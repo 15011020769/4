@@ -14,34 +14,34 @@
     label-position="left"
   >
     <el-form-item
-      label="策略名称"
+      :label="t('策略名称', 'WAF.clmc')"
       prop="name"
       :rules="[
-        { required: true, message: t('规则名称不能为空', 'WAF.gzmcbnwk') },
+        { required: true, message: t('名称不能为空', 'WAF.mcbnwk') },
         { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') },
       ]"
     >
-      <el-input v-model="form.name" class="name-input" />
+      <el-input v-model="form.name" :disabled="ucbRule !== undefined" class="name-input" />
     </el-form-item>
     <el-form-item label="策略描述" prop="desc">
       <el-input v-model="form.desc" class="name-input" />
     </el-form-item>
-    <el-form-item required label="策略开关" prop="status">
+    <el-form-item required :label="t('策略开关', 'WAF.clkg')" prop="status">
       <el-switch v-model="form.status" />
     </el-form-item>
     <el-form-item required>
       <span slot="label">
-        匹配条件
-        <el-tooltip effect="light" content="同一规则的多个条件是“与”关系，同时满足才会执行动作，且最多配置10个；若匹配条件输入类型为字符串，区分大小写。">
+        {{t('匹配条件', 'WAF.pptj')}}
+        <el-tooltip effect="light" :content="t('同一规则的多个条件是“与”关系，同时满足才会执行动作，且最多配置10个；若匹配条件输入类型为字符串，区分大小写', 'WAF.tygzddgtjs')">
           <i class="el-icon-info" />
         </el-tooltip>
       </span>
       <ul class="table-wrapper" >
         <li class="table-title">
-          <h4 style="width: 166px">匹配字段</h4>
-          <h4 style="width: 233px; padding-left: 15px;">匹配参数</h4>
-          <h4 style="width: 84px">逻辑符号</h4>
-          <h4 style="width: 260px; padding-left: 15px;">匹配内容</h4>
+          <h4 style="width: 166px">{{t('匹配字段', 'WAF.pplw')}}</h4>
+          <h4 style="width: 233px; padding-left: 15px;">{{t('匹配参数', 'WAF.ppcs')}}</h4>
+          <h4 style="width: 84px">{{t('逻辑符号', 'WAF.ljfh')}}</h4>
+          <h4 style="width: 260px; padding-left: 15px;">{{t('匹配内容', 'WAF.ppnr')}}</h4>
           <h4 style="width: 60px; text-align: center;">操作</h4>
         </li>
         <li v-for="(rule, i) in form.rule" :key="rule.key" class="table-title">
@@ -59,7 +59,7 @@
           </div>
 
           <el-select v-model="form.rule[i].op" style="width: 84px">
-            <el-option v-for="item in rule.opoptions" :value="item" :key="item" :label="item | labelFilter"></el-option>
+            <el-option v-for="item in rule.opoptions" :value="item" :key="item" :label="labelFilter(item)"></el-option>
           </el-select>
 
           <div style="width: 260px; padding-left: 15px;">
@@ -84,27 +84,31 @@
         </li>
       </ul>
        <el-row class="add-footer" type="flex" align="middle" justify="center">
-        <el-button type="text" size="small" @click="addUCBRule" :disabled="selectedMatchKeys.length > 9">添加</el-button>&nbsp;<span class="sub-text">还可以添加{{10 - selectedMatchKeys.length}}条，最多10条</span>
+        <el-button type="text" size="small" @click="addUCBRule" :disabled="selectedMatchKeys.length > 9">添加</el-button>&nbsp;<span class="sub-text">{{t('还', 'WAF.h')}}可以添加{{10 - selectedMatchKeys.length}}{{t('条', 'WAF.t')}}，最多10{{t('条', 'WAF.t')}}</span>
       </el-row>
     </el-form-item>
-    <el-form-item
-      :label="t('执行动作', 'WAF.zxdz')"
-      prop="action"
-      :rules="[
-        { required: true, },
-      ]"
-    >
-      <el-select v-model="form.action">
-        <el-option
-          v-for="item in CUSTOM_SESSION_ACTION_ARR"
-          :key="item.value"
-          :label="item.name"
-          :value="item.value"
-        >
-        </el-option>
-      </el-select>&nbsp;
+    <el-row type="flex">
+      <el-form-item
+        :label="t('执行动作', 'WAF.zxdz')"
+        prop="action"
+        :rules="[
+          { required: true, },
+        ]"
+      >
+        <el-select v-model="form.action">
+          <el-option
+            v-for="item in CUSTOM_SESSION_ACTION_ARR"
+            :key="item.value"
+            :label="item.name"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>&nbsp;
+        <span v-if="form.action === CUSTOM_SESSION_ACTION.验证码" class="sub-text"> {{t('仅用于浏览器访问场景 (强烈建议配置 UA类型 属于 browser后使用)', 'WAF.jyyllqfwcj')}}</span>
+      </el-form-item>
       <div class="name-input" style="display: inline-block;" v-if="form.action === CUSTOM_SESSION_ACTION.重定向">
         <el-form-item
+          class="redire-form"
           prop="addition_arg"
           :rules="[
             {
@@ -112,30 +116,32 @@
             }
           ]"
           >
-          <el-input v-model="form.addition_arg" :placeholder="t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy')"/>
+          <el-input v-model="form.addition_arg" :placeholder="t('请以/开头，支持重定向到当前域名下的URL，512个字符以内', 'WAF.qyktzccdxddqym')"/>
         </el-form-item>
       </div>
-      <span v-if="form.action === CUSTOM_SESSION_ACTION.验证码" class="sub-text"> 仅用于浏览器访问场景 (强烈建议配置 UA类型 属于 browser后使用)</span>
-    </el-form-item>
+    </el-row>
     <el-form-item
-    v-if="form.action !== CUSTOM_SESSION_ACTION.监控 && form.action !== CUSTOM_SESSION_ACTION.放行"
-      label="惩罚时长"
+      v-if="form.action !== CUSTOM_SESSION_ACTION.监控 && form.action !== CUSTOM_SESSION_ACTION.放行"
+      :label="t('惩罚时长', 'WAF.cfsc')"
       prop="valid_time"
       :rules="[
-        { required: true, },
+        { required: true, message: t('请输入5~10080以内的整数', 'WAF.qsr51zs') },
+        {
+          validator: isValidTime()
+        }
       ]"
     >
-      <el-input v-model="form.valid_time" style="width: 195px;" />&nbsp;
-      <el-tooltip effect="light" content="最短5分钟，最长1周">
+      <el-input v-model.number="form.valid_time" :placeholder="t('请输入5~10080以内的整数', 'WAF.qsr51zs')" style="width: 195px;" />&nbsp;
+      <el-tooltip effect="light" :content="t('最短5分钟，最长1周', 'WAF.zdfzzc')">
         <i class="el-icon-info" />
       </el-tooltip>
     </el-form-item>
     <el-form-item>
-      <p class="sub-text">策略优先级按照动作类型匹配生效，优先级为：放行＞监控＞重定向＞验证码＞拦截，动作相同添加时间越晚优先级越高。</p>
+      <p class="sub-text">{{t('策略优先级按照动作类型匹配生效，优先级为：放行＞监控＞重定向＞验证码＞拦截，动作相同添加时间越晚优先级越高', 'WAF.clsxazdz')}}</p>
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" :loading="loading" @click="onSubmit">{{ucbRule ? '保存' : '添加'}}</el-button>
-      <el-button :disabled="loading" @click="close">取消</el-button>
+      <el-button type="primary" size="small" :loading="loading" @click="onSubmit">{{ucbRule ? '保存' : '添加'}}</el-button>
+      <el-button :disabled="loading" size="small" @click="close">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -143,8 +149,7 @@
 <script>
 import { UPSERT_BOT_UCB_FEATURE_RULE } from '@/constants'
 import SelectMenu from './selectMenu'
-import DiySessionItem from './diySessionItem'
-import { ALL_RULE_ARR, ALL_RULE, CUSTOM_SESSION_ACTION_ARR, CUSTOM_SESSION_ACTION } from '../../constants'
+import { ALL_RULE_ARR, ALL_RULE, CUSTOM_SESSION_ACTION_ARR, CUSTOM_SESSION_ACTION, COMMON_ERROR } from '../../constants'
 export default {
   props: {
     domain: String,
@@ -156,11 +161,11 @@ export default {
   },
   components: {
     SelectMenu,
-    DiySessionItem
   },
   data() {
     return {
       form: {},
+      appid: '',
       loading: false,
       matchs: ALL_RULE_ARR,
       selectedMatchKeys: [],
@@ -181,6 +186,13 @@ export default {
             value: rule.value,
             showMatchDialog: false
           }))
+          console.log(ucbrule)
+          if (ucbrule.action !== CUSTOM_SESSION_ACTION.重定向) {
+            ucbrule.addition_arg = ''
+          }
+          if (ucbrule.action === CUSTOM_SESSION_ACTION.监控 || ucbrule.action === CUSTOM_SESSION_ACTION.放行) {
+            ucbrule.valid_time = ''
+          }
           this.form = ucbrule
         } else {
           this.form = {
@@ -195,16 +207,21 @@ export default {
     },
   },
   methods: {
-    test(a) {
-      a+='22'
-      console.log(2)
+    isValidTime() {
+      var warpper = (rule, value, callback) => {
+        if (value >= 5 && value <= 10080) {
+          return callback()
+        }
+        callback(this.t('请输入5~10080以内的整数', 'WAF.qsr51zs'))
+      }
+      return warpper
     },
     isValidURI() {
       var warpper = (rule, value, callback) => {
         if (/^\/.{1,128}$/.test(value)) {
           return callback()
         }
-        callback(this.t('重定向路径输入有误，请以/开头，128个字符以内', 'WAF.cdxtsy'))
+        callback(this.t('请以/开头，支持重定向到当前域名下的URL，512个字符以内', 'WAF.qyktzccdxddqym'))
       }
       return warpper
     },
@@ -226,7 +243,12 @@ export default {
       }
       return warpper
     },
-    onSubmit() {
+    async onSubmit() {
+      let appid = this.appid
+      if (!appid) {
+        const res = await this.axios.get(`redesc/selectAppid?uin=${this.$cookie.get('uuid')}`)
+        appid = res.data[0].app_id
+      }
       const rule = {
         domain: this.domain,
         name: this.form.name,
@@ -237,7 +259,7 @@ export default {
         rule_type: 0,
         addition_arg: 'none',
         valid_time: 0,
-        appid: 1300560919,
+        appid: Number(appid)
       }
       if (this.form.action !== CUSTOM_SESSION_ACTION.监控 && this.form.action !== CUSTOM_SESSION_ACTION.放行) {
         rule.valid_time = this.form.valid_time
@@ -250,14 +272,22 @@ export default {
         op: rule.op,
         value: rule.value
       }))
-      console.log(rule)
       this.$refs.form.validate((valid) => {
         if (valid) {
+          this.loading = true
           this.axios.post(UPSERT_BOT_UCB_FEATURE_RULE, {
             Version: '2018-01-25',
             Domain: this.domain,
             Rule: JSON.stringify(rule),
+          }).then(resp => {
+            this.generalRespHandler(resp, () => {
+              this.$emit('success')
+            }, COMMON_ERROR, this.ucbRule ? `${this.t('编辑', 'bj')}成功` : '添加成功')
+          }).then(() => {
+            this.loading = false
           })
+        } else {
+          this.loading = false
         }
       })
     },
@@ -301,14 +331,12 @@ export default {
     close() {
       this.$emit('update:visible', false)
     },
-  },
-  filters: {
     labelFilter(e) {
       switch (e) {
-        case '>': return '大于'
-        case '<': return '小于'
-        case 'belong': return '属于'
-        case 'not belong': return '不属于'
+        case '>': return `大${this.t('于', 'WAF.y')}`
+        case '<': return `小${this.t('于', 'WAF.y')}`
+        case 'belong': return this.t('属于', 'WAF.sy')
+        case 'not belong': return `不${this.t('属于', 'WAF.sy')}`
         case 'contains': return '包含'
         case 'not contains': return '不包含'
         case 'yes': return '是'
@@ -316,7 +344,7 @@ export default {
         default: break;
       }
     }
-  }
+  },
 }
 </script>
 
@@ -385,5 +413,10 @@ export default {
 }
 ::v-deep .el-input__suffix {
   top: 5px;
+}
+.redire-form{
+::v-deep .el-form-item__content {
+  margin-left: 0 !important;
+}
 }
 </style>

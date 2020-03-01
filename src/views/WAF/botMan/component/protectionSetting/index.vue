@@ -2,13 +2,13 @@
   <div>
     <div class="topHeader">
       <i @click="$router.push('/botSetting')" class="el-icon-back" style="cursor: pointer" />
-      <span style="margin-left: 20px">BOT 策略设置</span>
+      <span style="margin-left: 20px">BOT 策略{{t('设置', 'WAF.sz')}}</span>
       <el-select
         v-model="ipSearch"
         filterable
         allow-create
         default-first-option
-        placeholder="请选择文章标签">
+      >
         <el-option
           v-for="item in ipSearchOptions"
           :key="item.Domain"
@@ -17,13 +17,13 @@
         </el-option>
       </el-select>
       <el-tabs :value="routerTips">
-        <el-tab-pane name="public"><p @click="goRouter('public')" slot="label">公共类型</p></el-tab-pane>
-        <el-tab-pane name="diy"><p @click="goRouter('diy')" slot="label">自定义会话策略</p></el-tab-pane>
+        <el-tab-pane name="public"><p @click="goRouter('public')" slot="label">公共{{t('类型', 'WAF.lx')}}</p></el-tab-pane>
+        <el-tab-pane name="diy"><p @click="goRouter('diy')" slot="label">{{t('自定义会话策略', 'WAF.zdyhhcl')}}</p></el-tab-pane>
       </el-tabs>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
+        <p style="width: 99%">BOT {{t('行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。', 'WAF.xwglngdyh')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <DiyType :ipSearch="ipSearch" v-if="routerTips === 'diy'"/>

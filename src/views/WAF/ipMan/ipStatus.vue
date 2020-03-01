@@ -1,80 +1,100 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>IP封堵状态</span>
-      <el-select v-model="ipSearch" filterable allow-create default-first-option placeholder="请选择Ip地址">
+      <span>IP{{t('封堵状态', 'WAF.fdzt')}}</span>
+      <el-select v-model="ipSearch" filterable allow-create default-first-option :placeholder="t('请选择Ip地址', 'WAF.qxzipdz')">
         <el-option v-for="item in ipSearchOptions" :key="item.Domain" :label="item.Domain" :value="item.Domain">
         </el-option>
       </el-select>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p>这里可以查看到正在封堵状态中的IP记录/这里可以查看动态生成的IP封堵记录，例如CC，BOT，自定义人机识别等</p>
+        <p>{{t('这里可以查看到正在封堵状态中的IP记录/这里可以查看动态生成的IP封堵记录，例如CC，BOT，自定义人机识别等', 'WAF.zlkyckzzfd')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <div class="filterCon">
         <div>
-          <span>类型: </span>
+          <span>{{t('类型', 'WAF.lx')}}: </span>
           <el-select class="select" v-model="typeCheck" style="margin-left: 52px;">
-            <el-option v-for="item in IP_STATUS_TYPE_ARR" :label="item.name" :value="item.value" />
+            <el-option v-for="item in IP_STATUS_TYPE_ARR" :label="item.name" :value="item.value" :key="item.value" />
           </el-select>
         </div>
         <!-- <div class="timeCon newClear"> -->
         <div class="timeCon" style="display: flex">
           <div>
-            <span class="floatLeft">记录创建时间：</span>
+            <span class="floatLeft">{{t('记录创建时间', 'WAF.jlcjsj')}}：</span>
             <el-button-group class="floatLeft">
               <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('hour')">最近1小时</el-button>
               <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('day')">最近1天</el-button>
               <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('week')">最近7天</el-button>
             </el-button-group>
-            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="disabledIp" />
+            <el-date-picker style="border-left: none;" size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp" />
           </div>
           <div style="flex: 1">
             <el-checkbox :disabled="disabledIp" class="floatLeft checkBo" v-model="timeOut" label="有效截止日期:" name="time"></el-checkbox>
-            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue2" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :disabled="disabledIp"></el-date-picker>
+            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue2" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp"></el-date-picker>
           </div>
         </div>
-        <div>
-          <span>触发策略：</span>
+        <div style="margin-top: 15px;">
+          <span>{{t('触发策略', 'WAF.cfcl')}}：</span>
           <el-input :disabled="disabledIp" v-model="triggerStrategy" style="width: 180px; margin-left: 23px" />
-          <el-tooltip class="tooltip" effect="dark" content="如果您想查询“智能CC”的封堵状态，请输入auto_cc" placement="right">
+          <el-tooltip class="tooltip" effect="dark" :content="t('如果您想查询“智能CC”的封堵状态，请输入auto_cc', 'WAF.rgnxcxzncc')" placement="right">
             <i class="el-icon-info" style="margin-left: 10px;" />
           </el-tooltip>
         </div>
         <div style="margin-top: 20px;">
           <span>IP地址：</span>
           <el-input v-model="iptIP" style="width: 180px; margin-left: 36px" />
-          <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
+          <div class="err-tips"  style="margin-left: 83px"v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
         </div>
         <div>
-          <el-button @click="onSearch" size="mini" class="lookSearch">查询</el-button>
+          <el-button type="primary" @click="onSearch" size="mini" class="lookSearch">{{t('查询', 'WAF.js')}}</el-button>
         </div>
       </div>
+        <el-row type="flex" justify="end" style="margin-bottom: 15px;">
+          <el-button type="primary" size="small" :disabled="tableDataBegin.length === 0">{{t('导出全部筛选结果', 'WAF.dcqbsxjg')}}</el-button>
+        </el-row>
         <el-card>
           <el-table ref="multipleTable" :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
-            <el-table-column prop="num" label="序号">
+            <el-table-column
+              type="selection"
+              class-name="hide"
+              width="1"
+            />
+            <el-table-column prop="num" :label="t('序号', 'WAF.xh')">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
             <!-- <el-table-column prop="resourse" label="来源"></el-table-column> -->
-            <el-table-column prop="category" label="类别"></el-table-column>
+            <el-table-column prop="category" :label="t('类别', 'WAF.lb')"></el-table-column>
             <el-table-column prop="ip" label="IP地址"></el-table-column>
-            <el-table-column prop="name" label="策略名称"></el-table-column>
-            <el-table-column prop="action" label="动作"></el-table-column>
-            <el-table-column prop="ts_version" label="创建时间">
-              <span slot="header">
-                创建时间
+            <el-table-column prop="name" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
+            <el-table-column prop="action" :label="t('动作', 'WAF.dz')"></el-table-column>
+            <el-table-column prop="ts_version">
+              <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('ts_version')">
+                {{t('创建时间', 'WAF.cjsj')}}
+                <i class="el-icon-caret-top" v-if="sort === 'ts_version:1'"></i>
+                <i class="el-icon-caret-bottom" v-if="sort === 'ts_version:-1'"></i>
+                <i class="el-icon-d-caret" v-if="sort.includes('valid_ts')"></i>
+              </el-button>
+              <!-- <span slot="header">
+                {{t('创建时间', 'WAF.cjsj')}}
                 <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span>
+              </span> -->
               <template slot-scope="scope">
                 {{scope.row.ts_version | currentTimeFilter}}
               </template>
             </el-table-column>
-            <el-table-column prop="valid_ts" label="有效截止时间">
-              <span slot="header">
-                有效截止时间
+            <el-table-column prop="valid_ts">
+              <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('valid_ts')">
+                有效{{t('截止时间', 'WAF.jzsj')}}
+                <i class="el-icon-caret-top" v-if="sort === 'valid_ts:1'"></i>
+                <i class="el-icon-caret-bottom" v-if="sort === 'valid_ts:-1'"></i>
+                <i class="el-icon-d-caret" v-if="sort.includes('ts_version')"></i>
+              </el-button>
+              <!-- <span slot="header">
+                有效截止{{t('时间', 'WAF.time')}}
                 <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span>
+              </span> -->
               <template slot-scope="scope">
                 {{scope.row.valid_ts | currentTimeFilter}}
               </template>
@@ -126,7 +146,7 @@ export default {
       tipShow: true, //提示文字
       resouseC: "", //来源
       typeCheck: "BOT", //类别
-      iptIP: "182.254.173.153", //输入IP
+      iptIP: "", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
       timeValue1: "", //创建时间
@@ -157,17 +177,30 @@ export default {
       ipInfo: {}, // 保存编辑信息
       ctsFlag: false, // 更新时间升降序
       vtsFlag: false, // 有效时间时间升降序
+      sort: 'valid_ts:1',
     };
   },
   components: {
     addBlackWhite
   },
   mounted() {
-    this.getData();
+    // this.getData();
     this.getDescribeHost()
     this.onSearch()
   },
   methods: {
+    setSort(key) {
+      if (this.sort.includes(key)) { // 升降序
+        if (this.sort.includes('-')) {
+          this.sort = `${key}:1`
+        } else {
+          this.sort = `${key}:-1`
+        }
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
+      this.onSearch()
+    },
     //关闭提示文字
     closeTip() {
       this.tipShow = false;
@@ -204,35 +237,6 @@ export default {
           this.ipSearchOptions = data.Response.HostList
           this.ipSearch = this.ipSearchOptions[0].Domain
         }
-      })
-    },
-
-    // 获取数据
-    getData() {
-      this.loadShow = true;
-      // this.axios.get('', {}).then((res) => {
-      // console.log(res.data.tableData);
-      // this.tableDataBegin = res.data.tableData;
-      // this.tableDataBegin = this.allData;
-      // 将数据的长度赋值给totalItems
-      // this.totalItems = this.tableDataBegin.length;
-      // if (this.totalItems > this.pageSize) {
-      //   for (let index = 0; index < this.pageSize; index++) {
-      //     this.tableDataEnd.push(this.tableDataBegin[index]);
-      //   }
-      // } else {
-      //   this.tableDataEnd = this.tableDataBegin;
-      // }
-      // this.loadShow=false;
-      // })
-      let params = {
-        Version: '2018-01-25',
-        Domain: 'tfc.dhycloud.com',
-        Count: 10
-      }
-      this.axios.post(DESCRIBE_ACCESS_CONTROL, params).then(data => {
-        this.loadShow = false;
-        console.log(data)
       })
     },
     // 分页开始
@@ -291,7 +295,8 @@ export default {
         CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
         CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
         Category: this.typeCheck.toLowerCase(),
-        Name: this.triggerStrategy || undefined
+        Name: this.triggerStrategy || undefined,
+        Sort: this.sort,
       }
 
       if (this.timeOut) {
@@ -307,37 +312,11 @@ export default {
         delete params.Name
       }
 
-      if (params.sort) {
-        delete params.sort
-      }
-
-      if (sort === 'Cts') {
-        this.vtsFlag = false
-        params.Sort = this.ctsFlag ? 'ts_version:1' : 'ts_version:-1' 
-      }
-
-      if (sort === 'Vts') {
-        this.ctsFlag = false
-        params.Sort = this.vtsFlag ? 'valid_ts:1' : 'valid_ts:-1' 
-      }
-
-      this.axios.post(DESCRIBEIP_HITITEMS, params).then(data => {
-        // this.loadShow = true
-        // this.generalRespHandler(resp, () => {
-        //   this.tableDataBegin = data.Response.Data.Res;
-        //   this.loadShow = false
-        // }, COMMON_ERROR)
-        // this.axios.get('', {}).then((res) => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.tableDataBegin = data.Response.Data.Res || []
+      this.axios.post(DESCRIBEIP_HITITEMS, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          const data = (Data.Res || []).map(d => ({...d}))
+          this.tableDataBegin = data
           this.totalItems = this.tableDataBegin.length;
           if (this.totalItems > this.pageSize) {
             for (let index = 0; index < this.pageSize; index++) {
@@ -347,7 +326,7 @@ export default {
             this.tableDataEnd = this.tableDataBegin;
           }
           this.loadShow = false;
-        }
+        })
         // this.tableDataBegin = this.allData;
         // 将数据的长度赋值给totalItems
         // this.totalItems = this.tableDataBegin.length;
@@ -472,7 +451,6 @@ export default {
     }
     .lookSearch {
       color: #fff;
-      background-color: #006eff;
       margin-top: 20px;
     }
     .floatLeft {
@@ -520,5 +498,8 @@ export default {
     text-align: right;
     background-color: #fff;
   }
+}
+::v-deep .hide {
+  visibility: hidden;
 }
 </style>

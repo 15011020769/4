@@ -7,102 +7,119 @@
  * @FilePath: /new_product/src/views/WAF/botMan/component/transfer.vue
  -->
 <template>
-  <el-dialog title="复制策略" :visible="dialogVisible" width="850px" destroy-on-close>
-    <div class="main">
-      <span style="font-size: 12px">您可以将当前域名的策略复制到其他开启了BOT流量分析的域名，最多可选20个。</span>
-      <div class="transfer-box">
-        <div class="left content-wrapper">
-          <h4 class="title">请选择域名</h4>
-          <div class="content">
-            <el-input v-model="inputSearch">
-              <div slot="suffix" class="input-search">
-                <i style="cursor: pointer" class="el-icon-search" />
-              </div>
-            </el-input>
-            <ul class="list-wrapper">
-              <template v-if="!showLoading">
-                <el-checkbox-group v-model="checkList" @change="onCheck">
-                  <li v-for="item in ulData" :key="item.id" class="list-content">
-                    <el-checkbox name="ff" :label="item">
-                      <div>
-                        {{item.Domain}}
-                      </div>
-                    </el-checkbox>
-                  </li>
-                </el-checkbox-group>
-                <li v-if="ulData.length === 0" class="list-content" style="text-align: center; display: flex; justify-content: center">
-                  暂无数据，请确认域名是否开启了BOT流量分析
+  <div class="main">
+    <span style="font-size: 12px">{{t('您可以将当前域名的策略复制到其他开启了BOT流量分析的域名，最多可选20个。', 'WAF.zwsjqqrym')}}</span>
+    <div class="transfer-box">
+      <div class="left content-wrapper">
+        <h4 class="title">{{t('请选择', 'WAF.qxz')}}域名</h4>
+        <div class="content">
+          <el-input v-model="inputSearch" class="domain-input">
+            <div slot="suffix" class="input-search">
+              <i style="cursor: pointer" class="el-icon-search" />
+            </div>
+          </el-input>
+          <ul class="list-wrapper">
+            <template v-if="!showLoading">
+              <el-checkbox-group v-model="checkList">
+                <li v-for="item in ulData" :key="item.id" class="list-content">
+                  <el-checkbox name="ff" :label="item">
+                    <div>
+                      {{item.Domain}}
+                    </div>
+                  </el-checkbox>
                 </li>
-              </template>
-              <li v-if="showLoading" class="list-content" style="text-align: center; display: flex; justify-content: center">
-                <i class="el-icon-loading" /> 加载中...
+              </el-checkbox-group>
+              <li v-if="ulData.length === 0" class="list-content" style="text-align: center; display: flex; justify-content: center; font-size: 12px;">
+                {{t('暂无数据，请确认域名是否开启了BOT流量分析', 'WAF.zwsjqqrym')}}
               </li>
-            </ul>
-          </div>
+            </template>
+            <li v-if="showLoading" class="list-content" style="text-align: center; display: flex; justify-content: center">
+              <i class="el-icon-loading" /> 
+              {{t('载入中', 'WAF.zrz')}}...
+            </li>
+          </ul>
         </div>
-        <i class="el-icon-info" />
-        <div class="right content-wrapper">
-          <h4 class="title">已选择(1)</h4>
-          <div class="content">
-            <ul class="list-wrapper right-wrapper">
-              <li v-for="item in checkList" :key="item.id" class="list-content">
-                <!-- <el-checkbox label=""/> -->
-                <div class="right-list-contnt">
-                  <span>{{item.Domain}}</span>
-                  <i @click="onDelete(item)" style="cursor: pointer" class="el-icon-close" />
-                </div>
-              </li>
-            </ul>
-          </div>
+      </div>
+      <i class="iconfont">&#xe603;</i>
+      <div class="right content-wrapper">
+        <h4 class="title">{{t('已选择', 'WAF.yxz')}}({{checkList.length}})</h4>
+        <div class="content">
+          <ul class="list-wrapper right-wrapper">
+            <li v-for="item in checkList" :key="item.id" class="list-content">
+              <!-- <el-checkbox label=""/> -->
+              <div class="right-list-contnt">
+                <span>{{item.Domain}}</span>
+                <i @click="onDelete(item)" style="cursor: pointer" class="el-icon-close" />
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <div slot="footer">
-      <el-row type="flex" justify="center">
-        <el-button style="padding: 5px 10px; margin-right: 10px;" type="primary" @click="onSubmit">复制</el-button>
-        <el-button style="padding: 5px 10px; margin-right: 10px;" @click="onClose">取消</el-button>
-      </el-row>
-    </div>
-  </el-dialog>
-
+    <el-row type="flex" justify="center" style="margin-top: 30px;">
+      <el-button style="padding: 5px 10px; margin-right: 10px;" :loading="loading" type="primary" @click="onSubmit">{{t('复制', 'WAF.copy')}}</el-button>
+      <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="loading" @click="onClose">取消</el-button>
+    </el-row>
+  </div>
 </template>
 
 <script>
-import { DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS, COPY_BOTTCB_RULE } from '@/constants'
+import { DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS, COPY_BOT_UCB_PREINSTALL_RULE, COPY_BOTTCB_RULE } from '@/constants'
 import { COMMON_ERROR } from '../../constants'
 
 export default {
+  props: {
+    iptDomain: String,
+    dialogVisible: false,
+    category: String,
+  },
   data() {
     return {
       ulData: [],
       checkList: [],
       inputSearch: '',
-      showLoading: false
+      showLoading: false,
+      loading: false,
     }
   },
-
-  props: {
-    iptDomain: '',
-    dialogVisible: false
+  watch: {
+    inputSearch(n, o) {
+      let arr = [].concat(this.checkList)
+      if (n.length) {
+        this.ulData = this.ulData.filter(item => {
+          return item.Domain.indexOf(n) > -1
+        })
+        return
+      }
+      this.ulData = JSON.parse(localStorage.getItem('data'))
+      this.checkList = arr
+    },
+    iptDomain(n, o) {
+      this.getDescribeHost()
+    },
+    checkList(val, oldVal) {
+      if (val.length === 20) {
+        this.$message({
+          message: '最多只能选20个',
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        this.checkList = oldVal
+      }
+    },
   },
-
   mounted() {
     this.getDescribeHost()
   },
   methods: {
-    onCheck() {
-      console.log(this.checkList)
-    },
     onDelete(item) {
-      // console.log(item);
       const currtIndex = this.checkList.findIndex(_item => _item.id === item.id)
       this.checkList.splice(currtIndex, 1)
     },
-
     onClose() {
       this.$emit('update:dialogVisible', false)
     },
-
     // 获取防护域名列表
     getDescribeHost() {
       let params = {
@@ -155,6 +172,7 @@ export default {
 
     // 确定
     onSubmit() {
+      this.loading = true
       let Target = this.checkList.reduce((prev, next, index) => {
         let str
         if (index === this.checkList.length - 1) {
@@ -167,30 +185,22 @@ export default {
       let params = {
         Version: '2018-01-25',
         Domain: this.iptDomain,
-        Target
+        Target,
+        
       }
-      this.axios.post(COPY_BOTTCB_RULE, params).then(res => {
-         this.generalRespHandler(res, this.onClose(), COMMON_ERROR, '复制成功')
+      let url = COPY_BOTTCB_RULE // 复制公开类型
+      if (this.category) { // 复制自定义会话策略
+        params.Category = this.category === 'xy' ? 1 : 2
+        url = COPY_BOT_UCB_PREINSTALL_RULE
+      }
+      this.axios.post(url, params)
+      .then(res => {
+         this.generalRespHandler(res, this.onClose, COMMON_ERROR, `${t('复制', 'WAF.copy')}成功`)
+      }).then(() => {
+        this.loading = false
       })
     }
   },
-  watch: {
-    inputSearch(n, o) {
-      let arr = [].concat(this.checkList)
-      if (n.length) {
-        this.ulData = this.ulData.filter(item => {
-          return item.Domain.indexOf(n) > -1
-        })
-        return
-      }
-      this.ulData = JSON.parse(localStorage.getItem('data'))
-      this.checkList = arr
-    },
-
-    iptDomain(n, o) {
-      this.getDescribeHost()
-    }
-  }
 }
 </script>
 
@@ -234,5 +244,15 @@ export default {
     justify-content: space-between;
     align-items: center;
   }
+}
+.domain-input {
+  ::v-deep input {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+}
+.title {
+  font-size: 12px;
 }
 </style>

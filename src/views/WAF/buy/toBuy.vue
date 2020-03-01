@@ -3,48 +3,49 @@
     <div class="topHead"></div>
     <div class="wrapper">
       <div class="content">
-        <h1>欢迎使用web应用防火墙</h1>
-        <h2>Web应用防火墙是一款基于网站防护的一站式安全服务平台，可以为网站开发者提供网站入侵防护、业务访问风险、网站传播护航等安全服务</h2>
+        
+        <h1>{{t('欢迎使用Web应用防火墙', 'WAF.hysywaf')}}</h1>
+        <h2>{{t('Web应用防火墙是一款基于网站防护的一站式安全服务平台，可以为网站开发者提供网站入侵防护、业务访问风险、网站传播护航等安全服务', 'WAF.wafsykjy')}}</h2>
         <div class="boxAll newClear">
           <div class="boxC">
             <div>
               <img :src="imgUrl1" width="80" height="80" alt="">
             </div>
-            <p class="litTitle">专业的网站防护能力</p>
-            <p class="botPcon">千余条防御规则全面防护各种Web入侵攻击，专业攻防团队7*24小时实时防护</p>
+            <p class="litTitle">{{t('专业的网站防护能力', 'WAF.zydwzfh')}}</p>
+            <p class="botPcon">{{t('千余条防御规则全面防护各种Web入侵攻击，专业攻防团队7*24小时实时防护', 'WAF.qwtfhg')}}</p>
           </div>
           <div class="boxC">
             <div>
               <img :src="imgUrl2" width="80" height="80" alt="">
             </div>
-            <p class="litTitle">及时的补订修复保障</p>
+            <p class="litTitle">{{t('及时的补订修复保障', 'WAF.jsdbdxf')}}</p>
             <p class="botPcon">
-              12h内更新高危漏洞补丁
-              24h更新常见通用型漏洞补丁
-              云端自动升级 秒级同步下发
+              {{t('12h内更新高危漏洞补丁', 'WAF.ngxgwld')}}<br/>
+              {{t('24h更新常见通用型漏洞补丁', 'WAF.gxcjlg')}}<br/>
+              {{t('云端自动升级 秒级同步下发', 'WAF.ydzdsj')}}
             </p>
           </div>
           <div class="boxC">
             <div>
               <img :src="imgUrl3" width="80" height="80" alt="">
             </div>
-            <p class="litTitle">稳定的高可用业务保障</p>
-            <p class="botPcon">
-              BGP线路接入 多地容灾
-              一键DNS接入 隐藏源站
-              一键大流量BGP高防整合
+            <p class="litTitle">{{t('稳定的高可用业务保障', 'WAF.wddgky')}}</p>
+            <p class="botPcon" style="text-align: center;">
+              {{t('BGP线路接入 多地容灾', 'WAF.bgpxljr')}}<br/>
+              {{t('一键DNS接入 隐藏源站', 'WAF.yjdnsjr')}}<br/>
+              {{t('一键大流量BGP高防整合', 'WAF.yjdll')}}
             </p>
           </div>
           <div class="boxC">
             <div>
               <img :src="imgUrl4" width="80" height="80" alt="">
             </div>
-            <p class="litTitle">常见web攻击防护</p>
-            <p class="botPcon">防御SQL注入、XSS跨站脚本、Web服务器插件漏洞等常见攻击</p>
+            <p class="litTitle">{{t('常见web攻击防护', 'WAF.cjwebsj')}}</p>
+            <p class="botPcon">{{t('防御SQL注入、XSS跨站脚本、Web服务器插件漏洞等常见攻击', 'WAF.fysqlzr')}}</p>
           </div>
         </div>
         <div class="botBtn">
-          <el-button class="immeBuy" @click="immeBuy">立即购买</el-button>
+          <el-button class="immeBuy" @click="immeBuy">{{t('立即购买', 'WAF.ljgm')}}</el-button>
         </div>
       </div>
     </div>
@@ -125,6 +126,7 @@ export default {
       margin-top:12px;
     }
     .botPcon{
+      margin-top: 15px;
       font-size: 12px;
       color: #888;
       line-height: 20px;

@@ -1,14 +1,10 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>IP查询</span>
+      <span>IP{{t('黑白名单', 'WAF.hbmd')}}</span>
       <el-select
         v-model="ipSearch"
-        filterable
-        allow-create
-        default-first-option
-        placeholder="请选择文章标签"
-        @change="pageOffset === 0 ? onSearch() : pageOffset = 0"
+        @change="pageOffset === 0 ? getData() : pageOffset = 0"
       >
         <el-option
           key="all"
@@ -25,82 +21,79 @@
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p>在这里，您可以将一个或多个IP加入黑/白名单，实现精准的访问控制。需要注意的是：黑白名单的优先级仅低于WAF自定义放行策略，高于其他检测逻辑。</p>
-        <p>IP黑白名单优先级：全局白名单 > 域名白名单 > 域名黑名单 > 全局黑名单</p>
+        <p>{{t('在这里，您可以将一个或多个IP加入黑/白名单，实现精准的访问控制。需要注意的是：黑白名单的优先级仅低于WAF自定义放行策略，高于其他检测逻辑。', 'WAF.zzlnkyj')}}<p>
+        <p>{{t('IP黑白名单优先级：全局白名单 > 域名白名单 > 域名黑名单 > 全局黑名单', 'WAF.iphbmdsx')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <div class="filterCon">
         <div>
-          <span>类别：</span>
+          <span>{{t('类别', 'WAF.lb')}}：</span>
           <el-select class="select" v-model="typeCheck">
             <el-option label="全部" :value="undefined"></el-option>
-            <el-option label="黑名单" value="42"></el-option>
-            <el-option label="白名单" value="40"></el-option>
+            <el-option :label="t('黑名单', 'WAF.hmd')" value="42"></el-option>
+            <el-option :label="t('白名单', 'WAF.bmd')" value="40"></el-option>
           </el-select>
-          <span>来源：</span>
+          <span>
+            
+          </span>
           <el-select class="select" v-model="resouseC">
             <el-option label="全部" :value="undefined"></el-option>
             <el-option label="CC" value="cc"></el-option>
             <el-option label="BOT" value="bot"></el-option>
-            <el-option label="自定义" value="custom"></el-option>
+            <el-option :label="t('自定义', 'WAF.zdy')" value="custom"></el-option>
           </el-select>
-          <el-input placeholder="输入IP" class="iptIP" v-model="iptIP" :disabled="!arrowShow"></el-input>
+          <el-input :placeholder="t('输入IP', 'WAF.srip')" class="iptIP" v-model="iptIP" :disabled="!arrowShow"></el-input>
           <span class="topFilter" @click="isShowTop">
-            高级筛选
+            {{t('高级筛选', 'WAF.gjsx')}}
             <i v-if="arrowShow" class="el-icon-caret-bottom"></i>
             <i v-if="!arrowShow" class="el-icon-caret-top"></i>
           </span>
         </div>
         <div v-if="!arrowShow" class="timeCon newClear">
-          <span class="floatLeft">创建时间：</span>
+          <span class="floatLeft">{{t('创建时间', 'WAF.cjsj')}}：</span>
           <el-button-group class="floatLeft">
-            <el-button size="mini" @click="onTimeClick('hour')">最近1小时</el-button>
-            <el-button size="mini" @click="onTimeClick('day')">最近1天</el-button>
-            <el-button size="mini" @click="onTimeClick('week')">最近7天</el-button>
+            <el-button size="mini" :type="createTimeType === 'hour' ? 'primary' : ''" @click="onTimeClick('hour')">最近1小时</el-button>
+            <el-button size="mini" :type="createTimeType === 'day' ? 'primary' : ''" @click="onTimeClick('day')">最近1天</el-button>
+            <el-button size="mini" :type="createTimeType === 'week' ? 'primary' : ''" @click="onTimeClick('week')">最近7天</el-button>
           </el-button-group>
           <el-date-picker
             size="mini"
             class="floatLeft timePick"
+            style="border-left: none;"
             v-model="timeValue1"
             type="datetimerange"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
           ></el-date-picker>
-          <el-checkbox class="floatLeft checkBo" v-model="timeOut" label="有效截止日期:" name="time"></el-checkbox>
+          <el-checkbox class="floatLeft checkBo" v-model="timeOut" label="有效截止日期" name="time"></el-checkbox>
           <el-date-picker
             size="mini"
             class="floatLeft timePick"
             v-model="timeValue2"
             type="datetimerange"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
           ></el-date-picker>
         </div>
         <div>
-          <el-button @click="pageOffset === 0 ? onSearch() : pageOffset = 0" size="mini" class="lookSearch">查询</el-button>
+          <el-button @click="pageOffset === 0 ? getData() : pageOffset = 0" size="mini" type="primary" class="lookSearch">{{t('查询', 'WAF.js')}}</el-button>
         </div>
       </div>
       <div class="tableList">
         <div class="tableListBtn newClear">
-          <el-button class="addBW" size="mini" @click="addBW">添加黑白名单</el-button>
+          <el-button type="primary" class="addBW" size="mini" @click="addBW">{{t('添加黑白名单', 'WAF.tjhbmd')}}</el-button>
           <el-button 
+            :disabled="multipleSelection.length === 0"
             class="allDelete" 
-            @click="onDeleteRow(multipleSelection)"  
+            @click="dialogVisible=true"  
             size="mini"
             >
               批量删除
             </el-button>
-          <el-upload
-            class="import-btn"
-            action=""
-            :show-file-list="false"
-            :on-change="fileChange"
-          >
-            <el-button size="mini" type="primary">导入数据</el-button>
-          </el-upload>
-          <el-button class="exportFilter" @click="exportFile" size="mini">导出全部筛选结果</el-button>
+          <el-button size="mini" type="primary" @click="batchImportVisible=true">{{t('导入数据', 'WAF.drsj')}}</el-button>
+          <el-button class="exportFilter" type="primary" :disabled="tableDataBegin.length === 0" @click="exportFile" size="mini">{{t('导出全部筛选结果', 'WAF.dcqbsxjg')}}</el-button>
         </div>
         <el-card>
           <el-table
@@ -112,46 +105,50 @@
             @selection-change="handleSelectionChange"
           >
             <el-table-column type="selection" width="55" />
-            <el-table-column width="80px" prop="num" label="序号">
+            <el-table-column width="80px" prop="num" :label="t('序号', 'WAF.xh')">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
-            <el-table-column prop="Source" label="来源">
+            <el-table-column prop="Source" :label="t('来源', 'WAF.ly')">
               <template slot-scope="scope">
                 {{ scope.row.Source | sourceFilter }}
               </template>
             </el-table-column>
             <el-table-column prop="Ip" label="IP地址"></el-table-column>
-            <el-table-column prop="ActionType" label="类别">
+            <el-table-column prop="ActionType" :label="t('类别', 'WAF.lb')">
               <template slot-scope="scope">
                 {{scope.row.ActionType | ActionTypeFilter}}
               </template>
             </el-table-column>
-            <el-table-column prop="TsVersion" label="更新时间">
-              <span slot="header">
-                更新时间
-                <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span>
+            <el-table-column prop="TsVersion">
+              <el-button type="text" slot="header" style="padding: 0; cursor: pointer;color: #444;" @click="setSort('ts_version')">
+                {{t('更新时间', 'WAF.gxsj')}}
+                <i class="el-icon-caret-top" v-if="sort === 'ts_version:1'"></i>
+                <i class="el-icon-caret-bottom" v-if="sort === 'ts_version:-1'"></i>
+                <i class="el-icon-d-caret" v-if="sort.includes('valid_ts')"></i>
+              </el-button>
               <template slot-scope="scope">
                 {{scope.row.TsVersion | currentTimeFilter}}
               </template>
             </el-table-column>
-            <el-table-column prop="ValidTs" label="截止时间">
-              <span slot="header">
-                截止时间
-                <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span>
+            <el-table-column prop="ValidTs">
+              <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('valid_ts')">
+                {{t('截止时间', 'WAF.jzsj')}}
+                <i class="el-icon-caret-top" v-if="sort === 'valid_ts:1'"></i>
+                <i class="el-icon-caret-bottom" v-if="sort === 'valid_ts:-1'"></i>
+                <i class="el-icon-d-caret" v-if="sort.includes('ts_version')"></i>
+              </el-button>
               <template slot-scope="scope">
                 {{scope.row.ValidTs | currentTimeFilter}}
               </template>
             </el-table-column>
-            <el-table-column prop="Note" label="备注">
+            <el-table-column prop="Note" :label="t('备注', 'WAF.bz')">
               <template slot-scope="scope">
-                {{scope.row.Note || '无'}}
+                {{scope.row.Note || t('无', 'WAF.w')}}
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                <el-button @click="onEdit(scope)" type="text" size="mini">编辑</el-button>
+                <el-button @click="onEdit(scope)" type="text" size="mini">{{t('编辑', 'WAF.bj')}}</el-button>
                 <el-button @click="onAction(scope)" type="text" size="mini">{{scope.row.ActionType | actionButtonFilter}}</el-button>
                 <el-popover
                   placement="bottom"
@@ -159,7 +156,7 @@
                   v-model="scope.row.delDialog"
                   >
                   <div class="deleteCon" style="text-align:center;">
-                    <h1 style="font-size:14px;font-weight: 600;margin-bottom:16px;">确认删除该记录？</h1>
+                    <h1 style="font-size:14px;font-weight: 600;margin-bottom:16px;">{{t('确认删除该记录', 'WAF.qrscgjlm')}}？</h1>
                     <p style="font-size:12px;color:#333;margin-bottom:16px;">删除IP：{{scope.row.Ip}}</p>
                   </div>
                   <div style="text-align: right; margin: 0">
@@ -192,11 +189,27 @@
       :visible.sync="dialogVisible"
       width="30%"
       >
-      <i class="el-icon-warning" style="width: 30px"/><span>确定要删除选中的IP么？</span>
+      <i class="el-icon-warning" style="width: 30px"/><span>{{t('确定要删除选中的IP么', 'WAF.qrscxz')}}？</span>
       <el-row slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="onDeleteRow(multipleSelection)">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="onDeleteRow(multipleSelection)">{{t('确定', 'WAF.qd')}}</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
       </el-row>
+    </el-dialog>
+    <el-dialog
+      :visible.sync="batchImportVisible"
+      title="导入IP名单"
+      width="550px"
+      destroy-on-close
+    >
+      <batchImport :on-success="onSuccess" :domain="ipSearch" />
+    </el-dialog>
+    <el-dialog
+      :visible.sync="batchExportVisible"
+      title="导出记录"
+      width="550px"
+      destroy-on-close
+    >
+      <batchExport :visible.sync="batchExportVisible" :count="totalItems" :param="exportParam" />
     </el-dialog>
   </div>
 </template>
@@ -206,6 +219,8 @@ import addBlackWhite from './model/addBlackWhite'
 import XLSX from 'xlsx'
 import moment from 'moment'
 import { COMMON_ERROR } from '../constants'
+import batchImport from './model/batchImport'
+import batchExport from './model/batchExport'
 
 import { 
   DESCRIBE_ACCESS_CONTROL, 
@@ -219,6 +234,7 @@ const make_cols = refstr => Array(XLSX.utils.decode_range(refstr).e.c + 1).fill(
 export default {
   data() {
     return {
+      createTimeType: 'hour',
       ipSearch: "global", //ip查询下拉
       ipSearchOptions: [],
       tipShow: true, //提示文字
@@ -227,9 +243,9 @@ export default {
       iptIP: "", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
-      timeValue1: "", //创建时间
+      timeValue1: [moment().subtract(1, 'hour'), moment().endOf('d')], //创建时间
       timeOut: false, //有效截止日期
-      timeValue2: [moment().subtract(1, 'hour'), new Date()], //有效截止日期
+      timeValue2: [moment().subtract(1, 'hour'), moment().add('8', 'd')], //有效截止日期
       multipleSelection: [], //tableCheck
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
@@ -247,14 +263,20 @@ export default {
       pageShow: true,  // 切换分页显示
       ctsFlag: false, // 更新时间升降序
       vtsFlag: false, // 有效时间时间升降序
+      sort: 'ts_version:-1',
+      batchImportVisible: false,
+      batchExportVisible: false,
+      exportParam: undefined
     };
   },
   components:{
-    addBlackWhite
+    addBlackWhite,
+    batchImport,
+    batchExport
   },
   mounted() {
     this.getDescribeHost()
-    this.onSearch();
+    this.getData();
   },
 
   watch: {
@@ -262,40 +284,51 @@ export default {
       if(n === 0) {
         this.currentPage = 1
       }
-      this.onSearch()
+      this.getData()
     },
 
     pageLimit() {
-      this.onSearch()
+      this.getData()
     }
   },
 
   methods: {
-    fileChange(file) {
-      const reader = new FileReader();
-			reader.onload = (e) => {
-				/* Parse data */
-				const bstr = e.target.result;
-				const wb = XLSX.read(bstr, {type:'binary'});
-				/* Get first worksheet */
-				const wsname = wb.SheetNames[0];
-        const ws = wb.Sheets[wsname];
-				/* Convert array of arrays */
-        const data = XLSX.utils.sheet_to_json(ws, {header:1});
-        data.splice(0, 1) // 删除第一行表头
-				/* Update state */
-				this.data = data; // 导入的数据
-			};
-			reader.readAsBinaryString(file.raw);
+    onSuccess() {
+      this.batchImportVisible = false
+      this.getData()
+    },
+    setSort(key) {
+      if (this.sort.includes(key)) { // 升降序
+        if (this.sort.includes('-')) {
+          this.sort = `${key}:1`
+        } else {
+          this.sort = `${key}:-1`
+        }
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
+      this.getData()
     },
     exportFile() {
-      /* convert state to workbook */
-      this.data.unshift(["IP地址", "类别", "来源", "更新时间", "截止时间", "备注"])
-			const ws = XLSX.utils.aoa_to_sheet(this.data); // 导出的数据
-			const wb = XLSX.utils.book_new();
-			XLSX.utils.book_append_sheet(wb, ws, "ip_list");
-			/* generate file and send to client */
-			XLSX.writeFile(wb, "ip_list.xlsx");
+      const params = {
+        Version: '2018-01-25',
+        Domain: 'global',
+        Count: 1,
+        Sort: this.sort,
+        ActionType: this.typeCheck,
+        Source: this.resouseC || undefined,
+        Ip: this.iptIP || undefined,
+      }
+      if (!this.arrowShow) { // 高级筛选
+        params.CtsMin = moment(this.timeValue1[0]).format('x')
+        params.CtsMax = moment(this.timeValue1[1]).format('x')
+        if (this.timeOut) { // 勾选了有效截止时
+          params.VtsMin = moment(this.timeValue2[0]).format('X')
+          params.VtsMax = moment(this.timeValue2[1]).format('X')
+        }
+      }
+      this.exportParam = params
+      this.batchExportVisible = true
 		},
     //关闭提示文字
     closeTip() {
@@ -303,7 +336,6 @@ export default {
     },
     //点击查看详情
     isShowTop() {
-      console.log(this.flag);
       if (this.flag) {
         this.arrowShow = false;
         this.flag = false;
@@ -317,34 +349,39 @@ export default {
       this.multipleSelection = val;
     },
     // 获取数据
-    getData(params) {
-      this.loadShow=true;
-      if (!params) {
-        let params = {
-          Version: '2018-01-25',
-          Domain: 'global',
-          Count: 1,
-          Limit: this.pageLimit,
-          OffSet: this.pageOffset
+    getData() {
+      this.loadShow = true
+      const params = {
+        Version: '2018-01-25',
+        Domain: 'global',
+        Count: 1,
+        Limit: this.pageLimit,
+        OffSet: this.pageOffset,
+        Sort: this.sort,
+        ActionType: this.typeCheck,
+        Source: this.resouseC || undefined,
+        Ip: this.iptIP || undefined,
+      }
+      if (!this.arrowShow) { // 高级筛选
+        params.CtsMin = moment(this.timeValue1[0]).format('x')
+        params.CtsMax = moment(this.timeValue1[1]).format('x')
+        if (this.timeOut) { // 勾选了有效截止时
+          params.VtsMin = moment(this.timeValue2[0]).format('X')
+          params.VtsMax = moment(this.timeValue2[1]).format('X')
         }
       }
-      this.axios.post(DESCRIBE_ACCESS_CONTROL, params).then(data => {
-        this.loadShow = false;
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
+      this.axios.post(DESCRIBE_ACCESS_CONTROL, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({Data}) => {
+          const data = (Data.Res || []).map(d => ({...d}))
+          this.tableDataBegin = data
+          this.tableDataBegin.forEach(item => {
+            this.$set(item, 'delDialog', false)
           })
-        } else {
-           this.tableDataBegin = data.Response.Data.Res || [];
-            this.tableDataBegin.forEach(item => {
-              this.$set(item, 'delDialog', false)
-            })
-            this.totalItems = data.Response.Data.TotalCount;
-        }
+          this.totalItems = Data.TotalCount;
+        })
+      }).then(() => {
+        this.loadShow = false
       })
     },
     // 分页开始
@@ -367,64 +404,12 @@ export default {
       let params = {
         Version: '2018-01-25',
       }
-      
-      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.ipSearchOptions = data.Response.HostList
-        }
-      })
-    },
-
-    //  查询
-    onSearch(sort) {
-      let params = {
-        Version: '2018-01-25',
-        Domain: this.ipSearch,
-        Count: 1,
-        Limit: this.pageLimit,
-        OffSet: this.pageOffset,
-        Ip: this.iptIP || undefined,
-        CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
-        CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
-        ActionType: this.typeCheck,
-        Source: this.resouseC || undefined,
-      }
-
-      if (params.sort) {
-        delete params.sort
-      }
-
-      if (sort === 'Cts') {
-        this.vtsFlag = false
-        params.Sort = this.ctsFlag ? 'ts_version:1' : 'ts_version:-1' 
-      }
-
-      if (sort === 'Vts') {
-        this.ctsFlag = false
-        params.Sort = this.vtsFlag ? 'valid_ts:1' : 'valid_ts:-1' 
-      }
-
-      if (this.pageOffset === 0) {
-        this.pageShow = false
-        this.$nextTick(() => {
-          this.pageShow = true
+      this.axios.post(DESCRIBE_HOSTS, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ HostList }) => {
+          this.ipSearchOptions = HostList
         })
-      }
-
-      if (this.timeOut) {
-        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X') || undefined
-        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X') || undefined
-      }
-
-      this.getData(params)
+      })
     },
 
     //关闭
@@ -432,12 +417,13 @@ export default {
       this.addBWmodel = false ;
       this.ipInfo = {}
       if (isShow === 'refresh') {
-        this.onSearch()
+        this.getData()
       }
     },
 
     // 快捷时间查询
     onTimeClick(temp) {
+      this.createTimeType = temp
       const map = {
         hour: [moment().subtract(1, 'hour'), moment(new Date())],
         day: [moment().subtract(1, 'day'), moment(new Date())],
@@ -457,37 +443,21 @@ export default {
 
     // 加黑或者加白
     onAction(info) {
-      console.log(info.row)
-        this.axios.post(UPSERTIP_ACCESS_CONTROL, ({
+      this.axios.post(UPSERTIP_ACCESS_CONTROL, ({
         Version: '2018-01-25',
         Domain: this.ipSearch,
         'Items.0': JSON.stringify({
           ip: info.row.Ip,
           action: info.row.ActionType === 40 ? 42 : 40, // 除了黑名单加白 其他都加黑
-          // valid_ts: this.ipInfo.ValidTs,
           source: info.row.Source,
           valid_ts: info.row.ValidTs
         }),
         Edition: 'clb-waf'
-      })).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          this.onSearch()
-        }
+      }))
+      .then(resp => {
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '操作成功')
       })
     },
-
     // 删除表单
     onDeleteRow(row) {
       const itemArr = [].concat(row)
@@ -501,7 +471,8 @@ export default {
         Domain: this.ipSearch,
         ...flatItem
       }).then(resp => {
-        this.generalRespHandler(resp, this.onSearch(), COMMON_ERROR, '删除成功')
+        this.dialogVisible = false
+        this.generalRespHandler(resp, this.getData, COMMON_ERROR, '删除成功')
       })
     },
   },
@@ -612,6 +583,7 @@ export default {
       color: #006eff;
       font-size: 14px;
       margin-left: 10px;
+      cursor: pointer;
     }
     .timeCon {
       margin-top: 20px;
@@ -619,14 +591,13 @@ export default {
     }
     .lookSearch {
       color: #fff;
-      background-color: #006eff;
       margin-top: 20px;
     }
     .floatLeft {
       float: left;
     }
     .timePick {
-      width: 320px;
+      width: 340px;
       margin-right: 100px;
       ::v-deep .el-range-separator {
         width: 7%;
@@ -640,11 +611,9 @@ export default {
     .tableListBtn {
       margin-bottom: 12px;
       .addBW {
-        background-color: #006eff;
         color: #fff;
       }
       .exportFilter {
-        background-color: #006eff;
         color: #fff;
         float: right;
       }
@@ -665,5 +634,8 @@ export default {
 .import-btn {
   display: inline-block;
   margin-left: 10px;
+}
+::v-deep .el-input__inner {
+  border-radius: 0;
 }
 </style>

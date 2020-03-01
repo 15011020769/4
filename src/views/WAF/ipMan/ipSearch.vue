@@ -1,13 +1,9 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>IP查询</span>
+      <span>IP{{t('查询', 'WAF.js')}}</span>
       <el-select
-        v-model="ipSearch"
-        filterable
-        allow-create
-        default-first-option
-        placeholder="请选择文章标签">
+        v-model="ipSearch">
         <el-option
           key="all"
           label="ALL"
@@ -23,43 +19,43 @@
     </div>
     <div class="wrapper">
       <div class="tipTop newClear" v-if="closeTip">
-        在这里，你可以查询某个IP的封堵状态，是否在IP黑白名单中，是否触发了CC，BOT，自定义人机识别等
+        {{t('在这里，你可以查询某个IP的封堵状态，是否在IP黑白名单中，是否触发了CC，BOT，自定义人机识别等', 'WAF.zzlnkycx')}}
         <span class="el-icon-close" @click="closeTipBtn"></span>
       </div>
       <div class="searchIpt">
         <el-input v-model="searchIp" class="searchIp" :style="ipTest && 'border: 1px solid #e1504a; box-size: border-box'"></el-input>
-        <el-button @click="getActioned" class="searchBtn">查询</el-button>
-        <div class="err-tips" v-show="ipTest">IP格式输入有误</div>
+        <el-button @click="getActioned" class="searchBtn">{{t('查询', 'WAF.js')}}</el-button>
+        <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
       </div>
       <div class="searchResoult">
-        <h1>查询结果</h1>
+        <h1>{{t('查询', 'WAF.js')}}{{t('结果', 'WAF.jg')}}</h1>
         <div class="newClear" v-if="ipInfo.length">
           <div class="newClear newList">
             <p>IP</p>
-            <p>{{ipInfo[0].Ip}}<span style="margin-left: 10px; color: #007e3b">{{ipInfo[0].Name | currentTipsFilter}}</span></p>
+            <p>{{ipInfo[0].Ip}}<span style="margin-left: 10px; color: #007e3b">{{currentTipsFilter(ipInfo[0].Name)}}</span></p>
           </div>
           <div class="newClear newList">
             <p>域名</p>
             <p>-</p>
           </div>
           <div class="newClear newList">
-            <p>拦截开始时间</p>
+            <p>{{t('拦截开始时间', 'WAF.ljkssj')}}</p>
             <p>{{ipInfo[0].TsVersion | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
-            <p>拦截结束时间</p>
+            <p>{{t('拦截结束时间', 'WAF.ljjssj')}}</p>
             <p>{{ipInfo[0].ValidTs | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
-            <p>类别</p>
-            <p>{{ipInfo[0].Category | currentNameFilter}}</p>
+            <p>{{t('类别', 'WAF.lb')}}</p>
+            <p>{{currentNameFilter(ipInfo[0].Category)}}</p>
           </div>
           <div class="newClear newList">
-            <p>触发策略名称</p>
+            <p>{{t('触发策略名称', 'WAF.csclmc')}}</p>
             <p>{{ipInfo[0].Name}}</p>
           </div>
         </div>
-        <a href="#" v-if="ipInfo.length" @click="addBlack">加入黑白名单</a>
+        <el-button type="text" v-if="ipInfo.length" @click="addBlack">{{t('加入黑白名单', 'WAF.jrhbmd')}}</el-button>
         <span v-if="!ipInfo.length">{{textTips}}</span>
       </div>
     </div>
@@ -83,7 +79,7 @@ export default {
       addBwModel:false,//弹框
       ipTest: false, // ip输入格式是否正确
       ipInfo: [], // 查询的ip信息
-      textTips: '请输入IP，并点击查询。'
+      textTips: this.t('请输入IP，并点击查询', 'WAF.qsripjs')
     }
   },
   components:{
@@ -119,18 +115,11 @@ export default {
         Version: '2018-01-25',
       }
       
-      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.ipSearchOptions = data.Response.HostList
-        }
+      this.axios.post(DESCRIBE_HOSTS, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ HostList }) => {
+          this.ipSearchOptions = HostList
+        })
       })
     },
     // 获取黑白名单列表
@@ -140,23 +129,26 @@ export default {
         Domain: this.ipSearch,
         Ip: this.searchIp,
       }
-      this.axios.post(DESCRIBE_ACTIONED, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.ipInfo = data.Response.Data.Res
-          this.textTips = `没有在域名${this.ipSearch}下，查到${this.searchIp} 的相关信息。`
-        }
+      this.axios.post(DESCRIBE_ACTIONED, params).then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          this.ipInfo = Data.Res
+          this.textTips = `没有在域名${this.ipSearch === 'global' ? 'ALL' : this.ipSearch}下，查到${this.searchIp} 的${this.t('相关', 'WAF.xg')}信息。`
+        })
       })
+    },
+    currentNameFilter(text) {
+      if (text === 'whiteIp') {
+        return this.t('白名单', 'WAF.bmd')
+      }
+      return this.t('黑名单', 'WAF.hmd')
+    },
+    currentTipsFilter(text) {
+      if (text === 'custom') {
+        return '放通'
+      }
+      return this.t('拦截', 'WAF.lj')
     }
   },
-
   filters: {
     currentTimeFilter(time) {
       const len = JSON.stringify(time).length
@@ -166,20 +158,6 @@ export default {
       }
       return moment(new Date(str)).format("YYYY-MM-DD HH:mm:ss");
     },
-
-    currentNameFilter(text) {
-      if (text === 'whiteIp') {
-        return '白名单'
-      }
-      return '黑名单'
-    },
-
-    currentTipsFilter(text) {
-      if (text === 'custom') {
-        return '放通'
-      }
-      return '拦截'
-    }
   }
 }
 

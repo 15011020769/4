@@ -284,7 +284,6 @@ export default {
       strategy.CompareFunc = MATCH_KEY[strategy.Field].symbol[0]
     },
     onSubmit() {
-      this.loading = true
       this.$refs.form.validate((valid) => {
         if (valid) {
           const param = {
@@ -320,7 +319,7 @@ export default {
             }
             param.Bypass = bypass.join()
           }
-
+          this.loading = true
           this.axios.post(url, flatObj(param)).then(resp => {
             this.generalRespHandler(resp, () => {
               this.$emit('onSuccess')

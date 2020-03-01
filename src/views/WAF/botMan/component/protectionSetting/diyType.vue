@@ -9,9 +9,9 @@
 <template>
   <div>
     <el-tabs :value="active" @tab-click="tabChange">
-      <el-tab-pane name="xy" label="协议特征" />
-      <el-tab-pane name="ip" label="ip情报特征" />
-      <el-tab-pane name="diy" label="自定义会话特征" />
+      <el-tab-pane name="xy" :label="t('协议特征', 'WAF.xytz')" />
+      <el-tab-pane name="ip" :label="t('ip情报特征', 'WAF.qbtz')" />
+      <el-tab-pane name="diy" :label="t('自定义会话特征', 'WAF.zdyhhtz')" />
     </el-tabs>
     <PublicTable :ipSearch="ipSearch" v-if="tabsFlag !== 'diy'" :tabsFlag="tabsFlag" />
     <DiyTable :ipSearch="ipSearch" v-if="tabsFlag === 'diy'" />
