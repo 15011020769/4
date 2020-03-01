@@ -11,7 +11,7 @@
           <div class="tke-form-item_text">{{namespace}}</div>
         </el-form-item>
         <el-form-item label="VIP">
-          <div class="tke-form-item_text">{{ingressDetail.status && ingressDetail.status.loadBalancer.ingress[0].ip}}</div>
+          <div class="tke-form-item_text">{{ingressDetail.status && ingressDetail.status.loadBalancer && ingressDetail.status.loadBalancer.ingress && ingressDetail.status.loadBalancer.ingress[0].ip}}</div>
         </el-form-item>
         <el-form-item label="描述">
           <div class="tke-form-item_text">-</div>
@@ -53,7 +53,6 @@ import XLSX from 'xlsx'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips.js'
 import { ALL_CITY, POINT_REQUEST } from '@/constants'
-import Template from '../../../../../../CM/Template/Template'
 
 export default {
   name: 'ingressDetailInfo',
@@ -66,7 +65,6 @@ export default {
       list: [] // 列表
     }
   },
-  components: { Template },
   created () {
     // 从路由获取类型
     let { clusterId, ingressName, namespace } = this.$route.query
@@ -88,18 +86,30 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody)
           this.ingressDetail = mes
-          let tempList = mes.spec.rules
-          // 进行参数的重新封装
-          tempList.forEach((item) => {
+          let httpText = mes.metadata.annotations['kubernetes.io/ingress.http-rules']
+          let httpsText = mes.metadata.annotations['kubernetes.io/ingress.https-rules']
+          let tempFunc = (item, protocol, listenPort) => {
             let tempArr = {}
-            tempArr.protocol = Object.keys(item)[0]
-            tempArr.url = item[tempArr.protocol].paths[0].path
-            tempArr.backend = item[tempArr.protocol].paths[0].backend.serviceName
-            tempArr.servicePort = item[tempArr.protocol].paths[0].backend.servicePort
-            tempArr.domainName = mes.status.loadBalancer.ingress[0].ip
-            tempArr.listenPort = 80
+            tempArr.protocol = protocol
+            tempArr.listenPort = listenPort
+            tempArr.backend = item.backend.serviceName
+            tempArr.servicePort = item.backend.servicePort
+            tempArr.domainName = mes.status.loadBalancer && mes.status.loadBalancer && mes.status.loadBalancer.ingress && mes.status.loadBalancer.ingress[0].ip
+            tempArr.url = item.path
             this.list.push(tempArr)
-          })
+          }
+          let httpArr = JSON.parse(httpText)
+          let httpsArr = JSON.parse(httpsText)
+          if (httpArr) {
+            httpArr.forEach((item) => {
+              tempFunc(item, 'http', 443)
+            })
+          }
+          if (httpsArr) {
+            httpsArr.forEach((item) => {
+              tempFunc(item, 'https', 80)
+            })
+          }
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)

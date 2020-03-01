@@ -60,7 +60,7 @@
 
         >
           <template slot-scope="scope">
-            <p>{{scope.row.status.loadBalancer.ingress[0].ip}}</p>
+            <p>{{scope.row.status.loadBalancer.ingress && scope.row.status.loadBalancer.ingress[0].ip}}</p>
           </template>
         </el-table-column>
 
@@ -70,8 +70,9 @@
           width="350"
         >
           <template slot-scope="scope">
-            <span class="tke-text-link">http://{{scope.row.status.loadBalancer.ingress[0].ip}}</span>
-            {{scope.row.spec.rules[0].http.paths[0].path}}
+            <span class="tke-text-link">
+              http://{{scope.row.status.loadBalancer.ingress?scope.row.status.loadBalancer.ingress[0].ip:'-'}}{{scope.row.spec.rules[0].http.paths[0].path}}
+            </span>
             &ndash;&gt;
             {{scope.row.spec.rules[0].http.paths[0].backend.serviceName}}
             : {{scope.row.spec.rules[0].http.paths[0].backend.servicePort}}
@@ -91,9 +92,9 @@
           width="200"
         >
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="toUpdateConfigure('123')">更新转发配置</span>
+            <span class="tke-text-link" @click="toUpdateConfigure(scope.row)">更新转发配置</span>
             <span class="tke-text-link ml10">编辑YAML</span>
-            <span class="tke-text-link ml10">删除</span>
+            <span class="tke-text-link ml10" @click="showDeleteDialog(scope.row)">删除</span>
           </template>
         </el-table-column>
       </el-table>
@@ -112,6 +113,15 @@
         </div>
       </div>
     </div>
+
+    <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
+      <p style="color:#444;font-weight:bolder;">您确定要删除Ingress：{{ingressItem.name}}吗？</p>
+      <p style="color:#e54545">该Ingress下的所有规则将一并删除，销毁后不可恢复，请谨慎操作。</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteIngress()">确 定</el-button>
+        <el-button @click="showNameSpaceModal = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -139,7 +149,10 @@ export default {
       // 搜索下拉框
       searchOptions: [],
       searchType: 'default', // 下拉选中的值
-      searchInput: '' // 输入的搜索关键字
+      searchInput: '', // 输入的搜索关键字
+      nameSpaceName: '',
+      showNameSpaceModal: false,
+      ingressItem: {}
     }
   },
 
@@ -150,6 +163,31 @@ export default {
     this.getIngressList()
   },
   methods: {
+    // 删除ingress
+    deleteIngress: function () {
+      let { namespace, name } = this.ingressItem
+      let param = {
+        Method: 'DELETE',
+        Path: `/apis/extensions/v1beta1/namespaces/${namespace}/ingresses/${name}`,
+        Version: '2018-05-25',
+        RequestBody: JSON.stringify({ 'propagationPolicy': 'Background' }),
+        ClusterName: this.clusterId
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        this.$message({
+          message: '删除成功',
+          showClose: true,
+          duration: 2000
+        })
+        this.getIngressList()
+      })
+      this.showNameSpaceModal = false
+    },
+    showDeleteDialog: function (val) {
+      let { namespace, name } = val.metadata
+      this.ingressItem = { namespace, name }
+      this.showNameSpaceModal = true
+    },
     // 新建
     goIngressCreate () {
       this.$router.push({
@@ -187,11 +225,15 @@ export default {
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
+      if (this.searchInput !== '') {
+        param.Path = `/apis/extensions/v1beta1/namespaces/${this.searchType}/ingresses?fieldSelector=metadata.name=${this.searchInput}`
+      }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody)
-          this.list = mes.items
-          this.total = mes.items.length
+          let { items } = mes
+          this.list = items
+          this.total = items.length
           this.loadShow = false
         } else {
           let ErrTips = {}
@@ -231,6 +273,7 @@ export default {
     clickSearch (val) {
       this.searchInput = val
       console.log(this.searchInput)
+      this.getIngressList()
     },
     // 刷新数据
     refreshList () {
@@ -272,12 +315,13 @@ export default {
       this.pageSize = val
       // this.getColonyList();
     },
-    toUpdateConfigure (id) {
+    toUpdateConfigure (val) {
       this.$router.push({
         name: 'configure',
         query: {
           clusterId: this.clusterId,
-          id: id
+          np: val.metadata.namespace,
+          resourceIns: val.metadata.name
         }
       })
     },
