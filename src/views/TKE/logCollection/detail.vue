@@ -18,7 +18,7 @@
             {{$route.query.stashName}}
           </el-form-item>
           <el-form-item label="所属集群">
-            {{$route.query.clusterId}}
+            <a @click="goCluster()">{{$route.query.clusterId}}</a>
           </el-form-item>
           <el-form-item label="创建时间">
             {{timeFormat(createTime)}}
@@ -88,16 +88,29 @@ import {
         ckafka:{
             case:'',
             topic:''
-        }
+        },
+        id:''
       }
     },
     created(){
+      
         if(this.$route.query.clusterId&&this.$route.query.stashName&&this.$route.query.namespace){
             console.log(1)
             this.findData()
         }
+        this.id=this.$route.query.clusterId
     },
     methods: {
+
+      goCluster(){
+      this.$router.push({
+        name: "colonyResourceDeployment",
+        query: {
+          clusterId: this.id
+        }
+      });
+
+      },
       //  TKE_COLONY_QUERY
       timeFormat(times) {
         var d = new Date(times);
