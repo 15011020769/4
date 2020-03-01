@@ -11,11 +11,11 @@
     <el-row type="flex" justify="between">
       <el-col>
         <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="total === 50" type="primary" @click="onAdd">添加</el-button>
-        <el-button style="padding: 5px 10px; margin-right: 10px;" >{{t('复制', 'WAF.copy')}}</el-button>
+        <el-button style="padding: 5px 10px; margin-right: 10px;" @click="copy" :disabled="multipleSelection.length === 0">{{t('复制', 'WAF.copy')}}</el-button>
         <span style="color: #bbb; font-size: 12px; margin-left: 10px">最多可以添加50{{t('条', 'WAF.t')}}</span>
       </el-col>
       <el-row type="flex" align="middle">
-        <el-input :placeholder="t('请输入策略名称', 'WAF.qsrclmc')" style="width: 180px; font-size: 12px">
+        <el-input :placeholder="t('请输入策略名称', 'WAF.qsrclmc')" v-model="name" style="width: 180px; font-size: 12px">
           <div slot="suffix">
             <i class="el-icon-search"  style="cursor: pointer; font-size: 16px;" @click="getUCBRule"/>
           </div>
@@ -26,7 +26,9 @@
     <el-card style="margin-top: 20px">
       <el-table
         :data="tableData"
-        v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')"
+        v-loading="loading"
+        :empty-text="t('暂无数据', 'WAF.zwsj')"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column
           type="selection"
@@ -99,7 +101,21 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" @click="showDialog(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
-            <el-button type="text">删除</el-button>
+            <el-popover
+                placement="bottom"
+                width="280"
+                v-model="scope.row.delDialog"
+              >
+                <div class="prpoDialog">
+                  <h1>{{t('确定', 'WAF.qd')}}删除？</h1>
+                  <p>{{t('删除后源站将可能会遭受恶意攻击的威胁', 'WAF.schyzjknzs')}}。</p>
+                </div>
+                <div style="text-align: center; margin: 0">
+                  <el-button size="mini" type="text" @click="delUCBRule(scope.row)">{{t('确定', 'WAF.qd')}}</el-button>
+                  <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
+                </div>
+                <el-button slot="reference"style="color:#3E8EF7;background: transparent;border: none;">删除</el-button>
+              </el-popover>
           </template>
         </el-table-column>
       </el-table>
@@ -131,14 +147,23 @@
         ref="sessionDialog"
       />
     </el-dialog>
+    <el-dialog
+      :title="t('复制自定义策略', 'WAF.fzzdycl')"
+      :visible="dialogVisible"
+      width="850px"
+      destroy-on-close
+    >
+      <Transfer category="ucb" :ruleNames="ruleNames" :dialogVisible.sync="dialogVisible" :iptDomain="ipSearch" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import Transfer from '../../transfer'
 import DiySessionDialog from '../../diySessionDIalog'
-import { DESCRIBE_BOT_UCB_FEATURE_RULE, UPSERT_BOT_UCB_FEATURE_RULE } from '@/constants'
-import { ALL_RULE, CUSTOM_SESSION_ACTION, ALL_OPTION, CUSTOM_SESSION_ACTION_ARR } from '../../../../constants'
+import { DESCRIBE_BOT_UCB_FEATURE_RULE, UPSERT_BOT_UCB_FEATURE_RULE, DELETE_BOT_UCB_FEATURE_RULE } from '@/constants'
+import { ALL_RULE, CUSTOM_SESSION_ACTION, ALL_OPTION, CUSTOM_SESSION_ACTION_ARR, COMMON_ERROR } from '../../../../constants'
 
 export default {
   props: {
@@ -151,7 +176,9 @@ export default {
       limit: 10,
       loading: true,
       total: 0,
+      name: '',
       showSessionDialog: false,
+      dialogVisible: false,
       ucbRule: undefined,
       childMatchDialogIndex: -1,
       Operate: '-1',
@@ -160,11 +187,13 @@ export default {
       CUSTOM_SESSION_ACTION_ARR,
       ALL_OPTION,
       sort: 'timestamp:-1',
-      mounted: false,
+      multipleSelection: [],
+      ruleNames: '',
     }
   },
   components: {
-    DiySessionDialog
+    DiySessionDialog,
+    Transfer
   },
   watch: {
     ipSearch() {
@@ -177,9 +206,50 @@ export default {
     }
   },
   methods: {
-    onChangeStatus(fature, status) {
-      fature.status = !status
-      console.log(fature)
+    copy() {
+      this.ruleNames = this.multipleSelection.map(rule => rule.name).join(';')
+      this.dialogVisible = true
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    delUCBRule(rule) {
+      rule.delDialog = false
+      this.loading = true
+      this.axios.post(DELETE_BOT_UCB_FEATURE_RULE, {
+        Version: '2018-01-25',
+        Domain: rule.domain,
+        Name: rule.name,
+      }).then(resp => {
+        this.generalRespHandler(resp, this.getUCBRule, COMMON_ERROR, '删除成功')
+      }).then(() => {
+        this.loading = false
+      })
+    },
+    onChangeStatus(rule, status) {
+      rule.status = !status
+      const Rule = {
+        domain: rule.domain,
+        name: rule.name,
+        desc: rule.desc,
+        on_off: status ? 'on' : 'off',
+        timestamp: +new Date(),
+        action: rule.action,
+        rule_type: rule.rule_type,
+        addition_arg: rule.addition_arg,
+        valid_time: rule.valid_time,
+        appid: rule.appid
+      }
+      this.loading = true
+      this.axios.post(UPSERT_BOT_UCB_FEATURE_RULE, {
+        Version: '2018-01-25',
+        Domain: rule.domain,
+        Rule: JSON.stringify(Rule),
+      }).then(resp => {
+        this.generalRespHandler(resp, this.getUCBRule, COMMON_ERROR, `${this.t('编辑', 'bj')}成功`)
+      }).then(() => {
+        this.loading = false
+      })
     },
     setSort(key) {
       if (this.sort.includes(key)) { // 升降序
@@ -221,15 +291,18 @@ export default {
         "Domain": this.ipSearch, 
         "Skip": this.skip, 
         "Limit": this.limit,
+        Name: this.name,
       }
       if (this.Operate !== '-1') {
         param.Operate = this.Operate
       }
       param.Sort = this.sort
-      this.axios.post(DESCRIBE_BOT_UCB_FEATURE_RULE, param).then(resp => {
+      this.axios.post(DESCRIBE_BOT_UCB_FEATURE_RULE, param)
+      .then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           const data = Data.Res.map(data => {
             const d = JSON.parse(data)
+            d.delDialog = false
             d.status = d.on_off === 'off' ? false : true
             return d
           })
@@ -277,6 +350,21 @@ export default {
     height: 30px;
     display: flex;
     align-items: center;
+  }
+}
+.prpoDialog{
+  text-align:center;
+  h1{
+    font-size:14px;
+    font-weight: 600;
+    color:#000;
+    margin-top:16px;
+  }
+  p{
+    margin:16px 0;
+  }
+  ::v-deep button {
+    border: none;
   }
 }
 </style>

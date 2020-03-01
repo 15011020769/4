@@ -57,14 +57,14 @@
       </div>
     </div>
     <el-row type="flex" justify="center" style="margin-top: 30px;">
-      <el-button style="padding: 5px 10px; margin-right: 10px;" :loading="loading" type="primary" @click="onSubmit">{{t('复制', 'WAF.copy')}}</el-button>
+      <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="checkList.length === 0" :loading="loading" type="primary" @click="onSubmit">{{t('复制', 'WAF.copy')}}</el-button>
       <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="loading" @click="onClose">取消</el-button>
     </el-row>
   </div>
 </template>
 
 <script>
-import { DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS, COPY_BOT_UCB_PREINSTALL_RULE, COPY_BOTTCB_RULE } from '@/constants'
+import { DESCRIBE_HOSTS, DESCRIBE_BOT_STATUS, COPY_BOT_UCB_PREINSTALL_RULE, COPY_BOTTCB_RULE, COPY_BOT_UCB_FEATURE_RULES } from '@/constants'
 import { COMMON_ERROR } from '../../constants'
 
 export default {
@@ -72,6 +72,7 @@ export default {
     iptDomain: String,
     dialogVisible: false,
     category: String,
+    ruleNames: String,
   },
   data() {
     return {
@@ -186,16 +187,20 @@ export default {
         Version: '2018-01-25',
         Domain: this.iptDomain,
         Target,
-        
       }
       let url = COPY_BOTTCB_RULE // 复制公开类型
       if (this.category) { // 复制自定义会话策略
-        params.Category = this.category === 'xy' ? 1 : 2
-        url = COPY_BOT_UCB_PREINSTALL_RULE
+        if (this.category === 'ucb') {
+          url = COPY_BOT_UCB_FEATURE_RULES
+          params.Rules = this.ruleNames
+        } else {
+          params.Category = this.category === 'xy' ? 1 : 2
+          url = COPY_BOT_UCB_PREINSTALL_RULE
+        }
       }
       this.axios.post(url, params)
       .then(res => {
-         this.generalRespHandler(res, this.onClose, COMMON_ERROR, `${t('复制', 'WAF.copy')}成功`)
+         this.generalRespHandler(res, this.onClose, COMMON_ERROR, `${this.t('复制', 'WAF.copy')}成功`)
       }).then(() => {
         this.loading = false
       })
