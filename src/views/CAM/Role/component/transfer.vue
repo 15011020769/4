@@ -291,6 +291,10 @@ export default {
 .wrap >>> .el-dropdown {
   font-size: 12px;
 }
+::v-deep .el-input__clear {
+  position: absolute;
+  right: calc(100% + 2px);
+}
 .wrap >>> .el-input__inner {
   height: 30px;
   border-radius: 0;
