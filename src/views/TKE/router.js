@@ -16,7 +16,7 @@ export default new Router({
     {
       path: '/overview', // 概览
       name: 'overview',
-      component: () => import(/* webpackChunkName: "overview" */ './overview/index.vue'),
+      component: () => import(/* webpackChunkName: "overview" */ './overview/overview.vue'),
       meta: {
         keepAlive: true
       }
