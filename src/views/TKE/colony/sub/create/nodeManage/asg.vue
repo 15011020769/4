@@ -258,7 +258,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitGroup()">创建伸缩组</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="goBack">取消</el-button>
         </div>
       </div>
     </div>
@@ -877,7 +877,7 @@ export default {
       };
       let InstanceAdvancedSettings = {
         MountTarget:'',
-        DockerGraphPath: '',
+        DockerGraphPath: '/var/lib/docker',
         UserScript: '',
         Unschedulable: 0,
         ExtraArgs: {Kubelet: []}
