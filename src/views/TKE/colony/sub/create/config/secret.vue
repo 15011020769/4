@@ -474,6 +474,10 @@ textarea {
     padding: 8px 10px;
   }
 }
+ .colony-wrap >>>  .el-checkbox,
+.el-checkbox__input {
+  display: block !important;
+}
 .activeColor {
   color: #f56c6c !important;
 }
