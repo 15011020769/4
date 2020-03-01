@@ -147,15 +147,44 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'DiskAwait',
+          'DiskReadIops',
+          'DiskReadTraffic',
+          'DiskSvctm',
+          'DiskUtil',
+          'DiskWriteIops',
+          'DiskWriteTraffic'
+        ], //可用指标
         disName: {
-
-
+          'DiskAwait': '硬盘 IO 等待时间',
+          'DiskReadIops': '硬盘读 IOPS',
+          'DiskReadTraffic': '硬盘读流量',
+          'DiskSvctm': '硬盘 IO 服务时间',
+          'DiskUsage': '磁盘分区使用率',
+          'DiskUtil': '硬盘 IO 繁忙比率',
+          'DiskWriteIops': '硬盘写 IOPS',
+          'DiskWriteTraffic': '硬盘写流量'
         },
         Company: {
-
+          'DiskAwait': 'ms',
+          'DiskReadIops': '次数',
+          'DiskReadTraffic': 'KB/s',
+          'DiskSvctm': 'ms',
+          'DiskUsage': '%',
+          'DiskUtil': '%',
+          'DiskWriteIops': '次数',
+          'DiskWriteTraffic': 'KB/s'
         },
         Tips: {
-
+          'DiskAwait': '硬盘I / O平均每次操作的等待时间',
+          'DiskReadIops': '硬盘平均每秒读次数',
+          'DiskReadTraffic': '平均每秒从硬盘读到内存的数据量',
+          'DiskSvctm': '硬盘平均每次I / O操作所花的时间',
+          'DiskUsage': '磁盘分区使用率',
+          'DiskUtil': '硬盘有IO操作的时间与总时间的百分比',
+          'DiskWriteIops': '硬盘平均每秒写次数',
+          'DiskWriteTraffic': '平均每秒从内存写到硬盘的数据量'
         },
 
       }
@@ -174,11 +203,9 @@
               }
             });
           });
-          console.log(this.BaseListK.length, val.length)
           if (this.BaseListK.length == val.length) {
             this.tableData = this.BaseListK
             this.TableLoad = false
-            console.log(this.tableData)
           }
         }
       }
@@ -203,10 +230,14 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
             });
           } else {
             this.$message({
