@@ -96,24 +96,24 @@
                   <div class="ro-data-card" style="margin:0">
                     <div class="twoROW-data-card-list">
                       <div>
-                        <span style="font-size:18px;font-weight:700">0.04</span>
+                        <span style="font-size:18px;font-weight:700">{{item.c1||'--'}}</span>
                         <span class="font-small" style="color:black;"
-                          >%&nbsp;CPU利用率</span
+                          >&nbsp;CPU利用率</span
                         >
                       </div>
                       <div class="font-small" style="margin-top:10px;">
-                        总数：7.91核&nbsp;Request已分配：1.26%
+                        总数：{{item.c2||'--'}}核&nbsp;Request已分配：{{item.c3||'--'}}
                       </div>
                     </div>
                     <div class="twoROW-data-card-list">
                       <div>
-                        <span style="font-size:18px; font-weight:700">0.43</span>
+                        <span style="font-size:18px; font-weight:700">{{item.n1||'--'}}</span>
                         <span class="font-small" style="color:black;"
-                          >%&nbsp;内存利用率</span
+                          >&nbsp;内存利用率</span
                         >
                       </div>
                       <div class="font-small" style="margin-top:10px;">
-                        总数：29.37GB&nbsp;Request已分配：0.1%
+                        总数：{{item.n2||'--'}}GB&nbsp;Request已分配：{{item.n3||'--'}}
                       </div>
                     </div>
                     <div
@@ -214,7 +214,7 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
-import { TKE_COLONY_LIST, TKE_COLONY_STATUS_JZ } from "@/constants";
+import { TKE_COLONY_LIST, TKE_COLONY_STATUS_JZ,TKE_COLONY_STATUS_JZ2, TKE_GETCPUUSE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "overview",
@@ -279,6 +279,8 @@ export default {
     },
     show() {
       this.isShow = !this.isShow;
+
+      this.getCpuInfo()
     },
     async resourceList() {
       var params = {
@@ -354,14 +356,13 @@ export default {
      
     statusData(){
       var params={
-        // Dimensions: ["workload", "node", "master_etcd"],
         "Dimensions.0": "workload",
         "Dimensions.1": "node",
         "Dimensions.2": "master_etcd",
         ResourceType: "nodeWorkloadStaticNum",
         Version: "2018-05-25",
       }
-      this.axios.post('tke2/DescribeClustersResourceStatus', params).then(res=>{
+      this.axios.post(TKE_COLONY_STATUS_JZ2, params).then(res=>{
           console.log(res)   
           if (res.Response.Error === undefined){
            let  d1=res.Response.ResourceStatusSet
@@ -384,12 +385,43 @@ export default {
              arr.push(obj)
            })
            this.clusters = arr;
+           this.getCpuInfo();
+
            console.log(arr)
-
-
-            console.log(d1)
           } 
       })
+    },
+
+    getCpuInfo(){
+        var params={
+         Method: "POST",
+         Path: "/front/v1/get/query",
+         RequestBody: "eyJ0YWJsZSI6Ims4c19jbHVzdGVyIiwic3RhcnRUaW1lIjoxNTgzMTM4MzAyODA3LCJlbmRUaW1lIjoxNTgzMTM4NjAyODA3LCJmaWVsZHMiOlsibWVhbihrOHNfY2x1c3Rlcl9jcHVfY29yZV90b3RhbCkiLCJtZWFuKGs4c19jbHVzdGVyX3JhdGVfY3B1X2NvcmVfcmVxdWVzdF9jbHVzdGVyKSIsIm1lYW4oazhzX2NsdXN0ZXJfcmF0ZV9jcHVfY29yZV91c2VkX2NsdXN0ZXIpIiwibWVhbihrOHNfY2x1c3Rlcl9tZW1vcnlfdG90YWwpIiwibWVhbihrOHNfY2x1c3Rlcl9yYXRlX21lbV9yZXF1ZXN0X2J5dGVzX2NsdXN0ZXIpIiwibWVhbihrOHNfY2x1c3Rlcl9yYXRlX21lbV91c2FnZV9ieXRlc19jbHVzdGVyKSJdLCJjb25kaXRpb25zIjpbWyJ0a2VfY2x1c3Rlcl9pbnN0YW5jZV9pZCIsImluIixbImNscy03NHUwOGRjYyIsImNscy1uZDF5NWlvMiIsImNscy1oZnpveGI4bSJdXV0sIm9yZGVyQnkiOiJ0aW1lc3RhbXAiLCJncm91cEJ5IjpbInRpbWVzdGFtcCg2MHMpIiwidGtlX2NsdXN0ZXJfaW5zdGFuY2VfaWQiXSwib3JkZXIiOiJkZXNjIiwibGltaXQiOjY1NTM1fQ==",
+         Version: "2018-07-24",
+        }
+        this.axios.post(TKE_GETCPUUSE, params).then(res=>{
+
+          if (res.Response.Error === undefined){
+            let response = JSON.parse(res.Response.ResponseBody);
+            console.log(response)
+            console.log( this.clusters)
+            this.clusters.forEach(val=>{
+
+              response.data.forEach(item=>{
+                  
+                  if(item.indexOf(val.name)!=-1){
+                        val.c1=item[4]==null?'--':item[4].toFixed('2')+'%'
+                        val.c2=item[2]==null?'--':item[2].toFixed('2')
+                        val.c3=item[3]==null?'--':item[3].toFixed('2')+'%'
+                        val.n1=item[7]==null?'--':item[7].toFixed('2')+'%'
+                        val.n2=item[5]==null?'--':(item[5]/(1024*1024*1024)).toFixed('2')
+                        val.n3=item[6]==null?'--':item[6].toFixed('2')+'%'
+                  }
+              })
+            })
+           }
+        })
+
     },
 
   }

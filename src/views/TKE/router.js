@@ -304,9 +304,17 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新
+      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新pod数量
       name: 'podUpdate',
       component: () => import('./colony/sub/update/resource/updatePod.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/updatePodConfig', // 集群-pod--更新pod配置
+      name: 'podConfigUpdate',
+      component: () => import('./colony/sub/update/resource/updatePodConfig.vue'),
       meta: {
         keepAlive: true
       }

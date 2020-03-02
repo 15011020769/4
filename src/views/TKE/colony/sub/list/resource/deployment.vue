@@ -79,8 +79,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="goPodUpdate('number',scope.row)">更新Pod数量</span>
-            <span class="tke-text-link ml10" @click="goPodUpdate('config',scope.row)">更新Pod配置</span>
+            <span class="tke-text-link" @click="goPodUpdate(scope.row)">更新Pod数量</span>
+            <span class="tke-text-link ml10" @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
             <el-dropdown class="tke-dropdown">
               <span class="el-dropdown-link ml10">
                 更多
@@ -299,6 +299,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
+          console.log(response)
           if (response.items.length > 0) {
             response.items.map(deployment => {
               (deployment.k8sApp =
@@ -342,14 +343,25 @@ export default {
       });
     },
     //更新pod
-    goPodUpdate(type, rowData) {
+    goPodUpdate(rowData) {
+      console.log(rowData)
       this.$router.push({
         name: "podUpdate",
         query: {
-          type: type,
           clusterId: this.clusterId,
-          workloadData: rowData,
-          spaceName: this.nameSpaceName
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
+        }
+      });
+    },
+    //更新pod
+    goPodConfigUpdate(rowData) {
+      this.$router.push({
+        name: "podConfigUpdate",
+        query: {
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
         }
       });
     },
