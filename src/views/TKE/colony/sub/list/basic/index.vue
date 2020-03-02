@@ -72,7 +72,10 @@
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Cni === true? 'cni' : 'bridge'}}</span></div>
             </el-form-item>
             <el-form-item label="云联网">
-              <div class="tke-form-item_text"><span>{{vpcList.length > 0 ? '' : '当前VPC尚未关联云联网'}}</span></div>
+              <div class="tke-form-item_text" v-if="vpcList.length > 0">
+                <el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
+              </div>
+              <div class="tke-form-item_text" v-else><span>当前VPC尚未关联云联网</span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
               <div class="tke-form-item_text"><span>{{changeipvs(clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Ipvs)}}</span></div>
@@ -175,12 +178,12 @@
         style="width:700px"
       >
         <el-form-item label="操作系统" prop="pass">
-          <el-select type="text" v-model="os" autocomplete="off" style="width:300px" @change="changeOs(e)">
+          <el-select type="text" v-model="os" autocomplete="off" style="width:300px" @change="changeOs">
             <el-option
               v-for="item in osList"
               :key="item.Id"
               :label="item.Alias"
-              :value="item.Id"
+              :value="item"
             ></el-option>
           </el-select>
           <p>注意：更改操作系统仅决定集群内新增或者重装升级节点的操作系统，不影响正在运行节点的操作系统，更多<a href="#">查看详情</a><i class="el-icon-edit-outline"></i></p>
@@ -219,6 +222,14 @@
         <el-button @click="closeDialog('3')">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="确定要关闭注册？" :visible.sync="showCloseCidr" width="750px">
+      <p style="#e54545;">关闭注册容器网络到云联网，可能会造成已有的云联网和容器间路由不通</p>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="closeNet">提 交</el-button>
+        <el-button @click="showCloseCidr = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    
   </div>
 </template>
 
@@ -227,7 +238,9 @@ import subTitle from '@/views/TKE/components/subTitle'
 import Loading from '@/components/public/Loading'
 import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
-import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES } from '@/constants'
+import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, 
+  UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES, 
+  TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
@@ -244,8 +257,11 @@ export default {
       showUpdateProject: false,//是否显示更改项目modal
       showUpdateDescribe: false,//是否显示更改描述modal
       showUpdateOs: false,//是否显示更改操作系统modal
-      os: '',//操作系统
+      os: {},//操作系统
       osList: [],//所有操作系统列表
+      routeSets:[],//云网络列表
+      autoRefresh: false, //是否关联网络
+      showCloseCidr: false,//是否显示关闭注册网络弹窗
       ruleForm: {
         name: '',
         projectId: '',
@@ -323,16 +339,42 @@ export default {
         this.clusterInfo = res.Response.Clusters[0];
         console.log(this.clusterInfo);
         this.loadShow = false;
-        
-        let params = {
+        let params1 = {
           VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
           Version: "2018-05-25"
         }
 
-        await this.axios.post(CLUSTERS_INSTANCES, params).then(res => {
-          if(res.Response.Error === undefined) {
+        await this.axios.post(CLUSTERS_INSTANCES, params1).then(async (res1) => {
+          if(res1.Response.Error === undefined) {
             this.loadShow = false;
-            this.vpcList = res.Response.InstanceSet;
+            this.vpcList = res1.Response.InstanceSet;
+            let param = {
+              VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
+              ClusterCIDR: res1.Response.InstanceSet[0].Cidrs[0],
+              Version: "2018-05-25"
+            }
+            this.loadShow = true;
+            await this.axios.post(TKE_CCN_ROUTES, param).then(res2 => {
+              if(res2.Response.Error === undefined) {
+                this.loadShow = false;
+                if(res2.Response.RouteSet.length > 0) {
+                  this.autoRefresh = true;
+                }
+                this.routeSets = res2.Response.RouteSet;
+              } else {
+                this.loadShow = false;
+                let ErrTips = {
+                  
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res2.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            })
           } else {
             this.loadShow = false;
             let ErrTips = {
@@ -340,7 +382,7 @@ export default {
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[res1.Response.Error.Code],
               type: "error",
               showClose: true,
               duration: 0
@@ -431,19 +473,26 @@ export default {
       }
       const res = await this.axios.post(CLUSTERS_SECURITY, params)
       if (res.Error) {
-        console.log(res)
         this.loadShow = false
       } else {
         // console.log(res)
         this.security = res.Response
-        console.log(res)
         this.loadShow = false
       }
     },
 
     async getOsList() {
+      let osString = this.clusterInfo.ClusterOs;
       await this.axios.post(CLUSTER_OS).then(res => {
         if(res && res.code === 0 && res.data) {
+          if(res.data.images.length > 0) {
+            for(let i = 0; i<res.data.images.length; i++) {
+              let currOs = res.data.images[i].OsName;
+              if(currOs === osString) {
+                this.os = res.data.images[i];
+              }
+            }
+          }
           this.osList = res.data.images;
         }
       });
@@ -488,7 +537,7 @@ export default {
       });
     },
 
-    //更新集群名称
+    //更新集群描述
     async updateDescribe () {
       this.loadShow = true;
       let param = {
@@ -510,12 +559,67 @@ export default {
       });
     },
 
-    //查询是否关联云网络
-    async getIsRelation() {
-      
-      //
+    //注册、关闭网络
+    async changeSwitch() {
+      let autoRefresh = this.autoRefresh;
+      let vpcid = this.clusterInfo.ClusterNetworkSettings.VpcId;
+      let cidr = this.vpcList[0].Cidrs[0];
+      let param = {
+        Version: "2018-05-25",
+        VpcId: vpcid,
+        ClusterCIDR: cidr
+      }
+      if(autoRefresh) {
+        this.loadShow = true;
+        await this.axios.post(ADD_CIDE_TO_CCN, param).then(res => {
+          if(res.Response.Error === undefined) {
+            this.getColonyInfo();
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      } else {
+        this.showCloseCidr = true;
+      }
+      //CLUSTERS_INSTANCES
     },
-    
+    //关闭网络
+    async closeNet() {
+      this.loadShow = true;
+      let vpcid = this.clusterInfo.ClusterNetworkSettings.VpcId;
+      let cidr = this.vpcList[0].Cidrs[0];
+      let param = {
+        Version: "2018-05-25",
+        VpcId: vpcid,
+        ClusterCIDR: cidr
+      }
+      debugger
+      await this.axios.post(CLOSE_CIDE_TO_CCN, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.getColonyInfo();
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
 
     //提交描述修改
     submitDescribeForm (formName) {
@@ -531,7 +635,7 @@ export default {
 
     //选择系统
     changeOs(val) {
-debugger
+      let ss = this.os;
     },
     //提交修改系统
     async submitOsForm(formName) {
@@ -539,8 +643,8 @@ debugger
       let param = {
         Version: "2018-05-25",
         ClusterId: this.clusterId,
-        OsCustomizeType: "GENERAL",
-        ImageId: this.os
+        OsCustomizeType: this.os.CustomizeType,
+        ImageId: this.os.OsName
       }
 
       await this.axios.post(UPDATE_OS, param).then(res => {

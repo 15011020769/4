@@ -47,7 +47,7 @@
             @change="changeTimeValue"
           ></el-date-picker>
       </el-row>
-      <over-view :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'overview'"></over-view>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
       <Ub :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ub'"></Ub>
       <Ucb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ucb'"></Ucb>
       <Tcb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'tcb'"></Tcb>
@@ -172,17 +172,11 @@ export default {
       this.dateTimeValue = times
       this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
       this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
-      this.$nextTick(() => {
-        // this.getBotDomainStat()
-      })
     },
     changeTimeValue(val) {
       this.selBtn = 0
       this.startTime = moment(val[0]).utc().valueOf()
       this.endTime = moment(val[1]).utc().valueOf()
-      this.$nextTick(() => {
-        // this.getBotDomainStat()
-      })
     },
   }
 }

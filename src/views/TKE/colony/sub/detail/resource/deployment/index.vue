@@ -26,7 +26,7 @@
       <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">Pod管理</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">修订历史</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">日志</router-link>
+      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData,list:list}}">日志</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
       <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
@@ -43,7 +43,8 @@
 
 <script>
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "deploymentDetail",
   data() {
@@ -51,6 +52,7 @@ export default {
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
+      list: []//pod列表
     };
   },
   components: {
@@ -61,8 +63,36 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
+    this.getDeploymentsPodList();
   },
   methods: {
+    async getDeploymentsPodList() {
+      this.loadShow = true;
+      let params = {
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/deployments/"+this.rowData.metadata.name+"/pods",
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          let response = JSON.parse(res.Response.ResponseBody);
+          this.list = response.items;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      }); 
+    },
     //返回上一层
     goBack(){
       this.$router.push({

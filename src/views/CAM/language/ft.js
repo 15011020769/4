@@ -20,6 +20,7 @@ module.exports = {
       userText: '關聯訊息',
       userStrage: '授權',
       userAddGroup: '添加到組',
+      userSubscribeNotice: '訂閱消息',
       userdep: '訂閱訊息',
       userMore: '更多',
       userDel: '刪除用戶',

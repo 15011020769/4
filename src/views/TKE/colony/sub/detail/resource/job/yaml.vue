@@ -4,19 +4,30 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button  size="small" type="primary">编辑YAML</el-button>
+        <el-button  size="small" type="primary" @click="goUpdateYAML()" :disabled="rowData.metadata.namespace === 'kube-system'?true:false">编辑YAML</el-button>
       </div>
     </div>
     
     <div class="tke-card mt10 tke-formpanel-wrap">
       <el-card class='box-card'> 
-        <div class='box-black'>{{yamlData}}</div>
+        <div class='box-black'>
+          <codemirror style="background-color: #444;"  ref="myCm"  v-model="yamlData"  :options="cmOptions" class="code" ></codemirror>
+        </div>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
+import { codemirror } from 'vue-codemirror'
+  require("codemirror/mode/python/python.js")
+  require('codemirror/addon/fold/foldcode.js')
+  require('codemirror/addon/fold/foldgutter.js')
+  require('codemirror/addon/fold/brace-fold.js')
+  require('codemirror/addon/fold/xml-fold.js')
+  require('codemirror/addon/fold/indent-fold.js')
+  require('codemirror/addon/fold/markdown-fold.js')
+  require('codemirror/addon/fold/comment-fold.js')
 import { ErrorTips } from "@/components/ErrorTips";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 export default {
@@ -26,11 +37,25 @@ export default {
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       loadShow: false,//是否显示加载
-      yamlData: ''//数据
+      yamlData: '',//数据
+      cmOptions: {
+        tabSize: 4,
+        mode: 'python',
+        theme: 'darcula',
+        lineNumbers: true,//行号
+        line: true,
+        lineNumbers: true,
+        foldgutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+        lineWrapping: true, //代码折叠
+        foldGutter: true,
+        matchBrackets: true,  //括号匹配
+        autoCloseBrackets: true
+      }
     };
   },
   components: {
-   
+    codemirror
   },
   created() {
     // 从路由获取类型
@@ -65,6 +90,17 @@ export default {
           });
         }
       }); 
+    },
+    //跳转编辑Yaml
+    goUpdateYAML() {
+      this.$router.push({
+        name: "updateJob",
+        query: {
+          clusterId: this.clusterId,
+          spaceName: this.rowData.metadata.namespace,
+          rowData: this.rowData
+        }
+      });
     }
   }
 };

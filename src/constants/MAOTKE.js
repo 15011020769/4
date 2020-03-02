@@ -51,3 +51,12 @@ export const JOB_ID = 'tsm/GetTkeDataJob'
 
 //新建伸缩组
 export const CREATE_GROUP = 'tke2/CreateClusterAsGroup'
+
+//是否开启云网络
+export const TKE_CCN_ROUTES = 'tke2/DescribeCcnRoutes'
+
+//注册云网络
+export const ADD_CIDE_TO_CCN = 'tke2/AddClusterCIDRToCcn'
+
+//关闭注册云网络
+export const CLOSE_CIDE_TO_CCN = 'tke2/DeleteClusterCIDRFromCcn'

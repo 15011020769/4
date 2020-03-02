@@ -229,13 +229,21 @@ export default new Router({
         }
       ]
     },
+    { // 监控按钮页面monitor
+      path: '/colony/sub/list/components/openMonitor',
+      name: 'colonyOpenMonitor',
+      component: () => import('./colony/sub/list/components/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
     {
       path: '/colony/expand', // 集群-新建节点
       name: 'clusterExpand',
       component: () => import('./colony/expand.vue'),
       meta: {
         keepAlive: true
-       
+
       }
     },
     {
@@ -252,7 +260,7 @@ export default new Router({
       component: () => import('./colony/sub/create/nodeManage/asg.vue'),
       meta: {
         keepAlive: true
-       
+
       }
     },
     {
@@ -296,9 +304,17 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新
+      path: '/colony/sub/update/resource/updatePod', // 集群-pod--更新pod数量
       name: 'podUpdate',
       component: () => import('./colony/sub/update/resource/updatePod.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/updatePodConfig', // 集群-pod--更新pod配置
+      name: 'podConfigUpdate',
+      component: () => import('./colony/sub/update/resource/updatePodConfig.vue'),
       meta: {
         keepAlive: true
       }
@@ -383,7 +399,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/nodeManage/node/yaml',
           name: 'nodeDetailYaml',
@@ -391,7 +407,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -426,7 +442,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/nodeManage/masteretcd/yaml',
           name: 'masteretcdDetailYaml',
@@ -434,7 +450,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -453,7 +469,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/namespace/yaml',
           name: 'namespaceDetailYaml',
@@ -461,7 +477,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -513,7 +529,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/deployment/yaml',
           name: 'deploymentDetailYaml',
@@ -521,7 +537,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -565,7 +581,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/statefulSet/yaml',
           name: 'statefulSetDetailYaml',
@@ -573,7 +589,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -617,7 +633,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/daemonSet/yaml',
           name: 'daemonSetDetailYaml',
@@ -625,7 +641,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -669,11 +685,47 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/job/yaml',
           name: 'jobDetailYaml',
           component: () => import('./colony/sub/detail/resource/job/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+      ]
+    },
+    {
+      path: '/colony/sub/detail/resource/cronJob', // 工作负载-CronJob-详情
+      name: 'cronJobDetail',
+      component: () => import('./colony/sub/detail/resource/cronJob/index.vue'),
+      redirect: '/colony/sub/detail/resource/cronJob/event', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 事件
+          path: '/colony/sub/detail/resource/cronJob/event',
+          name: 'cronJobDetailEvent',
+          component: () => import('./colony/sub/detail/resource/cronJob/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/resource/cronJob/info',
+          name: 'cronJobDetailInfo',
+          component: () => import('./colony/sub/detail/resource/cronJob/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+          
+        { // yaml
+          path: '/colony/sub/detail/resource/cronJob/yaml',
+          name: 'cronJobDetailYaml',
+          component: () => import('./colony/sub/detail/resource/cronJob/yaml.vue'),
           meta: {
             keepAlive: true,
           }
@@ -704,7 +756,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/hpa/yaml',
           name: 'hpaDetailYaml',
@@ -712,7 +764,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -747,7 +799,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/service/svc/yaml',
           name: 'svcDetailYaml',
@@ -755,7 +807,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -782,7 +834,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/service/ingress/yaml',
           name: 'ingressDetailYaml',
@@ -790,7 +842,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -809,7 +861,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/config/configmap/yaml',
           name: 'configmapDetailYaml',
@@ -817,7 +869,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     { // 配置管理更新配置configmap
@@ -827,7 +879,7 @@ export default new Router({
       meta: {
         keepAlive: true,
       }
-    },   
+    },
     { // 配置管理更新配置configmap yaml
       path: '/colony/sub/update/config/yaml',
       name: 'updateYaml',
@@ -835,11 +887,51 @@ export default new Router({
       meta: {
         keepAlive: true,
       }
-    },  
+    },
     { // 更新命名空间 yaml
       path: '/colony/sub/update/namespace/yaml',
       name: 'updateNameSpace',
       component: () => import('./colony/sub/update/namespace/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载statefulSet yaml
+      path: '/colony/sub/update/resource/statefulSet',
+      name: 'updateStatefulSet',
+      component: () => import('./colony/sub/update/resource/statefulSet/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载deployment yaml
+      path: '/colony/sub/update/resource/deployment',
+      name: 'updateDeployment',
+      component: () => import('./colony/sub/update/resource/deployment/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载deployment yaml
+      path: '/colony/sub/update/resource/cronJob',
+      name: 'updateCronJob',
+      component: () => import('./colony/sub/update/resource/cronJob/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载daemonSet yaml
+      path: '/colony/sub/update/resource/daemonSet',
+      name: 'updateDaemonSet',
+      component: () => import('./colony/sub/update/resource/daemonSet/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载job yaml
+      path: '/colony/sub/update/resource/job',
+      name: 'updateJob',
+      component: () => import('./colony/sub/update/resource/job/yaml.vue'),
       meta: {
         keepAlive: true,
       }
@@ -860,7 +952,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/config/secret/yaml',
           name: 'secretDetailYaml',
@@ -868,7 +960,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -887,7 +979,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/pv/event',
           name: 'pvDetailEvent',
@@ -895,7 +987,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/pv/yaml',
           name: 'pvDetailYaml',
@@ -903,7 +995,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -922,7 +1014,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/pvc/event',
           name: 'pvcDetailEvent',
@@ -930,7 +1022,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/pvc/yaml',
           name: 'pvcDetailYaml',
@@ -938,7 +1030,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -957,7 +1049,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/sc/event',
           name: 'scDetailEvent',
@@ -965,7 +1057,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/sc/yaml',
           name: 'scDetailYaml',
@@ -973,7 +1065,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
 
@@ -992,7 +1084,7 @@ export default new Router({
       meta: {
         keepAlive: true
       },
-      children:[
+      children: [
         {
           path: 'detail', // 应用详情
           name: 'helmDetailDetail',

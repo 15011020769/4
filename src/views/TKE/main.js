@@ -13,6 +13,7 @@ import filters from '@/filters/filters.js'
 import i18n from './language/i18n.js' // 引入i18n包
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
+import store from '@/stores/store.js'
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
     // 引入折线图组件
@@ -49,6 +50,7 @@ Vue.use(codemirror)
 new Vue({
     router,
     i18n,
+    store,
     // store,
     render: h => h(App)
 }).$mount('#app')
