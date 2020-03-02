@@ -9,7 +9,6 @@
         <el-table-column prop="Enabled" :label="$t('CCN.tabs.tab4tr2') " width>
           <template slot-scope="scope">
             <div v-if="scope.row.Enabled == true" class="off_color">{{$t('CCN.tabs.worked')}}</div>
-            <!-- <div v-if="scope.row.Enabled == 0" class="close_color">关闭</div> -->
             <div v-else>{{$t('CCN.total.newClose')}}</div>
           </template>
         </el-table-column>
@@ -114,11 +113,10 @@
         this.$confirm("是否確認" + str + "路由？", "系統提示", {
           confirmButtonText: "確定",
           cancelButtonText: "取消",
-          callback: async action => {
-            if (action == "confirm") {
-              this.setRouteEnabled(route);
-            }
-          }
+        }).then(() => {
+          this.setRouteEnabled(route);
+        }).catch(() => {
+          this.getData();
         });
       },
       // 设置路由状态
