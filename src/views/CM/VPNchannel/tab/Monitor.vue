@@ -91,13 +91,6 @@
             name: '实时',
             Time: 'realTime',
             TimeGranularity: [{
-                value: "5",
-                label: "5秒"
-              }, {
-                value: "10",
-                label: "10秒"
-              },
-              {
                 value: "60",
                 label: "1分鐘"
               },
@@ -144,22 +137,50 @@
         ],
         ID: this.$route.query.id,
         BaseList: [], //全部指标列表
-        BaseListK: [], //用到的指标列表
+        BaseListK: [{
+            MetricName: "Outbandwidth"
+          },
+          {
+            MetricName: "Inbandwidth"
+          }, {
+            MetricName: "Outpkg",
+          }, {
+            MetricName: "Inpkg",
+          }, {
+            MetricName: "Pkgdrop",
+          }, {
+            MetricName: "Delay"
+          },
+        ], //用到的指标列表
         TableLoad: true,
         Period: '', //粒度
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-
+          "Outbandwidth": '外網出頻寬',
+          "Inbandwidth": '外網入頻寬',
+          "Outpkg": '出包量',
+          "Inpkg": '入包量',
+          "Pkgdrop": '丢包率',
+          "Delay": '時延'
         },
         Company: {
-
+          "Outbandwidth": 'Mbps',
+          "Inbandwidth": 'Mbps',
+          "Outpkg": '個/秒',
+          "Inpkg": '個/秒',
+          "Pkgdrop": '%',
+          "Delay": 'm'
         },
         Tips: {
-
+          "Outbandwidth": 'VPN通道平均每秒出流量',
+          "Inbandwidth": 'VPN通道平均每秒入流量',
+          "Outpkg": 'VPN通道平均每秒出包量',
+          "Inpkg": 'VPN通道平均每秒入包量',
+          "Pkgdrop": 'VPN探測一分鐘的丟包比例',
+          "Delay": 'VPN探測一分鐘的平均時延'
         },
-
       }
     },
     components: {
@@ -192,32 +213,15 @@
       },
       //获取基础指标详情
       _GetBase() {
-        let parms = {
-          Version: '2018-07-24',
-          Region: localStorage.getItem('regionv2'),
-          Namespace: 'QCE/VPNX'
-        }
-        this.axios.post(ALL_Basics, parms).then(res => {
-          if (res.Response.Error == undefined) {
-            this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
-            this.MonitorData = []
-            this.BaseListK = []
-            this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
-            });
-          } else {
-            this.$message({
-              message: ErrorTips[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
+        this.MonitorData = []
+        this.BaseListK.forEach(item => {
+          this._GetMonitorData(item.MetricName)
         });
+
+
+
+
+
       },
       //获取监控数据
       _GetMonitorData(MetricName) {
@@ -229,7 +233,7 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'InstanceId',
+          'Instances.0.Dimensions.0.Name': 'vpnConnId',
           'Instances.0.Dimensions.0.Value': this.ID,
         }
         this.axios.post(All_MONITOR, parms).then(data => {

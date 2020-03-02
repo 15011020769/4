@@ -211,7 +211,7 @@ export default {
       xAxisBarArt: [], // 响应时间最慢
       seriesBarArt: [], // 响应时间最慢
       xAxisBarUrl: [], // 页面访问次数
-      seriesBarArt: [], // 页面访问次数
+      seriesBarUrl: [], // 页面访问次数
       legendTextBarIp: "次数",
       color: ["#006eff", "#29CC85", "#FF9D00"],
       dialogDownloadVisible: false,
@@ -336,7 +336,7 @@ export default {
           let serverArrCount = []
           let serverArr = []
           this.generalRespHandler(resp, (Response) => {
-            console.log(Response)
+            console.log(Response.Piechart)
           })
         })
       } else if (type == "ua") {
@@ -394,7 +394,7 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               artArrCount.push(v.count)
-              artArr.push(v.art)
+              artArr.push(v.url)
             })
             this.xAxisBarArt = artArr
             this.seriesBarArt = artArrCount

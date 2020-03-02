@@ -120,6 +120,8 @@ export const DESCRIBE_ACCESSLOG_COUNT = 'waf2/DescribeAccessLogCount'
 export const DESCRIBE_ACCESS_DOWNLOAD_RECORDS = 'waf2/DescribeAccessDownloadRecords'
 /** 下载访问日志 */
 export const CREATE_ACCESS_DOWNLOAD_RECORD = 'waf2/CreateAccessDownloadRecord'
+/** Bot_V2 Bot流量统计 */
+export const DESCRIBE_BOT_STATISTIC_POINTS = 'waf2/DescribeBotStatisticPoints'
 /** Bot_V2 Bot类别统计 */
 export const DESCRIBE_BOT_TYPE_STAT = 'waf2/DescribeBotTypeStat'
 /** Bot_V2 bot地理纬度统计 */
@@ -136,3 +138,11 @@ export const DESCRIBE_BOT_UCB_FEATURE_RULE = 'waf2/DescribeBotUCBFeatureRule'
 export const UPSERT_BOT_UCB_FEATURE_RULE = 'waf2/UpsertBotUCBFeatureRule'
 /** Bot_V2 获取UCB预设策略 */
 export const DESCRIBE_BOT_UCB_PREINSTALLRULE = 'waf2/DescribeBotUCBPreinstallRule'
+/** Bot_V2 UCB预设策略拷贝 */
+export const COPY_BOT_UCB_PREINSTALL_RULE = 'waf2/CopyBotUCBPreinstallRule'
+/** Bot_V2 UCB预设规则更新 */
+export const MODIFY_BOT_UCB_PREINSTALL_RULE = 'waf2/ModifyBotUCBPreinstallRule'
+/** Bot_V2 UCB自定义策略删除 */
+export const DELETE_BOT_UCB_FEATURE_RULE = 'waf2/DeleteBotUCBFeatureRule'
+/** Bot_V2 UCB自定义策略拷贝 */
+export const COPY_BOT_UCB_FEATURE_RULES = 'waf2/CopyBotUCBFeatureRules'

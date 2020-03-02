@@ -299,7 +299,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.Cam >>> .el-input__clear {
+::v-deep .el-input__clear {
   position: absolute;
   right: calc(100% + 2px);
 }

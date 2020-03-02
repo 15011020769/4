@@ -1,14 +1,14 @@
 <template>
   <div class="main_ub">
     <el-row type="flex" justify="end" class="topSearch">
-      <el-input v-model="sourceIp" placeholder="请输入源ip"></el-input>
+      <el-input v-model="sourceIp" placeholder="请输入源IP或策略名称"></el-input>
     </el-row>
     <el-card>
       <el-table
         :data="ucbList"
         style="width: 100%"
       >
-        <el-table-column prop="date" label="序号"  width="55">
+        <el-table-column prop="date" label="序号"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
         <el-table-column prop="SrcIp" label="访问源IP"></el-table-column>
@@ -16,14 +16,14 @@
         <!-- <el-table-column prop="bot_feature" label="异常特征" width="120" :show-overflow-tooltip="true" :formatter="formatBotFeature"></el-table-column> -->
         <el-table-column prop="bot_feature" label="异常特征" width="120">
           <template slot-scope="scope">
-            <el-tooltip class="item" effect="light" :content="scope.row.bot_feature.join('，')" placement="right">
+            <el-tooltip class="item" effect="light" :content="scope.row.bot_feature.join('、')" placement="right">
               <p>{{scope.row.bot_feature | botFeatureFilter}}</p>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="Action" label="动作" width="60">
           <template slot-scope="scope">
-           {{scope.row.Action == "intercept" ? "拦截" : scope.row.Action}}
+           {{action[scope.row.Action]}}
           </template>
         </el-table-column>
         <el-table-column prop="Score" label="BOT得分" width="100" sortable>
@@ -45,7 +45,9 @@
         <el-table-column prop="date" label="最新检测时间" width="120" sortable :formatter="formatDate">
         </el-table-column>
         <el-table-column prop="date" label="操作">
-           <el-button @click="onEdit(scope)" type="text" size="mini">查看详情</el-button>
+          <template slot-scope="scope">
+            <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -76,12 +78,13 @@ export default {
       totalItems: 0,//总长度
       sceneValue: "", // 预测标签匹配字段绑定值
       scene_flag_list, // 预测标签匹配字段
+      action: {'intercept': '拦截', 'monitor': '监控'},
     }
   },
   props: {
     domain: {
       type: String,
-      default: ""
+      default: "",
     },
     times: {
       type: Array,
@@ -101,8 +104,8 @@ export default {
   },
   filters: {
     botFeatureFilter(text) {
-      if (text.length > 4) {
-        text = text.slice(0, 4)
+      if (text.length > 5) {
+        text = text.slice(0, 5)
         return text.join('') + '...'
       }
       return text.join('')
@@ -121,13 +124,21 @@ export default {
       this.axios.post(DESCRIBE_BOT_UCB_RECORDS, params).then(resp => {
         this.generalRespHandler(resp, ({Data}) => {
           console.log(Data)
-          this.ucbList = Data.Res.concat(Data.Res)
+          this.ucbList = Data.Res
           this.totalItems = Data.TotalCount
-          // this.totalItems = 12
         })
       })
     },
-      // 分页开始
+    // 查看详情
+    goDetail(scope) {
+      this.$router.push({
+        path: "/botDetail/ucb",
+        query: {
+          SrcIp: scope.row.SrcIp
+        }
+      })
+    },
+    // 分页开始
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageLimit = val
@@ -163,8 +174,8 @@ export default {
       return moment(row.Timestamp).format('YYYY-MM-DD HH:mm:ss')
     },
     formatBotFeature(row) {
-      if (row.bot_feature.length > 4) {
-        row.bot_feature = row.bot_feature.slice(0, 4)
+      if (row.bot_feature.length > 5) {
+        row.bot_feature = row.bot_feature.slice(0, 5)
         return row.bot_feature + '...'
       }
       return row.bot_feature

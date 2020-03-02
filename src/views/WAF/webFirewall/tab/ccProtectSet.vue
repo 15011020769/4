@@ -56,7 +56,11 @@
         <i class="el-icon-refresh refresh" @click="getCCRule" />
       </el-row>
       <el-table :data="rules" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
-        </el-table-column>
+        <el-table-column
+          type="selection"
+          class-name="hide"
+          width="1"
+        />
         <el-table-column prop="Name" :label="t('规则名称', 'WAF.gzmc')">
         </el-table-column>
         <el-table-column :label="t('匹配条件', 'WAF.pptj')">
@@ -86,14 +90,24 @@
             {{scope.row.ValidTime/60}}分钟
           </template>
         </el-table-column>
-        <el-table-column prop="Priority" :label="t('优先级', 'WAF.yxsx')" sortable>
+        <el-table-column prop="Priority">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSortPriority">
+            {{t('优先级', 'WAF.yxsx')}}
+            <i class="el-icon-caret-top" v-if="sortPriority === 'priority:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sortPriority === 'priority:-1'"></i>
+          </el-button>
         </el-table-column>
         <el-table-column prop="Name" :label="t('规则开关', 'WAF.gzkg')">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.StatusBool" @change="switchStatus(scope.row)" />
           </template>
         </el-table-column>
-        <el-table-column prop="CreateTime" :label="t('创建时间', 'WAF.cjsj')" sortable width="150">
+        <el-table-column width="150">
+           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSortTsVersion">
+            {{t('创建时间', 'WAF.cjsj')}}
+            <i class="el-icon-caret-top" v-if="sortTime === 'ts_version:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sortTime === 'ts_version:-1'"></i>
+          </el-button>
           <template slot-scope="scope">
             {{formatDate(scope.row.TsVersion)}}
           </template>
@@ -204,6 +218,9 @@ export default {
       offset: 1,
       limit: 10,
       total: 0,
+      sortPriority: 'priority:1',
+      sortTime: 'ts_version:-1',
+      sort: 'ts_version:-1;priority:1',
     }
   },
   components: {
@@ -220,6 +237,24 @@ export default {
     }
   },
   methods: {
+    setSortPriority() {
+      if (this.sortPriority.includes('-')) {
+        this.sortPriority = 'priority:1'
+      } else {
+        this.sortPriority = 'priority:-1'
+      }
+      this.sort = `${this.sortPriority};${this.sortTime}`
+      this.getCCRule()
+    },
+    setSortTsVersion() {
+      if (this.sortTime.includes('-')) {
+        this.sortTime = 'ts_version:1'
+      } else {
+        this.sortTime = 'ts_version:-1'
+      }
+      this.sort = `${this.sortTime};${this.sortPriority}`
+      this.getCCRule()
+    },
     switchStatus(rule) {
       rule.StatusBool = !rule.StatusBool
       this.axios.post(UPSERT_CCRULE, {
@@ -305,16 +340,20 @@ export default {
         Edition: 'clb-waf',
         Offset: this.offset - 1,
         Limit: this.limit,
+        Sort: this.sort
       }).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           Data = Data || {Res: [], TotalCount: 0}
           const ruleNames = []
-          Data.Res.forEach(rule => {
-            rule.StatusBool = !!rule.Status
+          const data = Data.Res.map(rule => {
             ruleNames.push(rule.Name)
+            return {
+              ...rule,
+              StatusBool: !!rule.Status
+            }
           })
           this.ruleNames = ruleNames
-          this.rules = Data.Res
+          this.rules = data
           this.total = Data.TotalCount
           this.loading = false
         })
@@ -409,5 +448,8 @@ export default {
   padding:0 16px;
   border:none;
   outline: none;
+}
+::v-deep .hide {
+  visibility: hidden;
 }
 </style>

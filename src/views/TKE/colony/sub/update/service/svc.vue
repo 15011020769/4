@@ -186,9 +186,9 @@
               <el-radio v-model="svc.ETP" label="1">Cluster</el-radio>
               <el-radio v-model="svc.ETP" label="2">Local</el-radio>
               <div v-if="svc.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
-              <div
-                v-if="svc.ETP=='2'"
-              >能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。</div>
+              <div v-if="svc.ETP=='2'">
+                能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。
+              </div>
             </el-form-item>
             <div>
               <el-form-item label-width="150px" label="Session Affinity">
@@ -196,7 +196,7 @@
                 <el-radio v-model="svc.SA" label="2">None</el-radio>
               </el-form-item>
               <div v-if="svc.SA=='1'">
-                <el-form-item label-width="150px" label="最大会话保持时间">
+                <el-form-item prop="time" :rules="timeRules" label-width="150px" label="最大会话保持时间">
                   <el-input v-model="svc.time" class="w200"></el-input>
                   <div>会话保持时间范围为0~86400</div>
                 </el-form-item>
@@ -225,7 +225,7 @@
 // import Service from './components/Service'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import { ALL_CITY, POINT_REQUEST, TKE_COLONY_LIST, TKE_DESCRIBELOADBALANCERS, TKE_VPC_METWORK, TKE_Worker_METWORK } from '@/constants'
+import { ALL_CITY, POINT_REQUEST, TKE_COLONY_LIST, TKE_EDSCRIBELOADBALANCERS, TKE_VPC_METWORK, TKE_WORKER_METWORK } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
   name: 'svcCreate',
@@ -247,8 +247,8 @@ export default {
         protocol: '', // 协议
         ETP: '1',
         SA: '2',
-        input1: '',//容器端口
-        input2: '',//服务端口
+        input1: '', // 容器端口
+        input2: '', // 服务端口
         list: [{}],
         workload: [],
         tabPosition: 'dep'
@@ -261,7 +261,25 @@ export default {
       LBsubnet: [], // LB所在子网
       vpcNameAry: [], // vpcName的数据
       addressCount: {}, // LB中的子网点对象
-      serviceInfo: {}// 服务详情信息
+      serviceInfo: {}, // 服务详情信息
+      timeRules: [{
+        validator: (rule, value, callback) => {
+          let reg = /^\d+\.\d+$/
+          if (value > 0 && value < 68400) {
+            callback()
+          } else if (!value) {
+            callback(new Error('会话保持时间不能为空'))
+          } else if (value < 0 && value > 68400) {
+            callback(new Error('不在会话保持时间范围'))
+          } else if (!reg.test(value)) {
+            callback(new Error('会话保持时间格式错误'))
+          } else {
+            callback(new Error('会话保持时间格式错误'))
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }]
     }
   },
   components: {
@@ -297,11 +315,11 @@ export default {
         Offset: 0,
         Version: '2017-03-12'
       }
-      await this.axios.post(TKE_Worker_METWORK, params).then(res => {
+      await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
+        // console.log(1111111, res)
         if (res.Response.Error === undefined) {
           this.LBsubnet = res.Response.SubnetSet
           this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
-          // console.log(this.LBsubnet)
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -348,7 +366,7 @@ export default {
         Offset: 0,
         Version: '2018-03-17'
       }
-      await this.axios.post(TKE_DESCRIBELOADBALANCERS, params).then(res => {
+      await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
           let msg = res.Response.LoadBalancerSet
           this.ownLoadBalancer = msg

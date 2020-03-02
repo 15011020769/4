@@ -331,6 +331,15 @@ const CUSTOM_SESSION_ACTION_LOCAL = {
 export const CUSTOM_SESSION_ACTION = addVal2Key(CUSTOM_SESSION_ACTION_LOCAL)
 export const CUSTOM_SESSION_ACTION_ARR = obj2Arr(CUSTOM_SESSION_ACTION_LOCAL)
 
+const UCB_ACTION_LOCAL = {
+  permit: '放行',
+  monitor: '监控',
+  captcha: '验证码',
+  intercept: '拦截',
+}
+export const UCB_ACTION = addVal2Key(UCB_ACTION_LOCAL)
+export const UCB_ACTION_ARR = obj2Arr(UCB_ACTION_LOCAL)
+
 /** 放行后继续执行的动作 */
 export const BY_PASS_ACTION = {
   geoip: '继续执行地域封禁防护',
@@ -476,7 +485,7 @@ export const ip_type_list = [{ value: "idc", label: "互联网数据中心（IDC
     {
         id: "",
         key: "ip_type", label: "IP类型",
-        title: "IP的类型信息，类型为IDC或基站(运营商基站)，当IP为IDC类型时疑似存在异常",
+        title: "IP的类型信息，類型為IDC或基站(运营商基站)，当IP为IDC类型时疑似存在异常",
         opoptions: ["contains", "not contains"], value: ""
         , valueoptions: ip_type_list,
         placeholder: "请选择1个",
@@ -485,7 +494,7 @@ export const ip_type_list = [{ value: "idc", label: "互联网数据中心（IDC
     {
         id: "",
         key: "ip_owner", label: "IP所有者",
-        title: "IP所有者信息（当IP类型为IDC时有效），例如：tencent.com，可以在BOT详情中查看",
+        title: "IP所有者信息（当IP類型為IDC时有效），例如：tencent.com，可以在BOT详情中查看",
         opoptions: ["belong", "not belong"], value: [],
         valueoptions: ip_owner_list,
         placeholder: "请选择1个",
@@ -831,3 +840,713 @@ export const ARGS_MAP = {
   "USER_AGENT": "User-Agent",
   "none": "无"
 }
+
+
+
+export const UCB_HTTP_PROTOCLS = [{
+  id: "method",
+  type: "http",
+  name: "使用HTTP HEAD方法",
+  ftname: "使用HTTP HEAD方法",
+  desc: "预设",
+  rule_type: 1,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "method",
+          op: "proportion",
+          op_arg: ["HEAD"],
+          op_op: ">",
+          op_value: 0
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+}, {
+  id: "protocal",
+  type: "http",
+  name: "HTTP协议为1.0或者更低",
+  ftname: "HTTP協議為1.0或者更低",
+  desc: "预设",
+  rule_type: 1,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "protocal",
+          op: "proportion",
+          op_arg: ["1.0", "0.9"],
+          op_op: ">",
+          op_value: 0.5
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+}];
+
+
+export const UCB_HEADERS_PROTOCLS = [
+  {
+      id: "referer_exist",
+      type: "headers",
+      name: "Referer空或不存在",
+      ftname: "Referer空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              "key": "referer_exist",
+              "op": "logic",
+              "value": false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }, {
+      id: "refer_kind_nums",
+      type: "headers",
+      name: "Referer滥用(多个UA使用相同Referer)",
+      ftname: "Referer濫用(多個UA使用相同Referer)",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_kind_nums",
+              op: ">",
+              value: 10
+          },
+          {
+              key: "refer_kind_nums",
+              op: "=",
+              value: 1
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }, {
+      id: "ua_kind_nums",
+      type: "headers",
+      name: "Cookie滥用(多个UA使用相同Cookie)",
+      ftname: "Cookie濫用(多個UA使用相同Cookie)",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_kind_nums",
+              op: ">",
+              value: 10
+          },
+          {
+              key: "cookie_kind_nums",
+              op: "=",
+              value: 1
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }, {
+      id: "cookie_exist",
+      type: "headers",
+      name: "Cookie空或不存在",
+      ftname: "Cookie空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "cookie_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }, {
+      id: "connection_exist",
+      type: "headers",
+      name: "Connection空或不存在",
+      ftname: "Connection空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "connection_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }, {
+      id: "accept_exist",
+      type: "headers",
+      name: "Accept空或不存在",
+      ftname: "Accept空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "accept_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "accept_language_exist",
+      type: "headers",
+      name: "Accept-Language空或不存在",
+      ftname: "Accept-Language空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "accept_language_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "accept_encoding_exist",
+      type: "headers",
+      name: "Accept-Enconding空或不存在",
+      ftname: "Accept-Enconding空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "accept_encoding_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }
+];
+
+export const UCB_UA_PROTOCLS = [
+  {
+
+      id: "ua_exist",
+      type: "ua",
+      name: "User-Agent为空或不存在",
+      ftname: "User-Agent為空或不存在",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_exist",
+              op: "logic",
+              value: false
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_bot",
+      type: "ua",
+      action: "monitor",
+      addition_arg: "none",
+      desc: "预设",
+      name: "User-Agent类型为BOT",
+      ftname: "User-Agent類型為BOT",
+      on_off: "off",
+      rule: [{
+          key: "ua_type",
+          op: "belong",
+          value: [
+              "bot"
+          ]
+      }],
+      rule_type: 1,
+      timestamp: 0,
+      valid_time: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_http",
+      type: "ua",
+      name: "User-Agent类型为HTTP Library",
+      ftname: "User-Agent類型為HTTP Library",
+      action: "monitor",
+      addition_arg: "none",
+      desc: "预设",
+      domain: "test.com",
+      rule: [
+          {
+              "key": "ua_type",
+              "op": "belong",
+              "value": [
+                  "http library"
+              ]
+          }
+      ],
+      on_off: "off",
+      rule_type: 1,
+      timestamp: 0,
+      valid_time: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_framework",
+      type: "ua",
+      name: "User-Agent类型为Framework",
+      ftname: "User-Agent類型為Framework",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_type",
+              op: "belong",
+              value: [
+                  "framework"
+              ]
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_tools",
+      type: "ua",
+      name: "User-Agent类型为Tools",
+      ftname: "User-Agent類型為Tools",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_type",
+              op: "belong",
+              value: [
+                  "tools"
+              ]
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_bot-unknown",
+      type: "ua",
+      name: "User-Agent类型为Unkonwn BOT",
+      ftname: "User-Agent類型為Unkonwn BOT",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              key: "ua_type",
+              op: "belong",
+              value: [
+                  "bot-unknown"
+              ]
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  },
+  {
+      id: "ua_type_scanner",
+      type: "ua",
+      name: "User-Agent类型为Scanner",
+      ftname: "User-Agent類型為Scanner",
+      desc: "预设",
+      rule_type: 1,
+      addition_arg: "none",
+      action: "monitor",
+      rule: [
+          {
+              "key": "ua_type",
+              "op": "belong",
+              "value": [
+                  "scanner"
+              ]
+          }
+      ],
+      on_off: "off",
+      valid_time: 0,
+      timestamp: 0,
+      visible: true
+  }
+];
+
+export const UCB_PROTOCLS = UCB_HTTP_PROTOCLS.concat(UCB_HEADERS_PROTOCLS).concat(UCB_UA_PROTOCLS)
+
+export const UCB_IPS = [{
+  id: "boce",
+  name: "拨测",
+  timestamp: 0,
+  action: "",
+  isOpen: true,
+  type: "",
+  visible: true
+}, {
+  name: "腾讯云WAF拨测",
+  ftname: "騰訊雲WAF撥測",
+  type: "boce",
+  desc: "预设",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "ip_scope",
+          op: "belong",
+          value: []
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+}, {
+  id: "idc",
+  name: "IDC-IP库",
+  ftname: "IDC-IP库",
+  timestamp: 0,
+  action: "monitor",
+  isOpen: true,
+  type: "",
+  visible: true
+},
+{
+  name: "IDC-IP 腾讯云",
+  ftname: "IDC-IP 騰訊雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          "key": "ip_type",
+          "op": "contains",
+          "value": "idc"
+      },
+      {
+          "key": "ip_owner",
+          "op": "contains",
+          "value": "tencent.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP 阿里云",
+  ftname: "IDC-IP 阿里雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "阿里云"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP 华为云",
+  ftname: "IDC-IP 華為雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "huawei.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP 金山云",
+  ftname: "IDC-IP 金山雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "ksyun.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+}, {
+  name: "IDC-IP UCloud",
+  ftname: "IDC-IP UCloud",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "ucloud.cn"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP 百度云",
+  ftname: "IDC-IP 百度雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "baidu.com"
+
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+
+{
+  name: "IDC-IP 京东云",
+  ftname: "IDC-IP 京東雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "pubyun.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP 青云",
+  ftname: "IDC-IP 青雲",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "qingcloud.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP Aws",
+  ftname: "IDC-IP Aws",
+  type: "idc",
+  desc: "预设",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "amazon.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP Azure",
+  ftname: "IDC-IP Azure",
+  desc: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "microsoft.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+},
+{
+  name: "IDC-IP Google",
+  ftname: "IDC-IP Google",
+  des: "预设",
+  type: "idc",
+  rule_type: 2,
+  addition_arg: "none",
+  action: "monitor",
+
+  rule: [
+      {
+          key: "ip_type",
+          op: "contains",
+          value: "idc"
+      },
+      {
+          key: "ip_owner",
+          op: "contains",
+          value: "cloud.google.com"
+      }
+  ],
+  on_off: "off",
+  valid_time: 0,
+  timestamp: 0,
+  visible: true
+}];

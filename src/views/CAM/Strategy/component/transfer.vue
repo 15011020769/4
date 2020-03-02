@@ -11,7 +11,18 @@
           tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading || loading1"
           :empty-text="$t('CAM.strategy.zwsj')">
           <el-table-column type="selection" prop="id" :selectable="checkboxT"></el-table-column>
-          <el-table-column prop="name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip>
+            <template  slot-scope="scope">
+              <el-popover v-if="scope.row.status === 1" trigger="hover" placement="top">
+                <p v-if="commandObj.value == 'user'">{{$t('CAM.strategy.dqyhybgl')}}</p>
+                <p v-if="commandObj.value == 'group'">{{$t('CAM.strategy.dqyhzybgl')}}</p>
+                <div slot="reference" class="name-wrapper">
+                  <p>{{scope.row.name}}</p>
+                </div>
+              </el-popover>
+              <p v-else>{{scope.row.name}}</p> 
+            </template>
+          </el-table-column>
           <el-table-column prop="type" :label="$t('CAM.strategy.switch')" width="200">
             <template slot="header">
               <el-dropdown trigger="click" @command="handleCommand" size="mini">
@@ -132,7 +143,10 @@
           this.entitiesForPolicy = []
           this.getAttachPolicys(n)
         }
-      }
+      },
+      userArr(val) {
+        this.getUserList();
+      },
     },
     methods: {
       // 获取策略关联的实体列表
@@ -157,12 +171,12 @@
               this.entitiesForPolicy.forEach(item => {
                 if (item.RelatedType == 1) {
                   userArr.push(item);
-                } else {
+                } else if(item.RelatedType == 2) {
                   groupArr.push(item);
                 }
               })
               this.userArr = this.userArr.concat(userArr);
-              this.groupArr = this.userArr.concat(groupArr);
+              this.groupArr = this.groupArr.concat(groupArr);
               this.loading1 = false
             }
           }
@@ -181,7 +195,7 @@
       });
     },
       checkboxT(row, index) {
-        if (row.status == 0) {
+        if (row.status == 1) {
           return false;
         } else {
           return true;
@@ -209,10 +223,10 @@
               item.id = item.Uin;
             });
             this.transfer_data.forEach(item => {
-              item.status = 1;
+              item.status = 0;
               this.userArr.forEach(val => {
-                if (val.Name == item.name) {
-                  item.status = 0;
+                if (val.Uin == item.id) {
+                  item.status = 1;
                 }
               });
             });
@@ -249,10 +263,10 @@
               item.id = item.GroupId;
             });
             this.transfer_data.forEach(item => {
-              item.status = 1;
+              item.status = 0;
               this.groupArr.forEach(val => {
-                if (val.Name == item.name) {
-                  item.status = 0;
+                if (val.Id == item.id) {
+                  item.status = 1;
                 }
               });
             });
@@ -518,7 +532,7 @@
 
 </script>
 <style lang="scss" scoped>
-  .Cam >>> .el-input__clear {
+  ::v-deep .el-input__clear {
     position: absolute;
     right: calc(100% + 2px);
   }

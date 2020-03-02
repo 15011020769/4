@@ -19,9 +19,9 @@
             ></el-option>
           </el-select>
           <el-button-group class="buttonDateCheck">
-            <el-button @click="checkTime(1)" :class="thisType=='1'?'addStyleBtn':''">今天</el-button>
-            <el-button @click="checkTime(2)" :class="thisType=='2'?'addStyleBtn':''">昨天</el-button>
-            <el-button @click="checkTime(3)" :class="thisType=='3'?'addStyleBtn':''">近7天</el-button>
+            <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">今天</el-button>
+            <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">昨天</el-button>
+            <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">近7天</el-button>
           </el-button-group>
           <el-date-picker
             v-model="dateTimeValue"
@@ -92,11 +92,11 @@ export default {
   data() {
     return {
       options: [], //默认下拉选项
-      dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
+      dateTimeValue: [moment().startOf("day"), moment().endOf("day")], //日期绑定
       selectValue: "", //域名下拉菜单
-      thisType: "1", //按钮默认选中
-      endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
-      startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
+      selBtn: 1, // 默认选中今天按钮
+      endTime: moment().endOf("days").format("YYYY-MM-DD HH:mm:ss"),
+      startTime: moment().startOf("days").format("YYYY-MM-DD HH:mm:ss"),
       host: "",
       dialogDownloadVisible: false,
       dialogSetVisible: false,
@@ -207,29 +207,26 @@ export default {
       this.dialogDownloadVisible = false
     },
     //时间点击事件
-    checkTime(type) {
-      this.thisType = type;
-      var ipt1 = document.querySelector(".dateTimeValue input:nth-child(2)");
-      var ipt2 = document.querySelector(".dateTimeValue input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
-      if (type == "1") {
-        start.setTime(start.getTime());
-        end.setTime(end.getTime());
-      } else if (type == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
-        end.setTime(end.getTime() - 3600 * 1000 * 24);
-      } else if (type == "3") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        end.setTime(end.getTime());
+    checkTime(val) {
+      let times = [moment().startOf("day"), moment()] // 默认今天
+      this.selBtn = val
+      switch (val) {
+        case 2:
+          times = [moment().subtract(24, "hours").startOf("day"), moment().subtract(24, "hours")]
+          break;
+        case 3:
+          times = [moment().subtract(7, "days").startOf("day"), moment()]
+          break;
+        default:
+          break;
       }
-      ipt1.value = moment(start).format("YYYY-MM-DD");
-      ipt2.value = moment(end).format("YYYY-MM-DD");
-      this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      times[1] = times[1].endOf('day')
+      this.dateTimeValue = times
+      this.startTime = moment(this.dateTimeValue[0]).format("YYYY-MM-DD HH:mm:ss")
+      this.endTime = moment(this.dateTimeValue[1]).format("YYYY-MM-DD HH:mm:ss")
     },
     changeTimeValue() {
-      this.thisType = 0
+      this.selBtn = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
     },

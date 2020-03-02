@@ -160,5 +160,7 @@ export const TKE_DESCRIBELISTENERS = 'clb2/DescribeListeners'
 // ingress新建 - 查询价格
 export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
 
-// ingress新建 - 描述平衡器
+// ingress新建 - 获取负载均衡器
 export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'
+
+export const GetTkeDataResult = 'tsm2/GetTkeDataResult'

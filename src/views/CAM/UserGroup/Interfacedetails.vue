@@ -1015,7 +1015,7 @@ export default {
   padding-top: 0;
   font-size: 12px;
 }
-.wrap >>> .el-input__clear {
+::v-deep .el-input__clear {
   position: absolute;
   right: calc(100% + 2px);
 }

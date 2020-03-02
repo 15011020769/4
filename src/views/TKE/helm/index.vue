@@ -19,7 +19,19 @@
     </HeadCom>
     <div class="wrap">
       <div class="wrap-bnt">
-        <el-button type="primary"  size="small" @click="jump()" :disabled="flag">新建</el-button>
+        <el-button type="primary" size="mini" @click="jump()" :disabled="flagSE">新建</el-button>
+      </div>
+       <div class="room-center" v-show="flagSE">
+         <div class="explain" v-show="flagAgin == 1 ? true:false">
+            <p>该集群暂未开通Helm应用，开通需在集群内安装Helm tiller组件，需要占用一定资源，如需使用请<a @click="centerDialogVisible3 = true" style="cursor:pointer">申请开通</a></p>
+          </div>
+          <div class="explain" v-show="flagAgin == 2 ? true:false">
+            <p>开通失败，请确认集群保留足够的空闲资源，并<a @click="centerDialogVisible3 = true" style="cursor:pointer">重新开通</a></p>
+          </div>
+          <div class="explain" v-show="flagAgin == 3 ? true:false">
+            <p> 正在校验Helm应用管理功能<i class="el-icon-loading"></i></p>
+          </div>
+         
       </div>
       <div class="helm-table">
         <template>
@@ -56,7 +68,7 @@
             <el-table-column label="操作" max-width="10%">
                <template slot-scope="scope">
                 <el-button @click="handleClick(scope.row)" type="text" size="small">更新应用</el-button>
-                <el-button type="text" size="small">删除</el-button>
+                <el-button @click="handleDelete(scope.row)"  type="text" size="small">删除</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -73,7 +85,7 @@
           <p>注意，若您重新填写了任意变量，将覆盖应用下所有自定义变量。不填写变量时，将会使用上次填写的变量更新应用。
           </p>
         </div>
-        <el-form  class="tke-form m0" :model="ruleForm":rules="rules" ref="ruleForm" label-position='left' label-width="100px" size="mini">
+        <el-form  class="tke-form m0" :model="ruleForm" ref="ruleForm" label-position='left' label-width="100px" size="mini">
             <el-form-item label="应用名">
                 {{ruleForm.name}}
             </el-form-item>
@@ -125,17 +137,37 @@
       </span>
     </el-dialog>
     <!-- 删除 -->
-    <!-- <el-dialog
-      :title="您确定要删除吗"+ruleForm.name
+    <el-dialog
+      :title="'您确定要删除吗'+ruleForm.name"
       :visible.sync="centerDialogVisible2"
-      width="30%"
-      center>
+      width="40%">
       <span>删除应用将删除该应用创建的所有K8S资源，删除后所有数据将被清除且不可恢复,请提前备份数据。</span>
       <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="deleteRow()">确 定</el-button>
         <el-button @click="centerDialogVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="centerDialogVisible2 = false">确 定</el-button>
       </span>
-    </el-dialog> -->
+    </el-dialog>
+    <!-- 重新开通弹窗 -->
+    <el-dialog
+      title="集群Helm应用管理功能"
+      :visible.sync="centerDialogVisible3"
+      width="40%"
+      center>
+      <div>
+        <p>新建Helm应用需要先开通Helm应用，当前所选集群暂未开通。</p>
+        <p>开通Helm应用功能：</p>
+        <p>1.将在集群内安装Helm tiller组件</p>
+        <p>2.将占用集群<span style="color: #ff9d00"> 0.28核 CPU 180Mi 内存</span> 的资源</p>
+      </div>
+      <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 1">
+        <el-button type="primary" @click="ApplyOpen()">确 定</el-button>
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+      </span>
+      <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 2">
+        <el-button type="primary" @click="openContect()">确 定</el-button>
+        <el-button @click="centerDialogVisible = false">取 消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -161,9 +193,13 @@ export default {
       options:[],
       value:'',
       flag:false,
+      flagSE:true,
+      flagAgin:"",
+      flagLast:false,
       loadShow:true,
       centerDialogVisible:false,
       centerDialogVisible2:false,
+      centerDialogVisible3:false,
       ruleForm:{
           name:'',
           chart:'',
@@ -202,10 +238,10 @@ export default {
       this.ruleForm.name = row.name
       this.ruleForm.chart = row.chart_metadata.name 
     },
-    // handleDelete(row){
-    //   this.centerDialogVisible2 = true
-    //   this.ruleForm.name = row.name
-    // },
+    handleDelete(row){
+      this.centerDialogVisible2 = true
+      this.ruleForm.name = row.name
+    },
     getUpdate(){
       this.loadShow = true
       this.setHelm()
@@ -217,7 +253,6 @@ export default {
       var index = this.domains.indexOf(item)
       if (index !== -1) {
         this.domains.splice(index, 1)
-       
       }
       if(this.domains.length == 0){
         this.flag = false
@@ -230,6 +265,40 @@ export default {
         valueKey: '',
       })
     },
+    // 申请开通
+    ApplyOpen(){
+        console.log(2)
+        this.centerDialogVisible3 = false
+        this.flagAgin = 3
+        this.getPost()
+        var timeId = setInterval(()=>{
+          if(this.status != "running"){
+              this.getFlag(timeId)
+              if(this.status== "running" || this.status== "failed"){
+                  this.getHelmList()
+                  clearInterval(timeId)
+              }
+          }
+        },4000)
+    },
+    // 重新开通
+    openContect(){
+      console.log(3)
+      this.centerDialogVisible3 = false
+      var time = 0
+      this.flagAgin = 3
+      if(this.status != "running"){
+        var timeId = setInterval(()=>{
+          this.getFlag(timeId)
+          time ++
+          if( time > 4 || this.status== "running"  || this.$route.path!='/helm'){
+            this.getHelmList()
+            clearInterval(timeId)
+            // this.flagAgin = 2
+          }
+        },4000)
+      }
+    },
     getColony () { // 获取集群数据
       const param = {
         Version: "2018-05-25"
@@ -239,7 +308,8 @@ export default {
           // console.log(res)
           this.options = res.Response.Clusters
           this.value = res.Response.Clusters[0].ClusterId
-          this.getHelmList()
+          // this.getHelmList()
+          this.getFlag()
           console.log(this.value)
         } else {
           this.$message({
@@ -264,7 +334,54 @@ export default {
           if (res.Response.Error == undefined) {
             this.tableData=JSON.parse(res.Response.ResponseBody).releases
             this.loadShow = false
+            this.flagSE = false
+            // clearInterval(timeId)
+            // this.flag = false
             console.log(this.tableData)
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+            })
+            this.tableData=[]
+            this.loadShow = false
+          }
+        })
+    },
+    // 判断是否开通
+    getFlag(timeId){
+      this.tableData=[]
+        const param = {
+         ClusterName: this.value,
+         Method: "GET",
+         Path: "/apis/platform.tke/v1/helms?fieldSelector=spec.clusterName="+this.value,
+         Version: "2018-05-25"
+        }
+        this.axios.post(POINT_REQUEST, param).then(res => {
+          // console.log(res)
+          if (res.Response.Error == undefined) {
+            console.log(JSON.parse(res.Response.ResponseBody))
+            if(JSON.parse(res.Response.ResponseBody).items.length){
+                this.status = JSON.parse(res.Response.ResponseBody).items[0].status.phase
+                 if(this.status == "running"){
+                    clearInterval(timeId)
+                    this.getHelmList()
+                  } else if(this.status == "checking"){
+                    this.flagAgin = 3
+                  } else {
+                    this.flagAgin = 2
+                    this.loadShow = false
+                  }
+            } else {
+              this.flagAgin = 1
+              this.status =""
+              this.loadShow = false
+              this.tableData=[]
+            }
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -288,7 +405,9 @@ export default {
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
       }else if(this.domains.length > 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
-      } else {
+      }else if(this.domains.length = 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
+         var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass}
+      }else {
         var RequestBodyAll = {"chart_url":this.ruleForm.address}
       }
       const param = {
@@ -318,6 +437,59 @@ export default {
           }
         })
     },
+    // 申请开通
+    getPost(){
+      const param = {
+          ClusterName: this.value,
+          Method: "POST",
+          Path: "/apis/platform.tke/v1/helms",
+          RequestBody: {"kind":"Helm","apiVersion":"platform.tke/v1","metadata":{"generateName":"hm"},"spec":{"clusterName": this.value}},
+          Version: "2018-05-25"
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error == undefined) {
+            console.log(JSON.parse(res.Response.ResponseBody))
+            this.flagAgin = 3
+            this.tableData=[]
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0,
+            })
+            this.loadShow = false
+          }
+        })
+    },
+    // 删除单行
+    deleteRow(){
+      this.centerDialogVisible2 = false
+      const param = {
+          ClusterName: this.value,
+          Method: "DELETE",
+          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/"+this.ruleForm.name+"/json?purge=true",
+          Version: "2018-05-25"
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error == undefined) {
+          console.log(JSON.parse(res.Response.ResponseBody))
+          this.getFlag()
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0,
+            })
+            this.loadShow = false
+          }
+        })
+    },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
         console.log(data.data)
@@ -333,8 +505,12 @@ export default {
       // this.GetTabularData()
     },
     setCusId(){
+      this.flagSE = true
+      // this.flagAgin = 1
+      this.flagAgin = ""
       this.loadShow = true
-      this.getHelmList()
+      this.tableData=[]
+      this.getFlag()
       console.log(this.value) 
     },
     jump () {
@@ -380,19 +556,19 @@ export default {
     width: 100%;
     padding: 20px 0 20px 20px;
     box-sizing: border-box;
-    button {
-      height: 30px;
-      padding: 0 20px;
-      background-color: #006eff;
-      color: #fff;
-      border: 1px solid #006eff;
-      line-height: 30px;
-      text-align: center;
-      outline: 0 none;
-      box-sizing: border-box;
-      text-decoration: none;
-      font-size: 12px;
-    }
+    // button {
+    //   height: 30px;
+    //   padding: 0 20px;
+    //   background-color: #006eff;
+    //   color: #fff;
+    //   border: 1px solid #006eff;
+    //   line-height: 30px;
+    //   text-align: center;
+    //   outline: 0 none;
+    //   box-sizing: border-box;
+    //   text-decoration: none;
+    //   font-size: 12px;
+    // }
   }
   .helm-titleWrap {
     width: 100%;
@@ -463,5 +639,21 @@ export default {
 }
 .margin-length{
   padding:10px 0;
+}
+.room-center {
+  // margin-top: 20px;
+  padding:0px 20px 20px 20px;
+  .explain {
+    // padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #ffd18b;
+    background:  #fff4e3;
+    p {
+      width:100%;
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
 }
 </style>

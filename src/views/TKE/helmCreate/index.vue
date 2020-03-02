@@ -41,12 +41,14 @@
                 </el-radio-group>
                  <div v-show="!isCollapse" class="user-room">
                       <div class="demo-ruleForm">
-                        <el-form-item label="用户名" prop="nameTwo" class="margin-length">
-                            <el-input type="text" v-model="ruleForm.nameTwo" size="mini" style="width:150px;"></el-input>
-                        </el-form-item>
-                          <el-form-item label="密码" prop="pass" class="margin-length">
-                            <el-input type="password" v-model="ruleForm.pass" size="mini" style="width:150px;"></el-input>
-                        </el-form-item>
+                        <el-form :model="rulePass" :rules="rules" ref="rulePass" label-width="100px" size="mini" label-position='left'  class="tke-form">
+                          <el-form-item label="用户名" prop="nameTwo" class="margin-length">
+                              <el-input type="text" v-model="rulePass.nameTwo" size="mini" style="width:150px;"></el-input>
+                          </el-form-item>
+                            <el-form-item label="密码" prop="pass" class="margin-length">
+                              <el-input type="password" v-model="rulePass.pass" size="mini" style="width:150px;"></el-input>
+                          </el-form-item>
+                        </el-form>
                       </div>
                     <!-- </el-form> -->
                   </div>
@@ -69,7 +71,7 @@
                 <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">新增变量</el-link>
               </el-form-item>
               <hr class="hr-mod">
-              <el-button type="primary" size="mini" @click="submitForm('ruleForm')">完成</el-button>
+              <el-button type="primary" size="mini" @click="submitForm('ruleForm','rulePass')">完成</el-button>
               <el-button size="mini" @click="jump()">取消</el-button>
             </el-form>
         </el-card> 
@@ -94,22 +96,31 @@ export default {
       }
     }
     var validatePass2 = (rule, value, callback) => {
+
       if (value === '') {
         callback(new Error('请输入用户名'))
-      } else {
+      }  else {
         callback()
       }
     }
     var validatePass3 = (rule, value, callback) => {
+      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
       if (value === '') {
         callback(new Error('请输入应用户名'))
-      } else {
+      } else if(!version.test(value)){
+        callback(new Error('格式不正确'))
+      } else if(value.length>63){
+        callback(new Error('长度不能超过63个字符'))
+      }else {
         callback()
       }
     }
      var validatePass4 = (rule, value, callback) => {
+      const version2 = /^http[\d\D]*tgz$/
       if (value === '') {
         callback(new Error('请输入Chart_url'))
+      } else if(!version2.test(value)){
+        callback(new Error('格式不正确'))
       } else {
         callback()
       }
@@ -124,9 +135,11 @@ export default {
         colony:"",
         local:"",
         name:"",// 应用名
+        address:""
+      },
+      rulePass:{
         pass: "",
         nameTwo: "",
-        address:""
       },
       domains: [],
       flag: false,
@@ -191,12 +204,9 @@ export default {
       }
     },
     // 确定
-    submitForm(formName) {
+    submitForm(formName,formPass) {
         this.$refs[formName].validate((valid) => {
-          if(this.isCollapse){
-            valid = !valid
-          }
-          if (valid) {
+          if(valid && this.isCollapse){
             this.setHelm()
             this.$router.push({
               name: 'helm',
@@ -204,11 +214,24 @@ export default {
                 clusterId:this.$route.query.clusterId
               }
             })
+          }else if (valid && !this.isCollapse) {
+            this.$refs[formPass].validate((validTwo) => {
+              console.log(validTwo)
+                if(validTwo){
+                  this.setHelm()
+                    this.$router.push({
+                      name: 'helm',
+                      query: {
+                        clusterId:this.$route.query.clusterId
+                      }
+                  })
+                }
+            })
           } else {
             console.log('error submit!!');
             return false;
           }
-        });
+        })
       },
       jump(){
         this.$router.push({
@@ -253,11 +276,13 @@ export default {
       let nmAll = this.domains.map(item=>{
         return item.value+"="+item.valueKey
       })
-      if(this.domains.length > 0 && this.ruleForm.nameTwo=="" && this.ruleForm.pass==""){
+      if(this.domains.length > 0 && this.rulePass.nameTwo=="" && this.rulePass.pass==""){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
-      }else if(this.domains.length > 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
-         var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","username":this.ruleForm.nameTwo,"password":this.ruleForm.pass}
-      } else {
+      }else if(this.domains.length = 0 && this.rulePass.nameTwo && this.rulePass.pass){
+         var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","username":this.rulePass.nameTwo,"password":this.rulePass.pass}
+      }else if(this.domains.length > 0 && this.rulePass.nameTwo && this.rulePass.pass){
+         var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","username":this.rulePass.nameTwo,"password":this.rulePass.pass,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
+      }else {
         var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other"}
       }
       const param = {

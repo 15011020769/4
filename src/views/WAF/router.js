@@ -179,6 +179,15 @@ const router = new Router({
       }
     },
     {
+      path: '/botDetail/ucb', // bot详情
+      name: 'ucb',
+      component: () => import(/* webpackChunkName: "ipMan" */ './botMan/component/botdetail/module'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
       path: '/toBuy', // bot详情
       name: 'toBuy',
       component: () => import(/* webpackChunkName: "ipMan" */ './buy/toBuy.vue'),

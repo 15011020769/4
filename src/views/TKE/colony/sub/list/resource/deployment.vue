@@ -104,7 +104,7 @@
                   <span class="tke-text-link">编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
-                  <span class="tke-text-link" @click="deleteDeployment(scope.row)">删除</span>
+                  <el-button type="text" :disabled="nameSpaceName === 'kube-system'?true:false" @click="deleteDeployment(scope.row)">删除</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>

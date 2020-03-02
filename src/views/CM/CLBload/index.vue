@@ -17,7 +17,8 @@
         <el-table-column prop :label="$t('CVM.clBload.zjm') " width="120">
           <template slot-scope="scope">
             <p v-for="i in scope.row.LoadBalancerVips">
-              <a @click="jump(scope.row.LoadBalancerId,i)" style="cursor:pointer;">{{scope.row.LoadBalancerId}}</a>
+              <a @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.VpcId)"
+                style="cursor:pointer;">{{scope.row.LoadBalancerId}}</a>
             </p>
             {{ scope.row.LoadBalancerName}}
           </template>
@@ -25,7 +26,8 @@
         <el-table-column prop :label="$t('CVM.clBload.jk')" width="80">
           <template slot-scope="scope">
             <div v-for="i in scope.row.LoadBalancerVips">
-              <div class="a" @click="jump(scope.row.LoadBalancerId,i)"></div>
+              <div class="a" @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.VpcId)">
+              </div>
             </div>
           </template>
         </el-table-column>
@@ -253,12 +255,14 @@
         this.GetTabularData();
       },
       //跳转
-      jump(id, vip) {
+      jump(id, vip, Status, VpcId) {
         this.$router.push({
           name: "CLBloaddetails",
           query: {
             id,
-            vip
+            vip,
+            Status,
+            VpcId
           }
         });
       }

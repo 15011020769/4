@@ -62,9 +62,11 @@ export default {
           // 使用函数模板  传入的数据值 -> value: number | Array
           formatter: function (val) {
             if (!val.data) {
-              return val.name + ': ' + 0
+              // return val.name + ': ' + 0
+              return 0
             }
-            return val.data.name + ': ' + val.data.value
+            // return val.data.name + ': ' + val.data.value
+            return val.data.value
           }
         },
         // 视觉映射组件

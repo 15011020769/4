@@ -20,12 +20,10 @@
           <div style="overflow: visible; max-width: 550px;">
             <el-table
               :data="secretsList"
-              
               style="width: 100%">
               <el-table-column
-                prop="name"
                 label="名称"
-                 width="300"
+                width="300"
                 >
                 <template slot-scope="scope">
                   <span>{{scope.row.metadata.name}}</span>

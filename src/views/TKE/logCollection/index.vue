@@ -310,10 +310,10 @@
                 this.$router.push({
                 path: '/logCreate',
                   query: {
-                   clusterId: this.value
+                   clusterId: this.value2
                  }
                  })
-             sessionStorage.setItem('clusterId', this.value)
+             sessionStorage.setItem('clusterId', this.value2)
             }
          })
       },
@@ -411,6 +411,8 @@
             this.$message({
               message: '删除成功',
               type: "success",
+               duration: 0,
+              showClose: true
             });
             this.findList()
           }

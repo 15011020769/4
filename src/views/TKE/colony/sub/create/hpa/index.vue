@@ -296,7 +296,12 @@
 
          if (this.hpa.name == "") {
           this.$refs.form.validateField("name");
-          this.$message("名称不能為空");
+          this.$message({
+            message:"名称不能為空",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
           return false;
         }
          let arr=[];
@@ -534,7 +539,12 @@
          }
 
          if(this.hpa.value3==''||this.hpa.value3==undefined){
-             this.$message("关联工作负载不能为空");
+            this.$message({
+            message:"关联工作负载不能为空",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
             return false
          }
 
@@ -542,12 +552,22 @@
              return v.valueKey==''||v.valueKey==undefined
          })
          if(arr2.length!=0){
-             this.$message("变量值不能为空");
+            this.$message({
+            message:"变量值不能为空",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
              return  false
          }
 
          if(this.hpa.vLeft>this.hpa.vRight||this.hpa.vLeft==this.hpa.vRight||this.hpa.vLeft==''||this.hpa.vLeft==''){
-             this.$message("最小副本数不能大于等于最大副本数");
+            this.$message({
+            message:"最小副本数不能大于等于最大副本数",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
             return false
          }
 
@@ -572,6 +592,12 @@
          this.axios.post(TKE_COLONY_QUERY, params2).then(res=>{
             console.log(res)
              if (res.Response.Error == undefined) {
+                this.$message({
+                type: "success",
+                message: "新建成功",
+                duration: 0,
+                showClose: true
+              });
                 this.$router.push({
                    name:'hpaDetailEvent',
                    query:{

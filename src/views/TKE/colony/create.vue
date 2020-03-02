@@ -298,9 +298,9 @@
               >
                 <el-option
                   v-for="group in colony.OSoptions"
-                  :key="group.Alias"
+                  :key="group.ImageId"
                   :label="group.Alias"
-                  :value="group.Alias"
+                  :value="group.ImageId"
                 >
                 </el-option>
               </el-select>
@@ -360,7 +360,7 @@
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
             <p>
-              {{ colony.OSvalue }}
+              {{ dispose.OSvalue }}
             </p>
           </div>
           <el-form-item label="节点来源">
@@ -422,14 +422,17 @@
               class="tke-second-radio-time"
             >
               <div class="tke-second-radio-btn">
-                <el-radio-group v-model="colonySecond.buyTime">
+                <el-radio-group
+                  v-model="colonySecond.buyTime"
+                  @change="BuyTime"
+                >
                   <el-radio-button label="1">1个月</el-radio-button>
                   <el-radio-button label="2">2个月</el-radio-button>
                   <el-radio-button label="3">3个月</el-radio-button>
                   <el-radio-button label="4">6个月</el-radio-button>
-                  <el-radio-button label="5">1年</el-radio-button>
-                  <el-radio-button label="6">2年</el-radio-button>
-                  <el-radio-button label="7">3年</el-radio-button>
+                  <el-radio-button label="12">1年</el-radio-button>
+                  <el-radio-button label="24">2年</el-radio-button>
+                  <el-radio-button label="36">3年</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -442,6 +445,7 @@
             </el-form-item>
             <div
               class="tke-second-worker"
+              style="margin-bottom:10px;"
               v-if="
                 colonySecond.workerShow === true && colonySecond.source == 1
               "
@@ -767,90 +771,40 @@
                               >
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
-                                  @change="BuyDataDisk"
+                                  @change="BuyDataDisk(index, 2)"
                                   >购买数据盘</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
-                                <div
-                                  class="tke-second-worker-popover-data-bg"
-                                  v-for="(x, i) in colonySecond.buyDataDiskArr"
-                                  :key="i"
-                                >
+                                <div class="tke-second-worker-popover-data-bg">
                                   <div>
                                     <div class="box">
                                       <p>云盘设置</p>
                                       <div>
                                         <el-select
-                                          v-model="x.dataDiskVal"
+                                          v-model="item.dataDiskVal"
                                           placeholder="请选择"
                                         >
                                           <el-option
-                                            v-for="item in colonySecond.dataDiskOptions"
-                                            :key="item.value"
-                                            :label="item.label"
-                                            :value="item.value"
+                                            v-for="j in colonySecond.dataDiskOptions"
+                                            :key="j.value"
+                                            :label="j.label"
+                                            :value="j.value"
                                           >
                                           </el-option>
                                         </el-select>
                                         <el-input-number
-                                          v-model="x.dataDiskNum"
+                                          v-model="item.dataDiskNum"
                                           :min="10"
                                           :max="16000"
                                           :step="10"
                                         ></el-input-number>
                                         <span>GB</span>
-                                        <el-checkbox
-                                          v-model="x.formatMount"
-                                          class="format-and-mount"
-                                          >格式化并挂载</el-checkbox
-                                        >
                                         <p>范围：10~16000，步长：10</p>
-                                      </div>
-                                      <p
-                                        style="margin-top:16px;"
-                                        v-if="x.formatMount"
-                                      >
-                                        格式化设置
-                                      </p>
-                                      <div
-                                        style="margin-top:16px;"
-                                        v-if="x.formatMount"
-                                      >
-                                        <el-select
-                                          v-model="x.latticeSetVal"
-                                          placeholder="请选择"
-                                        >
-                                          <el-option
-                                            v-for="x in colonySecond.latticeSetOpt"
-                                            :key="x.value"
-                                            :label="x.label"
-                                            :value="x.value"
-                                          >
-                                          </el-option>
-                                        </el-select>
-                                        <el-input
-                                          v-model="x.setValue"
-                                        ></el-input>
                                       </div>
                                     </div>
                                   </div>
-                                  <i
-                                    class="el-icon-error ml5"
-                                    style="margin-top:10px;"
-                                    @click="deleteDataDisk(i)"
-                                  ></i>
                                 </div>
-                              </div>
-                              <div
-                                class="add-data-disk"
-                                v-if="
-                                  item.buyDataDisk &&
-                                    colonySecond.buyDataDiskArr.length != 0
-                                "
-                                @click="AddDataDisk()"
-                              >
-                                添加数据盘
                               </div>
                               <div class="btn">
                                 <el-button @click="DataDiskSure(index, 2)"
@@ -965,6 +919,21 @@
                 </div>
               </div>
             </div>
+            <el-form-item
+              label="Master数据盘挂载"
+              v-if="colonySecond.masterDataDiskMountShow"
+              class="tke-second-checkbox"
+            >
+              <el-checkbox v-model="colonySecond.masterDataDiskMount"
+                >自动格式化 Master
+                节点数据盘成ext4，仅对拥有一块数据盘的节点生效</el-checkbox
+              >
+              <el-input
+                :value="colonySecond.masterDataDiskMountVal"
+                placeholder="请输入内容"
+                v-if="colonySecond.masterDataDiskMount"
+              ></el-input>
+            </el-form-item>
             <div
               class="tke-second-worker"
               v-if="colonySecond.source == 2 && colonySecond.master == 2"
@@ -1062,6 +1031,7 @@
                 </div>
               </div>
             </div>
+
             <div
               class="tke-second-worker"
               v-if="colonySecond.sourceShow && colonySecond.worker != 2"
@@ -1388,14 +1358,14 @@
                               >
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
-                                  @change="BuyDataDisk"
+                                  @change="BuyDataDisk(index, 1)"
                                   >购买数据盘</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
                                 <div
                                   class="tke-second-worker-popover-data-bg"
-                                  v-for="(x, i) in colonySecond.buyDataDiskArr"
+                                  v-for="(x, i) in item.buyDataDiskArr"
                                   :key="i"
                                 >
                                   <div>
@@ -1467,9 +1437,9 @@
                                 class="add-data-disk"
                                 v-if="
                                   item.buyDataDisk &&
-                                    colonySecond.buyDataDiskArr.length != 0
+                                    item.buyDataDiskArr.length != 0
                                 "
-                                @click="AddDataDisk()"
+                                @click="AddDataDisk(index)"
                               >
                                 添加数据盘
                               </div>
@@ -1695,13 +1665,17 @@
             </div>
             <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
               <div class="tke-second-cost">
-                <span class="tke-second-cost-num">{{Math.round(colonySecond.allocationCost)}}</span
+                <span class="tke-second-cost-num">{{
+                  colonySecond.allocationCost
+                }}</span
                 ><span class="tke-second-cost-h">元/小时</span
                 ><span class="tke-second-cost-t">(配置费用)</span>
                 <i>|</i>
-                <span class="tke-second-cost-num">{{Math.round(colonySecond.networkCost)}}</span
+                <span class="tke-second-cost-num">{{
+                  colonySecond.networkCost
+                }}</span
                 ><span class="tke-second-cost-h">元/小时</span
-                ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+                ><span class="tke-second-cost-w"> (网络费用)</span>
               </div>
             </el-form-item>
           </div>
@@ -1709,25 +1683,31 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="secondPrev">上一步</el-button>
-          <el-button
-            size="small"
-            type="primary"
-            @click="secondNext"
-            v-if="colonySecond.secondNextShow"
-            >下一步</el-button
-          >
-          <el-button size="small" disabled v-if="!colonySecond.secondNextShow"
-            >下一步</el-button
-          >
+          <p v-if="!colonySecond.completeBtn">
+            <el-button
+              size="small"
+              type="primary"
+              @click="secondNext"
+              v-if="colonySecond.secondNextShow"
+              >下一步</el-button
+            >
+            <el-button size="small" disabled v-if="!colonySecond.secondNextShow"
+              >下一步</el-button
+            >
+          </p>
           <span class="footer-tips" v-if="colonySecond.workerTips">
             请选择 Worker 节点
           </span>
           <span class="footer-tips" v-if="colonySecond.masterTips">
             Master 节点最少选择3台
           </span>
-          <span size="small" type="primary" v-if="colonySecond.completeBtn">
+          <el-button
+            size="small"
+            type="primary"
+            v-if="colonySecond.completeBtn"
+          >
             完成
-          </span>
+          </el-button>
         </div>
       </div>
       <!-- 第三步 云服务器配置 -->
@@ -1754,13 +1734,13 @@
           <el-form-item label="容器网络">
             <p>{{ dispose.container }}</p>
           </el-form-item>
-          <!-- <el-form-item label="计费模式">
-            <p>{{ dispose.container }}</p>
-          </el-form-item> -->
+          <el-form-item label="计费模式">
+            <p>{{ colonySecond.charging == 1 ? "按量计费" : "包年包月" }}</p>
+          </el-form-item>
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
             <p>
-              {{ colony.OSvalue }}
+              {{ dispose.OSvalue }}
             </p>
           </div>
           <el-form-item label="容器目录">
@@ -1776,32 +1756,35 @@
           <div class="tke-third-tips">
             <p>安全组<i class="el-icon-info"></i></p>
             <div class="input-box">
-              <p>
+              <p v-if="colonyThird.defaultSafeBox">
                 <el-input value="新建并绑定默认安全组" disabled></el-input>
-                <!-- <i class="el-icon-error" v-if="colonyThird.safeArr.length > 0"></i> -->
+                <i
+                  class="el-icon-error"
+                  v-if="colonyThird.defaultSafe"
+                  @click="colonyThird.defaultSafeBox = false"
+                ></i>
               </p>
-              <div
-                v-for="(item, index) in colonyThird.safeArr"
-                v-if="colonyThird.safeArr.length > 0"
-              >
-                <div>
-                  <el-select
-                    placeholder="请选择安全组"
-                    v-model="item.securityGroupSel"
-                  >
-                    <el-option
-                      v-for="x in securityGroupOpt"
-                      :key="x.value"
-                      :label="x.label"
-                      :value="x.value"
+              <div v-if="colonyThird.safeArr.length > 0">
+                <div v-for="(item, index) in colonyThird.safeArr" :key="index">
+                  <div>
+                    <el-select
+                      placeholder="请选择安全组"
+                      v-model="item.securityGroupSel"
                     >
-                    </el-option>
-                  </el-select>
-                  <i class="el-icon-refresh ml5"></i>
-                  <i
-                    class="el-icon-error ml5"
-                    @click="deleteExceptPrice(index)"
-                  ></i>
+                      <el-option
+                        v-for="x in securityGroupOpt"
+                        :key="x.value"
+                        :label="x.label"
+                        :value="x.value"
+                      >
+                      </el-option>
+                    </el-select>
+                    <i class="el-icon-refresh ml5"></i>
+                    <i
+                      class="el-icon-error ml5"
+                      @click="deleteExceptPrice(index)"
+                    ></i>
+                  </div>
                 </div>
               </div>
               <p v-if="colonyThird.safeArr.length === 0">
@@ -1865,7 +1848,7 @@
               [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
             </p>
           </el-form-item>
-          <el-form-item
+          <!-- <el-form-item
             label="确认密码"
             v-if="colonyThird.three"
             class="password"
@@ -1875,7 +1858,7 @@
               v-model="colonyThird.confirmPassword"
               show-password
             ></el-input>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
               <el-checkbox v-model="colonyThird.safetyChecked"
@@ -1933,32 +1916,79 @@
             <p>{{ dispose.container }}</p>
           </el-form-item>
           <el-form-item label="操作系统">
-            {{ colony.OSvalue }}
+            {{ dispose.OSvalue }}
+          </el-form-item>
+          <el-form-item
+            label="Master&Etcd节点"
+            class="tke-fourth-node"
+            style="padding:0px;border:0px;"
+            v-if="colonySecond.workerShow === true && colonySecond.source == 1"
+          >
+            <div
+              v-for="(item, index) in colonySecond.masterOneList"
+              :key="index"
+            >
+              <p>可用区:台北一区</p>
+              <p>
+                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                  item.modelHe
+                }}核{{ item.modelGB }}GB)
+              </p>
+              <p>
+                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+              </p>
+              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>
+                公网带宽:{{ item.broadbandValue }}
+                {{ item.broadbandNumber }}Mbps
+              </p>
+              <p>数量:{{ item.dataNum }}</p>
+            </div>
           </el-form-item>
           <el-form-item label="Node节点" class="tke-fourth-node">
-            <p>可用区:台北一区</p>
-            <p>机型:S3.SMALL1(标准型S3,1核1GB)</p>
-            <p>系统盘:高性能云硬盘 50GB</p>
-            <p>数据盘:暂不购买</p>
-            <p>公网带宽:按带宽计费 1Mbps</p>
-            <p>数量:1</p>
+            <div
+              v-for="(item, index) in colonySecond.workerOneList"
+              :key="index"
+            >
+              <p>可用区:台北一区</p>
+              <p>
+                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                  item.modelHe
+                }}核{{ item.modelGB }}GB)
+              </p>
+              <p>
+                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+              </p>
+              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>
+                公网带宽:{{ item.broadbandValue }}
+                {{ item.broadbandNumber }}Mbps
+              </p>
+              <p>数量:{{ item.dataNum }}</p>
+            </div>
           </el-form-item>
           <el-form-item label="总计费用">
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">0.16</span
+              <span class="tke-second-cost-num">{{
+                colonySecond.allocationCost
+              }}</span
               ><span class="tke-second-cost-h">元/小时</span
               ><span class="tke-second-cost-t">(配置费用)</span>
               <i>|</i>
-              <span class="tke-second-cost-num">0.06</span
+              <span class="tke-second-cost-num">{{
+                colonySecond.networkCost
+              }}</span
               ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+              ><span class="tke-second-cost-w"> (网络费用)</span>
             </div>
           </el-form-item>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="fourthPrev">上一步</el-button>
-          <el-button size="small" type="primary">完成</el-button>
+          <el-button size="small" type="primary" @click="CreateFinish"
+            >完成</el-button
+          >
         </div>
       </div>
     </div>
@@ -1986,7 +2016,9 @@ import {
   TKE_PRICE,
   // 第三步
   TKE_MISG,
-  TKE_SSH
+  TKE_SSH,
+  // 第四步
+  TKE_CREATW_CLUSTERS
 } from "@/constants";
 export default {
   name: "create",
@@ -2163,6 +2195,7 @@ export default {
             dataDiskValue: "暂不购买",
             buyDataDisk: false,
             dataDiskArr: [],
+            buyDataDiskArr: [],
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
             latticeSetVal: "ext3",
@@ -2188,12 +2221,14 @@ export default {
             dataDiskShow: false,
             broadbandShow: false,
             workerNodeNetworkValue: "",
+            InstanceChargeType: "POSTPAID_BY_HOUR",
             systemDiskVal: "CLOUD_PREMIUM",
             systemDiskValue: "高性能云硬盘",
             systemDiskNumber: "50",
             // 数据盘
             dataDiskValue: "暂不购买",
             dataDiskArr: [],
+            buyDataDiskArr: [],
             buyDataDisk: false,
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
@@ -2206,6 +2241,9 @@ export default {
             dataNum: "1"
           }
         ],
+        masterDataDiskMountShow: false,
+        masterDataDiskMount: false,
+        masterDataDiskMountVal: "/var/lib/docker",
         index: 0,
         masterIndex: 0,
         buyTime: 1, // 购买时长
@@ -2401,9 +2439,9 @@ export default {
         ],
         // 总计费用
         // 配置费用
-        allocationCost:"",
+        allocationCost: "",
         // 网络费用
-        networkCost:"",
+        networkCost: "",
         // 下一步
         secondNextShow: true,
         workerTips: false,
@@ -2435,6 +2473,8 @@ export default {
         containerInput: "/var/lib/docker",
         // 安全组
         safeArr: [],
+        defaultSafe: false,
+        defaultSafeBox: true,
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -2455,39 +2495,20 @@ export default {
       securityGroupOpt: [],
       securityGroupSel: "",
       radio1: 0,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
-      value: "",
-      num: 1,
       checked: true,
       input: "",
+      costAll: [],
+      costAll2: [],
       // 已选配置
       dispose: {
         name: "",
         kuValue: "",
         cityRadio: "台湾台北",
-        container: ""
-      }
+        container: "",
+        OSvalue: ""
+      },
+      param: [],
+      params: []
     };
   },
   components: {
@@ -2686,9 +2707,8 @@ export default {
       };
       this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.colony.OSoptions = res.Response.ImageInstanceSet;
-          this.colony.OSvalue = res.Response.ImageInstanceSet[0].Alias;
-          // console.log(this.colony.OSoptions);
+          this.colony.OSoptions = res.Response.ImageInstanceSet.splice(0, 2);
+          this.colony.OSvalue = this.colony.OSoptions[0].ImageId;
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2743,9 +2763,14 @@ export default {
             });
           });
         }
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            this.dispose.OSvalue = this.colony.OSoptions[i].Alias;
+          }
+        }
         this.ChildNodes();
         // 机型 选择机型
-        this.getDescribeZoneInstanceConfigInfos();
+        this.getDescribeZoneInstanceConfigInfos(0, 1);
       } else {
         this.colony.nameWran = true;
       }
@@ -2755,20 +2780,15 @@ export default {
     NodeSource(val) {
       this.rightList = [];
       if (val == "2") {
-        this.colonySecond.sourceShow = false;
-      } else {
-        this.colonySecond.workerTips = false;
-        this.colonySecond.sourceShow = true;
-        this.colonySecond.secondNextShow = true;
-      }
-      if (this.colonySecond.source == 2) {
         this.colonySecond.workerTips = true;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = false;
       } else {
+        this.colonySecond.worker = 1;
         this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
+        this.colonySecond.sourceShow = true;
       }
       if (
         this.colonySecond.worker == 2 &&
@@ -2988,36 +3008,30 @@ export default {
           for (var i in this.colonySecond.workerOneList) {
             this.colonySecond.workerOneList[
               i
-            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
-              i
-            ].SubnetId;
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[0].SubnetId;
             this.colonySecond.workerOneList[
               i
-            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
-              i
-            ].TotalIpAddressCount;
+            ].workerNodeNetworkValue = this.colonySecond.workerNodeNetOpt[0].SubnetName;
             this.colonySecond.workerOneList[
               i
-            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[0].TotalIpAddressCount;
+            this.colonySecond.workerOneList[
               i
-            ].AvailableIpAddressCount;
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[0].AvailableIpAddressCount;
           }
           for (var i in this.colonySecond.masterOneList) {
             this.colonySecond.masterOneList[
               i
-            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[
-              i
-            ].SubnetId;
+            ].workerNodeNetworkVal = this.colonySecond.workerNodeNetOpt[0].SubnetId;
             this.colonySecond.masterOneList[
               i
-            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[
-              i
-            ].TotalIpAddressCount;
+            ].workerNodeNetworkValue = this.colonySecond.workerNodeNetOpt[0].SubnetName;
             this.colonySecond.masterOneList[
               i
-            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[
+            ].nodeTotalNum = this.colonySecond.workerNodeNetOpt[0].TotalIpAddressCount;
+            this.colonySecond.masterOneList[
               i
-            ].AvailableIpAddressCount;
+            ].nodeSurplusNum = this.colonySecond.workerNodeNetOpt[0].AvailableIpAddressCount;
           }
         } else {
           let ErrTips = {};
@@ -3045,16 +3059,17 @@ export default {
     SecondMaster(val) {
       // console.log(val)
       this.rightListMaster = [];
-      if (val === "2") {
+      if (val == "2") {
         this.colonySecond.workerShow = true;
-        if (this.colonySecond.worker == 2 && this.colonySecond.source == 1) {
-          this.TotalCost(0, 2);
+        if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
+          this.TotalCost();
         }
       } else {
         this.colonySecond.workerShow = false;
         this.colonySecond.secondNextShow = true;
       }
       this.colonySecond.workerTips = false;
+      this.colonySecond.completeBtn = false;
       this.colonySecond.masterTips = true;
       this.colonySecond.secondNextShow = false;
       if (
@@ -3064,6 +3079,9 @@ export default {
       ) {
         this.colonySecond.boxShow = false;
         this.colonySecond.completeBtn = true;
+        this.colonySecond.workerTips = false;
+        this.colonySecond.masterTips = false;
+        this.colonySecond.secondNextShow = false;
       } else {
         this.colonySecond.boxShow = true;
         this.colonySecond.completeBtn = false;
@@ -3077,10 +3095,15 @@ export default {
       } else {
         this.colonySecond.chargingShow = false;
       }
+      this.TotalCost();
+    },
+    // 购买时长
+    BuyTime(val) {
+      this.TotalCost();
     },
     // 机型  选择机型
     //获取可用区机型配置信息
-    getDescribeZoneInstanceConfigInfos() {
+    getDescribeZoneInstanceConfigInfos(index, a) {
       let param = {
         Version: "2017-03-12"
       };
@@ -3125,8 +3148,9 @@ export default {
               i
             ].modelGB = this.colonySecond.masterTableList[i].Memory;
           }
+
           // 总计费用
-          this.ModelSure(0, 1);
+          this.TotalCost();
         } else {
           let ErrTips = {
             "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
@@ -3195,7 +3219,7 @@ export default {
         this.colonySecond.masterOneList[index].modelShow = false;
       }
       // 总计费用
-      this.TotalCost(index, a);
+      this.TotalCost();
     },
     // 系统盘 弹框确认
     SystemDiskSure(index, a) {
@@ -3205,7 +3229,7 @@ export default {
           this.colonySecond.workerOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
-          this.TotalCost(index, a);
+
           if (
             this.colonySecond.workerOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3218,7 +3242,6 @@ export default {
           this.colonySecond.masterOneList[
             index
           ].systemDiskNumber = this.colonySecond.systemDiskNum;
-          this.TotalCost(index, a);
           if (
             this.colonySecond.masterOneList[index].systemDiskVal ==
             systemDiskOptions[i].value
@@ -3229,86 +3252,108 @@ export default {
           this.colonySecond.masterOneList[index].systemDiskShow = false;
         }
       }
+      this.TotalCost();
     },
     // 购买数据盘
-    BuyDataDisk(val) {
-      if (val === true) {
-        this.colonySecond.buyDataWidth = 764;
-        this.AddDataDisk();
+    BuyDataDisk(index, a) {
+      if (a == 1) {
+        if (this.colonySecond.workerOneList[index].buyDataDisk === true) {
+          this.colonySecond.buyDataWidth = 764;
+          this.AddDataDisk(index);
+        } else {
+          this.colonySecond.buyDataWidth = 300;
+          this.colonySecond.workerOneList[index].buyDataDiskArr = [];
+        }
       } else {
-        this.colonySecond.buyDataWidth = 300;
-        this.colonySecond.buyDataDiskArr = [];
+        if (this.colonySecond.masterOneList[index].buyDataDisk === true) {
+          this.colonySecond.buyDataWidth = 764;
+        } else {
+          this.colonySecond.buyDataWidth = 300;
+          this.colonySecond.masterOneList[index].buyDataDiskArr = [];
+        }
       }
     },
     // 购买数据盘 添加数据盘
-    AddDataDisk() {
-      this.colonySecond.buyDataDiskArr.push({
+    AddDataDisk(index) {
+      this.colonySecond.workerOneList[index].buyDataDiskArr.push({
         dataDiskVal: "CLOUD_PREMIUM",
         dataDiskNum: "10",
         formatMount: false,
         latticeSetVal: "ext3",
-        setValue: ""
+        setValue: "/var/lib/docker"
       });
     },
     // 删除
     deleteDataDisk(index) {
-      this.colonySecond.buyDataDiskArr.splice(index, 1);
-      if (this.colonySecond.buyDataDiskArr.length === 0) {
+      this.colonySecond.workerOneList[index].buyDataDiskArr.splice(index, 1);
+      if (this.colonySecond.workerOneList[index].buyDataDiskArr.length === 0) {
         this.colonySecond.buyDataDisk = false;
         this.colonySecond.buyDataWidth = 300;
       }
     },
     // 数据盘 弹框确认
     DataDiskSure(index, a) {
-      let buyDataDiskArr = this.colonySecond.buyDataDiskArr;
-      this.colonySecond.workerOneList[index].dataDiskArr = [];
-      this.colonySecond.masterOneList[index].dataDiskArr = [];
+      let buyDataDiskArr = this.colonySecond.workerOneList[index]
+        .buyDataDiskArr;
+      console.log(this.colonySecond.workerOneList);
+      console.log(this.colonySecond.workerOneList[index]);
+      // this.colonySecond.workerOneList[index].dataDiskArr = [];
+      // this.colonySecond.masterOneList[index].dataDiskArr = [];
       let text = [];
-      if (buyDataDiskArr.length === 0) {
+      if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
         this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
-      } else {
-        for (var i in buyDataDiskArr) {
-          for (let j in this.colonySecond.dataDiskOptions) {
-            if (
-              buyDataDiskArr[i].dataDiskVal ===
-              this.colonySecond.dataDiskOptions[j].value
-            ) {
-              let num = i - 0 + (1 - 0);
-              text.push(
-                "[" +
-                  num +
-                  "]" +
-                  this.colonySecond.dataDiskOptions[j].label +
-                  " " +
-                  buyDataDiskArr[i].dataDiskNum +
-                  "GB;"
-              );
+      }
+      for (var i in buyDataDiskArr) {
+        for (let j in this.colonySecond.dataDiskOptions) {
+          if (
+            buyDataDiskArr[i].dataDiskVal ===
+            this.colonySecond.dataDiskOptions[j].value
+          ) {
+            let num = i - 0 + (1 - 0);
+            text.push(
+              "[" +
+                num +
+                "]" +
+                this.colonySecond.dataDiskOptions[j].label +
+                " " +
+                buyDataDiskArr[i].dataDiskNum +
+                "GB;"
+            );
 
-              if (a == 1) {
-                this.colonySecond.workerOneList[
-                  index
-                ].dataDiskValue = text.toString().replace(",", "");
-                this.colonySecond.workerOneList[index].dataDiskShow = false;
-                this.colonySecond.workerOneList[index].dataDiskArr.push({
-                  DiskType: this.colonySecond.dataDiskOptions[j].value,
-                  DiskSize: buyDataDiskArr[i].dataDiskNum
-                });
-              } else {
-                this.colonySecond.masterOneList[
-                  index
-                ].dataDiskValue = text.toString().replace(",", "");
-                this.colonySecond.masterOneList[index].dataDiskShow = false;
-                this.colonySecond.masterOneList[index].dataDiskArr.push({
-                  DiskType: this.colonySecond.dataDiskOptions[j].value,
-                  DiskSize: buyDataDiskArr[i].dataDiskNum
-                });
-              }
+            if (a == 1) {
+              console.log(this.colonySecond.workerOneList);
+              console.log(this.colonySecond.workerOneList[index]);
+              this.colonySecond.workerOneList[
+                index
+              ].dataDiskValue = text.toString().replace(",", "");
+              this.colonySecond.workerOneList[index].dataDiskShow = false;
+              this.colonySecond.workerOneList[index].dataDiskArr.push({
+                DiskType: this.colonySecond.dataDiskOptions[j].value,
+                DiskSize: buyDataDiskArr[i].dataDiskNum,
+                formatMount: buyDataDiskArr[i].formatMount,
+                latticeSetVal: buyDataDiskArr[i].latticeSetVal,
+                setValue: buyDataDiskArr[i].setValue
+              });
+              console.log(this.colonySecond.workerOneList[index].dataDiskArr);
+            } else {
+              this.colonySecond.masterOneList[
+                index
+              ].dataDiskValue = text.toString().replace(",", "");
+              this.colonySecond.masterOneList[index].dataDiskShow = false;
             }
           }
         }
       }
+
+      for (let i in this.colonySecond.masterOneList) {
+        if (this.colonySecond.masterOneList[i].buyDataDisk === true) {
+          this.colonySecond.masterDataDiskMountShow = true;
+        }
+      }
       // 总计费用
-      this.TotalCost(index, a);
+      this.$nextTick(() => {
+        this.TotalCost();
+      });
     },
     // 公网带宽 弹框确认
     BroadbandSure(index, a) {
@@ -3317,7 +3362,6 @@ export default {
         this.colonySecond.workerOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
-        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
           if (
             this.colonySecond.workerOneList[index].broadbandVal ===
@@ -3332,7 +3376,6 @@ export default {
         this.colonySecond.masterOneList[
           index
         ].broadbandNumber = this.colonySecond.broadbandNum;
-        this.TotalCost(index, a);
         for (var i in broadbandOptions) {
           if (
             this.colonySecond.masterOneList[index].broadbandVal ===
@@ -3344,6 +3387,7 @@ export default {
         }
         this.colonySecond.masterOneList[index].broadbandShow = false;
       }
+      this.TotalCost();
     },
     // 确定
     WorkerSure(index, a) {
@@ -3359,7 +3403,7 @@ export default {
           }
         }
         this.colonySecond.workerOneList[index].showText = true;
-      this.colonySecond.workerOneList[index].showEdit = false;
+        this.colonySecond.workerOneList[index].showEdit = false;
       } else {
         let worker = this.colonySecond.workerNodeNetOpt;
         for (var i in worker) {
@@ -3372,7 +3416,7 @@ export default {
           }
         }
         this.colonySecond.masterOneList[index].showText = true;
-      this.colonySecond.masterOneList[index].showEdit = false;
+        this.colonySecond.masterOneList[index].showEdit = false;
       }
     },
     // worker 配置 编辑
@@ -3400,6 +3444,7 @@ export default {
           }
         }
       }
+      this.TotalCost();
     },
     // worker 配置 删除
     DeleteWorker(index, a) {
@@ -3408,6 +3453,7 @@ export default {
       } else {
         this.colonySecond.masterOneList.splice(index, 1);
       }
+      this.TotalCost();
     },
     // 添加机型
     OneAddModel() {
@@ -3432,6 +3478,7 @@ export default {
         dataDiskValue: "暂不购买",
         buyDataDisk: false,
         dataDiskArr: [],
+        buyDataDiskArr: [],
         dataDiskVal: "1",
         dataDiskNumber: "10",
         latticeSetVal: "ext3",
@@ -3446,9 +3493,7 @@ export default {
       this.colonySecond.workerOneList[_length - 2].showText = true;
       this.colonySecond.workerOneList[_length - 2].showEdit = false;
       this.ChildNodes();
-      this.getDescribeZoneInstanceConfigInfos();
-      // 总计费用
-      this.TotalCost(this.colonySecond.workerOneList.length - 1, 1);
+      this.getDescribeZoneInstanceConfigInfos(this.colonySecond.index, 1);
     },
     // Master&Etcd 配置 添加机型
     MasterAddModel() {
@@ -3473,6 +3518,7 @@ export default {
         dataDiskValue: "暂不购买",
         buyDataDisk: false,
         dataDiskArr: [],
+        buyDataDiskArr: [],
         dataDiskVal: "1",
         dataDiskNumber: "10",
         latticeSetVal: "ext3",
@@ -3487,72 +3533,220 @@ export default {
       this.colonySecond.masterOneList[_length - 2].showText = true;
       this.colonySecond.masterOneList[_length - 2].showEdit = false;
       this.ChildNodes();
-      this.getDescribeZoneInstanceConfigInfos();
+      this.getDescribeZoneInstanceConfigInfos(this.colonySecond.masterIndex, 2);
       if (this.colonySecond.masterOneList.length > 2) {
         this.colonySecond.masterTips = false;
+        this.colonySecond.secondNextShow = true;
       }
     },
     // 总计费用
-    TotalCost(index, a) {
-      console.log(this.colonySecond.workerOneList[index]);
-      var array = [];
-      if (a == 1) {
-        array = this.colonySecond.workerOneList;
-      } else {
-        array = this.colonySecond.masterOneList;
-      }
-      let param = {
-        Version: "2017-03-12",
-        ImageId: "img-6yudrskj",
-        "Placement.ProjectId": this.colony.projectValue,
-        "Placement.Zone": "ap-taipei-1",
-        // 机型
-        InstanceChargeType: array[index].InstanceChargeType,
-        InstanceType: array[index].modelName,
-        // 数量
-        InstanceCount: 1,
-        // 系统盘
-        "SystemDisk.DiskSize": Number(array[index].systemDiskNumber),
-        "SystemDisk.DiskType": array[index].systemDiskVal,
-        PurchaseSource: "MC"
-      };
-      // 数据盘
-      if (array[index].dataDiskShow) {
-        let dataDisk = array[index].dataDiskArr;
-        for (let i in dataDisk) {
-          param["DataDisks." + i + ".DiskSize"] = dataDisk[i].DiskSize;
-          param["DataDisks." + i + ".DiskType"] = dataDisk[i].DiskSize;
+    async TotalCost() {
+      var _allcost,
+        _netcost,
+        _allcost2,
+        _netcost2 = "";
+      var num = 0;
+      var _workerOneList = this.colonySecond.workerOneList;
+      this.costAll = [];
+
+      for (var i in _workerOneList) {
+        let param = {
+          Version: "2017-03-12",
+          ImageId: this.colony.OSvalue,
+          "Placement.ProjectId": this.colony.projectValue,
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _workerOneList[i].InstanceChargeType,
+          InstanceType: _workerOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_workerOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _workerOneList[i].systemDiskVal,
+          PurchaseSource: "MC"
+        };
+        // 数据盘
+        if (_workerOneList[i].dataDiskShow) {
+          let dataDisk = _workerOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            param["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            param["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+          }
         }
-      }
-      // 公网带宽
-      param["InternetAccessible.InternetChargeType"] =
-        array[index].broadbandVal;
-      param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
-        array[index].broadbandNumber
-      );
-      if (array[index].broadbandNumber == 0) {
-        param["InternetAccessible.PublicIpAssigned"] = false;
-      } else {
-        param["InternetAccessible.PublicIpAssigned"] = true;
-      }
-      console.log(param);
-      this.axios.post(TKE_PRICE, param).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res.Response.Price);
-          let _data = res.Response.Price
-          this.colonySecond.allocationCost = _data.InstancePrice.UnitPrice
-          this.colonySecond.networkCost = _data.BandwidthPrice.UnitPrice
+        // 公网带宽
+        param["InternetAccessible.InternetChargeType"] =
+          _workerOneList[i].broadbandVal;
+        param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _workerOneList[i].broadbandNumber
+        );
+        if (_workerOneList[i].broadbandNumber == 0) {
+          param["InternetAccessible.PublicIpAssigned"] = false;
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          param["InternetAccessible.PublicIpAssigned"] = true;
         }
-      });
+        if (this.colonySecond.charging == 2) {
+          param["EnhancedService.SecurityService.Enabled"] = true;
+          param["EnhancedService.MonitorService.Enabled"] = true;
+          param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        await this.axios.post(TKE_PRICE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            let _data = res.Response.Price;
+            this.costAll.push(_data);
+          } else {
+            let ErrTips = {
+              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+              InstancesQuotaLimitExceeded:
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              InvalidParameterCombination: "表示参数组合不正确。",
+              InvalidParameterValue:
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              InvalidPassword:
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              InvalidPeriod:
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              InvalidPermission: "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              MissingParameter: "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
+
+      var _masterOneList = this.colonySecond.masterOneList;
+      this.costAll2 = [];
+      for (var i in _masterOneList) {
+        let params = {
+          Version: "2017-03-12",
+          ImageId: this.colony.OSvalue,
+          "Placement.ProjectId": this.colony.projectValue,
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _masterOneList[i].InstanceChargeType,
+          InstanceType: _masterOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
+          PurchaseSource: "MC"
+        };
+        // 数据盘
+        if (_masterOneList[i].dataDiskShow) {
+          let dataDisk = _masterOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+          }
+        }
+        // 公网带宽
+        params["InternetAccessible.InternetChargeType"] =
+          _masterOneList[i].broadbandVal;
+        params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _masterOneList[i].broadbandNumber
+        );
+        if (_masterOneList[i].broadbandNumber == 0) {
+          params["InternetAccessible.PublicIpAssigned"] = false;
+        } else {
+          params["InternetAccessible.PublicIpAssigned"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          params["EnhancedService.SecurityService.Enabled"] = true;
+          params["EnhancedService.MonitorService.Enabled"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          params["EnhancedService.SecurityService.Enabled"] = true;
+          params["EnhancedService.MonitorService.Enabled"] = true;
+          params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        await this.axios.post(TKE_PRICE, params).then(res => {
+          if (res.Response.Error === undefined) {
+            let _data = res.Response.Price;
+            this.costAll2.push(_data);
+          } else {
+            let ErrTips = {
+              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+              InstancesQuotaLimitExceeded:
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              InvalidParameterCombination: "表示参数组合不正确。",
+              InvalidParameterValue:
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              InvalidPassword:
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              InvalidPeriod:
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              InvalidPermission: "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              MissingParameter: "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
+
+      _allcost = this.costAll.reduce(
+        (num, item) => num + item.InstancePrice.UnitPrice,
+        0
+      );
+      _netcost = this.costAll.reduce(
+        (num, item) => num + item.BandwidthPrice.UnitPrice,
+        0
+      );
+
+      this.colonySecond.allocationCost = _allcost.toFixed(2);
+      this.colonySecond.networkCost = _netcost.toFixed(2);
+
+      if (this.colonySecond.source == 1 && this.colonySecond.master == 2) {
+        _allcost2 = this.costAll2.reduce(
+          (num, item) => num + item.InstancePrice.UnitPrice,
+          0
+        );
+        _netcost2 = this.costAll2.reduce(
+          (num, item) => num + item.BandwidthPrice.UnitPrice,
+          0
+        );
+        this.colonySecond.allocationCost = (_allcost + _allcost2).toFixed(2);
+        this.colonySecond.networkCost = (_netcost + _netcost2).toFixed(2);
+      }
     },
     // 第二步 上一步
     secondPrev() {
@@ -3599,6 +3793,8 @@ export default {
       });
     },
     AddSafe() {
+      this.colonyThird.defaultSafeBox = true;
+      this.colonyThird.defaultSafe = true;
       this.colonyThird.safeArr.push({
         securityGroupSel: ""
       });
@@ -3606,10 +3802,13 @@ export default {
     //删除一项
     deleteExceptPrice(index) {
       this.colonyThird.safeArr.splice(index, 1);
+      if (this.colonyThird.safeArr.length === 0) {
+        this.colonyThird.defaultSafeBox = true;
+        this.colonyThird.defaultSafe = false;
+      }
     },
     // 登录方式
     LoginMode(val) {
-      console.log(val);
       if (val === "1") {
         this.colonyThird.one = true;
         this.colonyThird.two = false;
@@ -3658,20 +3857,412 @@ export default {
         });
       });
     },
+    ValueParam() {
+      this.param = [];
+      this.params = [];
+      let _workerOneList = this.colonySecond.workerOneList;
+      for (let i in _workerOneList) {
+        let param = {
+          Version: "2017-03-12",
+          ImageId: this.colony.OSvalue,
+          "Placement.ProjectId": Number(this.colony.projectValue),
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _workerOneList[i].InstanceChargeType,
+          InstanceType: _workerOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_workerOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _workerOneList[i].systemDiskVal,
+          "VirtualPrivateCloud.VpcId": this.colony.networkValue,
+          "VirtualPrivateCloud.SubnetId":
+            _workerOneList[i].workerNodeNetworkVal,
+          InstanceName: "",
+          UserData: ""
+        };
+        // 数据盘
+        if (_workerOneList[i].dataDiskShow) {
+          let dataDisk = _workerOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            param["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            param["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+            // param['DataDisks'].push({
+            //   DiskSize:dataDisk[j].DiskSize,
+            //   DiskType:dataDisk[j].DiskType
+            // })
+          }
+        }
+        // 公网带宽
+        param["InternetAccessible.InternetChargeType"] =
+          _workerOneList[i].broadbandVal;
+        param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _workerOneList[i].broadbandNumber
+        );
+        if (_workerOneList[i].broadbandNumber == 0) {
+          param["InternetAccessible.PublicIpAssigned"] = false;
+        } else {
+          param["InternetAccessible.PublicIpAssigned"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          param["EnhancedService.SecurityService.Enabled"] = true;
+          param["EnhancedService.MonitorService.Enabled"] = true;
+          param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param["LoginSettings.KeyIds"] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 1) {
+          param["LoginSettings.Password"] = this.colonyThird.password;
+        }
+
+        this.param.push(param);
+        
+      }
+      console.log(this.param)
+      let _masterOneList = this.colonySecond.masterOneList;
+      for (let i in _masterOneList) {
+        let params = {
+          Version: "2017-03-12",
+          ImageId: this.colony.OSvalue,
+          "Placement.ProjectId": Number(this.colony.projectValue),
+          "Placement.Zone": "ap-taipei-1",
+          // 机型
+          InstanceChargeType: _masterOneList[i].InstanceChargeType,
+          InstanceType: _masterOneList[i].modelName,
+          // 数量
+          InstanceCount: 1,
+          // 系统盘
+          "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
+          "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
+          "VirtualPrivateCloud.VpcId": this.colony.networkValue,
+          "VirtualPrivateCloud.SubnetId":
+            _masterOneList[i].workerNodeNetworkVal,
+          InstanceName: "",
+          UserData: ""
+        };
+        // 数据盘
+        if (_masterOneList[i].dataDiskShow) {
+          let dataDisk = _masterOneList[i].dataDiskArr;
+          for (let j in dataDisk) {
+            params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+            params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+          }
+        }
+        // 公网带宽
+        params["InternetAccessible.InternetChargeType"] =
+          _masterOneList[i].broadbandVal;
+        params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+          _masterOneList[i].broadbandNumber
+        );
+        if (_masterOneList[i].broadbandNumber == 0) {
+          params["InternetAccessible.PublicIpAssigned"] = false;
+        } else {
+          params["InternetAccessible.PublicIpAssigned"] = true;
+        }
+        if (this.colonySecond.charging == 2) {
+          params["EnhancedService.SecurityService.Enabled"] = true;
+          params["EnhancedService.MonitorService.Enabled"] = true;
+          params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+          // if(this.colonySecond.renew === true){
+          params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+          // }
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          params["LoginSettings.KeyIds"] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 1) {
+          params["LoginSettings.Password"] = this.colonyThird.password;
+        }
+        this.params.push(params);
+      }
+    },
     // 第三步 下一步
     thirdNext() {
       this.firstBox = false;
       this.secondBox = false;
       this.thirdBox = false;
       this.fourthBox = true;
+      this.ValueParam();
     },
     // ----------------------------------------- 第四步 ---------------------------------------
-    // 第三步 下一步
+    // 第四步 上一步
     fourthPrev() {
       this.firstBox = false;
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+    },
+    // 创建 完成
+    CreateFinish() {
+      console.log(this.param);
+      console.log(this.params);
+      var workerOneListArr = this.colonySecond.workerOneList;
+      var masterOneListArr = this.colonySecond.masterOneList;
+      let param = {
+        Version: "2018-05-25",
+        "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
+        "ClusterCIDRSettings.IgnoreClusterCIDRConflict": false,
+        "ClusterCIDRSettings.MaxNodePodNum": Number(this.colony.PodValue),
+        "ClusterCIDRSettings.MaxClusterServiceNum": Number(
+          this.colony.ServiceValue
+        )
+      };
+      if (this.colonySecond.master == 1) {
+        param["ClusterType"] = "MANAGED_CLUSTER";
+      } else {
+        param["ClusterType"] = "INDEPENDENT_CLUSTER";
+      }
+      if (
+        this.colonySecond.workerShow === true &&
+        this.colonySecond.source == 1
+      ) {
+        param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+        for (let i in masterOneListArr) {
+          param["RunInstancesForNode.1.RunInstancesPara." + i] = JSON.stringify(
+            this.params[i]
+          );
+          if (this.colonySecond.masterDataDiskMount === true) {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = this.colonySecond.masterDataDiskMountVal;
+          } else {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = "";
+          }
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".DockerGraphPath"
+          ] = "";
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".UserScript"
+          ] = "";
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Unschedulable"
+          ] = 0;
+          param[
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".ExtraArgs.Kubelet.0"
+          ] = "";
+          param[
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Name"
+          ] = "";
+          param[
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Value"
+          ] = "";
+        }
+      }
+      param["RunInstancesForNode.0.NodeRole"] = "WORKER";
+      for (let i in workerOneListArr) {
+        param["RunInstancesForNode.0.RunInstancesPara." + i] =
+          // '{"Version":"2017-03-12","InstanceChargeType":"POSTPAID_BY_HOUR","Placement":{"Zone":"ap-taipei-1","ProjectId":0},"InstanceType":"S3.SMALL1","ImageId":"img-49iszl8j","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"VirtualPrivateCloud":{"VpcId":"vpc-kl9iqcz0","SubnetId":"subnet-p1qhaznf"},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"InstanceCount":1,"InstanceName":"","LoginSettings":{"Password":"a123456789"},"SecurityGroupIds":["sg-f1jnwzrq","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"PurchaseSource":"docker_dashboard","UserData":""}';
+          JSON.stringify(this.param[i]);
+        if (this.colonySecond.masterDataDiskMount === true) {
+          param[
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".MountTarget"
+          ] = this.colonySecond.masterDataDiskMountVal;
+        } else {
+          param[
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".MountTarget"
+          ] = "";
+        }
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".DockerGraphPath"
+        ] = "";
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".UserScript"
+        ] = "";
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".Unschedulable"
+        ] = 0;
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".ExtraArgs.Kubelet.0"
+        ] = "";
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".Labels.0.Name"
+        ] = "";
+        param[
+          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+            i +
+            ".Labels.0.Value"
+        ] = "";
+      }
+      let ClusterOs = "";
+      for (let i in this.colony.OSoptions) {
+        if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+          ClusterOs = this.colony.OSoptions[i].OsName;
+        }
+      }
+      param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+      param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+      param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+      param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+      param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+      param["ClusterBasicSettings.ProjectId"] = this.colony.projectValue;
+      if (this.colonyThird.defaultSafeBox === true) {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+      } else {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+      }
+      param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+      if (this.colony.ipvs === true) {
+        param["ClusterAdvancedSettings.IPVS"] = true;
+      } else {
+        param["ClusterAdvancedSettings.IPVS"] = false;
+      }
+      param["ClusterAdvancedSettings.AsEnabled"] = false;
+      param["ClusterAdvancedSettings.ContainerRuntime"] = "docker";
+      param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+      if (this.colonySecond.masterDataDiskMount === true) {
+        param[
+          "InstanceAdvancedSettings.MountTarget"
+        ] = this.colonySecond.masterDataDiskMountVal;
+      } else {
+        param["InstanceAdvancedSettings.MountTarget"] = "";
+      }
+      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      param["InstanceAdvancedSettings.UserScript"] = "";
+      param["InstanceAdvancedSettings.Unschedulable"] = 0;
+      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+
+      // let buyDataArr = [];
+      // for (let i in workerOneListArr) {
+      //   if (workerOneListArr[i].buyDataDisk === true) {
+      //     buyDataArr.push(workerOneListArr[i]);
+      //     for (let x in buyDataArr) {
+      //       param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+      //         workerOneListArr[i].modelName;
+      //       param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+      //         "ap-taipei-1";
+      //       for (let j in workerOneListArr[i].dataDiskArr) {
+      //         param[
+      //           "InstanceDataDiskMountSettings." +
+      //             x +
+      //             ".DataDisks." +
+      //             j +
+      //             ".DiskType"
+      //         ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+      //         param[
+      //           "InstanceDataDiskMountSettings." +
+      //             x +
+      //             ".DataDisks." +
+      //             j +
+      //             ".DiskSize"
+      //         ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+      //         param[
+      //           "InstanceDataDiskMountSettings." +
+      //             x +
+      //             ".DataDisks." +
+      //             j +
+      //             ".AutoFormatAndMount"
+      //         ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+      //         param[
+      //           "InstanceDataDiskMountSettings." +
+      //             x +
+      //             ".DataDisks." +
+      //             j +
+      //             ".FileSystem"
+      //         ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+      //         param[
+      //           "InstanceDataDiskMountSettings." +
+      //             x +
+      //             ".DataDisks." +
+      //             j +
+      //             ".MountTarget"
+      //         ] = workerOneListArr[i].dataDiskArr[j].setValue;
+      //       }
+      //     }
+      //   }
+      // }
+
+      console.log(param);
+      this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            "InternalError.AccountUserNotAuthenticated": "账户未通过认证。",
+            "InternalError.AsCommon": "伸缩组资源创建报错。",
+            "InternalError.CidrConflictWithOtherCluster":
+              "CIDR和其他集群CIDR冲突。",
+            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由冲突。",
+            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc冲突。",
+            "InternalError.CidrConflictWithVpcGlobalRoute":
+              "CIDR和全局路由冲突。",
+            "InternalError.CidrInvali": "CIDR无效。",
+            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩码无效。",
+            "InternalError.CreateMasterFailed": "创建集群失败。",
+            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.DfwGetUSGCount": "获得当前安全组总数失败。",
+            "InternalError.DfwGetUSGQuota": "获得安全组配额失败。",
+            "InternalError.InitMasterFailed": "初始化master失败。",
+            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
+            "InternalError.Param": "Param。",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+            "InternalError.QuotaUSGLimit": "安全组配额不足。",
+            "InternalError.UnexceptedInternal": "内部错误",
+            "InternalError.VpcCommon": "VPC报错。",
+            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
+            InvalidParameter: "参数错误",
+            LimitExceeded: "超过配额限制"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };
@@ -3679,18 +4270,18 @@ export default {
 
 <style lang="scss" scoped>
 .cid-tips {
+  margin-top: 8px;
   color: #e54545;
   font-size: 12px;
   line-height: 30px;
-  margin-top: 8px;
   span {
     margin-left: 6px;
-    font-size: 12px;
     color: #000;
+    font-size: 12px;
     i {
       margin-left: 18px;
-      font-size: 14px;
       color: #888;
+      font-size: 14px;
     }
   }
 }
@@ -3698,25 +4289,30 @@ export default {
 .tke-formpanel-footer {
   display: flex;
   ::v-deep .el-button--primary {
+    margin-left: 10px;
     background: #006eff;
     border-color: #006eff;
   }
+  ::v-deep .el-button.is-disabled {
+    height: 37px;
+    margin-left: 10px;
+  }
   .footer-tips {
     display: inline-block;
-    color: #b43537;
-    border: 1px solid #f6b5b5;
-    background-color: #fcecec;
-    margin-left: 20px;
-    border-radius: 2px;
-    font-size: 12px;
     padding: 10px 30px 10px 20px;
+    margin-left: 20px;
+    color: #b43537;
+    font-size: 12px;
+    background-color: #fcecec;
+    border: 1px solid #f6b5b5;
+    border-radius: 2px;
   }
 }
 
 .cidr-color {
   ::v-deep .el-input__inner {
-    border-color: #e1504a;
     color: #e1504a;
+    border-color: #e1504a;
   }
 }
 
@@ -3728,21 +4324,21 @@ export default {
     }
   }
   ::v-deep .el-input__inner {
-    border-radius: 0px;
+    border-radius: 0;
   }
   ::v-deep .el-radio-button__inner {
-    border-radius: 0px;
+    border-radius: 0;
   }
   ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-    border-color: #006eff;
-    background: #fff;
     color: #006eff;
+    background: #fff;
+    border-color: #006eff;
   }
   .el-icon-warning-outline {
-    color: #e1504a;
     margin-left: 5px;
-    font-weight: 600;
+    color: #e1504a;
     font-size: 16px;
+    font-weight: 600;
   }
   .cluster-wran {
     ::v-deep .el-input__inner {
@@ -3754,24 +4350,24 @@ export default {
 // 第二步
 .tke-second-box {
   .tke-second-title {
-    font-size: 14px;
-    color: #000;
-    font-weight: 700;
     margin-bottom: 11px;
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
   }
   ::v-deep .el-form-item__label {
-    line-height: 40px;
-    font-size: 12px;
     color: #888;
+    font-size: 12px;
+    line-height: 40px;
   }
   ::v-deep .el-form-item__content {
-    line-height: 40px;
-    font-size: 12px;
-    color: #444;
     overflow: hidden;
+    color: #444;
+    font-size: 12px;
+    line-height: 40px;
   }
   ::v-deep .el-form-item {
-    margin-bottom: 0px;
+    margin-bottom: 0;
   }
   .tke-second-tips {
     overflow: hidden;
@@ -3782,10 +4378,10 @@ export default {
       float: left;
       &:nth-of-type(1) {
         width: 120px;
-        padding: 6px 20px 0px 0px;
-        line-height: 18px;
-        font-size: 12px;
+        padding: 6px 20px 0 0;
         color: #888;
+        font-size: 12px;
+        line-height: 18px;
         & > i {
           font-size: 14px; // margin-top: 2px;
         }
@@ -3796,34 +4392,34 @@ export default {
     }
   }
   .tke-second-radio-btn {
-    margin-top: -6px;
     padding-bottom: 16px;
+    margin-top: -6px;
     ::v-deep .el-radio-button {
       width: 90px;
       height: 30px;
-      border-radius: 0px;
+      border-radius: 0;
     }
     ::v-deep .el-radio-button__inner {
-      padding: 0px;
       width: 90px;
       height: 30px;
-      border-radius: 0px;
+      padding: 0;
       font-size: 12px;
       line-height: 30px;
+      border-radius: 0;
     }
     ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-      border: 1px solid #006eff;
       color: #006eff;
-      background: #fff;
       font-size: 12px;
+      background: #fff;
       box-shadow: unset;
+      border: 1px solid #006eff;
     }
     & > p {
-      line-height: 14px;
-      font-size: 12px;
-      color: #888;
-      vertical-align: middle;
       margin-top: 8px;
+      color: #888;
+      font-size: 12px;
+      line-height: 14px;
+      vertical-align: middle;
       a {
         color: #006eff;
         &:hover {
@@ -3838,8 +4434,8 @@ export default {
       line-height: 30px;
     }
     .tke-second-radio-btn {
-      margin: 0px;
-      padding: 0px;
+      padding: 0;
+      margin: 0;
       line-height: 30px;
       ::v-deep .el-radio-button {
         width: unset;
@@ -3849,59 +4445,59 @@ export default {
         padding: 0 20px;
       }
       ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
-        padding: 0 20px;
         width: unset;
+        padding: 0 20px;
       }
     }
   }
   .tke-second-checkbox {
     ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
-      background: #006eff;
       width: 16px;
       height: 16px;
+      background: #006eff;
       border-color: #006eff;
     }
     ::v-deep .el-checkbox__label {
-      font-size: 12px;
       padding-left: 6px;
       color: #000;
+      font-size: 12px;
     }
     ::v-deep .el-checkbox__inner {
       width: 16px;
       height: 16px;
     }
     ::v-deep .el-checkbox__inner::after {
-      height: 9px;
       left: 5px;
+      height: 9px;
     }
     ::v-deep .el-checkbox__input.is-checked + .el-checkbox__label {
-      font-size: 12px;
-      color: #444;
       padding-left: 6px;
+      color: #444;
+      font-size: 12px;
     }
     ::v-deep .el-input {
-      line-height: 30px;
-      width: 88%;
       top: -8px;
+      width: 88%;
+      line-height: 30px;
     }
     ::v-deep .el-input__inner {
-      border-radius: 0px;
       width: 200px;
       height: 30px;
+      border-radius: 0;
     }
     ::v-deep .el-checkbox {
       line-height: 30px;
     }
   }
   .tke-second-icon-btn {
-    margin: 0px;
-    padding: 0px;
+    padding: 0;
+    margin: 0;
     a {
-      font-size: 12px;
-      margin-left: 10px;
-      color: #006eff;
       position: relative;
       top: 6px;
+      margin-left: 10px;
+      color: #006eff;
+      font-size: 12px;
       &:hover {
         text-decoration: underline;
       }
@@ -3910,34 +4506,35 @@ export default {
   .tke-second-worker {
     overflow: hidden;
     .tke-second-worker-l {
-      width: 120px;
       float: left;
-      font-size: 12px;
-      color: #888;
+      width: 120px;
       padding-top: 6px;
+      color: #888;
+      font-size: 12px;
     }
     .tke-second-worker-r {
-      width: 88%;
       float: left;
+      width: 88%;
       .tke-second-worker-array {
-        width: 100%;
-        background-color: #fff;
-        -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-        margin-left: auto;
-        margin-right: auto;
-        -webkit-box-sizing: border-box;
         box-sizing: border-box;
+        width: 100%;
         padding: 20px;
         margin-top: 4px;
+        margin-right: auto;
         margin-bottom: 10px;
+        margin-left: auto;
+        background-color: #fff;
+        box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+
+        -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+        -webkit-box-sizing: border-box;
         & > p {
           text-align: right;
           span {
-            cursor: pointer;
+            margin-left: 10px;
             color: #006eff;
             font-size: 12px;
-            margin-left: 10px;
+            cursor: pointer;
           }
         }
         & > ol {
@@ -3948,8 +4545,8 @@ export default {
               &:nth-of-type(1) {
                 display: inline-block;
                 width: 120px;
-                text-align: left;
                 color: #888;
+                text-align: left;
               }
               &:nth-of-type(2) {
                 color: #444;
@@ -3966,17 +4563,17 @@ export default {
           overflow: hidden;
           & > p {
             float: left;
+            width: 100px;
+            padding: 6px 20px 6px 0;
             color: #888;
             font-size: 12px;
-            width: 100px;
-            padding: 6px 20px 6px 0px;
           }
           .tke-second-worker-text {
-            padding: 6px 24px 16px 0px;
-            font-size: 12px;
-            color: #444;
-            width: 88%;
             overflow: hidden;
+            width: 88%;
+            padding: 6px 24px 16px 0;
+            color: #444;
+            font-size: 12px;
             span {
               float: left;
             }
@@ -3987,18 +4584,18 @@ export default {
           }
           .tke-second-worker-model-box {
             position: fixed;
-            top: 0px;
-            left: 0px;
+            top: 0;
+            left: 0;
+            z-index: 1200;
+            overflow: auto;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            z-index: 1200;
-            overflow: auto;
             .tke-second-worker-model {
               width: 90%;
-              background: #fff;
               padding: 25px;
               margin-left: 5%;
+              background: #fff;
               & > p {
                 overflow: hidden;
                 margin-bottom: 24px;
@@ -4009,14 +4606,14 @@ export default {
                   line-height: 26px;
                 }
                 i {
-                  display: inline-block;
                   float: right;
+                  display: inline-block;
                   width: 26px;
                   height: 26px;
                   font-size: 20px;
-                  cursor: pointer;
-                  text-align: center;
                   line-height: 26px;
+                  text-align: center;
+                  cursor: pointer;
                   &:active {
                     background-color: rgba(0, 0, 0, 0.05);
                   }
@@ -4028,24 +4625,24 @@ export default {
                 box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
               }
               .model-btn {
-                text-align: center;
                 margin-top: 30px;
+                text-align: center;
                 ::v-deep .el-button {
-                  border-radius: 0px;
                   width: 56px;
                   height: 30px;
-                  padding: 0px;
+                  padding: 0;
                   font-size: 12px;
+                  border-radius: 0;
                 }
                 .determine {
-                  background-color: #006eff;
                   color: #fff;
+                  background-color: #006eff;
                   border: 1px solid #006eff;
                 }
                 .cancel {
+                  color: #000;
                   background-color: #fff;
                   border-color: #ddd;
-                  color: #000;
                 }
               }
             }
@@ -4056,31 +4653,31 @@ export default {
             ::v-deep .el-radio-button {
               width: 90px;
               height: 30px;
-              border-radius: 0px;
+              border-radius: 0;
             }
             ::v-deep .el-radio-button__inner {
-              padding: 0px;
               width: 90px;
               height: 30px;
-              border-radius: 0px;
+              padding: 0;
               font-size: 12px;
               line-height: 30px;
+              border-radius: 0;
             }
             ::v-deep
               .el-radio-button__orig-radio:checked
               + .el-radio-button__inner {
-              border: 1px solid #006eff;
               color: #006eff;
-              background: #fff;
               font-size: 12px;
+              background: #fff;
               box-shadow: unset;
+              border: 1px solid #006eff;
             }
             ::v-deep .el-input {
               height: 30px;
             }
             ::v-deep .el-input__inner {
               height: 30px;
-              border-radius: 0px;
+              border-radius: 0;
             }
             ::v-deep .el-select {
               &:nth-of-type(2) {
@@ -4089,13 +4686,13 @@ export default {
             }
             ::v-deep .el-input-number__decrease {
               height: 28px;
-              border-radius: 0px;
               line-height: 28px;
+              border-radius: 0;
             }
             ::v-deep .el-input-number__increase {
               height: 28px;
-              border-radius: 0px;
               line-height: 28px;
+              border-radius: 0;
             }
             ::v-deep .el-input-number {
               line-height: unset;
@@ -4104,14 +4701,14 @@ export default {
           .tke-second-worker-select {
             & > span {
               margin-left: 5px;
-              font-size: 12px;
               color: #000;
+              font-size: 12px;
             }
             & > p {
-              font-size: 12px;
-              color: #888;
-              vertical-align: middle;
               margin-top: 8px;
+              color: #888;
+              font-size: 12px;
+              vertical-align: middle;
               & > a {
                 color: #006eff;
                 &:hover {
@@ -4121,12 +4718,12 @@ export default {
             }
           }
           .tke-second-worker-data {
-            padding-bottom: 0px;
+            padding-bottom: 0;
             & > p {
-              font-size: 12px;
-              color: #888;
-              vertical-align: middle;
               margin-top: 8px;
+              color: #888;
+              font-size: 12px;
+              vertical-align: middle;
               & > a {
                 color: #006eff;
                 &:hover {
@@ -4137,48 +4734,49 @@ export default {
             ::v-deep .el-button {
               width: 66px;
               height: 30px;
-              line-height: 30px;
-              border-radius: 0px;
-              padding: 0px;
+              padding: 0;
               margin-top: 16px;
+              line-height: 30px;
+              border-radius: 0;
             }
             .worker-determine-btn {
-              background-color: #006eff;
               color: #fff;
+              background-color: #006eff;
               border: 1px solid #006eff;
             }
             .worker-cancel-btn {
+              color: #000;
               background-color: #fff;
               border-color: #ddd;
-              color: #000;
             }
             .worker-cancel-btn-dis {
+              color: #bbb;
               background-color: #fff;
               border-color: #ddd;
-              color: #bbbbbb;
             }
           }
         }
       }
       .tke-second-worker-add-models {
-        border: 1px dashed #ddd;
         margin-top: 10px;
+        margin-bottom: 16px;
         font-size: 12px;
         text-align: center;
         background: #fff;
-        margin-bottom: 16px;
+        border: 1px dashed #ddd;
         ::v-deep .el-button {
-          border: 0px;
+          height: 48px;
+          padding: 0;
           color: #006eff;
-          padding: 0px;
           line-height: 50px;
+          border: 0;
           &:active {
             background: #fff;
           }
           &:hover {
-            background: #fff;
             color: #006eff;
             text-decoration: underline;
+            background: #fff;
           }
           &:focus {
             background: #fff;
@@ -4199,14 +4797,14 @@ export default {
         .flex {
           display: flex;
           .left-box {
-            font-size: 12px;
-            line-height: 30px;
-            font-weight: 700;
             color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 30px;
             .search {
               ::v-deep .el-input__inner {
-                padding: 0px;
                 height: 30px;
+                padding: 0;
                 line-height: 30px;
               }
               ::v-deep .el-select {
@@ -4215,17 +4813,17 @@ export default {
             }
           }
           .center-box {
-            height: 290px;
             display: flex;
-            align-items: center;
             justify-content: flex-start;
+            align-items: center;
+            height: 290px;
             margin: 0 5px;
           }
           .right-box {
-            font-size: 12px;
-            line-height: 30px;
-            font-weight: 700;
             color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 30px;
           }
           ::v-deep .el-table {
             border: 1px solid rgb(221, 221, 221);
@@ -4233,30 +4831,30 @@ export default {
         }
       }
       .tips {
-        width: 100%;
-        color: #b43537;
-        border: 1px solid #f6b5b5;
-        background: #fcecec;
-        margin-top: 16px;
         box-sizing: border-box;
+        width: 100%;
         padding: 10px 20px;
+        margin-top: 16px;
+        color: #b43537;
         line-height: 20px;
+        background: #fcecec;
+        border: 1px solid #f6b5b5;
       }
     }
   }
   .tke-second-cost {
     .tke-second-cost-num {
-      font-size: 14px;
       color: #ff7800;
+      font-size: 14px;
       font-weight: 400;
     }
     i {
-      font-style: normal;
       margin: 0 10px;
+      font-style: normal;
     }
     .tke-second-cost-h {
-      font-size: 12px;
       color: #444;
+      font-size: 12px;
     }
     .tke-second-cost-t {
       margin-left: 4px;
@@ -4274,54 +4872,54 @@ export default {
 // 第三步
 .tke-third-box {
   ::v-deep .el-checkbox__label {
-    font-size: 12px;
     padding-left: 6px;
     color: #000;
+    font-size: 12px;
   }
   ::v-deep .el-checkbox__inner {
     width: 16px;
     height: 16px;
   }
   ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
-    background: #006eff;
     width: 16px;
     height: 16px;
+    background: #006eff;
     border-color: #006eff;
   }
   ::v-deep .el-checkbox__inner::after {
-    height: 9px;
     left: 5px;
+    height: 9px;
   }
   ::v-deep .el-checkbox__input.is-checked + .el-checkbox__label {
-    font-size: 12px;
-    color: #444;
     padding-left: 6px;
+    color: #444;
+    font-size: 12px;
   }
   ::v-deep .el-input {
-    line-height: 30px;
-    width: 88%;
     top: -8px;
+    width: 88%;
+    line-height: 30px;
   }
   ::v-deep .el-input__inner {
-    border-radius: 0px;
     width: 200px;
     height: 30px;
+    border-radius: 0;
   }
   ::v-deep .el-checkbox {
     line-height: 30px;
   }
   .password {
     ::v-deep .el-input {
-      top: 0px;
+      top: 0;
       width: 200px;
     }
     p {
-      font-size: 12px;
-      color: #888;
-      vertical-align: middle;
-      margin-top: 4px;
-      line-height: 14px;
       padding-bottom: 14px;
+      margin-top: 4px;
+      color: #888;
+      font-size: 12px;
+      line-height: 14px;
+      vertical-align: middle;
     }
   }
   .tke-third-tips {
@@ -4330,24 +4928,24 @@ export default {
     & > p {
       float: left;
       width: 120px;
-      padding: 6px 20px 0px 0px;
-      line-height: 30px;
-      font-size: 12px;
+      padding: 6px 20px 0 0;
       color: #888;
+      font-size: 12px;
+      line-height: 30px;
       & > i {
         font-size: 14px;
       }
     }
     ::v-deep .el-input {
-      top: 0px;
+      top: 0;
       line-height: 36px;
     }
     & > div {
       float: left;
       & > p {
-        line-height: 22px;
-        font-size: 12px;
         color: #888;
+        font-size: 12px;
+        line-height: 22px;
         & > a {
           color: #006eff;
           &:hover {
@@ -4361,27 +4959,27 @@ export default {
         width: auto;
       }
       i {
-        font-size: 16px;
         margin-left: 6px;
+        font-size: 16px;
       }
     }
   }
   .tke-third-radio-btn {
-    margin-top: 0px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
+    margin-top: 0;
   }
   .tke-third-select {
     ::v-deep .el-input {
-      top: 0px;
+      top: 0;
     }
     ::v-deep .el-input__suffix {
-      right: -14px;
       top: -2px;
+      right: -14px;
     }
     & > p {
-      line-height: 22px;
-      font-size: 12px;
       color: #888;
+      font-size: 12px;
+      line-height: 22px;
       & > a {
         color: #006eff;
         &:hover {
@@ -4392,10 +4990,10 @@ export default {
   }
   .tke-third-checkbox {
     & > p {
-      line-height: 14px;
-      font-size: 12px;
-      color: #888;
       margin-top: -3px;
+      color: #888;
+      font-size: 12px;
+      line-height: 14px;
       & > a {
         color: #006eff;
         &:hover {
@@ -4404,8 +5002,8 @@ export default {
       }
     }
     .checkbox-tips {
-      color: #ff9d00;
       margin-bottom: 8px;
+      color: #ff9d00;
     }
   }
 }
@@ -4413,8 +5011,8 @@ export default {
 .tke-fourth-box {
   .tke-fourth-node {
     padding-bottom: 40px;
-    border-bottom: 1px solid rgb(221, 221, 221);
     margin-bottom: 20px;
+    border-bottom: 1px solid rgb(221, 221, 221);
     p {
       line-height: 20px;
       &:nth-of-type(1) {
@@ -4427,57 +5025,57 @@ export default {
 .tke-second-worker-popover-disk {
   padding: 6px;
   span {
-    display: inline-block;
-    height: 30px;
-    line-height: 30px;
-    padding: 0 10px;
-    font-size: 12px;
-    border: 1px solid #ddd;
-    border-radius: 0;
-    color: #444;
-    background-color: #f2f2f2;
     position: relative;
     top: 1px;
     left: -1px;
+    display: inline-block;
+    height: 30px;
+    padding: 0 10px;
+    color: #444;
+    font-size: 12px;
+    line-height: 30px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    border-radius: 0;
   }
   & > div {
     & > p {
-      font-size: 12px;
-      color: #888;
-      vertical-align: middle;
       margin-top: 8px;
+      color: #888;
+      font-size: 12px;
+      vertical-align: middle;
     }
   }
   ::v-deep .el-select {
     margin-right: 10px;
   }
   ::v-deep .el-input__inner {
-    border-radius: 0px;
     width: 200px;
     height: 30px;
     font-size: 12px;
+    border-radius: 0;
   }
   ::v-deep .el-input-number__decrease {
+    top: 4px;
+    left: 0;
     width: 30px;
     height: 30px;
-    line-height: 30px;
-    top: 4px;
-    left: 0px;
-    border: 1px solid #ddd;
-    border-radius: 0px;
-    background-color: #f2f2f2;
     color: #bbb;
+    line-height: 30px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    border-radius: 0;
   }
   ::v-deep .el-input-number__increase {
+    top: 4px;
+    right: 0;
     width: 30px;
     height: 30px;
-    line-height: 30px;
-    top: 4px;
-    right: 0px;
-    border: 1px solid #ddd;
-    border-radius: 0px;
-    background-color: #f2f2f2;
     color: #bbb;
+    line-height: 30px;
+    background-color: #f2f2f2;
+    border: 1px solid #ddd;
+    border-radius: 0;
   }
   ::v-deep .el-input-number {
     width: 120px;
@@ -4489,9 +5087,9 @@ export default {
     margin-top: 24px;
     text-align: right;
     ::v-deep .el-button {
-      border: 0px;
-      padding: 0px;
+      padding: 0;
       color: #006eff;
+      border: 0;
       &:hover {
         color: #006eff;
         text-decoration: underline;
@@ -4500,70 +5098,70 @@ export default {
     }
   }
   .tke-second-worker-popover-data-bg {
-    padding: 0 20px;
     display: flex;
+    padding: 0 20px;
     & > div {
       display: flex;
       width: 99%;
     }
     .box {
+      overflow: hidden;
       width: 99%;
-      background-color: #f2f2f2;
       padding: 10px;
       margin-top: 10px;
-      overflow: hidden;
+      background-color: #f2f2f2;
       & > p {
-        width: 120px;
         float: left;
+        width: 120px;
         padding-top: 6px;
-        font-size: 12px;
         color: #888;
+        font-size: 12px;
       }
       & > div {
         float: left;
         & > p {
-          font-size: 12px;
-          color: #888;
-          vertical-align: middle;
           margin-top: 4px;
+          color: #888;
+          font-size: 12px;
+          vertical-align: middle;
         }
       }
     }
     .format-and-mount {
       margin-left: 10px;
       ::v-deep .el-checkbox__input.is-checked .el-checkbox__inner {
-        background: #006eff;
         width: 16px;
         height: 16px;
+        background: #006eff;
         border-color: #006eff;
       }
       ::v-deep .el-checkbox__label {
-        font-size: 12px;
         padding-left: 6px;
         color: #000;
+        font-size: 12px;
       }
       ::v-deep .el-checkbox__inner {
         width: 16px;
         height: 16px;
       }
       ::v-deep .el-checkbox__inner::after {
-        height: 9px;
         left: 5px;
+        height: 9px;
       }
       ::v-deep .el-checkbox__input.is-checked + .el-checkbox__label {
-        font-size: 12px;
-        color: #444;
         padding-left: 6px;
+        color: #444;
+        font-size: 12px;
       }
       ::v-deep .el-input {
-        line-height: 30px;
-        width: 88%;
         top: -8px;
+        width: 88%;
+        line-height: 30px;
       }
       ::v-deep .el-input__inner {
-        border-radius: 0px;
         width: 200px;
         height: 30px;
+        border-radius: 0;
       }
       ::v-deep .el-checkbox {
         line-height: 30px;
@@ -4585,10 +5183,10 @@ export default {
 }
 
 .distribution {
-  padding: 0px !important;
+  padding: 0 !important;
   .format-and-mount {
     margin-top: 16px;
-    margin-left: 0px !important;
+    margin-left: 0 !important;
     a {
       color: #006eff;
       &:hover {
@@ -4599,8 +5197,8 @@ export default {
   }
 }
 .text-orange {
-  font-size: 14px;
   color: #ff7800;
+  font-size: 14px;
   font-weight: 600;
 }
 </style>

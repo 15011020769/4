@@ -2,10 +2,17 @@
   <div class="main_overview">
     <div class="firstShow">
       <h3>
-          <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
-          请求次数统计
-          <span style="color:#bbb;">(%)</span>
-        </h3>
+        <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
+        请求次数统计
+        <span style="color:#bbb;">(%)</span>
+      </h3>
+      <ELine
+        :xAxis="xAxisLineFlow"
+        :series1="seriesLineFlowTotal"
+        :series2="seriesLineFlowBot"
+        :legendText="legendTextLineFlow"
+        :color="colorLine"
+      />
     </div>
     <el-row class="secondShow">
       <el-col :span="12">
@@ -63,7 +70,7 @@
             </el-select>  
         </el-row>
       <world-map :series="seriesWorldMap" v-if="radio == 'global'"/>
-      <china-map :series="seriesChinaMap" v-else/>
+      <china-map :series="seriesWorldMap" v-else/>
     </div>
   </div>
 </template>
@@ -75,27 +82,34 @@ import chinaMap from '../../../components/chinaMap'
 import {
     DESCRIBE_BOT_TYPE_STAT,
     DESCRIBE_BOT_ACTION_STAT,
-    DESCRIBE_BOT_REGIONS_STAT
+    DESCRIBE_BOT_REGIONS_STAT,
+    DESCRIBE_BOT_STATISTIC_POINTS,
+    DESCRIBE_PEAK_POINTS,
   } from '@/constants'
 import EPie from '../../../saveOverView/components/pie'
 import ELine from '../../../saveOverView/components/line'
 export default {
   data () {
     return {
+      seriesLineFlowBot: [], // bot流量折线图
+      seriesLineFlowTotal: [], // bot流量折线图
+      xAxisLineFlow: [],
+      colorLine: ["#006eff", "#FF584C",],
+      legendTextLineFlow: ['总请求', 'BOT请求'],
       seriesPieType: [], // bot类型饼图
       seriesPieAction: [], // bot动作饼图
       colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
       legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'], // bot类型
       legendTextPieAction: ['验证码', '拦截', '监控', '重定向'], // bot动作
-      seriesWorldMap: [{ name: '中国', value: 2 }], // 世界地图查询值
-      seriesChinaMap:[{name: '广东', value: 2}], // 中国地图查询值
+      seriesWorldMap: [], // 世界地图和中国地图查询值 { name: '中国', value: 2 }
       radio: "global", // 全球/全国绑定值
       botType: "ALL", // bot类型下拉绑定值
-      options: [{value: 'ALL', label: '全部'},
-                {value: 'UCB', label: '自定义类型'},
-                {value: 'TCB', label: '公开类型'},
-                {value: 'UB', label: '未知类型'},
-              ]
+      options: [
+        {value: 'ALL', label: '全部'},
+        {value: 'UCB', label: '自定义类型'},
+        {value: 'TCB', label: '公开类型'},
+        {value: 'UB', label: '未知类型'},
+      ]
     }
   },
   props: {
@@ -115,19 +129,25 @@ export default {
     chinaMap,
   },
   watch: {
-    times() {
-      this.init()
+    times(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.init()
+      }
     },
-    domain() {
+    domain(val) {
       this.init()
     },
     radio(val) {
       this.radio = val
-      this.getBotRegions()
+      if(this.domain) {
+        this.getBotRegions()
+      }
     },
     botType(val) {
       this.botType = val
-      this.getBotRegions()
+      if(this.domain) {
+        this.getBotRegions()
+      }
     }
   },
   mounted() {
@@ -135,16 +155,57 @@ export default {
   },
   methods: {
     init() {
-      this.getBotType()
-      this.getBotAction()
-      this.getBotRegions()
+      if(this.domain) {
+        this.getBotType()
+        this.getBotAction()
+        this.getBotRegions()
+        this.getBotFlow()  
+      }
+    },
+    // 获取Bot_V2 Bot流量统计
+    getBotFlow() {
+      let axixArr = []
+      // 获取业务攻击趋势参数获取时间值
+      const paramsPeakPoints = {
+        Version: '2018-01-25',
+        FromTime: moment(this.times[0]).format("YYYY-MM-DD HH:mm:ss"),
+        ToTime: moment(this.times[1]).format("YYYY-MM-DD HH:mm:ss"),
+      }
+     const params = {
+        Version: "2018-01-25",
+        StartTs: this.times[0],
+        EndTs: this.times[1],
+        Stride: 2,
+        Domain: this.domain,
+      }
+      const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
+      this.axios.post(DESCRIBE_PEAK_POINTS, paramsPeakPoints).then(resp => {
+        this.generalRespHandler(resp, ({Points}) => {
+          Points.map((v, index) => {
+              if(Granularity < 7) {
+                if( index%2 == 0) {
+                  axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+                } 
+              } else {
+                axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+              }
+            })
+            this.xAxisLineFlow = axixArr
+        })
+      })
+      this.axios.post(DESCRIBE_BOT_STATISTIC_POINTS, params).then((resp) => {
+        this.generalRespHandler(resp, ({PointsBot, PointsTotal}) => {
+          this.seriesLineFlowBot = PointsBot
+          this.seriesLineFlowTotal = PointsTotal
+        })
+      })
     },
     // 获取Bot_V2 Bot类别统计
     getBotType() {
      const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
       }
       this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
@@ -159,8 +220,8 @@ export default {
     getBotAction() {
      const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
       }
       this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
@@ -176,16 +237,23 @@ export default {
     getBotRegions() {
       const params = {
         Version: "2018-01-25",
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Domain: this.domain,
         Scope: this.radio,
         BotType: this.botType,
       }
+      let regionsArr = []
        this.axios.post(DESCRIBE_BOT_REGIONS_STAT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          console.log(Response)
+        this.generalRespHandler(resp, ({Data}) => {
+          for(var i in Data) {
+            regionsArr.push({
+              name: i,
+              value: Data[i]
+            })
+          }
         })
+        this.seriesWorldMap = regionsArr
       })
     }
   }

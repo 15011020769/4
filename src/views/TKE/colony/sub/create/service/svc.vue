@@ -75,7 +75,7 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="资源列表">
-					<el-select v-model="svc.resourcesValue" placeholder="请选择" style="margin-left:70px;">
+					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'请选择':'无可用资源'" :disabled="resourcesList.length?false:true" style="margin-left:70px;">
 						<el-option
 							v-for="item in resourcesList"
 							:key="item.metadata.name"
@@ -83,10 +83,17 @@
 							:value="item.metadata.name">
 						</el-option>
 					</el-select>
-					<div style="margin-left:70px;">无可用资源，可前往<a href="">资源控制台</a>新建</div>
+					<div v-if="resourcesList.length?false:true" style="margin-left:70px;">无可用资源，可前往<a href="">资源控制台</a>新建</div>
 				</el-form-item>
 				<el-form-item label="Labels">
-					<div style="margin-left:70px;">请先选择Workload</div>
+					<div style="margin-left:70px;">
+            <p v-if="resourcesList.length === 0">请先选择Workload</p>
+            <div v-else v-for="(v1, i1) in resourcesList" :key="i1">
+              <!-- <p v-if="v1">1313</p> -->
+              <p v-for="(item, key) in v1.metadata.labels" :key="key">{{key}}: {{item}}</p>
+            </div>
+            <!-- <p v-else v-for="(item,key,i) in resourcesList[i].metadata.labels" :key="i">{{key}}:{{item}}</p> -->
+          </div>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -95,14 +102,13 @@
 			</div>
 		</el-dialog>
   </div>
-
 </template>
 
 <script>
 import Service from './components/Service'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
-import { ALL_CITY, POINT_REQUEST, TKE_DESCRIBELOADBALANCERS, TKE_COLONY_LIST, TKE_VPC_METWORK, TKE_Worker_METWORK } from '@/constants'
+import { ALL_CITY, POINT_REQUEST, TKE_EDSCRIBELOADBALANCERS, TKE_COLONY_LIST, TKE_VPC_METWORK, TKE_WORKER_METWORK } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
   name: 'svcCreate',
@@ -111,7 +117,7 @@ export default {
       dialogFormVisible: false,
       svc: {
         show: true,
-        time: '',
+        time: 30,
         checked: false,
         name: '', // 新建的名称
         value: '', // 命名空间名称
@@ -165,7 +171,7 @@ export default {
     // 从路由获取类型
     let { clusterId, nameSpaceName } = this.$route.query
     this.clusterId = clusterId
-    console.log(this.$route)
+    // console.log(this.$route)
     this.spaceName = nameSpaceName
     this.GetSpaceValue()// 获取命名空间
     this.getDescribeLoadBalancers()// 扫描均衡器
@@ -183,7 +189,7 @@ export default {
         Offset: 0,
         Version: '2018-03-17'
       }
-      await this.axios.post(TKE_DESCRIBELOADBALANCERS, params).then(res => {
+      await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.ownLoadBalancer = res.Response.LoadBalancerSet
           // console.log(this.ownLoadBalancer)
@@ -209,7 +215,7 @@ export default {
         Offset: 0,
         Version: '2017-03-12'
       }
-      await this.axios.post(TKE_Worker_METWORK, params).then(res => {
+      await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
         if (res.Response.Error === undefined) {
           this.LBsubnet = res.Response.SubnetSet
           // console.log(222, this.LBsubnet)
@@ -332,7 +338,9 @@ export default {
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(res)
-          this.resourcesList = JSON.parse(res.Response.ResponseBody).items
+          let msg = JSON.parse(res.Response.ResponseBody).items
+          this.resourcesList = msg
+          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -357,7 +365,9 @@ export default {
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(JSON.parse(res.Response.ResponseBody).items)
-          this.resourcesList = JSON.parse(res.Response.ResponseBody).items
+          let msg = JSON.parse(res.Response.ResponseBody).items
+          this.resourcesList = msg
+          this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -382,7 +392,10 @@ export default {
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(res)
-          this.resourcesList = JSON.parse(res.Response.ResponseBody).items
+          // this.resourcesList = JSON.parse(res.Response.ResponseBody).items
+          let msg = JSON.parse(res.Response.ResponseBody).items
+          this.resourcesList = msg
+          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -399,17 +412,25 @@ export default {
     },
     // 新建服务
     async submitFound () {
-      let { name, value, describe, list } = this.svc
+      let { name, describe, list, value, time, ETP, SA } = this.svc
       let newPortAry = []
       list.forEach(ele => {
         let ports = {
           name: `${ele.input1}-${ele.input2}-${ele.protocol.toLowerCase()}`,
-          port: ele.input1,
-          targetPort: ele.input2,
+          port: Number(ele.input1),
+          targetPort: Number(ele.input2),
           protocol: ele.protocol
         }
         newPortAry.push(ports)
       })
+      var policy = 'Cluster'
+      if (ETP === '2') {
+        policy = 'Local'
+      }
+      var sessionTime = 'None'
+      if (SA === '1') {
+        sessionTime = { 'clientIP': { 'timeoutSeconds': time } }
+      }
       let reqBody = {
         'kind': 'Service',
         'apiVersion': 'v1',
@@ -420,20 +441,27 @@ export default {
             'description': describe } },
         'spec': { 'type': 'LoadBalancer',
           'ports': newPortAry,
-          'externalTrafficPolicy': 'Cluster',
-          'sessionAffinity': 'None' } }
+          'externalTrafficPolicy': policy,
+          'sessionAffinity': sessionTime } }
       let param = {
         Method: 'POST',
-        Path: `/api/v1/namespaces/${this.clusterId}/services`,
+        Path: `/api/v1/namespaces/${this.spaceName}/services`,
         Version: '2018-05-25',
         RequestBody: JSON.stringify(reqBody),
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
-        console.log(res)
         if (res.Response.Error === undefined) {
           this.loadShow = false
-          // console.log(res)
+          console.log(res)
+          // this.$router.push({
+          //   path: '/colony/sub/detail/service/svc/event',
+          //   query: {
+          //     clusterId: this.clusterId,
+          //     ingressName: name,
+          //     namespace: value
+          //   }
+          // })
         } else {
           this.loadShow = false
           let ErrTips = {

@@ -143,23 +143,29 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'VipInpkg',
+          'VipIntraffic',
+          'VipOutpkg',
+          'VipOuttraffic',
+        ], //可用指标
         disName: {
-          'VipInpkg': '外网入包量',
-          'VipIntraffic': '外网入带宽',
-          'VipOutpkg': '外网出包量',
-          'VipOuttraffic': '外网出带宽'
+          'VipInpkg': '入包量',
+          'VipIntraffic': '入頻寬',
+          'VipOutpkg': '出包量',
+          'VipOuttraffic': '出頻寬',
         },
         Company: {
-          'VipInpkg': '个/秒',
+          'VipInpkg': 'Mbps',
           'VipIntraffic': 'Mbps',
-          'VipOutpkg': '个/秒',
-          'VipOuttraffic': 'Mbps'
+          'VipOutpkg': '個/秒',
+          'VipOuttraffic': '個/秒',
         },
         Tips: {
-          'VipInpkg': '外网入包量',
-          'VipIntraffic': '外网入带宽',
-          'VipOutpkg': '外网出包量',
-          'VipOuttraffic': '外网出带宽'
+          'VipInpkg': '入包量',
+          'VipIntraffic': '外網入頻寬',
+          'VipOutpkg': '出包量',
+          'VipOuttraffic': '外網出頻寬',
         },
 
       }
@@ -202,15 +208,17 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                console.log(item.MetricName, item.Meaning.Zh)
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
             });
           } else {
             this.$message({

@@ -54,7 +54,8 @@
             </div>
           </el-form-item>
           <el-form-item label="日志源">
-            <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'&&!editStatus">
+            <!-- <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'&&!editStatus"> -->
+            <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'">
               <el-radio-button label="one">所有容器</el-radio-button>
               <el-radio-button label="two">指定容器</el-radio-button>
             </el-radio-group>
@@ -449,7 +450,7 @@
           radio: "1",
           flag: true,
           activeName: "Deployment",
-          workload: [],
+          workload: '',
         }],
         namespaceOptions: [],
         namespaceOptions1: [],
@@ -494,7 +495,7 @@
           checkbox3: [],
           checkbox4: [],
         },
-        Checkbox2: {
+        Checkbox2: {//往后台要发送的数据
           checkbox0: [],
           checkbox1: [],
           checkbox2: [],
@@ -625,6 +626,7 @@
       },
       formFour: {
         handler(val) {
+           console.log(this.newroomFlag)
           val.forEach(item => {
 
             if (val.length == this.namespaceOptions.length) {
@@ -654,6 +656,9 @@
             if (item.radio == '1') {
               this.newroomFlag = false
             } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
+                 console.log(this.newroomFlag)
+          console.log(val.length)
+          console.log(this.namespaceOptions.length)
               this.newroomFlag = false
             } else {
               this.newroomFlag = true
@@ -691,6 +696,7 @@
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
       this.nameSpaceList();
+       console.log(this.newroomFlag)
     },
     mounted() {},
     methods: {
@@ -699,7 +705,7 @@
         if (this.form.name == "") {
           this.$refs.form.validateField("name");
           this.$message({
-            message:"函數名不能為空",
+            message:"规则名不能為空",
             type:'warning',
             showClose: true,
             duration: 0
@@ -860,6 +866,12 @@
         }
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
+               this.$message({
+                type: "success",
+                message: "新建成功",
+                duration: 0,
+                showClose: true
+              });
               this.$router.go(-1);
             }
           });
@@ -928,7 +940,65 @@
               if (!data.spec.input.container_log_input.all_namespaces) {
                 this.vlog = 'two'
               }
+              let namespace=data.spec.input.container_log_input.namespaces;
+              var arr=[],arr2=[],arr3=[],arr4=[],arr5=[],arr6=[],arr21=[],arr31=[],arr41=[],arr51=[],arr61=[];
+              namespace.forEach(item=>{
+                console.log(item)
+                if(item.all_containers){
+                  let obj={}
+                  obj.value1=item.namespace
+                    obj.radio='1';
+                    obj.flag=false;
+                    obj.activeName='Deployment';
+                    obj.workload= ''
+                     arr.push(obj)
+                }
+                
+                if(!item.all_containers){
+                  console.log(item.namespace)
+                  let obj2={}
+                   obj2.value1=item.namespace;
+                   obj2.radio='2';
+                   obj2.flag=false;
+                   obj2.activeName='Deployment';
+                   obj2.workload= item.workloads.length;
 
+                  item.workloads.forEach(v=>{
+                    console.log('v',v)
+                    if(v.type=='deployment'){
+                        arr2.push(v.name)
+                        arr21.push({name:v.name,type:item.namespace})
+                    }else if(v.type=='daemonset'){
+                        arr3.push(v.name)
+                        arr31.push({name:v.name,type:item.namespace})
+                    }else if(v.type=='statefulset'){
+                        arr4.push(v.name)
+                        arr41.push({name:v.name,type:item.namespace})
+                    }else if(v.type=='cronjob'){
+                       arr5.push(v.name)
+                       arr51.push({name:v.name,type:item.namespace})
+                    }else if(v.type=='job'){
+                       arr6.push(v.name)
+                       arr61.push({name:v.name,type:item.namespace})
+                    }
+                  })
+                   arr.push(obj2)
+                }
+               
+              })
+              console.log(arr)
+              this.formFour=arr;
+              this.Checkbox.checkbox0=arr2
+              this.Checkbox.checkbox1=arr3
+              this.Checkbox.checkbox2=arr4
+              this.Checkbox.checkbox3=arr5
+              this.Checkbox.checkbox4=arr6
+              // 
+              this.Checkbox2.checkbox0=arr21
+              this.Checkbox2.checkbox1=arr31
+              this.Checkbox2.checkbox2=arr41
+              this.Checkbox2.checkbox3=arr51
+              this.Checkbox2.checkbox4=arr61
 
             }
 
@@ -1062,8 +1132,8 @@
             this.wlFlag = false
           }
           this.formTwo.optionAll.forEach(v => { //采集路径选项判断
-            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value5 == '请选择挂载目录' || v.value6 == '' || v.value6 ==
-              undefined || v.value6[0] != '/') {
+            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value7 == '' ||  v.value7==
+              undefined || v.value7[0] != '/') {
               this.pathFlag = true
               return false
             } else {
@@ -1077,7 +1147,7 @@
               obj[x.value4] = []
             }
             obj[x.value4].push({
-              path: x.value5 + x.value6
+              path: x.value7
             })
           })
           params.RequestBody.spec.input = {
@@ -1122,11 +1192,20 @@
             type: "host-log"
           };
         }
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          if (res.Response.Error === undefined) {
-            this.$router.go(-1);
-          }
-        });
+        if(!this.pathFlag ){
+
+          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            if (res.Response.Error === undefined) {
+               this.$message({
+                  type: "success",
+                  message: "编辑完成",
+                  duration: 0,
+                  showClose: true
+                });
+              this.$router.go(-1);
+            }
+          });
+        }
       },
       checkboxChange0(val,np) {
         if (val.length != '0') {
@@ -1343,21 +1422,25 @@
         if (this.namespaceOptions1.length == '1') {
           this.namespaceOptions1 = []
         }
-        var s = 0;
-        for (let i in this.Checkbox2) {
-          s += this.Checkbox2[i].length
-        }
-        if(s==0){
-           this.$message({
-                message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
-                type: "warning",
-                showClose: true,
-                duration: 0
-              });
+        if(this.formFour[index].radio=='2'){
+          var s = 0;
+          for (let i in this.Checkbox2) {
+            s += this.Checkbox2[i].length
+          }
+          if(s==0){
+             this.$message({
+                  message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
+                  type: "warning",
+                  showClose: true,
+                  duration: 0
+                });
+          }else{
+            this.formFour[index].workload = s;
+            this.formFour[index].flag = !this.formFour[index].flag;
+          }
         }else{
-
-          this.formFour[index].workload = s;
-          this.formFour[index].flag = !this.formFour[index].flag;
+           this.formFour[index].workload = '';
+            this.formFour[index].flag = !this.formFour[index].flag;
         }
 
       },
