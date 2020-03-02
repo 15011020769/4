@@ -26,6 +26,7 @@ export const ATTACH_GROUP = 'cam2/AttachGroupPolicy'
 export const GET_GROUP = 'cam2/GetGroup'
 export const UPDATA_GROUP = 'cam2/UpdateGroup'
 export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
+export const MODIFY_SUBSCRIPTION = 'cam/ModifyMsgTypeOnReceiver'
 
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'
