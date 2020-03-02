@@ -45,7 +45,9 @@
         <el-table-column prop="date" label="最新检测时间" width="120" sortable :formatter="formatDate">
         </el-table-column>
         <el-table-column prop="date" label="操作">
-           <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
+          <template slot-scope="scope">
+            <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -129,9 +131,12 @@ export default {
     },
     // 查看详情
     goDetail(scope) {
-      // this.$router.push({
-      //   path: "/"
-      // })
+      this.$router.push({
+        path: "/botDetail/ucb",
+        query: {
+          SrcIp: scope.row.SrcIp
+        }
+      })
     },
     // 分页开始
     handleSizeChange(val) {
