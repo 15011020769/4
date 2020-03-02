@@ -74,7 +74,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <span :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
-            <span class=" ml10" :class="scope.row.isDisabled?'':'tke-text-link'">编辑YAML</span>
+            <span class=" ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="goEdit(scope.row)">编辑YAML</span>
             <span class="ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
           </template>
         </el-table-column>
@@ -186,19 +186,24 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
+          console.log(res)
           this.loadShow = false
           let data = JSON.parse(res.Response.ResponseBody).items
           if (data.length > 0) { // 处理selector字段中的数据
             data.map(item => {
               item.k8sApp = item.spec.selector && item.spec.selector['k8s-app']
               item.qcloudApp = item.spec.selector && item.spec.selector['qcloud-app']
+              let { metadata, spec } = item
               // 权限的验证
               // if (item.metadata.name === 'default' || item.metadata.name.indexOf('kube-') === 0) {
-              if (item.metadata.namespace !== 'default' || item.metadata.name.indexOf('kube') === 0) {
+              if (metadata.namespace !== 'default' || metadata.name.indexOf('kube') === 0) {
                 item.isDisabled = true
               } else {
                 item.isDisabled = false
               }
+              // if( spec.type == 'ClusterIP' || spec.type == 'NodePort'){
+
+              // }
             })
           }
           this.list = data// 得到列表数据并赋值
@@ -284,6 +289,16 @@ export default {
     },
     // 更新访问方式
     goSvcUpdteType (item) {
+      this.$router.push({
+        name: 'svcUpdate',
+        query: {
+          clusterId: this.clusterId,
+          spaceName: this.nameSpaceName,
+          serviceName: item.metadata.name
+        }
+      })
+    },
+    goEdit (item) {
       this.$router.push({
         name: 'svcUpdate',
         query: {

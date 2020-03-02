@@ -146,9 +146,9 @@
               </div>
               <!-- 内容 -->
               <div style="border-top:1px solid #ddd;padding: 10px;">
-                <div style="padding:5px 0;" v-for="it in svc.list" :key="it.key">
+                <div style="padding:5px 0;" v-for="(it,i) in svc.list" :key="i">
 									<!-- 下拉框协议 -->
-                  <el-select class="w100" v-model="svc.protocol" placeholder="请选择">
+                  <el-select class="w100" v-model="it.protocol" placeholder="请选择">
 										<el-option
                       v-for="item in svc.options"
                       :key="item"
@@ -163,9 +163,9 @@
                     ></el-option> -->
                   </el-select>
 									<!-- 容器器端口 -->
-                  <el-input class="w250" style="padding-left:30px;" v-model="svc.input1" placeholder="请输入内容"></el-input>
+                  <el-input class="w250" style="padding-left:30px;" v-model="it.port" placeholder="请输入内容"></el-input>
 									<!-- 服务端口 -->
-                  <el-input class="w250" style="padding-left:30px;" v-model="svc.input2" placeholder="请输入内容"></el-input>
+                  <el-input class="w250" style="padding-left:30px;" v-model="it.targetPort" placeholder="请输入内容"></el-input>
 									<!-- 关闭按钮 -->
                   <el-tooltip class="item" effect="dark" content="删除" placement="right">
                     <i
@@ -249,7 +249,7 @@ export default {
         SA: '2',
         input1: '', // 容器端口
         input2: '', // 服务端口
-        list: [{}],
+        list: [],
         workload: [],
         tabPosition: 'dep'
       },
@@ -299,11 +299,11 @@ export default {
     this.clusterId = clusterId
     this.spaceName = spaceName
     this.serviceName = serviceName
+    this.getInfo()// 获取服务详情信息
     this.getDescribeClusters()// 获取集群列表
     this.getDescribeLoadBalancers()// 扫描均衡器
     this.getDescribeVpcs()// 描述Vpcs
     this.getDescribeSubnets()// 扫描子网
-    this.getInfo()// 获取服务详情信息
   },
   methods: {
     // 扫描子网(4)
@@ -419,13 +419,60 @@ export default {
     },
     // 更新访问方式按钮的提交
     async updateAccessMode () {
-      // RequestBody:"{"metadata":{"annotations":{"service.kubernetes.io/loadbalance-id":"lb-65hfh43a","service.kubernetes.io/service.extensiveParameters":"{\"AddressIPVersion\":\"IPV4\"}"}},"spec":{"type":"LoadBalancer","ports":[{"name":"12-12-tcp","nodePort":31922,"port":12,"targetPort":12,"protocol":"TCP"}],"externalTrafficPolicy":"Cluster","sessionAffinity":"None"}}",
-      let jsonStr = JSON.stringify({ 'metadata': { 'annotations': { 'service.kubernetes.io/loadbalance-id': 'lb-65hfh43a', 'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}' } }, 'spec': { 'type': 'LoadBalancer', 'ports': [{ 'name': '12-12-tcp', 'nodePort': 31922, 'port': 12, 'targetPort': 12, 'protocol': 'TCP' }], 'externalTrafficPolicy': 'Cluster', 'sessionAffinity': 'None' } })
+      let { list, ETP, SA, time, value, radio } = this.svc
+      let newPortAry = []// 更改时的 端口映射数组
+      list.forEach(ele => { // 端口映射传参的判断
+        let ports = {
+          name: `${ele.port}-${ele.targetPort}-${ele.protocol.toLowerCase()}`,
+          port: Number(ele.port),
+          targetPort: Number(ele.targetPort),
+          nodePort: Number(ele.nodePort),
+          protocol: ele.protocol
+        }
+        if (this.svc.radio == '3' || this.svc.radio == '1') {
+          ports.nodePort = Number(ele.nodePort)
+        } else {
+          ports.nodePort = null
+        }
+        newPortAry.push(ports)
+      })
+      let specType = ''
+      if (radio == '1' || radio == '3') { // 访问方式type的判断
+        specType = 'LoadBalancer'
+      } else if (radio == '2') {
+        specType = 'ClusterIP'
+      } else {
+        specType = 'NodePort'
+      }
+      let policy = ''
+      if (ETP === '2') { // 高级选项ExtermalTrafficPolicy判断
+        policy = 'Local'
+      } else {
+        policy = 'Cluster'
+      }
+      let session = ''
+      let sessionTime = {}
+      if (SA === '1') { // 高级选项Session Affinity判断
+        session = 'ClientIP'
+        sessionTime = { 'clientIP': { 'timeoutSeconds': Number(time) } }
+      } else {
+        session = 'None'
+      }
+      let jsonStr = { 'metadata': {// 要传递的RequestBody参数
+        'annotations': {
+          'descriptions': this.serviceName,
+          'service.kubernetes.io/loadbalance-id': value,
+          'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}' } },
+      'spec': { 'type': specType,
+        'ports': newPortAry,
+        'externalTrafficPolicy': policy,
+        'sessionAffinity': session } }
+      if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime
       let param = {
         ContentType: 'application/merge-patch+json',
         Method: 'PATCH',
         Path: `/api/v1/namespaces/${this.spaceName}/services/${this.serviceName}`,
-        RequestBody: jsonStr,
+        RequestBody: JSON.stringify(jsonStr),
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
@@ -433,6 +480,12 @@ export default {
         if (res.Response.Error === undefined) {
           // console.log(res, 13213)
           // let response = JSON.parse(res.Response.ResponseBody)
+          this.$router.push({
+            path: '/colony/sub/list/service/svc',
+            query: {
+              clusterId: this.clusterId
+            }
+          })
         } else {
           let ErrTips = {
 
@@ -458,13 +511,34 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody))
+          console.log(JSON.parse(res.Response.ResponseBody))
           let msg = JSON.parse(res.Response.ResponseBody)
           this.serviceInfo = msg
-          let { protocol, port, targetPort } = msg.spec.ports[0]
-          this.svc.protocol = protocol
-          this.svc.input1 = port
-          this.svc.input2 = targetPort
+          this.svc.list = msg.spec.ports
+          // var at = 'kubernetes.io/loadbalance-id'
+          this.svc.value = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
+          console.log(this.svc.value)
+          if (msg.spec.type == 'NodePort') { // 判断服务访问方式
+            this.svc.radio = '4'
+          } else if (msg.spec.type == 'ClusterIP') {
+            this.svc.radio = '2'
+          } else if (msg.spec.type == 'LoadBalancer') {
+            this.svc.radio = '1'
+          } else {
+            this.svc.radio = '3'
+          }
+          if (msg.spec.externalTrafficPolicy == 'Cluster') { // 高级选项ExtermalTrafficPolicy判断
+            this.svc.ETP = '1'
+          } else {
+            this.svc.ETP = '2'
+          }
+          // console.log(msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds)
+          if (msg.spec.sessionAffinity == 'ClientIP') { // 高级选项Session Affinity判断
+            this.svc.SA = '1'
+            this.svc.time = msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds
+          } else {
+            this.svc.SA = '2'
+          }
           this.loadShow = false
         } else {
           this.loadShow = false

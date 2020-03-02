@@ -8,7 +8,10 @@
       </div>
     </div>
 
-    <div class="tke-card mt10 tke-formpanel-wrap">{{YAMLData}}</div>
+    <!-- <div class="tke-card mt10 tke-formpanel-wrap">{{YAMLData}}</div> -->
+    <div class="tke-card mt10 tke-formpanel-wrap">
+      <codemirror style="background-color: #444;"  ref="myCm"  v-model="YAMLData"  :options="cmOptions" class="code" ></codemirror>
+    </div>
   </div>
 </template>
 
@@ -17,6 +20,16 @@ import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import { ALL_CITY, POINT_REQUEST } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
+import { codemirror } from 'vue-codemirror'
+// import 'codemirror/theme/ambiance.css'
+require('codemirror/mode/python/python.js')
+require('codemirror/addon/fold/foldcode.js')
+require('codemirror/addon/fold/foldgutter.js')
+require('codemirror/addon/fold/brace-fold.js')
+require('codemirror/addon/fold/xml-fold.js')
+require('codemirror/addon/fold/indent-fold.js')
+require('codemirror/addon/fold/markdown-fold.js')
+require('codemirror/addon/fold/comment-fold.js')
 export default {
   name: 'svcDetailYaml',
   data () {
@@ -24,11 +37,25 @@ export default {
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
       serviceName: '', // 服务的名称
-      YAMLData: ''// 数据信息
+      YAMLData: '', // 数据信息
+      cmOptions: {
+        tabSize: 4,
+        mode: 'python',
+        theme: 'darcula',
+        lineNumbers: true, // 行号
+        line: true,
+        // lineNumbers: true,
+        foldgutter: true,
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+        lineWrapping: true, // 代码折叠
+        foldGutter: true,
+        matchBrackets: true, // 括号匹配
+        autoCloseBrackets: true
+      }
     }
   },
   components: {
-
+    codemirror
   },
   created () {
     // 从路由获取类型
@@ -72,6 +99,11 @@ export default {
 
 <style lang="scss" scoped>
 .mt10{
-  white-space: pre-wrap
+  white-space: pre-wrap;
+  .code{
+    text-align: left;
+    background-color: #444;
+  }
 }
+
 </style>
