@@ -125,7 +125,7 @@ export default {
       this.loadShow = true;
       let params = {
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/daemonsets/"+this.rowData.metadata.name+"/events",
+        Path: "/apis/batch/v1beta1/namespaces/"+this.rowData.metadata.namespace+"/cronjobs/"+this.rowData.metadata.name+"/events",
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
@@ -133,7 +133,8 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          if(response.items && response.items.length > 0) {
+          console.log(response);
+          if(response.items.length > 0) {
             response.items.map(event => {
               event.firstTime = moment(event.firstTimestamp).format("YYYY-MM-DD HH:mm:ss");
               event.lastTime = moment(event.lastTimestamp).format("YYYY-MM-DD HH:mm:ss");

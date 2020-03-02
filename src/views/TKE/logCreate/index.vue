@@ -54,7 +54,6 @@
             </div>
           </el-form-item>
           <el-form-item label="日志源">
-            <!-- <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'&&!editStatus"> -->
             <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'">
               <el-radio-button label="one">所有容器</el-radio-button>
               <el-radio-button label="two">指定容器</el-radio-button>
@@ -151,10 +150,6 @@
                         <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
                       </el-tab-pane>
                     </el-tabs>
-                    <!--数据展示 -->
-                    <!-- <div v-if="item.activeName=='deployment'">
-                        asdsadadssad
-                    </div> -->
                   </div>
                 </el-form-item>
               </div>
@@ -369,21 +364,6 @@
           }
         }
       };
-      //验证kafka
-      var validateKafka = (rule, value, callback) => {
-        console.log(rule);
-        console.log(value);
-        console.log(callback);
-      };
-      //验证topic
-      var validateTopic = (rule, value, callback) => {
-        console.log(rule);
-        console.log(value);
-        if (value == "无") {
-          callback(new Error("sdsd"));
-        }
-        console.log(callback);
-      };
       return {
         editStatus: false,
         genDataValue: [],
@@ -399,16 +379,6 @@
             trigger: "blur",
             required: false
           }],
-          Ckafka: [{
-            validator: validateKafka,
-            trigger: "blur",
-            required: true
-          }],
-          Topic: [{
-            validator: validateTopic,
-            trigger: "blur",
-            required: true
-          }]
         },
         form: {
           name: "",
@@ -510,9 +480,6 @@
       };
     },
     watch: {
-      value() {
-        console.log(this.value);
-      },
       Ckafka: {
         handler(val) {
           var params = {
@@ -626,7 +593,6 @@
       },
       formFour: {
         handler(val) {
-           console.log(this.newroomFlag)
           val.forEach(item => {
 
             if (val.length == this.namespaceOptions.length) {
@@ -656,9 +622,6 @@
             if (item.radio == '1') {
               this.newroomFlag = false
             } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
-                 console.log(this.newroomFlag)
-          console.log(val.length)
-          console.log(this.namespaceOptions.length)
               this.newroomFlag = false
             } else {
               this.newroomFlag = true
@@ -670,9 +633,7 @@
       },
       Checkbox: {
         handler(val) {
-
           for (let key in val) {
-            // console.log(key)
             if (val[key].length == '0') {
               this.newroomFlag = true
             } else {
@@ -696,7 +657,6 @@
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
       this.nameSpaceList();
-       console.log(this.newroomFlag)
     },
     mounted() {},
     methods: {
@@ -713,7 +673,6 @@
           return false;
         }
 
-        console.log(this.output);
         var params = {
           ClusterName: this.$route.query.clusterId.split("(")[0],
           Method: "POST",
@@ -909,7 +868,6 @@
                 obj['valueKey'] = data1[i]
                 arr.push(obj)
               }
-              console.log(arr)
               this.formThree.domains = arr
             } else if (data.spec.input.type == 'pod-log') { //容器文件路径
 
@@ -938,12 +896,16 @@
             } else if (data.spec.input.type == 'container-log') { //容器标准输出
               //指定文件
               if (!data.spec.input.container_log_input.all_namespaces) {
-                this.vlog = 'two'
+                this.vlog = 'two';
+                if(this.formFour.length!=this.namespaceOptions.length){
+                  this.newroomFlag=false
+                }else{
+                   this.newroomFlag=true 
+                }
               }
               let namespace=data.spec.input.container_log_input.namespaces;
               var arr=[],arr2=[],arr3=[],arr4=[],arr5=[],arr6=[],arr21=[],arr31=[],arr41=[],arr51=[],arr61=[];
               namespace.forEach(item=>{
-                console.log(item)
                 if(item.all_containers){
                   let obj={}
                   obj.value1=item.namespace
@@ -955,7 +917,6 @@
                 }
                 
                 if(!item.all_containers){
-                  console.log(item.namespace)
                   let obj2={}
                    obj2.value1=item.namespace;
                    obj2.radio='2';
@@ -986,8 +947,9 @@
                 }
                
               })
-              console.log(arr)
-              this.formFour=arr;
+              if(arr.length!=0){
+                this.formFour=arr;
+              }
               this.Checkbox.checkbox0=arr2
               this.Checkbox.checkbox1=arr3
               this.Checkbox.checkbox2=arr4
@@ -999,12 +961,7 @@
               this.Checkbox2.checkbox2=arr41
               this.Checkbox2.checkbox3=arr51
               this.Checkbox2.checkbox4=arr61
-
             }
-
-
-
-
             if (data.spec.output.ckafka_output) {
               this.axios.post(TKE_KAFKA_LIST, {}).then(val => {
                 if (val.codeDesc === "Success") {
@@ -1318,8 +1275,6 @@
         var params = {
           //  action: "DescribeInstancesDetail",
         };
-        // this.axios.post(TKE_KAFKA_LIST, params).then(res => {
-        // this.axios.post('ckafka/DescribeInstancesDetail&uin=100011921910', params).then(res => {
           this.axios.post(TKE_KAFKA_LIST, params).then(res => {
           if (res.codeDesc === "Success") {
               // console.log(res)

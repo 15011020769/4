@@ -8,12 +8,9 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('daemonSet')" size="small" type="primary">新建</el-button>
-        <el-button size="small" @click="flag=!flag">监控</el-button>
+        <el-button size="small" @click="toMonitor">监控</el-button>
       </div>
-      <!-- 抽屉 -->
-      <div class="dra" v-if="flag">
-        <openDrawer :flag="flag" title="工作负载监控" @changeFlag="setFlag" @setTime="setTime"></openDrawer>
-      </div>
+
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
@@ -132,7 +129,6 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import openDrawer from "./components/openDrawer";
 import moment from "moment";
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
@@ -142,6 +138,7 @@ export default {
   name: "colonyResourceDaemonSet",
   data() {
     return {
+      tit: "工作负载监控",
       loadShow: false, //加载是否显示
       clusterId: "", //集群id
       list: [], //列表
@@ -162,6 +159,15 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
+    toMonitor() {
+      //跳转监控页面
+      this.$router.push({
+        name: "colonyOpenMonitor",
+        query: {
+          title: this.tit + "(daemonSet)"
+        }
+      });
+    },
     //启动时获取DaemonSet列表数据
     async getNameSpaceList() {
       this.loadShow = true;
@@ -408,8 +414,7 @@ export default {
   components: {
     subTitle,
     tkeSearch,
-    Loading,
-    openDrawer
+    Loading
   }
 };
 </script>

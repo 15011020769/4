@@ -1,4 +1,4 @@
- <!-- 新建Service -->
+<!-- 新建Service -->
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header">
@@ -125,21 +125,21 @@
               <!-- 内容 -->
               <div style="border-top:1px solid #ddd;padding: 10px;">
                 <div style="padding:5px 0;" v-for="(it, i) in ing.list" :key="it.key">
-                    <el-select style="width:120px;" v-model="it.protocolValue" placeholder="请选择" @change="protocolChange($event, it.key)">
-                      <el-option
-                        v-for="item in ing.protocolOption"
-                        :key="item"
-                        :label="item"
-                        :value="item">
-                      </el-option>
-                    </el-select>
+                  <el-select style="width:120px;" v-model="it.protocolValue" placeholder="请选择" @change="protocolChange($event, it.key)">
+                    <el-option
+                      v-for="item in ing.protocolOption"
+                      :key="item"
+                      :label="item"
+                      :value="item">
+                    </el-option>
+                  </el-select>
                   <span style="padding-left:23px">{{it.portNumber}}</span>
                   <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP"></el-input>
                   <el-form-item style="display: inline-block;width:120px;padding-left:30px;" :prop="`list.${i}.path`" :rules="pathValidator">
                     <el-input v-model="it.path"></el-input>
                   </el-form-item>
                   <el-form-item style="display: inline-block;padding-left:30px;width:150px;" :prop="`list.${i}.backendServiceSelect`" :rules="bssValidator">
-                    <el-select v-model="it.backendServiceSelect" placeholder="请选择" @change="backendServiceChange($event, it.key)">
+                    <el-select v-model="it.backendServiceSelect" placeholder="请选择后端服务" @change="backendServiceChange($event, it.key)">
                       <el-option
                         v-for="item in ing.backendService"
                         :key="item.metadata.name"
@@ -160,7 +160,7 @@
                     </el-select>
                   </el-form-item>
                   <el-tooltip class="item" effect="dark" content="删除" placement="right">
-                    <i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removeprot(it)"></i>
+                    <i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="i!==0?removeprot(it):''"></i>
                   </el-tooltip>
                 </div>
               </div>
@@ -189,7 +189,7 @@ import {
   TKE_DESCRIBELISTENERS,
   TKE_INQUIRYPRICE,
   TKE_EDSCRIBELOADBALANCERS,
-  TKE_Worker_METWORK,
+  TKE_WORKER_METWORK,
   TKE_VPC_METWORK,
   TKE_COLONY_LIST,
   POINT_REQUEST
@@ -202,6 +202,8 @@ export default {
       dialogFormVisible: false,
       clusterId: '',
       namespace: '', // route 传入的命名空间名
+      vpcId: '',
+      vpcName: '',
       ing: {
         fz: 'zd',
         checked: true,
@@ -267,8 +269,14 @@ export default {
       }],
       bssValidator: [{
         validator: (rule, value, callback) => {
+          let itemObject = this.ing.backendService.find(item => {
+            return item.metadata.name === value
+          })
+          console.log('itemObject.spec.type', itemObject.spec.type)
           if (value === '请选择后端服务') {
             callback(new Error('请选择后端服务'))
+          } else if (itemObject.spec.type === 'ClusterIP') {
+            callback(new Error('后端服务的访问类型不能为ClusterIP(仅在集群内访问)'))
           } else {
             callback()
           }
@@ -326,18 +334,21 @@ export default {
     let { clusterId, np } = this.$route.query
     this.clusterId = clusterId
     this.namespace = np
-    this.getCertList()
-    this.getDescribeListeners()
-    this.getInquiryPrice()
-    this.getDescribeLoadBalancers()
-    this.getWorkerNetwork()
-    this.getVpcNetwork()
-    this.getColonyList()
-    this.getNameSpaceList()
-    this.getBackEndService()
-    this.addport()
+    this.initNetworkRequery()
   },
   methods: {
+    initNetworkRequery: async function () {
+      this.getCertList()
+      this.getDescribeListeners()
+      this.getInquiryPrice()
+      this.getDescribeLoadBalancers()
+      await this.getColonyList()
+      await this.getVpcNetwork()
+      await this.getWorkerNetwork()
+      this.getNameSpaceList()
+      this.getBackEndService()
+      this.addport()
+    },
     // 公共的查询 ing.list
     selectIngList: function (key, func) {
       let item = this.ing.list
@@ -552,57 +563,49 @@ export default {
       let param = {
         Version: '2017-03-12',
         'Filters.0.Name': 'vpc-id',
-        'Filters.0.Values.0': 'vpc-apm60zou',
+        'Filters.0.Values.0': this.vpcId,
         Offset: 0,
         Limit: 100
       }
-      this.axios.post(TKE_Worker_METWORK, param).then(res => {
-        if (!res) return
+      await this.axios.post(TKE_WORKER_METWORK, param).then(res => {
         let { Response: { SubnetSet } } = res
-        this.bindingWorkerNetwork(SubnetSet)
-      })
-    },
-    // 绑定子网列表
-    bindingWorkerNetwork: function (val) {
-      val.forEach((item, index) => {
-        let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
-        if (index === 0) {
-          this.ing.workerNetWorkValue = SubnetName
-          this.ing.workerNetWorkOrder = { TotalIpAddressCount, AvailableIpAddressCount }
-        }
-        this.ing.workerNetWorkOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+        this.ing.workerNetWorkOption = []
+        SubnetSet.forEach((item, index) => {
+          let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
+          if (index === 0) {
+            this.ing.workerNetWorkValue = SubnetName
+            this.ing.workerNetWorkOrder = { TotalIpAddressCount, AvailableIpAddressCount }
+          }
+          this.ing.workerNetWorkOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+        })
       })
     },
     // 获取vps列表
     getVpcNetwork: async function () {
       let param = {
         Version: '2017-03-12',
-        'VpcIds.0': 'vpc-apm60zou',
+        'VpcIds.0': this.vpcId,
         Offset: 0,
         Limit: 100
       }
       this.axios.post(TKE_VPC_METWORK, param).then(res => {
         let { Response: { VpcSet } } = res
-        this.setVpcOption(VpcSet)
-      })
-    },
-    // 设置ing对象里vps数组
-    setVpcOption: function (val) {
-      val.forEach((item, index) => {
-        if (index === 0) {
-          this.ing.vpcsValue = item.VpcName
-        }
-        this.ing.vpcsOption.push(item.VpcName)
+        VpcSet.forEach((item, index) => {
+          if (index === 0) {
+            this.ing.vpcsValue = item.VpcName
+          }
+          this.ing.vpcsOption.push(item.VpcName)
+        })
       })
     },
     // 获取集群列表
     getColonyList: async function () {
       let param = {
-        'ClusterIds.0': 'cls-a7rua9ae',
+        'ClusterIds.0': this.clusterId,
         Version: '2018-05-25'
       }
-      this.axios.post(TKE_COLONY_LIST, param).then(res => {
-        console.log('getColonyList', res)
+      await this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        this.vpcId = res.Response.Clusters[0].ClusterNetworkSettings.VpcId
       })
     },
     // 获取命名空间
@@ -643,78 +646,78 @@ export default {
 }
 </script>
 
- <style lang="scss" scoped>
-   .shadow {
-     z-index: 999;
-     float: left;
-     width: 100%;
-     height: 900px;
-     opacity: 0.6;
-     background: black;
-   }
+<style lang="scss" scoped>
+  .shadow {
+    z-index: 999;
+    float: left;
+    width: 100%;
+    height: 900px;
+    opacity: 0.6;
+    background: black;
+  }
 
-   .w250 {
-     width: 250px;
-   }
+  .w250 {
+    width: 250px;
+  }
 
-   .w100 {
-     width: 100px;
-   }
+  .w100 {
+    width: 100px;
+  }
 
-   .flex {
-     display: flex;
-   }
+  .flex {
+    display: flex;
+  }
 
-   .port {
-     max-width: 855px;
-     border: 1px solid #ddd;
-   }
+  .port {
+    max-width: 855px;
+    border: 1px solid #ddd;
+  }
 
-   .card {
-     padding: 10px;
-     border-bottom: 1px solid #dcdfe6;
-   }
+  .card {
+    padding: 10px;
+    border-bottom: 1px solid #dcdfe6;
+  }
 
-   .borderRed {
-     border: 1px solid #e54545;
-   }
+  .borderRed {
+    border: 1px solid #e54545;
+  }
 
-   .text-error {
-     color: #e54545;
-   }
+  .text-error {
+    color: #e54545;
+  }
 
-   .text-warning {
-     color: #ff9d00
-   }
+  .text-warning {
+    color: #ff9d00
+  }
 
-   .ms {
-     width: 330px;
-     padding: 5px 8px 8px 5px;
-     height: 100px;
-     border-radius: 4px;
-     border: 1px solid #dcdfe6;
-     resize: none;
-   }
-   .tke-fe-alert{
-     padding: 10px 30px 10px 20px;
-     vertical-align: middle;
-     color: #003b80;
-     border: 1px solid #97c7ff;
-     border-radius: 2px;
-     background: #e5f0ff;
-     position: relative;
-     box-sizing: border-box;
-     margin-right: auto;
-     display: inline-block;
-     margin-left: 20px;
-     margin-bottom: 0px;
-     max-width: 750px;
-     max-height: 120px;
-     overflow: auto;
-   }
-   .tke-fe-alert--error{
-     color: #b43537;
-     border-color: #f6b5b5;
-     background-color: #fcecec;
-   }
- </style>
+  .ms {
+    width: 330px;
+    padding: 5px 8px 8px 5px;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    resize: none;
+  }
+  .tke-fe-alert{
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-right: auto;
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 0px;
+    max-width: 750px;
+    max-height: 120px;
+    overflow: auto;
+  }
+  .tke-fe-alert--error{
+    color: #b43537;
+    border-color: #f6b5b5;
+    background-color: #fcecec;
+  }
+</style>

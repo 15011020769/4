@@ -11,32 +11,35 @@
         <el-table-column
           label="版本号"
           >
-          <template>
-            <span>ip-masq-agent-7jdzn</span>
+          <template slot-scope="scope">
+            <span></span>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="版本详情"
           >
-          <template>
-              <span class="text-green">Running</span>
+          <template slot-scope="scope">
+            <span class="text-green">
+              <i class="el-icon-tickets" @click="viewYaml(scope.row)" />
+            </span>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="镜像"
           >
-          <template>
-              <span>10.0.128.8</span>
+          <template slot-scope="scope">
+              <p></p>
+              <p></p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="更新时间"
           >
-          <template>
-            <span>172.16.1.4</span>
+          <template slot-scope="scope">
+            <span>{{scope.row.addTime}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -48,10 +51,26 @@
         </el-table-column>
       </el-table>
     </div>
+    <el-dialog title="版本详情" :visible.sync="isShowYamlModal" width="35%">
+      <codemirror style="background-color: #444;"  ref="myCm"  v-model="yamlInfo"  :options="cmOptions" class="code" >
+      </codemirror>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="isShowYamlModal = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { codemirror } from 'vue-codemirror'
+  require("codemirror/mode/python/python.js")
+  require('codemirror/addon/fold/foldcode.js')
+  require('codemirror/addon/fold/foldgutter.js')
+  require('codemirror/addon/fold/brace-fold.js')
+  require('codemirror/addon/fold/xml-fold.js')
+  require('codemirror/addon/fold/indent-fold.js')
+  require('codemirror/addon/fold/markdown-fold.js')
+  require('codemirror/addon/fold/comment-fold.js')
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
@@ -66,11 +85,26 @@ export default {
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
       list:[], //列表
-     
+      isShowYamlModal: false,//是否显示yaml显示框
+      yamlInfo: null,//yaml数据
+      cmOptions: {
+        tabSize: 4,
+        mode: 'JSON',
+        theme: 'darcula',
+        lineNumbers: true,//行号
+        line: true,
+        lineNumbers: true,
+        foldgutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+        lineWrapping: true, //代码折叠
+        foldGutter: true,
+        matchBrackets: true,  //括号匹配
+        autoCloseBrackets: true
+      }
     };
   },
   components: {
-   
+    codemirror
   },
   created() {
      // 从路由获取类型
@@ -83,21 +117,15 @@ export default {
     //获取修订历史列表
     async getHistoryList() {
       this.loadShow = true;
-      // let selector = this.rowData.spec.selector.matchLabels;
-      // let selectorList = Object.keys(selector);
-      // let param = '';
-      // if(selectorList.length > 0) {
-      //   for(var i = 0; i < selectorList.length; i++) {
-      //     debugger
-      //     console.log("selectorList[i]",selectorList[i]);
-      //     console.log("selector.selectorList[i]",selector.selectorList[i])
-      //     let key = selectorList[i];
-      //     param += key + "=" + selector.key +",";
-      //   }
-      // }
+      let selector = this.rowData.spec.selector.matchLabels;
+      let param = '';
+      for(let i in selector) {
+        param += i + '=' + selector[i] + ','
+      }
+      console.log(param);
       let params = {
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/replicasets?labelSelector=qcloud-app=cbs-provisioner",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/replicasets?labelSelector=" + param.substring(0,param.length - 1),
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
@@ -126,6 +154,11 @@ export default {
           });
         }
       });
+    },
+    //打开yaml查看modal
+    viewYaml(rowData) {
+      this.isShowYamlModal = true;
+      this.yamlInfo = JSON.stringify(rowData);
     }
   }
 };

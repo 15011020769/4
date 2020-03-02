@@ -59,43 +59,63 @@
         />
         <div class="empty" v-else>暂无数据</div>
       </div>
-      <div class="botDetail">
+      <div class="botDetail" v-for="(item, index) in domainStat">
         <div class="botDetailCon">
-          <p class="detailTop">1{{xAxisBotIp}}</p>
+          <p class="detailTop">
+            <span>{{index+1}}&nbsp;&nbsp;</span>
+            <el-button type="text" size="mini">{{item.Key}}</el-button>
+            <el-button type="text" size="mini">{{item.Value}}</el-button>
+          </p>
           <div class="detailbottom">
             <el-row class="bitPie">
               <el-col :sapn="12">
                 <h3>
-                  <!-- {{t('BOT 类型', 'WAF.gjlxzb')}} -->
                   BOT 类型
                 </h3>
-                <Pie
+                <!-- <Pie
                   :series="seriesPieType"
                   :color="colorPie"
                   :legendText="legendTextPieType"
+                /> -->
+                <PieType
+                  :domain="item.Key"
+                  :startTime="startTime"
+                  :endTime="endTime"
                 />
               </el-col>
               <el-col :sapn="12">
                 <h3>
-                  <!-- {{t('BOT 动作', 'WAF.gjlxzb')}} -->
                   BOT 动作
                 </h3>
-                <Pie
+                <PieAction
+                  :domain="item.Key"
+                  :startTime="startTime"
+                  :endTime="endTime"
+                />
+                <!-- <Pie
                   :series="seriesPieAction"
                   :color="colorPie"
                   :legendText="legendTextPieAction"
-                />
+                /> -->
               </el-col>
             </el-row>
             <h3>
-              <!-- {{t('BOT 动作', 'WAF.gjlxzb')}} -->
-              BOT 动作
+              BOT 请求趋势
             </h3>
-            <Pie
-                :series="seriesPieAction"
-                :color="colorPie"
-                :legendText="legendTextPieAction"
-              />
+            <ELine
+              :domain="item.Key"
+              :startTime="startTime"
+              :endTime="endTime"
+              :selBtn="selBtn"
+              :dateTimeValue="dateTimeValue"
+            />
+            <!-- <ELine
+              :xAxis="xAxisLineFlow"
+              :series1="seriesLineFlowTotal"
+              :series2="seriesLineFlowBot"
+              :legendText="legendTextLineFlow"
+              :color="colorLine"
+            /> -->
           </div>
         </div>
       </div>
@@ -108,33 +128,27 @@ import moment from 'moment'
 import {
     DESCRIBE_BOT_AGGREGATE_DOMAINSTAT,
     DESCRIBE_BOT_TYPE_STAT,
-    DESCRIBE_BOT_ACTION_STAT
+    DESCRIBE_BOT_ACTION_STAT,
+    DESCRIBE_BOT_STATISTIC_POINTS,
+    DESCRIBE_PEAK_POINTS,
   } from '@/constants'
 import Bar from '../components/bar'
-import Pie from '../components/pie'
-import Line from '../saveOverView/components/line'
+import PieType from '../components/pieType'
+import PieAction from '../components/pieAction'
+import ELine from '../components/lineBot'
 export default {
   data () {
     return {
-      tipShow: true,
-      selBtn: 3,
+      tipShow: true, // 显示提示文字
+      selBtn: 3, // 默认选中今天
       dateTimeValue: [moment().startOf("day"), moment().endOf("day")], // 日期绑定
-      startTime: moment().startOf("day").utc().valueOf(),
-      endTime: moment().endOf("day").utc().valueOf(),
-      seriesBotIp: [],
+      startTime: moment().startOf("day").utc().valueOf(), // 时间戳
+      endTime: moment().endOf("day").utc().valueOf(), // 时间戳
+      seriesBotIp: [], // BOT记录数域名TopN柱状图
       xAxisBotIp: [], // 域名数组
-      legendTextBarIp: "Bot记录",
-      topValue: 5,
-      seriesPieType: [],
-      seriesPieAction: [],
-      // seriesPieType: [
-      //   {value: 0, name: '公开类型'},
-      //   {value: 0, name: '未知类型'},
-      //   {value: 0, name: '用户自定义类型'},
-      // ],
-      colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
-      legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'],
-      legendTextPieAction: ['验证码', '拦截', '监控', '重定向'],
+      legendTextBarIp: "Bot记录", // 柱状图legend
+      topValue: 5, // 下拉默认选中top5
+      domainStat: [],
       options: [{
           value: 5,
           label: 'TOP5'
@@ -159,20 +173,19 @@ export default {
   },
   components: {
     Bar,
-    Pie,
+    PieType,
+    PieAction,
+    ELine,
   },
   watch: {
-    dateTimeValue() {
+    dateTimeValue(val, oldVal) {
+      if(val.join() !== oldVal.join()) {
+        this.getBotDomainStat()
+      }
     },
     topValue() {
       this.getBotDomainStat()
     },
-    xAxisBotIp(val){ // 域名存在时
-      if(val.length) {
-        this.getBotType()
-        this.getBotAction()
-      }
-    }
   },
   mounted() {
     this.getBotDomainStat()
@@ -194,51 +207,26 @@ export default {
         let arrIp = []
         let arrIpCount = []
         this.generalRespHandler(resp, ({Data}) => {
+          // this.domainStat = Data.concat({Value: 10,Key: "ddd.dhycloud.com"})
+          // this.domainStat = Data.concat(Data)
+          this.domainStat = Data
           Data.map(v => {
             arrIp.push(v.Key)
             arrIpCount.push(v.Value)
           })
+          // this.seriesBotIp = arrIpCount.concat(10)
+          // this.xAxisBotIp = arrIp.concat("ddd.dhycloud.com")
+          // this.seriesBotIp = arrIpCount.concat(arrIpCount)
+          // this.xAxisBotIp = arrIp.concat(arrIp)
           this.seriesBotIp = arrIpCount
           this.xAxisBotIp = arrIp
-        })
-      })
-    },
-    // 获取Bot_V2 Bot类别统计
-    getBotType() {
-     const params = {
-        Version: "2018-01-25",
-        StartTs: this.startTime,
-        EndTs: this.endTime,
-        Domain: this.xAxisBotIp[0],
-      }
-      this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
-          this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
-          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
-        })
-      })
-    },
-    // Bot_V2 获取bot动作统计
-    getBotAction() {
-     const params = {
-        Version: "2018-01-25",
-        StartTs: this.startTime,
-        EndTs: this.endTime,
-        Domain: this.xAxisBotIp[0],
-      }
-      this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: '验证码'})
-          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: '拦截'})
-          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
-          this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
+          
         })
       })
     },
     //时间点击事件
     checkTime(val) {
-      let times = [moment().subtract(7, "days").startOf("day"), moment()]
+      let times = [moment().startOf("day"), moment()]
       this.selBtn = val
       switch (val) {
         case 1:
@@ -247,11 +235,11 @@ export default {
         case 2:
           times = [moment().subtract(6, "hours"), moment()]
           break;
-        case 3:
-          times = [moment().startOf("day"), moment()]
-          break;
         case 4:
           times = [moment().subtract(24, "hours").startOf("day"), moment().subtract(24, "hours")]
+          break;
+        case 5:
+          times = [moment().subtract(7, "days").startOf("day"), moment()]
           break;
         default:
           break;
@@ -260,17 +248,11 @@ export default {
       this.dateTimeValue = times
       this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
       this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
-      this.$nextTick(() => {
-        this.getBotDomainStat()
-      })
     },
     changeTimeValue(val) {
       this.selBtn = 0
       this.startTime = moment(val[0]).utc().valueOf()
       this.endTime = moment(val[1]).utc().valueOf()
-      this.$nextTick(() => {
-        this.getBotDomainStat()
-      })
     },
     
   }

@@ -23,12 +23,9 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'deploymentDetailPod',query: {clusterId: clusterId}}">Pod管理</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailHistory',query: {clusterId: clusterId}}">修订历史</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailEvent',query: {clusterId: clusterId}}">事件</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailLog',query: {clusterId: clusterId}}">日志</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailInfo',query: {clusterId: clusterId}}">详情</router-link>
-      <router-link class="nav-item" :to="{name:'deploymentDetailYaml',query: {clusterId: clusterId}}">YAML</router-link>
+      <router-link class="nav-item" :to="{name:'cronJobDetailEvent',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">事件</router-link>
+      <router-link class="nav-item" :to="{name:'cronJobDetailInfo',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'cronJobDetailYaml',query: {clusterId: clusterId,spaceName: spaceName,rowData: rowData}}">YAML</router-link>
     </div> 
 
     <!-- 子页面 -->
@@ -45,10 +42,12 @@
 import XLSX from "xlsx";
 import { ALL_CITY } from "@/constants";
 export default {
-  name: "deploymentDetail",
+  name: "cronJobDetail",
   data() {
     return {
-        clusterId:'',
+      clusterId:'',//集群id
+      rowData: {},//传过来的数据
+      spaceName: '',//路由传过来的命名空间名称
     };
   },
   components: {
@@ -57,12 +56,14 @@ export default {
   created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
+    this.spaceName = this.$route.query.spaceName;
+    this.rowData = this.$route.query.rowData;
   },
   methods: {
     //返回上一层
     goBack(){
       this.$router.push({
-        name:'colonyResourceDeployment',
+        name:'colonyResourceCronJob',
       })
     },
     //返回集群列表

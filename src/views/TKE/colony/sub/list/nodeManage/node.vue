@@ -1,7 +1,7 @@
 <!-- 节点列表 -->
 <template>
   <div>
-    <subTitle title="节点列表" />
+    <subTitle :title="tit" />
 
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
@@ -10,17 +10,12 @@
         <el-button size="small" @click="goExpand" type="primary"
           >新建节点</el-button
         >
-        <el-button size="small" @click='flag=!flag'>监控</el-button>
+        <el-button size="small" @click='toMonitor' >监控</el-button>
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showDeleteModal()">移出</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showBlockModal()">封锁</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showUnBlockModal()">解除封锁</el-button>
       </div>
-       <!-- 抽屉 -->
-      <openDrawer :flag='flag'
-        title='节点监控'
-       @changeFlag='setFlag'
-       @setTime='setTime'></openDrawer>
       <!-- 右侧 -->
       <div class="tool">
         <div class="searchRight">
@@ -244,7 +239,6 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import openDrawer from "./components/openDrawer";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
 import XLSX from "xlsx";
@@ -255,6 +249,7 @@ export default {
   name: "colonyNodeManageNode",
   data() {
     return {
+      tit:"节点列表",
       clusterId: "",
       searchInput: "", // 输入的搜索关键字
       loadShow: false, // 加载是否显示
@@ -298,7 +293,6 @@ export default {
     subTitle,
     Loading,
     tkeSearch,
-    openDrawer
   },
   created() {
     // 从路由获取集群id
@@ -308,6 +302,15 @@ export default {
     this.GetCity();
   },
   methods: {
+    toMonitor(){
+      //跳转监控页面
+      this.$router.push({
+        name:"colonyOpenMonitor",
+        query:{
+          title:this.tit
+        }
+      })
+    },
     //获取节点列表
     async getNodeList () {
       this.loadShow = true;

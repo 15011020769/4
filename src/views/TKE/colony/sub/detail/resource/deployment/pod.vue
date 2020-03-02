@@ -197,11 +197,11 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    this.getStatefulsetsPodList();
+    this.getDeploymentsPodList();
   },
   methods: {
     //获取列表
-    async getStatefulsetsPodList() {
+    async getDeploymentsPodList() {
       this.loadShow = true;
       let params = {
         Method: "GET",
@@ -285,7 +285,7 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowRedeployment = false;
-          this.getStatefulsetsPodList();
+          this.getDeploymentsPodList();
         } else {
           this.loadShow = false;
           let ErrTips = {
