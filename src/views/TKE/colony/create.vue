@@ -1757,6 +1757,7 @@
             size="small"
             type="primary"
             v-if="colonySecond.completeBtn"
+            @click="SecondCreateFinish"
           >
             完成
           </el-button>
@@ -1795,6 +1796,16 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
+          <el-form-item label="数据盘挂载" v-if="!colonySecond.sourceShow">
+            <el-checkbox v-model="colonyThird.containerChecked"
+              >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
+            >
+            <el-input
+              v-model="colonyThird.containerInput"
+              placeholder="请输入内容"
+              v-if="colonyThird.containerChecked"
+            ></el-input>
+          </el-form-item>
           <el-form-item label="容器目录">
             <el-checkbox v-model="colonyThird.containerChecked"
               >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
@@ -1971,6 +1982,16 @@
             {{ dispose.OSvalue }}
           </el-form-item>
           <el-form-item
+            label="Node节点"
+            v-if="!colonySecond.sourceShow"
+            class="tke-fourth-node-text"
+          >
+            <p v-for="(item, index) in rightList" :key="index">
+              <a href="javascript:;">{{ item.InstanceId }}</a
+              ><span v-if="rightList.length > 1">,</span>
+            </p>
+          </el-form-item>
+          <el-form-item
             label="Master&Etcd节点"
             class="tke-fourth-node"
             style="padding:0px;border:0px;"
@@ -1997,7 +2018,11 @@
               <p>数量:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
-          <el-form-item label="Node节点" class="tke-fourth-node">
+          <el-form-item
+            label="Node节点"
+            class="tke-fourth-node"
+            v-if="colonySecond.sourceShow && colonySecond.worker != 2"
+          >
             <div
               v-for="(item, index) in colonySecond.workerOneList"
               :key="index"
@@ -2019,7 +2044,10 @@
               <p>数量:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
-          <el-form-item label="总计费用">
+          <el-form-item
+            label="总计费用"
+            v-if="colonySecond.sourceShow && colonySecond.worker != 2"
+          >
             <div class="tke-second-cost">
               <span class="tke-second-cost-num">{{
                 colonySecond.allocationCost
@@ -3012,10 +3040,12 @@ export default {
     // -------------------------------------- 第二步 ---------------------------------
     // 节点来源
     NodeSource(val) {
+      // colonySecond.source
       this.rightList = [];
       if (val == "2") {
-        this.colonySecond.workerTips = true;
+        this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
+        this.colonySecond.sourceShow = false;
         this.colonySecond.secondNextShow = false;
       } else {
         this.colonySecond.worker = 1;
@@ -3082,6 +3112,7 @@ export default {
     // left 列表
     handleSelectionChange(val) {
       this.rightList = val;
+      console.log(this.rightList);
       this.rightListVal = "已选择 " + this.rightList.length + " 台";
       this.IfStatus();
     },
@@ -3123,7 +3154,10 @@ export default {
       let params = {
         Version: "2018-05-25"
       };
-      if (this.selectList == "" && this.searchInput == "") {
+      if (
+        (this.selectList == "" && this.searchInput == "") ||
+        (this.selectList != "" && this.searchInput == "")
+      ) {
         params["ClusterId"] = "";
         params["Filters.0.Name"] = "vpc-id";
         params["Filters.0.Values.0"] = this.colony.networkValue;
@@ -3787,7 +3821,7 @@ export default {
           Version: "2017-03-12",
           // ImageId: this.colony.OSvalue,
           ImageId: "img-6yudrskj",
-          "Placement.ProjectId": this.colony.projectValue,
+          "Placement.ProjectId": Number(this.colony.projectValue),
           "Placement.Zone": "ap-taipei-1",
           // 机型
           InstanceChargeType: _workerOneList[i].InstanceChargeType,
@@ -3874,7 +3908,7 @@ export default {
             Version: "2017-03-12",
             // ImageId: this.colony.OSvalue,
             ImageId: "img-6yudrskj",
-            "Placement.ProjectId": this.colony.projectValue,
+            "Placement.ProjectId": Number(this.colony.projectValue),
             "Placement.Zone": "ap-taipei-1",
             // 机型
             InstanceChargeType: _masterOneList[i].InstanceChargeType,
@@ -3994,6 +4028,106 @@ export default {
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+    },
+    // 第二步 完成
+    SecondCreateFinish(){
+      let param = {
+        Version: "2018-05-25",
+        "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
+        "ClusterCIDRSettings.IgnoreClusterCIDRConflict": false,
+        "ClusterCIDRSettings.MaxNodePodNum": Number(this.colony.PodValue),
+        "ClusterCIDRSettings.MaxClusterServiceNum": Number(
+          this.colony.ServiceValue
+        )
+      };
+      if (this.colonySecond.master == 1) {
+        param["ClusterType"] = "MANAGED_CLUSTER";
+      } else {
+        param["ClusterType"] = "INDEPENDENT_CLUSTER";
+      }
+    
+      let ClusterOs = "";
+      for (let i in this.colony.OSoptions) {
+        if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+          ClusterOs = this.colony.OSoptions[i].OsName;
+        }
+      }
+      param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+      param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+      param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+      param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+      param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+      param["ClusterBasicSettings.ProjectId"] = Number(
+        this.colony.projectValue
+      );
+      if (this.colonyThird.defaultSafeBox === true) {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+      } else {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+      }
+      param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+      if (this.colony.ipvs === true) {
+        param["ClusterAdvancedSettings.IPVS"] = true;
+      } else {
+        param["ClusterAdvancedSettings.IPVS"] = false;
+      }
+      param["ClusterAdvancedSettings.AsEnabled"] = false;
+      param[
+        "ClusterAdvancedSettings.ContainerRuntime"
+      ] = this.colony.assemblyRadio;
+      param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+      this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            "InternalError.AccountUserNotAuthenticated": "账户未通过认证。",
+            "InternalError.AsCommon": "伸缩组资源创建报错。",
+            "InternalError.CidrConflictWithOtherCluster":
+              "CIDR和其他集群CIDR冲突。",
+            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由冲突。",
+            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc冲突。",
+            "InternalError.CidrConflictWithVpcGlobalRoute":
+              "CIDR和全局路由冲突。",
+            "InternalError.CidrInvali": "CIDR无效。",
+            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩码无效。",
+            "InternalError.CreateMasterFailed": "创建集群失败。",
+            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.DfwGetUSGCount": "获得当前安全组总数失败。",
+            "InternalError.DfwGetUSGQuota": "获得安全组配额失败。",
+            "InternalError.InitMasterFailed": "初始化master失败。",
+            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
+            "InternalError.Param": "Param。",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+            "InternalError.QuotaUSGLimit": "安全组配额不足。",
+            "InternalError.UnexceptedInternal": "内部错误",
+            "InternalError.VpcCommon": "VPC报错。",
+            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
+            InvalidParameter: "参数错误",
+            LimitExceeded: "超过配额限制"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // ----------------------------------------- 第三步 -------------------------------------
     // 安全组
@@ -4162,7 +4296,7 @@ export default {
         // 登录方式
         if (this.colonyThird.loginModeRadio == 1) {
           param["LoginSettings"] = {
-            KeyIds: this.colonyThird.sshKeySel
+            KeyIds: [this.colonyThird.sshKeySel]
           };
         }
         if (this.colonyThird.loginModeRadio == 3) {
@@ -4288,39 +4422,95 @@ export default {
         param["ClusterType"] = "INDEPENDENT_CLUSTER";
       }
       if (
-        this.colonySecond.workerShow === true &&
-        this.colonySecond.source == 1
+        this.colonySecond.worker != 2 &&
+        this.colonySecond.source != 2 &&
+        this.colonySecond.master != 1
       ) {
-        param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
-        for (let i in masterOneListArr) {
-          param["RunInstancesForNode.1.RunInstancesPara." + i] = JSON.stringify(
-            this.params[i]
+        if (
+          this.colonySecond.workerShow === true &&
+          this.colonySecond.source == 1
+        ) {
+          param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+          for (let i in masterOneListArr) {
+            param[
+              "RunInstancesForNode.1.RunInstancesPara." + i
+            ] = JSON.stringify(this.params[i]);
+            if (this.colonySecond.masterDataDiskMount === true) {
+              param[
+                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".MountTarget"
+              ] = this.colonySecond.masterDataDiskMountVal;
+            } else {
+              param[
+                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".MountTarget"
+              ] = "";
+            }
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = "";
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = "";
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Unschedulable"
+            ] = 0;
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".ExtraArgs.Kubelet.0"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Name"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Value"
+            ] = "";
+          }
+        }
+
+        param["RunInstancesForNode.0.NodeRole"] = "WORKER";
+        for (let i in workerOneListArr) {
+          param["RunInstancesForNode.0.RunInstancesPara." + i] = JSON.stringify(
+            this.param[i]
           );
           if (this.colonySecond.masterDataDiskMount === true) {
             param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
                 i +
                 ".MountTarget"
             ] = this.colonySecond.masterDataDiskMountVal;
           } else {
             param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
                 i +
                 ".MountTarget"
             ] = "";
           }
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".DockerGraphPath"
           ] = "";
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".UserScript"
           ] = "";
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".Unschedulable"
           ] = 0;
@@ -4342,55 +4532,6 @@ export default {
         }
       }
 
-      param["RunInstancesForNode.0.NodeRole"] = "WORKER";
-      for (let i in workerOneListArr) {
-        param["RunInstancesForNode.0.RunInstancesPara." + i] = JSON.stringify(
-          this.param[i]
-        );
-        if (this.colonySecond.masterDataDiskMount === true) {
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".MountTarget"
-          ] = this.colonySecond.masterDataDiskMountVal;
-        } else {
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".MountTarget"
-          ] = "";
-        }
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".DockerGraphPath"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".UserScript"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Unschedulable"
-        ] = 0;
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".ExtraArgs.Kubelet.0"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Labels.0.Name"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Labels.0.Value"
-        ] = "";
-      }
       let ClusterOs = "";
       for (let i in this.colony.OSoptions) {
         if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
@@ -4402,7 +4543,9 @@ export default {
       param["ClusterBasicSettings.ClusterName"] = this.colony.name;
       param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
       param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
-      param["ClusterBasicSettings.ProjectId"] = this.colony.projectValue;
+      param["ClusterBasicSettings.ProjectId"] = Number(
+        this.colony.projectValue
+      );
       if (this.colonyThird.defaultSafeBox === true) {
         param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
       } else {
@@ -4419,75 +4562,82 @@ export default {
         param["ClusterAdvancedSettings.IPVS"] = false;
       }
       param["ClusterAdvancedSettings.AsEnabled"] = false;
-      param["ClusterAdvancedSettings.ContainerRuntime"] = "docker";
+      param[
+        "ClusterAdvancedSettings.ContainerRuntime"
+      ] = this.colony.assemblyRadio;
       param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
       param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
-      if (this.colonySecond.masterDataDiskMount === true) {
-        param[
-          "InstanceAdvancedSettings.MountTarget"
-        ] = this.colonySecond.masterDataDiskMountVal;
-      } else {
-        param["InstanceAdvancedSettings.MountTarget"] = "";
-      }
-      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
-      param["InstanceAdvancedSettings.UserScript"] = "";
-      param["InstanceAdvancedSettings.Unschedulable"] = 0;
-      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      if (
+        this.colonySecond.worker != 2 &&
+        this.colonySecond.source != 2 &&
+        this.colonySecond.master != 1
+      ) {
+        if (this.colonySecond.masterDataDiskMount === true) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonySecond.masterDataDiskMountVal;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
-      let buyDataArr = [];
-      for (let i in workerOneListArr) {
-        if (workerOneListArr[i].buyDataDisk === true) {
-          buyDataArr.push(workerOneListArr[i]);
-          for (let x in buyDataArr) {
-            param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
-              workerOneListArr[i].modelName;
-            param["InstanceDataDiskMountSettings." + x + ".Zone"] =
-              "ap-taipei-1";
-            for (let j in workerOneListArr[i].dataDiskArr) {
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".DiskType"
-              ] = workerOneListArr[i].dataDiskArr[j].DiskType;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".DiskSize"
-              ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".AutoFormatAndMount"
-              ] = workerOneListArr[i].dataDiskArr[j].formatMount;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".FileSystem"
-              ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".MountTarget"
-              ] = workerOneListArr[i].dataDiskArr[j].setValue;
+        let buyDataArr = [];
+        for (let i in workerOneListArr) {
+          if (workerOneListArr[i].buyDataDisk === true) {
+            buyDataArr.push(workerOneListArr[i]);
+            for (let x in buyDataArr) {
+              param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+                workerOneListArr[i].modelName;
+              param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+                "ap-taipei-1";
+              for (let j in workerOneListArr[i].dataDiskArr) {
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".DiskType"
+                ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".DiskSize"
+                ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".AutoFormatAndMount"
+                ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".FileSystem"
+                ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".MountTarget"
+                ] = workerOneListArr[i].dataDiskArr[j].setValue;
+              }
             }
           }
         }
       }
-
       console.log(param);
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -5329,6 +5479,14 @@ export default {
       &:nth-of-type(1) {
         margin-top: 10px;
       }
+    }
+  }
+  .tke-fourth-node-text {
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    padding-bottom: 20px;
+    ::v-deep .el-form-item__content {
+      display: flex;
     }
   }
 }
