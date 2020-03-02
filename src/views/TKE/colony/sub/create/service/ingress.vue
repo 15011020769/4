@@ -139,7 +139,7 @@
                     <el-input v-model="it.path"></el-input>
                   </el-form-item>
                   <el-form-item style="display: inline-block;padding-left:30px;width:150px;" :prop="`list.${i}.backendServiceSelect`" :rules="bssValidator">
-                    <el-select v-model="it.backendServiceSelect" placeholder="请选择" @change="backendServiceChange($event, it.key)">
+                    <el-select v-model="it.backendServiceSelect" placeholder="请选择后端服务" @change="backendServiceChange($event, it.key)">
                       <el-option
                         v-for="item in ing.backendService"
                         :key="item.metadata.name"
@@ -160,7 +160,7 @@
                     </el-select>
                   </el-form-item>
                   <el-tooltip class="item" effect="dark" content="删除" placement="right">
-                    <i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removeprot(it)"></i>
+                    <i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="i!==0?removeprot(it):''"></i>
                   </el-tooltip>
                 </div>
               </div>
@@ -189,7 +189,7 @@ import {
   TKE_DESCRIBELISTENERS,
   TKE_INQUIRYPRICE,
   TKE_EDSCRIBELOADBALANCERS,
-  TKE_Worker_METWORK,
+  TKE_WORKER_METWORK,
   TKE_VPC_METWORK,
   TKE_COLONY_LIST,
   POINT_REQUEST
@@ -202,6 +202,8 @@ export default {
       dialogFormVisible: false,
       clusterId: '',
       namespace: '', // route 传入的命名空间名
+      vpcId: '',
+      vpcName: '',
       ing: {
         fz: 'zd',
         checked: true,
@@ -267,8 +269,14 @@ export default {
       }],
       bssValidator: [{
         validator: (rule, value, callback) => {
+          let itemObject = this.ing.backendService.find(item => {
+            return item.metadata.name === value
+          })
+          console.log('itemObject.spec.type', itemObject.spec.type)
           if (value === '请选择后端服务') {
             callback(new Error('请选择后端服务'))
+          } else if (itemObject.spec.type === 'ClusterIP') {
+            callback(new Error('后端服务的访问类型不能为ClusterIP(仅在集群内访问)'))
           } else {
             callback()
           }
@@ -326,18 +334,21 @@ export default {
     let { clusterId, np } = this.$route.query
     this.clusterId = clusterId
     this.namespace = np
-    this.getCertList()
-    this.getDescribeListeners()
-    this.getInquiryPrice()
-    this.getDescribeLoadBalancers()
-    this.getWorkerNetwork()
-    this.getVpcNetwork()
-    this.getColonyList()
-    this.getNameSpaceList()
-    this.getBackEndService()
-    this.addport()
+    this.initNetworkRequery()
   },
   methods: {
+    initNetworkRequery: async function () {
+      this.getCertList()
+      this.getDescribeListeners()
+      this.getInquiryPrice()
+      this.getDescribeLoadBalancers()
+      await this.getColonyList()
+      await this.getVpcNetwork()
+      await this.getWorkerNetwork()
+      this.getNameSpaceList()
+      this.getBackEndService()
+      this.addport()
+    },
     // 公共的查询 ing.list
     selectIngList: function (key, func) {
       let item = this.ing.list
@@ -552,57 +563,49 @@ export default {
       let param = {
         Version: '2017-03-12',
         'Filters.0.Name': 'vpc-id',
-        'Filters.0.Values.0': 'vpc-apm60zou',
+        'Filters.0.Values.0': this.vpcId,
         Offset: 0,
         Limit: 100
       }
-      this.axios.post(TKE_Worker_METWORK, param).then(res => {
-        if (!res) return
+      await this.axios.post(TKE_WORKER_METWORK, param).then(res => {
         let { Response: { SubnetSet } } = res
-        this.bindingWorkerNetwork(SubnetSet)
-      })
-    },
-    // 绑定子网列表
-    bindingWorkerNetwork: function (val) {
-      val.forEach((item, index) => {
-        let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
-        if (index === 0) {
-          this.ing.workerNetWorkValue = SubnetName
-          this.ing.workerNetWorkOrder = { TotalIpAddressCount, AvailableIpAddressCount }
-        }
-        this.ing.workerNetWorkOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+        this.ing.workerNetWorkOption = []
+        SubnetSet.forEach((item, index) => {
+          let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
+          if (index === 0) {
+            this.ing.workerNetWorkValue = SubnetName
+            this.ing.workerNetWorkOrder = { TotalIpAddressCount, AvailableIpAddressCount }
+          }
+          this.ing.workerNetWorkOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+        })
       })
     },
     // 获取vps列表
     getVpcNetwork: async function () {
       let param = {
         Version: '2017-03-12',
-        'VpcIds.0': 'vpc-apm60zou',
+        'VpcIds.0': this.vpcId,
         Offset: 0,
         Limit: 100
       }
       this.axios.post(TKE_VPC_METWORK, param).then(res => {
         let { Response: { VpcSet } } = res
-        this.setVpcOption(VpcSet)
-      })
-    },
-    // 设置ing对象里vps数组
-    setVpcOption: function (val) {
-      val.forEach((item, index) => {
-        if (index === 0) {
-          this.ing.vpcsValue = item.VpcName
-        }
-        this.ing.vpcsOption.push(item.VpcName)
+        VpcSet.forEach((item, index) => {
+          if (index === 0) {
+            this.ing.vpcsValue = item.VpcName
+          }
+          this.ing.vpcsOption.push(item.VpcName)
+        })
       })
     },
     // 获取集群列表
     getColonyList: async function () {
       let param = {
-        'ClusterIds.0': 'cls-a7rua9ae',
+        'ClusterIds.0': this.clusterId,
         Version: '2018-05-25'
       }
-      this.axios.post(TKE_COLONY_LIST, param).then(res => {
-        console.log('getColonyList', res)
+      await this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        this.vpcId = res.Response.Clusters[0].ClusterNetworkSettings.VpcId
       })
     },
     // 获取命名空间
