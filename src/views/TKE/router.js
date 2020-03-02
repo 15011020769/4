@@ -229,13 +229,21 @@ export default new Router({
         }
       ]
     },
+    { // 监控按钮页面monitor
+      path: '/colony/sub/list/components/openMonitor',
+      name: 'colonyOpenMonitor',
+      component: () => import('./colony/sub/list/components/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
     {
       path: '/colony/expand', // 集群-新建节点
       name: 'clusterExpand',
       component: () => import('./colony/expand.vue'),
       meta: {
         keepAlive: true
-       
+
       }
     },
     {
@@ -252,7 +260,7 @@ export default new Router({
       component: () => import('./colony/sub/create/nodeManage/asg.vue'),
       meta: {
         keepAlive: true
-       
+
       }
     },
     {
@@ -383,7 +391,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/nodeManage/node/yaml',
           name: 'nodeDetailYaml',
@@ -391,7 +399,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -426,7 +434,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/nodeManage/masteretcd/yaml',
           name: 'masteretcdDetailYaml',
@@ -434,7 +442,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -453,7 +461,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/namespace/yaml',
           name: 'namespaceDetailYaml',
@@ -461,7 +469,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -513,7 +521,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/deployment/yaml',
           name: 'deploymentDetailYaml',
@@ -521,7 +529,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -565,7 +573,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/statefulSet/yaml',
           name: 'statefulSetDetailYaml',
@@ -573,7 +581,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -617,7 +625,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/daemonSet/yaml',
           name: 'daemonSetDetailYaml',
@@ -625,7 +633,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -669,7 +677,7 @@ export default new Router({
             keepAlive: true,
           }
         },
-          
+
         { // yaml
           path: '/colony/sub/detail/resource/job/yaml',
           name: 'jobDetailYaml',
@@ -677,7 +685,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -704,7 +712,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/hpa/yaml',
           name: 'hpaDetailYaml',
@@ -712,7 +720,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -747,7 +755,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/service/svc/yaml',
           name: 'svcDetailYaml',
@@ -755,7 +763,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -782,7 +790,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },   
+        },
         { // yaml
           path: '/colony/sub/detail/service/ingress/yaml',
           name: 'ingressDetailYaml',
@@ -790,7 +798,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -809,7 +817,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/config/configmap/yaml',
           name: 'configmapDetailYaml',
@@ -817,7 +825,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     { // 配置管理更新配置configmap
@@ -827,7 +835,7 @@ export default new Router({
       meta: {
         keepAlive: true,
       }
-    },   
+    },
     { // 配置管理更新配置configmap yaml
       path: '/colony/sub/update/config/yaml',
       name: 'updateYaml',
@@ -835,7 +843,7 @@ export default new Router({
       meta: {
         keepAlive: true,
       }
-    },  
+    },
     { // 更新命名空间 yaml
       path: '/colony/sub/update/namespace/yaml',
       name: 'updateNameSpace',
@@ -860,7 +868,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/config/secret/yaml',
           name: 'secretDetailYaml',
@@ -868,7 +876,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -887,7 +895,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/pv/event',
           name: 'pvDetailEvent',
@@ -895,7 +903,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/pv/yaml',
           name: 'pvDetailYaml',
@@ -903,7 +911,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -922,7 +930,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/pvc/event',
           name: 'pvcDetailEvent',
@@ -930,7 +938,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/pvc/yaml',
           name: 'pvcDetailYaml',
@@ -938,7 +946,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
     {
@@ -957,7 +965,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // 事件
           path: '/colony/sub/detail/storage/sc/event',
           name: 'scDetailEvent',
@@ -965,7 +973,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        }, 
+        },
         { // yaml
           path: '/colony/sub/detail/storage/sc/yaml',
           name: 'scDetailYaml',
@@ -973,7 +981,7 @@ export default new Router({
           meta: {
             keepAlive: true,
           }
-        },  
+        },
       ]
     },
 
@@ -992,7 +1000,7 @@ export default new Router({
       meta: {
         keepAlive: true
       },
-      children:[
+      children: [
         {
           path: 'detail', // 应用详情
           name: 'helmDetailDetail',

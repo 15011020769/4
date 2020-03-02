@@ -8,11 +8,7 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('deployment')" size="small" type="primary">新建</el-button>
-        <el-button size="small" @click="flag=!flag">监控</el-button>
-      </div>
-      <!-- 抽屉 -->
-      <div class="dra" v-if="flag">
-        <open-drawer :flag="flag" title="工作负载监控" @changeFlag="setFlag" @setTime="setTime"></open-drawer>
+        <el-button size="small" @click="toMonitor">监控</el-button>
       </div>
 
       <!-- 右侧 -->
@@ -104,7 +100,11 @@
                   <span class="tke-text-link">编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
-                  <el-button type="text" :disabled="nameSpaceName === 'kube-system'?true:false" @click="deleteDeployment(scope.row)">删除</el-button>
+                  <el-button
+                    type="text"
+                    :disabled="nameSpaceName === 'kube-system'?true:false"
+                    @click="deleteDeployment(scope.row)"
+                  >删除</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -153,12 +153,12 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
-import openDrawer from "./components/openDrawer";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 export default {
   name: "colonyResourceDeployment",
   data() {
     return {
+      tit: "工作负载监控",
       loadShow: false, //加载是否显示
       clusterId: "", //集群id
       list: [], //列表
@@ -183,6 +183,15 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
+    toMonitor() {
+      //跳转监控页面
+      this.$router.push({
+        name: "colonyOpenMonitor",
+        query: {
+          title: this.tit + "(deployment)"
+        }
+      });
+    },
     //启动时获取命名空间列表数据
     async getNameSpaceList() {
       this.loadShow = true;
@@ -530,7 +539,6 @@ export default {
     subTitle,
     tkeSearch,
     Loading,
-    openDrawer
   }
 };
 </script>
