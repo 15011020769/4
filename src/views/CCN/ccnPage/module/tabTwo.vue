@@ -143,50 +143,45 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'InBandwidth',
+          'InPkg',
+          'OutBandwidth',
+          'OutPkg',
+          'RegionInPkg',
+          'RegionOutPkg',
+          'RegionOutBandwidth',
+          'RegionInBandwidth',
+        ], //可用指标
         disName: {
-          'InBandwidth': '入帶寬',
-          'InPkg': '入帶寬',
+          'InBandwidth': '入带宽',
+          'InPkg': '入包量',
           'OutBandwidth': '出帶寬',
           'OutPkg': '出包量',
-          'ReginInBandwidth': '地域總入帶寬',
           'RegionInBandwidth': '地域總入帶寬',
-          'RegionInBandwidthBM': '地域總入帶寬',
           'RegionInPkg': '地域總入包量',
-          'RegionInPkgBM': '地域總入包量',
           'RegionOutBandwidth': '地域總出帶寬',
-          'RegionOutBandwidthBM': '地域總出帶寬',
           'RegionOutPkg': '地域總出包量',
-          'RegionOutPkgBM': '地域總出包量'
         },
         Company: {
           'InBandwidth': 'Mbps',
           'InPkg': 'Mbps',
           'OutBandwidth': 'Mbps',
           'OutPkg': 'pps',
-          'ReginInBandwidth': 'Mbps',
           'RegionInBandwidth': 'Mbps',
-          'RegionInBandwidthBM': 'Mbps',
           'RegionInPkg': 'pps',
-          'RegionInPkgBM': 'pps',
           'RegionOutBandwidth': 'Mbps',
-          'RegionOutBandwidthBM': 'Mbps',
           'RegionOutPkg': 'pps',
-          'RegionOutPkgBM': 'pps'
         },
         Tips: {
-          'InBandwidth': '入帶寬',
-          'InPkg': '入帶寬',
-          'OutBandwidth': '出帶寬',
-          'OutPkg': '出包量',
-          'ReginInBandwidth': '地域總入帶寬',
+          'InBandwidth': '地域间入带宽',
+          'InPkg': '地域间入包量',
+          'OutBandwidth': '地域间出帶寬',
+          'OutPkg': '地域间出包量',
           'RegionInBandwidth': '地域總入帶寬',
-          'RegionInBandwidthBM': '地域總入帶寬',
           'RegionInPkg': '地域總入包量',
-          'RegionInPkgBM': '地域總入包量',
           'RegionOutBandwidth': '地域總出帶寬',
-          'RegionOutBandwidthBM': '地域總出帶寬',
           'RegionOutPkg': '地域總出包量',
-          'RegionOutPkgBM': '地域總出包量'
         },
 
       }
@@ -222,6 +217,7 @@
       //获取基础指标详情
       _GetBase() {
         let parms = {
+
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
           Namespace: 'QCE/VBC'
@@ -232,10 +228,15 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
+
             });
           } else {
             this.$message({
