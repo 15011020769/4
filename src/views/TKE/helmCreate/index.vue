@@ -35,7 +35,7 @@
                  <p>请输入Helm Chart压缩包的可下载地址，压缩包文件一般为.tgz格式</p>
               </el-form-item>
               <el-form-item label="类型">
-                <el-radio-group v-model="isCollapse"  size="mini" @change="setPrivate('ruleForm')">
+                <el-radio-group v-model="isCollapse"  size="mini" @change="setPrivate('rulePass')">
                   <el-radio-button :label="true" >公有</el-radio-button>
                   <el-radio-button :label="false">私有</el-radio-button>
                 </el-radio-group>
@@ -142,6 +142,7 @@ export default {
         nameTwo: "",
       },
       domains: [],
+      getFlag:true,
       flag: false,
       rules: {
         pass: [
@@ -198,15 +199,16 @@ export default {
     setPrivate(formName){
       console.log(this.isCollapse)
       if(this.isCollapse){
-        this.ruleForm.nameTwo = ""
-        this.ruleForm.pass = ""
-        this.$refs[formName].resetFields();
+        this.rulePass.nameTwo = ""
+        this.rulePass.pass = ""
+        this.$refs[formName].clearValidate();
       }
     },
     // 确定
     submitForm(formName,formPass) {
         this.$refs[formName].validate((valid) => {
           if(valid && this.isCollapse){
+            console.log(this.rulePass,1)
             this.setHelm()
             this.$router.push({
               name: 'helm',
@@ -214,8 +216,11 @@ export default {
                 clusterId:this.$route.query.clusterId
               }
             })
+            this.$store.commit("getFlag",true);
           }else if (valid && !this.isCollapse) {
             this.$refs[formPass].validate((validTwo) => {
+              console.log(this.rulePass,2)
+              // console.log(this.rulePass.)
               console.log(validTwo)
                 if(validTwo){
                   this.setHelm()
@@ -225,6 +230,10 @@ export default {
                         clusterId:this.$route.query.clusterId
                       }
                   })
+                  this.$store.commit("getFlag",true);
+                } else {
+                   console.log('error submit!!');
+                   return false;
                 }
             })
           } else {
@@ -278,9 +287,9 @@ export default {
       })
       if(this.domains.length > 0 && this.rulePass.nameTwo=="" && this.rulePass.pass==""){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
-      }else if(this.domains.length = 0 && this.rulePass.nameTwo && this.rulePass.pass){
+      }else if(this.domains.length == 0 && this.rulePass.nameTwo!="" && this.rulePass.pass!=""){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","username":this.rulePass.nameTwo,"password":this.rulePass.pass}
-      }else if(this.domains.length > 0 && this.rulePass.nameTwo && this.rulePass.pass){
+      }else if(this.domains.length > 0 && this.rulePass.nameTwo!="" && this.rulePass.pass!=""){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other","username":this.rulePass.nameTwo,"password":this.rulePass.pass,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
       }else {
         var RequestBodyAll = {"chart_url":this.ruleForm.address,"repo":"Other"}
