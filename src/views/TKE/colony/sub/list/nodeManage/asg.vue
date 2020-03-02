@@ -1021,6 +1021,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tke-grid{
+  margin-top:0;
+}
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
   .bottom{
     margin:15px 0;
   }
