@@ -2707,7 +2707,7 @@ export default {
       };
       this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.colony.OSoptions = res.Response.ImageInstanceSet.splice(0, 2);
+          this.colony.OSoptions = res.Response.ImageInstanceSet;
           this.colony.OSvalue = this.colony.OSoptions[0].ImageId;
         } else {
           let ErrTips = {};
@@ -3059,6 +3059,10 @@ export default {
     SecondMaster(val) {
       // console.log(val)
       this.rightListMaster = [];
+      this.colonySecond.workerTips = false;
+      this.colonySecond.completeBtn = false;
+      this.colonySecond.masterTips = true;
+      this.colonySecond.secondNextShow = false;
       if (val == "2") {
         this.colonySecond.workerShow = true;
         if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
@@ -3066,12 +3070,11 @@ export default {
         }
       } else {
         this.colonySecond.workerShow = false;
+        this.colonySecond.workerTips = false;
+        this.colonySecond.completeBtn = false;
+        this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
       }
-      this.colonySecond.workerTips = false;
-      this.colonySecond.completeBtn = false;
-      this.colonySecond.masterTips = true;
-      this.colonySecond.secondNextShow = false;
       if (
         this.colonySecond.worker == 2 &&
         this.colonySecond.source == 2 &&
@@ -3295,10 +3298,8 @@ export default {
     DataDiskSure(index, a) {
       let buyDataDiskArr = this.colonySecond.workerOneList[index]
         .buyDataDiskArr;
-      console.log(this.colonySecond.workerOneList);
-      console.log(this.colonySecond.workerOneList[index]);
-      // this.colonySecond.workerOneList[index].dataDiskArr = [];
-      // this.colonySecond.masterOneList[index].dataDiskArr = [];
+      this.colonySecond.workerOneList[index].dataDiskArr = [];
+      this.colonySecond.masterOneList[index].dataDiskArr = [];
       let text = [];
       if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
         this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
@@ -3566,7 +3567,7 @@ export default {
           PurchaseSource: "MC"
         };
         // 数据盘
-        if (_workerOneList[i].dataDiskShow) {
+        if (_workerOneList[i].buyDataDisk) {
           let dataDisk = _workerOneList[i].dataDiskArr;
           for (let j in dataDisk) {
             param["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
@@ -3588,7 +3589,7 @@ export default {
           param["EnhancedService.SecurityService.Enabled"] = true;
           param["EnhancedService.MonitorService.Enabled"] = true;
           param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if(this.colonySecond.renew === true){
+          // if (this.colonySecond.renew === true) {
           param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
           // }
         }
@@ -3652,7 +3653,7 @@ export default {
           PurchaseSource: "MC"
         };
         // 数据盘
-        if (_masterOneList[i].dataDiskShow) {
+        if (_masterOneList[i].buyDataDisk) {
           let dataDisk = _masterOneList[i].dataDiskArr;
           for (let j in dataDisk) {
             params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
@@ -3670,15 +3671,13 @@ export default {
         } else {
           params["InternetAccessible.PublicIpAssigned"] = true;
         }
+
         if (this.colonySecond.charging == 2) {
           params["EnhancedService.SecurityService.Enabled"] = true;
           params["EnhancedService.MonitorService.Enabled"] = true;
-        }
-        if (this.colonySecond.charging == 2) {
-          params["EnhancedService.SecurityService.Enabled"] = true;
-          params["EnhancedService.MonitorService.Enabled"] = true;
+
           params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if(this.colonySecond.renew === true){
+          // if (this.colonySecond.renew === true) {
           params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
           // }
         }
@@ -3865,119 +3864,156 @@ export default {
         let param = {
           Version: "2017-03-12",
           ImageId: this.colony.OSvalue,
-          "Placement.ProjectId": Number(this.colony.projectValue),
-          "Placement.Zone": "ap-taipei-1",
+          Placement: {
+            ProjectId: Number(this.colony.projectValue),
+            Zone: "ap-taipei-1"
+          },
           // 机型
           InstanceChargeType: _workerOneList[i].InstanceChargeType,
           InstanceType: _workerOneList[i].modelName,
           // 数量
           InstanceCount: 1,
           // 系统盘
-          "SystemDisk.DiskSize": Number(_workerOneList[i].systemDiskNumber),
-          "SystemDisk.DiskType": _workerOneList[i].systemDiskVal,
-          "VirtualPrivateCloud.VpcId": this.colony.networkValue,
-          "VirtualPrivateCloud.SubnetId":
-            _workerOneList[i].workerNodeNetworkVal,
+          SystemDisk: {
+            DiskSize: Number(_workerOneList[i].systemDiskNumber),
+            DiskType: _workerOneList[i].systemDiskVal
+          },
+          VirtualPrivateCloud: {
+            VpcId: this.colony.networkValue,
+            SubnetId: _workerOneList[i].workerNodeNetworkVal
+          },
           InstanceName: "",
-          UserData: ""
+          UserData: "",
+          PurchaseSource: "docker_dashboard"
         };
+
         // 数据盘
-        if (_workerOneList[i].dataDiskShow) {
+        let _dtaDisk = [];
+        if (_workerOneList[i].buyDataDisk) {
           let dataDisk = _workerOneList[i].dataDiskArr;
           for (let j in dataDisk) {
-            param["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
-            param["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
-            // param['DataDisks'].push({
-            //   DiskSize:dataDisk[j].DiskSize,
-            //   DiskType:dataDisk[j].DiskType
-            // })
+            _dtaDisk.push({
+              DiskSize: dataDisk[j].DiskSize,
+              DiskType: dataDisk[j].DiskType
+            });
+          }
+          param["DataDisks"] = _dtaDisk;
+        }
+
+        // 公网带宽
+        param["InternetAccessible"] = {
+          InternetChargeType: _workerOneList[i].broadbandVal,
+          InternetMaxBandwidthOut: _workerOneList[i].broadbandNumber
+        };
+        if (_workerOneList[i].broadbandNumber == 0) {
+          param["InternetAccessible"].PublicIpAssigned = false;
+        } else {
+          param["InternetAccessible"].PublicIpAssigned = true;
+        }
+        param["EnhancedService"] = {
+          SecurityService: { Enabled: true },
+          MonitorService: { Enabled: true }
+        };
+
+        if (this.colonySecond.charging == 2) {
+          if (this.colonySecond.renew === true) {
+            param["InstanceChargePrepaid"] = {
+              Period: this.colonySecond.buyTime,
+              RenewFlag: "NOTIFY_AND_AUTO_RENEW"
+            };
           }
         }
-        // 公网带宽
-        param["InternetAccessible.InternetChargeType"] =
-          _workerOneList[i].broadbandVal;
-        param["InternetAccessible.InternetMaxBandwidthOut"] = Number(
-          _workerOneList[i].broadbandNumber
-        );
-        if (_workerOneList[i].broadbandNumber == 0) {
-          param["InternetAccessible.PublicIpAssigned"] = false;
-        } else {
-          param["InternetAccessible.PublicIpAssigned"] = true;
-        }
-        if (this.colonySecond.charging == 2) {
-          param["EnhancedService.SecurityService.Enabled"] = true;
-          param["EnhancedService.MonitorService.Enabled"] = true;
-          param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if(this.colonySecond.renew === true){
-          param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
-          // }
-        }
+
         // 登录方式
         if (this.colonyThird.loginModeRadio == 1) {
-          param["LoginSettings.KeyIds"] = this.colonyThird.sshKeySel;
+          param["LoginSettings"] = {
+            KeyIds: this.colonyThird.sshKeySel
+          };
         }
-        if (this.colonyThird.loginModeRadio == 1) {
-          param["LoginSettings.Password"] = this.colonyThird.password;
+        if (this.colonyThird.loginModeRadio == 3) {
+          param["LoginSettings"] = {
+            Password: this.colonyThird.password
+          };
         }
 
         this.param.push(param);
-        
       }
-      console.log(this.param)
+
       let _masterOneList = this.colonySecond.masterOneList;
       for (let i in _masterOneList) {
         let params = {
           Version: "2017-03-12",
           ImageId: this.colony.OSvalue,
-          "Placement.ProjectId": Number(this.colony.projectValue),
-          "Placement.Zone": "ap-taipei-1",
+          Placement: {
+            ProjectId: Number(this.colony.projectValue),
+            Zone: "ap-taipei-1"
+          },
           // 机型
           InstanceChargeType: _masterOneList[i].InstanceChargeType,
           InstanceType: _masterOneList[i].modelName,
           // 数量
           InstanceCount: 1,
           // 系统盘
-          "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
-          "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
-          "VirtualPrivateCloud.VpcId": this.colony.networkValue,
-          "VirtualPrivateCloud.SubnetId":
-            _masterOneList[i].workerNodeNetworkVal,
+          SystemDisk: {
+            DiskSize: Number(_masterOneList[i].systemDiskNumber),
+            DiskType: _masterOneList[i].systemDiskVal
+          },
+          VirtualPrivateCloud: {
+            VpcId: this.colony.networkValue,
+            SubnetId: _masterOneList[i].workerNodeNetworkVal
+          },
           InstanceName: "",
-          UserData: ""
+          UserData: "",
+          PurchaseSource: "docker_dashboard"
         };
+
         // 数据盘
-        if (_masterOneList[i].dataDiskShow) {
+        let _dtaDisk = [];
+        if (_masterOneList[i].buyDataDisk) {
           let dataDisk = _masterOneList[i].dataDiskArr;
           for (let j in dataDisk) {
-            params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
-            params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+            _dtaDisk.push({
+              DiskSize: dataDisk[j].DiskSize,
+              DiskType: dataDisk[j].DiskType
+            });
+          }
+          params["DataDisks"] = _dtaDisk;
+        }
+        
+
+        // 公网带宽
+        params["InternetAccessible"] = {
+          InternetChargeType: _masterOneList[i].broadbandVal,
+          InternetMaxBandwidthOut: _masterOneList[i].broadbandNumber
+        };
+        if (_masterOneList[i].broadbandNumber == 0) {
+          params["InternetAccessible"].PublicIpAssigned = false;
+        } else {
+          params["InternetAccessible"].PublicIpAssigned = true;
+        }
+        params["EnhancedService"] = {
+          SecurityService: { Enabled: true },
+          MonitorService: { Enabled: true }
+        };
+        if (this.colonySecond.charging == 2) {
+          if (this.colonySecond.renew === true) {
+            params["InstanceChargePrepaid"] = {
+              Period: this.colonySecond.buyTime,
+              RenewFlag: "NOTIFY_AND_AUTO_RENEW"
+            };
           }
         }
-        // 公网带宽
-        params["InternetAccessible.InternetChargeType"] =
-          _masterOneList[i].broadbandVal;
-        params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
-          _masterOneList[i].broadbandNumber
-        );
-        if (_masterOneList[i].broadbandNumber == 0) {
-          params["InternetAccessible.PublicIpAssigned"] = false;
-        } else {
-          params["InternetAccessible.PublicIpAssigned"] = true;
-        }
-        if (this.colonySecond.charging == 2) {
-          params["EnhancedService.SecurityService.Enabled"] = true;
-          params["EnhancedService.MonitorService.Enabled"] = true;
-          params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if(this.colonySecond.renew === true){
-          params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
-          // }
-        }
+
         // 登录方式
         if (this.colonyThird.loginModeRadio == 1) {
-          params["LoginSettings.KeyIds"] = this.colonyThird.sshKeySel;
+          params["LoginSettings"] = {
+            KeyIds: this.colonyThird.sshKeySel
+          };
         }
-        if (this.colonyThird.loginModeRadio == 1) {
-          params["LoginSettings.Password"] = this.colonyThird.password;
+        if (this.colonyThird.loginModeRadio == 3) {
+          params["LoginSettings"] = {
+            Password: this.colonyThird.password
+          };
         }
         this.params.push(params);
       }
@@ -4000,8 +4036,6 @@ export default {
     },
     // 创建 完成
     CreateFinish() {
-      console.log(this.param);
-      console.log(this.params);
       var workerOneListArr = this.colonySecond.workerOneList;
       var masterOneListArr = this.colonySecond.masterOneList;
       let param = {
@@ -4072,10 +4106,11 @@ export default {
           ] = "";
         }
       }
+
       param["RunInstancesForNode.0.NodeRole"] = "WORKER";
       for (let i in workerOneListArr) {
         param["RunInstancesForNode.0.RunInstancesPara." + i] =
-          // '{"Version":"2017-03-12","InstanceChargeType":"POSTPAID_BY_HOUR","Placement":{"Zone":"ap-taipei-1","ProjectId":0},"InstanceType":"S3.SMALL1","ImageId":"img-49iszl8j","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"VirtualPrivateCloud":{"VpcId":"vpc-kl9iqcz0","SubnetId":"subnet-p1qhaznf"},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"InstanceCount":1,"InstanceName":"","LoginSettings":{"Password":"a123456789"},"SecurityGroupIds":["sg-f1jnwzrq","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"PurchaseSource":"docker_dashboard","UserData":""}';
+          // '{"Version":"2017-03-12","InstanceChargeType":"POSTPAID_BY_HOUR","Placement":{"Zone":"ap-taipei-1","ProjectId":0},"InstanceType":"S3.SMALL1","ImageId":"img-49iszl8j","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"VirtualPrivateCloud":{"VpcId":"vpc-6whh21qa","SubnetId":"subnet-nn56635p"},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"InstanceCount":1,"InstanceName":"","LoginSettings":{"KeyIds":["skey-120yh2jb"]},"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"PurchaseSource":"docker_dashboard","UserData":""}';
           JSON.stringify(this.param[i]);
         if (this.colonySecond.masterDataDiskMount === true) {
           param[
@@ -4168,55 +4203,55 @@ export default {
       param["InstanceAdvancedSettings.Labels.0.Name"] = "";
       param["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
-      // let buyDataArr = [];
-      // for (let i in workerOneListArr) {
-      //   if (workerOneListArr[i].buyDataDisk === true) {
-      //     buyDataArr.push(workerOneListArr[i]);
-      //     for (let x in buyDataArr) {
-      //       param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
-      //         workerOneListArr[i].modelName;
-      //       param["InstanceDataDiskMountSettings." + x + ".Zone"] =
-      //         "ap-taipei-1";
-      //       for (let j in workerOneListArr[i].dataDiskArr) {
-      //         param[
-      //           "InstanceDataDiskMountSettings." +
-      //             x +
-      //             ".DataDisks." +
-      //             j +
-      //             ".DiskType"
-      //         ] = workerOneListArr[i].dataDiskArr[j].DiskType;
-      //         param[
-      //           "InstanceDataDiskMountSettings." +
-      //             x +
-      //             ".DataDisks." +
-      //             j +
-      //             ".DiskSize"
-      //         ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
-      //         param[
-      //           "InstanceDataDiskMountSettings." +
-      //             x +
-      //             ".DataDisks." +
-      //             j +
-      //             ".AutoFormatAndMount"
-      //         ] = workerOneListArr[i].dataDiskArr[j].formatMount;
-      //         param[
-      //           "InstanceDataDiskMountSettings." +
-      //             x +
-      //             ".DataDisks." +
-      //             j +
-      //             ".FileSystem"
-      //         ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
-      //         param[
-      //           "InstanceDataDiskMountSettings." +
-      //             x +
-      //             ".DataDisks." +
-      //             j +
-      //             ".MountTarget"
-      //         ] = workerOneListArr[i].dataDiskArr[j].setValue;
-      //       }
-      //     }
-      //   }
-      // }
+      let buyDataArr = [];
+      for (let i in workerOneListArr) {
+        if (workerOneListArr[i].buyDataDisk === true) {
+          buyDataArr.push(workerOneListArr[i]);
+          for (let x in buyDataArr) {
+            param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+              workerOneListArr[i].modelName;
+            param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+              "ap-taipei-1";
+            for (let j in workerOneListArr[i].dataDiskArr) {
+              param[
+                "InstanceDataDiskMountSettings." +
+                  x +
+                  ".DataDisks." +
+                  j +
+                  ".DiskType"
+              ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  x +
+                  ".DataDisks." +
+                  j +
+                  ".DiskSize"
+              ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  x +
+                  ".DataDisks." +
+                  j +
+                  ".AutoFormatAndMount"
+              ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  x +
+                  ".DataDisks." +
+                  j +
+                  ".FileSystem"
+              ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  x +
+                  ".DataDisks." +
+                  j +
+                  ".MountTarget"
+              ] = workerOneListArr[i].dataDiskArr[j].setValue;
+            }
+          }
+        }
+      }
 
       console.log(param);
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
