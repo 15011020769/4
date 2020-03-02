@@ -1,4 +1,4 @@
- <!-- 新建Service -->
+<!-- 新建Service -->
 <template>
   <div class="colony-wrap">
     <div class="tke-content-header">
@@ -125,14 +125,14 @@
               <!-- 内容 -->
               <div style="border-top:1px solid #ddd;padding: 10px;">
                 <div style="padding:5px 0;" v-for="(it, i) in ing.list" :key="it.key">
-                    <el-select style="width:120px;" v-model="it.protocolValue" placeholder="请选择" @change="protocolChange($event, it.key)">
-                      <el-option
-                        v-for="item in ing.protocolOption"
-                        :key="item"
-                        :label="item"
-                        :value="item">
-                      </el-option>
-                    </el-select>
+                  <el-select style="width:120px;" v-model="it.protocolValue" placeholder="请选择" @change="protocolChange($event, it.key)">
+                    <el-option
+                      v-for="item in ing.protocolOption"
+                      :key="item"
+                      :label="item"
+                      :value="item">
+                    </el-option>
+                  </el-select>
                   <span style="padding-left:23px">{{it.portNumber}}</span>
                   <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP"></el-input>
                   <el-form-item style="display: inline-block;width:120px;padding-left:30px;" :prop="`list.${i}.path`" :rules="pathValidator">
@@ -643,78 +643,78 @@ export default {
 }
 </script>
 
- <style lang="scss" scoped>
-   .shadow {
-     z-index: 999;
-     float: left;
-     width: 100%;
-     height: 900px;
-     opacity: 0.6;
-     background: black;
-   }
+<style lang="scss" scoped>
+  .shadow {
+    z-index: 999;
+    float: left;
+    width: 100%;
+    height: 900px;
+    opacity: 0.6;
+    background: black;
+  }
 
-   .w250 {
-     width: 250px;
-   }
+  .w250 {
+    width: 250px;
+  }
 
-   .w100 {
-     width: 100px;
-   }
+  .w100 {
+    width: 100px;
+  }
 
-   .flex {
-     display: flex;
-   }
+  .flex {
+    display: flex;
+  }
 
-   .port {
-     max-width: 855px;
-     border: 1px solid #ddd;
-   }
+  .port {
+    max-width: 855px;
+    border: 1px solid #ddd;
+  }
 
-   .card {
-     padding: 10px;
-     border-bottom: 1px solid #dcdfe6;
-   }
+  .card {
+    padding: 10px;
+    border-bottom: 1px solid #dcdfe6;
+  }
 
-   .borderRed {
-     border: 1px solid #e54545;
-   }
+  .borderRed {
+    border: 1px solid #e54545;
+  }
 
-   .text-error {
-     color: #e54545;
-   }
+  .text-error {
+    color: #e54545;
+  }
 
-   .text-warning {
-     color: #ff9d00
-   }
+  .text-warning {
+    color: #ff9d00
+  }
 
-   .ms {
-     width: 330px;
-     padding: 5px 8px 8px 5px;
-     height: 100px;
-     border-radius: 4px;
-     border: 1px solid #dcdfe6;
-     resize: none;
-   }
-   .tke-fe-alert{
-     padding: 10px 30px 10px 20px;
-     vertical-align: middle;
-     color: #003b80;
-     border: 1px solid #97c7ff;
-     border-radius: 2px;
-     background: #e5f0ff;
-     position: relative;
-     box-sizing: border-box;
-     margin-right: auto;
-     display: inline-block;
-     margin-left: 20px;
-     margin-bottom: 0px;
-     max-width: 750px;
-     max-height: 120px;
-     overflow: auto;
-   }
-   .tke-fe-alert--error{
-     color: #b43537;
-     border-color: #f6b5b5;
-     background-color: #fcecec;
-   }
- </style>
+  .ms {
+    width: 330px;
+    padding: 5px 8px 8px 5px;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    resize: none;
+  }
+  .tke-fe-alert{
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-right: auto;
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 0px;
+    max-width: 750px;
+    max-height: 120px;
+    overflow: auto;
+  }
+  .tke-fe-alert--error{
+    color: #b43537;
+    border-color: #f6b5b5;
+    background-color: #fcecec;
+  }
+</style>
