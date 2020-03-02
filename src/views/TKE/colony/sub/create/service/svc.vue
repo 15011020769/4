@@ -100,7 +100,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+				<el-button type="primary" @click="handlerDet">确 定</el-button>
 			</div>
 		</el-dialog>
   </div>
@@ -139,7 +139,9 @@ export default {
         list: [],
         workload: [], // 高级选项的值
         tabPosition: 'dep', // 幕布层资源类型
-        describe: ''// 描述
+        describe: '', // 描述
+        inputValue1: '',
+        inputValue2: ''
       },
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
@@ -343,7 +345,12 @@ export default {
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
           // console.log(msg)
-          this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
+          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -371,7 +378,12 @@ export default {
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
           // console.log(msg)
-          this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
+          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -399,10 +411,11 @@ export default {
           // this.resourcesList = JSON.parse(res.Response.ResponseBody).items
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
-          // if (!msg.length) {
-          //   msg.push({ metadata: { name: '无可用资源' } })
-          // }
-          this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
         } else {
           let ErrTips = {
 
@@ -519,7 +532,15 @@ export default {
         }
       })
     },
-
+    // 处理幕布层确定按钮的事件
+    handlerDet () {
+      this.dialogFormVisible = false
+      this.svc.workload = this.resourcesList.filter(item => {
+        return item.metadata.name === this.svc.resourcesValue
+      })
+      console.log(this.svc.workload)
+      // this.svc.workload.push()
+    },
     handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {
