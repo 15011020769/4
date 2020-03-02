@@ -4,7 +4,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button  size="small" type="primary" @click="goUpdateYAML()" :disabled="rowData.metadata.namespace === 'kube-system'?true:false">编辑YAML</el-button>
+        <el-button  size="small" type="primary"  @click="goUpdateYAML()" :disabled="rowData.metadata.namespace === 'kube-system'?true:false">编辑YAML</el-button>
       </div>
     </div>
     
@@ -29,6 +29,7 @@ import { codemirror } from 'vue-codemirror'
   require('codemirror/addon/fold/markdown-fold.js')
   require('codemirror/addon/fold/comment-fold.js')
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   name: "deploymentDetailYaml",
   data() {
@@ -68,10 +69,10 @@ export default {
       this.loadShow = true;
       let params = {
           Method: "GET",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.rowData.metadata.namespace+"/statefulsets/"+this.rowData.metadata.name,
+          Path: "/apis/batch/v1beta1/namespaces/"+this.rowData.metadata.namespace+"/cronjobs/"+this.rowData.metadata.name,
           Version: "2018-05-25",
           Accept: "application/yaml",
-          ClusterName: this.clusterId,
+          ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if(res.Response.Error === undefined) {
@@ -93,7 +94,7 @@ export default {
     //跳转编辑Yaml
     goUpdateYAML() {
       this.$router.push({
-        name: "updateStatefulSet",
+        name: "updateCronJob",
         query: {
           clusterId: this.clusterId,
           spaceName: this.rowData.metadata.namespace,

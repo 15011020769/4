@@ -2,33 +2,184 @@
 <template>
   <div class="colony-main">
     <div class="tke-card mt10 tke-formpanel-wrap">
+      <div class="tke-grid ">
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+        </div>
+      </div>
       <el-card class='box-card'> 
-        <div class='box-black'>1</div>
+        <el-select v-model="currPod" @change="changePod">
+          <el-option 
+            v-for="(it, i) in potList" 
+            :key="i" 
+            :label="it.metadata.name" 
+            :value="it.metadata.name"
+            >
+          </el-option>
+        </el-select>
+        <el-select v-model="currDeployment" @change="changeContainer">
+          <el-option
+            v-for="(item,i) in this.deploymentList"
+            :key="i"
+            :label="item.name"
+            :value="item.name"
+            >
+          </el-option>
+        </el-select>
+        <el-select v-model="index" @change="changeSize">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+            >
+          </el-option>
+        </el-select>
+        <div class='box-black'>
+          <codemirror style="background-color: #444;"  ref="myCm"  v-model="logData"  :options="cmOptions" class="code" ></codemirror>
+        </div>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { codemirror } from 'vue-codemirror'
+  require("codemirror/mode/python/python.js")
+  require('codemirror/addon/fold/foldcode.js')
+  require('codemirror/addon/fold/foldgutter.js')
+  require('codemirror/addon/fold/brace-fold.js')
+  require('codemirror/addon/fold/xml-fold.js')
+  require('codemirror/addon/fold/indent-fold.js')
+  require('codemirror/addon/fold/markdown-fold.js')
+  require('codemirror/addon/fold/comment-fold.js')
+import { ALL_CITY, POINT_REQUEST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment';
 export default {
   name: "deploymenDetailLog",
   data() {
     return {
-     
+      options: [
+        {value: 100,
+        label: '显示100条'},
+        {value: 200,
+        label: '显示200条'},
+        {value: 500,
+        label: '显示500条'},
+        {value: 1000,
+        label: '显示1000条'},
+      ],
+      index: 100,//选中的条数
+      deploymentList: [],//statefulSet列表
+      potList:[],//pod列表
+      currPod: '',//选中的pod
+      currDeployment: '',//选中的stateful
+      loadShow: false,//是否显示加载
+      clusterId:'',//集群id
+      rowData: {},//传过来的数据
+      spaceName: '',//路由传过来的命名空间名称
+      logData: null,//日志数据
+      cmOptions: {
+        tabSize: 4,
+        mode: 'python',
+        theme: 'darcula',
+        lineNumbers: true,//行号
+        line: true,
+        lineNumbers: true,
+        foldgutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+        lineWrapping: true, //代码折叠
+        foldGutter: true,
+        matchBrackets: true,  //括号匹配
+        autoCloseBrackets: true
+      },
+      autoRefresh: true, //自动刷新
+      timer: null,//定时器
     };
   },
   components: {
-   
+    codemirror
   },
   created() {
      // 从路由获取类型
-   
+    this.clusterId=this.$route.query.clusterId
+    this.potList = this.$route.query.list;
+    this.spaceName = this.$route.query.spaceName;
+    this.rowData = this.$route.query.rowData;
+    this.currPod = this.$route.query.list[0].metadata.name;
+    this.deploymentList = this.$route.query.rowData.spec.template.spec.containers;
+    this.currDeployment = this.$route.query.rowData.spec.template.spec.containers[0].name;
+    this.getdeploymentLog();
+    let autoRefresh = this.autoRefresh;
+    if(autoRefresh) {
+      if(this.timer) {
+        this.timer = setInterval(() => {
+          this.getdeploymentLog();
+        }, 1000 * 20);
+      }
+    }
   },
   methods: {
-   
+    async getdeploymentLog() {
+      this.loadShow = true;
+      let param = {
+        Method: "GET",
+        Path: "/api/v1/namespaces/"+this.rowData.metadata.namespace+"/pods/"+this.currPod+"/log?container="+this.currDeployment+"&timestamps=true&tailLines="+this.index,
+        Version: "2018-05-25",
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.logData = res.Response.ResponseBody;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //选择实例
+    changePod() {
+      this.getdeploymentLog();
+    },
+    //选择容器
+    changeContainer() {
+      this.getdeploymentLog();
+    },
+    //选择条数
+    changeSize() {
+      this.getdeploymentLog();
+    },
+    //是否刷新
+    changeSwitch() {
+      let autoRefresh = this.autoRefresh;
+      if(autoRefresh) {
+        if(!this.timer) {
+          this.timer = setInterval(() => {
+            this.getdeploymentLog();
+          }, 1000 * 20);
+        }
+      } else {
+        if(this.timer) { //如果定时器在运行则关闭
+          clearInterval(this.timer); 
+        }
+      }
+    },
+    //销毁定时器
+    destroyed(){
+      if(this.timer) { //如果定时器在运行则关闭
+        clearInterval(this.timer); 
+      }
+    }
   }
 };
 </script>

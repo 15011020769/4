@@ -697,6 +697,42 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/resource/cronJob', // 工作负载-CronJob-详情
+      name: 'cronJobDetail',
+      component: () => import('./colony/sub/detail/resource/cronJob/index.vue'),
+      redirect: '/colony/sub/detail/resource/cronJob/event', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [ // 子路由
+        { // 事件
+          path: '/colony/sub/detail/resource/cronJob/event',
+          name: 'cronJobDetailEvent',
+          component: () => import('./colony/sub/detail/resource/cronJob/event.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+        { // 详情
+          path: '/colony/sub/detail/resource/cronJob/info',
+          name: 'cronJobDetailInfo',
+          component: () => import('./colony/sub/detail/resource/cronJob/info.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },
+          
+        { // yaml
+          path: '/colony/sub/detail/resource/cronJob/yaml',
+          name: 'cronJobDetailYaml',
+          component: () => import('./colony/sub/detail/resource/cronJob/yaml.vue'),
+          meta: {
+            keepAlive: true,
+          }
+        },  
+      ]
+    },
+    {
       path: '/colony/sub/detail/hpa', // 自动伸缩-详情
       name: 'hpaDetail',
       component: () => import('./colony/sub/detail/hpa/index.vue'),
@@ -856,6 +892,46 @@ export default new Router({
       path: '/colony/sub/update/namespace/yaml',
       name: 'updateNameSpace',
       component: () => import('./colony/sub/update/namespace/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载statefulSet yaml
+      path: '/colony/sub/update/resource/statefulSet',
+      name: 'updateStatefulSet',
+      component: () => import('./colony/sub/update/resource/statefulSet/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载deployment yaml
+      path: '/colony/sub/update/resource/deployment',
+      name: 'updateDeployment',
+      component: () => import('./colony/sub/update/resource/deployment/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载deployment yaml
+      path: '/colony/sub/update/resource/cronJob',
+      name: 'updateCronJob',
+      component: () => import('./colony/sub/update/resource/cronJob/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载daemonSet yaml
+      path: '/colony/sub/update/resource/daemonSet',
+      name: 'updateDaemonSet',
+      component: () => import('./colony/sub/update/resource/daemonSet/yaml.vue'),
+      meta: {
+        keepAlive: true,
+      }
+    },
+    { // 更新工作负载job yaml
+      path: '/colony/sub/update/resource/job',
+      name: 'updateJob',
+      component: () => import('./colony/sub/update/resource/job/yaml.vue'),
       meta: {
         keepAlive: true,
       }

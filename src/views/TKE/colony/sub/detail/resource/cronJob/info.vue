@@ -13,45 +13,43 @@
         <el-form-item label="描述">
           <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.annotations && rowData.metadata.annotations.description || '-'}}</div>
         </el-form-item>
-        <el-form-item label="创建时间">
-          <div class="tke-form-item_text">{{rowData.addTime}}</div>
+        <el-form-item label="启动时间">
+          <div class="tke-form-item_text">{{rowData.status.startTime | startTime}}</div>
         </el-form-item>
         <el-form-item label="Labels">
           <div class="tke-form-item_text">{{changeLabel(rowData.metadata && rowData.metadata.labels)}}</div>
         </el-form-item>
-        <el-form-item label="annotations">
-          <div class="tke-form-item_text">{{rowData.metadata && rowData.metadata.annotations && rowData.metadata.annotations.description || '-'}}</div>
+        <el-form-item label="执行策略">
+          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.schedule || '-'}}</div>
         </el-form-item>
-        <el-form-item label="Selector">
-          <div class="tke-form-item_text">{{changeSelector(rowData.spec && rowData.spec.selector && rowData.spec.selector.matchLabels)}}</div>
+        <el-form-item label="并发策略">
+          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.concurrencyPolicy || '-'}}</div>
         </el-form-item>
-        <el-form-item label="更新策略">
-          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.updateStrategy && rowData.spec.updateStrategy.type || '-'}}</div>
+        <el-form-item label="并行度">
+          <div class="tke-form-item_text">{{rowData.spec.jobTemplate.spec.parallelism || 0}}</div>
         </el-form-item>
-        <el-form-item label="副本数">
-          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.replicas || '-'}}</div>
+        <el-form-item label="重复次数">
+          <div class="tke-form-item_text">{{rowData.spec.jobTemplate.spec.completions || 0}}</div>
         </el-form-item>
-        <el-form-item label="运行副本数">
-          <div class="tke-form-item_text">{{rowData.status && rowData.status.replicas || '-'}}</div>
-        </el-form-item>
+        
         
       </el-form>
     </div>
 
     <div class="tke-card tke-formpanel-wrap mt10">
       <h4  class="tke-formpanel-title">数据卷（Volumes）</h4>
-      <el-form  class="tke-form" label-position='left' label-width="120px" size="mini"  v-for="(item, i) in rowData.spec.template.spec.volumes && rowData.spec.template.spec.volumes" :key="i">
+      <!-- <el-form  class="tke-form" label-position='left' label-width="120px" size="mini"  v-for="(item, i) in rowData.spec.template.spec.volumes && rowData.spec.template.spec.volumes" :key="i">
         <el-form-item label="">
           <div class="tke-form-item_text">{{item | volumes}}</div>
         </el-form-item>
-      </el-form>
+      </el-form> -->
     </div>
 
     <div class="tke-card tke-formpanel-wrap mt10">
       <h4  class="tke-formpanel-title">容器（Containers）</h4>
       <hr style="margin-left:-20px; margin-right:-20px">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane v-for="(item, i) in rowData.spec.template.spec.containers" :key="i"  :label="item.name" :name="item.name">
+        <el-tab-pane v-for="(item, i) in rowData.spec.jobTemplate.spec.template.spec.containers" :key="i"  :label="item.name" :name="item.name">
           <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
             <el-form-item label="容器名称">
               <div class="tke-form-item_text">{{item.name}}</div>
@@ -113,8 +111,7 @@
 </template>
 
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
+import moment from 'moment';
 import { ALL_CITY } from "@/constants";
 export default {
   name: "deploymentDetailInfo",
@@ -134,6 +131,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
+    console.log("rowData",this.rowData);
   },
   methods: {
     handleClick(tab, event) {
@@ -244,6 +242,13 @@ export default {
         return res;
       } else {
         return res;
+      }
+    },
+    startTime(value) {
+      if(value) {
+        return moment(value).format("YYYY-MM-DD HH:mm:ss");
+      } else {
+        return '';
       }
     }
   }
