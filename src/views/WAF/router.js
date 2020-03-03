@@ -38,7 +38,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: accessLogIntercept
     },
     {
       path: '/accessLogDetail', // 访问日志
@@ -47,7 +48,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: accessLogIntercept
     },
     {
       path: '/protectionSettings', // 防护设置
@@ -240,6 +242,28 @@ const router = new Router({
 })
 
 let pack
+const accessLogIntercept = (to, from, next) => {
+  if (pack) {
+    if (pack.Cls) {
+      next()
+    } else {
+      next('/accessLogIntercept')
+    }
+  } else {
+    Vue.prototype.axios.post(DESCRIBE_USER_INFO, {
+      Version: '2018-01-25'
+    }).then(resp => {
+      Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+        pack = Data
+        if (pack.Cls) {
+          next()
+        } else {
+          next('/accessLogIntercept')
+        }
+      })
+    })
+  }
+}
 const botIntercept = (to, from, next) => {
   if (pack) {
     if (pack.Level === CLB_PACKAGE_CFG_TYPES[2]) {
