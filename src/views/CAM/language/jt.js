@@ -314,6 +314,18 @@ module.exports = {
         },
         provider: {
           delTip: '此操作将删除该身份提供商，同时该身份提供商将解除与相关角色的关联，无法以该身份提供商申请使用相关角色。您确定要删除该身份提供商吗？'
+        },
+        noticeSubscriptionDialog: {
+          close: "关 闭",
+          confirm: "确 定",
+          expand: "展开",
+          unexpand: "收起",
+          xxlx: "消息类型",
+          znx: "站内信",
+          cz: "操作",
+          subscriber: "消息接受人",
+          subscribeType: "订阅消息类型",
+          subscription: "订阅消息"
         }
     },
     COM: require('@/components/language/jt'),
