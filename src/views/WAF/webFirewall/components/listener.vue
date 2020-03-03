@@ -42,7 +42,7 @@
       <el-col :span="3">
       </el-col>
       <el-col>
-         <el-button type="primary" @click="add" :loading="reqLoading">完成</el-button>
+         <el-button type="primary" @click="add" :loading="reqLoading" size="small">完成</el-button>
       </el-col>
     </el-row>
     <el-dialog
@@ -137,7 +137,7 @@ export default {
     this.reqLoading = false
     this.axios.post(CLB_LIST, {
       Version: '2018-03-17',
-      Region: 'ap-taipei', // 'ap-guangzhou',
+      Region: 'ap-guangzhou', // ,'ap-taipei'
       Forward: 1,
       LoadBalancerType: 'OPEN',
       Offset: 0,
@@ -188,7 +188,7 @@ export default {
         Host: {
           Domain: this.domain.Domain,
           IsCdn: this.domain.IsCdn,
-          Region: 'tp', // 'gz',
+          Region: 'gz', // tp
           LoadBalancerSet: lbset,
           DomainId: this.domain.DomainId || '',
         }
@@ -236,7 +236,7 @@ export default {
       this.axios.post(DESCRIBE_LISTENERS, {
         LoadBalancerId: lbId,
         Version: '2018-03-17',
-        Region: 'ap-taipei',
+        Region: 'ap-guangzhou', // 'ap-taipei',
       }).then(({ Response }) => {
         if (Response.Error) {
           this.$message({
@@ -282,6 +282,7 @@ export default {
   color: #888;
 }
 .lb-input, .listener-input, .lb-container, .listener-container {
+  font-size: 12px;
   width: 382px;
 }
 .lb-container, .listener-container {
