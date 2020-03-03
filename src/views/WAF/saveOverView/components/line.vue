@@ -79,7 +79,8 @@ export default {
           containLabel: true
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          formatter: `{b}<br/>{a} {c}次`
         },
         legend: {
             data: this.legendText,

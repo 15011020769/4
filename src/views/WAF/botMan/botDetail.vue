@@ -48,8 +48,8 @@
           ></el-date-picker>
       </el-row>
       <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ucb'"></Ucb>
+      <Ub :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ub'"></Ub>
+      <Ucb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ucb'"></Ucb>
       <Tcb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'tcb'"></Tcb>
     </div>
   </div>
