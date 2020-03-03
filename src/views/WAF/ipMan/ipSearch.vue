@@ -59,9 +59,14 @@
         <span v-if="!ipInfo.length">{{textTips}}</span>
       </div>
     </div>
-    <template v-if="ipInfo[0]">
-      <addBlackWhite :isShow="addBwModel" @closeModel="closeModel" :ipInfo="Object.assign(ipInfo[0], { Domain: ipSearch })"/>
-    </template>
+    <el-dialog
+      title="添加黑白IP"
+      :visible.sync="addBwModel"
+      width="45%"
+      destroy-on-close
+    >
+      <addBlackWhite :isShow.sync="addBwModel" @success="closeModel" :ipInfo="editIpInfo"/>
+    </el-dialog>
   </div>
 </template>
 
@@ -79,6 +84,7 @@ export default {
       addBwModel:false,//弹框
       ipTest: false, // ip输入格式是否正确
       ipInfo: [], // 查询的ip信息
+      editIpInfo: {},
       textTips: this.t('请输入IP，并点击查询', 'WAF.qsripjs')
     }
   },
@@ -103,11 +109,19 @@ export default {
     searchBtn(){},
     //加入黑名单
     addBlack(){
+      this.editIpInfo = {
+        Domain: this.ipSearch,
+        ipAddress: this.ipInfo[0].Ip,
+        blackWhiteCh: 40,
+        des: this.ipInfo[0].Name,
+        datatime: moment().add(7, 'd'),
+        timeValue: moment().add(7, 'd').format('YYYY-MM-DD 23:59:59')
+      }
       this.addBwModel=true;
     },
     //关闭
-    closeModel(isShow){
-      this.addBwModel=isShow;
+    closeModel(){
+      this.addBwModel = false
     },
     // 获取防护域名列表
     getDescribeHost() {

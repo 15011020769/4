@@ -177,7 +177,7 @@ export default {
           this.nameSpaceList();
           // this.getKind();
         }, 20000);
-         window.clearInterval(timeId);
+        window.clearInterval(timeId);
       } else {
         window.clearInterval(timeId);
         this.nsOptions = [];

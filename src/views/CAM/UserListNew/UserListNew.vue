@@ -162,7 +162,7 @@
                     <el-button
                       type="text"
                       style="color:#000"
-                      @click="subscribeNotice(scope.row.Uid)"
+                      @click="subscribeNotice(scope.row.Uid, scope.row.Name)"
                     >{{$t('CAM.userList.userSubscribeNotice')}}</el-button>
                   </el-dropdown-item> -->
                 </el-dropdown-menu>
@@ -316,6 +316,7 @@
     <NoticeSubscriptionDialog
       :visible="noticeSubscriptionVisible"
       :subscriberId="subscriberId"
+      :subscriberName="subscriberName"
       @handleClose="subscriptionClose"
       @handleConfirm="subscriptionConfirm"
     ></NoticeSubscriptionDialog>
@@ -384,7 +385,8 @@ export default {
       currpage: 1, // 当前页码
       value: "", //更多操作多选值
       noticeSubscriptionVisible: false,
-      subscriberId: 0
+      subscriberId: 0,
+      subscriberName: ""
     };
   },
   methods: {
@@ -979,9 +981,10 @@ export default {
     handleCloses() {
       this.dialogVisible = false;
     },
-    subscribeNotice(uid) {
+    subscribeNotice(uid, name) {
       this.noticeSubscriptionVisible = true;
       this.subscriberId = uid;
+      this.subscriberName = name;
     },
     subscriptionClose() {
       this.noticeSubscriptionVisible = false;

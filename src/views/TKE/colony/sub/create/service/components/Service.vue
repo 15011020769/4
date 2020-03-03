@@ -74,15 +74,15 @@
 					<el-option
 						v-for="item in personObj.ownLoadBalancer"
 						:key="item.LoadBalancerId"
-						:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
-						:value="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'">
+						:label="`${item.LoadBalancerId}  (${item.LoadBalancerName})`"
+						:value="item.LoadBalancerId">
 					</el-option>
 				</el-select>
 			</p>
 			</div>
 		</el-form-item>
 		<el-form-item label="端口映射">
-			<div class="port">
+			<div class="port" :class="{ports:svc.radio=='4'}">
 				<!-- 头部 -->
 				<div class="flex">
 					<div style="width:140px;padding-left:14px">协议
@@ -90,12 +90,17 @@
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div style="width:250px;">容器端口
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'">容器端口
 						<el-tooltip content="端口范围1~65535" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div style="padding-left:30px">服务端口
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'" v-if="svc.radio=='4'">主机端口
+						<el-tooltip content="可通过云服务器IP+主机端口访问服务，端口范围30000~32767，不填自动分配" placement="top" effect="light">
+						<i class="el-icon-warning"></i>
+						</el-tooltip>
+					</div>
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'':'padding-left:30px'">服务端口
 						<el-tooltip content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
@@ -115,14 +120,20 @@
 						    </el-option>
 						  </el-select>
 						</el-form-item>
-						<el-form-item style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input1`" :rules="verifyPort">
-						  <el-input class="w250" v-model="it.input1" placeholder="请输入内容"></el-input>
+						<el-form-item :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;"
+						:prop="`list.${i}.input1`" :rules="verifyPort">
+						  <el-input class="w250" v-model="it.input1" placeholder="容器内应用程序监听的端口"></el-input>
 						</el-form-item>
-						<el-form-item style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input2`" :rules="verifyPort">
-						  <el-input class="w250" v-model="it.input2" placeholder="请输入内容"></el-input>
+						<el-form-item :class="{cons:svc.radio=='4'}" v-if="svc.radio=='4'"
+						style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input3`" :rules="verifyPort2">
+						  <el-input class="w250" v-model="it.input3" placeholder="范围: 30000~32767"></el-input>
+						</el-form-item>
+						<el-form-item :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;"
+						:prop="`list.${i}.input2`" :rules="verifyPort">
+						  <el-input class="w250" v-model="it.input2" placeholder="建议与容器端口一致"></el-input>
 						</el-form-item>
 						<el-tooltip class="item" effect="dark" content="删除" placement="right">
-							<i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removeprot(it)"></i>
+							<i style="font-size:18px;" :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close" @click="removeprot(it)"></i>
 						</el-tooltip>
 					</div>
 				</div>
@@ -138,7 +149,7 @@
 				<div v-if="svc.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
 				<div v-if="svc.ETP=='2'">能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。</div>
 			</el-form-item>
-			<div>
+			<div v-if="svc.radio!=='2'">
 				<el-form-item label-width="150px" label="Session Affinity">
 					<el-radio v-model="svc.SA" label="1">ClienIP</el-radio>
 					<el-radio v-model="svc.SA" label="2">None</el-radio>
@@ -166,16 +177,16 @@ export default {
       // AvailableIpAddressCount: '', // 剩余可用子网数
       protocolList: ['TCP', 'UDP'], // 协议列表
       addressCount: {}, // 子网点对象
-      // 会话事件的验证
+      // 会话时间的验证
       timeRules: [{
         validator: (rule, value, callback) => {
-          if (value > 0 && value < 68400) {
+          if (value > 0 && value <= 68400) {
             callback()
           } else if (!value) {
             callback(new Error('会话保持时间不能为空'))
           } else if (value < 0 && value > 68400) {
             callback(new Error('不在会话保持时间范围'))
-          } else if (/^\d+\.\d+$/.test(value)) {
+          } else if (!(/^\d+$/.test(value))) {
             callback(new Error('会话保持时间格式错误'))
           } else {
             callback(new Error('会话保持时间格式错误'))
@@ -198,7 +209,24 @@ export default {
         },
         trigger: 'blur',
         required: true }
-      ]
+      ],
+      verifyPort2: [{// 主机端口的验证
+        validator: (rule, value, callback) => {
+          if (value > 30000 && value <= 32767) {
+            callback()
+          } else if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (value < 0 && value > 32767) {
+            callback(new Error('超出端口号范围'))
+          } else if (!(/^\d+$/.test(value))) {
+            callback(new Error('端口号格式不正确'))
+          } else {
+            callback(new Error('端口格式不正确'))
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }]
     }
   },
   created: function () {
@@ -250,13 +278,24 @@ export default {
     // 新增端口
     addport () {
       // console.log(this.svc.list)
-      this.svc.list.push({
-        value: '',
-        input1: '',
-        input2: '',
-        protocol: 'TCP',
-        key: Date.now()
-      })
+      if (this.svc.radio == '4') {
+        this.svc.list.push({
+          value: '',
+          input1: '',
+          input3: '',
+          input2: '',
+          protocol: 'TCP',
+          key: Date.now()
+        })
+      } else {
+        this.svc.list.push({
+          value: '',
+          input1: '',
+          input2: '',
+          protocol: 'TCP',
+          key: Date.now()
+        })
+      }
     }
   }
 }
@@ -301,7 +340,21 @@ export default {
 	border: 1px solid #dcdfe6;
 	resize: none;
 }
-
+.ports{
+  max-width: 848px;
+}
+.titles{
+	width: 204px;
+	.el-input{
+		width: 184px
+	}
+}
+.cons{
+	width: 204px;
+	.el-input{
+		width: 200px
+	}
+}
 // .radio1 {
 //    ::v-deep .el-radio-button__orig-radio:checked + .el-radio-button__inner {
 //               border: 1px solid #006eff;

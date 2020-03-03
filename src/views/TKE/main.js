@@ -14,6 +14,7 @@ import i18n from './language/i18n.js' // 引入i18n包
 import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 import store from '@/stores/store.js'
+import { ErrorTips } from "@/components/ErrorTips";
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
     // 引入折线图组件
@@ -21,6 +22,7 @@ require('echarts/lib/chart/line')
     // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
+Vue.prototype.$ErrorTips=ErrorTips
 for (let key in filters) {
     Vue.filter(key, filters[key])
 }

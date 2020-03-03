@@ -29,7 +29,8 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                :MetricName='disName[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -143,7 +144,34 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          '2xxResponse',
+          '3xxResponse',
+          '4xxResponse',
+          '5xxResponse',
+          'ArcStorage',
+          'CdnOriginTraffic',
+          'IaReadRequests',
+          'IaRetrieval',
+          'IaWriteRequests',
+          'InboundTraffic',
+          'InternalTraffic',
+          'InternetTraffic',
+          'NelStorage',
+          'NlReadRequests',
+          'NlRetrieval',
+          'NlWriteRequests',
+          'SiaStorage',
+          'StdReadRequests',
+          'StdRetrieval',
+          'StdStorage',
+          'StdWriteRequests'
+        ], //可用指标
         disName: {
+          'NelStorage': '近线存储存储空间',
+          'SiaStorage': '低频存储存储空间',
+          'ArcStorage': '归档存储存储空间',
+          'StdStorage': '标准存储存储空间',
           '2xxResponse': '2xx状态码',
           '3xxResponse': '3xx状态码',
           '4xxResponse': '4xx状态码',
@@ -155,10 +183,6 @@
           'InboundTraffic': '上传流量',
           'InternalTraffic': '内网流量',
           'InternetTraffic': '外网流量',
-          'MazIaReadRequests': '多AZ低频存储读请求',
-          'MazIaWriteRequests': '多AZ低频存储写请求',
-          'MazStdReadRequests': '多AZ标准存储读请求',
-          'MazStdWriteRequests': '多AZ标准存储写请求',
           'NlReadRequests': '近线存储读请求',
           'NlRetrieval': '近线数据取回',
           'NlWriteRequests': '近线存储写请求',
@@ -167,29 +191,33 @@
           'StdWriteRequests': '标准存储写请求',
         },
         Company: {
-          '2xxResponse': '次数',
-          '3xxResponse': '次数',
-          '4xxResponse': '次数',
-          '5xxResponse': '次数',
-          'CdnOriginTraffic': '次数',
-          'IaReadRequests': '次数',
-          'IaRetrieval': '次数',
-          'IaWriteRequests': '次数',
-          'InboundTraffic': '次数',
-          'InternalTraffic': '次数',
-          'InternetTraffic': '次数',
-          'MazIaReadRequests': '次数',
-          'MazIaWriteRequests': '次数',
-          'MazStdReadRequests': '次数',
-          'MazStdWriteRequests': '次数',
-          'NlReadRequests': '次数',
-          'NlRetrieval': '次数',
-          'NlWriteRequests': '次数',
-          'StdReadRequests': '次数',
-          'StdRetrieval': '次数',
-          'StdWriteRequests': '次数',
+          'NelStorage': '次',
+          'SiaStorage': '次',
+          '2xxResponse': '次',
+          '3xxResponse': '次',
+          '4xxResponse': '次',
+          '5xxResponse': '次',
+          'CdnOriginTraffic': '次',
+          'IaReadRequests': '次',
+          'IaRetrieval': '次',
+          'IaWriteRequests': '次',
+          'InboundTraffic': '次',
+          'InternalTraffic': '次',
+          'InternetTraffic': '次',
+          'NlReadRequests': '次',
+          'NlRetrieval': '次',
+          'NlWriteRequests': '次',
+          'StdReadRequests': '次',
+          'StdRetrieval': '次',
+          'StdWriteRequests': '次',
+          'StdStorage': '次',
+          'ArcStorage': '次',
         },
         Tips: {
+          'NelStorage': '近线存储存储空间',
+          'SiaStorage': '低频存储存储空间',
+          'ArcStorage': '归档存储存储空间',
+          'StdStorage': '标准存储存储空间',
           '2xxResponse': '2xx状态码',
           '3xxResponse': '3xx状态码',
           '4xxResponse': '4xx状态码',
@@ -201,10 +229,6 @@
           'InboundTraffic': '上传流量',
           'InternalTraffic': '内网流量',
           'InternetTraffic': '外网流量',
-          'MazIaReadRequests': '多AZ低频存储读请求',
-          'MazIaWriteRequests': '多AZ低频存储写请求',
-          'MazStdReadRequests': '多AZ标准存储读请求',
-          'MazStdWriteRequests': '多AZ标准存储写请求',
           'NlReadRequests': '近线存储读请求',
           'NlRetrieval': '近线数据取回',
           'NlWriteRequests': '近线存储写请求',
@@ -256,11 +280,15 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                console.log(item.MetricName, item.Meaning.Zh)
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
+              console.log(item.MetricName, item.Meaning.Zh)
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    this._GetMonitorData(item.MetricName)
+                  }
+                }
+              });
             });
           } else {
             this.$message({

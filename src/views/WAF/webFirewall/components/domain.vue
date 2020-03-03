@@ -38,7 +38,7 @@
       <el-col :span="3">
       </el-col>
       <el-col>
-         <el-button type="primary" @click="next">下一步</el-button>
+         <el-button type="primary" size="small" @click="next">下一步</el-button>
       </el-col>
     </el-row>
   </div>
@@ -51,10 +51,15 @@ import { COMMON_ERROR } from '../../constants'
 export default {
   props: {
     level: Number, // 套餐类型
-    domain: Object,
+    domain: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
   },
   data(){
-    return{
+    return {
       error: '',
       notExists: 0, // 1不存在 2加载中 0 默认不显示
     }

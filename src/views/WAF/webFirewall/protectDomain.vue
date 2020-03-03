@@ -31,6 +31,7 @@ export default {
       domainId: '',
       domain: {
         IsCdn: 0,
+        Domain: ''
       }
     }
   },

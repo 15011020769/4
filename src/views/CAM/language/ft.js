@@ -184,7 +184,8 @@ module.exports = {
     },
     Role: {
       roleNameInvalid: '1-128個英文字母、數字和+=,.@_-',
-      cancelSessionTitle: '為有效保障您的帳戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為 RevokeOlderSessionForTCS_QCSRole 的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',
+      cancelSessionTitle1: '為有效保障您的帳戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為', 
+      cancelSessionTitle2: '的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',
       title: '角色',
       addBtn: '新建角色',
       delBtn: '刪除',
@@ -314,6 +315,18 @@ module.exports = {
     },
     provider: {
       delTip: '此操作將刪除該身份提供商，同時該身份提供商將解除與相關角色的關聯，無法以該身份提供商申請使用相關角色。您確定要刪除該身份提供商嗎？'
+    },
+    noticeSubscriptionDialog: {
+      close: "關 閉",
+      confirm: "確 定",
+      expand: "展開",
+      unexpand: "收起",
+      xxlx: "消息類型",
+      znx: "站內信",
+      cz: "操作",
+      subscriber: "消息接受人",
+      subscribeType: "訂閱消息類型",
+      subscription: "訂閱消息"
     }
   },
   COM: require('@/components/language/ft'),

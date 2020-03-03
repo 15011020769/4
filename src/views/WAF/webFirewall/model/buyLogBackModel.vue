@@ -10,7 +10,7 @@
           <div class="newClear dominPackList">
             <p>{{t('购买数量', 'WAF.gmsl')}}</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange"></el-input-number> {{t('个', 'WAF.g')}}
+              <el-input-number v-model="buyNum"></el-input-number> {{t('个', 'WAF.g')}}
             </p>
           </div>
           <div class="newClear dominPackList">
@@ -25,12 +25,12 @@
             <p>{{t('费用', 'WAF.fy')}}</p>
             <p class="totalMoney">
               <template v-if="loading">计算中...</template>
-              <template v-else>NT$ {{price}}</template>
+              <template v-else>NT$ {{cost}}</template>
             </p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="nowBuy">{{t('立即购买', 'WAF.ljgm')}}</el-button>
+          <el-button class="buyImmediate" @click="nowBuy" :disabled="loading">{{t('立即购买', 'WAF.ljgm')}}</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>
@@ -40,7 +40,7 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { BUY_LOG_TYPES } from '../../constants'
+import { BUY_LOG_TYPES, ORDER_INFO } from '../../constants'
 export default {
   props:{
     isShow:Boolean,
@@ -56,8 +56,9 @@ export default {
       logBackModel: '', // 弹框
       buyNum: 1, // 购买数量
       remainingDays: 0, // 剩余天数
-      price: 0,
+      cost: 0,
       loading: true,
+      exchange: 0,
     }
   },
   watch: {
@@ -81,6 +82,15 @@ export default {
   },
   methods:{
     queryPrice() {
+      if (!this.exchange) {
+        this.axios({
+          method: 'get',
+          baseURL: process.env.VUE_APP_adminUrl,
+          url: 'taifucloud/texchangerate/getExchange'
+        }).then(({ taxRate, usd2twd, cny2usd }) => {
+          this.exchange = taxRate * usd2twd * cny2usd
+        })
+      }
       this.loading = true
       const resInfo = {
         "regionId": 1,
@@ -122,7 +132,7 @@ export default {
         ResInfo: [resInfo]
       }).then(resp => {
         this.generalRespHandler(resp, ({ CostInfo }) => {
-          this.price = CostInfo[0].RealTotalCost // RealTotalCost
+          this.cost = CostInfo[0].RealTotalCost // RealTotalCost
           this.loading = false
         })
       })
@@ -132,15 +142,100 @@ export default {
       this.logBackModel=false;
       this.$emit("closeLogBackModel",this.logBackModel)
     },
-    //计数器
-    handleChange(){
-
-    },
     //立即购买按钮
     nowBuy(){
-      this.logBackModel=false;
-      this.$emit("closeLogBackModel",this.logBackModel)
-    }
+      let validTime = this.package.ValidTime
+      const aqrzfw = this.t('安全日志服务', 'WAF.aqrzfwb')
+      let d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
+      let time = d/(365/12) // 到期月数
+      let newEdiPrice
+      let curEdiPrice
+      let price = `${this.cost / d}/天` // 新购时单价 /每天
+      let purchaseTime = `${d}天`
+      let name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${aqrzfw}-CLB${this.t('新购', 'WAF.ng')}`
+      let tips
+      if (this.package.Cls) { // 变配
+        validTime = this.package.Cls.ValidTime
+        d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
+        time = d/(365/12) // 到期月数
+        newEdiPrice = (this.buyNum + this.package.Cls.Count) * 500 * this.exchange
+        curEdiPrice = this.package.Cls.Count * 500 * this.exchange
+        name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${aqrzfw}包-${this.t('变配', 'WAF.bp')}`
+        price = '-'
+        purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
+        tips = [
+          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
+          `(2).${this.t('时长', 'WAF.sc')}:${time.toFixed(8)}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
+        ]
+      }
+      const order = {
+        name,
+        config: `${aqrzfw}包：${this.buyNum}T`,
+        price, // 单价
+        cost: this.cost, // 费用
+        purchaseTime,
+        tips
+      }
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders: [order],
+        dealParam: this.getDealParam()
+      }))
+      this.$router.push({
+        name: 'pay'
+      })
+    },
+    getDealParam() {
+      const { Cls } = this.package
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+      }
+      if (Cls) {
+        return JSON.stringify({
+          'Goods.0.GoodsCategoryId': BUY_LOG_TYPES.edit_categoryid,
+          ...param,
+          'Goods.0.GoodsDetail': JSON.stringify({
+            productInfo: [{
+              name: `${this.t('安全日志服务', 'WAF.aqrzfwb')}包`,
+              value: `${this.buyNum}T`
+            }],
+            curDeadline: Cls.ValidTime,
+            resourceId: Cls.ResourceIds,
+            oldConfig: {
+              pid: BUY_LOG_TYPES.pid,
+              [BUY_LOG_TYPES.pricetype]: Cls.Count,
+              type: BUY_LOG_TYPES.goodstype
+            },
+            newConfig: {
+              pid: BUY_LOG_TYPES.pid,
+              [BUY_LOG_TYPES.pricetype]: Cls.Count + this.buyNum,
+              type: BUY_LOG_TYPES.goodstype
+            }
+          }),
+        })
+      }
+      return JSON.stringify({
+        'Goods.0.GoodsCategoryId': BUY_LOG_TYPES.first_categoryid,
+        ...param,
+        'Goods.0.GoodsDetail': {
+          productInfo: [{
+            name: `${this.t('安全日志服务', 'WAF.aqrzfwb')}包`,
+            value: `${this.buyNum}T`
+          }],
+          timeSpan: this.remainingDays,
+          timeUnit: 'd',
+          pid: BUY_LOG_TYPES.pid,
+          type: BUY_LOG_TYPES.goodstype,
+          [BUY_LOG_TYPES.pricetype]: this.buyNum,
+          Currency: 'CNY'
+        }
+      })
+    },
   }
 }
 </script>
@@ -161,6 +256,12 @@ export default {
   background-color:#ff9700;
   color:#fff;
   border:none;
+  &.is-disabled {
+    background: #ccc;
+    &:hover {
+      color: #f5f7fa;
+    }
+  }
 }
 ::v-deep button{
   height:30px;

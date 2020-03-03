@@ -23,8 +23,8 @@
 <script>
 import XLSX from 'xlsx'
 import moment from 'moment'
-import { DESCRIBE_ACCESS_CONTROL } from '@/constants'
-import { COMMON_ERROR } from '../../constants'
+import { DESCRIBEIP_HITITEMS } from '@/constants'
+import { COMMON_ERROR, ALL_ACTION } from '../../constants'
 
 export default {
   props: {
@@ -45,26 +45,26 @@ export default {
     _export() {
       const i = Math.ceil(this.count/600)
       const ps = []
-      let data = [["IP地址", "类别", "来源", "更新时间", "截止时间", "备注"]]
+      let data = [['IP地址', '类别', '名称', '动作', '创建时间', '有效截止时间']]
       for (let j = 0; j < i; j += 1) {
-        ps.push(this.axios.post(DESCRIBE_ACCESS_CONTROL, {
+        ps.push(this.axios.post(DESCRIBEIP_HITITEMS, {
           ...this.param,
           Limit: 600,
-          OffSet: j * 600,
+          Skip: j * 600,
         }))
       }
       Promise.all(ps)
       .then(resp => {
         resp.forEach(({ Response }) => {
-          Response.Data.Res.forEach(item => {
-            const { Ip, ActionType, Source, TsVersion, ValidTs, Note } = item
+          (Response.Data.Res || []).forEach(item => {
+            const { ip, name, action, ts_version, valid_ts, category } = item
             data.push([
-              Ip,
-              ActionType === 42 ? '黑名单' : '白名单',
-              Source === 'custom' ? '自定义' : Source,
-              TsVersion ? moment(TsVersion).format('YYYY/MM/DD HH:mm:ss') : '',
-              moment(ValidTs * 1000).format('YYYY/MM/DD HH:mm:ss'),
-              Note
+              ip,
+              category === 'cc' ? 'CC' : category,
+              name,
+              ALL_ACTION[action],
+              moment(ts_version).format('YYYY/MM/DD HH:mm:ss'),
+              moment(valid_ts * 1000).format('YYYY/MM/DD HH:mm:ss'),
             ])
             this.progress += 1
           })
@@ -73,7 +73,7 @@ export default {
         const wb = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(wb, ws, "ip_list")
         /* generate file and send to client */
-        XLSX.writeFile(wb, `ip_list_${moment().format('x')}.xlsx`)
+        XLSX.writeFile(wb, `ip_record_${moment().format('x')}.xlsx`)
         this.$emit('update:visible', false)
       })
     }

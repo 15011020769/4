@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { DESCRIBE_USER_EDITION } from '@/constants'
+import { DESCRIBE_USER_EDITION, DESCRIBE_USER_INFO } from '@/constants'
+import { CLB_PACKAGE_CFG_TYPES } from './constants'
 
 Vue.use(Router)
 
@@ -22,13 +23,23 @@ const router = new Router({
       }
     },
     {
+      path: '/accessLogIntercept', // 访问日志
+      name: 'accessLogIntercept',
+      component: () => import(/* webpackChunkName: "ipMan" */ './logService/intercept.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
       path: '/accessLog', // 访问日志
       name: 'accessLog',
       component: () => import(/* webpackChunkName: "ipMan" */ './logService/accessLog.vue'),
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: accessLogIntercept
     },
     {
       path: '/accessLogDetail', // 访问日志
@@ -37,7 +48,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: accessLogIntercept
     },
     {
       path: '/protectionSettings', // 防护设置
@@ -124,12 +136,21 @@ const router = new Router({
       }
     },
     {
+      path: '/botIntercept', // bot管理
+      name: 'botIntercept',
+      component: () => import(/* webpackChunkName: "ipMan" */ './botMan/intercept.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
       path: '/botMan', // bot管理
       name: 'botMan',
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
     },
     {
       path: '/botOverview', // botOverview
@@ -138,7 +159,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: botIntercept
     },
     {
       path: '/botSetting', // bot设置
@@ -147,7 +169,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: botIntercept
     },
     {
       path: '/botSetting/public/:id',
@@ -161,7 +184,7 @@ const router = new Router({
     },
     {
       path: '/botSetting/diy/:id',
-      name: 'proctionSetting',
+      name: 'proctionSettingdiy',
       meta: {
         keepAlive: true,
         leftNav:true,
@@ -176,7 +199,8 @@ const router = new Router({
       meta: {
         keepAlive: true,
         leftNav:true
-      }
+      },
+      beforeEnter: botIntercept
     },
     {
       path: '/botDetail/ucb', // bot详情
@@ -217,31 +241,77 @@ const router = new Router({
   ]
 })
 
-// let waf = -1 // 0 未购买 1 已购买
-// router.beforeEach((to, from, next) => {
-//   if (to.path === '/toBuy') {
-//     next()
-//     return
-//   }
-//   if (waf === -1) {
-//     Vue.prototype.axios.post(DESCRIBE_USER_EDITION, {
-//       Version: '2018-01-25'
-//     }).then(resp => {
-//       Vue.prototype.generalRespHandler(resp, ({ Data }) => {
-//         if (!Data || !Data.includes('clb-waf')) {
-//           waf = 0
-//           next('/toBuy')
-//         } else {
-//           waf = 1
-//           next()
-//         }
-//       }, )
-//     })
-//   } else if (waf === 0) {
-//     next('/toBuy')
-//   } else {
-//     next()
-//   }
-// })
+let pack
+const accessLogIntercept = (to, from, next) => {
+  if (pack) {
+    if (pack.Cls) {
+      next()
+    } else {
+      next('/accessLogIntercept')
+    }
+  } else {
+    Vue.prototype.axios.post(DESCRIBE_USER_INFO, {
+      Version: '2018-01-25'
+    }).then(resp => {
+      Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+        pack = Data
+        if (pack.Cls) {
+          next()
+        } else {
+          next('/accessLogIntercept')
+        }
+      })
+    })
+  }
+}
+const botIntercept = (to, from, next) => {
+  if (pack) {
+    if (pack.Level === CLB_PACKAGE_CFG_TYPES[2]) {
+      next('/botIntercept')
+    } else {
+      next()
+    }
+  } else {
+    Vue.prototype.axios.post(DESCRIBE_USER_INFO, {
+      Version: '2018-01-25'
+    }).then(resp => {
+      Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+        pack = Data
+        if (pack.Level === CLB_PACKAGE_CFG_TYPES[2]) {
+          next('/botIntercept')
+        } else {
+          next()
+        }
+      })
+    })
+  }
+}
+
+let waf = -1 // 0 未购买 1 已购买
+router.beforeEach((to, from, next) => {
+  if (to.path === '/toBuy') {
+    next()
+    return
+  }
+  if (waf === -1) {
+    Vue.prototype.axios.post(DESCRIBE_USER_EDITION, {
+      Version: '2018-01-25'
+    }).then(resp => {
+      Vue.prototype.generalRespHandler(resp, ({ Data }) => {
+        if (!Data || !Data.includes('clb-waf')) {
+          waf = 0
+          next('/toBuy')
+        } else {
+          waf = 1
+          next()
+        }
+      })
+    })
+  } else if (waf === 0) {
+    next('/toBuy')
+  } else {
+    next()
+  }
+})
 
 export default router

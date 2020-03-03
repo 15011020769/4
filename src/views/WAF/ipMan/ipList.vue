@@ -181,9 +181,15 @@
         </el-card>
       </div>
     </div>
-    <template :v-if="addBWmodel">
-      <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch })"/>
-    </template>
+    <el-dialog
+      :title="`${ipInfo.bj ? t('编辑', 'WAF.bj') : '添加'}黑白IP`"
+      :visible.sync="addBWmodel"
+      width="45%"
+      destroy-on-close
+      @close="ipInfo={}"
+    >
+      <addBlackWhite @success="closeHBDialog" :isShow.sync="addBWmodel" :ipInfo="ipInfo"/>
+    </el-dialog>
     <el-dialog
       title="删除IP"
       :visible.sync="dialogVisible"
@@ -216,7 +222,6 @@
 
 <script>
 import addBlackWhite from './model/addBlackWhite'
-import XLSX from 'xlsx'
 import moment from 'moment'
 import { COMMON_ERROR } from '../constants'
 import batchImport from './model/batchImport'
@@ -228,8 +233,6 @@ import {
   UPSERTIP_ACCESS_CONTROL ,
   DELETEIP_ACCESS_CONTROL
   } from '@/constants'
-
-const make_cols = refstr => Array(XLSX.utils.decode_range(refstr).e.c + 1).fill(0).map((x,i) => ({name:XLSX.utils.encode_col(i), key:i}));
 
 export default {
   data() {
@@ -353,7 +356,7 @@ export default {
       this.loadShow = true
       const params = {
         Version: '2018-01-25',
-        Domain: 'global',
+        Domain: this.ipSearch,
         Count: 1,
         Limit: this.pageLimit,
         OffSet: this.pageOffset,
@@ -396,6 +399,11 @@ export default {
 
     //添加黑白名单按钮
     addBW(){
+      this.ipInfo = {
+        Domain: this.ipSearch,
+        datatime: moment().add(7, 'd'),
+        timeValue: moment().add(7, 'd').format('YYYY-MM-DD 23:59:59')
+      }
       this.addBWmodel=true;
     },
 
@@ -413,12 +421,10 @@ export default {
     },
 
     //关闭
-    closeModel(isShow){
+    closeHBDialog(isShow){
       this.addBWmodel = false ;
       this.ipInfo = {}
-      if (isShow === 'refresh') {
-        this.getData()
-      }
+      this.getData()
     },
 
     // 快捷时间查询
@@ -434,11 +440,18 @@ export default {
     },
 
     // 编辑
-    onEdit(info) {
-      this.ipInfo = info.row
-      setTimeout(() => {
-        this.addBWmodel = true
-      })
+    onEdit({ row }) {
+      this.ipInfo = {
+        Domain: this.ipSearch,
+        ipAddress: row.Ip,
+        blackWhiteCh: row.ActionType,
+        des: row.Note,
+        datatime: moment(row.ValidTs * 1000).format('YYYY-MM-DD HH:mm:ss'),
+        timeValue: moment(row.ValidTs * 1000).format('YYYY-MM-DD HH:mm:ss'),
+        type: 'ipList',
+        bj: true,
+      }
+      this.addBWmodel = true
     },
 
     // 加黑或者加白

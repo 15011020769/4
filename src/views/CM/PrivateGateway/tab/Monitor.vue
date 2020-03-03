@@ -29,7 +29,8 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"></echart-line>
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                :MetricName='disName[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -202,13 +203,10 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                console.log(item)
-                console.log(item.MetricName, item.Meaning.Zh)
                 this.BaseListK.push(item)
                 this._GetMonitorData(item.MetricName)
               }

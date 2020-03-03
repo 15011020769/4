@@ -140,8 +140,6 @@
       this.nameSpaceList();
       //获取日志列表
       this.findList();
-
-
     },
     watch: {
       value(val) {
@@ -196,6 +194,14 @@
 
               } else {
                 this.tableData = [];
+               let ErrTips = {};
+               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+               this.$message({
+                 message: ErrOr[res.Response.Error.Code],
+                 type: "error",
+                 showClose: true,
+                 duration: 0
+               });
               }
             })
 
@@ -303,9 +309,7 @@
               "spec":{"clusterName":this.value2}},
           Version: "2018-05-25",
         }
-        console.log(params)
          this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
-           console.log(res)
             if (res.Response.Error === undefined){
                 this.$router.push({
                 path: '/logCreate',
@@ -314,6 +318,10 @@
                  }
                  })
              sessionStorage.setItem('clusterId', this.value2)
+            }else{
+
+
+
             }
          })
       },

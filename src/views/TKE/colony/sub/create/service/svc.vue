@@ -75,7 +75,8 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item label="资源列表">
-					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'请选择':'无可用资源'" :disabled="resourcesList.length?false:true" style="margin-left:70px;">
+					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'请选择':'无可用资源'"
+          :disabled="resourcesList.length?false:true" style="margin-left:70px;">
 						<el-option
 							v-for="item in resourcesList"
 							:key="item.metadata.name"
@@ -90,7 +91,8 @@
             <p v-if="resourcesList.length === 0">请先选择Workload</p>
             <div v-else v-for="(v1, i1) in resourcesList" :key="i1">
               <!-- <p v-if="v1">1313</p> -->
-              <p v-for="(item, key) in v1.metadata.labels" :key="key">{{key}}: {{item}}</p>
+              <p v-for="(item, key) in v1.metadata.labels" :key="key"
+              v-if="svc.resourcesValue === v1.metadata.name">{{key}}: {{item}}</p>
             </div>
             <!-- <p v-else v-for="(item,key,i) in resourcesList[i].metadata.labels" :key="i">{{key}}:{{item}}</p> -->
           </div>
@@ -98,7 +100,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+				<el-button type="primary" @click="handlerDet">确 定</el-button>
 			</div>
 		</el-dialog>
   </div>
@@ -137,7 +139,9 @@ export default {
         list: [],
         workload: [], // 高级选项的值
         tabPosition: 'dep', // 幕布层资源类型
-        describe: ''// 描述
+        describe: '', // 描述
+        inputValue1: '',
+        inputValue2: ''
       },
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
@@ -179,6 +183,7 @@ export default {
     this.getDescribeVpcs()// 描述Vpcs
     this.getDescribeClusters()// 获取集群列表
     this.getForwardRequest()// 转发请求
+    this.handleType1()
   },
   methods: {
     // 扫描均衡器
@@ -337,9 +342,14 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res)
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
+          // console.log(msg)
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
           // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
@@ -367,7 +377,13 @@ export default {
           // console.log(JSON.parse(res.Response.ResponseBody).items)
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
-          this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          // console.log(msg)
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
+          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
         } else {
           let ErrTips = {
 
@@ -395,7 +411,11 @@ export default {
           // this.resourcesList = JSON.parse(res.Response.ResponseBody).items
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
-          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          if (msg.length > 0) {
+            this.svc.resourcesValue = msg[0].metadata.name
+          } else {
+            this.svc.resourcesValue = ''
+          }
         } else {
           let ErrTips = {
 
@@ -412,37 +432,72 @@ export default {
     },
     // 新建服务
     async submitFound () {
-      let { name, describe, list, value, time, ETP, SA } = this.svc
+      let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue } = this.svc
       let newPortAry = []
-      list.forEach(ele => {
+      list.forEach(ele => { // 端口映射参数
         let ports = {
           name: `${ele.input1}-${ele.input2}-${ele.protocol.toLowerCase()}`,
           port: Number(ele.input1),
           targetPort: Number(ele.input2),
           protocol: ele.protocol
         }
+        if (radio == '4') {
+          ports.nodePort = ele.nodePort
+        }
         newPortAry.push(ports)
       })
-      var policy = 'Cluster'
+      let policy = 'Cluster'// 高级选项参数
       if (ETP === '2') {
         policy = 'Local'
       }
-      var sessionTime = 'None'
-      if (SA === '1') {
-        sessionTime = { 'clientIP': { 'timeoutSeconds': time } }
+      let session = 'None'
+      let sessionTime = {}
+      if (SA === '1') { // 高级选项参数
+        session = 'ClientIP'
+        sessionTime = { 'clientIP': { 'timeoutSeconds': Number(time) } }
       }
-      let reqBody = {
+      let reqBody = {// 传递的reqbody整体参数
         'kind': 'Service',
         'apiVersion': 'v1',
         'metadata': { 'name': name,
           'namespace': value,
           'annotations': {
-            'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}',
-            'description': describe } },
+            'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}'
+          } },
         'spec': { 'type': 'LoadBalancer',
           'ports': newPortAry,
           'externalTrafficPolicy': policy,
-          'sessionAffinity': sessionTime } }
+          'sessionAffinity': session } }
+      if (session == 'ClientIP') reqBody.spec.sessionAffinityConfig = sessionTime// 会话时间
+      if (describe) reqBody.metadata.annotations.description = describe// 是否有描述
+      if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue// 是否选中 使用已有
+      if (radio == '3') { // 服务访问方式 第3个需要的参数
+        reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
+        reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
+      }
+      if (radio == '2' && !describe) { // 服务访问方式 第2个需要的参数
+        reqBody = {
+          'kind': 'Service',
+          'apiVersion': 'v1',
+          'metadata': { 'name': name, 'namespace': value },
+          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'sessionAffinity': session } }
+        if (checked) {
+          reqBody.spec.clusterIP = session
+        }
+      }
+      if (radio == '4' && !describe) { // 服务访问方式 第4个需要的参数
+        reqBody = {
+          'kind': 'Service',
+          'apiVersion': 'v1',
+          'metadata': { 'name': name, 'namespace': value },
+          'spec': {
+            'type': 'NodePort',
+            'ports': newPortAry,
+            'externalTrafficPolicy': policy,
+            'sessionAffinity': session
+          }
+        }
+      }
       let param = {
         Method: 'POST',
         Path: `/api/v1/namespaces/${this.spaceName}/services`,
@@ -453,15 +508,15 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false
-          console.log(res)
-          // this.$router.push({
-          //   path: '/colony/sub/detail/service/svc/event',
-          //   query: {
-          //     clusterId: this.clusterId,
-          //     ingressName: name,
-          //     namespace: value
-          //   }
-          // })
+          // console.log(res)
+          this.$router.push({
+            path: '/colony/sub/detail/service/svc/event',
+            query: {
+              clusterId: this.clusterId,
+              spaceName: this.svc.value,
+              serviceName: this.svc.name
+            }
+          })
         } else {
           this.loadShow = false
           let ErrTips = {
@@ -477,7 +532,15 @@ export default {
         }
       })
     },
-
+    // 处理幕布层确定按钮的事件
+    handlerDet () {
+      this.dialogFormVisible = false
+      this.svc.workload = this.resourcesList.filter(item => {
+        return item.metadata.name === this.svc.resourcesValue
+      })
+      console.log(this.svc.workload)
+      // this.svc.workload.push()
+    },
     handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {

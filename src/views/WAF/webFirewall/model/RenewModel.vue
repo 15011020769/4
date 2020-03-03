@@ -46,13 +46,13 @@
             <p class="renewListCon">
               <span class="totalMoney">
                 <template v-if="loading">计算中...</template>
-                <template v-else>NT$ {{price}}</template>
+                <template v-else>NT$ {{cost}}</template>
               </span>
             </p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="renewImmediate">{{t('立即续费', 'WAF.ljxf')}}</el-button>
+          <el-button class="buyImmediate" @click="renewImmediate" :disabled="loading">{{t('立即续费', 'WAF.ljxf')}}</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>
@@ -61,7 +61,7 @@
 </template>
 <script>
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { CLB_PACKAGE_CFG_TYPES, BUY_LOG_TYPES, CLB_BUY_DOMAIN_TYPES, CLB_BUY_QPS_TYPES } from '../../constants'
+import { CLB_PACKAGE_CFG_TYPES, BUY_LOG_TYPES, CLB_BUY_DOMAIN_TYPES, CLB_BUY_QPS_TYPES, ORDER_INFO } from '../../constants'
 export default {
   props:{
     isShow: Boolean,
@@ -75,7 +75,7 @@ export default {
       thisType:'1',//默认选中
       loading: true,
       costInfo: undefined,
-      price: 0,
+      cost: 0,
     }
   },
   watch: {
@@ -152,13 +152,13 @@ export default {
         ResInfo: resInfo }).then(resp => {
         this.generalRespHandler(resp, ({ CostInfo }) => {
           const costInfo = {}
-          let price = 0
-          CostInfo.forEach(cost => {
-            costInfo[cost.Pid] = cost
-            price += cost.RealTotalCost // RealTotalCost
+          let cost = 0
+          CostInfo.forEach(info => {
+            costInfo[info.Pid] = info
+            cost += info.RealTotalCost // RealTotalCost
           })
           this.costInfo = costInfo
-          this.price = price
+          this.cost = cost
           this.loading = false
         })
       })
@@ -174,37 +174,160 @@ export default {
         name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}-CLB${this.t('续费', 'WAF.xf')}`,
         config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}`,
         price: this.costInfo[CLB_PACKAGE_CFG_TYPES[this.package.Level].pid].RealTotalCost, // 单价
-        purchaseTime: this.month,
+        cost: this.costInfo[CLB_PACKAGE_CFG_TYPES[this.package.Level].pid].RealTotalCost, // 费用
+        purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
       }]
       if (this.package.Cls) {
         orders.push({
-          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'安全日志服务续费', 'WAF.aqrzfwxf'}`,
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${this.t('安全日志服务续费', 'WAF.aqrzfwxf')}`,
           config: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}：1T`,
-          price: this.costInfo[BUY_LOG_TYPES].RealTotalCost, // 单价
-          purchaseTime: this.month,
+          price: this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost, // 单价
+          cost: this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
       if (this.package.QPS) {
         orders.push({
           name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'域名包', 'WAF.域名包'}`,
           config: `${this.t('全量域名包', 'WAF.域名包')}：1T`,
-          price: this.costInfo[CLB_BUY_DOMAIN_TYPES].RealTotalCost, // 单价
-          purchaseTime: this.month,
+          price: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 单价
+          cost: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
       if (this.package.DomainPkg) {
         orders.push({
           name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'QPS扩展包', 'WAF.QPS扩展包'}`,
           config: `${this.t('QPS扩展包', 'WAF.QPS扩展包')}：1T`,
-          price: this.costInfo[CLB_BUY_QPS_TYPES].RealTotalCost, // 单价
-          purchaseTime: this.month,
+          cost: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 单价
+          price: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders,
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
-        name: 'pay',
-        params: {
-          orders,
+        name: 'pay'
+      })
+    },
+    getDealParam() {
+      const { Level, ValidTime, ResourceIds, Cls, DomainPkg, QPS } = this.package
+      const { categoryid, name, pricetype, pid, } = CLB_PACKAGE_CFG_TYPES[Level]
+      let index = 0
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.GoodsCategoryId': categoryid,
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+        'Goods.0.GoodsDetail': {
+           productInfo: [{
+            name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}`,
+            value: name
+          }],
+          curDeadline: ValidTime,
+          timeSpan: this.month,
+          timeUnit: 'm',
+          resourceId: ResourceIds,
+          pid: pid,
+          [pricetype]: 1,
+          Currency: 'CNY'
         }
+      }
+      let clsParam = {}
+      let domainParam = {}
+      let qpsParam = {}
+      if (Cls) {
+        index += 1
+        const { ValidTime: clsValidTime, ResourceIds: clsResourceIds, Count: clsCount } = Cls
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: BUY_LOG_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}`,
+              value: `${clsCount}T`
+            }],
+            curDeadline: clsValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: clsResourceIds,
+            pid: BUY_LOG_TYPES.pid,
+            [BUY_LOG_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      if (DomainPkg) {
+        index += 1
+        const { ValidTime: domainValidTime, ResourceIds: domainResourceIds, Count: domainCount } = DomainPkg
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_DOMAIN_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${domainCount}${this.t('个', 'WAF.g')}`
+            }],
+            curDeadline: domainValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: domainResourceIds,
+            pid: CLB_BUY_DOMAIN_TYPES.pid,
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      if (QPS) {
+        index += 1
+        const { ValidTime: qpsValidTime, ResourceIds: qpsResourceIds, Count: qpsCount } = QPS
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_QPS_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${qpsCount}QPS`
+            }],
+            curDeadline: qpsValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: qpsResourceIds,
+            pid: CLB_BUY_QPS_TYPES.pid,
+            [CLB_BUY_QPS_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      return JSON.stringify({
+        ...param,
+        ...clsParam,
+        ...domainParam,
+        ...qpsParam,
       })
     },
     //点击续费时长按钮
@@ -231,6 +354,12 @@ export default {
   background-color:#ff9700;
   color:#fff;
   border:none;
+  &.is-disabled {
+    background: #ccc;
+    &:hover {
+      color: #f5f7fa;
+    }
+  }
 }
 ::v-deep button{
   height:30px;
