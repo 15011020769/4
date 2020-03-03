@@ -19,6 +19,9 @@
       :rules="[
         { required: true, message: t('名称不能为空', 'WAF.mcbnwk') },
         { max: 50, message: t('名称长度不能超过50个字符', 'WAF.mccd50zy') },
+        {
+          validator: isRepeatName()
+        }
       ]"
     >
       <el-input v-model="form.name" :disabled="ucbRule !== undefined" class="name-input" />
@@ -55,7 +58,21 @@
             />
           </div>
 
-          <div style="width: 233px; display: inline-block; padding-left: 15px;">
+          <div style="width: 233px; display: inline-block; padding: 0 15px;">
+            <el-form-item
+              v-if="rule.argplaceholder"
+              :prop="`rule[${i}].arg`"
+              :rules="[
+                {
+                  validator: isvalidArg(rule.argreg, rule.argplaceholder)
+                }
+              ]"
+            >
+            <el-input
+              :placeholder="rule.argplaceholder"
+              v-model="rule.arg"
+            />
+            </el-form-item>
           </div>
 
           <el-select v-model="form.rule[i].op" style="width: 84px">
@@ -158,6 +175,7 @@ export default {
     },
     ucbRule: Object,
     childMatchDialogIndex: Number,
+    allRuleNames: Array,
   },
   components: {
     SelectMenu,
@@ -172,20 +190,33 @@ export default {
       currShowMatchDialogIndex: -1,
       CUSTOM_SESSION_ACTION_ARR,
       CUSTOM_SESSION_ACTION,
+      names: [],
     }
   },
 
   watch: {
     ucbRule: {
       handler(r) {
+        this.names = [...this.allRuleNames.filter(name => name !== (this.ucbRule && this.ucbRule.name || ''))]
         if (r) {
           const ucbrule = JSON.parse(JSON.stringify(r))
-          ucbrule.rule = ucbrule.rule.map(rule => ({
-            ...ALL_RULE[rule.key],
-            op: rule.op === 'logic' ? (rule.value ? 'yes' : 'no') : rule.op,
-            value: rule.value,
-            showMatchDialog: false
-          }))
+          ucbrule.rule = ucbrule.rule.map(rule => {
+            if (rule.op === 'proportion') { // 可输入匹配参数
+              return {
+                ...ALL_RULE[rule.key],
+                arg: rule.op_arg.join(),
+                op: rule.op_op,
+                value: `${rule.op_value * 100}%`,
+                showMatchDialog: false,
+              }
+            }
+            return {
+              ...ALL_RULE[rule.key],
+              op: rule.op === 'logic' ? (rule.value ? 'yes' : 'no') : rule.op,
+              value: rule.value,
+              showMatchDialog: false
+            }
+          })
           if (ucbrule.action !== CUSTOM_SESSION_ACTION.重定向) {
             ucbrule.addition_arg = ''
           }
@@ -206,6 +237,15 @@ export default {
     },
   },
   methods: {
+    isRepeatName() {
+      var warpper = (rule, value, callback) => {
+        if (!this.names.includes(value)) {
+          return callback()
+        }
+        callback(this.t('名称不能重复', 'WAF.mcbncf'))
+      }
+      return warpper
+    },
     isValidTime() {
       var warpper = (rule, value, callback) => {
         if (value >= 5 && value <= 10080) {
@@ -221,6 +261,15 @@ export default {
           return callback()
         }
         callback(this.t('请以/开头，支持重定向到当前域名下的URL，512个字符以内', 'WAF.qyktzccdxddqym'))
+      }
+      return warpper
+    },
+    isvalidArg(reg, msg) {
+      var warpper = (rule, value, callback) => {
+        if (reg.test(value)) {
+          return callback()
+        }
+        callback(msg)
       }
       return warpper
     },
@@ -266,11 +315,22 @@ export default {
       if (this.form.action === CUSTOM_SESSION_ACTION.重定向) {
         rule.addition_arg = this.form.addition_arg
       }
-      rule.rule = this.form.rule.map(rule => ({
-        key: rule.key,
-        op: rule.op,
-        value: rule.value
-      }))
+      rule.rule = this.form.rule.map(rule => {
+        if (rule.argreg) { // 可输入匹配参数
+          return {
+            key: rule.key,
+            op: 'proportion',
+            op_op: rule.op,
+            op_arg: rule.arg.split(','),
+            op_value: Number(rule.value.replace('%', ''))/100,
+          }
+        }
+        return {
+          key: rule.key,
+          op: rule.op,
+          value: rule.value
+        }
+      })
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true

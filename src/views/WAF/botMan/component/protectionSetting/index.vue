@@ -86,13 +86,8 @@ export default {
           })
         } else {
           this.ipSearchOptions = data.Response.HostList
-          this.ipSearch = this.ipSearchOptions[0].Domain
         }
       })
-    },
-    // 点击bot流量分析开关switch
-    togleSwitch(e) {
-      console.log(e);
     },
     // 绑定tabs选项菜单
     getTabs() {
