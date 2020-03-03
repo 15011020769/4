@@ -116,7 +116,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">BOT类型</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{botType[recordDetail[0].bot_type]}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{BOTS_TYPES_CFG[recordDetail[0].bot_type]}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">BOT得分</span></el-col>
@@ -130,7 +130,7 @@
           <el-col :span="10"><span class="leftFont">动作</span></el-col>
           <el-col :span="14">
             <span class="rightFont">
-              {{action[recordDetail[0].action]}}&nbsp;截止时间{{recordDetail[0].valid_ts | formatSecond }}
+              {{UCB_ACTION_LOCAL[recordDetail[0].action]}}&nbsp;截止时间{{recordDetail[0].valid_ts | formatSecond }}
             </span>
           </el-col>
         </el-row>
@@ -171,7 +171,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP类型</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.ip_type}}?</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.ip_type == "unknown" ? "未知类型" : recordDetail[0].ip_info.ip_type}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP运营商</span></el-col>
@@ -213,7 +213,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA类型</span></el-col>
-          <el-col :span="14"><span class="addRed">{{recordDetail[0].stat.ua_analyze_res.ua_type}}</span></el-col>
+          <el-col :span="14"><span class="addRed">{{formatUaType(recordDetail[0].stat.ua_analyze_res.ua_type)}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA随机性指数</span></el-col>
@@ -354,6 +354,7 @@ import moment from 'moment'
 import ELine from '../../../../saveOverView/components/line'
 import EPie from '../../../../components/pie'
 import addBlackWhite from './addBlackWhite'
+import { ua_type_list, UCB_ACTION_LOCAL, BOTS_TYPES_CFG } from '../../../../constants'
 import {
   DESCRIBE_BOT_RECORD_POINTS,
   DESCRIBE_BOT_RECORD_ITEMS,
@@ -369,10 +370,8 @@ export default {
       legendTextBotPoints: ['事件数量'],
       colorLine: ["#006eff"],
       recordDetail: [],
-      botType: {
-        UCB: "用户自定义类型"
-      },
-      action: {'intercept': '拦截', 'monitor': '监控'},
+      BOTS_TYPES_CFG,
+      UCB_ACTION_LOCAL,
       seriesPieStatus: [], // 返回响应码占比饼图
       legendTextPieStatus: [], // 返回响应码占比饼图
       colorPie: ["#47a986", "#51b1ce"],
@@ -385,7 +384,8 @@ export default {
       ipInfo: [], // 保存编辑信息,
       SrcIp: "",
       Id: "",
-      domain: ""
+      domain: "",
+      ua_type_list
     }
   },
   components: {
@@ -399,9 +399,9 @@ export default {
     this.domain = this.$route.query.domain
   },
   mounted() {
-    this.getBotRecordPoints()
-    this.getbb()
+    // this.getBotRecordPoints()
     this.getBotRecordDetail()
+    this.getbb()
     this.getActioned()
   },
   filters: {
@@ -456,9 +456,19 @@ export default {
       this.axios.post(DESCRIBE_ACTIONED, params).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           this.ipInfo = Data.Res
-          console.log(Data)
+          // console.log(Data)
+          console.log(this.ipInfo[0])
         })
       })
+    },
+    formatUaType(val) {
+      let str = ''
+      this.ua_type_list.map(v => {
+        if (val == v.value) {
+          str = v.label
+        }
+      })
+        return str
     },
     currentNameFilter(text) {
       if (text === 'whiteIp') {
@@ -470,16 +480,16 @@ export default {
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
         Version: '2018-01-25',
-        FromTime: moment(1583125380941).format("YYYY-MM-DD HH:mm:ss"),
-        ToTime: moment(1583133229738).format("YYYY-MM-DD HH:mm:ss"),
+        FromTime: moment(this.recordDetail[0].start_ts).format("YYYY-MM-DD HH:mm:00"),
+        ToTime: moment(this.recordDetail[0].timestamp).format("YYYY-MM-DD HH:mm:ss"),
       }
       const params = {
         Version: "2018-01-25",
-        StartTs: 1583125380941,
-        EndTs: 1583133229738,
+        StartTs: this.recordDetail[0].start_ts,
+        EndTs: this.recordDetail[0].timestamp,
         Stride: 2,
-        Domain: this.$route.query.domain,
-        Id: this.$route.query.domain + this.$route.query.SrcIp,
+        Domain: this.domain,
+        Id: this.domain + this.SrcIp,
         // Id: "waf.dhycloud.com43.227.136.148"
       }
       let axixArr = []
@@ -502,8 +512,8 @@ export default {
     getbb() {
       const params = {
         Version: "2018-01-25",
-        Domain: this.$route.query.domain,
-        Id: this.$route.query.Id
+        Domain: this.domain,
+        Id: this.Id
       }
       this.axios.post(DESCRIBE_BOT_RECORD_ITEMS, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
@@ -543,10 +553,10 @@ export default {
           }
           for (let i in protocalTemp) {
             protocalArr.push({
-              name: i,
+              name: Number(i) / 10,
               value: protocalTemp[i]
             })
-            this.legendTextPieProtocal.push(i)
+            this.legendTextPieProtocal.push(Number(i) / 10)
           }
           let a = statusArr.pop()
           let b = methodArr.pop()
@@ -555,6 +565,8 @@ export default {
           this.seriesPieMethod = methodArr
           this.seriesPieProtocal = protocalArr
         })
+      }).then(() => {
+        this.getBotRecordPoints()
       })
     }
   }

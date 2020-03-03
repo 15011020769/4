@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column prop="Action" label="动作" width="60">
           <template slot-scope="scope">
-            <span class="addRed">{{action[scope.row.Action]}}</span>
+            <span class="addRed">{{UCB_ACTION_LOCAL[scope.row.Action]}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="Score" label="BOT得分" width="100" sortable>
@@ -63,7 +63,7 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_BOT_UCB_RECORDS } from '@/constants'
-import { scene_flag_list } from '../../../constants'
+import { scene_flag_list, UCB_ACTION_LOCAL } from '../../../constants'
 export default {
   data () {
     return {
@@ -75,7 +75,7 @@ export default {
       totalItems: 0,//总长度
       sceneValue: "", // 预测标签匹配字段绑定值
       scene_flag_list, // 预测标签匹配字段
-      action: {'intercept': '拦截', 'monitor': '监控'},
+      UCB_ACTION_LOCAL,
     }
   },
   props: {
