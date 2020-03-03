@@ -2,9 +2,8 @@
   <el-dialog
     :title="$t('CAM.noticeSubscriptionDialog.subscription')"
     :visible.sync="visible"
-    width="1000px"
+    width="900px"
     :before-close="handleClose"
-    center
     destroy-on-close
   >
     <div class="container">
@@ -28,7 +27,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="300"
+            width="263"
             :label="$t('CAM.noticeSubscriptionDialog.xxlx')"
             prop="noticeCategoryName"
           >
@@ -70,7 +69,7 @@
         </el-table>
       </div>
 
-      <div slot="footer" class="dialog-footer">
+      <div class="dialog-footer">
         <el-button @click="handleClose">{{$t('CAM.noticeSubscriptionDialog.close')}}</el-button>
         <el-button
           type="primary"
@@ -326,34 +325,50 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.notice-category >>> .el-table {
-  display: relative;
-  left: 100px;
-  bottom: 20px;
-  border: 1px solid #eeeeee;
+>>> .el-table::before {
+    border-bottom:  none;
+    height: 0px
 }
 .title {
   vertical-align: baseline;
   color: #888;
-  padding-right: 20px;
-  padding-top: 6px;
-  padding-bottom: 6px;
   width: 1px;
   font-size: 12px;
 }
 .container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
   .user {
+    flex: 1;
     .value {
       font-size: 12px;
       color: #444;
-      margin-left: 20px;
+      margin-left: 35px;
       vertical-align: middle;
     }
   }
   .notice-category {
-    width: 800px;
-    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    flex: 8;
+    margin-top: 15px;
+    justify-content: space-around;
+    .title {
+      margin-top: -5px;
+      flex: 1;
+    }
+    >>> .el-table {
+      flex: 9;
+      border: 1px solid #eeeeee;
+      margin-left: 12px;
+    }
+  }
+  .dialog-footer {
+    flex: 1;
+    margin-top: 10px;
+    flex-direction: row;
+    align-self: flex-end;
   }
 }
 </style>
