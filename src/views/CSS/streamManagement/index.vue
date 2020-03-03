@@ -4,10 +4,10 @@
     <div class="streamWrap">
       <div class="streamBnt">
         <div class="bntWrap" style="flex:1">
-          <el-radio-group v-model="type" @change="onTypeChange">
-            <el-radio-button :label="$t('CSS.domainManagement.33')"></el-radio-button>
-            <el-radio-button :label="$t('CSS.domainManagement.34')"></el-radio-button>
-            <el-radio-button label="禁推流"></el-radio-button>
+          <el-radio-group v-model="type">
+            <el-radio-button :label="$t('CSS.domainManagement.33')">{{$t('CSS.domainManagement.33')}}</el-radio-button>
+            <el-radio-button :label="$t('CSS.domainManagement.34')">{{$t('CSS.domainManagement.34')}}</el-radio-button>
+            <el-radio-button label="禁推流">禁推流</el-radio-button>
           </el-radio-group>
         </div>
         <div class="streamInp" v-show="type !== '禁推流'">
@@ -112,13 +112,18 @@ export default {
   name: "streamManagement",
   data() {
     return {
-      type: $t('CSS.domainManagement.33'),
+      type: this.$t('CSS.domainManagement.33'),
       tableData: [],
       streamName: '',
       pageNum: 1,
       pageSize: 10,
       total: 0,
     };
+  },
+  watch: {
+    type(n) {
+      this.onTypeChange(n)
+    }
   },
   mounted() {
     this.onTypeChange(this.type)
@@ -139,9 +144,9 @@ export default {
       }
       let cb
       switch(val) {
-        case $t('CSS.domainManagement.33'):
+        case this.$t('CSS.domainManagement.33'):
           break
-        case $t('CSS.domainManagement.34'):
+        case this.$t('CSS.domainManagement.34'):
           url = LIVE_DESCRIBE_LIVESTREAMEVENTLIST
           key = 'EventList'
           params.EndTime = moment.utc().format()
@@ -164,8 +169,8 @@ export default {
 
     },
     disable(row) {
-      this.$confirm(`${$t('CSS.domainManagement.46')}${row.StreamName}?`, '禁用', {
-        confirmButtonText: $t('CSS.domainManagement.43'),
+      this.$confirm(`${this.$t('CSS.domainManagement.46')}${row.StreamName}?`, '禁用', {
+        confirmButtonText: this.$t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -178,8 +183,8 @@ export default {
       })
     },
     enable(row) {
-      this.$confirm(`${$t('CSS.domainManagement.44')}${row.StreamName}?`, $t('CSS.domainManagement.7'), {
-        confirmButtonText: $t('CSS.domainManagement.43'),
+      this.$confirm(`${$t('CSS.domainManagement.44')}${row.StreamName}?`, this.$t('CSS.domainManagement.7'), {
+        confirmButtonText: this.$t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -192,8 +197,8 @@ export default {
       })
     },
     dropStream(row) {
-      this.$confirm(`${$t('CSS.domainManagement.42')}${row.StreamName}?`, $t('CSS.domainManagement.45'), {
-        confirmButtonText: $t('CSS.domainManagement.43'),
+      this.$confirm(`${this.$t('CSS.domainManagement.42')}${row.StreamName}?`, this.$t('CSS.domainManagement.45'), {
+        confirmButtonText: this.$t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
@@ -204,7 +209,7 @@ export default {
           StreamName: row.StreamName,
         }).then(() => {
           this.$message({
-            message: $t('CSS.domainManagement.41'),
+            message: this.$t('CSS.domainManagement.41'),
             type: 'success'
           })
           this.onTypeChange(this.type)

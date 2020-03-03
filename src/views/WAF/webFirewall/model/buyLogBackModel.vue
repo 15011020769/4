@@ -10,7 +10,7 @@
           <div class="newClear dominPackList">
             <p>{{t('购买数量', 'WAF.gmsl')}}</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange"></el-input-number> {{t('个', 'WAF.g')}}
+              <el-input-number v-model="buyNum"></el-input-number> {{t('个', 'WAF.g')}}
             </p>
           </div>
           <div class="newClear dominPackList">
@@ -58,6 +58,7 @@ export default {
       remainingDays: 0, // 剩余天数
       cost: 0,
       loading: true,
+      exchange: 0,
     }
   },
   watch: {
@@ -81,6 +82,15 @@ export default {
   },
   methods:{
     queryPrice() {
+      if (!this.exchange) {
+        this.axios({
+          method: 'get',
+          baseURL: process.env.VUE_APP_adminUrl,
+          url: 'taifucloud/texchangerate/getExchange'
+        }).then(({ taxRate, usd2twd, cny2usd }) => {
+          this.exchange = taxRate * usd2twd * cny2usd
+        })
+      }
       this.loading = true
       const resInfo = {
         "regionId": 1,
@@ -132,10 +142,6 @@ export default {
       this.logBackModel=false;
       this.$emit("closeLogBackModel",this.logBackModel)
     },
-    //计数器
-    handleChange(){
-
-    },
     //立即购买按钮
     nowBuy(){
       let validTime = this.package.ValidTime
@@ -152,8 +158,8 @@ export default {
         validTime = this.package.Cls.ValidTime
         d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
         time = d/(365/12) // 到期月数
-        newEdiPrice = (this.buyNum + this.package.Cls.Count) * 500
-        curEdiPrice = this.package.Cls.Count * 500 
+        newEdiPrice = (this.buyNum + this.package.Cls.Count) * 500 * this.exchange
+        curEdiPrice = this.package.Cls.Count * 500 * this.exchange
         name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${aqrzfw}包-${this.t('变配', 'WAF.bp')}`
         price = '-'
         purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
@@ -170,11 +176,66 @@ export default {
         purchaseTime,
         tips
       }
-      localStorage.setItem(ORDER_INFO, JSON.stringify([order]))
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders: [order],
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
         name: 'pay'
       })
-    }
+    },
+    getDealParam() {
+      const { Cls } = this.package
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+      }
+      if (Cls) {
+        return JSON.stringify({
+          'Goods.0.GoodsCategoryId': BUY_LOG_TYPES.edit_categoryid,
+          ...param,
+          'Goods.0.GoodsDetail': JSON.stringify({
+            productInfo: [{
+              name: `${this.t('安全日志服务', 'WAF.aqrzfwb')}包`,
+              value: `${this.buyNum}T`
+            }],
+            curDeadline: Cls.ValidTime,
+            resourceId: Cls.ResourceIds,
+            oldConfig: {
+              pid: BUY_LOG_TYPES.pid,
+              [BUY_LOG_TYPES.pricetype]: Cls.Count,
+              type: BUY_LOG_TYPES.goodstype
+            },
+            newConfig: {
+              pid: BUY_LOG_TYPES.pid,
+              [BUY_LOG_TYPES.pricetype]: Cls.Count + this.buyNum,
+              type: BUY_LOG_TYPES.goodstype
+            }
+          }),
+        })
+      }
+      return JSON.stringify({
+        'Goods.0.GoodsCategoryId': BUY_LOG_TYPES.first_categoryid,
+        ...param,
+        'Goods.0.GoodsDetail': {
+          productInfo: [{
+            name: `${this.t('安全日志服务', 'WAF.aqrzfwb')}包`,
+            value: `${this.buyNum}T`
+          }],
+          timeSpan: this.remainingDays,
+          timeUnit: 'd',
+          pid: BUY_LOG_TYPES.pid,
+          type: BUY_LOG_TYPES.goodstype,
+          [BUY_LOG_TYPES.pricetype]: this.buyNum,
+          Currency: 'CNY'
+        }
+      })
+    },
   }
 }
 </script>

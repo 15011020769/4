@@ -137,7 +137,7 @@ export default {
     this.reqLoading = false
     this.axios.post(CLB_LIST, {
       Version: '2018-03-17',
-      Region: 'ap-guangzhou',
+      Region: 'ap-taipei', // 'ap-guangzhou',
       Forward: 1,
       LoadBalancerType: 'OPEN',
       Offset: 0,
@@ -188,7 +188,7 @@ export default {
         Host: {
           Domain: this.domain.Domain,
           IsCdn: this.domain.IsCdn,
-          Region: 'gz',
+          Region: 'tp', // 'gz',
           LoadBalancerSet: lbset,
           DomainId: this.domain.DomainId || '',
         }
@@ -236,7 +236,7 @@ export default {
       this.axios.post(DESCRIBE_LISTENERS, {
         LoadBalancerId: lbId,
         Version: '2018-03-17',
-        Region: 'ap-guangzhou',
+        Region: 'ap-taipei',
       }).then(({ Response }) => {
         if (Response.Error) {
           this.$message({

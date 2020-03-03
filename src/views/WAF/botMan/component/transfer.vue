@@ -123,43 +123,31 @@ export default {
     },
     // 获取防护域名列表
     getDescribeHost() {
+      console.log(111)
       let params = {
         Version: '2018-01-25',
       }
       this.showLoading = true
-      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.ulData = data.Response.HostList
+      this.axios.post(DESCRIBE_HOSTS, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ HostList }) => {
+          this.ulData = HostList
           this.getBotStatus()
-        }
+        })
       })
     },
 
     // 查询bot开关
     getBotStatus() {
+      console.log(123)
       let params = {
         Version: '2018-01-25',
         Category: 'bot'
       }
-      this.axios.post(DESCRIBE_BOT_STATUS, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          const botArr = data.Response.Data.Res
+      this.axios.post(DESCRIBE_BOT_STATUS, params)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          const botArr = Data.Res
           this.ulData.forEach(item => {
             let temp = botArr.find(_item => _item.Domain === item.Domain)
             temp && this.$set(item, 'botStatus', temp.Status)
@@ -167,7 +155,7 @@ export default {
           this.showLoading = false
           this.ulData = this.ulData.filter(item => item.botStatus > 0 && item.Domain !== this.iptDomain)
           localStorage.setItem('data', JSON.stringify(this.ulData))
-        }
+        })
       })
     },
 

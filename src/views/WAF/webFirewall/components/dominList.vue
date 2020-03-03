@@ -21,7 +21,7 @@
         </el-input>
       </el-row>
       <div class="tableList">
-        <el-table :data="domains.slice(start, end)" @selection-change="handleSelectionChange" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
+        <el-table :data="domains" @selection-change="handleSelectionChange" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
           <el-table-column
             type="selection"
             width="55">
@@ -46,7 +46,7 @@
           </el-table-column>
           <el-table-column prop="vipAddress" :label="t('区域', 'WAF.qy')" width="60">
             <template slot-scope="scope">
-              {{scope.row.Region || t('无', 'WAF.w')}}
+              台北
             </template>
           </el-table-column>
           <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
@@ -127,7 +127,7 @@
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.StatusBool"
-                @change="status => updateWafStatus([scope.row], status)"
+                @change="status => updateWafStatus(scope.row, status)"
                 active-color="#006eff"
                 inactive-color="#bbb">
               </el-switch>
@@ -188,7 +188,7 @@ export default {
   data(){
     return {
       loading: true,
-      domains: [],//表格数据
+      allDomains: [],//表格数据
       keyword: '',//搜索框绑定
       checkedWafs: [],
       logSwitchValue: true,//访问日志开关
@@ -202,12 +202,9 @@ export default {
     }
   },
   computed: {
-    start() {
-      return (this.currentPage - 1) * this.pageSize
+    domains() {
+      return this.allDomains.slice((this.currentPage - 1) * this.pageSize, (this.currentPage - 1) * this.pageSize + this.pageSize)
     },
-    end() {
-      return (this.currentPage - 1) * this.pageSize + this.pageSize
-    }
   },
   components:{
     packageUpgradeModel,//升级
@@ -245,10 +242,16 @@ export default {
       this.pageSize = size
     },
     enableWAF() {
-      this.updateWafStatus(this.checkedWafs, true)
+      this.modifyHostStatus(this.checkedWafs, true)
     },
     disableWAF() {
-      this.updateWafStatus(this.checkedWafs, false)
+      this.$confirm(this.t('关闭后，WAF将不再对经过负载均衡监听器的流量进行防护，WAF所有功能也将失效。确认关闭？', 'WAF.gbhjbz'), this.t('确认', 'WAF.qr'), {
+        confirmButtonText: this.t('确认', 'WAF.qr'),
+        cancelButtonText: '取消',
+        type: ''
+      }).then(() => {
+        this.modifyHostStatus(this.checkedWafs, false)
+      })
     },
     del() {
       this.$confirm('确定删除当前所选域名？', '删除域名', {
@@ -270,7 +273,21 @@ export default {
         this.generalRespHandler(resp, this.getData, COMMON_ERROR, '切换成功')
       })
     },
-    updateWafStatus(wafs, status) {
+    updateWafStatus(waf, status) {
+      waf.StatusBool = !status
+      if (status) {
+        this.modifyHostStatus([waf], status)
+        return
+      }
+      this.$confirm(this.t('关闭后，WAF将不再对经过负载均衡监听器的流量进行防护，WAF所有功能也将失效。确认关闭？', 'WAF.gbhjbz'), this.t('确认', 'WAF.qr'), {
+        confirmButtonText: this.t('确认', 'WAF.qr'),
+        cancelButtonText: '取消',
+        type: ''
+      }).then(() => {
+        this.modifyHostStatus([waf], status)
+      })
+    },
+    modifyHostStatus(wafs, status) {
       this.loading = true
       this.axios.post(MODIFY_HOST_STATUS, flatObj({
         Version: '2018-01-25',
@@ -325,7 +342,7 @@ export default {
             domain.delDialog = false
           })
           this.total = TotalCount
-          this.domains = domains
+          this.allDomains = domains
         })
       }).then(() => {
         this.loading = false

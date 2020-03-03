@@ -170,7 +170,6 @@ export default {
     },
     //立即购买按钮
     renewImmediate(){
-      console.log(this.costInfo)
       const orders = [{
         name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}-CLB${this.t('续费', 'WAF.xf')}`,
         config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}`,
@@ -205,9 +204,130 @@ export default {
           purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
-      localStorage.setItem(ORDER_INFO, JSON.stringify(orders))
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders,
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
         name: 'pay'
+      })
+    },
+    getDealParam() {
+      const { Level, ValidTime, ResourceIds, Cls, DomainPkg, QPS } = this.package
+      const { categoryid, name, pricetype, pid, } = CLB_PACKAGE_CFG_TYPES[Level]
+      let index = 0
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.GoodsCategoryId': categoryid,
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+        'Goods.0.GoodsDetail': {
+           productInfo: [{
+            name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}`,
+            value: name
+          }],
+          curDeadline: ValidTime,
+          timeSpan: this.month,
+          timeUnit: 'm',
+          resourceId: ResourceIds,
+          pid: pid,
+          [pricetype]: 1,
+          Currency: 'CNY'
+        }
+      }
+      let clsParam = {}
+      let domainParam = {}
+      let qpsParam = {}
+      if (Cls) {
+        index += 1
+        const { ValidTime: clsValidTime, ResourceIds: clsResourceIds, Count: clsCount } = Cls
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: BUY_LOG_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}`,
+              value: `${clsCount}T`
+            }],
+            curDeadline: clsValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: clsResourceIds,
+            pid: BUY_LOG_TYPES.pid,
+            [BUY_LOG_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      if (DomainPkg) {
+        index += 1
+        const { ValidTime: domainValidTime, ResourceIds: domainResourceIds, Count: domainCount } = DomainPkg
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_DOMAIN_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${domainCount}${this.t('个', 'WAF.g')}`
+            }],
+            curDeadline: domainValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: domainResourceIds,
+            pid: CLB_BUY_DOMAIN_TYPES.pid,
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      if (QPS) {
+        index += 1
+        const { ValidTime: qpsValidTime, ResourceIds: qpsResourceIds, Count: qpsCount } = QPS
+        clsParam = {
+          // 日志包产品
+          [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_QPS_TYPES.categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${qpsCount}QPS`
+            }],
+            curDeadline: qpsValidTime,
+            timeSpan: this.month,
+            timeUnit: 'm',
+            resourceId: qpsResourceIds,
+            pid: CLB_BUY_QPS_TYPES.pid,
+            [CLB_BUY_QPS_TYPES.pricetype]: 1,
+            Currency: 'CNY'
+          }
+        }
+      }
+      return JSON.stringify({
+        ...param,
+        ...clsParam,
+        ...domainParam,
+        ...qpsParam,
       })
     },
     //点击续费时长按钮

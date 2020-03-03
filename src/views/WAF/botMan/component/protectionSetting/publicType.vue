@@ -29,8 +29,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="type" :label="t('BOT 分类', 'WAF.botfl')" />
-        <el-table-column prop="Count" :label="t('BOT 种类数', 'WAF.botzls')" />
-        <el-table-column prop="Action" :label="t('动作', 'WAF.dz')">
+        <el-table-column prop="count" :label="t('BOT 种类数', 'WAF.botzls')" />
+        <el-table-column>
           <div slot="header">
             <el-dropdown trigger="click" style="line-height: 0">
               <span class="el-dropdown-link" style="font-size: 12px;">
@@ -45,14 +45,14 @@
             </el-dropdown>
           </div>
           <template slot-scope="scope">
-            <span :class="scope.row.Action">{{scope.row.Action | actionFilter}}</span>
+            <span :class="scope.row.action">{{ALL_ACTION[scope.row.action]}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="upDateRule(scope.row, 'monitor')" v-if="scope.row.Action !== 'monitor'" type="text">{{t('设为', 'WAF.sw')}}{{t('监控', 'WAF.jk')}}</el-button>
-            <el-button @click="upDateRule(scope.row, 'intercept')" v-if="scope.row.Action !== 'intercept'" type="text">{{t('设为', 'WAF.sw')}}{{t('拦截', 'WAF.lj')}}</el-button>
-            <el-button @click="upDateRule(scope.row, 'permit')" v-if="scope.row.Action !== 'permit'" type="text">{{t('设为', 'WAF.sw')}}放行</el-button>
+            <el-button @click="upDateRule(scope.row, 'monitor')" v-if="scope.row.action !== 'monitor'" type="text">{{t('设为', 'WAF.sw')}}{{t('监控', 'WAF.jk')}}</el-button>
+            <el-button @click="upDateRule(scope.row, 'intercept')" v-if="scope.row.action !== 'intercept'" type="text">{{t('设为', 'WAF.sw')}}{{t('拦截', 'WAF.lj')}}</el-button>
+            <el-button @click="upDateRule(scope.row, 'permit')" v-if="scope.row.action !== 'permit'" type="text">{{t('设为', 'WAF.sw')}}放行</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -73,13 +73,14 @@
 
 <script>
 import { DESCRIBE_BOTTCB_RECORDS, MODIFY_BOTTCB_RULE } from '@/constants'
-import { COMMON_ERROR } from '../../../constants'
+import { COMMON_ERROR, ALL_ACTION } from '../../../constants'
 import Transfer from '../transfer'
 
 import moment from 'moment'
 export default {
   data() {
     return {
+      ALL_ACTION,
       tabList: [],
       loadShow: false,
       currentPage: 1,
@@ -89,7 +90,7 @@ export default {
   },
 
   props: {
-    ipSearch: ''
+    ipSearch: String,
   },
 
   components: {
@@ -101,9 +102,6 @@ export default {
   },
 
   watch: {
-    pageSize(n, o) {
-      console.log(n)
-    },
     ipSearch(n, o) {
       if(n) {
         this.getTableList()
@@ -119,45 +117,32 @@ export default {
         Domain: this.ipSearch,
       }
       this.loadShow = true
-      this.axios.post(DESCRIBE_BOTTCB_RECORDS, parmas).then(data => {
-        this.loadShow = false
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          const result = data.Response.Data.Res[0]
+      this.axios.post(DESCRIBE_BOTTCB_RECORDS, parmas)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          const result = JSON.parse(Data.Res[0])
           this.tabList = []
           Object.keys(result).forEach(item => {
-            if (result[item].Count) {
+            if (result[item].count) {
               this.tabList.push({
-                type: this.toLine(item),
+                type: item,
                 ...result[item],
                 Name: item
               })
             }
           })
           localStorage.setItem('BotTCBRule', JSON.stringify(this.tabList))
-        }
+        })
+      }).then(() => {
+        this.loadShow = false
       })
     },
-
-    // 驼峰转换下划线
-    toLine(name) {
-      return name.replace(/([A-Z])/g, " $1").toLowerCase();
-    },
-
     // 策略更新
     upDateRule(row, rule) {
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
         Name: row.Name,
-        // Name: "Screenshot creator",
         Operate: rule
       }
 
@@ -170,41 +155,31 @@ export default {
     filterAction(action) {
       const arr = JSON.parse(localStorage.getItem('BotTCBRule'))
       if (action) {
-        this.tabList = arr.filter(item => item.Action === action)
+        this.tabList = arr.filter(item => item.action === action)
         return
       }
 
       this.tabList = arr
     },
   },
-
-  filters: {
-    actionFilter(text) {
-      const map = {
-        monitor: '监控',
-        intercept: '拦截',
-        permit: '放行',
-      }
-      return map[text]
-    }
-  }
-
 }
 </script>
 
 <style lang="scss" scoped>
-.intercept {
-  color: #e1504a;
-}
-.permit {
-  color: #0abf5b;
-}
-
 .tabListPage {
   height: 50px;
   border-top: 1px solid #ddd;
   padding-top: 8px;
   text-align: right;
   background-color: #fff;
+}
+.intercept {
+  color: #e1504a;
+}
+.permit {
+  color: #0ABF5B;
+}
+.captcha {
+  color: #FF9D00;
 }
 </style>
