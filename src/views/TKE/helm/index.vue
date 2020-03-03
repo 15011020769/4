@@ -202,7 +202,7 @@
               fixed="right"
               label="操作">
               <template slot-scope="scope">
-                <el-button @click="deleteStatus(scope.row.name)" type="text" size="small">取消安装</el-button>
+                <el-button @click="deleteStatus(scope)" type="text" size="small">取消安装</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -257,6 +257,7 @@ export default {
       isCollapse:true,
       timeIds:null,
       openData:"",//是否开通数据
+      number:1
     }
   },
   created () {
@@ -279,44 +280,73 @@ export default {
       immediate: true,
       deep: true
     },
+    // openData 监听数据变化
     openData:{
         handler:function(data){
           for(let key in data){
-            console.log(data[key])
-            var times = 1
             if(data[key]  == 0){
-              if(times == 1){
+              // 插入newData数据
+              if(this.number == 1){
                 this.newData.push({
                   name:key,
                   status:"创建中"
                 })
               }
-              this.timeIds = setInterval(()=>{
+              clearInterval(this.timeIds)
+                this.timeIds = setInterval(()=>{
+                    this.getflags= true
+                    this.$store.commit("getFlag",this.getflags);
+                    //  if(this.newData.length>1){
+                    //     this.number = 1
+                    //     // clearInterval(this.timeIds)
+                    //     this.newData.splice(this.newData.length-1,1)
+                    //     this.getCreate()
+                    //     return
+                    //  }
+                    if(this.$route.path != "/helm" || data[key] == undefined){
+                        clearInterval(this.timeIds)
+                        this.timeIds = null
+                        this.getflags = false
+                        this.$store.commit("getFlag",this.getflags);
+                        return
+                    } 
+                   
+                  // else if(data[key] == 1) {
+                  //   this.newData.push({
+                  //     name:key,
+                  //     status:"失败"
+                  //   })
+                  //   this.getflags = true
+                  //   this.$store.commit("getFlag",this.getflags)
+                  //   clearInterval(this.timeIds)
+                  // }
                   this.getCreate()
-                  this.getflags= true
-                  this.$store.commit("getFlag",this.getflags);
-                  if(this.$route.path != "/helm" || data[key] == undefined || data[key] == 1 ){
-                      window.clearInterval(this.timeIds)
-                      this.timeIds = null
-                      this.getflags = false
-                      this.$store.commit("getFlag",this.getflags);
-                  }
-                  times++
+                  console.log(data[key])
+                  this.number++
                 },2000)
               } else if(data[key] == 1){
-                console.log(data[key],23423)
+                this.number = 1
+                if(this.newData.length>0){
+                  this.newData.splice(this.newData.length-1,1)
+                }
                 this.newData.push({
                   name:key,
                   status:"失败"
                 })
+                // this.newData = this.newData.map(item=>{
+                //   if(item.status == "失败"){
+                //     return item
+                //   }
+                // })
                 this.getflags = true
-                this.$store.commit("getFlag",this.getflags);
-                window.clearInterval(this.timeIds)
+                this.$store.commit("getFlag",this.getflags)
+                clearInterval(this.timeIds)
               } else {
-                console.log("242342")
+                this.number = 1
+                this.newData.splice(this.newData.length-1,1)
                 this.getflags = false
-                this.$store.commit("getFlag",this.getflags);
-                window.clearInterval(this.timeIds)
+                this.$store.commit("getFlag",this.getflags)
+                clearInterval(this.timeIds)
                 this.timeIds = null
               }
             }
@@ -372,6 +402,7 @@ export default {
       this.flagAgin = ""
       this.loadShow = true
       this.tableData=[]
+      this.getCreate()
       this.getFlag()
       this.$router.push({
           name: 'helm',
@@ -429,8 +460,8 @@ export default {
             this.value = res.Response.Clusters[0].ClusterId
           }
           // this.getHelmList()
-          this.getFlag()
           this.getCreate()
+          this.getFlag()
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -612,17 +643,17 @@ export default {
         })
     },
     // 取消安装
-    deleteStatus(row){
+    deleteStatus(scope){
       this.centerDialogVisible2 = false
       const param = {
           ClusterName: this.value,
           Method: "DELETE",
-          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/"+row+"/json",
+          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/"+scope.row.name+"/json",
           Version: "2018-05-25"
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-            this.getCreate()
+            this.newData.splice(scope.$index,1)
             if(this.newData.length == 0){
                 this.getflags = false
                 this.$store.commit("getFlag",this.getflags);
@@ -652,46 +683,15 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.openData = JSON.parse(res.Response.ResponseBody)
+          console.log(this.openData)
+          // if(this.openData){
+
+          // }
           this.getflags = this.$store.state.flag
           if(this.newData.length == 0){
               this.getflags = false
               this.$store.commit("getFlag",this.getflags);
           }
-          // for(let key in this.openData){
-          //   // console.log(this.openData[key])
-          //     if(this.openData[key]  == 0){
-          //       this.newData.push({
-          //         name:key,
-          //         status:"创建中"
-          //       })
-          //       this.timeIds = setInterval(()=>{
-          //         this.getCreate()
-          //         this.getflags= true
-          //         if(this.$route.path != "/helm" || data[key]=="{}" || data[key] == 1 ){
-          //             window.clearInterval(this.timeIds)
-          //             this.timeIds = null
-          //             this.getflags = false
-          //             this.$store.commit("getFlag",this.getflags);
-          //             // this.getCreate()
-          //           }
-          //       },2000)
-          //     } else if(this.openData[key] == 1){
-          //       console.log(this.openData[key],23423)
-          //       this.newData.push({
-          //         name:key,
-          //         status:"失败"
-          //       })
-          //       this.getflags = true
-          //       this.$store.commit("getFlag",this.getflags);
-          //       window.clearInterval(this.timeIds)
-          //     } else {
-          //       console.log("242342")
-          //       this.getflags = false
-          //       this.$store.commit("getFlag",this.getflags);
-          //       window.clearInterval(this.timeIds)
-          //       this.timeIds = null
-          //     }
-          //   }
           console.log(this.$store.state.flag,45)
           console.log(JSON.parse(res.Response.ResponseBody),99999)
         } else {
@@ -704,6 +704,8 @@ export default {
                 duration: 0,
             })
             this.loadShow = false
+            this.getflags = false
+            this.$store.commit("getFlag",this.getflags);
           }
         })
     },

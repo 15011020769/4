@@ -100,6 +100,7 @@
             </el-pagination>
           </div>
         </div>
+        <!-- 删除提示 -->
         <el-dialog
           title="删除资源"
           :visible.sync="centerDialogVisible"

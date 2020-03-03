@@ -210,6 +210,7 @@ export default {
             // console.log(res)
             if (res.Response.Error == undefined) {
                 this.Data=JSON.parse(res.Response.ResponseBody).release
+                console.log(this.Data)
                 var conYaml = this.Data.manifest.split("#")
                 this.tableDate.push( {
                     resource:this.Data.name+"-zookeeper-headless",
@@ -232,6 +233,7 @@ export default {
                     yaml:conYaml[4]
                 })
                 this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
+                console.log(JSON.parse(res.Response.ResponseBody).release)
                 console.log(this.raw)
                 // 判断自定义参数列表是否存在
                 if(this.raw  == undefined || this.raw ==""){

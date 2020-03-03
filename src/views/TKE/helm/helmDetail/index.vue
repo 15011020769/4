@@ -2,7 +2,7 @@
   <div class="myMirror-wrap">
     <div class="datails-nav">
       <ul>
-        <router-link :to="{name: 'helm'}">
+        <router-link :to="{name: 'helm',query:{clusterId:this.$route.query.clusterId}}">
           <li>
             <i class="el-icon-back"></i>
             <span>{{this.$route.query.helmName}}详情</span>
