@@ -15,7 +15,7 @@ module.exports = {
       Protectivewash: '清洗中',
       blockIng: '封堵中',
       myProduct: '我的產品',
-      ProtectiveExclusive: '獨享包',
+      ProtectiveExclusive: '高防包',
       aboutExpire: '即將到期',
       Expiring: '已到期',
       professionalEdition: '高防IP專業版',

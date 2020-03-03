@@ -513,8 +513,8 @@ export default {
             path: '/colony/sub/detail/service/svc/event',
             query: {
               clusterId: this.clusterId,
-              ingressName: this.svc.name,
-              namespace: this.svc.value
+              spaceName: this.svc.value,
+              serviceName: this.svc.name
             }
           })
         } else {
