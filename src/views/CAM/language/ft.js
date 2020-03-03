@@ -20,6 +20,7 @@ module.exports = {
       userText: '關聯訊息',
       userStrage: '授權',
       userAddGroup: '添加到組',
+      userSubscribeNotice: '訂閱消息',
       userdep: '訂閱訊息',
       userMore: '更多',
       userDel: '刪除用戶',
@@ -183,7 +184,8 @@ module.exports = {
     },
     Role: {
       roleNameInvalid: '1-128個英文字母、數字和+=,.@_-',
-      cancelSessionTitle: '為有效保障您的帳戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為 RevokeOlderSessionForTCS_QCSRole 的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',
+      cancelSessionTitle1: '為有效保障您的帳戶安全，CAM 支持您立即撤銷角色當前所有活動會話。如果您選擇撤消所有會話, 當前角色將被附加名為', 
+      cancelSessionTitle2: '的自定義策略。此策略將更新當前時間戳，並立即拒絕該角色當前所有會話的編程訪問和控制台訪問。您可以繼續通過這個角色創建新的會話，新的會話將不受影響可正常訪問。如果您稍後需要撤消此操作，您可以移除自定義策略。',
       title: '角色',
       addBtn: '新建角色',
       delBtn: '刪除',

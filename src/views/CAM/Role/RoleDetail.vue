@@ -208,7 +208,7 @@
           <!-- tab  角色载体 end -->
           <el-tab-pane :label="$t('CAM.Role.Cancel')" name="third">
             <div class="explain">
-              <p>{{$t('CAM.Role.cancelSessionTitle')}}</p>
+              <p>{{$t('CAM.Role.cancelSessionTitle1')}}RevokeOlderSessionFor{{roleInfo.RoleName}}{{$t('CAM.Role.cancelSessionTitle2')}}</p>
             </div>
             <el-button
               size="small"
@@ -492,7 +492,6 @@ export default {
     },
     // 获取角色策略
     getRolePolicy() {
-      console.log(1234)
       this.loading = true;
       this.selTotalNum = 0;
       let paramsList = {
@@ -843,7 +842,7 @@ export default {
       let PolicyId
       res = await this.axios.post(POLICY_LIST, {
         Version: '2019-01-16',
-        Keyword: 'RevokeOlderSessionForadf'
+        Keyword: `RevokeOlderSessionFor${this.roleInfo.RoleName}`
       })
       if (res.Response.Error !== undefined) {
         let ErrTips = {
@@ -864,6 +863,7 @@ export default {
         loading.close()
         return
       }
+      return
       PolicyId = res.Response.List[0].PolicyId
       if (res.Response.List.length) {
         let paramsPolicy = {

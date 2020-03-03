@@ -1,12 +1,12 @@
  <!-- Master&Etcd列表 -->
 <template>
   <div >
-    <subTitle title='Master&Etcd列表'  />
+    <subTitle :title='tit'  />
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary" @click="flag=!flag">监控</el-button>
+        <el-button size="small" type="primary" @click='toMonitor'>监控</el-button>
       </div>
       <!-- 右侧 -->
       <!-- <div class="grid-right">
@@ -15,14 +15,9 @@
         </el-input>
         <i class="el-icon-download tke-download"></i>
       </div> -->
-      <!-- <openDrawer :flag='flag'></openDrawer> -->
      
       </div>
-    <!-- 抽屉 -->
-    <openDrawer :flag='flag'
-        title='Master&Etcd列表'
-       @changeFlag='setFlag'
-       @setTime='setTime'></openDrawer>
+   
     <!-- 数据列表展示 -->
       <div class="tke-card mt10">
         <el-table
@@ -136,13 +131,13 @@
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
-import openDrawer from "./components/openDrawer";
 import moment from 'moment';
 import { NODE_INFO, NODE_LIST, ALL_CITY } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
   data() {
     return {
+      tit:"Master&Etcd列表",
       clusterId:'',
       loadShow: false, //加载是否显示
       list:[], //列表
@@ -156,7 +151,6 @@ export default {
   components: {
     subTitle,
     Loading,
-    openDrawer
   },
   created() {
     // 从路由获取集群id
@@ -164,6 +158,15 @@ export default {
     this.getNodeList();
   },
   methods: {
+    toMonitor(){
+      //跳转监控页面
+      this.$router.push({
+        name:"colonyOpenMonitor",
+        query:{
+          title:this.tit
+        }
+      })
+    },
     //获取节点列表
     async getNodeList () {
       this.loadShow = true;
@@ -250,7 +253,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
 </style>
 

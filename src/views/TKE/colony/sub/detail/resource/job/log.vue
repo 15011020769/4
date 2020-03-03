@@ -2,35 +2,58 @@
 <template>
   <div class="colony-main">
     <div class="tke-card mt10 tke-formpanel-wrap">
+      <div class="tke-grid ">
+        <!-- 右侧 -->
+        <div class="grid-right">
+          <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+        </div>
+      </div>
       <el-card class='box-card'> 
-        <el-select v-model="currPod">
-          <!-- <el-option v-for="(i,it) in potList" :key="i" :label="it.metadata.name" :value="it.metadata.name"></el-option> -->
+        <el-select v-model="currPod" @change="changePod">
+          <el-option 
+            v-for="(it, i) in potList" 
+            :key="i" 
+            :label="it.metadata.name" 
+            :value="it.metadata.name"
+            >
+          </el-option>
         </el-select>
-        <el-select v-model="currStateful">
-          <!-- <el-option
-            v-for="(i,item) in statefulSetList"
+        <el-select v-model="currJob" @change="changeContainer">
+          <el-option
+            v-for="(item,i) in this.jobList"
             :key="i"
-            :label="item.metadata.name"
-            :value="item.metadata.name">
-          </el-option> -->
+            :label="item.name"
+            :value="item.name"
+            >
+          </el-option>
         </el-select>
-        <el-select v-model="index">
+        <el-select v-model="index" @change="changeSize">
           <el-option
             v-for="item in options"
             :key="item.value"
             :label="item.label"
-            :value="item.value">
+            :value="item.value"
+            >
           </el-option>
         </el-select>
-        <div class='box-black'>1</div>
+        <div class='box-black'>
+          <codemirror style="background-color: #444;"  ref="myCm"  v-model="logData"  :options="cmOptions" class="code" ></codemirror>
+        </div>
       </el-card>
     </div>
   </div>
 </template>
 
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
+import { codemirror } from 'vue-codemirror'
+  require("codemirror/mode/python/python.js")
+  require('codemirror/addon/fold/foldcode.js')
+  require('codemirror/addon/fold/foldgutter.js')
+  require('codemirror/addon/fold/brace-fold.js')
+  require('codemirror/addon/fold/xml-fold.js')
+  require('codemirror/addon/fold/indent-fold.js')
+  require('codemirror/addon/fold/markdown-fold.js')
+  require('codemirror/addon/fold/comment-fold.js')
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
@@ -49,41 +72,68 @@ export default {
         label: '显示1000条'},
       ],
       index: 100,//选中的条数
-      statefulSetList: [],//statefulSet列表
+      jobList: [],//statefulSet列表
       potList:[],//pod列表
       currPod: '',//选中的pod
-      currStateful: '',//选中的stateful
+      currJob: '',//选中的stateful
       loadShow: false,//是否显示加载
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
+      logData: null,//日志数据
+      cmOptions: {
+        tabSize: 4,
+        mode: 'python',
+        theme: 'darcula',
+        lineNumbers: true,//行号
+        line: true,
+        lineNumbers: true,
+        foldgutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter","CodeMirror-lint-markers"],
+        lineWrapping: true, //代码折叠
+        foldGutter: true,
+        matchBrackets: true,  //括号匹配
+        autoCloseBrackets: true
+      },
+      autoRefresh: true, //自动刷新
+      timer: null,//定时器
     };
   },
   components: {
-   
+    codemirror
   },
   created() {
      // 从路由获取类型
-    this.statefulSetList = this.$route.query.statefulSetList;
     this.clusterId=this.$route.query.clusterId
     this.potList = this.$route.query.potList;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    this.getstatefulLog();
+    this.currPod = this.$route.query.potList[0].metadata.name;
+    this.jobList = this.$route.query.rowData.spec.template.spec.containers;
+    this.currJob = this.$route.query.rowData.spec.template.spec.containers[0].name;
+    this.getdaemonSetLog();
+    let autoRefresh = this.autoRefresh;
+    if(autoRefresh) {
+      if(this.timer) {
+        this.timer = setInterval(() => {
+          this.getdaemonSetLog();
+        }, 1000 * 20);
+      }
+    }
   },
   methods: {
-    async getstatefulLog() {
+    async getdaemonSetLog() {
       this.loadShow = true;
       let param = {
         Method: "GET",
-        Path: "/api/v1/namespaces/"+this.rowData.metadata.namespace+"/pods/"+this.currPod+"/log?container="+this.currStateful+"&timestamps=true&tailLines="+this.index,
+        Path: "/api/v1/namespaces/"+this.rowData.metadata.namespace+"/pods/"+this.currPod+"/log?container="+this.currJob+"&timestamps=true&tailLines="+this.index,
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
-          let response = JSON.parse(res.Response.ResponseBody);
+          this.logData = res.Response.ResponseBody;
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -96,6 +146,39 @@ export default {
           });
         }
       });
+    },
+    //选择实例
+    changePod() {
+      this.getdaemonSetLog();
+    },
+    //选择容器
+    changeContainer() {
+      this.getdaemonSetLog();
+    },
+    //选择条数
+    changeSize() {
+      this.getdaemonSetLog();
+    },
+    //是否刷新
+    changeSwitch() {
+      let autoRefresh = this.autoRefresh;
+      if(autoRefresh) {
+        if(!this.timer) {
+          this.timer = setInterval(() => {
+            this.getdaemonSetLog();
+          }, 1000 * 20);
+        }
+      } else {
+        if(this.timer) { //如果定时器在运行则关闭
+          clearInterval(this.timer); 
+        }
+      }
+    },
+    //销毁定时器
+    destroyed(){
+      if(this.timer) { //如果定时器在运行则关闭
+        clearInterval(this.timer); 
+      }
     }
   }
 };

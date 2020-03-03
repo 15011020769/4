@@ -25,12 +25,12 @@
             <p>{{t('费用', 'WAF.fy')}}</p>
             <p class="totalMoney">
               <template v-if="loading">计算中...</template>
-              <template v-else>NT$ {{price}}</template>
+              <template v-else>NT$ {{cost}}</template>
             </p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button class="buyImmediate" @click="buyImmediate">{{t('立即购买', 'WAF.ljgm')}}</el-button>
+          <el-button class="buyImmediate" @click="buyImmediate" :disabled="loading">{{t('立即购买', 'WAF.ljgm')}}</el-button>
           <el-button @click="handleClose">取 消</el-button>
         </span>
       </el-dialog>
@@ -40,7 +40,7 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_WAF_PRICE } from '@/constants'
-import { CLB_BUY_DOMAIN_TYPES } from '../../constants'
+import { CLB_BUY_DOMAIN_TYPES, ORDER_INFO } from '../../constants'
 export default {
   props:{
     isShow:Boolean,
@@ -56,7 +56,7 @@ export default {
       dialogModel: '', // 弹框
       buyNum: 1, // 购买数量
       remainingDays: 0, // 剩余天数
-      price: 0,
+      cost: 0,
       loading: true,
     }
   },
@@ -121,7 +121,7 @@ export default {
         ResInfo: [resInfo]
       }).then(resp => {
         this.generalRespHandler(resp, ({ CostInfo }) => {
-          this.price = CostInfo[0].RealTotalCost // RealTotalCost
+          this.cost = CostInfo[0].RealTotalCost // RealTotalCost
           this.loading = false
         })
       })
@@ -133,8 +133,41 @@ export default {
     },
     //立即购买按钮
     buyImmediate(){
-      this.dialogModel=false;
-      this.$emit("buyDominPacModelClose",this.dialogModel)
+      let validTime = this.package.ValidTime
+      let d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
+      let time = d/(365/12) // 到期月数
+      let newEdiPrice
+      let curEdiPrice
+      let price = `${this.cost / d}/天` // 新购时单价 /每天
+      let purchaseTime = `${d}天`
+      let name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-CLB${this.t('新购', 'WAF.ng')}`
+      let tips
+      if (this.package.DomainPkg) { // 变配
+        validTime = this.package.DomainPkg.ValidTime
+        d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
+        time = d/(365/12) // 到期月数
+        newEdiPrice = (this.buyNum + this.package.DomainPkg.Count) * 500 // TODO 这里的500需要修改
+        curEdiPrice = this.package.DomainPkg.Count * 500  // TODO 这里的500需要修改
+        name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-${this.t('变配', 'WAF.bp')}`
+        price = '-'
+        purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
+        tips = [
+          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
+          `(2).${this.t('时长', 'WAF.sc')}:${time.toFixed(8)}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
+        ]
+      }
+      const order = {
+        name,
+        config: `${this.t('扩展', 'WAF.kz')}域名包：${this.buyNum}个`,
+        price, // 单价
+        cost: this.cost, // 费用
+        purchaseTime,
+        tips
+      }
+      localStorage.setItem(ORDER_INFO, JSON.stringify([order]))
+      this.$router.push({
+        name: 'pay'
+      })
     },
     //监测数量改变、
     handleChange(){
@@ -160,6 +193,12 @@ export default {
   background-color:#ff9700;
   color:#fff;
   border:none;
+  &.is-disabled {
+    background: #ccc;
+    &:hover {
+      color: #f5f7fa;
+    }
+  }
 }
 ::v-deep button{
   height:30px;

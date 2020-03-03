@@ -1,5 +1,6 @@
 import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6, arr2Obj } from '@/utils'
 export const SAFE_OVERVIEW_SHOWMODULE_KEY = 'waf:safeOverView:showModules'
+export const ORDER_INFO = 'waf:order_info'
 /** 套餐包信息 */
 export const CLB_PACKAGE_CFG_TYPES = {
 
@@ -11,7 +12,8 @@ export const CLB_PACKAGE_CFG_TYPES = {
     name: "高級版", index: 2,
     mainCount: 2, subCount: 20,
     busQps: 2500,
-    CCQps: 30000
+    CCQps: 30000,
+    price: 3880,
   },
   3: {
       key: "sp_wsm_waf_enterprise_clb",
@@ -21,7 +23,8 @@ export const CLB_PACKAGE_CFG_TYPES = {
       name: "企業版", index: 3,
       mainCount: 3, subCount: 30,
       busQps: 5000,
-      CCQps: 150000
+      CCQps: 150000,
+      price: 9880,
   },
   4: {
       key: "sp_wsm_waf_ultimate_clb",
@@ -31,7 +34,8 @@ export const CLB_PACKAGE_CFG_TYPES = {
       name: "旗艦版", index: 4,
       mainCount: 4, subCount: 40,
       busQps: 10000,
-      CCQps: 500000
+      CCQps: 500000,
+      price: 28880,
   },
 }
 
@@ -360,6 +364,12 @@ const CC_RULE_ACTION_LOCAL = {
 export const CC_RULE_ACTION = addVal2Key(CC_RULE_ACTION_LOCAL)
 export const CC_RULE_ACTION_ARR = obj2Arr(CC_RULE_ACTION_LOCAL)
 
+export const ALL_ACTION = {
+  ...CC_RULE_ACTION_LOCAL,
+  ...CUSTOM_SESSION_ACTION_LOCAL,
+  POLICY_RULE_ACTION_LOCAL
+}
+
 /** CC规则匹配条件  */
 const CC_RULE_MATCH_LOCAL = {
   0: '相等',
@@ -371,8 +381,8 @@ export const CC_RULE_MATCH_ARR = obj2Arr(CC_RULE_MATCH_LOCAL)
 
 /** IP封堵类型 */
 const IP_STATUS_TYPE_LOCAL = {
-  BOT: 'BOT',
   CC: 'CC',
+  BOT: 'BOT',
   DIY: '自定义人机识别'
 }
 export const IP_STATUS_TYPE = addVal2Key(IP_STATUS_TYPE_LOCAL)

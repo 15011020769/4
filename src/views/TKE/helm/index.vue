@@ -31,7 +31,11 @@
           <div class="explain" v-show="flagAgin == 3 ? true:false">
             <p> 正在校验Helm应用管理功能<i class="el-icon-loading"></i></p>
           </div>
-         
+      </div>
+      <div class="room-center" v-show="getflags">
+         <div class="explain-o">
+            <p>正在创建新的Helm应用<i class="el-icon-loading"></i><a style="cursor:pointer" @click="centerDialogVisible4 = true">查看详情</a></p>
+          </div>
       </div>
       <div class="helm-table">
         <template>
@@ -43,7 +47,11 @@
                       </div>
                 </template>
             </el-table-column>
-            <el-table-column label="状态" max-width="10%"></el-table-column>
+            <el-table-column label="状态" max-width="10%" prop="info">
+              <template slot-scope="scope">
+                 <div>{{scope.row.info.status.code|codes}}</div>
+               </template>
+            </el-table-column>
             <el-table-column label="版本号" max-width="15%" prop="version">
                <template slot-scope="scope">
                  <div>{{scope.row.version}}</div>
@@ -161,12 +169,47 @@
       </div>
       <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 1">
         <el-button type="primary" @click="ApplyOpen()">确 定</el-button>
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button @click="centerDialogVisible3 = false">取 消</el-button>
       </span>
       <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 2">
         <el-button type="primary" @click="openContect()">确 定</el-button>
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button @click="centerDialogVisible3 = false">取 消</el-button>
       </span>
+    </el-dialog>
+    <el-dialog
+      title="Helm应用安装日志"
+      :visible.sync="centerDialogVisible4"
+      width="60%">
+      <div style="width:100%;height:400px;">
+        <div style="width:40%;height:400px;float:left;">
+          <el-table
+            ref="multipleTable"
+            :data="newData"
+            tooltip-effect="dark"
+            style="width: 100%">
+            <el-table-column
+              type="selection">
+            </el-table-column>
+            <el-table-column
+              label="Helm名称"
+              prop="name">
+              <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
+            </el-table-column>
+            <el-table-column  label="状态" prop="status">
+              <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
+            </el-table-column>
+            <el-table-column
+              fixed="right"
+              label="操作">
+              <template slot-scope="scope">
+                <el-button @click="deleteStatus(scope.row.name)" type="text" size="small">取消安装</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+        <div style="width:60%;height:400px;background:black;float:left;">
+        </div>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -186,12 +229,14 @@ export default {
   data () {
     return {
       tableData: [],
+      newData:[],
       cities: [],
       selectedRegion: '',
       selectedCity: '',
       select: '',
       options:[],
       value:'',
+      getflags:false,
       flag:false,
       flagSE:true,
       flagAgin:"",
@@ -200,6 +245,7 @@ export default {
       centerDialogVisible:false,
       centerDialogVisible2:false,
       centerDialogVisible3:false,
+      centerDialogVisible4:false,
       ruleForm:{
           name:'',
           chart:'',
@@ -208,7 +254,9 @@ export default {
           pass:''
       },
       domains: [],
-      isCollapse:true
+      isCollapse:true,
+      timeIds:null,
+      openData:"",//是否开通数据
     }
   },
   created () {
@@ -230,6 +278,59 @@ export default {
       },
       immediate: true,
       deep: true
+    },
+    openData:{
+        handler:function(data){
+          for(let key in data){
+            console.log(data[key])
+            var times = 1
+            if(data[key]  == 0){
+              if(times == 1){
+                this.newData.push({
+                  name:key,
+                  status:"创建中"
+                })
+              }
+              this.timeIds = setInterval(()=>{
+                  this.getCreate()
+                  this.getflags= true
+                  this.$store.commit("getFlag",this.getflags);
+                  if(this.$route.path != "/helm" || data[key] == undefined || data[key] == 1 ){
+                      window.clearInterval(this.timeIds)
+                      this.timeIds = null
+                      this.getflags = false
+                      this.$store.commit("getFlag",this.getflags);
+                  }
+                  times++
+                },2000)
+              } else if(data[key] == 1){
+                console.log(data[key],23423)
+                this.newData.push({
+                  name:key,
+                  status:"失败"
+                })
+                this.getflags = true
+                this.$store.commit("getFlag",this.getflags);
+                window.clearInterval(this.timeIds)
+              } else {
+                console.log("242342")
+                this.getflags = false
+                this.$store.commit("getFlag",this.getflags);
+                window.clearInterval(this.timeIds)
+                this.timeIds = null
+              }
+            }
+        },
+        deep:true,
+        immediate :true
+    },
+    newData(value){
+      console.log(value)
+      if(value.length == 0){
+          console.log(value,3234)
+          this.getflags = false
+          this.$store.commit("getFlag",this.getflags);
+      }
     }
   },
   methods: {
@@ -265,6 +366,21 @@ export default {
         valueKey: '',
       })
     },
+    setCusId(){
+      this.flagSE = true
+      // this.flagAgin = 1
+      this.flagAgin = ""
+      this.loadShow = true
+      this.tableData=[]
+      this.getFlag()
+      this.$router.push({
+          name: 'helm',
+          query: {
+            clusterId:this.value
+          }
+      })
+      console.log(this.value) 
+    },
     // 申请开通
     ApplyOpen(){
         console.log(2)
@@ -291,7 +407,7 @@ export default {
         var timeId = setInterval(()=>{
           this.getFlag(timeId)
           time ++
-          if( time > 4 || this.status== "running"  || this.$route.path!='/helm'){
+          if( time > 4 || this.status== "running" || this.status== "failed" || this.$route.path!='/helm'){
             this.getHelmList()
             clearInterval(timeId)
             // this.flagAgin = 2
@@ -307,10 +423,14 @@ export default {
         if (res.Error == undefined) {
           // console.log(res)
           this.options = res.Response.Clusters
-          this.value = res.Response.Clusters[0].ClusterId
+          if(this.$route.query.clusterId){
+            this.value = this.$route.query.clusterId
+          } else {
+            this.value = res.Response.Clusters[0].ClusterId
+          }
           // this.getHelmList()
           this.getFlag()
-          console.log(this.value)
+          this.getCreate()
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -337,7 +457,7 @@ export default {
             this.flagSE = false
             // clearInterval(timeId)
             // this.flag = false
-            console.log(this.tableData)
+            console.log(this.tableData,999)
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -405,7 +525,7 @@ export default {
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
       }else if(this.domains.length > 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass,"values":{"raw_original":nmAll.join(','),"values_type":"kv"}}
-      }else if(this.domains.length = 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
+      }else if(this.domains.length == 0 && this.ruleForm.nameTwo && this.ruleForm.pass){
          var RequestBodyAll = {"chart_url":this.ruleForm.address,"username":this.ruleForm.nameTwo,"password":this.ruleForm.pass}
       }else {
         var RequestBodyAll = {"chart_url":this.ruleForm.address}
@@ -475,9 +595,106 @@ export default {
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
+          // console.log(JSON.parse(res.Response.ResponseBody))
+          this.loadShow = true
           this.getFlag()
           } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0,
+            })
+            this.loadShow = false
+          }
+        })
+    },
+    // 取消安装
+    deleteStatus(row){
+      this.centerDialogVisible2 = false
+      const param = {
+          ClusterName: this.value,
+          Method: "DELETE",
+          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/"+row+"/json",
+          Version: "2018-05-25"
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error == undefined) {
+            this.getCreate()
+            if(this.newData.length == 0){
+                this.getflags = false
+                this.$store.commit("getFlag",this.getflags);
+            }
+            console.log(this.newData.length)
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0,
+            })
+            this.loadShow = false
+          }
+        })
+    },
+    // 是否创建成功
+    getCreate(){
+      const param = {
+          ClusterName: this.value,
+          Method: "GET",
+          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/json",
+          Version: "2018-05-25"
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if (res.Response.Error == undefined) {
+          this.openData = JSON.parse(res.Response.ResponseBody)
+          this.getflags = this.$store.state.flag
+          if(this.newData.length == 0){
+              this.getflags = false
+              this.$store.commit("getFlag",this.getflags);
+          }
+          // for(let key in this.openData){
+          //   // console.log(this.openData[key])
+          //     if(this.openData[key]  == 0){
+          //       this.newData.push({
+          //         name:key,
+          //         status:"创建中"
+          //       })
+          //       this.timeIds = setInterval(()=>{
+          //         this.getCreate()
+          //         this.getflags= true
+          //         if(this.$route.path != "/helm" || data[key]=="{}" || data[key] == 1 ){
+          //             window.clearInterval(this.timeIds)
+          //             this.timeIds = null
+          //             this.getflags = false
+          //             this.$store.commit("getFlag",this.getflags);
+          //             // this.getCreate()
+          //           }
+          //       },2000)
+          //     } else if(this.openData[key] == 1){
+          //       console.log(this.openData[key],23423)
+          //       this.newData.push({
+          //         name:key,
+          //         status:"失败"
+          //       })
+          //       this.getflags = true
+          //       this.$store.commit("getFlag",this.getflags);
+          //       window.clearInterval(this.timeIds)
+          //     } else {
+          //       console.log("242342")
+          //       this.getflags = false
+          //       this.$store.commit("getFlag",this.getflags);
+          //       window.clearInterval(this.timeIds)
+          //       this.timeIds = null
+          //     }
+          //   }
+          console.log(this.$store.state.flag,45)
+          console.log(JSON.parse(res.Response.ResponseBody),99999)
+        } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -504,15 +721,6 @@ export default {
       this.$cookie.set('regionv2', city.Region)
       // this.GetTabularData()
     },
-    setCusId(){
-      this.flagSE = true
-      // this.flagAgin = 1
-      this.flagAgin = ""
-      this.loadShow = true
-      this.tableData=[]
-      this.getFlag()
-      console.log(this.value) 
-    },
     jump () {
       this.$router.push({
         name: 'helmCreate',
@@ -532,6 +740,23 @@ export default {
     }
   },
   filters:{
+    codes:function(value){
+        if(value == "DEPLOYED"){
+            return "正常"
+        } else if (value == "DELETED"){
+            return "已删除"
+        } else if (value == "DELETING"){
+            return "正在删除"
+        } else if (value == "SUPERSEDED"){
+            return "已废弃"
+        } else if (value == "FAILED"){
+            return "异常"
+        } else if (value == "UNHEALTHY"){
+            return "异常"
+        } else {
+            return "-"
+        }
+    },
    creationTimestamps:function(value){
         var d = new Date(value);
         var n = d.getFullYear();
@@ -556,19 +781,6 @@ export default {
     width: 100%;
     padding: 20px 0 20px 20px;
     box-sizing: border-box;
-    // button {
-    //   height: 30px;
-    //   padding: 0 20px;
-    //   background-color: #006eff;
-    //   color: #fff;
-    //   border: 1px solid #006eff;
-    //   line-height: 30px;
-    //   text-align: center;
-    //   outline: 0 none;
-    //   box-sizing: border-box;
-    //   text-decoration: none;
-    //   font-size: 12px;
-    // }
   }
   .helm-titleWrap {
     width: 100%;
@@ -655,5 +867,18 @@ export default {
       line-height: 18px;
     }
   }
+  .explain-o{
+    vertical-align: middle;
+    color: #003b80;
+    border:1px solid #97c7ff;
+    background:  #e5f0ff;
+    p {
+      padding:10px;
+      width:100%;
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
 }
+
 </style>

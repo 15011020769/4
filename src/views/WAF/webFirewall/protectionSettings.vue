@@ -49,7 +49,7 @@
               </p>
               <p><span>已使用域名</span><span>{{package.DomainCount}}/{{package.DomainLimit}}{{t('个', 'WAF.g')}}</span></p>
               <p>
-                <span>{{t('安全日志服务包', 'WAF.aqrzfwb')}}</span>
+                <span>{{t('安全日志服务', 'WAF.aqrzfwb')}}包</span>
                 <span>
                   <a class="orangeHref">{{package.Cls && package.Cls.Count || 0}}{{t('个', 'WAF.g')}}</a>
                   （{{t('一个包包含1T日志服务存储容量', 'WAF.ygbbh')}}），

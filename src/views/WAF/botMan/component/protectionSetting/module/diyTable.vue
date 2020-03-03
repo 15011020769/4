@@ -11,7 +11,7 @@
     <el-row type="flex" justify="between">
       <el-col>
         <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="total === 50" type="primary" @click="onAdd">添加</el-button>
-        <el-button style="padding: 5px 10px; margin-right: 10px;" @click="copy" :disabled="multipleSelection.length === 0">{{t('复制', 'WAF.copy')}}</el-button>
+        <el-button style="padding: 5px 10px; margin-right: 10px;" :disabled="multipleSelection.length === 0" @click="copy">{{t('复制', 'WAF.copy')}}</el-button>
         <span style="color: #bbb; font-size: 12px; margin-left: 10px">最多可以添加50{{t('条', 'WAF.t')}}</span>
       </el-col>
       <el-row type="flex" align="middle">
@@ -29,6 +29,7 @@
         v-loading="loading"
         :empty-text="t('暂无数据', 'WAF.zwsj')"
         @selection-change="handleSelectionChange"
+        row-key="name"
       >
         <el-table-column
           type="selection"
@@ -50,11 +51,20 @@
         <el-table-column prop="term" :label="t('匹配条件', 'WAF.pptj')">
           <template slot-scope="scope">
             <div v-for="rule in scope.row.rule" :key="rule.key">
-              <p>{{ALL_RULE[rule.key].label}} {{labelFilter(rule.op)}} 
-                <span v-if="rule.value === true">是</span>
-                <span v-else-if="rule.value === false">否</span>
-                <span v-else-if="Array.isArray(rule.value)" v-for="v in rule.value">{{ALL_OPTION[v] && ALL_OPTION[v].label || v}} </span>
-                <span v-else>{{rule.value}}</span>
+              <p>
+                <span style="font-weight: 600;color: #000;">{{ALL_RULE[rule.key].label}}&nbsp;</span>
+                <template v-if="rule.op === 'proportion'">
+                  {{rule.op_arg.join()}}
+                  {{labelFilter(rule.op_op)}}&nbsp;
+                  {{rule.op_value * 100}}%
+                </template>
+                <template v-else>
+                  <span>{{labelFilter(rule.op)}}&nbsp;</span>
+                  <span v-if="rule.value === true">是</span>
+                  <span v-else-if="rule.value === false">否</span>
+                  <span v-else-if="Array.isArray(rule.value)" v-for="v in rule.value">{{ALL_OPTION[v] && ALL_OPTION[v].label || v}} </span>
+                  <span v-else>{{rule.value}}</span>
+                </template>
               </p>
             </div>
           </template>
@@ -82,12 +92,12 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column :label="t('策略开关', 'WAF.clkg')">
+        <el-table-column :label="t('策略开关', 'WAF.clkg')" width="150">
           <template slot-scope="scope">
             <el-switch v-model="scope.row.status" @change="status => onChangeStatus(scope.row, status)" />
           </template>
         </el-table-column>
-        <el-table-column prop="time">
+        <el-table-column prop="time" width="150">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
             {{t('修改时间', 'WAF.xgsj')}}
             <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
@@ -98,7 +108,7 @@
             {{formatDate(scope.row.timestamp)}}
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="150">
           <template slot-scope="scope">
             <el-button type="text" @click="showDialog(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
             <el-popover
@@ -122,9 +132,9 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="skip"
+        :current-page="currentPage"
         :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
-        :page-size="limit"
+        :page-size="pageSize"
         layout="total, sizes, prev, pager, next"
         :total="total">
       </el-pagination>
@@ -132,13 +142,14 @@
     <el-dialog
       :visible.sync="showSessionDialog"
       :title="`${ucbRule ? t('编辑', 'WAF.bj') : '添加'}${t('自定义会话特征', 'WAF.zdyhhtz')}`"
-      width="960px"
+      width="1000px"
       :close-on-click-modal="false"
       @click.native="closeChildMatchDialogIndex"
       @close="beforeClose"
       destroy-on-close
     >
       <DiySessionDialog
+        :allRuleNames="allRuleNames"
         :domain="ipSearch"
         :childMatchDialogIndex.sync="childMatchDialogIndex"
         :visible.sync="showSessionDialog"
@@ -171,9 +182,9 @@ export default {
   },
   data() {
     return {
-      tableData: [],
-      skip: 0,
-      limit: 10,
+      allTableData: [],
+      currentPage: 1,
+      pageSize: 20,
       loading: true,
       total: 0,
       name: '',
@@ -188,8 +199,14 @@ export default {
       ALL_OPTION,
       sort: 'timestamp:-1',
       multipleSelection: [],
-      ruleNames: '',
+      ruleNames: '', // 待复制的策略名称
+      allRuleNames: [], // 使用策略名称，用于添加时去重
     }
+  },
+  computed: {
+    tableData() {
+      return this.allTableData.slice((this.currentPage - 1) * this.pageSize, (this.currentPage - 1) * this.pageSize + this.pageSize)
+    },
   },
   components: {
     DiySessionDialog,
@@ -289,8 +306,8 @@ export default {
         "Version": 
         "2018-01-25",
         "Domain": this.ipSearch, 
-        "Skip": this.skip, 
-        "Limit": this.limit,
+        "Skip": 0, 
+        "Limit": 99,
         Name: this.name,
       }
       if (this.Operate !== '-1') {
@@ -300,26 +317,27 @@ export default {
       this.axios.post(DESCRIBE_BOT_UCB_FEATURE_RULE, param)
       .then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
+          const allRuleNames = []
           const data = Data.Res.map(data => {
             const d = JSON.parse(data)
+            allRuleNames.push(d.name)
             d.delDialog = false
             d.status = d.on_off === 'off' ? false : true
             return d
           })
-          this.tableData = data
+          this.allRuleNames = allRuleNames
+          this.allTableData = data
           this.total = Data.TotalCount
         })
       }).then(() => {
         this.loading = false
       })
     },
-    handleCurrentChange(page) {
-      this.skip = page
-      this.getUCBRule()
+     handleCurrentChange(page) {
+      this.currentPage = page
     },
     handleSizeChange(size) {
-      this.limit = size
-      this.getUCBRule()
+      this.pageSize = size
     },
     beforeClose() {
       this.ucbRule = undefined

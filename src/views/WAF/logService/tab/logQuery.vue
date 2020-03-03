@@ -34,10 +34,10 @@
         </div>
         <div>
           <el-input placeholder="请输入" v-model="keyword" class="input-with-select">
-            <el-select v-model="condi" value-key="label" slot="prepend" placeholder="请选择过滤条件" style="width: 150px;">
+            <el-select v-model="condi" value-key="label" slot="prepend" :placeholder="t('请选择过滤条件', 'WAF.qxzgltj')" style="width: 150px;">
               <el-option v-for="item in query" :key="item.value" :label="item.value" :value="item"></el-option>
             </el-select>
-            <el-button slot="append" @click="addCondi">添加过滤条件</el-button>
+            <el-button slot="append" @click="addCondi">{{t('添加过滤条件', 'WAF.tjgltj')}}</el-button>
           </el-input>&nbsp;&nbsp;
           <el-button class="selectBtn" @click="search">{{t('查询', 'WAF.js')}}</el-button>
           <i class="el-icon-download" style="cursor: pointer;" @click="createDownTask"></i>
@@ -76,7 +76,7 @@
               <template slot-scope="scope">
                 <div>
                   <p><strong>方法:</strong>{{scope.row.method}}</p>
-                  <p><strong>协议:</strong>{{scope.row.schema}}</p>
+                  <p><strong>{{t('协议', 'WAF.xy')}}:</strong>{{scope.row.schema}}</p>
                   <p><strong>HOST:</strong>{{scope.row.host}}</p>
                   <p><strong>URI:</strong>{{scope.row.url}}</p>
                   <p><strong>Query:</strong>{{scope.row.query}}</p>
@@ -98,17 +98,17 @@
               <template slot-scope="scope">
                 <div>
                   <p><strong>回源地址:</strong>{{scope.row.upstream}}</p>
-                  <p><strong>回源耗时:</strong>{{parseFloat(scope.row.upstream_connect_time) * 1000}}ms</p>
-                  <p><strong>源站响应耗时:</strong>{{parseFloat(scope.row.upstream_response_time) * 1000}}ms</p>
+                  <p><strong>{{t('回源耗时', 'WAF.hyhs')}}:</strong>{{parseFloat(scope.row.upstream_connect_time) * 1000}}ms</p>
+                  <p><strong>{{t('源站响应耗时', 'WAF.yzxyhs')}}::</strong>{{parseFloat(scope.row.upstream_response_time) * 1000}}ms</p>
                 </div>
               </template>
             </el-table-column>
             <el-table-column :label="t('响应详情', 'WAF.xyxq')" v-if="columnsCopy.includes('response')">
               <template slot-scope="scope">
                 <div>
-                  <p><strong>WAF响应码:</strong>{{scope.row.status}}</p>
-                  <p><strong>源站响应码:</strong>{{scope.row.upstream_status}}</p>
-                  <p><strong>响应大小:</strong>{{scope.row.bytes_sent}}字节</p>
+                  <p><strong>{{t('WAF响应码', 'WAF.ydm')}}:</strong>{{scope.row.status}}</p>
+                  <p><strong>{{t('源站响应码', 'WAF.yzxym')}}:</strong>{{scope.row.upstream_status}}</p>
+                  <p><strong>{{t('响应大小', 'WAF.xydx')}}:</strong>{{scope.row.bytes_sent}}{{t('字节', 'WAF.zj')}}</p>
                 </div>
               </template>
             </el-table-column>
@@ -177,7 +177,7 @@ export default {
       startTime: moment().format("YYYY-MM-DD HH:mm:ss"),
       endTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
       columnsCopy: [],
-      columns: ['index', 'action', 'time', 'client', 'source', 'request', 'body', 'header', 'upstream', 'response'],
+      columns: ['request', 'index', 'action', 'time', 'client', 'header', 'upstream', 'response'],
       total: 0,
       visible: false,
       queryCopy: [{

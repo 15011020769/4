@@ -13,7 +13,7 @@
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
-          <span>命名空间</span>
+          <span style="margin-right:10px;">命名空间</span>
           <el-select
             size="mini"
             v-model="searchType"
@@ -401,5 +401,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.grid-right{
+  height: 39px;
+  display: flex;
+  align-items: center;
+}
+.grid-right >>> .el-input__inner{
+  height: 32px;
+}
+.tke-search{
+  margin-bottom:5px;
+}
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
 </style>
 

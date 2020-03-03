@@ -8,16 +8,12 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('statefulSet')" size="small" type="primary">新建</el-button>
-        <el-button size="small" @click="flag=!flag">监控</el-button>
-      </div>
-      <!-- 抽屉 -->
-      <div class="dra" v-if="flag">
-        <openDrawer :flag="flag" title="工作负载监控" @changeFlag="setFlag" @setTime="setTime"></openDrawer>
+        <el-button size="small" @click='toMonitor'>监控</el-button>
       </div>
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
-          <span>命名空间</span>
+          <span style="margin-right:10px;">命名空间</span>
           <el-select
             size="mini"
             v-model="searchType"
@@ -132,7 +128,6 @@
 import subTitle from "@/views/TKE/components/subTitle";
 import tkeSearch from "@/views/TKE/components/tkeSearch";
 import Loading from "@/components/public/Loading";
-import openDrawer from "./components/openDrawer";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 import XLSX from "xlsx";
@@ -142,6 +137,7 @@ export default {
   name: "colonyResourceStatefulSet",
   data() {
     return {
+      tit:"工作负载监控",
       loadShow: false, //加载是否显示
       clusterId: "", //集群id
       list: [], //列表
@@ -162,6 +158,15 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
+     toMonitor(){
+      //跳转监控页面
+      this.$router.push({
+        name:"colonyOpenMonitor",
+        query:{
+          title:this.tit + "(statefulSet)"
+        }
+      })
+    },
     //启动时获取StatefulSet列表数据
     async getNameSpaceList() {
       this.loadShow = true;
@@ -434,11 +439,25 @@ export default {
     subTitle,
     tkeSearch,
     Loading,
-    openDrawer
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.grid-right{
+  height: 39px;
+  display: flex;
+  align-items: center;
+}
+.grid-right >>> .el-input__inner{
+  height: 32px;
+}
+.tke-search{
+  margin-bottom:5px;
+}
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
 </style>
 

@@ -26,13 +26,13 @@
           <div class="tke-form-item_text">{{changeSelector(rowData.spec && rowData.spec.selector && rowData.spec.selector.matchLabels)}}</div>
         </el-form-item>
         <el-form-item label="更新策略">
-          <div class="tke-form-item_text"></div>
+          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.updateStrategy && rowData.spec.updateStrategy.type || '-'}}</div>
         </el-form-item>
         <el-form-item label="副本数">
-          <div class="tke-form-item_text"></div>
+          <div class="tke-form-item_text">{{rowData.spec && rowData.spec.replicas || '-'}}</div>
         </el-form-item>
         <el-form-item label="运行副本数">
-          <div class="tke-form-item_text"></div>
+          <div class="tke-form-item_text">{{rowData.status && rowData.status.replicas || '-'}}</div>
         </el-form-item>
         
       </el-form>

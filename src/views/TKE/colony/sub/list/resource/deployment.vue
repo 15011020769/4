@@ -8,17 +8,13 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('deployment')" size="small" type="primary">新建</el-button>
-        <el-button size="small" @click="flag=!flag">监控</el-button>
-      </div>
-      <!-- 抽屉 -->
-      <div class="dra" v-if="flag">
-        <open-drawer :flag="flag" title="工作负载监控" @changeFlag="setFlag" @setTime="setTime"></open-drawer>
+        <el-button size="small" @click="toMonitor">监控</el-button>
       </div>
 
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
-          <span>命名空间</span>
+          <span style="margin-right:10px;">命名空间</span>
           <el-select
             size="mini"
             v-model="nameSpaceName"
@@ -83,8 +79,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="goPodUpdate('number',scope.row)">更新Pod数量</span>
-            <span class="tke-text-link ml10" @click="goPodUpdate('config',scope.row)">更新Pod配置</span>
+            <span class="tke-text-link" @click="goPodUpdate(scope.row)">更新Pod数量</span>
+            <span class="tke-text-link ml10" @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
             <el-dropdown class="tke-dropdown">
               <span class="el-dropdown-link ml10">
                 更多
@@ -104,7 +100,11 @@
                   <span class="tke-text-link">编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
-                  <el-button type="text" :disabled="nameSpaceName === 'kube-system'?true:false" @click="deleteDeployment(scope.row)">删除</el-button>
+                  <el-button
+                    type="text"
+                    :disabled="nameSpaceName === 'kube-system'?true:false"
+                    @click="deleteDeployment(scope.row)"
+                  >删除</el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -153,12 +153,12 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
-import openDrawer from "./components/openDrawer";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 export default {
   name: "colonyResourceDeployment",
   data() {
     return {
+      tit: "工作负载监控",
       loadShow: false, //加载是否显示
       clusterId: "", //集群id
       list: [], //列表
@@ -183,6 +183,15 @@ export default {
     this.getNameSpaceList();
   },
   methods: {
+    toMonitor() {
+      //跳转监控页面
+      this.$router.push({
+        name: "colonyOpenMonitor",
+        query: {
+          title: this.tit + "(deployment)"
+        }
+      });
+    },
     //启动时获取命名空间列表数据
     async getNameSpaceList() {
       this.loadShow = true;
@@ -290,6 +299,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
+          console.log(response)
           if (response.items.length > 0) {
             response.items.map(deployment => {
               (deployment.k8sApp =
@@ -333,14 +343,25 @@ export default {
       });
     },
     //更新pod
-    goPodUpdate(type, rowData) {
+    goPodUpdate(rowData) {
+      console.log(rowData)
       this.$router.push({
         name: "podUpdate",
         query: {
-          type: type,
           clusterId: this.clusterId,
-          workloadData: rowData,
-          spaceName: this.nameSpaceName
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
+        }
+      });
+    },
+    //更新pod
+    goPodConfigUpdate(rowData) {
+      this.$router.push({
+        name: "podConfigUpdate",
+        query: {
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
         }
       });
     },
@@ -530,11 +551,25 @@ export default {
     subTitle,
     tkeSearch,
     Loading,
-    openDrawer
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.grid-right{
+  height: 39px;
+  display: flex;
+  align-items: center;
+}
+.grid-right >>> .el-input__inner{
+  height: 32px;
+}
+.tke-search{
+  margin-bottom:5px;
+}
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
 </style>
 

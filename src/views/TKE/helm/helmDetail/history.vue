@@ -19,10 +19,18 @@
                 </template>
             </el-table-column>
             <el-table-column
+             prop="release"
                 label="描述">
+                <template slot-scope="scope">
+                    {{scope.row.release.info.Description}}
+                </template>
             </el-table-column> 
             <el-table-column
+             prop="release"
                 label="状态">
+                <template slot-scope="scope">
+                    {{scope.row.release.info.status.code|codes}}
+                </template>
             </el-table-column>
             <el-table-column
                 prop="release"
@@ -72,7 +80,7 @@ import { POINT_REQUEST } from '@/constants'
             // console.log(res)
             if (res.Response.Error == undefined) {
                 this.tableData.push(JSON.parse(res.Response.ResponseBody))
-                // console.log(this.tableData)
+                console.log(this.tableData)
                 this.loadShow=false
             } else {
                 let ErrTips = {};
@@ -88,6 +96,23 @@ import { POINT_REQUEST } from '@/constants'
         },
       },
       filters:{
+        codes:function(value){
+            if(value == "DEPLOYED"){
+                return "正常"
+            } else if (value == "DELETED"){
+                return "已删除"
+            } else if (value == "DELETING"){
+                return "正在删除"
+            } else if (value == "SUPERSEDED"){
+                return "已废弃"
+            } else if (value == "FAILED"){
+                return "异常"
+            } else if (value == "UNHEALTHY"){
+                return "异常"
+            } else {
+                return "-"
+            }
+        },
         creationTimestamps:function(value){
                 var d = new Date(value);
                 var n = d.getFullYear();

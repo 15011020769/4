@@ -2,7 +2,7 @@
   <div>
     <div class="topHeader">
       <span>BOT 详情</span>
-      <el-tabs v-model="activeName" @tab-click="handleTabClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="概览" name="overview"></el-tab-pane>
         <el-tab-pane label="未知类型" name="ub"></el-tab-pane>
         <el-tab-pane label="自定义类型" name="ucb"></el-tab-pane>
@@ -47,10 +47,10 @@
             @change="changeTimeValue"
           ></el-date-picker>
       </el-row>
-      <over-view :domain="domainValue" :times="[startTime, endTime]" v-if="routerParams == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'ucb'"></Ucb>
-      <Tcb :domain="domainValue" :times="dateTimeValue" v-if="routerParams == 'tcb'"></Tcb>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
+      <Ub :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ub'"></Ub>
+      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ucb'"></Ucb>
+      <Tcb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'tcb'"></Tcb>
     </div>
   </div>
 </template>
@@ -73,7 +73,6 @@ export default {
       domainValue: "", // 域名绑定
       activeName: "overview", // 默认选中概览页
       options: [],
-      routerParams: "overview",
       tableDataBegin: [],
     }
   },
@@ -90,9 +89,6 @@ export default {
     //关闭提示文字
     closeTip() {
       this.tipShow = false;
-    },
-    handleTabClick(tab, event) {
-      this.routerParams = tab.name
     },
     // 获取防护域名列表
     getDescribeHost(bot='') {
@@ -176,17 +172,11 @@ export default {
       this.dateTimeValue = times
       this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
       this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
-      this.$nextTick(() => {
-        // this.getBotDomainStat()
-      })
     },
     changeTimeValue(val) {
       this.selBtn = 0
       this.startTime = moment(val[0]).utc().valueOf()
       this.endTime = moment(val[1]).utc().valueOf()
-      this.$nextTick(() => {
-        // this.getBotDomainStat()
-      })
     },
   }
 }

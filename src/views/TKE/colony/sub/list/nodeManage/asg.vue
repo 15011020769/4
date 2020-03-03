@@ -225,7 +225,7 @@
                 </el-radio-group>
               <p class='left' v-if="form.radio == 1">随机选择一个伸缩组进行扩容</p>
               <p class='left' v-else-if="form.radio == 2">选择能调度更多pod的伸缩组进行扩容</p>
-              <p class='left' v-else="form.radio == 3">选择pod调度后资源剩余更少的伸缩组进行扩容</p>
+              <p class='left' v-else-if="form.radio == 3">选择pod调度后资源剩余更少的伸缩组进行扩容</p>
             </el-form-item>
         </el-form>
       </el-card>
@@ -1021,6 +1021,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.tke-grid{
+  margin-top:0;
+}
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
   .bottom{
     margin:15px 0;
   }

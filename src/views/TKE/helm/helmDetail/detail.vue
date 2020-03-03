@@ -1,7 +1,7 @@
 <template>
     <div class="room">
-        <div class="room-padding">
-            <el-card v-if="this.Data&&this.info">
+        <div class="room-padding" v-if="this.Data&&this.info">
+            <el-card >
                 <h3>基本信息</h3>
                  <el-form  class="tke-form top"  label-position='left' label-width="120px" size="mini">
                     <el-form-item label="Helm名称">
@@ -31,6 +31,10 @@
                         prop="resource"
                         label="资源"
                         max-width="33%">
+                        <template slot-scope="scope" >
+                            <a style="cursor:pointer;" @click="getJump(scope.row)" v-if="scope.$index!=3">{{scope.row.resource}}</a>
+                            <p v-if="scope.$index==3">{{scope.row.resource}}</p>
+                        </template>
                     </el-table-column>
                     <el-table-column
                         prop="type"
@@ -55,11 +59,13 @@
             </el-card>
             <el-card class="top" v-if="info">
                 <h3>资源状态</h3>
-                <el-switch v-model="flag" class="pose"></el-switch>
+                <div  class="pose">
+                    <span>自动刷新</span><el-switch v-model="flag" ></el-switch>
+                </div>
                 <div class="top">
                     <div class="background">
                         <pre style="color:white">
-                            {{info.info.status.resources}}
+                            {{resources}}
                         </pre>
                     </div>
                 </div>
@@ -91,7 +97,6 @@ import { codemirror } from 'vue-codemirror'
   require('codemirror/addon/fold/markdown-fold.js')
   require('codemirror/addon/fold/comment-fold.js')
 export default {
-    
     name:'HelmDetails',
     data(){
         return{
@@ -99,11 +104,29 @@ export default {
             Data:"",
             raw:[],
             count:[],
-            flag:true,
+            flag:false,
             tableDate:[],
             centerDialogVisible:false,
             yamlInfo:"",
-            see:true
+            see:true,
+            resources:'',
+            timeId:null
+        }
+    },
+    watch:{
+        flag(val){
+            if(val){
+               this.timeId = setInterval(()=>{
+                if(this.$route.path != "/helmDetail/detail"){
+                    clearInterval(this.timeId)
+                    this.timeId =null
+                }   
+                this.getHelmResources()
+              },4000)
+            } else {
+                window.clearInterval(this.timeId)
+                this.timeId=null
+            }
         }
     },
     created(){
@@ -117,6 +140,14 @@ export default {
             this.yamlInfo = row
             
         },
+        getJump(row){
+            this.$router.push({
+                name: 'colonyServiceSvc',
+                query: {
+                    clusterId:this.$route.query.clusterId
+                }
+            })
+        },
         // 详情
         getHelmDetail(){
             const param = {
@@ -129,12 +160,8 @@ export default {
             // console.log(res)
             if (res.Response.Error == undefined) {
                 this.info=JSON.parse(res.Response.ResponseBody)
+                this.resources = JSON.parse(res.Response.ResponseBody).info.status.resources
                 console.log(this.info)
-                // console.log(this.info.manifest)
-               
-                // console.log(res)
-                // this.options = res.Response.Clusters
-                // this.value = res.Response.Clusters[0].ClusterId
             } else {
                 let ErrTips = {};
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -145,6 +172,30 @@ export default {
                     duration: 0
                 })
             }
+            })
+        },
+        // 详情
+        getHelmResources(){
+            const param = {
+                ClusterName: this.$route.query.clusterId,
+                Method: "GET",
+                Path: "/apis/platform.tke/v1/clusters/"+this.$route.query.clusterId+"/helm/tiller/v2/releases/"+this.$route.query.helmName+"/status/json",
+                Version: "2018-05-25"
+            }
+            this.axios.post(POINT_REQUEST, param).then(res => {
+            // console.log(res)
+                if (res.Response.Error == undefined) {
+                    this.resources = JSON.parse(res.Response.ResponseBody).info.status.resources
+                } else {
+                    let ErrTips = {};
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                        message: ErrOr[res.Response.Error.Code],
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                    })
+                }
             })
         },
         // 详情2
@@ -180,19 +231,19 @@ export default {
                     type:"PodDisruptionBudget",
                     yaml:conYaml[4]
                 })
-                this.raw =JSON.parse(res.Response.ResponseBody).release
-                let rawDetail = JSON.parse(this.raw).config.raw
-                if(this.raw  == "undefined" || this.raw ==""){
-                    console.log(3)
+                this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
+                console.log(this.raw)
+                // 判断自定义参数列表是否存在
+                if(this.raw  == undefined || this.raw ==""){
                     this.see =false
                 }else{
-                    console.log(4)
                     this.see = true
+                    let rawDetail = JSON.parse(this.raw)
+                    console.log(rawDetail)
                      for(let key in rawDetail){
                         this.count.push("'"+key+"'"+":"+"'"+rawDetail[key]+"'")
                     }
                 }
-               
                 console.log(this.tableDate)
                 // console.log(this.count)
                

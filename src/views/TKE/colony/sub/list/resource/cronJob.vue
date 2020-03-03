@@ -31,7 +31,7 @@
     </div>
 
     <!-- 数据列表展示 -->
-    <div class="tke-card mt10">
+    <div class="tke-card mt10" style="margin-top:12px;">
       <el-table
         :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
         v-loading="loadShow"
@@ -40,7 +40,7 @@
       >
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span class="tke-text-link">{{scope.row.metadata.name}}</span>
+            <span class="tke-text-link" @click="goCronJobDetail(scope.row)">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="执行策略">
@@ -195,6 +195,18 @@ export default {
         if (typeof console !== "undefined") console.log(e, wbout);
       }
       return wbout;
+    },
+
+    //跳转详情
+    goCronJobDetail(rowData) {
+      this.$router.push({
+        name: "cronJobDetail",
+        query: {
+          clusterId: this.clusterId,
+          spaceName: this.nameSpaceName,
+          rowData: rowData
+        }
+      });
     },
 
     // 分页

@@ -93,7 +93,7 @@ export default {
     return {
       seriesLineFlowBot: [], // bot流量折线图
       seriesLineFlowTotal: [], // bot流量折线图
-      xAxisLineFlow: [],
+      xAxisLineFlow: [], // bot流量折线图
       colorLine: ["#006eff", "#FF584C",],
       legendTextLineFlow: ['总请求', 'BOT请求'],
       seriesPieType: [], // bot类型饼图
@@ -120,6 +120,9 @@ export default {
     times: {
       type: Array,
       defaule: () => []
+    },
+    selBtn: {
+      type: Number
     }
   },
   components: {
@@ -179,11 +182,22 @@ export default {
         Domain: this.domain,
       }
       const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
+      // if(moment(this.times[1]).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
+      if(this.selBtn == 1 ||this.selBtn == 2 || this.selBtn == 3 ) {
+        // 当选中时间有当天时，需将bot值控制在当前时间而不是23:59:59
+        params["EndTs"] = moment().utc().valueOf()
+        paramsPeakPoints["FromTime"] = moment(this.times[0]).format("YYYY-MM-DD HH:mm:00")
+      }
+      if (Granularity >= 7) {
+        params["Stride"] = 1440
+      } else if(Granularity > 0 && Granularity < 7) {
+        params["Stride"] = 60
+      }
       this.axios.post(DESCRIBE_PEAK_POINTS, paramsPeakPoints).then(resp => {
         this.generalRespHandler(resp, ({Points}) => {
-          Points.map((v, index) => {
-              if(Granularity < 7) {
-                if( index%2 == 0) {
+          Points.forEach((v, index) => {
+              if(Granularity == 0) {
+                if( (index%2) == 0) {
                   axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
                 } 
               } else {
@@ -197,8 +211,32 @@ export default {
         this.generalRespHandler(resp, ({PointsBot, PointsTotal}) => {
           this.seriesLineFlowBot = PointsBot
           this.seriesLineFlowTotal = PointsTotal
+        }, {}, '',(error) => {
+          this.seriesLineFlowBot = []
+          this.seriesLineFlowTotal = []
         })
       })
+      // const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
+      // this.axios.post(DESCRIBE_PEAK_POINTS, paramsPeakPoints).then(resp => {
+      //   this.generalRespHandler(resp, ({Points}) => {
+      //     Points.map((v, index) => {
+      //         if(Granularity < 7) {
+      //           if( index%2 == 0) {
+      //             axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+      //           } 
+      //         } else {
+      //           axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
+      //         }
+      //       })
+      //       this.xAxisLineFlow = axixArr
+      //   })
+      // })
+      // this.axios.post(DESCRIBE_BOT_STATISTIC_POINTS, params).then((resp) => {
+      //   this.generalRespHandler(resp, ({PointsBot, PointsTotal}) => {
+      //     this.seriesLineFlowBot = PointsBot
+      //     this.seriesLineFlowTotal = PointsTotal
+      //   })
+      // })
     },
     // 获取Bot_V2 Bot类别统计
     getBotType() {

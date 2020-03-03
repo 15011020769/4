@@ -8,6 +8,7 @@
   export default {
     name: "echart-line",
     props: {
+      MetricName: String,
       id: String,
       time: [Array, String, Number],
       opData: Array,
@@ -31,21 +32,6 @@
       }
     },
     methods: {
-      //导出图片
-      exportImg() {
-        var myChart = this.$echarts.init(document.getElementById("id"));
-
-        var i = myChart.getDataURL({
-          type: "png",
-          backgroundColor: "white"
-          // 导出的图片分辨率比例，默认为 1。
-          //pixelRatio: number,
-        });
-        var $a = document.createElement("a");
-        $a.setAttribute("href", i);
-        $a.setAttribute("download", "image.png");
-        $a.click();
-      },
       init() {
         const period = this.period;
         const chartView = this.$refs.chart;
@@ -55,7 +41,7 @@
             enterable: true,
             trigger: "axis",
             axisPointer: {
-              type: "line",
+              type: "cross",
               lineStyle: {
                 width: 1
               },
@@ -65,7 +51,6 @@
             },
 
             formatter(params) {
-              // console.log(params)
               let relVal = `${params[0].name}<br/>`;
               relVal += `粒度：${period}</br>`;
 
@@ -74,11 +59,12 @@
           },
           toolbox: {
             feature: {
-              show: true,
               saveAsImage: {
                 show: true,
+                name: this.MetricName,
                 title: "導出圖片"
               }
+
             }
           },
           legend: {

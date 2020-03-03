@@ -57,8 +57,16 @@
                     <dd>{{$t('CAM.userGroup.title')}}</dd>
                     <dt>
                       <p v-show="scope.row.group.length == 0">-</p>
-                      <p v-show="scope.row.group.length != 0" style="max-width: 170px; word-break: break-all;">
-                        <a v-for="(item,index) in scope.row.group" :key="index" :style="scope.row.group.length < 3 && 'display: block'" v-if="index < 2">
+                      <p
+                        v-show="scope.row.group.length != 0"
+                        style="max-width: 170px; word-break: break-all;"
+                      >
+                        <a
+                          v-for="(item,index) in scope.row.group"
+                          :key="index"
+                          :style="scope.row.group.length < 3 && 'display: block'"
+                          v-if="index < 2"
+                        >
                           <span @click="goToGroup(item)">{{item.GroupName}}</span>
                           <span
                             style="color:black;"
@@ -144,19 +152,28 @@
                       style="color:#000"
                       @click="bindMesg"
                     >{{$t('CAM.userList.userdep')}}</el-button>
-                  </el-dropdown-item> -->
+                  </el-dropdown-item>-->
                   <el-button
                     type="text"
                     style="color:#000;padding-left:20px;"
                     @click="delUserRow(scope.row)"
                   >{{$t('CAM.userList.userDel')}}</el-button>
+                  <!-- <el-dropdown-item>
+                    <el-button
+                      type="text"
+                      style="color:#000"
+                      @click="subscribeNotice(scope.row.Uid)"
+                    >{{$t('CAM.userList.userSubscribeNotice')}}</el-button>
+                  </el-dropdown-item> -->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
         <div class="Right-style pagstyle" style="height:70px;">
-          <span class="pagtotal">已选{{selectData.length}}{{$t("CAM.strip")}},&nbsp;共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+          <span
+            class="pagtotal"
+          >已选{{selectData.length}}{{$t("CAM.strip")}},&nbsp;共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
           <el-pagination
             @size-change="handleSizeChange"
             :page-size="pagesize"
@@ -259,11 +276,11 @@
       width="70%"
       :before-close="deleteRowHandl"
     >
-    <p>確定刪除該用戶嗎？</p>
+      <p>確定刪除該用戶嗎？</p>
       <!-- <p>{{$t('CAM.userList.removeText')}}</p> -->
       <!-- <div class="explainDelet">
         <p>{{$t('CAM.userList.removeContext')}}</p>
-      </div> -->
+      </div>-->
       <!-- <div>
         <template>
           <el-table style="width: 100%" :data="delNewData" :empty-text="$t('CAM.strategy.zwsj')">
@@ -275,7 +292,7 @@
             <el-table-column :label="$t('CAM.userList.userCz')"></el-table-column>
           </el-table>
         </template>
-      </div> -->
+      </div>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogDeleteUser = false">{{$t('CAM.userList.handClose')}}</el-button>
         <el-button type="primary" @click="suerDelUser">{{$t('CAM.userList.suerAdd')}}</el-button>
@@ -296,6 +313,12 @@
     </el-dialog>
 
     <!-- <Subscribe :subscribe="flag" @suerClose="suerClose"  @confirm="confirm" /> -->
+    <NoticeSubscriptionDialog
+      :visible="noticeSubscriptionVisible"
+      :subscriberId="subscriberId"
+      @handleClose="subscriptionClose"
+      @handleConfirm="subscriptionConfirm"
+    ></NoticeSubscriptionDialog>
   </div>
 </template>
 <script>
@@ -312,9 +335,10 @@ import {
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
 import transfer from "../Role/component/transfer";
+import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
 export default {
   components: {
-    Subscribe,
+    NoticeSubscriptionDialog,
     transfer
   },
   data() {
@@ -358,7 +382,9 @@ export default {
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
-      value: "" //更多操作多选值
+      value: "", //更多操作多选值
+      noticeSubscriptionVisible: false,
+      subscriberId: 0
     };
   },
   methods: {
@@ -369,7 +395,7 @@ export default {
         this.userGroupShow = true;
         this.strategyShow = false;
         this.uids = this.selectData.map(user => user.Uid); //调用初始化用户组数据
-        this.userGroups()
+        this.userGroups();
       } else {
         this.$message({
           showClose: true,
@@ -719,21 +745,23 @@ export default {
         })
         .then(() => {
           this.$nextTick(() => {
-            Promise.all(this.uids.map(Uid => {
-              const params = {
-                Version: "2019-01-16",
-                Uid,
-              };
-              return this.axios.post(RELATE_USER, params)
-            })).then(ress => {
-              const groupInfo = this.userArr
+            Promise.all(
+              this.uids.map(Uid => {
+                const params = {
+                  Version: "2019-01-16",
+                  Uid
+                };
+                return this.axios.post(RELATE_USER, params);
+              })
+            ).then(ress => {
+              const groupInfo = this.userArr;
               ress.forEach(res => {
                 if (res.Response.Error === undefined) {
                   groupInfo.forEach(item => {
                     res.Response.GroupInfo.forEach(val => {
                       if (val.GroupId === item.GroupId) {
                         item.status = 1;
-                      } else if (item.status !== 1){
+                      } else if (item.status !== 1) {
                         item.status = 0;
                       }
                     });
@@ -750,11 +778,11 @@ export default {
                     duration: 0
                   });
                 }
-              })
+              });
               this.userGroup = groupInfo;
               this.groupLoading = false;
-            })
-          })
+            });
+          });
         });
     },
     //搜索用户组数据
@@ -878,18 +906,18 @@ export default {
         this.userGroupSelect.forEach(item => {
           addGroupId.push(item);
         });
-        let msg
-        const info = []
+        let msg;
+        const info = [];
         addGroupId.forEach(item => {
           this.uids.forEach(uid => {
             const params = {
-              Version: "2019-01-16",
+              Version: "2019-01-16"
             };
-            params[`Info.0.Uid`] = uid
-            params[`Info.0.GroupId`] = item.GroupId
-            
+            params[`Info.0.Uid`] = uid;
+            params[`Info.0.GroupId`] = item.GroupId;
+
             this.axios.post(ADD_USERTOGROUP, params).then(res => {
-              if (msg) msg.close()
+              if (msg) msg.close();
               if (res.Response.Error === undefined) {
                 msg = this.$message({
                   showClose: true,
@@ -916,8 +944,8 @@ export default {
                 });
               }
             });
-          })
-        })
+          });
+        });
         this.authorization = false;
       }
     },
@@ -950,6 +978,16 @@ export default {
     },
     handleCloses() {
       this.dialogVisible = false;
+    },
+    subscribeNotice(uid) {
+      this.noticeSubscriptionVisible = true;
+      this.subscriberId = uid;
+    },
+    subscriptionClose() {
+      this.noticeSubscriptionVisible = false;
+    },
+    subscriptionConfirm() {
+      this.noticeSubscriptionVisible = false;
     }
   },
   created() {

@@ -23,6 +23,7 @@ module.exports = {
             userText: '关联信息',
             userStrage: '授权',
             userAddGroup: '添加到组',
+            userSubscribeNotice: '订阅消息',
             userdep: '订阅信息',
             userMore: '更多',
             userDel: '删除',

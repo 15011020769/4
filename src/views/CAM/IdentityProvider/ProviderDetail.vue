@@ -50,6 +50,7 @@
             action=""
             :show-file-list="false"
             :on-change="handleChange"
+            :auto-upload="false"
           >
             <el-row type="flex" :gutter="20">
               <el-col>
@@ -62,9 +63,10 @@
           </el-row>
           </el-upload>
         </el-form-item>
+        <p v-if="loading" style="margin-left: 100px;font-size: 14px;">上传中...</p>
       </el-form>
       <el-row slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="updateSAMLMetadata">确 定</el-button>
+        <el-button type="primary" :disabled="loading" @click="updateSAMLMetadata">确 定</el-button>
         <el-button @click="cancelUpload">取 消</el-button>
       </el-row>
     </el-dialog>
@@ -86,15 +88,7 @@ export default {
       addModel: {
         metadataDocument: ""
       },
-      // rules: {
-      //   metadataDocument: [
-      //     {
-      //       required: true,
-      //       message: "請選擇元數據文件",
-      //       trigger: "blur"
-      //     }
-      //   ]
-      // },
+      loading: false,
       dialogVisible: false,
       showEditDescription: false,
       description: '',
@@ -107,10 +101,11 @@ export default {
   methods: {
     cancelUpload() {
       this.addModel.metadataDocument = ''
+      this.metadataDocumentError = ''
       this.dialogVisible = false
     },
     handleChange(file) {
-      console.log(file)
+      this.loading = true
       this.metadataDocumentError = ''
       if (!file.name.endsWith('.xml')) {
         this.metadataDocumentError = '文件类型无效，请上传类型为xml的文件'
@@ -132,6 +127,8 @@ export default {
             } else  {
               this.base64encode = base64encode
             }
+          }).then(() => {
+            this.loading = false
           })
         } catch (err) {
           this.metadataDocumentError = '元數據文檔內容有誤'
