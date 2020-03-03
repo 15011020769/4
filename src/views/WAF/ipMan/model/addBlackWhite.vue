@@ -1,58 +1,52 @@
 <template>
   <div>
-    <div>
-      <el-dialog
-        title="添加黑白IP"
-        :visible.sync="isShow"
-        width="45%"
-        :before-close="handleClose"
-        >
-        <div class="newClear">
-          <div class="newClear newList">
-            <p>{{t('类别', 'WAF.lb')}}</p>
-            <p>
-              <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
-                <el-radio :label="42">{{t('黑名单', 'WAF.hmd')}}</el-radio>
-                <el-radio :label="40">{{t('白名单', 'WAF.bmd')}}</el-radio>
-              </el-radio-group>
-            </p>
-          </div>
-          <div class="newClear newList">
-            <p>IP地址</p>
-            <p>
-              <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
-              <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
-            </p>
-          </div>
-          <div class="newClear newList">
-            <p>截止日期<i class="required">*</i></p>
-            <p>
-              <el-date-picker
-                class="datatime"
-                v-model="datatime"
-                type="date"
-                format="yyyy-MM-dd HH:mm:ss"
-              >
-              </el-date-picker>
-              <el-time-picker
-                class="datatime"
-                v-model="timeValue"
-              >
-              </el-time-picker>
-            </p>
-          </div>
-          <div class="newClear newList">
-            <p>{{t('备注', 'WAF.bz')}}</p>
-            <p>
-              <el-input class="des" v-model="des"></el-input>
-            </p>
-          </div>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button :disabled="ipTest" type="primary" @click="addSure">添加</el-button>
-          <el-button @click="handleClose">取 消</el-button>
-        </span>
-      </el-dialog>
+    <div class="newClear">
+      <div class="newClear newList">
+        <p>{{t('类别', 'WAF.lb')}}</p>
+        <p>
+          <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
+            <el-radio :label="42">{{t('黑名单', 'WAF.hmd')}}</el-radio>
+            <el-radio :label="40">{{t('白名单', 'WAF.bmd')}}</el-radio>
+          </el-radio-group>
+        </p>
+      </div>
+      <div class="newClear newList">
+        <p>IP地址</p>
+        <p>
+          <el-input :disabled="ipInfo.type === 'ipStatus' || ipInfo.type === 'ipList'" type="textarea" v-model="ipAddress" />
+          <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
+        </p>
+      </div>
+      <div class="newClear newList">
+        <p>截止日期<i class="required">*</i></p>
+        <p>
+          <el-date-picker
+            class="datatime"
+            v-model="datatime"
+            type="date"
+            format="yyyy-MM-dd HH:mm:ss"
+          >
+          </el-date-picker>
+          <el-time-picker
+            class="datatime"
+            v-model="timeValue"
+          >
+          </el-time-picker>
+        </p>
+      </div>
+      <div class="newClear newList">
+        <p>{{t('备注', 'WAF.bz')}}</p>
+        <p>
+          <el-input class="des" v-model="des"></el-input>
+        </p>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <el-button :disabled="ipTest || loading" type="primary" @click="addSure">
+        <template v-if="ipInfo.bj">保存</template>
+        <template v-else>添加</template>
+      </el-button>
+      <el-button @click="handleClose">取 消</el-button>
     </div>
   </div>
 </template>
@@ -60,6 +54,7 @@
 import { UPSERTIP_ACCESS_CONTROL } from '@/constants'
 import { flatObj, isValidIPAddressNew } from '@/utils'
 import moment from 'moment'
+import { COMMON_ERROR } from '../../constants'
 export default {
   props:{
     isShow:{
@@ -70,6 +65,7 @@ export default {
   },
   data(){
     return{
+      loading: false,
       blackWhiteCh: 42,//黑白名单
       ipAddress:'',//ip地址
       datatime:'',//选择日期
@@ -94,27 +90,21 @@ export default {
     },
     ipInfo: {
       handler(n) {
-        this.ipAddress = n.Ip || n.ip
-        this.blackWhiteCh = n.Action || 42
-        this.des = n.Note || n.Name
-        this.datatime = n.ValidTs ? moment(new Date(n.ValidTs*1000)) : moment().add(7, 'd')
-        this.timeValue = n.ValidTs && moment(new Date(n.ValidTs*1000)).format('h:mm') || moment().endOf().format('YYYY-MM-DD 23:59:59')
-        if (n.type === "ipStatus") {
-          this.datatime = n.valid_ts ? moment(new Date(n.valid_ts*1000)) : ''
-          this.timeValue = n.ts_version && moment(new Date(n.ts_version*1000)).format('h:mm')
-        }
+        Object.keys(n).forEach(key => {
+          this[key] = n[key]
+        })
       },
       immediate: true
     }
   },
   methods:{
-    //关闭按钮
-    handleClose(){
-      this.$emit("closeModel",false)
+    handleClose() {
+      this.$emit('update:isShow', false)
     },
     //确定按钮
     addSure(){
       if (this.ipAddress && this.ipAddress.trim()) {
+        this.loading = true
         const param = {
           Version: '2018-01-25',
           Domain: this.ipInfo.Domain,
@@ -132,8 +122,11 @@ export default {
         this.axios.post(UPSERTIP_ACCESS_CONTROL, param)
         .then(resp => {
           this.generalRespHandler(resp, () => {
-            this.$emit("closeModel", 'refresh')
-          })
+            this.$emit("success")
+          }, COMMON_ERROR, `${this.ipInfo.bj ? this.t('编辑', 'WAF.bj') : '添加'}成功`)
+        })
+        .then(() => {
+          this.loading = false
         })
       } else {
         this.ipTest = true

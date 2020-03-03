@@ -253,7 +253,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-
+.tke-grid >>> .el-input__inner,
+.tke-grid >>> .el-button {
+  border-radius: 0;
+}
 </style>
 

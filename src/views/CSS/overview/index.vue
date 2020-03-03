@@ -2,16 +2,6 @@
   <div class="overview-wrap">
     <HeaderCom :title="$t('CSS.overview.0')"/>
     <div class="overview-main">
-      <div class="explain">
-        <p>
-          {{$t('CSS.overview.1')}}
-          <a href="#">{{$t('CSS.overview.2')}}</a>
-        </p>
-        <p>
-          {{$t('CSS.overview.3')}}
-          <a href="#">{{$t('CSS.overview.4')}} >>>></a>
-        </p>
-      </div>
       <div class="main-box">
         <h3>{{$t('CSS.overview.5')}}</h3>
         <div class="overview">

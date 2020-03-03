@@ -21,12 +21,12 @@
         </div>
         <!-- <div class="timeCon newClear"> -->
         <div class="timeCon" style="display: flex">
-          <div>
+          <div style="margin-right: 20px;">
             <span class="floatLeft">{{t('记录创建时间', 'WAF.jlcjsj')}}：</span>
             <el-button-group class="floatLeft">
-              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('hour')">最近1小时</el-button>
-              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('day')">最近1天</el-button>
-              <el-button :disabled="disabledIp" size="mini" @click="onTimeClick('week')">最近7天</el-button>
+              <el-button :disabled="disabledIp" :type="createTimeType === 5 ? 'primary' : ''" size="mini" @click="onTimeClick(5)">最近5{{t('分钟', 'WAF.fz')}}</el-button>
+              <el-button :disabled="disabledIp" :type="createTimeType === 10 ? 'primary' : ''"  size="mini" @click="onTimeClick(10)">最近10{{t('分钟', 'WAF.fz')}}</el-button>
+              <el-button :disabled="disabledIp" :type="createTimeType === 30 ? 'primary' : ''" size="mini" @click="onTimeClick(30)">最近30{{t('分钟', 'WAF.fz')}}</el-button>
             </el-button-group>
             <el-date-picker style="border-left: none;" size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp" />
           </div>
@@ -55,7 +55,10 @@
           <el-button type="primary" size="small" :disabled="tableDataBegin.length === 0">{{t('导出全部筛选结果', 'WAF.dcqbsxjg')}}</el-button>
         </el-row>
         <el-card>
-          <el-table ref="multipleTable" :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)" tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
+          <el-table
+            ref="multipleTable"
+            :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
             <el-table-column
               type="selection"
               class-name="hide"
@@ -64,11 +67,18 @@
             <el-table-column prop="num" :label="t('序号', 'WAF.xh')">
               <template slot-scope="scope">{{ scope.$index+1}}</template>
             </el-table-column>
-            <!-- <el-table-column prop="resourse" label="来源"></el-table-column> -->
-            <el-table-column prop="category" :label="t('类别', 'WAF.lb')"></el-table-column>
+            <el-table-column prop="category" :label="t('类别', 'WAF.lb')">
+              <template slot-scope="scope">
+                {{scope.row.category === 'cc' ? 'CC' : scope.row.category}}
+              </template>
+            </el-table-column>
             <el-table-column prop="ip" label="IP地址"></el-table-column>
             <el-table-column prop="name" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
-            <el-table-column prop="action" :label="t('动作', 'WAF.dz')"></el-table-column>
+            <el-table-column prop="action" :label="t('动作', 'WAF.dz')">
+              <template slot-scope="scope">
+                {{ALL_ACTION[scope.row.action]}}
+              </template>
+            </el-table-column>
             <el-table-column prop="ts_version">
               <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('ts_version')">
                 {{t('创建时间', 'WAF.cjsj')}}
@@ -76,10 +86,6 @@
                 <i class="el-icon-caret-bottom" v-if="sort === 'ts_version:-1'"></i>
                 <i class="el-icon-d-caret" v-if="sort.includes('valid_ts')"></i>
               </el-button>
-              <!-- <span slot="header">
-                {{t('创建时间', 'WAF.cjsj')}}
-                <i @click="() => { onSearch('Cts'); ctsFlag = !ctsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span> -->
               <template slot-scope="scope">
                 {{scope.row.ts_version | currentTimeFilter}}
               </template>
@@ -91,41 +97,28 @@
                 <i class="el-icon-caret-bottom" v-if="sort === 'valid_ts:-1'"></i>
                 <i class="el-icon-d-caret" v-if="sort.includes('ts_version')"></i>
               </el-button>
-              <!-- <span slot="header">
-                有效截止{{t('时间', 'WAF.time')}}
-                <i @click="() => { onSearch('Vts'); vtsFlag = !vtsFlag }" style="cursor: pointer" class="el-icon-d-caret" />
-              </span> -->
               <template slot-scope="scope">
                 {{scope.row.valid_ts | currentTimeFilter}}
               </template>
             </el-table-column>
             <el-table-column prop="action" label="操作">
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="mini">编辑</el-button> -->
-                <el-button @click="addBW(40, scope)" type="text" size="mini">加白</el-button>
                 <el-button @click="addBW(42, scope)" type="text" size="mini">加黑</el-button>
-                <!-- <el-popover
-                  placement="bottom"
-                  width="220"
-                  v-model="visible">
-                  <div class="deleteCon" style="text-align:center;">
-                    <h1 style="font-size:14px;font-weight: 600;margin-bottom:16px;">确认删除该记录？</h1>
-                    <p style="font-size:12px;color:#333;margin-bottom:16px;">删除IP：{{scope.row.ipAddress}}</p>
-                  </div>
-                  <div style="text-align: right; margin: 0">
-                    <el-button type="primary" size="mini" @click="visible = false">删除</el-button>
-                    <el-button size="mini" type="text" @click="visible = false">取消</el-button>
-                  </div>
-                  <el-button slot="reference" size="mini" type="text" style="margin-left:10px;">删除</el-button>
-                </el-popover> -->
+                <el-button @click="addBW(40, scope)" type="text" size="mini">加白</el-button>
               </template>
             </el-table-column>
           </el-table>
           <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
         </el-card>
     </div>
-    <!-- <addBWmodel :isShow="addBWmodel"/> -->
-    <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo, { Domain: ipSearch, type: 'ipStatus' })" />
+    <el-dialog
+      title="添加黑白IP"
+      :visible.sync="addBWmodel"
+      width="45%"
+      destroy-on-close
+    >
+      <addBlackWhite @success="closeModel" :isShow.sync="addBWmodel" :ipInfo="ipInfo" />
+    </el-dialog>
   </div>
 </template>
 
@@ -133,34 +126,27 @@
 import addBWmodel from './model/addBWmodel'
 import addBlackWhite from './model/addBlackWhite'
 import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, DESCRIBEIP_HITITEMS } from '@/constants'
-import { IP_STATUS_TYPE_ARR } from '../constants'
+import { IP_STATUS_TYPE_ARR, ALL_ACTION, COMMON_ERROR } from '../constants'
 import moment from 'moment'
-import { COMMON_ERROR } from '../constants'
 
 export default {
   data() {
     return {
+      ALL_ACTION,
       ipSearch: "", //ip查询下拉
       ipSearchOptions: [],
       IP_STATUS_TYPE_ARR, //类型下拉选项
       tipShow: true, //提示文字
       resouseC: "", //来源
-      typeCheck: "BOT", //类别
+      typeCheck: "CC", //类别
       iptIP: "", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
-      timeValue1: "", //创建时间
+      timeValue1: [moment().subtract(5, 'm'), moment()], //创建时间
       timeOut: false, //有效截止日期
-      timeValue2: "", //有效截止日期
+      timeValue2: [moment(), moment().add(8, 'd')], //有效截止日期
       multipleSelection: [], //tableCheck
-      allData: [{
-        resourse: '自定义',
-        ipAddress: '10.1.1.23',
-        type: '黑名单',
-        updata: '2019-12-25 13:52:03',
-        stopTime: '2020-01-01 23:59:59',
-        descrip: '123'
-      }],//自定义数据
+      createTimeType: 5,
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
       currentPage: 1,//当前页
@@ -168,7 +154,7 @@ export default {
       totalItems: 0,//总长度
       filterTableDataEnd: [],
       flag: false,//定义一个开关
-      loadShow: false,//加载
+      loadShow: true,//加载
       visible: false,//删除弹框
       addBWmodel: false,//添加黑白IP弹框
       ipTest: false, // ip输入格式是否正确
@@ -183,10 +169,19 @@ export default {
   components: {
     addBlackWhite
   },
+  watch: {
+    iptIP(n) {
+      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
+      this.ipTest = !pattern.test(n)
+      if (n) {
+        this.disabledIp = true
+      } else {
+        this.disabledIp = false
+      }
+    }
+  },
   mounted() {
-    // this.getData();
     this.getDescribeHost()
-    this.onSearch()
   },
   methods: {
     setSort(key) {
@@ -236,17 +231,16 @@ export default {
         } else {
           this.ipSearchOptions = data.Response.HostList
           this.ipSearch = this.ipSearchOptions[0].Domain
+          this.onSearch()
         }
       })
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.handleCurrentChange(this.currentPage);
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
       //需要判断是否检索
       if (!this.flag) {
@@ -266,18 +260,26 @@ export default {
       }
     },
     //添加黑白名单按钮
-    addBW(flag, scope) {
-      this.ipInfo = scope.row
-      this.ipInfo.ActionType = flag
+    addBW(flag, { row }) {
+      this.ipInfo = {
+        Domain: this.ipSearch,
+        type: 'ipStatus',
+        ipAddress: row.ip,
+        blackWhiteCh: flag,
+        des: row.name,
+        datatime: moment(),
+        timeValue: moment().format('YYYY-MM-DD 23:59:59')
+      }
       this.addBWmodel = true;
     },
 
     // 快捷时间查询
     onTimeClick(temp) {
+      this.createTimeType = temp
       const map = {
-        hour: [moment().subtract(1, 'hour'), moment(new Date())],
-        day: [moment().subtract(1, 'day'), moment(new Date())],
-        week: [moment().subtract(7, 'day'), moment(new Date())]
+        5: [moment().subtract(5, 'm'), moment()],
+        10: [moment().subtract(10, 'm'), moment()],
+        30: [moment().subtract(30, 'm'), moment()]
       }
 
       this.timeValue1 = map[temp]
@@ -293,7 +295,7 @@ export default {
         Skip: 0,
         Ip: this.iptIP || undefined,
         CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
-        CtsMax: this.timeValue1 ? moment(new Date(this.timeValue1[1])).format('x') : undefined,
+        CtsMax: moment(moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')).format('x'),
         Category: this.typeCheck.toLowerCase(),
         Name: this.triggerStrategy || undefined,
         Sort: this.sort,
@@ -327,40 +329,13 @@ export default {
           }
           this.loadShow = false;
         })
-        // this.tableDataBegin = this.allData;
-        // 将数据的长度赋值给totalItems
-        // this.totalItems = this.tableDataBegin.length;
-        // if (this.totalItems > this.pageSize) {
-        //   for (let index = 0; index < this.pageSize; index++) {
-        //     this.tableDataEnd.push(this.tableDataBegin[index]);
-        //   }
-        // } else {
-        //   this.tableDataEnd = this.tableDataBegin;
-        // }
-        // this.loadShow=false;
-        // })
       })
     },
 
     //关闭
     closeModel(isShow) {
-      this.addBWmodel = false;
-      this.ipInfo = {}
-      if (isShow === 'refresh') {
-        this.onSearch()
-      }
+      this.addBWmodel = false
     },
-  },
-  watch: {
-    iptIP(n) {
-      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
-      this.ipTest = !pattern.test(n)
-      if (n) {
-        this.disabledIp = true
-      } else {
-        this.disabledIp = false
-      }
-    }
   },
 
   filters: {
@@ -457,8 +432,7 @@ export default {
       float: left;
     }
     .timePick {
-      width: 320px;
-      margin-right: 100px;
+      width: 345px;
       ::v-deep .el-range-separator {
         width: 7%;
       }

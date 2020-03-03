@@ -31,7 +31,7 @@
     </div>
 
     <!-- 数据列表展示 -->
-    <div class="tke-card mt10">
+    <div class="tke-card mt10" style="margin-top:12px;">
       <el-table
         :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
         v-loading="loadShow"

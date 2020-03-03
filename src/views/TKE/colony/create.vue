@@ -72,7 +72,13 @@
                 @focus="ClusterNameFocus"
                 placeholder="请输入集群名称，不超过60个字符"
               ></el-input>
-              <i class="el-icon-warning-outline" v-if="colony.nameWran"></i>
+              <el-tooltip
+                effect="dark"
+                content="集群名称不能为空"
+                placement="right"
+                v-if="colony.nameWran"
+                ><i class="el-icon-warning-outline ml5"></i>
+              </el-tooltip>
             </el-form-item>
             <el-form-item label="新增资源所属项目">
               <el-select
@@ -101,6 +107,7 @@
                 class="w200"
                 v-model="colony.kuValue"
                 placeholder="请选择"
+                @change="KubernetesChange"
               >
                 <el-option
                   v-for="item in colony.kuOptions"
@@ -114,11 +121,49 @@
             <el-form-item label="运行时组件">
               <el-radio-group v-model="colony.assemblyRadio" size="small">
                 <el-radio-button label="docker">docker</el-radio-button>
-                <el-radio-button label="containerd"
+                <el-radio-button label="containerd" v-if="!colony.assemblyDis"
                   >containerd (beta)</el-radio-button
                 >
+                <el-tooltip
+                  effect="dark"
+                  content="仅支持 Kubernetes 1.12.x 及以上版本"
+                  placement="top"
+                  v-if="colony.assemblyDis"
+                >
+                  <el-radio-button label="containerd" disabled
+                    >containerd (beta)</el-radio-button
+                  >
+                </el-tooltip>
               </el-radio-group>
-              <a href="#" class="ml5">如何选择</a>
+              <el-popover placement="right" width="450" trigger="click">
+                <div class="how-choose">
+                  <h3>如何选择</h3>
+                  <p>TKE 支持用户选择 containerd 和 docker 作为运行时组件：</p>
+                  <p>
+                    containerd 调用链更短，组件更少，更稳定，占用节点资源更少。
+                    建议选择 containerd。
+                  </p>
+                  <p>以下情况，请选择 docker 作为运行时组件：</p>
+                  <ul>
+                    <li><span></span>如需使用 docker in docker</li>
+                    <li>
+                      <span></span>如需在 TKE 节点使用 docker
+                      build/push/save/load 等命令
+                    </li>
+                    <li><span></span>如需调用 docker API</li>
+                    <li><span></span>如需 docker compose 或 docker swarm</li>
+                    <li><span></span>如需在集群内创建GPU应用</li>
+                    <li><span></span>如需使用TKE日志采集功能</li>
+                  </ul>
+                  <p class="hover-target">
+                    <a href="javascript:;" class="ml5" slot="reference"
+                      >查看详情</a
+                    >
+                  </p>
+                </div>
+                <a href="javascript:;" class="ml5" slot="reference">如何选择</a>
+              </el-popover>
+
               <p v-if="colony.assemblyRadio == 'docker'">
                 dockerd是社区版运行时组件，支持docker api
               </p>
@@ -136,7 +181,7 @@
               <el-select
                 class="w200"
                 v-model="colony.networkValue"
-                placeholder="请选择"
+                placeholder="请选择集群网络"
                 @change="NetWork"
               >
                 <el-option
@@ -147,7 +192,10 @@
                 >
                 </el-option>
               </el-select>
-              <i class="el-icon-refresh ml5"></i>
+              <i
+                class="el-icon-refresh ml5"
+                @click="NetworkRefresh(colony.networkValue)"
+              ></i>
               <span class="ml5 text-gray">CIDR: {{ colony.CidrBlock }}</span>
               <p>
                 如现有的网络不合适，您可以去控制台<a href="#">新建私有网络</a>
@@ -191,25 +239,29 @@
                       effect="dark"
                       :content="colony.CIDRValueContent_2"
                       placement="bottom"
+                      :disabled="colony.CIDRTipsDis_2"
                     >
                       <el-input
                         class="w56"
                         v-model="colony.CIDRValue_2"
                         :disabled="colony.CIDRValueDis_2"
                         @input="NetWork()"
+                        @blur="CIDR2(colony.CIDRValue_2)"
                       ></el-input>
                     </el-tooltip>
                     .
                     <el-tooltip
                       effect="dark"
-                      content="范围：0, 32, ... , 224"
+                      :content="colony.CIDRValueContent_3"
                       placement="bottom"
+                      :disabled="colony.CIDRTipsDis_3"
                     >
                       <el-input
                         class="w56"
                         :disabled="colony.CIDRValueDis_3"
                         v-model="colony.CIDRValue_3"
                         @input="NetWork()"
+                        @blur="CIDR3(colony.CIDRValue_3)"
                       ></el-input>
                     </el-tooltip>
                     .
@@ -1705,6 +1757,7 @@
             size="small"
             type="primary"
             v-if="colonySecond.completeBtn"
+            @click="SecondCreateFinish"
           >
             完成
           </el-button>
@@ -1743,6 +1796,16 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
+          <el-form-item label="数据盘挂载" v-if="!colonySecond.sourceShow">
+            <el-checkbox v-model="colonyThird.containerChecked"
+              >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
+            >
+            <el-input
+              v-model="colonyThird.containerInput"
+              placeholder="请输入内容"
+              v-if="colonyThird.containerChecked"
+            ></el-input>
+          </el-form-item>
           <el-form-item label="容器目录">
             <el-checkbox v-model="colonyThird.containerChecked"
               >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
@@ -1919,6 +1982,16 @@
             {{ dispose.OSvalue }}
           </el-form-item>
           <el-form-item
+            label="Node节点"
+            v-if="!colonySecond.sourceShow"
+            class="tke-fourth-node-text"
+          >
+            <p v-for="(item, index) in rightList" :key="index">
+              <a href="javascript:;">{{ item.InstanceId }}</a
+              ><span v-if="rightList.length > 1">,</span>
+            </p>
+          </el-form-item>
+          <el-form-item
             label="Master&Etcd节点"
             class="tke-fourth-node"
             style="padding:0px;border:0px;"
@@ -1945,7 +2018,11 @@
               <p>数量:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
-          <el-form-item label="Node节点" class="tke-fourth-node">
+          <el-form-item
+            label="Node节点"
+            class="tke-fourth-node"
+            v-if="colonySecond.sourceShow && colonySecond.worker != 2"
+          >
             <div
               v-for="(item, index) in colonySecond.workerOneList"
               :key="index"
@@ -1967,7 +2044,10 @@
               <p>数量:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
-          <el-form-item label="总计费用">
+          <el-form-item
+            label="总计费用"
+            v-if="colonySecond.sourceShow && colonySecond.worker != 2"
+          >
             <div class="tke-second-cost">
               <span class="tke-second-cost-num">{{
                 colonySecond.allocationCost
@@ -2043,6 +2123,7 @@ export default {
         kuOptions: [],
         kuValue: "",
         assemblyRadio: "docker",
+        assemblyDis: false,
         cityRadio: "tb",
         networkOptions: [],
         networkValue: "",
@@ -2070,15 +2151,10 @@ export default {
         CIDRValueDis_3: true,
         CIDRValueDis_4: true,
         CIDRValueContent_2: "范围：16, 18, ... , 31",
+        CIDRValueContent_3: "",
+        CIDRTipsDis_2: false,
+        CIDRTipsDis_3: true,
         CIDROptions_5: [
-          {
-            value: "14",
-            label: "14"
-          },
-          {
-            value: "15",
-            label: "15"
-          },
           {
             value: "16",
             label: "16"
@@ -2515,10 +2591,7 @@ export default {
     // HeadCom,
     // SEARCH
   },
-  created() {
-    // --------------------------------  第一步 -----------------------------
-    this.colony.CIDROptions_5.splice(0, 2);
-  },
+  created() {},
   mounted() {
     // --------------------------------  第一步 -----------------------------
     // 新增资源所属项目
@@ -2586,6 +2659,7 @@ export default {
       this.axios.post(TKE_NEW_EDITION, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colony.kuOptions = res.Response.VersionInstanceSet;
+          console.log(this.colony.kuOptions);
           this.colony.kuValue =
             res.Response.VersionInstanceSet[
               this.colony.kuOptions.length - 1
@@ -2601,6 +2675,16 @@ export default {
           });
         }
       });
+    },
+    KubernetesChange(val) {
+      let _valOne = Number(val.split(".")[0]);
+      let _valTwo = Number(val.split(".")[1]);
+      console.log(_valOne, _valTwo);
+      if (_valOne > 0 && _valTwo > 11) {
+        this.colony.assemblyDis = false;
+      } else {
+        this.colony.assemblyDis = true;
+      }
     },
     // 集群网络
     ClusterNetworkData() {
@@ -2626,6 +2710,12 @@ export default {
         }
       });
     },
+    NetworkRefresh(val) {
+      this.colony.networkValue = "";
+      setTimeout(() => {
+        this.colony.networkValue = val;
+      }, 500);
+    },
     NetWork(val) {
       if (val) {
         let array = this.colony.networkOptions;
@@ -2635,7 +2725,6 @@ export default {
           }
         }
       }
-
       var _cidr =
         this.colony.CIDRValue_1 +
         "." +
@@ -2661,21 +2750,67 @@ export default {
     // 容器网络 CID
     CIDchange_1(val) {
       if (val === "192") {
-        this.colony.CIDRValueDis_2 = true;
         this.colony.CIDRValue_2 = "168";
+        this.colony.CIDRValueDis_2 = true;
+        this.colony.CIDRTipsDis_2 = true;
+        this.colony.CIDRValueDis_3 = true;
+        this.colony.CIDRTipsDis_3 = true;
+        this.colony.CIDROptions_5 = [];
+        this.colony.CIDROptions_5.push(
+          {
+            value: "16",
+            label: "16"
+          },
+          {
+            value: "17",
+            label: "17"
+          },
+          {
+            value: "18",
+            label: "18"
+          },
+          {
+            value: "19",
+            label: "19"
+          }
+        );
         this.colony.CIDRValue_5 = "16";
-        this.colony.CIDROptions_5.splice(0, 2);
       } else if (val === "172") {
-        this.colony.CIDRValueDis_2 = false;
         this.colony.CIDRValue_2 = "16";
+        this.colony.CIDRValueDis_2 = false;
+        this.colony.CIDRTipsDis_2 = false;
+        this.colony.CIDRValueContent_2 = "范围：16, 18, ... , 31";
+        this.colony.CIDRValue_3 = "0";
+        this.colony.CIDRValueDis_3 = true;
+        this.colony.CIDRTipsDis_3 = true;
         this.colony.CIDRValue_5 = "16";
-        this.colony.CIDROptions_5.splice(0, 2);
+        this.colony.CIDROptions_5 = [];
+        this.colony.CIDROptions_5.push(
+          {
+            value: "16",
+            label: "16"
+          },
+          {
+            value: "17",
+            label: "17"
+          },
+          {
+            value: "18",
+            label: "18"
+          },
+          {
+            value: "19",
+            label: "19"
+          }
+        );
+        this.colony.CIDRValue_5 = "16";
       } else if (val === "10") {
         this.colony.CIDRValueDis_2 = false;
         this.colony.CIDRValue_2 = "0";
         this.colony.CIDRValue_5 = "14";
         this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
-        this.colony.CIDROptions_5.unshift(
+        this.colony.CIDROptions_5 = [];
+        this.colony.CIDROptions_5.push(
           {
             value: "14",
             label: "14"
@@ -2683,20 +2818,146 @@ export default {
           {
             value: "15",
             label: "15"
+          },
+          {
+            value: "16",
+            label: "16"
+          },
+          {
+            value: "17",
+            label: "17"
+          },
+          {
+            value: "18",
+            label: "18"
+          },
+          {
+            value: "19",
+            label: "19"
           }
         );
+        this.colony.CIDRValue_5 = "14";
       }
       this.NetWork();
     },
+    CIDR2(val) {
+      if (
+        this.colony.CIDRValue_1 == "172" &&
+        Number(this.colony.CIDRValue_5) >= 16
+      ) {
+        if (Number(val) < 18) {
+          this.colony.CIDRValue_2 = 16;
+        }
+        if (Number(val) > 31) {
+          this.colony.CIDRValue_2 = 31;
+        }
+      }
+      if (this.colony.CIDRValue_1 == "10") {
+        if (this.colony.CIDRValue_5 == "14") {
+          if (Number(val) < 3) {
+            this.colony.CIDRValue_2 = 0;
+          } else if (Number(val) > 251) {
+            this.colony.CIDRValue_2 = 252;
+          } else {
+            if (Number(val) % 4 == 0) {
+              this.colony.CIDRValue_2 = val;
+            } else {
+              let num = Math.floor(Number(val) / 4);
+              this.colony.CIDRValue_2 = 4 * num;
+            }
+          }
+        }
+      }
+    },
+    CIDR3(val) {
+      if (this.colony.CIDRValue_5 == 17) {
+        if (Number(val) < 65) {
+          this.colony.CIDRValue_3 = 0;
+        } else {
+          this.colony.CIDRValue_3 = 128;
+        }
+      }
+      if (this.colony.CIDRValue_5 == 18) {
+        if (Number(val) < 33) {
+          this.colony.CIDRValue_3 = 0;
+        } else if (Number(val) < 97) {
+          this.colony.CIDRValue_3 = 64;
+        } else if (Number(val) < 161) {
+          this.colony.CIDRValue_3 = 128;
+        } else {
+          this.colony.CIDRValue_3 = 192;
+        }
+      }
+      if (this.colony.CIDRValue_5 == 19) {
+        if (Number(this.colony.CIDRValue_3) < 17) {
+          this.colony.CIDRValue_3 = 0;
+        } else if (Number(this.colony.CIDRValue_3) < 49) {
+          this.colony.CIDRValue_3 = 32;
+        } else if (Number(this.colony.CIDRValue_3) < 81) {
+          this.colony.CIDRValue_3 = 64;
+        } else if (Number(this.colony.CIDRValue_3) < 113) {
+          this.colony.CIDRValue_3 = 96;
+        } else if (Number(this.colony.CIDRValue_3) < 145) {
+          this.colony.CIDRValue_3 = 128;
+        } else if (Number(this.colony.CIDRValue_3) < 177) {
+          this.colony.CIDRValue_3 = 160;
+        } else if (Number(this.colony.CIDRValue_3) < 209) {
+          this.colony.CIDRValue_3 = 192;
+        } else {
+          this.colony.CIDRValue_3 = 224;
+        }
+      }
+    },
     CIDchange_5(val) {
-      if (val === "17") {
-        this.colony.CIDRValueDis_2 = false;
-      } else if (val === "18") {
-        this.colony.CIDRValueDis_2 = false;
-      } else if (val === "19") {
-        this.colony.CIDRValueDis_2 = false;
-      } else {
-        this.colony.CIDRValueDis_2 = true;
+      if (this.colony.CIDRValue_1 == "192") {
+        this.colony.CIDRValueDis_3 = false;
+        this.colony.CIDRTipsDis_3 = false;
+        if (val == 17) {
+          this.colony.CIDRValueContent_3 = "范围：0, 128";
+        } else if (val == 18) {
+          this.colony.CIDRValueContent_3 = "范围：0, 64, 128, 192";
+        } else {
+          this.colony.CIDRValueContent_3 = "范围：0, 32, ... , 224";
+        }
+      }
+      if (this.colony.CIDRValue_1 == "10") {
+        if (val == "14") {
+          this.colony.CIDRValue_2 = 0;
+          this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
+          if (Number(val) < 3) {
+            this.colony.CIDRValue_2 = 0;
+          } else if (Number(val) > 251) {
+            this.colony.CIDRValue_2 = 252;
+          } else {
+            if (Number(val) % 4 == 0) {
+              this.colony.CIDRValue_2 = val;
+            } else {
+              let num = Math.floor(Number(val) / 4);
+              this.colony.CIDRValue_2 = 4 * num;
+            }
+          }
+        } else if (val == 15) {
+          this.colony.CIDRValue_2 = 0;
+          this.colony.CIDRValueContent_2 = "范围：0, 2, ... , 254";
+          if (Number(val) < 2) {
+            this.colony.CIDRValue_2 = 0;
+          } else if (Number(val) > 253) {
+            this.colony.CIDRValue_2 = 254;
+          } else {
+            if (Number(val) % 2 == 0) {
+              this.colony.CIDRValue_2 = val;
+            } else {
+              let num = Math.floor(Number(val) / 2);
+              this.colony.CIDRValue_2 = 2 * num;
+            }
+          }
+        } else if (Number(val) >= 16) {
+          this.colony.CIDRValue_2 = 0;
+          this.colony.CIDRValueContent_2 = "范围：0, 1, ... , 255";
+          if (Number(val) > 254) {
+            this.colony.CIDRValue_2 = 255;
+          }
+        }
       }
       this.NetWork();
     },
@@ -2771,17 +3032,20 @@ export default {
         this.ChildNodes();
         // 机型 选择机型
         this.getDescribeZoneInstanceConfigInfos(0, 1);
-      } else {
+      }
+      if (this.colony.name === "") {
         this.colony.nameWran = true;
       }
     },
     // -------------------------------------- 第二步 ---------------------------------
     // 节点来源
     NodeSource(val) {
+      // colonySecond.source
       this.rightList = [];
       if (val == "2") {
-        this.colonySecond.workerTips = true;
+        this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
+        this.colonySecond.sourceShow = false;
         this.colonySecond.secondNextShow = false;
       } else {
         this.colonySecond.worker = 1;
@@ -2848,6 +3112,7 @@ export default {
     // left 列表
     handleSelectionChange(val) {
       this.rightList = val;
+      console.log(this.rightList);
       this.rightListVal = "已选择 " + this.rightList.length + " 台";
       this.IfStatus();
     },
@@ -2889,7 +3154,10 @@ export default {
       let params = {
         Version: "2018-05-25"
       };
-      if (this.selectList == "" && this.searchInput == "") {
+      if (
+        (this.selectList == "" && this.searchInput == "") ||
+        (this.selectList != "" && this.searchInput == "")
+      ) {
         params["ClusterId"] = "";
         params["Filters.0.Name"] = "vpc-id";
         params["Filters.0.Values.0"] = this.colony.networkValue;
@@ -3065,9 +3333,6 @@ export default {
       this.colonySecond.secondNextShow = false;
       if (val == "2") {
         this.colonySecond.workerShow = true;
-        if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
-          this.TotalCost();
-        }
       } else {
         this.colonySecond.workerShow = false;
         this.colonySecond.workerTips = false;
@@ -3089,6 +3354,7 @@ export default {
         this.colonySecond.boxShow = true;
         this.colonySecond.completeBtn = false;
       }
+      this.TotalCost();
     },
     // 计费模式
     SecondCharging(val) {
@@ -3553,8 +3819,9 @@ export default {
       for (var i in _workerOneList) {
         let param = {
           Version: "2017-03-12",
-          ImageId: this.colony.OSvalue,
-          "Placement.ProjectId": this.colony.projectValue,
+          // ImageId: this.colony.OSvalue,
+          ImageId: "img-6yudrskj",
+          "Placement.ProjectId": Number(this.colony.projectValue),
           "Placement.Zone": "ap-taipei-1",
           // 机型
           InstanceChargeType: _workerOneList[i].InstanceChargeType,
@@ -3633,95 +3900,96 @@ export default {
           }
         });
       }
-
-      var _masterOneList = this.colonySecond.masterOneList;
-      this.costAll2 = [];
-      for (var i in _masterOneList) {
-        let params = {
-          Version: "2017-03-12",
-          ImageId: this.colony.OSvalue,
-          "Placement.ProjectId": this.colony.projectValue,
-          "Placement.Zone": "ap-taipei-1",
-          // 机型
-          InstanceChargeType: _masterOneList[i].InstanceChargeType,
-          InstanceType: _masterOneList[i].modelName,
-          // 数量
-          InstanceCount: 1,
-          // 系统盘
-          "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
-          "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
-          PurchaseSource: "MC"
-        };
-        // 数据盘
-        if (_masterOneList[i].buyDataDisk) {
-          let dataDisk = _masterOneList[i].dataDiskArr;
-          for (let j in dataDisk) {
-            params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
-            params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+      if (this.colonySecond.master == 2 && this.colonySecond.source == 1) {
+        var _masterOneList = this.colonySecond.masterOneList;
+        this.costAll2 = [];
+        for (var i in _masterOneList) {
+          let params = {
+            Version: "2017-03-12",
+            // ImageId: this.colony.OSvalue,
+            ImageId: "img-6yudrskj",
+            "Placement.ProjectId": Number(this.colony.projectValue),
+            "Placement.Zone": "ap-taipei-1",
+            // 机型
+            InstanceChargeType: _masterOneList[i].InstanceChargeType,
+            InstanceType: _masterOneList[i].modelName,
+            // 数量
+            InstanceCount: 1,
+            // 系统盘
+            "SystemDisk.DiskSize": Number(_masterOneList[i].systemDiskNumber),
+            "SystemDisk.DiskType": _masterOneList[i].systemDiskVal,
+            PurchaseSource: "MC"
+          };
+          // 数据盘
+          if (_masterOneList[i].buyDataDisk) {
+            let dataDisk = _masterOneList[i].dataDiskArr;
+            for (let j in dataDisk) {
+              params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
+              params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
+            }
           }
-        }
-        // 公网带宽
-        params["InternetAccessible.InternetChargeType"] =
-          _masterOneList[i].broadbandVal;
-        params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
-          _masterOneList[i].broadbandNumber
-        );
-        if (_masterOneList[i].broadbandNumber == 0) {
-          params["InternetAccessible.PublicIpAssigned"] = false;
-        } else {
-          params["InternetAccessible.PublicIpAssigned"] = true;
-        }
-
-        if (this.colonySecond.charging == 2) {
-          params["EnhancedService.SecurityService.Enabled"] = true;
-          params["EnhancedService.MonitorService.Enabled"] = true;
-
-          params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
-          // if (this.colonySecond.renew === true) {
-          params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
-          // }
-        }
-        await this.axios.post(TKE_PRICE, params).then(res => {
-          if (res.Response.Error === undefined) {
-            let _data = res.Response.Price;
-            this.costAll2.push(_data);
+          // 公网带宽
+          params["InternetAccessible.InternetChargeType"] =
+            _masterOneList[i].broadbandVal;
+          params["InternetAccessible.InternetMaxBandwidthOut"] = Number(
+            _masterOneList[i].broadbandNumber
+          );
+          if (_masterOneList[i].broadbandNumber == 0) {
+            params["InternetAccessible.PublicIpAssigned"] = false;
           } else {
-            let ErrTips = {
-              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
-              InstancesQuotaLimitExceeded:
-                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
-              "InvalidClientToken.TooLong":
-                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
-              "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不属于该请求账号所有。",
-              "InvalidInstanceName.TooLong":
-                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
-              "InvalidInstanceType.Malformed":
-                "指定InstanceType参数格式不合法。",
-              InvalidParameterCombination: "表示参数组合不正确。",
-              InvalidParameterValue:
-                "无效参数值。参数值格式错误或者参数值不被支持等。",
-              "InvalidParameterValue.Range":
-                "无效参数值。参数值取值范围不合法。",
-              InvalidPassword:
-                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
-              InvalidPeriod:
-                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-              InvalidPermission: "账户不支持该操作。",
-              "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              MissingParameter: "参数缺失。请求没有带必选参数。"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+            params["InternetAccessible.PublicIpAssigned"] = true;
           }
-        });
-      }
 
+          if (this.colonySecond.charging == 2) {
+            params["EnhancedService.SecurityService.Enabled"] = true;
+            params["EnhancedService.MonitorService.Enabled"] = true;
+
+            params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
+            // if (this.colonySecond.renew === true) {
+            params["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
+            // }
+          }
+          await this.axios.post(TKE_PRICE, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let _data = res.Response.Price;
+              this.costAll2.push(_data);
+            } else {
+              let ErrTips = {
+                AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+                InstancesQuotaLimitExceeded:
+                  "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+                "InvalidClientToken.TooLong":
+                  "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+                "InvalidHostId.NotFound":
+                  "指定的HostId不存在，或不属于该请求账号所有。",
+                "InvalidInstanceName.TooLong":
+                  "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+                "InvalidInstanceType.Malformed":
+                  "指定InstanceType参数格式不合法。",
+                InvalidParameterCombination: "表示参数组合不正确。",
+                InvalidParameterValue:
+                  "无效参数值。参数值格式错误或者参数值不被支持等。",
+                "InvalidParameterValue.Range":
+                  "无效参数值。参数值取值范围不合法。",
+                InvalidPassword:
+                  "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+                InvalidPeriod:
+                  "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+                InvalidPermission: "账户不支持该操作。",
+                "InvalidZone.MismatchRegion": "指定的zone不存在。",
+                MissingParameter: "参数缺失。请求没有带必选参数。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        }
+      }
       _allcost = this.costAll.reduce(
         (num, item) => num + item.InstancePrice.UnitPrice,
         0
@@ -3760,6 +4028,106 @@ export default {
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+    },
+    // 第二步 完成
+    SecondCreateFinish(){
+      let param = {
+        Version: "2018-05-25",
+        "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
+        "ClusterCIDRSettings.IgnoreClusterCIDRConflict": false,
+        "ClusterCIDRSettings.MaxNodePodNum": Number(this.colony.PodValue),
+        "ClusterCIDRSettings.MaxClusterServiceNum": Number(
+          this.colony.ServiceValue
+        )
+      };
+      if (this.colonySecond.master == 1) {
+        param["ClusterType"] = "MANAGED_CLUSTER";
+      } else {
+        param["ClusterType"] = "INDEPENDENT_CLUSTER";
+      }
+    
+      let ClusterOs = "";
+      for (let i in this.colony.OSoptions) {
+        if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+          ClusterOs = this.colony.OSoptions[i].OsName;
+        }
+      }
+      param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+      param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+      param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+      param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+      param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+      param["ClusterBasicSettings.ProjectId"] = Number(
+        this.colony.projectValue
+      );
+      if (this.colonyThird.defaultSafeBox === true) {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+      } else {
+        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+      }
+      param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+      if (this.colony.ipvs === true) {
+        param["ClusterAdvancedSettings.IPVS"] = true;
+      } else {
+        param["ClusterAdvancedSettings.IPVS"] = false;
+      }
+      param["ClusterAdvancedSettings.AsEnabled"] = false;
+      param[
+        "ClusterAdvancedSettings.ContainerRuntime"
+      ] = this.colony.assemblyRadio;
+      param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+      param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+      this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            "InternalError.AccountUserNotAuthenticated": "账户未通过认证。",
+            "InternalError.AsCommon": "伸缩组资源创建报错。",
+            "InternalError.CidrConflictWithOtherCluster":
+              "CIDR和其他集群CIDR冲突。",
+            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由冲突。",
+            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc冲突。",
+            "InternalError.CidrConflictWithVpcGlobalRoute":
+              "CIDR和全局路由冲突。",
+            "InternalError.CidrInvali": "CIDR无效。",
+            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩码无效。",
+            "InternalError.CreateMasterFailed": "创建集群失败。",
+            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.DfwGetUSGCount": "获得当前安全组总数失败。",
+            "InternalError.DfwGetUSGQuota": "获得安全组配额失败。",
+            "InternalError.InitMasterFailed": "初始化master失败。",
+            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
+            "InternalError.Param": "Param。",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+            "InternalError.QuotaUSGLimit": "安全组配额不足。",
+            "InternalError.UnexceptedInternal": "内部错误",
+            "InternalError.VpcCommon": "VPC报错。",
+            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
+            InvalidParameter: "参数错误",
+            LimitExceeded: "超过配额限制"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // ----------------------------------------- 第三步 -------------------------------------
     // 安全组
@@ -3864,6 +4232,7 @@ export default {
         let param = {
           Version: "2017-03-12",
           ImageId: this.colony.OSvalue,
+          // ImageId: "img-0amm1ukz",
           Placement: {
             ProjectId: Number(this.colony.projectValue),
             Zone: "ap-taipei-1"
@@ -3903,7 +4272,7 @@ export default {
         // 公网带宽
         param["InternetAccessible"] = {
           InternetChargeType: _workerOneList[i].broadbandVal,
-          InternetMaxBandwidthOut: _workerOneList[i].broadbandNumber
+          InternetMaxBandwidthOut: Number(_workerOneList[i].broadbandNumber)
         };
         if (_workerOneList[i].broadbandNumber == 0) {
           param["InternetAccessible"].PublicIpAssigned = false;
@@ -3927,7 +4296,7 @@ export default {
         // 登录方式
         if (this.colonyThird.loginModeRadio == 1) {
           param["LoginSettings"] = {
-            KeyIds: this.colonyThird.sshKeySel
+            KeyIds: [this.colonyThird.sshKeySel]
           };
         }
         if (this.colonyThird.loginModeRadio == 3) {
@@ -3944,6 +4313,7 @@ export default {
         let params = {
           Version: "2017-03-12",
           ImageId: this.colony.OSvalue,
+          // ImageId: "img-0amm1ukz",
           Placement: {
             ProjectId: Number(this.colony.projectValue),
             Zone: "ap-taipei-1"
@@ -3979,12 +4349,11 @@ export default {
           }
           params["DataDisks"] = _dtaDisk;
         }
-        
 
         // 公网带宽
         params["InternetAccessible"] = {
           InternetChargeType: _masterOneList[i].broadbandVal,
-          InternetMaxBandwidthOut: _masterOneList[i].broadbandNumber
+          InternetMaxBandwidthOut: Number(_masterOneList[i].broadbandNumber)
         };
         if (_masterOneList[i].broadbandNumber == 0) {
           params["InternetAccessible"].PublicIpAssigned = false;
@@ -4053,39 +4422,95 @@ export default {
         param["ClusterType"] = "INDEPENDENT_CLUSTER";
       }
       if (
-        this.colonySecond.workerShow === true &&
-        this.colonySecond.source == 1
+        this.colonySecond.worker != 2 &&
+        this.colonySecond.source != 2 &&
+        this.colonySecond.master != 1
       ) {
-        param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
-        for (let i in masterOneListArr) {
-          param["RunInstancesForNode.1.RunInstancesPara." + i] = JSON.stringify(
-            this.params[i]
+        if (
+          this.colonySecond.workerShow === true &&
+          this.colonySecond.source == 1
+        ) {
+          param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+          for (let i in masterOneListArr) {
+            param[
+              "RunInstancesForNode.1.RunInstancesPara." + i
+            ] = JSON.stringify(this.params[i]);
+            if (this.colonySecond.masterDataDiskMount === true) {
+              param[
+                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".MountTarget"
+              ] = this.colonySecond.masterDataDiskMountVal;
+            } else {
+              param[
+                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".MountTarget"
+              ] = "";
+            }
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = "";
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = "";
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Unschedulable"
+            ] = 0;
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".ExtraArgs.Kubelet.0"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Name"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Value"
+            ] = "";
+          }
+        }
+
+        param["RunInstancesForNode.0.NodeRole"] = "WORKER";
+        for (let i in workerOneListArr) {
+          param["RunInstancesForNode.0.RunInstancesPara." + i] = JSON.stringify(
+            this.param[i]
           );
           if (this.colonySecond.masterDataDiskMount === true) {
             param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
                 i +
                 ".MountTarget"
             ] = this.colonySecond.masterDataDiskMountVal;
           } else {
             param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
                 i +
                 ".MountTarget"
             ] = "";
           }
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".DockerGraphPath"
           ] = "";
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".UserScript"
           ] = "";
           param[
-            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
               i +
               ".Unschedulable"
           ] = 0;
@@ -4107,55 +4532,6 @@ export default {
         }
       }
 
-      param["RunInstancesForNode.0.NodeRole"] = "WORKER";
-      for (let i in workerOneListArr) {
-        param["RunInstancesForNode.0.RunInstancesPara." + i] =
-          // '{"Version":"2017-03-12","InstanceChargeType":"POSTPAID_BY_HOUR","Placement":{"Zone":"ap-taipei-1","ProjectId":0},"InstanceType":"S3.SMALL1","ImageId":"img-49iszl8j","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"VirtualPrivateCloud":{"VpcId":"vpc-6whh21qa","SubnetId":"subnet-nn56635p"},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"InstanceCount":1,"InstanceName":"","LoginSettings":{"KeyIds":["skey-120yh2jb"]},"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"PurchaseSource":"docker_dashboard","UserData":""}';
-          JSON.stringify(this.param[i]);
-        if (this.colonySecond.masterDataDiskMount === true) {
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".MountTarget"
-          ] = this.colonySecond.masterDataDiskMountVal;
-        } else {
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".MountTarget"
-          ] = "";
-        }
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".DockerGraphPath"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".UserScript"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Unschedulable"
-        ] = 0;
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".ExtraArgs.Kubelet.0"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Labels.0.Name"
-        ] = "";
-        param[
-          "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-            i +
-            ".Labels.0.Value"
-        ] = "";
-      }
       let ClusterOs = "";
       for (let i in this.colony.OSoptions) {
         if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
@@ -4167,7 +4543,9 @@ export default {
       param["ClusterBasicSettings.ClusterName"] = this.colony.name;
       param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
       param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
-      param["ClusterBasicSettings.ProjectId"] = this.colony.projectValue;
+      param["ClusterBasicSettings.ProjectId"] = Number(
+        this.colony.projectValue
+      );
       if (this.colonyThird.defaultSafeBox === true) {
         param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
       } else {
@@ -4184,75 +4562,82 @@ export default {
         param["ClusterAdvancedSettings.IPVS"] = false;
       }
       param["ClusterAdvancedSettings.AsEnabled"] = false;
-      param["ClusterAdvancedSettings.ContainerRuntime"] = "docker";
+      param[
+        "ClusterAdvancedSettings.ContainerRuntime"
+      ] = this.colony.assemblyRadio;
       param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
       param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
-      if (this.colonySecond.masterDataDiskMount === true) {
-        param[
-          "InstanceAdvancedSettings.MountTarget"
-        ] = this.colonySecond.masterDataDiskMountVal;
-      } else {
-        param["InstanceAdvancedSettings.MountTarget"] = "";
-      }
-      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
-      param["InstanceAdvancedSettings.UserScript"] = "";
-      param["InstanceAdvancedSettings.Unschedulable"] = 0;
-      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      if (
+        this.colonySecond.worker != 2 &&
+        this.colonySecond.source != 2 &&
+        this.colonySecond.master != 1
+      ) {
+        if (this.colonySecond.masterDataDiskMount === true) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonySecond.masterDataDiskMountVal;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
-      let buyDataArr = [];
-      for (let i in workerOneListArr) {
-        if (workerOneListArr[i].buyDataDisk === true) {
-          buyDataArr.push(workerOneListArr[i]);
-          for (let x in buyDataArr) {
-            param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
-              workerOneListArr[i].modelName;
-            param["InstanceDataDiskMountSettings." + x + ".Zone"] =
-              "ap-taipei-1";
-            for (let j in workerOneListArr[i].dataDiskArr) {
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".DiskType"
-              ] = workerOneListArr[i].dataDiskArr[j].DiskType;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".DiskSize"
-              ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".AutoFormatAndMount"
-              ] = workerOneListArr[i].dataDiskArr[j].formatMount;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".FileSystem"
-              ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
-              param[
-                "InstanceDataDiskMountSettings." +
-                  x +
-                  ".DataDisks." +
-                  j +
-                  ".MountTarget"
-              ] = workerOneListArr[i].dataDiskArr[j].setValue;
+        let buyDataArr = [];
+        for (let i in workerOneListArr) {
+          if (workerOneListArr[i].buyDataDisk === true) {
+            buyDataArr.push(workerOneListArr[i]);
+            for (let x in buyDataArr) {
+              param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+                workerOneListArr[i].modelName;
+              param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+                "ap-taipei-1";
+              for (let j in workerOneListArr[i].dataDiskArr) {
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".DiskType"
+                ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".DiskSize"
+                ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".AutoFormatAndMount"
+                ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".FileSystem"
+                ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+                param[
+                  "InstanceDataDiskMountSettings." +
+                    x +
+                    ".DataDisks." +
+                    j +
+                    ".MountTarget"
+                ] = workerOneListArr[i].dataDiskArr[j].setValue;
+              }
             }
           }
         }
       }
-
       console.log(param);
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -4304,6 +4689,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// 第一步
+.how-choose {
+  padding: 8px;
+  h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 700;
+    color: #000;
+  }
+  p {
+    font-size: 12px;
+    color: #000;
+  }
+  ul {
+    li {
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #000;
+      display: flex;
+      align-items: center;
+      span {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #000;
+        margin-right: 4px;
+      }
+    }
+  }
+  .hover-target {
+    margin-top: 24px;
+    text-align: right;
+    a {
+      color: #006eff;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
 .cid-tips {
   margin-top: 8px;
   color: #e54545;
@@ -5053,6 +5479,14 @@ export default {
       &:nth-of-type(1) {
         margin-top: 10px;
       }
+    }
+  }
+  .tke-fourth-node-text {
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    padding-bottom: 20px;
+    ::v-deep .el-form-item__content {
+      display: flex;
     }
   }
 }

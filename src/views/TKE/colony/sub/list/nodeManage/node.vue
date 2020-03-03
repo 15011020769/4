@@ -820,6 +820,14 @@ export default {
 </script>
   
 <style lang="scss" scoped>
+.tke-grid{
+  height:39px;
+}
+ .tke-grid >>> .el-input__inner,
+  .tke-grid >>> .el-button {
+    border-radius: 0;
+    height: 34px;
+  }
   .tke-node-list-nobr{
     vertical-align: middle;
     white-space: nowrap;
@@ -829,7 +837,7 @@ export default {
   }
 
   .tool {
-    margin: 20px 20px 10px 20px;
+    margin: 20px 20px 20px 20px;
     display: flex;
     justify-content: space-between;
 
