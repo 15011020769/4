@@ -40,17 +40,19 @@ export default {
       YAMLData: '', // 数据信息
       cmOptions: {
         tabSize: 4,
-        mode: 'python',
+        mode: 'python', // 默认脚本编码
         theme: 'darcula',
-        lineNumbers: true, // 行号
+        lineNumbers: true, // 是否显示行号
         line: true,
         // lineNumbers: true,
         foldgutter: true,
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-        lineWrapping: true, // 代码折叠
+        lineWrapping: true, // 是否强制换行
         foldGutter: true,
         matchBrackets: true, // 括号匹配
-        autoCloseBrackets: true
+        autoCloseBrackets: true,
+        readOnly: true// 只读
+        // readOnly: 'nocursor'// 只读没有焦点
       }
     }
   },

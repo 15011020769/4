@@ -40,7 +40,7 @@
               <div v-if="svc.radio=='2'">
                 <div>将提供一个可以被集群内其他服务或容器访问的入口，支持TCP/UDP协议，数据库类服务如Mysql可以选择集群内访问,来保证服务网络隔离性。</div>
                 <div>
-                  <el-checkbox v-model="svc.checked">Headless&nbsp;Service</el-checkbox>
+                  <el-checkbox v-model="svc.checked" disabled>Headless&nbsp;Service</el-checkbox>
                   <el-tooltip
                     content="不创建用于集群内访问的ClusterIP,访问Service名称时返回后端Pods IP地址,用于适配自有的服务发现机制。"
                     placement="top"
@@ -111,7 +111,7 @@
 				        		v-for="item in ownLoadBalancer"
 				        		:key="item.LoadBalancerId"
 				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
-				        		:value="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'">
+				        		:value="item.LoadBalancerId">
 				        	</el-option>
 				        </el-select>
               </p>
@@ -234,16 +234,17 @@ export default {
       dialogFormVisible: false,
       svc: {
         show: true,
-        time: 30,
+        time: 30, // 会话时间
         checked: false, // 仅在集群内访问的多选框
         name: '',
         loadBalance: '1', // 负载平衡选项
+        val: '', // 自有创建的id
         value: '', // 使用已有均衡器
         LBvalue2: '', // LB所在子网
         LBvalue1: '', // LB所在子网
         // options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
         options: ['TCP', 'UDP'],
-        radio: '1', // 服务访问方式
+        radio: '', // 服务访问方式
         protocol: '', // 协议
         ETP: '1',
         SA: '2',
@@ -419,21 +420,21 @@ export default {
     },
     // 更新访问方式按钮的提交
     async updateAccessMode () {
-      let { list, ETP, SA, time, value, radio } = this.svc
+      let { list, ETP, SA, time, val, value, radio, loadBalance, LBvalue1, LBvalue2 } = this.svc
       let newPortAry = []// 更改时的 端口映射数组
       list.forEach(ele => { // 端口映射传参的判断
         let ports = {
           name: `${ele.port}-${ele.targetPort}-${ele.protocol.toLowerCase()}`,
           port: Number(ele.port),
           targetPort: Number(ele.targetPort),
-          nodePort: Number(ele.nodePort),
+          nodePort: ele.nodePort ? Number(ele.nodePort) : null,
           protocol: ele.protocol
         }
-        if (this.svc.radio == '3' || this.svc.radio == '1') {
-          ports.nodePort = Number(ele.nodePort)
-        } else {
-          ports.nodePort = null
-        }
+        // if (this.svc.radio == '3' || this.svc.radio == '1') {
+        //   ports.nodePort = Number(ele.nodePort)
+        // } else {
+        //   ports.nodePort = null
+        // }
         newPortAry.push(ports)
       })
       let specType = ''
@@ -444,6 +445,7 @@ export default {
       } else {
         specType = 'NodePort'
       }
+      // if(radio =='1')
       let policy = ''
       if (ETP === '2') { // 高级选项ExtermalTrafficPolicy判断
         policy = 'Local'
@@ -461,13 +463,29 @@ export default {
       let jsonStr = { 'metadata': {// 要传递的RequestBody参数
         'annotations': {
           'descriptions': this.serviceName,
-          'service.kubernetes.io/loadbalance-id': value,
+          'service.kubernetes.io/loadbalance-id': val,
           'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}' } },
       'spec': { 'type': specType,
         'ports': newPortAry,
         'externalTrafficPolicy': policy,
         'sessionAffinity': session } }
-      if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime
+      if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime// 会话时间的参数判断
+      // 访问方式参数判断
+      if (radio == '2' || radio == '3' || radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+      if (radio == '1' && loadBalance == '2') jsonStr.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+      // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+      if (radio == '3' && loadBalance == '1') {
+        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = 'cls-hfzoxb8m'
+        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
+      } else if (radio == '3' && loadBalance == '1') {
+        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = 'cls-hfzoxb8m'
+        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
+        jsonStr.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+      }
+      // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+
       let param = {
         ContentType: 'application/merge-patch+json',
         Method: 'PATCH',
@@ -516,16 +534,17 @@ export default {
           this.serviceInfo = msg
           this.svc.list = msg.spec.ports
           // var at = 'kubernetes.io/loadbalance-id'
-          this.svc.value = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
-          console.log(this.svc.value)
+          this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']// 自有创建的均衡器id
+          let isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid']
+          // console.log(this.svc.value)
           if (msg.spec.type == 'NodePort') { // 判断服务访问方式
             this.svc.radio = '4'
           } else if (msg.spec.type == 'ClusterIP') {
             this.svc.radio = '2'
-          } else if (msg.spec.type == 'LoadBalancer') {
-            this.svc.radio = '1'
-          } else {
+          } else if (msg.spec.type == 'LoadBalancer' && isart) {
             this.svc.radio = '3'
+          } else {
+            this.svc.radio = '1'
           }
           if (msg.spec.externalTrafficPolicy == 'Cluster') { // 高级选项ExtermalTrafficPolicy判断
             this.svc.ETP = '1'
