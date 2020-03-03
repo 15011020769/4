@@ -267,20 +267,13 @@ export default {
         Version: '2018-01-25',
       }
 
-      this.axios.post(DESCRIBE_HOSTS, params).then(data => {
-        if (data.Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.ipSearchOptions = data.Response.HostList
+      this.axios.post(DESCRIBE_HOSTS, params)
+      then(resp => {
+        this.generalRespHandler(resp, ({ HostList }) => {
+          this.ipSearchOptions = HostList
           this.ipSearch = this.ipSearchOptions[0].Domain
           this.onSearch()
-        }
+        })
       })
     },
     // 分页开始
