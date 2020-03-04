@@ -59,7 +59,8 @@
                       class="spanList"
                       :class="GbpsChildIndex==index?'seceltList':''"
                       @click="_GbpsChild(index,item)"
-                    >{{item}}Gbps</span>
+                    >{{showGbpsInfo(index,item)}}</span>
+                     <!-- >{{item}}Gbps</span> -->
                     <!-- <span
                       class="spanList"
                       :class="type3==index?'seceltList':''"
@@ -86,33 +87,34 @@
                     >50Mbps</span>
                     <span
                       class="spanList"
-                      :class="type4==1?'seceltList':''"
+                      :class="type4==2?'seceltList':''"
                       @click="checkListFour(2,'100Mbps')"
                     >100Mbps</span>
                     <span
                       class="spanList"
-                      :class="type4==2?'seceltList':''"
+                      :class="type4==3?'seceltList':''"
                       @click="checkListFour(3,'150Mbps')"
                     >150Mbps</span>
                     <span
                       class="spanList"
-                      :class="type4==3?'seceltList':''"
+                      :class="type4==4?'seceltList':''"
                       @click="checkListFour(4,'200Mbps')"
                     >200Mbps</span>
                     <span
                       class="spanList"
-                      :class="type4==4?'seceltList':''"
+                      :class="type4==5?'seceltList':''"
                       @click="checkListFour(5,'500Mbps')"
                     >500Mbps</span>
                     <span
                       class="spanList"
-                      :class="type4==5?'seceltList':''"
+                      :class="type4==6?'seceltList':''"
                       @click="checkListFour(6,'1Gbps')"
                     >1Gbps</span>
                     <!-- <span class="spanList" :class="type4==6?'seceltList':''" @click="checkListFour(6,'2Gbps')">2Gbps</span> -->
                   </div>
                   <div class="tipList">
-                    <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p>
+                    <!-- 移除免費贈送100M的業務頻寬 -->
+                    <!-- <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p> -->
                     <p class="tipListThree">{{$t('DDOS.choose.bandwidth')}}: {{checked4}}</p>
                     <p class="tipListThree">HTTP: {{checkChange1}}QPS</p>
                     <p class="tipListThree">HTTPS: {{checkChange2}}QPS</p>
@@ -553,11 +555,18 @@ export default {
       // //console.log(document.documentElement.scrollTop)
       // offsetTop.scrollHeight < 60 ? this.searchBarFixed = true : this.searchBarFixed = false;
     },
-    destroyed() {
+    destroyed () {
       window.removeEventListener("scroll", this.handleScroll);
+    },
+    showGbpsInfo (i, item) {
+      if (i === 0) {
+        return '无'
+      } else {
+        return item + 'Gbps'
+      }
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .wrap {
