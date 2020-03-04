@@ -341,10 +341,10 @@
       </el-col>
     </el-row>
     <template v-if="addBWmodel">
-      <addBlackWhite :isShow="addBWmodel" @closeModel="closeModel" :ipInfo="ipInfo[0]"/>
+      <addBlackWhite :isShow="addBWmodel" @closeModel="closeModel" :ipInfo="Object.assign(ipInfo[0], {Domain: this.domain})"/>
     </template>
     <!-- <template :v-if="addBWmodel">
-      <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="Object.assign(ipInfo[0], { Domain: "global" })"/>
+      <addBlackWhite @closeModel="closeModel" :isShow="addBWmodel" :ipInfo="ipInfo[0]" :ipInfo="Object.assign(ipInfo[0], { Domain: "global" })"/>
     </template> -->
   </div>
 </template>
@@ -374,10 +374,10 @@ export default {
       UCB_ACTION_LOCAL,
       seriesPieStatus: [], // 返回响应码占比饼图
       legendTextPieStatus: [], // 返回响应码占比饼图
-      colorPie: ["#47a986", "#51b1ce"],
+      colorPie: ["#47a986", "#51b1ce", "#038b5b"],
       seriesPieMethod: [], // 请求方法占比
       legendTextPieMethod: [], // 请求方法占比
-      colorPieMethod: ["#51b1ce", "#038b5b"],
+      colorPieMethod: ["#51b1ce", "#038b5b", "#47a986",],
       seriesPieProtocal: [], // HTTP协议版本占比
       legendTextPieProtocal: [], // HTTP协议版本占比
       addBWmodel: false, // 添加黑白名单弹框
@@ -399,9 +399,7 @@ export default {
     this.domain = this.$route.query.domain
   },
   mounted() {
-    // this.getBotRecordPoints()
     this.getBotRecordDetail()
-    this.getbb()
     this.getActioned()
   },
   filters: {
@@ -476,6 +474,7 @@ export default {
       }
       return this.t('黑名单', 'WAF.hmd')
     },
+    // BOT记录访问趋势
     getBotRecordPoints() {
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
@@ -509,18 +508,7 @@ export default {
         })
       })
     },
-    getbb() {
-      const params = {
-        Version: "2018-01-25",
-        Domain: this.domain,
-        Id: this.Id
-      }
-      this.axios.post(DESCRIBE_BOT_RECORD_ITEMS, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          console.log(Response)
-        })
-      })
-    },
+    // BOT详情 
     getBotRecordDetail() {
       const params = {
         Version: "2018-01-25",
