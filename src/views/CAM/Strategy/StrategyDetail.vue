@@ -125,12 +125,24 @@
                   </el-table-column>
                   <el-table-column prop="address" label="操作">
                     <template slot-scope="scope">
-                      <!-- <el-button size="mini" type="text" @click="popover_visible = true" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button> -->
-                      <el-button size="mini" type="text" @click="del(scope.row)" slot="reference">
-                        解除用戶<span
-                          v-show="scope.row.RelatedType == '2'"
-                        >{{$t('CAM.strategy.team')}}</span>
-                      </el-button>
+                      <el-popover
+                        placement="bottom"
+                        width="280"
+                        v-model="scope.row.delDialog"
+                      >
+                        <div class="prpoDialog">
+                          <p>解除此用戶組後，將不具備該策略對應的許可權，是否確認？</p>
+                        </div>
+                        <div style="text-align: center; margin: 0">
+                          <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)">確認解除</el-button>
+                          <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
+                        </div>
+                        <el-button size="mini" type="text" slot="reference"style="color:#3E8EF7;background: transparent;font-size:12px;">
+                          解除用戶<span
+                            v-show="scope.row.RelatedType == '2'"
+                          >{{$t('CAM.strategy.team')}}</span>
+                        </el-button>
+                      </el-popover>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -313,15 +325,15 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
-    del(row) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
-        confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        this.removePolicyEntity(row);
-      });
-    },
+    // del(row) {
+    //   this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+    //     confirmButtonText: "確定",
+    //     cancelButtonText: "取消",
+    //     type: "warning"
+    //   }).then(() => {
+    //     this.removePolicyEntity(row);
+    //   });
+    // },
     attach(val) {
       this.attachVal = val;
     },
@@ -400,9 +412,10 @@ export default {
           var groupArr = [];
           var userArr = [];
           // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
-          this.policysData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
-          this.policysData.forEach(item => {
+          const list = res.Response.List
+          list.forEach(item => {
+            item.delDialog = false
             if (item.RelatedType == 2) {
               groupArr.push(item);
             }
@@ -410,6 +423,8 @@ export default {
               userArr.push(item);
             }
           });
+          console.log(list)
+          this.policysData = list;
           this.userArr = userArr;
           this.groupArr = groupArr;
           this.loading = false;
