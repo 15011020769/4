@@ -41,7 +41,7 @@ export default new Router({
   //新新建用户
   {
     path: '/adduserNew',
-    name: 'adduser',
+    name: 'adduserNew',
     component: () => import( /* webpackChunkName: "UserListNew" */ './UserListNew/addUser'),
     meta: {
       keepAlive: true
@@ -114,14 +114,14 @@ export default new Router({
       keepAlive: true
     }
   },
-  {
-    path: '/adduser', //添加用户组
-    name: 'adduser',
-    component: () => import( /* webpackChunkName:"adduser" */ './UserList/adduser.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
+  // {
+  //   path: '/adduser', //添加用户组
+  //   name: 'adduser',
+  //   component: () => import( /* webpackChunkName:"adduser" */ './UserList/adduser.vue'),
+  //   meta: {
+  //     keepAlive: true
+  //   }
+  // },
   {
     path: '/custormCreate', // 自定义用户创建
     name: 'custormCreate',
