@@ -1,8 +1,8 @@
 <template>
   <div class="main_ub">
-    <el-row type="flex" justify="end" class="topSearch">
+    <!-- <el-row type="flex" justify="end" class="topSearch">
       <el-input v-model="sourceIp" placeholder="请输入源ip"></el-input>
-    </el-row>
+    </el-row> -->
     <el-card>
       <el-table :data="ubList">
         <el-table-column label="序号"  width="50">
@@ -197,11 +197,12 @@ export default {
 //     }
 //   }
 .main_ub {
-  .topSearch {
-    ::v-deep .el-input {
-      width: 250px;
-    }   
-  }
+  margin-top: 20px;
+  // .topSearch {
+  //   ::v-deep .el-input {
+  //     width: 250px;
+  //   }   
+  // }
   .addRed {
     color: #e1504a;
   }

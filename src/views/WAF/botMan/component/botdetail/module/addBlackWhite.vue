@@ -94,7 +94,6 @@ export default {
     },
     ipInfo: {
       handler(n) {
-        console.log(n)
         this.ipAddress = n.Ip || n.ip
         this.blackWhiteCh = n.Action || 42
         this.des = n.Note || n.Name

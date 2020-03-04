@@ -1,8 +1,8 @@
 <template>
   <div class="main_ub">
-    <el-row type="flex" justify="end" class="topSearch">
+    <!-- <el-row type="flex" justify="end" class="topSearch">
       <el-input v-model="sourceIp" placeholder="请输入源IP或策略名称"></el-input>
-    </el-row>
+    </el-row> -->
     <el-card>
       <el-table
         :data="ucbList"
@@ -201,12 +201,13 @@ export default {
 //     }
 //   }
 .main_ub {
-  .topSearch {
-    ::v-deep .el-input {
-      width: 250px;
-      margin-bottom: 10px;
-    }
-  }
+  margin-top: 20px;
+  // .topSearch {
+  //   ::v-deep .el-input {
+  //     width: 250px;
+  //     margin-bottom: 10px;
+  //   }
+  // }
   .addRed {
     color: #e1504a;
   }

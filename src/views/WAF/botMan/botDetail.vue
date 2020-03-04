@@ -15,28 +15,28 @@
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <el-row type="flex" class="topSelect">
-        <el-select
-          v-model="domainValue"
-          filterable
-          class="selectDomin"
-          default-first-option
-          size="small"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item.Domain"
-            :label="item.Domain"
-            :value="item.Domain"
-          ></el-option>
-        </el-select>
-        <el-button-group>
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
-          <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
-          <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
-          <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
-        </el-button-group>
-        <el-date-picker
+          <el-select
+            v-model="domainValue"
+            filterable
+            class="selectDomin"
+            default-first-option
+            size="small"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.Domain"
+              :label="item.Domain"
+              :value="item.Domain"
+            ></el-option>
+          </el-select>
+          <el-button-group>
+            <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
+            <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
+            <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
+            <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
+            <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
+          </el-button-group>
+          <el-date-picker
             v-model="dateTimeValue"
             type="datetimerange"
             class="timeValue"
@@ -46,11 +46,17 @@
             :clearable= false
             @change="changeTimeValue"
           ></el-date-picker>
+          <el-input
+            :model="sourceIp"
+            :placeholder="activeName == 'ucb' ?'请输入源IP或策略名称' : '请输入源ip'"
+            v-if="activeName != 'overview'"
+          >
+          </el-input>
       </el-row>
       <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ucb'"></Ucb>
-      <Tcb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'tcb'"></Tcb>
+      <Ub :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ub'" :sourceIp="sourceIp"></Ub>
+      <Ucb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ucb'" :sourceIp="sourceIp"></Ucb>
+      <Tcb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'tcb'" :sourceIp="sourceIp"></Tcb>
     </div>
   </div>
 </template>
@@ -74,6 +80,7 @@ export default {
       activeName: "overview", // 默认选中概览页
       options: [],
       tableDataBegin: [],
+      sourceIp: "", // 搜索框绑定
     }
   },
   components: {
@@ -230,6 +237,9 @@ export default {
     }
   }
   .topSelect {
+    ::v-deep {
+      flex-wrap: wrap !important;
+    }
     ::v-deep .el-range__icon {
         line-height: 22px;
     }
@@ -239,6 +249,9 @@ export default {
     }
     ::v-deep .el-select {
       margin-right: 10px;
+    }
+    ::v-deep .el-input {
+      width: 250px;
     }
     button {
       padding: 0 20px;

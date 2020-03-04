@@ -304,7 +304,7 @@ export default {
   border-right: 1px solid #e5e5e5;
 }
 .main_overview {
-  margin-top: 30px;
+  margin-top: 20px;
   .firstShow {
     padding: 20px;
     width: 100%;
