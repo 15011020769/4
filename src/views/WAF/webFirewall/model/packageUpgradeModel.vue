@@ -82,6 +82,7 @@ export default {
       type: '',
       cost: 0,
       loading: true,
+      exchange: 0,
     }
   },
   watch: {
@@ -100,6 +101,15 @@ export default {
   },
   methods:{
     queryPrice() {
+      if (!this.exchange) {
+        this.axios({
+          method: 'get',
+          baseURL: process.env.VUE_APP_adminUrl,
+          url: 'taifucloud/texchangerate/getExchange'
+        }).then(({ taxRate, usd2twd, cny2usd }) => {
+          this.exchange = taxRate * usd2twd * cny2usd
+        })
+      }
       this.loading = true
       this.axios.post(DESCRIBE_WAF_PRICE, {
         Version: '2018-01-25',
@@ -141,6 +151,7 @@ export default {
     upgradeImmediately(){
       const { name, price: newEdiPrice } = CLB_PACKAGE_CFG_TYPES[this.type]
       const { price: curEdiPrice } = CLB_PACKAGE_CFG_TYPES[this.package.Level]
+
       const d = Math.ceil(moment(this.package.ValidTime).diff(moment(), 'd', true)) // 到期天数
       const time = d/(365/12) // 到期月数
       const orders = [{
@@ -150,13 +161,50 @@ export default {
         cost: this.cost, // 费用
         purchaseTime: `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
         tips: [
-          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
+          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
           `(2).${this.t('时长', 'WAF.sc')}:${time.toFixed(8)}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
         ]
       }]
-      localStorage.setItem(ORDER_INFO, JSON.stringify(orders))
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders,
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
         name: 'pay'
+      })
+    },
+    getDealParam() {
+      const { edit_categoryid, name: newName, pid: newpid, pricetype: newpricetype, key: newkey } = CLB_PACKAGE_CFG_TYPES[this.type]
+      const { ValidTime, ResourceIds, Level } = this.package
+      const { pid: currPid, key: curKey, pricetype: curPricetype } = CLB_PACKAGE_CFG_TYPES[Level]
+      // 企业版升级到旗舰版
+      return JSON.stringify({
+        Version: '2018-07-09',
+        'Goods.0.GoodsCategoryId': edit_categoryid, // 新版的
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+        'Goods.0.GoodsDetail': {
+          productInfo: [{
+            name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}`,
+            value: newName, // 升级新的name
+          }],
+          curDeadline: ValidTime,
+          resourceId: ResourceIds,
+          oldConfig: {
+            pid: currPid, // 当前版的pid
+            type: curKey, // 当前版的key
+            [curPricetype]: 1,
+          },
+          newConfig: {
+            pid: newpid,
+            type: newkey,
+            [newpricetype]: 1,
+          }
+        },
       })
     },
     checkType(type){

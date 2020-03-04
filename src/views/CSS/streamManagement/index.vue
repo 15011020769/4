@@ -41,8 +41,7 @@
       </div>
       <div class="streamWTable">
         <div class="tableWrap">
-          <el-table :data="tableData" empty-text="暫無數據" style="width: 100%"
-            v-loading="loading">
+          <el-table :data="tableData" empty-text="暫無數據" style="width: 100%" v-loading="loading">
             <el-table-column prop="StreamName" :label="$t('CSS.domainManagement.35')"></el-table-column>
 
             <template v-if="type !== '禁推流'">
@@ -213,7 +212,7 @@ export default {
         `${this.$t("CSS.domainManagement.44")}${row.StreamName}?`,
         this.$t("CSS.domainManagement.7"),
         {
-          confirmButtonText:this.$t("CSS.domainManagement.43"),
+          confirmButtonText: this.$t("CSS.domainManagement.43"),
           cancelButtonText: "取消",
           type: "warning"
         }

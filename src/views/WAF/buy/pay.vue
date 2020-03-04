@@ -34,7 +34,7 @@
         <div class="payBot">
           <div class="btnGroup">
             <span class="totalMo">总计费用：</span><span class="totaoMoneyO"><i>NT$ {{tableData.map(data => data.cost).reduce((a, b) => a + b, 0)}}</i></span>
-            &nbsp;<el-button @click="next" size="mini" class="selfPay">自行支付</el-button>
+            &nbsp;<el-button @click="pay" size="mini" class="selfPay" :disabled="!orderIds || orderIds.length === 0">自行支付</el-button>
           </div>
         </div>
       </div>
@@ -42,28 +42,64 @@
   </div>
 </template>
 <script>
-import { ORDER_INFO } from '../constants'
+import {
+  ORDER_INFO,
+  CLB_PACKAGE_CFG_TYPES,
+  CLB_BUY_DOMAIN_TYPES,
+  BUY_LOG_TYPES,
+  CLB_BUY_QPS_TYPES,
+} from '../constants'
+import { GENERATE_DEALS, PAY_DEALS } from '@/constants'
+import { flatObj } from '@/utils'
 export default {
   data(){
     return{
       active: 0,//第一步
       tableData:[],//表格
       useCard:false,//使用代金券
+      orderIds: [],
     }
   },
   mounted() {
     const orderStr = localStorage.getItem(ORDER_INFO)
     if (orderStr) {
       const order = JSON.parse(orderStr)
-      console.log(order)
-      this.tableData = order
+      this.tableData = order.orders
+      this.generateDeal(JSON.parse(order.dealParam))
     }
   },
   methods:{
-    //下一步
-    next() {
-      if (this.active++ > 2) this.active = 0;
-    }
+    pay() {
+      this.loading = true
+      this.axios.post(PAY_DEALS, flatObj({
+        Version: '2018-07-09',
+        OrderIds: this.orderIds
+      })).then(resp => {
+        let ErrTips = {
+          "FailedOperation":'操作失败',
+          "FailedOperation.AgentPayDealCannotDown":'代理支付设备不能降配',
+          "FailedOperation.BalanceInsufficient":'余额不足',
+          "FailedOperation.InvalidDeal":'订单状态有误，只有未支付订单才能支付',
+          "FailedOperation.InvalidVoucher": '代金券不可用',
+          "FailedOperation.NeedPayTogeter": '一起购买的订单必须同时支付',
+          "FailedOperation.PayPriceError": '支付失敗，請聯繫台富雲工作人員處理',
+          'FailedOperation.PaySuccDeliverFailed': '支付成功但發貨失敗，請聯繫台富雲工作人員處理',
+          'UnauthorizedOperation.CertificationNeedUpgrade': '因賬號安全升級，支付失敗',
+          'UnauthorizedOperation.NotFinanceAuth': '賬號沒有財務授權，支付失敗'
+        }
+        this.generalRespHandler(resp, () => {
+          this.$router.push('/')
+        }, ErrTips, '支付成功')
+      })
+    },
+    generateDeal(param) {
+      this.axios.post(GENERATE_DEALS, param)
+      .then(resp => {
+        this.generalRespHandler(resp, ({ OrderIds }) => {
+          this.orderIds = OrderIds
+        })
+      })
+    },
   }
 }
 </script>
@@ -141,6 +177,12 @@ export default {
         .selfPay{
           background-color:#fa7821;
           color:#fff;
+          &.is-disabled {
+            background: #ccc;
+            &:hover {
+              color: #f5f7fa;
+            }
+          }
         }
       }
     }

@@ -10,7 +10,7 @@
           <div class="newClear dominPackList">
             <p>{{t('购买数量', 'WAF.gmsl')}}</p>
             <p>
-              <el-input-number v-model="buyNum" @change="handleChange" :max="500" :min="1"></el-input-number> {{t('个', 'WAF.g')}}
+              <el-input-number v-model="buyNum" :max="500" :min="1"></el-input-number> {{t('个', 'WAF.g')}}
             </p>
           </div>
           <div class="newClear dominPackList">
@@ -58,6 +58,7 @@ export default {
       remainingDays: 0, // 剩余天数
       cost: 0,
       loading: true,
+      exchange: 0,
     }
   },
   computed:{
@@ -80,6 +81,15 @@ export default {
   },
   methods:{
     queryPrice() {
+      if (!this.exchange) {
+        this.axios({
+          method: 'get',
+          baseURL: process.env.VUE_APP_adminUrl,
+          url: 'taifucloud/texchangerate/getExchange'
+        }).then(({ taxRate, usd2twd, cny2usd }) => {
+          this.exchange = taxRate * usd2twd * cny2usd
+        })
+      }
       this.loading = true
       const resInfo = {
         "regionId": 1,
@@ -146,8 +156,8 @@ export default {
         validTime = this.package.DomainPkg.ValidTime
         d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
         time = d/(365/12) // 到期月数
-        newEdiPrice = (this.buyNum + this.package.DomainPkg.Count) * 500 // TODO 这里的500需要修改
-        curEdiPrice = this.package.DomainPkg.Count * 500  // TODO 这里的500需要修改
+        newEdiPrice = (this.buyNum + this.package.DomainPkg.Count) * 2000 * this.exchange
+        curEdiPrice = this.package.DomainPkg.Count * 2000 * this.exchange
         name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-${this.t('变配', 'WAF.bp')}`
         price = '-'
         purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
@@ -164,15 +174,66 @@ export default {
         purchaseTime,
         tips
       }
-      localStorage.setItem(ORDER_INFO, JSON.stringify([order]))
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders: [order],
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
         name: 'pay'
       })
     },
-    //监测数量改变、
-    handleChange(){
-
-    }
+    getDealParam() {
+      const { DomainPkg } = this.package
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+      }
+      if (DomainPkg) {
+        return JSON.stringify({
+          'Goods.0.GoodsCategoryId': CLB_BUY_DOMAIN_TYPES.edit_categoryid,
+          ...param,
+          'Goods.0.GoodsDetail': JSON.stringify({
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${this.buyNum}${this.t('个', 'WAF.g')}`
+            }],
+            curDeadline: DomainPkg.ValidTime,
+            resourceId: DomainPkg.ResourceIds,
+            oldConfig: {
+              pid: CLB_BUY_DOMAIN_TYPES.pid,
+              [CLB_BUY_DOMAIN_TYPES.pricetype]: DomainPkg.Count,
+              type: CLB_BUY_DOMAIN_TYPES.goodstype
+            },
+            newConfig: {
+              pid: CLB_BUY_DOMAIN_TYPES.pid,
+              [CLB_BUY_DOMAIN_TYPES.pricetype]: DomainPkg.Count + this.buyNum,
+              type: CLB_BUY_DOMAIN_TYPES.goodstype
+            }
+          }),
+        })
+      }
+      return JSON.stringify({
+        'Goods.0.GoodsCategoryId': CLB_BUY_DOMAIN_TYPES.first_categoryid,
+        ...param,
+        'Goods.0.GoodsDetail': {
+          productInfo: [{
+            name: `${this.t('扩展', 'WAF.kz')}域名包`,
+            value: `${this.buyNum}${this.t('个', 'WAF.g')}`
+          }],
+          timeSpan: this.remainingDays,
+          timeUnit: 'd',
+          pid: CLB_BUY_DOMAIN_TYPES.pid,
+          type: CLB_BUY_DOMAIN_TYPES.goodstype,
+          [CLB_BUY_DOMAIN_TYPES.pricetype]: this.buyNum,
+          Currency: 'CNY'
+        }
+      })
+    },
   }
 }
 </script>

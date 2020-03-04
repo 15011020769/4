@@ -91,10 +91,10 @@
                   <span class="tke-text-link" @click="redeployment(scope.row)">重新部署</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="a">
-                  <span class="tke-text-link">设置更新策略</span>
+                  <span class="tke-text-link" @click="goSetUpdateTactics(scope.row)">设置更新策略</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="b">
-                  <span class="tke-text-link">更新调度策略</span>
+                  <span class="tke-text-link"  @click="goUpdateTactics(scope.row)">更新调度策略</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
                   <span class="tke-text-link">编辑YAML</span>
@@ -354,7 +354,7 @@ export default {
         }
       });
     },
-    //更新pod
+    //更新pod配置
     goPodConfigUpdate(rowData) {
       this.$router.push({
         name: "podConfigUpdate",
@@ -377,6 +377,29 @@ export default {
         }
       });
     },
+    //设置更新策略
+    goSetUpdateTactics(rowData){
+      this.$router.push({
+        name:'setStrategy',
+        query:{
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
+        }
+      })
+    },
+    //更新调度策略
+    goUpdateTactics(rowData){
+       this.$router.push({
+        name:'updateStrategy',
+        query:{
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace
+        }
+      })
+    },
+
 
     //是否打开重新部署弹窗
     redeployment(rowData) {

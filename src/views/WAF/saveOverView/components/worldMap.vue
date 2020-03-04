@@ -96,7 +96,7 @@ export default {
           calculable: true, // 是否显示拖拽用的手柄
           // 定义 在选中范围中 的视觉元素
           inRange: {
-            color: ['#9fb5ea', "#3385ff", '#2d78f4', '#5475f5', '#4395ff'] // 图元的颜色
+            color: ['#9fb5ea', '#006eff']
           }
         },
         series: [

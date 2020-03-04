@@ -335,7 +335,7 @@ const CUSTOM_SESSION_ACTION_LOCAL = {
 export const CUSTOM_SESSION_ACTION = addVal2Key(CUSTOM_SESSION_ACTION_LOCAL)
 export const CUSTOM_SESSION_ACTION_ARR = obj2Arr(CUSTOM_SESSION_ACTION_LOCAL)
 
-const UCB_ACTION_LOCAL = {
+export const UCB_ACTION_LOCAL = {
   permit: '放行',
   monitor: '监控',
   captcha: '验证码',
@@ -413,6 +413,12 @@ export const ATTACK_TYPE = [
   { id: "CC策略拦截", label: "CC策略拦截" },
   { id: "Bot 拦截", label: "Bot 拦截" },
 ]
+
+export const BOTS_TYPES_CFG = {
+  TCB: "公开类型",
+  UCB: "用户自定义类型",
+  UB: "未知类型"
+}
 
 //  自定义策略-会话特征
 export const sessionRules = [
@@ -621,7 +627,7 @@ export const advanceRules = [
 ];
 
   //匹配字段--UA类型 的匹配内容
-  const ua_type_list = [{ value: "browser", label: "浏览器" },
+ export const ua_type_list = [{ value: "browser", label: "浏览器" },
   { value: "mobile", label: "移动端" },
   { value: "gameortv", label: "游戏或电视终端" },
   { value: "bot", label: "公开BOT类型" },

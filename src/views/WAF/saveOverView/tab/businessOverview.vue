@@ -39,7 +39,8 @@
           <i class="el-icon-setting"></i>
         </el-row>
       </p>
-      <div class="contentNum">
+
+      <!-- <div class="contentNum">
         <el-row>
           <el-col :span="8">
             <div class="rowContain">
@@ -69,7 +70,12 @@
             </div>
           </el-col>
         </el-row>
-      </div>
+      </div> -->
+      <component
+        is="overview"
+        :times="[startTime, endTime]"
+        :domain="selectValue"
+      />
       <el-row class="echartsShowfirst">
         <h3 class="topfont">
           {{t('业务峰值趋势', 'WAF.ywfzqs')}}
@@ -174,6 +180,7 @@ import DownLoadImg from '../components/downLoadImg'
 import ELine from "../components/line"
 import EBar from "../components/bar"
 import EPie from "../components/pie"
+import overview from './model/overview'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
@@ -192,9 +199,9 @@ export default {
       thisType: "1", //按钮默认选中
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
-      upPeakValue: 0, // 上行峰值
-      downPeakValue: 0, // 下行峰值
-      qpsRequest: 0, // QPS请求
+      // upPeakValue: 0, // 上行峰值
+      // downPeakValue: 0, // 下行峰值
+      // qpsRequest: 0, // QPS请求
       xAxis1: [], // 业务攻击趋势
       series1: [], // 业务攻击趋势
       series2: [], // 业务攻击趋势
@@ -221,7 +228,8 @@ export default {
     DownLoadImg,
     ELine,
     EBar,
-    ELine
+    ELine,
+    overview
   },
   mounted () {
     this.getDominList();

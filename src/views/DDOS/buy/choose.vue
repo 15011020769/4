@@ -12,7 +12,11 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.regional')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span class="address spanList" :class="type1=='1'?'seceltList':''" @click="checkAddress(1,'台湾台北')">{{city}}</span>
+                    <span
+                      class="address spanList"
+                      :class="type1=='1'?'seceltList':''"
+                      @click="checkAddress(1,'台湾台北')"
+                    >{{city}}</span>
                   </div>
                 </div>
               </div>
@@ -22,7 +26,13 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.MinimumProtection')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span v-for="(item,index) in Gbps" :key="index" class="spanList" :class="GbpsIndex==index?'seceltList':''" @click="_Gbps(index)">{{item.name}}Gbps</span>
+                    <span
+                      v-for="(item,index) in Gbps"
+                      :key="index"
+                      class="spanList"
+                      :class="GbpsIndex==index?'seceltList':''"
+                      @click="_Gbps(index,item)"
+                    >{{item.name}}Gbps</span>
                     <!-- <span
                       class="spanList"
                       :class="type2==1?'seceltList':''"
@@ -43,7 +53,13 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.ElasticProtection')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span v-for="(item,index) in Gbps[GbpsIndex].child" :key="index" class="spanList" :class="GbpsChildIndex==index?'seceltList':''" @click="_GbpsChild(index)">{{item}}Gbps</span>
+                    <span
+                      v-for="(item,index) in Gbps[GbpsIndex].child"
+                      :key="index"
+                      class="spanList"
+                      :class="GbpsChildIndex==index?'seceltList':''"
+                      @click="_GbpsChild(index,item)"
+                    >{{item}}Gbps</span>
                     <!-- <span
                       class="spanList"
                       :class="type3==index?'seceltList':''"
@@ -62,12 +78,38 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.BusinessMetrics')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span class="spanList" :class="type4==1?'seceltList':''" @click="checkListFour(1,'100Mbps')">100Mbps</span>
-                    <span class="spanList" :class="type4==2?'seceltList':''" @click="checkListFour(2,'150Mbps')">150Mbps</span>
-                    <span class="spanList" :class="type4==3?'seceltList':''" @click="checkListFour(3,'200Mbps')">200Mbps</span>
-                    <span class="spanList" :class="type4==4?'seceltList':''" @click="checkListFour(4,'500Mbps')">500Mbps</span>
-                    <span class="spanList" :class="type4==5?'seceltList':''" @click="checkListFour(5,'1Gbps')">1Gbps</span>
-                    <span class="spanList" :class="type4==6?'seceltList':''" @click="checkListFour(6,'2Gbps')">2Gbps</span>
+                    <!-- 业务带宽最低是50M起卖，最大为1G不是2G -->
+                    <span
+                      class="spanList"
+                      :class="type4==1?'seceltList':''"
+                      @click="checkListFour(1,'50Mbps')"
+                    >50Mbps</span>
+                    <span
+                      class="spanList"
+                      :class="type4==1?'seceltList':''"
+                      @click="checkListFour(2,'100Mbps')"
+                    >100Mbps</span>
+                    <span
+                      class="spanList"
+                      :class="type4==2?'seceltList':''"
+                      @click="checkListFour(3,'150Mbps')"
+                    >150Mbps</span>
+                    <span
+                      class="spanList"
+                      :class="type4==3?'seceltList':''"
+                      @click="checkListFour(4,'200Mbps')"
+                    >200Mbps</span>
+                    <span
+                      class="spanList"
+                      :class="type4==4?'seceltList':''"
+                      @click="checkListFour(5,'500Mbps')"
+                    >500Mbps</span>
+                    <span
+                      class="spanList"
+                      :class="type4==5?'seceltList':''"
+                      @click="checkListFour(6,'1Gbps')"
+                    >1Gbps</span>
+                    <!-- <span class="spanList" :class="type4==6?'seceltList':''" @click="checkListFour(6,'2Gbps')">2Gbps</span> -->
                   </div>
                   <div class="tipList">
                     <p class="tipListThree">{{$t('DDOS.choose.toBychoose')}}</p>
@@ -83,56 +125,104 @@
                 <div class="checkListLeft">{{$t('DDOS.choose.byTime')}}</div>
                 <div class="checkListRight">
                   <div>
-                    <span class="spanList" :class="type5==1?'seceltList':''" @click="checkListFive(1,'1个月')">1个月</span>
-                    <span class="spanList" :class="type5==2?'seceltList':''" @click="checkListFive(2,'2个月')">2个月</span>
-                    <span class="spanList" :class="type5==3?'seceltList':''" @click="checkListFive(3,'3个月')">3个月</span>
-                    <span class="spanList" :class="type5==4?'seceltList':''" @click="checkListFive(4,'4个月')">4个月</span>
-                    <span class="spanList" :class="type5==5?'seceltList':''" @click="checkListFive(5,'5个月')">5个月</span>
+                    <span
+                      class="spanList"
+                      :class="type5==1?'seceltList':''"
+                      @click="checkListFive(1,'1个月')"
+                    >1个月</span>
+                    <span
+                      class="spanList"
+                      :class="type5==2?'seceltList':''"
+                      @click="checkListFive(2,'2个月')"
+                    >2个月</span>
+                    <span
+                      class="spanList"
+                      :class="type5==3?'seceltList':''"
+                      @click="checkListFive(3,'3个月')"
+                    >3个月</span>
+                    <span
+                      class="spanList"
+                      :class="type5==4?'seceltList':''"
+                      @click="checkListFive(4,'4个月')"
+                    >4个月</span>
+                    <span
+                      class="spanList"
+                      :class="type5==5?'seceltList':''"
+                      @click="checkListFive(5,'5个月')"
+                    >5个月</span>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span class="spanList" :class="type5==6?'seceltList':''" @click="checkListFive(6,'6个月')">
+                      <span
+                        class="spanList"
+                        :class="type5==6?'seceltList':''"
+                        @click="checkListFive(6,'6个月')"
+                      >
                         6个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">{{$t('DDOS.choose.months')}}</div>
-                      <span class="spanList" :class="type5==7?'seceltList':''" @click="checkListFive(7,'7个月')">
+                      <span
+                        class="spanList"
+                        :class="type5==7?'seceltList':''"
+                        @click="checkListFive(7,'7个月')"
+                      >
                         7个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span class="spanList" :class="type5==8?'seceltList':''" @click="checkListFive(8,'8个月')">
+                      <span
+                        class="spanList"
+                        :class="type5==8?'seceltList':''"
+                        @click="checkListFive(8,'8个月')"
+                      >
                         8个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">6个月以上享88折</div>
-                      <span class="spanList" :class="type5==9?'seceltList':''" @click="checkListFive(9,'9个月')">
+                      <span
+                        class="spanList"
+                        :class="type5==9?'seceltList':''"
+                        @click="checkListFive(9,'9个月')"
+                      >
                         9个月
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">1年享83折</div>
-                      <span class="spanList" :class="type5==10?'seceltList':''" @click="checkListFive(10,'1年')">
+                      <span
+                        class="spanList"
+                        :class="type5==10?'seceltList':''"
+                        @click="checkListFive(10,'1年')"
+                      >
                         1年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">2年享7折</div>
-                      <span class="spanList" :class="type5==11?'seceltList':''" @click="checkListFive(11,'2年')">
+                      <span
+                        class="spanList"
+                        :class="type5==11?'seceltList':''"
+                        @click="checkListFive(11,'2年')"
+                      >
                         2年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
                     </el-tooltip>
                     <el-tooltip placement="top" effect="light">
                       <div slot="content">3年享5折</div>
-                      <span class="spanList" :class="type5==12?'seceltList':''" @click="checkListFive(12,'3年')">
+                      <span
+                        class="spanList"
+                        :class="type5==12?'seceltList':''"
+                        @click="checkListFive(12,'3年')"
+                      >
                         3年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
@@ -289,76 +379,116 @@ export default {
       GbpsChildIndex: 0
     };
   },
-  mounted: function () {
+  mounted: function() {
     window.addEventListener("scroll", this.handleScroll, true); // 监听（绑定）滚轮滚动事件
   },
   created() {
     this.region();
   },
   methods: {
-    _GbpsChild(index) {
+    _GbpsChild(index, item) {
       this.GbpsChildIndex = index;
+      if (index === 0) {
+        this.saveShow = true;
+      } else {
+        this.saveShow = false;
+      }
+      this.checkedRoute3 = item ;
     },
-    _Gbps(index) {
+    _Gbps(index, item) {
       this.GbpsIndex = index;
+      this.type2 = index;
+      this.checked2 = item;
+      if (index === 1) {
+        this.ccText = "70,000QPS";
+      } else if (index === 2) {
+        this.ccText = "150,000QPS";
+      } else {
+        this.ccText = "40,000QPS";
+      }
     },
     region() {
       this.axios.get(ALL_CITY).then(data => {
         this.city = data.data[0].zone;
       });
     },
-    //默认选择中国台湾
+    // 默认选择中国台湾
     checkAddress(type1, checked) {
       this.type1 = type1;
       this.checked1 = checked;
     },
     //保底防护峰值
-    checkListTwo(type2, checked) {
-      this.type2 = type2;
-      this.checked2 = checked;
-    },
+    // checkListTwo(type2, checked) {
+    //   this.type2 = type2;
+    //   this.checked2 = checked;
+    // },
     //弹性防护峰值
-    checkListThree(type3, checked) {
-      this.type3 = type3;
-      this.checked3 = checked;
-      if (type3 == 0) {
-        console.log(this.checkedRoute3);
-        this.saveShow = true;
-        this.checkedRoute3 = 0;
-      } else {
-        this.saveShow = false;
-        this.checkedRoute3 = checked;
-      }
-      console.log(type3, checked);
-    },
+    // checkListThree(type3, checked) {
+    //   this.type3 = type3;
+    //   this.checked3 = checked;
+    //   if (type3 == 0) {
+    //     console.log(this.checkedRoute3);
+    //     this.saveShow = true;
+    //     this.checkedRoute3 = 0;
+    //   } else {
+    //     this.saveShow = false;
+    //     this.checkedRoute3 = checked;
+    //   }
+    //   console.log(type3, checked);
+    // },
     //业务规格
     checkListFour(type4, checked) {
       this.type4 = type4;
       this.checked4 = checked;
-      if (this.type4 == 1) {
+      // if (this.type4 == 1) {
+      //   this.checkChange1 = 3000;
+      //   this.checkChange2 = 3000;
+      //   this.checkedRoute4 = 100;
+      // } else if (this.type4 == 2) {
+      //   this.checkChange1 = 5000;
+      //   this.checkChange2 = 3500;
+      //   this.checkedRoute4 = 150;
+      // } else if (this.type4 == 3) {
+      //   this.checkChange1 = 7000;
+      //   this.checkChange2 = 4000;
+      //   this.checkedRoute4 = 200;
+      // } else if (this.type4 == 4) {
+      //   this.checkChange1 = 20000;
+      //   this.checkChange2 = 7000;
+      //   this.checkedRoute4 = 500;
+      // } else if (this.type4 == 5) {
+      //   this.checkChange1 = 40000;
+      //   this.checkChange2 = 10000;
+      //   this.checkedRoute4 = 1000;
+      // } else if (this.type4 == 6) {
+      //   this.checkChange1 = 70000;
+      //   this.checkChange2 = 17000;
+      //   this.checkedRoute4 = 2000;
+      // }
+      if (this.type4 === 1) {
+        this.checkChange1 = 1500;
+        this.checkChange2 = 1500;
+        this.checkedRoute4 = 50;
+      } else if (this.type4 === 2) {
         this.checkChange1 = 3000;
         this.checkChange2 = 3000;
         this.checkedRoute4 = 100;
-      } else if (this.type4 == 2) {
+      } else if (this.type4 === 3) {
         this.checkChange1 = 5000;
         this.checkChange2 = 3500;
         this.checkedRoute4 = 150;
-      } else if (this.type4 == 3) {
+      } else if (this.type4 === 4) {
         this.checkChange1 = 7000;
         this.checkChange2 = 4000;
         this.checkedRoute4 = 200;
-      } else if (this.type4 == 4) {
+      } else if (this.type4 === 5) {
         this.checkChange1 = 20000;
         this.checkChange2 = 7000;
         this.checkedRoute4 = 500;
-      } else if (this.type4 == 5) {
+      } else if (this.type4 === 6) {
         this.checkChange1 = 40000;
         this.checkChange2 = 10000;
         this.checkedRoute4 = 1000;
-      } else if (this.type4 == 6) {
-        this.checkChange1 = 70000;
-        this.checkChange2 = 17000;
-        this.checkedRoute4 = 2000;
       }
     },
     //购买时长
@@ -378,11 +508,11 @@ export default {
     //点击跳转支付页面
     payPage() {
       // 被锁定的账户无法购买资源 lock_state === '1' 表示账户为锁定状态
-      if (this.$cookie.get('lock_state') === '1') {
+      if (this.$cookie.get("lock_state") === "1") {
         this.$message({
           showClose: true,
-          message: this.$t('COM.lockText'),
-          type: 'warning'
+          message: this.$t("COM.lockText"),
+          type: "warning"
         });
       } else {
         let params = {
@@ -405,7 +535,7 @@ export default {
       }
     },
     //滚动监听
-    handleScroll: function () {
+    handleScroll: function() {
       //   const that = this
       // let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
       // that.scrollTop = scrollTop

@@ -57,16 +57,16 @@
           label-position="left"
         >
           <el-form-item label="集群名">
-            <p>{{ dispose.name }}</p>
+            <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ dispose.kuValue }}</p>
+            <p>{{ nodeForm.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ dispose.cityRadio }}</p>
+            <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ dispose.container }}</p>
+            <p>{{ nodeForm.container }}</p>
           </el-form-item>
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
@@ -81,17 +81,17 @@
             <p>计费模式<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group
-                v-model="colonySecond.charging"
+                v-model="nodeForm.instanceChargeType"
                 @change="SecondCharging"
               >
-                <el-radio-button label="1">按量计费</el-radio-button>
-                <el-radio-button label="2">包年包月</el-radio-button>
+                <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
+                <el-radio-button label="PREPAID">包年包月</el-radio-button>
               </el-radio-group>
               <a href="#">详细对比</a>
             </div>
           </div>
           <el-form-item label="所在地域">
-            <p style="line-height:48px;">{{ dispose.cityRadio }}</p>
+            <p style="line-height:48px;">{{ nodeForm.cityRadio }}</p>
           </el-form-item>
           <div
             class="tke-second-tips"
@@ -110,21 +110,21 @@
           >
             <p>节点网络<i class="el-icon-info"></i></p>
             <div class="tke-second-worker-select">
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="nodeForm.groupVps" disabled placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in nodeForm.describeVpcs"
+                  :key="item.VpcId"
+                  :label="item.VpcName"
+                  :value="item.VpcId"
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="nodeForm.subnetId" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in nodeForm.subNetList"
+                  :key="item.SubnetId"
+                  :label="item.SubnetName"
+                  :value="item.SubnetId"
                 >
                 </el-option>
               </el-select>
@@ -154,7 +154,7 @@
             <div class="model-bg">
               <el-table
                 ref="singleTable"
-                :data="colonySecond.tableData"
+                :data="zoneInfoList"
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: 100%"
@@ -167,14 +167,30 @@
                   </template>
                 </el-table-column>
                 <el-table-column property="date" label="机型">
+                  <template slot-scope="scope">
+                    <span>{{ModelTypeName(scope.row.TypeName)}}</span>
+                  </template>
                 </el-table-column>
                 <el-table-column property="name" label="规格">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.InstanceType}}</span>
+                  </template>
                 </el-table-column>
                 <el-table-column property="address" label="CPU">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.Cpu}}核</span>
+                  </template>
                 </el-table-column>
                 <el-table-column property="address" label="内存">
+                  <template slot-scope="scope">
+                    <span>{{scope.row.Memory}}GB</span>
+                  </template>
                 </el-table-column>
                 <el-table-column property="address" label="配置费用">
+                  <template slot-scope="scope">
+                    <span class="text-orange" style="color:#ff7800;">￥{{ scope.row.Price.UnitPrice }}</span
+                    >元/小时起
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
@@ -200,16 +216,16 @@
           label-position="left"
         >
           <el-form-item label="集群名">
-            <p>{{ dispose.name }}</p>
+            <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ dispose.kuValue }}</p>
+            <p>{{ nodeForm.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ dispose.cityRadio }}</p>
+            <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ dispose.container }}</p>
+            <p>{{ nodeForm.container }}</p>
           </el-form-item>
           <div class="tke-second-tips tke-third-tips-h">
             <p>操作系统<i class="el-icon-info"></i></p>
@@ -225,12 +241,12 @@
           </el-form-item>
           <el-form-item label="系统盘">
             <div class="tke-second-radio-btn tke-third-radio-btn">
-              <el-radio-group v-model="colonyThird.loginModeRadio">
-                <el-radio-button label="1">高性能云硬盘</el-radio-button>
-                <el-radio-button label="2">SSD云硬盘</el-radio-button>
+              <el-radio-group v-model="nodeForm.systemDiskType">
+                <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
+                <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider v-model="value1" show-input></el-slider>
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input></el-slider>
               </div>
             </div>
           </el-form-item>
@@ -405,22 +421,22 @@
         <div class="tke-second-title">已选配置</div>
         <el-form ref="form" label-width="120px" label-position="left">
           <el-form-item label="集群名">
-            <p>{{ dispose.name }}</p>
+            <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ dispose.kuValue }}</p>
+            <p>{{ nodeForm.kuValue }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
-            <p>{{ dispose.cityRadio }}</p>
+            <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ dispose.container }}</p>
+            <p>{{ nodeForm.container }}</p>
           </el-form-item>
           <el-form-item label="计费模式">
             <p>按量计费</p>
           </el-form-item>
           <el-form-item label="机型">
-            <p>{{ dispose.container }}</p>
+            <p>{{ nodeForm.container }}</p>
           </el-form-item>
           <el-form-item label="规格">
             <p>按量计费</p>
@@ -465,23 +481,45 @@
 <script>
 // import HeadCom from '@/components/public/Head'
 // import SEARCH from '@/components/public/SEARCH'
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { ALL_CITY,
+  TKE_COLONY_LIST,
+  DESCRIBE_ZONE_INFO,
+  TKE_VPC_METWORK,
+  TKE_WORKER_METWORK,
+  TKE_SSH,
+  TKE_MISG } from "@/constants";
 export default {
   name: "create",
   data() {
     return {
+      loadShow: false,//是否显示加载
+      clusterId: '',//集群id
+      clusterInfo: {},//集群基本信息
+      zoneInfoList: [],//机型列表
+      secretList: [],//SSH秘钥列表
+      securityGroups: [],//安全组列表
       // 步骤显示
       secondBox: true,
       thirdBox: false,
       fourthBox: false,
-      // 已选配置
-      dispose: {
-        name: "55", // 集群名称
-        kuValue: "1.24.5", // 版本
-        cityRadio: "台湾台北",
-        container: "192.168.0.0/16"
+      //form绑定数据
+      nodeForm: {
+        name: "", // 集群名称
+        kuValue: "", // 版本
+        cityRadio: "台湾台北",//区域
+        container: "",//容器网络
+        os:'',//操作系统
+        instanceChargeType: 'POSTPAID_BY_HOUR',//付费方式
+        describeVpcs: [],//vpsc列表
+        subNetList: [],//子网列表
+        groupVps: '',//vpcsID
+        subnetId: '',//子网id
+        zoneInfoList: [],//机型列表
+        secretList: [],//SSH秘钥列表
+        securityGroups: [],//安全组列表
+        systemDiskType: 'CLOUD_PREMIUM',//系统盘类型
+        systemSize: 0,//系统盘大小
       },
       // 第二步
       colonySecond: {
@@ -637,8 +675,244 @@ export default {
     // HeadCom,
     // SEARCH
   },
-  created() {},
+  created() {
+    this.clusterId = this.$route.query.clusterId;
+    this.getColonyInfo();
+    this.getDescribeZoneInstanceConfigInfos();
+    // this.getDescribeVpcs();
+    this.getSecretList();
+    this.getSecurityGroups();
+  },
   methods: {
+    async getColonyInfo () {
+      this.loadShow = true;
+      let params = {
+        Version: "2018-05-25",
+        Limit: 10,
+        Offset: 0
+      };
+      params["ClusterIds.0"] = this.clusterId;
+      const res = await this.axios.post(TKE_COLONY_LIST, params);
+      if (res.Response.Error === undefined) {
+        let response = res.Response.Clusters[0];
+        this.nodeForm.name = response.ClusterName;
+        this.nodeForm.container = response.ClusterNetworkSettings.ClusterCIDR;
+        this.nodeForm.os = response.ClusterOs;
+        this.clusterInfo = response;
+        this.nodeForm.groupVps = response.ClusterNetworkSettings.VpcId;
+        this.loadShow = false;
+        this.loadShow = true;
+        let params = {
+          Version: "2017-03-12",
+          Offset: 0,
+          Limit: 100,
+        };
+        await this.axios.post(TKE_VPC_METWORK, params).then( async(res2) => {
+          if(res2.Response.Error === undefined) {
+            this.describeVpcs = res2.Response.VpcSet;
+            if(res2.Response.VpcSet.length > 0) {
+              this.loadShow = true;
+              let param = {
+                Version: "2017-03-12",
+                Offset: 0,
+                Limit: 100,
+                "Filters.0.Name": "zone",
+                "Filters.0.Values.0": 'ap-taipei-1',
+                "Filters.1.Name": "vpc-id",
+                "Filters.1.Values.0": response.ClusterNetworkSettings.VpcId
+              }
+              await this.axios.post(TKE_WORKER_METWORK, param).then(res1 => {
+                if(res1.Response.Error === undefined) {
+                  this.nodeForm.subNetList = res1.Response.SubnetSet;
+                  this.nodeForm.subnetId = res1.Response.SubnetSet[0].SubnetId;
+                  this.loadShow = false;
+                } else {
+                  this.loadShow = false;
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res1.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            }
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res2.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      } else {
+        this.loadShow = false;
+        let ErrTips = {
+          "InternalError": "内部错误",
+          "InternalError.CamNoAuth": "没有权限。",
+          "InternalError.Db": "db错误。",
+          "InternalError.DbAffectivedRows": "DB错误",
+          "InternalError.Param": "Param。",
+          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+          "InvalidParameter": "参数错误",
+          "InvalidParameter.Param": "参数错误。",
+          "LimitExceeded": "超过配额限制",
+          "ResourceNotFound": "资源不存在"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
+    //获取可用区机型配置信息
+    async getDescribeZoneInstanceConfigInfos() {
+      let param = {
+        Version: "2017-03-12"        
+      }
+      param["Filters.0.Name"] = "zone";
+      param["Filters.0.Values.0"] = "ap-taipei-1";
+      param["Filters.1.Name"] = "instance-charge-type";
+      param["Filters.1.Values.0"] = "POSTPAID_BY_HOUR";
+      await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
+            "InvalidRegion.NotFound": "未找到该区域",
+            "InvalidZone.MismatchRegion": "指定的zone不存在",
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取支持网络
+    async getDescribeVpcs() {
+      this.loadShow = true;
+      let params = {
+        Version: "2017-03-12",
+        Offset: 0,
+        Limit: 100,
+      };
+      await this.axios.post(TKE_VPC_METWORK, params).then( async(res) => {
+        if(res.Response.Error === undefined) {
+          this.describeVpcs = res.Response.VpcSet;
+          if(res.Response.VpcSet.length > 0) {
+            this.loadShow = true;
+            let param = {
+              Version: "2017-03-12",
+              Offset: 0,
+              Limit: 100,
+              "Filters.0.Name": "zone",
+              "Filters.0.Values.0": 'ap-taipei-1',
+              "Filters.1.Name": "vpc-id",
+              "Filters.1.Values.0": this.groupVps
+            }
+            await this.axios.post(TKE_WORKER_METWORK, param).then(res1 => {
+              if(res1.Response.Error === undefined) {
+                this.nodeForm.subNetList = res1.Response.SubnetSet;
+                this.nodeForm.subnetId = res1.Response.SubnetId;
+                this.loadShow = false;
+              } else {
+                this.loadShow = false;
+                let ErrTips = {};
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res1.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            });
+          }
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取安全组列表
+    async getSecurityGroups() {
+      this.loadShow = true;
+      let params = {
+        Version: "2017-03-12",
+        Offset: 0,
+        Limit: 100,
+      }
+      params["Filters.0.Name"] = "project-id";
+      params["Filters.0.Values.0"] = 0;
+
+      await this.axios.post(TKE_MISG, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.nodeForm.securityGroups = res.Response.SecurityGroupSet;
+          // this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取ssh秘钥密码
+    async getSecretList() {
+      this.loadShow = true;
+      let params = {
+        Version: "2017-03-12",
+        Limit: 100
+      }
+      await this.axios.post(TKE_SSH, params).then(res => {
+        if(res.Response.Error === undefined) {
+          this.nodeForm.secretList = res.Response.KeyPairSet;
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     // 返回上一层
     goBack() {
       this.$router.go(-1);
@@ -729,6 +1003,15 @@ export default {
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+    },
+    ModelTypeName(val) {
+      if (val === "Standard S3") {
+        return "标准型S3";
+      } else if (val === "Compute C3") {
+        return "计算型C3";
+      } else if (val === "MEM-optimized M3") {
+        return "内存型M3";
+      }
     }
   }
 };

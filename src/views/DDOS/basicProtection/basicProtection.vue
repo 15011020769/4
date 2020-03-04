@@ -143,7 +143,7 @@ export default {
         { subarea: "cvm", lable: "雲伺服器專區" },
         { subarea: "clb", lable: "負載均衡專區" },
         { subarea: "nat", lable: "NAT伺服器專區" },
-        { subarea: "net", lable: "網際網路通道" }
+        // { subarea: "net", lable: "網際網路通道" }
       ],
       // 地域选择
       selectedCity: {},

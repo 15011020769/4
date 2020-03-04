@@ -20,6 +20,14 @@ export default {
       type: Array,
       default: () => []
     },
+    radius: {
+      type: Array,
+      default: () => ['50%', '70%']
+    },
+    left: {
+      type: String,
+      default: "58%"
+    },
     // tooltip: {
       //   type: Object,
     //   default: function() {
@@ -63,7 +71,7 @@ export default {
         legend: {
             data: this.legendText,
             orient: 'vertical',
-            left: '60%',
+            left: this.left,
             y: 'center',
             icon: "circle",
             textStyle:{
@@ -92,7 +100,7 @@ export default {
             data: this.series,
             type: 'pie',
             center: ['30%', '50%'],
-            radius: ['50%', '70%'],
+            radius: this.radius,
             avoidLabelOverlap: false,
             label: {
               normal: {

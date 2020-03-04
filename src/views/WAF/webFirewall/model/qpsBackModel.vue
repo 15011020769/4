@@ -58,6 +58,7 @@ export default {
       remainingDays: 0, // 剩余天数
       cost: 0,
       loading: true,
+      exchange: 0,
     }
   },
   computed:{
@@ -81,6 +82,15 @@ export default {
   },
   methods:{
     queryPrice() {
+      if (!this.exchange) {
+        this.axios({
+          method: 'get',
+          baseURL: process.env.VUE_APP_adminUrl,
+          url: 'taifucloud/texchangerate/getExchange'
+        }).then(({ taxRate, usd2twd, cny2usd }) => {
+          this.exchange = taxRate * usd2twd * cny2usd
+        })
+      }
       this.loading = true
       const resInfo = {
         "regionId": 1,
@@ -144,12 +154,12 @@ export default {
       let purchaseTime = `${d}天`
       let name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${qpsname}-CLB${this.t('新购', 'WAF.ng')}`
       let tips
-      if (this.package.DomainPkg) { // 变配
-        validTime = this.package.DomainPkg.ValidTime
+      if (this.package.QPSPackage) { // 变配
+        validTime = this.package.QPSPackage.ValidTime
         d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
         time = d/(365/12) // 到期月数
-        newEdiPrice = (this.buyNum + this.package.DomainPkg.Count) * 500 // TODO 这里的500需要修改
-        curEdiPrice = this.package.DomainPkg.Count * 500  // TODO 这里的500需要修改
+        newEdiPrice = (this.buyNum + this.package.QPSPackage.Count) * 1000 * this.exchange
+        curEdiPrice = this.package.QPSPackage.Count * 1000 * this.exchange
         name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${qpsname}-${this.t('变配', 'WAF.bp')}`
         price = '-'
         purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
@@ -166,11 +176,66 @@ export default {
         purchaseTime,
         tips
       }
-      localStorage.setItem(ORDER_INFO, JSON.stringify([order]))
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders: [order],
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
         name: 'pay'
       })
-    }
+    },
+    getDealParam() {
+      const { QPS } = this.package
+      const param = {
+        Version: '2018-07-09',
+        'Goods.0.RegionId': 1,
+        'Goods.0.ZoneId': 0,
+        'Goods.0.GoodsNum': 1,
+        'Goods.0.ProjectId': 0,
+        'Goods.0.PayMode': 1,
+        'Goods.0.Platform': 1,
+      }
+      if (QPS) {
+        return JSON.stringify({
+          'Goods.0.GoodsCategoryId': CLB_BUY_QPS_TYPES.edit_categoryid,
+          ...param,
+          'Goods.0.GoodsDetail': JSON.stringify({
+            productInfo: [{
+              name: `${this.t('QPS扩展包', 'WAF.qpskzb')}`,
+              value: `${this.buyNum * 1000}QPS`
+            }],
+            curDeadline: QPS.ValidTime,
+            resourceId: QPS.ResourceIds,
+            oldConfig: {
+              pid: CLB_BUY_QPS_TYPES.pid,
+              [CLB_BUY_QPS_TYPES.pricetype]: 1000 * QPS.Count,
+              type: CLB_BUY_QPS_TYPES.goodstype
+            },
+            newConfig: {
+              pid: CLB_BUY_QPS_TYPES.pid,
+              [CLB_BUY_QPS_TYPES.pricetype]: 1000 * (QPS.Count + this.buyNum),
+              type: CLB_BUY_QPS_TYPES.goodstype
+            }
+          }),
+        })
+      }
+      return JSON.stringify({
+        'Goods.0.GoodsCategoryId': CLB_BUY_QPS_TYPES.first_categoryid,
+        ...param,
+        'Goods.0.GoodsDetail': {
+          productInfo: [{
+            name: `${this.t('QPS扩展包', 'WAF.qpskzb')}`,
+            value: `${this.buyNum * 1000}QPS`
+          }],
+          timeSpan: this.remainingDays,
+          timeUnit: 'd',
+          pid: CLB_BUY_QPS_TYPES.pid,
+          type: CLB_BUY_QPS_TYPES.goodstype,
+          [CLB_BUY_QPS_TYPES.pricetype]: 1000 * this.buyNum,
+          Currency: 'CNY'
+        }
+      })
+    },
   }
 }
 </script>

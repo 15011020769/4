@@ -51,7 +51,8 @@
         <div class="allConMainOneCon allConMainTwoCon">
           <el-row :gutter="20">
             <el-col :span="12">
-              <div class="allConMainOneLeft allConMainTwoLeft">
+              <!-- 【【安全-DDoS防护-防护概览】台富云不售卖高防包，在防护概览页中高防包和共享包相关的功能可以取消】 -->
+              <!-- <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
                     {{$t('DDOS.Protective.ProtectiveExclusive')}}
@@ -80,7 +81,7 @@
                     </p>
                   </el-col>
                 </el-row>
-              </div>
+              </div> -->
             </el-col>
             <el-col :span="12">
               <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
@@ -137,10 +138,10 @@
         <div class="allConMainThreeCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button
+              <!-- <el-button
                 @click="btnClick('bgp')"
                 :class="{'addColor':type=='bgp'}"
-              >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button>
+              >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button> -->
               <el-button
                 @click="btnClick('bgp-multip')"
                 :class="{'addColor':type=='bgp-multip'}"

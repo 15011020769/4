@@ -226,7 +226,8 @@ export default new Router({
             keepAlive: true,
             clusterId: true
           }
-        }
+        },
+       
       ]
     },
     { // 监控按钮页面monitor
@@ -315,6 +316,22 @@ export default new Router({
       path: '/colony/sub/update/resource/updatePodConfig', // 集群-pod--更新pod配置
       name: 'podConfigUpdate',
       component: () => import('./colony/sub/update/resource/updatePodConfig.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/setStrategy', //设置更新策略
+      name: 'setStrategy',
+      component: () => import('./colony/sub/update/resource/setStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/updateStrategy',//更新调度策略
+      name: 'updateStrategy',
+      component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
       meta: {
         keepAlive: true
       }
@@ -1358,22 +1375,7 @@ export default new Router({
         keepAlive: true
       }
     },
-    {
-      path: '/setStrategy/:rid', //存储列表设置更新策略
-      name: 'setStrategy',
-      component: () => import('./colony/sub/update/resource/setStrategy.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/updateStrategy/:rid',//更新调度策略
-      name: 'updateStrategy',
-      component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
+    
     {
       path: '/editYaml/:rid',//更新调度策略
       name: 'editYaml',

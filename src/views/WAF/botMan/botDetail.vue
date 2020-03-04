@@ -1,17 +1,17 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 详情</span>
+      <span>{{t('BOT 详情', 'WAF.botxq')}}</span>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="概览" name="overview"></el-tab-pane>
-        <el-tab-pane label="未知类型" name="ub"></el-tab-pane>
-        <el-tab-pane label="自定义类型" name="ucb"></el-tab-pane>
-        <el-tab-pane label="公开类型" name="tcb"></el-tab-pane>
+        <el-tab-pane :label="t('概览', 'WAF.gl')" name="overview"></el-tab-pane>
+        <el-tab-pane :label="t('未知类型', 'WAF.wzlx')" name="ub"></el-tab-pane>
+        <el-tab-pane :label="t('自定义类型', 'WAF.zdylx')" name="ucb"></el-tab-pane>
+        <el-tab-pane :label="t('公开类型', 'WAF.gklx')" name="tcb"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
+        <p style="width: 99%">{{t('BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多', 'WAF.botxwgl')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <el-row type="flex" class="topSelect">
@@ -48,9 +48,9 @@
           ></el-date-picker>
       </el-row>
       <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ucb'"></Ucb>
-      <Tcb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'tcb'"></Tcb>
+      <Ub :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ub'"></Ub>
+      <Ucb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'ucb'"></Ucb>
+      <Tcb :domain="domainValue" :times="[startTime, endTime]" v-if="activeName == 'tcb'"></Tcb>
     </div>
   </div>
 </template>
