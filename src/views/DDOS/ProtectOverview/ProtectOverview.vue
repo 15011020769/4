@@ -34,11 +34,15 @@
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>{{$t('DDOS.Protective.Protectivewash')}}</p>
-                    <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p>
+                    <!-- 移除高仿包相关数据 -->
+                    <!-- <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p> -->
+                    <p>{{(+packDataIP[1].Value)}}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
                     <p>{{$t('DDOS.Protective.blockIng')}}</p>
-                    <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p>
+                    <!-- 移除高仿包相关数据 -->
+                    <!-- <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p> -->
+                    <p>{{(+packDataIP[2].Value)}}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -51,7 +55,8 @@
         <div class="allConMainOneCon allConMainTwoCon">
           <el-row :gutter="20">
             <el-col :span="12">
-              <div class="allConMainOneLeft allConMainTwoLeft">
+              <!-- 【安全-DDoS防护-防护概览】台富云不售卖高防包，在防护概览页中高防包和共享包相关的功能可以取消】 -->
+              <!-- <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
                     {{$t('DDOS.Protective.ProtectiveExclusive')}}
@@ -80,7 +85,7 @@
                     </p>
                   </el-col>
                 </el-row>
-              </div>
+              </div> -->
             </el-col>
             <el-col :span="12">
               <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
@@ -137,10 +142,10 @@
         <div class="allConMainThreeCon">
           <div class="chartShowTit">
             <el-button-group>
-              <el-button
+              <!-- <el-button
                 @click="btnClick('bgp')"
                 :class="{'addColor':type=='bgp'}"
-              >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button>
+              >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button> -->
               <el-button
                 @click="btnClick('bgp-multip')"
                 :class="{'addColor':type=='bgp-multip'}"
@@ -248,15 +253,16 @@ export default {
         { Key: "ExpireingPackCount", Value: 0 },
         { Key: "IsolatePackCount", Value: 0 }
       ],
-      packDataBgp: [
-        // bgp
-        { Key: "TotalPackCount", Value: 0 },
-        { Key: "AttackPackCount", Value: 70 },
-        { Key: "BlockPackCount", Value: 0 },
-        { Key: "ExpiredPackCount", Value: 0 },
-        { Key: "ExpireingPackCount", Value: 0 },
-        { Key: "IsolatePackCount", Value: 60 }
-      ],
+      // <!-- 移除高仿包相关数据 -->
+      // packDataBgp: [
+      //   // bgp
+      //   { Key: "TotalPackCount", Value: 0 },
+      //   { Key: "AttackPackCount", Value: 70 },
+      //   { Key: "BlockPackCount", Value: 0 },
+      //   { Key: "ExpiredPackCount", Value: 0 },
+      //   { Key: "ExpireingPackCount", Value: 0 },
+      //   { Key: "IsolatePackCount", Value: 60 }
+      // ],
       // 日期区间：30天
       endTime: this.getDateString(new Date()),
       startTime: this.getDateString(
@@ -295,9 +301,9 @@ export default {
           case "net":
             this.describePackIndex(this.packDataIP);
             break;
-          case "bgp":
-            this.describePackIndex(this.packDataBgp);
-            break;
+          // case "bgp":
+          //   this.describePackIndex(this.packDataBgp);
+          //   break;
         }
       }
       this.describeDDoSEvList();
@@ -402,9 +408,11 @@ export default {
     //下面tab切换表格
     btnClick(param) {
       this.type = param;
-      if (param == "bgp") {
-        this.downloadName = "獨享包攻擊記錄";
-      } else if (param == "bgp-multip") {
+      // 移除高仿包相关数据
+      // if (param == "bgp") {
+      //   this.downloadName = "獨享包攻擊記錄";
+      // } else
+      if (param == "bgp-multip") {
         this.downloadName = "共享包攻擊記錄";
       } else if (param == "net") {
         this.downloadName = "高防IP專業版攻擊記錄";

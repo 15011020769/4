@@ -43,12 +43,12 @@ module.exports = {
       x3: '狀態',
       x4: '網路類型',
       x5: 'IP地址',
-      x6: '所屬項目',
+      x6: '所屬專案',
       x7: '健康狀態'
     },
     searchOptions: [{
       value: "project-id",
-      label: "項目ID"
+      label: "專案ID"
     },
     {
       value: "instance-id",
@@ -96,7 +96,7 @@ module.exports = {
       cz: '操作',
       jk: '監控',
       gjcl: '告警策略',
-      fhlb: '返回列表',
+      fhlb: '返回清單',
       fzjh: '負載均衡CLB',
       zjm: 'ID/主機名',
       zt: '狀態',
@@ -142,7 +142,7 @@ module.exports = {
     },
     Casegrouping: {
       slfz: '實例分組',
-      slfztgnl: '實例分組功能提供對跨地域、跨項目組的雲產品資源進行分組管理的能力',
+      slfztgnl: '實例分組功能提供對跨地域、跨專案組的雲產品資源進行分組管理的能力',
       xj: '新建',
       qsrslzm: '請輸入實例組名搜索',
       slzmc: '實例組名稱',

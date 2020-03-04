@@ -48,8 +48,8 @@
         </el-table-column>
         <el-table-column prop label="类型">
           <template slot-scope="scope">
-            <span :class="scope.row.isDisabled?'':'tke-text-link'">{{scope.row.spec.type}}</span>
-            <p v-if="scope.row.isDisabled?false:true">负载均衡</p>
+            <span :class="scope.row.idDb?'tke-text-link':''">{{scope.row.spec.type}}</span>
+            <p v-if="scope.row.idDb?true:false">负载均衡</p>
           </template>
         </el-table-column>
         <el-table-column prop label="Selector">
@@ -73,9 +73,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
-            <span class=" ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="goEdit(scope.row)">编辑YAML</span>
-            <span class="ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
+            <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
+            <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span>
+            <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
           </template>
         </el-table-column>
       </el-table>
@@ -201,9 +201,11 @@ export default {
               } else {
                 item.isDisabled = false
               }
-              // if( spec.type == 'ClusterIP' || spec.type == 'NodePort'){
-
-              // }
+              if (spec.type == 'ClusterIP' || spec.type == 'NodePort') {
+                item.idDb = false
+              } else {
+                item.idDb = true
+              }
             })
           }
           this.list = data// 得到列表数据并赋值
@@ -300,7 +302,7 @@ export default {
     },
     goEdit (item) {
       this.$router.push({
-        name: 'svcUpdate',
+        name: 'svcUpdateYaml',
         query: {
           clusterId: this.clusterId,
           spaceName: this.nameSpaceName,
@@ -376,7 +378,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.aaa{
+.fontColor{
   color:#ccc;
 }
 </style>

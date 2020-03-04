@@ -93,7 +93,7 @@
 import FileSaver from "file-saver";
 import { ErrorTips } from "@/components/ErrorTips";
 import XLSX from "xlsx";
-import { ALL_CITY } from "@/constants";
+import { ALL_CITY ,TKE_CBS_POLICIES} from "@/constants";
 export default {
   name: "pvCreate",
   data() {
@@ -111,7 +111,8 @@ export default {
         checkListO:[],
         checkListT:["台北一区"],
         city:''
-      }  
+      },
+      num:0
     };
   },
   components: {
@@ -119,12 +120,34 @@ export default {
   },
   created() {
      // 从路由获取类型
-   
+    this.GetPolicies()
   },
   methods: {
     //返回上一层
     goBack(){
           this.$router.go(-1);
+    },
+    GetPolicies(){
+      const param = {
+          "Filters.0.Name":"auto-snapshot-policy-state",
+          "Filters.0.Values.0":"NORMAL",
+          TryCreateDefaultAutoSnapshotPolicy: true,
+          Version: "2017-03-12"
+        }
+        this.axios.post(TKE_CBS_POLICIES, param).then(res => {
+          console.log(res)
+            if (res.Response.Error == undefined) {
+              console.log(res)
+              // this.loadShow = false
+            } else {
+              this.$message({
+                message: ErrorTips[res.Response.Error.code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              })
+            }
+          })
     },
   }
 };

@@ -8,7 +8,7 @@
         :data="ucbList"
         style="width: 100%"
       >
-        <el-table-column prop="date" label="序号"  width="50">
+        <el-table-column label="序号"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
         <el-table-column prop="SrcIp" label="访问源IP"></el-table-column>
@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column prop="Action" label="动作" width="60">
           <template slot-scope="scope">
-           {{action[scope.row.Action]}}
+            <span class="addRed">{{UCB_ACTION_LOCAL[scope.row.Action]}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="Score" label="BOT得分" width="100" sortable>
@@ -32,19 +32,16 @@
           </template>
         </el-table-column>
         <el-table-column prop="Nums" label="会话总次数" width="110" sortable></el-table-column>
-        <el-table-column prop="date" label="会话持续时间" width="118" sortable  :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{formatSeconds(scope.row.SessionDuration * 60)}}
-          </template>
+        <el-table-column label="会话持续时间" width="118" sortable :formatter="formatSessionDuration">
         </el-table-column>
-        <el-table-column prop="date" label="平均速率" sortable width="100">
+        <el-table-column label="平均速率" sortable width="100">
           <template slot-scope="scope">
             {{parseInt(scope.row.Stat.AvgSpeed)}}次/分
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="最新检测时间" width="120" sortable :formatter="formatDate">
+        <el-table-column label="最新检测时间" width="120" sortable :formatter="formatDate">
         </el-table-column>
-        <el-table-column prop="date" label="操作">
+        <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
           </template>
@@ -66,7 +63,7 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_BOT_UCB_RECORDS } from '@/constants'
-import { scene_flag_list } from '../../../constants'
+import { scene_flag_list, UCB_ACTION_LOCAL } from '../../../constants'
 export default {
   data () {
     return {
@@ -78,7 +75,7 @@ export default {
       totalItems: 0,//总长度
       sceneValue: "", // 预测标签匹配字段绑定值
       scene_flag_list, // 预测标签匹配字段
-      action: {'intercept': '拦截', 'monitor': '监控'},
+      UCB_ACTION_LOCAL,
     }
   },
   props: {
@@ -116,8 +113,8 @@ export default {
       const params = {
         Version: "2018-01-25",
         Domain: this.domain,
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
+        StartTs: this.times[0],
+        EndTs: this.times[1],
         Skip: this.pageSkip,
         Limit: this.pageLimit,
       }
@@ -131,10 +128,13 @@ export default {
     },
     // 查看详情
     goDetail(scope) {
+      console.log(scope)
       this.$router.push({
         path: "/botDetail/ucb",
         query: {
-          SrcIp: scope.row.SrcIp
+          SrcIp: scope.row.SrcIp,
+          domain: this.domain,
+          Id: scope.row.Id
         }
       })
     },
@@ -149,7 +149,8 @@ export default {
       console.log(`当前页: ${val}`);
       this.pageOffset = (val - 1) * this.pageLimit
     }, 
-    formatSeconds(value) {
+    formatSessionDuration(row) {
+      const value = row.SessionDuration * 60
       let secondTime = parseInt(value);// 秒
       let minuteTime = 0;// 分
       let hourTime = 0;// 小时
@@ -205,6 +206,9 @@ export default {
       width: 250px;
       margin-bottom: 10px;
     }
+  }
+  .addRed {
+    color: #e1504a;
   }
 }
 </style>

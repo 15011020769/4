@@ -445,7 +445,10 @@
           <div v-if="colonySecond.boxShow">
             <el-form-item label="Worker 节点" v-if="colonySecond.workerShow">
               <div class="tke-second-radio-btn">
-                <el-radio-group v-model="colonySecond.worker">
+                <el-radio-group
+                  v-model="colonySecond.worker"
+                  @change="WorkerNodeChange"
+                >
                   <el-radio-button label="1">立即部署</el-radio-button>
                   <el-radio-button label="2">暂不部署</el-radio-button>
                 </el-radio-group>
@@ -511,7 +514,19 @@
                   <div class="tke-second-worker-array" v-if="item.showText">
                     <p v-if="colonySecond.masterOneList.length > 1">
                       <span @click="EditWorker(index, 2)">编辑</span>
-                      <span @click="DeleteWorker(index, 2)">删除</span>
+                      <span
+                        @click="DeleteWorker(index, 2)"
+                        v-if="colonySecond.workerOneList.length > 1"
+                        >删除</span
+                      >
+                      <el-tooltip
+                        v-else
+                        content="不可删除，至少选择一个机型"
+                        placement="top"
+                        effect="light"
+                      >
+                        <span class="delete-color">删除</span>
+                      </el-tooltip>
                     </p>
                     <ol>
                       <li>
@@ -573,9 +588,9 @@
                         >
                           <el-option
                             v-for="item in colony.networkOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            :key="item.VpcId"
+                            :label="item.VpcName"
+                            :value="item.VpcId"
                           >
                           </el-option>
                         </el-select>
@@ -953,14 +968,23 @@
                             @click="WorkerSure(index, 2)"
                             >确定</el-button
                           >
-                          <el-button class="worker-cancel-btn-dis"
-                            >取消</el-button
-                          >
                           <el-button
                             class="worker-cancel-btn"
-                            style="display:none;"
+                            @click="DeleteWorker(index, 2)"
+                            v-if="colonySecond.workerOneList.length > 1"
                             >取消</el-button
                           >
+
+                          <el-tooltip
+                            v-else
+                            content="至少选择一个机型"
+                            placement="right"
+                            effect="light"
+                          >
+                            <el-button class="worker-cancel-btn-dis"
+                              >取消</el-button
+                            >
+                          </el-tooltip>
                         </el-row>
                       </div>
                     </li>
@@ -981,13 +1005,14 @@
                 节点数据盘成ext4，仅对拥有一块数据盘的节点生效</el-checkbox
               >
               <el-input
-                :value="colonySecond.masterDataDiskMountVal"
+                v-model="colonySecond.masterDataDiskMountVal"
                 placeholder="请输入内容"
                 v-if="colonySecond.masterDataDiskMount"
               ></el-input>
             </el-form-item>
             <div
               class="tke-second-worker"
+              style="margin-bottom:10px;"
               v-if="colonySecond.source == 2 && colonySecond.master == 2"
             >
               <p class="tke-second-worker-l">Master&Etcd 配置</p>
@@ -1019,7 +1044,7 @@
                       <div class="right-table">
                         <el-table
                           ref="multipleTableMaster"
-                          :data="leftList"
+                          :data="leftListMaster"
                           tooltip-effect="dark"
                           style="width: 430px"
                           height="250"
@@ -1095,9 +1120,21 @@
                   :key="index"
                 >
                   <div class="tke-second-worker-array" v-if="item.showText">
-                    <p v-if="colonySecond.workerOneList.length > 1">
+                    <p>
                       <span @click="EditWorker(index, 1)">编辑</span>
-                      <span @click="DeleteWorker(index, i)">删除</span>
+                      <span
+                        @click="DeleteWorker(index, 1)"
+                        v-if="colonySecond.workerOneList.length > 1"
+                        >删除</span
+                      >
+                      <el-tooltip
+                        v-else
+                        content="不可删除，至少选择一个机型"
+                        placement="top"
+                        effect="light"
+                      >
+                        <span class="delete-color">删除</span>
+                      </el-tooltip>
                     </p>
                     <ol>
                       <li>
@@ -1159,9 +1196,9 @@
                         >
                           <el-option
                             v-for="item in colony.networkOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
+                            :key="item.VpcId"
+                            :label="item.VpcName"
+                            :value="item.VpcId"
                           >
                           </el-option>
                         </el-select>
@@ -1590,14 +1627,23 @@
                             @click="WorkerSure(index, 1)"
                             >确定</el-button
                           >
-                          <el-button class="worker-cancel-btn-dis"
-                            >取消</el-button
-                          >
                           <el-button
                             class="worker-cancel-btn"
-                            style="display:none;"
+                            @click="DeleteWorker(index, 1)"
+                            v-if="colonySecond.workerOneList.length > 1"
                             >取消</el-button
                           >
+
+                          <el-tooltip
+                            v-else
+                            content="至少选择一个机型"
+                            placement="right"
+                            effect="light"
+                          >
+                            <el-button class="worker-cancel-btn-dis"
+                              >取消</el-button
+                            >
+                          </el-tooltip>
                         </el-row>
                       </div>
                     </li>
@@ -1608,7 +1654,7 @@
                 </div>
               </div>
             </div>
-            <div class="tke-second-worker" v-if="!colonySecond.sourceShow">
+            <div class="tke-second-worker" v-if="colonySecond.workerDeployShow">
               <p class="tke-second-worker-l">Worker 配置</p>
               <div class="tke-second-worker-r">
                 <div class="bg">
@@ -1796,14 +1842,14 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
-          <el-form-item label="数据盘挂载" v-if="!colonySecond.sourceShow">
-            <el-checkbox v-model="colonyThird.containerChecked"
-              >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
+          <el-form-item label="数据盘挂载" v-if="colonySecond.workerDeployShow">
+            <el-checkbox v-model="colonyThird.dataDiskChecked"
+              >自动格式化数据盘成ext4，仅对拥有一块数据盘的节点生效</el-checkbox
             >
             <el-input
-              v-model="colonyThird.containerInput"
+              v-model="colonyThird.dataDiskInput"
               placeholder="请输入内容"
-              v-if="colonyThird.containerChecked"
+              v-if="colonyThird.dataDiskChecked"
             ></el-input>
           </el-form-item>
           <el-form-item label="容器目录">
@@ -2126,7 +2172,6 @@ export default {
         assemblyDis: false,
         cityRadio: "tb",
         networkOptions: [],
-        networkValue: "",
         CidrBlock: "",
         CIDRTips: "",
         CIDROptions_1: [
@@ -2247,6 +2292,7 @@ export default {
         sourceShow: true,
         master: 1,
         workerShow: false,
+        workerDeployShow: false,
         worker: 1,
         boxShow: true,
         masterOneList: [
@@ -2273,6 +2319,7 @@ export default {
             dataDiskArr: [],
             buyDataDiskArr: [],
             dataDiskVal: "CLOUD_PREMIUM",
+            dataDiskNum: "10",
             dataDiskNumber: "10",
             latticeSetVal: "ext3",
             setValue: "/var/lib/docker",
@@ -2327,6 +2374,7 @@ export default {
         charging: 1,
         chargingShow: false,
         usableArea: 1,
+        networkValue: "",
         // 节点网络
         workerNodeNetworkVal: "",
         workerNodeNetOpt: [],
@@ -2547,6 +2595,9 @@ export default {
         // 容器目录
         containerChecked: false,
         containerInput: "/var/lib/docker",
+        // 数据盘挂载
+        dataDiskChecked: false,
+        dataDiskInput: "/var/lib/docker",
         // 安全组
         safeArr: [],
         defaultSafe: false,
@@ -2807,6 +2858,9 @@ export default {
       } else if (val === "10") {
         this.colony.CIDRValueDis_2 = false;
         this.colony.CIDRValue_2 = "0";
+        this.colony.CIDRValue_3 = "0";
+        this.colony.CIDRValueDis_3 = true;
+        this.colony.CIDRTipsDis_3 = true;
         this.colony.CIDRValue_5 = "14";
         this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
         this.colony.CIDROptions_5 = [];
@@ -2845,63 +2899,84 @@ export default {
         this.colony.CIDRValue_1 == "172" &&
         Number(this.colony.CIDRValue_5) >= 16
       ) {
-        if (Number(val) < 18) {
+        if (Number(~~val) < 18) {
           this.colony.CIDRValue_2 = 16;
         }
-        if (Number(val) > 31) {
+        if (Number(~~val) > 31) {
           this.colony.CIDRValue_2 = 31;
         }
       }
       if (this.colony.CIDRValue_1 == "10") {
         if (this.colony.CIDRValue_5 == "14") {
-          if (Number(val) < 3) {
+          if (Number(~~val) < 3) {
             this.colony.CIDRValue_2 = 0;
-          } else if (Number(val) > 251) {
+          } else if (Number(~~val) > 251) {
             this.colony.CIDRValue_2 = 252;
           } else {
-            if (Number(val) % 4 == 0) {
-              this.colony.CIDRValue_2 = val;
+            if (Number(~~val) % 4 == 0) {
+              this.colony.CIDRValue_2 = ~~val;
             } else {
-              let num = Math.floor(Number(val) / 4);
+              let num = Math.floor(Number(~~val) / 4);
               this.colony.CIDRValue_2 = 4 * num;
             }
+          }
+        }
+        if (this.colony.CIDRValue_5 == "15") {
+          if (Number(~~val) < 2) {
+            this.colony.CIDRValue_2 = 0;
+          } else if (Number(~~val) > 253) {
+            this.colony.CIDRValue_2 = 254;
+          } else {
+            if (Number(~~val) % 2 == 0) {
+              this.colony.CIDRValue_2 = ~~val;
+            } else {
+              let num = Math.floor(Number(~~val) / 2);
+              this.colony.CIDRValue_2 = 2 * num;
+            }
+          }
+        }
+        if (Number(this.colony.CIDRValue_5) >= 16) {
+          if (Number(~~val) > 254) {
+            this.colony.CIDRValue_2 = 255;
+          } else {
+            this.colony.CIDRValue_2 = ~~val;
           }
         }
       }
     },
     CIDR3(val) {
       if (this.colony.CIDRValue_5 == 17) {
-        if (Number(val) < 65) {
+        if (Number(~~val) < 65) {
           this.colony.CIDRValue_3 = 0;
         } else {
           this.colony.CIDRValue_3 = 128;
         }
       }
       if (this.colony.CIDRValue_5 == 18) {
-        if (Number(val) < 33) {
+        if (Number(~~val) < 33) {
           this.colony.CIDRValue_3 = 0;
-        } else if (Number(val) < 97) {
+        } else if (Number(~~val) < 97) {
           this.colony.CIDRValue_3 = 64;
-        } else if (Number(val) < 161) {
+        } else if (Number(~~val) < 161) {
           this.colony.CIDRValue_3 = 128;
         } else {
           this.colony.CIDRValue_3 = 192;
         }
       }
       if (this.colony.CIDRValue_5 == 19) {
-        if (Number(this.colony.CIDRValue_3) < 17) {
+        if (Number(~~val) < 17) {
           this.colony.CIDRValue_3 = 0;
-        } else if (Number(this.colony.CIDRValue_3) < 49) {
+        } else if (Number(~~val) < 49) {
           this.colony.CIDRValue_3 = 32;
-        } else if (Number(this.colony.CIDRValue_3) < 81) {
+        } else if (Number(~~val) < 81) {
           this.colony.CIDRValue_3 = 64;
-        } else if (Number(this.colony.CIDRValue_3) < 113) {
+        } else if (Number(~~val) < 113) {
           this.colony.CIDRValue_3 = 96;
-        } else if (Number(this.colony.CIDRValue_3) < 145) {
+        } else if (Number(~~val) < 145) {
           this.colony.CIDRValue_3 = 128;
-        } else if (Number(this.colony.CIDRValue_3) < 177) {
+        } else if (Number(~~val) < 177) {
           this.colony.CIDRValue_3 = 160;
-        } else if (Number(this.colony.CIDRValue_3) < 209) {
+        } else if (Number(~~val) < 209) {
           this.colony.CIDRValue_3 = 192;
         } else {
           this.colony.CIDRValue_3 = 224;
@@ -2909,54 +2984,40 @@ export default {
       }
     },
     CIDchange_5(val) {
+      if (val == 17) {
+        this.colony.CIDRValueContent_3 = "范围：0, 128";
+      } else if (val == 18) {
+        this.colony.CIDRValueContent_3 = "范围：0, 64, 128, 192";
+      } else {
+        this.colony.CIDRValueContent_3 = "范围：0, 32, ... , 224";
+      }
       if (this.colony.CIDRValue_1 == "192") {
         this.colony.CIDRValueDis_3 = false;
         this.colony.CIDRTipsDis_3 = false;
-        if (val == 17) {
-          this.colony.CIDRValueContent_3 = "范围：0, 128";
-        } else if (val == 18) {
-          this.colony.CIDRValueContent_3 = "范围：0, 64, 128, 192";
-        } else {
-          this.colony.CIDRValueContent_3 = "范围：0, 32, ... , 224";
-        }
+      }
+      if (this.colony.CIDRValue_1 == "172") {
+        this.colony.CIDRValueDis_3 = false;
+        this.colony.CIDRTipsDis_3 = false;
       }
       if (this.colony.CIDRValue_1 == "10") {
         if (val == "14") {
           this.colony.CIDRValue_2 = 0;
           this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
-          if (Number(val) < 3) {
-            this.colony.CIDRValue_2 = 0;
-          } else if (Number(val) > 251) {
-            this.colony.CIDRValue_2 = 252;
-          } else {
-            if (Number(val) % 4 == 0) {
-              this.colony.CIDRValue_2 = val;
-            } else {
-              let num = Math.floor(Number(val) / 4);
-              this.colony.CIDRValue_2 = 4 * num;
-            }
-          }
         } else if (val == 15) {
           this.colony.CIDRValue_2 = 0;
           this.colony.CIDRValueContent_2 = "范围：0, 2, ... , 254";
-          if (Number(val) < 2) {
-            this.colony.CIDRValue_2 = 0;
-          } else if (Number(val) > 253) {
-            this.colony.CIDRValue_2 = 254;
-          } else {
-            if (Number(val) % 2 == 0) {
-              this.colony.CIDRValue_2 = val;
-            } else {
-              let num = Math.floor(Number(val) / 2);
-              this.colony.CIDRValue_2 = 2 * num;
-            }
-          }
         } else if (Number(val) >= 16) {
           this.colony.CIDRValue_2 = 0;
           this.colony.CIDRValueContent_2 = "范围：0, 1, ... , 255";
-          if (Number(val) > 254) {
-            this.colony.CIDRValue_2 = 255;
-          }
+        }
+        if (Number(val) > 16) {
+          this.colony.CIDRValue_3 = "0";
+          this.colony.CIDRValueDis_3 = false;
+          this.colony.CIDRTipsDis_3 = false;
+        } else {
+          this.colony.CIDRValue_3 = "0";
+          this.colony.CIDRValueDis_3 = true;
+          this.colony.CIDRTipsDis_3 = true;
         }
       }
       this.NetWork();
@@ -3017,6 +3078,7 @@ export default {
           this.colony.CIDRValue_4 +
           "/" +
           CIDRValue_5;
+
         if (this.rightList.length != 0) {
           this.$nextTick(() => {
             this.rightList.forEach(row => {
@@ -3043,11 +3105,16 @@ export default {
       // colonySecond.source
       this.rightList = [];
       if (val == "2") {
-        this.colonySecond.workerTips = false;
+        this.colonySecond.workerTips = true;
         this.colonySecond.masterTips = false;
         this.colonySecond.sourceShow = false;
         this.colonySecond.secondNextShow = false;
+        this.colonySecond.workerDeployShow = true;
+        if (this.colonySecond.worker == 2) {
+          this.colonySecond.workerDeployShow = false;
+        }
       } else {
+        this.colonySecond.workerDeployShow = false;
         this.colonySecond.worker = 1;
         this.colonySecond.workerTips = false;
         this.colonySecond.masterTips = false;
@@ -3226,13 +3293,29 @@ export default {
         Region: "ap-taipei",
         Version: "2017-03-12"
       };
-      for (var i in this.leftList) {
-        param["InstanceIds." + i] = this.leftList[i].InstanceId;
+      if (
+        this.searchInputMaster == "" ||
+        (this.selectListMaster == "" && this.searchInputMaster == "") ||
+        (this.selectListMaster != "" && this.searchInputMaster == "")
+      ) {
+        for (var i in this.leftList) {
+          param["InstanceIds." + i] = this.leftList[i].InstanceId;
+        }
+      }
+      if (
+        (this.selectListMaster == "" && this.searchInputMaster != "") ||
+        (this.selectListMaster == 2 && this.searchInputMaster != "")
+      ) {
+        param["Filters.0.Name"] = "instance-name";
+        param["Filters.0.Values.0"] = this.searchInputMaster;
+      }
+      if (this.selectListMaster == 1 && this.searchInputMaster != "") {
+        param["InstanceIds.0"] = this.searchInputMaster;
       }
       this.axios.post(TKE_EXIST_NODES, param).then(res => {
         if (res.Response.Error === undefined) {
           this.leftListMaster = res.Response.InstanceSet;
-          // console.log(res.Response.InstanceSet);
+          console.log(res.Response.InstanceSet);
           this.leftListMasterVal =
             " 共 " + this.leftListMaster.length + " 云服务器";
         } else {
@@ -3326,19 +3409,24 @@ export default {
     // Master 节点
     SecondMaster(val) {
       // console.log(val)
+      this.rightList = [];
       this.rightListMaster = [];
       this.colonySecond.workerTips = false;
       this.colonySecond.completeBtn = false;
-      this.colonySecond.masterTips = true;
       this.colonySecond.secondNextShow = false;
       if (val == "2") {
         this.colonySecond.workerShow = true;
+        this.colonySecond.masterTips = true;
       } else {
         this.colonySecond.workerShow = false;
         this.colonySecond.workerTips = false;
         this.colonySecond.completeBtn = false;
         this.colonySecond.masterTips = false;
         this.colonySecond.secondNextShow = true;
+        if (this.colonySecond.source == 2) {
+          this.colonySecond.secondNextShow = false;
+          this.colonySecond.workerTips = true;
+        }
       }
       if (
         this.colonySecond.worker == 2 &&
@@ -3355,6 +3443,21 @@ export default {
         this.colonySecond.completeBtn = false;
       }
       this.TotalCost();
+    },
+    WorkerNodeChange(val) {
+      if (val == 2) {
+        if (this.colonySecond.source == 2 && this.colonySecond.master == 2) {
+          this.colonySecond.workerDeployShow = false;
+        } else {
+          this.colonySecond.workerDeployShow = true;
+        }
+      } else {
+        if (this.colonySecond.source == 2 && this.colonySecond.master == 2) {
+          this.colonySecond.workerDeployShow = true;
+        } else {
+          this.colonySecond.workerDeployShow = false;
+        }
+      }
     },
     // 计费模式
     SecondCharging(val) {
@@ -3538,7 +3641,6 @@ export default {
           this.colonySecond.buyDataWidth = 764;
         } else {
           this.colonySecond.buyDataWidth = 300;
-          this.colonySecond.masterOneList[index].buyDataDiskArr = [];
         }
       }
     },
@@ -3562,34 +3664,33 @@ export default {
     },
     // 数据盘 弹框确认
     DataDiskSure(index, a) {
-      let buyDataDiskArr = this.colonySecond.workerOneList[index]
-        .buyDataDiskArr;
       this.colonySecond.workerOneList[index].dataDiskArr = [];
-      this.colonySecond.masterOneList[index].dataDiskArr = [];
+      let _masterOneList = this.colonySecond.masterOneList;
       let text = [];
+      let text_2 = "";
       if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
         this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
       }
-      for (var i in buyDataDiskArr) {
-        for (let j in this.colonySecond.dataDiskOptions) {
-          if (
-            buyDataDiskArr[i].dataDiskVal ===
-            this.colonySecond.dataDiskOptions[j].value
-          ) {
-            let num = i - 0 + (1 - 0);
-            text.push(
-              "[" +
-                num +
-                "]" +
-                this.colonySecond.dataDiskOptions[j].label +
-                " " +
-                buyDataDiskArr[i].dataDiskNum +
-                "GB;"
-            );
 
-            if (a == 1) {
-              console.log(this.colonySecond.workerOneList);
-              console.log(this.colonySecond.workerOneList[index]);
+      if (a == 1) {
+        let buyDataDiskArr = this.colonySecond.workerOneList[index]
+          .buyDataDiskArr;
+        for (var i in buyDataDiskArr) {
+          for (let j in this.colonySecond.dataDiskOptions) {
+            if (
+              buyDataDiskArr[i].dataDiskVal ===
+              this.colonySecond.dataDiskOptions[j].value
+            ) {
+              let num = i - 0 + (1 - 0);
+              text.push(
+                "[" +
+                  num +
+                  "]" +
+                  this.colonySecond.dataDiskOptions[j].label +
+                  " " +
+                  buyDataDiskArr[i].dataDiskNum +
+                  "GB;"
+              );
               this.colonySecond.workerOneList[
                 index
               ].dataDiskValue = text.toString().replace(",", "");
@@ -3601,21 +3702,37 @@ export default {
                 latticeSetVal: buyDataDiskArr[i].latticeSetVal,
                 setValue: buyDataDiskArr[i].setValue
               });
-              console.log(this.colonySecond.workerOneList[index].dataDiskArr);
-            } else {
-              this.colonySecond.masterOneList[
-                index
-              ].dataDiskValue = text.toString().replace(",", "");
-              this.colonySecond.masterOneList[index].dataDiskShow = false;
             }
           }
         }
+      } else {
+        console.log(_masterOneList[index].buyDataDisk);
+        if (!_masterOneList[index].buyDataDisk) {
+          _masterOneList[index].dataDiskValue = "暂不购买";
+        } else {
+          for (let i in this.colonySecond.dataDiskOptions) {
+            if (
+              _masterOneList[index].dataDiskVal ==
+              this.colonySecond.dataDiskOptions[i].value
+            ) {
+              text_2 = this.colonySecond.dataDiskOptions[i].label;
+            }
+          }
+          _masterOneList[index].dataDiskValue =
+            "[1]" + text_2 + " " + _masterOneList[index].dataDiskNum + "GB";
+        }
+        _masterOneList[index].dataDiskShow = false;
       }
-
+      let arrMaster = [];
       for (let i in this.colonySecond.masterOneList) {
         if (this.colonySecond.masterOneList[i].buyDataDisk === true) {
-          this.colonySecond.masterDataDiskMountShow = true;
+          arrMaster.push(this.colonySecond.masterOneList[i]);
         }
+      }
+      if (arrMaster.length > 0) {
+        this.colonySecond.masterDataDiskMountShow = true;
+      } else {
+        this.colonySecond.masterDataDiskMountShow = false;
       }
       // 总计费用
       this.$nextTick(() => {
@@ -3746,8 +3863,9 @@ export default {
         buyDataDisk: false,
         dataDiskArr: [],
         buyDataDiskArr: [],
-        dataDiskVal: "1",
+        dataDiskVal: "CLOUD_PREMIUM",
         dataDiskNumber: "10",
+        dataDiskNum: "10",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
         broadbandValue: "按宽带计费",
@@ -3764,7 +3882,7 @@ export default {
     },
     // Master&Etcd 配置 添加机型
     MasterAddModel() {
-      this.colonySecond.masterIndex++;
+      // this.colonySecond.masterIndex++;
       this.colonySecond.masterOneList.push({
         showText: false,
         showEdit: true,
@@ -3786,8 +3904,9 @@ export default {
         buyDataDisk: false,
         dataDiskArr: [],
         buyDataDiskArr: [],
-        dataDiskVal: "1",
+        dataDiskVal: "CLOUD_PREMIUM",
         dataDiskNumber: "10",
+        dataDiskNum: "10",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
         broadbandValue: "按宽带计费",
@@ -3922,11 +4041,8 @@ export default {
           };
           // 数据盘
           if (_masterOneList[i].buyDataDisk) {
-            let dataDisk = _masterOneList[i].dataDiskArr;
-            for (let j in dataDisk) {
-              params["DataDisks." + j + ".DiskSize"] = dataDisk[j].DiskSize;
-              params["DataDisks." + j + ".DiskType"] = dataDisk[j].DiskType;
-            }
+            params["DataDisks.0.DiskSize"] = _masterOneList[i].dataDiskNum;
+            params["DataDisks.0.DiskType"] = _masterOneList[i].dataDiskVal;
           }
           // 公网带宽
           params["InternetAccessible.InternetChargeType"] =
@@ -4030,7 +4146,7 @@ export default {
       this.fourthBox = false;
     },
     // 第二步 完成
-    SecondCreateFinish(){
+    SecondCreateFinish() {
       let param = {
         Version: "2018-05-25",
         "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
@@ -4045,7 +4161,7 @@ export default {
       } else {
         param["ClusterType"] = "INDEPENDENT_CLUSTER";
       }
-    
+
       let ClusterOs = "";
       for (let i in this.colony.OSoptions) {
         if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
@@ -4338,18 +4454,16 @@ export default {
         };
 
         // 数据盘
-        let _dtaDisk = [];
         if (_masterOneList[i].buyDataDisk) {
-          let dataDisk = _masterOneList[i].dataDiskArr;
-          for (let j in dataDisk) {
-            _dtaDisk.push({
-              DiskSize: dataDisk[j].DiskSize,
-              DiskType: dataDisk[j].DiskType
-            });
-          }
+          let _dtaDisk = [];
+
+          _dtaDisk.push({
+            DiskSize: _masterOneList[i].dataDiskNum,
+            DiskType: _masterOneList[i].dataDiskVal
+          });
+
           params["DataDisks"] = _dtaDisk;
         }
-
         // 公网带宽
         params["InternetAccessible"] = {
           InternetChargeType: _masterOneList[i].broadbandVal,
@@ -4421,11 +4535,7 @@ export default {
       } else {
         param["ClusterType"] = "INDEPENDENT_CLUSTER";
       }
-      if (
-        this.colonySecond.worker != 2 &&
-        this.colonySecond.source != 2 &&
-        this.colonySecond.master != 1
-      ) {
+      if (!this.colonySecond.workerDeployShow) {
         if (
           this.colonySecond.workerShow === true &&
           this.colonySecond.source == 1
@@ -4570,11 +4680,7 @@ export default {
       param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
-      if (
-        this.colonySecond.worker != 2 &&
-        this.colonySecond.source != 2 &&
-        this.colonySecond.master != 1
-      ) {
+      if (!this.colonySecond.workerDeployShow) {
         if (this.colonySecond.masterDataDiskMount === true) {
           param[
             "InstanceAdvancedSettings.MountTarget"
@@ -4582,12 +4688,38 @@ export default {
         } else {
           param["InstanceAdvancedSettings.MountTarget"] = "";
         }
-        param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
         param["InstanceAdvancedSettings.UserScript"] = "";
         param["InstanceAdvancedSettings.Unschedulable"] = 0;
         param["InstanceAdvancedSettings.Labels.0.Name"] = "";
         param["InstanceAdvancedSettings.Labels.0.Value"] = "";
-
+      } else {
+        if (this.colonyThird.dataDiskChecked) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonyThird.dataDiskInput;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
+      if (!this.colonySecond.workerDeployShow) {
         let buyDataArr = [];
         for (let i in workerOneListArr) {
           if (workerOneListArr[i].buyDataDisk === true) {
@@ -4638,6 +4770,127 @@ export default {
           }
         }
       }
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 1 &&
+        this.colonySecond.worker == 1
+      ) {
+        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = true;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = true;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds.0"
+        ] = "";
+      }
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker == 1
+      ) {
+        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = true;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = true;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        param["ExistedInstancesForNode.0.SecurityGroupIds.0"] = "";
+        param["ExistedInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+        param[
+          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = true;
+        param[
+          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = true;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        param[
+          "ExistedInstancesForNode.1.ExistedInstancesPara.SecurityGroupIds.0"
+        ] = "";
+      }
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker == 2
+      ) {
+        param["ExistedInstancesForNode.0.NodeRole"] = "MASTER_ETCD";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = true;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = true;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds.0"
+        ] = "";
+      }
+
       console.log(param);
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -4820,6 +5073,7 @@ export default {
     color: #888;
     font-size: 12px;
     line-height: 40px;
+    width: 130px !important;
   }
   ::v-deep .el-form-item__content {
     overflow: hidden;
@@ -4838,7 +5092,7 @@ export default {
     & > p {
       float: left;
       &:nth-of-type(1) {
-        width: 120px;
+        width: 130px;
         padding: 6px 20px 0 0;
         color: #888;
         font-size: 12px;
@@ -4997,6 +5251,10 @@ export default {
             font-size: 12px;
             cursor: pointer;
           }
+        }
+        .delete-color {
+          color: #bbb;
+          cursor: not-allowed;
         }
         & > ol {
           li {

@@ -64,9 +64,9 @@
                      <span>%</span>
                    </el-tooltip>
                  <span v-if='val.value2 == 5||val.value2 == 6'>MiB</span>
-                 <span v-if='val.value2 == 13||val.value2 == 14||val.value2 == 19||val.value2 == 20||val.value1== 3'>KB/s</span>
+                 <span v-if='val.value2 == 13||val.value2 == 14||val.value2 == 19||val.value2 == 20||val.value2 == 3'>KB/s</span>
                  <span v-if='val.value2 == 15||val.value2 == 16'>次/s</span>
-                 <span v-if='val.value2 == 17||val.value2 == 18||val.value1 == 4'>Mbps</span>
+                 <span v-if='val.value2 == 17||val.value2 == 18||val.value2 == 4'>Mbps</span>
                  <span v-if='val.value2 == 21||val.value2 == 22'>个</span>
                  <el-tooltip class="item" effect="light" content="至少保留一个指标" placement="right">
                    <i class="el-icon-close" @click.prevent="removeOptions(optionsData,index)"></i>
@@ -80,11 +80,7 @@
                  <a href="#" @click="newAddTarget">新增指标</a>
                </el-form-item>
                <el-form-item label="实例范围">
-                 <!-- <el-input class="w100"></el-input>~<el-input class="w100"></el-input> -->
-                  <el-input class='w100' type='number' :min='1' v-model='vLeft'></el-input>
-             <span class='w-span'>~</span>
-             <el-input class='w100' type='number' :min='2' v-model='vRight'></el-input>
-             <p>在设定的实例范围内自动调节，不会超出该设定范围</p>
+                 <el-input class="w100"></el-input>~<el-input class="w100"></el-input>
                </el-form-item>
              </div>
            </el-form-item>
@@ -93,10 +89,7 @@
 
          <!-- 底部 -->
          <div class="tke-formpanel-footer">
-           <el-button size="small" type="primary"   @click="updatePodNumber()">更新实例数目</el-button>
-           <el-button size="small" type="primary"  @click="updatePodNumber2()">更新实例数目2</el-button>
-           <el-button size="small" type="primary"  @click="updatePodNumber3()">更新实例数目3</el-button>
-           <el-button size="small" type="primary"  @click="updatePodNumber4()">更新实例数目4</el-button>
+           <el-button size="small" type="primary" @click="updatePodNumber()">更新实例数目</el-button>
            <el-button size="small" @click="$router.go(-1)">取消</el-button>
          </div>
        </div>
@@ -125,22 +118,17 @@
          clusterId: this.$route.query.clusterId,
          spaceName: this.$route.query.spaceName,
          name: this.$route.query.name,//路由传过来的工作负载数据
-         name2:'',
          caseNum:'',
-         index:'1',
          // 更新pod数量
          upn: {
            type: '1',
            num: 0,
          },
-         vLeft:'',
-         vRight:'',
          touchTactics: [{
            touch1: 'CPU',
            touch2: 'CPU使用量',
            size: ''
          }], // 实例数量自动调节下拉框内容
-         optionsData2:[],
          optionsData: [{
              options: [{
                value: 1,
@@ -278,56 +266,30 @@
      },
      methods: {
     //获取数据
-     getData(){
+       getData(){
          var params={
           Method: "GET",
-          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
+          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments/" +this.name+"/horizontalpodautoscalers",
+          // Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
         this.axios.post(POINT_REQUEST, params).then(res=>{
            if(res.Response.Error === undefined){
               let response = JSON.parse(res.Response.ResponseBody);
+                console.log(response,"response");
               this.caseNum=response.items[0].status.replicas
               this.upn.num=response.items[0].status.replicas
-              this.getaAutoData()
+
            }
 
         })
-       },
-       getaAutoData(){
-
-         var params={
-           ClusterName: this.clusterId,
-           Method: "GET",
-           Path: "/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments/"+this.name+"/horizontalpodautoscalers",
-           Version: "2018-05-25",
-         }
-        this.axios.post(POINT_REQUEST, params).then(res=>{
-           if(res.Response.Error === undefined){
-               let response = JSON.parse(res.Response.ResponseBody);
-                console.log(response,"response");
-                if(response.items.length!=0){
-                    this.index=2;
-                    this.upn.type=2
-                    this.name2=response.items[0].metadata.name
-                    let arr=JSON.parse(response.items[0].metadata.annotations['autoscaling.alpha.kubernetes.io/metrics']) ;
-                    this.dataFilter(arr)
-                    this.vLeft=response.items[0].spec.minReplicas
-                    this.vRight=response.items[0].spec.maxReplicas
-                    // if(this.upn.type=='1'){
-                    //   this.index=3
-                    // }
-
-                }
-           }
-        })
-
        },
         //更新实例数目
       updatePodNumber() {
-         if(this.upn.type==1){
-           var param = {
+
+         if(this.upn.type=='1'){
+           let param = {
              Method: "PATCH",
              Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
              Version: "2018-05-25",
@@ -335,24 +297,7 @@
              ContentType: "application/strategic-merge-patch+json",
              ClusterName: this.clusterId
            }
-         }
-          this.axios.post(POINT_REQUEST, param).then(res => {
-            console.log(res)
-            if(res.Response.Error === undefined) {
-              this.$router.go(-1)
-            } else {
-              let ErrTips = {} ;
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          })
-    },
-    updatePodNumber2(){
+         }else{
             let arr=[];
            this.optionsData.forEach(x=>{
             //cpu
@@ -580,509 +525,44 @@
                arr.push(obj)
              }
          });
-           let arr2=this.optionsData.filter(v=>{
-             return v.valueKey==''||v.valueKey==undefined
-         })
-         if(arr2.length!=0){
-            this.$message({
-            message:"变量值不能为空",
-            type:'warning',
-            showClose: true,
-            duration: 0
-            });
-             return  false
-         }
-          if(this.vLeft>this.vRight||this.vLeft==this.vRight||this.vLeft==''||this.vLeft==''){
-            this.$message({
-            message:"实例范围最小副本数不能大于等于最大副本数",
-            type:'warning',
-            showClose: true,
-            duration: 0
-            });
-            return false
-         }
-        var params={
-            ClusterName: this.clusterId,
-            ContentType: "application/strategic-merge-patch+json",
-            Method: "PATCH",
-            Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/"+this.name2,
-            RequestBody: {"metadata":{"annotations":
-                   {"autoscaling.alpha.kubernetes.io/metrics":JSON.stringify(arr)  }},
-                  "spec":{"minReplicas":this.vLeft,"maxReplicas":this.vRight,
+        let param={
+               ClusterName: this.clusterId,
+               ContentType: "application/strategic-merge-patch+json",
+              Method: "PATCH",
+              Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/hpa-cbs-provisioner-k7a22txx",
+              RequestBody: 
+               {"metadata":
+                 {"annotations":
+                   {"autoscaling.alpha.kubernetes.io/metrics":arr}
+                 },
+                "spec":{
+                   "minReplicas":2,"maxReplicas":3,
                    "metrics":arr
-               }},
-            Version: "2018-05-25",
-        }
-        console.log(params)
-        this.axios.post(POINT_REQUEST, params).then(res=>{
+                   }
+                },
+              Version: "2018-05-25",
+            }
+
+         } 
+
+        this.axios.post(POINT_REQUEST, param).then(res => {
           console.log(res)
-           if(res.Response.Error === undefined) {
+          if(res.Response.Error === undefined) {
             this.$router.go(-1)
+          } else {
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-                type: "success",
-                message: "编辑成功",
-                duration: 0,
-                showClose: true
-              });
-          }
-        })
-    },
-    updatePodNumber3(){
-      var params={
-        ClusterName: this.clusterId,
-        Method: "DELETE",
-        Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/"+this.name2,
-        RequestBody:{"propagationPolicy":"Background"},
-        Version: "2018-05-25",
-      }
-       this.axios.post(POINT_REQUEST, params).then(res=>{
-          console.log(res)
-           if(res.Response.Error === undefined) {
-            this.updatePodNumber();
-            this.$router.go(-1)
-           
-          }
-       })
-    },
-    updatePodNumber4(){
-        let arr=[];
-           this.optionsData.forEach(x=>{
-            //cpu
-            if(x.value1=='1'&&x.value2=='1'&&x.valueKey!=''){
-               let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_cpu_core_used",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-            }
-            if(x.value1=='1'&&x.value2=='2'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_cpu_core_used_node",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-            }
-            if(x.value1=='1'&&x.value2=='3'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_cpu_core_used_request",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-            }
-            if(x.value1=='1'&&x.value2=='4'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_cpu_core_used_limit",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-            }
-            // 内存
-             if(x.value1=='2'&&x.value2=='5'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_mem_usage_bytes",
-				         	"targetAverageValue": x.valueKey+"Mi"
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='6'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_mem_no_cache_bytes",
-				         	"targetAverageValue": x.valueKey+"Mi"
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='7'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_usage_node",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='8'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_no_cache_node",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='9'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_usage_request",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='10'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_no_cache_request",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='11'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_usage_limit",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='2'&&x.value2=='12'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_rate_mem_no_cache_limit",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-         //硬盘
-             if(x.value1=='3'&&x.value2=='13'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_fs_write_bytes",
-				         	"targetAverageValue": x.valueKey+'Ki'
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='3'&&x.value2=='14'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_fs_read_bytes",
-				         	"targetAverageValue": x.valueKey+'Ki'
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='3'&&x.value2=='15'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_fs_read_times",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-             if(x.value1=='3'&&x.value2=='16'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_fs_write_times",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-         //网络
-           if(x.value1=='4'&&x.value2=='17'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_receive_bytes_bw",
-				         	"targetAverageValue": x.valueKey+"Mi"
-				         }
-               };
-               arr.push(obj)
-             }
-           if(x.value1=='4'&&x.value2=='18'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_transmit_bytes_bw",
-				         	"targetAverageValue": x.valueKey+"Mi"
-				         }
-               };
-               arr.push(obj)
-             }
-           if(x.value1=='4'&&x.value2=='19'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_receive_bytes",
-				         	"targetAverageValue": x.valueKey+"Ki"
-				         }
-               };
-               arr.push(obj)
-             }
-           if(x.value1=='4'&&x.value2=='20'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_transmit_bytes",
-				         	"targetAverageValue": x.valueKey+"Ki"
-				         }
-               };
-               arr.push(obj)
-             }
-           if(x.value1=='4'&&x.value2=='21'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_receive_packets",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-           if(x.value1=='4'&&x.value2=='22'&&x.valueKey!=''){
-                let obj={
-                  "type": "Pods",
-				      "pods": {
-				         	"metricName": "k8s_pod_network_transmit_packets",
-				         	"targetAverageValue": x.valueKey
-				         }
-               };
-               arr.push(obj)
-             }
-         });
-           let arr2=this.optionsData.filter(v=>{
-             return v.valueKey==''||v.valueKey==undefined
-         })
-         if(arr2.length!=0){
-            this.$message({
-            message:"变量值不能为空",
-            type:'warning',
-            showClose: true,
-            duration: 0
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
-             return  false
-         }
-          if(this.vLeft>this.vRight||this.vLeft==this.vRight||this.vLeft==''||this.vLeft==''){
-            this.$message({
-            message:"实例范围最小副本数不能大于等于最大副本数",
-            type:'warning',
-            showClose: true,
-            duration: 0
-            });
-            return false
-         }
-      var params={
-         ClusterName: this.clusterId,
-         Method: "POST",
-         Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers",
-         RequestBody:{"kind":"HorizontalPodAutoscaler",
-                      "apiVersion":"autoscaling/v2beta1",
-                      "metadata":{
-                        "name":this.name2,
-                        "namespace":this.spaceName,
-                        "labels":{"qcloud-app":this.name2}
-                      },
-                      "spec":{
-                        "minReplicas":this.vLeft,
-                        "maxReplicas":this.vRight,
-                        "metrics":arr,
-                        "scaleTargetRef":{"apiVersion":"apps/v1beta2","kind":"Deployment","name":this.name}
-                        }
-          },
-         Version: "2018-05-25",
-      }
-      console.log(params)
-       this.axios.post(POINT_REQUEST, params).then(res=>{
-          console.log(res)
-           if(res.Response.Error === undefined) {
-           
-            this.$router.go(-1)
-           
           }
-       })
-    },
-    dataFilter(arr){//回显数据
-        arr.forEach(item=>{
-            let type=item.pods.metricName
-            let num=item.pods.targetAverageValue;
-            if(type=='k8s_pod_cpu_core_used'){
-                this.pushData(1,1,parseFloat(num))
-            }else if(type=='k8s_pod_rate_cpu_core_used_node'){
-                 this.pushData(1,2,parseFloat(num))
-            }else if(type=='k8s_pod_rate_cpu_core_used_request'){
-                 this.pushData(1,3,parseFloat(num))
-            }else if(type=='k8s_pod_rate_cpu_core_used_limit'){
-                 this.pushData(1,4,parseFloat(num))
-            }else if(type=='k8s_pod_mem_usage_bytes'){
-                 this.pushData(2,5,parseFloat(num))
-            }else if(type=='k8s_pod_mem_no_cache_bytes'){
-                 this.pushData(2,6,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_usage_node'){
-                 this.pushData(2,7,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_no_cache_node'){
-                 this.pushData(2,8,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_usage_request'){
-                 this.pushData(2,9,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_no_cache_request'){
-                 this.pushData(2,10,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_usage_limit'){
-                 this.pushData(2,11,parseFloat(num))
-            }else if(type=='k8s_pod_rate_mem_no_cache_limit'){
-                 this.pushData(2,12,parseFloat(num))
-            }else if(type=='k8s_pod_fs_write_bytes'){
-                 this.pushData(3,13,parseFloat(num))
-            }else if(type=='k8s_pod_fs_read_bytes'){
-                 this.pushData(3,14,parseFloat(num))
-            }else if(type=='k8s_pod_fs_read_times'){
-                 this.pushData(3,15,parseFloat(num))
-            }else if(type=='k8s_pod_fs_read_times'){
-                 this.pushData(3,15,parseFloat(num))
-            }else if(type=='k8s_pod_fs_write_times'){
-                 this.pushData(3,16,parseFloat(num))
-            }else if(type=='k8s_pod_network_receive_bytes_bw'){
-                 this.pushData(4,17,parseFloat(num))
-            }else if(type=='k8s_pod_network_transmit_bytes_bw'){
-                 this.pushData(4,18,parseFloat(num))
-            }else if(type=='k8s_pod_network_receive_bytes'){
-                 this.pushData(4,19,parseFloat(num))
-            }else if(type=='k8s_pod_network_transmit_bytes'){
-                 this.pushData(4,20,parseFloat(num))
-            }else if(type=='k8s_pod_network_receive_packets'){
-                 this.pushData(4,21,parseFloat(num))
-            }else if(type=='k8s_pod_network_transmit_packets'){
-                 this.pushData(4,22,parseFloat(num))
-            }
-        })
-        this.optionsData=this.optionsData2;
-
-    }, 
-    pushData(x,y,z){
-    this.optionsData2.push({
-             options: [{
-               value: 1,
-               label: 'CPU'
-             }, {
-               value: 2,
-               label: '内存'
-             }, {
-               value: 3,
-               label: '硬盘'
-             }, {
-               value: 4,
-               label: '网络'
-             }],
-
-             option1: [{
-               value: 1,
-               label: 'CPU使用量'
-             }, {
-               value: 2,
-               label: 'CPU利用率(占节点)'
-             }, {
-               value: 3,
-               label: 'CPU利用率(占Request)'
-             }, {
-               value: 4,
-               label: 'CPU利用率(占Limit)'
-             }],
-
-             option2: [{
-               value: 5,
-               label: '内存使用量'
-             }, {
-               value: 6,
-               label: '内存使用量(不含Cache)'
-             }, {
-               value: 7,
-               label: '内存使用量(占节点)'
-             }, {
-               value: 8,
-               label: '内存使用量(占节点、不含Cache)'
-             }, {
-               value: 9,
-               label: '内存使用量(占Request)'
-             }, {
-               value: 10,
-               label: '内存使用量(占Request、不含Cache)'
-             }, {
-               value: 11,
-               label: '内存使用量(占Limit)'
-             }, {
-               value: 12,
-               label: '内存使用量(占Limit、不含Cache)'
-             }],
-
-             option3: [{
-               value: 13,
-               label: '硬盘写流量'
-             }, {
-               value: 14,
-               label: '硬盘读流量'
-             }, {
-               value: 15,
-               label: '硬盘读IOPS'
-             }, {
-               value: 16,
-               label: '硬盘写IOPS'
-             }],
-
-             option4: [{
-               value: 17,
-               label: '网络出带宽'
-             }, {
-               value: 18,
-               label: '网络入带宽'
-             }, {
-               value: 19,
-               label: '网络出流量'
-             }, {
-               value: 20,
-               label: '网络入流量'
-             }, {
-               value: 21,
-               label: '网络出包量'
-             }, {
-               value: 22,
-               label: '网络入包量'
-             }],
-             value1: x,
-             value2: y,
-             valueKey: z
-    })
-    },
-    changeOne(item,index){
-        if(item==1){
-            this.hpa.domains[index].value5=1
-        }else if(item==2){
-             this.hpa.domains[index].value5=5 
-        }else if(item==3){
-             this.hpa.domains[index].value5=13
-        }else if(item==4){
-             this.hpa.domains[index].value5=17 
-        }
-    },
+        });
+      },
       //默认选择项设置
       changeOne(item,index){
         if(item==1){
@@ -1286,17 +766,6 @@
            }
          },
          deep: true,
-       },
-       upn:{
-        //  handler(val){
-        //    console.log(val)
-        //    if(val.type=='2'){
-        //      this.index=3
-        //    }else if(val.type=='1'){
-        //      this.index=1
-        //    }
-        //  },
-        //  deep:true
        }
      }
    };

@@ -613,15 +613,6 @@
                   if (res.Response.Error === undefined) {
                     var data = JSON.parse(res.Response.ResponseBody);
                     this.workload1 = data.items;
-                  }else{
-                     let ErrTips = {};
-                     let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-                     this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                     showClose: true,
-                     duration: 0
-                    });
                   }
                 });
               }
@@ -841,15 +832,6 @@
                 showClose: true
               });
               this.$router.go(-1);
-            }else{
-               let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
             }
           });
       },
@@ -872,7 +854,7 @@
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
-           
+            console.log(data)
             this.resourceVersion = data.metadata.resourceVersion
             //节点文件路径
             if (data.spec.input.type == 'host-log') {
@@ -1014,15 +996,6 @@
               this.output2.port = data.spec.output.kafka_output.port;
               this.output2.topic = data.spec.output.kafka_output.topic;
             }
-          }else{
-             let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
           }
         });
       },
@@ -1187,15 +1160,6 @@
                   showClose: true
                 });
               this.$router.go(-1);
-            }else{
-               let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
             }
           });
         }
@@ -1338,7 +1302,7 @@
             Version: "2018-05-25"
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response.Error === undefined) {
+            if (res.Response) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
                 this.namespaceOptions.push(item.metadata.name);
@@ -1346,15 +1310,6 @@
               });
               this.formFour[0].value1 = this.namespaceOptions[0];
               // this.formTwo.value1 = this.namespaceOptions[0];//设置工作负载选项命名空间默认值
-            }else{
-               let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
             }
           });
         }
@@ -1372,16 +1327,7 @@
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
             this.show1 = data.status.phase == "running" ? false : true;
-          } else {
-             let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
-          }
+          } else {}
         });
       },
 

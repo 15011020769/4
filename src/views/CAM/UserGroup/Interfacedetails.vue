@@ -12,13 +12,13 @@
         <!-- 用户组详情页面 start -->
         <div v-show="flag==true">
           <el-form ref="form" :model="groupData" label-width="100px">
-            <el-form-item :label="$t('CAM.userGroup.colNmae')">
+            <el-form-item :label="$t('CAM.userGroup.colNmae')" required>
               <span>{{groupData.GroupName}}</span>
             </el-form-item>
             <el-form-item :label="$t('CAM.userGroup.colRemark')">
               <span>{{groupData.Remark ? groupData.Remark : '-'}}</span>
             </el-form-item>
-            <el-form-item :label="$t('CAM.userGroup.colCreTime')">
+            <el-form-item :label="$t('CAM.userGroup.colCreTime')" required>
               <span>{{groupData.CreateTime}}</span>
             </el-form-item>
           </el-form>
@@ -27,7 +27,7 @@
         <!-- 用户组编辑页面 start -->
         <div v-show="flag==false">
           <el-form ref="form" :model="groupData" label-width="100px">
-            <el-form-item :label="$t('CAM.userGroup.colNmae')">
+            <el-form-item :label="$t('CAM.userGroup.colNmae')" required>
               <el-input size="small" v-model="groupData.GroupName">{{$t('CAM.userGroup.testApi')}}</el-input>
               <i class="el-icon-circle-check mark"></i>
             </el-form-item>

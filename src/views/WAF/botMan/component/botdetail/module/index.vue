@@ -8,8 +8,8 @@
       </el-tabs>
     </div>
     <div class="wrapper">
-      <access-detail v-if="activeName == 'info'"></access-detail>
-      <base-info  v-if="activeName == 'detail'"></base-info>
+      <base-info  v-if="activeName == 'info'"></base-info>
+      <access-detail v-if="activeName == 'detail'"></access-detail>
     </div>
   </div>
 </template>

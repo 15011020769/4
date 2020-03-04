@@ -47,7 +47,9 @@ export const DESCRIBE_ZONE_INFO = 'cvm/DescribeZoneInstanceConfigInfos'
 export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'
 
 //获取节点JOBID
-export const JOB_ID = 'tsm/GetTkeDataJob'
+export const JOB_ID = 'tsm2/GetTkeDataJob'
+
+export const MOMITOR_TKE = '/tsm2/GetTkeDataResult'
 
 //新建伸缩组
 export const CREATE_GROUP = 'tke2/CreateClusterAsGroup'

@@ -33,6 +33,14 @@
     },
     methods: {
       init() {
+        const TimeGranularity = {
+          '5': '5秒',
+          '10': '10秒',
+          '60': '1分鐘',
+          '300': '5分鐘',
+          '3600': '1小時',
+          '86400': '1天',
+        }
         const period = this.period;
         const chartView = this.$refs.chart;
         const myChart = this.$echarts.init(chartView);
@@ -40,8 +48,43 @@
           tooltip: {
             enterable: true,
             trigger: "axis",
+            position: function (point, params, dom, rect, size) {
+              // 鼠标坐标和提示框位置的参考坐标系是：以外层div的左上角那一点为原点，x轴向右，y轴向下
+              // 提示框位置
+              var x = 0; // x坐标位置
+              var y = 0; // y坐标位置
+
+              // 当前鼠标位置
+              var pointX = point[0];
+              var pointY = point[1];
+
+              // 外层div大小
+              // var viewWidth = size.viewSize[0];
+              // var viewHeight = size.viewSize[1];
+
+              // 提示框大小
+              var boxWidth = size.contentSize[0];
+              var boxHeight = size.contentSize[1];
+
+              // boxWidth > pointX 说明鼠标左边放不下提示框
+              if (boxWidth > pointX) {
+                x = 5;
+              } else { // 左边放的下
+                x = pointX - boxWidth;
+              }
+
+              // boxHeight > pointY 说明鼠标上边放不下提示框
+              if (boxHeight > pointY) {
+                y = 5;
+              } else { // 上边放得下
+                y = pointY - boxHeight;
+              }
+
+              return [x, y];
+            },
+
             axisPointer: {
-              type: "cross",
+              type: "line",
               lineStyle: {
                 width: 1
               },
@@ -49,11 +92,10 @@
                 backgroundColor: "#6a7985"
               }
             },
-
             formatter(params) {
-              let relVal = `${params[0].name}<br/>`;
-              relVal += `粒度：${period}</br>`;
-
+              let relVal = `${params[0].name}<br/>
+           ${params[0].data}<br />`;
+              relVal += `粒度：${TimeGranularity[period]}</br>`;
               return relVal;
             }
           },
@@ -72,7 +114,7 @@
             y: "bottom"
           },
           grid: {
-            x: 25,
+            x: 50,
             y: 45,
             x2: 5,
             y2: 20,

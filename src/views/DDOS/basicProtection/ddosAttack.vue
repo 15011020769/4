@@ -1,8 +1,8 @@
 <template>
-  <div v-loading='loading'>
+  <div v-loading="loading">
     <div class="newClear">
       <el-button-group class="buttonGroupAll">
-        <el-button class="buttonGroup"  @click="thisTime(1)">今天</el-button>
+        <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
         <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
         <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
         <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
@@ -22,7 +22,7 @@
       <el-table
         :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         height="450"
-        empty-text='暫無數據'
+        empty-text="暫無數據"
       >
         <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
           <template slot-scope="scope">{{scope.row.StartTime}}</template>
@@ -81,12 +81,13 @@ export default {
       thisEnd: "",
       tableDataEnd: [],
       filterTableDataEnd: [],
-      flag: false
+      flag: false 
     };
   },
   watch: {
     timeValue: function(value) {
       this.Period = 86400;
+      console.log(this.timeValue)
       //根据开始时间与结束时间以及时间粒度，计算监控x轴应有多少坐标点
       var num = this.timeValue[1].getTime() - this.timeValue[0].getTime(); //计算时间戳的差
       var arr = [];
@@ -132,16 +133,16 @@ export default {
         if (res.Response.Error === undefined) {
           this.bps = res.Response.Data;
           this.drawLine(res.Response.Data, date);
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
 
@@ -162,14 +163,14 @@ export default {
           this.totalItems = this.tableDataBegin.length;
         } else {
           let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -187,68 +188,105 @@ export default {
     thisTime(thisTime) {
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
-      let start
-      let end = moment()
-      const times = []
+      let start;
+      let end = moment();
+      const times = [];
       if (thisTime == "1") {
-        start = moment().startOf('day')
-        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        start = moment().startOf("day");
+        times.push(start.format("YYYY-MM-DD HH:mm:ss"));
         while (!start.isSameOrAfter(end)) {
-          times.push(start.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
+          times.push(start.add(5, "m").format("YYYY-MM-DD HH:mm:ss"));
         }
-        this.startTime = moment().startOf('day').format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        this.startTime = moment()
+          .startOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment()
+          .endOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 300;
         this.timey = times;
+        this.timeValue = null
       } else if (thisTime == "2") {
-        start = moment().subtract(6, 'd').startOf('day')
-        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        start = moment()
+          .subtract(6, "d")
+          .startOf("day");
+        times.push(start.format("YYYY-MM-DD HH:mm:ss"));
         while (!start.isSameOrAfter(end)) {
-          times.push(start.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          times.push(start.add(1, "h").format("YYYY-MM-DD HH:mm:ss"));
         }
-        console.log(times)
-        ipt1.value = moment().subtract(6, 'd').format('YYYY-MM-DD')
-        ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(6, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        console.log(times);
+        ipt1.value = moment()
+          .subtract(6, "d")
+          .format("YYYY-MM-DD");
+        ipt2.value = moment().format("YYYY-MM-DD");
+        this.startTime = moment()
+          .subtract(6, "d")
+          .startOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment()
+          .endOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 3600;
-        this.timey = times
+        this.timey = times;
+        console.log('start=' + start)
+        console.log('end=' + end)
+         console.log('startTime=' + this.startTime)
+        console.log('this.endTime=' + this.endTime)
+         this.timeValue = [this.startTime,  this.endTime]
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
         //ddos攻击-攻击流量带宽
-        start = moment().subtract(14, 'd').startOf('day')
-        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        start = moment()
+          .subtract(14, "d")
+          .startOf("day");
+        times.push(start.format("YYYY-MM-DD HH:mm:ss"));
         while (!start.isSameOrAfter(end)) {
-          times.push(start.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
+          times.push(start.add(1, "d").format("YYYY-MM-DD HH:mm:ss"));
         }
-        ipt1.value = moment().subtract(14, 'd').format('YYYY-MM-DD')
-        ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(14, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        ipt1.value = moment()
+          .subtract(14, "d")
+          .format("YYYY-MM-DD");
+        ipt2.value = moment().format("YYYY-MM-DD");
+        this.startTime = moment()
+          .subtract(14, "d")
+          .startOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment()
+          .endOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 86400;
-        this.timey = times
+        this.timey = times;
+         this.timeValue = [this.startTime,  this.endTime]
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
-        start = moment().subtract(29, 'd').startOf('day')
-        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        start = moment()
+          .subtract(29, "d")
+          .startOf("day");
+        times.push(start.format("YYYY-MM-DD HH:mm:ss"));
         while (!start.isSameOrAfter(end)) {
-          times.push(start.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
+          times.push(start.add(1, "d").format("YYYY-MM-DD HH:mm:ss"));
         }
-        ipt1.value = moment().subtract(29, 'd').format('YYYY-MM-DD')
-        ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(29, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
+        ipt1.value = moment()
+          .subtract(29, "d")
+          .format("YYYY-MM-DD");
+        ipt2.value = moment().format("YYYY-MM-DD");
+        this.startTime = moment()
+          .subtract(29, "d")
+          .startOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
+        this.endTime = moment()
+          .endOf("day")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 86400;
-        this.timey = times
+        this.timey = times;
+        this.timeValue = [this.startTime,  this.endTime]
       }
       this.describeDDoSTrend(this.timey);
       this.describeDDoSEvList();
+     
     },
 
     drawLine(y, date) {
-
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
@@ -256,13 +294,13 @@ export default {
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
         tooltip: {
-          trigger: 'axis'
+          trigger: "axis"
         },
         xAxis: {
           data: date
         },
         yAxis: {
-          type: 'value',
+          type: "value",
           axisLine: {
             //y轴
             show: false
@@ -314,16 +352,16 @@ export default {
     getDateString(date) {
       let o = {
         y: date.getFullYear(),
-        M: date.getMonth()+1,
+        M: date.getMonth() + 1,
         d: date.getDate(),
         h: date.getHours(),
         m: date.getMinutes(),
         s: date.getSeconds()
-      }
+      };
       for (const i in o) {
-        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+        o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
       }
-      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
+      return o.y + "-" + o.M + "-" + o.d + " " + o.h + ":" + o.m + ":" + o.s;
     },
 
     handleSizeChange(val) {

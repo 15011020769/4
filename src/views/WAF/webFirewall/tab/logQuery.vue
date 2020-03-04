@@ -17,11 +17,11 @@
             </el-option>
           </el-select>
           <el-button-group class="btnGroup">
-            <el-button :class="thisType=='1'?'addBgColor':''" @click="choseDate(1)">近1小{{t('时', 'WAF.hour')}}</el-button>
-            <el-button :class="thisType=='2'?'addBgColor':''" @click="choseDate(2)">近6小{{t('时', 'WAF.hour')}}</el-button>
-            <el-button :class="thisType=='3'?'addBgColor':''" @click="choseDate(3)">今天</el-button>
-            <el-button :class="thisType=='4'?'addBgColor':''" @click="choseDate(4)">昨天</el-button>
-            <el-button :class="thisType=='5'?'addBgColor':''" @click="choseDate(5)">近7天</el-button>
+            <el-button :class="thisType=='1h'?'addBgColor':''" @click="choseDate(1, 'h')">近1小{{t('时', 'WAF.hour')}}</el-button>
+            <el-button :class="thisType=='6h'?'addBgColor':''" @click="choseDate(6, 'h')">近6小{{t('时', 'WAF.hour')}}</el-button>
+            <el-button :class="thisType=='0d'?'addBgColor':''" @click="choseDate(0, 'd')">今天</el-button>
+            <el-button :class="thisType=='1d'?'addBgColor':''" @click="choseDate(1, 'd')">昨天</el-button>
+            <el-button :class="thisType=='7d'?'addBgColor':''" @click="choseDate(7, 'd')">近7天</el-button>
           </el-button-group>
           <el-date-picker
             v-model="timeValue"
@@ -157,8 +157,8 @@ export default {
       columns: ['index', 'action', 'Domain', 'AttackIp', 'AttackType', 'RuleId', 'RuleName', 'AttackContent', 'AttackTime', 'Status', 'RiskLevel'],
       dominList: 'ALL',//域名下拉
       dominOptions:[],
-      thisType: '1',//默认时间选择
-      timeValue:'',//时间选择
+      thisType: '1h',//默认时间选择
+      timeValue: [moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'), moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")],//时间选择
       riskLevelVlaue: '-1',//风险等级
       riskLevelOption:[
         {
@@ -209,8 +209,8 @@ export default {
       total: 0,
       loading: false,
       loadmoreloading: false,
-      startTime: moment().format("YYYY-MM-DD HH:mm:ss"),
-      endTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
+      startTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
+      endTime: moment().endOf('d').format("YYYY-MM-DD HH:mm:ss"),
     }
   },
   components:{
@@ -348,28 +348,18 @@ export default {
       })
     },
     //时间选择按钮
-    choseDate(thisType){
-      this.thisType=thisType;
+    choseDate(num, unit){
+      this.thisType= `${num}${unit}`;
       var ipt1 = document.querySelector(".dataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".dataTime input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
-      if (thisType == "1") {
-        start.setTime(start.getTime() - 3600 * 1000);
-      } else if (thisType == "2") {
-        start.setTime(start.getTime() - 3600 * 1000 * 6);
-      } else if (thisType == "3") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24);
-      }else if (thisType == "4") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 2);
-        end.setTime(end.getTime() - 3600 * 1000 * 24);
-      }else if (thisType == "5") {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      let startTime = moment().subtract(num, unit)
+      if (unit === 'd') {
+        startTime = moment().subtract(num, unit).startOf('d')
       }
-      ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-      ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-      this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-      this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      ipt1.value = startTime.format("YYYY-MM-DD HH:mm:ss")
+      ipt2.value = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")
+      this.startTime = startTime.format("YYYY-MM-DD HH:mm:ss")
+      this.endTime = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")
     },
     //创建下载任务
     createDownTask(){

@@ -44,8 +44,8 @@
 						<h3 style="padding-bottom:20px;">Workload（选填）</h3>
 						<el-form-item label="Selectors">
 							<div style="padding-bottom:10px;" v-for="it in svc.workload" :key="it.key">
-								<el-input placeholder="key" class="w100"></el-input>=
-								<el-input placeholder="value" class="w100"></el-input>
+								<el-input v-model="it.key" placeholder="key" class="w100"></el-input>=
+								<el-input v-model="it.value" placeholder="value" class="w100"></el-input>
 								<el-tooltip class="item" effect="dark" content="删除" placement="right">
 									<i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removework(it)"></i>
 								</el-tooltip>
@@ -141,7 +141,8 @@ export default {
         tabPosition: 'dep', // 幕布层资源类型
         describe: '', // 描述
         inputValue1: '',
-        inputValue2: ''
+        inputValue2: '',
+        workloadObj: {}
       },
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
@@ -432,7 +433,7 @@ export default {
     },
     // 新建服务
     async submitFound () {
-      let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue } = this.svc
+      let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue, workload, workloadObj } = this.svc
       let newPortAry = []
       list.forEach(ele => { // 端口映射参数
         let ports = {
@@ -468,6 +469,7 @@ export default {
           'ports': newPortAry,
           'externalTrafficPolicy': policy,
           'sessionAffinity': session } }
+      if (radio == '2' || radio == '3' || radio == '4') reqBody.metadata.annotations = {}
       if (session == 'ClientIP') reqBody.spec.sessionAffinityConfig = sessionTime// 会话时间
       if (describe) reqBody.metadata.annotations.description = describe// 是否有描述
       if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue// 是否选中 使用已有
@@ -480,7 +482,7 @@ export default {
           'kind': 'Service',
           'apiVersion': 'v1',
           'metadata': { 'name': name, 'namespace': value },
-          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'sessionAffinity': session } }
+          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'externalTrafficPolicy': policy } }
         if (checked) {
           reqBody.spec.clusterIP = session
         }
@@ -498,6 +500,7 @@ export default {
           }
         }
       }
+      if (workload.length > 0) reqBody.spec.selector = workloadObj// Workload（选填）
       let param = {
         Method: 'POST',
         Path: `/api/v1/namespaces/${this.spaceName}/services`,
@@ -535,11 +538,28 @@ export default {
     // 处理幕布层确定按钮的事件
     handlerDet () {
       this.dialogFormVisible = false
-      this.svc.workload = this.resourcesList.filter(item => {
+      let ary = this.resourcesList.filter(item => {
         return item.metadata.name === this.svc.resourcesValue
       })
-      console.log(this.svc.workload)
-      // this.svc.workload.push()
+      let obj = ary.length && ary[0].metadata.labels
+      this.svc.workload = []
+      if (ary.length) {
+        for (let k in obj) {
+          this.svc.workload.push({ value: obj[k], key: k })
+        }
+      }
+      this.handlerReqWorkload()
+    },
+    // 处理新建workload要传递的参数对象
+    handlerReqWorkload () {
+      this.svc.workload.forEach(item => {
+        let obj = {}
+        let key = item.key
+        let value = item.value
+        obj[key] = value
+        this.svc.workloadObj = Object.assign(this.svc.workloadObj, obj)
+      })
+      // console.log(this.svc.workloadObj)
     },
     handleClose (done) {
       this.$confirm('确认关闭？')
@@ -566,7 +586,7 @@ export default {
     addwork () {
       this.svc.workload.push({
         value: '',
-        key: Date.now()
+        key: ''
       })
     },
     // 新增端口

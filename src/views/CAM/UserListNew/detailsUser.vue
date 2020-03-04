@@ -359,7 +359,7 @@ export default {
     },
     //对手机号进行判断
     tel: function() {
-      var phone = /^1[345789]\d{9}$/;
+      var phone = /^09\d{8}$/;
       if (this.ruleForm.PhoneNum != "") {
         if (!phone.test(this.ruleForm.PhoneNum)) {
           this.telReg = true;

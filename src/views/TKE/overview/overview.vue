@@ -363,6 +363,7 @@ export default {
         Version: "2018-05-25",
       }
       this.axios.post(TKE_COLONY_STATUS_JZ2, params).then(res=>{
+          console.log(res)   
           if (res.Response.Error === undefined){
            let  d1=res.Response.ResourceStatusSet
            var arr=[];
@@ -385,17 +386,9 @@ export default {
            })
            this.clusters = arr;
            this.getCpuInfo();
+
            console.log(arr)
-          }else{
-             let ErrTips = {};
-             let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
-          }
+          } 
       })
     },
 

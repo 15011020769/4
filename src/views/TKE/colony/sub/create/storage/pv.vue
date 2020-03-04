@@ -201,10 +201,14 @@ export default {
      // 获取云硬盘
    GetDescribeDisks(){
       const param = {
-         Filters:[{Name: "disk-usage", Values: ["DATA_DISK"]}, {Name: "portable", Values: ["TRUE"]},{Name: "disk-state", Values: ["UNATTACHED"]},{Name: "zone", Values: ["ap-taipei-1"]}],
+        "Filters.0.Name":"disk-usage",
+        "Filters.0.Values.0":"DATA_DISK",
+        "Filters.1.Name":"disk-state",
+        "Filters.1.Values.0":"ATTACHED",
          Limit: 20,
          Offset: 0,
          Version: "2017-03-12"
+        
       }
       this.axios.post(TKE_DESCRIBEDISKS, param).then(res => {
         console.log(res)

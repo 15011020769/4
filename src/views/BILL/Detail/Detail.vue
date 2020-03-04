@@ -154,7 +154,7 @@
         </el-table-column>
         <el-table-column prop="incentivePaybak" header-align="center" align="center" width="140" :label="$t('BILL.Detail.incentivePaybak')">
         </el-table-column>
-        <el-table-column prop="usdExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usdExpendbak')">
+        <!--<el-table-column prop="usdExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.usdExpendbak')">-->
         </el-table-column>
         <!-- <el-table-column prop="ntExpendbak" header-align="center" align="center" width="120" :label="$t('BILL.Detail.ntExpendbak')">
         </el-table-column> -->

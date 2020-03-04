@@ -95,7 +95,7 @@ import {
     created(){
       
         if(this.$route.query.clusterId&&this.$route.query.stashName&&this.$route.query.namespace){
-          
+            console.log(1)
             this.findData()
         }
         this.id=this.$route.query.clusterId
@@ -151,14 +151,7 @@ import {
                   }
 
             } else {
-                let ErrTips = {};
-               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-               this.$message({
-                 message: ErrOr[res.Response.Error.Code],
-                 type: "error",
-                 showClose: true,
-                 duration: 0
-               });
+            
             }
           })
       },
