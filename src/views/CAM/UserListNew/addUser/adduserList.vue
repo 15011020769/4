@@ -235,7 +235,7 @@ export default {
         pwdType: [],
         pwdRadio: false,
         Password: "", //密码
-        ConsoleLogin: 1, //子用户是否可以登录控制台
+        ConsoleLogin: 0, //子用户是否可以登录控制台
         Name: "", //	子用户用户名
         Remark: "", //子用户备注
         PhoneNum: "", //手机号
@@ -313,7 +313,7 @@ export default {
     },
     //手机号验证
     telInp() {
-      var reg = /^1[3456789]\d{9}$/;
+      var reg = /^09\d{8}$/;
       if (this.ruleForm.PhoneNum != "") {
         if (!reg.test(this.ruleForm.PhoneNum)) {
           this.phoneReg = true;
