@@ -131,6 +131,7 @@ export default {
             this.loading = false
           })
         } catch (err) {
+          this.loading = false
           this.metadataDocumentError = '元數據文檔內容有誤'
         }
       };
@@ -170,6 +171,7 @@ export default {
         this.metadataDocumentError = '請選擇元數據文件'
         return
       }
+      if (this.metadataDocumentError) return
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           const info = {
