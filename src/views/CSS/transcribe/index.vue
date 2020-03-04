@@ -12,7 +12,8 @@
         <p>
           {{$t('CSS.watermark.3')}}
           <a href="#">域名管理</a>{{$t('CSS.watermark.4')}}
-          <a href="#">{{$t('CSS.watermark.2')}}</a>{{$t('CSS.watermark.5')}}
+          <!-- <a href="#">{{$t('CSS.watermark.2')}}</a> -->
+          {{$t('CSS.watermark.5')}}
         </p>
       </div>
       <div class="main-box">

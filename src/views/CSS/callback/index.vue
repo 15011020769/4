@@ -11,8 +11,9 @@
       <div class="explain">
         <p>
           模板设置完成，需关联推流域名方可生效，请点击
-          <a href="#">域名管理</a>进行关联设置。模板设置请
-          <a href="#">参考文档</a>模板配置完后续大约5分鐘生效
+          <a href="#">域名管理</a>进行关联设置。
+          <!-- <a href="#">参考文档</a> -->
+          模板配置完后续大约5分鐘生效
         </p>
       </div>
       <div class="main-box">
@@ -20,8 +21,8 @@
           <i class="el-icon-plus" @click="_add" />
           <i class="el-icon-delete" @click="modalVisible=true"/>
           <ul class="recording-list-box">
-            <li 
-              v-for="item in configList" 
+            <li
+              v-for="item in configList"
               @click="onSelectRecording(item)"
               :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
               >
@@ -30,18 +31,18 @@
           </ul>
         </div>
         <div class="right">
-          <OptionForm 
+          <OptionForm
             :formShow.sync="formShow"
             :selectItem="selectItem"
             v-if="formShow"
             />
-          <ConfigDetail 
+          <ConfigDetail
             v-if="!formShow"
             :selectItem="selectItem"
             :formShow.sync="formShow"
             />
         </div>
-          <DeleteModal 
+          <DeleteModal
             :modalVisible.sync="modalVisible"
             :domainName="selectItem.TemplateName"
           />
