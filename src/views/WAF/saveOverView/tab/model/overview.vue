@@ -37,7 +37,7 @@ export default {
   props: {
     times: Array,
     domain: String,
-    // showModules: Array
+    showModules: Array
   },
   data() {
     return {
@@ -47,11 +47,11 @@ export default {
     }
   },
   watch: {
-    // showModules(val, oldVal) {
-    //   if (val.join() !== oldVal.join()) {
-    //     this.getPeakValue()
-    //   }
-    // },
+    showModules(val, oldVal) {
+      if (val.join() !== oldVal.join()) {
+        this.getPeakValue()
+      }
+    },
     times(val, oldVal) {
       if (
         val[0] !== oldVal[0]
