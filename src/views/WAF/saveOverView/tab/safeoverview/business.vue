@@ -33,8 +33,8 @@ export default {
       series1: [],
       series2: [],
       series3: [],
-      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
-      legendText2: ['WEB攻击次数', 'CC攻击次数'],
+      legendText1: [this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs'), this.t('BOT请求次数', 'WAF.botqqcs')],
+      legendText2: [this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs')],
       color: ["#FF584C", "#FF9D00", "#006eff"],
     }
   },

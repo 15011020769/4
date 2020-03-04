@@ -11,7 +11,7 @@
       :legendText="legendTextBarIp"
       v-if="xAxisBarLocal.length == 0 ? false : true"
     />
-    <el-row class="empty" v-else>暂无数据</el-row>
+    <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     </el-col>
     <el-col :span="12">
     <h3 class="topfont">
@@ -24,7 +24,7 @@
       :legendText="legendTextBarIp"
       v-if="xAxisBarIp.length == 0 ? false : true"
     />
-    <el-row class="empty" v-else>暂无数据</el-row>
+    <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     </el-col>
   </el-row>
 </template>
@@ -43,7 +43,7 @@ export default {
       xAxisBarLocal: [],
       seriesBarIp: [],
       xAxisBarIp: [],
-      legendTextBarIp: "次数",
+      legendTextBarIp: this.t('次数','WAF.cscs'),
     }
   },
   components: {

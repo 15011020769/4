@@ -29,8 +29,8 @@
             class="dateTimeValue"
             @change="changeTimeValue"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
@@ -54,7 +54,7 @@
       @onCancel = "onCancel"
     />
     <el-dialog
-      title="自定义展示模板"
+      :title="t('自定义展示模板','WAF.zdyzsmb')"
       :visible.sync="dialogSetVisible"
       width="40%"
     >
@@ -101,11 +101,11 @@ export default {
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       allModuleCopy: [
-        { name: 'overview', value: 'WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数' },
-        { name: 'business', value: '业务请求趋势' },
-        { name: 'attackSource', value: '攻击来源地域TOP5 & 攻击来源IP TOP5' },
-        { name: 'attackTypePrecent', value: '访问类型占比 & 攻击类型占比' },
-        { name: 'attackDistribution', value: '攻击来源区域分布' },
+        { name: 'overview', value: this.t('WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数', 'WAF.webgjlj')},
+        { name: 'business', value: this.t('业务请求趋势', 'WAF.ywqqqs')},
+        { name: 'attackSource', value: this.t('攻击来源地域TOP5 & 攻击来源IP TOP5', 'WAF.gjlydyip')},
+        { name: 'attackTypePrecent', value: this.t('访问类型占比 & 攻击类型占比', 'WAF.fwlxzbgj')},
+        { name: 'attackDistribution', value: this.t('攻击来源区域分布', 'WAF.gjlyqyfb')},
       ],
       allModule: [],
       showModules: [],

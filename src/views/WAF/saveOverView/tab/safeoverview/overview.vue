@@ -7,7 +7,7 @@
             <span class="red">{{webAttack}}</span>
             <span>次</span>
           </p>
-          <p>WEB攻击次数</p>
+          <p>{{t('WEB攻击次数', 'WAF.webgjcs')}}</p>
         </div>
       </el-col>
       <el-col :span="domain==''?12:8">
@@ -16,7 +16,7 @@
             <span class="oarnge">{{ccRequest}}</span>
             <span>个</span>
           </p>
-          <p>CC攻击次数</p>
+          <p>{{t('CC攻击次数', 'WAF.ccgjcs')}}</p>
         </div>
       </el-col>
       <el-col :span="domain==''?12:8" v-if="domain==''?false:true">
@@ -25,7 +25,7 @@
             <span class="blue">{{botRequest}}</span>
             <span>次</span>
           </p>
-          <p>BOT请求次数</p>
+          <p>{{t('BOT请求次数', 'WAF.botqqcs')}}</p>
         </div>
       </el-col>
     </el-row>

@@ -7,7 +7,7 @@
                 <span class="green">{{upPeakValue}}</span>
                 <span>bps</span>
               </p>
-              <p>上行带宽峰值</p>
+              <p>{{t('上行带宽峰值', 'WAF.sxdkfz')}}</p>
             </div>
           </el-col>
           <el-col :span="8">
@@ -16,7 +16,7 @@
                 <span class="oarnge">{{downPeakValue}}</span>
                 <span>bps</span>
               </p>
-              <p>下行带宽峰值</p>
+              <p>{{t('下行带宽峰值', 'WAF.xxdkfz')}}</p>
             </div>
           </el-col>
           <el-col :span="8">
@@ -25,7 +25,7 @@
                 <span class="blue">{{qpsRequest}}</span>
                 <span>QPS</span>
               </p>
-              <p>请求峰值</p>
+              <p>{{t('请求峰值', 'WAF.qqfz')}}</p>
             </div>
           </el-col>
         </el-row>

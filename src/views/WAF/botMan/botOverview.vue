@@ -11,8 +11,8 @@
       </div>
       <div class="timeList">
         <el-button-group class="buttonDateCheck">
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
+          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小{{t('时', 'WAF.hour')}}</el-button>
+          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小{{t('时', 'WAF.hour')}}</el-button>
           <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
           <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
@@ -22,8 +22,8 @@
           type="datetimerange"
           class="timeValue"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('开始日期', 'WAF.ksrq')"
+          :end-placeholder="t('结束日期', 'WAF.jsrq')"
           :clearable= false
           @change="changeTimeValue"
         ></el-date-picker>

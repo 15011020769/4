@@ -66,13 +66,13 @@ export default {
   data() {
     return {
       seriesPie: [
-        {value: 0, name: '正常访问'},
-        {value: 0, name: 'WEB攻击次数'},
-        {value: 0, name: 'CC攻击次数'},
+        {value: 0, name: this.t('正常访问', 'WAF.zzfw')},
+        {value: 0, name: this.t('WEB攻击次数', 'WAF.webgjcs')},
+        {value: 0, name: this.t('CC攻击次数', 'WAF.ccgjcs')},
         {value: 0, name: ''},
       ],
       colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
-      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
+      legendTextPie: [this.t('正常访问', 'WAF.zzfw'), this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs'), ''],
       seriesPieAttack: [],
       legendTextPieAttack: [],
     }
@@ -99,7 +99,7 @@ export default {
       }
       this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
+          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: this.t('正常访问', 'WAF.zzfw')},)
         })
       })
     },
@@ -119,7 +119,7 @@ export default {
       }
       this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: 'WEB攻击次数'},)
+          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: this.t('WEB攻击次数', 'WAF.webgjcs')},)
         })
       })
     },
@@ -138,7 +138,7 @@ export default {
       }
       this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: this.t('CC攻击次数', 'WAF.ccgjcs')},)
         })
       })
     },
@@ -154,8 +154,8 @@ export default {
       this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.botRequest = Response.Count
-          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
-          this.$set(this.legendTextPie, 3, 'Bot请求次数')
+          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: this.t('BOT请求次数', 'WAF.botqqcs')})
+          this.$set(this.legendTextPie, 3, this.t('BOT请求次数', 'WAF.botqqcs'))
           console.log(this.seriesPie)
         })
       })
