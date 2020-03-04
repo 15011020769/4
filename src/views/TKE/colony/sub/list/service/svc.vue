@@ -73,9 +73,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
-            <span class=" ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="goEdit(scope.row)">编辑YAML</span>
-            <span class="ml10" :class="scope.row.isDisabled?'':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
+            <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
+            <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span>
+            <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
           </template>
         </el-table-column>
       </el-table>
@@ -302,7 +302,7 @@ export default {
     },
     goEdit (item) {
       this.$router.push({
-        name: 'svcUpdate',
+        name: 'svcUpdateYaml',
         query: {
           clusterId: this.clusterId,
           spaceName: this.nameSpaceName,
@@ -378,7 +378,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.aaa{
+.fontColor{
   color:#ccc;
 }
 </style>

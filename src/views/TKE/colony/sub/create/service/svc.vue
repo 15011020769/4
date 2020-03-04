@@ -469,6 +469,7 @@ export default {
           'ports': newPortAry,
           'externalTrafficPolicy': policy,
           'sessionAffinity': session } }
+      if (radio == '2' || radio == '3' || radio == '4') reqBody.metadata.annotations = {}
       if (session == 'ClientIP') reqBody.spec.sessionAffinityConfig = sessionTime// 会话时间
       if (describe) reqBody.metadata.annotations.description = describe// 是否有描述
       if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue// 是否选中 使用已有
@@ -481,7 +482,7 @@ export default {
           'kind': 'Service',
           'apiVersion': 'v1',
           'metadata': { 'name': name, 'namespace': value },
-          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'sessionAffinity': session } }
+          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'externalTrafficPolicy': policy } }
         if (checked) {
           reqBody.spec.clusterIP = session
         }

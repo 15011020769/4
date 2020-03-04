@@ -4,7 +4,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary">编辑YAML</el-button>
+        <el-button size="small" :disabled="spaceName=='kube-system'?true:false" type="primary" @click="goEdit">编辑YAML</el-button>
       </div>
     </div>
 
@@ -79,12 +79,10 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           let response = res.Response.ResponseBody
-          console.log(response)
+          // console.log(response)
           this.YAMLData = response
         } else {
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -94,6 +92,18 @@ export default {
           })
         }
       })
+    },
+    goEdit () {
+      if (this.spaceName !== 'kube-system') {
+        this.$router.push({
+          name: 'svcUpdateYaml',
+          query: {
+            clusterId: this.clusterId,
+            spaceName: this.spaceName,
+            serviceName: this.serviceName
+          }
+        })
+      }
     }
   }
 }

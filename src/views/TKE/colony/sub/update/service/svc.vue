@@ -1,6 +1,6 @@
  <!-- 新建Service -->
 <template>
-  <div class="colony-wrap">
+  <div class="colony-wrap" v-loading="loadShow">
     <div class="tke-content-header">
       <div class="tke-grid">
         <!-- 左侧 -->
@@ -71,7 +71,7 @@
           </el-form-item>
 
           <el-form-item v-if="svc.radio=='3'" label="LB所在子网">
-			      <el-select v-model="svc.LBvalue1" placeholder="请选择" disabled>
+			      <el-select v-model="svc.LBvalue1" :placeholder="svc.LBvalue1" disabled>
 			      	<el-option
 			      		v-for="item in vpcNameAry"
 			      		:key="item.VpcName"
@@ -88,7 +88,7 @@
 			      	</el-option>
 			      </el-select>
 			      <el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
-			      共<span>{{addressCount.TotalIpAddressCount}}</span>个子网点，剩下<span>{{addressCount.AvailableIpAddressCount}}}</span>个可用
+			      共<span>{{addressCount.TotalIpAddressCount}}</span>个子网点，剩下<span>{{addressCount.AvailableIpAddressCount}}</span>个可用
 		      </el-form-item>
 
           <el-form-item label="负载均衡器" v-if="svc.radio=='3' || svc.radio=='1'">
@@ -182,7 +182,7 @@
           <!-- 高级设置 -->
           <div v-if="svc.show">
             <h3 style="padding-bottom:10px;">高级设置（选填）</h3>
-            <el-form-item label-width="150px" label="ExtermalTrafficPolicy">
+            <el-form-item label-width="150px" label="ExtermalTrafficPolicy" v-if="svc.radio!=='2'">
               <el-radio v-model="svc.ETP" label="1">Cluster</el-radio>
               <el-radio v-model="svc.ETP" label="2">Local</el-radio>
               <div v-if="svc.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
@@ -225,12 +225,14 @@
 // import Service from './components/Service'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
+import Loading from '@/components/public/Loading'
 import { ALL_CITY, POINT_REQUEST, TKE_COLONY_LIST, TKE_EDSCRIBELOADBALANCERS, TKE_VPC_METWORK, TKE_WORKER_METWORK } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
   name: 'svcCreate',
   data () {
     return {
+      loadShow: false, // 加载是否显示
       dialogFormVisible: false,
       svc: {
         show: true,
@@ -252,7 +254,10 @@ export default {
         input2: '', // 服务端口
         list: [],
         workload: [],
-        tabPosition: 'dep'
+        tabPosition: 'dep',
+        vpcIds: '',
+        subnetId: '',
+        describe: ''// 描述
       },
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
@@ -263,7 +268,8 @@ export default {
       vpcNameAry: [], // vpcName的数据
       addressCount: {}, // LB中的子网点对象
       serviceInfo: {}, // 服务详情信息
-      vpcId: [], // (2)中vpcids数据
+      // vpcId: [], // (2)中vpcids数据
+      subnetAry: [], // 子网数组
       timeRules: [{
         validator: (rule, value, callback) => {
           let reg = /^\d+\.\d+$/
@@ -309,6 +315,7 @@ export default {
   methods: {
     // 扫描子网(4)
     async getDescribeSubnets () {
+      this.loadShow = true
       let params = {
         // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
         'Filters.0.Name': 'vpc-id',
@@ -320,9 +327,21 @@ export default {
       await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
         // console.log(1111111, res)
         if (res.Response.Error === undefined) {
-          this.LBsubnet = res.Response.SubnetSet
-          this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
+          let msg = res.Response.SubnetSet
+          this.LBsubnet = msg
+          // console.log(msg)
+          if (this.svc.radio !== '3') {
+            this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
+          }
+          this.loadShow = false
+          msg.forEach(ele => {
+            if (ele.SubnetId == this.svc.subnetId) {
+              this.svc.LBvalue2 = ele.SubnetName
+              // this.svc.subnetId = ele.SubnetId
+            }
+          })
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -336,6 +355,7 @@ export default {
     },
     // 扫描vpcs(3)
     async getDescribeVpcs () {
+      this.loadShow = true
       let params = {
         Limit: 100,
         Offset: 0,
@@ -344,11 +364,21 @@ export default {
         // 'VpcIds.0': this.vpcId[0]
       }
       await this.axios.post(TKE_VPC_METWORK, params).then(res => {
-        // console.log(22222, res)
         if (res.Response.Error === undefined) {
-          this.vpcNameAry = res.Response.VpcSet
-          this.svc.LBvalue1 = res.Response.VpcSet[0].VpcName
+          let msg = res.Response.VpcSet
+          this.vpcNameAry = msg
+          if (this.svc.radio !== '3') {
+            this.svc.LBvalue1 = res.Response.VpcSet[0].VpcName
+          }
+          msg.forEach(ele => {
+            if (ele.VpcId == this.svc.vpcIds) {
+              this.svc.LBvalue1 = ele.VpcName
+            }
+          })
+          // console.log(this.svc.LBvalue1)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -362,6 +392,7 @@ export default {
     },
     // 扫描均衡器(2)
     async getDescribeLoadBalancers () {
+      this.loadShow = true
       let params = {
         Forward: 1,
         Limit: 100,
@@ -372,17 +403,27 @@ export default {
         if (res.Response.Error === undefined) {
           let msg = res.Response.LoadBalancerSet
           this.ownLoadBalancer = msg
-          this.svc.value = msg[0].LoadBalancerId + '  (' + msg[0].LoadBalancerName + ')'
+          // this.svc.value = msg[0].LoadBalancerId + '  (' + msg[0].LoadBalancerName + ')'
           // this.vpcId = this.vpcId.push(msg[0].VpcId)
-          if (msg.length > 0) {
-            msg.forEach(ele => {
-              this.vpcId.push(ele.VpcId)
-            })
-          }
-          this.vpcId = new Set(this.vpcId)
+          // msg.forEach(ele => {
+          //   if (this.svc.value === ele.LoadBalancerId) {
+          //     this.svc.loadBalance = '2'
+          //   } else {
+          //     this.svc.loadBalance = '1'
+          //     // this.svc.value = ''
+          //   }
+          // })
+          // if (msg.length > 0) {
+          //   msg.forEach(ele => {
+          //     this.vpcId.push(ele.VpcId)
+          //   })
+          // }
+          // this.vpcId = new Set(this.vpcId)
           // console.log(22222, this.vpcId)
           // console.log(this.ownLoadBalancer)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -396,6 +437,7 @@ export default {
     },
     // 获取集群列表(1)
     async getDescribeClusters () {
+      this.loadShow = true
       let params = {
         'ClusterIds.0': this.clusterId,
         Version: '2018-05-25'
@@ -404,9 +446,12 @@ export default {
         if (res.Response.Error === undefined) {
           let msg = res.Response.Clusters
           this.describeClustersList = msg
+          this.svc.vpcIds = msg[0].ClusterNetworkSettings.VpcId
           // this.vpcId = msg
-          // console.log(this.describeClustersList)
+          // console.log(this.svc.vpcIds)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -420,21 +465,19 @@ export default {
     },
     // 更新访问方式按钮的提交
     async updateAccessMode () {
-      let { list, ETP, SA, time, val, value, radio, loadBalance, LBvalue1, LBvalue2 } = this.svc
+      let { list, ETP, SA, time, val, value, radio, loadBalance, describe } = this.svc
       let newPortAry = []// 更改时的 端口映射数组
       list.forEach(ele => { // 端口映射传参的判断
         let ports = {
           name: `${ele.port}-${ele.targetPort}-${ele.protocol.toLowerCase()}`,
           port: Number(ele.port),
           targetPort: Number(ele.targetPort),
-          nodePort: ele.nodePort ? Number(ele.nodePort) : null,
+          // nodePort: ele.nodePort ? Number(ele.nodePort) : null,
           protocol: ele.protocol
         }
-        // if (this.svc.radio == '3' || this.svc.radio == '1') {
-        //   ports.nodePort = Number(ele.nodePort)
-        // } else {
-        //   ports.nodePort = null
-        // }
+        if (ele.nodePort && radio !== '2') {
+          ports.nodePort = Number(ele.nodePort)
+        }
         newPortAry.push(ports)
       })
       let specType = ''
@@ -462,27 +505,31 @@ export default {
       }
       let jsonStr = { 'metadata': {// 要传递的RequestBody参数
         'annotations': {
-          'descriptions': this.serviceName,
-          'service.kubernetes.io/loadbalance-id': val,
-          'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}' } },
+          // 'description': this.serviceName,
+          'service.kubernetes.io/loadbalance-id': val
+          // 'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}'
+        } },
       'spec': { 'type': specType,
         'ports': newPortAry,
-        'externalTrafficPolicy': policy,
-        'sessionAffinity': session } }
+        // 'externalTrafficPolicy': policy
+        'sessionAffinity': session
+      } }
+      if (describe) jsonStr.metadata.annotations.description = describe// 是否有描述
       if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime// 会话时间的参数判断
       // 访问方式参数判断
-      if (radio == '2' || radio == '3' || radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
-      if (radio == '1' && loadBalance == '2') jsonStr.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+      if (radio == '1') jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
+      if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy // 高级选项ExtermalTrafficPolicy的参数
+      if (radio == '1' && loadBalance == '2') jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
       // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
       if (radio == '3' && loadBalance == '1') {
-        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
-        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = 'cls-hfzoxb8m'
-        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
-      } else if (radio == '3' && loadBalance == '1') {
-        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
-        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = 'cls-hfzoxb8m'
-        jsonStr.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
-        jsonStr.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+        this.getSubnetId()
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
+      } else if (radio == '3' && loadBalance == '2') {
+        this.getSubnetId()
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
       }
       // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
 
@@ -505,9 +552,7 @@ export default {
             }
           })
         } else {
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -535,8 +580,20 @@ export default {
           this.svc.list = msg.spec.ports
           // var at = 'kubernetes.io/loadbalance-id'
           this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']// 自有创建的均衡器id
-          let isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid']
-          // console.log(this.svc.value)
+          // if (this.svc.radio == '3') {
+          this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+          var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid']
+          // }
+          // if (this.svc.loadBalance == '2') {
+          this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+          // }
+          this.svc.describe = msg.metadata.annotations.description
+          console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
+          if (!this.svc.value) {
+            this.svc.loadBalance = '1'
+          } else {
+            this.svc.loadBalance = '2'
+          }
           if (msg.spec.type == 'NodePort') { // 判断服务访问方式
             this.svc.radio = '4'
           } else if (msg.spec.type == 'ClusterIP') {
@@ -561,9 +618,7 @@ export default {
           this.loadShow = false
         } else {
           this.loadShow = false
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -571,6 +626,14 @@ export default {
             showClose: true,
             duration: 0
           })
+        }
+      })
+    },
+    // 获取subnetID
+    getSubnetId () {
+      this.LBsubnet.forEach(ele => {
+        if (this.svc.LBvalue2 == ele.SubnetName) {
+          this.svc.subnetId = ele.SubnetId
         }
       })
     },
