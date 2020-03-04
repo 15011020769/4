@@ -45,7 +45,7 @@
 
             <template v-if="type !== $t('CSS.domainManagement.34')">
               <el-table-column :label="$t('CSS.domainManagement.3')">
-                <span v-if="type === '在线流'">直播中</span>
+                <span v-if="type === $t('CSS.domainManagement.33')">直播中</span>
                 <span v-if="type === '禁推流'">已禁用</span>
               </el-table-column>
             </template>
@@ -183,7 +183,7 @@ export default {
       })
     },
     enable(row) {
-      this.$confirm(`${$t('CSS.domainManagement.44')}${row.StreamName}?`, this.$t('CSS.domainManagement.7'), {
+      this.$confirm(`${this.$t('CSS.domainManagement.44')}${row.StreamName}?`, this.$t('CSS.domainManagement.7'), {
         confirmButtonText: this.$t('CSS.domainManagement.43'),
         cancelButtonText: '取消',
         type: 'warning'
