@@ -11,7 +11,13 @@
           </el-radio-group>
         </div>
         <div class="streamInp" v-show="type !== '禁推流'">
-          <el-input v-model="streamName" placeholder="按照推流ID搜索" size="small" class="inputSearch" style="width:90%;">
+          <el-input
+            v-model="streamName"
+            placeholder="按照推流ID搜索"
+            size="small"
+            class="inputSearch"
+            style="width:90%;"
+          >
             <i slot="suffix" class="el-input__icon el-icon-search" @click="doFilter"></i>
           </el-input>
           <svg
@@ -35,7 +41,8 @@
       </div>
       <div class="streamWTable">
         <div class="tableWrap">
-          <el-table :data="tableData" empty-text="暫無數據" style="width: 100%">
+          <el-table :data="tableData" empty-text="暫無數據" style="width: 100%"
+            v-loading="loading">
             <el-table-column prop="StreamName" :label="$t('CSS.domainManagement.35')"></el-table-column>
 
             <template v-if="type !== '禁推流'">
@@ -52,27 +59,40 @@
 
             <template v-if="type === $t('CSS.domainManagement.33')">
               <el-table-column :label="$t('CSS.domainManagement.37')" width="180">
-                <template slot-scope="scope">
-                  {{format(scope.row.PublishTimeList[0].PublishTime)}}
-                </template>
+                <template slot-scope="scope">{{format(scope.row.PublishTimeList[0].PublishTime)}}</template>
               </el-table-column>
             </template>
 
             <template v-if="type === $t('CSS.domainManagement.34')">
-              <el-table-column prop="StreamEndTime" :label="$t('CSS.domainManagement.38')" width="180">
-                <template slot-scope="scope">
-                  {{format(scope.row.StreamEndTime)}}
-                </template>
+              <el-table-column
+                prop="StreamEndTime"
+                :label="$t('CSS.domainManagement.38')"
+                width="180"
+              >
+                <template slot-scope="scope">{{format(scope.row.StreamEndTime)}}</template>
               </el-table-column>
             </template>
 
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <template v-if="type === $t('CSS.domainManagement.33')">
-                  <el-button type="text" size="small" @click="test(scope.row)">{{$t('CSS.domainManagement.39')}}</el-button>
-                  <el-button type="text" size="small" @click="dropStream(scope.row)">{{$t('CSS.domainManagement.40')}}</el-button>
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="test(scope.row)"
+                  >{{$t('CSS.domainManagement.39')}}</el-button>
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="dropStream(scope.row)"
+                  >{{$t('CSS.domainManagement.40')}}</el-button>
                 </template>
-                <el-button v-if="type === '禁推流'" type="text" size="small" @click="enable(scope.row)">{{$t('CSS.domainManagement.7')}}</el-button>
+                <el-button
+                  v-if="type === '禁推流'"
+                  type="text"
+                  size="small"
+                  @click="enable(scope.row)"
+                >{{$t('CSS.domainManagement.7')}}</el-button>
                 <el-button v-else type="text" size="small" @click="disable(scope.row)">禁用</el-button>
               </template>
             </el-table-column>
@@ -96,15 +116,15 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
-import { 
+import {
   LIVE_DESCRIBE_LIVESTREAMONLINELIST,
   LIVE_DESCRIBE_LIVESTREAMEVENTLIST,
   LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST,
   LIVE_FORBIDLIVESTREAM,
   LIVE_RESUMELIVESTREAM,
   LIVE_DROPLIVESTREAM
-} from '@/constants'
-import moment from 'moment'
+} from "@/constants";
+import moment from "moment";
 export default {
   components: {
     HeadCom
@@ -112,116 +132,142 @@ export default {
   name: "streamManagement",
   data() {
     return {
-      type: $t('CSS.domainManagement.33'),
+      type: this.$t("CSS.domainManagement.33"),
       tableData: [],
-      streamName: '',
+      streamName: "",
       pageNum: 1,
       pageSize: 10,
       total: 0,
+      loading: true
     };
   },
   mounted() {
-    this.onTypeChange(this.type)
+    this.onTypeChange(this.type);
   },
   methods: {
     format(utcDate) {
-      return moment(utcDate).format('YYYY-MM-DD HH:mm:ss')
+      return moment(utcDate).format("YYYY-MM-DD HH:mm:ss");
     },
     onTypeChange(val) {
-      this.tableData = []
-      let url = LIVE_DESCRIBE_LIVESTREAMONLINELIST
-      let key = 'OnlineInfo'
+      this.loading = true;
+      this.tableData = [];
+      let url = LIVE_DESCRIBE_LIVESTREAMONLINELIST;
+      let key = "OnlineInfo";
       const params = {
-        Version: '2018-08-01',
+        Version: "2018-08-01",
         PageNum: this.pageNum,
         PageSize: this.pageSize,
-        StreamName: this.streamName,
-      }
-      let cb
-      switch(val) {
-        case $t('CSS.domainManagement.33'):
-          break
-        case $t('CSS.domainManagement.34'):
-          url = LIVE_DESCRIBE_LIVESTREAMEVENTLIST
-          key = 'EventList'
-          params.EndTime = moment.utc().format()
-          params.StartTime = moment().subtract(7, 'd').utc().format()
-          params.IsFilter = 1 // 返回推流历史记录
-          break
-        case '禁推流':
-          url = LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST
-          key = 'ForbidStreamList'
-          delete params.StreamName
-          break
-        default: break
+        StreamName: this.streamName
+      };
+      let cb;
+      switch (val) {
+        case this.$t("CSS.domainManagement.33"):
+          break;
+        case this.$t("CSS.domainManagement.34"):
+          url = LIVE_DESCRIBE_LIVESTREAMEVENTLIST;
+          key = "EventList";
+          params.EndTime = moment.utc().format();
+          params.StartTime = moment()
+            .subtract(7, "d")
+            .utc()
+            .format();
+          params.IsFilter = 1; // 返回推流历史记录
+          break;
+        case "禁推流":
+          url = LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST;
+          key = "ForbidStreamList";
+          delete params.StreamName;
+          break;
+        default:
+          break;
       }
       this.axios.post(url, params).then(({ Response }) => {
-        this.tableData = Response[key]
-        this.total = Response.TotalNum
-      })
+        this.loading = false;
+        this.tableData = Response[key];
+        this.total = Response.TotalNum;
+      });
     },
-    test(row) {
-
-    },
+    test(row) {},
     disable(row) {
-      this.$confirm(`${$t('CSS.domainManagement.46')}${row.StreamName}?`, '禁用', {
-        confirmButtonText: $t('CSS.domainManagement.43'),
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.axios.post(LIVE_FORBIDLIVESTREAM, {
-          Version: '2018-08-01',
-          AppName: row.AppName,
-          DomainName: row.DomainName,
-          StreamName: row.StreamName,
-        }).then(() => this.onTypeChange(this.type))
-      })
+      this.$confirm(
+        `${this.$t("CSS.domainManagement.46")}${row.StreamName}?`,
+        "禁用",
+        {
+          confirmButtonText: this.$t("CSS.domainManagement.43"),
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        this.axios
+          .post(LIVE_FORBIDLIVESTREAM, {
+            Version: "2018-08-01",
+            AppName: row.AppName,
+            DomainName: row.DomainName,
+            StreamName: row.StreamName
+          })
+          .then(() => this.onTypeChange(this.type));
+      });
     },
     enable(row) {
-      this.$confirm(`${$t('CSS.domainManagement.44')}${row.StreamName}?`, $t('CSS.domainManagement.7'), {
-        confirmButtonText: $t('CSS.domainManagement.43'),
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.axios.post(LIVE_RESUMELIVESTREAM, {
-          Version: '2018-08-01',
-          AppName: row.AppName || '',
-          DomainName: row.DomainName || '',
-          StreamName: row.StreamName,
-        }).then(() => this.onTypeChange(this.type))
-      })
+      this.$confirm(
+        `${this.$t("CSS.domainManagement.44")}${row.StreamName}?`,
+        this.$t("CSS.domainManagement.7"),
+        {
+          confirmButtonText:this.$t("CSS.domainManagement.43"),
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        this.axios
+          .post(LIVE_RESUMELIVESTREAM, {
+            Version: "2018-08-01",
+            AppName: row.AppName || "",
+            DomainName: row.DomainName || "",
+            StreamName: row.StreamName
+          })
+          .then(() => this.onTypeChange(this.type));
+      });
     },
     dropStream(row) {
-      this.$confirm(`${$t('CSS.domainManagement.42')}${row.StreamName}?`, $t('CSS.domainManagement.45'), {
-        confirmButtonText: $t('CSS.domainManagement.43'),
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.axios.post(LIVE_DROPLIVESTREAM, {
-          Version: '2018-08-01',
-          AppName: row.AppName,
-          DomainName: row.DomainName,
-          StreamName: row.StreamName,
-        }).then(() => {
-          this.$message({
-            message: $t('CSS.domainManagement.41'),
-            type: 'success'
+      this.$confirm(
+        `${this.$t("CSS.domainManagement.42")}${row.StreamName}?`,
+        this.$t("CSS.domainManagement.45"),
+        {
+          confirmButtonText: this.$t("CSS.domainManagement.43"),
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        this.axios
+          .post(LIVE_DROPLIVESTREAM, {
+            Version: "2018-08-01",
+            AppName: row.AppName,
+            DomainName: row.DomainName,
+            StreamName: row.StreamName
           })
-          this.onTypeChange(this.type)
-        })
-      })
+          .then(() => {
+            this.$message({
+              message: this.$t("CSS.domainManagement.41"),
+              type: "success"
+            });
+            this.onTypeChange(this.type);
+          });
+      });
     },
     doFilter() {
-      this.currentPage = 1
-      this.$nextTick(() => this.onTypeChange(this.type))
+      this.currentPage = 1;
+      this.$nextTick(() => this.onTypeChange(this.type));
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      this.$nextTick(() => this.onTypeChange(this.type))
+      this.$nextTick(() => this.onTypeChange(this.type));
     },
     handleCurrentChange(val) {
       this.pageNum = val;
-      this.$nextTick(() => this.onTypeChange(this.type))
+      this.$nextTick(() => this.onTypeChange(this.type));
+    },
+    handleRefresh() {
+      this.onTypeChange(this.type);
     }
   }
 };
@@ -246,11 +292,11 @@ export default {
   .streamInp {
     width: 300px;
   }
-   .streamWTable{
-     width: 100%;
-     padding: 0px 20px 0px 20px;
-     box-sizing: border-box;
-   }
+  .streamWTable {
+    width: 100%;
+    padding: 0px 20px 0px 20px;
+    box-sizing: border-box;
+  }
 }
 .streamWTable {
   padding: 20px 20px 0px 20px;
@@ -276,12 +322,12 @@ export default {
     }
   }
 }
-.tabListPage{
-  height:50px;
-  padding-top:8px;
-  border-top:1px solid #ddd;
-  text-align:right;
-  background-color:#fff;
+.tabListPage {
+  height: 50px;
+  padding-top: 8px;
+  border-top: 1px solid #ddd;
+  text-align: right;
+  background-color: #fff;
   ::v-deep .el-input__inner {
     width: 100% !important;
     height: 30px !important;

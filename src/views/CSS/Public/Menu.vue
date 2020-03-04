@@ -12,100 +12,100 @@
       :router="true"
     >
       <el-menu-item index="/overview">
-        <span slot="title">概览</span>
+        <span slot="title">{{$t('CSS.leftSide.0')}}</span>
       </el-menu-item>
       <el-menu-item index="/domainManagement">
-        <span slot="title">域名管理</span>
+        <span slot="title">{{$t('CSS.leftSide.1')}}</span>
       </el-menu-item>
       <el-menu-item index="/streamManagement">
-        <span slot="title">流管理</span>
+        <span slot="title">{{$t('CSS.leftSide.2')}}</span>
       </el-menu-item>
       <el-submenu index="1">
         <template slot="title">
-          <span>功能模板</span>
+          <span>{{$t('CSS.leftSide.3')}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/transcribe">
-            <span slot="title">录制配置</span>
+            <span slot="title">{{$t('CSS.leftSide.4')}}</span>
           </el-menu-item>
           <el-menu-item index="/transcoding">
-            <span slot="title">转码设置</span>
+            <span slot="title">{{$t('CSS.leftSide.5')}}</span>
           </el-menu-item>
           <el-menu-item index="/screenshot">
-            <span slot="title">截图鉴黄配置</span>
+            <span slot="title">{{$t('CSS.leftSide.6')}}</span>
           </el-menu-item>
           <el-menu-item index="/watermark">
-            <span slot="title">水印配置</span>
+            <span slot="title">{{$t('CSS.leftSide.7')}}</span>
           </el-menu-item>
           <el-menu-item index="/callback">
-            <span slot="title">回调配置</span>
+            <span slot="title">{{$t('CSS.leftSide.8')}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="2">
         <template slot="title">
-          <span>统计分析</span>
+          <span>{{$t('CSS.leftSide.9')}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/appreciation">
-            <span slot="title">增值功能</span>
+            <span slot="title">{{$t('CSS.leftSide.10')}}</span>
           </el-menu-item>
           <el-menu-item index="/streamlookup">
-            <span slot="title">流查询</span>
+            <span slot="title">{{$t('CSS.leftSide.11')}}</span>
           </el-menu-item>
           <el-menu-item index="/operation">
-            <span slot="title">运营数据</span>
+            <span slot="title">{{$t('CSS.leftSide.12')}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <!-- <el-menu-item index="/logManagement">
-        <span slot="title">日志分析</span>
+        <span slot="title">{{$t('CSS.leftSide.13')}}</span>
       </el-menu-item> -->
       <!-- <el-submenu index="3">
         <template slot="title">
-          <span>直播SDK</span>
+          <span>{{$t('CSS.leftSide.14')}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="license">
             <span slot="title">License</span>
           </el-menu-item>
           <el-menu-item index="application">
-            <span slot="title">应用管理</span>
+            <span slot="title">{{$t('CSS.leftSide.15')}}</span>
           </el-menu-item>
           <el-menu-item index="statistic">
-            <span slot="title">统计分析</span>
+            <span slot="title">{{$t('CSS.leftSide.16')}}</span>
           </el-menu-item>
           <el-menu-item index="meerkat">
-            <span slot="title">移动直播连麦</span>
+            <span slot="title">{{$t('CSS.leftSide.17')}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="4">
         <template slot="title">
-          <span>慢直播</span>
+          <span>{{$t('CSS.leftSide.18')}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="domainLive">
-            <span slot="title">域名管理</span>
+            <span slot="title">{{$t('CSS.leftSide.19')}}</span>
           </el-menu-item>
           <el-menu-item index="configuration">
-            <span slot="title">模板配置</span>
+            <span slot="title">{{$t('CSS.leftSide.20')}}</span>
           </el-menu-item>
           <el-menu-item index="statisticLive">
-            <span slot="title">统计分析</span>
+            <span slot="title">{{$t('CSS.leftSide.21')}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu> -->
       <el-submenu index="5">
         <template slot="title">
-          <span>辅助工具</span>
+          <span>{{$t('CSS.leftSide.22')}}</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/cutout">
-            <span slot="title">断流诊断</span>
+            <span slot="title">{{$t('CSS.leftSide.23')}}</span>
           </el-menu-item>
           <el-menu-item index="/builder">
-            <span slot="title">地址生成器</span>
+            <span slot="title">{{$t('CSS.leftSide.24')}}</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>

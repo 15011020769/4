@@ -2,12 +2,12 @@
   <div class="transcribe-wrap">
     <HeaderCom :title="$t('CSS.transcribe.0')" />
     <div class="transcribe-main">
-      <div class="explain">
+      <!-- <div class="explain">
         <p>
           {{$t('CSS.transcribe.1')}}
           <a href="#">{{$t('CSS.transcribe.2')}}</a>
         </p>
-      </div>
+      </div> -->
       <div class="explain">
         <p>
           {{$t('CSS.watermark.3')}}
@@ -20,8 +20,8 @@
           <i class="el-icon-plus" @click="_add" />
           <i class="el-icon-delete" @click="modalVisible=true"/>
           <ul class="recording-list-box">
-            <li 
-              v-for="item in configList" 
+            <li
+              v-for="item in configList"
               @click="onSelectRecording(item)"
               :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
               >
@@ -30,18 +30,18 @@
           </ul>
         </div>
         <div class="right">
-          <OptionForm 
+          <OptionForm
             :formShow.sync="formShow"
             :selectItem="selectItem"
             v-if="formShow"
             />
-          <ConfigDetail 
+          <ConfigDetail
             v-if="!formShow"
             :selectItem="selectItem"
             :formShow.sync="formShow"
             />
         </div>
-          <DeleteModal 
+          <DeleteModal
             :modalVisible.sync="modalVisible"
             :domainName="selectItem.TemplateName"
           />

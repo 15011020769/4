@@ -145,7 +145,9 @@ export default {
           this.$emit('update:formShow', false)
           return
         }
-        this.$message.error(data.Response.Error.Message)
+        // this.$message.error(data.Response.Error.Message)
+        console.log(data.Response);
+
       })
     },
 
