@@ -71,19 +71,19 @@
         </el-table-column>
         <el-table-column prop="action">
           <el-dropdown slot="header" @command="handleCommand">
-          <span class="el-dropdown-link" style="color: #909399;">
-            {{t('动作', 'WAF.dz')}}<i class="el-icon-arrow-down el-icon--right"></i>
-          </span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item
-              :command="action.value"
-              v-for="action in CUSTOM_SESSION_ACTION_ARR"
-              :key="action.name"
-            >
-              {{action.name}}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
+            <span class="el-dropdown-link" style="color: #909399;">
+              {{t('动作', 'WAF.dz')}}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                :command="action.value"
+                v-for="action in CUSTOM_SESSION_ACTION_ARR"
+                :key="action.name"
+              >
+                {{action.name}}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
           <template slot-scope="scope">
             {{CUSTOM_SESSION_ACTION[scope.row.action]}}
             <span v-if="scope.row.valid_time > 0">{{scope.row.valid_time}}{{t('分钟', 'WAF.fz')}}</span>

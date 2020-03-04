@@ -4,7 +4,16 @@
       <el-input v-model="sourceIp" placeholder="请输入源ip"></el-input>
     </el-row> -->
     <el-card>
-      <el-table :data="ubList">
+      <el-table
+        :data="ubList"
+        row-key="Id"
+        v-loading="loading"
+      >
+        <el-table-column
+          type="selection"
+          class-name="hide"
+          width="1"
+        />
         <el-table-column label="序号"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
@@ -18,7 +27,7 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="">全部</el-dropdown-item>
                 <el-dropdown-item v-for="item in scene_flag_list"
-                  :key="item.value" :command="item.label">
+                  :key="item.value" :command="item.value">
                   {{item.label}}
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -37,21 +46,53 @@
             <span class="addRed">{{action[scope.row.Action]}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="Score" label="BOT得分" width="100" sortable>
+        <el-table-column prop="Score" width="100">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('score.total')">
+            BOT得分
+            <i class="el-icon-caret-top" v-if="sort === 'score.total:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'score.total:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('score.total')"></i>
+          </el-button>
           <template slot-scope="scope">
             {{scope.row.Score.Total}}
           </template>
         </el-table-column>
-        <el-table-column prop="Nums" label="会话总次数" width="110" sortable></el-table-column>
-        <el-table-column label="会话持续时间" width="118" sortable :formatter="formatSessionDuration">
+        <el-table-column prop="Nums" width="120">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('nums')">
+            会话总次数
+            <i class="el-icon-caret-top" v-if="sort === 'nums:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'nums:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('nums')"></i>
+          </el-button>
         </el-table-column>
-        <el-table-column label="平均速率" sortable width="100">
+        <el-table-column width="118" :formatter="formatSessionDuration">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('session_duration')">
+            会话持续时间
+            <i class="el-icon-caret-top" v-if="sort === 'session_duration:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'session_duration:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('session_duration')"></i>
+          </el-button>
+        </el-table-column>
+        <el-table-column width="100">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('stat.avg_speed')">
+            平均速率
+            <i class="el-icon-caret-top" v-if="sort === 'stat.avg_speed:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'stat.avg_speed:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('stat.avg_speed')"></i>
+          </el-button>
           <template slot-scope="scope">
             {{parseInt(scope.row.Stat.AvgSpeed)}}次/分
           </template>
         </el-table-column>
-        <el-table-column label="最新检测时间" sortable :formatter="formatDate"></el-table-column>
-        <el-table-column label="操作" >
+        <el-table-column label="最新检测时间" width="150" :formatter="formatDate">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
+            最新检测时间
+            <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'timestamp:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('timestamp')"></i>
+          </el-button>
+        </el-table-column>
+        <el-table-column label="操作" width="80">
           <template slot-scope="scope">
             <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
           </template>
@@ -62,7 +103,7 @@
         @current-change="handleCurrentChange"
         :current-page="currentPage"
         :page-sizes="[10, 20, 30, 50]"
-        :page-size="pageSize"
+        :page-size="pageLimit"
         layout="total, sizes, prev, pager, next, jumper"
         :total="totalItems"
       ></el-pagination>
@@ -74,23 +115,25 @@
 import moment from 'moment'
 import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
 import { scene_flag_list } from '../../../constants'
+import { isValidIPAddressNew } from '@/utils'
 export default {
   data () {
     return {
-      sourceIp: "",
-      ubList: "", //ub列表
-      currentPage: 1,//当前页
-      pageSize: 10,//每页长度
+      ubList: [], //ub列表
+      pageLimit: 10,//每页长度
+      currentPage: 1,
       totalItems: 0,//总长度
       sceneValue: "", // 预测标签匹配字段绑定值
       scene_flag_list, // 预测标签匹配字段
+      sort: 'timestamp:-1',
+      action: '',
+      loading: true,
     }
   },
   props: {
-    domain: {
-      type: String,
-      default: "tfc.dhycloud.com"
-    },
+    domain: String,
+    sourceIp: String,
+    id: Number,
     times: {
       type: Array,
       defaule: () => []
@@ -98,12 +141,19 @@ export default {
   },
   watch: {
     domain() {
-
+      this.getBotUbList()
+    },
+    id() {
+      this.getBotUbList()
+    },
+    times(n, o) {
+      if (n.join() !== o.join()) {
+        this.getBotUbList()
+      }
     }
   },
   mounted() {
     this.getBotUbList()
-    // console.log(scene_flag_list)
   },
   filters: {
     botFeatureFilter(text) {
@@ -115,41 +165,65 @@ export default {
     }
   },
   methods: {
+    setSort(key) {
+      if (this.sort.includes(key)) { // 升降序
+        if (this.sort.includes('-')) {
+          this.sort = `${key}:1`
+        } else {
+          this.sort = `${key}:-1`
+        }
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
+      this.getBotUbList()
+    },
     onChangeScene(scene) {
-      
+      this.sceneValue = scene
+      this.getBotUbList()
     },
     getBotUbList() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         Domain: this.domain,
         StartTs: this.times[0],
         EndTs: this.times[1],
-        Skip: 0,
-        Limit: 5,
+        Skip: (this.currentPage - 1) * this.pageLimit,
+        Limit: this.pageLimit,
       }
-      this.axios.post(DESCRIBE_BOT_UB_RECORDS, params).then(resp => {
+      params.Sort = this.sort
+      if (this.action) {
+        params.Action = this.action
+      }
+      if (this.sourceIp) {
+        if (isValidIPAddressNew(this.sourceIp)) {
+          params.Ip = this.sourceIp
+        } else {
+          params.Name = this.sourceIp
+        }
+      }
+      if (this.sceneValue) {
+        params.Name = this.sceneValue
+      }
+      this.axios.post(DESCRIBE_BOT_UB_RECORDS, params)
+      .then(resp => {
         this.generalRespHandler(resp, ({Data}) => {
-          console.log(Data)
           this.ubList = Data.Res
           this.totalItems = Data.TotalCount
         })
       })
+      .then(() => {
+        this.loading = false
+      })
     },
       // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
+      this.pageLimit = val;
+      this.getBotUbList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
+      this.getBotUbList()
     },
     formatDate(row) {
       return moment(row.Timestamp).format('YYYY-MM-DD HH:mm:ss')
