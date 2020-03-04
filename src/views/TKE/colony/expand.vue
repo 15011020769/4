@@ -71,7 +71,7 @@
           <div class="tke-second-tips">
             <p>操作系统<i class="el-icon-info"></i></p>
             <p>
-              Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized
+              {{nodeForm.os}}
             </p>
           </div>
           <div
@@ -154,21 +154,21 @@
             <div class="model-bg">
               <el-table
                 ref="singleTable"
-                :data="zoneInfoList"
+                :data="nodeForm.zoneInfoList"
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: 100%"
               >
                 <el-table-column width="50">
                   <template slot-scope="scope">
-                    <el-radio v-model="radio1" :label="scope.row"
+                    <el-radio v-model="nodeForm.modelType" :label="scope.row"
                       ><i></i
                     ></el-radio>
                   </template>
                 </el-table-column>
                 <el-table-column property="date" label="机型">
                   <template slot-scope="scope">
-                    <span>{{ModelTypeName(scope.row.TypeName)}}</span>
+                    <span>{{scope.row.TypeName | ModelTypeName}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column property="name" label="规格">
@@ -188,8 +188,9 @@
                 </el-table-column>
                 <el-table-column property="address" label="配置费用">
                   <template slot-scope="scope">
-                    <span class="text-orange" style="color:#ff7800;">￥{{ scope.row.Price.UnitPrice }}</span
-                    >元/小时起
+                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">￥{{ scope.row.Price.UnitPrice }}</span>
+                    <span class="text-orange" style="color:#ff7800;" v-else>￥{{ scope.row.Price.DiscountPrice }}</span>
+                    元/{{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小时' : '月'}}起
                   </template>
                 </el-table-column>
               </el-table>
@@ -210,10 +211,11 @@
       >
         <div class="tke-second-title">已选配置</div>
         <el-form
-          ref="form"
-          :model="colonyThird"
+          ref="nodeForm"
+          :model="nodeForm"
           label-width="120px"
           label-position="left"
+          :rules="rules"
         >
           <el-form-item label="集群名">
             <p>{{ nodeForm.name }}</p>
@@ -227,17 +229,20 @@
           <el-form-item label="容器网络">
             <p>{{ nodeForm.container }}</p>
           </el-form-item>
+          <el-form-item label="计费模式">
+            <p>{{nodeForm.instanceChargeType | instanceChargeType}}</p>
+          </el-form-item>
           <div class="tke-second-tips tke-third-tips-h">
             <p>操作系统<i class="el-icon-info"></i></p>
             <p>
-              Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized
+              {{nodeForm.os}}
             </p>
           </div>
           <el-form-item label="机型">
-            <p>标准型S3</p>
+            <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
           </el-form-item>
           <el-form-item label="规格" class="norms">
-            <p>S3.SMALL1 (1核1GB)</p>
+            <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
           </el-form-item>
           <el-form-item label="系统盘">
             <div class="tke-second-radio-btn tke-third-radio-btn">
@@ -253,39 +258,55 @@
           <div class="tke-second-tips tke-third-tips-h">
             <p>数据盘</p>
             <div class="data-disk">
-              <el-checkbox v-model="colonyThird.safetyChecked"
+              <el-checkbox v-model="nodeForm.isShowDataDisk" @change="isBuyDataDisk"
                 >购买数据盘</el-checkbox
               >
             </div>
+            <!-- <div
+              class="tke-second-checkbox"
+              style="padding-left:20px;"
+            >
+              <el-checkbox
+                v-model="item.buyDataDisk"
+                @change="BuyDataDisk(index, 1)"
+                >购买数据盘</el-checkbox
+              >
+            </div> -->
+            
           </div>
           <el-form-item label="容器目录">
-            <el-checkbox v-model="colonyThird.containerChecked"
+            <el-checkbox v-model="nodeForm.containerChecked"
               >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
             >
             <el-input
-              v-model="colonyThird.containerInput"
-              placeholder="请输入内容"
-              v-if="colonyThird.containerChecked"
+              v-model="nodeForm.containerInput"
+              placeholder="容器目录格式如 /var/lib/docker"
+              v-if="nodeForm.containerChecked"
+              prop="container"
             ></el-input>
           </el-form-item>
           <div class="tke-second-tips tke-third-broadband">
             <p>公网宽带<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-third-radio-btn">
-              <el-radio-group v-model="colonyThird.loginModeRadio">
-                <el-radio-button label="1">按带宽计费</el-radio-button>
-                <el-radio-button label="2">按使用流量</el-radio-button>
+              <el-radio-group v-model="nodeForm.internetChargeType">
+                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">按带宽计费</el-radio-button>
+                <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button>
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
                 <div class="block">
-                  <el-slider v-model="value1" show-input></el-slider>
+                  <el-slider :min="0" :max="100" :step="1" v-model="nodeForm.internetMaxBandwidthOut" show-input
+                  @change="changeInternet"></el-slider>
                 </div>
                 <div class="data-disk">
-                  <el-checkbox v-model="colonyThird.containerChecked"
+                  <p v-show="nodeForm.internetMaxBandwidthOut === 0">
+                    您设置的带宽为0，容器服务将无法直接提供外网服务
+                  </p>
+                  <el-checkbox v-model="nodeForm.publicIpAssigned" :disabled = "nodeForm.disabled"
                     >免费分配公网IP<a href="javascript:;"
                       >使用指引</a
                     ></el-checkbox
                   >
-                  <p>
+                  <p v-show="nodeForm.internetMaxBandwidthOut === 0 || nodeForm.publicIpAssigned === false">
                     如果您对业务安全有要求不希望业务直接暴露到公网，同时又希望访问公网，您可以使用腾讯云NAT网关,点击查看
                     <a href="javascript:;">NAT网关详细介绍</a>
                   </p>
@@ -295,22 +316,26 @@
           </div>
           <el-form-item label="实例名称">
             <div class="tke-second-radio-btn tke-third-radio-btn">
-              <el-radio-group v-model="colonyThird.loginModeRadio">
-                <el-radio-button label="1">自动命名</el-radio-button>
-                <el-radio-button label="2">手动命名</el-radio-button>
+              <el-radio-group v-model="nodeForm.instanceNameType">
+                <el-radio-button label="auto">自动命名</el-radio-button>
+                <el-radio-button label="manual">手动命名</el-radio-button>
               </el-radio-group>
-              <p>云服务器将自动命名为 tke_集群id_worker</p>
+              <p v-show="nodeForm.instanceNameType === 'auto'">云服务器将自动命名为 tke_集群id_worker</p>
             </div>
+          </el-form-item>
+          <el-form-item v-show="nodeForm.instanceNameType === 'manual'" style="margin-top: 20px;">
+            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" ></el-input>
+            <p>实例名称不超过60个字符</p>
           </el-form-item>
           <el-form-item label="登录方式">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group
-                v-model="colonyThird.loginModeRadio"
+                v-model="nodeForm.loginSettings"
                 @change="LoginMode"
               >
-                <el-radio-button label="1">立即关联密钥</el-radio-button>
-                <el-radio-button label="2">自动生成密码</el-radio-button>
-                <el-radio-button label="3">设置密码</el-radio-button>
+                <el-radio-button label="relation">立即关联密钥</el-radio-button>
+                <el-radio-button label="auto">自动生成密码</el-radio-button>
+                <el-radio-button label="set">设置密码</el-radio-button>
               </el-radio-group>
               <p v-if="colonyThird.two">
                 注：创建后，自动生成的密码将通过站内信发送给您。也可登录CVM控制台重置密码。
@@ -319,28 +344,28 @@
           </el-form-item>
           <el-form-item
             label="用户名"
-            v-if="colonyThird.one || colonyThird.three"
+            v-if="nodeForm.loginSettings === 'relation' || nodeForm.loginSettings === 'set'"
           >
-            <p>名字</p>
+            <p>ubuntu</p>
           </el-form-item>
-          <el-form-item label="SSH密钥" v-if="colonyThird.one">
+          <el-form-item label="SSH密钥" v-if="nodeForm.loginSettings === 'relation'">
             <div class="tke-third-select">
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="nodeForm.keyIds" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in nodeForm.secretList"
+                  :key="item.KeyId"
+                  :label="item.KeyName"
+                  :value="item.KeyId"
                 >
                 </el-option>
               </el-select>
               <p>如您现有的密钥不合适，可以<a href="#">现在创建</a></p>
             </div>
           </el-form-item>
-          <el-form-item label="密码" v-if="colonyThird.three" class="password">
+          <el-form-item label="密码" v-if="nodeForm.loginSettings === 'set'" class="password">
             <el-input
               placeholder="请输入主机密码"
-              v-model="colonyThird.password"
+              v-model="nodeForm.password"
               show-password
             ></el-input>
             <p>
@@ -350,24 +375,24 @@
           </el-form-item>
           <el-form-item
             label="确认密码"
-            v-if="colonyThird.three"
+            v-if="nodeForm.loginSettings === 'set'"
             class="password"
           >
             <el-input
               placeholder="请输入主机密码"
-              v-model="colonyThird.confirmPassword"
+              v-model="nodeForm.confirmPassword"
               show-password
             ></el-input>
           </el-form-item>
           <div class="tke-third-tips">
             <p>安全组<i class="el-icon-info"></i></p>
             <div>
-              <el-select v-model="value" placeholder="请选择">
+              <el-select v-model="nodeForm.securityId" placeholder="请选择">
                 <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
+                  v-for="item in nodeForm.securityGroups"
+                  :key="item.SecurityGroupId"
+                  :label="item.SecurityGroupName"
+                  :value="item.SecurityGroupId"
                 >
                 </el-option>
               </el-select>
@@ -378,7 +403,7 @@
           </div>
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
-              <el-checkbox v-model="colonyThird.safetyChecked"
+              <el-checkbox v-model="nodeForm.securityService"
                 >免费开通</el-checkbox
               >
               <p>
@@ -390,10 +415,10 @@
           </el-form-item>
           <el-form-item label="云监控">
             <div class="tke-third-checkbox">
-              <el-checkbox v-model="colonyThird.cloudwatchChecked"
+              <el-checkbox v-model="nodeForm.monitorService"
                 >免费开通</el-checkbox
               >
-              <p class="checkbox-tips" v-if="!colonyThird.cloudwatchChecked">
+              <p class="checkbox-tips" v-if="!nodeForm.monitorService">
                 取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
               </p>
               <p>
@@ -408,7 +433,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="thirdPrev">上一步</el-button>
-          <el-button size="small" type="primary" @click="thirdNext"
+          <el-button size="small" type="primary" @click="thirdNext('nodeForm')"
             >下一步</el-button
           >
         </div>
@@ -430,31 +455,33 @@
             <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
           <el-form-item label="容器网络">
-            <p>{{ nodeForm.container }}</p>
+            <p>{{ nodeForm.container }}, {{clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}个service/集群, {{clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}个Pod/节点, 上限1008个节点</p>
           </el-form-item>
           <el-form-item label="计费模式">
-            <p>按量计费</p>
+            <p>{{nodeForm.instanceChargeType | instanceChargeType}}</p>
           </el-form-item>
           <el-form-item label="机型">
-            <p>{{ nodeForm.container }}</p>
+            <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
           </el-form-item>
           <el-form-item label="规格">
-            <p>按量计费</p>
+            <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
           </el-form-item>
           <el-form-item label="操作系统">
-            Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized
+            {{nodeForm.os}}
           </el-form-item>
           <el-form-item label="系统盘">
-            <p>按量计费</p>
+            <p>{{nodeForm.systemDiskType | systemDiskType}} ({{nodeForm.systemSize}}GB)</p>
           </el-form-item>
           <el-form-item label="数据盘">
-            Ubuntu Server 18.04.1 LTS 64bit TKE-Optimized
+            <p v-if="!nodeForm.isShowDataDisk">暂不购买</p>
+            <p v-else>dataDiskType</p>
+            
           </el-form-item>
           <el-form-item label="公网带宽" class="tke-fourth-broadband">
-            按带宽计费（1Mbps）
+            <p>{{nodeForm.internetChargeType | internetChargeType}} ({{nodeForm.internetMaxBandwidthOut}}Mbps)</p>
           </el-form-item>
           <el-form-item label="云服务器数量" class="cvm-num">
-            <el-input-number v-model="num" :min="1" :max="10"></el-input-number>
+            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="10"></el-input-number>
           </el-form-item>
           <el-form-item label="总计费用">
             <div class="tke-second-cost">
@@ -471,10 +498,101 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="fourthPrev">上一步</el-button>
-          <el-button size="small" type="primary">完成</el-button>
+          <el-button size="small" type="primary" @click="submitOk()">完成</el-button>
         </div>
       </div>
     </div>
+    <el-dialog :visible.sync="nodeForm.dataDiskShow">
+      <div v-if="nodeForm.dataDiskShow">
+        <div
+          class="tke-second-worker-popover-data-bg"
+          v-for="(x, i) in nodeForm.buyDataDiskArr"
+          :key="i"
+        >
+          <div>
+            <div class="box">
+              <p>云盘设置</p>
+              <div>
+                <el-select
+                  v-model="x.dataDiskVal"
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="item in nodeForm.dataDiskOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input-number
+                  v-model="x.dataDiskNum"
+                  :min="10"
+                  :max="16000"
+                  :step="10"
+                ></el-input-number>
+                <span>GB</span>
+                <el-checkbox
+                  v-model="x.formatMount"
+                  class="format-and-mount"
+                  >格式化并挂载</el-checkbox
+                >
+                <p>范围：10~16000，步长：10</p>
+              </div>
+              <p
+                style="margin-top:16px;"
+                v-if="x.formatMount"
+              >
+                格式化设置
+              </p>
+              <div
+                style="margin-top:16px;"
+                v-if="x.formatMount"
+              >
+                <el-select
+                  v-model="x.latticeSetVal"
+                  placeholder="请选择"
+                >
+                  <el-option
+                    v-for="x in nodeForm.latticeSetOpt"
+                    :key="x.value"
+                    :label="x.label"
+                    :value="x.value"
+                  >
+                  </el-option>
+                </el-select>
+                <el-input
+                  v-model="x.setValue"
+                ></el-input>
+              </div>
+            </div>
+          </div>
+          <i
+            class="el-icon-error ml5"
+            style="margin-top:10px;"
+            @click="deleteDataDisk(i)"
+          ></i>
+        </div>
+      </div>
+      <div
+        class="add-data-disk"
+        v-if="
+          nodeForm.buyDataDisk &&
+            nodeForm.buyDataDiskArr.length != 0
+        "
+        @click="AddDataDisk(index)"
+      >
+        添加数据盘
+      </div>
+      <div class="btn">
+        <el-button @click="DataDiskSure(index, 1)"
+          >确定</el-button
+        >
+        <el-button @click="nodeForm.dataDiskShow = false"
+          >取消</el-button
+        >
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -482,13 +600,15 @@
 // import HeadCom from '@/components/public/Head'
 // import SEARCH from '@/components/public/SEARCH'
 import { ErrorTips } from "@/components/ErrorTips";
+import { type } from 'os';
 import { ALL_CITY,
   TKE_COLONY_LIST,
   DESCRIBE_ZONE_INFO,
   TKE_VPC_METWORK,
   TKE_WORKER_METWORK,
   TKE_SSH,
-  TKE_MISG } from "@/constants";
+  TKE_MISG,
+  TKE_ADD_NODE } from "@/constants";
 export default {
   name: "create",
   data() {
@@ -496,9 +616,6 @@ export default {
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
       clusterInfo: {},//集群基本信息
-      zoneInfoList: [],//机型列表
-      secretList: [],//SSH秘钥列表
-      securityGroups: [],//安全组列表
       // 步骤显示
       secondBox: true,
       thirdBox: false,
@@ -519,7 +636,59 @@ export default {
         secretList: [],//SSH秘钥列表
         securityGroups: [],//安全组列表
         systemDiskType: 'CLOUD_PREMIUM',//系统盘类型
-        systemSize: 0,//系统盘大小
+        systemSize: 50,//系统盘大小
+        modelType: {},//实例机型对象
+        instanceType: 'S1.SMALL1',//实例机型类型
+        isShowDataDisk: false,//是否购买数据盘
+        dataDiskShow: false,//是否显示购买数据盘modal
+        buyDataDiskArr: [],//数据盘购买列表
+        dataDiskOptions: [
+          {
+            value: "CLOUD_PREMIUM",
+            label: "高性能云硬盘"
+          },
+          {
+            value: "CLOUD_SSD",
+            label: "SSD云硬盘"
+          }
+        ],
+        latticeSetOpt: [
+          { value: "ext3", label: "ext3" },
+          { value: "ext4", label: "ext4" },
+          { value: "xfs", label: "xfs" }
+        ],
+        containerChecked: false,// 容器目录
+        containerInput: '/var/lib/docker',//容器目录内容
+        internetChargeType: 'BANDWIDTH_POSTPAID_BY_HOUR',//公网带宽类型
+        internetMaxBandwidthOut: 1,//公网大小
+        publicIpAssigned: true,//是否免费分配公网
+        disabled: false,//是否禁用
+        instanceNameType: 'auto',//实例名称选择方式
+        instanceName: '',//实例名称
+        loginSettings: 'relation',//登录方式
+        keyIds: '',//ssh秘钥id
+        password: '',//密码 
+        confirmPassword: '',//确认密码
+        securityId: '',//安全组id
+        securityService: true,//云服务器
+        monitorService: true,//云监控
+        instanceCount: 1,//购买实例数量
+      },
+      rules: {
+        container: [
+          {
+            validator: (rule, value, callback) => {
+              debugger
+              if (this.nodeForm.containerChecked && value === '') {
+                callback(new Error('容器目录不能为空'))
+              } else {
+                callback()
+              }
+            },
+            trigger: "blur",
+            required: true
+          }
+        ]
       },
       // 第二步
       colonySecond: {
@@ -624,8 +793,7 @@ export default {
       },
       // 第三步
       colonyThird: {
-        // 容器目录
-        containerChecked: false,
+        
         containerInput: "",
         // 登录方式
         loginModeRadio: 1,
@@ -684,6 +852,100 @@ export default {
     this.getSecurityGroups();
   },
   methods: {
+    //提交保存
+    
+    //新建节点
+    async submitOk() {
+      let LoginSettings = {};
+      if(this.nodeForm.loginSettings === 'relation') {
+        LoginSettings.KeyIds = [this.nodeForm.keyIds];
+      } else if (this.nodeForm.loginSettings === 'auto') {
+        LoginSettings = {};
+      } else {
+        LoginSettings.Password = this.nodeForm.password;
+      }
+      let SecurityGroupIds = [];//未做完
+      SecurityGroupIds.push(this.nodeForm.securityId);
+      let RunInstancePara = {
+        InstanceChargeType: this.nodeForm.instanceChargeType,
+        Placement: {Zone: "ap-taipei-1", ProjectId: 0},
+        InstanceType: this.nodeForm.instanceType,
+        SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
+        DataDisks:[],//未做完
+        VirtualPrivateCloud: {VpcId: this.nodeForm.groupVps, SubnetId: this.nodeForm.subnetId, AsVpcGateway: false},
+        InternetAccessible: {InternetChargeType: this.nodeForm.internetChargeType,
+            InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),PublicIpAssigned: this.nodeForm.publicIpAssigned},
+        InstanceCount: this.nodeForm.instanceCount,
+        ImageId: '',//未取值
+        InstanceName: this.nodeForm.instanceName,
+        LoginSettings: LoginSettings,
+        SecurityGroupIds: SecurityGroupIds,
+        EnhancedService: {SecurityService: {Enabled: this.nodeForm.securityService}, MonitorService: {Enabled: this.nodeForm.monitorService}}
+      };
+      let containerInput = "";
+      if(this.nodeForm.containerChecked) {
+        containerInput = this.nodeForm.containerInput;
+      }
+      let InstanceAdvancedSettings = {
+        DockerGraphPath: JSON.stringify(containerInput),
+        UserScript: '',
+        Unschedulable: Number(0)
+        // ,Labels: []
+        // ,ExtraArgs: {Kubelet: []}
+      }
+      // InstanceAdvancedSettings['Labels'] = '';
+      // InstanceAdvancedSettings.ExtraArgs = {};
+      // InstanceAdvancedSettings.ExtraArgs['Kubelet'] = '';
+      let param = {
+        Version: '2018-05-25',
+        ClusterId: this.clusterId,
+        RunInstancePara: JSON.stringify(RunInstancePara),
+        InstanceAdvancedSettings: InstanceAdvancedSettings
+      }
+      await this.axios.post(TKE_ADD_NODE, param).then(res => {
+        debugger
+        if(res.Response.Error === undefined) {
+          
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            "FailedOperation":"操作失败",
+            "InternalError": "内部错误",
+            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "InternalError.CvmNotFound": "cvm不存在。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.DbRecordNotFound": "记录未找到。",
+            "InternalError.ImageIdNotFound": "镜像未找到。",
+            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Param": "Param。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit":"超过配额限制。",
+            "InternalError.QuotaMaxRtLimit":"超过配额限制。",
+            "InternalError.UnexceptedInternal":"内部错误",
+            "InternalError.VpcCommon":"VPC报错。",
+            "InternalError.VpcPeerNotFound":"对等连接不存在。",
+            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
+            "InvalidParameter": "参数错误",
+            "MissingParameter":"缺少参数错误",
+            "ResourceInUse":"资源被占用",
+            "ResourceNotFound":	"资源不存在",
+            "ResourceUnavailable":	"资源不可用",
+            "UnauthorizedOperation":"未授权操作",
+            "UnknownParameter": "未知参数错误",
+            "UnsupportedOperation": "操作不支持"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //获取集群信息
     async getColonyInfo () {
       this.loadShow = true;
       let params = {
@@ -785,10 +1047,11 @@ export default {
       param["Filters.0.Name"] = "zone";
       param["Filters.0.Values.0"] = "ap-taipei-1";
       param["Filters.1.Name"] = "instance-charge-type";
-      param["Filters.1.Values.0"] = "POSTPAID_BY_HOUR";
+      param["Filters.1.Values.0"] = this.nodeForm.instanceChargeType;
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if(res.Response.Error === undefined) {
           this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+          this.nodeForm.modelType = res.Response.InstanceTypeQuotaSet[0];
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -929,28 +1192,14 @@ export default {
     },
     // 计费模式
     SecondCharging(val) {
-      // console.log(val);
-      if (val === "2") {
-        this.colonySecond.chargingShow = true;
-      } else {
-        this.colonySecond.chargingShow = false;
-      }
+      this.getDescribeZoneInstanceConfigInfos()
     },
     // 机型
     handleCurrentChange(val) {
-      console.log(val);
+      this.nodeForm.modelType = val;
+      this.nodeForm.instanceType = val.InstanceType;
     },
-    // 系统盘 弹框确认
-    SystemDiskSure() {
-      this.colonySecond.systemDiskNumber = this.colonySecond.systemDiskNum;
-      var systemDiskOptions = this.colonySecond.systemDiskOptions;
-      for (var i in systemDiskOptions) {
-        if (systemDiskOptions[i].value == this.colonySecond.systemDiskVal) {
-          this.colonySecond.systemDiskValue = systemDiskOptions[i].label;
-        }
-      }
-      this.colonySecond.systemDiskShow = false;
-    },
+
     // 购买数据盘
     BuyDataDisk(val) {
       if (val === true) {
@@ -992,10 +1241,17 @@ export default {
       this.fourthBox = false;
     },
     // 第三步 下一步
-    thirdNext() {
-      this.secondBox = false;
-      this.thirdBox = false;
-      this.fourthBox = true;
+    thirdNext(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.secondBox = false;
+          this.thirdBox = false;
+          this.fourthBox = true;
+        } else {
+          return false
+        }
+      });
+      
     },
     // ----------------------------------------- 第四步 ---------------------------------------
     // 第三步 下一步
@@ -1004,6 +1260,40 @@ export default {
       this.thirdBox = true;
       this.fourthBox = false;
     },
+    //是否购买数据盘
+    isBuyDataDisk() {
+      this.nodeForm.dataDiskShow = true;
+    },
+    // 删除
+    deleteDataDisk(index) {
+      this.nodeForm.buyDataDiskArr.splice(index, 1);
+      // if (this.colonySecond.workerOneList[index].buyDataDiskArr.length === 0) {
+      //   this.colonySecond.buyDataDisk = false;
+      //   this.colonySecond.buyDataWidth = 300;
+      // }
+    },
+    // 购买数据盘 添加数据盘
+    AddDataDisk(index) {
+      this.nodeForm.buyDataDiskArr.push({
+        dataDiskVal: "CLOUD_PREMIUM",
+        dataDiskNum: "10",
+        formatMount: false,
+        latticeSetVal: "ext3",
+        setValue: "/var/lib/docker"
+      });
+    },
+    //选择带宽
+    changeInternet() {
+      if(this.nodeForm.internetMaxBandwidthOut === 0) {
+        this.nodeForm.publicIpAssigned = false;
+        this.nodeForm.disabled = true;
+      } else {
+        this.nodeForm.publicIpAssigned = true;
+        this.nodeForm.disabled = false;
+      }
+    }
+  },
+  filters: {
     ModelTypeName(val) {
       if (val === "Standard S3") {
         return "标准型S3";
@@ -1012,8 +1302,48 @@ export default {
       } else if (val === "MEM-optimized M3") {
         return "内存型M3";
       }
+    },
+    //付费模式
+    instanceChargeType(val) {
+      if(val) {
+        if(val === 'POSTPAID_BY_HOUR') {
+          return '按量计费';
+        } else {
+          return '包年包月';
+        }
+      }
+    },
+    //系统盘类型
+    systemDiskType(val) {
+      if(val) {
+        if(val === 'CLOUD_PREMIUM') {
+          return "高性能云盘";
+        } else {
+          return "SSD云盘";
+        }
+      }
+    },
+    //数据盘类型
+    dataDiskType() {
+      if(val) {
+        if(val === 'CLOUD_PREMIUM') {
+          return "高性能云盘";
+        } else {
+          return "SSD云盘";
+        }
+      }
+    },
+    //宽带类型
+    internetChargeType(val) {
+      if(val) {
+        if(val === 'BANDWIDTH_POSTPAID_BY_HOUR') {
+          return '按带宽计费';
+        } else {
+          return '按使用流量';
+        }
+      }
     }
-  }
+  },
 };
 </script>
 

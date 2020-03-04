@@ -62,3 +62,6 @@ export const ADD_CIDE_TO_CCN = 'tke2/AddClusterCIDRToCcn'
 
 //关闭注册云网络
 export const CLOSE_CIDE_TO_CCN = 'tke2/DeleteClusterCIDRFromCcn'
+
+//新增节点
+export const TKE_ADD_NODE = 'tke2/CreateClusterInstances'
