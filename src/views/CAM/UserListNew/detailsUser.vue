@@ -146,7 +146,11 @@
             :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column type="selection"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName">
+              <template slot-scope="scope">
+                <el-button type="text" @click="$router.push(`/Interfacedetails?GroupId=${scope.row.GroupId}`)">{{scope.row.GroupName}}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column :label="$t('CAM.userList.RelatedPolicies')" width="300">
               <template slot-scope="scope">
                 <div class="omit" v-show="scope.row.policy.length!=0">
