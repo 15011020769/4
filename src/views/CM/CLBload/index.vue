@@ -33,7 +33,11 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
-            <p :class="scope.row.Status=='1'?'green':'orange'">{{instanceStatus[scope.row.Status]}}</p>
+            <p v-show="scope.row.Isolation==1" style="color:red">
+              隔離中
+            </p>
+            <p :class="scope.row.Status=='1'?'green':'orange'" v-show="scope.row.Isolation!=1">
+              {{instanceStatus[scope.row.Status]}}</p>
           </template>
         </el-table-column>
 
