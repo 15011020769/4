@@ -13,7 +13,7 @@
     >
       <el-menu-item index="appId">
         <i class="iconfont">&#xe615;</i>
-        <span slot="title">APPID列表</span>
+        <span slot="title">APPID清單</span>
       </el-menu-item>
     </el-menu>
   </div>

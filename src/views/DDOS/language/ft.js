@@ -82,8 +82,8 @@ module.exports = {
       tiao: '條'
     },
     AssetList: {
-      resourceList: '資源列表',
-      businessList: '業務列表',
+      resourceList: '資源清單',
+      businessList: '業務清單',
       newPurchases: '新購',
       willExpire: '即將過期',
       RunningState: '運行狀態',
@@ -308,7 +308,7 @@ module.exports = {
       Uptoadded: '最多可以添加50條IP',
       Add_newpolicy: '添加新策略',
       delete_thepolicy: '確定刪除該政策么？',
-      After_deletingpolicy: '刪除策略後，該防護策略將從列表中永久刪除，不可恢復。若您已開啟UDP水印剝離開關，則策略會同步關閉UDP水印剝離開關。',
+      After_deletingpolicy: '刪除策略後，該防護策略將從清單中永久刪除，不可恢復。若您已開啟UDP水印剝離開關，則策略會同步關閉UDP水印剝離開關。',
       delete_advanced: '確定刪除該條高級策略',
       Binding_resources: '綁定資源',
       Blackwhite_list: '黑白名單',
