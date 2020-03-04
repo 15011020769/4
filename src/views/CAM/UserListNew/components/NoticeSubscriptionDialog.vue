@@ -162,6 +162,7 @@ export default {
     handleRowExpaneChanged(row, expanded) {
       row.isExpanded = expanded;
 
+      // 管理已展开的row
       if (expanded === true) {
         this.expandedRow.push(row)
       } else {
@@ -169,8 +170,7 @@ export default {
       }
     },
     handleExpand(index, row) {
-      console.log(row);
-
+      // 手动展开row
       this.$refs.multipleTable.toggleRowExpansion(row);
     },
     selectAllChecked(status) {
