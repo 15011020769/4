@@ -96,7 +96,7 @@ module.exports = {
       cz: '操作',
       jk: '監控',
       gjcl: '告警策略',
-      fhlb: '返回列表',
+      fhlb: '返回清單',
       fzjh: '負載均衡CLB',
       zjm: 'ID/主機名',
       zt: '狀態',
