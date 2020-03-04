@@ -326,7 +326,7 @@
               console.log('刪除成功')
             } else {
               let ErrTips = {
-                'FailedOperation.DeleteNamespace': '無法刪除默認Namespace',
+                'FailedOperation.DeleteNamespace': '無法刪除預設Namespace',
                 'InternalError': '內部錯誤',
                 'InvalidParameterValue': '參數取值錯誤',
                 'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
