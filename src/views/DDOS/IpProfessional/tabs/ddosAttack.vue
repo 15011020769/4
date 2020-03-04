@@ -1,11 +1,11 @@
 <template>
   <div class="child">
-    <div class="mainConList">
+    <div class="mainConList" v-loading="loading">
       <div
         class="mainConListAll mainConListOne newClear"
         style="display: flex;flex-direction: column;"
       >
-        <div class="newClear" v-if="ResIpList.length > 0">
+        <div class="newClear">
           <el-button-group class="buttonGroupAll">
             <el-button
               class="buttonGroup"
@@ -53,7 +53,7 @@
           </el-select>
         </div>
       </div>
-      <template  v-if="ResIpList.length > 0">
+      <!-- <template  v-if="ResIpList.length > 0"> -->
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName" type="card" @tab-click="handleClick1">
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
@@ -122,7 +122,7 @@
           ></el-pagination>
         </div>
       </div>
-      </template>
+      <!-- </template> -->
     </div>
   </div>
 </template>
@@ -163,6 +163,9 @@ export default {
   },
   watch: {
     dateChoice: function(value) {
+      if(this.selectId == "") {
+        return
+      }
       this.period = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
       var arr = [];
@@ -205,6 +208,7 @@ export default {
               showClose: true,
               duration: 0
             });
+            this.loading = false
             return
           }
           this.ResIpList = res.Response.Resource;
@@ -235,7 +239,6 @@ export default {
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
     describeDDoSNetEvList() {
-      console.log(1)
       this.loading = true;
       let params = {
         Version: "2018-07-09",
@@ -358,6 +361,9 @@ export default {
     },
     //获取时间
     choiceTime(thisTime) {
+      if(this.selectId == "") {
+        return
+      }
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();
