@@ -184,7 +184,10 @@
               <p style="color:#ff9d00;" v-show="!asg.monitor">取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择</p>
               <p>
                 免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
-                <a href="https://cloud.tencent.com/product/cm" target="_blank">详细介绍</a>
+                <a
+                  href="https://cloud.tencent.com/product/cm"
+                  target="_blank"
+                >详细介绍</a>
               </p>
             </el-form-item>
           </el-form-item>
@@ -291,13 +294,25 @@
             </p>
           </el-form-item>
 
-          <el-form-item label="重试策略">
+          <p>
+            <i :class="[isActiveMode?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
+            <el-button type="text" style="font-size:12px;" @click="isActiveMode=!isActiveMode">高级设置</el-button>
+          </p>
+          <el-form-item label="重试策略" v-show="isActiveMode">
             <el-radio-group v-model="asg.restart" size="small" @change="setRadio($event)">
               <el-radio-button label="IMMEDIATE_RETRY">快速重试</el-radio-button>
               <el-radio-button label="INCREMENTAL_INTERVALS">简介递增重试</el-radio-button>
             </el-radio-group>
-            <p v-show="Radio==='IMMEDIATE_RETRY'">立即重试，在较短时间内快速重试，连续失败超过一定次数（5次）后不再重试。</p>
-            <p v-show="Radio==='INCREMENTAL_INTERVALS'">间隔递增重试，随着连续失败次数的增加，重试间隔逐渐增大，重试间隔从秒级到1天不等。</p>
+            <p v-show="asg.restart==='IMMEDIATE_RETRY'">立即重试，在较短时间内快速重试，连续失败超过一定次数（5次）后不再重试。</p>
+            <p
+              v-show="asg.restart==='INCREMENTAL_INTERVALS'"
+            >间隔递增重试，随着连续失败次数的增加，重试间隔逐渐增大，重试间隔从秒级到1天不等。</p>
+          </el-form-item>
+          <el-form-item label="扩缩容模式" v-show="isActiveMode">
+            <el-radio-group v-model="asg.shrinkage" size="small">
+              <el-radio-button label="RELEASE_MODE">释放模式</el-radio-button>
+            </el-radio-group>
+            <p>缩容时自动释放Cluster AutoScaler判断的空余节点， 扩容时自动创建新的CVM节点加入到伸缩组</p>
           </el-form-item>
         </el-form>
         <!-- 底部 -->
@@ -307,6 +322,7 @@
         </div>
       </div>
     </div>
+
     <el-dialog title="选择机型" :visible.sync="typeModelShow" width="80%">
       <div class="tke-second-worker-model-box" v-if="typeModelShow">
         <div class="tke-second-worker-model">
@@ -548,6 +564,7 @@ export default {
       textarea2: "",
       inputRoom: "/var/lib/docker",
       isActive: false,
+      isActiveMode: false,
       textOne: "",
       textTwo: "",
       Radio: "pwd1",
@@ -561,7 +578,7 @@ export default {
         zoneInstanceConfigInfo: "", //机型
         minSize: "", //最小节点数量
         maxSize: "", //最大节点数
-        restart: "", //重试策略
+        restart: "IMMEDIATE_RETRY", //重试策略
         instanceType: "", //机器类型
         diskType: "CLOUD_PREMIUM", //云盘类型
         groupVps: "", //支持的网络
@@ -580,7 +597,8 @@ export default {
         setValue: "/var/lib/docker",
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR", //带宽类型
         broadbandNum: 1, //带宽大小
-        pubBroadbandShow: true //是否分配免费IP
+        pubBroadbandShow: true, //是否分配免费IP
+        shrinkage: "RELEASE_MODE" //扩缩容模式
       },
       systemDisk: [
         {
