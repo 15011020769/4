@@ -82,7 +82,7 @@
     </div>
     <el-dialog :title="$t('CSS.builder.14')" :visible.sync="dialogVisible" width="850px">
       <img width="800px"
-        src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/console/v1/css/img/lvb/url-description.png">
+        src="~@/assets/CSS_Assets/images/url-description.png">
     </el-dialog>
   </div>
 </template>

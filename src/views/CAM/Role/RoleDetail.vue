@@ -2,7 +2,7 @@
   <div class="RoleDetail wrap">
     <HeadCom :title="roleInfo.RoleName" :backShow="true" @_back="_back" />
     <div class="container">
-      <div class="baseInfo" v-loading="infoLoad">
+      <div class="baseInfo">
         <p class="baseInfo_title">{{$t('CAM.Role.jsxx')}}</p>
         <div class="baseInfo_flex">
           <p>
@@ -330,6 +330,7 @@ import {
   POLICY_LIST,
   UPDATE_POLICY,
   LOGOUT_ROLE_SESSIONS,
+  CREATE_POLICY,
 } from "@/constants";
 export default {
   components: {
@@ -346,10 +347,6 @@ export default {
       cancelAllSessionChecked: false,
       title: "",
       activeName: "first",
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4,
       dialogVisible: false,
       Relieve_dialogVisible: false,
       transfer_value: [],
@@ -399,7 +396,7 @@ export default {
       pagePolicies: 1,
       rpPolicies: 20,
       roleCarrier: [],
-      TotalCounts: [],
+      TotalCounts: 0,
       TotalNum: 0,
       selTotalNum: 0,
       roleServeCarrier: [],
@@ -441,9 +438,11 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             let resInfo = res.Response.RoleInfo;
+            console.log(resInfo)
             let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
             this.TotalCounts =
-              PolicyDocument.statement[0].principal.service.length;
+              (PolicyDocument.statement[0].principal.service || PolicyDocument.statement[0].principal.qcs).length
+              console.log((PolicyDocument.statement[0].principal.service || PolicyDocument.statement[0].principal.qcs).length)
             if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
               _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
               resInfo.PolicyDocument =
@@ -470,6 +469,7 @@ export default {
               resInfo.PolicyDocument =
                 PolicyDocument.statement[0].principal.service;
             }
+            console.log(resInfo)
             this.roleInfo = resInfo;
             this.loading = false;
           } else {
@@ -487,7 +487,7 @@ export default {
             });
           }
           this.infoLoad = false;
-        })
+        }) 
         .catch(error => {});
     },
     // 获取角色策略
@@ -863,114 +863,61 @@ export default {
         loading.close()
         return
       }
-      return
-      PolicyId = res.Response.List[0].PolicyId
-      if (res.Response.List.length) {
-        let paramsPolicy = {
-          Version: "2019-01-16",
-          PolicyDocument: `{"version":"2.0","statement":[{"action":["*"],"resource":"*","effect":"deny","condition":{"date_less_than":{"qcs:token_create_time":"${moment().utc().format()}"}}}]}`,
-          PolicyId,
-        };
-        res = await this.axios.post(UPDATE_POLICY, paramsPolicy)
-        if (res.Response.Error === undefined) {
-          res = await this.axios.post(ATTACH_ROLE, {
-            Version: "2019-01-16",
-            PolicyId,
-            AttachRoleId: this.$route.query.RoleId
-          })
-          if (res.Response.Error === undefined) {
-            res = await this.axios.post(LOGOUT_ROLE_SESSIONS, {
-              roleId: this.$route.query.RoleId
-            })
-            loading.close()
-            this.getRolePolicy()
-            if (res.code === 0) {
-              this.$message({
-                message: '撤銷成功',
-                type: "success",
-                showClose: true,
-                duration: 0
-              });
-              this.dialogVisibleCancelAllSession = false
-            } else {
-              this.$message({
-                message: '撤銷失敗',
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            } 
-          } else {
-            loading.close()
-            let ErrTips = {
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.AttachmentFull":
-                "principal欄位的授權對象關聯策略數已達到上限",
-              "InvalidParameter.ParamError": "非法入參",
-              "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-              "InvalidParameter.RoleNotExist": "角色不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }          
-        } else {
-          loading.close()
-          let ErrTips = {
-            "FailedOperation.PolicyNameInUse":
-              "PolicyName欄位指定的策略名已存在",
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.ActionError": "策略文件的Action欄位不合法",
-            "InvalidParameter.AttachmentFull":
-              "principal欄位的授權對象關聯策略數已達到上限",
-            "InvalidParameter.ConditionError":
-              "策略文件的condition欄位不合法",
-            "InvalidParameter.DescriptionLengthOverlimit":
-              "Description入參長度不能大於300位元組",
-            "InvalidParameter.EffectError": "策略文件的Effect欄位不合法",
-            "InvalidParameter.NotSupportProduct":
-              "CAM不支持策略文件中所指定的資源類型",
-            "InvalidParameter.ParamError": "非法入參",
-            "InvalidParameter.PolicyDocumentError":
-              "PolicyDocument欄位不合法",
-            "InvalidParameter.PolicyDocumentLengthOverLimit":
-              "PolicyDocument欄位超過長度限制",
-            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.PolicyNameError": "PolicyName欄位不合法",
-            "InvalidParameter.PrincipalError":
-              "策略文件的principal欄位不合法",
-            "InvalidParameter.ResourceError": "策略文件的Resource欄位不合法",
-            "InvalidParameter.StatementError":
-              "策略文件的Statement欄位不合法",
-            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-            "InvalidParameter.VersionError": "策略文件的Version欄位不合法",
-            "ResourceNotFound.GroupNotExist": "用戶組不存在",
-            "ResourceNotFound.NotFound": "資源不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+      if (res.Response.TotalNum === 0) {
+        res = await this.axios.post(CREATE_POLICY, {
+          Version: '2019-01-16',
+          PolicyName: `RevokeOlderSessionFor${this.roleInfo.RoleName}`,
+          PolicyDocument: `{"version":"2.0","statement":[{"action":["*"],"resource":"*","effect":"deny","condition":{"date_less_than":{"qcs:token_create_time":"${moment().utc().format()}"}}}]}`
+        })
+        PolicyId = res.Response.PolicyId
+      } else {
+        PolicyId = res.Response.List[0].PolicyId
+      }
+      res = await this.axios.post(ATTACH_ROLE, {
+        Version: "2019-01-16",
+        PolicyId,
+        AttachRoleId: this.$route.query.RoleId
+      })
+      if (res.Response.Error === undefined) {
+        res = await this.axios.post(LOGOUT_ROLE_SESSIONS, {
+          roleId: this.$route.query.RoleId
+        })
+        loading.close()
+        this.getRolePolicy()
+        if (res.code === 0) {
           this.$message({
-            message: ErrOr[res.Response.Error.Code],
+            message: '撤銷成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.dialogVisibleCancelAllSession = false
+        } else {
+          this.$message({
+            message: '撤銷失敗',
             type: "error",
             showClose: true,
             duration: 0
           });
-        }
+        } 
       } else {
-        tloading.close()
+        loading.close()
+        let ErrTips = {
+          "InternalError.SystemError": "內部錯誤",
+          "InvalidParameter.AttachmentFull":
+            "principal欄位的授權對象關聯策略數已達到上限",
+          "InvalidParameter.ParamError": "非法入參",
+          "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+          "InvalidParameter.RoleNotExist": "角色不存在"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
-          message: '撤銷失敗',
+          message: ErrOr[res.Response.Error.Code],
           type: "error",
           showClose: true,
           duration: 0
         });
-      }
+      } 
     },
     handleClick() {},
     isRelieve() {},

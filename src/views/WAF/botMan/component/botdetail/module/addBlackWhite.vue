@@ -118,7 +118,7 @@ export default {
       if (this.ipAddress && this.ipAddress.trim()) {
         const param = {
           Version: '2018-01-25',
-          Domain: "global",
+          Domain: this.ipInfo.Domain,
           Edition: 'clb-waf'
         }
         this.ipAddress.split('\n').forEach((ip, i) => {
