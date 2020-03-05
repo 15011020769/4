@@ -638,6 +638,21 @@ export const advanceRules = [
   { value: "scanner", label: "公开扫描器" },
   { value: "frmework", label: "开发框架" },
   { value: "http library", label: "语言HTTP库" }];
+  // TCB BOT分类
+  export const tcb_types = [
+    "Search engine bot",
+    "Site monitor",
+    "Screenshot creator",
+    "Link checker",
+    "Web scraper",
+    "Vulnerability scanner",
+    "Virus scanner",
+    "Speed tester",
+    "Feed Fetcher",
+    "Tool",
+    "Marketing",
+    "Uncategorised"
+];
 
 // 自定义会话特征-ua
   export const uaRules = [

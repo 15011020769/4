@@ -12,6 +12,7 @@
         :series2="seriesLineFlowBot"
         :legendText="legendTextLineFlow"
         :color="colorLine"
+        v-loading="loading"
       />
     </div>
     <el-row class="secondShow">
@@ -27,6 +28,7 @@
           :color="colorPie"
           :legendText="legendTextPieType"
           v-else
+          v-loading="loading"
         />
         </el-col>
         <el-col :span="12">
@@ -41,6 +43,7 @@
           :color="colorPie"
           :legendText="legendTextPieAction"
           v-else
+          v-loading="loading"
         />
       </el-col>
     </el-row>
@@ -69,8 +72,8 @@
               ></el-option>
             </el-select>  
         </el-row>
-      <world-map :series="seriesWorldMap" v-if="radio == 'global'"/>
-      <china-map :series="seriesWorldMap" v-else/>
+      <world-map :series="seriesWorldMap" v-if="radio == 'global'" v-loading="loading"/>
+      <china-map :series="seriesWorldMap" v-else v-loading="loading"/>
     </div>
   </div>
 </template>
@@ -109,7 +112,8 @@ export default {
         {value: 'UCB', label: '自定义类型'},
         {value: 'TCB', label: '公开类型'},
         {value: 'UB', label: '未知类型'},
-      ]
+      ],
+      loading: true,
     }
   },
   props: {
@@ -123,7 +127,8 @@ export default {
     },
     selBtn: {
       type: Number
-    }
+    },
+    id: Number,
   },
   components: {
     EPie,
@@ -136,6 +141,9 @@ export default {
       if (val.join() !== oldVal.join()) {
         this.init()
       }
+    },
+    id() {
+      this.init()
     },
     domain(val) {
       this.init()
@@ -167,6 +175,7 @@ export default {
     },
     // 获取Bot_V2 Bot流量统计
     getBotFlow() {
+      this.loading = true
       let axixArr = []
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
@@ -182,7 +191,6 @@ export default {
         Domain: this.domain,
       }
       const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
-      // if(moment(this.times[1]).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
       if(this.selBtn == 1 ||this.selBtn == 2 || this.selBtn == 3 ) {
         // 当选中时间有当天时，需将bot值控制在当前时间而不是23:59:59
         params["EndTs"] = moment().utc().valueOf()
@@ -206,6 +214,8 @@ export default {
             })
             this.xAxisLineFlow = axixArr
         })
+      }).then(() => {
+        this.loading = false
       })
       this.axios.post(DESCRIBE_BOT_STATISTIC_POINTS, params).then((resp) => {
         this.generalRespHandler(resp, ({PointsBot, PointsTotal}) => {
@@ -215,6 +225,8 @@ export default {
           this.seriesLineFlowBot = []
           this.seriesLineFlowTotal = []
         })
+      }).then(() => {
+        this.loading = false
       })
       // const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
       // this.axios.post(DESCRIBE_PEAK_POINTS, paramsPeakPoints).then(resp => {
@@ -240,7 +252,8 @@ export default {
     },
     // 获取Bot_V2 Bot类别统计
     getBotType() {
-     const params = {
+      this.loading = true
+      const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
         EndTs: this.times[1],
@@ -252,11 +265,14 @@ export default {
           this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
           this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // Bot_V2 获取bot动作统计
     getBotAction() {
-     const params = {
+      this.loading = true
+      const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
         EndTs: this.times[1],
@@ -269,10 +285,13 @@ export default {
           this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
           this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // Bot_V2 bot地理纬度统计
     getBotRegions() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
@@ -282,7 +301,7 @@ export default {
         BotType: this.botType,
       }
       let regionsArr = []
-       this.axios.post(DESCRIBE_BOT_REGIONS_STAT, params).then((resp) => {
+      this.axios.post(DESCRIBE_BOT_REGIONS_STAT, params).then((resp) => {
         this.generalRespHandler(resp, ({Data}) => {
           for(var i in Data) {
             regionsArr.push({
@@ -292,6 +311,8 @@ export default {
           }
         })
         this.seriesWorldMap = regionsArr
+      }).then(() => {
+        this.loading = false
       })
     }
   }

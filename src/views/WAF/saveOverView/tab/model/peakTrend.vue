@@ -11,6 +11,7 @@
       :series3="series3"
       :color="color"
       :legendText="legendText1"
+      v-loading="loading"
     />
   </el-row>
 </template>
@@ -22,7 +23,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   components: {
     ELine
@@ -35,6 +37,7 @@ export default {
       series3: [], // 业务攻击趋势
       legendText1: ['QPS', '上行带宽', '下行带宽'], // 业务攻击趋势
       color: ["#006eff", "#29CC85", "#FF9D00"],
+      loading: true,
     }
   },
   watch: {
@@ -55,7 +58,10 @@ export default {
       if (val !== oldVal) {
         this.getPeakPoints()
       }
-    }
+    },
+    id() {
+      this.getPeakPoints()
+    },
   },
   mounted() {
     this.getPeakPoints()
@@ -63,6 +69,7 @@ export default {
   methods: {
     // 获取业务攻击趋势
     getPeakPoints() {
+      this.loading = true
       const axixArr = []
       const series1Arr = []
       const series2Arr = []
@@ -88,6 +95,8 @@ export default {
           this.series2 = series2Arr
           this.series3 = series3Arr
         })
+      }).then(() => {
+        this.loading = false
       })
     },
   }

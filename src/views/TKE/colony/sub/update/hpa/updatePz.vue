@@ -103,7 +103,7 @@
 
 
    </div>
- </template>
+</template>
 
  <script>
    import FileSaver from "file-saver";

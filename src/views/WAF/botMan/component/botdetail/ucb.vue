@@ -1,8 +1,5 @@
 <template>
   <div class="main_ub">
-    <!-- <el-row type="flex" justify="end" class="topSearch">
-      <el-input v-model="sourceIp" placeholder="请输入源IP或策略名称"></el-input>
-    </el-row> -->
     <el-card>
       <el-table
         :data="ucbList"

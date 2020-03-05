@@ -9,6 +9,7 @@
       :xAxis="xAxisBarLocal"
       :series="seriesBarLocal"
       :legendText="legendTextBarIp"
+      v-loading="loading"
       v-if="xAxisBarLocal.length == 0 ? false : true"
     />
     <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
@@ -22,6 +23,7 @@
       :xAxis="xAxisBarIp"
       :series="seriesBarIp"
       :legendText="legendTextBarIp"
+      v-loading="loading"
       v-if="xAxisBarIp.length == 0 ? false : true"
     />
     <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
@@ -35,7 +37,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   data() {
     return {
@@ -44,6 +47,7 @@ export default {
       seriesBarIp: [],
       xAxisBarIp: [],
       legendTextBarIp: this.t('次数','WAF.cscs'),
+      loading: true,
     }
   },
   components: {
@@ -64,7 +68,10 @@ export default {
       if (val !== oldVal) {
         this.init()
       }
-    }
+    },
+    id() {
+      this.init()
+    },
   },
   mounted() {
     this.init()
@@ -76,6 +83,7 @@ export default {
     },
     // 获取攻击来源地址和ip柱状图
     getAttackIp(type) {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -112,6 +120,8 @@ export default {
             this.seriesBarLocal = localArrCount
           })
         }
+      }).then(() => {
+        this.loading = false
       })
     },
   }

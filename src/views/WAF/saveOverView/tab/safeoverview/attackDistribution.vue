@@ -4,7 +4,7 @@
       {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
-    <EMap :series="seriesMap" />
+    <EMap :series="seriesMap" v-loading="loading" />
   </el-row>
 </template>
 <script>
@@ -14,7 +14,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   components: {
     EMap
@@ -34,11 +35,15 @@ export default {
       if (val !== oldVal) {
         this.getAttackWorldMap()
       }
-    }
+    },
+     id() {
+      this.getAttackWorldMap()
+    },
   },
   data() {
     return {
-      seriesMap: []
+      seriesMap: [],
+      loading: true,
     }
   },
   mounted() {
@@ -47,6 +52,7 @@ export default {
   methods: {
     // 获取攻击城市分布
     getAttackWorldMap() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -68,6 +74,8 @@ export default {
           })
         })
         this.seriesMap = regionsArr
+      }).then(() => {
+        this.loading = false
       })
     },
   }

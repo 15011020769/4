@@ -208,7 +208,12 @@ export default {
           let response = JSON.parse(res.Response.ResponseBody);
           //默认选中第一项
           let nameSpace = response.items[0];
-          this.nameSpaceName = nameSpace.metadata.name;
+          if(sessionStorage.getItem('namespace')){
+            this.nameSpaceName=sessionStorage.getItem('namespace')
+          }else{
+            this.nameSpaceName = nameSpace.metadata.name;
+          }
+
           this.searchOptions = response.items;
           this.loadShow = true;
           let params = {};
@@ -354,6 +359,7 @@ export default {
           spaceName:rowData.metadata.namespace
         }
       });
+      sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //更新pod配置
     goPodConfigUpdate(rowData) {
@@ -569,6 +575,11 @@ export default {
       } else {
         return "-";
       }
+    }
+  },
+  watch:{
+    nameSpaceName(val){
+       this.getDeploymentList();
     }
   },
   components: {

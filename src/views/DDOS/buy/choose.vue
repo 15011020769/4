@@ -152,73 +152,49 @@
                       :class="type5==5?'seceltList':''"
                       @click="checkListFive(5,'5个月')"
                     >5个月</span>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">6个月以上享88折</div>
-                      <span
+                     <span
                         class="spanList"
                         :class="type5==6?'seceltList':''"
                         @click="checkListFive(6,'6个月')"
                       >
-                        6个月
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">{{$t('DDOS.choose.months')}}</div>
-                      <span
+                        6个月</span>
+                        <span
                         class="spanList"
                         :class="type5==7?'seceltList':''"
                         @click="checkListFive(7,'7个月')"
                       >
-                        7个月
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">6个月以上享88折</div>
-                      <span
+                        7个月 </span>
+                         <span
                         class="spanList"
                         :class="type5==8?'seceltList':''"
                         @click="checkListFive(8,'8个月')"
                       >
-                        8个月
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">6个月以上享88折</div>
+                        8个月 </span>
                       <span
                         class="spanList"
                         :class="type5==9?'seceltList':''"
                         @click="checkListFive(9,'9个月')"
                       >
-                        9个月
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">1年享83折</div>
-                      <span
+                        9个月</span>
+                   <span
                         class="spanList"
                         :class="type5==10?'seceltList':''"
                         @click="checkListFive(10,'1年')"
                       >
-                        1年
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
-                      <div slot="content">2年享7折</div>
-                      <span
+                        1年 </span>
+                   <span
                         class="spanList"
                         :class="type5==11?'seceltList':''"
                         @click="checkListFive(11,'2年')"
                       >
-                        2年
-                        <a href="#" class="spanListPosi">惠</a>
-                      </span>
-                    </el-tooltip>
-                    <el-tooltip placement="top" effect="light">
+                        2年</span>
+                      <span
+                        class="spanList"
+                        :class="type5==12?'seceltList':''"
+                        @click="checkListFive(12,'3年')"
+                      >
+                        3年 </span>
+                    <!-- <el-tooltip placement="top" effect="light">
                       <div slot="content">3年享5折</div>
                       <span
                         class="spanList"
@@ -228,7 +204,7 @@
                         3年
                         <a href="#" class="spanListPosi">惠</a>
                       </span>
-                    </el-tooltip>
+                    </el-tooltip> -->
                   </div>
                 </div>
               </div>
@@ -409,10 +385,14 @@ export default {
         this.ccText = "40,000QPS";
       }
     },
-    region() {
+    region () {
       this.axios.get(ALL_CITY).then(data => {
-        this.city = data.data[0].zone;
-      });
+        if (data === undefined || data.data === undefined) {
+          this.city = '台灣台北'
+        } else {
+          this.city = data.data[0].zone
+        }
+      })
     },
     // 默认选择中国台湾
     checkAddress(type1, checked) {

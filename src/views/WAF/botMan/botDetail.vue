@@ -56,7 +56,7 @@
           <i class="el-icon-search el-input__icon" slot="suffix" @click="id+=1" />
         </el-input>
       </el-row>
-      <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" :id="id" :selBtn="selBtn" v-if="activeName == 'overview' && domainValue.length"></over-view>
       <Ub :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ub'" :sourceIp="sourceIp"></Ub>
       <Ucb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ucb'" :sourceIp="sourceIp"></Ucb>
       <Tcb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'tcb'" :sourceIp="sourceIp"></Tcb>

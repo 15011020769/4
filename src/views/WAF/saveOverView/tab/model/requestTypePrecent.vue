@@ -9,6 +9,7 @@
       :xAxis="xAxisBarLocal"
       :series="seriesBarLocal"
       :legendText="legendTextBarIp"
+      v-loading="loading"
       v-if="xAxisBarLocal.length == 0 ? false : true"
     />
     <el-row class="empty" v-else>暂无数据</el-row>
@@ -22,6 +23,7 @@
       :xAxis="xAxisBarIp"
       :series="seriesBarIp"
       :legendText="legendTextBarIp"
+      v-loading="loading"
       v-if="xAxisBarIp.length == 0 ? false : true"
     />
     <el-row class="empty" v-else>暂无数据</el-row>
@@ -35,7 +37,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   data() {
     return {
@@ -44,6 +47,7 @@ export default {
       seriesBarIp: [], // 请求来源ip
       xAxisBarIp: [], // 请求来源ip,
       legendTextBarIp: "次数",
+      loading: true,
     }
   },
   components: {
@@ -64,7 +68,10 @@ export default {
       if (val !== oldVal) {
         this.init()
       }
-    }
+    },
+    id() {
+      this.init()
+    },
   },
   mounted() {
     this.init()
@@ -76,6 +83,7 @@ export default {
     },
     // 获取请求来源地址和ip柱状图、响应时间最慢和页面访问次数top5
     getAccessIp(type) {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -112,6 +120,8 @@ export default {
             this.seriesBarLocal = localArrCount
           })
         }
+      }).then(() => {
+        this.loading = false
       })
     },
   }
