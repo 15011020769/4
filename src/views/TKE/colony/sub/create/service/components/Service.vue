@@ -143,13 +143,13 @@
 		<!-- 高级设置 -->
 		<div v-if="svc.show">
 			<h3 style="padding-bottom:10px;">高级设置（选填）</h3>
-			<el-form-item label-width="150px" label="ExtermalTrafficPolicy">
+			<el-form-item label-width="150px" label="ExtermalTrafficPolicy" v-if="svc.radio!=='2'">
 				<el-radio v-model="svc.ETP" label="1">Cluster</el-radio>
 				<el-radio v-model="svc.ETP" label="2">Local</el-radio>
 				<div v-if="svc.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
 				<div v-if="svc.ETP=='2'">能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。</div>
 			</el-form-item>
-			<div v-if="svc.radio!=='2'">
+			<div>
 				<el-form-item label-width="150px" label="Session Affinity">
 					<el-radio v-model="svc.SA" label="1">ClienIP</el-radio>
 					<el-radio v-model="svc.SA" label="2">None</el-radio>
@@ -258,7 +258,8 @@ export default {
         if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer[0])) return
         this.svc.LBvalue2 = LBsubnet[0].SubnetName
         this.svc.LBvalue1 = vpcNameAry[0].VpcName
-        this.svc.balancerValue = ownLoadBalancer[0].LoadBalancerId + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
+        this.svc.balancerValue = ownLoadBalancer[0].LoadBalancerId
+        // + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
       }
     }
   },

@@ -146,10 +146,10 @@
                 @click="btnClick('bgp')"
                 :class="{'addColor':type=='bgp'}"
               >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button> -->
-              <el-button
+              <!-- <el-button
                 @click="btnClick('bgp-multip')"
                 :class="{'addColor':type=='bgp-multip'}"
-              >{{$t('DDOS.Protective.shareExclusive')}}</el-button>
+              >{{$t('DDOS.Protective.shareExclusive')}}</el-button> -->
               <el-button
                 @click="btnClick('net')"
                 :class="{'addColor':type=='net'}"
@@ -242,7 +242,8 @@ export default {
         { Key: "IpNum", Value: 0, desc: "統計的IP數據" }
       ],
       // 获取产品总览
-      packParams: ["bgp", "net"],
+      // packParams: ["bgp", "net"],
+      packParams: ["net"],
       business: "net", // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [
         // 高防IP专业版 net
@@ -275,7 +276,8 @@ export default {
       pageSize: 10,
       totalItems: 0,
       // 攻击事件列表：bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
-      type: "bgp",
+      // type: "bgp",
+      type: "net",
       // 下载名称
       downloadName: "獨享包攻擊記錄",
       // 查询输入字段（资源实例id）
@@ -412,9 +414,10 @@ export default {
       // if (param == "bgp") {
       //   this.downloadName = "獨享包攻擊記錄";
       // } else
-      if (param == "bgp-multip") {
-        this.downloadName = "共享包攻擊記錄";
-      } else if (param == "net") {
+      // if (param == "bgp-multip") {
+      //   this.downloadName = "共享包攻擊記錄";
+      // } else 
+      if (param == "net") {
         this.downloadName = "高防IP專業版攻擊記錄";
       }
       this.describeDDoSEvList();
