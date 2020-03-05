@@ -86,9 +86,9 @@
                   <span v-for="(item,index) in scope.row.Record" :key="index">
                     <!-- (idle:运行中, attacking:攻击中, blocking:封堵中, isolate:隔离中) -->
                     <span v-if="item.Key=='Status'&&item.Value=='idle'">{{$t('DDOS.AssetList.Running')}}</span>
-                    <span v-else-if="item.Key=='Status'&&item.Value=='attacking'" style="color: red;">{{$t('DDOS.basicProtection.gongjiz')}}</span>
-                    <span v-else-if="item.Key=='Status'&&item.Value=='blocking'">{{$t('DDOS.Protective.blockIng')}}</span>
-                    <span v-else-if="item.Key=='Status'&&item.Value=='isolate'">{{$t('DDOS.AssetList.Running')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='attacking'" style="color: red;">{{$t('DDOS.AssetList.Attacking')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='blocking'">{{$t('DDOS.AssetList.Blocking')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='isolate'">{{$t('DDOS.AssetList.Isolate')}}</span>
                   </span>
                 </template>
               </el-table-column>
