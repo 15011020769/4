@@ -1,32 +1,32 @@
 <template>
   <div id="unBlocking">
-    <div class="contentTit">{{$t('DDOS.UnlockOperation.Unlock')}}</div>
+    <div class="contentTit">{{ $t("DDOS.UnlockOperation.Unlock") }}</div>
     <div class="mainContentBlock">
       <div class="contPartOne newClear">
         <el-row>
           <el-col :span="8">
             <div class="contPartOneData">
-              <p>{{$t('DDOS.UnlockOperation.totalNum')}}</p>
+              <p>{{ $t("DDOS.UnlockOperation.totalNum") }}</p>
               <p>
-                <span>{{unBlockStatis.Total}}</span>
+                <span>{{ unBlockStatis.Total }}</span>
                 <span>次</span>
               </p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData">
-              <p>{{$t('DDOS.UnlockOperation.CurrentlyUse')}}</p>
+              <p>{{ $t("DDOS.UnlockOperation.CurrentlyUse") }}</p>
               <p>
-                <span>{{unBlockStatis.Used}}</span>
+                <span>{{ unBlockStatis.Used }}</span>
                 <span>次</span>
               </p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="contPartOneData contPartOneDataT">
-              <p>{{$t('DDOS.UnlockOperation.NotUse')}}</p>
+              <p>{{ $t("DDOS.UnlockOperation.NotUse") }}</p>
               <p>
-                <span>{{unBlockStatis.Total - unBlockStatis.Used}}</span>
+                <span>{{ unBlockStatis.Total - unBlockStatis.Used }}</span>
                 <span>次</span>
               </p>
             </div>
@@ -35,20 +35,36 @@
       </div>
       <div class="contPartTwo">
         <div class="tableContentUn">
-          <el-table :data="tableDatalist" v-loading="loading" height="450" :empty-text="$t('DDOS.Statistical_forms.Nodate')">
+          <el-table
+            :data="tableDatalist"
+            v-loading="loading"
+            height="450"
+            :empty-text="$t('DDOS.Statistical_forms.Nodate')"
+          >
             <el-table-column prop="Ip" label="IP">
               <template slot-scope="scope">
-                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.Ip}}</a>
+                <span>{{ scope.row.Ip }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="blockingTime" :label="$t('DDOS.UnlockOperation.BlockingTime')">
-              <template slot-scope="scope">{{scope.row.BlockTime}}</template>
+            <el-table-column
+              prop="blockingTime"
+              :label="$t('DDOS.UnlockOperation.BlockingTime')"
+            >
+              <template slot-scope="scope">{{ scope.row.BlockTime }}</template>
             </el-table-column>
-            <el-table-column prop="unblockTime" :label="$t('DDOS.UnlockOperation.EstimatedTime')">
-              <template slot-scope="scope">{{scope.row.UnBlockTime}}</template>
+            <el-table-column
+              prop="unblockTime"
+              :label="$t('DDOS.UnlockOperation.EstimatedTime')"
+            >
+              <template slot-scope="scope">{{
+                scope.row.UnBlockTime
+              }}</template>
             </el-table-column>
-            <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
-              <template slot-scope="scope">{{scope.row.Status}}</template>
+            <el-table-column
+              prop="status"
+              :label="$t('DDOS.UnlockOperation.Unlockstate')"
+            >
+              <template slot-scope="scope">{{ scope.row.Status }}</template>
             </el-table-column>
             <el-table-column
               prop="action"
@@ -57,88 +73,145 @@
             >
               <template slot-scope="scope">
                 <el-button
-                  @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                  @click.native.prevent="RenewModel(scope.row)"
                   type="text"
                   size="small"
-                >{{scope.row.ActionType}}</el-button>
+                >
+                  {{ $t("DDOS.Automatic_unsealing." + scope.row.ActionType) }}
+                </el-button>
               </template>
             </el-table-column>
           </el-table>
-          
+          <!-- 解封弹框 -->
+          <RenewModel
+            :RenewShow="doalogRenewModel"
+            :unsealingIP="dataUnsealingIP"
+            @sureRenewModel="sureRenewModel"
+            @closeRenewModel="closeRenewModel"
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+// eslint-disable-next-line camelcase
+import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST, Create_UnblockIp } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import RenewModel from './model/RenewModel'
+
 export default {
-  data() {
+
+  data () {
     return {
       unBlockStatis: {
-        BeginTime: "",
-        EndTime: "",
-        RequestId: "",
+        BeginTime: '',
+        EndTime: '',
+        RequestId: '',
         Total: 0,
         Used: 0
       },
+
       tableDatalist: [],
-      loading: true
-    };
+      loading: true,
+      doalogRenewModel: false, // 解封弹框
+      dataUnsealingIP: ''
+    }
   },
-  created() {
-    this.describeUnBlockStatis(); //获取黑洞解封次数接口
-    this.describeIpBlockList(); //获取IP封堵列表接口
+  components: {
+
+    RenewModel
+
+  },
+  created () {
+    this.describeUnBlockStatis() // 获取黑洞解封次数接口
+    this.describeIpBlockList() // 获取IP封堵列表接口
+    console.log(this.dataUnsealingIP, 'pppp')
   },
   methods: {
-    //获取IP封堵列表接口
-    describeIpBlockList() {
-      this.loading = true;
+    // 解封弹框
+    RenewModel (val) {
+      this.doalogRenewModel = true
+      this.dataUnsealingIP = val.Ip
+    },
+    // 解封弹框关闭按钮
+    closeRenewModel (isShow) {
+      this.doalogRenewModel = isShow
+    },
+    // 解封弹出框确定
+    sureRenewModel (isShow) {
+      this.doalogRenewModel = isShow
+      this.loading = true
       let params = {
-        Version: "2018-07-09"
-      };
+        Version: '2018-07-09',
+        Region: '',
+        Ip: this.dataUnsealingIP,
+        ActionType: ''// 解封类型
+      }
+      this.axios.post(Create_UnblockIp, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.unBlockStatis = res.Response
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+        this.loading = false
+      })
+      console.log('jief ')
+    },
+    // 获取IP封堵列表接口
+    describeIpBlockList () {
+      this.loading = true
+      let params = {
+        Version: '2018-07-09'
+      }
       this.axios.post(IPBlOCKLIST_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.tableDatalist = res.Response.List;
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
-        this.loading = false;
-      });
+          this.tableDatalist = res.Response.List
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+        this.loading = false
+      })
     },
 
-    //获取黑洞解封次数接口
-    describeUnBlockStatis() {
-      this.loading = true;
+    // 获取黑洞解封次数接口
+    describeUnBlockStatis () {
+      this.loading = true
       let params = {
-        Version: "2018-07-09"
-      };
+        Version: '2018-07-09'
+      }
       this.axios.post(UNBlOCKSTATIS_NUM, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.unBlockStatis = res.Response;
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
+          this.unBlockStatis = res.Response
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

@@ -18,33 +18,33 @@
 </template>
 
 <script>
-import NavHeader from "@/components/HeaderAside/Header";
-import LeftAside from "./Public/Menu";
-import { ALL_CITY } from "@/constants";
+import NavHeader from '@/components/HeaderAside/Header'
+import LeftAside from './Public/Menu'
+import { ALL_CITY } from '@/constants'
 export default {
-  data() {
-    return {};
+  data () {
+    return {}
   },
   components: {
     NavHeader,
     LeftAside
   },
-  mounted() {
-    this.GetCity();
+  mounted () {
+    this.GetCity()
   },
   methods: {
     // 获取城市列表
-    GetCity() {
+    GetCity () {
       this.axios.get(ALL_CITY).then(data => {
-        let city = data.data[0];
+        let city = data.data[0]
         // this.$cookie.set("regionv1", city.regionCode);
         // this.$cookie.set("regionv2", city.Region);
-        localStorage.setItem("regionv1",city.regionCode);
-        localStorage.setItem("regionv2",city.Region);
-      });
+        localStorage.setItem('regionv1', city.regionCode)
+        localStorage.setItem('regionv2', city.Region)
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 #DDOS >>> .el-aside {

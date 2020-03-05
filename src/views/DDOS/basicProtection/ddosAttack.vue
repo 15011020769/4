@@ -1,8 +1,8 @@
 <template>
-  <div v-loading='loading'>
+  <div v-loading="loading">
     <div class="newClear">
       <el-button-group class="buttonGroupAll">
-        <el-button class="buttonGroup"  @click="thisTime(1)">今天</el-button>
+        <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
         <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
         <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
         <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
@@ -22,7 +22,7 @@
       <el-table
         :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
         height="450"
-        empty-text='暫無數據'
+        empty-text="暫無數據"
       >
         <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
           <template slot-scope="scope">{{scope.row.StartTime}}</template>
@@ -54,15 +54,15 @@
   </div>
 </template>
 <script>
-import moment from "moment";
-import { DDOS_EV_LIST, DDOS_TREND } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment'
+import { DDOS_EV_LIST, DDOS_TREND } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
-  data() {
+  data () {
     return {
       loading: true,
-      business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
-      metricName: "bps", // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+      business: 'basic', // [bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
+      metricName: 'bps', // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       // period: 600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       // 日期区间：今天
       endTime: this.getDateString(new Date()),
@@ -77,132 +77,132 @@ export default {
       totalItems: 0,
       Period: 300,
       timeValue: {},
-      thisStart: "",
-      thisEnd: "",
+      thisStart: '',
+      thisEnd: '',
       tableDataEnd: [],
       filterTableDataEnd: [],
       flag: false
-    };
+    }
   },
   watch: {
-    timeValue: function(value) {
-      this.Period = 86400;
-      //根据开始时间与结束时间以及时间粒度，计算监控x轴应有多少坐标点
-      var num = this.timeValue[1].getTime() - this.timeValue[0].getTime(); //计算时间戳的差
-      var arr = [];
+    timeValue: function (value) {
+      this.Period = 86400
+      // 根据开始时间与结束时间以及时间粒度，计算监控x轴应有多少坐标点
+      var num = this.timeValue[1].getTime() - this.timeValue[0].getTime() // 计算时间戳的差
+      var arr = []
       for (var i = 0; i <= num / 86400000; i++) {
-        //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
-        var d = new Date(this.timeValue[1].getTime() - 86400000 * i);
-        arr.push(moment(d).format("MM-DD"));
+        // 根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+        var d = new Date(this.timeValue[1].getTime() - 86400000 * i)
+        arr.push(moment(d).format('MM-DD'))
       }
-      this.timey = arr;
-      this.startTime = moment(this.timeValue[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.endTime = moment(this.timeValue[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.describeDDoSTrend(this.timey);
+      this.timey = arr
+      this.startTime = moment(this.timeValue[0]).format('YYYY-MM-DD HH:mm:ss') // 格式处理
+      this.endTime = moment(this.timeValue[1]).format('YYYY-MM-DD HH:mm:ss') // 格式处理
+      this.describeDDoSTrend(this.timey)
     }
   },
   computed: {},
-  created() {
-    this.getData();
+  created () {
+    this.getData()
   },
-  mounted() {
+  mounted () {
     // this.drawLine();
   },
   methods: {
-    getData() {
-      this.getIp();
-      this.thisTime(1);
-      this.describeDDoSEvList();
+    getData () {
+      this.getIp()
+      this.thisTime(1)
+      this.describeDDoSEvList()
     },
-    getIp() {
-      this.ddosAttack = JSON.parse(localStorage.getItem("ddosAttack"));
+    getIp () {
+      this.ddosAttack = JSON.parse(localStorage.getItem('ddosAttack'))
     },
     // 1.1.获取DDoS攻击指标数据
-    describeDDoSTrend(date) {
+    describeDDoSTrend (date) {
       let params = {
-        Version: "2018-07-09",
+        Version: '2018-07-09',
         Business: this.business,
-        Ip: this.ddosAttack["Ip.0"],
+        Ip: this.ddosAttack['Ip.0'],
         MetricName: this.metricName,
         StartTime: this.startTime,
         EndTime: this.endTime,
         Period: this.Period
-      };
+      }
       this.axios.post(DDOS_TREND, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.bps = res.Response.Data;
-          this.drawLine(res.Response.Data, date);
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
-      });
+          this.bps = res.Response.Data
+          this.drawLine(res.Response.Data, date)
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
     },
 
     // 1.2.获取DDoS攻击事件列表
-    describeDDoSEvList() {
-      this.loading = true;
+    describeDDoSEvList () {
+      this.loading = true
       let params = {
-        Version: "2018-07-09",
+        Version: '2018-07-09',
         Business: this.business,
         StartTime: this.startTime,
         EndTime: this.endTime,
-        "IpList.0": this.ddosAttack["Ip.0"]
-      };
+        'IpList.0': this.ddosAttack['Ip.0']
+      }
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         // console.log(res)
         if (res.Response.Error === undefined) {
-          this.tableDataBegin = res.Response.Data;
-          this.totalItems = this.tableDataBegin.length;
+          this.tableDataBegin = res.Response.Data
+          this.totalItems = this.tableDataBegin.length
         } else {
-          let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
-        this.loading = false;
-      });
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+        this.loading = false
+      })
     },
 
-    timedone(end, start, p) {
-      var num = end.getTime() - start.getTime();
-      var arr = [];
+    timedone (end, start, p) {
+      var num = end.getTime() - start.getTime()
+      var arr = []
       for (var i = 0; i <= num / p; i++) {
-        var d = new Date(end.getTime() - p * i);
-        arr.push(moment(d).format("MM-DD"));
+        var d = new Date(end.getTime() - p * i)
+        arr.push(moment(d).format('MM-DD'))
       }
-      this.timey = arr;
+      this.timey = arr
     },
-    //选择时间
-    thisTime(thisTime) {
-      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+    // 选择时间
+    thisTime (thisTime) {
+      var ipt1 = document.querySelector('.newDataTime input:nth-child(2)')
+      var ipt2 = document.querySelector('.newDataTime input:nth-child(4)')
       let start
       let end = moment()
       const times = []
-      if (thisTime == "1") {
+      if (thisTime == '1') {
         start = moment().startOf('day')
         times.push(start.format('YYYY-MM-DD HH:mm:ss'))
         while (!start.isSameOrAfter(end)) {
           times.push(start.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
         }
         this.startTime = moment().startOf('day').format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.Period = 300;
-        this.timey = times;
-      } else if (thisTime == "2") {
+          'YYYY-MM-DD HH:mm:ss'
+        )
+        this.endTime = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.Period = 300
+        this.timey = times
+      } else if (thisTime == '2') {
         start = moment().subtract(6, 'd').startOf('day')
         times.push(start.format('YYYY-MM-DD HH:mm:ss'))
         while (!start.isSameOrAfter(end)) {
@@ -211,13 +211,13 @@ export default {
         console.log(times)
         ipt1.value = moment().subtract(6, 'd').format('YYYY-MM-DD')
         ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(6, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.Period = 3600;
+        this.startTime = moment().subtract(6, 'd').startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.Period = 3600
         this.timey = times
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "3") {
-        //ddos攻击-攻击流量带宽
+        // ddos攻击-攻击流量带宽
+      } else if (thisTime == '3') {
+        // ddos攻击-攻击流量带宽
         start = moment().subtract(14, 'd').startOf('day')
         times.push(start.format('YYYY-MM-DD HH:mm:ss'))
         while (!start.isSameOrAfter(end)) {
@@ -225,12 +225,12 @@ export default {
         }
         ipt1.value = moment().subtract(14, 'd').format('YYYY-MM-DD')
         ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(14, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.Period = 86400;
+        this.startTime = moment().subtract(14, 'd').startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.Period = 86400
         this.timey = times
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "4") {
+        // ddos攻击-攻击流量带宽
+      } else if (thisTime == '4') {
         start = moment().subtract(29, 'd').startOf('day')
         times.push(start.format('YYYY-MM-DD HH:mm:ss'))
         while (!start.isSameOrAfter(end)) {
@@ -238,23 +238,22 @@ export default {
         }
         ipt1.value = moment().subtract(29, 'd').format('YYYY-MM-DD')
         ipt2.value = moment().format('YYYY-MM-DD')
-        this.startTime = moment().subtract(29, 'd').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
-        this.Period = 86400;
+        this.startTime = moment().subtract(29, 'd').startOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment().endOf('day').format('YYYY-MM-DD HH:mm:ss')
+        this.Period = 86400
         this.timey = times
       }
-      this.describeDDoSTrend(this.timey);
-      this.describeDDoSEvList();
+      this.describeDDoSTrend(this.timey)
+      this.describeDDoSEvList()
     },
 
-    drawLine(y, date) {
-
+    drawLine (y, date) {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById("myChart"));
+      let myChart = this.$echarts.init(document.getElementById('myChart'))
       // 绘制图表
       myChart.setOption({
-        color: ["rgb(124, 181, 236)"],
-        title: { text: "" },
+        color: ['rgb(124, 181, 236)'],
+        title: { text: '' },
         tooltip: {
           trigger: 'axis'
         },
@@ -264,93 +263,93 @@ export default {
         yAxis: {
           type: 'value',
           axisLine: {
-            //y轴
+            // y轴
             show: false
           },
           axisTick: {
-            //刻度线
+            // 刻度线
             show: false
           },
           splitLine: {
-            //网格线
+            // 网格线
             show: false
           },
           axisLabel: {
-            formatter: "{value}bps"
+            formatter: '{value}bps'
           },
           boundaryGap: true
         },
         series: [
           {
-            name: "攻擊流量寬頻",
-            type: "line",
+            name: '攻擊流量寬頻',
+            type: 'line',
             data: y,
             itemStyle: {
               normal: {
                 lineStyle: {
-                  color: "rgb(124, 181, 236)"
+                  color: 'rgb(124, 181, 236)'
                 }
               }
             }
           }
         ],
         legend: {
-          //默认横向布局，纵向布局值为'vertical'
-          orient: "vertical",
-          x: "center", //可设定图例在左、右、居中
-          y: "bottom",
-          icon: "line", //图例样式
+          // 默认横向布局，纵向布局值为'vertical'
+          orient: 'vertical',
+          x: 'center', // 可设定图例在左、右、居中
+          y: 'bottom',
+          icon: 'line', // 图例样式
           textStyle: {
-            //文字样式
-            fontWeight: "bold"
+            // 文字样式
+            fontWeight: 'bold'
           },
           lineStyle: {
-            color: "rgb(124, 181, 236)"
+            color: 'rgb(124, 181, 236)'
           }
         }
-      });
+      })
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
-    getDateString(date) {
+    getDateString (date) {
       let o = {
         y: date.getFullYear(),
-        M: date.getMonth()+1,
+        M: date.getMonth() + 1,
         d: date.getDate(),
         h: date.getHours(),
         m: date.getMinutes(),
         s: date.getSeconds()
       }
       for (const i in o) {
-        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+        o[i] = (o[i] + '').length == 1 ? '0' + o[i] : o[i]
       }
-      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
+      return o.y + '-' + o.M + '-' + o.d + ' ' + o.h + ':' + o.m + ':' + o.s
     },
 
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
+    handleSizeChange (val) {
+      this.pageSize = val
+      this.handleCurrentChange(this.currentPage)
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      //需要判断是否检索
+    handleCurrentChange (val) {
+      this.currentPage = val
+      // 需要判断是否检索
       if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
+        this.currentChangePage(this.tableDataEnd)
       } else {
-        this.currentChangePage(this.filterTableDataEnd);
+        this.currentChangePage(this.filterTableDataEnd)
       }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
+    }, // 组件自带监控当前页码
+    currentChangePage (list) {
+      let from = (this.currentPage - 1) * this.pageSize
+      let to = this.currentPage * this.pageSize
+      this.tableDataEnd = []
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+          this.tableDataEnd.push(list[from])
         }
       }
     }
   }
-};
+}
 </script>
 <style lang="scss">
 .Right-style {

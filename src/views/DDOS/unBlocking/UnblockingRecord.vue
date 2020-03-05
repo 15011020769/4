@@ -1,6 +1,6 @@
 <template>
   <div id="unBlockingRecord">
-    <div class="contentTit">{{$t('DDOS.UnsealCode.UnsealName')}}</div>
+    <div class="contentTit">{{ $t("DDOS.UnsealCode.UnsealName") }}</div>
     <div class="mainContentBlock">
       <div class="contPartOne">
         <el-date-picker
@@ -15,28 +15,50 @@
       <div class="contPartTwo">
         <div class="tableContentUn">
           <el-table
-            :data="IpUnBlockList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            :data="
+              IpUnBlockList.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+              )
+            "
             v-loading="loading"
             :empty-text="$t('DDOS.Statistical_forms.Nodate')"
           >
             <el-table-column prop="ip" label="IP">
               <template slot-scope="scope">
-                <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.ip}}</a>
+                <span>{{ scope.row.Ip }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="blockingTime" :label="$t('DDOS.UnlockOperation.BlockingTime')">
-              <template slot-scope="scope">{{scope.row.BlockTime}}</template>
+            <el-table-column
+              prop="blockingTime"
+              :label="$t('DDOS.UnlockOperation.BlockingTime')"
+            >
+              <template slot-scope="scope">{{ scope.row.BlockTime }}</template>
             </el-table-column>
-            <el-table-column prop="unblockTime" :label="$t('DDOS.UnlockOperation.EstimatedTime')">
-              <template slot-scope="scope">{{scope.row.UnBlockTime}}</template>
+            <el-table-column
+              prop="unblockTime"
+              :label="$t('DDOS.UnlockOperation.EstimatedTime')"
+            >
+              <template slot-scope="scope">{{
+                scope.row.UnBlockTime
+              }}</template>
             </el-table-column>
-            <el-table-column prop="unblockType" :label="$t('DDOS.UnsealCode.UnsealingType')">
-              <template slot-scope="scope">{{scope.row.ActionType}}</template>
+            <el-table-column
+              prop="unblockType"
+              :label="$t('DDOS.UnsealCode.UnsealingType')"
+            >
+              <template slot-scope="scope">{{
+                $t("DDOS.Automatic_unsealing." + scope.row.ActionType)
+              }}</template>
             </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+          <span class="pagtotal"
+            >共&nbsp;{{ totalItems }}&nbsp;{{
+              $t("DDOS.UnsealCode.tiao")
+            }}</span
+          >
           <el-pagination
             @current-change="handleCurrentChange"
             :page-size="pageSize"
@@ -50,11 +72,13 @@
   </div>
 </template>
 <script>
-import { IPUNBlOCKLIST_LIST } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import { IPUNBlOCKLIST_LIST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
-  data() {
+
+  data () {
     return {
+      datanum: this.$t('DDOS.Automatic_unsealing.auto'),
       currentPage: 1,
       pageSize: 10,
       totalItems: 0,
@@ -63,76 +87,86 @@ export default {
       BeginTime: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 90)
       ),
+
       // 日期选择
-      dateChoice: {},
+      dateChoice: [ this.getDateString(new Date(new Date().getTime() - 24 * 60 * 60 * 1000 * 90)), this.getDateString(new Date()) ],
+
       IpUnBlockList: [],
       loading: false
-    };
-  },
-  watch: {
-    dateChoice: function(value) {
-      this.BeginTime = this.getDateString(value[0]);
-      this.EndTime = this.getDateString(value[1]);
-      this.describeIpUnBlockList();
     }
   },
-  created() {
-    this.describeIpUnBlockList(); //获取IP解封记录接口
+  watch: {
+    dateChoice: function (value) {
+      if (value !== null) {
+        this.BeginTime = this.getDateString(value[0])
+        this.EndTime = this.getDateString(value[1])
+        this.describeIpUnBlockList()
+      } else {
+        this.IpUnBlockList = []
+        this.totalItems = 0
+      }
+    }
+
   },
+
+  created () {
+    this.describeIpUnBlockList() // 获取IP解封记录接口
+  },
+
   methods: {
     // 获取IP解封记录
-    describeIpUnBlockList() {
-      this.loading = true;
+    describeIpUnBlockList () {
+      this.loading = true
       let params = {
-        Version: "2018-07-09",
+        Version: '2018-07-09',
         BeginTime: this.BeginTime,
         EndTime: this.EndTime
-      };
+      }
       this.axios.post(IPUNBlOCKLIST_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-					this.IpUnBlockList = res.Response.List;
-          this.totalItems = res.Response.Total;
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
-        this.loading = false;
-      });
+          this.IpUnBlockList = res.Response.List
+          this.totalItems = res.Response.Total
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+        this.loading = false
+      })
     },
     // 分页方法
-    handleSizeChange(val) {
-      this.pageSize = val;
+    handleSizeChange (val) {
+      this.pageSize = val
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
+    handleCurrentChange (val) {
+      this.currentPage = val
     },
-    currentChangePage() {
-      
+    currentChangePage () {
+
     },
 
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
-    getDateString(date) {
+    getDateString (date) {
       let o = {
         y: date.getFullYear(),
-        M: date.getMonth()+1,
+        M: date.getMonth() + 1,
         d: date.getDate(),
         h: date.getHours(),
         m: date.getMinutes(),
         s: date.getSeconds()
       }
       for (const i in o) {
-        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+        o[i] = (o[i] + '').length == 1 ? '0' + o[i] : o[i]
       }
-      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
+      return o.y + '-' + o.M + '-' + o.d + ' ' + o.h + ':' + o.m + ':' + o.s
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .Right-style {
@@ -177,7 +211,7 @@ export default {
       width: 100%;
       padding: 0 20px 20px 0;
       .dateUnBlock {
-        width: 340px;
+        width: 380px;
         height: 30px;
         border-radius: 0;
         line-height: 30px;

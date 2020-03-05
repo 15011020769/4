@@ -31,7 +31,7 @@ module.exports = {
       AgainstType: '攻擊類型',
       AgainstBandwidth: '攻擊最大寬頻',
       AgainstMaximum: '攻擊最大包速率',
-      TriggerBanned: '觸發封禁',
+      TriggerBanned: '觸發封禁'
     },
     basicProtection: {
       jcfh: 'DDoS基礎防護',
@@ -62,7 +62,7 @@ module.exports = {
       gjzt: '攻擊狀態',
       gjjs: '攻擊結束',
       gongjiz: '攻擊中',
-      ddosgjjl: 'DDoS攻擊記錄',
+      ddosgjjl: 'DDoS攻擊記錄'
     },
     UnlockOperation: {
       Unlock: '解封操作',
@@ -77,7 +77,7 @@ module.exports = {
     UnsealCode: {
       UnsealName: '解封操作記錄',
       beginDate: '開始日期',
-      overDate: "結束日期",
+      overDate: '結束日期',
       UnsealingType: '解封操作類型',
       tiao: '條'
     },
@@ -91,7 +91,7 @@ module.exports = {
       searchAssetList: '輸入ID/名稱/IP搜索',
       searchAssetListS: '輸入域名/CNAME搜索',
       AssetListSet: '設置',
-      domainName: "域名",
+      domainName: '域名',
       currentIp: '當前IP',
       AutomaticBack: '自動回切',
       keyBack: '一鍵回切',
@@ -103,7 +103,7 @@ module.exports = {
       DueTime: '到期時間',
       upgrade: '升級',
       renewal: '續約',
-      ProtectionConfig: '防護配置',
+      ProtectionConfig: '防護配置'
     },
     choose: {
       regional: '地域',
@@ -129,23 +129,23 @@ module.exports = {
     },
     AccesstoCon: {
       NonWebsite: '非網站業務',
-      searchAccess: "請輸入要查詢的ID或名稱",
+      searchAccess: '請輸入要查詢的ID或名稱',
       addNewAccess: '新建',
       BulkImport: '批量導入',
       Importforward: '導入轉發規則',
       ImportTitle: '導入會話保持/健康檢查',
       BulkOut: '批量導出',
       ImportforwardOut: '導出轉發規則',
-      ImportTitleIn: "導出會話保持/健康檢查",
+      ImportTitleIn: '導出會話保持/健康檢查',
       delMoreAcc: '批量刪除',
       businessDoma: '業務域名',
-      ForwardPort: "轉發協議/端口",
-      LoadBalancing: "負載均衡方式",
+      ForwardPort: '轉發協議/端口',
+      LoadBalancing: '負載均衡方式',
       WeightedPoll: '加權輪詢',
       HealthCheck: '健康檢查',
       Temporary: '暫不支持',
       KeepSession: '會話保持',
-      WatermarkState: "水印剝離狀態",
+      WatermarkState: '水印剝離狀態',
       AccClose: '關閉',
       AccOpen: '開啟',
       AccUpdate: '編輯',
@@ -157,10 +157,10 @@ module.exports = {
       ImSure: '確定'
     },
     accessCopy: {
-      accessCopyTitle: "注意：域名訊息用於規則說明，不用作轉發規則匹配",
+      accessCopyTitle: '注意：域名訊息用於規則說明，不用作轉發規則匹配',
       ForwardingPro: '轉發協議',
       ForwardingExcit: '轉發端口',
-      SourceIp: "源站IP + 權重",
+      SourceIp: '源站IP + 權重',
       SoutceTitle: '請輸入源站IP + 權重，中間由空格分隔，例如：1.1.1.1 50。用回車分隔多個源站IP + 權重，最多支持20個',
       domainName: '源站域名',
       domainTitle: '請輸入源站域名，用回車分隔多個源站域名，最多支持20個',
@@ -168,7 +168,7 @@ module.exports = {
       WeightedPoll: '加權輪詢',
       AddAsk: '添加訪問控制策略',
       AddAskTitle: '請添加需要訪問控制策略，添加完成後默認開啟該策略',
-      strageName: "策略名称",
+      strageName: '策略名称',
       searchStarge: '請輸入策略名稱，最長20個字',
       agreement: '協議',
       speedModelTitle: '請慎用限速模式，該模式訪問控制策略只能添加一條',
@@ -186,7 +186,7 @@ module.exports = {
       TextBiness: '有業務域名',
       noTextBin: '省略業務域名',
       binessTitle: '注意：粘貼內容從左至右依次為業務域名(選填)、協議、轉發端口、源站端口、回源IP和權重（或回源域名），中間由空格分隔。一行只能填寫一條轉發規則。',
-      frequency: '訪問頻率 ',
+      frequency: '訪問頻率 '
     },
     protectCon: {
       ProtectionName: 'DDoS防護配置',
@@ -234,7 +234,7 @@ module.exports = {
       upgradeRoleNum: '升級轉發規則數',
       WarmPort: '溫馨提示：規則數，保底防護峰值、業務頻寬升級後不支持降級，如需幫忙請聯繫客服',
       upgradeMoney: '升級費用',
-      EorrorLog: "Error: 伺服器開了個小差，請稍後重試,請稍候再試",
+      EorrorLog: 'Error: 伺服器開了個小差，請稍後重試,請稍候再試',
       justUpgrade: '立即升級',
       area: '台灣台北'
     },
@@ -267,7 +267,7 @@ module.exports = {
       Attack_peak: '攻擊請求峰值（QPS）',
       Attack_source: '攻擊源',
       Traffic_broadband: '業務流量寬頻',
-      Packet_rate: '業務包速率',
+      Packet_rate: '業務包速率'
     },
     Proteccon_figura: {
       Proteccon_title: '防護配置',
@@ -370,7 +370,7 @@ module.exports = {
       qsrbmd: '請輸入IP白名單, 以換行符分隔',
       pldrurlbmd: '批量導入URL白名單',
       qsrurlbmd: '請輸入URL白名單, 以換行符分隔',
-      zgtw: '中國台灣',
+      zgtw: '中國台灣'
     }
   },
   COM: require('@/components/language/ft')

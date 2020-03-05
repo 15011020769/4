@@ -5,11 +5,11 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     project,
-    flag:false
+    flag: false
   },
   mutations: {
     // TKE 判断Helm
-    getFlag(state,data){
+    getFlag(state, data) {
       state.flag = data
     }
   },

@@ -1,13 +1,14 @@
+/* eslint-disable space-before-function-paren */
 const project = {
   state: {
-    projectArr: [],
- 
+    projectArr: []
+
   },
   mutations: {
-    projectFun (state, data){
+    projectFun(state, data) {
       state.projectArr = data
-    },
-    
+    }
+
   },
   actions: {},
   getters: {}

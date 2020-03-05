@@ -1,27 +1,27 @@
 <template>
   <div>
-    <div class="overviewTit">{{$t('DDOS.Protective.ProtectiveName')}}</div>
+    <div class="overviewTit">{{ $t("DDOS.Protective.ProtectiveName") }}</div>
     <div class="allConMain">
       <div class="allConMainOne">
-        <div class="allConMainOneTit">{{$t('DDOS.Protective.Protectiveoverview')}}</div>
+        <div class="allConMainOneTit">{{ $t("DDOS.Protective.Protectiveoverview") }}</div>
         <div class="allConMainOneCon">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>{{$t('DDOS.Protective.Protectivesecurity')}}</h3>
+                <h3>{{ $t("DDOS.Protective.Protectivesecurity") }}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="8" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.ProtectiveAttack')}}</p>
-                    <p>{{attackData[1].Value}}</p>
+                    <p>{{ $t("DDOS.Protective.ProtectiveAttack") }}</p>
+                    <p>{{ attackData[1].Value }}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConTwo LeftConRow">
-                    <p>{{$t('DDOS.Protective.ProtectiveSeal')}}</p>
-                    <p>{{attackData[2].Value}}</p>
+                    <p>{{ $t("DDOS.Protective.ProtectiveSeal") }}</p>
+                    <p>{{ attackData[2].Value }}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConThree LeftConRow">
-                    <p>{{$t('DDOS.Protective.Protectivepeak')}}</p>
+                    <p>{{ $t("DDOS.Protective.Protectivepeak") }}</p>
                     <p>
-                      {{attackData[3].Value}}
+                      {{ attackData[3].Value }}
                       <span>Mbps</span>
                     </p>
                   </el-col>
@@ -30,15 +30,15 @@
             </el-col>
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>{{$t('DDOS.Protective.CurrentState')}}</h3>
+                <h3>{{ $t("DDOS.Protective.CurrentState") }}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.Protectivewash')}}</p>
-                    <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p>
+                    <p>{{ $t("DDOS.Protective.Protectivewash") }}</p>
+                    <p>{{ +packDataIP[1].Value + +packDataBgp[1].Value }}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.blockIng')}}</p>
-                    <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p>
+                    <p>{{ $t("DDOS.Protective.blockIng") }}</p>
+                    <p>{{ +packDataIP[2].Value + +packDataBgp[2].Value }}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -47,36 +47,36 @@
         </div>
       </div>
       <div class="allConMainTwo allConMainOne">
-        <div class="allConMainTwoTit allConMainOneTit">{{$t('DDOS.Protective.myProduct')}}</div>
+        <div class="allConMainTwoTit allConMainOneTit">{{ $t("DDOS.Protective.myProduct") }}</div>
         <div class="allConMainOneCon allConMainTwoCon">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
-                    {{$t('DDOS.Protective.ProtectiveExclusive')}}
-                    <span>{{packDataBgp[0].Value}}</span>
+                    {{ $t("DDOS.Protective.ProtectiveExclusive") }}
+                    <span>{{ packDataBgp[0].Value }}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2">
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Protectivewash')}}</span>
-                      <span>{{packDataBgp[1].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Protectivewash") }}</span>
+                      <span>{{ packDataBgp[1].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.blockIng')}}</span>
-                      <span>{{packDataBgp[2].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.blockIng") }}</span>
+                      <span>{{ packDataBgp[2].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.aboutExpire')}}</span>
-                      <span>{{packDataBgp[4].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.aboutExpire") }}</span>
+                      <span>{{ packDataBgp[4].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Expiring')}}</span>
-                      <span>{{packDataBgp[3].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Expiring") }}</span>
+                      <span>{{ packDataBgp[3].Value }}</span>
                     </p>
                   </el-col>
                 </el-row>
@@ -86,29 +86,29 @@
               <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
-                    {{$t('DDOS.Protective.professionalEdition')}}
-                    <span>{{packDataIP[0].Value}}</span>
+                    {{ $t("DDOS.Protective.professionalEdition") }}
+                    <span>{{ packDataIP[0].Value }}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2">
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Protectivewash')}}</span>
-                      <span>{{packDataIP[1].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Protectivewash") }}</span>
+                      <span>{{ packDataIP[1].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.blockIng')}}</span>
-                      <span>{{packDataIP[2].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.blockIng") }}</span>
+                      <span>{{ packDataIP[2].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.aboutExpire')}}</span>
-                      <span>{{packDataIP[4].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.aboutExpire") }}</span>
+                      <span>{{ packDataIP[4].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Expiring')}}</span>
-                      <span>{{packDataIP[3].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Expiring") }}</span>
+                      <span>{{ packDataIP[3].Value }}</span>
                     </p>
                   </el-col>
                 </el-row>
@@ -119,13 +119,13 @@
       </div>
       <div class="allConMainThree">
         <div class="allConMainThreeTit">
-          <div>{{$t('DDOS.Protective.AttackLog')}}</div>
+          <div>{{ $t("DDOS.Protective.AttackLog") }}</div>
           <div class="rightCon">
-            <a
-              href="#"
-              class="downloadTable"
-              @click="exportExcel"
-            >{{$t('DDOS.Protective.DownTable')}}</a>
+            <a href="#" class="downloadTable" @click="exportExcel">
+              {{
+              $t("DDOS.Protective.DownTable")
+              }}
+            </a>
             <el-input
               class="rightIptSearch"
               v-model="searchInputID"
@@ -139,73 +139,98 @@
             <el-button-group>
               <el-button
                 @click="btnClick('bgp')"
-                :class="{'addColor':type=='bgp'}"
-              >{{$t('DDOS.Protective.ProtectiveExclusive')}}</el-button>
+                :class="{ addColor: type == 'bgp' }"
+              >{{ $t("DDOS.Protective.ProtectiveExclusive") }}</el-button>
               <el-button
                 @click="btnClick('bgp-multip')"
-                :class="{'addColor':type=='bgp-multip'}"
-              >{{$t('DDOS.Protective.shareExclusive')}}</el-button>
+                :class="{ addColor: type == 'bgp-multip' }"
+              >{{ $t("DDOS.Protective.shareExclusive") }}</el-button>
               <el-button
                 @click="btnClick('net')"
-                :class="{'addColor':type=='net'}"
-              >{{$t('DDOS.Protective.professionalEdition')}}</el-button>
+                :class="{ addColor: type == 'net' }"
+              >{{ $t("DDOS.Protective.professionalEdition") }}</el-button>
             </el-button-group>
           </div>
           <div class="tableOverView">
             <el-table
               id="exportTable"
-              :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+              :data="
+                tableDataBegin.slice(
+                  (currentPage - 1) * pageSize,
+                  currentPage * pageSize
+                )
+              "
               height="450"
               v-loading="loading"
-              empty-text='暫無數據'
+              empty-text="暫無數據"
             >
               <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
                 <template slot-scope="scope">
-                  {{scope.row.StartTime}}
+                  {{ scope.row.StartTime }}
                   <!-- <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a> -->
                 </template>
               </el-table-column>
               <el-table-column prop="durationTime" :label="$t('DDOS.Protective.durationTime')">
-                <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
+                <template slot-scope="scope">
+                  {{
+                  scope.row.EndTime - scope.row.StartTime
+                  }}
+                </template>
               </el-table-column>
               <el-table-column prop :label="$t('DDOS.Protective.productName')">
                 <template slot-scope="scope">-</template>
               </el-table-column>
               <el-table-column prop="ResourceName" :label="$t('DDOS.Protective.AssetName')">
-                <template slot-scope="scope">{{scope.row.ResourceName}}</template>
+                <template slot-scope="scope">
+                  {{
+                  scope.row.ResourceName
+                  }}
+                </template>
               </el-table-column>
               <el-table-column
                 prop
                 :label="$t('DDOS.Protective.AssetType')"
-                v-if="type=='net'?false:true"
+                v-if="type == 'net' ? false : true"
               >
                 <template slot-scope="scope">-</template>
               </el-table-column>
               <el-table-column prop="Vip" label="IP">
-                <template slot-scope="scope">{{scope.row.Vip}}</template>
+                <template slot-scope="scope">{{ scope.row.Vip }}</template>
               </el-table-column>
               <el-table-column
                 prop="AttackType"
                 :label="$t('DDOS.Protective.AgainstType')"
                 width="70px"
               >
-                <template slot-scope="scope">{{scope.row.AttackType}}</template>
+                <template slot-scope="scope">
+                  {{
+                  scope.row.AttackType
+                  }}
+                </template>
               </el-table-column>
               <el-table-column prop="Mbps" :label="$t('DDOS.Protective.AgainstBandwidth')">
-                <template slot-scope="scope">{{scope.row.Mbps}}</template>
+                <template slot-scope="scope">{{ scope.row.Mbps }}</template>
               </el-table-column>
               <el-table-column prop="Pps" :label="$t('DDOS.Protective.AgainstMaximum')">
-                <template slot-scope="scope">{{scope.row.Pps}}</template>
+                <template slot-scope="scope">{{ scope.row.Pps }}</template>
               </el-table-column>
               <el-table-column prop :label="$t('DDOS.Protective.TriggerBanned')" width="180">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small">{{$t('DDOS.Protective.TriggerBanned')}}</el-button>
+                  <el-button type="text" size="small">
+                    {{
+                    $t("DDOS.Protective.TriggerBanned")
+                    }}
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+            <span class="pagtotal">
+              共&nbsp;{{ totalItems }}&nbsp;{{
+              $t("DDOS.UnsealCode.tiao")
+              }}
+            </span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -220,42 +245,42 @@
   </div>
 </template>
 <script>
-import FileSaver from "file-saver";
-import XLSX from "xlsx";
-import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST} from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import FileSaver from 'file-saver'
+import XLSX from 'xlsx'
+import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
-  data() {
+  data () {
     return {
       loading: true,
       // 安全统计-本月
       attackData: [
-        { Key: "AttackIpCount", Value: 120, desc: "受攻擊的IP數" },
-        { Key: "AttackCount", Value: 330, desc: "攻擊次數" },
-        { Key: "BlockCount", Value: 440, desc: "封堵次數" },
-        { Key: "MaxMbps", Value: 80, desc: "攻擊峰值Mbps" },
-        { Key: "IpNum", Value: 0, desc: "統計的IP數據" }
+        { Key: 'AttackIpCount', Value: 120, desc: '受攻擊的IP數' },
+        { Key: 'AttackCount', Value: 330, desc: '攻擊次數' },
+        { Key: 'BlockCount', Value: 440, desc: '封堵次數' },
+        { Key: 'MaxMbps', Value: 80, desc: '攻擊峰值Mbps' },
+        { Key: 'IpNum', Value: 0, desc: '統計的IP數據' }
       ],
       // 获取产品总览
-      packParams: ["bgp", "net"],
-      business: "net", // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
+      packParams: ['bgp', 'net'],
+      business: 'net', // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [
         // 高防IP专业版 net
-        { Key: "TotalPackCount", Value: 50 },
-        { Key: "AttackPackCount", Value: 0 },
-        { Key: "BlockPackCount", Value: 0 },
-        { Key: "ExpiredPackCount", Value: 50 },
-        { Key: "ExpireingPackCount", Value: 0 },
-        { Key: "IsolatePackCount", Value: 0 }
+        { Key: 'TotalPackCount', Value: 50 },
+        { Key: 'AttackPackCount', Value: 0 },
+        { Key: 'BlockPackCount', Value: 0 },
+        { Key: 'ExpiredPackCount', Value: 50 },
+        { Key: 'ExpireingPackCount', Value: 0 },
+        { Key: 'IsolatePackCount', Value: 0 }
       ],
       packDataBgp: [
         // bgp
-        { Key: "TotalPackCount", Value: 0 },
-        { Key: "AttackPackCount", Value: 70 },
-        { Key: "BlockPackCount", Value: 0 },
-        { Key: "ExpiredPackCount", Value: 0 },
-        { Key: "ExpireingPackCount", Value: 0 },
-        { Key: "IsolatePackCount", Value: 60 }
+        { Key: 'TotalPackCount', Value: 0 },
+        { Key: 'AttackPackCount', Value: 70 },
+        { Key: 'BlockPackCount', Value: 0 },
+        { Key: 'ExpiredPackCount', Value: 0 },
+        { Key: 'ExpireingPackCount', Value: 0 },
+        { Key: 'IsolatePackCount', Value: 60 }
       ],
       // 日期区间：30天
       endTime: this.getDateString(new Date()),
@@ -269,200 +294,200 @@ export default {
       pageSize: 10,
       totalItems: 0,
       // 攻击事件列表：bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
-      type: "bgp",
+      type: 'bgp',
       // 下载名称
-      downloadName: "獨享包攻擊記錄",
+      downloadName: '獨享包攻擊記錄',
       // 查询输入字段（资源实例id）
-      searchInputID: "",
+      searchInputID: '',
 
       tableDataEnd: [],
       filterTableDataEnd: [],
       flag: false,
       dialogVisible: false
-    };
+    }
   },
-  created() {
-    this.getData();
+  created () {
+    this.getData()
   },
   methods: {
-    getData() {
-      this.describeSecIndex();
+    getData () {
+      this.describeSecIndex()
       for (let i in this.packParams) {
-        this.business = this.packParams[i];
+        this.business = this.packParams[i]
         switch (
-          this.business //[bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
+          this.business // [bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         ) {
-          case "net":
-            this.describePackIndex(this.packDataIP);
-            break;
-          case "bgp":
-            this.describePackIndex(this.packDataBgp);
-            break;
+          case 'net':
+            this.describePackIndex(this.packDataIP)
+            break
+          case 'bgp':
+            this.describePackIndex(this.packDataBgp)
+            break
         }
       }
-      this.describeDDoSEvList();
+      this.describeDDoSEvList()
     },
     // 1.1.获取安全统计-本月
-    describeSecIndex() {
+    describeSecIndex () {
       let params = {
-        Version: "2018-07-09"
-      };
+        Version: '2018-07-09'
+      }
       this.axios.post(DDOS_SECINDEX, params).then(res => {
         if (res.Response.Error === undefined) {
           for (let i in this.attackData) {
             for (let j in res.Response.Data) {
               if (this.attackData[i].Key == res.Response.Data[j].Key) {
-                this.attackData[i].Value = res.Response.Data[j].Value;
-                break;
+                this.attackData[i].Value = res.Response.Data[j].Value
+                break
               }
             }
           }
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
-          });
+          })
         }
-      });
+      })
     },
     // 1.2.获取产品总览
-    describePackIndex(packData) {
+    describePackIndex (packData) {
       let params = {
-        Version: "2018-07-09",
+        Version: '2018-07-09',
         Business: this.business
-      };
+      }
       this.axios.post(DDOS_PACKINDEX, params).then(res => {
         if (res.Response.Error === undefined) {
           for (let i in packData) {
             for (let j in res.Response.Data) {
               if (packData[i].Key == res.Response.Data[j].Key) {
-                packData[i].Value = res.Response.Data[j].Value;
-                break;
+                packData[i].Value = res.Response.Data[j].Value
+                break
               }
             }
           }
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
-          });
+          })
         }
-      });
+      })
     },
     // 1.3.获取DDoS攻击事件列表
-    describeDDoSEvList() {
-      this.loading = true;
+    describeDDoSEvList () {
+      this.loading = true
       let params = {
-        Version: "2018-07-09",
-        Business: this.type, //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
+        Version: '2018-07-09',
+        Business: this.type, // [bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         StartTime: this.startTime,
         EndTime: this.endTime,
         Id: this.searchInputID
-      };
+      }
       this.axios.post(DDOS_EV_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.tableDataBegin = res.Response.Data;
-          this.totalItems = this.tableDataBegin.length;
+          this.tableDataBegin = res.Response.Data
+          this.totalItems = this.tableDataBegin.length
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
-          });
+          })
         }
-        this.loading = false;
-      });
+        this.loading = false
+      })
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
-    getDateString(date) {
+    getDateString (date) {
       let o = {
         y: date.getFullYear(),
-        M: date.getMonth()+1,
+        M: date.getMonth() + 1,
         d: date.getDate(),
         h: date.getHours(),
         m: date.getMinutes(),
         s: date.getSeconds()
       }
       for (const i in o) {
-        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+        o[i] = (o[i] + '').length == 1 ? '0' + o[i] : o[i]
       }
-      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
+      return o.y + '-' + o.M + '-' + o.d + ' ' + o.h + ':' + o.m + ':' + o.s
     },
-    //下面tab切换表格
-    btnClick(param) {
-      this.type = param;
-      if (param == "bgp") {
-        this.downloadName = "獨享包攻擊記錄";
-      } else if (param == "bgp-multip") {
-        this.downloadName = "共享包攻擊記錄";
-      } else if (param == "net") {
-        this.downloadName = "高防IP專業版攻擊記錄";
+    // 下面tab切换表格
+    btnClick (param) {
+      this.type = param
+      if (param == 'bgp') {
+        this.downloadName = '獨享包攻擊記錄'
+      } else if (param == 'bgp-multip') {
+        this.downloadName = '共享包攻擊記錄'
+      } else if (param == 'net') {
+        this.downloadName = '高防IP專業版攻擊記錄'
       }
-      this.describeDDoSEvList();
+      this.describeDDoSEvList()
     },
     // 搜索
-    doFilter() {
-      this.describeDDoSEvList();
+    doFilter () {
+      this.describeDDoSEvList()
       // 重新定义当前页
-      this.currentPage = 1;
+      this.currentPage = 1
     },
 
     // 分页开始
-    handleSizeChange(val) {
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
+    handleSizeChange (val) {
+      this.pageSize = val
+      this.handleCurrentChange(this.currentPage)
     },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      //需要判断是否检索
+    handleCurrentChange (val) {
+      this.currentPage = val
+      // 需要判断是否检索
       if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
+        this.currentChangePage(this.tableDataEnd)
       } else {
-        this.currentChangePage(this.filterTableDataEnd);
+        this.currentChangePage(this.filterTableDataEnd)
       }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
+    }, // 组件自带监控当前页码
+    currentChangePage (list) {
+      let from = (this.currentPage - 1) * this.pageSize
+      let to = this.currentPage * this.pageSize
+      this.tableDataEnd = []
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+          this.tableDataEnd.push(list[from])
         }
       }
     },
-    exportExcel() {
+    exportExcel () {
       /* generate workbook object from table */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var wb = XLSX.utils.table_to_book(document.querySelector('#exportTable'))
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
-        bookType: "xlsx",
+        bookType: 'xlsx',
         bookSST: true,
-        type: "array"
-      });
+        type: 'array'
+      })
       try {
         FileSaver.saveAs(
-          new Blob([wbout], { type: "application/octet-stream" }),
-          this.downloadName + ".xlsx"
-        );
+          new Blob([wbout], { type: 'application/octet-stream' }),
+          this.downloadName + '.xlsx'
+        )
       } catch (e) {
-        if (typeof console !== "undefined") console.log(e, wbout);
+        if (typeof console !== 'undefined') console.log(e, wbout)
       }
-      return wbout;
+      return wbout
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .Right-style {
