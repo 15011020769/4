@@ -9,8 +9,8 @@ const conf = {
   loading: true,
   withCredentials: true,
   headers: {
-    // uuid: VueCookie.get('uuid'),
-    uuid: 100011921910,
+    uuid: VueCookie.get('uuid'),
+    // uuid: 100011921910,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'
@@ -43,7 +43,7 @@ instance.interceptors.response.use(
   }
 );
 
-Plugin.install = function(vue) {
+Plugin.install = function (vue) {
   vue.axios = instance;
   window.axios = instance;
   Object.defineProperties(vue.prototype, {
