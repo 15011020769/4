@@ -79,7 +79,7 @@ export default {
               that.series.map(v => {
                 if (name == v.name) {
                   arrdetail.push(
-                    v.name + ' '+v.value + '次,  ' + '占比' + (v.value/total*100).toFixed(1) + '%'
+                    v.name + ' '+v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
                   )
                 }
               })

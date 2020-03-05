@@ -91,7 +91,7 @@
         </el-table-column>
         <el-table-column label="操作" width="110">
           <template slot-scope="scope">
-            <el-button @click="" type="text" size="mini">加黑</el-button>
+            <el-button @click="onEdit(scope)" type="text" size="mini">加黑</el-button>
             <el-button @click="goDetail(scope)" type="text" size="mini">{{t('查看详情', 'WAF.ckxq')}}</el-button>
           </template>
         </el-table-column>
@@ -106,11 +106,21 @@
         :total="totalItems"
       ></el-pagination>
     </el-card>
+    <el-dialog
+      title="添加黑IP"
+      :visible.sync="addBWmodel"
+      width="45%"
+      destroy-on-close
+      @close="ipInfo={}"
+    >
+      <addBlack @success="closeHBDialog" :isShow.sync="addBWmodel" :ipInfo="ipInfo"/>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import addBlack from './module/addBlack'
 import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
 import { scene_flag_list, UCB_ACTION_LOCAL, } from '../../../constants'
 import { isValidIPAddressNew } from '@/utils' // 验证IP地址是否有效
@@ -127,6 +137,8 @@ export default {
       action: '',
       loading: true,
       UCB_ACTION_LOCAL,
+      addBWmodel:false, //添加黑白IP弹框
+      ipInfo: {}
     }
   },
   props: {
@@ -154,6 +166,9 @@ export default {
   mounted() {
     this.init()
   },
+  components: {
+    addBlack
+  },
   filters: {
     botFeatureFilter(text) {
       if (text.length > 5) {
@@ -168,6 +183,22 @@ export default {
       if(this.domain) {
         this.getBotUbList()
       }
+    },
+    // 加黑
+    onEdit({ row }) {
+      this.ipInfo = {
+        Domain: this.domain,
+        ipAddress: row.SrcIp,
+        datatime: moment().add(7, 'd'),
+        timeValue: moment().add(7, 'd').format('YYYY-MM-DD 23:59:59'),
+      }
+      this.addBWmodel = true
+    },
+     //关闭
+    closeHBDialog(isShow){
+      this.addBWmodel = false ;
+      this.ipInfo = {}
+      this.getBotUbList()
     },
     setSort(key) {
       if (this.sort.includes(key)) { // 升降序
@@ -272,7 +303,7 @@ export default {
           result = "" + parseInt(minuteTime) + "分" + result;
       }
       if(hourTime > 0) {
-          result = "" + parseInt(hourTime) + "小时" + result;
+          result = "" + parseInt(hourTime) + "小" + this.t('时', 'WAF.hour') + result;
       }
       return result;
     },

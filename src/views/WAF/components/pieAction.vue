@@ -1,5 +1,8 @@
 <template>
-  <div ref="pie_dv" style="width: 100%;height: 240px;"></div>
+  <div>
+    <el-row class="empty" v-if="seriesPieAction.lenght==0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+    <div ref="pie_dv" style="width: 100%;height: 240px;" v-else></div>
+  </div>
 </template>
 
 <script>
@@ -18,7 +21,7 @@ export default {
     return {
       seriesPieAction: [], // BOT类型饼图
       colorPie: ['#ff9d00', '#e54545', '#2277da', '#f5736e'],
-      legendTextPieAction: ['验证码', '拦截', '监控', '重定向'],
+      legendTextPieAction: [this.t('验证码', 'WAF.yzm'), this.t('拦截', 'WAF.lj'), this.t('监控', 'WAF.jk'), '重定向'],
     };
   },
   mounted() {
@@ -58,9 +61,9 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: '验证码'})
-          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: '拦截'})
-          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
+          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: this.t('验证码', 'WAF.yzm')})
+          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: this.t('拦截', 'WAF.lj')})
+          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: this.t('监控', 'WAF.jk')})
           this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
         }, {}, '', (error) => {
           this.seriesPieAction = []
@@ -100,7 +103,7 @@ export default {
               that.seriesPieAction.map(v => {
                 if (name == v.name) {
                   arrdetail.push(
-                    v.name + ' '+v.value + '次,  ' + '占比' + (v.value/total*100).toFixed(1) + '%'
+                    v.name + ' '+v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
                   )
                 }
               })

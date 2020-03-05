@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-row class="empty" v-if="seriesPieType.lenght==0 ? true : false">暂无数据</el-row>
+    <el-row class="empty" v-if="seriesPieType.lenght==0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     <div ref="pie_dv" style="width: 100%;height: 240px;" v-else></div>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
     return {
       seriesPieType: [], // BOT类型饼图
       colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
-      legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'],
+      legendTextPieType: [this.t('公开类型', 'WAF.gklx'), this.t('未知类型', 'WAF.wzlx'), this.t('用户自定义类型', 'WAF.yhzdylx')],
     };
   },
   mounted() {
@@ -65,9 +65,9 @@ export default {
       this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.seriesPieType = [
-            {value: Response.TCB, name: '公开类型'},
-            {value: Response.UB, name: '未知类型'},
-            {value: Response.UCB, name: '用户自定义类型'}
+            {value: Response.TCB, name: this.t('公开类型', 'WAF.gklx')},
+            {value: Response.UB, name: this.t('未知类型', 'WAF.wzlx')},
+            {value: Response.UCB, name: this.t('用户自定义类型', 'WAF.yhzdylx')}
           ]
           // this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
           // this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
@@ -110,7 +110,7 @@ export default {
               that.seriesPieType.map(v => {
                 if (name == v.name) {
                   arrdetail.push(
-                    v.name + ' '+v.value + '次,  ' + '占比' + (v.value/total*100).toFixed(1) + '%'
+                    v.name + ' '+v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
                   )
                 }
               })

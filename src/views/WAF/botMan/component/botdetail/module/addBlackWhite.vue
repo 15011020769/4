@@ -34,13 +34,6 @@
               </el-radio-group>
             </p>
           </div>
-          <!-- <div class="newClear newList">
-            <p>IP地址</p>
-            <p>
-              <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
-              <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
-            </p>
-          </div> -->
           <div class="newClear newList">
             <p>截止日期<i class="required">*</i></p>
             <p>
@@ -112,6 +105,7 @@ export default {
     },
     ipInfo: {
       handler(n) {
+        console.log(n)
         this.ipAddress = n.Ip || n.ip
         this.blackWhiteCh = n.Action || 42
         this.des = n.Note || n.Name

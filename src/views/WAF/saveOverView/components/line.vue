@@ -13,6 +13,7 @@ export default {
   mounted() {
     this.echart();
     window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
+    console.log(this.legendText)
   },
   props: {
     color: {
@@ -80,7 +81,7 @@ export default {
         },
         tooltip: {
           trigger: 'axis',
-          formatter: `{b}<br/>{a} {c}次`
+          // formatter: `{b}<br/>{a} {c}次`
         },
         legend: {
             data: this.legendText,
