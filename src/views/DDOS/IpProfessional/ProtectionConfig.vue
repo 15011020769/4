@@ -146,7 +146,7 @@
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -222,7 +222,7 @@
                       :disabled="scope.row.BoundResources.length==0?false:true"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</el-button>
                     <el-dialog
-                      title="删除高级策略"
+                      :title="$t('DDOS.Proteccon_figura.scgjcl')"
                       :visible.sync="dialogVisible"
                       width="30%"
                       :before-close="handleClose"
@@ -248,9 +248,9 @@
                       type="text"
                       size="small"
                       style="padding-left:7px"
-                    >綁定資源</el-button>
+                    >{{$t('DDOS.Proteccon_figura.Binding_resources')}}</el-button>
                     <el-dialog
-                      title="綁定資源"
+                      :title="$t('DDOS.Proteccon_figura.Binding_resources')"
                       :visible.sync="dialogVisible1"
                       width="43%"
                       :before-close="handleClose1"
@@ -484,7 +484,7 @@ export default {
                   if (ipArr.hasOwnProperty(key)) {
                     const element = ipArr[key];
                     let ipDetailArr = element.split("-");
-                    IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'中國台灣':ipDetailArr[1])+
+                    IPText.push(ipDetailArr[0]+"("+(ipDetailArr[1]=='tpe'?'台灣台北':ipDetailArr[1])+
                     (ipDetailArr[2]=='bgp'?'BGP':ipDetailArr[2])+")");
                   }
                 }
