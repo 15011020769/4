@@ -1,21 +1,40 @@
 <template>
   <div class="wrapper_item">
-    <div class="topHeader">
+    <div class="header_top">
       <el-row type="flex" justify="space-between">
         <el-col>
           <el-button type="primary" @click="getExpends">一键展开</el-button><span style="color: #bbb; margin-left: 10px">统计数据源为会话前600条数据</span>
         </el-col>
         <el-col>
           <el-row type="flex">
-            <el-input clearable v-model="recordSearch">
-              <i class="el-icon-search el-input__icon" slot="suffix"/>
-            </el-input>
-            <el-tooltip placement="top" effect="dark" class="mode-tooltip">
+            <el-input placeholder="请输入" v-model="keyword" class="input-with-select">
+              <el-select v-model="condi" value-key="label" slot="prepend" :placeholder="t('请选择过滤条件', 'WAF.qxzgltj')" style="width: 150px;">
+                <el-option v-for="item in query" :key="item.value" :label="item.value" :value="item"></el-option>
+              </el-select>
+              <el-button slot="append" @click="addCondi">{{t('添加过滤条件', 'WAF.tjgltj')}}</el-button>
+            </el-input>&nbsp;&nbsp;
+            <el-button class="selectBtn" @click="search">{{t('查询', 'WAF.js')}}</el-button>
+            <el-tooltip placement="top" effect="dark" class="mode-tooltip" v-if="infoIcon">
               <i class="el-icon-info"></i>
               <span slot="content" @click="openDialog"><span style="cursor: pointer">帮助</span></span>
             </el-tooltip>
-            <el-button type="primary" class="selectBtn">查询</el-button></span>
+            <!-- <el-input clearable v-model="recordSearch">
+              <i class="el-icon-search el-input__icon" slot="suffix"/>
+            </el-input>
+            <el-button type="primary" class="selectBtn">查询</el-button></span> -->
           </el-row>
+          <div style="margin-top: 10px;">
+            <el-tag
+              size="small"
+              v-for="(tag, i) in condis"
+              :key="tag.condi.label"
+              closable
+              @close="removeCondi(tag, i)"
+              style="margin-right: 10px;"
+            >
+            {{tag.condi.value}}:{{tag.keyword}}
+        </el-tag>
+        </div>
         </el-col>
       </el-row>
     </div>
@@ -113,6 +132,7 @@ export default {
   data () {
     return {
       tableData: [],
+      tableDataCopy: [],
       total: 0, // 总条数
       currentPage: 1, // 当前页
       pageSize: 20, // 每页显示条数
@@ -123,6 +143,37 @@ export default {
       httpOptions: [],
       requestOptions: [],
       statusOptions: [],
+      infoIcon: false,
+      condi: "", // select绑定
+      condis: [],
+      keyword: "",
+      queryCopy: [
+        {
+          label: 'ua',
+          value: 'UA',
+        },
+        {
+          label: 'cookie',
+          value: 'Cookie',
+        },
+        {
+          label: 'url',
+          value: '请求URL',
+        },
+        {
+          label: 'query',
+          value: 'GET参数',
+        },
+        {
+          label: 'body',
+          value: 'Body',
+        },
+        {
+          label: 'http_referer',
+          value: 'Referer',
+        },
+      ],
+      query: []
     }
   },
   components: {
@@ -133,7 +184,8 @@ export default {
     this.domain = this.$route.query.domain
   },
   mounted() {
-     this.getRecordList()
+    this.query = JSON.parse(JSON.stringify(this.queryCopy))
+    this.getRecordList()
   },
   filters: {
     formatMillisecond(val) {
@@ -146,6 +198,38 @@ export default {
     },
   },
   methods: {
+    // showInfo() {
+    //   this.infoIcon = true
+    // },
+    // hideInfo() {
+    //    this.infoIcon = false
+    // },
+    addCondi() {
+      const { condi, keyword, condis, queryCopy, query } = this
+      if (condi.label && keyword && keyword.trim()) {
+        condis.push({ condi, keyword })
+        this.condi = {}
+        this.keyword = ''
+        this.query = query.filter(q => q.value !== condi.value)
+      }
+    },
+    removeCondi(tag, index) {
+      const vals = this.query.map(q => q.value)
+      vals.push(tag.condi.value)
+      this.query = this.queryCopy.filter(q => vals.includes(q.value))
+      this.condis.splice(index, 1)
+    },
+    search() {
+      if (!this.condis.length) {
+        this.getRecordList()
+      }
+      this.condis.forEach(item => {
+        this.tableData = this.tableDataCopy.filter(v => {
+          return v[item.condi.label].includes(item.keyword)
+        })
+      })
+      this.total = this.tableData.length
+    },
     getExpends(){
       this.toogle = !this.toogle
       var Id = this.recordList.map(item => item.id)
@@ -168,7 +252,7 @@ export default {
       if (status == 0) {
         this.getRecordList()
       }
-      this.tableData = this.tableData.filter((v) => {
+      this.tableData = this.tableDataCopy.filter((v) => {
         return v.protocal == status
       })
       this.total = this.tableData.length
@@ -178,7 +262,7 @@ export default {
       if (status == 0) {
         this.getRecordList()
       }
-      this.tableData = this.tableData.filter((v) => {
+      this.tableData = this.tableDataCopy.filter((v) => {
         return v.http == status
       })
       this.total = this.tableData.length
@@ -188,7 +272,7 @@ export default {
       if (status == 0) {
         this.getRecordList()
       }
-      this.tableData = this.tableData.filter((v) => {
+      this.tableData = this.tableDataCopy.filter((v) => {
         return v.status == status
       })
       this.total = this.tableData.length
@@ -254,8 +338,8 @@ export default {
               });
           });
           this.tableData = items
+          this.tableDataCopy = items
           this.total = items.length
-          console.log(this.tableData)
         })
       }).then(() => {
         let httpArr = []
@@ -292,7 +376,7 @@ export default {
 }
 ::v-deep .el-icon-info {
   position: absolute;
-  left: calc(100% - 114px);
+  left: calc(100% - 180px);
   line-height: 30px;
   cursor: pointer;
 }
@@ -302,7 +386,7 @@ export default {
 }
 
 .wrapper_item {
-  .topHeader {
+  .header_top {
     width: 100%;
     margin-bottom: 10px;
     .el-input__icon {
@@ -315,8 +399,19 @@ export default {
       padding:0 16px;
       border:none;
       outline: none;
+    }
+   ::v-deep button.selectBtn{
       background-color:#006eff;
       color:#fff;
+    }
+    .input-with-select {
+      width: 600px;
+      ::v-deep .el-input-group__append {
+        button {
+          padding: 0 5px;
+          font-size: 12px;
+        }
+      }
     }
   }
   .content {
@@ -329,7 +424,7 @@ export default {
     }
     ::v-deep .el-form-item__label {
       font-weight: 900;
-}
+    }
   }
 }
 
