@@ -2644,8 +2644,8 @@ export default {
           {
             showText: false,
             showEdit: true,
-            radio1: 0,
-            radioIndex: 0,
+            radio1: null,
+            radioIndex: null,
             modelShow: false,
             modelName: "",
             modelType: "",
@@ -3929,6 +3929,10 @@ console.log(15)
             this.colonySecond.workerOneList[
               i
             ].modelName = this.colonySecond.tableList[i].InstanceType;
+            this.colonySecond.workerOneList[
+              i
+            ].radio1 = this.colonySecond.tableList[i].index;
+            
             this.colonySecond.workerOneList[i].modelType = this.ModelTypeName(
               this.colonySecond.tableList[i].TypeName
             );
@@ -4379,8 +4383,10 @@ console.log(15)
         this.colonySecond.index
       ].Memory;
       for (let i in this.colonySecond.tableList) {
-        for (let j in _workerOneList) {
+        for (let j in _workerOneList) { 
           if (this.colonySecond.tableList[i].index == _workerOneList[j].radioIndex) {
+            console.log(_workerOneList[j].radioIndex)
+            console.log(this.colonySecond.tableList[i].index)
             this.colonySecond.tableList[i].tableDisShow = true;
           }
         }
@@ -4931,15 +4937,16 @@ console.log(15)
         }
 
         // 安全组
-        if (_safeArr.length > 0) {
-          let _safeArr = this.colonyThird.safeArr;
+         let _safeArr1 = this.colonyThird.safeArr;
+        if (_safeArr1.length > 0) {
+         
           let _saArr = [];
 
-          for (let i in _safeArr) {
-            _saArr.push(_safeArr[i].securityGroupSel);
+          for (let i in _safeArr1) {
+            _saArr.push(_safeArr1[i].securityGroupSel);
           }
 
-          param["SecurityGroupIds"] = _saArr;
+          param["SecurityGroupIds"] = _saArr1;
         }
         this.param.push(param);
       }
@@ -5018,10 +5025,10 @@ console.log(15)
             Password: this.colonyThird.password
           };
         }
-
+ let _safeArr = this.colonyThird.safeArr;
         // 安全组
         if (_safeArr.length > 0) {
-          let _safeArr = this.colonyThird.safeArr;
+         
           let _saArr = [];
 
           for (let i in _safeArr) {
@@ -5035,7 +5042,6 @@ console.log(15)
     },
     // 设置密码
     PasswordInput(val) {
-      console.log(val);
       if (val == "") {
         this.colonyThird.passwordTips = "密码不能为空";
         this.colonyThird.passwordWran = true;
@@ -5064,8 +5070,8 @@ console.log(15)
         this.secondBox = false;
         this.thirdBox = false;
         this.fourthBox = true;
-        this.ValueParam();
       }
+      this.ValueParam();
     },
     // ----------------------------------------- 第四步 ---------------------------------------
     // 第四步 上一步
