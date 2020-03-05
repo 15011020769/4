@@ -9,30 +9,29 @@
         row-key="Id"
         v-loading="loading"
       >
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           class-name="hide"
           width="1"
-        />
+        /> -->
         <el-table-column label="序号"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
         <el-table-column prop="SrcIp" label="访问源IP"></el-table-column>
-        <el-table-column prop="date" label="预测策略">
-          <template slot="header" slot-scope="scope">
-            <el-dropdown trigger="click" @command="onChangeScene" size="small">
-              <span>
-                预测标签<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="">全部</el-dropdown-item>
-                <el-dropdown-item v-for="item in scene_flag_list"
-                  :key="item.value" :command="item.value">
-                  {{item.label}}
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
+        <el-table-column prop="RuleName" label="预测标签">
+          <el-dropdown slot="header" trigger="click" @command="onChangeScene" size="small">
+            <span>
+              预测标签<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="">全部</el-dropdown-item>
+              <el-dropdown-item v-for="item in scene_flag_list"
+                :key="item.value" :command="item.value">
+                {{item.label}}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+          <template slot-scope="scope">{{formatRuleName(scope.row.RuleName)}}</template>
         </el-table-column>
         <el-table-column prop="date" label="异常特征" width="120">
           <template slot-scope="scope">
@@ -43,7 +42,7 @@
         </el-table-column>
         <el-table-column prop="Action" label="动作" width="60">
           <template slot-scope="scope">
-            <span class="addRed">{{action[scope.row.Action]}}</span>
+            <span class="addRed">{{UCB_ACTION_LOCAL[scope.row.Action]}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="Score" width="100">
@@ -114,7 +113,7 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
-import { scene_flag_list } from '../../../constants'
+import { scene_flag_list, UCB_ACTION_LOCAL, } from '../../../constants'
 import { isValidIPAddressNew } from '@/utils'
 export default {
   data () {
@@ -128,6 +127,7 @@ export default {
       sort: 'timestamp:-1',
       action: '',
       loading: true,
+      UCB_ACTION_LOCAL,
     }
   },
   props: {
@@ -162,7 +162,7 @@ export default {
         return text.join('') + '...'
       }
       return text.join('')
-    }
+    },
   },
   methods: {
     setSort(key) {
@@ -225,8 +225,29 @@ export default {
       this.currentPage = val;
       this.getBotUbList()
     },
+    // 查看详情
+    goDetail(scope) {
+      this.$router.push({
+        path: "/botDetail/ucb",
+        query: {
+          SrcIp: scope.row.SrcIp,
+          domain: this.domain,
+          Id: scope.row.Id
+        }
+      })
+    },
+    // 转换时间
     formatDate(row) {
       return moment(row.Timestamp).format('YYYY-MM-DD HH:mm:ss')
+    },
+    formatRuleName(RuleName) {
+      let label = ""
+      this.scene_flag_list.map(v => {
+        if(v.value == RuleName) {
+          label =  v.label
+        }
+      })
+      return label
     },
     // 换算时分秒
     formatSessionDuration(row) {

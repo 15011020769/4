@@ -476,14 +476,12 @@
 
    </div>
 
- </template>
+</template>
 
  <script>
-   // import Service from '../../components/Service'
    import SelectMirrorImg from '../../create/resource/components/selectMirrorImg'
    import FileSaver from "file-saver";
    import XLSX from "xlsx";
-   import { ErrorTips } from "@/components/ErrorTips";
    import {
      ALL_CITY,
      POINT_REQUEST
@@ -494,7 +492,6 @@
        return {
          loadShow: false,
          dialogFormVisible: false,
-         type: this.$route.query.type,//路由传过来的类型
          clusterId: this.$route.query.clusterId,
          spaceName: this.$route.query.spaceName,
          name: this.$route.query.name,//路由传过来的工作负载数据

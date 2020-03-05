@@ -1384,23 +1384,6 @@ export default new Router({
       }
     },
     {
-      path: '/setStrategy/:rid', // 存储列表设置更新策略
-      name: 'setStrategy',
-      component: () => import('./colony/sub/update/resource/setStrategy.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
-    {
-      path: '/updateStrategy/:rid', // 更新调度策略
-      name: 'updateStrategy',
-      component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
-      meta: {
-        keepAlive: true
-      }
-    },
-
-    {
       path: '/editYaml/:rid', // 更新调度策略
       name: 'editYaml',
       component: () => import('./colony/sub/update/resource/editYaml.vue'),
