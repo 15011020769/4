@@ -377,6 +377,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/storage/pvYaml', // 集群-更新PersistentVolume yaml
+      name: 'pvUpdate',
+      component: () => import('./colony/sub/update/storage/pvYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/storage/pvc', // 集群-新建PersistentVolumeClaim
       name: 'pvcCreate',
       component: () => import('./colony/sub/create/storage/pvc.vue'),
@@ -385,9 +393,25 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/storage/pvcYaml', // 集群-更新PersistentVolumeClaim yaml
+      name: 'pvcUpdate',
+      component: () => import('./colony/sub/update/storage/pvcYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/storage/sc', // 集群-新建StorageClass
       name: 'scCreate',
       component: () => import('./colony/sub/create/storage/sc.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/storage/scYaml', // 集群-更新StorageClass yaml
+      name: 'scUpdate',
+      component: () => import('./colony/sub/update/storage/scYaml.vue'),
       meta: {
         keepAlive: true
       }

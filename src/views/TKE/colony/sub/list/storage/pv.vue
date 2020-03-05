@@ -89,7 +89,7 @@
             label="操作"
             width="200">
             <template slot-scope="scope">
-              <span class="tke-text-link">编辑YAML</span>
+              <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
               <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
             </template>
           </el-table-column>
@@ -206,6 +206,16 @@ export default {
     //     this.DeletePersistentVolume(row.metadata.name)
     //     this.GetPersistentVolume()
     // },
+    // 跳转Yaml
+    editYaml(row){
+      this.$router.push({
+          name: "pvUpdate",
+          query: {
+            clusterId: this.$route.query.clusterId,
+            resourceIns:row.metadata.name
+          }
+      });
+    },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')

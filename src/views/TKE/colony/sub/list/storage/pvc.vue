@@ -54,7 +54,7 @@
          </el-table-column>
          <el-table-column label="操作" width="200">
            <template slot-scope="scope">
-             <span class="tke-text-link">编辑YAML</span>
+             <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
              <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
            </template>
          </el-table-column>
@@ -83,7 +83,6 @@
         </el-dialog>
    </div>
  </template>
-
  <script>
    import subTitle from "@/views/TKE/components/subTitle";
    import tkeSearch from "@/views/TKE/components/tkeSearch";
@@ -166,6 +165,16 @@
          this.getList()
          console.log('refreshList....')
        },
+       // 跳转Yaml
+       editYaml(row){
+        this.$router.push({
+            name: "pvcUpdate",
+            query: {
+              clusterId: this.$route.query.clusterId,
+              resourceIns:row.metadata.name
+            }
+        });
+      },
        // 导出表格
        exportExcel() {
          console.log('exportExcel...')

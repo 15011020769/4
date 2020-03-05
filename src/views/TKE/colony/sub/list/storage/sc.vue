@@ -81,7 +81,7 @@
             label="操作"
             width="200">
             <template slot-scope="scope">
-              <span class="tke-text-link">编辑YAML</span>
+              <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
               <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
             </template>
           </el-table-column>
@@ -225,6 +225,16 @@ export default {
     deleteOne(row){
       this.deleteName = row.metadata.name
       this.centerDialogVisible = true
+    },
+     // 跳转Yaml
+    editYaml(row){
+    this.$router.push({
+          name: "scUpdate",
+          query: {
+            clusterId: this.$route.query.clusterId,
+            resourceIns:row.metadata.name
+          }
+      });
     },
     // 获取列表
     GetList() {
