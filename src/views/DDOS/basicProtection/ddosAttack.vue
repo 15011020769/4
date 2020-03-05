@@ -414,7 +414,7 @@ export default {
       let leave2=leave1%(3600*1000)    //计算小时数后剩余的毫秒数
       let minutes=Math.floor(leave2/(60*1000))//计算相差分钟数
       if (minutes > 0) {
-        durationTime += minutes + '分'
+        durationTime += minutes + '分鐘'
       }
       //计算相差秒数
       let leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
