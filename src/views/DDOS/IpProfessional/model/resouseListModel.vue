@@ -25,7 +25,7 @@
                   class="basicLabel"
                   v-if="item.Key=='Name'"
                 >{{$t('DDOS.protectCon.ResourceName')}}</span>
-                <span class="basicIpt" v-if="item.Key=='Name'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='Name'">{{item.Value==""?'未命名':item.Value}}</span>
                 <el-input
                   class="resouseName"
                   v-model="editName"
@@ -55,7 +55,10 @@
                   class="basicLabel"
                   v-if="item.Key=='Status'"
                 >{{$t('DDOS.protectCon.currentstates')}}</span>
-                <span class="basicIpt" v-if="item.Key=='Status'">{{item.Value=='idle'?$t('DDOS.AssetList.Running'):item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='Status'&&item.Value=='idle'">{{$t('DDOS.AssetList.Running')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='attacking'" style="color: red;">{{$t('DDOS.AssetList.Attacking')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='blocking'">{{$t('DDOS.AssetList.Blocking')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='isolate'">{{$t('DDOS.AssetList.Isolate')}}</span>
               </div>
             </div>
             <div class="editBtn" v-if="thisEditShow">
@@ -69,9 +72,9 @@
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
-                  v-if="item.Key=='RuleLimit'"
+                  v-if="item.Key=='DdosMax'"
                 >{{$t('DDOS.choose.MinimumProtection')}}</span>
-                <span class="basicIpt" v-if="item.Key=='RuleLimit'">{{item.Value}}Gbps</span>
+                <span class="basicIpt" v-if="item.Key=='DdosMax'">{{item.Value/1000}}Gbps</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
@@ -92,7 +95,7 @@
                 <span class="basicIpt" v-if="item.Key=='IPText'">{{item.Value.join(';')}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
-                <span class="basicLabel" v-if="item.Key=='Expire'">到期时间</span>
+                <span class="basicLabel" v-if="item.Key=='Expire'">{{$t('DDOS.AssetList.DueTime')}}</span>
                 <span class="basicIpt" v-if="item.Key=='Expire'">{{item.Value}}</span>
               </div>
               <div class="newClear">

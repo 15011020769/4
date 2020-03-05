@@ -115,6 +115,7 @@ export default {
       multipleSelection: [],
       showNameSpaceModal: false, //是否显示删除框
       nameSpaceName: "",
+      useName:"",
       //搜索下拉框
       searchOptions: [],
       searchType: "default", //下拉选中的值
@@ -294,6 +295,8 @@ export default {
     },
     //打开删除
     deleteNameSpace(row) {
+      console.log(row.metadata.name);
+      this.useName=row.metadata.name
       this.showNameSpaceModal = true;
       this.nameSpaceName = row.metadata.name;
     },
@@ -303,17 +306,22 @@ export default {
       this.loadShow = true;
       const param = {
         Method: "DELETE",
-        Path: "/api/v1/namespaces/" + this.nameSpaceName,
+        Path: "/api/v1/namespaces/" + this.searchType+"/secrets/"+this.useName,//default/secrets
         Version: "2018-05-25",
-        RequestBody: { propagationPolicy: "Background", gracePeriodSeconds: 0 },
+        RequestBody: { propagationPolicy: "Background" },
         ClusterName: this.clusterId
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.getNameSpaceList();
+           this.getData();
           this.showNameSpaceModal = false;
           this.loadShow = false;
-          
+           this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 2000
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {

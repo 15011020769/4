@@ -3,29 +3,29 @@
         <el-row>
           <el-col :span="8">
             <div class="rowContain">
-              <p>
+              <p v-loading="loading">
                 <span class="green">{{upPeakValue}}</span>
                 <span>bps</span>
               </p>
-              <p>上行带宽峰值</p>
+              <p>{{t('上行带宽峰值', 'WAF.sxdkfz')}}</p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="rowContain">
-              <p>
+              <p v-loading="loading">
                 <span class="oarnge">{{downPeakValue}}</span>
                 <span>bps</span>
               </p>
-              <p>下行带宽峰值</p>
+              <p>{{t('下行带宽峰值', 'WAF.xxdkfz')}}</p>
             </div>
           </el-col>
           <el-col :span="8">
             <div class="rowContain">
-              <p>
+              <p v-loading="loading">
                 <span class="blue">{{qpsRequest}}</span>
                 <span>QPS</span>
               </p>
-              <p>请求峰值</p>
+              <p>{{t('请求峰值', 'WAF.qqfz')}}</p>
             </div>
           </el-col>
         </el-row>
@@ -37,13 +37,15 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   data() {
     return {
       upPeakValue: 0, // 上行峰值
       downPeakValue: 0, // 下行峰值
       qpsRequest: 0, // QPS请求
+      loading: true,
     }
   },
   watch: {
@@ -64,7 +66,10 @@ export default {
       if (val !== oldVal) {
         this.getPeakValue()
       }
-    }
+    },
+    id() {
+      this.getPeakValue()
+    },
   },
   mounted() {
     this.getPeakValue()
@@ -72,6 +77,7 @@ export default {
   methods: {
     // 获取峰值
     getPeakValue() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -86,6 +92,8 @@ export default {
           this.downPeakValue = Down * 8
           this.qpsRequest = Access
         })
+      }).then(() => {
+        this.loading = false
       })
     },
   }

@@ -10,6 +10,7 @@
       :series2="series2"
       :series3="series3"
       :color="color"
+      v-loading="loading"
       :legendText="domain == '' ? legendText2 : legendText1"
     />
   </el-row>
@@ -22,7 +23,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   components: {
     ELine,
@@ -33,9 +35,10 @@ export default {
       series1: [],
       series2: [],
       series3: [],
-      legendText1: ['WEB攻击次数', 'CC攻击次数', 'BOT请求次数'],
-      legendText2: ['WEB攻击次数', 'CC攻击次数'],
+      legendText1: [this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs'), this.t('BOT请求次数', 'WAF.botqqcs')],
+      legendText2: [this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs')],
       color: ["#FF584C", "#FF9D00", "#006eff"],
+      loading: true,
     }
   },
   watch: {
@@ -53,7 +56,10 @@ export default {
       if (val !== oldVal) {
         this.getPeakPoints()
       }
-    }
+    },
+    id() {
+      this.getPeakPoints()
+    },
   },
   mounted() {
     this.getPeakPoints()
@@ -61,6 +67,7 @@ export default {
   methods: {
     // 获取业务攻击趋势
     getPeakPoints() {
+      this.loading = true
       const axixArr = []
       const series1Arr = []
       const series2Arr = []
@@ -86,10 +93,13 @@ export default {
             this.series1 = series1Arr
             this.series2 = series2Arr
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // 查询Bot趋势
     getBotPoints() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -101,6 +111,8 @@ export default {
         this.generalRespHandler(resp, ({Points}) => {
           this.series3 = Points
         })
+      }).then(() => {
+        this.loading = false
       })
     },
   }

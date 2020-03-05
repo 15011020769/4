@@ -108,18 +108,18 @@ export default {
         this.axios.post(CCIPALLOWDENY_MODIFY, params).then(res => {
           if (res.Response.Error) {
             if (this.method == "delete") {
-              this.$message.error("删除失败");
+              this.$message.error("刪除失敗");
             } else if (this.method == "add") {
               if (res.Response.Error.Code == "InvalidParameterValue") {
-                this.$message.error("添加失败，参数错误");
+                this.$message.error("添加失敗，參數錯誤");
               } else {
-                this.$message.error("添加失败");
+                this.$message.error("添加失敗");
               }
             }
           } else {
             if (this.method == "delete") {
               this.$message({
-                message: "删除成功",
+                message: "刪除成功",
                 type: "success"
               });
             } else if (this.method == "add") {

@@ -162,7 +162,7 @@ export default {
           if (res.Response.Success) {
             if (this.method == "delete") {
               this.$message({
-                message: "删除成功",
+                message: "刪除成功",
                 type: "success"
               });
             } else if (this.method == "add") {
@@ -173,9 +173,9 @@ export default {
             }
           } else {
             if (this.method == "delete") {
-              this.$message.error("删除失败");
+              this.$message.error("刪除失敗");
             } else if (this.method == "add") {
-              this.$message.error("添加失败");
+              this.$message.error("添加失敗");
             }
           }
         });
@@ -186,8 +186,8 @@ export default {
     },
     // table行内删除
     deleteRow(obj) {
-      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-        confirmButtonText: "确定",
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       })
@@ -204,7 +204,7 @@ export default {
         .catch(() => {
           this.$message({
             type: "info",
-            message: "已取消删除"
+            message: "已取消刪除"
           });
         });
     },
@@ -268,8 +268,8 @@ export default {
     // 批量删除
     deleteList() {
       if (this.tableSelect.length > 0) {
-        this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-          confirmButtonText: "确定",
+        this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+          confirmButtonText: "確定",
           cancelButtonText: "取消",
           type: "warning"
         })
@@ -288,7 +288,7 @@ export default {
           .catch(() => {
             this.$message({
               type: "info",
-              message: "已取消删除"
+              message: "已取消刪除"
             });
           });
       } else {

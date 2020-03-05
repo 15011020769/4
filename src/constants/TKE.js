@@ -169,5 +169,12 @@ export const GetTkeDataResult = 'tsm2/GetTkeDataResult'
 // 定期备份
 export const TKE_CBS_POLICIES = 'cbs2/DescribeAutoSnapshotPolicies'
 
+// 云硬盘---地区选择
+export const TKE_DESCRIBEZONES = 'cvm2/DescribeZones'
+
+
+
+
+
 
 

@@ -413,12 +413,6 @@ export default {
           //     // this.svc.value = ''
           //   }
           // })
-          // if (msg.length > 0) {
-          //   msg.forEach(ele => {
-          //     this.vpcId.push(ele.VpcId)
-          //   })
-          // }
-          // this.vpcId = new Set(this.vpcId)
           // console.log(22222, this.vpcId)
           // console.log(this.ownLoadBalancer)
           this.loadShow = false
@@ -525,6 +519,7 @@ export default {
         this.getSubnetId()
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
+        // this.svc.value = ''
       } else if (radio == '3' && loadBalance == '2') {
         this.getSubnetId()
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
@@ -579,16 +574,19 @@ export default {
           this.serviceInfo = msg
           this.svc.list = msg.spec.ports
           // var at = 'kubernetes.io/loadbalance-id'
-          this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']// 自有创建的均衡器id
+          // 自有创建的均衡器id
+          this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
           // if (this.svc.radio == '3') {
+          // LB子网id
           this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
-          var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid']
+          // 用来判断选中的是哪个访问方式
+          var isart = msg.metadata.annotations['service.kubernetes.io/service.extensiveParameters']
           // }
           // if (this.svc.loadBalance == '2') {
           this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
           // }
           this.svc.describe = msg.metadata.annotations.description
-          console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
+          // console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
           if (!this.svc.value) {
             this.svc.loadBalance = '1'
           } else {
@@ -598,7 +596,7 @@ export default {
             this.svc.radio = '4'
           } else if (msg.spec.type == 'ClusterIP') {
             this.svc.radio = '2'
-          } else if (msg.spec.type == 'LoadBalancer' && isart) {
+          } else if (msg.spec.type == 'LoadBalancer' && !isart) {
             this.svc.radio = '3'
           } else {
             this.svc.radio = '1'

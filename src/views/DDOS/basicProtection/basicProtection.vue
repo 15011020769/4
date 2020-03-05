@@ -113,7 +113,9 @@
                 </div>
               </template>
             </el-table-column>
-            <!-- 操作：升级防护 跳转页面为BGP高防包，不涉及此功能 -->
+            <el-table-column  label="操作">
+              <a href="#/choose">升級防護</a>
+            </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">

@@ -97,7 +97,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click ="submitForm('pv')">新建PersistentVolumeClaim</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="jump()">取消</el-button>
         </div>
       </div>
     </div>
@@ -172,6 +172,7 @@ export default {
     goBack(){
           this.$router.go(-1);
     },
+
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -193,6 +194,15 @@ export default {
           return false;
         }
       });
+    },
+    // 取消跳转
+    jump(){
+      this.$router.push({
+        name: 'colonyStoragePvc',
+        query: {
+          clusterId:this.$route.query.clusterId,
+        }
+      })
     },
       // 获取storageValue
     GetStorageValue() {

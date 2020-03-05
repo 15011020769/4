@@ -4,7 +4,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button  size="small" type="primary">编辑YAML</el-button>
+        <el-button  size="small" type="primary" @click="editYaml()">编辑YAML</el-button>
       </div>
     </div>
     
@@ -41,27 +41,19 @@ export default {
       list:'',
       yaml:'',
       cmOptions: {
-        tabSize: 4,//字符的宽度，默认为4 。
-        mode: "python",
-        theme: "darcula",
-        lineNumbers: true, //行号
+         tabSize: 4,
+        mode: 'python', // 默认脚本编码
+        theme: 'darcula',
+        lineNumbers: true, // 是否显示行号
         line: true,
-        lineNumbers: true,
+        // lineNumbers: true,
         foldgutter: true,
-        indentUnit: 2,//首行缩进
-        smartIndent: false,//缩进继承
-        lineWrapping: scroll,//超出滚动
-        // readOnly: nocursor,//只读
-        showCursorWhenSelecting:true,//是否显示光标
-        gutters: [
-          "CodeMirror-linenumbers",
-          "CodeMirror-foldgutter",
-          "CodeMirror-lint-markers"
-        ],
-        lineWrapping: true, //代码折叠
+        gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+        lineWrapping: true, // 是否强制换行
         foldGutter: true,
-        matchBrackets: true, //括号匹配
-        autoCloseBrackets: true
+        matchBrackets: true, // 括号匹配
+        autoCloseBrackets: true,
+        readOnly: true// 只读
       }
     };
   },
@@ -100,6 +92,15 @@ export default {
           }
         })
     },
+    editYaml(){
+      this.$router.push({
+          name: "pvcUpdate",
+          query: {
+            clusterId: this.$route.query.clusterId,
+            resourceIns:this.$route.query.resourceIns
+          }
+      });
+    }
   }
 };
 </script>

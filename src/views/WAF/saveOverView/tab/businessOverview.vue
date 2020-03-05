@@ -27,15 +27,16 @@
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
+            :clearable= false
             @change="changeTimeValue"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
-          <i class="el-icon-refresh"></i>
+          <i class="el-icon-refresh" @click="id+=1"></i>
           <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
@@ -46,6 +47,7 @@
         :times="[startTime, endTime]"
         :domain="selectValue"
         :showModules="showModules"
+        :id="id"
       />
     </div>
     <DownLoadImg
@@ -54,7 +56,7 @@
       @onCancel = "onCancel"
     />
     <el-dialog
-      title="自定义展示模板"
+      :title="t('自定义展示模板','WAF.zdyzsmb')"
       :visible.sync="dialogSetVisible"
       width="40%"
     >
@@ -107,15 +109,16 @@ export default {
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       allModuleCopy: [
-        { name: 'overview', value: '带宽峰值、请求峰值' },
-        { name: 'peakTrend', value: '业务请求趋势' },
-        { name: 'serverStatus', value: '服务器响应状态 & 浏览器类型' },
-        { name: 'requestTypePrecent', value: '请求来源地域TOP5 & 请求来源IP TOP5' },
-        { name: 'responsePage', value: '响应时间最慢页面TOP5 & 页面访问次数TOP5' },
+        { name: 'overview', value: this.t('带宽峰值、请求峰值', 'WAF.dkfzqqfz') },
+        { name: 'peakTrend', value: this.t('业务请求趋势', 'WAF.ywqqqs') },
+        { name: 'serverStatus', value: this.t('服务器响应状态 & 浏览器类型', 'WAF.fwqxyztllq') },
+        { name: 'requestTypePrecent', value: this.t('请求来源地域TOP5 & 请求来源IP TOP5', 'WAF.qqlydqqip') },
+        { name: 'responsePage', value: this.t('响应时间最慢页面TOP5 & 页面访问次数TOP5', 'WAF.xysjzmymfw') },
       ],
       allModule: [], // 所有组件
       showModules: [], // 显示的组件
       showModulesCopy: [], // 复制显示组件
+      id: 0, // 用于父组件点击查询
     };
   },
   components: {

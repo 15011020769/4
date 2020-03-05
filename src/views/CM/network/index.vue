@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.cjsj')">
           <template slot-scope="scope">
-            <p>{{scope.row.CreatedTime}}</p>
+            <p>{{scope.row.CreatedTime |UpTime()}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.slid')">
@@ -53,6 +53,7 @@
 </template>
 
 <script>
+  import moment from "moment";
   import FileSaver from "file-saver";
   import XLSX from "xlsx";
   import {
@@ -226,6 +227,12 @@
             id
           }
         });
+      }
+    },
+    filters: {
+      UpTime(value) {
+        let uptime = moment(value).format("YYYY-MM-DD HH:mm:ss");
+        return uptime;
       }
     }
   };

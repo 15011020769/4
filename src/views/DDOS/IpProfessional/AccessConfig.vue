@@ -191,12 +191,12 @@
             <!-- :title="$t('DDOS.AccesstoCon.addAcc')" -->
           <el-dialog
             class="dialogModel"
-            title="批量删除转发规则"
+            :title="$t('DDOS.updateddos.plsczfgz')"
             :visible.sync="dialogDelete_2"
             width="30%"
             :before-close="handleCloseDelete"
           >
-            <p>确定批量删除转发规则</p>
+            <p>{{$t('DDOS.updateddos.qdplsczfgz')}}</p>
             <span class="footerBtn">
               <el-button @click="deleteSurePart">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
               <el-button @click="dialogDelete_2=false,partD2=[]">取消</el-button>
@@ -334,7 +334,7 @@ export default {
       if(this.partD2.length==0){
           this.$message({
             showClose: true,
-            message: "请选择删除项",
+            message: "請選擇刪除項",
             type: "warning"
           });
       }else{
@@ -374,7 +374,7 @@ export default {
         } else {
           this.$message({
             showClose: true,
-            message: "删除成功",
+            message: "刪除成功",
             type: "success"
           });
           this.describleL4Rules();

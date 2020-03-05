@@ -47,7 +47,7 @@
                     <a v-if="item.Key=='Id'" @click="toDetailResourse(scope.row)">{{item.Value}}</a>
                   </div>
                   <div v-for="(item,index) in scope.row.Record" :key="index+'i'">
-                    <span v-if="item.Key=='Name'">{{item.Value}}</span>
+                    <span v-if="item.Key=='Name'">{{item.Value==""?'未命名':item.Value}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -63,37 +63,51 @@
               </el-table-column>
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
                 <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" :key="index">
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='IPText'">
                       <el-tooltip class="item" effect="dark" :content="item.Value.join(';')" placement="top">
-                        <a>{{item.Value.length}}</a>
+                        <span>{{item.Value.length}}</span>
                       </el-tooltip>
                     </div>
-                    
-                  </span>
+                  </div>
                 </template>
               </el-table-column>
               <!-- 初始区域（接口未对字段说明，部分值无法解析直接输出） -->
               <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
                 <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='OriginRegion'">{{item.Value=='tpe'?$t('DDOS.total.address'):item.Value}}</a>
-                  </span>
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <span v-if="item.Key=='OriginRegion'">{{item.Value=='tpe'?$t('DDOS.total.address'):item.Value}}</span>
+                  </div>
                 </template>
               </el-table-column>
-              <!-- 状态（接口未对字段说明，部分值无法解析直接输出） -->
+              <!-- 状态 -->
               <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
                 <template slot-scope="scope">
                   <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='Status'">{{item.Value=='idle'?$t('DDOS.AssetList.Running'):item.Value}}</a>
+                    <!-- (idle:运行中, attacking:攻击中, blocking:封堵中, isolate:隔离中) -->
+                    <span v-if="item.Key=='Status'&&item.Value=='idle'">{{$t('DDOS.AssetList.Running')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='attacking'" style="color: red;">{{$t('DDOS.AssetList.Attacking')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='blocking'">{{$t('DDOS.AssetList.Blocking')}}</span>
+                    <span v-else-if="item.Key=='Status'&&item.Value=='isolate'">{{$t('DDOS.AssetList.Isolate')}}</span>
                   </span>
                 </template>
               </el-table-column>
               <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
                 <template slot-scope="scope">
-                  <span v-for="(item,index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key=='Expire'">{{item.Value}}</a>
-                  </span>
+                  <div v-for="(item,index) in scope.row.Record" :key="index">
+                    <span v-if="item.Key=='Expire'">{{item.Value}}</span>
+                  </div>
+                </template>
+              </el-table-column>
+              <!-- 自动续费 -->
+              <el-table-column prop="renewFlag" :label="$t('DDOS.choose.renewalMoney')">
+                <template slot-scope="scope">
+                  <el-switch
+                    v-model="scope.row.RenewFlag"
+                    active-color="#006eff"
+                    inactive-color="#999"
+                    @change="renewFlagSwitch(scope.row)"
+                  ></el-switch>
                 </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
@@ -108,7 +122,7 @@
                     href="#"
                     @click="RenewModel"
                   >{{$t('DDOS.AssetList.renewal')}}</a>
-                  <!--  -->
+                  <!-- 防护配置 -->
                   <a
                     class="marginRightA"
                     href="#"
@@ -142,15 +156,15 @@
               <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
                 <template slot-scope="scope">
                   {{ scope.row.RuleNameList }}
+                  <a @click="toAccest(scope.row.Record)">{{$t('DDOS.AssetList.AssetListSet')}}</a>
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
                 <template slot-scope="scope">
                   <div v-for="(item,index) in scope.row.Record" :key="index">
                     <div v-if="item.Key=='IPText'">
-                      <div v-for="(item2, i) in item.Value" :key="i+'i'">
-                        <span>{{item2}}</span><br/>
-                      </div>
+                      <span>{{item.Value[item.Value.length-1]}}</span>
+                      <!-- 此处值在获取的方法中转化时，使用push操作所以顺序为倒序，去最后一个值即为原数据的第一个值 -->
                     </div>
                     <!-- IP地址-->
                   </div>
@@ -226,7 +240,8 @@ import {
   RULESETS_CONT,
   SOURCEIPSEGMENT_DESCRIBE,
   INSTANCENAME_CONT,
-  L4_RULES
+  L4_RULES,
+  MODIFY_RENEWFLAG
 } from "@/constants";
 import resouseListModel from "./model/resouseListModel";
 import upgradeModel from "./model/upgradeModel";
@@ -417,6 +432,8 @@ export default {
                 Value: IPText
               };
               val.Record.push(obj);
+            } else if (item.Key == "AutoRenewFlag") { // 自动续费
+              val.RenewFlag = item.Value == "1" ? true:false;
             }
           });
         });
@@ -465,6 +482,9 @@ export default {
                   }
                 });
               });
+              if(item.RuleNameList === undefined) {
+                item.RuleNameList = "-";
+              }
             } else if (map.Key == "AutoReturn") {
               if (map.Value == "1") {
                 item.AutoReturn = true;
@@ -510,8 +530,20 @@ export default {
         Name: name
       };
       this.axios.post(INSTANCENAME_CONT, params).then(res => {
-        console.log(res);
-        this.describeResourceList();
+        if (res.Response.Error === undefined) {
+          this.describeResourceList();
+        } else {
+					let ErrTips = {
+            
+					};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // 1.5.获取DDoS高级策略
@@ -524,9 +556,53 @@ export default {
         this.tableDataPolicy = res.Response.DDosPolicyList;
       });
     },
+    // 1.6.资源列表-自动续费
+    modifyResourceRenewFlag(id, renewFlag) {
+      let params = {
+        Version: "2018-07-09",
+        Business: "net",
+        Id: id,
+        RenewFlag: renewFlag //RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）
+      };
+      this.axios.post(MODIFY_RENEWFLAG, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.describeResourceList();
+        } else {
+					let ErrTips = {
+            "DryRunOperation": "多傳了DryRun參數的操作",
+            "FailedOperation": "操作失敗",
+ 						"InternalError": "內部錯誤",
+            "InvalidParameter": "無效參數",
+            "InvalidParameterValue": "無效參數值",
+            "LimitExceeded": "超過配額限制",
+            "MissingParameter": "缺少參數錯誤",
+            "ResourceInUse": "資源被占用",
+            "ResourceNotFound": "資源不存在",
+            "ResourceUnavailable": "資源不可用"
+					};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
+      });
+    },
 
+    // 自动回切
     changeSwitch(val) {
       // this.$message('暂无接口调用');
+    },
+    // 自动续费
+    renewFlagSwitch(row) {
+      for (let i = 0; i < row.Record.length; i++) {
+        if("Id" == row.Record[i].Key) {
+          this.modifyResourceRenewFlag(row.Record[i].Value, row.RenewFlag==true?1:0);
+          return
+        }
+      }
     },
     // 跳转详情页面
     toDetailResourse(scopeRow) {

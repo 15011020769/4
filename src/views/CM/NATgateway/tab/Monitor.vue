@@ -163,11 +163,11 @@
           "Conns": '個/秒'
         },
         Tips: {
-          "OutBandwidth": 'NAT網關平均每秒出流量',
-          "InBandwidth": 'NAT網關平均每秒入流量',
-          "OutPkg": 'NAT網關平均每秒出包量',
-          "InPkg": 'NAT網關平均每秒入包量',
-          "Conns": 'NAT網關的實時並發數'
+          "OutBandwidth": 'NAT閘道平均每秒出流量',
+          "InBandwidth": 'NAT閘道平均每秒入流量',
+          "OutPkg": 'NAT閘道平均每秒出包量',
+          "InPkg": 'NAT閘道平均每秒入包量',
+          "Conns": 'NAT閘道的實時並發數'
         },
       }
     },

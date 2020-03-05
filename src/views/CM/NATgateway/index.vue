@@ -204,7 +204,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "NAT網關" + ".xlsx"
+            "NAT閘道" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);

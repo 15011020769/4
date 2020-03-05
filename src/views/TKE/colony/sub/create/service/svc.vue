@@ -39,7 +39,7 @@
 					</div>
           <!-- 访问设置的封装组件 -->
 					<Service :personObj="{ownLoadBalancer,LBsubnet,vpcNameAry}" :svcData.sync='svc'></Service>
-
+         <!-- Selectors中的workload选填 -->
 					<div class="card">
 						<h3 style="padding-bottom:20px;">Workload（选填）</h3>
 						<el-form-item label="Selectors">
@@ -59,7 +59,7 @@
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="submitFound('form')">创建Service</el-button>
+          <el-button size="small" type="primary" @click="submitSer('form')">创建Service</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
@@ -431,6 +431,16 @@ export default {
         }
       })
     },
+    // 验证新建按钮
+    submitSer (form) {
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          this.submitFound()
+        } else {
+          return false
+        }
+      })
+    },
     // 新建服务
     async submitFound () {
       let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue, workload, workloadObj } = this.svc
@@ -442,8 +452,8 @@ export default {
           targetPort: Number(ele.input2),
           protocol: ele.protocol
         }
-        if (radio == '4') {
-          ports.nodePort = ele.nodePort
+        if (this.svc.radio === '4') {
+          ports.nodePort = Number(ele.input3)
         }
         newPortAry.push(ports)
       })
@@ -457,6 +467,14 @@ export default {
         session = 'ClientIP'
         sessionTime = { 'clientIP': { 'timeoutSeconds': Number(time) } }
       }
+      let specType = ''
+      if (radio == '1' || radio == '3') { // 访问方式type的判断
+        specType = 'LoadBalancer'
+      } else if (radio == '2') {
+        specType = 'ClusterIP'
+      } else {
+        specType = 'NodePort'
+      }
       let reqBody = {// 传递的reqbody整体参数
         'kind': 'Service',
         'apiVersion': 'v1',
@@ -465,27 +483,32 @@ export default {
           'annotations': {
             'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}'
           } },
-        'spec': { 'type': 'LoadBalancer',
+        'spec': {
+          'type': specType,
           'ports': newPortAry,
-          'externalTrafficPolicy': policy,
+          // 'externalTrafficPolicy': policy,
           'sessionAffinity': session } }
       if (radio == '2' || radio == '3' || radio == '4') reqBody.metadata.annotations = {}
       if (session == 'ClientIP') reqBody.spec.sessionAffinityConfig = sessionTime// 会话时间
       if (describe) reqBody.metadata.annotations.description = describe// 是否有描述
-      if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue// 是否选中 使用已有
+      // 是否选中 使用已有
+      if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue
       if (radio == '3') { // 服务访问方式 第3个需要的参数
         reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
       }
+      // 高级设置第一项的判断
+      if (radio !== '2') { reqBody.spec.externalTrafficPolicy = policy }
       if (radio == '2' && !describe) { // 服务访问方式 第2个需要的参数
         reqBody = {
           'kind': 'Service',
           'apiVersion': 'v1',
           'metadata': { 'name': name, 'namespace': value },
-          'spec': { 'type': 'LoadBalancer', 'ports': newPortAry, 'externalTrafficPolicy': policy } }
-        if (checked) {
-          reqBody.spec.clusterIP = session
-        }
+          'spec': { 'ports': newPortAry, 'sessionAffinity': session } }
+        // 'type': 'ClusterIP',
+      }
+      if (checked) {
+        reqBody.spec.clusterIP = 'None'
       }
       if (radio == '4' && !describe) { // 服务访问方式 第4个需要的参数
         reqBody = {
@@ -493,7 +516,7 @@ export default {
           'apiVersion': 'v1',
           'metadata': { 'name': name, 'namespace': value },
           'spec': {
-            'type': 'NodePort',
+            // 'type': 'NodePort',
             'ports': newPortAry,
             'externalTrafficPolicy': policy,
             'sessionAffinity': session

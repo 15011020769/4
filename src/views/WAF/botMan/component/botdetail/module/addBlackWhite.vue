@@ -7,9 +7,26 @@
         width="45%"
         :before-close="handleClose"
         >
+        <div class="topTip" v-if="tipShow">
+          <p style="width: 99%">{{t('加黑IP后，您可前往【IP管理-IP黑白名单】查看', 'WAF.jhiph')}}</p>
+          <span class="el-icon-close" @click="closeTip"></span>
+        </div>
         <div class="newClear">
           <div class="newClear newList">
-            <p>{{t('类别', 'WAF.lb')}}</p>
+            <p>生效范围</p>
+            <p>
+              当前域名
+            </p>
+          </div>
+          <div class="newClear newList">
+            <p>IP<i class="required">*</i></p>
+            <p>
+              <el-input :disabled="ipInfo.type === 'ipStatus'" disabled v-model="ipAddress" />
+              <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
+            </p>
+          </div>
+          <div class="newClear newList">
+            <p>{{t('类别', 'WAF.lb')}}<i class="required">*</i></p>
             <p>
               <el-radio-group v-model="blackWhiteCh" :disabled="ipInfo.type === 'ipStatus'">
                 <el-radio :label="42">{{t('黑名单', 'WAF.hmd')}}</el-radio>
@@ -17,13 +34,13 @@
               </el-radio-group>
             </p>
           </div>
-          <div class="newClear newList">
+          <!-- <div class="newClear newList">
             <p>IP地址</p>
             <p>
               <el-input :disabled="ipInfo.type === 'ipStatus'" type="textarea" v-model="ipAddress" />
               <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
             </p>
-          </div>
+          </div> -->
           <div class="newClear newList">
             <p>截止日期<i class="required">*</i></p>
             <p>
@@ -76,6 +93,7 @@ export default {
       timeValue:'',//选择时间
       des:'',//备注
       ipTest: false, // ip输入格式是否正确
+      tipShow: true
     }
   },
   watch: {
@@ -94,7 +112,6 @@ export default {
     },
     ipInfo: {
       handler(n) {
-        console.log(n)
         this.ipAddress = n.Ip || n.ip
         this.blackWhiteCh = n.Action || 42
         this.des = n.Note || n.Name
@@ -109,6 +126,10 @@ export default {
     }
   },
   methods:{
+    //关闭提示文字
+    closeTip() {
+      this.tipShow = false;
+    },
     //关闭按钮
     handleClose(){
       this.$emit("closeModel",false)
@@ -163,6 +184,9 @@ export default {
   border-radius: 0;
   resize: none;
 }
+::v-deep .el-input {
+  width: 320px;
+}
 .newList{
   margin-bottom:20px;
   p:nth-child(1){
@@ -198,4 +222,25 @@ export default {
   padding-top: 5px;
   margin-left: 80px;
 }
+.topTip {
+    font-size: 12px;
+    line-height: inherit;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    margin-bottom: 20px;
+    position: relative;
+    p {
+      line-height: 20px;
+    }
+    .el-icon-close {
+      position: absolute;
+      font-size: 18px;
+      top: 10px;
+      margin-left: 10px;
+      right: 20px;
+    }
+  }
 </style>

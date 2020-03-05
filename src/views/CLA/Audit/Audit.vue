@@ -46,216 +46,250 @@
         </el-table>
       </div>
     </div>
+    <el-dialog title="服务授权" :visible.sync="dialogVisible" width="40%">
+      <span>同意赋予云审计权限后，将创建服务预设角色并授予云审计相关权限</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="_Opening">确 定</el-button>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { ErrorTips } from "@/components/ErrorTips";
-import { GZJ_LIST, GZJ_NUM } from "@/constants";
-export default {
-  data() {
-    return {
-      value1: "",
-      input3: "",
-      isDisabled: true, // 创建按钮
-      visible: false,
-      tableData: [], // 列表数据
-      loading: true
-    };
-  },
-  created() {
-    this.getData();
-    this.listNum();
-  },
-  methods: {
-    //查询用户可创建跟踪集数量
-    listNum() {
-      const params = {
-        Version: "2019-03-19",
-        Region: localStorage.getItem("regionv2")
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import {
+    GZJ_LIST,
+    GZJ_NUM,
+    GET_ROLE
+  } from "@/constants";
+  export default {
+    data() {
+      return {
+        dialogVisible: false,
+        value1: "",
+        input3: "",
+        isDisabled: true, // 创建按钮
+        visible: false,
+        tableData: [], // 列表数据
+        loading: true
       };
-      this.axios.post(GZJ_NUM, params).then(res => {
-        if (res.Response.Error === undefined) {
-          if (res.Response.AuditAmount < 1) {
-            this.isDisabled = true;
+    },
+    created() {
+      this.getData();
+      this.listNum();
+    },
+    methods: {
+      //查询用户可创建跟踪集数量
+      listNum() {
+        const params = {
+          Version: "2019-03-19",
+          Region: localStorage.getItem("regionv2")
+        };
+        this.axios.post(GZJ_NUM, params).then(res => {
+          if (res.Response.Error === undefined) {
+            if (res.Response.AuditAmount < 1) {
+              this.isDisabled = true;
+            } else {
+              this.isDisabled = false;
+            }
           } else {
-            this.isDisabled = false;
+            let ErrTips = {
+              "InternalError.InquireAuditCreditError": "查詢可創建跟蹤集的數量錯誤，請聯繫開發人員"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
-        } else {
-          let ErrTips = {
-            "InternalError.InquireAuditCreditError":
-              "查詢可創建跟蹤集的數量錯誤，請聯繫開發人員"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //获取列表数据
-    getData() {
-      let params = {
-        Version: "2019-03-19",
-        Region: localStorage.getItem("regionv2")
-      };
-      this.axios.post(GZJ_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.tableData = res.Response.AuditSummarys;
-          this.loading = false;
-        } else {
-          let ErrTips = {
-            "InternalError.ListAuditsError":
-              "查詢跟蹤集概要內部錯誤，請聯繫開發人員"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    // 创建
-    Create() {
-      this.$router.push({
-        path: "/NewAudit"
-      });
-    },
-    // 详情页跳转
-    handleClick(rows) {
-      this.$router.push({
-        path: "/DetailAudit",
-        query: {
-          AuditName: rows.AuditName,
-          AuditStatus: rows.AuditStatus
-        }
-      });
+        });
+      },
+      //获取列表数据
+      getData() {
+        let params = {
+          Version: "2019-03-19",
+          Region: localStorage.getItem("regionv2")
+        };
+        this.axios.post(GZJ_LIST, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.tableData = res.Response.AuditSummarys;
+            this.loading = false;
+          } else {
+            let ErrTips = {
+              "InternalError.ListAuditsError": "查詢跟蹤集概要內部錯誤，請聯繫開發人員"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      // 创建
+      Create() {
+        let params = {
+          Version: "2019-01-16",
+          Region: localStorage.getItem("regionv2"),
+          RoleName: 'CloudAudit_QCSRole'
+        };
+        this.axios.post(GET_ROLE, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$router.push({
+              path: "/NewAudit"
+            });
+          } else {
+            this.dialogVisible = true
+          }
+        });
+
+      },
+      _Opening() {
+
+      },
+      // 详情页跳转
+      handleClick(rows) {
+        this.$router.push({
+          path: "/DetailAudit",
+          query: {
+            AuditName: rows.AuditName,
+            AuditStatus: rows.AuditStatus
+          }
+        });
+      }
     }
-  }
-};
+  };
+
 </script>
 
 <style scoped lang="scss">
-.title_top {
-  height: 50px;
-  background: #fff;
+  .title_top {
+    height: 50px;
+    background: #fff;
 
-  h1 {
-    padding-left: 20px;
-    line-height: 50px;
-    font-size: 16px;
-    font-weight: 700;
-  }
-}
-
-.tea-content__body {
-  padding: 20px;
-
-  .explain {
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    border-radius: 2px;
-    background: #e5f0ff;
-    position: relative;
-    box-sizing: border-box;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 20px;
-
-    p {
-      line-height: 20px;
+    h1 {
+      padding-left: 20px;
+      line-height: 50px;
+      font-size: 16px;
+      font-weight: 700;
     }
   }
-}
 
-.btn {
-  .over {
-    position: relative;
-    width: 66px;
-    height: 30px;
-    overflow: hidden;
+  .tea-content__body {
+    padding: 20px;
 
-    & > p {
-      width: 144px;
-      position: absolute;
-      left: 30px;
+    .explain {
+      font-size: 12px;
+      padding: 10px 30px 10px 20px;
+      vertical-align: middle;
+      color: #003b80;
+      border: 1px solid #97c7ff;
+      border-radius: 2px;
+      background: #e5f0ff;
+      position: relative;
+      box-sizing: border-box;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+
+      p {
+        line-height: 20px;
+      }
+    }
+  }
+
+  .btn {
+    .over {
+      position: relative;
+      width: 66px;
+      height: 30px;
+      overflow: hidden;
+
+      &>p {
+        width: 144px;
+        position: absolute;
+        left: 30px;
+        color: #fff;
+        background: rgb(29, 29, 29);
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 100;
+        font-size: 12px;
+      }
+    }
+
+    :hover {
+      overflow: visible;
+    }
+
+    .el-button {
+      height: 30px;
+      background-color: #006eff;
       color: #fff;
-      background: rgb(29, 29, 29);
-      padding: 5px 10px;
-      border-radius: 5px;
-      z-index: 100;
+      border: 1px solid #006eff;
+      line-height: 0px;
+      border-radius: 0px;
+      font-size: 12px !important;
+    }
+
+    .el-button.is-plain:hover {
+      background-color: #0063e5;
+      color: #fff;
+      border: 1px solid #0063e5;
+    }
+
+    .btn-dis {
+      border-color: #ddd;
+      background-color: #fff;
+      color: #bbb;
+      cursor: not-allowed;
+    }
+  }
+
+  .tables {
+    margin-top: 10px;
+
+    .el-table {
       font-size: 12px;
     }
+
+    .el-table th>.cell {
+      font-size: 12px;
+    }
+
+    .el-table .cell {
+      height: 23px;
+    }
+
+    .el-button--text {
+      height: 23px;
+      line-height: 0px;
+      font-size: 12px;
+    }
+
+    .el-table td:nth-of-type(2) {
+      color: #006eff;
+    }
+
+    .close_color {
+      color: #e54545;
+    }
+
+    .off_color {
+      color: #0abf5b;
+    }
   }
 
-  :hover {
-    overflow: visible;
+  ::v-deep .el-dialog__footer {
+    text-align: center !important;
   }
 
-  .el-button {
-    height: 30px;
-    background-color: #006eff;
-    color: #fff;
-    border: 1px solid #006eff;
-    line-height: 0px;
-    border-radius: 0px;
-    font-size: 12px !important;
-  }
-
-  .el-button.is-plain:hover {
-    background-color: #0063e5;
-    color: #fff;
-    border: 1px solid #0063e5;
-  }
-
-  .btn-dis {
-    border-color: #ddd;
-    background-color: #fff;
-    color: #bbb;
-    cursor: not-allowed;
-  }
-}
-
-.tables {
-  margin-top: 10px;
-
-  .el-table {
-    font-size: 12px;
-  }
-
-  .el-table th > .cell {
-    font-size: 12px;
-  }
-
-  .el-table .cell {
-    height: 23px;
-  }
-
-  .el-button--text {
-    height: 23px;
-    line-height: 0px;
-    font-size: 12px;
-  }
-
-  .el-table td:nth-of-type(2) {
-    color: #006eff;
-  }
-
-  .close_color {
-    color: #e54545;
-  }
-
-  .off_color {
-    color: #0abf5b;
-  }
-}
 </style>

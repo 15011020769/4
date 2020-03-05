@@ -29,8 +29,8 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
-            <p :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'">
-              {{vpcConnState[scope.row.State]}}</p>
+            <p :class="scope.row.NetStatus == 'UNAVAILABLE' ? 'orange' : 'green'">
+              {{vpcConnState[scope.row.NetStatus]}}</p>
           </template>
         </el-table-column>
 
@@ -91,8 +91,8 @@
 
         <el-table-column prop :label="$t('CVM.clBload.zt')">
           <template slot-scope="scope">
-            <p :class="scope.row.State == 'PENDING' ? 'orange' : scope.row.State == 'AVAILABLE' ? 'green' : 'red'">
-              {{vpcConnState[scope.row.State]}}</p>
+            <p :class="scope.row.NetStatus == 'UNAVAILABLE' ? 'orange' : 'green'">
+              {{vpcConnState[scope.row.NetStatus]}}</p>
           </template>
         </el-table-column>
 
@@ -171,9 +171,8 @@
           PROTECTIVELY_ISOLATED: "隔離"
         },
         vpcConnState: {
-          PENDING: "生產中",
-          AVAILABLE: "運行中",
-          DELETING: "刪除中"
+          UNAVAILABLE: "未聯通",
+          AVAILABLE: "已联通"
         },
         cities: [],
         selectedRegion: "ap-taipei", // 默认选中城市
