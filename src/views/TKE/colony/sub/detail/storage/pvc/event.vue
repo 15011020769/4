@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" ></el-switch>
+        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh"></el-switch>
       </div>
     </div>
     
@@ -90,8 +90,9 @@ export default {
   data() {
     return {
       loadShow: false, //加载是否显示
-      autoRefresh: true, //自动刷新
+      autoRefresh: "", //自动刷新
       list:[], //列表
+      timeId:null
     };
   },
   components: {
@@ -100,11 +101,36 @@ export default {
   created() {
     this.SearchList()
   },
+  watch:{
+    autoRefresh(val){
+      console.log(this.$route)
+      console.log(val)
+       if(val){
+          this.timeId = setInterval(()=>{
+          if(this.$route.name != "pvcDetailEvent"){
+              clearInterval(this.timeId)
+              this.timeId =null
+          }   
+          this.SearchList()
+        },4000)
+      } else {
+          window.clearInterval(this.timeId)
+          this.timeId=null
+      }
+      
+    },
+    deep:true,
+    immediate :true
+  },
   methods: {
     //返回上一层
     goBack(){
           this.$router.go(-1);
     },
+    //  getFlag(){
+    //    this.autoRefresh = !this.autoRefresh
+    //    console.log(this.autoRefresh)
+    //  },
     // 获取列表
     SearchList() {
       var params = {
@@ -119,6 +145,7 @@ export default {
          console.log(mes);
           this.list = mes.items;
           console.log(this.list)
+          this.autoRefresh =true
           // this.loadShow = false
         } else {
           let ErrTips = {};

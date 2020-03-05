@@ -67,7 +67,7 @@
             </el-form-item>
             <el-form-item label="容量" prop="input">
               <el-tooltip content="普通云硬盘硬盘大小为10GB,最大为16000GB" placement="top" effect="light">
-                <el-input style="width:150px" v-model="pv.input" >
+                <el-input style="width:150px" v-model="pv.input" @change="getMoney()">
                   <template slot="append">GiB</template>
                 </el-input>
               </el-tooltip>
@@ -92,7 +92,6 @@
             </el-form-item>
           </div>
         </el-form>
-
        
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -110,7 +109,7 @@
 import { ErrorTips } from "@/components/ErrorTips";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { ALL_CITY,POINT_REQUEST } from "@/constants";
+import { ALL_CITY,POINT_REQUEST,TKE_PAY_MONEY } from "@/constants";
 export default {
   name: "pvCreate",
   data() {
@@ -276,24 +275,53 @@ export default {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
             if(res.Response.Error.Code == "InternalError"){
-             this.$message({
-              message: "persistentvolumeclaims "+"'" +this.pv.name +"'"+" already exists",
-              type: "error",
-              showClose: true,
-              duration: 2000
-            });
-            return
+              this.$message({
+                message: "persistentvolumeclaims "+"'" +this.pv.name +"'"+" already exists",
+                type: "error",
+                showClose: true,
+                duration: 2000
+              });
+           } else {
+              let ErrTips = {}
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+              })
            }
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 2000
-            })
         }
       })
     },
-  }
+    getMoney(){
+      if(this.pv.input){
+        var params = {
+        DiskChargeType: "POSTPAID_BY_HOUR",
+        DiskSize: this.pv.input,
+        DiskType: "CLOUD_BASIC",
+        Version: "2017-03-12"
+        }
+        this.axios.post(TKE_PAY_MONEY, params).then(res => {
+          if (res.Response.Error === undefined) {
+              console.log(res)
+          }
+          else{
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+              })
+            }
+          })
+        } else {
+          return 
+        }
+      }
+    }
 };
 // ClusterName: "cls-n1xokuh6"
 // Method: "POST"
