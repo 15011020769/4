@@ -118,36 +118,43 @@
       },
       //切换粒度
       SwitchGrain() {
+        this.Start_End.StartTIme = moment(new Date(this.Start_End.StartTIme)).format("YYYY-MM-DD HH:mm:ss")
+        this.Start_End.EndTIme = moment(new Date(this.Start_End.EndTIme)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
       //根据字段获取响应时间
       AcquisitionTime() {
         if (this.TimeValue === 'realTime') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'hours').format("YYYY-MM-DD HH:mm:ss");;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss");;
         } else if (this.TimeValue === 'Nearly_24_hours') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'days').format("YYYY/MM/DD HH:mm:ss");;
         } else if (this.TimeValue === 'Nearly_7_days') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY-MM-DD HH:mm:ss");;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY/MM/DD HH:mm:ss");;
+        } else if (this.TimeValue === 'Nearly_15_days') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(14, 'days').format("YYYY/MM/DD HH:mm:ss");;
         } else if (this.TimeValue === 'Today') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).startOf('day').format("YYYY-MM-DD HH:mm:ss");;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).startOf('day').format("YYYY/MM/DD HH:mm:ss");;
         } else if (this.TimeValue === 'Yesterday') {
-          this.Start_End.StartTIme = moment().subtract(1, 'days').startOf('day').format("YYYY-MM-DD HH:mm:ss");
-          this.Start_End.EndTIme = moment().subtract(1, 'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
+          this.Start_End.StartTIme = moment().subtract(1, 'days').startOf('day').format("YYYY/MM/DD HH:mm:ss");
+          this.Start_End.EndTIme = moment().subtract(1, 'days').endOf('day').format("YYYY/MM/DD HH:mm:ss");
         } else if (this.TimeValue === 'Nearly_30_days') {
-          this.Start_End.EndTIme = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY-MM-DD HH:mm:ss");;
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY/MM/DD HH:mm:ss");;
         }
+        this.Start_End.StartTIme = moment(new Date(this.Start_End.StartTIme)).format("YYYY-MM-DD HH:mm:ss")
+        this.Start_End.EndTIme = moment(new Date(this.Start_End.EndTIme)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
       // 确定按钮
       Sure() {
         this.TimeValue = '' //按钮样式去掉
-        this.timevalueStart = moment(this.timevalueStart).format("YYYY-MM-DD HH:mm:ss")
-        this.timevalueEnd = moment(this.timevalueEnd).format("YYYY-MM-DD HH:mm:ss")
+        this.timevalueStart = moment(this.timevalueStart).format("YYYY/MM/DD HH:mm:ss")
+        this.timevalueEnd = moment(this.timevalueEnd).format("YYYY/MM/DD HH:mm:ss")
         const startTime = moment(this.timevalueStart);
         const endTime = moment(this.timevalueEnd);
         let Basis = ''
@@ -162,6 +169,8 @@
           Basis = 'Today'
         } else if (endTime.diff(startTime, 'd') <= 6 && this.Difference == 'D') {
           Basis = 'Nearly_7_days'
+        } else if (endTime.diff(startTime, 'd') <= 14 && this.Difference == 'D') {
+          Basis = 'Nearly_15_days'
         } else if (endTime.diff(startTime, 'd') <= 29 && this.Difference == 'D') {
           Basis = 'Nearly_30_days'
         }
@@ -176,8 +185,8 @@
         this.visible = false;
         this.datetime = true;
         this.datetim = false;
-        this.Start_End.StartTIme = this.timevalueStart;
-        this.Start_End.EndTIme = this.timevalueEnd;
+        this.Start_End.StartTIme = moment(new Date(this.timevalueStart)).format("YYYY-MM-DD HH:mm:ss")
+        this.Start_End.EndTIme = moment(new Date(this.timevalueEnd)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
       // 选择时间
@@ -185,8 +194,8 @@
         this.datetime = false;
         this.datetim = true;
         if (this.timevalueStart === null) {
-          this.timevalueStart = moment(new Date()).subtract(1, 'hours').format("YYYY-MM-DD HH:mm:ss")
-          this.timevalueEnd = moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+          this.timevalueStart = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss")
+          this.timevalueEnd = moment(new Date()).format("YYYY/MM/DD HH:mm:ss")
         }
         this.visible = true;
       },
