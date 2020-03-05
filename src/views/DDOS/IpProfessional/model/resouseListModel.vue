@@ -25,7 +25,7 @@
                   class="basicLabel"
                   v-if="item.Key=='Name'"
                 >{{$t('DDOS.protectCon.ResourceName')}}</span>
-                <span class="basicIpt" v-if="item.Key=='Name'">{{item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='Name'">{{item.Value==""?'未命名':item.Value}}</span>
                 <el-input
                   class="resouseName"
                   v-model="editName"
@@ -55,7 +55,10 @@
                   class="basicLabel"
                   v-if="item.Key=='Status'"
                 >{{$t('DDOS.protectCon.currentstates')}}</span>
-                <span class="basicIpt" v-if="item.Key=='Status'">{{item.Value=='idle'?$t('DDOS.AssetList.Running'):item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='Status'&&item.Value=='idle'">{{$t('DDOS.AssetList.Running')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='attacking'" style="color: red;">{{$t('DDOS.basicProtection.gongjiz')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='blocking'">{{$t('DDOS.Protective.blockIng')}}</span>
+                <span class="basicIpt" v-else-if="item.Key=='Status'&&item.Value=='isolate'">{{$t('DDOS.AssetList.Running')}}</span>
               </div>
             </div>
             <div class="editBtn" v-if="thisEditShow">
@@ -69,9 +72,9 @@
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
-                  v-if="item.Key=='RuleLimit'"
+                  v-if="item.Key=='DdosMax'"
                 >{{$t('DDOS.choose.MinimumProtection')}}</span>
-                <span class="basicIpt" v-if="item.Key=='RuleLimit'">{{item.Value}}Gbps</span>
+                <span class="basicIpt" v-if="item.Key=='DdosMax'">{{item.Value/1000}}Gbps</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span

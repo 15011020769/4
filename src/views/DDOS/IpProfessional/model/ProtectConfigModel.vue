@@ -184,7 +184,7 @@
                 </el-select>
               </span>
               <span class="modelSpan3" v-if="servicePack.AlarmType!=0">
-                <el-input v-model="servicePack.AlarmThreshold" class="intMbps" @change="modifyAlarmThreshold"></el-input>
+                <el-input type="number" v-model="servicePack.AlarmThreshold" class="intMbps" @change="modifyAlarmThreshold"></el-input>
               </span>
               <span class="modelSpan3" v-if="servicePack.AlarmType!=0">Mbps</span>
             </p>
@@ -469,10 +469,29 @@ export default {
     // 5.0修改DDOS攻击告警阈值（类型）
     modifyAlarmType() {
       // console.log(this.servicePack.AlarmType, this.servicePack.AlarmThreshold);
+      if(this.servicePack.AlarmType == 0 && !(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))) {
+        this.servicePack.AlarmThreshold = 1000;
+      }
       this.modifyDDoSAlarmThreshold();
     },
     modifyAlarmThreshold(){
       // console.log(this.servicePack.AlarmType, this.servicePack.AlarmThreshold);
+      if(this.servicePack.AlarmThreshold == ''){
+        this.$message({
+          showClose: true,
+          message: "DDoS攻告警阈值不為空",
+          type: "warning"
+        });
+        return
+      }
+      if(!(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))){
+        this.$message({
+          showClose: true,
+          message: "DDoS攻告警阈值為正整數",
+          type: "warning"
+        });
+        return
+      }
       this.modifyDDoSAlarmThreshold();
     },
     //设置DDoS告警通知阈值
