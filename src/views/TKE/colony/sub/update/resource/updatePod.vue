@@ -58,8 +58,10 @@
 
                    </el-option>
                  </el-select>
-                 <el-input class="w100" :class="{ 'pod-wran': mathWarn }"  @blur="podMathBlur(val.valueKey)"
-                @focus="podMathFocus(val.valueKey)" v-model="val.valueKey" style="margin-right:6px"></el-input>
+                 <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }" 
+                v-model="val.valueKey" style="margin-right:6px"></el-input>
+                 <!-- <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }"  @blur="podMathBlur(val.valueKey)"
+                @focus="podMathFocus(val.valueKey)" v-model="val.valueKey" style="margin-right:6px"></el-input> -->
                   <span v-if='val.value2 == 1'>核</span>
                   <el-tooltip v-if='val.value2 == 2||val.value2 == 3||val.value2 == 4||val.value2 == 7||val.value2 == 8||val.value2 == 9||val.value2 == 10||val.value2 == 11||val.value2 == 12' class="item" effect="light" content="阙值范围0-100" placement="right">
                      <span>%</span>
@@ -120,6 +122,7 @@
         vLeft:'',
         vRight:'',
         mathWarn:false,
+        reg:/^\d+$/,
          optionsDataCopy:[],
          optionsData: [{
              options: [{
@@ -885,25 +888,25 @@
              this.optionsData[index].value2=17 
         }
        },
-       podMathFocus(val){
-         console.log('focus')
-          let reg=/^\d+$/
-         console.log(val)
-        if(val==''||!reg.test(val)){
-           this.mathWarn=true
-         }else{
-           this.mathWarn=false;
-         }
+      //  podMathFocus(val){
+      //    console.log('focus')
+      //     let reg=/^\d+$/
+      //    console.log(val)
+      //   if(val==''||!reg.test(val)){
+      //      this.mathWarn=true
+      //    }else{
+      //      this.mathWarn=false;
+      //    }
         
-       },
-       podMathBlur(val){
-         let reg=/^\d+$/
-         if(val==''||!reg.test(val)){
-           this.mathWarn=true
-         }else{
-           this.mathWarn=false;
-         }
-       },
+      //  },
+      //  podMathBlur(val){
+      //    let reg=/^\d+$/
+      //    if(val==''||!reg.test(val)){
+      //      this.mathWarn=true
+      //    }else{
+      //      this.mathWarn=false;
+      //    }
+      //  },
        //返回上一层
        goBack() {
          this.$router.go(-1);
