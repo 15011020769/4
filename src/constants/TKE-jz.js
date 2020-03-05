@@ -1,6 +1,10 @@
 // 获取集群列表
 export const TKE_COLONY_LIST = 'tke2/DescribeClusters'
 
+//获取集群实例
+export const  TKE_COLONY_INSTANCES='tke2/DescribeClusterInstances'
+
+
 //集群状态展示
 export const TKE_COLONY_STATUS_JZ='ccs/GetClustersResourceStatus'
 

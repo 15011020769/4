@@ -77,16 +77,16 @@
             <span>{{scope.row.status && scope.row.status.readyReplicas || 0}}/{{scope.row.status && scope.row.status.replicas || 0}}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="240">
           <template slot-scope="scope">
             <span class="tke-text-link" @click="goPodUpdate(scope.row)">更新Pod数量</span>
             <span class="tke-text-link ml10" @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
-            <el-dropdown class="tke-dropdown">
-              <span class="el-dropdown-link ml10">
+            <el-dropdown class="tke-dropdown"  trigger="click">
+              <span class="el-dropdown-link ml10" style="cursor:pointer">
                 更多
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
-              <el-dropdown-menu slot="dropdown">
+              <el-dropdown-menu slot="dropdown" >
                 <el-dropdown-item command="a">
                   <span class="tke-text-link" @click="redeployment(scope.row)">重新部署</span>
                 </el-dropdown-item>
@@ -240,6 +240,7 @@ export default {
               this.loadShow = false;
               let response = JSON.parse(res.Response.ResponseBody);
               this.list = response.items;
+              console.log(response.items)
               this.total = response.items.length;
             } else {
               this.loadShow = false;
@@ -384,7 +385,7 @@ export default {
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
         }
       })
     },
