@@ -75,14 +75,16 @@
                         </a>
                         <span v-show="scope.row.group.length>2">
                           以及
-                          <a @click="goTo">另外({{scope.row.group.length-2}}){{$t('CAM.userGroup.ge')}}</a>
+                          <a
+                            @click="goTo"
+                          >另外({{scope.row.group.length-2}}){{$t('CAM.userGroup.ge')}}</a>
                         </span>
                       </p>
                     </dt>
                   </dl>
                   <dl>
                     <dd>{{$t('CAM.userGroup.xxdy')}}</dd>
-                    <dt>-</dt>
+                    <dt>{{scope.row.subscription ? scope.row.subscription : '-'}}</dt>
                   </dl>
                   <dl>
                     <dd>{{$t('CAM.userList.userRemark')}}</dd>
@@ -130,7 +132,7 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" width="140">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" @click="addRight(scope.row)">{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
@@ -331,7 +333,9 @@ import {
   ADD_USERTOGROUP,
   DELETE_USER,
   RELATE_USER,
-  QUERY_POLICY
+  QUERY_POLICY,
+  GET_ALL_SUBSCRIPTION_TYPE,
+  GET_ALL_SUBSCRIPTION_PARENT_TYPE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
@@ -408,31 +412,41 @@ export default {
     },
     rowChange(row) {
       this.loadrowC = true;
-      this.tableData.forEach(element => {
-        if (row.Uid === element.Uid) {
-          const params = {
-            Version: "2019-01-16",
-            Uid: row.Uid
+
+      const item = this.tableData.find(element => {
+        return row.Uid === element.Uid;
+      });
+
+      if (item === undefined) {
+        this.loadrowC = false;
+        return;
+      }
+
+      const params = {
+        Version: "2019-01-16",
+        Uid: row.Uid
+      };
+
+      this.axios.post(RELATE_USER, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+
+          item.group = res.Response.GroupInfo;
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
-          this.axios.post(RELATE_USER, params).then(res => {
-            if (res.Response.Error === undefined) {
-              element.group = res.Response.GroupInfo;
-            } else {
-              let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-            this.loadrowC = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });
+
+      this.matchAllSubscriptionByUserId(row.Uid, row);
     },
     goToGroup(item) {
       var groupId = item.GroupId;
@@ -628,41 +642,46 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (data.Response.Error === undefined) {
-            if (data != "") {
-              this.loading = false;
-              var arr = data.Response.Data;
-              //获取用户关联的用户组
-              arr.forEach((item, index) => {
-                item.group = [];
-                item.index = index;
-              });
-              this.tableData = arr;
-              this.tableData.reverse();
-              this.json = arr;
-              this.tableData1 = this.tableData.slice(
-                (this.currpage - 1) * this.pagesize,
-                this.currpage * this.pagesize
-              );
-              this.TotalCount = this.json.length;
+          // console.log(data);
+
+          this.loading = false;
+          // 如果返回的data是String类型的，说明接口返回信息有误
+          if (typeof data !== "string") {
+            if (data.Response.Error === undefined) {
+              if (data != "") {
+                var arr = data.Response.Data;
+                //获取用户关联的用户组
+                arr.forEach((item, index) => {
+                  item.group = [];
+                  item.index = index;
+                  item.subscription = undefined;
+                });
+                this.tableData = arr;
+                this.tableData.reverse();
+                this.json = arr;
+                this.tableData1 = this.tableData.slice(
+                  (this.currpage - 1) * this.pagesize,
+                  this.currpage * this.pagesize
+                );
+                this.TotalCount = this.json.length;
+              } else {
+                this.$message({
+                  type: "info",
+                  message: "無響應數據！",
+                  showClose: true,
+                  duration: 0
+                });
+              }
             } else {
-              this.loading = false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                type: "info",
-                message: "無響應數據！",
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
                 showClose: true,
                 duration: 0
               });
             }
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[data.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
           }
         })
         .catch(error => {
@@ -991,6 +1010,94 @@ export default {
     },
     subscriptionConfirm() {
       this.noticeSubscriptionVisible = false;
+    },
+    getAllSubscriptionType() {
+      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
+    },
+    getAllSubscriptionParentType() {
+      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
+    },
+    matchAllSubscriptionByUserId(uid, row) {
+      var that = this;
+      this.$axiosStatic
+        .all([
+          this.getAllSubscriptionParentType(),
+          this.getAllSubscriptionType()
+        ])
+        .then(
+          that.$axiosStatic.spread(function(parentData, childData) {
+            // 确定请求和数据都正常
+            if (
+              parentData.code === 0 &&
+              Array.isArray(parentData.data) &&
+              childData.code === 0 &&
+              Array.isArray(childData.data)
+            ) {
+              // 先找出该用户已订阅的子类型的父类型，再找到找到父类型的名称
+              // 然后显示
+              const subscribedTypes = [];
+              const childDataLength = childData.data.length;
+              for (let i = 0; i < childDataLength; i++) {
+                const child = childData.data[i];
+                if (that.isUserSubscribeThisType(uid, child.users)) {
+                  if (subscribedTypes.indexOf(child.fType) === -1) {
+                    subscribedTypes.push(child.fType);
+                  }
+                }
+              }
+
+              const subscribedTypeNames = subscribedTypes.map(function(item) {
+                const parentDataLength = parentData.data.length;
+
+                for (let i = 0; i < parentDataLength; i++) {
+                  const parent = parentData.data[i];
+                  if (parent.categoryId !== item) {
+                    continue;
+                  }
+
+                  return parent.categoryName;
+                }
+              });
+
+              row.subscription = subscribedTypeNames.join(",");
+            } else {
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              if (parentData.Response.Error) {
+                this.$message({
+                  message: ErrOr[parentData.Response.Errorr.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+              if (childData.Response.Error) {
+                this.$message({
+                  message: ErrOr[childData.Response.Errorr.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            }
+          })
+        )
+        .then(function() {
+          that.loadrowC = false;
+        });
+    },
+    isUserSubscribeThisType(subscriberId, subscribedUsers) {
+      if (!Array.isArray(subscribedUsers) || subscribedUsers.length === 0) {
+        return false;
+      }
+
+      let subscribed = false;
+      for (let index = 0; index < subscribedUsers.length; index++) {
+        if (subscribedUsers[index].uid === subscriberId) {
+          subscribed = true;
+          break;
+        }
+      }
+      return subscribed;
     }
   },
   created() {
