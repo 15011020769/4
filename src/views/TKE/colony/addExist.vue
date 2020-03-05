@@ -86,7 +86,7 @@
                   :data="leftList"
                   tooltip-effect="dark"
                   style="width: 100%"
-                  height="250"
+                  height="350"
                   @selection-change="handleSelectionChange"
                 >
                   <el-table-column
@@ -126,7 +126,7 @@
                 :data="rightList"
                 tooltip-effect="dark"
                 style="width: 430px;"
-                height="290"
+                height="390"
               >
                 <el-table-column label="ID/节点名">
                   <template slot-scope="scope">

@@ -681,7 +681,7 @@
                             ></i>
                           </p>
                           <div class="model-bg">
-                           <div>
+                            <div>
                               <el-select
                                 v-model="colonySecond.AllCPUVal"
                                 placeholder="请选择"
@@ -710,7 +710,13 @@
                               </el-select>
                             </div>
                             <div style="margin-top:16px;">
-                              <el-radio-group v-model="colonySecond.caseRace" @change="AllModel();TableFilter(2)">
+                              <el-radio-group
+                                v-model="colonySecond.caseRace"
+                                @change="
+                                  AllModel();
+                                  TableFilter(2);
+                                "
+                              >
                                 <el-radio-button label="1"
                                   >全部实例族</el-radio-button
                                 >
@@ -726,22 +732,28 @@
                               </el-radio-group>
                             </div>
                             <div style="margin-top:16px;">
-                              <el-radio-group v-model="colonySecond.caseType" @change="TableFilter(2)">
+                              <el-radio-group
+                                v-model="colonySecond.caseType"
+                                @change="TableFilter(2)"
+                              >
                                 <el-radio-button label="1"
                                   >全部实例类型</el-radio-button
                                 >
-                                <el-radio-button label="S3" v-if='S3show'
+                                <el-radio-button label="S3" v-if="S3show"
                                   >标准型S3</el-radio-button
                                 >
-                                <el-radio-button label="C3" v-if='C3show'
+                                <el-radio-button label="C3" v-if="C3show"
                                   >计算型C3</el-radio-button
                                 >
-                                <el-radio-button label="M3" v-if='M3show'
+                                <el-radio-button label="M3" v-if="M3show"
                                   >内存型M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
-                            <div style="margin-top:16px;"  v-if="tableFilterShow">
+                            <div
+                              style="margin-top:16px;"
+                              v-if="tableFilterShow"
+                            >
                               <el-table
                                 ref="masterSingleTable"
                                 :data="colonySecond.masterTableList"
@@ -789,12 +801,15 @@
                                 </el-table-column>
                               </el-table>
                             </div>
-                            <div style="margin-top:16px;" v-if="!tableFilterShow">
+                            <div
+                              style="margin-top:16px;"
+                              v-if="!tableFilterShow"
+                            >
                               <el-table
                                 ref="singleTable"
                                 :data="colonySecond.tableList1"
                                 highlight-current-row
-                                @current-change="handleCurrentChange1"
+                                @current-change="handleCurrentChange"
                                 style="width: 100%"
                                 height="500px"
                               >
@@ -1448,7 +1463,13 @@
                               </el-select>
                             </div>
                             <div style="margin-top:16px;">
-                              <el-radio-group v-model="colonySecond.caseRace" @change="AllModel();TableFilter(1)">
+                              <el-radio-group
+                                v-model="colonySecond.caseRace"
+                                @change="
+                                  AllModel();
+                                  TableFilter(1);
+                                "
+                              >
                                 <el-radio-button label="1"
                                   >全部实例族</el-radio-button
                                 >
@@ -1464,22 +1485,28 @@
                               </el-radio-group>
                             </div>
                             <div style="margin-top:16px;">
-                              <el-radio-group v-model="colonySecond.caseType" @change="TableFilter(1)">
+                              <el-radio-group
+                                v-model="colonySecond.caseType"
+                                @change="TableFilter(1)"
+                              >
                                 <el-radio-button label="1"
                                   >全部实例类型</el-radio-button
                                 >
-                                <el-radio-button label="S3" v-if='S3show'
+                                <el-radio-button label="S3" v-if="S3show"
                                   >标准型S3</el-radio-button
                                 >
-                                <el-radio-button label="C3" v-if='C3show'
+                                <el-radio-button label="C3" v-if="C3show"
                                   >计算型C3</el-radio-button
                                 >
-                                <el-radio-button label="M3" v-if='M3show'
+                                <el-radio-button label="M3" v-if="M3show"
                                   >内存型M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
-                            <div style="margin-top:16px;" v-if="tableFilterShow">
+                            <div
+                              style="margin-top:16px;"
+                              v-if="tableFilterShow"
+                            >
                               <el-table
                                 ref="singleTable"
                                 :data="colonySecond.tableList"
@@ -1539,7 +1566,10 @@
                                 </el-table-column>
                               </el-table>
                             </div>
-                            <div style="margin-top:16px;" v-if="!tableFilterShow">
+                            <div
+                              style="margin-top:16px;"
+                              v-if="!tableFilterShow"
+                            >
                               <el-table
                                 ref="singleTable"
                                 :data="colonySecond.tableList1"
@@ -2358,7 +2388,7 @@
             >
               <p>可用区:台北一区</p>
               <p>
-                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                机型:{{ item.modelName }}({{ item.modelType }},{{
                   item.modelHe
                 }}核{{ item.modelGB }}GB)
               </p>
@@ -2384,7 +2414,7 @@
             >
               <p>可用区:台北一区</p>
               <p>
-                机型:>{{ item.modelName }}({{ item.modelType }},{{
+                机型:{{ item.modelName }}({{ item.modelType }},{{
                   item.modelHe
                 }}核{{ item.modelGB }}GB)
               </p>
@@ -2951,10 +2981,10 @@ export default {
       },
       param: [],
       params: [],
-      tableFilterShow:true,
-      S3show:true,
-      C3show:true,
-      M3show:true,
+      tableFilterShow: true,
+      S3show: true,
+      C3show: true,
+      M3show: true
     };
   },
   components: {
@@ -3028,7 +3058,6 @@ export default {
       this.axios.post(TKE_NEW_EDITION, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colony.kuOptions = res.Response.VersionInstanceSet;
-          console.log(this.colony.kuOptions);
           this.colony.kuValue =
             res.Response.VersionInstanceSet[
               this.colony.kuOptions.length - 1
@@ -3048,7 +3077,6 @@ export default {
     KubernetesChange(val) {
       let _valOne = Number(val.split(".")[0]);
       let _valTwo = Number(val.split(".")[1]);
-      console.log(_valOne, _valTwo);
       if (_valOne > 0 && _valTwo > 11) {
         this.colony.assemblyDis = false;
       } else {
@@ -3416,108 +3444,178 @@ export default {
       }
     },
     // -------------------------------------- 第二步 ---------------------------------
-    AllModel(){
-      console.log(this.colonySecond.caseRace)
-      this.colonySecond.caseType =1
-      if(this.colonySecond.caseRace == 1){
-        this.C3show = true
-        this.S3show = true
-        this.M3show = true
-      }else if(this.colonySecond.caseRace == 'Standard'){
-        this.C3show = false
-        this.S3show = true
-        this.M3show = false
-      }else if(this.colonySecond.caseRace == 'Compute'){
-        this.C3show = true
-        this.S3show = false
-        this.M3show = false
-      }else if(this.colonySecond.caseRace == 'MEM-optimized'){
-this.C3show = false
-        this.S3show = false
-        this.M3show = true
+    AllModel() {
+      this.colonySecond.caseType = 1;
+      if (this.colonySecond.caseRace == 1) {
+        this.C3show = true;
+        this.S3show = true;
+        this.M3show = true;
+      } else if (this.colonySecond.caseRace == "Standard") {
+        this.C3show = false;
+        this.S3show = true;
+        this.M3show = false;
+      } else if (this.colonySecond.caseRace == "Compute") {
+        this.C3show = true;
+        this.S3show = false;
+        this.M3show = false;
+      } else if (this.colonySecond.caseRace == "MEM-optimized") {
+        this.C3show = false;
+        this.S3show = false;
+        this.M3show = true;
       }
-
     },
     // 过滤机型table
     TableFilter(a) {
-      let _tableListArr = []
-      if(a == 1){
-      _tableListArr = this.colonySecond.tableList;
-      }else{
-        _tableListArr = this.colonySecond.masterTableList
+      let _tableListArr = [];
+      if (a == 1) {
+        _tableListArr = this.colonySecond.tableList;
+      } else {
+        _tableListArr = this.colonySecond.masterTableList;
       }
       let _array = [];
-      this.colonySecond.tableList1 = []
+      this.colonySecond.tableList1 = [];
       for (let i in _tableListArr) {
-        if (this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == 1 && this.colonySecond.caseType ==1) {
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == 1
+        ) {
           _array.push(_tableListArr[i]);
-          console.log(1)
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == 1 && this.colonySecond.caseType == _tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(2)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==1){
-_array.push(_tableListArr[i]);
-console.log(3)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == 1
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==_tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(4)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
 
-        if (this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == 1 && this.colonySecond.caseType ==1) {
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == 1
+        ) {
           _array.push(_tableListArr[i]);
-          console.log(5)
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == 1 && this.colonySecond.caseType == _tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(6)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==1){
-_array.push(_tableListArr[i]);
-console.log(7)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == 1
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == _tableListArr[i].Cpu && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==_tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(8)
+        if (
+          this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
 
-        if (this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == 1 && this.colonySecond.caseType == 1) {
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == 1
+        ) {
           _array.push(_tableListArr[i]);
-          console.log(9)
         }
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == 1 && this.colonySecond.caseType == _tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(10)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==1){
-_array.push(_tableListArr[i]);
-console.log(11)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == 1
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == _tableListArr[i].Memory && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==_tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(12)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
 
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == 1 && this.colonySecond.caseType == _tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(13)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace == 1 &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==1){
-_array.push(_tableListArr[i]);
-console.log(14)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == 1
+        ) {
+          _array.push(_tableListArr[i]);
         }
-        if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == _tableListArr[i].TypeName.split(" ")[0] && this.colonySecond.caseType ==_tableListArr[i].InstanceFamily){
-_array.push(_tableListArr[i]);
-console.log(15)
+        if (
+          this.colonySecond.AllCPUVal == 0 &&
+          this.colonySecond.AllRAMVal == 0 &&
+          this.colonySecond.caseRace ==
+            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseType == _tableListArr[i].InstanceFamily
+        ) {
+          _array.push(_tableListArr[i]);
         }
       }
-      
-      this.tableFilterShow = false
-      if(this.colonySecond.AllCPUVal == 0 && this.colonySecond.AllRAMVal == 0 && this.colonySecond.caseRace == 1 && this.colonySecond.caseType ==1){
-        this.tableFilterShow = true
-      
+
+      this.tableFilterShow = false;
+      if (
+        this.colonySecond.AllCPUVal == 0 &&
+        this.colonySecond.AllRAMVal == 0 &&
+        this.colonySecond.caseRace == 1 &&
+        this.colonySecond.caseType == 1
+      ) {
+        this.tableFilterShow = true;
       }
       this.colonySecond.tableList1 = _array;
     },
@@ -3600,7 +3698,6 @@ console.log(15)
     // left 列表
     handleSelectionChange(val) {
       this.rightList = val;
-      console.log(this.rightList);
       this.rightListVal = "已选择 " + this.rightList.length + " 台";
       this.IfStatus();
     },
@@ -3932,7 +4029,7 @@ console.log(15)
             this.colonySecond.workerOneList[
               i
             ].radio1 = this.colonySecond.tableList[i].index;
-            
+
             this.colonySecond.workerOneList[i].modelType = this.ModelTypeName(
               this.colonySecond.tableList[i].TypeName
             );
@@ -3995,7 +4092,6 @@ console.log(15)
     },
     // 机型
     handleCurrentChange1(val) {
-      console.log(val);
       this.modelText = val;
     },
     Radio1Change(index, i) {
@@ -4013,7 +4109,6 @@ console.log(15)
       if (this.modelText2 === undefined) {
         this.modelText2 = this.colonySecond.masterTableList[index];
       }
-      console.log(this.modelText);
       if (a == 1) {
         this.colonySecond.workerOneList[
           index
@@ -4026,9 +4121,12 @@ console.log(15)
         );
         this.colonySecond.workerOneList[index].modelHe = this.modelText.Cpu;
         this.colonySecond.workerOneList[index].modelGB = this.modelText.Memory;
-        this.colonySecond.index = Number(this.colonySecond.workerOneList[
+        this.colonySecond.index = this.colonySecond.workerOneList[
           index
-        ].radioIndex);
+        ].radioIndex;
+        this.colonySecond.workerOneList[
+          index
+        ].radioIndex = this.colonySecond.workerOneList[index].radioIndex;
         this.colonySecond.workerOneList[index].modelShow = false;
       } else {
         this.colonySecond.masterOneList[
@@ -4141,7 +4239,6 @@ console.log(15)
     },
     // 删除
     deleteDataDisk(index, i) {
-      console.log(index);
       this.colonySecond.workerOneList[index].buyDataDiskArr.splice(i, 1);
       if (this.colonySecond.workerOneList[index].buyDataDiskArr.length === 0) {
         this.colonySecond.workerOneList[index].buyDataDisk = false;
@@ -4334,7 +4431,7 @@ console.log(15)
         showText: false,
         showEdit: true,
         radio1: this.colonySecond.index,
-        radioIndex:'',
+        radioIndex: null,
         modelShow: false,
         modelName: "",
         modelType: "",
@@ -4383,10 +4480,10 @@ console.log(15)
         this.colonySecond.index
       ].Memory;
       for (let i in this.colonySecond.tableList) {
-        for (let j in _workerOneList) { 
-          if (this.colonySecond.tableList[i].index == _workerOneList[j].radioIndex) {
-            console.log(_workerOneList[j].radioIndex)
-            console.log(this.colonySecond.tableList[i].index)
+        for (let j in _workerOneList) {
+          if (
+            this.colonySecond.tableList[i].index == _workerOneList[j].radioIndex
+          ) {
             this.colonySecond.tableList[i].tableDisShow = true;
           }
         }
@@ -4428,9 +4525,23 @@ console.log(15)
         formatMount: true,
         dataNum: "1"
       });
-      var _length = this.colonySecond.masterOneList.length;
-      this.colonySecond.masterOneList[_length - 2].showText = true;
-      this.colonySecond.masterOneList[_length - 2].showEdit = false;
+      let _length = this.colonySecond.masterOneList.length;
+      let _masterOneList = this.colonySecond.masterOneList;
+      _masterOneList[_length - 2].showText = true;
+      _masterOneList[_length - 2].showEdit = false;
+      _masterOneList[_length - 1].modelName = this.colonySecond.masterTableList[
+        this.colonySecond.masterIndex
+      ].InstanceType;
+      _masterOneList[_length - 1].modelType = this.ModelTypeName(
+        this.colonySecond.masterTableList[this.colonySecond.masterIndex]
+          .TypeName
+      );
+      _masterOneList[_length - 1].modelHe = this.colonySecond.masterTableList[
+        this.colonySecond.masterIndex
+      ].Cpu;
+      _masterOneList[_length - 1].modelGB = this.colonySecond.masterTableList[
+        this.colonySecond.masterIndex
+      ].Memory;
       this.ChildNodes();
       this.TotalCost();
       if (this.colonySecond.masterOneList.length > 2) {
@@ -4718,6 +4829,7 @@ console.log(15)
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
           console.log(res.Response);
+          this.$router.go(-1);
         } else {
           let ErrTips = {
             InternalError: "内部错误",
@@ -4937,9 +5049,8 @@ console.log(15)
         }
 
         // 安全组
-         let _safeArr1 = this.colonyThird.safeArr;
+        let _safeArr1 = this.colonyThird.safeArr;
         if (_safeArr1.length > 0) {
-         
           let _saArr = [];
 
           for (let i in _safeArr1) {
@@ -5017,7 +5128,7 @@ console.log(15)
         // 登录方式
         if (this.colonyThird.loginModeRadio == 1) {
           params["LoginSettings"] = {
-            KeyIds: this.colonyThird.sshKeySel
+            KeyIds: [this.colonyThird.sshKeySel]
           };
         }
         if (this.colonyThird.loginModeRadio == 3) {
@@ -5025,10 +5136,9 @@ console.log(15)
             Password: this.colonyThird.password
           };
         }
- let _safeArr = this.colonyThird.safeArr;
+        let _safeArr = this.colonyThird.safeArr;
         // 安全组
         if (_safeArr.length > 0) {
-         
           let _saArr = [];
 
           for (let i in _safeArr) {
@@ -5477,6 +5587,7 @@ console.log(15)
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
           console.log(res.Response);
+          this.$router.go(-1);
         } else {
           let ErrTips = {
             InternalError: "内部错误",
