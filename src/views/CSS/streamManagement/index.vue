@@ -51,7 +51,7 @@
 
             <template v-if="type !== $t('CSS.domainManagement.34')">
               <el-table-column :label="$t('CSS.domainManagement.3')">
-                <span v-if="type === '在线流'">直播中</span>
+                <span v-if="type === $t('CSS.domainManagement.33')">直播中</span>
                 <span v-if="type === '禁推流'">已禁用</span>
               </el-table-column>
             </template>
