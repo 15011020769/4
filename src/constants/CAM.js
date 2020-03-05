@@ -29,7 +29,6 @@ export const UPDATA_GROUP = 'cam2/UpdateGroup'
 export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
 export const MODIFY_SUBSCRIPTION = 'message/ModifyMsgTypeOnReceiver'
 export const GET_ALL_SUBSCRIPTION_TYPE = 'message/GetReceiversOnAllType'
-export const GET_ALL_SUBSCRIPTION_PARENT_TYPE = 'message/ListFirstMsgType'
 
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'

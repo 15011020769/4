@@ -3,8 +3,6 @@ import VueCookie from "vue-cookie";
 import { Loading } from "element-ui";
 import axios from "axios";
 
-Vue.prototype.$axiosStatic = axios; //$axiosStatic 使用axios的all方法和spread方法
-
 const conf = {
   baseURL: process.env.VUE_APP_serverUrl || "",
   timeout: 60 * 1000,

@@ -334,13 +334,13 @@ import {
   DELETE_USER,
   RELATE_USER,
   QUERY_POLICY,
-  GET_ALL_SUBSCRIPTION_TYPE,
-  GET_ALL_SUBSCRIPTION_PARENT_TYPE
+  GET_ALL_SUBSCRIPTION_TYPE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
 import transfer from "../Role/component/transfer";
 import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
+import { datasource } from "./components/NoticeCategoryData";
 export default {
   components: {
     NoticeSubscriptionDialog,
@@ -1018,99 +1018,75 @@ export default {
       return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
     },
     matchAllSubscriptionByUserId(uid, row) {
-      var that = this;
-      this.$axiosStatic
-        .all([
-          this.getAllSubscriptionParentType(),
-          this.getAllSubscriptionType()
-        ])
-        .then(
-          that.$axiosStatic.spread(function(parentData, childData) {
-            // 确定请求和数据都正常
-            if (
-              parentData.code === 0 &&
-              Array.isArray(parentData.data) &&
-              childData.code === 0 &&
-              Array.isArray(childData.data)
-            ) {
-              // 先找出该用户已订阅的子类型的父类型，再找到找到父类型的名称
-              // 然后显示
-              const subscribedTypes = [];
-              const childDataLength = childData.data.length;
-              for (let i = 0; i < childDataLength; i++) {
-                const child = childData.data[i];
-                if (that.isUserSubscribeThisType(uid, child.users)) {
-                  if (subscribedTypes.indexOf(child.fType) === -1) {
-                    subscribedTypes.push(child.fType);
+      let that = this;
+      this.axios
+        .post(GET_ALL_SUBSCRIPTION_TYPE)
+        .then(res => {
+          if (res.code === 0 && Array.isArray(res.data)) {
+
+            const subscribedParentNames = []
+
+            const dataLength = res.data.length;
+            const parentLength = datasource.length;
+            for (let i = 0; i < parentLength; i++) {
+              const parent = datasource[i];
+
+              const childrenLength = parent.children.length;
+              for (let j = 0; j < childrenLength; j++) {
+                const child = parent.children[j];
+                // 如果当前类型被订阅了，就添加到subscribedParentNames
+                if (that.isThisTypeSubscribedByUser(child.key, res.data, uid)) {
+                  if (subscribedParentNames.indexOf(parent.name) === -1) {
+                    console.log("" + parent.name + "被添加");
+
+                    subscribedParentNames.push(parent.name);
+                    break;
                   }
                 }
-              }
-
-              const subscribedTypeNames = [];
-
-              parentData.data.sort(function(el1, el2) {
-                return el2.displayWeight - el1.displayWeight;
-              });
-
-              const parentDataLength = parentData.data.length;
-
-              for (let i = 0; i < parentDataLength; i++) {
-                const parent = parentData.data[i];
-                for (let j = 0; j < subscribedTypes.length; j++) {
-                  const element = subscribedTypes[j];
-                  if (parent.categoryId !== element) {
-                    continue;
-                  }
-
-                  // 替换接口中带有腾讯的字样
-                  let parentName = parent.categoryName;
-                  if (parentName.indexOf("腾讯") !== -1) {
-                    parentName = parentName.replace("腾讯", "台富");
-                  }
-
-                  subscribedTypeNames.push(parentName);
-                }
-              }
-
-              row.subscription = subscribedTypeNames.join(",");
-            } else {
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              if (parentData.Response.Error) {
-                this.$message({
-                  message: ErrOr[parentData.Response.Errorr.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-              if (childData.Response.Error) {
-                this.$message({
-                  message: ErrOr[childData.Response.Errorr.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
               }
             }
-          })
-        )
+            console.log(subscribedParentNames);
+
+            row.subscription = subscribedParentNames.join(",");
+
+          } else {
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            if (res.Response.Error) {
+              this.$message({
+                message: ErrOr[res.Response.Errorr.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          }
+        })
         .then(function() {
           that.loadrowC = false;
         });
     },
-    isUserSubscribeThisType(subscriberId, subscribedUsers) {
-      if (!Array.isArray(subscribedUsers) || subscribedUsers.length === 0) {
+    isThisTypeSubscribedByUser(typeKey, types, uid) {
+      if (!Array.isArray(types)) {
         return false;
       }
 
-      let subscribed = false;
-      for (let index = 0; index < subscribedUsers.length; index++) {
-        if (subscribedUsers[index].uid === subscriberId) {
-          subscribed = true;
-          break;
-        }
+      const item = types.find(element => {
+        return typeKey === element.msgType;
+      });
+
+      if (
+        item === undefined ||
+        item.users === undefined ||
+        !Array.isArray(item.users)
+      ) {
+        return false;
       }
-      return subscribed;
+
+      const result = item.users.find(element => {
+        return element.uid === uid;
+      });
+
+      return result !== undefined;
     }
   },
   created() {

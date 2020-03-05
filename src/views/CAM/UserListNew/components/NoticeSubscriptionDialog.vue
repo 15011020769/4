@@ -2,7 +2,7 @@
   <el-dialog
     :title="$t('CAM.noticeSubscriptionDialog.subscription')"
     :visible.sync="visible"
-    width="900px"
+    width="800px"
     :before-close="handleClose"
     destroy-on-close
     @open="handleOpen"
@@ -16,7 +16,6 @@
       <div class="notice-category">
         <label class="title">{{$t('CAM.noticeSubscriptionDialog.subscribeType')}}</label>
         <el-table
-          height="450"
           ref="multipleTable"
           :data="tableData"
           tooltip-effect="dark"
@@ -43,7 +42,7 @@
 
           <el-table-column
             :label="$t('CAM.noticeSubscriptionDialog.znx')"
-            width="300"
+            width="200"
             prop="stationLetterChecked"
             align="center"
           >
@@ -56,7 +55,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('CAM.noticeSubscriptionDialog.cz')" width="138">
+          <el-table-column :label="$t('CAM.noticeSubscriptionDialog.cz')" width="149">
             <template slot-scope="scope">
               <el-button
                 type="text"
@@ -82,11 +81,10 @@
 <script>
 import {
   MODIFY_SUBSCRIPTION,
-  GET_ALL_SUBSCRIPTION_TYPE,
-  GET_ALL_SUBSCRIPTION_PARENT_TYPE
+  GET_ALL_SUBSCRIPTION_TYPE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-// import { datasource } from "./NoticeCategoryData";
+import { datasource } from "./NoticeCategoryData";
 let ErrTips = {
   InternalError: "內部錯誤",
   InvalidParameter: "參數錯誤",
@@ -286,13 +284,12 @@ export default {
         return false;
       }
 
-      if (children.length > 0) {
-        for (let i = 0; i < children.length; i++) {
-          if (children[i].isChecked === false) {
-            return false;
-          }
+      for (let i = 0; i < children.length; i++) {
+        if (children[i].isChecked === false) {
+          return false;
         }
       }
+
       return true;
     },
     iisUnselectAllInChildren(children) {
@@ -301,13 +298,12 @@ export default {
         return false;
       }
 
-      if (children.length > 0) {
-        for (let i = 0; i < children.length; i++) {
-          if (children[i].isChecked === true) {
-            return false;
-          }
+      for (let i = 0; i < children.length; i++) {
+        if (children[i].isChecked === true) {
+          return false;
         }
       }
+
       return true;
     },
     getSelectedKeys() {
@@ -362,131 +358,77 @@ export default {
     getAllSubscriptionParentType() {
       return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
     },
-    getAllSubscription() {
-      var that = this;
-      this.loading = true;
-      this.$axiosStatic
-        .all([
-          this.getAllSubscriptionParentType(),
-          this.getAllSubscriptionType()
-        ])
-        .then(
-          that.$axiosStatic.spread(function(parentData, childData) {
-            // 确定请求和数据都正常
-            if (
-              parentData.code === 0 &&
-              Array.isArray(parentData.data) &&
-              childData.code === 0 &&
-              Array.isArray(childData.data)
-            ) {
-              const datasource = [];
-
-              const parentDataLength = parentData.data.length;
-              const childDataLength = childData.data.length;
-              // 组装数据
-              // 遍历第一级，生成第一级数据
-              for (let i = 0; i < parentDataLength; i++) {
-                const parent = parentData.data[i];
-                // 确定第一级是否要显示
-                if (parent.displayWeight !== 0) {
-                  // 遍历第一级，生成第一级数据
-                  const children = [];
-                  for (let j = 0; j < childDataLength; j++) {
-                    const child = childData.data[j];
-                    // 确定子类要显示(暂时不需要)，以及是否是该父类型下面的子类型
-                    if (
-                      // child.displayWeight !== 0 &&
-                      child.fType === parent.categoryId
-                    ) {
-                      let childName = child.name;
-                      if (childName.indexOf("腾讯云") !== -1) {
-                        childName = childName.replace("腾讯云", "台富云");
-                      }
-
-                      children.push({
-                        key: child.msgType,
-                        name: childName,
-                        isChecked: that.isUserSubscribeThisType(
-                          that.subscriberId,
-                          child.users
-                        ),
-                        displayWeight: child.displayWeight,
-                        stationLetterChecked: true
-                      });
-                    }
-                  }
-
-                  // 排序二级类型
-                  children.sort(function(el1, el2) {
-                    return el2.displayWeight - el1.displayWeight;
-                  });
-
-                  const childrenOrEmpty =
-                    children.length > 0 ? children : undefined;
-
-                  let parentName = parent.categoryName;
-                  if (parentName.indexOf("腾讯") !== -1) {
-                    parentName = parentName.replace("腾讯", "台富");
-                  }
-                  datasource.push({
-                    key: parent.categoryId,
-                    name: parentName,
-                    displayWeight: parent.displayWeight,
-                    isChecked: that.isSelectAllInChildren(childrenOrEmpty),
-                    isExpanded: false,
-                    isIndeterminate: that.isIndeterminateByChildren(
-                      childrenOrEmpty
-                    ),
-                    children: childrenOrEmpty
-                  });
-                }
-              }
-
-              // 排序第一级
-              datasource.sort(function(el1, el2) {
-                return el2.displayWeight - el1.displayWeight;
-              });
-              console.log(datasource);
-
-              that.tableData = datasource;
-            } else {
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              if (parentData.Response.Error) {
-                this.$message({
-                  message: ErrOr[parentData.Response.Errorr.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-              if (childData.Response.Error) {
-                this.$message({
-                  message: ErrOr[childData.Response.Errorr.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            }
-          })
-        )
-        .then(function() {
-          that.loading = false;
-        });
-    },
-    isUserSubscribeThisType(subscriberId, subscribedUsers) {
-      if (!Array.isArray(subscribedUsers) || subscribedUsers.length === 0) {
+    isThisTypeSubscribedByUser(typeKey, types) {
+      if (!Array.isArray(types)) {
         return false;
       }
 
-      let subscribed = false;
-      for (let index = 0; index < subscribedUsers.length; index++) {
-        if (subscribedUsers[index].uid === subscriberId) {
-          subscribed = true;
-          break;
-        }
+      const item = types.find(element => {
+        return typeKey === element.msgType;
+      });
+
+      if (
+        item === undefined ||
+        item.users === undefined ||
+        !Array.isArray(item.users)
+      ) {
+        return false;
       }
-      return subscribed;
+
+      let that = this;
+
+      const result = item.users.find(element => {
+        return element.uid === that.subscriberId;
+      });
+
+      return result !== undefined;
+    },
+    getAllSubscription() {
+      this.loading = true;
+
+      let that = this;
+      this.axios
+        .post(GET_ALL_SUBSCRIPTION_TYPE)
+        .then(res => {
+          if (res.code === 0 && Array.isArray(res.data)) {
+            const dataLength = res.data.length;
+            const parentLength = datasource.length;
+            for (let i = 0; i < parentLength; i++) {
+              const parent = datasource[i];
+              const childrenLength = parent.children.length;
+              for (let j = 0; j < childrenLength; j++) {
+                const child = parent.children[j];
+                child.isChecked = that.isThisTypeSubscribedByUser(
+                  child.key,
+                  res.data
+                );
+                child.stationLetterChecked = true;
+              }
+              console.log(parent);
+
+              parent.isChecked = that.isSelectAllInChildren(parent.children);
+              parent.isExpanded = false;
+              parent.isIndeterminate = that.isIndeterminateByChildren(
+                parent.children
+              );
+            }
+
+            this.tableData = datasource;
+          } else {
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            if (res.Response.Error) {
+              this.$message({
+                message: ErrOr[res.Response.Errorr.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          }
+        })
+        .then(function() {
+          that.loading = false;
+        });
     }
   }
 };
