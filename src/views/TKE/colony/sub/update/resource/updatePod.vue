@@ -71,11 +71,6 @@
                  <el-tooltip class="item" effect="light" content="至少保留一个指标" placement="right">
                    <i class="el-icon-close" @click.prevent="removeOptions(optionsData,index)"></i>
                  </el-tooltip>
-                   <!-- <el-tooltip effect="light" content="至少保留一个指标" placement="right" v-if="touchTactics.length==1">
-                     <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
-                   </el-tooltip>
-                   <i v-else class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
-                     @click="touchTactics.splice(index, 1)"></i> -->
                  </div>
                  <a href="#" @click="newAddTarget">新增指标</a>
                </el-form-item>
@@ -97,24 +92,17 @@
 
    </div>
 
- </template>
+</template>
 
  <script>
-   // import Service from '../../components/Service'
-   import SelectMirrorImg from '../../create/resource/components/selectMirrorImg'
    import FileSaver from "file-saver";
    import XLSX from "xlsx";
-   import { ErrorTips } from "@/components/ErrorTips";
-   import {
-     ALL_CITY,
-     POINT_REQUEST
-   } from "@/constants";
+   import {ALL_CITY,POINT_REQUEST} from "@/constants";
    export default {
-     name: "svcCreate",
+     name: "updatePod",
      data() {
        return {
          dialogFormVisible: false,
-         type: this.$route.query.type,//路由传过来的类型
          clusterId: this.$route.query.clusterId,
          spaceName: this.$route.query.spaceName,
          name: this.$route.query.name,//路由传过来的工作负载数据
@@ -124,11 +112,6 @@
            type: '1',
            num: 0,
          },
-         touchTactics: [{
-           touch1: 'CPU',
-           touch2: 'CPU使用量',
-           size: ''
-         }], // 实例数量自动调节下拉框内容
          optionsData: [{
              options: [{
                value: 1,
@@ -221,48 +204,11 @@
              value2: 1,
              valueKey: ''
            }],
-
-         // 更新pod配置
-         upc: {
-           dataJuan: [],
-           caseContent:{
-            name:'',
-            mirrorImg:'',
-            versions:'',
-            mirrorPullTactics: 'Always', //镜像拉取策略
-            requestCpu:'',
-            limitCpu:'',
-            requestMemory:'',
-            limitMemory:'',
-            limitNum:0,
-            environmentVar1:[],
-            environmentVar2:[],
-            citeCs:[],
-          },
-         },
-         containerCheck: {
-          type: 'TCP端口检查',
-          http: {
-            type: 'HTTP'
-          }
-        },
-       
-       
-         yesOrnoAddDataJuan: false,
-         highLevelSetShow:false,
-        highLevelSetShow2:false,
-      
-
        };
      },
-
-     components: {
-       SelectMirrorImg
-     },
+     components: {},
      created() {
-       console.log(this.type)
        this.getData()
-      // this.getTriggerList();
      },
      methods: {
     //获取数据
@@ -708,266 +654,40 @@
        goBack() {
          this.$router.go(-1);
        },
-       addDataJuan() { //新增数据卷
-         this.dataFlag = true;
-         var obj = {
-           name1: "",
-           name2: "",
-           name3: ""
-         };
-         this.upc.dataJuan.push(obj);
-       },
-       selectYun() {
-         this.dialogVisibleYun = true;
-       },
-       selectConfig() {
-         this.dialogVisibleConfig = true;
-       },
-       selectSecret() {
-         this.dialogVisibleSecret = true;
-       },
-       //改变每页显示数量
-       handleSizeChange(val) {
-         console.log(`每頁 ${val} 條`);
-       },
-       // 改变页数
-       handleCurrentChange(val) {
-         this.currpage = val;
-       },
-
-      //  
-       addEnvironmentVar(){
-         this.upc.caseContent.environmentVar1.push({key:'',value:''})
-       } ,
-       importAddCs(){
-           this.upc.caseContent.environmentVar2.push({data1:'',data2:'',data3:'',elseName:''})
-       },
-        close(val){
-        this.SelectMirrorImgFlag=val;
-        console.log(val)
-      },
-     
+      
      },
-     watch: {
-       upc: {
-         handler(val) {
-           //监听数据卷
-           val.dataJuan.forEach(item => {
-             if (item.name1 == "useMenu" && item.name2) {
-               this.yesOrnoAddDataJuan = false;
-             } else if (item.name1 && item.name2 && item.name3) {
-               this.yesOrnoAddDataJuan = false;
-             } else {
-               this.yesOrnoAddDataJuan = true;
-             }
-           });
-           if (val.dataJuan.length == 0) {
-             this.yesOrnoAddDataJuan = false;
-           }
-         },
-         deep: true,
-       }
-     }
    };
 
  </script>
 
  <style lang="scss" scoped>
-   .shadow {
-     z-index: 999;
-     float: left;
-     width: 100%;
-     height: 900px;
-     opacity: 0.6;
-     background: black;
-   }
-
-   .w250 {
-     width: 250px;
-   }
-
-   .w192 {
-     width: 192px;
-   }
-
    .w100 {
      width: 100px;
    }
-   .w150 {
-    width: 150px;
-  }
-
    .ml100 {
      margin-left: 100px;
    }
-
    .flex {
      display: flex;
    }
-
    .port {
      max-width: 680px;
      border: 1px solid #ddd;
    }
-
    .card {
      padding: 10px;
      border-bottom: 1px solid #dcdfe6;
    }
-
    .text-error {
      color: #e54545;
    }
-
    .text-warning {
      color: #ff9d00
    }
-
    .bottom10 {
      margin-bottom: 10px;
    }
-
-   .margin-middle {
-     margin: 0px 10px;
-   }
-
-   .pagstyle {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-
-     .pagestyle_right {
-       display: flex;
-       justify-content: flex-start;
-
-       div {
-         span {
-           margin-right: 10px;
-         }
-       }
-     }
-   }
-i{
+    i{
    cursor:pointer;
-}
-   .ms {
-     width: 330px;
-     padding: 5px 8px 8px 5px;
-     height: 100px;
-     border-radius: 4px;
-     border: 1px solid #dcdfe6;
-     resize: none;
    }
-
-   .search-one {
-     display: flex;
-     align-items: center;
-     width: 80%;
-     background: #f2f2f2;
-     height: 50px;
-     box-sizing: border-box;
-     padding: 0px 20px;
-
-     .search-input {
-       width: 210px;
-       margin-left: 10px;
-     }
-
-     .search-hidden {
-       flex: 1;
-       margin-left: 10px;
-     }
-
-     .el-icon-close {
-       font-size: 18px;
-       cursor: pointer;
-     }
-
-     .add-check {
-       color: #409eff;
-       cursor: pointer;
-       margin-left: 10px;
-     }
-
-     .cancle-addjuan {
-       cursor: no-drop;
-       color: #888;
-     }
-   }
-   .add-content{
-      width:80%;
-       background: #f2f2f2;
-       padding:12px;
-       margin-bottom:10px;
-       display:flex;
-       align-items:center;
-       justify-content:space-between;
-   }
-   .case-content {
-    width: 80%;
-    background: #f2f2f2;
-    overflow: hidden;
-    box-sizing: border-box;
-    padding: 20px 20px 0px;
-
-    &>>>.el-form-item:nth-of-type(1) {
-      margin-top: 30px;
-    }
-
-  }
-  .cpu-limit {
-    display: flex;
-
-    &>div:nth-of-type(1) {
-      margin-right: 60px;
-
-    }
-  .cpu-limit2 {
-    width: 120px;
-    display: flex;
-    text-align: center;
-    border: solid 1px #ddd;
-
-    span {
-      display: block;
-      height: 28px;
-      line-height: 28px;
-      width: 180px;
-      border-right: solid 1px #ddd;
-    }
-
-    ::v-deep .el-input__inner {
-      border: none !important;
-    }
-  }
-  }
-   .addcontent {
-    width: 80%;
-    border: dotted 2px #f2f2f2;
-    height: 40px;
-    text-align: center;
-    line-height: 40px;
-    margin: 6px 0px;
-
-    &:hover {
-      background: #f2f2f2;
-    }
-  }
-  .setPosition {
-    position: absolute;
-    left: -64px;
-    top: 8px;
-  }
-
-  .setPosition2 {
-    position: absolute;
-    left: -38px;
-    top: 8px;
-  }
-  .setPosition3 {
-    position: absolute;
-    left: -52px;
-    top: 8px;
-  }
-
  </style>

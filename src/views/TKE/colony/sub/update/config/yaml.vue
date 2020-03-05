@@ -47,7 +47,7 @@ require("codemirror/addon/fold/comment-fold.js");
 import { ALL_CITY, TKE_COLONY_QUERY } from "@/constants";
 export default {
   name: "configmapCreate",
-  components: {  },
+  components: { codemirror },
   data() {
     return {
       clusterId: "",
