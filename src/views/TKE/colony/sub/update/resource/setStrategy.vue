@@ -19,7 +19,7 @@
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form
 					class="tke-form"
-					:model="strategy"
+					:model="cl"
 					label-position="left"
 					label-width="120px"
 					size="mini"
@@ -34,7 +34,7 @@
             </el-form-item>
             <div v-show="updateWay=='1'">
               <el-form-item label="更新间隔">
-                <el-input class="w100" ></el-input>秒
+                <el-input class="w100" v-model="cl.timeInterval" ></el-input>秒
               </el-form-item>
               <el-form-item label="更新策略">
                 <el-radio-group v-model="updateTactics">
@@ -48,7 +48,7 @@
                 <div class="flex bg" v-show="updateTactics!=3">
                   <span>Pods</span>
                   <div style="margin-left:150px;">
-                    <el-input class="w192"></el-input>
+                    <el-input class="w192" v-model="cl.podNum"></el-input>
                     <p> Pod将批量启动或停止</p>
                   </div>
                 </div>
@@ -56,14 +56,14 @@
                   <div class="flex">
                     <span>MaxSurge</span>
                     <div style="margin-left:150px;">
-                      <el-input class="w192"></el-input>
+                      <el-input class="w192" v-model="cl.maxPodOver"></el-input>
                       <p>允许超出所需规模的最大Pod数量</p>
                     </div>
                   </div>
                   <div class="flex">
                     <span>MaxUnavailable</span>
                     <div style="margin-left:114px;">
-                      <el-input class="w192"></el-input>
+                      <el-input class="w192" v-model="cl.maxPodNot"></el-input>
                       <p>允许最大不可用的Pod数量</p>
                     </div>
                   </div>
@@ -89,14 +89,18 @@ export default {
   data() {
     return {
       number:0,
-      strategy:{
-
+      cl:{
+        timeInterval:'',
+        podNum:'',
+        maxPodOver:'',
+        maxPodNot:'',
       },
       updateWay:'1',
       updateTactics:'1',
       clusterId:'',
       name:'',
       spaceName:'',
+      type:'RollingUpdate',
     };
   },
   components: {
@@ -106,6 +110,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.name=this.$route.query.name;
     this.spaceName=this.$route.query.spaceName;
+    this.baseData();
   },
   methods: {
     //返回上一层
@@ -130,7 +135,7 @@ export default {
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
           Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
-          RequestBody:{"spec":{"minReadySeconds":10,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":12,"maxUnavailable":0}}}},
+          RequestBody:{"spec":{"minReadySeconds":this.cl.timeInterval,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":this.cl.maxPodOver,"maxUnavailable":this.cl.maxPodNot}}}},
           Version: "2018-05-25",
         }
       }
@@ -158,12 +163,31 @@ export default {
                });
            }
       })
+    },
+    baseData(){
+        var params={
+              Method: "GET",
+              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +
+                this.name,
+              Version: "2018-05-25",
+              ClusterName: this.clusterId
+        }
+        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+           let response = JSON.parse(res.Response.ResponseBody);
+           let obj=response.items[0];
+          console.log(obj)
+        this.type=obj.spec.strategy.type;
 
+         if(this.type=='RollingUpdate'){
+            this.updateWay='1'//滚动更新
+           }else{
+           this.updateWay='2'//快速更新
+         }
+            
+        })
 
+    },
 
-
-
-		}
   }
 };
 </script>
