@@ -64,7 +64,9 @@
   import {
     GZJ_LIST,
     GZJ_NUM,
-    GET_ROLE
+    GET_ROLE,
+    CLA_ATT,
+    CLA_CAMCREAT
   } from "@/constants";
   export default {
     data() {
@@ -139,7 +141,7 @@
         let params = {
           Version: "2019-01-16",
           Region: localStorage.getItem("regionv2"),
-          RoleName: 'CloudAudit_QCSRole'
+          RoleName: 'CloudAudit_QCSRole',
         };
         this.axios.post(GET_ROLE, params).then(res => {
           if (res.Response.Error === undefined) {
@@ -150,10 +152,44 @@
             this.dialogVisible = true
           }
         });
-
       },
       _Opening() {
-
+        let params = {
+          Version: "2019-01-16",
+          region: localStorage.getItem("regionv2"),
+          roleName: 'CloudAudit_QCSRole',
+          policyDocument: {
+            "version": "2.0",
+            "statement": [{
+              "action": "name/sts:AssumeRole",
+              "effect": "allow",
+              "principal": {
+                "service": "cloudaudit.cloud.tencent.com"
+              }
+            }]
+          }
+        };
+        this.axios.post(CLA_CAMCREAT, params).then(res => {
+          if (res.code !== 4000) {
+            let params = {
+              Version: "2019-01-16",
+              Region: localStorage.getItem("regionv2"),
+              RoleName: 'CloudAudit_QCSRole',
+              'PolicyName.0': 'QcloudAccessForCARole'
+            };
+            this.axios.post(CLA_ATT, params).then(res => {
+              if (res.Response.Error === undefined) {
+                this.dialogVisible = false
+                this.$message({
+                  message: '開通成功',
+                  type: "success",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            });
+          }
+        });
       },
       // 详情页跳转
       handleClick(rows) {
