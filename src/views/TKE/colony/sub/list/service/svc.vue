@@ -186,7 +186,7 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res)
+          // console.log(res)
           this.loadShow = false
           let data = JSON.parse(res.Response.ResponseBody).items
           if (data.length > 0) { // 处理selector字段中的数据
@@ -209,7 +209,7 @@ export default {
             })
           }
           this.list = data// 得到列表数据并赋值
-          console.log(this.list)
+          // console.log(this.list)
           this.total = data.length// 总条数
         } else {
           this.loadShow = false
