@@ -35,7 +35,7 @@
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
-          <i class="el-icon-refresh"></i>
+          <i class="el-icon-refresh" @click="id+=1"></i>
           <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
@@ -46,6 +46,7 @@
         :times="[startTime, endTime]"
         :domain="selectValue"
         :showModules="showModules"
+        :id="id"
       />
     </div>
     <DownLoadImg
@@ -116,6 +117,7 @@ export default {
       allModule: [], // 所有组件
       showModules: [], // 显示的组件
       showModulesCopy: [], // 复制显示组件
+      id: 0, // 用于父组件点击查询
     };
   },
   components: {

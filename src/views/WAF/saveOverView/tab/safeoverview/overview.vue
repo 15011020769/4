@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="domain==''?12:8">
         <div class="rowContain">
-          <p>
+          <p v-loading="loading">
             <span class="red">{{webAttack}}</span>
             <span>次</span>
           </p>
@@ -12,7 +12,7 @@
       </el-col>
       <el-col :span="domain==''?12:8">
         <div class="rowContain">
-          <p>
+          <p v-loading="loading">
             <span class="oarnge">{{ccRequest}}</span>
             <span>个</span>
           </p>
@@ -21,7 +21,7 @@
       </el-col>
       <el-col :span="domain==''?12:8" v-if="domain==''?false:true">
         <div class="rowContain">
-          <p>
+          <p v-loading="loading">
             <span class="blue">{{botRequest}}</span>
             <span>次</span>
           </p>
@@ -37,13 +37,15 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   data() {
     return {
       webAttack: 0,
       ccRequest: 0,
       botRequest: 0,
+      loading: true,
     }
   },
   watch: {
@@ -51,6 +53,9 @@ export default {
       if (val.join() !== oldVal.join()) {
         this.getPeakValue()
       }
+    },
+    id() {
+      this.getPeakValue()
     },
     times(val, oldVal) {
       if (
@@ -72,6 +77,7 @@ export default {
   methods: {
     // 获取业务攻击峰值
     getPeakValue() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -88,6 +94,8 @@ export default {
           this.webAttack = Response.Attack
           this.ccRequest = Response.Cc
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // 查询bot数量

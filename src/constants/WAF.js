@@ -132,6 +132,8 @@ export const DESCRIBE_BOT_ACTION_STAT = 'waf2/DescribeBotActionStat'
 export const DESCRIBE_BOT_UB_RECORDS = 'waf2/DescribeBotUBRecords'
 /** Bot_V2 获取UCB类型Bots */
 export const DESCRIBE_BOT_UCB_RECORDS = 'waf2/DescribeBotUCBRecords'
+/** Bot_V2 获取TCB类型Bots */
+export const DESCRIBE_BOT_TCB_RECORDS = 'waf2/DescribeBotTCBRecords'
 /** bot记录访问趋势图*/
 export const DESCRIBE_BOT_RECORD_POINTS = 'waf2/DescribeBotRecordPoints'
 /** Bot_V2 bot记录访问详情*/

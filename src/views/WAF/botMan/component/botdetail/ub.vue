@@ -1,19 +1,16 @@
 <template>
   <div class="main_ub">
-    <!-- <el-row type="flex" justify="end" class="topSearch">
-      <el-input v-model="sourceIp" placeholder="请输入源ip"></el-input>
-    </el-row> -->
     <el-card>
       <el-table
         :data="ubList"
         row-key="Id"
         v-loading="loading"
       >
-        <!-- <el-table-column
+        <el-table-column
           type="selection"
           class-name="hide"
           width="1"
-        /> -->
+        />
         <el-table-column label="序号"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
@@ -114,7 +111,7 @@
 import moment from 'moment'
 import { DESCRIBE_BOT_UB_RECORDS } from '@/constants'
 import { scene_flag_list, UCB_ACTION_LOCAL, } from '../../../constants'
-import { isValidIPAddressNew } from '@/utils'
+import { isValidIPAddressNew } from '@/utils' // 验证IP地址是否有效
 export default {
   data () {
     return {
@@ -301,5 +298,8 @@ export default {
   .addRed {
     color: #e1504a;
   }
+}
+::v-deep .hide {
+  visibility: hidden;
 }
 </style>
