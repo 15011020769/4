@@ -160,13 +160,13 @@
                     style="color:#000;padding-left:20px;"
                     @click="delUserRow(scope.row)"
                   >{{$t('CAM.userList.userDel')}}</el-button>
-                  <!-- <el-dropdown-item>
+                  <el-dropdown-item>
                     <el-button
                       type="text"
                       style="color:#000"
                       @click="subscribeNotice(scope.row.Uid, scope.row.Name)"
                     >{{$t('CAM.userList.userSubscribeNotice')}}</el-button>
-                  </el-dropdown-item>-->
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -1046,12 +1046,19 @@ export default {
                 }
               }
 
-              const subscribedTypeNames = subscribedTypes.map(function(item) {
-                const parentDataLength = parentData.data.length;
+              const subscribedTypeNames = [];
 
-                for (let i = 0; i < parentDataLength; i++) {
-                  const parent = parentData.data[i];
-                  if (parent.categoryId !== item) {
+              parentData.data.sort(function(el1, el2) {
+                return el2.displayWeight - el1.displayWeight;
+              });
+
+              const parentDataLength = parentData.data.length;
+
+              for (let i = 0; i < parentDataLength; i++) {
+                const parent = parentData.data[i];
+                for (let j = 0; j < subscribedTypes.length; j++) {
+                  const element = subscribedTypes[j];
+                  if (parent.categoryId !== element) {
                     continue;
                   }
 
@@ -1060,9 +1067,10 @@ export default {
                   if (parentName.indexOf("腾讯") !== -1) {
                     parentName = parentName.replace("腾讯", "台富");
                   }
-                  return parentName;
+
+                  subscribedTypeNames.push(parentName);
                 }
-              });
+              }
 
               row.subscription = subscribedTypeNames.join(",");
             } else {

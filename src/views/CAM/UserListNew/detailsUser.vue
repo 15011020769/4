@@ -42,7 +42,7 @@
             <!-- <p>
               <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
               <span>-</span>
-            </p> -->
+            </p>-->
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@
           <p>{{$t('CAM.userList.fastToDo')}}</p>
         </div>
         <div class="rightBody">
-          <!-- <el-button size="small" @click="bindMesg">{{$t('CAM.userList.userdep')}}</el-button> -->
+          <el-button size="small" @click="subscribeNotice">{{$t('CAM.userList.userdep')}}</el-button>
           <el-button size="small" class="delete" @click="deleteUser">{{$t('CAM.userList.userDel')}}</el-button>
         </div>
       </div>
@@ -88,11 +88,21 @@
                 <el-link @click="handleClicks(scope.row)" type="primary">{{scope.row.PolicyName}}</el-link>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('CAM.userList.gllx')" prop="CreateMode" show-overflow-tooltip>
+            <el-table-column
+              :label="$t('CAM.userList.gllx')"
+              prop="CreateMode"
+              show-overflow-tooltip
+            >
               <template slot-scope="scope">
                 <span v-if="scope.row.Groups.length">
                   随组关联 来自
-                  <el-button type="text" size="small" v-for="group in scope.row.Groups" @click="$router.push(`/Interfacedetails?GroupId=${group.GroupId}`)">{{group.GroupName}}</el-button>
+                  <el-button
+                    type="text"
+                    size="small"
+                    :key="group.GroupId"
+                    v-for="group in scope.row.Groups"
+                    @click="$router.push(`/Interfacedetails?GroupId=${group.GroupId}`)"
+                  >{{group.GroupName}}</el-button>
                 </span>
                 <span v-else>直接关联</span>
               </template>
@@ -148,7 +158,10 @@
             <el-table-column type="selection"></el-table-column>
             <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName">
               <template slot-scope="scope">
-                <el-button type="text" @click="$router.push(`/Interfacedetails?GroupId=${scope.row.GroupId}`)">{{scope.row.GroupName}}</el-button>
+                <el-button
+                  type="text"
+                  @click="$router.push(`/Interfacedetails?GroupId=${scope.row.GroupId}`)"
+                >{{scope.row.GroupName}}</el-button>
               </template>
             </el-table-column>
             <el-table-column :label="$t('CAM.userList.RelatedPolicies')" width="300">
@@ -160,7 +173,9 @@
                   </p>
                   <p v-show="scope.row.policy.length>2">
                     <span style="color:black;" v-show="scope.row.policy.length>2">以及</span>
-                    <span @click="goToPolicyList">其他({{scope.row.policy.length-2}}){{$t('CAM.Role.item')}}</span>
+                    <span
+                      @click="goToPolicyList"
+                    >其他({{scope.row.policy.length-2}}){{$t('CAM.Role.item')}}</span>
                   </p>
                 </div>
                 <div v-show="scope.row.policy.length==0">-</div>
@@ -229,7 +244,12 @@
     </el-dialog>
 
     <!-- 删除用户 -->
-    <el-dialog :title="$t('CAM.userList.scyh')" :visible.sync="delDialog" width="30%" :before-close="handleClose">
+    <el-dialog
+      :title="$t('CAM.userList.scyh')"
+      :visible.sync="delDialog"
+      width="30%"
+      :before-close="handleClose"
+    >
       <span>{{$t('CAM.userList.delUserTitle')}}</span>
       <span slot="footer" class="dialog-footer">
         <el-button @click="delDialog = false">{{$t('CAM.userList.handClose')}}</el-button>
@@ -274,6 +294,13 @@
       </span>
     </el-dialog>
     <!-- <Subscribe :subscribe="flag" @suerClose="suerClose" @confirm="confirm" /> -->
+    <NoticeSubscriptionDialog
+      :visible="noticeSubscriptionVisible"
+      :subscriberId="subscriberId"
+      :subscriberName="subscriberName"
+      @handleClose="subscriptionClose"
+      @handleConfirm="subscriptionConfirm"
+    ></NoticeSubscriptionDialog>
   </div>
 </template>
 <script>
@@ -292,11 +319,12 @@ import {
   GROUP_POLICY
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
+import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
 import { parse } from "path";
 export default {
   components: {
-    Headcom //头部组件
-    // Subscribe
+    Headcom, //头部组件
+    NoticeSubscriptionDialog
   },
   data() {
     return {
@@ -342,7 +370,10 @@ export default {
         Remark: "",
         PhoneNum: "",
         Email: ""
-      }
+      },
+      noticeSubscriptionVisible: false,
+      subscriberId: 0,
+      subscriberName: ""
     };
   },
   methods: {
@@ -467,7 +498,7 @@ export default {
         .then(data => {
           if (data.Response.Error === undefined) {
             this.$message({
-              message: '删除成功',
+              message: "删除成功",
               type: "success",
               showClose: true,
               duration: 0
@@ -544,15 +575,15 @@ export default {
           TargetUin: this.userData.Uin,
           Rp: this.pagesizes,
           Page: this.currpages,
-          AttachType: 0,
+          AttachType: 0
         };
         this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams).then(res => {
           if (res.Response.Error === undefined) {
             if (res != "") {
               this.loading = false;
-              const strategies = res.Response.PolicyList
-              this.StrategyData = strategies
-              this.TotalCounts = res.Response.TotalNum
+              const strategies = res.Response.PolicyList;
+              this.StrategyData = strategies;
+              this.TotalCounts = res.Response.TotalNum;
               this.totalNum = "許可權(" + res.Response.TotalNum + ")";
             } else {
               this.loading = false;
@@ -584,7 +615,7 @@ export default {
       this.ploicyData();
     },
     handleSizeChanges(val) {
-      this.pagesizes = val
+      this.pagesizes = val;
       this.ploicyData();
     },
     //获取每一个子用户下的用户组
@@ -599,7 +630,7 @@ export default {
           this.userData = res.Response;
           let groupParams = {
             Version: "2019-01-16",
-            Uid: this.userData.Uid,
+            Uid: this.userData.Uid
           };
           this.axios.post(RELATE_USER, groupParams).then(res => {
             if (res.Response.Error === undefined) {
@@ -615,7 +646,7 @@ export default {
                   const params = {
                     Version: "2019-01-16",
                     TargetGroupId: item.GroupId,
-                    Rp: this.pagesize,
+                    Rp: this.pagesize
                   };
                   this.axios.post(GROUP_POLICY, params).then(res => {
                     if (res.Response.Error === undefined) {
@@ -679,7 +710,7 @@ export default {
       this.groupListData();
     },
     handleSizeChange(val) {
-      this.pagesize = val
+      this.pagesize = val;
       this.groupListData();
     },
     //确定解除策略
@@ -881,26 +912,29 @@ export default {
       }
     },
     handleClick(tab, event) {
-      this.$refs.multipleTable.clearSelection()
-      this.$refs.multipleTable2.clearSelection()
-      this.disabled = true
+      this.$refs.multipleTable.clearSelection();
+      this.$refs.multipleTable2.clearSelection();
+      this.disabled = true;
     },
     handleClose(done) {
       this.StrategyLoading = false;
       this.delDialog = false;
       this.updataUser = false;
     },
-    bindMesg() {
-      this.$message({
-        showClose: true,
-        message: "內測中...",
-        type: "info",
-        duration: 0,
-        showClose: true
-      });
-    },
+    subsribe() {},
     back() {
       this.$router.go(-1);
+    },
+    subscribeNotice() {
+      this.noticeSubscriptionVisible = true;
+      this.subscriberId = this.userData.Uid;
+      this.subscriberName = this.userData.Name;
+    },
+    subscriptionClose() {
+      this.noticeSubscriptionVisible = false;
+    },
+    subscriptionConfirm() {
+      this.noticeSubscriptionVisible = false;
     }
   },
   created() {
