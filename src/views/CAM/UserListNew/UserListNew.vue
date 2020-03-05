@@ -166,7 +166,7 @@
                       style="color:#000"
                       @click="subscribeNotice(scope.row.Uid, scope.row.Name)"
                     >{{$t('CAM.userList.userSubscribeNotice')}}</el-button>
-                  </el-dropdown-item> -->
+                  </el-dropdown-item>-->
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -1055,7 +1055,12 @@ export default {
                     continue;
                   }
 
-                  return parent.categoryName;
+                  // 替换接口中带有腾讯的字样
+                  let parentName = parent.categoryName;
+                  if (parentName.indexOf("腾讯") !== -1) {
+                    parentName = parentName.replace("腾讯", "台富");
+                  }
+                  return parentName;
                 }
               });
 

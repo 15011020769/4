@@ -148,8 +148,6 @@ export default {
   },
   methods: {
     handleOpen() {
-      console.log("=============");
-
       this.getAllSubscription();
     },
     handleClosed() {
@@ -426,9 +424,13 @@ export default {
                   const childrenOrEmpty =
                     children.length > 0 ? children : undefined;
 
+                  let parentName = parent.categoryName;
+                  if (parentName.indexOf("腾讯") !== -1) {
+                    parentName = parentName.replace("腾讯", "台富");
+                  }
                   datasource.push({
                     key: parent.categoryId,
-                    name: parent.categoryName,
+                    name: parentName,
                     displayWeight: parent.displayWeight,
                     isChecked: that.isSelectAllInChildren(childrenOrEmpty),
                     isExpanded: false,
