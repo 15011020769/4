@@ -46,7 +46,7 @@
                     <td v-if="index==0">當</td>
                     <td v-else>且當</td>
                     <td width="110px">
-                      <el-select v-model="item.Skey" class="hoseDomin">
+                      <el-select v-model="item.Skey" class="hoseDomin"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                         <el-option label="host" value="host"></el-option>
                         <el-option label="CGI" value="cgi"></el-option>
                         <el-option label="user_agent" value="ua"></el-option>
@@ -54,7 +54,7 @@
                       </el-select>
                     </td>
                     <td width="90px">
-                      <el-select v-model="item.Operator" class="relese">
+                      <el-select v-model="item.Operator" class="relese" :placeholder="$t('DDOS.Proteccon_figura.qxz')" >
                         <el-option label="包含" value="include"></el-option>
                         <el-option :label="$t('DDOS.accessCopy.equalTo')" value="not_include"></el-option>
                         <el-option :label="$t('DDOS.accessCopy.noEqua')" value="equal"></el-option>

@@ -2,17 +2,17 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 概览</span>
+      <span>{{t('BOT 概览', 'WAF.botgl')}}</span>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
+        <p style="width: 99%">{{t('BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多', 'WAF.botxwgl')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
       <div class="timeList">
         <el-button-group class="buttonDateCheck">
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
+          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小{{t('时', 'WAF.hour')}}</el-button>
+          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小{{t('时', 'WAF.hour')}}</el-button>
           <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
           <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
@@ -22,8 +22,8 @@
           type="datetimerange"
           class="timeValue"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('开始日期', 'WAF.ksrq')"
+          :end-placeholder="t('结束日期', 'WAF.jsrq')"
           :clearable= false
           @change="changeTimeValue"
         ></el-date-picker>
@@ -31,8 +31,8 @@
       <div class="showChart">
         <el-row>
           <h3 class="topfont">
-            <!-- {{t('攻击趋势', 'WAF.gjqs')}} -->
-            BOT 记录数 域名 TOP {{topValue}}
+            {{t('BOT 记录数 域名 TOP', 'WAF.botjls')}}
+            {{topValue}}
           </h3>
           <div>
             排名：<el-select
@@ -55,9 +55,10 @@
           :xAxis="xAxisBotIp"
           :series="seriesBotIp"
           :legendText="legendTextBarIp"
+          v-loading="loading"
           v-if="xAxisBotIp.length == 0 ? false : true"
         />
-        <div class="empty" v-else>暂无数据</div>
+        <div class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</div>
       </div>
       <div class="botDetail" v-for="(item, index) in domainStat">
         <div class="botDetailCon">
@@ -70,13 +71,8 @@
             <el-row class="bitPie">
               <el-col :sapn="12">
                 <h3>
-                  BOT 类型
+                  {{t('BOT 类型', 'WAF.botlx')}}
                 </h3>
-                <!-- <Pie
-                  :series="seriesPieType"
-                  :color="colorPie"
-                  :legendText="legendTextPieType"
-                /> -->
                 <PieType
                   :domain="item.Key"
                   :startTime="startTime"
@@ -85,22 +81,17 @@
               </el-col>
               <el-col :sapn="12">
                 <h3>
-                  BOT 动作
+                  {{t('BOT 动作', 'WAF.botdz')}}
                 </h3>
                 <PieAction
                   :domain="item.Key"
                   :startTime="startTime"
                   :endTime="endTime"
                 />
-                <!-- <Pie
-                  :series="seriesPieAction"
-                  :color="colorPie"
-                  :legendText="legendTextPieAction"
-                /> -->
               </el-col>
             </el-row>
             <h3>
-              BOT 请求趋势
+              {{t('BOT 请求趋势', 'WAF.botqqqs')}}
             </h3>
             <ELine
               :domain="item.Key"
@@ -109,13 +100,6 @@
               :selBtn="selBtn"
               :dateTimeValue="dateTimeValue"
             />
-            <!-- <ELine
-              :xAxis="xAxisLineFlow"
-              :series1="seriesLineFlowTotal"
-              :series2="seriesLineFlowBot"
-              :legendText="legendTextLineFlow"
-              :color="colorLine"
-            /> -->
           </div>
         </div>
       </div>
@@ -141,6 +125,7 @@ export default {
     return {
       tipShow: true, // 显示提示文字
       selBtn: 3, // 默认选中今天
+      loading: true,
       dateTimeValue: [moment().startOf("day"), moment().endOf("day")], // 日期绑定
       startTime: moment().startOf("day").utc().valueOf(), // 时间戳
       endTime: moment().endOf("day").utc().valueOf(), // 时间戳
@@ -197,6 +182,7 @@ export default {
     },
     // 获取BOT 记录数 域名 TOP N
     getBotDomainStat() {
+      this.loading = true
        const params = {
         Version: "2018-01-25",
         StartTs: this.startTime,
@@ -214,14 +200,11 @@ export default {
             arrIp.push(v.Key)
             arrIpCount.push(v.Value)
           })
-          // this.seriesBotIp = arrIpCount.concat(10)
-          // this.xAxisBotIp = arrIp.concat("ddd.dhycloud.com")
-          // this.seriesBotIp = arrIpCount.concat(arrIpCount)
-          // this.xAxisBotIp = arrIp.concat(arrIp)
           this.seriesBotIp = arrIpCount
           this.xAxisBotIp = arrIp
-          
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     //时间点击事件

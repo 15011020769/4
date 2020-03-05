@@ -64,3 +64,5 @@ export const CC_LIST = 'dayu2/DescribeCCEvList' // 获取 CC 攻击事件列表
 export const CC_DATA = 'dayu2/DescribeCCTrend' // 获取CC攻击指标数据
 export const STATIC_LIST = 'dayu2/DescribeTransmitStatis' // 获取业务转发统计数据
 export const DESCRIBE_CHANNEL_DEVICE_RESOURCE = 'dayu2/DescribeChannelDeviceResource' // 获取基础防护互联网通道资源
+
+export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源自动续费标记

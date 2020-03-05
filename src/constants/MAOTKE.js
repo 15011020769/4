@@ -47,7 +47,9 @@ export const DESCRIBE_ZONE_INFO = 'cvm/DescribeZoneInstanceConfigInfos'
 export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'
 
 //获取节点JOBID
-export const JOB_ID = 'tsm/GetTkeDataJob'
+export const JOB_ID = 'tsm2/GetTkeDataJob'
+
+export const MOMITOR_TKE = 'tsm2/GetTkeDataResult'
 
 //新建伸缩组
 export const CREATE_GROUP = 'tke2/CreateClusterAsGroup'
@@ -60,3 +62,6 @@ export const ADD_CIDE_TO_CCN = 'tke2/AddClusterCIDRToCcn'
 
 //关闭注册云网络
 export const CLOSE_CIDE_TO_CCN = 'tke2/DeleteClusterCIDRFromCcn'
+
+//新增节点
+export const TKE_ADD_NODE = 'tke2/CreateClusterInstances'

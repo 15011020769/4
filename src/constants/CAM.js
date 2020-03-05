@@ -1,4 +1,5 @@
 //用户列表
+export const CREATE_POLICY = 'cam2/CreatePolicy'
 export const USER_LIST = 'cam2/ListUsers'
 export const POLICY_LIST = 'cam2/ListPolicies'
 export const USER_GROUP = 'cam2/ListGroups'
@@ -26,7 +27,8 @@ export const ATTACH_GROUP = 'cam2/AttachGroupPolicy'
 export const GET_GROUP = 'cam2/GetGroup'
 export const UPDATA_GROUP = 'cam2/UpdateGroup'
 export const DETACH_POLICY = 'cam2/DetachGroupPolicy'
-export const MODIFY_SUBSCRIPTION = 'cam/ModifyMsgTypeOnReceiver'
+export const MODIFY_SUBSCRIPTION = 'message/ModifyMsgTypeOnReceiver'
+export const GET_ALL_SUBSCRIPTION_TYPE = 'message/GetReceiversOnAllType'
 
 //策略
 export const LIST_ENPOLICY = 'cam2/ListEntitiesForPolicy'

@@ -14,24 +14,32 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">域名</span>
-                  {{log.Domain}}
+                  <el-row type="flex">
+                    <div class="w120">域名</div>
+                    <div>{{log.Domain}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">攻击类型</span>
-                  {{log.AttackType}}
+                  <el-row type="flex">
+                    <div class="w120">攻击类型</div>
+                    <div>{{log.AttackType}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
             <el-col :span="8">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w80">地区</span>
-                  {{log.IpinfoState}}
+                  <el-row type="flex">
+                    <div class="w80">地区</div>
+                    <div>{{log.IpinfoState}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w80">IP所有者</span>
-                  {{log.IpinfoDetail}}
+                  <el-row type="flex">
+                    <div class="w80">IP所有者</div>
+                    <div>{{log.IpinfoDetail}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
@@ -41,24 +49,32 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">聚合攻击次数</span>
-                  {{log.Count}}
+                  <el-row type="flex">
+                    <div class="w120">聚合攻击次数</div>
+                    <div>{{log.Count}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">攻击源IP</span>
-                  {{log.AttackIp}}
+                  <el-row type="flex">
+                    <div class="w120">攻击源IP</div>
+                    <div>{{log.AttackIp}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
             <el-col :span="8">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w80">国家</span>
-                  {{log.IpinfoNation}}
+                  <el-row type="flex">
+                    <div class="w80">国家</div>
+                    <div>{{log.IpinfoNation}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w80">省份</span>
-                  {{log.IpinfoProvince}}
+                  <el-row type="flex">
+                    <div class="w80">省份</div>
+                    <div>{{log.IpinfoProvince}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
@@ -68,24 +84,32 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">命中规则ID</span>
-                  {{log.RuleId}}
+                  <el-row type="flex">
+                    <div class="w120">命中规则ID</div>
+                    <div>{{log.RuleId}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">命中规则名称</span>
-                  {{log.RuleName}}
+                  <el-row type="flex">
+                    <div class="w120">命中规则名称</div>
+                    <div>{{log.RuleName}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
             <el-col :span="8">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w80">城市</span>
-                  {{log.IpinfoCity}}
+                  <el-row type="flex">
+                    <div class="w80">城市</div>
+                    <div>{{log.IpinfoCity}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w80">经度</span>
-                  {{log.IpinfoDimensionality}}
+                  <el-row type="flex">
+                    <div class="w80">经度</div>
+                    <div>{{log.IpinfoDimensionality}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
@@ -95,26 +119,34 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">请求方法</span>
-                  {{log.Method}}
+                  <el-row type="flex">
+                    <div class="w120">请求方法</div>
+                    <div>{{log.Method}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">风险等级</span>
-                  <span v-if="log.RiskLevel === '1'">高危</span>
-                  <span v-if="log.RiskLevel === '2'">中危</span>
-                  <span v-if="log.RiskLevel === '3'">低危</span>
+                  <el-row type="flex">
+                    <div class="w120">风险等级</div>
+                    <div class="h" v-if="log.RiskLevel === '1'">高危</div>
+                    <div class="c" v-if="log.RiskLevel === '2'">中危</div>
+                    <div v-if="log.RiskLevel === '3'">低危</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
             <el-col :span="8">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w80">运营商</span>
-                  {{log.IpinfoDetail}}
+                  <el-row type="flex">
+                    <div class="w80">运营商</div>
+                    <div>{{log.IpinfoDetail}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w80">纬度</span>
-                  {{log.IpinfoLongtitude}}
+                  <el-row type="flex">
+                    <div class="w80">纬度</div>
+                    <div>{{log.IpinfoLongtitude}}</div>
+                  </el-row>
                 </el-col>
               </el-row>
             </el-col>
@@ -124,12 +156,16 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">攻击时间</span>
-                  {{log.AttackTime}}
+                  <el-row type="flex">
+                    <div class="w120">攻击时间</div>
+                    <div>{{log.AttackTime}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">匹配来源</span>
-                  {{ARGS_MAP[log.ArgsName || "none"] || "其他"}}
+                  <el-row type="flex">
+                    <div class="w120">匹配来源</div>
+                    <div>{{ARGS_MAP[log.ArgsName || "none"] || "其他"}}</div>
+                  </el-row>                  
                 </el-col>
               </el-row>
             </el-col>
@@ -139,12 +175,16 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-col :span="12">
-                  <span class="w120">请求UUID</span>
-                  {{log.Uuid}}
+                  <el-row type="flex">
+                    <div class="w120">请求UUID</div>
+                    <div>{{log.Uuid}}</div>
+                  </el-row>
                 </el-col>
                 <el-col :span="12">
-                  <span class="w120">执行动作</span>
-                  {{log.Status === '1' ? '拦截' : '观察'}}
+                  <el-row type="flex">
+                    <div class="w120">执行动作</div>
+                    <div :class="log.Status === '1' ? 'h' : ''">{{log.Status === '1' ? '拦截' : '观察'}}</div>
+                  </el-row>                  
                 </el-col>
               </el-row>
             </el-col>
@@ -153,16 +193,20 @@
           <el-row>
             <el-col :span="16">
               <el-row type="flex">
-                <span class="w120">请求URI</span>
-                {{log.Uri}}
+                <el-row type="flex">
+                  <div class="w120">请求URI</div>
+                  <div>{{log.Uri}}</div>
+                </el-row>
               </el-row>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="16">
               <el-row type="flex">
-                <span class="w120">攻击内容</span>
-                {{log.AttackContent}}
+                <el-row type="flex">
+                  <div class="w120">攻击内容</div>
+                  <div>{{log.AttackContent}}</div>
+                </el-row>                
               </el-row>
             </el-col>
           </el-row>
@@ -172,13 +216,17 @@
         <el-card>
           <h3>详情信息</h3>
           <el-row>
-            <el-col>
-              <span>协议版本</span>
-              {{log.HttpLog && log.HttpLog.PROCOTOL}}
+            <el-col v-if="log.HttpLog && log.HttpLog.PROCOTOL">
+              <el-row type="flex">
+                <div class="w120">协议版本</div>
+                <div>{{log.HttpLog.PROCOTOL}}</div>
+              </el-row>              
             </el-col>
             <el-col>
-              <span>User-Agent</span>
-              {{log.UserAgent}}
+              <el-row type="flex">
+                <div class="w120">User-Agent</div>
+                <div>{{log.UserAgent}}</div>
+              </el-row>
             </el-col>
           </el-row>
         </el-card>
@@ -227,16 +275,31 @@ export default {
     margin-bottom: 20px;
   }
   span {
+    
+  }
+  .w120 {
     display: inline-block;
     color: #888;
     font-size: 12px;
     line-height: 30px;
-  }
-  .w120 {
     width: 120px;
   }
   .w80 {
+    display: inline-block;
+    color: #888;
+    font-size: 12px;
+    line-height: 30px;
     width: 80px;
   }
+}
+::v-deep .el-row--flex {
+  // justify-content: center;
+  align-items: center;
+}
+.h {
+  color: #e1504a;
+}
+.c {
+  color: #FF9D00;
 }
 </style>

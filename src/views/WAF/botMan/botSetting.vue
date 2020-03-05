@@ -25,12 +25,7 @@
             <el-table-column prop="num" :label="t('序号', 'WAF.xh')" width="70%">
               <template slot-scope="scope">{{ scope.$index+1 }}</template>
             </el-table-column>
-            <el-table-column prop="Domain">
-              <div slot="header" @click="togleHost" style="cursor: pointer">
-                域名
-                <i v-if="hostFlag" class="el-icon-caret-top" />
-                <i v-if="!hostFlag" class="el-icon-caret-bottom" />
-              </div>
+            <el-table-column prop="Domain" label="域名" sortable>
             </el-table-column>
             <el-table-column class="bot-wrapper" prop="Status" :label="``">
               <div slot="header">

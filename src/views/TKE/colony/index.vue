@@ -120,7 +120,11 @@
                 v-if="scope.row.ClusterInstanceState == 'AllNormal'"
                 >全部正常</span
               >
-              <span class="text-red" v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'">全部异常</span>
+              <span
+                class="text-red"
+                v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'"
+                >全部异常</span
+              >
               <span class="text-red" v-else>部分异常</span>)
               <el-popover
                 width="50"
@@ -129,32 +133,20 @@
                 v-if="scope.row.ClusterInstanceState != 'AllNormal'"
               >
                 <div class="node-popover">
-                  <p>
-                    创建中：{{ scope.row.ClusterInitNodeNum }}台
-                  </p>
-                  <p>
-                    运行中：{{
-                      scope.row.ClusterRunningNodeNum
-                    }}台
-                  </p>
-                  <p>
-                    异常：{{ scope.row.ClusterRunningNodeNum }}台
-                  </p>
-                  <p>
-                    已关机：{{ scope.row.ClusterClosedNodeNum }}台
-                  </p>
-                  <p>
-                    关机中：{{ scope.row.ClusterClosingNodeNum }}台
-                  </p>
+                  <p>创建中：{{ scope.row.ClusterInitNodeNum }}台</p>
+                  <p>运行中：{{ scope.row.ClusterRunningNodeNum }}台</p>
+                  <p>异常：{{ scope.row.ClusterFailedNodeNum }}台</p>
+                  <p>已关机：{{ scope.row.ClusterClosedNodeNum }}台</p>
+                  <p>关机中：{{ scope.row.ClusterClosingNodeNum }}台</p>
                 </div>
                 <i class="el-icon-warning-outline" slot="reference"></i>
               </el-popover>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="已分配/总配置">
-            <template $slot-scope="scope">
-              <p>CPU: -/-</p>
-              <p>内存: -/-</p>
+            <template slot-scope="scope">
+              <p>CPU: -/{{ scope.row.root }}核</p>
+              <p>内存: -/-GB</p>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="220">
@@ -213,13 +205,19 @@
                       >新建节点</span
                     >
                   </el-dropdown-item>
-                  <el-dropdown-item command="c">
+
+                  <el-dropdown-item
+                    command="c"
+                    v-if="scope.row.ClusterStatus == 'Running'"
+                  >
                     <span
                       class="tke-text-link"
                       href="javascript:;"
                       @click="Delete(scope.row)"
                       >删除</span
-                    >
+                    > </el-dropdown-item
+                  ><el-dropdown-item command="b" v-else>
+                    <span class="tke-text-link tke-text-link-dis">删除</span>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -295,16 +293,24 @@
             <el-table-column label="ID" width="180">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
-                <p>{{ InstanceName_2[scope.$index] }}</p>
+                <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" width="180">
+            <el-table-column label="状态" width="100">
               <template slot-scope="scope">
-                <p v-if="scope.row.InstanceState === 'running'">健康</p>
-                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                <p
+                  v-if="scope.row.InstanceState === 'running'"
+                  class="text-green"
+                >
+                  健康
+                </p>
+                <p
+                  v-else-if="scope.row.InstanceState === 'initializing'"
+                  class="text-orange"
+                >
                   创建中
                 </p>
-                <p v-else>异常</p>
+                <p v-else class="text-red">异常</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
@@ -322,16 +328,24 @@
             <el-table-column label="ID" width="180">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
-                <p>{{ InstanceName[scope.$index] }}</p>
+                <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
             <el-table-column label="状态" width="180">
               <template slot-scope="scope">
-                <p v-if="scope.row.InstanceState === 'running'">健康</p>
-                <p v-else-if="scope.row.InstanceState === 'initializing'">
+                <p
+                  v-if="scope.row.InstanceState === 'running'"
+                  class="text-green"
+                >
+                  健康
+                </p>
+                <p
+                  v-else-if="scope.row.InstanceState === 'initializing'"
+                  class="text-orange"
+                >
                   创建中
                 </p>
-                <p v-else>异常</p>
+                <p v-else class="text-red">异常</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
@@ -377,7 +391,9 @@ import {
   TKE_COLONY_DES,
   TKE_COLONY_DELETE,
   TKE_DELETE_XS,
-  TKE_EXIST_NODES
+  TKE_EXIST_NODES,
+  JOB_ID,
+  MOMITOR_TKE
 } from "@/constants";
 export default {
   name: "colony",
@@ -385,6 +401,8 @@ export default {
     return {
       loadShow: true, // 加载是否显示
       list: [], // 集群列表
+      list1: [], // 集群列表
+      JobId: "",
       listStatus: [], // 集群列表节点数状态
       listStatusArr: [], // 集群列表节点数状态
       editClusterId: "",
@@ -421,11 +439,8 @@ export default {
       deteleMaterNodeNum: "",
       detailsShow: true,
       InstanceName: [],
-      InstanceName_2: [],
       detaleTableData: [],
       detaleTableData_ETCD: [],
-      detaleTableData_2: [],
-      detaleTableData_2ETCD: [],
       deteleCheck: true,
       deleteLoadShow: true
     };
@@ -459,7 +474,7 @@ export default {
           let params = {
             Version: "2018-05-25"
           };
-          if(res.Response.Clusters.length > 0) {
+          if (res.Response.Clusters.length > 0) {
             for (var i in res.Response.Clusters) {
               params["ClusterIds." + i] = res.Response.Clusters[i].ClusterId;
             }
@@ -468,26 +483,79 @@ export default {
             this.listStatus = res1.Response.ClusterStatusSet;
             let status = res1.Response.ClusterStatusSet;
             res.Response.Clusters.map(cluster => {
-              for(var i in status) {
-                if(cluster.ClusterId === status[i].ClusterId) {
+              for (var i in status) {
+                if (cluster.ClusterId === status[i].ClusterId) {
                   cluster.status = status[i].ClusterState;
                   cluster.ClusterInstanceState = status[i].ClusterInstanceState;
                   cluster.ClusterBMonitor = status[i].ClusterBMonitor;
                   cluster.ClusterInitNodeNum = status[i].ClusterInitNodeNum;
-                  cluster.ClusterRunningNodeNum = status[i].ClusterRunningNodeNum;
+                  cluster.ClusterRunningNodeNum =
+                    status[i].ClusterRunningNodeNum;
                   cluster.ClusterFailedNodeNum = status[i].ClusterFailedNodeNum;
                   cluster.ClusterClosedNodeNum = status[i].ClusterClosedNodeNum;
-                  cluster.ClusterClosingNodeNum = status[i].ClusterClosingNodeNum;
+                  cluster.ClusterClosingNodeNum =
+                    status[i].ClusterClosingNodeNum;
                 }
               }
               return cluster;
             });
           });
-          this.list = res.Response.Clusters;
+          this.list1 = res.Response.Clusters;
           this.total = res.Response.TotalCount;
         }
         // this.getColonyStatus();
-        console.log("list",this.list);
+
+        let _data = {
+          EndTime: new Date().getTime(),
+          Limit: 65535,
+          Module: "/front/v1",
+          NamespaceName: "k8s_cluster",
+          Offset: 0,
+          Order: "desc",
+          OrderBy: "timestamp",
+          StartTime: new Date().getTime() - 1 * 60 * 60 * 1000,
+          Version: "2019-06-06"
+        };
+        let ClusterIdArr = [];
+        for (let i in this.list1) {
+          ClusterIdArr.push(this.list1[i].ClusterId);
+        }
+        _data["Conditions.0"] = JSON.stringify([
+          "tke_cluster_instance_id",
+          "in",
+          ClusterIdArr
+        ]);
+        _data["Fields.0"] = "avg(k8s_cluster_cpu_core_total)";
+        _data["Fields.1"] = "avg(k8s_cluster_memory_total)";
+        _data["Fields.2"] = "avg(k8s_cluster_rate_cpu_core_request_cluster)";
+        _data["Fields.3"] = "avg(k8s_cluster_rate_mem_request_bytes_cluster)";
+        _data["GroupBys.0"] = "timestamp(60s)";
+        _data["GroupBys.1"] = "tke_cluster_instance_id";
+        await this.axios.post(JOB_ID, _data).then(res => {
+          this.JobId = res.Response.JobId;
+        });
+        let _datas = {
+          Version: "2019-06-06",
+          JobId: this.JobId,
+          // JobId: "36asom5trrq8use7",
+          Module: "/front/v1"
+        };
+        await this.axios.post(MOMITOR_TKE, _datas).then(res => {
+          if (JSON.parse(res.Response.Data).length !== 0) {
+            let _Data = JSON.parse(res.Response.Data).splice(
+              0,
+              this.list1.length
+            );
+            console.log(_Data);
+            for (let j in this.list1) {
+              if (this.list1[j].ClusterId === _Data[j][1]) {
+                this.list1[j]["root"] = _Data[j][2].toFixed(2);
+              }
+            }
+          }
+          this.list = this.list1;
+          console.log("list", this.list);
+        });
         this.loadShow = false;
       } else {
         this.loadShow = false;
@@ -520,7 +588,7 @@ export default {
       let params = {
         Version: "2018-05-25"
       };
-      if(list.length > 0) {
+      if (list.length > 0) {
         for (var i in list) {
           params["ClusterIds." + i] = list[i].ClusterId;
         }
@@ -531,8 +599,8 @@ export default {
         this.listStatusArr = [];
         let status = res.Response.ClusterStatusSet;
         list.map(cluster => {
-          for(var i in status) {
-            if(cluster.ClusterId === status[i].ClusterId) {
+          for (var i in status) {
+            if (cluster.ClusterId === status[i].ClusterId) {
               cluster.ClusterState = status[i].ClusterState;
               cluster.ClusterInstanceState = status[i].ClusterInstanceState;
               cluster.ClusterBMonitor = status[i].ClusterBMonitor;
@@ -637,16 +705,50 @@ export default {
       this.deteleMaterNodeNum = row.ClusterMaterNodeNum;
       this.DeleteTable(row);
     },
-    DeleteTable(row) {
+    async DeleteTable(row) {
       let params = {
         Version: "2018-05-25",
         ClusterId: row.ClusterId
       };
-      this.axios.post(TKE_DELETE_XS, params).then(res => {
+      await this.axios.post(TKE_DELETE_XS, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.detaleTableData = res.Response.InstanceSet.reverse();
-          console.log(this.detaleTableData);
-          this.DeleteTable_2();
+          var _detaleTableData = res.Response.InstanceSet;
+
+          let params = {
+            Version: "2017-03-12",
+            Limit: 20
+          };
+          for (var i in _detaleTableData) {
+            params["InstanceIds." + i] = _detaleTableData[i].InstanceId;
+          }
+          this.axios.post(TKE_EXIST_NODES, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let _detaleTableData_2 = res.Response.InstanceSet.reverse();
+              for (let i in _detaleTableData) {
+                for (let j in _detaleTableData_2) {
+                  if (
+                    _detaleTableData[i].InstanceId ===
+                    _detaleTableData_2[j].InstanceId
+                  ) {
+                    _detaleTableData[i]["InstanceName"] =
+                      _detaleTableData_2[j].InstanceName;
+                  }
+                }
+              }
+              this.detaleTableData = _detaleTableData.reverse();
+              this.deleteLoadShow = true;
+            } else {
+              this.deleteLoadShow = false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -664,82 +766,60 @@ export default {
         ClusterId: row.ClusterId,
         InstanceRole: "MASTER_ETCD"
       };
-      this.axios.post(TKE_DELETE_XS, data).then(res => {
+      await this.axios.post(TKE_DELETE_XS, data).then(res => {
         if (res.Response.Error === undefined) {
-          this.detaleTableData_ETCD = res.Response.InstanceSet.reverse();
-          console.log(this.detaleTableData_ETCD);
-          this.DeleteTable_2ETCD();
+          var _detaleTableData_ETCD = res.Response.InstanceSet;
+          let params = {
+            Version: "2017-03-12",
+            Limit: 20
+          };
+          for (let i in _detaleTableData_ETCD) {
+            params["InstanceIds." + i] = _detaleTableData_ETCD[i].InstanceId;
+          }
+          this.axios.post(TKE_EXIST_NODES, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let _detaleTableData_2ETCD = res.Response.InstanceSet;
+              for (let i in _detaleTableData_ETCD) {
+                for (let j in _detaleTableData_2ETCD) {
+                  if (
+                    _detaleTableData_ETCD[i].InstanceId ===
+                    _detaleTableData_2ETCD[j].InstanceId
+                  ) {
+                    _detaleTableData_ETCD[i]["InstanceName"] =
+                      _detaleTableData_2ETCD[j].InstanceName;
+                  }
+                }
+              }
+              this.detaleTableData_ETCD = _detaleTableData_ETCD.reverse();
+              console.log(
+                "this.detaleTableData_ETCD",
+                this.detaleTableData_ETCD
+              );
+              this.deleteLoadShow = false;
+            } else {
+              this.deleteLoadShow = false;
+              let ErrTips = {
+                FailedOperation: "操作失败",
+                InternalError: "内部错误",
+                "InternalError.Param": "Param。",
+                "InternalError.PublicClusterOpNotSupport":
+                  "集群不支持当前操作。",
+                InvalidParameter: "参数错误",
+                ResourceNotFound: "资源不存在",
+                ResourceUnavailable: "资源不可用"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    DeleteTable_2() {
-      let params = {
-        Version: "2017-03-12",
-        Limit: 20
-      };
-      for (var i in this.detaleTableData) {
-        params["InstanceIds." + i] = this.detaleTableData[i].InstanceId;
-      }
-      this.axios.post(TKE_EXIST_NODES, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.detaleTableData_2 = res.Response.InstanceSet.reverse();
-          this.InstanceName = [];
-          for (var i in this.detaleTableData_2) {
-            this.InstanceName.push(this.detaleTableData_2[i].InstanceName);
-          }
-          this.deleteLoadShow = false;
-        } else {
-          this.deleteLoadShow = false;
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    DeleteTable_2ETCD() {
-      let params = {
-        Version: "2017-03-12",
-        Limit: 20
-      };
-      for (var i in this.detaleTableData) {
-        params["InstanceIds." + i] = this.detaleTableData[i].InstanceId;
-      }
-      this.axios.post(TKE_EXIST_NODES, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.detaleTableData_2ETCD = res.Response.InstanceSet.reverse();
-          this.InstanceName_2 = [];
-          for (var i in this.detaleTableData_2ETCD) {
-            this.InstanceName_2.push(
-              this.detaleTableData_2ETCD[i].InstanceName
-            );
-          }
-          this.deleteLoadShow = false;
-        } else {
-          this.deleteLoadShow = false;
-          let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
-            "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            InvalidParameter: "参数错误",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用"
-          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -978,5 +1058,14 @@ export default {
       }
     }
   }
+}
+.text-green {
+  color: #0abf5b;
+}
+.text-orange {
+  color: #ff9d00;
+}
+.text-red {
+  color: #e1504a;
 }
 </style>

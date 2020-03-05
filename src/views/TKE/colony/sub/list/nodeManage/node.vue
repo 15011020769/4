@@ -244,7 +244,7 @@ import moment from 'moment';
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
 import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE, 
-  NODE_ID_LIST, NODE_POD_LIST, JOB_ID } from '@/constants';
+  NODE_ID_LIST, NODE_POD_LIST, JOB_ID, MOMITOR_TKE } from '@/constants';
 export default {
   name: "colonyNodeManageNode",
   data() {
@@ -349,10 +349,10 @@ export default {
           ClusterName: this.clusterId,
         }
         let paramJob = {
-          Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
+          // Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
           EndTime: new Date().getTime(),
-          Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
-          GroupBys: ["timestamp(60s)", "unInstanceId"],
+          // Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
+          // GroupBys: ["timestamp(60s)", "unInstanceId"],
           Limit: 65535,
           Module: "/front/v1",
           NamespaceName: "k8s_node",
@@ -362,6 +362,12 @@ export default {
           StartTime: new Date().getTime(),
           Version: "2019-06-06"
         }
+        paramJob['Conditions.0'] = JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]);
+        paramJob['Conditions.1'] = JSON.stringify(["node_role","=","Node"]);
+        paramJob['Fields.0'] = 'avg(k8s_node_cpu_core_request_total)';
+        paramJob['Fields.1'] = 'avg(k8s_node_memory_request_bytes_total)';
+        paramJob['GroupBys.0'] = 'timestamp(60s)';
+        paramJob['GroupBys.1'] = 'unInstanceId';
         if(ids.length > 0) {
           for(let i = 0; i < ids.length; i++) {
             param['InstanceIds.'+i] = ids[i];
@@ -386,7 +392,14 @@ export default {
               duration: 0
             });
           }
-          // let jobRes = await this.axios.post(JOB_ID, paramJob);
+          let param3 = {
+            Version: "2019-06-06",
+            JobId: 'xocz9p1dhimlcsal',
+            Module: '/front/v1'
+          }
+          let jobRes = await this.axios.post(JOB_ID, paramJob);
+          let jobRes22 = await this.axios.post(MOMITOR_TKE, param3);
+          
           this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
           if(nodeRes.Response.Error === undefined) {

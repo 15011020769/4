@@ -3,7 +3,7 @@
     <div class="big-title">{{$t("menu.title1")}} CM</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
       background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
-      <!-- <el-menu-item index="overview">
+      <el-menu-item index="overview">
         <span slot="title">监控概览</span>
       </el-menu-item>
       <el-menu-item index="Dashboard">
@@ -15,7 +15,7 @@
       <el-menu-item index="History">
         <span slot="title">告警历史</span>
       </el-menu-item> -->
-      <!-- <el-submenu index="4">
+     <el-submenu index="4">
         <template slot="title">
           <span>告警配置</span>
         </template>
@@ -30,8 +30,8 @@
             <span slot="title">自定义消息</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu> -->
-      <!-- <el-menu-item index="Template">
+      </el-submenu> 
+      <el-menu-item index="Template">
         <span slot="title">触发条件模板</span>
       </el-menu-item>
       <el-submenu index="5">
@@ -46,8 +46,8 @@
             <span slot="title">平台事件</span>
           </el-menu-item>
         </el-menu-item-group>
-      </el-submenu> -->
-      <!-- <el-submenu index="6">
+      </el-submenu>
+   <el-submenu index="6">
         <template slot="title">
           <span>自定义监控</span>
         </template>

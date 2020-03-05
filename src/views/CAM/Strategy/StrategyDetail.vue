@@ -70,11 +70,11 @@
                   @click="Relation_user"
                   size="small"
                 >{{$t('CAM.strategy.straGroup')}}</el-button>
-                <!-- <el-button
+                <el-button
                   type="primary"
                   @click="Relieve_user"
                   size="small"
-                >{{$t('CAM.strategy.outBindUser')}}</el-button>-->
+                >{{$t('CAM.strategy.outBindUser')}}</el-button>
               </p>
               <div class="config_table">
                 <el-table
@@ -85,8 +85,9 @@
                   :header-cell-style="{height:'20px',padding:'0px 10px'}"
                   style="width: 100%"
                   :empty-text="$t('CAM.strategy.zwsj')"
+                  @selection-change="handleSelectionChange"
                 >
-                  <!-- <el-table-column type="selection" width="60"></el-table-column> -->
+                  <el-table-column type="selection" prop="Id" width="80"></el-table-column>
                   <el-table-column prop="date" :label="$t('CAM.strategy.straGroup')">
                     <template slot-scope="scope">
                       <el-button
@@ -118,19 +119,30 @@
                       </el-dropdown>
                     </template>
                     <template slot-scope="scope">
-                      <p v-show="scope.row.RelatedType == '1'">{{$t('CAM.strategy.userBind')}}</p>
-                      <p v-show="scope.row.RelatedType == '2'">{{$t('CAM.strategy.userGroupBind')}}</p>
+                      <p v-show="scope.row.RelatedType == '1'">用戶</p>
+                      <p v-show="scope.row.RelatedType == '2'">用戶組</p>
                     </template>
                   </el-table-column>
                   <el-table-column prop="address" label="操作">
                     <template slot-scope="scope">
-                      <!-- <el-button size="mini" type="text" @click="popover_visible = true" slot="reference">解除用户<span v-show="scope.row.RelatedType == '2'">组</span></el-button> -->
-                      <el-button size="mini" type="text" @click="del(scope.row)" slot="reference">
-                        {{$t('CAM.strategy.sureOubind')}}
-                        <span
-                          v-show="scope.row.RelatedType == '2'"
-                        >{{$t('CAM.strategy.team')}}</span>
-                      </el-button>
+                      <el-popover
+                        placement="bottom"
+                        width="280"
+                        v-model="scope.row.delDialog"
+                      >
+                        <div class="prpoDialog">
+                          <p>解除此用戶組後，將不具備該策略對應的許可權，是否確認？</p>
+                        </div>
+                        <div style="text-align: center; margin: 0">
+                          <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)">確認解除</el-button>
+                          <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
+                        </div>
+                        <el-button size="mini" type="text" slot="reference"style="color:#3E8EF7;background: transparent;font-size:12px;">
+                          解除用戶<span
+                            v-show="scope.row.RelatedType == '2'"
+                          >{{$t('CAM.strategy.team')}}</span>
+                        </el-button>
+                      </el-popover>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -139,8 +151,11 @@
             <div
               style="background:#fff;padding:10px;display:flex;justify-content: space-between;line-height:30px"
             >
-              <div style="flex:1;display:flex;justify-content: flex-end;">
-                <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('CAM.strip')}}</span>
+              <div style="flex:1;display:flex;justify-content: space-between;">
+                <div>
+                  <span class="pagtotal">已选 {{policysSelData.length}} 项，</span>
+                  <span class="pagtotal" style="margin-left: 5px;">共&nbsp;{{TotalCount}}&nbsp;{{$t('CAM.strip')}}</span>
+                </div>
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
@@ -244,11 +259,11 @@ export default {
         },
         {
           value: "1",
-          label: "用戶關聯"
+          label: "用戶"
         },
         {
           value: "2",
-          label: "用戶組關聯"
+          label: "用戶組"
         }
       ],
       entityFilter: "",
@@ -310,15 +325,15 @@ export default {
     this.getAttachPolicys();
   },
   methods: {
-    del(row) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
-        confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-        this.removePolicyEntity(row);
-      });
-    },
+    // del(row) {
+    //   this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+    //     confirmButtonText: "確定",
+    //     cancelButtonText: "取消",
+    //     type: "warning"
+    //   }).then(() => {
+    //     this.removePolicyEntity(row);
+    //   });
+    // },
     attach(val) {
       this.attachVal = val;
     },
@@ -397,9 +412,10 @@ export default {
           var groupArr = [];
           var userArr = [];
           // RelatedType 关联类型。1 用户关联 ； 2 用户组关联
-          this.policysData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
-          this.policysData.forEach(item => {
+          const list = res.Response.List
+          list.forEach(item => {
+            item.delDialog = false
             if (item.RelatedType == 2) {
               groupArr.push(item);
             }
@@ -407,6 +423,8 @@ export default {
               userArr.push(item);
             }
           });
+          console.log(list)
+          this.policysData = list;
           this.userArr = userArr;
           this.groupArr = groupArr;
           this.loading = false;
@@ -708,5 +726,8 @@ export default {
       }
     }
   }
+}
+.pagtotal {
+  color: #888;
 }
 </style>

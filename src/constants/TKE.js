@@ -149,7 +149,7 @@ export const POINT_REQUEST = 'tke2/ForwardRequest'
 export const TKE_DELETE_POLICIES = 'tke2/DeleteAlarmPolicies'
 
 // 云硬盘列表
-export const TKE_DESCRIBEDISKS = 'cbs/DescribeDisks'
+export const TKE_DESCRIBEDISKS = 'cbs2/DescribeDisks'
 
 // ingress新建 - 获取证书列表
 export const TKE_GETCERTLIST = 'account/GetCertList'
@@ -163,4 +163,18 @@ export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
 // ingress新建 - 获取负载均衡器
 export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'
 
+
 export const GetTkeDataResult = 'tsm2/GetTkeDataResult'
+
+// 定期备份
+export const TKE_CBS_POLICIES = 'cbs2/DescribeAutoSnapshotPolicies'
+
+// 云硬盘---地区选择
+export const TKE_DESCRIBEZONES = 'cvm2/DescribeZones'
+
+
+
+
+
+
+

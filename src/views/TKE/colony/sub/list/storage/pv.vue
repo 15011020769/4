@@ -89,7 +89,7 @@
             label="操作"
             width="200">
             <template slot-scope="scope">
-              <span class="tke-text-link">编辑YAML</span>
+              <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
               <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
             </template>
           </el-table-column>
@@ -109,6 +109,18 @@
           </div>
         </div>
       </div>
+      <!-- 删除提示 -->
+       <el-dialog
+          title="删除资源"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          >
+          <span>您确定要删除PersistentVolume：{{deleteName}}吗？</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="DeletePersistentVolume()">确 定</el-button>
+            <el-button @click="centerDialogVisible = false">取 消</el-button>
+          </span>
+        </el-dialog>
   </div>
 </template>
 <script>
@@ -130,6 +142,8 @@ export default {
       pageIndex:0,
       multipleSelection: [],
       searchInput: "", //输入的搜索关键字
+      deleteName:"",
+      centerDialogVisible:false
     };
   },
  
@@ -181,6 +195,27 @@ export default {
       this.loadShow = true
       this.GetPersistentVolume()
     },
+    // 删除
+    deleteOne(row){
+      this.deleteName = row.metadata.name
+      this.centerDialogVisible = true
+    },
+     // 删除一行数据
+    // deleteOne(row){
+    //     this.loadShow = true
+    //     this.DeletePersistentVolume(row.metadata.name)
+    //     this.GetPersistentVolume()
+    // },
+    // 跳转Yaml
+    editYaml(row){
+      this.$router.push({
+          name: "pvUpdate",
+          query: {
+            clusterId: this.$route.query.clusterId,
+            resourceIns:row.metadata.name
+          }
+      });
+    },
     // 导出表格
     exportExcel() {
       console.log('exportExcel...')
@@ -208,22 +243,17 @@ export default {
       this.pageIndex+=1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      // this.getColonyList();
+      this.loadShow = true
+      this.GetPersistentVolume();
     },
-    // 删除一行数据
-    deleteOne(row){
-        this.loadShow = true
-        this.DeletePersistentVolume(row.metadata.name)
-        this.GetPersistentVolume()
-    },
+   
     // 获取pv列表
    GetPersistentVolume(){
       const param = {
          ClusterName: this.$route.query.clusterId,
          Method: "GET",
-         Path: "/api/v1/persistentvolumes?limit=20",
+         Path: "/api/v1/persistentvolumes?limit="+this.pageSize,
          Version: "2018-05-25"
         }
         this.axios.post(POINT_REQUEST, param).then(res => {
@@ -232,7 +262,7 @@ export default {
             console.log(data)
             this.list = data.items
             console.log(this.list)
-            // this.TotalCount = res.Response.TotalCount
+            this.total = data.items.length
             // this.delete = []
             this.loadShow = false
           } else {
@@ -271,17 +301,20 @@ export default {
         })
     },
     // 删除pv
-    DeletePersistentVolume(row){
+    DeletePersistentVolume(){
       const param = {
           ClusterName: this.$route.query.clusterId,
           Method: "DELETE",
-          Path: "/api/v1/persistentvolumes/"+row,
+          Path: "/api/v1/persistentvolumes/"+this.deleteName,
           RequestBody: {"propagationPolicy":"Background"},
           Version: "2018-05-25"
         }
         this.axios.post(POINT_REQUEST, param).then(res => {
           if (res.Response.Error == undefined) {
-            this.loadShow = false
+            this.loadShow = true
+            this.centerDialogVisible = false
+            this.GetPersistentVolume()
+            
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.code],
@@ -312,16 +345,16 @@ export default {
         }
       },
     creationTimestamps:function(value){
-              var d = new Date(value);
-              var n = d.getFullYear();
-              var y = d.getMonth() + 1;
-              var r = d.getDate();
-              var h = d.getHours(); //12
-              var m = d.getMinutes(); //12
-              var s = d.getSeconds();
-              h < 10 ? h = "0" + h : h;
-              m < 10 ? m = "0" + m : m
-              return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
+        var d = new Date(value);
+        var n = d.getFullYear();
+        var y = d.getMonth() + 1;
+        var r = d.getDate();
+        var h = d.getHours(); //12
+        var m = d.getMinutes(); //12
+        var s = d.getSeconds();
+        h < 10 ? h = "0" + h : h;
+        m < 10 ? m = "0" + m : m
+        return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
       }
     },
   components: {

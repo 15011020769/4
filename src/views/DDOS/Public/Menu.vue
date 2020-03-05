@@ -1,6 +1,6 @@
 <template>
   <div class="DDOS">
-    <div class="big-title">DDoS防护</div>
+    <div class="big-title">DDoS防護</div>
     <!-- <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" :router="true">
       <el-menu-item index="appId">
         <i class="iconfont">&#xe615;</i>
@@ -18,10 +18,10 @@
       :router="true"
     >
       <el-menu-item index="ProtectOverview">
-        <span slot="title">防护概览</span>
+        <span slot="title">防護概览</span>
       </el-menu-item>
       <el-menu-item index="basicProtection">
-        <span slot="title">基础防护</span>
+        <span slot="title">基础防護</span>
       </el-menu-item>
       <el-submenu index="IpProfessional">
         <template slot="title">
@@ -29,9 +29,9 @@
         </template>
         <el-menu-item-group>
           <el-menu-item class="selectMenu" index="IpProfessional">统计报表</el-menu-item>
-          <el-menu-item class="selectMenu" index="ProtectionConfig">防护配置</el-menu-item>
+          <el-menu-item class="selectMenu" index="ProtectionConfig">防護配置</el-menu-item>
           <el-menu-item class="selectMenu" index="AccessConfig">接入配置</el-menu-item>
-          <el-menu-item class="selectMenu" index="AssetList">资产列表</el-menu-item>
+          <el-menu-item class="selectMenu" index="AssetList">資產列表</el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-submenu index="unBlocking">

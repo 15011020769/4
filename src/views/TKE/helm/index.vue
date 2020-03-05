@@ -183,10 +183,12 @@
       <div style="width:100%;height:400px;">
         <div style="width:40%;height:400px;float:left;">
           <el-table
-            ref="multipleTable"
+            ref="newData"
             :data="newData"
             tooltip-effect="dark"
-            style="width: 100%">
+            style="width: 100%"
+             @select="selected"
+             @select-all="selectAll">
             <el-table-column
               type="selection">
             </el-table-column>
@@ -202,12 +204,13 @@
               fixed="right"
               label="操作">
               <template slot-scope="scope">
-                <el-button @click="deleteStatus(scope.row.name)" type="text" size="small">取消安装</el-button>
+                <el-button @click="deleteStatus(scope)" type="text" size="small">取消安装</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
-        <div style="width:60%;height:400px;background:black;float:left;">
+        <div style="width:60%;height:400px;background:black;float:left;color:white;">
+          {{tableError}}
         </div>
       </div>
     </el-dialog>
@@ -257,6 +260,9 @@ export default {
       isCollapse:true,
       timeIds:null,
       openData:"",//是否开通数据
+      number:1,
+      numdel:1,
+      tableError:""
     }
   },
   created () {
@@ -279,47 +285,113 @@ export default {
       immediate: true,
       deep: true
     },
+    // openData 监听数据变化
     openData:{
         handler:function(data){
+          var arr = Object.keys(data)
+          if(arr.length){
+          // console.log(JSON.parse(data))
+          // for(let key in JSON.parse(data)){
+          //      console.log(key)
+          // }
           for(let key in data){
-            console.log(data[key])
-            var times = 1
             if(data[key]  == 0){
-              if(times == 1){
+              // 插入newData数据
+              if(this.number == 1){
                 this.newData.push({
                   name:key,
-                  status:"创建中"
+                  status:"创建中",
                 })
               }
-              this.timeIds = setInterval(()=>{
+              clearInterval(this.timeIds)
+                this.timeIds = setInterval(()=>{
+                    this.getflags= true
+                    this.$store.commit("getFlag",this.getflags);
+                    //  if(this.newData.length>1){
+                    //     this.number = 1
+                    //     // clearInterval(this.timeIds)
+                    //     this.newData.splice(this.newData.length-1,1)
+                    //     this.getCreate()
+                    //     return
+                    //  }
+                    if(this.$route.path != "/helm" || data[key] == undefined){
+                        clearInterval(this.timeIds)
+                        this.timeIds = null
+                        this.getflags = false
+                        this.$store.commit("getFlag",this.getflags);
+                        return
+                    } 
+                   
+                  // else if(data[key] == 1) {
+                  //   this.newData.push({
+                  //     name:key,
+                  //     status:"失败"
+                  //   })
+                  //   this.getflags = true
+                  //   this.$store.commit("getFlag",this.getflags)
+                  //   clearInterval(this.timeIds)
+                  // }
                   this.getCreate()
-                  this.getflags= true
-                  this.$store.commit("getFlag",this.getflags);
-                  if(this.$route.path != "/helm" || data[key] == undefined || data[key] == 1 ){
-                      window.clearInterval(this.timeIds)
-                      this.timeIds = null
-                      this.getflags = false
-                      this.$store.commit("getFlag",this.getflags);
-                  }
-                  times++
+                  console.log(data[key])
+                  // if(this.newData.length>0){
+                  //   this.newData.splice(this.newData.length,1)
+                  // }
+                  this.number++
+                  // this.numdel = 1
                 },2000)
               } else if(data[key] == 1){
-                console.log(data[key],23423)
-                this.newData.push({
-                  name:key,
-                  status:"失败"
-                })
+                this.number = 1
+                // let news = JSON.parse(JSON.stringify(this.newData))
+                
+                console.log(arr)
+                console.log(this.newData.length)
+                if(arr.length != this.newData.length){
+                  this.newData.push({
+                        name:key,
+                        status:"失败",
+                  })
+                }
+                if(arr.length == this.newData.length){
+                  this.newData = this.newData.filter(item=>{
+                    if(item.status == "失败"){
+                          return item
+                    }
+                  })
+                }
+                // for(let i in newData){
+                //   if(this.newData.length>0&&newData[i].status == "创建中"){
+                //     this.newData.splice(this.newData.length-1,1)
+                //   }
+                // }
+                // if(this.newData.length>0){
+                //   this.newData.splice(this.newData.length-1,1)
+                // }
+               
+                // this.newData = this.newData.map(item=>{
+                //   if(item.status == "失败"){
+                //     return item
+                //   }
+                // })
+                this.numdel++
                 this.getflags = true
-                this.$store.commit("getFlag",this.getflags);
-                window.clearInterval(this.timeIds)
+                this.$store.commit("getFlag",this.getflags)
+                clearInterval(this.timeIds)
               } else {
-                console.log("242342")
+                this.number = 1
+                 this.newData = this.newData.filter(item=>{
+                  if(item.status == "失败"){
+                        return item
+                  }
+                })
                 this.getflags = false
-                this.$store.commit("getFlag",this.getflags);
-                window.clearInterval(this.timeIds)
+                this.$store.commit("getFlag",this.getflags)
+                clearInterval(this.timeIds)
                 this.timeIds = null
               }
             }
+          } else {
+            this.newData = []
+          }
         },
         deep:true,
         immediate :true
@@ -342,6 +414,22 @@ export default {
     handleDelete(row){
       this.centerDialogVisible2 = true
       this.ruleForm.name = row.name
+    },
+    selected(selection, row){
+      console.log(selection[0].name)
+         if (selection.length > 1) {
+          let del_row = selection.shift();
+          this.$refs.newData.toggleRowSelection(del_row, false); // 用于多选表格，切换某一行的选中状态，如果使用
+        }
+        this.getError(selection[0].name)
+    },
+    selectAll(selection) {
+        // console.log('当用户手动勾选全选 Checkbox 时触发的事件', selection)
+        // 选择项大于2时
+        if (selection.length > 1) {
+            selection.length = 1;
+        }
+        this.getError(selection[0].name)
     },
     getUpdate(){
       this.loadShow = true
@@ -372,6 +460,7 @@ export default {
       this.flagAgin = ""
       this.loadShow = true
       this.tableData=[]
+      this.getCreate()
       this.getFlag()
       this.$router.push({
           name: 'helm',
@@ -423,14 +512,15 @@ export default {
         if (res.Error == undefined) {
           // console.log(res)
           this.options = res.Response.Clusters
-          if(this.$route.query.clusterId){
+          console.log(this.$route.query.clusterId)
+          if(this.$route.query.clusterId || this.$route.query.clusterId!=undefined){
             this.value = this.$route.query.clusterId
           } else {
             this.value = res.Response.Clusters[0].ClusterId
           }
           // this.getHelmList()
-          this.getFlag()
           this.getCreate()
+          this.getFlag()
         } else {
           this.$message({
               message: ErrorTips[res.codeDesc],
@@ -612,17 +702,17 @@ export default {
         })
     },
     // 取消安装
-    deleteStatus(row){
+    deleteStatus(scope){
       this.centerDialogVisible2 = false
       const param = {
           ClusterName: this.value,
           Method: "DELETE",
-          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/"+row+"/json",
+          Path: "/apis/platform.tke/v1/clusters/"+this.value+"/helm/tiller/v2/releases/installing/"+scope.row.name+"/json",
           Version: "2018-05-25"
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
-            this.getCreate()
+            this.newData.splice(scope.$index,1)
             if(this.newData.length == 0){
                 this.getflags = false
                 this.$store.commit("getFlag",this.getflags);
@@ -652,46 +742,14 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.openData = JSON.parse(res.Response.ResponseBody)
+          console.log(this.openData)
+         
           this.getflags = this.$store.state.flag
+          // var arr = Object.keys(openData)
           if(this.newData.length == 0){
               this.getflags = false
               this.$store.commit("getFlag",this.getflags);
           }
-          // for(let key in this.openData){
-          //   // console.log(this.openData[key])
-          //     if(this.openData[key]  == 0){
-          //       this.newData.push({
-          //         name:key,
-          //         status:"创建中"
-          //       })
-          //       this.timeIds = setInterval(()=>{
-          //         this.getCreate()
-          //         this.getflags= true
-          //         if(this.$route.path != "/helm" || data[key]=="{}" || data[key] == 1 ){
-          //             window.clearInterval(this.timeIds)
-          //             this.timeIds = null
-          //             this.getflags = false
-          //             this.$store.commit("getFlag",this.getflags);
-          //             // this.getCreate()
-          //           }
-          //       },2000)
-          //     } else if(this.openData[key] == 1){
-          //       console.log(this.openData[key],23423)
-          //       this.newData.push({
-          //         name:key,
-          //         status:"失败"
-          //       })
-          //       this.getflags = true
-          //       this.$store.commit("getFlag",this.getflags);
-          //       window.clearInterval(this.timeIds)
-          //     } else {
-          //       console.log("242342")
-          //       this.getflags = false
-          //       this.$store.commit("getFlag",this.getflags);
-          //       window.clearInterval(this.timeIds)
-          //       this.timeIds = null
-          //     }
-          //   }
           console.log(this.$store.state.flag,45)
           console.log(JSON.parse(res.Response.ResponseBody),99999)
         } else {
@@ -704,9 +762,35 @@ export default {
                 duration: 0,
             })
             this.loadShow = false
+            this.getflags = false
+            this.$store.commit("getFlag",this.getflags);
           }
         })
     },
+    getError(name){
+      const param = {
+          ClusterName: "cls-nlj8k7wm",
+          Method: "GET",
+          Path: "/apis/platform.tke/v1/clusters/"+this.$route.query.clusterId+"/helm/tiller/v2/releases/installing/"+name+"/content/json",
+          Version: "2018-05-25"
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+             if (res.Response.Error == undefined) {
+               console.log(res)
+               this.tableError=JSON.parse(res.Response.ResponseBody).message
+             }
+             else{
+                let ErrTips = {};
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0,
+                })
+             }
+          })
+        },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {
         console.log(data.data)

@@ -27,153 +27,67 @@
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
+            :clearable= false
             @change="changeTimeValue"
             range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
+            :start-placeholder="t('开始日期', 'WAF.ksrq')"
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
-          <i class="el-icon-refresh"></i>
-          <i class="el-icon-setting"></i>
+          <i class="el-icon-refresh" @click="id+=1"></i>
+          <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
-      <div class="contentNum">
-        <el-row>
-          <el-col :span="8">
-            <div class="rowContain">
-              <p>
-                <span class="green">{{upPeakValue}}</span>
-                <span>bps</span>
-              </p>
-              <p>上行带宽峰值</p>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="rowContain">
-              <p>
-                <span class="oarnge">{{downPeakValue}}</span>
-                <span>bps</span>
-              </p>
-              <p>下行带宽峰值</p>
-            </div>
-          </el-col>
-          <el-col :span="8">
-            <div class="rowContain">
-              <p>
-                <span class="blue">{{qpsRequest}}</span>
-                <span>QPS</span>
-              </p>
-              <p>请求峰值</p>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
-      <el-row class="echartsShowfirst">
-        <h3 class="topfont">
-          {{t('业务峰值趋势', 'WAF.ywfzqs')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <ELine
-          :xAxis="xAxis1"
-          :series1="series1"
-          :series2="series2"
-          :series3="series3"
-          :color="color"
-          :legendText="legendText1"
-        />
-      </el-row>
-      <el-row class="echartsShowSecond">
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('服务器响应状态', 'WAF.fwqxyzt')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        </el-col>
-        <el-col :span="12">
-        <h3 class="topfont">
-          {{t('浏览器类型', 'WAF.llqlx')}}
-          <span style="color:#bbb;">(次)</span>
-        </h3>
-        <!-- <EBar
-          :xAxis="xAxisBar"
-          :series="seriesBar"
-          :legendText="legendTextBar"
-        /> -->
-        </el-col>
-      </el-row>
-      <el-row class="echartsShowThird">
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('请求来源地域TOP5', 'WAF.qqlydy')}}
-            <span style="color:#bbb;">(%)</span>
-          </h3>
-          <EBar
-            :xAxis="xAxisBarLocal"
-            :series="seriesBarLocal"
-            :legendText="legendTextBarIp"
-            v-if="xAxisBarLocal.length == 0 ? false : true"
-          />
-          <el-row class="empty" v-else>暂无数据</el-row>
-         </el-col>
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('请求来源IP TOP5', 'WAF.qqlyip')}}
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-          <EBar
-            :xAxis="xAxisBarIp"
-            :series="seriesBarIp"
-            :legendText="legendTextBarIp"
-            v-if="xAxisBarIp.length == 0 ? false : true"
-          />
-          <el-row class="empty" v-else>暂无数据</el-row>
-         </el-col>
-      </el-row>
-      <el-row class="echartsShowFour">
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('响应时间最慢页面TOP5', 'WAF.xysjzmym')}}
-            <span style="color:#bbb;">(毫秒)</span>
-          </h3>
-          <EBar
-            :xAxis="xAxisBarArt"
-            :series="seriesBarArt"
-            :legendText="legendTextBarIp"
-            v-if="xAxisBarArt.length == 0 ? false : true"
-          />
-          <el-row class="empty" v-else>暂无数据</el-row>
-         </el-col>
-         <el-col :span="12">
-          <h3 class="topfont">
-            {{t('页面访问次数TOP5', 'WAF.ymfwcs')}}
-            <span style="color:#bbb;">(次)</span>
-          </h3>
-          <EBar
-            :xAxis="xAxisBarUrl"
-            :series="seriesBarUrl"
-            :legendText="legendTextBarIp"
-            v-if="xAxisBarArt.length == 0 ? false : true"
-          />
-          <el-row class="empty" v-else>暂无数据</el-row>
-         </el-col>
-      </el-row>
+      <component
+        class="comp"
+        v-for="comp in showModules"
+        :is="comp"
+        :times="[startTime, endTime]"
+        :domain="selectValue"
+        :showModules="showModules"
+        :id="id"
+      />
     </div>
     <DownLoadImg
       :dialogDownloadVisible = dialogDownloadVisible
       @imgSaveMethod = "saveImg"
       @onCancel = "onCancel"
     />
+    <el-dialog
+      :title="t('自定义展示模板','WAF.zdyzsmb')"
+      :visible.sync="dialogSetVisible"
+      width="40%"
+    >
+      <div>
+        <el-checkbox-group v-model="showModulesCopy" class="module">
+          <el-checkbox border v-for="(m, index) in allModule" :key="m.name" :label="m.name">
+            {{m.value}}
+            <div :class="`move ${index === 0 || index === (allModule.length - 1) ? 'alone' : ''}`">
+              <i class="el-icon-caret-top" @click.prevent="up(index)" v-if="index !== 0"></i>
+              <i class="el-icon-caret-bottom" @click.prevent="down(index)" v-if="index !== (allModule.length - 1)"></i>
+            </div>
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="saveModuleDisplaySet">保存</el-button>
+        <el-button @click="cancelModuleDisplaySet">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import moment from "moment";
 import html2canvas from "html2canvas"
 import DownLoadImg from '../components/downLoadImg'
-import ELine from "../components/line"
-import EBar from "../components/bar"
-import EPie from "../components/pie"
+import overview from './model/overview'
+import peakTrend from './model/peakTrend'
+import serverStatus from './model/serverStatus'
+import requestTypePrecent from './model/requestTypePrecent'
+import responsePage from './model/responsePage'
+import { BUSINESS_SHOWMODULE_KEY } from '../../constants'
 import {
   DESCRIBE_HOSTS,
   DESCRIBE_PEAK_VALUE,
@@ -192,61 +106,88 @@ export default {
       thisType: "1", //按钮默认选中
       endTime: moment(new Date()).endOf("days").format("YYYY-MM-DD HH:mm:ss"),
       startTime: moment(new Date()).startOf("days").format("YYYY-MM-DD 00:00:00"),
-      upPeakValue: 0, // 上行峰值
-      downPeakValue: 0, // 下行峰值
-      qpsRequest: 0, // QPS请求
-      xAxis1: [], // 业务攻击趋势
-      series1: [], // 业务攻击趋势
-      series2: [], // 业务攻击趋势
-      series3: [], // 业务攻击趋势
-      legendText1: ['QPS', '上行带宽', '下行带宽'], // 业务攻击趋势 
-      seriesPieServer: [], // 服务器响应状态
-      legendTextPieServer: [], // 服务器响应状态
-      seriesPieBrowser: [], // 浏览器类型
-      legendTextPieBrowser: [], // 浏览器类型
-      seriesBarLocal: [], // 请求来源地域
-      xAxisBarLocal: [], // 请求来源地域
-      seriesBarIp: [], // 请求来源ip
-      xAxisBarIp: [], // 请求来源ip
-      xAxisBarArt: [], // 响应时间最慢
-      seriesBarArt: [], // 响应时间最慢
-      xAxisBarUrl: [], // 页面访问次数
-      seriesBarUrl: [], // 页面访问次数
-      legendTextBarIp: "次数",
-      color: ["#006eff", "#29CC85", "#FF9D00"],
       dialogDownloadVisible: false,
+      dialogSetVisible: false,
+      allModuleCopy: [
+        { name: 'overview', value: this.t('带宽峰值、请求峰值', 'WAF.dkfzqqfz') },
+        { name: 'peakTrend', value: this.t('业务请求趋势', 'WAF.ywqqqs') },
+        { name: 'serverStatus', value: this.t('服务器响应状态 & 浏览器类型', 'WAF.fwqxyztllq') },
+        { name: 'requestTypePrecent', value: this.t('请求来源地域TOP5 & 请求来源IP TOP5', 'WAF.qqlydqqip') },
+        { name: 'responsePage', value: this.t('响应时间最慢页面TOP5 & 页面访问次数TOP5', 'WAF.xysjzmymfw') },
+      ],
+      allModule: [], // 所有组件
+      showModules: [], // 显示的组件
+      showModulesCopy: [], // 复制显示组件
+      id: 0, // 用于父组件点击查询
     };
   },
   components: {
     DownLoadImg,
-    ELine,
-    EBar,
-    ELine
+    overview,
+    peakTrend,
+    serverStatus,
+    requestTypePrecent,
+    responsePage,
   },
   mounted () {
-    this.getDominList();
-    this.getPeakPoints()
-    this.getPeakValue();
-    this.getPieChart("us");
-    this.getPieChart("ua");
-    this.getAccessIp("local");
-    this.getAccessIp("ip");
-    this.getAccessIp("art");
-    this.getAccessIp("url");
+    const allModuleCopy = JSON.parse(JSON.stringify(this.allModuleCopy))
+    let showModules = localStorage.getItem(BUSINESS_SHOWMODULE_KEY)
+    if (showModules) {
+      showModules = JSON.parse(showModules)
+    } else {
+      showModules = ['overview', 'peakTrend']
+    }
+
+    this.showModules = showModules
+
+    let i = showModules.length - 1
+    allModuleCopy.forEach(mm => {
+      if (showModules.includes(mm.name)) {
+        mm.index = showModules.indexOf(mm.name)
+      } else {
+        mm.index = ++i
+      }
+    })
+    allModuleCopy.sort((a, b) => a.index - b.index)
+
+    this.allModule = allModuleCopy
+    this.getDominList()
 　},
   watch: {
-    selectValue() {
-      this.getPeakPoints()
-      this.getPeakValue();
-      this.getPieChart("us");
-      this.getPieChart("ua");
-      this.getAccessIp("local");
-      this.getAccessIp("ip");
-      this.getAccessIp("art");
-      this.getAccessIp("url");
+    showModules(val, oldVal) {
+      if (val.length === 1) {
+        this.$message({
+          message: this.t('至少选择2个', 'WAF.zsxz2g'),
+          type: 'error',
+          showClose: true,
+          duration: 0
+        })
+        this.showModules = [...oldVal]
+      }
     }
   },
   methods: {
+    openSetDialog() {
+      this.dialogSetVisible = true
+      this.showModulesCopy = [...this.showModules]
+    },
+    up(i) {
+      this.allModule[i] = this.allModule.splice(i-1, 1, this.allModule[i])[0]
+    },
+    down(i) {
+      this.allModule[i] = this.allModule.splice(i+1, 1, this.allModule[i])[0]
+    },
+    saveModuleDisplaySet() {
+      this.dialogSetVisible = false
+      const moduleNames = this.allModule.map(m => m.name) // 获取所有模块名称
+      this.showModules = [...this.showModulesCopy]
+      this.showModules = moduleNames.filter(name => this.showModules.includes(name))
+      localStorage.setItem(BUSINESS_SHOWMODULE_KEY, JSON.stringify(this.showModules))
+    },
+    cancelModuleDisplaySet() {
+      this.dialogSetVisible = false
+      this.showModulesCopy = [...this.showModules]
+    },
     //获取域名列表
     getDominList() {
       this.axios.post(DESCRIBE_HOSTS, {
@@ -271,146 +212,68 @@ export default {
      onCancel() {
       this.dialogDownloadVisible = false
     },
-    // 获取峰值
-    getPeakValue() {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-      }
-      if (this.selectValue != "") {
-        params["Domain"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
-        this.generalRespHandler(resp, ({Up, Down, Access}) => {
-          this.upPeakValue = Up * 8
-          this.downPeakValue = Down * 8
-          this.qpsRequest = Access
-        })
-      })
-    },
-    // 获取业务攻击趋势
-    getPeakPoints() {
-      const axixArr = []
-      const series1Arr = []
-      const series2Arr = []
-      const series3Arr = []
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-      }
-      if (this.selectValue != "") {
-        params["Domain"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
-        this.generalRespHandler(resp, ({Points}) => {
-          Points.map((v) => {
-            axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
-            series1Arr.push(v.Access)
-            series2Arr.push(v.Up * 8)
-            series3Arr.push(v.Down * 8)
-          })
-          this.xAxis1 = axixArr
-          this.series1 = series1Arr
-          this.series2 = series2Arr
-          this.series3 = series3Arr
-        })
-      })
-    },
-    // 获取服务器响应浏览器类型
-    getPieChart(type) {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        QueryField: type,
-        Host: "all",
-        Edition: "clb-waf"
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      if (type == "us") {
-        this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
-          let serverArrCount = []
-          let serverArr = []
-          this.generalRespHandler(resp, (Response) => {
-            console.log(Response.Piechart)
-          })
-        })
-      } else if (type == "ua") {
-        this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
-          let browserArrCount = []
-          let browserArr = []
-          this.generalRespHandler(resp, ({Data: {Piechart}}) => {
-            console.log(Piechart)
-          })
-        })
-      }
-    },
-     // 获取请求来源地址和ip柱状图、响应时间最慢和页面访问次数top5
-    getAccessIp(type) {
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.startTime,
-        ToTime: this.endTime,
-        Host: "all",
-        Edition: "clb-waf",
-        QueryField: type,
-        Source: "access",
-      }
-      if (this.selectValue != "") {
-        params["Host"] = this.selectValue
-      }
-      this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
-        let ipArrCount = []
-        let ipArr = []
-        let localArr = []
-        let localArrCount = []
-        let artArrCount = []
-        let artArr = []
-        let urlArrCount = []
-        let urlArr = []
-        if (type == "ip") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              ipArrCount.push(v.count)
-              ipArr.push(v.ip)
-            })
-            this.xAxisBarIp = ipArr
-            this.seriesBarIp = ipArrCount
-          })
-        } else if(type == "local") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              localArrCount.push(v.count)
-              localArr.push(v.local)
-            })
-            this.xAxisBarLocal = localArr
-            this.seriesBarLocal = localArrCount
-          })
-        } else if(type == "art") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              artArrCount.push(v.count)
-              artArr.push(v.url)
-            })
-            this.xAxisBarArt = artArr
-            this.seriesBarArt = artArrCount
-          })
-        } else if(type == "url") {
-          this.generalRespHandler(resp, ({Histogram}) => {
-            Histogram && Histogram.map(v => {
-              urlArrCount.push(v.count)
-              urlArr.push(v.url)
-            })
-            this.xAxisBarUrl = urlArr
-            this.seriesBarUrl = urlArrCount
-          })
-        }
-      })
-    },
+    //  // 获取请求来源地址和ip柱状图、响应时间最慢和页面访问次数top5
+    // getAccessIp(type) {
+    //   const params = {
+    //     Version: '2018-01-25',
+    //     FromTime: this.startTime,
+    //     ToTime: this.endTime,
+    //     Host: "all",
+    //     Edition: "clb-waf",
+    //     QueryField: type,
+    //     Source: "access",
+    //   }
+    //   if (this.selectValue != "") {
+    //     params["Host"] = this.selectValue
+    //   }
+    //   this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
+    //     let ipArrCount = []
+    //     let ipArr = []
+    //     let localArr = []
+    //     let localArrCount = []
+    //     let artArrCount = []
+    //     let artArr = []
+    //     let urlArrCount = []
+    //     let urlArr = []
+    //     if (type == "ip") {
+    //       this.generalRespHandler(resp, ({Histogram}) => {
+    //         Histogram && Histogram.map(v => {
+    //           ipArrCount.push(v.count)
+    //           ipArr.push(v.ip)
+    //         })
+    //         this.xAxisBarIp = ipArr
+    //         this.seriesBarIp = ipArrCount
+    //       })
+    //     } else if(type == "local") {
+    //       this.generalRespHandler(resp, ({Histogram}) => {
+    //         Histogram && Histogram.map(v => {
+    //           localArrCount.push(v.count)
+    //           localArr.push(v.local)
+    //         })
+    //         this.xAxisBarLocal = localArr
+    //         this.seriesBarLocal = localArrCount
+    //       })
+    //     } else if(type == "art") {
+    //       this.generalRespHandler(resp, ({Histogram}) => {
+    //         Histogram && Histogram.map(v => {
+    //           artArrCount.push(v.count)
+    //           artArr.push(v.url)
+    //         })
+    //         this.xAxisBarArt = artArr
+    //         this.seriesBarArt = artArrCount
+    //       })
+    //     } else if(type == "url") {
+    //       this.generalRespHandler(resp, ({Histogram}) => {
+    //         Histogram && Histogram.map(v => {
+    //           urlArrCount.push(v.count)
+    //           urlArr.push(v.url)
+    //         })
+    //         this.xAxisBarUrl = urlArr
+    //         this.seriesBarUrl = urlArrCount
+    //       })
+    //     }
+    //   })
+    // },
     // 时间点击事件
      checkTime(type) {
       this.thisType = type;
@@ -432,27 +295,11 @@ export default {
       ipt2.value = moment(end).format("YYYY-MM-DD");
       this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPieChart();
-        this.getPieChart("us");
-        this.getPieChart("ua");
-        this.getAccessIp("local");
-        this.getAccessIp("ip");
-      })
     },
     changeTimeValue() {
       this.thisType = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
       this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.$nextTick(() => {
-        this.getPeakPoints();
-        this.getPieChart();
-        this.getPieChart("us");
-        this.getPieChart("ua");
-        this.getAccessIp("local");
-        this.getAccessIp("ip");
-      })
     },
     html2canvas_2(imgtype) {
       //获取截取区域的高度和宽度
@@ -507,6 +354,15 @@ export default {
 ::v-deep .el-col-12:nth-child(1) {
   height: 100%;
   border-right: 1px solid #ccc;
+}
+::v-deep .el-checkbox {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 0px;
+  margin-left: 0px;
+}
+::v-deep .el-checkbox.is-bordered+.el-checkbox.is-bordered {
+  margin-left: 0px;
 }
 .empty {
   height: 200px;
@@ -606,53 +462,6 @@ export default {
       }
     }
   }
-  .echartsShowfirst {
-    width: 100%;
-    height: 378px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    .topfont{
-      padding-left: 20px;
-    }
-  }
-  .echartsShowSecond {
-    width: 100%;
-    height: 258px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
-   .echartsShowThird {
-    width: 100%;
-    height: 258px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
-  .echartsShowFour {
-    width: 100%;
-    height: 308px;
-    padding: 20px 0;
-    box-sizing: border-box;
-    background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    .topfont{
-      padding-left: 20px;
-    }
-  }
   .echartsShow {
     width: 100%;
     height: 378px;
@@ -668,5 +477,26 @@ export default {
       }
     }
   }
+}
+.comp {
+  margin-top: 20px;
+}
+.module {
+  label {
+    cursor: default;
+  }
+}
+.move {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  display: flex;
+  flex-direction: column;
+  i {
+    cursor: pointer;
+  }
+}
+.alone.move {
+  top: 13px;
 }
 </style>

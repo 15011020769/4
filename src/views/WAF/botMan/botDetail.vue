@@ -1,26 +1,26 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 详情</span>
+      <span>{{t('BOT 详情', 'WAF.botxq')}}</span>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="概览" name="overview"></el-tab-pane>
-        <el-tab-pane label="未知类型" name="ub"></el-tab-pane>
-        <el-tab-pane label="自定义类型" name="ucb"></el-tab-pane>
-        <el-tab-pane label="公开类型" name="tcb"></el-tab-pane>
+        <el-tab-pane :label="t('概览', 'WAF.gl')" name="overview"></el-tab-pane>
+        <el-tab-pane :label="t('未知类型', 'WAF.wzlx')" name="ub"></el-tab-pane>
+        <el-tab-pane :label="t('自定义类型', 'WAF.zdylx')" name="ucb"></el-tab-pane>
+        <el-tab-pane :label="t('公开类型', 'WAF.gklx')" name="tcb"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多</p>
+        <p style="width: 99%">{{t('BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多', 'WAF.botxwgl')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <el-row type="flex" class="topSelect">
+      <el-row class="topSelect">
         <el-select
           v-model="domainValue"
           filterable
-          class="selectDomin"
+          popper-class="selectDomin"
           default-first-option
-          size="small"
+          size="mini"
         >
           <el-option
             v-for="item in options"
@@ -30,27 +30,36 @@
           ></el-option>
         </el-select>
         <el-button-group>
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
+          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小{{t('时', 'WAF.hour')}}</el-button>
+          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小{{t('时', 'WAF.hour')}}</el-button>
           <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
           <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
         </el-button-group>
         <el-date-picker
-            v-model="dateTimeValue"
-            type="datetimerange"
-            class="timeValue"
-            range-separator="至"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :clearable= false
-            @change="changeTimeValue"
-          ></el-date-picker>
+          v-model="dateTimeValue"
+          type="datetimerange"
+          class="timeValue"
+          range-separator="至"
+          :start-placeholder="t('开始日期', 'WAF.ksrq')"
+          :end-placeholder="t('结束日期', 'WAF.jsrq')"
+          :clearable= false
+          @change="changeTimeValue"
+        ></el-date-picker>
+        <i class="el-icon-refresh" @click="id+=1" />
+        <el-input
+          v-model.trim="sourceIp"
+          :placeholder="activeName == 'ucb' ? t('请输入源IP或策略名称', 'WAF.qsryipcl') : t('请输入源IP', 'WAF.qsryip')"
+          v-if="activeName != 'overview'"
+          class="search-input"
+        >
+          <i class="el-icon-search el-input__icon" slot="suffix" @click="id+=1" />
+        </el-input>
       </el-row>
-      <over-view :domain="domainValue" :times="[startTime, endTime]" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
-      <Ub :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ub'"></Ub>
-      <Ucb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'ucb'"></Ucb>
-      <Tcb :domain="domainValue" :times="dateTimeValue" v-if="activeName == 'tcb'"></Tcb>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" :id="id" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
+      <Ub :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ub'" :sourceIp="sourceIp"></Ub>
+      <Ucb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ucb'" :sourceIp="sourceIp"></Ucb>
+      <Tcb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'tcb'" :sourceIp="sourceIp"></Tcb>
     </div>
   </div>
 </template>
@@ -74,6 +83,8 @@ export default {
       activeName: "overview", // 默认选中概览页
       options: [],
       tableDataBegin: [],
+      sourceIp: "", // 搜索框绑定
+      id: 0, // 用于父组件点击查询
     }
   },
   components: {
@@ -81,6 +92,11 @@ export default {
     Ub,
     Ucb,
     Tcb
+  },
+  watch: {
+    activeName() {
+      this.sourceIp = ''
+    }
   },
   mounted() {
     this.getDescribeHost()
@@ -230,6 +246,19 @@ export default {
     }
   }
   .topSelect {
+    & > * {
+      float: left;
+    }
+    .selectDomin {
+      width: 230px;
+    }
+    ::v-deep {
+      
+      flex-wrap: wrap !important;
+    }
+    ::v-deep .el-button{
+      font-size: 12px !important;
+    }
     ::v-deep .el-range__icon {
         line-height: 22px;
     }
@@ -240,6 +269,9 @@ export default {
     ::v-deep .el-select {
       margin-right: 10px;
     }
+    ::v-deep .el-input {
+      width: 250px;
+    }
     button {
       padding: 0 20px;
     }
@@ -248,5 +280,34 @@ export default {
       color: #fff;
     }
   }
+}
+.search-input {
+  font-size: 12px;
+  float: right !important;
+  .el-icon-search {
+    cursor: pointer;
+  }
+  ::v-deep .el-input__suffix {
+    top: -4px;
+  }
+}
+.timeValue {
+  border-left: none;
+  width: 360px;
+  font-size: 12px !important;
+}
+::v-deep .el-date-editor .el-range-input {
+  width: 44%;
+}
+::v-deep .el-range__close-icon {
+  display: none;
+}
+.el-icon-refresh {
+  font-size: 18px !important;
+  display: inline-block;
+  line-height: 30px;
+  float: right !important;
+  margin-left: 5px;
+  cursor: pointer;
 }
 </style>

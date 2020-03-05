@@ -2,7 +2,7 @@
   <div class="room">
     <div class="room-top">
       <div class="top-left">
-        <el-button type="primary" size="mini" class="botton-size" @click="dialogVisible = true">新建</el-button>
+        <el-button type="primary" size="mini" class="botton-size" @click="dialogVisible = true" :disabled="tableData.length == 10">新建</el-button>
       </div>
       <div class="top-right">
           <el-input v-model.trim="input" placeholder="请输入名称" size="mini" ></el-input>

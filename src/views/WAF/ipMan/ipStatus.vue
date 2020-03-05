@@ -28,11 +28,11 @@
               <el-button :disabled="disabledIp" :type="createTimeType === 10 ? 'primary' : ''"  size="mini" @click="onTimeClick(10)">最近10{{t('分钟', 'WAF.fz')}}</el-button>
               <el-button :disabled="disabledIp" :type="createTimeType === 30 ? 'primary' : ''" size="mini" @click="onTimeClick(30)">最近30{{t('分钟', 'WAF.fz')}}</el-button>
             </el-button-group>
-            <el-date-picker style="border-left: none;" size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp" />
+            <el-date-picker style="border-left: none;" :clearable="false" size="mini" class="floatLeft timePick" v-model="timeValue1" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp" />
           </div>
           <div style="flex: 1">
             <el-checkbox :disabled="disabledIp" class="floatLeft checkBo" v-model="timeOut" label="有效截止日期:" name="time"></el-checkbox>
-            <el-date-picker size="mini" class="floatLeft timePick" v-model="timeValue2" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp"></el-date-picker>
+            <el-date-picker size="mini" :clearable="false" class="floatLeft timePick" v-model="timeValue2" type="datetimerange" range-separator="至" :start-placeholder="t('开始日期', 'WAF.ksrq')" :end-placeholder="t('结束日期', 'WAF.jsrq')" :disabled="disabledIp"></el-date-picker>
           </div>
         </div>
         <div style="margin-top: 15px;">
@@ -44,7 +44,7 @@
         </div>
         <div style="margin-top: 20px;">
           <span>IP地址：</span>
-          <el-input v-model="iptIP" style="width: 180px; margin-left: 36px" />
+          <el-input v-model.trim="iptIP" style="width: 180px; margin-left: 36px" />
           <div class="err-tips"  style="margin-left: 83px"v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
         </div>
         <div>
@@ -52,12 +52,12 @@
         </div>
       </div>
         <el-row type="flex" justify="end" style="margin-bottom: 15px;">
-          <el-button type="primary" size="small" :disabled="tableDataBegin.length === 0">{{t('导出全部筛选结果', 'WAF.dcqbsxjg')}}</el-button>
+          <el-button type="primary" size="small" @click="exportFile" :disabled="tableDataBegin.length === 0">{{t('导出全部筛选结果', 'WAF.dcqbsxjg')}}</el-button>
         </el-row>
         <el-card>
           <el-table
             ref="multipleTable"
-            :data="tableDataBegin && tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            :data="tableDataBegin"
             tooltip-effect="dark" style="width: 100%" v-loading="loadShow">
             <el-table-column
               type="selection"
@@ -108,7 +108,15 @@
               </template>
             </el-table-column>
           </el-table>
-          <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 20, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalItems"></el-pagination>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="skip"
+            :page-sizes="[10, 15, 20, 25, 30]"
+            :page-size="limit"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="totalItems"
+          ></el-pagination>
         </el-card>
     </div>
     <el-dialog
@@ -119,12 +127,20 @@
     >
       <addBlackWhite @success="closeModel" :isShow.sync="addBWmodel" :ipInfo="ipInfo" />
     </el-dialog>
+    <el-dialog
+      :visible.sync="batchExportVisible"
+      title="导出记录"
+      width="550px"
+      destroy-on-close
+    >
+      <batchExport :visible.sync="batchExportVisible" :count="totalItems" :param="exportParam" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import addBWmodel from './model/addBWmodel'
 import addBlackWhite from './model/addBlackWhite'
+import batchExport from './model/batchExportStatus'
 import { DESCRIBE_ACCESS_CONTROL, DESCRIBE_HOSTS, DESCRIBEIP_HITITEMS } from '@/constants'
 import { IP_STATUS_TYPE_ARR, ALL_ACTION, COMMON_ERROR } from '../constants'
 import moment from 'moment'
@@ -132,6 +148,7 @@ import moment from 'moment'
 export default {
   data() {
     return {
+      batchExportVisible: false,
       ALL_ACTION,
       ipSearch: "", //ip查询下拉
       ipSearchOptions: [],
@@ -142,15 +159,15 @@ export default {
       iptIP: "", //输入IP
       arrowShow: true, //箭头显示
       flag: true,
-      timeValue1: [moment().subtract(5, 'm'), moment()], //创建时间
+      timeValue1: [moment().subtract(5, 'm'), moment().endOf('d')], //创建时间
       timeOut: false, //有效截止日期
       timeValue2: [moment(), moment().add(8, 'd')], //有效截止日期
       multipleSelection: [], //tableCheck
       createTimeType: 5,
       tableDataBegin: [],//表格数据
       tableDataEnd: [],
-      currentPage: 1,//当前页
-      pageSize: 10,//每页长度
+      skip: 1,//当前页
+      limit: 20,//每页长度
       totalItems: 0,//总长度
       filterTableDataEnd: [],
       flag: false,//定义一个开关
@@ -164,19 +181,22 @@ export default {
       ctsFlag: false, // 更新时间升降序
       vtsFlag: false, // 有效时间时间升降序
       sort: 'valid_ts:1',
+      exportParam: undefined,
     };
   },
   components: {
-    addBlackWhite
+    addBlackWhite,
+    batchExport
   },
   watch: {
     iptIP(n) {
-      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
-      this.ipTest = !pattern.test(n)
       if (n) {
+        let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
+        this.ipTest = !pattern.test(n)
         this.disabledIp = true
       } else {
         this.disabledIp = false
+        this.ipTest = false
       }
     }
   },
@@ -184,6 +204,34 @@ export default {
     this.getDescribeHost()
   },
   methods: {
+    exportFile() {
+      let params = {
+        Version: '2018-01-25',
+        Domain: this.ipSearch,
+        Count: 1,
+        Ip: this.iptIP || undefined,
+        CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
+        CtsMax: moment(moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')).format('x'),
+        Category: this.typeCheck.toLowerCase(),
+        Name: this.triggerStrategy || undefined,
+        Sort: this.sort,
+      }
+
+      if (this.timeOut) {
+        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X')
+        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X')
+      }
+
+      if (this.disabledIp) {
+        delete params.CtsMin
+        delete params.CtsMax
+        delete params.VtsMin
+        delete params.VtsMax
+        delete params.Name
+      }
+      this.exportParam = params
+      this.batchExportVisible = true
+		},
     setSort(key) {
       if (this.sort.includes(key)) { // 升降序
         if (this.sort.includes('-')) {
@@ -237,27 +285,12 @@ export default {
     },
     // 分页开始
     handleSizeChange(val) {
-      this.pageSize = val;
-      this.handleCurrentChange(this.currentPage);
+      this.limit = val;
+      this.onSearch()
     },
     handleCurrentChange(val) {
-      this.currentPage = val;
-      //需要判断是否检索
-      if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd);
-      } else {
-        this.currentChangePage(this.filterTableDataEnd);
-      }
-    }, //组件自带监控当前页码
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
-      for (; from < to; from++) {
-        if (list[from]) {
-          this.tableDataEnd.push(list[from]);
-        }
-      }
+      this.skip = val;
+      this.onSearch()
     },
     //添加黑白名单按钮
     addBW(flag, { row }) {
@@ -277,22 +310,22 @@ export default {
     onTimeClick(temp) {
       this.createTimeType = temp
       const map = {
-        5: [moment().subtract(5, 'm'), moment()],
-        10: [moment().subtract(10, 'm'), moment()],
-        30: [moment().subtract(30, 'm'), moment()]
+        5: [moment().subtract(5, 'm'), moment().endOf('d')],
+        10: [moment().subtract(10, 'm'), moment().endOf('d')],
+        30: [moment().subtract(30, 'm'), moment().endOf('d')]
       }
 
       this.timeValue1 = map[temp]
     },
 
     // 条件查询
-    onSearch(sort) {
+    onSearch() {
       let params = {
         Version: '2018-01-25',
         Domain: this.ipSearch,
         Count: 1,
-        Limit: 20,
-        Skip: 0,
+        Limit: this.limit,
+        Skip: (this.skip - 1) * this.limit,
         Ip: this.iptIP || undefined,
         CtsMin: this.timeValue1 ? moment(new Date(this.timeValue1[0])).format('x') : undefined, //创建最小时间戳
         CtsMax: moment(moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')).format('x'),
@@ -302,8 +335,8 @@ export default {
       }
 
       if (this.timeOut) {
-        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X') || undefined
-        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X') || undefined
+        params.VtsMin = moment(new Date(this.timeValue2[0])).format('X')
+        params.VtsMax = moment(new Date(this.timeValue2[1])).format('X')
       }
 
       if (this.disabledIp) {
@@ -319,15 +352,8 @@ export default {
         this.generalRespHandler(resp, ({ Data }) => {
           const data = (Data.Res || []).map(d => ({...d}))
           this.tableDataBegin = data
-          this.totalItems = this.tableDataBegin.length;
-          if (this.totalItems > this.pageSize) {
-            for (let index = 0; index < this.pageSize; index++) {
-              this.tableDataEnd.push(this.tableDataBegin[index]);
-            }
-          } else {
-            this.tableDataEnd = this.tableDataBegin;
-          }
-          this.loadShow = false;
+          this.totalItems = Data.TotalCount
+          this.loadShow = false
         })
       })
     },

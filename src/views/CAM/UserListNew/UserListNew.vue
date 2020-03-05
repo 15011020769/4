@@ -75,14 +75,16 @@
                         </a>
                         <span v-show="scope.row.group.length>2">
                           以及
-                          <a @click="goTo">另外({{scope.row.group.length-2}}){{$t('CAM.userGroup.ge')}}</a>
+                          <a
+                            @click="goTo"
+                          >另外({{scope.row.group.length-2}}){{$t('CAM.userGroup.ge')}}</a>
                         </span>
                       </p>
                     </dt>
                   </dl>
                   <dl>
                     <dd>{{$t('CAM.userGroup.xxdy')}}</dd>
-                    <dt>-</dt>
+                    <dt>{{scope.row.subscription ? scope.row.subscription : '-'}}</dt>
                   </dl>
                   <dl>
                     <dd>{{$t('CAM.userList.userRemark')}}</dd>
@@ -130,7 +132,7 @@
             </template>
           </el-table-column>
           <el-table-column label="操作" width="140">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" @click="addRight(scope.row)">{{$t('CAM.userList.userStrage')}}</el-button>
               <span>|</span>
               <el-dropdown :hide-on-click="false">
@@ -158,13 +160,13 @@
                     style="color:#000;padding-left:20px;"
                     @click="delUserRow(scope.row)"
                   >{{$t('CAM.userList.userDel')}}</el-button>
-                  <!-- <el-dropdown-item>
+                  <el-dropdown-item>
                     <el-button
                       type="text"
                       style="color:#000"
                       @click="subscribeNotice(scope.row.Uid, scope.row.Name)"
                     >{{$t('CAM.userList.userSubscribeNotice')}}</el-button>
-                  </el-dropdown-item> -->
+                  </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
             </template>
@@ -331,12 +333,14 @@ import {
   ADD_USERTOGROUP,
   DELETE_USER,
   RELATE_USER,
-  QUERY_POLICY
+  QUERY_POLICY,
+  GET_ALL_SUBSCRIPTION_TYPE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
 import transfer from "../Role/component/transfer";
 import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
+import { datasource } from "./components/NoticeCategoryData";
 export default {
   components: {
     NoticeSubscriptionDialog,
@@ -408,31 +412,41 @@ export default {
     },
     rowChange(row) {
       this.loadrowC = true;
-      this.tableData.forEach(element => {
-        if (row.Uid === element.Uid) {
-          const params = {
-            Version: "2019-01-16",
-            Uid: row.Uid
+
+      const item = this.tableData.find(element => {
+        return row.Uid === element.Uid;
+      });
+
+      if (item === undefined) {
+        this.loadrowC = false;
+        return;
+      }
+
+      const params = {
+        Version: "2019-01-16",
+        Uid: row.Uid
+      };
+
+      this.axios.post(RELATE_USER, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+
+          item.group = res.Response.GroupInfo;
+        } else {
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用戶不存在"
           };
-          this.axios.post(RELATE_USER, params).then(res => {
-            if (res.Response.Error === undefined) {
-              element.group = res.Response.GroupInfo;
-            } else {
-              let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-            this.loadrowC = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });
+
+      this.matchAllSubscriptionByUserId(row.Uid, row);
     },
     goToGroup(item) {
       var groupId = item.GroupId;
@@ -628,41 +642,46 @@ export default {
       this.axios
         .post(USER_LIST, userList)
         .then(data => {
-          if (data.Response.Error === undefined) {
-            if (data != "") {
-              this.loading = false;
-              var arr = data.Response.Data;
-              //获取用户关联的用户组
-              arr.forEach((item, index) => {
-                item.group = [];
-                item.index = index;
-              });
-              this.tableData = arr;
-              this.tableData.reverse();
-              this.json = arr;
-              this.tableData1 = this.tableData.slice(
-                (this.currpage - 1) * this.pagesize,
-                this.currpage * this.pagesize
-              );
-              this.TotalCount = this.json.length;
+          // console.log(data);
+
+          this.loading = false;
+          // 如果返回的data是String类型的，说明接口返回信息有误
+          if (typeof data !== "string") {
+            if (data.Response.Error === undefined) {
+              if (data != "") {
+                var arr = data.Response.Data;
+                //获取用户关联的用户组
+                arr.forEach((item, index) => {
+                  item.group = [];
+                  item.index = index;
+                  item.subscription = undefined;
+                });
+                this.tableData = arr;
+                this.tableData.reverse();
+                this.json = arr;
+                this.tableData1 = this.tableData.slice(
+                  (this.currpage - 1) * this.pagesize,
+                  this.currpage * this.pagesize
+                );
+                this.TotalCount = this.json.length;
+              } else {
+                this.$message({
+                  type: "info",
+                  message: "無響應數據！",
+                  showClose: true,
+                  duration: 0
+                });
+              }
             } else {
-              this.loading = false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                type: "info",
-                message: "無響應數據！",
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
                 showClose: true,
                 duration: 0
               });
             }
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[data.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
           }
         })
         .catch(error => {
@@ -991,6 +1010,83 @@ export default {
     },
     subscriptionConfirm() {
       this.noticeSubscriptionVisible = false;
+    },
+    getAllSubscriptionType() {
+      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
+    },
+    getAllSubscriptionParentType() {
+      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
+    },
+    matchAllSubscriptionByUserId(uid, row) {
+      let that = this;
+      this.axios
+        .post(GET_ALL_SUBSCRIPTION_TYPE)
+        .then(res => {
+          if (res.code === 0 && Array.isArray(res.data)) {
+
+            const subscribedParentNames = []
+
+            const dataLength = res.data.length;
+            const parentLength = datasource.length;
+            for (let i = 0; i < parentLength; i++) {
+              const parent = datasource[i];
+
+              const childrenLength = parent.children.length;
+              for (let j = 0; j < childrenLength; j++) {
+                const child = parent.children[j];
+                // 如果当前类型被订阅了，就添加到subscribedParentNames
+                if (that.isThisTypeSubscribedByUser(child.key, res.data, uid)) {
+                  if (subscribedParentNames.indexOf(parent.name) === -1) {
+                    console.log("" + parent.name + "被添加");
+
+                    subscribedParentNames.push(parent.name);
+                    break;
+                  }
+                }
+              }
+            }
+            console.log(subscribedParentNames);
+
+            row.subscription = subscribedParentNames.join(",");
+
+          } else {
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            if (res.Response.Error) {
+              this.$message({
+                message: ErrOr[res.Response.Errorr.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          }
+        })
+        .then(function() {
+          that.loadrowC = false;
+        });
+    },
+    isThisTypeSubscribedByUser(typeKey, types, uid) {
+      if (!Array.isArray(types)) {
+        return false;
+      }
+
+      const item = types.find(element => {
+        return typeKey === element.msgType;
+      });
+
+      if (
+        item === undefined ||
+        item.users === undefined ||
+        !Array.isArray(item.users)
+      ) {
+        return false;
+      }
+
+      const result = item.users.find(element => {
+        return element.uid === uid;
+      });
+
+      return result !== undefined;
     }
   },
   created() {

@@ -108,9 +108,9 @@ export default {
         this.axios.post(CCURLALLOW_MODIFY, params).then(res => {
           if (res.Response.Error) {
             if (res.Response.Error.Code == "InvalidParameterValue") {
-              this.$message.error("添加失败,参数值错误");
+              this.$message.error("添加失敗，參數值錯誤");
             } else {
-              this.$message.error("添加失败");
+              this.$message.error("添加失敗");
             }
           } else {
             this.$message({

@@ -197,7 +197,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "VPN網關" + ".xlsx"
+            "VPN連接" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);

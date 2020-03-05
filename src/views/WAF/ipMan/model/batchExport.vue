@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div type="flex" align="middle" justify="center" class="import-wrap">
-      <el-row type="flex">
+      <el-row type="flex" align="middle">
         <span style="color: #888; font-size: 12px; width: 40px; display: inline-block;">进度：</span>
         <el-col>
         <el-progress :percentage="(progress/count)*100" :show-text="false"></el-progress>
@@ -43,14 +43,14 @@ export default {
       this.$emit('update:visible', false)
     },
     _export() {
-      const i = Math.ceil(this.count/6)
+      const i = Math.ceil(this.count/600)
       const ps = []
       let data = [["IP地址", "类别", "来源", "更新时间", "截止时间", "备注"]]
       for (let j = 0; j < i; j += 1) {
         ps.push(this.axios.post(DESCRIBE_ACCESS_CONTROL, {
           ...this.param,
-          Limit: 6,
-          OffSet: j * 6,
+          Limit: 600,
+          OffSet: j * 600,
         }))
       }
       Promise.all(ps)

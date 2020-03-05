@@ -5,10 +5,10 @@
         {{t('安全概览', 'WAF.aqgl')}}
       </div>
       <el-tabs v-model="activeName" @tab-click="handleClick" class="tabList">
-        <el-tab-pane label="攻击概览" name="first">
+        <el-tab-pane :label="t('攻击概览', 'WAF.gjgl')" name="first">
           <attackOverview v-if="isChildUpdate1"/>
         </el-tab-pane>
-        <el-tab-pane label="业务概览" name="second">
+        <el-tab-pane :label="t('业务概览', 'WAF.ywgl')" name="second">
           <businessOverview v-if="isChildUpdate2"/>
         </el-tab-pane>
       </el-tabs>

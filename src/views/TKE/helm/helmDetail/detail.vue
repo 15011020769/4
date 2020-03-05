@@ -77,7 +77,7 @@
             width="60%"
             >
             <div class="yaml">
-                <codemirror style="background-color: #303133;"  ref="myCm"  :value="yamlInfo"  class="code" >
+                <codemirror style="background-color: #303133;"  ref="myCm"  :value="yamlInfo"  class="code" :options="cmOptions" >
                 </codemirror>
             </div>
         </el-dialog>
@@ -110,7 +110,22 @@ export default {
             yamlInfo:"",
             see:true,
             resources:'',
-            timeId:null
+            timeId:null,
+            cmOptions: {
+                tabSize: 4,
+                mode: 'python', // 默认脚本编码
+                theme: 'darcula',
+                lineNumbers: true, // 是否显示行号
+                line: true,
+                // lineNumbers: true,
+                foldgutter: true,
+                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+                lineWrapping: true, // 是否强制换行
+                foldGutter: true,
+                matchBrackets: true, // 括号匹配
+                autoCloseBrackets: true,
+                readOnly: true// 只读
+            }
         }
     },
     watch:{

@@ -32,6 +32,7 @@
                 currentPage * pageSize
               )
             "
+            empty-text="暫無數據"
           >
             <el-table-column prop="Type" label="策略">
               <template slot-scope="scope">
@@ -99,7 +100,7 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags" :key="index">
             <td>
-              <el-select class="selectChange" v-model="item.Protocol">
+              <el-select class="selectChange" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
                 <el-option label="ICMP" value="icmp"></el-option>
@@ -107,7 +108,7 @@
               </el-select>
             </td>
             <td>
-              <el-select class="selectChange" v-model="item.Kind">
+              <el-select class="selectChange" v-model="item.Kind" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option
                   v-for="t in portArr"
                   :key="t.value"
@@ -163,7 +164,7 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags1" :key="index">
             <td>
-              <el-select class="selectChange1" v-model="item.Protocol">
+              <el-select class="selectChange1" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
                 <el-option label="ICMP" value="icmp"></el-option>
@@ -213,15 +214,15 @@
               ></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchBegin">
-                <el-option label="检测" value="begin_l5"></el-option>
-                <el-option label="不检测" value="no_match"></el-option>
+              <el-select class="selectChange1" v-model="item.MatchBegin" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+                <el-option :label="$t('DDOS.updateddos.jc')" value="begin_l5"></el-option>
+                <el-option :label="$t('DDOS.updateddos.bjc')" value="no_match"></el-option>
               </el-select>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchType">
-                <el-option label="关键字" value="sunday"></el-option>
-                <el-option label="正则表达式" value="pcre"></el-option>
+              <el-select class="selectChange1" v-model="item.MatchType" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+                <el-option :label="$t('DDOS.updateddos.gjzi')" value="sunday"></el-option>
+                <el-option :label="$t('DDOS.Proteccon_figura.regular_expression')" value="pcre"></el-option>
               </el-select>
             </td>
             <td>
@@ -243,7 +244,7 @@
               >
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.IsNot">
+              <el-select class="selectChange1" v-model="item.IsNot" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="包含" value="1"></el-option>
                 <el-option label="不包含" value="0"></el-option>
               </el-select>
@@ -257,23 +258,23 @@
               ></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.Action">
+              <el-select class="selectChange1" v-model="item.Action"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <!-- 策略动作，取值范围[drop，drop_black，drop_rst，drop_black_rst，transmit] -->
-                <el-option label="丢弃报文" value="drop"></el-option>
+                <el-option :label="$t('DDOS.updateddos.dqbw')" value="drop"></el-option>
                 <el-option
-                  label="丢弃且拉黑源IP"
+                  :label="$t('DDOS.updateddos.dqqlh')"
                   value="drop_black"
                 ></el-option>
-                <el-option label="丢弃且断开连接" value="drop_rst"></el-option>
+                <el-option :label="$t('DDOS.updateddos.dqqdk')" value="drop_rst"></el-option>
                 <el-option
-                  label="丢弃, 断开连接且拉黑"
+                  :label="$t('DDOS.updateddos.dqdkqlh')"
                   value="drop_black_rst"
                 ></el-option>
-                <el-option label="直接转发" value="transmit"></el-option>
+                <el-option :label="$t('DDOS.updateddos.zjzf')" value="transmit"></el-option>
               </el-select>
             </td>
             <td>
-              <a v-on:click="removeRow(index, 2)" v-show="index >= 0">删除</a>
+              <a v-on:click="removeRow(index, 2)" v-show="index >= 0">{{$t('DDOS.AccesstoCon.AccDel')}}</a>
             </td>
           </tr>
         </table>
@@ -291,7 +292,7 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags3" :key="index">
             <td>
-              <el-select class="selectChange" v-model="item.protocol" @change="ProV(item.protocol)">
+              <el-select class="selectChange" v-model="item.protocol" @change="ProV(item.protocol)"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="ICMP" value="ICMP"></el-option>
                 <el-option label="OTHER" value="OTHER"></el-option>
                 <el-option label="TCP" value="TCP"></el-option>
@@ -308,7 +309,7 @@
               >Mbps
             </td>
             <td>
-              <a v-on:click="removeRow(index, 3)" v-show="index >= 0">删除</a>
+              <a v-on:click="removeRow(index, 3)" v-show="index >= 0">{{$t('DDOS.AccesstoCon.AccDel')}}</a>
             </td>
           </tr>
         </table>
@@ -349,7 +350,7 @@
         </el-radio-group>
         <span v-if="thisRadio3">
           <el-input class="inputChange1" v-model="input3"></el-input>
-          <span class="company">个/秒</span>
+          <span class="company">{{$t('DDOS.updateddos.g')}}/秒</span>
         </span>
         <br />
         <span class="spanStyleLabel">{{
@@ -361,7 +362,7 @@
         </el-radio-group>
         <span v-if="thisRadio4">
           <el-input class="inputChange1" v-model="input4"></el-input>
-          <span class="company">个</span>
+          <span class="company">{{$t('DDOS.updateddos.g')}}</span>
         </span>
         <br />
         <span class="spanStyleLabel">{{
@@ -373,7 +374,7 @@
         </el-radio-group>
         <span v-if="thisRadio5">
           <el-input class="inputChange1" v-model="input5"></el-input>
-          <span class="company">个/秒</span>
+          <span class="company">{{$t('DDOS.updateddos.g')}}/秒</span>
         </span>
         <br />
         <span class="spanStyleLabel">{{
@@ -385,7 +386,7 @@
         </el-radio-group>
         <span v-if="thisRadio6">
           <el-input class="inputChange1" v-model="input6"></el-input>
-          <span class="company">个</span>
+          <span class="company">{{$t('DDOS.updateddos.g')}}</span>
         </span>
       </div>
       <!-- 异常连接检测 -->
@@ -403,7 +404,7 @@
         </el-radio-group>
         <span v-if="thisRadio7">
           <el-input class="inputChange1" v-model="input7"></el-input>
-          <span class="company">个</span>
+          <span class="company">{{$t('DDOS.updateddos.g')}}</span>
         </span>
         <br />
         <div v-if="thisRadio7">
@@ -447,7 +448,7 @@
       <!-- 水印防护 -->
       <div class="childContTit">
         <h2>{{ $t("DDOS.Proteccon_figura.Watermark_protection") }}</h2>
-        <el-table :data="tableDataBegin2" class="tableBorderTop">
+        <el-table :data="tableDataBegin2" class="tableBorderTop" empty-text="暫無數據">
           <el-table-column :label="$t('DDOS.Proteccon_figura.TCP_protectionport')" prop="tcpPort">
             <template slot-scope="scope">{{scope.row.tcpPort.join()}}</template>
           </el-table-column>
@@ -459,13 +460,13 @@
             prop="RemoveSwitch"
           >
             <template slot-scope="scope">{{
-              scope.row.RemoveSwitch == 0 ? "不自动剥离" : "自动剥离"
+              scope.row.RemoveSwitch == 0 ? "不自動剝離" : "自動剝離"
             }}</template>
           </el-table-column>
           <el-table-column
             :label="$t('DDOS.Proteccon_figura.Policy_switch')"
             prop="OpenStatus"
-            >开启</el-table-column
+            >{{$t('DDOS.AccesstoCon.AccOpen')}}</el-table-column
           >
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
@@ -546,7 +547,7 @@
                 </td>
                 <td>
                   <a v-on:click="removeRow(index, 5)" v-show="index >= 0"
-                    >删除</a
+                    >{{$t('DDOS.AccesstoCon.AccDel')}}</a
                   >
                 </td>
               </tr>
@@ -591,17 +592,17 @@
           type="primary"
           @click="createDDoSPolicy(true)"
           v-if="nameFlag"
-          >确定</el-button
+          >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button
         >
         <el-button type="primary" @click="createDDoSPolicy(false)" v-else
-          >确定</el-button
+          >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button
         >
         <el-button @click="closeAddPage">取消</el-button>
       </div>
     </div>
     <el-dialog
       class="dialogModelAddBw"
-      title="添加黑白名单"
+      :title="$t('DDOS.updateddos.tjhbmd')"
       :visible.sync="dialogModelAddBw"
       width="40%"
       :before-close="handleCloseAddBw"
@@ -614,7 +615,7 @@
               class="inputText"
               v-model="blackWhiteText"
               type="textarea"
-              placeholder="请输入IP地址，以换行符分隔"
+              :placeholder="$t('DDOS.updateddos.qsrdz')"
             ></el-input>
           </p>
         </div>
@@ -629,13 +630,13 @@
         </div>
       </div>
       <span class="footerBw">
-        <el-button @click="addBWSure">确定</el-button>
+        <el-button @click="addBWSure">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
         <el-button @click="dialogModelAddBw = false">取消</el-button>
       </span>
     </el-dialog>
     <el-dialog
       class="dialogModelAddBw"
-      title="编辑黑白名單"
+      :title="$t('DDOS.updateddos.bjhnmd')"
       :visible.sync="dialogEdit"
       width="40%"
       :before-close="handleCloseedit"
@@ -658,7 +659,7 @@
         </div>
       </div>
       <span class="footerBw">
-        <el-button @click="addbwSURE">确定</el-button>
+        <el-button @click="addbwSURE">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
         <el-button @click="dialogModelAddBw = false">取消</el-button>
       </span>
     </el-dialog>

@@ -19,39 +19,61 @@
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form
 					class="tke-form"
-					:model="strategy"
+					:model="cl"
 					label-position="left"
 					label-width="120px"
 					size="mini"
 				>
-					<el-form-item label="更新方式">
-						<el-select placeholder="请选择">
-							<el-option
-							v-for="item in options"
-							:key="item.value"
-							:label="item.label"
-							:value="item.value"
-							>
-							</el-option>
-						</el-select>
-						<p class="tke-type">对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>	
-					</el-form-item>
-					<el-form-item label="策略配置">
-						<div class="tke-set">
-							<el-form-item style="padding:10px;" label="Partition">
-								<el-input
-                  type="text"
-                  v-model="number"
-                  class='w420'
-									style="width:200px;">
-                </el-input>
-							</el-form-item>	
-						</div>
-					</el-form-item>
+					 <el-form-item label="更新方式" >
+              <el-select v-model="updateWay">
+                <el-option label="滚动更新（推荐）" value="1"> </el-option>
+                <el-option label="快速更新" value="2"> </el-option>
+              </el-select>
+              <p v-show="updateWay=='1'"> 对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>
+              <p v-show="updateWay=='2'"> 直接关闭所有实例，启动相同数量的新实例</p>
+            </el-form-item>
+            <div v-show="updateWay=='1'">
+              <el-form-item label="更新间隔">
+                <el-input class="w100" v-model="cl.timeInterval" ></el-input>秒
+              </el-form-item>
+              <el-form-item label="更新策略">
+                <el-radio-group v-model="updateTactics">
+                  <el-radio label="1">启动新的Pod,停止旧的Pod</el-radio>
+                  <el-radio label="2">停止旧的Pod，启动新的Pod</el-radio>
+                  <el-radio label="3">自定义</el-radio>
+                </el-radio-group>
+                <p v-show="updateTactics==1">请确认集群有足够的CPU和内存用于启动新的Pod, 否则可能导致集群崩溃</p>
+              </el-form-item>
+              <el-form-item label="策略配置" >
+                <div class="flex bg" v-show="updateTactics!=3">
+                  <span>Pods</span>
+                  <div style="margin-left:150px;">
+                    <el-input class="w192" v-model="cl.podNum"></el-input>
+                    <p> Pod将批量启动或停止</p>
+                  </div>
+                </div>
+                <div class="bg" v-show="updateTactics==3">
+                  <div class="flex">
+                    <span>MaxSurge</span>
+                    <div style="margin-left:150px;">
+                      <el-input class="w192" v-model="cl.maxPodOver"></el-input>
+                      <p>允许超出所需规模的最大Pod数量</p>
+                    </div>
+                  </div>
+                  <div class="flex">
+                    <span>MaxUnavailable</span>
+                    <div style="margin-left:114px;">
+                      <el-input class="w192" v-model="cl.maxPodNot"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </div>
+                  </div>
+                </div>
+              </el-form-item>
+            </div>
         </el-form>
 				<!-- 底部 -->
         <div class="tke-formpanel-footer">
-					<el-button size="small" type="primary" @click="submit">完成</el-button>
+					<el-button size="small"   type="primary" @click="submit">完成</el-button>
           <el-button size="small" @click="goBack">取消</el-button>
         </div>
       </div>    
@@ -61,40 +83,34 @@
 
 <script>
 import HeadCom from "@/components/public/Head";
+import {TKE_COLONY_QUERY} from '@/constants'
 export default {
   name: "setStrategy",
   data() {
     return {
-			number:0,
-      options: [
-        {
-          value: '选项1',
-          label: '黄金糕'
-        },
-        {
-          value: '选项2',
-          label: '双皮奶'
-        },
-        {
-          value: '选项3',
-          label: '蚵仔煎'
-        },
-        {
-          value: '选项4',
-          label: '龙须面'
-        },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ]
+      number:0,
+      cl:{
+        timeInterval:'',
+        podNum:'',
+        maxPodOver:'',
+        maxPodNot:'',
+      },
+      updateWay:'1',
+      updateTactics:'1',
+      clusterId:'',
+      name:'',
+      spaceName:'',
+      type:'RollingUpdate',
     };
   },
   components: {
     HeadCom
   },
   created() {
-
+    this.clusterId=this.$route.query.clusterId;
+    this.name=this.$route.query.name;
+    this.spaceName=this.$route.query.spaceName;
+    this.baseData();
   },
   methods: {
     //返回上一层
@@ -102,8 +118,76 @@ export default {
       this.$router.go(-1);
 		},
 		submit(){
+      var params;
+      if(this.updateWay==2){//快速更新
+        params={
+          ClusterName: this.clusterId,
+          ContentType: "application/strategic-merge-patch+json",
+          Method: "PATCH",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+          RequestBody: {"spec":{"minReadySeconds":0,"strategy":{"type":"Recreate","rollingUpdate":null}}},
+          Version: "2018-05-25",
+        }
+      }else if(this.updateWay==1){//滚动更新
 
-		}
+        params={
+          ClusterName:this.clusterId,
+          ContentType: "application/strategic-merge-patch+json",
+          Method: "PATCH",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+          RequestBody:{"spec":{"minReadySeconds":this.cl.timeInterval,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":this.cl.maxPodOver,"maxUnavailable":this.cl.maxPodNot}}}},
+          Version: "2018-05-25",
+        }
+      }
+      console.log(params)
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+            console.log(res)
+            if(res.Response.Error === undefined){
+              this.$router.go(-1);
+              this.$message({
+                message: '更新成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+
+
+            }else{
+              let ErrTips = {};
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+               });
+           }
+      })
+    },
+    baseData(){
+        var params={
+              Method: "GET",
+              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +
+                this.name,
+              Version: "2018-05-25",
+              ClusterName: this.clusterId
+        }
+        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+           let response = JSON.parse(res.Response.ResponseBody);
+           let obj=response.items[0];
+          console.log(obj)
+        this.type=obj.spec.strategy.type;
+
+         if(this.type=='RollingUpdate'){
+            this.updateWay='1'//滚动更新
+           }else{
+           this.updateWay='2'//快速更新
+         }
+            
+        })
+
+    },
+
   }
 };
 </script>
@@ -119,6 +203,20 @@ export default {
 		height: 50px;
 		width	: 400px;
 	}
+   .flex {
+    display: flex;
+    align-items: center;
+  }
+
+  .bg {
+    width: 50%;
+    background: #f2f2f2;
+    box-sizing: border-box;
+    padding: 10px;
+  }
+  .w192{
+    width:192px;
+  }
 
 </style>
 

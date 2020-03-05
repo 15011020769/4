@@ -2,57 +2,58 @@
   <div class="main_overview">
     <div class="firstShow">
       <h3>
-        <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
-        请求次数统计
+        {{t('请求次数统计', 'WAF.qqcstj')}}
         <span style="color:#bbb;">(%)</span>
       </h3>
+      <el-row class="empty" v-if="seriesLineFlowTotal.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
       <ELine
         :xAxis="xAxisLineFlow"
         :series1="seriesLineFlowTotal"
         :series2="seriesLineFlowBot"
         :legendText="legendTextLineFlow"
         :color="colorLine"
+        v-loading="loading"
+        v-else
       />
     </div>
     <el-row class="secondShow">
       <el-col :span="12">
         <h3 class="topfont">
-          <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
-          BOT 动作占比
+          {{t('BOT 动作占比', 'WAF.botdzzb')}}
           <span style="color:#bbb;">(%)</span>
         </h3>
-        <el-row class="empty" v-if="seriesPieType.length == 0 ? true : false">暂无数据</el-row>
+        <el-row class="empty" v-if="seriesPieType.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
         <EPie
           :series="seriesPieType"
           :color="colorPie"
           :legendText="legendTextPieType"
           v-else
+          v-loading="loading"
         />
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
-          <!-- {{t('攻击类型占比', 'WAF.gjlxzb')}} -->
-          BOT 类型占比
+          {{t('BOT 类型占比', 'WAF.botlxzb')}}
           <span style="color:#bbb;">(%)</span>
         </h3>
-        <el-row class="empty" v-if="seriesPieAction.length == 0 ? true : false">暂无数据</el-row>
+        <el-row class="empty" v-if="seriesPieAction.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
         <EPie
           :series="seriesPieAction"
           :color="colorPie"
           :legendText="legendTextPieAction"
           v-else
+          v-loading="loading"
         />
       </el-col>
     </el-row>
     <div class="thirdShow">
         <el-row type="flex" justify="start">
             <h3 class="topfont">
-              <!-- {{t('攻击类型占比', 'WAF.gjlxzb')}} -->
-              BOT 来源分布
+              {{t('BOT 来源分布', 'WAF.botlyfb')}}
             </h3>
             <el-radio-group v-model="radio" size="small">
               <el-radio-button label="global">全球</el-radio-button>
-              <el-radio-button label="china">全国</el-radio-button>
+              <el-radio-button label="china">{{t('全国', 'WAF.qg')}}</el-radio-button>
             </el-radio-group>
             <el-select
               v-model="botType"
@@ -69,8 +70,8 @@
               ></el-option>
             </el-select>  
         </el-row>
-      <world-map :series="seriesWorldMap" v-if="radio == 'global'"/>
-      <china-map :series="seriesWorldMap" v-else/>
+      <world-map :series="seriesWorldMap" v-if="radio == 'global'" v-loading="loading"/>
+      <china-map :series="seriesWorldMap" v-else v-loading="loading"/>
     </div>
   </div>
 </template>
@@ -95,21 +96,22 @@ export default {
       seriesLineFlowTotal: [], // bot流量折线图
       xAxisLineFlow: [], // bot流量折线图
       colorLine: ["#006eff", "#FF584C",],
-      legendTextLineFlow: ['总请求', 'BOT请求'],
+      legendTextLineFlow: [this.t('总请求', 'WAF.zqq'), this.t('BOT请求', 'WAF.botqq')],
       seriesPieType: [], // bot类型饼图
       seriesPieAction: [], // bot动作饼图
       colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
-      legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'], // bot类型
-      legendTextPieAction: ['验证码', '拦截', '监控', '重定向'], // bot动作
+      legendTextPieType: [this.t('公开类型', 'WAF.gklx'), this.t('未知类型', 'WAF.wzlx'), this.t('用户自定义类型', 'WAF.yhzdylx')], // bot类型
+      legendTextPieAction: [this.t('验证码', 'WAF.yzm'), this.t('拦截', 'WAF.lj'), this.t('监控', 'WAF.jk'), '重定向'], // bot动作
       seriesWorldMap: [], // 世界地图和中国地图查询值 { name: '中国', value: 2 }
       radio: "global", // 全球/全国绑定值
       botType: "ALL", // bot类型下拉绑定值
       options: [
         {value: 'ALL', label: '全部'},
-        {value: 'UCB', label: '自定义类型'},
-        {value: 'TCB', label: '公开类型'},
-        {value: 'UB', label: '未知类型'},
-      ]
+        {value: 'UCB', label: this.t('自定义类型', 'WAF.zdylx')},
+        {value: 'TCB', label: this.t('公开类型', 'WAF.gklx')},
+        {value: 'UB', label: this.t('未知类型', 'WAF.wzlx')},
+      ],
+      loading: true,
     }
   },
   props: {
@@ -123,7 +125,8 @@ export default {
     },
     selBtn: {
       type: Number
-    }
+    },
+    id: Number,
   },
   components: {
     EPie,
@@ -136,6 +139,9 @@ export default {
       if (val.join() !== oldVal.join()) {
         this.init()
       }
+    },
+    id() {
+      this.init()
     },
     domain(val) {
       this.init()
@@ -167,6 +173,7 @@ export default {
     },
     // 获取Bot_V2 Bot流量统计
     getBotFlow() {
+      this.loading = true
       let axixArr = []
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
@@ -182,7 +189,6 @@ export default {
         Domain: this.domain,
       }
       const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
-      // if(moment(this.times[1]).format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')) {
       if(this.selBtn == 1 ||this.selBtn == 2 || this.selBtn == 3 ) {
         // 当选中时间有当天时，需将bot值控制在当前时间而不是23:59:59
         params["EndTs"] = moment().utc().valueOf()
@@ -206,6 +212,8 @@ export default {
             })
             this.xAxisLineFlow = axixArr
         })
+      }).then(() => {
+        this.loading = false
       })
       this.axios.post(DESCRIBE_BOT_STATISTIC_POINTS, params).then((resp) => {
         this.generalRespHandler(resp, ({PointsBot, PointsTotal}) => {
@@ -215,6 +223,8 @@ export default {
           this.seriesLineFlowBot = []
           this.seriesLineFlowTotal = []
         })
+      }).then(() => {
+        this.loading = false
       })
       // const Granularity = moment(this.times[1]).diff(moment(this.times[0]), 'days')
       // this.axios.post(DESCRIBE_PEAK_POINTS, paramsPeakPoints).then(resp => {
@@ -240,7 +250,8 @@ export default {
     },
     // 获取Bot_V2 Bot类别统计
     getBotType() {
-     const params = {
+      this.loading = true
+      const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
         EndTs: this.times[1],
@@ -248,15 +259,18 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
-          this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
-          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
+          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: this.t('公开类型', 'WAF.gklx')})
+          this.$set(this.seriesPieType, 1, {value: Response.UB, name: this.t('未知类型', 'WAF.wzlx')})
+          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: this.t('用户自定义类型', 'WAF.yhzdylx')})
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // Bot_V2 获取bot动作统计
     getBotAction() {
-     const params = {
+      this.loading = true
+      const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
         EndTs: this.times[1],
@@ -264,15 +278,18 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: '验证码'})
-          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: '拦截'})
-          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
+          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: this.t('验证码', 'WAF.yzm')})
+          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: this.t('拦截', 'WAF.lj')})
+          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: this.t('监控', 'WAF.jk')})
           this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // Bot_V2 bot地理纬度统计
     getBotRegions() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         StartTs: this.times[0],
@@ -282,7 +299,7 @@ export default {
         BotType: this.botType,
       }
       let regionsArr = []
-       this.axios.post(DESCRIBE_BOT_REGIONS_STAT, params).then((resp) => {
+      this.axios.post(DESCRIBE_BOT_REGIONS_STAT, params).then((resp) => {
         this.generalRespHandler(resp, ({Data}) => {
           for(var i in Data) {
             regionsArr.push({
@@ -292,6 +309,8 @@ export default {
           }
         })
         this.seriesWorldMap = regionsArr
+      }).then(() => {
+        this.loading = false
       })
     }
   }
@@ -304,13 +323,20 @@ export default {
   border-right: 1px solid #e5e5e5;
 }
 .main_overview {
-  margin-top: 30px;
+  margin-top: 20px;
   .firstShow {
     padding: 20px;
     width: 100%;
     height: 375px;
     background: #fff;
     box-sizing: border-box;
+    .empty {
+      height: 300px;
+      width: 100%;
+      line-height: 300px;
+      text-align: center;
+      font-weight: bold
+    }
   }
   .secondShow {
     width: 100%;
@@ -355,9 +381,9 @@ export default {
       margin-left: 10px;
     }
     .empty {
-      height: 200px;
+      height: 600px;
       width: 100%;
-      line-height: 200px;
+      line-height: 600px;
       text-align: center;
       font-weight: bold
     }

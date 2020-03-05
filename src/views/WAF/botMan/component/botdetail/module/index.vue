@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 详情</span>
+      <span>{{t('BOT 详情', 'WAF.botxq')}}</span>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="基础信息" name="info"></el-tab-pane>
-        <el-tab-pane label="访问详情" name="detail"></el-tab-pane>
+        <el-tab-pane :label="t('基础信息', 'WAF.jcxx')" name="info"></el-tab-pane>
+        <el-tab-pane :label="t('访问详情', 'WAF.fwxq')" name="detail"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="wrapper">
-      <access-detail v-if="activeName == 'info'"></access-detail>
-      <base-info  v-if="activeName == 'detail'"></base-info>
+      <base-info  v-if="activeName == 'info'"></base-info>
+      <access-detail v-if="activeName == 'detail'"></access-detail>
     </div>
   </div>
 </template>

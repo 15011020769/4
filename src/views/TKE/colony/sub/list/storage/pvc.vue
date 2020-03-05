@@ -54,8 +54,8 @@
          </el-table-column>
          <el-table-column label="操作" width="200">
            <template slot-scope="scope">
-             <span class="tke-text-link">编辑YAML</span>
-             <span class="tke-text-link ml10" @click="DeleteList(scope.row)">删除</span>
+             <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
+             <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
            </template>
          </el-table-column>
        </el-table>
@@ -69,9 +69,20 @@
          </div>
        </div>
      </div>
+      <!-- 删除提示 -->
+      <el-dialog
+          title="删除资源"
+          :visible.sync="centerDialogVisible"
+          width="30%"
+          >
+          <span>您确定要删除PersistentVolumeClaim：{{deleteName}}吗？</span>
+          <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="DeleteList()">确 定</el-button>
+            <el-button @click="centerDialogVisible = false">取 消</el-button>
+          </span>
+        </el-dialog>
    </div>
  </template>
-
  <script>
    import subTitle from "@/views/TKE/components/subTitle";
    import tkeSearch from "@/views/TKE/components/tkeSearch";
@@ -99,6 +110,8 @@
          searchOptions: [],
          searchType: "", //下拉选中的值
          searchInput: "", //输入的搜索关键字
+         centerDialogVisible:false,
+         deleteName:""
        };
      },
 
@@ -152,6 +165,16 @@
          this.getList()
          console.log('refreshList....')
        },
+       // 跳转Yaml
+       editYaml(row){
+        this.$router.push({
+            name: "pvcUpdate",
+            query: {
+              clusterId: this.$route.query.clusterId,
+              resourceIns:row.metadata.name
+            }
+        });
+      },
        // 导出表格
        exportExcel() {
          console.log('exportExcel...')
@@ -187,6 +210,11 @@
          this.getList()
          // this.getColonyList();
        },
+        // 删除
+        deleteOne(row){
+          this.deleteName = row.metadata.name
+          this.centerDialogVisible = true
+        },
 
        //命名空间选项
        nameSpaceList() {
@@ -276,22 +304,20 @@
          });
        },
        // 删除列表
-       DeleteList(row) {
+       DeleteList() {
          var params = {
             ClusterName: this.$route.query.clusterId,
             Method: "DELETE",
-            Path: "/api/v1/namespaces/"+this.searchType+"/persistentvolumeclaims/"+row.metadata.name,
+            Path: "/api/v1/namespaces/"+this.searchType+"/persistentvolumeclaims/"+this.deleteName,
             RequestBody: {"propagationPolicy":"Background"},
             Version: "2018-05-25"
          };
          this.axios.post(POINT_REQUEST, params).then(res => {
            if (res.Response.Error === undefined) {
              var mes = JSON.parse(res.Response.ResponseBody);
-            //  console.log(mes);
-            //  this.list = mes.items;
-             this.loadShow = true
+              this.loadShow = true
+              this.centerDialogVisible = false
              this.getList()
-             
            } else {
              let ErrTips = {};
              let ErrOr = Object.assign(ErrorTips, ErrTips);

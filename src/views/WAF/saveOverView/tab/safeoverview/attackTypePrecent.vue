@@ -9,6 +9,7 @@
       :series="seriesPie"
       :color="colorPie"
       :legendText="legendTextPie"
+      v-loading="loading"
     />
     </el-col>
     <el-col :span="12">
@@ -21,6 +22,7 @@
       :series="seriesPieAttack"
       :color="colorPie"
       :legendText="legendTextPieAttack"
+      v-loading="loading"
       v-else
     />
     </el-col>
@@ -41,7 +43,8 @@ export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   watch: {
     showModules(val, oldVal) {
@@ -58,7 +61,10 @@ export default {
       if (val !== oldVal) {
         this.init()
       }
-    }
+    },
+    id() {
+      this.init()
+    },
   },
   components: {
     EPie,
@@ -66,15 +72,16 @@ export default {
   data() {
     return {
       seriesPie: [
-        {value: 0, name: '正常访问'},
-        {value: 0, name: 'WEB攻击次数'},
-        {value: 0, name: 'CC攻击次数'},
+        {value: 0, name: this.t('正常访问', 'WAF.zzfw')},
+        {value: 0, name: this.t('WEB攻击次数', 'WAF.webgjcs')},
+        {value: 0, name: this.t('CC攻击次数', 'WAF.ccgjcs')},
         {value: 0, name: ''},
       ],
       colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
-      legendTextPie: ['正常访问', 'WEB攻击次数', 'CC攻击次数', ''],
+      legendTextPie: [this.t('正常访问', 'WAF.zzfw'), this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs'), ''],
       seriesPieAttack: [],
       legendTextPieAttack: [],
+      loading: true,
     }
   },
   mounted() {
@@ -89,6 +96,7 @@ export default {
     },
     // 获取正常访问次数
     getNormalRequest() {
+      this.loading = true
       const params =  {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -99,12 +107,15 @@ export default {
       }
       this.axios.post(DESCRIBE_REQUEST_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: '正常访问'},)
+          this.$set(this.seriesPie, 0, {value: `${Response.Count}`, name: this.t('正常访问', 'WAF.zzfw')},)
         })
+      }).then(() => {
+        this.loading = false
       })
     },
      // 获取web攻击次数
     getWebAttack() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -119,12 +130,15 @@ export default {
       }
       this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: 'WEB攻击次数'},)
+          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: this.t('WEB攻击次数', 'WAF.webgjcs')},)
         })
+      }).then(() => {
+        this.loading = false
       })
     },
      // 获取业务攻击峰值
     getPeakValue() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -138,12 +152,15 @@ export default {
       }
       this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: 'CC攻击次数'},)
+          this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: this.t('CC攻击次数', 'WAF.ccgjcs')},)
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // 查询bot数量
     getBotCount() {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -154,14 +171,17 @@ export default {
       this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
           this.botRequest = Response.Count
-          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: 'Bot请求次数'})
-          this.$set(this.legendTextPie, 3, 'Bot请求次数')
+          this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: this.t('BOT请求次数', 'WAF.botqqcs')})
+          this.$set(this.legendTextPie, 3, this.t('BOT请求次数', 'WAF.botqqcs'))
           console.log(this.seriesPie)
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // 查询TOP N攻击类型饼图
     getAttackType() {
+      this.loading = true
       let typeArr = []
       let typeLegend = []
       const params = {
@@ -183,6 +203,8 @@ export default {
           this.seriesPieAttack = typeArr
           this.legendTextPieAttack = typeLegend    
         })
+      }).then(() => {
+        this.loading = false
       })
     },
   }

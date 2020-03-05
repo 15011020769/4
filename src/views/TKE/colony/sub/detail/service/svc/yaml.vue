@@ -4,7 +4,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary">编辑YAML</el-button>
+        <el-button size="small" :disabled="spaceName=='kube-system'?true:false" type="primary" @click="goEdit">编辑YAML</el-button>
       </div>
     </div>
 
@@ -40,17 +40,19 @@ export default {
       YAMLData: '', // 数据信息
       cmOptions: {
         tabSize: 4,
-        mode: 'python',
+        mode: 'python', // 默认脚本编码
         theme: 'darcula',
-        lineNumbers: true, // 行号
+        lineNumbers: true, // 是否显示行号
         line: true,
         // lineNumbers: true,
         foldgutter: true,
         gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-        lineWrapping: true, // 代码折叠
+        lineWrapping: true, // 是否强制换行
         foldGutter: true,
         matchBrackets: true, // 括号匹配
-        autoCloseBrackets: true
+        autoCloseBrackets: true,
+        readOnly: true// 只读
+        // readOnly: 'nocursor'// 只读没有焦点
       }
     }
   },
@@ -77,12 +79,10 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           let response = res.Response.ResponseBody
-          console.log(response)
+          // console.log(response)
           this.YAMLData = response
         } else {
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -92,6 +92,18 @@ export default {
           })
         }
       })
+    },
+    goEdit () {
+      if (this.spaceName !== 'kube-system') {
+        this.$router.push({
+          name: 'svcUpdateYaml',
+          query: {
+            clusterId: this.clusterId,
+            spaceName: this.spaceName,
+            serviceName: this.serviceName
+          }
+        })
+      }
     }
   }
 }

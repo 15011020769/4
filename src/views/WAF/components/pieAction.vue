@@ -24,7 +24,6 @@ export default {
   mounted() {
     this.echart();
     window.onresize = this.$echarts.init(this.$refs.pie_dv).resize;
-    console.log(this.domain)
     this.getBotAction(this.domain)
   },
   props: {

@@ -1,134 +1,128 @@
+
+import i18n from "../../language/i18n";
+
 export const datasource = [
   {
-    noticeCategoryName: "财务消息",
-    noticeCategoryKey: "106",
+    name: i18n.t("CAM.subscriptionType.0"),
+    key: 106,
     children: [
       {
-        noticeCategoryName: "账务欠费通知",
-        noticeCategoryKey: "213",
-        stationLetterChecked: true
+        name: i18n.t("CAM.subscriptionType.1"),
+        key: 213
       },
       {
-        noticeCategoryName: "账户预警通知",
-        noticeCategoryKey: "268",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.2"),
+        key: 268
       },
       {
-        noticeCategoryName: "账单出账通知",
-        noticeCategoryKey: "310",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.3"),
+        key: 310
       },
       {
-        noticeCategoryName: "账户提现通知",
-        noticeCategoryKey: "215",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.4"),
+        key: 215
       }
     ]
   },
   {
-    noticeCategoryName: "产品消息",
-    noticeCategoryKey: "103",
+    name: i18n.t("CAM.subscriptionType.5"),
+    key: 103,
     children: [
       {
-        noticeCategoryName: "产品到期、回收通知",
-        noticeCategoryKey: "217",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.6"),
+        key: 217
       },
       {
-        noticeCategoryName: "产品自动续费通知",
-        noticeCategoryKey: "219",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.7"),
+        key: 219
       },
       {
-        noticeCategoryName: "CDM云数据迁移消息通知",
-        noticeCategoryKey: "283",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.8"),
+        key: 283
       },
       {
-        noticeCategoryName: "CDN相关通知",
-        noticeCategoryKey: "208",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.9"),
+        key: 208
       },
       {
-        noticeCategoryName: "产品服务相关通知",
-        noticeCategoryKey: "294",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.10"),
+        key: 294
       },
       {
-        noticeCategoryName: "产品变更通知",
-        noticeCategoryKey: "313",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.11"),
+        key: 313
       },
       {
-        noticeCategoryName: "DNSPod邮件通知",
-        noticeCategoryKey: "292",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.12"),
+        key: 292
       },
       {
-        noticeCategoryName: "HTTPDNS相关通知",
-        noticeCategoryKey: "267",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.13"),
+        key: 267
       },
       {
-        noticeCategoryName: "工单服务通知",
-        noticeCategoryKey: "309",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.14"),
+        key: 309
       },
       {
-        noticeCategoryName: "产品告警通知",
-        noticeCategoryKey: "269",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.15"),
+        key: 269
       },
       {
-        noticeCategoryName: "天御业务安全防护相关通知",
-        noticeCategoryKey: "233",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.16"),
+        key: 233
       },
       {
-        noticeCategoryName: "云市场服务通知",
-        noticeCategoryKey: "302",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.17"),
+        key: 302
       },
       {
-        noticeCategoryName: "证书两码发放",
-        noticeCategoryKey: "279",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.18"),
+        key: 279
       },
       {
-        noticeCategoryName: "渠道服务通知",
-        noticeCategoryKey: "264",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.19"),
+        key: 264
       },
       {
-        noticeCategoryName: "URL安全解决方案",
-        noticeCategoryKey: "256",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.20"),
+        key: 256
       },
       {
-        noticeCategoryName: "官网服务通知",
-        noticeCategoryKey: "232",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.21"),
+        key: 232
       },
       {
-        noticeCategoryName: "SSL证书相关通知",
-        noticeCategoryKey: "222",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.22"),
+        key: 222
       }
     ]
   },
   {
-    noticeCategoryName: "安全消息",
-    noticeCategoryKey: "104",
+    name: i18n.t("CAM.subscriptionType.23"),
+    key: 104,
     children: [
       {
-        noticeCategoryName: "安全事件通知",
-        noticeCategoryKey: "207",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.24"),
+        key: 207
       },
       {
-        noticeCategoryName: "内容违规通知",
-        noticeCategoryKey: "303",
-        stationLetterChecked: false
+        name: i18n.t("CAM.subscriptionType.25"),
+        key: 303
+      }
+    ]
+  },
+  {
+    name: i18n.t("CAM.subscriptionType.26"),
+    key: 102,
+    children: [
+      {
+        name: i18n.t("CAM.subscriptionType.27"),
+        key: 305
+      },
+      {
+        name: i18n.t("CAM.subscriptionType.28"),
+        key: 211
       }
     ]
   }

@@ -65,7 +65,7 @@
         </el-table-column>
         <el-table-column prop label="资源类型">
           <template slot-scope="scope">
-            <span>{{scope.row.involvedObject.kind}}</span>
+            <span v-if="scope.row.involvedObject.kind">{{scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="资源名称">
@@ -127,27 +127,59 @@ export default {
       nameFlag: true,
       typeOptions: [
         {
-          value: "全部类型",
-          label: "全部类型"
+          value: "全部類型",
+          label: "全部類型"
         },
         {
-          value: "CronJob",
+          value: "cronjob",
           label: "CronJob"
         },
         {
-          value: "DaemonSet",
+          value: "daemonset",
           label: "DaemonSet"
         },
         {
-          value: "Deployment",
+          value: "deployment",
           label: "Deployment"
         },
         {
-          value: "Ingress",
+          value: "ingress",
           label: "Ingress"
+        },
+        {
+          value: "job",
+          label: "Job"
+        },
+        {
+          value: "node",
+          label: "Node"
+        },
+        {
+          value: "pods",
+          label: "Pod"
+        },
+        {
+          value: "pv",
+          label: "PersistentVolume"
+        },
+        {
+          value: "pvc",
+          label: "PersistentVolumeClaim"
+        },
+        {
+          value: "sc",
+          label: "StorageClass"
+        },
+        {
+          value: "statefulset",
+          label: "StatefulSet"
+        },
+        {
+          value: "svc",
+          label: "Service"
         }
       ],
-      typeValue: "全部类型",
+      typeValue: "全部類型",
       nameOptions: [
         {
           value: "aaa",
@@ -166,7 +198,6 @@ export default {
   created() {
     // this.getEventList();
     this.nameSpaceList();
-    // this.getKind();
     this.refresh();
   },
   methods: {
@@ -175,14 +206,14 @@ export default {
       if (this.autoRefresh == true) {
         var timeId = setInterval(() => {
           this.nameSpaceList();
-          // this.getKind();
+          this.getKind();
         }, 20000);
         window.clearInterval(timeId);
       } else {
         window.clearInterval(timeId);
         this.nsOptions = [];
         this.nameSpaceList();
-        // this.getKind();
+        this.getKind();
       }
     },
     //    /api/v1/namespaces    get
@@ -199,15 +230,17 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          // console.log(mes);
-          this.list = mes.items;
-          this.total = mes.items.length;
-          mes.items.forEach(item => {
-            this.nsOptions.push({
-              value: item.metadata.name,
-              label: item.metadata.name
+          if (mes.items != []) {
+            this.list = mes.items;
+            this.total = mes.items.length;
+            mes.items.forEach(item => {
+              this.nsOptions.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
             });
-          });
+          }
+          this.getKind();
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -216,11 +249,10 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
-      this.getKind();
     },
     getKind() {
       //获取类型的数据
@@ -234,6 +266,7 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
+          console.log(this.list);
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -243,7 +276,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -251,9 +284,13 @@ export default {
     getEventList() {
       //事件列表
       var typeValues = this.typeValue;
-      typeValues =
-        typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
-      console.log(typeValues);
+      if (typeValues.charAt(typeValues.length - 1) == "s") {
+        typeValues =
+          typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "es";
+      } else {
+        typeValues =
+          typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
+      }
       var params = {
         Method: "GET",
         // /apis/apps/v1beta2/namespaces/default/daemonsets
@@ -267,8 +304,7 @@ export default {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
           this.total = mes.items.length;
-          console.log(mes.items[0]);
-          if (mes.items[0].metadata.name !== "") {
+          if (mes.items != []) {
             this.nameFlag = false;
           }
           this.loadShow = false;
@@ -279,13 +315,22 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
+      //       Method: "GET"
+      // Path: "/api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=CronJob&limit=20"
+      // Version: "2018-05-25"
+      // ClusterName: "cls-h3phnkpy"
       var params = {
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/" + this.nsValue + "/daemonsets",
+        Path:
+          "/apis/apps/v1beta2/namespaces/" +
+          this.nsValue +
+          "/events？fieldSelector=involvedObject.kind=" +
+          this.typeValue +
+          "b&limit=20",
         ClusterName: this.$route.query.clusterId,
         Version: "2018-05-25"
       };
@@ -302,7 +347,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -310,12 +355,12 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getEventList();
+      // this.getEventList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      this.getEventList();
+      // this.getEventList();
     }
   },
   components: {

@@ -1,52 +1,99 @@
 <template>
   <div class="main_ub">
-    <el-row type="flex" justify="end" class="topSearch">
-      <el-input v-model="sourceIp" placeholder="请输入源IP或策略名称"></el-input>
-    </el-row>
     <el-card>
       <el-table
         :data="ucbList"
         style="width: 100%"
+        row-key="Id"
+        :empty-text="t('暂无数据', 'WAF.zwsj')"
+        v-loading="loading"
       >
-        <el-table-column prop="date" label="序号"  width="50">
+        <el-table-column
+          type="selection"
+          class-name="hide"
+          width="1"
+        />
+        <el-table-column :label="t('序号', 'WAF.xh')"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
-        <el-table-column prop="SrcIp" label="访问源IP"></el-table-column>
-        <el-table-column prop="RuleName" label="策略名称"></el-table-column>
+        <el-table-column prop="SrcIp" :label="t('访问源IP', 'WAF.fwyip')"></el-table-column>
+        <el-table-column prop="RuleName" :label="t('策略名称', 'WAF.clmc')"></el-table-column>
         <!-- <el-table-column prop="bot_feature" label="异常特征" width="120" :show-overflow-tooltip="true" :formatter="formatBotFeature"></el-table-column> -->
-        <el-table-column prop="bot_feature" label="异常特征" width="120">
+        <el-table-column prop="bot_feature" :label="t('异常特征', 'WAF.yctz')" width="120">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="light" :content="scope.row.bot_feature.join('、')" placement="right">
               <p>{{scope.row.bot_feature | botFeatureFilter}}</p>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="Action" label="动作" width="60">
+        <el-table-column prop="Action" width="100">
+          <el-dropdown slot="header" @command="handleCommand">
+            <span class="el-dropdown-link" style="color: #909399;">
+              {{t('动作', 'WAF.dz')}}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item
+                :command="action.value"
+                v-for="action in UCB_ACTION_ARR"
+                :key="action.name"
+              >
+                {{action.name}}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
           <template slot-scope="scope">
-           {{action[scope.row.Action]}}
+            <span class="addRed">{{UCB_ACTION[scope.row.Action]}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="Score" label="BOT得分" width="100" sortable>
+        <el-table-column prop="Score" width="100">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('score.total')">
+            BOT 得分
+            <i class="el-icon-caret-top" v-if="sort === 'score.total:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'score.total:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('score.total')"></i>
+          </el-button>
           <template slot-scope="scope">
             {{scope.row.Score.Total}}
           </template>
         </el-table-column>
-        <el-table-column prop="Nums" label="会话总次数" width="110" sortable></el-table-column>
-        <el-table-column prop="date" label="会话持续时间" width="118" sortable  :show-overflow-tooltip="true">
-          <template slot-scope="scope">
-            {{formatSeconds(scope.row.SessionDuration * 60)}}
-          </template>
+        <el-table-column prop="Nums" width="120">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('nums')">
+            {{t('会话总次数', 'WAF.hhzcs')}}
+            <i class="el-icon-caret-top" v-if="sort === 'nums:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'nums:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('nums')"></i>
+          </el-button>
         </el-table-column>
-        <el-table-column prop="date" label="平均速率" sortable width="100">
+        <el-table-column width="118" :formatter="formatSessionDuration">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('session_duration')">
+            {{t('会话持续时间', 'WAF.hhcxsj')}}
+            <i class="el-icon-caret-top" v-if="sort === 'session_duration:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'session_duration:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('session_duration')"></i>
+          </el-button>
+        </el-table-column>
+        <el-table-column width="100">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('stat.avg_speed')">
+            平均速率
+            <i class="el-icon-caret-top" v-if="sort === 'stat.avg_speed:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'stat.avg_speed:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('stat.avg_speed')"></i>
+          </el-button>
           <template slot-scope="scope">
             {{parseInt(scope.row.Stat.AvgSpeed)}}次/分
           </template>
         </el-table-column>
-        <el-table-column prop="date" label="最新检测时间" width="120" sortable :formatter="formatDate">
+        <el-table-column label="最新检测时间" width="150" :formatter="formatDate">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
+            {{t('最新检测时间', 'WAF.zxjcsh')}}
+            <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'timestamp:-1'"></i>
+            <i class="el-icon-d-caret" v-if="!sort.includes('timestamp')"></i>
+          </el-button>
         </el-table-column>
-        <el-table-column prop="date" label="操作">
+        <el-table-column label="操作" width="80">
           <template slot-scope="scope">
-            <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
+            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('查看详情', 'WAF.ckxq')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -66,26 +113,28 @@
 <script>
 import moment from 'moment'
 import { DESCRIBE_BOT_UCB_RECORDS } from '@/constants'
-import { scene_flag_list } from '../../../constants'
+import { scene_flag_list, UCB_ACTION, UCB_ACTION_ARR, } from '../../../constants'
+import { isValidIPAddressNew } from '@/utils'
 export default {
   data () {
     return {
-      sourceIp: "",
       ucbList: [],
       currentPage: 1,//当前页
       pageLimit: 10,//每页长度
-      pageSkip: 0,
       totalItems: 0,//总长度
       sceneValue: "", // 预测标签匹配字段绑定值
       scene_flag_list, // 预测标签匹配字段
-      action: {'intercept': '拦截', 'monitor': '监控'},
+      UCB_ACTION,
+      UCB_ACTION_ARR,
+      sort: 'timestamp:-1',
+      action: '',
+      loading: true,
     }
   },
   props: {
-    domain: {
-      type: String,
-      default: "",
-    },
+    sourceIp: String,
+    domain: String,
+    id: Number,
     times: {
       type: Array,
       defaule: () => []
@@ -93,14 +142,19 @@ export default {
   },
   watch: {
     domain() {
-      this.getBotUcbList()
+      this.init()
     },
-    times() {
-      this.getBotUcbList()
+    id() {
+      this.init()
+    },
+    times(n, o) {
+      if (n.join() !== o.join()) {
+        this.init()
+      }
     }
   },
   mounted() {
-    this.getBotUcbList()
+    this.init()
   },
   filters: {
     botFeatureFilter(text) {
@@ -112,21 +166,53 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.getBotUcbList()
+    },
+    handleCommand(action) {
+      this.action = action
+      this.getBotUcbList()
+    },
+    setSort(key) {
+      if (this.sort.includes(key)) { // 升降序
+        if (this.sort.includes('-')) {
+          this.sort = `${key}:1`
+        } else {
+          this.sort = `${key}:-1`
+        }
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
+      this.init()
+    },
     getBotUcbList() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         Domain: this.domain,
-        StartTs: moment(this.times[0]).utc().valueOf(),
-        EndTs: moment(this.times[1]).utc().valueOf(),
-        Skip: this.pageSkip,
+        StartTs: this.times[0],
+        EndTs: this.times[1],
+        Skip: (this.currentPage - 1) * this.pageLimit,
         Limit: this.pageLimit,
+      }
+      params.Sort = this.sort
+      if (this.action) {
+        params.Action = this.action
+      }
+      if (this.sourceIp) {
+        if (isValidIPAddressNew(this.sourceIp)) {
+          params.Ip = this.sourceIp
+        } else {
+          params.Name = this.sourceIp
+        }
       }
       this.axios.post(DESCRIBE_BOT_UCB_RECORDS, params).then(resp => {
         this.generalRespHandler(resp, ({Data}) => {
-          console.log(Data)
           this.ucbList = Data.Res
           this.totalItems = Data.TotalCount
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // 查看详情
@@ -134,22 +220,23 @@ export default {
       this.$router.push({
         path: "/botDetail/ucb",
         query: {
-          SrcIp: scope.row.SrcIp
+          SrcIp: scope.row.SrcIp,
+          domain: this.domain,
+          Id: scope.row.Id
         }
       })
     },
     // 分页开始
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageLimit = val
-      this.currentPage = val
-      this.pageOffset = 0
+      this.getBotUcbList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.pageOffset = (val - 1) * this.pageLimit
+      this.currentPage = val
+      this.getBotUcbList()
     }, 
-    formatSeconds(value) {
+    formatSessionDuration(row) {
+      const value = row.SessionDuration * 60
       let secondTime = parseInt(value);// 秒
       let minuteTime = 0;// 分
       let hourTime = 0;// 小时
@@ -200,11 +287,18 @@ export default {
 //     }
 //   }
 .main_ub {
-  .topSearch {
-    ::v-deep .el-input {
-      width: 250px;
-      margin-bottom: 10px;
-    }
+  margin-top: 20px;
+  // .topSearch {
+  //   ::v-deep .el-input {
+  //     width: 250px;
+  //     margin-bottom: 10px;
+  //   }
+  // }
+  .addRed {
+    color: #e1504a;
   }
+}
+::v-deep .hide {
+  visibility: hidden;
 }
 </style>

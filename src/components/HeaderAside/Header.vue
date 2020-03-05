@@ -17,7 +17,7 @@
           style="width: 140px; height: 60px;"
         />
       </el-menu-item>
-      <el-menu-item index="2" @mouseenter.native="Show">
+      <el-menu-item index="2" @mouseenter.native="show=true" @mouseleave.native="show=false">
         <!-- 产品中心 -->
         <div>{{ $t("COM.center") }}</div>
       </el-menu-item>
@@ -52,7 +52,7 @@
     </el-menu>
 
     <transition name="hehe">
-      <div class="PRO-style" v-if="show" :key="1" @mouseleave="Show2">
+      <div class="PRO-style" v-if="show" :key="1" @mouseenter="show=true" @mouseleave.stop="show=false">
         <product-center></product-center>
       </div>
     </transition>
