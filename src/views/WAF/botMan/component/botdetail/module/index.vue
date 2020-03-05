@@ -1,10 +1,10 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>BOT 详情</span>
+      <span>{{t('BOT 详情', 'WAF.botxq')}}</span>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="基础信息" name="info"></el-tab-pane>
-        <el-tab-pane label="访问详情" name="detail"></el-tab-pane>
+        <el-tab-pane :label="t('基础信息', 'WAF.jcxx')" name="info"></el-tab-pane>
+        <el-tab-pane :label="t('访问详情', 'WAF.fwxq')" name="detail"></el-tab-pane>
       </el-tabs>
     </div>
     <div class="wrapper">

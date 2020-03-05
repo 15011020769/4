@@ -2,10 +2,10 @@
   <div class="main_overview">
     <div class="firstShow">
       <h3>
-        <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
-        请求次数统计
+        {{t('请求次数统计', 'WAF.qqcstj')}}
         <span style="color:#bbb;">(%)</span>
       </h3>
+      <el-row class="empty" v-if="seriesLineFlowTotal.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
       <ELine
         :xAxis="xAxisLineFlow"
         :series1="seriesLineFlowTotal"
@@ -13,16 +13,16 @@
         :legendText="legendTextLineFlow"
         :color="colorLine"
         v-loading="loading"
+        v-else
       />
     </div>
     <el-row class="secondShow">
       <el-col :span="12">
         <h3 class="topfont">
-          <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
-          BOT 动作占比
+          {{t('BOT 动作占比', 'WAF.botdzzb')}}
           <span style="color:#bbb;">(%)</span>
         </h3>
-        <el-row class="empty" v-if="seriesPieType.length == 0 ? true : false">暂无数据</el-row>
+        <el-row class="empty" v-if="seriesPieType.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
         <EPie
           :series="seriesPieType"
           :color="colorPie"
@@ -33,11 +33,10 @@
         </el-col>
         <el-col :span="12">
         <h3 class="topfont">
-          <!-- {{t('攻击类型占比', 'WAF.gjlxzb')}} -->
-          BOT 类型占比
+          {{t('BOT 类型占比', 'WAF.botlxzb')}}
           <span style="color:#bbb;">(%)</span>
         </h3>
-        <el-row class="empty" v-if="seriesPieAction.length == 0 ? true : false">暂无数据</el-row>
+        <el-row class="empty" v-if="seriesPieAction.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
         <EPie
           :series="seriesPieAction"
           :color="colorPie"
@@ -50,12 +49,11 @@
     <div class="thirdShow">
         <el-row type="flex" justify="start">
             <h3 class="topfont">
-              <!-- {{t('攻击类型占比', 'WAF.gjlxzb')}} -->
-              BOT 来源分布
+              {{t('BOT 来源分布', 'WAF.botlyfb')}}
             </h3>
             <el-radio-group v-model="radio" size="small">
               <el-radio-button label="global">全球</el-radio-button>
-              <el-radio-button label="china">全国</el-radio-button>
+              <el-radio-button label="china">{{t('全国', 'WAF.qg')}}</el-radio-button>
             </el-radio-group>
             <el-select
               v-model="botType"
@@ -98,20 +96,20 @@ export default {
       seriesLineFlowTotal: [], // bot流量折线图
       xAxisLineFlow: [], // bot流量折线图
       colorLine: ["#006eff", "#FF584C",],
-      legendTextLineFlow: ['总请求', 'BOT请求'],
+      legendTextLineFlow: [this.t('总请求', 'WAF.zqq'), this.t('BOT请求', 'WAF.botqq')],
       seriesPieType: [], // bot类型饼图
       seriesPieAction: [], // bot动作饼图
       colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],
-      legendTextPieType: ['公开类型', '未知类型', '用户自定义类型'], // bot类型
-      legendTextPieAction: ['验证码', '拦截', '监控', '重定向'], // bot动作
+      legendTextPieType: [this.t('公开类型', 'WAF.gklx'), this.t('未知类型', 'WAF.wzlx'), this.t('用户自定义类型', 'WAF.yhzdylx')], // bot类型
+      legendTextPieAction: [this.t('验证码', 'WAF.yzm'), this.t('拦截', 'WAF.lj'), this.t('监控', 'WAF.jk'), '重定向'], // bot动作
       seriesWorldMap: [], // 世界地图和中国地图查询值 { name: '中国', value: 2 }
       radio: "global", // 全球/全国绑定值
       botType: "ALL", // bot类型下拉绑定值
       options: [
         {value: 'ALL', label: '全部'},
-        {value: 'UCB', label: '自定义类型'},
-        {value: 'TCB', label: '公开类型'},
-        {value: 'UB', label: '未知类型'},
+        {value: 'UCB', label: this.t('自定义类型', 'WAF.zdylx')},
+        {value: 'TCB', label: this.t('公开类型', 'WAF.gklx')},
+        {value: 'UB', label: this.t('未知类型', 'WAF.wzlx')},
       ],
       loading: true,
     }
@@ -261,9 +259,9 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_TYPE_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: '公开类型'})
-          this.$set(this.seriesPieType, 1, {value: Response.UB, name: '未知类型'})
-          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: '用户自定义类型'})
+          this.$set(this.seriesPieType, 0, {value: Response.TCB, name: this.t('公开类型', 'WAF.gklx')})
+          this.$set(this.seriesPieType, 1, {value: Response.UB, name: this.t('未知类型', 'WAF.wzlx')})
+          this.$set(this.seriesPieType, 2, {value: Response.UCB, name: this.t('用户自定义类型', 'WAF.yhzdylx')})
         })
       }).then(() => {
         this.loading = false
@@ -280,9 +278,9 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_ACTION_STAT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: '验证码'})
-          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: '拦截'})
-          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: '监控'})
+          this.$set(this.seriesPieAction, 0, {value: Response.Captcha, name: this.t('验证码', 'WAF.yzm')})
+          this.$set(this.seriesPieAction, 1, {value: Response.Intercept, name: this.t('拦截', 'WAF.lj')})
+          this.$set(this.seriesPieAction, 2, {value: Response.Monitor, name: this.t('监控', 'WAF.jk')})
           this.$set(this.seriesPieAction, 3, {value: Response.Redirect, name: '重定向'})
         })
       }).then(() => {
@@ -332,6 +330,13 @@ export default {
     height: 375px;
     background: #fff;
     box-sizing: border-box;
+    .empty {
+      height: 300px;
+      width: 100%;
+      line-height: 300px;
+      text-align: center;
+      font-weight: bold
+    }
   }
   .secondShow {
     width: 100%;
@@ -376,9 +381,9 @@ export default {
       margin-left: 10px;
     }
     .empty {
-      height: 200px;
+      height: 600px;
       width: 100%;
-      line-height: 200px;
+      line-height: 600px;
       text-align: center;
       font-weight: bold
     }

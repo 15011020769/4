@@ -27,6 +27,7 @@
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
+            :clearable= false
             @change="changeTimeValue"
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"

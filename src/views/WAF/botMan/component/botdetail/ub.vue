@@ -4,6 +4,7 @@
       <el-table
         :data="ubList"
         row-key="Id"
+        :empty-text="t('暂无数据', 'WAF.zwsj')"
         v-loading="loading"
       >
         <el-table-column
@@ -11,14 +12,14 @@
           class-name="hide"
           width="1"
         />
-        <el-table-column label="序号"  width="50">
+        <el-table-column :label="t('序号', 'WAF.xh')"  width="50">
           <template slot-scope="scope">{{ scope.$index+1}}</template>
         </el-table-column>
-        <el-table-column prop="SrcIp" label="访问源IP"></el-table-column>
-        <el-table-column prop="RuleName" label="预测标签">
+        <el-table-column prop="SrcIp" :label="t('访问源IP', 'WAF.fwyip')"></el-table-column>
+        <el-table-column prop="RuleName">
           <el-dropdown slot="header" trigger="click" @command="onChangeScene" size="small">
             <span>
-              预测标签<i class="el-icon-arrow-down el-icon--right"></i>
+              {{t('预测标签', 'WAF.ycbq')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="">全部</el-dropdown-item>
@@ -30,21 +31,21 @@
           </el-dropdown>
           <template slot-scope="scope">{{formatRuleName(scope.row.RuleName)}}</template>
         </el-table-column>
-        <el-table-column prop="date" label="异常特征" width="120">
+        <el-table-column prop="date" :label="t('异常特征', 'WAF.yctz')" width="120">
           <template slot-scope="scope">
             <el-tooltip class="item" effect="light" :content="scope.row.bot_feature.join('、')" placement="right">
               <p>{{scope.row.bot_feature | botFeatureFilter}}</p>
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="Action" label="动作" width="60">
+        <el-table-column prop="Action" :label="t('动作', 'WAF.dz')" width="60">
           <template slot-scope="scope">
             <span class="addRed">{{UCB_ACTION_LOCAL[scope.row.Action]}}</span>
           </template>
         </el-table-column>
         <el-table-column prop="Score" width="100">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('score.total')">
-            BOT得分
+            BOT 得分
             <i class="el-icon-caret-top" v-if="sort === 'score.total:1'"></i>
             <i class="el-icon-caret-bottom" v-if="sort === 'score.total:-1'"></i>
             <i class="el-icon-d-caret" v-if="!sort.includes('score.total')"></i>
@@ -55,7 +56,7 @@
         </el-table-column>
         <el-table-column prop="Nums" width="120">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('nums')">
-            会话总次数
+            {{t('会话总次数', 'WAF.hhzcs')}}
             <i class="el-icon-caret-top" v-if="sort === 'nums:1'"></i>
             <i class="el-icon-caret-bottom" v-if="sort === 'nums:-1'"></i>
             <i class="el-icon-d-caret" v-if="!sort.includes('nums')"></i>
@@ -63,7 +64,7 @@
         </el-table-column>
         <el-table-column width="118" :formatter="formatSessionDuration">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('session_duration')">
-            会话持续时间
+            {{t('会话持续时间', 'WAF.hhcxsj')}}
             <i class="el-icon-caret-top" v-if="sort === 'session_duration:1'"></i>
             <i class="el-icon-caret-bottom" v-if="sort === 'session_duration:-1'"></i>
             <i class="el-icon-d-caret" v-if="!sort.includes('session_duration')"></i>
@@ -82,15 +83,16 @@
         </el-table-column>
         <el-table-column label="最新检测时间" width="150" :formatter="formatDate">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
-            最新检测时间
+            {{t('最新检测时间', 'WAF.zxjcsh')}}
             <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
             <i class="el-icon-caret-bottom" v-if="sort === 'timestamp:-1'"></i>
             <i class="el-icon-d-caret" v-if="!sort.includes('timestamp')"></i>
           </el-button>
         </el-table-column>
-        <el-table-column label="操作" width="80">
+        <el-table-column label="操作" width="110">
           <template slot-scope="scope">
-            <el-button @click="goDetail(scope)" type="text" size="mini">查看详情</el-button>
+            <el-button @click="" type="text" size="mini">加黑</el-button>
+            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('查看详情', 'WAF.ckxq')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -138,19 +140,19 @@ export default {
   },
   watch: {
     domain() {
-      this.getBotUbList()
+      this.init()
     },
     id() {
-      this.getBotUbList()
+      this.init()
     },
     times(n, o) {
       if (n.join() !== o.join()) {
-        this.getBotUbList()
+        this.init()
       }
     }
   },
   mounted() {
-    this.getBotUbList()
+    this.init()
   },
   filters: {
     botFeatureFilter(text) {
@@ -162,6 +164,11 @@ export default {
     },
   },
   methods: {
+    init() {
+      if(this.domain) {
+        this.getBotUbList()
+      }
+    },
     setSort(key) {
       if (this.sort.includes(key)) { // 升降序
         if (this.sort.includes('-')) {
@@ -172,11 +179,11 @@ export default {
       } else { // 换个排序字段 默认降序
         this.sort = `${key}:-1`
       }
-      this.getBotUbList()
+      this.init()
     },
     onChangeScene(scene) {
       this.sceneValue = scene
-      this.getBotUbList()
+      this.init()
     },
     getBotUbList() {
       this.loading = true

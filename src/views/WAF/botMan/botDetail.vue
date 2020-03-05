@@ -30,8 +30,8 @@
           ></el-option>
         </el-select>
         <el-button-group>
-          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小时</el-button>
-          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小时</el-button>
+          <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小{{t('时', 'WAF.hour')}}</el-button>
+          <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小{{t('时', 'WAF.hour')}}</el-button>
           <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">今天</el-button>
           <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">昨天</el-button>
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
@@ -41,22 +41,22 @@
           type="datetimerange"
           class="timeValue"
           range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          :start-placeholder="t('开始日期', 'WAF.ksrq')"
+          :end-placeholder="t('结束日期', 'WAF.jsrq')"
           :clearable= false
           @change="changeTimeValue"
         ></el-date-picker>
         <i class="el-icon-refresh" @click="id+=1" />
         <el-input
           v-model.trim="sourceIp"
-          :placeholder="activeName == 'ucb' ?'请输入源IP或策略名称' : '请输入源ip'"
+          :placeholder="activeName == 'ucb' ? t('请输入源IP或策略名称', 'WAF.qsryipcl') : t('请输入源IP', 'WAF.qsryip')"
           v-if="activeName != 'overview'"
           class="search-input"
         >
           <i class="el-icon-search el-input__icon" slot="suffix" @click="id+=1" />
         </el-input>
       </el-row>
-      <over-view :domain="domainValue" :times="[startTime, endTime]" :id="id" :selBtn="selBtn" v-if="activeName == 'overview' && domainValue.length"></over-view>
+      <over-view :domain="domainValue" :times="[startTime, endTime]" :id="id" :selBtn="selBtn" v-if="activeName == 'overview'"></over-view>
       <Ub :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ub'" :sourceIp="sourceIp"></Ub>
       <Ucb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'ucb'" :sourceIp="sourceIp"></Ucb>
       <Tcb :domain="domainValue" :times="[startTime, endTime]" :id="id" v-if="activeName == 'tcb'" :sourceIp="sourceIp"></Tcb>
