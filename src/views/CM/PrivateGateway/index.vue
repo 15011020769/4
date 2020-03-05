@@ -171,7 +171,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "專線網關" + ".xlsx"
+            "專線閘道" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);

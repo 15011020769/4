@@ -27,7 +27,7 @@ module.exports = {
     lljk: '流量監控',
     gjls: '告警歷史',
     jkgl: '監控概覽',
-    zxwg: '專線網關',
+    zxwg: '專線閘道',
     cftjmb: '觸發條件模板',
     gjpz: '告警配置',
     dxcc: '對象儲存',
