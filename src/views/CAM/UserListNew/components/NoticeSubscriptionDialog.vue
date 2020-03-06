@@ -385,7 +385,7 @@ export default {
         .post(GET_ALL_SUBSCRIPTION_TYPE)
         .then(res => {
           if (res.code === 0 && Array.isArray(res.data)) {
-            const dataLength = res.data.length;
+
             const parentLength = datasource.length;
             for (let i = 0; i < parentLength; i++) {
               const parent = datasource[i];
