@@ -79,9 +79,9 @@
         </el-table-column>
         <el-table-column :label="t('请求时间', 'WAF.qqsj')" prop="timestamp">
           <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
-            {{t('最新检测时间', 'WAF.zxjcsh')}}
-            <i class="el-icon-caret-top" v-show="sort === 'timestamp:1'"></i>
-            <i class="el-icon-caret-bottom" v-show="sort === 'timestamp:-1'"></i>
+            {{t('请求时间', 'WAF.qqsj')}}
+            <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'timestamp:-1'"></i>
           </el-button>
           <template slot-scope="scope">
             {{ scope.row.timestamp | formatMillisecond }}
@@ -217,10 +217,18 @@ export default {
       if (this.sort.includes(key)) { // 升降序
         if (this.sort.includes('-')) {
           this.sort = `${key}:1`
+          this.tableData = this.tableDataCopy.sort((a, b) => {
+            return a.timestamp - b.timestamp
+          })
         } else {
           this.sort = `${key}:-1`
+          this.tableData = this.tableDataCopy.sort((a, b) => {
+            return b.timestamp - a.timestamp
+          })
         }
-      } 
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
     },
     addCondi() {
       const { condi, keyword, condis, queryCopy, query } = this

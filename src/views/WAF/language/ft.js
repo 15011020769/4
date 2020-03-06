@@ -493,7 +493,7 @@ module.exports = {
       hbmdsx: '黑白名單屬性',
       yys: '運營商',
       dq: '地區',
-      jd: '經度',
+      jingdu: '經度',
       wd: '維度',
       zl: '種類',
       sjxzs: '隨機性指數',
