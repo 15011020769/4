@@ -178,7 +178,7 @@ export default {
     init(){
        this.loading = true
       //  let uin = "100011921910"
-       let uin = VueCookie.get('uuid')
+       let uin = VueCookie.get('uin')
        this.dataType = sessionStorage.getItem('portal-inmail-type')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
@@ -213,7 +213,7 @@ export default {
     //获取未读数据
     getCount(){
       //  let uin = "100011921910"
-       let uin = VueCookie.get('uuid')
+       let uin = VueCookie.get('uin')
        this.axios.get(`${process.env.VUE_APP_adminUrl + UNREAD_DATA}`+'?uin='+uin).then(res=>{
        })
     },
