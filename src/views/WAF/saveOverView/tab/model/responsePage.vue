@@ -31,7 +31,7 @@
   </el-row>
 </template>
 <script>
-import EBar from "../../components/bar"
+import EBar from "../../components/stackBar"
 import { DESCRIBE_HISTOGRAM } from '@/constants'
 export default {
   props: {

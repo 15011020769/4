@@ -10,6 +10,7 @@
         :series1="seriesBotPoints"
         :legendText="legendTextBotPoints"
         :color="colorLine"
+        :tooltip="tooltip"
       />
     </div>
     <div class="secondShow">
@@ -379,7 +380,17 @@ export default {
       SrcIp: "",
       Id: "",
       domain: "",
-      ua_type_list
+      ua_type_list,
+      tooltip: {
+        trigger: 'axis',
+        formatter(params) {
+          let relVal = params[0].name;
+          params.forEach(v => {
+            relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "次";
+          })  
+          return relVal;  
+        }
+      },
     }
   },
   components: {
