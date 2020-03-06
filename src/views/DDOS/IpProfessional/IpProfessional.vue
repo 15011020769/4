@@ -157,10 +157,10 @@ export default {
       width: 100%;
       height: 50px;
       background-color: #fff;
-      border-bottom: 1px solid #ddd;
+      // border-bottom: 1px solid #ddd;
       padding: 0 20px;
       line-height: 50px;
-      margin-bottom: 20px;
+      // margin-bottom: 20px;
       .ReportTitH3 {
         float: left;
         font-size: 16px;
