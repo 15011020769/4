@@ -321,16 +321,6 @@ export default {
                         this.$store.commit("getFlag",this.getflags);
                         return
                     } 
-                   
-                  // else if(data[key] == 1) {
-                  //   this.newData.push({
-                  //     name:key,
-                  //     status:"失败"
-                  //   })
-                  //   this.getflags = true
-                  //   this.$store.commit("getFlag",this.getflags)
-                  //   clearInterval(this.timeIds)
-                  // }
                   this.getCreate()
                   console.log(data[key])
                   // if(this.newData.length>0){

@@ -6,11 +6,13 @@
       <p>
         <i class="el-icon-info"></i>{{$t('SCF.total.zs')}}
       </p>
-
+      <div class="exportExcel">
+        <el-button size="small" @click="exportExcel" :disabled="TableLoad">導出</el-button>
+      </div>
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad' id="exportTable">
         <el-table-column prop width="200">
           <template slot-scope="scope">
             <p>
@@ -72,6 +74,8 @@
   </div>
 </template>
 <script>
+  import FileSaver from "file-saver";
+  import XLSX from "xlsx";
   import moment from "moment";
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   import echartLine from "@/components/public/echars-line"; //引入图标组件
@@ -228,6 +232,28 @@
       }
     },
     methods: {
+      //导出表格
+      exportExcel() {
+        /* generate workbook object from table */
+        var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+        /* get binary string as output */
+        var wbout = XLSX.write(wb, {
+          bookType: "xlsx",
+          bookSST: true,
+          type: "array"
+        });
+        try {
+          FileSaver.saveAs(
+            new Blob([wbout], {
+              type: "application/octet-stream"
+            }),
+            "NAT閘道" + ".xlsx"
+          );
+        } catch (e) {
+          if (typeof console !== "undefined") console.log(e, wbout);
+        }
+        return wbout;
+      },
       GetDat(data) {
         this.Period = data[0]
         this.Time = data[1]
@@ -320,6 +346,10 @@
       margin-top: 20px;
       color: #ccc;
       font-size: 14px;
+    }
+
+    .exportExcel {
+      text-align: right
     }
 
     .box-table {

@@ -20,7 +20,7 @@ export default {
       xAxisLineFlow: [], // bot流量折线图
       seriesLineFlowBot: [], // BOT请求趋势折线图
       seriesLineFlowTotal: [], // BOT请求趋势折线图
-      legendTextLineFlow: ['总请求', 'BOT请求'],
+      legendTextLineFlow: [this.t('总请求', 'WAF.zqq'), this.t('BOT 请求', 'WAF.botqq')],
       colorLine: ["#006eff", "#FF584C",],
     };
   },

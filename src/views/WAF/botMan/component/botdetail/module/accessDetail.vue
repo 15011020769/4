@@ -3,7 +3,7 @@
     <div class="header_top">
       <el-row type="flex" justify="space-between">
         <el-col>
-          <el-button type="primary" @click="getExpends">一键展开</el-button><span style="color: #bbb; margin-left: 10px">统计数据源为会话前600条数据</span>
+          <el-button type="primary" @click="getExpends">{{t('一键展开', 'WAF.yjzk')}}</el-button><span style="color: #bbb; margin-left: 10px">统计数据源为会话前600条数据</span>
         </el-col>
         <el-col>
           <el-row type="flex">
@@ -14,10 +14,10 @@
               <el-button slot="append" @click="addCondi">{{t('添加过滤条件', 'WAF.tjgltj')}}</el-button>
             </el-input>&nbsp;&nbsp;
             <el-button class="selectBtn" @click="search">{{t('查询', 'WAF.js')}}</el-button>
-            <el-tooltip placement="top" effect="dark" class="mode-tooltip" v-if="infoIcon">
+            <!-- <el-tooltip placement="top" effect="dark" class="mode-tooltip" v-if="infoIcon">
               <i class="el-icon-info"></i>
               <span slot="content" @click="openDialog"><span style="cursor: pointer">帮助</span></span>
-            </el-tooltip>
+            </el-tooltip> -->
             <!-- <el-input clearable v-model="recordSearch">
               <i class="el-icon-search el-input__icon" slot="suffix"/>
             </el-input>
@@ -51,7 +51,7 @@
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="GET参数">
+              <el-form-item :label="t('GET参数', 'WAF.canshu')">
                 <span>{{ props.row.query }}</span>
               </el-form-item>
               <el-form-item label="Body">
@@ -98,7 +98,7 @@
         </el-table-column>
         <el-table-column label="UA" prop="ua"></el-table-column>
         <el-table-column label="请求URL" prop="url"></el-table-column>
-        <el-table-column label="GET参数" prop="query"></el-table-column>
+        <el-table-column :label="t('GET参数', 'WAF.canshu')" prop="query"></el-table-column>
         <el-table-column label="状态码" prop="status" v-if="statusOptions.length">
           <el-dropdown slot="header" style="padding: 0" @command="onChangeStatus">
             <span class="el-dropdown-link" style="color: #909399;">

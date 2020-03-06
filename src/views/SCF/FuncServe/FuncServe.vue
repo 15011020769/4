@@ -37,7 +37,7 @@
         <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
           <template slot-scope="$scope">
             <!-- 点击函数名跳转页面 -->
-            <a href="#" @click="toDoDetail($scope.row)">{{$scope.row.FunctionName}}</a>
+            <a href="#" @click="toDoDetail($scope.row,'first')">{{$scope.row.FunctionName}}</a>
           </template>
         </el-table-column>
         <el-table-column :label="$t('SCF.total.hszt')">
@@ -47,7 +47,7 @@
         </el-table-column>
         <el-table-column prop="monitor" :label="$t('SCF.total.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="toDoDetail(scope.row)"></div>
+            <div class="a" @click="toDoDetail(scope.row,'fifth')"></div>
           </template>
 
 
@@ -118,7 +118,8 @@
         </p>
         <p v-else><a>{{$t('SCF.total.xzmmkj')}}{{$t('SCF.total.me')}}</a></p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="_keepSpace" :loading='keeploanding' size="small">{{$t('SCF.total.tj')}}</el-button>
+          <el-button type="primary" @click="_keepSpace" :loading='keeploanding' size="small">{{$t('SCF.total.tj')}}
+          </el-button>
           <el-button @click="SpaceVisible = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -541,11 +542,12 @@
         });
       },
       //跳转详情页点击事件
-      toDoDetail(data) {
+      toDoDetail(data, num) {
         this.$router.push({
           path: "/funSeverDetail",
           query: {
-            functionName: data.FunctionName
+            functionName: data.FunctionName,
+            num: num
           }
         });
       },

@@ -31,7 +31,6 @@ export default {
     baseInfo,
   },
   mounted() {
-    console.log(this.SrcIp)
   },
   methods: {
   }

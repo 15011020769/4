@@ -96,7 +96,7 @@ export default {
       seriesLineFlowTotal: [], // bot流量折线图
       xAxisLineFlow: [], // bot流量折线图
       colorLine: ["#006eff", "#FF584C",],
-      legendTextLineFlow: [this.t('总请求', 'WAF.zqq'), this.t('BOT请求', 'WAF.botqq')],
+      legendTextLineFlow: [this.t('总请求', 'WAF.zqq'), this.t('BOT 请求', 'WAF.botqq')],
       seriesPieType: [], // bot类型饼图
       seriesPieAction: [], // bot动作饼图
       colorPie: ['#2277da', '#e54545', '#ff9d00', '#f5736e'],

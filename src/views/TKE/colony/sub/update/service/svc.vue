@@ -18,10 +18,10 @@
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form class="tke-form" :model="svc" label-position="left" label-width="120px" size="mini">
           <el-form-item label="服务访问方式">
-            <el-radio v-model="svc.radio" label="1">提供公网访问</el-radio>
-            <el-radio v-model="svc.radio" label="2">仅在集群内访问</el-radio>
-            <el-radio v-model="svc.radio" label="3">VPC内网访问</el-radio>
-            <el-radio v-model="svc.radio" label="4">主机端口访问</el-radio>
+            <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="1">提供公网访问</el-radio>
+            <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="2">仅在集群内访问</el-radio>
+            <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="3">VPC内网访问</el-radio>
+            <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="4">主机端口访问</el-radio>
             <a href="javascript:;" style="padding-left:10px;">如何选择</a>
             <i class="el-icon-edit-outline"></i>
             <!-- 方式介绍 -->
@@ -235,7 +235,7 @@ export default {
       loadShow: false, // 加载是否显示
       dialogFormVisible: false,
       svc: {
-        show: true,
+        show: false,
         time: 30, // 会话时间
         checked: false, // 仅在集群内访问的多选框
         name: '',
@@ -306,76 +306,30 @@ export default {
     this.clusterId = clusterId
     this.spaceName = spaceName
     this.serviceName = serviceName
-    this.getInfo()// 获取服务详情信息
-    this.getDescribeClusters()// 获取集群列表
-    this.getDescribeLoadBalancers()// 扫描均衡器
-    this.getDescribeVpcs()// 描述Vpcs
-    this.getDescribeSubnets()// 扫描子网
+    this.initRequery()
   },
   methods: {
-    // 扫描子网(4)
-    async getDescribeSubnets () {
-      this.loadShow = true
-      let params = {
-        // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
-        'Filters.0.Name': 'vpc-id',
-        'Filters.0.Values.0': 'vpc-apm60zou',
-        Limit: 100,
-        Offset: 0,
-        Version: '2017-03-12'
-      }
-      await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
-        // console.log(1111111, res)
-        if (res.Response.Error === undefined) {
-          let msg = res.Response.SubnetSet
-          this.LBsubnet = msg
-          // console.log(msg)
-          if (this.svc.radio !== '3') {
-            this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
-          }
-          this.loadShow = false
-          msg.forEach(ele => {
-            if (ele.SubnetId == this.svc.subnetId) {
-              this.svc.LBvalue2 = ele.SubnetName
-              // this.svc.subnetId = ele.SubnetId
-            }
-          })
-        } else {
-          this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 2000
-          })
-        }
-      })
+    initRequery: async function () {
+      await this.getInfo()// 获取服务详情信息
+      await this.getDescribeClusters()// 获取集群列表
+      await this.getDescribeLoadBalancers()// 扫描均衡器
+      await this.getDescribeVpcs()// 描述Vpcs
+      await this.getDescribeSubnets()// 扫描子网
     },
-    // 扫描vpcs(3)
-    async getDescribeVpcs () {
+    // 获取集群列表(1)
+    async getDescribeClusters () {
       this.loadShow = true
       let params = {
-        Limit: 100,
-        Offset: 0,
-        Version: '2017-03-12',
-        'VpcIds.0': 'vpc-apm60zou'
-        // 'VpcIds.0': this.vpcId[0]
+        'ClusterIds.0': this.clusterId,
+        Version: '2018-05-25'
       }
-      await this.axios.post(TKE_VPC_METWORK, params).then(res => {
+      await this.axios.post(TKE_COLONY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          let msg = res.Response.VpcSet
-          this.vpcNameAry = msg
-          if (this.svc.radio !== '3') {
-            this.svc.LBvalue1 = res.Response.VpcSet[0].VpcName
-          }
-          msg.forEach(ele => {
-            if (ele.VpcId == this.svc.vpcIds) {
-              this.svc.LBvalue1 = ele.VpcName
-            }
-          })
-          // console.log(this.svc.LBvalue1)
+          let msg = res.Response.Clusters
+          this.describeClustersList = msg
+          this.svc.vpcIds = msg[0].ClusterNetworkSettings.VpcId
+          // this.vpcId = msg
+          // console.log(msg)
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -413,7 +367,7 @@ export default {
           //     // this.svc.value = ''
           //   }
           // })
-          // console.log(22222, this.vpcId)
+          // console.log(msg)
           // console.log(this.ownLoadBalancer)
           this.loadShow = false
         } else {
@@ -429,20 +383,30 @@ export default {
         }
       })
     },
-    // 获取集群列表(1)
-    async getDescribeClusters () {
+    // 扫描vpcs(3)
+    async getDescribeVpcs () {
       this.loadShow = true
       let params = {
-        'ClusterIds.0': this.clusterId,
-        Version: '2018-05-25'
+        Limit: 100,
+        Offset: 0,
+        Version: '2017-03-12'
+        // 'VpcIds.0': this.svc.vpcIds
+        // 'VpcIds.0': this.vpcId[0]
       }
-      await this.axios.post(TKE_COLONY_LIST, params).then(res => {
+      params['VpcIds.0'] = this.svc.vpcIds
+      await this.axios.post(TKE_VPC_METWORK, params).then(res => {
         if (res.Response.Error === undefined) {
-          let msg = res.Response.Clusters
-          this.describeClustersList = msg
-          this.svc.vpcIds = msg[0].ClusterNetworkSettings.VpcId
-          // this.vpcId = msg
-          // console.log(this.svc.vpcIds)
+          let msg = res.Response.VpcSet
+          this.vpcNameAry = msg
+          if (this.svc.radio !== '3') {
+            this.svc.LBvalue1 = res.Response.VpcSet[0].VpcName
+          }
+          msg.forEach(ele => {
+            if (ele.VpcId == this.svc.vpcIds) {
+              this.svc.LBvalue1 = ele.VpcName
+            }
+          })
+          // console.log(msg)
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -457,6 +421,52 @@ export default {
         }
       })
     },
+    // 扫描子网(4)
+    async getDescribeSubnets () {
+      this.loadShow = true
+      let params = {
+        // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
+        // 'Filters.0.Name': 'vpc-id',
+        // 'Filters.0.Values.0': this.svc.vpcIds,
+        Limit: 100,
+        Offset: 0,
+        Version: '2017-03-12'
+      }
+      // params['Filters.0.Name'] = 'vpc-id'
+      params['Filters.0.Name'] = 'vpc-id'
+      // params['Filters.0.Values.0'] = this.svc.vpcIds
+      params['Filters.0.Values.0'] = this.svc.vpcIds
+
+      await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
+        // console.log(1111111, res)
+        if (res.Response.Error === undefined) {
+          let msg = res.Response.SubnetSet
+          this.LBsubnet = msg
+          // console.log(msg)
+          if (this.svc.radio !== '3') {
+            this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
+          }
+          this.loadShow = false
+          msg.forEach(ele => {
+            if (ele.SubnetId == this.svc.subnetId) {
+              this.svc.LBvalue2 = ele.SubnetName
+              // this.svc.subnetId = ele.SubnetId
+            }
+          })
+        } else {
+          this.loadShow = false
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 2000
+          })
+        }
+      })
+    },
+
     // 更新访问方式按钮的提交
     async updateAccessMode () {
       let { list, ETP, SA, time, val, value, radio, loadBalance, describe } = this.svc
@@ -500,7 +510,7 @@ export default {
       let jsonStr = { 'metadata': {// 要传递的RequestBody参数
         'annotations': {
           // 'description': this.serviceName,
-          'service.kubernetes.io/loadbalance-id': val
+          'service.kubernetes.io/loadbalance-id': val || ''
           // 'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}'
         } },
       'spec': { 'type': specType,
@@ -508,25 +518,37 @@ export default {
         // 'externalTrafficPolicy': policy
         'sessionAffinity': session
       } }
-      if (describe) jsonStr.metadata.annotations.description = describe// 是否有描述
-      if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime// 会话时间的参数判断
-      // 访问方式参数判断
-      if (radio == '1') jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
-      if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy // 高级选项ExtermalTrafficPolicy的参数
-      if (radio == '1' && loadBalance == '2') jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
-      // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+      // 是否有描述
+      if (describe) jsonStr.metadata.annotations.description = describe
+      // 会话时间的参数判断
+      if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime
+      // 访问方式1参数
+      if (radio == '1') {
+        jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
+      }
+      if (radio == '1' && loadBalance == '2') {
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+        // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
+      }
+      // 高级选项ExtermalTrafficPolicy的参数
+      if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy
+      // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
       if (radio == '3' && loadBalance == '1') {
         this.getSubnetId()
+        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
         // this.svc.value = ''
       } else if (radio == '3' && loadBalance == '2') {
         this.getSubnetId()
+        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
+        // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
       }
-      // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+      // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
 
       let param = {
         ContentType: 'application/merge-patch+json',
@@ -569,45 +591,63 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
+          // console.log(JSON.parse(res.Response.ResponseBody))
           let msg = JSON.parse(res.Response.ResponseBody)
           this.serviceInfo = msg
           this.svc.list = msg.spec.ports
+          // var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+          if (msg.spec.type === 'NodePort') { // 判断服务访问方式
+            this.svc.radio = '4'
+          } else if (msg.spec.type === 'ClusterIP') {
+            this.svc.radio = '2'
+          } else if (msg.spec.type === 'LoadBalancer' && msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']) {
+            this.svc.radio = '3'
+          } else {
+            this.svc.radio = '1'
+            // msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
+          }
           // var at = 'kubernetes.io/loadbalance-id'
           // 自有创建的均衡器id
-          this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
-          // if (this.svc.radio == '3') {
+          if (msg.metadata.annotations) {
+            this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
+          }
+          if (this.svc.radio === '3') {
           // LB子网id
-          this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+            this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
           // 用来判断选中的是哪个访问方式
-          var isart = msg.metadata.annotations['service.kubernetes.io/service.extensiveParameters']
+          // var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+          }
+          // 获取使用已有均衡器的id
+          // if (this.svc.loadBalance === '2') {
+          this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] || ''
           // }
-          // if (this.svc.loadBalance == '2') {
-          this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
-          // }
-          this.svc.describe = msg.metadata.annotations.description
+          // console.log(this.svc.value)
+          // 获取描述信息
+          if (msg.metadata.annotations) {
+            this.svc.describe = msg.metadata.annotations.description
+          }
           // console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
-          if (!this.svc.value) {
+          if (this.svc.val !== '') {
             this.svc.loadBalance = '1'
           } else {
             this.svc.loadBalance = '2'
           }
-          if (msg.spec.type == 'NodePort') { // 判断服务访问方式
-            this.svc.radio = '4'
-          } else if (msg.spec.type == 'ClusterIP') {
-            this.svc.radio = '2'
-          } else if (msg.spec.type == 'LoadBalancer' && !isart) {
-            this.svc.radio = '3'
-          } else {
-            this.svc.radio = '1'
-          }
-          if (msg.spec.externalTrafficPolicy == 'Cluster') { // 高级选项ExtermalTrafficPolicy判断
+          // if (msg.spec.type == 'NodePort') { // 判断服务访问方式
+          //   this.svc.radio = '4'
+          // } else if (msg.spec.type == 'ClusterIP') {
+          //   this.svc.radio = '2'
+          // } else if (msg.spec.type == 'LoadBalancer' && isart) {
+          //   this.svc.radio = '3'
+          // } else {
+          //   this.svc.radio = '1'
+          // }
+          if (msg.spec.externalTrafficPolicy === 'Cluster') { // 高级选项ExtermalTrafficPolicy判断
             this.svc.ETP = '1'
           } else {
             this.svc.ETP = '2'
           }
           // console.log(msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds)
-          if (msg.spec.sessionAffinity == 'ClientIP') { // 高级选项Session Affinity判断
+          if (msg.spec.sessionAffinity === 'ClientIP') { // 高级选项Session Affinity判断
             this.svc.SA = '1'
             this.svc.time = msg.spec.sessionAffinityConfig.clientIP.timeoutSeconds
           } else {
@@ -635,6 +675,9 @@ export default {
         }
       })
     },
+    // isdisable(){
+    //   if
+    // }
     handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {

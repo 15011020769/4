@@ -172,6 +172,12 @@ export const TKE_CBS_POLICIES = 'cbs2/DescribeAutoSnapshotPolicies'
 // 云硬盘---地区选择
 export const TKE_DESCRIBEZONES = 'cvm2/DescribeZones'
 
+// 获取PersistentVolumeClaim费用
+export const TKE_PAY_MONEY = 'cbs2/InquiryPriceCreateDisks'
+
+
+
+
 
 
 

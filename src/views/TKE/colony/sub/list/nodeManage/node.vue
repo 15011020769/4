@@ -392,12 +392,13 @@ export default {
               duration: 0
             });
           }
+          let jobRes = await this.axios.post(JOB_ID, paramJob);
           let param3 = {
             Version: "2019-06-06",
-            JobId: 'xocz9p1dhimlcsal',
+            JobId: jobRes.Response.JobId,
             Module: '/front/v1'
           }
-          let jobRes = await this.axios.post(JOB_ID, paramJob);
+          
           let jobRes22 = await this.axios.post(MOMITOR_TKE, param3);
           
           this.loadShow = true;

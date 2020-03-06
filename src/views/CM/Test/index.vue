@@ -61,6 +61,19 @@
             ]
           },
           {
+            name: '近15天',
+            Time: 'Nearly_15_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+          {
             name: '今天',
             Time: 'Today',
             TimeGranularity: [{
@@ -80,6 +93,19 @@
           {
             name: '昨天',
             Time: 'Yesterday',
+          },
+          {
+            name: '近15天',
+            Time: 'Nearly_15_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
           }, {
             name: '近30天',
             Time: 'Nearly_30_days',
