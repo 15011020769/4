@@ -10,10 +10,11 @@
       </div>-->
       <div class="explain">
         <p>
-          範本设置完成，需关联推流域名方可生效，请点击
-          <router-link to="/domainManagement">域名管理</router-link>进行关联设置。
+          範本設置完成，需關聯推流域名方可生效，請點擊
+          <router-link to="/domainManagement">域名管理</router-link>
+          進行關聯設置。
           <!-- <a href="#">参考文档</a> -->
-          範本配置完后续大约5分鐘生效
+          範本配置完後續大約5分鐘生效
         </p>
       </div>
       <div class="main-box" v-loading="loading">
