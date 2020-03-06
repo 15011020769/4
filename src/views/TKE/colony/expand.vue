@@ -82,7 +82,7 @@
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group
                 v-model="nodeForm.instanceChargeType"
-                @change="SecondCharging"
+                @change="SecondCharging();costPrice()"
               >
                 <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
                 <el-radio-button label="PREPAID">包年包月</el-radio-button>
@@ -132,7 +132,7 @@
           </div>
           <el-form-item label="CPU&内存">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList">
+              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList;costPrice">
                 <el-option
                   v-for="item in nodeForm.AllCPU"
                   :key="item.value"
@@ -141,7 +141,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList">
+              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList;costPrice">
                 <el-option
                   v-for="item in nodeForm.AllRAM"
                   :key="item.value"
@@ -154,7 +154,7 @@
           </el-form-item>
           <el-form-item label="实例族">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList">
+              <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList;costPrice">
                 <el-radio-button label="all">全部实例族</el-radio-button>
                 <el-radio-button label="S3">标准型</el-radio-button>
                 <el-radio-button label="M3">内存型</el-radio-button>
@@ -164,7 +164,7 @@
           </el-form-item>
           <el-form-item label="实例类型">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList">
+              <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList;costPrice">
                 <el-radio-button label="all">全部实例类型</el-radio-button>
                 <el-radio-button label="S3" v-show="nodeForm.example === 'all' || nodeForm.example === 'S3'">标准型S3</el-radio-button>
                 <el-radio-button label="C3" v-show="nodeForm.example === 'all' || nodeForm.example === 'M3'">计算型C3</el-radio-button>
@@ -285,42 +285,59 @@
               >
             </div>
             <div v-if="nodeForm.dataDiskShow" style="margin: 0 120px;background-color: #f2f2f2;" class="tke-second-radio-btn tke-third-radio-btn">
-              <div  >
-                <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;">
-                  <el-radio-group v-model="nodeForm.dataDiskType">
-                    <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
-                    <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
-                  </el-radio-group>
-                  <div class="block">
-                    <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="nodeForm.dataSize" show-input></el-slider>
+              <div>
+                <div v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i" style="display: flex;"><!--v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i"-->
+                  <div style="flex: 1;">
+                    <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;">
+                      <el-radio-group v-model="item.dataDiskType">
+                        <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
+                        <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
+                      </el-radio-group>
+                      <div class="block">
+                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize" show-input></el-slider>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="格式化设置" class="norms" style="padding-left: 10px;">
+                      <el-checkbox v-model="item.fomatAndMount" @change="isFomatMount">
+                        格式化并挂载          
+                      </el-checkbox>
+                      <div v-if="item.fomatAndMount" style="display: flex;">
+                        <el-select v-model="item.fileSystem" placeholder="请选择" style="padding-right: 10px;">
+                          <el-option
+                            v-for="item in nodeForm.latticeSetOpt"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                          >
+                          </el-option>
+                        </el-select>
+                        <el-input v-model="item.filePath" placeholder="请输入挂载路径"></el-input>
+                      </div>
+                    </el-form-item>
                   </div>
-                </el-form-item>
-                <el-form-item label="格式化设置" class="norms" style="padding-left: 10px;">
-                  <el-checkbox v-model="nodeForm.fomatAndMount" @change="isFomatMount">
-                    格式化并挂载          
-                  </el-checkbox>
-                  <div v-if="nodeForm.isShowFomatMount" style="display: flex;">
-                    <el-select v-model="nodeForm.fileSystem" placeholder="请选择" style="padding-right: 10px;">
-                      <el-option
-                        v-for="item in nodeForm.latticeSetOpt"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-input v-model="nodeForm.filePath" placeholder="请输入挂载路径"></el-input>
-                  </div>
-                </el-form-item>
+                  <span>
+                    <i
+                      class="el-icon-error ml5"
+                      style="margin-top:10px;height: 20px;width:20px;"
+                      @click="deleteDataDisk(i)"
+                    ></i>
+                  </span>
+                </div>
               </div>
-            </div>
-            
-            <div
-              class="add-data-disk" style="margin-left: 120px;margin-top: -15px;"
-              v-if="nodeForm.dataDiskShow"
-              @click="AddDataDisk()"
-            >
-              添加数据盘
+              <div class="btn">
+                <el-button @click="DataDiskSure()" style="color: #006eff;"
+                  >确定</el-button
+                >
+                <el-button @click="closeDataDisk"
+                  >取消</el-button
+                >
+              </div>
+              <div
+                class="add-data-disk" style="margin-top: 10px;"
+                v-if="nodeForm.dataDiskShow"
+              >
+                <el-button @click="AddDataDisk()" style="color: #006eff;">添加机型</el-button> 
+              </div>
             </div>
           </div>
           <el-form-item label="容器目录">
@@ -907,11 +924,11 @@ export default {
         containerInput = this.nodeForm.containerInput;
       }
       let InstanceAdvancedSettings = {
-        DockerGraphPath: JSON.stringify(containerInput),
+        DockerGraphPath: containerInput,
         UserScript: '',
         Unschedulable: Number(0)
-        // ,Labels: []
-        // ,ExtraArgs: {Kubelet: []}
+        ,Labels: []
+        ,ExtraArgs: {Kubelet: []}
       }
       // InstanceAdvancedSettings['Labels'] = '';
       // InstanceAdvancedSettings.ExtraArgs = {};
@@ -966,7 +983,8 @@ export default {
       });
     },
     //计算价格
-    costPrice() {
+    async costPrice() {
+      
       let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
         let dataDisks = [];
         if(buyDataDiskArr.length > 0) {
@@ -980,7 +998,8 @@ export default {
         }
       let param = {
         DataDisks:dataDisks,
-        ImageId: this.nodeForm.imageId,
+        // ImageId: this.nodeForm.imageId,
+        ImageId: "img-6yudrskj",
         InstanceChargeType: this.nodeForm.instanceChargeType,
         InstanceCount: this.nodeForm.instanceCount,
         InstanceType: this.nodeForm.instanceType,
@@ -994,6 +1013,45 @@ export default {
           PublicIpAssigned: this.nodeForm.publicIpAssigned
         }
       }
+
+      await this.axios.post(TKE_PRICE, param).then(res => {
+        if(res.Response === undefined) {
+
+        } else {
+          let ErrTips = {
+            "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
+            "InstancesQuotaLimitExceeded":
+              "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+            "InvalidClientToken.TooLong":
+              "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+            "InvalidHostId.NotFound":
+              "指定的HostId不存在，或不属于该请求账号所有。",
+            "InvalidInstanceName.TooLong":
+              "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+            "InvalidInstanceType.Malformed":
+              "指定InstanceType参数格式不合法。",
+            "InvalidParameterCombination": "表示参数组合不正确。",
+            "InvalidParameterValue":
+              "无效参数值。参数值格式错误或者参数值不被支持等。",
+            "InvalidParameterValue.Range":
+              "无效参数值。参数值取值范围不合法。",
+            "InvalidPassword":
+              "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+            "InvalidPeriod":
+              "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+            "InvalidPermission": "账户不支持该操作。",
+            "InvalidZone.MismatchRegion": "指定的zone不存在。",
+            "MissingParameter": "参数缺失。请求没有带必选参数。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     //获取镜像 
     async getImagesList() {
@@ -1030,12 +1088,13 @@ export default {
         }
         
         await this.axios.post(TKE_OPERAT_SYSTEM, paramImage).then(resImage => {
-          if(resImage.Response === undefined) {
+          if(resImage.Response.Error === undefined) {
             let images = resImage.Response.ImageInstanceSet;
             if(images.length > 0) {
               for (let i = 0; i < images.length; i++) {
-                if(response.ClusterOs === images[i].Alias) {
-                  this.nodeForm.imageId = images[i].ImageId;
+                let image = images[i];
+                if(response.ClusterOs === image.OsName) {
+                  this.nodeForm.imageId = image.ImageId;
                   continue;
                 }
               }
@@ -1300,7 +1359,11 @@ export default {
       this.$router.go(-1);
     },
     // -------------------------------------- 第二步 ---------------------------------
-    
+    //关闭数据盘购买
+    closeDataDisk() {
+      this.nodeForm.dataDiskShow = false;
+      this.nodeForm.isShowDataDisk = false;
+    },
     // 计费模式
     SecondCharging(val) {
       this.getDescribeZoneInstanceConfigInfos()
@@ -1332,6 +1395,7 @@ export default {
         fileSystem: "ext4",
         filePath: "/var/lib/docker"
       });
+      console.log("this.nodeForm.buyDataDiskArr",this.nodeForm.buyDataDiskArr);
     },
 
     // 购买数据盘
@@ -1378,6 +1442,7 @@ export default {
     isBuyDataDisk() {
       if(this.nodeForm.isShowDataDisk) {
         this.nodeForm.dataDiskShow = true;
+        this.AddDataDisk();
       } else {
         this.nodeForm.dataDiskShow = false;
       }
