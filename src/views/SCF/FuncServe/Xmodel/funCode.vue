@@ -42,10 +42,31 @@
           </p>
         </div>
       </div>
+
+      <div v-if="SubmissionValue==='Inline'" class="content">
+        <el-input type="textarea" :rows="10" placeholder="请输入内容" v-model="textarea">
+        </el-input>
+      </div>
+
+      <div v-if="SubmissionValue==='ZipFile'" class="content">
+        <div>
+          <p>函数代码</p>
+          <div>
+            <p>
+              <el-upload class="upload-demo" action="" multiple :limit="3" :on-exceed="handleExceed"
+                :file-list="fileList">
+                <el-button size="small" type="primary">点击上传</el-button>
+              </el-upload>
+            </p>
+            <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
+  // import JsZip from 'jszip'
   import {
     SCF_DETAILS,
     LIST_VERSION
@@ -74,7 +95,9 @@
             label: '通过cos上传zip包',
             value: 'Cos'
           }
-        ]
+        ],
+        fileList: [],
+        textarea: '测试'
       }
     },
     created() {},
@@ -89,6 +112,20 @@
         this.axios.post(SCF_DETAILS, param).then(res => {
 
         });
+      },
+      handleExceed(files, fileList) {
+        console.log(files, fileList)
+        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      },
+      successUpload(response, file, fileList) {
+        let new_zip = new JsZip()
+        new_zip.loadAsync(file.raw)
+          .then(function (zip) {
+            new_zip.file("test.txt").async("string") // 此处是压缩包中的test.txt文件,返回String类型(此时在回调的参数中已经可以获取到上传的zip压缩包下的所有文件)
+              .then(function (content) {
+                console.log(content) // 这个就是.txt文件中的内容
+              })
+          })
       }
     }
   }
@@ -147,6 +184,10 @@
 
 
 
+    }
+
+    .content {
+      margin: 20px 0;
     }
   }
 
