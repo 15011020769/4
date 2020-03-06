@@ -1,7 +1,12 @@
 <template>
   <!-- 防护配置 -->
   <div class="wrap">
-    <HeaderCom title="防護配置" />
+    <h3 class="ReportTitH3">
+      {{ $t("DDOS.Proteccon_figura.Proteccon_title") }}
+    </h3>
+    <!-- 新购 -->
+    <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
+    <br/>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <!-- DDOS攻击防护 -->
       <el-tab-pane
@@ -795,24 +800,30 @@ a {
   clear: both;
 }
 
-.statistReportTit {
+.wrap {
   width: 100%;
-  height: 84px;
+  height: 100px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  padding: 12px 20px 0;
-
+  padding: 0 20px;
+  line-height: 50px;
+  margin-bottom: 20px;
   .ReportTitH3 {
     float: left;
     font-size: 16px;
     font-weight: 600;
+    margin-right: 20px;
   }
-
   .ReportTitBtn {
     float: right;
-    height: 32px;
-    line-height: 32px;
+    height: 30px;
+    line-height: 30px;
     padding: 0;
+    margin-top: 8px;
+    width: 52px;
+    border-radius: 0;
+    text-align: center;
+    background-color: #006eff;
   }
 }
 
@@ -873,10 +884,10 @@ button.el-icon-search {
   width: 50px;
   height: 30px;
   padding: 0;
-  line-height: 30px;
+  // line-height: 30px;
   text-align: center;
   border-radius: 0;
-  float: right;
+  // float: right;
 }
 
 .mainConListOneIpt {
