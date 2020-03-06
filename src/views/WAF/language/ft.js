@@ -532,7 +532,7 @@ module.exports = {
       sllddsh: '數量量大的時候，導出可能比較慢，請耐心等待。',
       zddc: '最多導出10000條數據。',
       ksdc: '開始導出',
-      jd: '進度',
+      jdd: '進度',
     },
     COM: require('@/components/language/ft'),
 }
