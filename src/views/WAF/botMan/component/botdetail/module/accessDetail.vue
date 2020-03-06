@@ -2,7 +2,7 @@
   <div class="wrapper_item">
     <div class="header_top">
       <el-row type="flex" justify="space-between">
-        <el-col>{{sort}}
+        <el-col>
           <el-button type="primary" @click="getExpends">{{t('一键展开', 'WAF.yjzk')}}</el-button>
           <span style="color: #bbb; margin-left: 10px">{{t('统计数据源为会话前600条数据', 'WAF.tjsjy')}}</span>
         </el-col>
