@@ -364,7 +364,9 @@ export default {
                   http_upgrade_insecure_requests: array[12]
               });
           });
-          this.tableData = items
+          this.tableData = items.sort((a, b) => {
+            return b.timestamp - a.timestamp
+          })
           this.tableDataCopy = items
           this.total = items.length
         })
