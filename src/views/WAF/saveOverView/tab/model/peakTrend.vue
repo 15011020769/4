@@ -4,6 +4,7 @@
       {{t('业务峰值趋势', 'WAF.ywfzqs')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
+    <el-row class="empty" v-if="series1.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     <ELine
       :xAxis="xAxis1"
       :series1="series1"
@@ -12,6 +13,7 @@
       :color="color"
       :legendText="legendText1"
       v-loading="loading"
+      v-else
     />
   </el-row>
 </template>
@@ -35,7 +37,7 @@ export default {
       series1: [], // 业务攻击趋势
       series2: [], // 业务攻击趋势
       series3: [], // 业务攻击趋势
-      legendText1: ['QPS', '上行带宽', '下行带宽'], // 业务攻击趋势
+      legendText1: ['QPS', this.t('上行带宽', 'WAF.sxdk'), this.t('下行带宽', 'WAF.xxdk')], // 业务攻击趋势
       color: ["#006eff", "#29CC85", "#FF9D00"],
       loading: true,
     }
@@ -112,6 +114,13 @@ export default {
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     .topfont{
       padding-left: 20px;
+    }
+     .empty {
+      height: 300px;
+      width: 100%;
+      line-height: 300px;
+      text-align: center;
+      font-weight: bold
     }
   }
 </style>

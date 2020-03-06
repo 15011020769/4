@@ -4,6 +4,7 @@
       {{t('攻击趋势', 'WAF.gjqs')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
+     <el-row class="empty" v-if="series1.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     <ELine
       :xAxis="xAxis1"
       :series1="series1"
@@ -12,6 +13,7 @@
       :color="color"
       v-loading="loading"
       :legendText="domain == '' ? legendText2 : legendText1"
+      v-else
     />
   </el-row>
 </template>
@@ -128,6 +130,13 @@ export default {
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     .topfont{
       padding-left: 20px;
+    }
+     .empty {
+      height: 300px;
+      width: 100%;
+      line-height: 300px;
+      text-align: center;
+      font-weight: bold
     }
   }
 </style>

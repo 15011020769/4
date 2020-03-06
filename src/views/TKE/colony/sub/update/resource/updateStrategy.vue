@@ -62,25 +62,25 @@
                     </el-tooltip>
                   </p>
                   <div style="float:right;">
-                    <div v-for="(i,index) in val" :key="index" style="margin-bottom:6px;" class="flex">
-                      <el-input class="w150" v-model="i.name"></el-input>
-                      <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
+                    <div v-for="(i,index) in val.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
+                      <el-input class="w150" v-model="i.key"></el-input>
+                      <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                         <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
                           :value="item.value">
                         </el-option>
                       </el-select>
-                      <el-input class="w150" v-model="i.rule"></el-input>
-                      <el-tooltip v-if="val.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
+                      <el-input class="w150" v-model="i.values"></el-input>
+                      <el-tooltip v-if="val.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
                         <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
                       </el-tooltip>
-                      <i class="el-icon-close" v-else @click="val.splice(index,1)"
+                      <i class="el-icon-close" v-else @click="val.matchExpressions.splice(index,1)"
                         style="font-size:20px;cursor:pointer"></i>
                     </div>
-                    <a href="#" @click="addRule1(idx)">添加规则</a>
+                    <a  @click="addRule1(idx)">添加规则</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a href="#" @click="addCondition">添加条件</a>
+                <a @click="addCondition">添加条件</a>
               </el-form-item>
               <el-form-item label="尽量满足条件">
                 <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
@@ -99,26 +99,26 @@
                   </div>
                   <div style="float:right;">
                       <div style="margin-bottom:10px"><el-input   v-model="val.weight" class="w150" ></el-input></div>
-                      <div v-for="(i,index) in val.arr" :key="index" style="margin-bottom:6px;" class="flex">
-                        <el-input class="w150" v-model="i.name"></el-input>
-                        <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
+                      <div v-for="(i,index) in val.preference.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
+                        <el-input class="w150" v-model="i.key"></el-input>
+                        <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                           <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-input class="w150" v-model="i.rule"></el-input>
-                        <el-tooltip v-if="val.arr.length==1" class="item" effect="light" content="至少配置一个选择器"
+                        <el-input class="w150" v-model="i.values"></el-input>
+                        <el-tooltip v-if="val.preference.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器"
                           placement="top">
                           <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
                         </el-tooltip>
-                        <i class="el-icon-close" v-else @click="val.arr.splice(index,1)"
+                        <i class="el-icon-close" v-else @click="val.preference.matchExpressions.splice(index,1)"
                           style="font-size:20px;cursor:pointer"></i>
                       </div>
-                      <a href="#" @click="addRule2(idx)">添加规则</a>
+                      <a @click="addRule2(idx)">添加规则</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a href="#" @click="addCondition2">添加条件</a>
+                <a @click="addCondition2">添加条件</a>
               </el-form-item>
             </div>
         </el-form>
@@ -197,7 +197,7 @@ export default {
 		},
 		submit(){
       var params={
-        ClusterName: "cls-otln4thi",
+        ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
         Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
@@ -209,9 +209,6 @@ export default {
         }},
         Version: "2018-05-25",
       }
- 
-
-
       if(this.se.radio=='1'){
         params.RequestBody.spec.template.spec.affinity=null
       }else if(this.se.radio=='2'){
@@ -229,12 +226,21 @@ export default {
 							"preferredDuringSchedulingIgnoredDuringExecution": null
 						}
 					}
+      }else if(this.se.radio=='3'){
+         params.RequestBody.spec.template.spec.affinity={
+           "nodeAffinity":{
+             "requiredDuringSchedulingIgnoredDuringExecution":{
+               "nodeSelectorTerms":this.muserDefinedData()
+              },
+              "preferredDuringSchedulingIgnoredDuringExecution":this.nuserDefinedData()
+            }
+         }    
       }
       console.log(params)
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
         console.log(res)
          if(res.Response.Error === undefined){
-          //  this.$router.go(-1)
+           this.$router.go(-1)
          }else{
             let ErrTips = {};
             let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
@@ -260,10 +266,10 @@ export default {
       }
       console.log(params)
       this.axios.post(TKE_COLONY_INSTANCES,params).then(res=>{
-        console.log(res)
+        // console.log(res)
           if(res.Response.Error === undefined){
               // this.content=res.Response.InstanceSet
-              console.log( this.content)
+              // console.log( this.content)
             }else{
               let ErrTips = {};
               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
@@ -310,15 +316,101 @@ export default {
               ClusterName: this.clusterId
         }
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-              console.log(res)
-              if(res.Response.Error === undefined){
-                let response = JSON.parse(res.Response.ResponseBody);
+          if(res.Response.Error === undefined){
+            let response = JSON.parse(res.Response.ResponseBody);
                 let obj=response.items[0];
               console.log(obj)
+                if(obj.spec.template.spec['affinity']!=undefined){
+                  if(obj.spec.template.spec.affinity.nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
+                    this.se.radio='2';
+                    let nd=obj.spec.template.spec.affinity.nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].values;
+                    this.appointNode=nd;
+                  }else{
+                    let nd2=obj.spec.template.spec.affinity.nodeAffinity;
+                      console.log(nd2)
+                      this.se.radio='3';
+                      let qzCondition=nd2['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms;
+                      let jlCondition=nd2['preferredDuringSchedulingIgnoredDuringExecution'];
+                      
+                      if(qzCondition){//强制条件还原
+                        let arr=[];
+                        qzCondition.forEach(element => {
+                          let obj={}
+                          obj.matchExpressions=element.matchExpressions
+                          for(let item of obj.matchExpressions){
+                              item.key=item.key;
+                              item.operator=item.operator;
+                              item.values=item.values[0]
+                          }
+                          arr.push(obj)
+                        });
+                         console.log(arr)
+                        this.mustCondition=arr
+                      }
+
+                      if(jlCondition){//尽量满足条件还原
+                        let arr=[];
+                        jlCondition.forEach(element=>{
+                            let obj={}
+                            obj.weight=element.weight;
+                            obj.preference=element.preference;
+                             for(let item of obj.preference.matchExpressions){
+                              item.key=item.key;
+                              item.operator=item.operator;
+                              item.values=item.values[0]
+                          }
+                        arr.push(obj)
+                        })
+                        this.needCondition=arr
+                      }
+
+                  }
+                }
               }
 
          })
     },
+
+    muserDefinedData(){
+
+      if(this.mustCondition.length!=0){
+       let arr=[];
+         this.mustCondition.forEach(element => {
+            let obj={}
+            obj.matchExpressions=JSON.parse(JSON.stringify(element.matchExpressions))
+            for(let item of obj.matchExpressions){
+                    item.key=item.key;
+                    item.operator=item.operator;
+                    item.values=[item.values]
+              }
+           arr.push(obj)
+          });
+         return arr
+       }else{
+         return null
+       }
+    },
+    nuserDefinedData(){
+      if(this.needCondition.length!=0){
+        let arr=[];
+        this.needCondition.forEach(element=>{
+              let obj={}
+              obj.weight=element.weight;
+              obj.preference=JSON.parse(JSON.stringify(element.preference));
+                for(let item of obj.preference.matchExpressions){
+                    item.key=item.key;
+                    item.operator=item.operator;
+                    item.values=[item.values]
+                    }
+              arr.push(obj)
+          })
+        return arr
+      }else{
+        return null
+      }
+
+    },
+    
 
      //节点调度策略
     delMustCondition(index) {// 删除强制满足条件
@@ -327,38 +419,43 @@ export default {
     delNeedCondition(index) {//删除尽可能满足条件
       this.needCondition.splice(index, 1)
     },
-  //节点调度策略
+    //节点调度策略
     addRule1(index) {//添加规则1
-        this.mustCondition[index].push({
-          name: '',
-          rule: '',
-          connect: 'In'
+        this.mustCondition[index].matchExpressions.push({
+           key: '',
+          operator: 'In',
+          values: ''
         })
      },
     addRule2(index) {//添加规则2
-        this.needCondition[index].arr.push({
-          name: '',
-          rule: '',
-          connect: 'In'
+        this.needCondition[index].preference.matchExpressions.push({
+           key: '',
+          operator: 'In',
+          values: ''
         })
     },
      //节点调度策略
     addCondition() {// 添加强制满足条件
-        var arr = [{
-          name: '',
-          connect: 'In',
-          rule: ''
-        }];
-        this.mustCondition.push(arr)
+        var obj = {
+          matchExpressions:[{
+            key: '',
+            operator: 'In',
+            values: ''
+          }]
+        };
+        console.log(this.mustCondition)
+        this.mustCondition.push(obj)
     },
     addCondition2() {// 添加尽可能满足条件
         var obj = {
           weight:'',
-          arr:[{
-            name: '',
-            connect: 'In',
-            rule: ''
-          }]
+          preference:{
+            matchExpressions:[{
+              key: '',
+             operator: 'In',
+             values: ''
+            }]
+          },
         };
         this.needCondition.push(obj)
     },

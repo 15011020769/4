@@ -64,7 +64,9 @@
               prop="status"
               :label="$t('DDOS.UnlockOperation.Unlockstate')"
             >
-              <template slot-scope="scope">{{ scope.row.Status }}</template>
+              <template slot-scope="scope">{{
+                $t("DDOS.Automatic_unsealing." + scope.row.Status)
+              }}</template>
             </el-table-column>
             <el-table-column
               prop="action"
@@ -77,7 +79,7 @@
                   type="text"
                   size="small"
                 >
-                  {{ $t("DDOS.Automatic_unsealing." + scope.row.ActionType) }}
+                  解封
                 </el-button>
               </template>
             </el-table-column>
@@ -96,12 +98,15 @@
 </template>
 <script>
 // eslint-disable-next-line camelcase
-import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST, Create_UnblockIp } from '@/constants'
+import {
+  UNBlOCKSTATIS_NUM,
+  IPBlOCKLIST_LIST,
+  Create_UnblockIp
+} from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 import RenewModel from './model/RenewModel'
 
 export default {
-
   data () {
     return {
       unBlockStatis: {
@@ -116,17 +121,15 @@ export default {
       loading: true,
       doalogRenewModel: false, // 解封弹框
       dataUnsealingIP: ''
+
     }
   },
   components: {
-
     RenewModel
-
   },
   created () {
     this.describeUnBlockStatis() // 获取黑洞解封次数接口
     this.describeIpBlockList() // 获取IP封堵列表接口
-    console.log(this.dataUnsealingIP, 'pppp')
   },
   methods: {
     // 解封弹框
@@ -141,16 +144,17 @@ export default {
     // 解封弹出框确定
     sureRenewModel (isShow) {
       this.doalogRenewModel = isShow
-      this.loading = true
       let params = {
+        Action: 'CreateUnblockIp',
         Version: '2018-07-09',
-        Region: '',
+        Region: localStorage.getItem('regionv2'),
         Ip: this.dataUnsealingIP,
-        ActionType: ''// 解封类型
+        ActionType: 'user'
       }
+      console.log(params, 'params')
       this.axios.post(Create_UnblockIp, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.unBlockStatis = res.Response
+          this.describeIpBlockList()
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -161,9 +165,7 @@ export default {
             duration: 0
           })
         }
-        this.loading = false
       })
-      console.log('jief ')
     },
     // 获取IP封堵列表接口
     describeIpBlockList () {
