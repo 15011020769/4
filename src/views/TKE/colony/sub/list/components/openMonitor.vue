@@ -27,23 +27,22 @@
               align="right"
               size="mini"
               @change="setTime()"
-              style="width:300px;"
             ></el-date-picker>
           </div>
           <!-- 对比维度 -->
-          <div v-show="dimensionflag">
+          <div v-show="isFlag">
             <span class="span-2">对比维度</span>
-            <el-radio-group v-model="isCollapse" size="mini" @change="getRoom($event)">
+            <el-radio-group v-model="isCollapse" size="mini" >
               <el-radio-button :label="true">节点</el-radio-button>
               <el-radio-button :label="false">pod</el-radio-button>
             </el-radio-group>
             <span class="span-2" v-show="!isCollapse">所属节点</span>
-            <el-select v-model="value" placeholder="请选择" size="mini" v-show="!isCollapse">
+            <el-select v-model="value" placeholder="请选择" size="mini" v-show="!isCollapse" @change="getChange($event)">
               <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in podData"
+                :key="item.InstanceId"
+                :label="item.InstanceId+'('+item.InstanceName+')'"
+                :value="item.PrivateIpAddresses"
               ></el-option>
             </el-select>
           </div>
@@ -55,14 +54,14 @@
             :indeterminate="isIndeterminate"
             v-model="checkAll"
             @change="handleCheckAllChange"
-          >全选(共{{this.cities.length}}个)</el-checkbox>
+          >全选(共{{this.instances.length}}个)</el-checkbox>
           <!-- <div style="margin: 15px 0;"></div> -->
           <el-checkbox-group
-            v-model="checkedCities"
+            v-model="checkedInstances"
             @change="handleCheckedCitiesChange"
             class="check-flex"
           >
-            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
           </el-checkbox-group>
         </div>
         <div class="box-bottom-right">
@@ -80,7 +79,9 @@
 </template>
 <script>
 // import subTitle from "@/views/TKE/components/subTitle";
-const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
+import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO} from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
+// const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
   props: {
@@ -96,10 +97,15 @@ export default {
       checkAll: true,
       options: [],
       isCollapse: true,
-      checkedCities: ["asdasd", "3dsda", "asdaqwe"],
+      checkedInstances: [],// 全选
       isIndeterminate: false,
-      cities: cityOptions,
-      title:this.$route.query.title,
+      instances: [], // 单选
+      title:"",
+      clusterId:"",
+      InstancesAll:[],
+      isFlag:true,
+      list:[],
+      podData:[],
       pickerOptions: {
         shortcuts: [
           {
@@ -133,14 +139,31 @@ export default {
         ]
       },
       value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: ""
-    };
-  },
-  created() {},
-  watch:{
-    title(val){
-      console.log(val)
+      value2: [new Date(Date.parse(new Date())- 3600 * 1000),new Date(Date.parse(new Date()))]
     }
+  },
+  watch:{
+    isCollapse(val){
+      if(!val){
+        this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.getPodList()
+      } else {
+         this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.getNodeList()
+      }
+    }
+  },
+  created() {
+    let{ title, clusterId } = this.$route.query
+    this.clusterId = clusterId
+    this.title = title
+    // this.pickerOptions.shortcuts[0].onClick(picker)
+    this.getNodeList()
+    // this.GetNode()
   },
   methods: {
     //返回上一层
@@ -151,14 +174,17 @@ export default {
       this.$emit("changeFlag", false);
     },
     handleCheckAllChange(val) {
-      this.checkedCities = val ? cityOptions : [];
+      console.log(val)
+      this.checkedInstances = val ? this.InstancesAll : [];
+      console.log(this.checkedInstances)
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.cities.length;
+      console.log(value)
+      let checkedInstances = value.length;
+      this.checkAll = checkedInstances === this.instances.length;
       this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.cities.length;
+        checkedInstances > 0 && checkedInstances < this.instances.length;
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -166,9 +192,170 @@ export default {
     setTime() {
       this.$emit("setTime", this.value2);
     },
-    getRoom(e) {
-      this.isCollapse = e;
-    }
+    getChange(val){
+      this.value = val
+      this.getPodList()
+    },
+    // getPod(val){
+    //   for()
+    // },
+    // getRoom(e) {
+    //   console.log(e)
+    //   this.isCollapse = e;
+    // },
+        //获取节点列表
+    async getNodeList () {
+      let params = {
+        ClusterId: this.clusterId,
+        Offset: 0,
+        Limit: 20,
+        Version: "2018-05-25",
+        InstanceRole: "MASTER_ETCD"
+      };
+      const res = await this.axios.post(NODE_INFO, params);
+      // this.loadShow = false;
+      // 节点
+      let ids = [];
+      if (res.Response.InstanceSet.length > 0) {
+        res.Response.InstanceSet.map(obj => {
+          ids.push(obj.InstanceId);
+        });
+      }
+      console.log(res.Response.InstanceSet)
+      // check选择部分
+      this.checkedInstances = ids
+      this.instances =  ids
+      this.InstancesAll = ids
+      // this.list = ids
+      // this.value = ids[0]
+      let param = {
+        Version: "2017-03-12",
+        Limit: 20
+      }
+      if(ids.length > 0) {
+        for(let i = 0; i < ids.length; i++) {
+          param['InstanceIds.'+i] = ids[i];
+        }
+        // this.loadShow = true;
+        let nodeRes = await this.axios.post(NODE_LIST, param);
+        // console.log(nodeRes)
+        if(nodeRes.Response.Error === undefined) {
+          // this.loadShow = false;
+          this.podData = []
+          if(nodeRes.Response.InstanceSet.length > 0) {
+            console.log(nodeRes.Response.InstanceSet)
+            for(let i in ids){
+              for(let  j in nodeRes.Response.InstanceSet){
+                if(nodeRes.Response.InstanceSet[j].InstanceId == ids[i]){
+                  this.podData.push({
+                    InstanceId:ids[i],
+                    InstanceName:nodeRes.Response.InstanceSet[j].InstanceName,
+                    PrivateIpAddresses:nodeRes.Response.InstanceSet[j].PrivateIpAddresses[0]
+                  })
+                }  
+              }
+            }
+            this.value = this.podData[0].PrivateIpAddresses
+            // if(ids.length!= this.podData.length){
+            //    for(let i in ids){
+            //      this.podData.filter(item=>{
+            //        if(item.InstanceId.indexof(ids[i])===-1){
+            //           this.podData.push({
+            //             InstanceId:ids[i],
+            //             InstanceName:""
+            //           })
+            //           return
+            //        }
+            //      })
+            //    }
+            // }
+            console.log(this.podData)
+            // console.log(this.podData)
+          }
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      }
+    },
+    getPodList() {
+      this.list = [];
+      const param = {
+        Method: 'GET',
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.value+'&limit=50',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          console.log(JSON.parse(res.Response.ResponseBody))
+          // JSON.parse(res.Response.ResponseBody)
+          let dataPod = []
+          dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
+            return item.metadata.name
+          })
+          this.checkedInstances = dataPod
+          this.instances =  dataPod
+          this.InstancesAll = dataPod
+        }
+      })
+    },
+
+    // getDataJob(){
+    //    const param = {
+    //     Conditions: ["["tke_cluster_instance_id","=","cls-59yq0hoi"]", "["node_role","!=","Node"]",…]
+    //     EndTime: 1583511737000
+    //     Fields: ["sum(k8s_node_pod_restart_total)", "min(k8s_node_status_ready)", "max(k8s_node_cpu_usage)",…]
+    //     GroupBys: ["timestamp(60s)", "unInstanceId"]
+    //     Limit: 65535
+    //     Module: "/front/v1"
+    //     NamespaceName: "k8s_node"
+    //     Offset: 0
+    //     Order: "asc"
+    //     OrderBy: "timestamp"
+    //     StartTime: 1583508137000
+    //     Version: "2019-06-06"
+    //   }
+    // }
+    
+    // TKE_GETTKEDATAJOB
+    // GetNode () { 
+    //   const param = {
+    //     ClusterName: "cls-59yq0hoi",
+    //     Method: "GET",
+    //     Path: "/api/v1/nodes?limit=20",
+    //     Version: "2018-05-25"
+    //   }
+    //   this.axios.post(POINT_REQUEST, param).then(res => {
+    //     if (res.Error == undefined) {
+    //     console.log(JSON.parse(res.Response.ResponseBody))
+    //     this.options = JSON.parse(res.Response.ResponseBody).items
+    //       // this.instances = res.Response.InstanceSet
+    //       // for(let i in this.instances){
+    //       //     this.checkedInstances.push(this.instances[i].InstanceId)
+    //       //     this.InstancesAll.push(this.instances[i].InstanceId)
+    //       // }
+    //     } else {
+    //       let ErrTips = {};
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 2000
+    //       });
+    //     }
+    //   })
+    // },
   },
   // components: {
   //   subTitle

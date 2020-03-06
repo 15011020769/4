@@ -163,8 +163,11 @@ export const TKE_INQUIRYPRICE = 'clb2/InquiryPriceCreateLoadBalancer'
 // ingress新建 - 获取负载均衡器
 export const TKE_EDSCRIBELOADBALANCERS = 'clb2/DescribeLoadBalancers'
 
+// 监控Job数据
+export const TKE_GETTKEDATAJOB = 'tsm2/GetTkeDataJob'
 
-export const GetTkeDataResult = 'tsm2/GetTkeDataResult'
+// 监控Result数据
+export const TKE_GETTKEDATARESULT = 'tsm2/GetTkeDataResult'
 
 // 定期备份
 export const TKE_CBS_POLICIES = 'cbs2/DescribeAutoSnapshotPolicies'
@@ -174,6 +177,11 @@ export const TKE_DESCRIBEZONES = 'cvm2/DescribeZones'
 
 // 获取PersistentVolumeClaim费用
 export const TKE_PAY_MONEY = 'cbs2/InquiryPriceCreateDisks'
+
+
+// export const TKE_PAY_MONEY = 'cbs2/InquiryPriceCreateDisks'
+
+
 
 
 
