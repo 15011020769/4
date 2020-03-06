@@ -377,7 +377,7 @@ export default {
   },
   methods: {
     delPolicy(id) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm("是否確定為該用戶組解除此策略？解除後該用戶組內用戶將無法獲得該策略所描述的相關許可權。", "解除策略", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
@@ -727,7 +727,7 @@ export default {
     },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm("移出后，该用户将无法接收到该组的站內信通知", "移出用戶", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"

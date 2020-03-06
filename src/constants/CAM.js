@@ -1,6 +1,7 @@
 //用户列表
 export const CREATE_POLICY = 'cam2/CreatePolicy'
 export const USER_LIST = 'cam2/ListUsers'
+export const LIST_SUBACCOUNTS = 'cam2/ListSubAccounts'
 export const POLICY_LIST = 'cam2/ListPolicies'
 export const USER_GROUP = 'cam2/ListGroups'
 export const DELETE_USER = 'cam2/DeleteUser'

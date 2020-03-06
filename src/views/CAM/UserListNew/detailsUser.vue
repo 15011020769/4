@@ -33,11 +33,27 @@
           <div class="bodyRight" style="flex:1">
             <p>
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
-              <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</span>
+              <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}
+                <el-tooltip v-if="userData.PhoneFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
+                    <el-badge is-dot class="item">
+                      發送驗證鏈接&nbsp;&nbsp;
+                    </el-badge>
+                  </el-button>
+                </el-tooltip>
+              </span>
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
-              <span>{{userData.Email ? userData.Email : '-'}}</span>
+              <span>{{userData.Email ? userData.Email : '-'}}
+                <el-tooltip v-if="userData.EmailFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
+                    <el-badge is-dot class="item">
+                      發送驗證鏈接&nbsp;&nbsp;
+                    </el-badge>
+                  </el-button>
+                </el-tooltip>
+              </span>
             </p>
             <!-- <p>
               <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
@@ -311,6 +327,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "./components/Head"; //头部组件引入
 import {
   QUERY_USER,
+  LIST_SUBACCOUNTS,
   QUERY_USER_ALLPOLICY,
   RELATE_USER,
   REMOVEBIND_USER,
@@ -547,11 +564,11 @@ export default {
       this.infoLoad = true;
       let params = {
         Version: "2019-01-16",
-        Name: this.$route.query.detailsData
+        Uid: this.$route.query.uid
       };
-      this.axios.post(QUERY_USER, params).then(res => {
+      this.axios.post(LIST_SUBACCOUNTS, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.userData = res.Response;
+          this.userData = res.Response.UserInfo[0];
           this.infoLoad = false;
           this.ploicyData()
           this.groupListData()
@@ -880,6 +897,7 @@ export default {
       this.delDialog = false;
       this.updataUser = false;
       this.batchRemoveStrategies = false
+      done()
     },
     subsribe() {},
     back() {

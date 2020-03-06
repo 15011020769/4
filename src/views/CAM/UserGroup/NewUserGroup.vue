@@ -2,7 +2,7 @@
   <div class="Cam wrap" id="app">
     <Headcom :title="$t('CAM.userGroup.addBtn')" :backShow="true" @_back="goback" />
     <div class="container">
-      <div class="step">
+      <div class="step">{{active}}
         <el-steps :space="200" :active="active" simple style="padding-left: 10px;">
           <el-step :title="$t('CAM.userGroup.createWrite')"></el-step>
           <el-step :title="$t('CAM.userGroup.createRelevance')"></el-step>
