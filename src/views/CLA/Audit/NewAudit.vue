@@ -6,7 +6,7 @@
         <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <div class="main-box">
             <h2>{{ $t('CLA.total.jcxx') }}</h2>
-            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" required class="AuditName">
+            <el-form-item :label="$t('CLA.total.gzjmc')" prop="AuditName" class="AuditName">
               <el-input v-model="ruleForm.AuditName"></el-input>
               <span>{{ $t('CLA.total.jzcfmsz') }}</span>
             </el-form-item>
@@ -177,6 +177,7 @@
             trigger: "blur"
           }],
           AuditName: [{
+            required: true,
             validator: AuditName,
             trigger: "change"
           }],
