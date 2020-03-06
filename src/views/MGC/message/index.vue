@@ -8,8 +8,8 @@
       <div class="message-fun">
         <div class="message-funLeft">
           <div class="message-btns">
-            <el-button @click="delMesg">{{$t('MGC.sc')}}</el-button>
-            <el-button @click="changeRead">{{$t('MGC.bjyd')}}</el-button>
+            <el-button @click="delMesg" :disabled="delshow">{{$t('MGC.sc')}}</el-button>
+            <el-button @click="changeRead" :disabled="readshow">{{$t('MGC.bjyd')}}</el-button>
             <el-button @click="AllRead">{{$t('MGC.qbbjyd')}}</el-button>
           </div>
           <div class="message-btns btnStyle">
@@ -121,6 +121,8 @@ export default {
       dialogVisible:false,//删除弹框
       MessageDialog:false,//訊息弹框
       btnIndex: 0, //按钮默认选中
+      delshow:true,//删除按钮可用状态
+      readshow:true,//标记已读可用状态
       //按钮数据
       btnData: [
         "全部",
@@ -176,6 +178,7 @@ export default {
     init(){
        this.loading = true
        let uin = "100011921910"
+      //  let uin = VueCookie.get('uuid')
        this.dataType = sessionStorage.getItem('portal-inmail-type')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
@@ -195,7 +198,9 @@ export default {
              this.loading = false;
               this.$message({
                 type: "info",
-                message: "無響應數據！"
+                message: "無響應數據！",
+                duration: 0,
+                showClose: true,
             });
         }
       })
@@ -208,6 +213,7 @@ export default {
     //获取未读数据
     getCount(){
        let uin = "100011921910"
+      //  let uin = VueCookie.get('uuid')
        this.axios.get(`${process.env.VUE_APP_adminUrl + UNREAD_DATA}`+'?uin='+uin).then(res=>{
        })
     },
@@ -237,7 +243,11 @@ export default {
       if(this.getData.length != 0){
           this.dialogVisible = true
       }else{
-         this.$message("請選擇數據")
+        this.$message({
+            message: "請選擇數據",
+            duration: 0,
+            showClose: true,
+          });
       }
     },
      //多选已读
@@ -253,7 +263,11 @@ export default {
           this.init()
         })
      }else{
-         this.$message("請選擇數據")
+          this.$message({
+            message: "請選擇數據",
+            duration: 0,
+            showClose: true,
+          });
       }
     },
     //全部标记为已读显示弹框
@@ -306,6 +320,18 @@ export default {
     //多选框
     handleSelectionChange(val){
        this.getData = val;
+        if (this.getData.length == 0) {
+        this.delshow = true;
+        this.readshow = true
+      } else {
+        this.delshow = false;
+      }
+      for (var i = 0; i < this.getData.length; i++) {
+        if (this.getData[i].status.includes("0")) {
+          this.readshow = false;
+          break;
+        }else{this.readshow=true}
+      }
     },
     //删除弹框x
     handleClose(){
