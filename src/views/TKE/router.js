@@ -393,6 +393,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/create/yaml', // 集群详情 --创建yaml
+      name: 'createYaml',
+      component: () => import('./colony/sub/create/yaml/yaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/storage/pvc', // 集群-新建PersistentVolumeClaim
       name: 'pvcCreate',
       component: () => import('./colony/sub/create/storage/pvc.vue'),
