@@ -9,13 +9,22 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新</h2>
+          <h2 class="header-title">更新Deployment</h2>
         </div>
         <!-- 右侧 -->
       </div>
     </div>
     <el-card class='box-card'> 
-      <div class='box-black'>1</div>
+      <div >
+      <!-- <div class='box-black'> -->
+            <codemirror
+        style="background-color: #444;"
+        ref="myCm"
+        v-model="yamlInfo"
+        :options="cmOptions"
+        class="code"
+      ></codemirror>
+      </div>
     </el-card>
 		<!-- 底部 -->
 		<div class="tke-formpanel-footer">
@@ -26,7 +35,16 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
+import { codemirror } from "vue-codemirror";
+require("codemirror/mode/python/python.js");
+require("codemirror/addon/fold/foldcode.js");
+require("codemirror/addon/fold/foldgutter.js");
+require("codemirror/addon/fold/brace-fold.js");
+require("codemirror/addon/fold/xml-fold.js");
+require("codemirror/addon/fold/indent-fold.js");
+require("codemirror/addon/fold/markdown-fold.js");
+require("codemirror/addon/fold/comment-fold.js");
+import {TKE_COLONY_QUERY} from '@/constants'
 export default {
   name: "editYaml",
   data() {
@@ -36,14 +54,48 @@ export default {
       se: {
         tabPosition: 'jt',
         radio: '2'
-      }
+      },
+      cmOptions: {
+        tabSize: 4,//字符的宽度，默认为4 。
+        mode: "python",
+        theme: "darcula",
+        lineNumbers: true, //行号
+        line: true,
+        lineNumbers: true,
+        foldgutter: true,
+        indentUnit: 2,//首行缩进
+        smartIndent: false,//缩进继承
+        lineWrapping: scroll,//超出滚动
+        // readOnly: nocursor,//只读
+        showCursorWhenSelecting:true,//是否显示光标
+        gutters: [
+          "CodeMirror-linenumbers",
+          "CodeMirror-foldgutter",
+          "CodeMirror-lint-markers"
+        ],
+        lineWrapping: true, //代码折叠
+        foldGutter: true,
+        matchBrackets: true, //括号匹配
+        autoCloseBrackets: true
+      },
+      yamlInfo:'',
+      clusterId:'',
+      name:'',
+      spaceName:'',
+      rowData:{},//路由接受对象
     };
   },
   components: {
-    HeadCom
+    codemirror
   },
   created() {
-		this.type = this.$router.query.type;
+     this.clusterId=this.$route.query.clusterId;
+     this.name=this.$route.query.name;
+     this.spaceName=this.$route.query.spaceName;
+     this.rowData=this.$route.query.rowData
+     console.log(this.rowData)
+     this.baseYamlData()
+     this.baseData()
   },
   methods: {
     //返回上一层
@@ -51,8 +103,86 @@ export default {
       this.$router.go(-1);
 		},
 		submit(){
+      // RequestBody
+      var params={
+        Accept: "application/json",
+        ClusterName: this.clusterId,
+        ContentType: "application/yaml",
+        Method: "PUT",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Version: "2018-05-25",
+        RequestBody:this.yamlInfo
+      }
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+        console.log(res)
+        if(res.Response.Error === undefined){
+          this.$message({
+                message: '更新成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+          });
+          this.$router.push({
+            name:'deploymentDetailEvent',
+            query:{
+              clusterId: this.clusterId,
+              spaceName: this.spaceName,
+              rowData: this.rowData
+            }
+          })
 
-		}
+        }else{
+          let ErrTips = {};
+          let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+
+    },
+    baseData(){
+      var params={
+          Method: "GET",
+          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+      }
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+        console.log(res)
+      })
+    },
+    baseYamlData(){
+      var params={
+        Accept: "application/yaml",
+        ClusterName: this.clusterId,
+        Method: "GET",
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Version: "2018-05-25",
+      }
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+        console.log(res) 
+        if(res.Response.Error === undefined){
+            // let response = JSON.parse(res.Response.ResponseBody);
+            let response = res.Response.ResponseBody;
+            console.log(response)
+            this.yamlInfo=response
+          }else{
+             let ErrTips = {};
+               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+               this.$message({
+                 message: ErrOr[res.Response.Error.Code],
+                 type: "error",
+                 showClose: true,
+                 duration: 0
+               });
+             }
+      })
+
+    }
   }
 };
 </script>

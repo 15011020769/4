@@ -125,6 +125,7 @@
                    <el-button
                     type="text"
                      v-else
+                     @click="goUpdateYaml(scope.row)"
                   >编辑YAML</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
@@ -409,6 +410,7 @@ export default {
 
     // 详情.
     goDeploymentDetail(rowData) {
+      console.log(rowData)
       this.$router.push({
         name: "deploymentDetail",
         query: {
@@ -436,12 +438,22 @@ export default {
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
         }
       })
     },
-
-
+    //编辑Yaml
+    goUpdateYaml(rowData){
+      this.$router.push({
+        name:'updateYamlWorkLoad',
+        query:{
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace,
+          rowData:rowData
+        }
+      })
+    },
     //是否打开重新部署弹窗
     redeployment(rowData) {
       this.isShowRedeployment = true;

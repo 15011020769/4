@@ -345,6 +345,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/editYaml',//编辑YAML
+      name: 'updateYamlWorkLoad',
+      component: () => import('./colony/sub/update/resource/editYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),
