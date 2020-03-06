@@ -151,7 +151,7 @@
           </el-table-column>
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
-              <span
+              <!-- <span
                 @click="ConfigWarn"
                 class="tke-text-link"
                 v-if="scope.row.ClusterStatus == 'Running'"
@@ -159,7 +159,7 @@
               >
               <span class="tke-text-link tke-text-link-dis" v-else
                 >配置告警</span
-              >
+              > -->
               <span
                 @click="goAddExist(scope.row.ClusterId)"
                 v-if="scope.row.ClusterStatus == 'Running'"
@@ -548,8 +548,14 @@ export default {
             );
             console.log(_Data);
             for (let j in this.list1) {
-              if (this.list1[j].ClusterId === _Data[j][1]) {
-                this.list1[j]["root"] = _Data[j][2].toFixed(2);
+              for (let k in _Data) {
+                if (this.list1[j].ClusterId === _Data[k][1]) {
+                  if (_Data[k][2]) {
+                    this.list1[j]["root"] = _Data[k][2].toFixed(2);
+                  } else {
+                    this.list1[j]["root"] = 0;
+                  }
+                }
               }
             }
           }

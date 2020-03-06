@@ -22,7 +22,7 @@ const conf = {
 const instance = axios.create(conf)
 let loading
 
-instance.interceptors.request.use(config => {
+instance.interceptors.request.use((config) => {
   if (config.loading) {
     loading = Loading.service({
       lock: true,
@@ -33,17 +33,14 @@ instance.interceptors.request.use(config => {
   return config
 })
 
-instance.interceptors.response.use(
-  res => {
-    if (loading) loading.close()
-    if (res.status !== 200) return Promise.reject(res)
-    return res.data
-  },
-  err => {
-    if (loading) loading.close()
-    return Promise.reject(err)
-  }
-)
+instance.interceptors.response.use((res) => {
+  if (loading) loading.close()
+  if (res.status !== 200) return Promise.reject(res)
+  return res.data
+}, (err) => {
+  if (loading) loading.close()
+  return Promise.reject(err)
+})
 
 Plugin.install = function (vue) {
   vue.axios = instance
