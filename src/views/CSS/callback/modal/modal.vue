@@ -1,6 +1,6 @@
 <template>
   <div class="Deldomain">
-    <el-dialog title="刪除回調配置" :visible="modalVisible">
+    <el-dialog title="刪除回調配置" :visible="modalVisible" :before-close="handleClose">
       <P>{{`確定刪除配置  ${domainName}`}}</P>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="$parent._delete()">确 定</el-button>
@@ -21,6 +21,12 @@ export default {
       required: false,
       type: String,
       default: ''
+    }
+  },
+  methods: {
+    handleClose(done) {
+      this.$emit("update:modalVisible", false);
+      done();
     }
   }
 }

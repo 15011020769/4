@@ -9,7 +9,7 @@
 <template>
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
-      <h3>錄製配置</h3>
+      <h3>轉碼配置</h3>
       <el-button type="text" @click="onEdit">編輯</el-button>
     </el-row>
     <ul class="content-box">
