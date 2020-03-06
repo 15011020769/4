@@ -53,8 +53,8 @@
           <p>函数代码</p>
           <div>
             <p>
-              <el-upload class="upload-demo" action="" multiple :limit="3" :on-exceed="handleExceed"
-                :file-list="fileList">
+              <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" multiple :limit="3"
+                :on-exceed="handleExceed" :file-list="fileList">
                 <el-button size="small" type="primary">点击上传</el-button>
               </el-upload>
             </p>
