@@ -154,26 +154,29 @@ export default {
       // new一个cos的对象 获取签名
       let cos = new COS({
         getAuthorization: (options, callback) => {
+          console.log(options)
           this.axios({
-            baseURL: process.env.VUE_APP_adminUrl,
-            url: "/taifucloud/tworkorder/getUploadKey?method=" + (options.Method || "get").toLowerCase() + "&pathname=/" + (options.Key || ""),
-            method: "get",
+            url: "bucket/uploadKey2",
+            data: {method:  (options.Method || "get").toLowerCase(), pathname: '/' + (options.Key || "")},
+            method: "post",
             withCredentials: true
           }).then(data => {
-            callback(data);
+            console.log(data)
+            callback(data.data);
           });
         }
       });
       // 获取异步签名之后 调用cos 上传文件 获取返回文件的网络url 上传的文件名为时间戳
       cos.sliceUploadFile(
         {
-          Bucket: "workorder-1300560981",
+          Bucket: 'livewatermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
           Region: "ap-taipei",
           StorageClass: "STANDARD",
           Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,
           Body: file
         },
         (err, data) => {
+          console.log(data)
           this.ruleForm.PictureUrl = `https://${data.Location}`
         }
       );
