@@ -12,7 +12,7 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <TimeX v-on:switchData="GetDat" :classsvalue="value"></TimeX>
+            <TimeX v-on:switchData="GetPlatformList" :classsvalue="value"></TimeX>
           </div>
           <div class="writeput">
               <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
@@ -56,8 +56,15 @@
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
 import Dialog from "./custom/custom"
+
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { PLATFORM_EVENT_LIST } from "@/constants";
 export default {
   name: "platform",
+  created() {
+    this.GetPlatformList()
+  },
   data() {
     return {
       activeName: "first",
@@ -78,7 +85,20 @@ export default {
   },
   methods: {
    //获取数据
-    GetDat(data) {
+    GetPlatformList(data) {
+      this.loadShow = true; //加载
+      const params = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+
+      //  monitor2/DescribeAccidentEventList   //接口
+    
+      console.log(params);
+      this.axios.post(PLATFORM_EVENT_LIST, params).then(res => {
+        console.log(res);
+      });
       // console.log(data);
     },
      //分页
