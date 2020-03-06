@@ -136,7 +136,7 @@ export default {
     RenewModel (val) {
       this.doalogRenewModel = true
       this.dataUnsealingIP = val.Ip
-      this.dataUnsealingStatus = val.Status
+      this.dataUnsealingStatus = val.ActionType
     },
     // 解封弹框关闭按钮
     closeRenewModel (isShow) {
@@ -148,7 +148,7 @@ export default {
       let params = {
         Action: 'CreateUnblockIp',
         Version: '2018-07-09',
-        Region: '',
+        Region: localStorage.getItem('regionv2'),
         Ip: this.dataUnsealingIP,
         ActionType: this.dataUnsealingStatus // 解封类型
       }
