@@ -3,7 +3,7 @@
     <div class="explain">
       <p>{{$t('CAM.userList.heckYourSelf')}}</p>
     </div>
-    <div class="edit-main" v-loading="loading">
+    <div class="edit-main">
       <div class="edit-box">
         <h3>{{$t('CAM.userList.userMessage')}}</h3>
         <table width="100%" boder="1" cellspacing="0" cellpadding="1">
@@ -16,33 +16,21 @@
               <td width="170">{{$t('CAM.userList.userRemark')}}</td>
               <td width="200">{{$t('CAM.userList.userPhone')}}</td>
               <td width="200">{{$t('CAM.userList.userEmail')}}</td>
-              <td>操作</td>
             </tr>
           </thead>
           <tbody>
-            <tr v-show="!userInp" class="userInp">
-              <td>{{userData.Name}}</td>
-              <td>{{userData.Remark ? userData.Remark : '-'}}</td>
-              <td>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</td>
-              <td>{{userData.Email ? userData.Email : '-'}}</td>
-              <td class="edit" @click="_edit">{{$t('CAM.userList.updataUser')}}</td>
-            </tr>
-            <tr v-show="userInp">
-              <td>{{userData.Name}}</td>
+            <tr>
+              <td>{{userInfo.Name}}</td>
               <td>
-                <el-input v-model="form.Remark"></el-input>
+                <el-input v-model="userInfo.Remark"></el-input>
               </td>
               <td class="reg">
-                <el-input v-model="form.PhoneNum" @change="telInp"></el-input>
+                <el-input v-model="userInfo.PhoneNum" @change="telInp"></el-input>
                 <span class="red" v-show="phoneReg">{{$t('CAM.userList.sjhyw')}}</span>
               </td>
               <td class="reg">
-                <el-input v-model="form.Email" @change="emailInp"></el-input>
+                <el-input v-model="userInfo.Email" @change="emailInp"></el-input>
                 <span class="red" v-show="emailReg">{{$t('CAM.userList.yxsryw')}}</span>
-              </td>
-              <td class="edit">
-                <span @click="_userConfirm">{{$t('CAM.userList.suerAdd')}}</span>
-                <!-- <span style="margin-left:5px;" @click="_userCancel">{{$t('CAM.userList.handClose')}}</span> -->
               </td>
             </tr>
           </tbody>
@@ -50,72 +38,31 @@
       </div>
       <div class="edit-box">
         <h3>{{$t('CAM.userList.askMesg')}}</h3>
-        <el-form ref="form" label-width="100px">
+        <el-form label-width="120px">
           <el-form-item :label="$t('CAM.userList.askWay')" required>
-            <p v-show="userData.ConsoleLogin == 1">{{$t('CAM.userList.consoleAsk')}}</p>
-            <p v-show="userData.ConsoleLogin == 0">{{$t('CAM.userList.noWayAsk')}}</p>
+            <p v-show="userInfo.ConsoleLogin == 1">{{$t('CAM.userList.consoleAsk')}}</p>
+            <p v-show="userInfo.ConsoleLogin == 0">{{$t('CAM.userList.noWayAsk')}}</p>
           </el-form-item>
           <el-form-item :label="$t('CAM.userList.passType')">
-            <p v-if="!pwdRadio">{{$t('CAM.userList.generation')}}</p>
-            <p v-if="pwdRadio">{{$t('CAM.userList.Custom')}}</p>
+            <p v-if="userInfo.pwdRadio">{{$t('CAM.userList.Custom')}}</p>
+            <p v-else>{{$t('CAM.userList.generation')}}</p>
           </el-form-item>
           <el-form-item :label="$t('CAM.userList.resetPassword')">
-            <p v-if="pwdType.length != 0">是</p>
-            <p v-if="pwdType.length == 0">否</p>
+            <p v-if="userInfo.pwdType.length != 0">是</p>
+            <p v-if="userInfo.pwdType.length == 0">否</p>
           </el-form-item>
         </el-form>
       </div>
-      <div class="edit-box">
+      <div class="edit-box" v-if="userInfo.ConsoleLogin === 1">
         <h3>{{$t('CAM.userList.policyMesg')}}</h3>
         <el-table
-          :data="policyData"
+          :data="strategies"
           style="width: 100%"
-          v-if="activeName == 'first' || activeName == 'second'"
-          v-loading="tableloading"
           max-height="520"
         >
-          <el-table-column prop="PolicyName" :label="$t('CAM.userList.strategyNames')" width="220"></el-table-column>
-          <el-table-column :label="$t('CAM.userList.policyMS')">
-            <template slot-scope="scope">
-              <p class="omit">{{scope.row.Remark}}</p>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" width="150">
-            <template slot-scope="scope">
-              <p
-                style="color:#006eff;cursor: pointer;"
-                @click="_del(scope.row)"
-              >{{$t('CAM.userList.Remove')}}</p>
-            </template>
-          </el-table-column>
+         <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+          <el-table-column label="描述" prop="Description"></el-table-column>
         </el-table>
-        <el-table
-          :data="userList"
-          style="width: 100%"
-          v-if="activeName == 'third'"
-          v-loading="tableloading"
-          max-height="520"
-        >
-          <el-table-column prop="GroupName" :label="$t('CAM.userGroup.colNmae')"></el-table-column>
-          <el-table-column :label="$t('CAM.userList.userCz')" width="250">
-            <template slot-scope="scope">
-              <p
-                style="color:#006eff;cursor: pointer;"
-                @click="_del(scope.row)"
-              >{{$t('CAM.userList.Remove')}}</p>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-          <el-pagination
-            :page-size="pagesize"
-            :pager-count="7"
-            layout="prev, pager, next"
-            @current-change="handleCurrentChange"
-            :total="TotalCount"
-          ></el-pagination>
-        </div>
       </div>
     </div>
   </div>
@@ -133,6 +80,20 @@ import {
 } from "@/constants";
 export default {
   name: "edit",
+  props: {
+    userInfo: {
+      type: Object,
+      default() {
+        return {}
+      }
+    },
+    strategies: {
+      type: Array,
+      default() {
+        return []
+      }
+    }
+  },
   data() {
     return {
       phoneReg: false,
@@ -140,23 +101,19 @@ export default {
       loading: true, //加载
       tableloading: true, //表格加载
       //表单
-      form: {},
       num: 0,
       userList: [],
       policyData: [], //策略列表
       userData: {}, //用户信息
       userInp: false, //用户信息input
-      TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
     };
   },
   methods: {
     //手机号验证
     telInp() {
-      var reg = /^1[3456789]\d{9}$/;
-      if (this.form.PhoneNum != "") {
-        if (!reg.test(this.form.PhoneNum)) {
+      var reg = /^09\d{8}$/;
+      if (this.userInfo.PhoneNum != "") {
+        if (!reg.test(this.userInfo.PhoneNum)) {
           this.phoneReg = true;
         } else {
           this.phoneReg = false;
@@ -168,8 +125,8 @@ export default {
     //邮箱验证
     emailInp() {
       var reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
-      if (this.form.Email != "") {
-        if (!reg.test(this.form.Email)) {
+      if (this.userInfo.Email != "") {
+        if (!reg.test(this.userInfo.Email)) {
           this.emailReg = true;
         } else {
           this.emailReg = false;
@@ -177,187 +134,6 @@ export default {
       } else {
         this.emailReg = false;
       }
-    },
-    //用户组列表
-    _groupList() {
-      this.tableloading = true;
-      const params = {
-        Version: "2019-01-16",
-        Uid: this.userData.Uid,
-        Page: this.currpage,
-        Rp: this.pagesize
-      };
-      this.axios.post(RELATE_USER, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.userList = res.Response.GroupInfo;
-          this.num = res.Response.TotalNum;
-          this.TotalCount = res.Response.TotalNum;
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.tableloading = false;
-      });
-    },
-    //用户组解除绑定
-    _userDel(val) {
-      const params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.userData.Uid,
-        "Info.0.GroupId": val.GroupId
-      };
-      this.axios.post(DEL_USERTOGROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$message({
-            message: "解除成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this._getUser();
-      });
-    },
-    //策略解除绑定
-    _del(val) {
-      this.$confirm("此操作將解除綁定, 是否繼續?", "提示", {
-        confirmButtonText: "確定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          if (this.activeName == "first" || this.activeName == "second") {
-            this._remove(val);
-          } else if (this.activeName == "third") {
-            this._userDel(val);
-          }
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消刪除",
-            duration: 0,
-            showClose: true
-          });
-        });
-    },
-    //策略解除绑定
-    _remove(val) {
-      const params = {
-        Version: "2019-01-16",
-        DetachUin: this.userData.Uin,
-        PolicyId: val.PolicyId
-      };
-      this.axios.post(REMOVEBIND_USER, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$message({
-            showClose: true,
-            message: "解除成功",
-            duration: 0,
-            type: "success"
-          });
-          this._getUser();
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.AttachmentFull":
-              "principal欄位的授權對象關聯策略數已達到上限",
-            "InvalidParameter.ParamError": "非法入參",
-            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //策略列表
-    _tactics() {
-      this.tableloading = true;
-      const params = {
-        Version: "2019-01-16",
-        TargetUin: this.userData.Uin,
-        Page: this.currpage,
-        Rp: this.pagesize
-      };
-      this.axios.post(QUERY_POLICY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.num = res.Response.TotalNum;
-          this.TotalCount = res.Response.TotalNum;
-          this.policyData = res.Response.List;
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.ParamError": "非法入參"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-
-        this.tableloading = false;
-      });
-    },
-    //获取用户信息
-    _getUser() {
-      const params = {
-        Version: "2019-01-16",
-        Name: this.name
-      };
-      this.axios
-        .post(QUERY_USER, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.userData = res.Response;
-            this.form = res.Response;
-            this.loading = false;
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .then(() => {
-          if (this.activeName == "first" || this.activeName == "second") {
-            this._tactics();
-          } else if (this.activeName == "third") {
-            this._groupList();
-          }
-        });
     },
     //用户信息编辑
     _edit() {
@@ -368,88 +144,61 @@ export default {
     //   this.userInp = !this.userInp;
     // },
     //用户信息确定
-    _userConfirm() {
-      const params = {
-        Version: "2019-01-16",
-        Name: this.name,
-        Remark: this.form.Remark,
-        PhoneNum: this.form.PhoneNum,
-        Email: this.form.Email
-      };
-      if (this.phoneReg) {
-        this.$message({
-          showClose: true,
-          message: "請輸入正確的手機號",
-          duration: 0,
-          type: "error"
-        });
-      } else if (this.emailReg) {
-        this.$message({
-          showClose: true,
-          message: "請輸入正確的郵箱",
-          duration: 0,
-          type: "error"
-        });
-      } else {
-        this.axios
-          .post(UPDATA_USER, params)
-          .then(res => {
-            if (res.Response.Error === undefined) {
-              this.$message({
-                showClose: true,
-                message: "編輯成功",
-                duration: 0,
-                type: "success"
-              });
-              this.userInp = !this.userInp;
-            } else {
-              let ErrTips = {
-                "InvalidParameter.PasswordViolatedRules":
-                  "密碼不符合用戶安全設置",
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          })
-          .then(() => {
-            this._getUser();
-          });
-      }
-    },
-    //分页
-    handleSizeChange(val) {
-      this.pagesize = val;
-      this.currpage = 1;
-      if (this.activeName == "first") {
-        this._tactics();
-      } else if (this.activeName == "third") {
-        this._groupList();
-      }
-    },
-    handleCurrentChange(val) {
-      this.currpage = val;
-      if (this.activeName == "first") {
-        this._tactics();
-      } else if (this.activeName == "third") {
-        this._groupList();
-      }
-    }
+    // _userConfirm() {
+    //   const params = {
+    //     Version: "2019-01-16",
+    //     Name: this.name,
+    //     Remark: this.form.Remark,
+    //     PhoneNum: this.form.PhoneNum,
+    //     Email: this.form.Email
+    //   };
+    //   if (this.phoneReg) {
+    //     this.$message({
+    //       showClose: true,
+    //       message: "請輸入正確的手機號",
+    //       duration: 0,
+    //       type: "error"
+    //     });
+    //   } else if (this.emailReg) {
+    //     this.$message({
+    //       showClose: true,
+    //       message: "請輸入正確的郵箱",
+    //       duration: 0,
+    //       type: "error"
+    //     });
+    //   } else {
+    //     this.axios
+    //       .post(UPDATA_USER, params)
+    //       .then(res => {
+    //         if (res.Response.Error === undefined) {
+    //           this.$message({
+    //             showClose: true,
+    //             message: "編輯成功",
+    //             duration: 0,
+    //             type: "success"
+    //           });
+    //           this.userInp = !this.userInp;
+    //         } else {
+    //           let ErrTips = {
+    //             "InvalidParameter.PasswordViolatedRules":
+    //               "密碼不符合用戶安全設置",
+    //             "ResourceNotFound.UserNotExist": "用戶不存在"
+    //           };
+    //           let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //           this.$message({
+    //             message: ErrOr[res.Response.Error.Code],
+    //             type: "error",
+    //             showClose: true,
+    //             duration: 0
+    //           });
+    //         }
+    //       })
+    //       .then(() => {
+    //         this._getUser();
+    //       });
+    //   }
+    // },
   },
-  created() {
-    this._getUser();
-  },
-  props: {
-    name: String,
-    activeName: String,
-    pwdType: Array,
-    pwdRadio: Boolean
-  }
 };
 </script>
 

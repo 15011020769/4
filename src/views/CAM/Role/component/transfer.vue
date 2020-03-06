@@ -26,7 +26,7 @@
             <el-table-column prop="PolicyName" label="策略名" width="180">
               <template  slot-scope="scope">
                 <el-popover v-if="scope.row.status === 1" trigger="hover" placement="top">
-                  <p>当前策略已被关联，如需解除关联请前往详情页操作</p>
+                  <p>當前策略已被關聯，如需解除關聯請前往詳情頁操作</p>
                   <div slot="reference" class="name-wrapper">
                     <p>{{scope.row.PolicyName}}</p>
                   </div>
@@ -34,22 +34,7 @@
                 <p v-else>{{scope.row.PolicyName}}</p>
               </template>
             </el-table-column>
-            <el-table-column align="center">
-              <template slot="header" slot-scope="scope">
-                <el-dropdown trigger="click" @command="handleCommand" size="mini">
-                  <span style="color:#909399">
-                    {{ tableTitle }}
-                    <i class="el-icon-arrow-down el-icon--right"></i>
-                  </span>
-                  <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item
-                      v-for="item in optionPolicies"
-                      :key="item.value"
-                      :command="item"
-                    >{{item.label}}</el-dropdown-item>
-                  </el-dropdown-menu>
-                </el-dropdown>
-              </template>
+            <el-table-column align="center" label="預設策略">
               <template slot-scope="scope">
                 <p>{{type[scope.row.Type]}}</p>
               </template>

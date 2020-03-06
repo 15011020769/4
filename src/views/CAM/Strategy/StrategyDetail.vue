@@ -131,7 +131,7 @@
                         v-model="scope.row.delDialog"
                       >
                         <div class="prpoDialog">
-                          <p>解除此用戶組後，將不具備該策略對應的許可權，是否確認？</p>
+                          <p>解除此用戶{{scope.row.RelatedType == '2' ? '組' : ''}}後，將不具備該策略對應的許可權，是否確認？</p>
                         </div>
                         <div style="text-align: center; margin: 0">
                           <el-button size="mini" type="text" @click="removePolicyEntity(scope.row)">確認解除</el-button>

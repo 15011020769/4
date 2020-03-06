@@ -2,11 +2,11 @@
   <div class="adduserlist-wrap">
     <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
     <div class="adduserlist-main" v-loading="loading">
-      <el-steps :active="active" simple>
+      <el-steps :active="active" simple>{{active}}
         <el-step :title="$t('CAM.userList.chooserType')"></el-step>
         <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
-        <el-step :title="$t('CAM.userList.setStrage')" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
-        <el-step :title="$t('CAM.userList.userMesg')" v-if="this.ruleForm.ConsoleLogin == 1"></el-step>
+        <el-step :title="$t('CAM.userList.setStrage')" v-if="ruleForm.ConsoleLogin == 1"></el-step>
+        <el-step :title="$t('CAM.userList.userMesg')" v-if="ruleForm.ConsoleLogin == 1"></el-step>
       </el-steps>
       <div class="main">
         <el-form
@@ -127,32 +127,19 @@
         </el-form>
         <div class="step3" v-show="active == 2">
           <Step3
-            :totalNum="totalNum"
-            :tableData="tableData"
-            :userData="userData"
-            :userNum="userNum"
-            :userDatas="userDatas"
-            @handleSelectionChange="handleSelectionChange"
-            @acitiveName="_acitiveName"
-            @loadMore="_loadMore"
-            @_policySearch="_policySearch"
-            @_policyInp="_policyInp"
-            @_userSearch="_userSearch"
-            @_userInp="_userInp"
-            @_userRadio="_userRadio"
+            ref="step3"
           />
         </div>
         <div class="step4" v-if="active == 3">
           <Step4
-            :name="this.ruleForm.Name"
-            :activeName="activeName"
-            :pwdType="ruleForm.pwdType"
-            :pwdRadio="ruleForm.pwdRadio"
+            ref="step4"
+            :userInfo.sync="this.ruleForm"
+            :strategies="strategies"
           />
         </div>
       </div>
       <div class="btn-box">
-        <el-button @click="_lastStep" v-show="this.active == 1">上一步</el-button>
+        <el-button @click="_lastStep" v-show="this.active > 0">上一步</el-button>
         <el-button type="primary" @click="_nextStep('ruleForm')">{{btnVal}}</el-button>
       </div>
     </div>
@@ -171,7 +158,10 @@ import {
   ADD_USERTOGROUP,
   USER_LIST,
   QUERY_POLICY,
-  GROUP_POLICY
+  GROUP_POLICY,
+  BATCH_OPERATE_CAM_STRATEGY,
+  ADD_GROUPTOLIST,
+  COPY_USER_POLICY
 } from "@/constants";
 import Step3 from "./Tab/Step3"; //步骤3
 import Step4 from "./Tab/Step4"; //步骤4
@@ -203,7 +193,7 @@ export default {
       activeName: "first",
       userData: [], //用户组
       totalNum: 0, //策略列表条数
-      multipleSelection: [], //全选
+      strategies: [], //全选
       tableData: [],
       active: 0,
       btnVal: "下一步",
@@ -277,21 +267,32 @@ export default {
     Step3,
     Step4
   },
-  created() {
-    this._getList();
-    this._userList();
-    this.init();
+  watch: {
+    active(n) {
+      if (n === 3) {
+        this.btnVal = '完成'
+      } else {
+        this.btnVal = '下一步'
+      }
+    },
+    'ruleForm.Password'() {
+      this._pwdInp()
+    }
   },
   methods: {
     //密码验证
     _pwdInp() {
-      var reg = /^(?=.*?[a-z])(?=.*?[A-Z])(?=.*?\d)(?=.*?[#@*&.]).*$/;
+      var reg1 = /[1-9]/
+      var reg2 = /[a-z]/
+      var reg3 = /[A-Z]/
+      var reg4 = /[\.?!@#$%^&*()_+~|\\/<>;'`,=]/
       //用户名不能和密码相同
       if (this.ruleForm.Name != this.ruleForm.Password) {
         this.pwdreReg = false;
       } else {
         this.pwdreReg = true;
       }
+      // 0. 长度为 8-32 个字符,1. 包含数字，特殊字符（除空格），小写字母，大写字母
       //长度为8-32个字符
       if (
         this.ruleForm.Password.length >= 8 &&
@@ -303,8 +304,11 @@ export default {
       }
       //包含数字，特殊字符(除空格)，小写字母，大写字母
       if (
-        reg.test(this.ruleForm.Password) &&
-        !/s/.test(this.ruleForm.Password)
+           reg1.test(this.ruleForm.Password)
+        && reg2.test(this.ruleForm.Password)
+        && reg3.test(this.ruleForm.Password)
+        && reg4.test(this.ruleForm.Password)
+        && !/\s/.test(this.ruleForm.Password)
       ) {
         this.pwdtypeReg = false;
       } else {
@@ -337,251 +341,14 @@ export default {
         this.emailReg = false;
       }
     },
-    //获取cookir
-    getCookie(name) {
-      var strcookie = document.cookie; //获取cookie字符串
-      var arrcookie = strcookie.split("; "); //分割
-      //遍历匹配
-      for (var i = 0; i < arrcookie.length; i++) {
-        var arr = arrcookie[i].split("=");
-        if (arr[0] == name) {
-          return arr[1];
-        }
-      }
-      return "";
-    },
     //返回上一级
     _back() {
       this.$router.go(-1);
     },
-    //复用现有用户策略
-    _userRadio(val) {
-      const params = {
-        Version: "2019-01-16",
-        Name: val
-        // Name: this.ruleForm.Name
-      };
-      this.axios
-        .post(QUERY_USER, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.userUin = res.Response.Uin;
-          }
-          // else {
-          //   let ErrTips = {};
-          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-          //   this.$message({
-          //     message: ErrOr[res.Response.Error.Code],
-          //     type: "error",
-          //     showClose: true,
-          //     duration: 0
-          //   });
-          // }
-        })
-        //获取关联的策略
-        .then(data => {
-          const params = {
-            Version: "2019-01-16",
-            TargetUin: this.userUin
-          };
-          this.axios.post(QUERY_POLICY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.multipleSelection = res.Response.List;
-            }
-            // else {
-            //   let ErrTips = {
-            //     "InternalError.SystemError": "内部错误",
-            //     "nvalidParameter.ParamError": "非法入参"
-            //   };
-            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-            //   this.$message({
-            //     message: ErrOr[res.Response.Error.Code],
-            //     type: "error",
-            //     showClose: true,
-            //     duration: 0
-            //   });
-            // }
-          });
-        });
-    },
-    //初始化用户列表数据
-    init() {
-      let userList = {
-        Version: "2019-01-16"
-      };
-      this.axios.post(USER_LIST, userList).then(data => {
-        if (data.Response.Error === undefined) {
-          var json = data.Response.Data;
-          json.forEach(item => {
-            const params = {
-              Version: "2019-01-16",
-              TargetUin: item.Uin
-            };
-            this.axios.post(QUERY_POLICY, params).then(res => {
-              if (res.Response.Error === undefined) {
-                item.policy = res.Response.List;
-              }
-              // else {
-              //   let ErrTips = {
-              //     "InternalError.SystemError": "内部错误",
-              //     "nvalidParameter.ParamError": "非法入参"
-              //   };
-              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-              //   this.$message({
-              //     message: ErrOr[res.Response.Error.Code],
-              //     type: "error",
-              //     showClose: true,
-              //     duration: 0
-              //   });
-              // }
-            });
-          });
-          this.userDatas = json;
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[data.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //用户列表搜索
-    _userSearch(val) {
-      this.userVal = val;
-      this._userList(val);
-    },
-    _userInp(val) {
-      if (val == "") {
-        this._userList();
-      }
-    },
-    //策略列表搜索
-    _policySearch(val) {
-      this.policyVal = val;
-      this._getList(val);
-    },
-    _policyInp(val) {
-      if (val == "") {
-        this._getList();
-      }
-    },
-    //步骤三表格懒加载
-    _loadMore(val) {
-      if (val == "first") {
-        this.policyPage++;
-        this.policyNum = this.policyNum + 10;
-        this._getList(this.policyVal);
-      } else if (val == "third") {
-        this.userPage++;
-        this.userNums = this.userNums + 10;
-        this._userList(this.userVal);
-      }
-    },
-    //绑定用户组
-    _userGroup(id) {
-      const params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.userpolicyData.Uid,
-        "Info.0.GroupId": id
-      };
-      this.axios.post(ADD_USERTOGROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res);
-        } else {
-          let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用戶組不存在",
-            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
-            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //tab标签名称
-    _acitiveName(val) {
-      this.activeName = val;
-    },
-    //获取用户信息
-    _getUser() {
-      const params = {
-        Version: "2019-01-16",
-        // Name: "策略列表"
-        Name: this.ruleForm.Name
-      };
-      this.axios.post(QUERY_USER, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.userpolicyData = res.Response;
-        }
-        // else {
-        //   let ErrTips = {
-        //     "ResourceNotFound.UserNotExist": "用户不存在"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
-    },
-    //绑定策略列表
-    _policy(id) {
-      const params = {
-        Version: "2019-01-16",
-        PolicyId: id,
-        AttachUin: this.userpolicyData.Uin
-      };
-      this.axios.post(POLICY_USER, params).then(res => {
-        if (res.Response.Error === undefined) {
-          if (res.Response.RequestId) {
-            this.active = 3;
-          }
-        } else {
-          let ErrTips = {
-            "FailedOperation.PolicyFull": "用戶策略數超過上限",
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.AttachmentFull":
-              "principal欄位的授權對象關聯策略數已達到上限",
-            "InvalidParameter.ParamError": "非法入參",
-            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //全选
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
     //新建子用户
-    _arrUser() {
-      this.loading = true;
-      const params = {
+    async addUser() {
+      this.loading = true
+      const param = {
         Version: "2019-01-16",
         Name: this.ruleForm.Name,
         Remark: this.ruleForm.Remark,
@@ -593,149 +360,102 @@ export default {
         Email: this.ruleForm.Email,
         UseApi: 1
       };
-      this.axios
-        .post(ADD_USER, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.taifuAIP = res.Response;
-            if (res.Response.Error) {
-              this.$message({
-                showClose: true,
-                message: res.Response.Error.Message,
-                type: "error",
-                duration: 0
-              });
-            } else {
-              this.$nextTick(() => {
-                if (this.btnVal == "完成") {
-                  this.$router.push("/UserListNew");
-                }
-              })
-              if (this.pwdReg) {
-                this._getUser();
-                this.active = 2;
-              }
-            }
-          } else {
-            let ErrTips = {
-              "InvalidParameter.ParamError": "非法入參",
-              "InvalidParameter.PasswordViolatedRules":
-                "密碼不符合用戶安全設置",
-              "InvalidParameter.SubUserFull": "子賬號數量達到上限",
-              "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-          this.loading = false;
+      let res = await this.axios.post(ADD_USER, param)
+      if (res.Response.Error) {
+        let ErrTips = {
+          "InvalidParameter.ParamError": "非法入參",
+          "InvalidParameter.PasswordViolatedRules":
+            "密碼不符合用戶安全設置",
+          "InvalidParameter.SubUserFull": "子賬號數量達到上限",
+          "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
         })
-        .then(() => {
-          const params = {
-            Password: "yes",
-            QcloudUin: this.getCookie("uin"), //uin
-            SecretId: this.taifuAIP.SecretId,
-            SecretKey: this.taifuAIP.SecretKey,
-            SubAccountUin: String(this.taifuAIP.Uin),
-            SubAccountname: this.taifuAIP.Name
-          };
-          this.axios
-            .post(
-              `${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`,
-              params
-            )
-            .then(res => {
-              console.log(res);
-            });
-        });
-    },
-    //用户组列表
-    _userList(val) {
-      const params = {
-        Version: "2019-01-16",
-        Rp: this.userNums
-      };
-      if (val) {
-        params["Keyword"] = val;
+        this.loading = false
+        return
       }
-      this.axios.post(USER_GROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.userData = res.Response.GroupInfo;
-          this.userNum = res.Response.TotalNum;
-          var data = this.userData;
-          data.forEach(item => {
-            const params = {
-              Version: "2019-01-16",
-              TargetGroupId: item.GroupId
-            };
-            this.axios.post(GROUP_POLICY, params).then(res => {
-              if (res.Response.Error === undefined) {
-                item.policy = res.Response.List;
-              }
-              // else {
-              //   let ErrTips = {
-              //     "InternalError.SystemError": "内部错误",
-              //     "InvalidParameter.ParamError": "非法入参"
-              //   };
-              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-              //   this.$message({
-              //     message: ErrOr[res.Response.Error.Code],
-              //     type: "error",
-              //     showClose: true,
-              //     duration: 0
-              //   });
-              // }
-            });
-          });
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //策略列表
-    _getList(val) {
       const params = {
-        Version: "2019-01-16",
-        Rp: this.policyNum
+        Password: "yes",
+        QcloudUin: this.$cookie.get("uin"), //uin
+        SecretId: res.Response.SecretId,
+        SecretKey: res.Response.SecretKey,
+        SubAccountUin: String(res.Response.Uin),
+        SubAccountname: res.Response.Name
       };
-      if (val) {
-        params["Keyword"] = val;
+      this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`, params)
+      if (this.ruleForm.ConsoleLogin === 0) {
+        this.$message({
+          message: '創建成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        })
+        this.$router.push('/UserListNew')
+        return
       }
-      this.axios.post(POLICY_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.tableData = res.Response.List;
-          this.totalNum = res.Response.TotalNum;
+      const step3Ref = this.$refs.step3
+      //从策略列表中选取策略关联
+      if (step3Ref.activeName === "first") {
+        const param = {
+          Version: "2019-01-16",
+          "ActionType": 1, // 绑定
+          "RelateUin.0": res.Response.Uin
         }
-        // else {
-        //   let ErrTips = {
-        //     "InternalError.SystemError": "内部错误",
-        //     "InvalidParameter.GroupIdError": "GroupId字段不合法",
-        //     "InvalidParameter.KeywordError": "Keyword字段不合法",
-        //     "InvalidParameter.ParamError": "非法入参",
-        //     "InvalidParameter.ScopeError": "Scope字段不合法",
-        //     "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-        //     "InvalidParameter.UinError": "Uin字段不合法"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
+        this.strategies.forEach((strategy, i) => {
+          param[`StrategyId.${i}`] = strategy.PolicyId
+        })
+        res = await this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
+      } else if (step3Ref.activeName === "second") { // 复用现有用户策略
+        const param = {
+          Version: "2019-01-16",
+          "FromUin": step3Ref.selectedUser, // 绑定
+          "ToUin.0": res.Response.Uin
+        }
+        res = await this.axios.post(COPY_USER_POLICY, param)
+      }
+      // //添加至组获得随机权限
+      else {
+        const param = {
+          Version: "2019-01-16",
+        }
+        this.attachGroupIds.forEach((groupId, i) => {
+          param[`Info.${i}.Uid`] = res.Response.Uid
+          param[`Info.${i}.GroupId`] = groupId
+        })
+        res = await this.axios.post(ADD_GROUPTOLIST, param)
+      }
+      if (res.Response.Error) {
+        let ErrTips = {
+          "InvalidParameter.GroupNotExist": "用戶組不存在",
+          "InvalidParameter.GroupUserFull":
+            "用戶組中的子用戶數量達到上限",
+          "InvalidParameter.UserGroupFull":
+            "子用戶加入的用戶組數量達到上限",
+          "ResourceNotFound.UserNotExist": "用戶不存在"
+        }
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: `用戶創建成功，但是關聯策略失敗！${ErrOr[res.Response.Error.Code]}`,
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        this.loading = false
+        return
+      } else {
+        this.$message({
+          message: '創建成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        })
+        this.$router.push('/UserListNew')
+      }
     },
     //控制台密码
     _pwdRadio() {
@@ -770,37 +490,66 @@ export default {
     },
     //下一步
     _nextStep(formName) {
-      var num = this.active;
-      var temp = 3;
-      if (this.ruleForm.ConsoleLogin == 0) {
-        var temp = 1;
-      }
-      if (this.active < temp) {
-        num++;
-      }
-      if (num == temp) {
-        this.btnVal = "完成";
-      }
       if (this.active == 2) {
-        this.multipleSelection.forEach(item => {
-          //从策略列表中选取策略关联
-          if (this.activeName == "first") {
-            this._policy(item.PolicyId);
+        const step3Ref = this.$refs.step3
+        //从策略列表中选取策略关联
+        if (step3Ref.activeName == "first") {
+          if (!step3Ref.selectedPolicyId.length) {
+            this.$message({
+              message: '請選擇策略',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return
           }
-          //复用现有用户策略
-          else if (this.activeName == "second") {
-            this._policy(item.PolicyId);
+          this.strategies = step3Ref.getSelectedStrategiesForStrategies()
+        }
+        // //复用现有用户策略
+        else if (step3Ref.activeName == "second") {
+          if (!step3Ref.selectedUser) {
+            this.$message({
+              message: '請選擇用戶',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return
           }
-          //添加至组获得随机权限
-          else if (this.activeName == "third") {
-            this._userGroup(item.GroupId);
+          this.strategies = step3Ref.getSelectedStrategiesForUser()
+        }
+        // //添加至组获得随机权限
+        else if (step3Ref.activeName == "third") {
+          if (!step3Ref.selectedUserGroupId.length) {
+            this.$message({
+              message: '請選擇用戶組',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return
           }
-        });
+          const result = step3Ref.getSelectedStrategiesForUserGroup()
+          const strategies = []
+          const attachGroupIds = []
+          Object.keys(result).forEach(groupId => {
+            attachGroupIds.push(groupId)
+            strategies.push(...result[groupId])
+          })
+          this.attachGroupIds = attachGroupIds
+          this.strategies = strategies
+        }
+        this.active += 1
+        return
       }
-      if (this.active == 3) {
-        this.$router.push("/UserListNew");
+      if (this.active === 3) {
+        const step4Ref = this.$refs.step4
+        if (!step4Ref.phoneReg && !step4Ref.emailReg) {
+          this.addUser()
+        }
       }
       if (this.active == 1) {
+        let flag = false
         if (this.phoneReg) {
           this.$message({
             showClose: true,
@@ -815,81 +564,85 @@ export default {
             type: "error",
             duration: 0
           });
+        } else if (!this.ruleForm.Name) {
+          this.$message({
+            showClose: true,
+            message: "用戶名不能為空",
+            type: "error",
+            duration: 0
+          });
+        } else if (this.ruleForm.type.length == 0) {
+          this.$message({
+            showClose: true,
+            message: "編程訪問和台富雲控制台訪問至少需要選擇一個",
+            type: "error",
+            duration: 0
+          });
+        } else if (this.visitType) {
+          if (this.ruleForm.loginRadio === "") {
+            this.$message({
+              showClose: true,
+              message: "請設置登入保護",
+              type: "error",
+              duration: 0
+            });
+          } else if (this.ruleForm.processRadio === "") {
+            this.$message({
+              showClose: true,
+              message: "請設置操作保護",
+              type: "error",
+              duration: 0
+            });
+          } else if (this.ruleForm.pwdRadio && (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg)) {
+            this.$message({
+              showClose: true,
+              message: "密碼格式輸入有誤",
+              type: "error",
+              duration: 0
+            });
+          } else {
+            flag = true
+          }
         } else {
-          if (!this.visitType) {
-            if (!this.ruleForm.Name) {
-              this.$message({
-                showClose: true,
-                message: "用戶名不能為空",
-                type: "error",
-                duration: 0
-              });
-            } else if (this.ruleForm.type.length == 0) {
-              this.$message({
-                showClose: true,
-                message: "編程訪問和台富雲控制台訪問至少需要選擇一個",
-                type: "error",
-                duration: 0
-              });
-            } else {
-              this._arrUser();
-            }
-          }
-          if (this.visitType) {
-            if (!this.ruleForm.Name) {
-              this.$message({
-                showClose: true,
-                message: "用戶名不能為空",
-                type: "error",
-                duration: 0
-              });
-            } else if (this.ruleForm.type.length == 0) {
-              this.$message({
-                showClose: true,
-                message: "編程訪問和台富雲控制台訪問至少需要選擇一個",
-                type: "error",
-                duration: 0
-              });
-            } else if (this.ruleForm.loginRadio === "") {
-              this.$message({
-                showClose: true,
-                message: "請設置登入保護",
-                type: "error",
-                duration: 0
-              });
-            } else if (this.ruleForm.processRadio === "") {
-              this.$message({
-                showClose: true,
-                message: "請設置操作保護",
-                type: "error",
-                duration: 0
-              });
-            } else if (this.ruleForm.pwdRadio && (this.pwdlenReg || this.pwdtypeReg || this.pwdreReg)) {
-              this.$message({
-                showClose: true,
-                message: "密碼格式輸入有誤",
-                type: "error",
-                duration: 0
-              });
-            } else {
-              this._arrUser();
-            }
-          }
+          flag = true
         }
-      } else {
-        this.active = num;
+        if (flag) {
+          this.loading = true
+          this.axios.post(QUERY_USER, {
+            Version: '2019-01-16',
+            Name: this.ruleForm.Name
+          })
+          .then(res => {
+            if (res.Response.Uid) {
+              this.$message({
+                message: '子用戶名稱重複',
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            } else {
+              if (this.ruleForm.ConsoleLogin === 1) {
+                this.active += 1
+              } else {
+                this.active = 3
+              }
+            }
+          }).then(() => {
+            this.loading = false
+          })
+        }
+      }
+      if (this.active === 0) {
+        this.active += 1
       }
     },
     //上一步
     _lastStep() {
-      var num = this.active;
-      if (this.active > 0) {
-        num--;
+      if (this.active === 3 && this.ruleForm.ConsoleLogin === 0) {
+        this.active = 1
+      } else {
+        this.active -= 1
       }
-      if (this.btnVal == "完成") {
-        this.btnVal = "下一步";
-      }
-      this.active = num;
     }
   }
 };
