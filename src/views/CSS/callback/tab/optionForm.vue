@@ -112,16 +112,53 @@ export default {
 
       callback();
     };
-
-    let checkHttpOrHttps = (rule, value, callback) => {
+    let checkStreamBeginNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = /(http|https):\/\/([\w.]+\/?)\S*/.test(value);
-
+        let result = this.isHttpOrHttps(value);
         if (!result) {
-          return callback(new Error("回调URL以http、https开头"));
+          return callback(new Error("推流回調URL不合法"));
         }
       }
+      callback();
+    };
 
+    let checkStreamEndNotifyUrl = (rule, value, callback) => {
+      if (value && value.length > 0) {
+        let result = this.isHttpOrHttps(value);
+        if (!result) {
+          return callback(new Error("斷流回調URL不合法"));
+        }
+      }
+      callback();
+    };
+
+    let checkRecordNotifyUrl = (rule, value, callback) => {
+      if (value && value.length > 0) {
+        let result = this.isHttpOrHttps(value);
+        if (!result) {
+          return callback(new Error("錄製回調URL不合法"));
+        }
+      }
+      callback();
+    };
+
+    let checkSnapshotNotifyUrl = (rule, value, callback) => {
+      if (value && value.length > 0) {
+        let result = this.isHttpOrHttps(value);
+        if (!result) {
+          return callback(new Error("截圖回調URL不合法"));
+        }
+      }
+      callback();
+    };
+
+    let PornCensorshipNotifyUrl = (rule, value, callback) => {
+      if (value && value.length > 0) {
+        let result = this.isHttpOrHttps(value);
+        if (!result) {
+          return callback(new Error("鑑黃回調URL不合法"));
+        }
+      }
       callback();
     };
 
@@ -151,13 +188,17 @@ export default {
           { validator: checkCallbackKey, trigger: "blur" }
         ],
         StreamBeginNotifyUrl: [
-          { validator: checkHttpOrHttps, trigger: "blur" }
+          { validator: checkStreamBeginNotifyUrl, trigger: "blur" }
         ],
-        StreamEndNotifyUrl: [{ validator: checkHttpOrHttps, trigger: "blur" }],
-        RecordNotifyUrl: [{ validator: checkHttpOrHttps, trigger: "blur" }],
-        SnapshotNotifyUrl: [{ validator: checkHttpOrHttps, trigger: "blur" }],
+        StreamEndNotifyUrl: [
+          { validator: checkStreamEndNotifyUrl, trigger: "blur" }
+        ],
+        RecordNotifyUrl: [{ validator: checkRecordNotifyUrl, trigger: "blur" }],
+        SnapshotNotifyUrl: [
+          { validator: checkSnapshotNotifyUrl, trigger: "blur" }
+        ],
         PornCensorshipNotifyUrl: [
-          { validator: checkHttpOrHttps, trigger: "blur" }
+          { validator: PornCensorshipNotifyUrl, trigger: "blur" }
         ]
       }
     };
@@ -237,6 +278,9 @@ export default {
           this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
         });
       }
+    },
+    isHttpOrHttps(url) {
+      return /(http|https):\/\/([\w.]+\/?)\S*/.test(url);
     }
   }
 };
