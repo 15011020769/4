@@ -3,7 +3,7 @@
     <div class="firstShow">
       <h3>
         {{t('请求次数统计', 'WAF.qqcstj')}}
-        <span style="color:#bbb;">(%)</span>
+        <span style="color:#bbb;">(次)</span>
       </h3>
       <el-row class="empty" v-if="seriesLineFlowTotal.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
       <ELine

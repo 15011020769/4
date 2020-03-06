@@ -11,6 +11,7 @@
         :legendText="legendTextBotPoints"
         :color="colorLine"
         :tooltip="tooltip"
+        v-loading="loading"
       />
     </div>
     <div class="secondShow">
@@ -25,6 +26,7 @@
             :legendText="legendTextPieStatus"
             :radius="['40%', '55%']"
             :left="'50%'"
+            v-loading="loading"
           />
         </el-col>
         <el-col :span="8" class="pieShow">
@@ -37,6 +39,7 @@
             :legendText="legendTextPieMethod"
             :radius="['37%', '50%']"
             :left="'50%'"
+            v-loading="loading"
           />
         </el-col>
         <el-col :span="8" class="pieShow">
@@ -49,12 +52,13 @@
             :legendText="legendTextPieProtocal"
             :radius="['40%', '55%']"
             :left="'50%'"
+            v-loading="loading"
           />
         </el-col>
       </el-row>
         <p class="pieTip">{{t('统计数据源为会话前600条数据', 'WAF.tjsjy')}}</p>
     </div>
-    <el-row class="thirdShow">
+    <el-row class="thirdShow" v-loading="loading">
       <el-col :span="8" class="wrapperCol" v-if="recordDetail.length">
         <h3 class="botTitle">
           {{t('会话基础信息', 'WAF.hhjcxx')}}
@@ -81,7 +85,12 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话存在', 'WAF.hhcz')}}Robots.txt</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.req_analyze_res.req_robots_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              <!-- {{recordDetail[0].stat.req_analyze_res.req_robots_exist ? "是" : "否"}} -->
+              {{recordDetail[0].stat.req_analyze_res.req_robots_exist | fromatValue}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话持续时间', 'WAF.hhcxsj')}}</span></el-col>
@@ -89,11 +98,17 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('敏感接口访问', 'WAF.mgjkfw')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.sensitive_request_flag ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">
+            {{recordDetail[0].stat.sensitive_request_flag | fromatValue}}
+          </span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话发生在凌晨', 'WAF.hhfszlc')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.req_analyze_res.req_in_wee_hours ? "是" : "否"}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].stat.req_analyze_res.req_in_wee_hours | fromatValue}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('时序行为异常指数', 'WAF.sxxwyc')}}</span></el-col>
@@ -105,7 +120,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('AI模型检出', 'WAF.mxjc')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.AI_abnormal_flag ? '是' : '否'}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">
+            {{recordDetail[0].stat.AI_abnormal_flag | fromatValue}}
+          </span></el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
@@ -121,14 +138,17 @@
           <el-col :span="14"><span class="addRed">{{recordDetail[0].score.total}}</span></el-col>
         </el-row>
         <el-row type="flex">
-          <el-col :span="10"><span class="leftFont">{{t('策略名称', 'WAF.clmc')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].rule_name}}</span></el-col>
+          <el-col :span="10"><span class="leftFont">{{botLabel}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{fromatBOTInfos(recordDetail[0].rule_name)}}</span></el-col>
         </el-row>
          <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('动作', 'WAF.dz')}}</span></el-col>
           <el-col :span="14">
             <span class="rightFont">
-              {{UCB_ACTION_LOCAL[recordDetail[0].action]}}&nbsp;{{t('截止时间', 'WAF.jzsh')}}{{recordDetail[0].valid_ts | formatSecond }}
+              {{UCB_ACTION_LOCAL[recordDetail[0].action]}}&nbsp;
+              <span v-if="recordDetail[0].valid_ts">
+                {{t('截止时间', 'WAF.jzsh')}}{{recordDetail[0].valid_ts | formatSecond }}
+              </span>
             </span>
           </el-col>
         </el-row>
@@ -158,7 +178,7 @@
             </span>
           </el-col>
         </el-row>
-        <el-row type="flex">
+        <el-row type="flex" v-if="showBlack">
           <el-col :span="10"><span class="leftFont">{{t('黑白名单属性', 'WAF.hbmdsx')}}</span></el-col>
           <el-col :span="14">
             <span v-if="ipInfo.length">
@@ -169,7 +189,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('类型', 'WAF.lx')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.ip_type == "unknown" ? "未知类型" : recordDetail[0].ip_info.ip_type}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{formatIpType(recordDetail[0].ip_info.ip_type)}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('运营商', 'WAF.yys')}}</span></el-col>
@@ -177,7 +197,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('地区', 'WAF.dq')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.country}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.country}}&nbsp;{{recordDetail[0].ip_info.city ? recordDetail[0].ip_info.city: ""}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP所有者</span></el-col>
@@ -199,7 +219,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_exist | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA存在比</span></el-col>
@@ -223,7 +243,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('公开BOT伪造', 'WAF.gkbotwz')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_not_match_ip ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_not_match_ip | fromatValue}}</span></el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
@@ -233,19 +253,19 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_exist | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept-Language存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_language_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_language_exist | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept-Encoding存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_encoding_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_encoding_exist | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Connection存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.connection_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.connection_exist | fromatValue}}</span></el-col>
         </el-row>
       </el-col>
       <el-col :span="8" class="wrapperCol" v-if="recordDetail.length">
@@ -281,7 +301,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">
+            {{recordDetail[0].stat.cookie_analyze_res.cookie_exist | fromatValue}}
+          </span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE存在比</span></el-col>
@@ -289,7 +311,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE{{t('重复比', 'WAF.cfb')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_repeat == null ? "null" : recordDetail[0].stat.cookie_analyze_res.cookie_repeat}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_repeat | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE{{t('种类', 'WAF.zl')}}</span></el-col>
@@ -298,11 +320,11 @@
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('出现', 'WAF.cx')}}最多的COOKIE</span></el-col>
           <el-col :span="14"><span class="rightFont">
-            {{recordDetail[0].stat.cookie_analyze_res.cookie_max == "" ? "空" : recordDetail[0].stat.cookie_analyze_res.cookie_max}}</span></el-col>
+            {{recordDetail[0].stat.cookie_analyze_res.cookie_max | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE{{t('滥用', 'WAF.lanyong')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_abuse ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_abuse | fromatValue}}</span></el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
@@ -311,7 +333,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_exist ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_exist | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer存在比</span></el-col>
@@ -319,7 +341,7 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer{{t('重复比', 'WAF.cfb')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_repeat == null ? "null" : recordDetail[0].stat.refer_analyze_res.refer_repeat}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_repeat | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer{{t('种类', 'WAF.zl')}}</span></el-col>
@@ -327,11 +349,11 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('出现', 'WAF.cx')}}最多的Referer</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_max == "" ? "空" : recordDetail[0].stat.refer_analyze_res.refer_max}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_max | fromatValue}}</span></el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer{{t('滥用', 'WAF.lanyong')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_abuse ? "是" : "否"}}</span></el-col>
+          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_abuse | fromatValue}}</span></el-col>
         </el-row>
       </el-col>
     </el-row>
@@ -349,7 +371,13 @@ import moment from 'moment'
 import ELine from '../../../../saveOverView/components/line'
 import EPie from '../../../../components/pie'
 import addBlackWhite from './addBlackWhite'
-import { ua_type_list, UCB_ACTION_LOCAL, BOTS_TYPES_CFG } from '../../../../constants'
+import { ua_type_list,
+      UCB_ACTION_LOCAL,
+      BOTS_TYPES_CFG,
+      scene_flag_list,
+      ip_type_list
+  } from '../../../../constants'
+let that
 import {
   DESCRIBE_BOT_RECORD_POINTS,
   DESCRIBE_BOT_RECORD_ITEMS,
@@ -369,10 +397,10 @@ export default {
       UCB_ACTION_LOCAL,
       seriesPieStatus: [], // 返回响应码占比饼图
       legendTextPieStatus: [], // 返回响应码占比饼图
-      colorPie: ["#47a986", "#51b1ce", "#038b5b"],
+      colorPie: ["#47a986", "#51b1ce","#6296c6", "#038b5b"],
       seriesPieMethod: [], // 请求方法占比
       legendTextPieMethod: [], // 请求方法占比
-      colorPieMethod: ["#51b1ce", "#038b5b", "#47a986",],
+      colorPieMethod: ["#51b1ce", "#038b5b", "#47a986", "#6296c6"],
       seriesPieProtocal: [], // HTTP协议版本占比
       legendTextPieProtocal: [], // HTTP协议版本占比
       addBWmodel: false, // 添加黑白名单弹框
@@ -381,6 +409,11 @@ export default {
       Id: "",
       domain: "",
       ua_type_list,
+      botLabel: this.t('策略名称', 'WAF.clmc'), // bot类型不同,标签名称不同
+      scene_flag_list,
+      ip_type_list,
+      showBlack: true, // 是否显示ip黑白名单属性
+      loading: true,
       tooltip: {
         trigger: 'axis',
         formatter(params) {
@@ -398,6 +431,9 @@ export default {
     EPie,
     addBlackWhite,
   },
+  beforeCreate() {
+    that = this
+  },
   created() {
     this.SrcIp = this.$route.query.SrcIp
     this.Id = this.$route.query.Id
@@ -408,6 +444,21 @@ export default {
     this.getActioned()
   },
   filters: {
+    fromatValue (value) {
+      if ("undefined" === typeof value) {
+          return "null";
+      } else if ("" === value) {
+          return "空";
+      } else if ("object" === typeof value && !value) { //null
+          return "null";
+      } else if ("boolean" === typeof value) {//boolean
+          return value ? "是" : "否";
+      } else if ("number" === typeof value) {//number
+          return value + "";
+      } else {
+          return value;
+      }
+    },
     formatMillisecond(val) {
       return moment(val).format("YYYY-MM-DD HH:mm:ss")
     },
@@ -432,12 +483,39 @@ export default {
           result = "" + parseInt(minuteTime) + "分" + result;
       }
       if(hourTime > 0) {
-          result = "" + parseInt(hourTime) + "小"+ this.t('时', 'WAF.hour') + result;
+          result = "" + parseInt(hourTime) + "小"+ that.t('时', 'WAF.hour') + result;
       }
       return result;
     },
   },
   methods: {
+    fromatBOTInfos(name) {
+      if (this.recordDetail[0].bot_type === "UCB") {
+        this.botLabel = this.t('策略名称', 'WAF.clmc')
+        return name
+      } else if (this.recordDetail[0].bot_type === "TCB") {
+        this.botLabel = this.t('BOT 分类', 'WAF.botfl')
+        return name
+      } else if(this.recordDetail[0].bot_type === "UB") {
+        this.botLabel = this.t('预测标签', 'WAF.ycbq')
+        let label = ""
+        this.scene_flag_list.map(v => {
+        if(v.value == name) {
+            label =  v.label
+          }
+        })
+        return label 
+      }
+    },
+    formatIpType(type) {
+      let temp = ""
+      this.ip_type_list.map(item => {
+        if(item.value == type) {
+          temp = item.label
+        }
+      })
+      return temp
+    },
     //添加黑白名单按钮
     addBW(){
       this.addBWmodel=true;
@@ -445,6 +523,7 @@ export default {
       //关闭
     closeModel(isShow){
       this.addBWmodel = false
+      this.getActioned()
       if (isShow === 'refresh') {
         this.getActioned()
       }
@@ -459,8 +538,17 @@ export default {
       this.axios.post(DESCRIBE_ACTIONED, params).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           this.ipInfo = Data.Res
-          // console.log(Data)
-          console.log(this.ipInfo[0])
+          console.log(Data)
+          // console.log(this.ipInfo[0])
+          let arr = []
+          Data.Res.forEach(item => {
+            arr.push(item.Action)
+          })
+          if (arr.includes(42) || arr.includes(40)){
+            this.showBlack = true
+          } else {
+            this.showBlack = false
+          }
         })
       })
     },
@@ -481,6 +569,7 @@ export default {
     },
     // BOT记录访问趋势
     getBotRecordPoints() {
+      this.loading = true
       // 获取业务攻击趋势参数获取时间值
       const paramsPeakPoints = {
         Version: '2018-01-25',
@@ -506,15 +595,20 @@ export default {
           })
             this.xAxisBotPoints = axixArr
         })
+      }).then(() => {
+        this.loading = false
       })
       this.axios.post(DESCRIBE_BOT_RECORD_POINTS, params).then((resp) => {
         this.generalRespHandler(resp, ({PointsTotal}) => {
           this.seriesBotPoints = PointsTotal
         })
+      }).then(() => {
+        this.loading = false
       })
     },
     // BOT详情 
     getBotRecordDetail() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         Domain: this.$route.query.domain,
@@ -526,7 +620,7 @@ export default {
       this.axios.post(DESCRIBE_BOT_RECORD_DETAIL, params).then((resp) => {
         this.generalRespHandler(resp, ({Res}) => {
           console.log(JSON.parse(Res[0]))
-          this.recordDetail.push(JSON.parse(Res[0]))
+          this.recordDetail.push(JSON.parse(Res[0])) // 基础信息
           const statusTemp = this.recordDetail[0].stat.status
           const methodTemp = this.recordDetail[0].stat.method
           const protocalTemp = this.recordDetail[0].stat.protocal
@@ -560,6 +654,7 @@ export default {
         })
       }).then(() => {
         this.getBotRecordPoints()
+        this.loading = false
       })
     }
   }
