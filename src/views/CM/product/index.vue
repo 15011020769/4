@@ -89,8 +89,17 @@
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
 import Dialog from "./custom/custom";
+
+  import {
+    PRODUCT_EVENT_LIST
+  } from "@/constants";
+
+
 export default {
   name: "product",
+  created () {
+    this.GetDat()
+  },
   data() {
     return {
       activeName: "first",
@@ -112,7 +121,14 @@ export default {
   methods: {
     //获取数据
     GetDat(data) {
-      // console.log(data);
+      const param = {
+          Region: localStorage.getItem('monitor2'),
+          Version: "2018-07-24",
+          Module: "monitor2"
+        };
+      this.axios.get(PRODUCT_EVENT_LIST, param).then(data => {
+          console.log(data)
+        });
     },
      //分页
     handleCurrentChange(val) {

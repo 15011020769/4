@@ -572,12 +572,14 @@
     }
 
     ::v-deep .el-input__inner {
-      height: 32px !important;
+      height: 36px !important;
+      line-height:36px !important;
       width: 180px !important;
     }
 
     ::v-deep .el-input {
       height: 32px !important;
+      line-height:32px !important;
     }
 
     .title {

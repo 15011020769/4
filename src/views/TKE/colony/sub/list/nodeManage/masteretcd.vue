@@ -1,7 +1,7 @@
  <!-- Master&Etcd列表 -->
 <template>
   <div >
-    <subTitle :title='tit'  />
+    <!-- <subTitle :title='name'></subTitle> -->
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
       <!-- 左侧 -->
@@ -145,7 +145,8 @@ export default {
       pageSize:10,
       pageIndex:0,
       flag: false,
-      DrawerTitle:''
+      DrawerTitle:'',
+      name:"Master&Etcd"
     };
   },
   components: {
@@ -163,7 +164,7 @@ export default {
       this.$router.push({
         name:"colonyOpenMonitor",
         query:{
-          title:this.tit
+          title:this.name
         }
       })
     },
