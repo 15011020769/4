@@ -80,7 +80,13 @@
         <el-table-column label="操作" width="240">
           <template slot-scope="scope">
             <span class="tke-text-link" @click="goPodUpdate(scope.row)">更新Pod数量</span>
-            <span class="tke-text-link ml10" @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
+             <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse ml10"
+                    >更新Pod配置</el-button>
+                  </el-tooltip>
+            <span class="tke-text-link ml10" v-else @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
             <el-dropdown class="tke-dropdown"  trigger="click">
               <span class="el-dropdown-link ml10" style="cursor:pointer">
                 更多
@@ -91,18 +97,46 @@
                   <span class="tke-text-link" @click="redeployment(scope.row)">重新部署</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="a">
-                  <span class="tke-text-link" @click="goSetUpdateTactics(scope.row)">设置更新策略</span>
+                  <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >设置更新策略</el-button>
+                  </el-tooltip>
+                  <span v-else class="tke-text-link" @click="goSetUpdateTactics(scope.row)">设置更新策略</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="b">
-                  <span class="tke-text-link"  @click="goUpdateTactics(scope.row)">更新调度策略</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="c">
-                  <span class="tke-text-link">编辑YAML</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="c">
-                  <el-button
+                  <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
                     type="text"
-                    :disabled="nameSpaceName === 'kube-system'?true:false"
+                    class="notuse"
+                    >更新调度策略</el-button>
+                  </el-tooltip>
+
+                  <span v-else  class="tke-text-link"  @click="goUpdateTactics(scope.row)">更新调度策略</span>
+                </el-dropdown-item>
+                <el-dropdown-item command="c">
+                   <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的资源不可编辑YAML,如需查看YAML,请前往详情页" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >编辑YAML</el-button>
+                  </el-tooltip>
+                   <el-button
+                    type="text"
+                     v-else
+                  >编辑YAML</el-button>
+                </el-dropdown-item>
+                <el-dropdown-item command="c">
+                  <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >删除</el-button>
+                  </el-tooltip>
+                  <el-button
+                    v-else
+                    type="text"
                     @click="deleteDeployment(scope.row)"
                   >删除</el-button>
                 </el-dropdown-item>
@@ -605,6 +639,10 @@ export default {
 .tke-grid >>> .el-input__inner,
 .tke-grid >>> .el-button {
   border-radius: 0;
+}
+.notuse{
+  color: #C0C4CC;
+  cursor: not-allowed;
 }
 </style>
 
