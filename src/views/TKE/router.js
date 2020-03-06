@@ -833,6 +833,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/hpa/editYaml', // 自动伸缩-编辑yaml
+      name: 'updateHpaYaml',
+      component: () => import('./colony/sub/update/hpa/editYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/detail/service/svc', // 服务-Service-详情
       name: 'svcDetail',
       component: () => import('./colony/sub/detail/service/svc/index.vue'),

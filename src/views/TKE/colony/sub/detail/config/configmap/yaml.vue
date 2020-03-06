@@ -70,7 +70,6 @@ export default {
   },
   created() {
      // 从路由获取类型
-    // 从路由获取集群id
     this.clusterId = this.$route.query.clusterId;
     if (this.$route.query.name && this.$route.query.np) {
       this.name = this.$route.query.name;
