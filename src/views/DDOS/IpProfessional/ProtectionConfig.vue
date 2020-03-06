@@ -353,7 +353,7 @@ export default {
           <div>
             <span> {option.key} </span>
             <br />
-            <span>{option.label}</span>
+            <span>{option.label.substring(0, option.label.indexOf(option.key))}</span>
           </div>
         );
       }, //穿梭框
@@ -386,6 +386,7 @@ export default {
   },
   created() {
     this.describeResourceList();
+    this.describeDDoSPolicy();
   },
   methods: {
     // 1.1.获取资源列表
@@ -695,7 +696,10 @@ export default {
       });
       // 循环资源列表
       this.tableDataBegin.forEach(resource => {
-        const objTemp = {};
+        const objTemp = {
+          key: '',
+          label: ''
+        };
         for (const i in resource.Record) {
           if (resource.Record.hasOwnProperty(i)) {
             const element = resource.Record[i];
@@ -704,7 +708,6 @@ export default {
             } else if (element.Key == "GroupIpList") {
               //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
               let arr = element.Value.split(";");
-              objTemp.label = "";
               for (const j in arr) {
                 if (arr.hasOwnProperty(j)) {
                   const ipStr = arr[j];
@@ -714,6 +717,7 @@ export default {
             }
           }
         }
+        objTemp.label += objTemp.key;
         if (binded.length > 0 && binded.indexOf(objTemp.key) < 0) {
           this.resData.push(objTemp);
         } else if (binded.length == 0) {
@@ -802,7 +806,7 @@ a {
 
 .wrap {
   width: 100%;
-  height: 100px;
+  height: 99px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   padding: 0 20px;
@@ -816,8 +820,8 @@ a {
   }
   .ReportTitBtn {
     float: right;
-    height: 30px;
-    line-height: 30px;
+    height: 32px;
+    line-height: 32px;
     padding: 0;
     margin-top: 8px;
     width: 52px;

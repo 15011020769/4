@@ -307,7 +307,11 @@ export default {
           } else {
             this.resourceId = this.$route.query.resourceId;
           }
-          this.describleL4Rules();
+          if(this.resourceId == "") {
+            this.loading = false;
+          } else {
+            this.describleL4Rules();
+          }
 				} else {
 					let ErrTips = {};
 					let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -338,11 +342,11 @@ export default {
     //点击批量删除
     partDel(){
       if(this.partD2.length==0){
-          this.$message({
-            showClose: true,
-            message: "請選擇刪除項",
-            type: "warning"
-          });
+        this.$message({
+          showClose: true,
+          message: "請選擇刪除項",
+          type: "warning"
+        });
       }else{
         this.dialogDelete_2=true;
       }
@@ -431,7 +435,16 @@ export default {
     },
     //新建按钮弹框
     newCreate() {
-      this.dialogVisible = true;
+      if(this.resourceId == "") {
+        this.$message({
+          showClose: true,
+          message: "需要選中資源新建",
+          type: "warning"
+        });
+        this.describleL4Rules();
+      } else {
+        this.dialogVisible = true;
+      }
     },
     //新建规则弹框确定按钮
     addRulesSure(isShowFalse) {

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="topHeader">
-      <span>{{t('BOT 详情', 'WAF.botxq')}}</span>
+      <span><i class="el-icon-back" @click="$router.go(-1)"></i>{{t('BOT 详情', 'WAF.botxq')}}</span>
       <el-tabs v-model="activeName">
         <el-tab-pane :label="t('基础信息', 'WAF.jcxx')" name="info"></el-tab-pane>
         <el-tab-pane :label="t('访问详情', 'WAF.fwxq')" name="detail"></el-tab-pane>
@@ -49,7 +49,12 @@ export default {
     color: #000;
     margin-right: 20px;
   }
+  .el-icon-back{
+    margin-right:12px;
+    color:#006eff;
+  }
 }
+
 .wrapper {
   width: 100%;
   padding: 20px;
@@ -63,26 +68,6 @@ export default {
     line-height: 30px;
     border-radius: 0;
   }
-  .topTip {
-    font-size: 12px;
-    line-height: inherit;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    background: #e5f0ff;
-    margin-bottom: 20px;
-    position: relative;
-    p {
-      line-height: 20px;
-    }
-    .el-icon-close {
-      position: absolute;
-      font-size: 18px;
-      top: 10px;
-      margin-left: 10px;
-      right: 20px;
-    }
   }
   .topSelect {
     ::v-deep .el-range__icon {
@@ -103,5 +88,4 @@ export default {
       color: #fff;
     }
   }
-}
 </style>

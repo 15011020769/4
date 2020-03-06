@@ -167,7 +167,9 @@ export default {
   },
   methods: {
     init() {
-      this.describeCCSelfDefinePolicy();
+      if(this.ccResourceId != "") {
+        this.describeCCSelfDefinePolicy();
+      }
     },
     // 1.1.获取CC自定义策略
     describeCCSelfDefinePolicy() {
@@ -187,7 +189,15 @@ export default {
     },
     //修改CC自定义策略开关
     changeSwitch(ccPolicy) {
-      this.modifyCCPolicySwitch(ccPolicy);
+      if(this.ccResourceId != ""){
+        this.modifyCCPolicySwitch(ccPolicy);
+      } else {
+        this.$message({
+          showClose: true,
+          message: "未選擇資源不能操作",
+          type: "warning"
+        });
+      }
     },
     // 1.2.修改CC自定义策略开关
     modifyCCPolicySwitch(ccPolicy) {
@@ -209,8 +219,8 @@ export default {
     },
     // 1.3.删除CC自定义策略
     deleteCCSelfDefinePolicy(ccPolicy) {
-      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
-        confirmButtonText: "确定",
+      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+        confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       })
@@ -289,8 +299,16 @@ export default {
     },
     //添加访问控制策略弹框
     addAccessModel() {
-      this.editFlag = false;
-      this.addAccessContModel = true;
+      if(this.ccResourceId != ""){
+        this.editFlag = false;
+        this.addAccessContModel = true;
+      } else {
+        this.$message({
+          showClose: true,
+          message: "未選擇資源不能操作",
+          type: "warning"
+        });
+      }
     },
     //添加访问控制策略弹框关闭按钮
     closeDialogModel(isShow) {
@@ -360,10 +378,10 @@ export default {
       }
       button {
         height: 30px;
-        line-height: 30px;
+        // line-height: 30px;
         padding: 0 12px;
         border-radius: 0;
-        float: left;
+        // float: left;
         :hover {
           background-color: transparent;
         }

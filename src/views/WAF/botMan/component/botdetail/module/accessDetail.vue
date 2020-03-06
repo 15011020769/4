@@ -48,6 +48,8 @@
         style="width: 100%"
         :expand-row-keys="expendsAll"
         :row-key="getRowKeys"
+        :empty-text="t('暂无数据', 'WAF.zwsj')"
+        v-loading="loading"
       >
         <el-table-column type="expand">
           <template slot-scope="props">
@@ -97,7 +99,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-table-column>
-        <el-table-column label="UA" prop="ua"></el-table-column>
+        <el-table-column label="UA" prop="ua" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column :label="t('请求URL', 'WAF.qqurl')" prop="url"></el-table-column>
         <el-table-column :label="t('GET参数', 'WAF.canshu')" prop="query"></el-table-column>
         <el-table-column :label="t('状态码', 'WAF.ztm')" prop="status" v-if="statusOptions.length">
@@ -174,7 +176,8 @@ export default {
           value: 'Referer',
         },
       ],
-      query: []
+      query: [],
+      loading: true
     }
   },
   components: {
@@ -298,6 +301,7 @@ export default {
     },
     // BOT记录访问详情
     getRecordList() {
+      this.loading = true
       const params = {
         Version: "2018-01-25",
         Domain: this.domain,
@@ -354,6 +358,7 @@ export default {
         this.httpOptions = Array.from(new Set(httpArr))
         this.requestOptions = Array.from(new Set(requestArr))
         this.statusOptions = Array.from(new Set(statusArr))
+        this.loading = false
       })
     },
   }

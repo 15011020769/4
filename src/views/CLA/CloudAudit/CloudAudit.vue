@@ -74,7 +74,9 @@
           <el-table-column :label="$t('CLA.total.sjsj')" prop="EventTime"></el-table-column>
           <el-table-column :label="$t('CLA.total.yhm')" prop="Username">
             <template slot-scope="scope">
-              <p style="color:#006eff">{{scope.row.Username}}</p>
+              <p>
+                {{scope.row.Username}}
+              </p>
             </template>
           </el-table-column>
           <el-table-column :label="$t('CLA.total.sjmc')" width="350">
