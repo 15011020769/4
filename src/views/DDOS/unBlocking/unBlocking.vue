@@ -120,7 +120,8 @@ export default {
       tableDatalist: [],
       loading: true,
       doalogRenewModel: false, // 解封弹框
-      dataUnsealingIP: ''
+      dataUnsealingIP: '',
+      dataUnsealingStatus: ''
     }
   },
   components: {
@@ -129,13 +130,13 @@ export default {
   created () {
     this.describeUnBlockStatis() // 获取黑洞解封次数接口
     this.describeIpBlockList() // 获取IP封堵列表接口
-    console.log(this.dataUnsealingIP, 'pppp')
   },
   methods: {
     // 解封弹框
     RenewModel (val) {
       this.doalogRenewModel = true
       this.dataUnsealingIP = val.Ip
+      this.dataUnsealingStatus = val.Status
     },
     // 解封弹框关闭按钮
     closeRenewModel (isShow) {
@@ -144,16 +145,16 @@ export default {
     // 解封弹出框确定
     sureRenewModel (isShow) {
       this.doalogRenewModel = isShow
-      this.loading = true
       let params = {
+        Action: 'CreateUnblockIp',
         Version: '2018-07-09',
         Region: '',
         Ip: this.dataUnsealingIP,
-        ActionType: '' // 解封类型
+        ActionType: this.dataUnsealingStatus // 解封类型
       }
       this.axios.post(Create_UnblockIp, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.unBlockStatis = res.Response
+          this.describeIpBlockList()
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -164,7 +165,6 @@ export default {
             duration: 0
           })
         }
-        this.loading = false
       })
     },
     // 获取IP封堵列表接口
