@@ -507,7 +507,15 @@ module.exports = {
       lanyong: '濫用',
       sjsl: '事件數量',
       yjzk: '一鍵展開',
-      canshu: 'GET參數'
+      canshu: 'GET參數',
+      sxdk: '上行帶寬',
+      xxdk: '下行帶寬',
+      qqsj: '請求時間',
+      qqff: '請求方法',
+      qqurl: '請求URL',
+      ztm: '狀態碼',
+      jl: 'BOT記錄',
+      tjsjy: '統計數據源為會話前600條數據'
     },
     COM: require('@/components/language/ft'),
 }

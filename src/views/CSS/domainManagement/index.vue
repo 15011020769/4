@@ -194,7 +194,7 @@ export default {
       //分页查询
       this.$nextTick(this.describeLiveDomains)
     }, //组件自带监控当前页码
-    
+
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;

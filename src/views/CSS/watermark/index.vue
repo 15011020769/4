@@ -11,7 +11,7 @@
       <div class="explain">
         <p>
           {{$t('CSS.watermark.3')}}
-          <a href="#">域名管理</a>{{$t('CSS.watermark.4')}}
+          <router-link to="/domainManagement">域名管理</router-link>{{$t('CSS.watermark.4')}}
           <!-- <a href="#">{{$t('CSS.watermark.2')}}</a> -->
           {{$t('CSS.watermark.5')}}
         </p>
@@ -91,7 +91,7 @@ export default {
     },
 
     _delete() {
-      this.$confirm(`${$t('CSS.watermark.6')}: ${this.selectItem.WatermarkName}`, '删除水印配置', {
+      this.$confirm(`${this.$t('CSS.watermark.6')}: ${this.selectItem.WatermarkName}`, '删除水印配置', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

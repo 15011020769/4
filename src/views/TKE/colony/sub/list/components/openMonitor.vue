@@ -7,7 +7,7 @@
         <div class="grid-left">
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
-            <span>{{this.$route.query.title}} / 监控</span>
+            <span>{{title}} / 监控</span>
           </span>
         </div>
       </div>
@@ -79,7 +79,7 @@
   </div>
 </template>
 <script>
-import subTitle from "@/views/TKE/components/subTitle";
+// import subTitle from "@/views/TKE/components/subTitle";
 const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -99,6 +99,7 @@ export default {
       checkedCities: ["asdasd", "3dsda", "asdaqwe"],
       isIndeterminate: false,
       cities: cityOptions,
+      title:this.$route.query.title,
       pickerOptions: {
         shortcuts: [
           {
@@ -136,6 +137,11 @@ export default {
     };
   },
   created() {},
+  watch:{
+    title(val){
+      console.log(val)
+    }
+  },
   methods: {
     //返回上一层
     goBack() {
@@ -164,9 +170,9 @@ export default {
       this.isCollapse = e;
     }
   },
-  components: {
-    subTitle
-  }
+  // components: {
+  //   subTitle
+  // }
 };
 </script>
 <style lang='scss' scoped>

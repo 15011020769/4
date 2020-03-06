@@ -15,13 +15,13 @@
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="7">模板名稱</el-col>
+          <el-col :span="7">範本名稱</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">模板描述</el-col>
+          <el-col :span="7">範本描述</el-col>
           <el-col class="text-black">{{ selectItem.Description }}</el-col>
         </el-row>
       </li>
@@ -33,7 +33,7 @@
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">啟用智能鑒黃</el-col>
+          <el-col :span="7">啟用智慧鑒黃</el-col>
           <el-col class="text-black">{{ selectItem.PornFlag ? '已啟用' : '未啟用' }}</el-col>
         </el-row>
       </li>

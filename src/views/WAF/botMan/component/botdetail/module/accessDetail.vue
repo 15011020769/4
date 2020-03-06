@@ -3,7 +3,8 @@
     <div class="header_top">
       <el-row type="flex" justify="space-between">
         <el-col>
-          <el-button type="primary" @click="getExpends">{{t('一键展开', 'WAF.yjzk')}}</el-button><span style="color: #bbb; margin-left: 10px">统计数据源为会话前600条数据</span>
+          <el-button type="primary" @click="getExpends">{{t('一键展开', 'WAF.yjzk')}}</el-button>
+          <span style="color: #bbb; margin-left: 10px">{{t('统计数据源为会话前600条数据', 'WAF.tjsjy')}}</span>
         </el-col>
         <el-col>
           <el-row type="flex">
@@ -69,7 +70,7 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column label="请求时间" prop="timestamp" sortable>
+        <el-table-column :label="t('请求时间', 'WAF.qqsj')" prop="timestamp" sortable>
           <template slot-scope="scope">
             {{ scope.row.timestamp | formatMillisecond }}
           </template>
@@ -77,7 +78,7 @@
         <el-table-column label="HTTP协议版本" prop="protocal" v-if="httpOptions.length">
           <el-dropdown slot="header" style="padding: 0" @command="onChangeProtocal">
             <span class="el-dropdown-link" style="color: #909399;">
-              HTTP协议版本<i class="el-icon-arrow-down el-icon--right"></i>
+              HTTP{{t('协议', 'WAF.xy')}}版本<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
@@ -85,10 +86,10 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-table-column>
-        <el-table-column label="请求方法" prop="http" v-if="requestOptions.length">
+        <el-table-column :label="t('请求方法', 'WAF.qqff')" prop="http" v-if="requestOptions.length">
           <el-dropdown slot="header" style="padding: 0" @command="onChangeRequest">
             <span class="el-dropdown-link" style="color: #909399;">
-              请求方法<i class="el-icon-arrow-down el-icon--right"></i>
+              {{t('请求方法', 'WAF.qqff')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
@@ -97,12 +98,12 @@
           </el-dropdown>
         </el-table-column>
         <el-table-column label="UA" prop="ua"></el-table-column>
-        <el-table-column label="请求URL" prop="url"></el-table-column>
+        <el-table-column :label="t('请求URL', 'WAF.qqurl')" prop="url"></el-table-column>
         <el-table-column :label="t('GET参数', 'WAF.canshu')" prop="query"></el-table-column>
-        <el-table-column label="状态码" prop="status" v-if="statusOptions.length">
+        <el-table-column :label="t('状态码', 'WAF.ztm')" prop="status" v-if="statusOptions.length">
           <el-dropdown slot="header" style="padding: 0" @command="onChangeStatus">
             <span class="el-dropdown-link" style="color: #909399;">
-              状态码<i class="el-icon-arrow-down el-icon--right"></i>
+              {{t('状态码', 'WAF.ztm')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="0">全部</el-dropdown-item>
@@ -158,11 +159,11 @@ export default {
         },
         {
           label: 'url',
-          value: '请求URL',
+          value: this.t('请求URL', 'WAF.qqurl'),
         },
         {
           label: 'query',
-          value: 'GET参数',
+          value: this.t('GET参数', 'WAF.canshu'),
         },
         {
           label: 'body',

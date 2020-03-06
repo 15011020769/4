@@ -64,7 +64,7 @@
         <div class="botDetailCon">
           <p class="detailTop">
             <span>{{index+1}}&nbsp;&nbsp;</span>
-            <el-button type="text" size="mini">{{item.Key}}</el-button>
+            <el-button type="text" size="mini" @click="goDetail(item.Key)">{{item.Key}}</el-button>
             <el-button type="text" size="mini">{{item.Value}}</el-button>
           </p>
           <div class="detailbottom">
@@ -131,7 +131,7 @@ export default {
       endTime: moment().endOf("day").utc().valueOf(), // 时间戳
       seriesBotIp: [], // BOT记录数域名TopN柱状图
       xAxisBotIp: [], // 域名数组
-      legendTextBarIp: "Bot记录", // 柱状图legend
+      legendTextBarIp: [this.t("Bot记录", 'WAF.jl')], // 柱状图legend
       topValue: 5, // 下拉默认选中top5
       domainStat: [],
       options: [{
@@ -179,6 +179,14 @@ export default {
     //关闭提示文字
     closeTip() {
       this.tipShow = false;
+    },
+    goDetail(domain) {
+      this.$router.push({
+        path: '/botDetail',
+        query: {
+          domain
+        }
+      })
     },
     // 获取BOT 记录数 域名 TOP N
     getBotDomainStat() {

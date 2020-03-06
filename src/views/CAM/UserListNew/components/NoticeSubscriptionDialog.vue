@@ -352,12 +352,6 @@ export default {
         }
       });
     },
-    getAllSubscriptionType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
-    },
-    getAllSubscriptionParentType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
-    },
     isThisTypeSubscribedByUser(typeKey, types) {
       if (!Array.isArray(types)) {
         return false;
@@ -391,7 +385,7 @@ export default {
         .post(GET_ALL_SUBSCRIPTION_TYPE)
         .then(res => {
           if (res.code === 0 && Array.isArray(res.data)) {
-            const dataLength = res.data.length;
+
             const parentLength = datasource.length;
             for (let i = 0; i < parentLength; i++) {
               const parent = datasource[i];

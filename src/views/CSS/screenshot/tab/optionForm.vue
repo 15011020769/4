@@ -2,30 +2,27 @@
   <div class="form-wrap">
     <h4>截圖鑒黃配置</h4>
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-      <el-form-item label="模板名稱" prop="TemplateName">
+      <el-form-item label="範本名稱" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="模板描述" prop="Description">
+      <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
       <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
       </el-form-item>
-      <el-form-item label="啟用智能鑒黃" prop="PornFlag">
+      <el-form-item label="啟用智慧鑒黃" prop="PornFlag">
       <el-switch v-model="ruleForm.PornFlag" />
       <div class="explain" v-if="ruleForm.PornFlag">
         <p>
-          启用智能鉴黄后，需配置回调才可收到鉴黄结果，请参考文档
-          <a href="#">回调配置</a>
+          啟用智慧鑑黃後，需配置回調才可收到鑑黃結果
         </p>
       </div>
       </el-form-item>
       <el-form-item label="儲存位置">
         <div class="explain">
           <p>
-            截图将存储在您配置的 COS bucket 中，请您确认 COS bucket 已授权云直播写入，
-            创建 COS bucket 及授权
-            <a href="#">参考文档</a>
+            截圖將儲存在您配置的 COS bucket 中，請您確認 COS bucket 已授權雲直播寫入
           </p>
         </div>
       </el-form-item>
