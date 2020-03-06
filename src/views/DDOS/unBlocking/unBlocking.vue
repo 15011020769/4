@@ -64,7 +64,9 @@
               prop="status"
               :label="$t('DDOS.UnlockOperation.Unlockstate')"
             >
-              <template slot-scope="scope">{{ scope.row.Status }}</template>
+              <template slot-scope="scope">{{
+                $t("DDOS.Automatic_unsealing." + scope.row.Status)
+              }}</template>
             </el-table-column>
             <el-table-column
               prop="action"
@@ -96,12 +98,15 @@
 </template>
 <script>
 // eslint-disable-next-line camelcase
-import { UNBlOCKSTATIS_NUM, IPBlOCKLIST_LIST, Create_UnblockIp } from '@/constants'
+import {
+  UNBlOCKSTATIS_NUM,
+  IPBlOCKLIST_LIST,
+  Create_UnblockIp
+} from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 import RenewModel from './model/RenewModel'
 
 export default {
-
   data () {
     return {
       unBlockStatis: {
@@ -119,9 +124,7 @@ export default {
     }
   },
   components: {
-
     RenewModel
-
   },
   created () {
     this.describeUnBlockStatis() // 获取黑洞解封次数接口
@@ -146,7 +149,7 @@ export default {
         Version: '2018-07-09',
         Region: '',
         Ip: this.dataUnsealingIP,
-        ActionType: ''// 解封类型
+        ActionType: '' // 解封类型
       }
       this.axios.post(Create_UnblockIp, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -163,7 +166,6 @@ export default {
         }
         this.loading = false
       })
-      console.log('jief ')
     },
     // 获取IP封堵列表接口
     describeIpBlockList () {

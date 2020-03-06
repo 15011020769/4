@@ -397,7 +397,10 @@ module.exports = {
       user: '自助解封',
       auto: '自动解封',
       update: '升级解封',
-      bind: '绑定高防包解封'
+      bind: '绑定高防包解封',
+      Blocked: '被封堵',
+      UnBlocking: '解封中',
+      UnBlockFailed: '解封失败'
     }
 
   },

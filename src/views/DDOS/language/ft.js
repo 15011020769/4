@@ -396,7 +396,10 @@ module.exports = {
       user: '自助解封',
       auto: '自動解封',
       update: '升級解封',
-      bind: '綁定高防包解封'
+      bind: '綁定高防包解封',
+      Blocked: '被封堵',
+      UnBlocking: '解封中',
+      UnBlockFailed: '解封失敗'
     }
   },
   COM: require('@/components/language/ft')
