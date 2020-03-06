@@ -241,6 +241,8 @@ export default {
           return false;
         }
       }
+
+      return true;
     },
     handleAdd(params) {
 
@@ -249,7 +251,7 @@ export default {
       }
 
       this.axios.post(ADD_RECORDING_CONFIG, params).then(data => {
-        if (data.Response.Error == undefined) {
+        if (data.Response.Error === undefined) {
           this.$message({
             message: "添加成功",
             type: "success"
@@ -266,6 +268,7 @@ export default {
     },
 
     handleUpdate(params) {
+
       if (!this.validateTableParameters(params)) {
         return;
       }

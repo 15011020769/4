@@ -15,13 +15,13 @@
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="5">模板名稱</el-col>
+          <el-col :span="5">範本名稱</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">模板描述</el-col>
+          <el-col :span="5">範本描述</el-col>
           <el-col class="text-black">{{ selectItem.Description }}</el-col>
         </el-row>
       </li>
@@ -39,7 +39,7 @@
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">码率压缩比</el-col>
+          <el-col :span="5">碼率壓縮比</el-col>
           <el-col class="text-black">{{ selectItem.Rotate }}</el-col>
         </el-row>
       </li>

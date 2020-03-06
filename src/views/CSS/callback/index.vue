@@ -10,10 +10,10 @@
       </div> -->
       <div class="explain">
         <p>
-          模板设置完成，需关联推流域名方可生效，请点击
-          <a href="#">域名管理</a>进行关联设置。
+          範本设置完成，需关联推流域名方可生效，请点击
+          <router-link to="/domainManagement">域名管理</router-link>进行關聯设置。
           <!-- <a href="#">参考文档</a> -->
-          模板配置完后续大约5分鐘生效
+          範本配置完后续大约5分鐘生效
         </p>
       </div>
       <div class="main-box">

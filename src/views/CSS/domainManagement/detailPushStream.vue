@@ -1,23 +1,24 @@
 <template>
   <div v-loading="loadShow">
     <div class="topHead">
-      <i class="el-icon-back" @click="returnBack"></i>{{$route.params.domain}}
+      <i class="el-icon-back" @click="returnBack"></i>
+      {{$route.params.domain}}
     </div>
     <div class="conTabs">
-      <el-tabs v-model="activeName">
+      <el-tabs v-model="activeName" v-loading="loading">
         <el-tab-pane label="基本信息" name="first">
           <div class="wrapper">
-            <BasicInfo :info="info"/>
+            <BasicInfo :info="info" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="推流配置" name="second" v-if="info.Type === 0">
           <div class="wrapper">
-            <pushStreamSet/>
+            <pushStreamSet />
           </div>
         </el-tab-pane>
         <el-tab-pane label="模板配置" name="third">
           <div class="wrapper">
-            <templateconfig/>
+            <templateconfig />
           </div>
         </el-tab-pane>
       </el-tabs>
@@ -25,70 +26,93 @@
   </div>
 </template>
 <script>
-import BasicInfo from './tabs/BasicInfo'
-import pushStreamSet from './tabs/pushStreamSet'
-import templateconfig from './tabs/templateconfig'
-import { DOMAIN_DELTILS } from "@/constants"
+import BasicInfo from "./tabs/BasicInfo";
+import pushStreamSet from "./tabs/pushStreamSet";
+import templateconfig from "./tabs/templateconfig";
+import { DOMAIN_DELTILS } from "@/constants";
+
+let ErrTips = {
+  "InternalError.SystemError": "內部錯誤",
+  "InvalidParameter.ParamError": "非法入參",
+  "ResourceNotFound.UserNotExist": "用戶不存在",
+  "ResourceNotFound.DomainNotExist": "域名不存在"
+};
 export default {
-  data(){
-    return{
-      activeName: 'first',
-      loadShow: false,//加载
-      info: {},//详情内容
-    }
+  name: "detailPushStream",
+  data() {
+    return {
+      activeName: "first",
+      loadShow: false, //加载
+      info: {}, //详情内容
+      loading: true
+    };
   },
-  components:{
-    BasicInfo:BasicInfo,
-    pushStreamSet:pushStreamSet,
-    templateconfig:templateconfig
+  components: {
+    BasicInfo: BasicInfo,
+    pushStreamSet: pushStreamSet,
+    templateconfig: templateconfig
   },
-  mounted(){
+  mounted() {
     const params = {
       Version: "2018-08-01",
-      DomainName: this.$route.params.domain
+      DomainName: this.$route.query.Name
     };
-    this.axios.post(DOMAIN_DELTILS, params).then(({ Response: { DomainInfo } }) => {
-      this.info = DomainInfo
-    })
+
+    this.loading = true;
+    this.axios.post(DOMAIN_DELTILS, params).then(res => {
+      this.loading = false;
+      if (res.Response.Error !== undefined) {
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return;
+      }
+
+      this.info = res.Response.DomainInfo;
+    });
   },
   methods: {
     //返回列表页
-    returnBack(){
+    returnBack() {
       this.$router.push({
-        name:'domainManagement'
-      })
+        name: "domainManagement"
+      });
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
-.newClear:after{
-  content:'';
-  display:block;
-  clear:both;
+.newClear:after {
+  content: "";
+  display: block;
+  clear: both;
 }
-.topHead{
-  width:100%;
-  height:50px;
-  background-color:#fff;
+.topHead {
+  width: 100%;
+  height: 50px;
+  background-color: #fff;
   line-height: 50px;
-  padding:0 20px;
-  font-size:16px;
+  padding: 0 20px;
+  font-size: 16px;
   font-weight: 600;
-  .el-icon-back{
-    margin-right:40px;
-    font-size:24px;
-    color:#006eff;
+  .el-icon-back {
+    margin-right: 40px;
+    font-size: 24px;
+    color: #006eff;
   }
 }
-.conTabs{
-  width:100%;
-  height:40px;
-  background-color:#fff;
-  padding:0 20px;
-  border-bottom:1px solid #ddd;
+.conTabs {
+  width: 100%;
+  height: 40px;
+  background-color: #fff;
+  padding: 0 20px;
+  border-bottom: 1px solid #ddd;
 }
-.wrapper{
-  width:100%;
+.wrapper {
+  width: 100%;
 }
 </style>

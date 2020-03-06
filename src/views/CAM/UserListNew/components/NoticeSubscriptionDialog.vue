@@ -352,12 +352,6 @@ export default {
         }
       });
     },
-    getAllSubscriptionType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
-    },
-    getAllSubscriptionParentType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
-    },
     isThisTypeSubscribedByUser(typeKey, types) {
       if (!Array.isArray(types)) {
         return false;

@@ -88,17 +88,17 @@ export default {
       y: 0,
       rules: {
         WatermarkName: [
-          { required: true, message: "填写水印名称", trigger: "blur" },
+          { required: true, message: "填寫水印名稱", trigger: "blur" },
           { validator(rule, value, callback) {
             if (!/^[\u4e00-\u9fa5a-zA-Z\d_-]{1,30}$/.test(value)) {
-              callback(new Error('仅支持中文、英文、数字、_、-，不超过30个字符'))
+              callback(new Error('僅支持中文、英文、數字、_、-，不超過30個字符'))
             } else {
               callback()
             }
           }, trigger: "blur" }
         ],
         PictureUrl: [
-          { required: true, message: "请上传图片", trigger: 'blur' },
+          { required: true, message: "請上傳圖片", trigger: 'blur' },
         ],
       },
     }
@@ -190,10 +190,10 @@ export default {
         if (valid) {
           // 如果有selectItem则为修改
 
-          const params = { 
+          const params = {
             PictureUrl: this.ruleForm.PictureUrl,
             XPosition: this.ruleForm.XPosition,
-            YPosition: this.ruleForm.YPosition, 
+            YPosition: this.ruleForm.YPosition,
             WatermarkName: this.ruleForm.WatermarkName,
             Width: Math.ceil(this.w / 640 * 100),
             Height: 0,
