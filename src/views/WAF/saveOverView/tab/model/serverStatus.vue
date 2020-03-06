@@ -5,32 +5,44 @@
       {{t('服务器响应状态', 'WAF.fwqxyzt')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
+    <el-row class="empty" v-if="seriesPieServer.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+    <EPie
+      :series="seriesPieServer"
+      :color="colorPie"
+      :legendText="legendTextPieServer"
+      v-loading="loading"
+      v-else
+    />
     </el-col>
     <el-col :span="12">
     <h3 class="topfont">
       {{t('浏览器类型', 'WAF.llqlx')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
-    <!-- <EBar
-      :xAxis="xAxisBar"
-      :series="seriesBar"
-      :legendText="legendTextBar"
-    /> -->
+    <el-row class="empty" v-if="seriesPieBrowser.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+    <EPie
+      :series="seriesPieBrowser"
+      :color="colorPie"
+      :legendText="legendTextPieBrowser"
+      v-loading="loading"
+      v-else
+    />
     </el-col>
   </el-row>
 </template>
 <script>
 import moment from "moment";
 import { DESCRIBE_PIECHART } from '@/constants'
-import ELine from "../../components/line"
+import EPie from "../../components/pie"
 export default {
   props: {
     times: Array,
     domain: String,
-    showModules: Array
+    showModules: Array,
+    id: Number,
   },
   components: {
-    ELine
+    EPie
   },
   data() {
     return {
@@ -38,6 +50,8 @@ export default {
       legendTextPieServer: [], // 服务器响应状态
       seriesPieBrowser: [], // 浏览器类型
       legendTextPieBrowser: [], // 浏览器类型
+      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
+      loading: true
     }
   },
   watch: {
@@ -58,7 +72,10 @@ export default {
       if (val !== oldVal) {
         this.init()
       }
-    }
+    },
+     id() {
+      this.init()
+    },
   },
   mounted() {
     this.getPieChart("us");
@@ -71,6 +88,7 @@ export default {
     },
     // 获取服务器响应浏览器类型
     getPieChart(type) {
+      this.loading = true
       const params = {
         Version: '2018-01-25',
         FromTime: this.times[0],
@@ -84,19 +102,35 @@ export default {
       }
       if (type == "us") {
         this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
-          let serverArrCount = []
-          let serverArr = []
-          this.generalRespHandler(resp, (Response) => {
-            console.log(Response.Piechart)
+          let usArrCount = []
+          let usLegend = []
+          this.generalRespHandler(resp, ({Piechart}) => {
+            // console.log(Response.Piechart)
+            Piechart && Piechart.map(v => {
+              usArrCount.push({value: JSON.parse(v).count, name: JSON.parse(v).us,})
+              usLegend.push(JSON.parse(v).us)
+            })
+            this.seriesPieServer = usArrCount
+            this.legendTextPieServer = usLegend
           })
-        })
+        }).then(() => {
+            this.loading = false
+          })
       } else if (type == "ua") {
         this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
-          let browserArrCount = []
-          let browserArr = []
-          this.generalRespHandler(resp, (Response) => {
+          let uaArrCount = []
+          let uaLegend = []
+          this.generalRespHandler(resp, ({Piechart}) => {
             console.log(Response.Piechart)
+            Piechart && Piechart.map(v => {
+              uaArrCount.push({value: JSON.parse(v).count, name: JSON.parse(v).ua,})
+              uaLegend.push(JSON.parse(v).ua)
+            })
+            this.seriesPieBrowser = uaArrCount
+            this.legendTextPieBrowser = uaLegend
           })
+        }).then(() => {
+          this.loading = false
         })
       }
     },
@@ -114,6 +148,13 @@ export default {
     margin-top: 20px;
     .topfont{
       padding-left: 20px;
+    }
+    .empty {
+      height: 200px;
+      width: 100%;
+      line-height: 200px;
+      text-align: center;
+      font-weight: bold
     }
   }
 </style>

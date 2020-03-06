@@ -104,8 +104,8 @@ export default {
         if(type == "art") {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
-              artArrCount.push(v.count)
-              artArr.push(v.url)
+              artArrCount.push(JSON.parse(v).count)
+              artArr.push(JSON.parse(v).url)
             })
             this.xAxisBarArt = artArr
             this.seriesBarArt = artArrCount
@@ -113,8 +113,8 @@ export default {
         } else if(type == "url") {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
-              urlArrCount.push(v.count)
-              urlArr.push(v.url)
+              urlArrCount.push(JSON.parse(v).count)
+              urlArr.push(JSON.parse(v).url)
             })
             this.xAxisBarUrl = urlArr
             this.seriesBarUrl = urlArrCount
