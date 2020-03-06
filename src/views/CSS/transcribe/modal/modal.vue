@@ -1,7 +1,7 @@
 <template>
   <div class="Deldomain">
-    <el-dialog title="刪除錄製配置" :visible="modalVisible">
-      <P>{{`確定刪除配置  ${domainName}`}}</P>
+    <el-dialog title="刪除錄製配置" :visible="modalVisible" :before-close="handleClose">
+      <P>{{`確定刪除配置 ${domainName}`}}</P>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="$parent._delete()">确 定</el-button>
         <el-button @click="$emit('update:modalVisible', false)">取 消</el-button>
@@ -20,12 +20,17 @@ export default {
     domainName: {
       required: false,
       type: String,
-      default: ''
+      default: ""
+    }
+  },
+  methods: {
+    handleClose(done) {
+      this.$emit("update:modalVisible", false);
+      done();
     }
   }
-}
+};
 </script>
 
 <style>
-
 </style>
