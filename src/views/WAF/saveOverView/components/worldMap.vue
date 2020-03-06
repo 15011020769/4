@@ -10,22 +10,10 @@ import nameComparison from './nameComparison '
 export default {
   name: "myChart",
   props: {
-    // className: {
-    //   type: String,
-    //   default: "yourClassName"
-    // },
-    // id: {
-    //   type: String,
-    //   default: "yourID"
-    // },
-    // width: {
-    //   type: String,
-    //   default: "100%"
-    // },
-    // height: {
-    //   type: String,
-    //   default: "400px"
-    // }
+    max: {
+      type: Number,
+      default: 50000
+    },
     series: {
       type: Array,
     }
@@ -46,6 +34,10 @@ export default {
   watch: {
     series(val) {
       this.series = val
+      this.initChart()
+    },
+    max(val) {
+      this.max = val
       this.initChart()
     }
   },
@@ -77,7 +69,7 @@ export default {
           // [visualMap.min, visualMax.max] 形成了视觉映射的『定义域』
           left: "2%",
           min: 0,
-          max: 50000,
+          max: this.max,
           // pieces: [                           //自定义『分段式视觉映射组件（visualMapPiecewise）』的每一段的范围，以及每一段的文字，以及每一段的特别的样式
           //   {min: 1500},                     // 不指定 max，表示 max 为无限大（Infinity）。
           //   {min: 900, max: 1500},
