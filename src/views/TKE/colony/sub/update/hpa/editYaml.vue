@@ -9,7 +9,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新Deployment</h2>
+          <h2 class="header-title">更新HorizontalPodAutoscaler</h2>
         </div>
         <!-- 右侧 -->
       </div>
@@ -91,11 +91,9 @@ export default {
   created() {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
-     this.spaceName=this.$route.query.spaceName;
-     this.rowData=this.$route.query.rowData
-     console.log(this.rowData)
+     this.spaceName=this.$route.query.np;
      this.baseYamlData()
-     this.baseData()
+    //  this.baseData()
   },
   methods: {
     //返回上一层
@@ -109,7 +107,7 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/yaml",
         Method: "PUT",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/"+this.name,
         Version: "2018-05-25",
         RequestBody:this.yamlInfo
       }
@@ -123,11 +121,11 @@ export default {
                 duration: 0
           });
           this.$router.push({
-            name:'deploymentDetailEvent',
+            name:'hpaDetailEvent',
             query:{
               clusterId: this.clusterId,
-              spaceName: this.spaceName,
-              rowData: this.rowData
+              np: this.spaceName,
+              name: this.name
             }
           })
 
@@ -144,25 +142,26 @@ export default {
       })
 
     },
-    baseData(){
-      var params={
-          Method: "GET",
-          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
-          Version: "2018-05-25",
-          ClusterName: this.clusterId
-      }
-      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
-      })
-    },
+    // baseData(){
+    //   var params={
+    //       Method: "GET",
+    //       Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
+    //       Version: "2018-05-25",
+    //       ClusterName: this.clusterId
+    //   }
+    //   this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+    //     console.log(res)
+    //   })
+    // },
     baseYamlData(){
       var params={
         Accept: "application/yaml",
         ClusterName: this.clusterId,
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/autoscaling/v2beta1/namespaces/"+this.spaceName+"/horizontalpodautoscalers/"+this.name,
         Version: "2018-05-25",
       }
+      console.log(params)
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
         console.log(res) 
         if(res.Response.Error === undefined){

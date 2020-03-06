@@ -119,7 +119,7 @@
                     </el-tooltip>
                   </div>
                   <template slot-scope="scope">
-                    <span v-if="scope.row.validTime">{{scope.row.validTime}}</span>
+                    <span v-if="scope.row.validTime" style="color: #e54545">{{scope.row.validTime}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column label="操作">
@@ -509,7 +509,7 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             // this.rolePolicies = res.Response.List;
-            const index = res.Response.List.findIndex(item => item.PolicyName === 'RevokeOlderSessionFor6')
+            const index = res.Response.List.findIndex(item => item.PolicyName.includes('RevokeOlderSessionFor'))
             if (index !== -1) {
               this.axios.post(GET_POLICY, {
                 Version: '2019-01-16',

@@ -62,6 +62,7 @@ export default {
           left: '1%',
           right: '1%',
           bottom: '6%',
+          top: '14%',
           containLabel: true,
         },
         tooltip: {

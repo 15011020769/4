@@ -4,7 +4,7 @@
       {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
-    <EMap :series="seriesMap" v-loading="loading" />
+    <EMap :series="seriesMap" v-loading="loading" :max="5000" />
   </el-row>
 </template>
 <script>

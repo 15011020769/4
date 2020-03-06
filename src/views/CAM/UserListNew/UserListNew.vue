@@ -819,7 +819,8 @@ export default {
       this.$router.push({
         path: "/detailsUser",
         query: {
-          detailsData: val.Name
+          detailsData: val.Name,
+          uid: val.Uid,
         }
       });
     },

@@ -368,6 +368,7 @@ import resouseListModel from './model/resouseListModel'
 import upgradeModel from './model/upgradeModel'
 import RenewModel from './model/RenewModel'
 import ProtectConfigModel from './model/ProtectConfigModel'
+import { ErrorTips } from "@/components/ErrorTips"
 
 export default {
   data () {

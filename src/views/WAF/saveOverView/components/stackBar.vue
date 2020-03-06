@@ -1,5 +1,5 @@
 <template>
-  <div ref="bar_dv" style="width: 100%;height: 200px;"></div>
+  <div ref="bar_dv" style="width: 100%;height: 250px;"></div>
 </template>
 
 <script>
@@ -59,7 +59,8 @@ export default {
         grid: {
           left: '3%',
           right: '4%',
-          bottom: '10%',
+          bottom: '6%',
+          top: '14%',
           containLabel: true
         },
         tooltip: {
@@ -78,7 +79,7 @@ export default {
           padding: [50, 0 , 0, 0]
         },
         xAxis: {
-          type: "category",
+          type: "value",
           boundaryGap: true,
           axisLabel: {
             color: '#606060',
@@ -88,18 +89,16 @@ export default {
             show: false
           },
           axisLine: {
+            show: false
+          },
+          splitLine:{show: false},
+        },
+        yAxis: {
+          type: 'category',
+          axisLine: {
             lineStyle: {
               color: '#C0D0E0'
             }
-          },
-          data:
-            this.xAxis
-        },
-        yAxis: {
-          type: "value",
-          splitLine:{show: false},
-          axisLine: {
-            show: false
           },
           axisTick: {
             show: false
@@ -107,8 +106,11 @@ export default {
           axisLabel: {
             color: '#606060',
             fontSize: 10,
-            verticalAlign: 'top'
-          }
+            verticalAlign: 'top',
+            interval:0,//横轴信息全部显示
+          },
+          data:
+            this.xAxis
         },
         series: [
           {
@@ -123,7 +125,7 @@ export default {
               normal: {
                   label: {
                       show: true, //开启显示
-                      position: 'top', //在上方显示
+                      position: 'right', //在上方显示
                       textStyle: { //数值样式
                           color: 'black',
                           fontSize: 11

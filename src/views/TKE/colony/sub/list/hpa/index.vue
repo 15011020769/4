@@ -103,7 +103,7 @@
               </div>
               <div v-else>
                    <el-button   class='btn' @click="goUpdatepz(scope.row)" >修改配置</el-button>
-                   <el-button  class='btn' >编辑YAML</el-button>
+                   <el-button  class='btn' @click="goUpdateYaml(scope.row)">编辑YAML</el-button>
                    <el-button   class='btn' @click="delConfig(scope.row)">删除</el-button>
               </div>
             </template>
@@ -270,7 +270,7 @@ export default {
           }
       });
     },
-    //编辑
+    //编辑配置
     goUpdatepz(item){
       console.log(item)
        this.$router.push({
@@ -281,6 +281,18 @@ export default {
             np:item.metadata.namespace,
           }
       });
+    },
+    //编辑yaml
+    goUpdateYaml(item){
+       this.$router.push({
+          name: "updateHpaYaml",
+          query: {
+            clusterId: this.clusterId,
+            name:item.metadata.name,
+            np:item.metadata.namespace,
+          }
+      });
+
     },
 
     //选择搜索条件

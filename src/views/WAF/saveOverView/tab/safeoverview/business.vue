@@ -12,6 +12,7 @@
       :series3="series3"
       :color="color"
       v-loading="loading"
+      :tooltip="tooltip"
       :legendText="domain == '' ? legendText2 : legendText1"
       v-else
     />
@@ -41,6 +42,16 @@ export default {
       legendText2: [this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs')],
       color: ["#FF584C", "#FF9D00", "#006eff"],
       loading: true,
+      tooltip: {
+        trigger: 'axis',
+        formatter(params) {
+          let relVal = params[0].name;
+          params.forEach(v => {
+            relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "次";
+          })  
+          return relVal;  
+        }
+      },
     }
   },
   watch: {

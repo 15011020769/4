@@ -3,7 +3,7 @@
     <el-col :span="12">
     <h3 class="topfont">
       {{t('请求来源地域TOP5', 'WAF.qqlydy')}}
-      <span style="color:#bbb;">(%)</span>
+      <span style="color:#bbb;">(次)</span>
     </h3>
     <EBar
       :xAxis="xAxisBarLocal"

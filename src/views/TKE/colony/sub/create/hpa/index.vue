@@ -601,7 +601,9 @@
                 this.$router.push({
                    name:'hpaDetailEvent',
                    query:{
-                      clusterId:this.clusterId
+                      clusterId:this.clusterId,
+                      name:this.hpa.name,
+                      np:this.hpa.value1,
                    }
                 })
              }

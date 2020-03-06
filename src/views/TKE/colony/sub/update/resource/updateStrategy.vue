@@ -69,7 +69,7 @@
                           placement="bottom"
                           :disabled="i.key!=''"
                         >
-                      <el-input class="w150" v-model.trim="i.key"></el-input>
+                      <el-input   :class="{warn:i.key==''}" class="w150" v-model.trim="i.key"></el-input>
                       </el-tooltip>
                       <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                         <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
@@ -84,7 +84,7 @@
                           placement="bottom"
                           :disabled="i.values!=''"
                         >
-                      <el-input class="w200" v-model.trim="i.values" ></el-input>
+                      <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
                       </el-tooltip>
                       <el-tooltip v-if="val.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
                         <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
@@ -122,7 +122,7 @@
                           placement="bottom"
                           :disabled="i.key!=''"
                         >
-                      <el-input class="w150" v-model.trim="i.key"></el-input>
+                      <el-input  :class="{warn:i.key==''}" class="w150" v-model.trim="i.key"></el-input>
                       </el-tooltip>
                         <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                           <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
@@ -137,7 +137,7 @@
                           placement="bottom"
                           :disabled="i.values!=''"
                         >
-                           <el-input class="w200" v-model.trim="i.values" ></el-input>
+                           <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
                         </el-tooltip>
                         <el-tooltip v-if="val.preference.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器"
                           placement="top">
@@ -556,6 +556,12 @@ export default {
   .cursor{
     cursor: pointer;
   }
+  .warn {
+  ::v-deep .el-input__inner {
+    color: #e1504a;
+    border-color: #e1504a;
+  }
+}
 
 </style>
 

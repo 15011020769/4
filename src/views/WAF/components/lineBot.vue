@@ -145,7 +145,14 @@ export default {
           containLabel: true
         },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'axis',
+          formatter(params) {
+            let relVal = params[0].name;
+            params.forEach(v => {
+              relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "次";
+            })  
+            return relVal;  
+          }
         },
         legend: {
             data: this.legendTextLineFlow,

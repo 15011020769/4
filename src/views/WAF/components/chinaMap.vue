@@ -77,7 +77,7 @@ export default {
           // [visualMap.min, visualMax.max] 形成了视觉映射的『定义域』
           left: "2%",
           min: 0,
-          max: 50000,
+          max: 100,
           // pieces: [                           //自定义『分段式视觉映射组件（visualMapPiecewise）』的每一段的范围，以及每一段的文字，以及每一段的特别的样式
           //   {min: 1500},                     // 不指定 max，表示 max 为无限大（Infinity）。
           //   {min: 900, max: 1500},
@@ -96,7 +96,7 @@ export default {
           calculable: true, // 是否显示拖拽用的手柄
           // 定义 在选中范围中 的视觉元素
           inRange: {
-            color: ['#9fb5ea', "#3385ff", '#2d78f4', '#5475f5', '#4395ff'] // 图元的颜色
+            color: ['#9fb5ea', '#006eff'] // 图元的颜色
           }
         },
         series: [

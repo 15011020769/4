@@ -91,14 +91,6 @@ export default new Router({
     }
   },
   {
-    path: '/addPolicyToUser', // 用户添加到策略
-    name: 'addPolicyToUser',
-    component: () => import( /* webpackChunkName: "addPolicyToUser" */ './UserList/addPolicyToUser.vue'),
-    meta: {
-      keepAlive: true
-    }
-  },
-  {
     path: '/addTeamUser', // 添加到用户组
     name: 'addTeamUser',
     component: () => import( /* webpackChunkName: "addTeamUser" */ './UserList/addTeamUser.vue'),

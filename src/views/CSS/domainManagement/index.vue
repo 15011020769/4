@@ -41,9 +41,27 @@
               </template>
             </el-table-column>
             <el-table-column prop="CurrentCName" label="CNAME" width>
-              <template slot-scope="scope">{{scope.row.TargetDomain}}
+              <template slot-scope="scope">
+                <el-tooltip
+                  effect="light"
+                  content="CNAME已配置"
+                  placement="bottom"
+                  v-if="scope.row.BCName===1"
+                >
+                  <i class="el-icon-success"></i>
+                </el-tooltip>
+
+                <el-tooltip
+                  effect="light"
+                  content="CNAME未配置"
+                  placement="bottom"
+                  v-else
+                >
+                  <i class="el-icon-warning"></i>
+                </el-tooltip>
+                {{scope.row.TargetDomain}}
                 <!-- <span v-if="scope.row.Status==0">{{scope.row.TargetDomain}}</span>
-                <span v-if="scope.row.Status==1">{{scope.row.CurrentCName}}</span> -->
+                <span v-if="scope.row.Status==1">{{scope.row.CurrentCName}}</span>-->
               </template>
             </el-table-column>
             <el-table-column prop="Type" :label="$t('CSS.domainManagement.3')">
@@ -55,7 +73,10 @@
             <el-table-column prop="Status" :label="$t('CSS.domainManagement.4')">
               <template slot-scope="scope">
                 <span v-if="scope.row.Status==0" style="color:red">未{{$t('CSS.domainManagement.7')}}</span>
-                <span v-if="scope.row.Status==1" style="color:green">已{{$t('CSS.domainManagement.7')}}</span>
+                <span
+                  v-if="scope.row.Status==1"
+                  style="color:green"
+                >已{{$t('CSS.domainManagement.7')}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="CreateTime" :label="$t('CSS.domainManagement.5')">
@@ -66,9 +87,23 @@
             </el-table-column>
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
-                <el-button type="text" size="small" @click="$router.push(`/detailPushStream/${scope.row.Name}`)">管理</el-button>
-                <el-button v-if="scope.row.Status==0" type="text" size="small" @click="startBtn(scope.$index, scope.row)">启用</el-button>
-                <el-button v-if="scope.row.Status==1" type="text" size="small" @click="stopBtn(scope.$index, scope.row)">禁用</el-button>
+                <el-button
+                  type="text"
+                  size="small"
+                  @click="$router.push(`/detailPushStream/${scope.row.Name}`)"
+                >管理</el-button>
+                <el-button
+                  v-if="scope.row.Status==0"
+                  type="text"
+                  size="small"
+                  @click="startBtn(scope.$index, scope.row)"
+                >启用</el-button>
+                <el-button
+                  v-if="scope.row.Status==1"
+                  type="text"
+                  size="small"
+                  @click="stopBtn(scope.$index, scope.row)"
+                >禁用</el-button>
                 <el-button
                   @click.native.prevent="deleteRow(scope.$index, scope.row)"
                   type="text"
@@ -91,11 +126,7 @@
         </div>
       </div>
       <addModel :isShow="addModel" @closeAddModel="closeAddModel" />
-      <stopModel
-        :isShow="stopModel"
-        :con="DomainName"
-        @closeStopDominModel="closeStopDominModel"
-      />
+      <stopModel :isShow="stopModel" :con="DomainName" @closeStopDominModel="closeStopDominModel" />
       <deleteModel
         :isShow="deleteModel"
         :con="deleteDominArr"
@@ -139,9 +170,9 @@ export default {
       deleteDominArr: [], //删除域名数组传值
       deleteModel: false, //删除弹框
       editTagsModel: false, //编辑标签弹框
-      loadShow:false,//加载
-      allData:[],//
-      typeNew:'',//类型
+      loadShow: false, //加载
+      allData: [], //
+      typeNew: "" //类型
     };
   },
   mounted() {
@@ -151,21 +182,21 @@ export default {
   methods: {
     // 1.1.查询域名列表(支持分页查询)
     describeLiveDomains() {
-      this.loadShow=true;
+      this.loadShow = true;
       let params = {
         Version: "2018-08-01",
         PageSize: this.pageSize, //分页大小，范围：10~100。默认10
-        PageNum: this.currentPage, //取第几页，范围：1~100000。默认1
+        PageNum: this.currentPage //取第几页，范围：1~100000。默认1
         // DomainPrefix: this.tableDataName
       };
       if (this.tableDataName) {
-        params.DomainPrefix = this.tableDataName
+        params.DomainPrefix = this.tableDataName;
       }
       this.axios.post(DOMAIN_LIST, params).then(res => {
-        this.allData=res.Response.DomainList;
+        this.allData = res.Response.DomainList;
         this.tableDataBegin = res.Response.DomainList;
         this.totalItems = res.Response.AllCount;
-        this.loadShow=false;
+        this.loadShow = false;
         // if(false) {
         //   this.$message({
         //     message: '恭喜你，这是一条成功消息',
@@ -178,21 +209,21 @@ export default {
     },
     // 搜索
     doFilter() {
-      this.currentPage = 1
-      this.$nextTick(this.describeLiveDomains)
+      this.currentPage = 1;
+      this.$nextTick(this.describeLiveDomains);
     },
     //切换pagesize
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.$nextTick(this.describeLiveDomains)
+      this.$nextTick(this.describeLiveDomains);
     },
     //切换分页
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
       this.currentPage = val;
       //分页查询
-      this.$nextTick(this.describeLiveDomains)
+      this.$nextTick(this.describeLiveDomains);
     }, //组件自带监控当前页码
 
     currentChangePage(list) {
@@ -210,15 +241,15 @@ export default {
       this.DomainName = row.Name;
       let params = {
         Version: "2018-08-01",
-        DomainName: this.DomainName,
+        DomainName: this.DomainName
       };
       this.axios.post(ENABLE_DOMAIN, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: '启用域名成功',
-            type: 'success'
+            message: "启用域名成功",
+            type: "success"
           });
-          this.describeLiveDomains();//刷新列表页面
+          this.describeLiveDomains(); //刷新列表页面
         } else {
           this.$message.error(data.Response.Error.Message);
         }
@@ -231,19 +262,20 @@ export default {
     },
     //关闭禁用域名弹框
     closeStopDominModel(isShow) {
-      if(isShow) {//是否确认禁用
+      if (isShow) {
+        //是否确认禁用
         console.log(isShow);
         let param = {
-          Version: '2018-08-01',
-          DomainName: this.DomainName,
+          Version: "2018-08-01",
+          DomainName: this.DomainName
         };
         this.axios.post(PROHIBIT_DOMAIN, param).then(data => {
           if (data.Response.Error == undefined) {
             this.$message({
-              message: '禁用域名成功',
-              type: 'success'
+              message: "禁用域名成功",
+              type: "success"
             });
-            this.describeLiveDomains();//刷新列表页面
+            this.describeLiveDomains(); //刷新列表页面
           } else {
             this.$message.error(data.Response.Error.Message);
           }
@@ -253,11 +285,11 @@ export default {
     },
     //删除按钮
     deleteRow(index, row) {
-      this.deleteDominArr=[];
+      this.deleteDominArr = [];
       this.deleteModel = true;
       this.deleteDominArr.push(row.Name);
       this.deleteDominArr.push(row.Type);
-      console.log(this.deleteDominArr)
+      console.log(this.deleteDominArr);
     },
     //关闭删除弹框
     closedeleteDominModel(isShow) {
@@ -288,18 +320,18 @@ export default {
       this.addModel = isShow;
     },
     //跳转详情页
-    toDetail(row){
+    toDetail(row) {
       console.log(row);
-      if(row.Type=='1'){
+      if (row.Type == "1") {
         this.$router.push({
-          name:'deletaPlay',
-          query:row
-        })
-      }else if(row.Type=='0'){
+          name: "deletaPlay",
+          query: row
+        });
+      } else if (row.Type == "0") {
         this.$router.push({
-          name:'detailPushStream',
-          query:row
-        })
+          name: "detailPushStream",
+          query: row
+        });
       }
     }
   }
@@ -307,6 +339,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+i {
+  cursor: pointer;
+}
 .newClear:after {
   display: block;
   content: "";
@@ -367,12 +402,12 @@ export default {
       }
     }
   }
-  .tabListPage{
-    height:50px;
-    padding-top:8px;
-    border-top:1px solid #ddd;
-    text-align:right;
-    background-color:#fff;
+  .tabListPage {
+    height: 50px;
+    padding-top: 8px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+    background-color: #fff;
     ::v-deep .el-input__inner {
       width: 100% !important;
       height: 30px !important;

@@ -132,6 +132,7 @@ module.exports = {
       JustPay: '立即支付'
     },
     AccesstoCon: {
+      AccessConfig: '接入配置',
       NonWebsite: '非網站業務',
       searchAccess: '請輸入要查詢的ID或名稱',
       addNewAccess: '新建',

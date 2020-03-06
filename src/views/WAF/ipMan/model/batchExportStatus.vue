@@ -2,7 +2,7 @@
   <div class="container">
     <div type="flex" align="middle" justify="center" class="import-wrap">
       <el-row type="flex" align="middle">
-        <span style="color: #888; font-size: 12px; width: 40px; display: inline-block;">进度：</span>
+        <span style="color: #888; font-size: 12px; width: 40px; display: inline-block;">{{t('进度', 'WAF.jd')}}：</span>
         <el-col>
         <el-progress :percentage="(progress/count)*100" :show-text="false"></el-progress>
         </el-col>
@@ -10,12 +10,12 @@
         <p class="imp-tip">{{progress}}/{{count}}</p>
     </div>
     <div class="tip">
-      <p>说明</p>
-      <p>1. 数量量大的时候，导出可能比较慢，请耐心等待。</p>
-      <p>2. 最多导出10000条数据。</p>
+      <p>{{t('说明', 'WAF.sm')}}</p>
+      <p>1. {{t('数量量大的时候，导出可能比较慢，请耐心等待。', 'WAF.sllddsh')}}</p>
+      <p>2. {{t('最多导出10000条数据。', 'WAF.zddc')}}</p>
     </div>
     <el-row type="flex" align="middle" justify="center">
-      <el-button type="primary" size="small" @click="_export" :loading="loading">开始导出</el-button>
+      <el-button type="primary" size="small" @click="_export" :loading="loading">{{t('开始导出', 'WAF.ksdc')}}</el-button>
       <el-button class="reset" size="small" :disabled="loading" @click="cancel">取消</el-button>
     </el-row>
   </div>
@@ -45,7 +45,7 @@ export default {
     _export() {
       const i = Math.ceil(this.count/600)
       const ps = []
-      let data = [['IP地址', '类别', '名称', '动作', '创建时间', '有效截止时间']]
+      let data = [['IP地址', this.t('类别', 'WAF.lb'), this.t('名称', 'WAF.mc'), this.t('动作', 'WAF.dz'), this.t('创建时间', 'WAF.cjsj'), this.t('有效截止时间', 'WAF.yxjzsj')]]
       for (let j = 0; j < i; j += 1) {
         ps.push(this.axios.post(DESCRIBEIP_HITITEMS, {
           ...this.param,
