@@ -386,6 +386,7 @@ export default {
   },
   created() {
     this.describeResourceList();
+    this.describeDDoSPolicy();
   },
   methods: {
     // 1.1.获取资源列表
@@ -802,7 +803,7 @@ a {
 
 .wrap {
   width: 100%;
-  height: 100px;
+  height: 99px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
   padding: 0 20px;
@@ -816,8 +817,8 @@ a {
   }
   .ReportTitBtn {
     float: right;
-    height: 30px;
-    line-height: 30px;
+    height: 32px;
+    line-height: 32px;
     padding: 0;
     margin-top: 8px;
     width: 52px;
