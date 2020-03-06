@@ -19,7 +19,7 @@
           <el-button icon="el-icon-search" @click="clickSerch(triggerInput)" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
-      <el-table style="width: 100%" height="450" :data="tableData"
+      <el-table style="width: 100%" height="450" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
         <el-table-column prop="groupName" label="模板名称">
@@ -61,10 +61,17 @@
         </el-table-column>
         <el-table-column prop="address" label="绑定告警策略数">
           <template slot-scope="scope">
-            <span class="tke-text-link">{{`${scope.row.policyGroups.length}个`}}</span>
+            <el-popover trigger="hover" placement="right" content="点击查看详情">
+              <span class="tke-text-link" slot="reference">{{`${scope.row.policyGroups.length}个`}}</span>
+            </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="qudao" sortable label="最后修改"></el-table-column>
+        <el-table-column prop="qudao" sortable label="最后修改">
+          <template slot-scope="scope">
+            <span class="textEps">{{scope.row.lastEditUin}}</span>
+            <span>{{upTime(scope.row.updateTime)}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <!-- <template :slot-scope="$scope.row">
             <el-button type="text" class="cloneBtn">复制</el-button>
@@ -113,12 +120,14 @@
 <script>
 import Header from '@/components/public/Head'
 import Dialog from './components/dialog'
+import Loading from '@/components/public/Loading'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
   name: 'Template',
   data () {
     return {
+      loadShow: false, // 加载是否显示
       panelFlag: false, // dialog新建弹框
       // metricShowName:'',//指标显示名称
       // dialogFormVisible: false,
@@ -289,12 +298,13 @@ export default {
   },
   components: {
     Header,
-    Dialog
+    Dialog,
+    Loading
   },
   created () {
     // this.getReportUserLastVisit()
     this.getList()
-    // console.log(this.upTime(100011921910))
+    console.log(this.upTime(1583490304))
   },
   methods: {
 
@@ -311,7 +321,8 @@ export default {
       })
     },
     // 获取列表数据
-    getList () {
+    async getList () {
+      this.loadShow = true
       let params = {
         groupName: '',
         lang: 'zh',
@@ -319,11 +330,13 @@ export default {
         offset: 0
         // Version: '2018-07-24'
       }
-      this.axios.post('monitor/GetConditionsTemplateList', params).then(res => {
+      if (this.triggerInput !== '') params.groupName = this.triggerInput
+      await this.axios.post('monitor/GetConditionsTemplateList', params).then(res => {
         console.log(res.data.templateGroupList)
         this.TotalCount = res.data.total
         let msg = res.data.templateGroupList
         this.tableData = msg
+        this.loadShow = false
         var abc = {
           // let ary = []
           // msg.forEach(ele => {
@@ -343,7 +356,7 @@ export default {
     },
     // 格式化时间
     upTime (value) {
-      return moment(value).format('YYYY-MM-DD HH :mm:ss')
+      return moment(value).format('YYYY/MM/DD HH :mm:ss')
     },
     // 搜索框的事件
     // changeInput (val) {
@@ -351,6 +364,7 @@ export default {
     // },
     // 点击所搜按钮的事件
     clickSerch (val) {
+      console.log(val)
       this.triggerInput = val
       this.getList()
     },
@@ -367,16 +381,19 @@ export default {
     },
     // 复制数据
     async coptData () {
+      this.loadShow = true
       let params = {
         groupId: this.groupId,
         lang: 'zh'
       }
       await this.axios.post('monitor/CopyConditionsTemplate', params).then(res => {
-        if (res.Response.Error == undefined) {
+        if (res.codeDesc == 'Success') {
           this.showCopyDialog = false
           this.getList()
           console.log(res)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           this.errorPrompt(res)
         }
       })
@@ -389,11 +406,12 @@ export default {
         lang: 'zh'
       }
       await this.axios.post('monitor/DeleteConditionsTemplate', params).then(res => {
-        if (res.Response.Error == undefined) {
+        if (res.codeDesc == 'Success') {
           this.getList()
           this.showDelDialog = false
           this.$message.success('删除成功')
         } else {
+          this.showDelDialog = false
           this.errorPrompt(res)
         }
       })
