@@ -14,7 +14,7 @@
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /
           </span>
-          <h2 class="header-title">PersistentVolumeClaim:vvv(kube-public)</h2>
+          <h2 class="header-title">PersistentVolumeClaim:{{$route.query.resourceIns}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>

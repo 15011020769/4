@@ -134,15 +134,15 @@ export const CVM_STATE = {
   'STOPPING': '关机中',
   'REBOOTING': '重启中',
   'SHUTDOWN': '停止待销毁',
-  'TERMINATING': '销毁中',
+  'TERMINATING': '销毁中'
 }
-//实例计费模式
+// 实例计费模式
 export const INSTANCE_BILL = {
   'PREPAID': '包年包月',
   'POSTPAID_BY_HOUR': '按量计费',
-  'CDHPAID': 'CDH付费',
+  'CDHPAID': 'CDH付费'
 }
-//网络计费模式
+// 网络计费模式
 export const NET_BILL = {
   'TRAFFIC_POSTPAID_BY_HOUR': '按流量计费',
   'BANDWIDTH_PREPAID': '按带宽包年包月计费',
@@ -150,41 +150,41 @@ export const NET_BILL = {
   'BANDWIDTH_PACKAGE': '带宽包计费方式',
   'BANDWIDTH_POSTPAID_BY_MONTH': '按月后付费'
 }
-//主机类型
+// 主机类型
 export const INST_TYPEA = {
-  "S4": "标准型S4",
-  "S3": "标准型S3",
-  "S2": "标准型S2",
-  "S1": "标准型S1",
-  "SN3NE": "标准网络优化型",
-  "SA1": "标准型SA1",
-  "S2NE": "标准网络优化型 S2ne",
-  "SN2": "标准网络增强型SN2",
-  "I3": "高IO型I3",
-  "I2": "高IO型I2",
-  "I1": "高IO型I1",
-  "M4": "内存型M4",
-  "M3": "内存型M3",
-  "M2": "内存型M2",
-  "M1": "内存型M1",
-  "C3": "计算型C3",
-  "C2": "计算型C2",
-  "CN3": "计算型CN3",
-  "CN2": "计算网络增强型CN2",
-  "D1": "大数据型 D1",
-  "D2": "大数据型 D2",
-  "GN2": "GPU计算型GN2",
-  "GN8": "GPU计算型GN8",
-  "GA": "GPU渲染型GA2",
-  "FX2": "FPGA型FX2",
-  "BS1": "批量计算型 BS1",
-  "BC1": "批量计算型 BC1"
+  'S4': '标准型S4',
+  'S3': '标准型S3',
+  'S2': '标准型S2',
+  'S1': '标准型S1',
+  'SN3NE': '标准网络优化型',
+  'SA1': '标准型SA1',
+  'S2NE': '标准网络优化型 S2ne',
+  'SN2': '标准网络增强型SN2',
+  'I3': '高IO型I3',
+  'I2': '高IO型I2',
+  'I1': '高IO型I1',
+  'M4': '内存型M4',
+  'M3': '内存型M3',
+  'M2': '内存型M2',
+  'M1': '内存型M1',
+  'C3': '计算型C3',
+  'C2': '计算型C2',
+  'CN3': '计算型CN3',
+  'CN2': '计算网络增强型CN2',
+  'D1': '大数据型 D1',
+  'D2': '大数据型 D2',
+  'GN2': 'GPU计算型GN2',
+  'GN8': 'GPU计算型GN8',
+  'GA': 'GPU渲染型GA2',
+  'FX2': 'FPGA型FX2',
+  'BS1': '批量计算型 BS1',
+  'BC1': '批量计算型 BC1'
 }
-//系统盘
+// 系统盘
 export const DISK_TYPE = {
-  "CLOUD_BASIC": "普通雲硬盘",
-  "CLOUD_PREMIUM": "高性能雲硬盘",
-  "CLOUD_SSD": "SSD雲硬盘"
+  'CLOUD_BASIC': '普通雲硬盘',
+  'CLOUD_PREMIUM': '高性能雲硬盘',
+  'CLOUD_SSD': 'SSD雲硬盘'
 }
 // 安全组
 export const SAFETY_GROUP_PROJECT = {

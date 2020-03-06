@@ -18,31 +18,56 @@
     </div>
     <div id="myChart"></div>
     <div>
-      <h3>{{$t('DDOS.basicProtection.ddosgjjl')}}</h3>
+      <h3>{{ $t("DDOS.basicProtection.ddosgjjl") }}</h3>
       <el-table
-        :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+        :data="
+          tableDataBegin.slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize
+          )
+        "
         height="450"
         empty-text="暫無數據"
       >
-        <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
-          <template slot-scope="scope">{{scope.row.StartTime}}</template>
+        <el-table-column
+          prop="StartTime"
+          :label="$t('DDOS.Protective.AgainstTime')"
+        >
+          <template slot-scope="scope">{{ scope.row.StartTime }}</template>
         </el-table-column>
-        <el-table-column prop="durnTime" :label="$t('DDOS.Protective.durationTime')">
-          <template slot-scope="scope">{{durationDate(scope.row.EndTime,scope.row.StartTime)}}</template>
+        <el-table-column
+          prop="durnTime"
+          :label="$t('DDOS.Protective.durationTime')"
+        >
+          <template slot-scope="scope">{{
+            durationDate(scope.row.EndTime, scope.row.StartTime)
+          }}</template>
         </el-table-column>
-        <el-table-column prop="AttackType" :label="$t('DDOS.Protective.AgainstType')">
-          <template slot-scope="scope">{{scope.row.AttackType}}</template>
+        <el-table-column
+          prop="AttackType"
+          :label="$t('DDOS.Protective.AgainstType')"
+        >
+          <template slot-scope="scope">{{ scope.row.AttackType }}</template>
         </el-table-column>
-        <el-table-column prop="AttackStatus" :label="$t('DDOS.basicProtection.gjzt')">
+        <el-table-column
+          prop="AttackStatus"
+          :label="$t('DDOS.basicProtection.gjzt')"
+        >
           <template slot-scope="scope">
-            <div v-if="scope.row.AttackStatus == '0'">{{$t('DDOS.basicProtection.gongjiz')}}</div>
-            <div v-else-if="scope.row.AttackStatus == '1'">{{$t('DDOS.basicProtection.gjjs')}}</div>
+            <div v-if="scope.row.AttackStatus == '0'">
+              {{ $t("DDOS.basicProtection.gongjiz") }}
+            </div>
+            <div v-else-if="scope.row.AttackStatus == '1'">
+              {{ $t("DDOS.basicProtection.gjjs") }}
+            </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <div class="Right-style pagstyle">
-      <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+      <span class="pagtotal"
+        >共&nbsp;{{ totalItems }}&nbsp;{{ $t("DDOS.UnsealCode.tiao") }}</span
+      >
       <el-pagination
         :page-size="pageSize"
         :pager-count="7"
@@ -61,7 +86,7 @@ export default {
   data() {
     return {
       loading: true,
-      business: "basic", //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
+      business: "basic", // [bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版；basic表示DDoS基础防护]
       metricName: "bps", // 指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       // period: 600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       // 日期区间：今天
@@ -70,7 +95,7 @@ export default {
         new Date(new Date(new Date().toLocaleDateString()).getTime())
       ),
       // 攻击事件列表
-      tableDataBegin: [ ],
+      tableDataBegin: [],
       // 分页相关
       currentPage: 1,
       pageSize: 10,
@@ -81,19 +106,19 @@ export default {
       thisEnd: "",
       tableDataEnd: [],
       filterTableDataEnd: [],
-      flag: false ,
+      flag: false,
       clickFlag: false
     };
   },
   watch: {
     timeValue: function(value) {
       this.Period = 86400;
-      console.log(this.timeValue)
+      console.log(this.timeValue);
       // console.log(this.durationDate('2019-09-07 12:20:20' ,'2019-09-07 10:25:10'))
       // 根据开始时间与结束时间以及时间粒度，计算监控x轴应有多少坐标点
       if (!this.clickFlag) {
-        let num = this.timeValue[1].getTime() - this.timeValue[0].getTime(); //计算时间戳的差
-        console.log(num)
+        let num = this.timeValue[1].getTime() - this.timeValue[0].getTime(); // 计算时间戳的差
+        console.log(num);
         var arr = [];
         for (var i = 0; i <= num / 86400000; i++) {
           // 根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
@@ -101,12 +126,14 @@ export default {
           arr.push(moment(d).format("YYYY-MM-DD HH:mm:ss"));
         }
         this.timey = arr;
-        this.startTime = moment(this.timeValue[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-        this.endTime = moment(this.timeValue[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-        this.describeDDoSTrend(this.timey.reverse())
-        this.describeDDoSEvList()
+        this.startTime = moment(this.timeValue[0]).format(
+          "YYYY-MM-DD HH:mm:ss"
+        ); // 格式处理
+        this.endTime = moment(this.timeValue[1]).format("YYYY-MM-DD HH:mm:ss"); // 格式处理
+        this.describeDDoSTrend(this.timey.reverse());
+        this.describeDDoSEvList();
       }
-      this.clickFlag = false
+      this.clickFlag = false;
     }
   },
   computed: {},
@@ -139,7 +166,7 @@ export default {
       this.axios.post(DDOS_TREND, params).then(res => {
         if (res.Response.Error === undefined) {
           this.bps = res.Response.Data;
-          this.drawLine(res.Response.Data,res.Response.MetricName , date);
+          this.drawLine(res.Response.Data, res.Response.MetricName, date);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -191,9 +218,9 @@ export default {
       }
       this.timey = arr;
     },
-    //选择时间
+    // 选择时间
     thisTime(thisTime) {
-      this.clickFlag = true
+      this.clickFlag = true;
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       let start;
@@ -213,7 +240,7 @@ export default {
           .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 300;
         this.timey = times;
-        this.timeValue = {}
+        this.timeValue = {};
       } else if (thisTime == "2") {
         start = moment()
           .subtract(6, "d")
@@ -236,10 +263,10 @@ export default {
           .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 3600;
         this.timey = times;
-        this.timeValue = [this.startTime, this.endTime]
-        //ddos攻击-攻击流量带宽
+        this.timeValue = [this.startTime, this.endTime];
+        // ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
-        //ddos攻击-攻击流量带宽
+        // ddos攻击-攻击流量带宽
         start = moment()
           .subtract(14, "d")
           .startOf("day");
@@ -247,21 +274,9 @@ export default {
         while (!start.isSameOrAfter(end)) {
           times.push(start.add(1, "d").format("YYYY-MM-DD HH:mm:ss"));
         }
-        ipt1.value = moment()
-          .subtract(14, "d")
-          .format("YYYY-MM-DD");
-        ipt2.value = moment().format("YYYY-MM-DD");
-        this.startTime = moment()
-          .subtract(14, "d")
-          .startOf("day")
-          .format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment()
-          .endOf("day")
-          .format("YYYY-MM-DD HH:mm:ss");
-        this.Period = 86400;
         this.timey = times;
-        this.timeValue = [this.startTime, this.endTime]
-        //ddos攻击-攻击流量带宽
+        this.timeValue = [this.startTime, this.endTime];
+        // ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
         start = moment()
           .subtract(29, "d")
@@ -283,17 +298,16 @@ export default {
           .format("YYYY-MM-DD HH:mm:ss");
         this.Period = 86400;
         this.timey = times;
-        this.timeValue = [this.startTime, this.endTime]
+        this.timeValue = [this.startTime, this.endTime];
       }
       this.describeDDoSTrend(this.timey);
       this.describeDDoSEvList();
-     
     },
 
     drawLine(y, MetricName, date) {
-      let yShow = '{value}' + this.metricName
+      let yShow = "{value}" + this.metricName;
       if (y !== undefined) {
-        yShow = '{value}' + MetricName
+        yShow = "{value}" + MetricName;
       }
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("myChart"));
@@ -310,15 +324,15 @@ export default {
         yAxis: {
           type: "value",
           axisLine: {
-            //y轴
+            // y轴
             show: false
           },
           axisTick: {
-            //刻度线
+            // 刻度线
             show: false
           },
           splitLine: {
-            //网格线
+            // 网格线
             show: false
           },
           axisLabel: {
@@ -330,7 +344,7 @@ export default {
           {
             name: "攻擊流量寬頻",
             type: "line",
-            data:  y,
+            data: y,
             itemStyle: {
               normal: {
                 lineStyle: {
@@ -341,13 +355,13 @@ export default {
           }
         ],
         legend: {
-          //默认横向布局，纵向布局值为'vertical'
+          // 默认横向布局，纵向布局值为'vertical'
           orient: "vertical",
-          x: "center", //可设定图例在左、右、居中
+          x: "center", // 可设定图例在左、右、居中
           y: "bottom",
-          icon: "line", //图例样式
+          icon: "line", // 图例样式
           textStyle: {
-            //文字样式
+            // 文字样式
             fontWeight: "bold"
           },
           lineStyle: {
@@ -378,13 +392,13 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      //需要判断是否检索
+      // 需要判断是否检索
       if (!this.flag) {
         this.currentChangePage(this.tableDataEnd);
       } else {
         this.currentChangePage(this.filterTableDataEnd);
       }
-    }, //组件自带监控当前页码
+    }, // 组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
@@ -396,35 +410,35 @@ export default {
       }
     },
     // 获取持续时间
-    durationDate (endTime, StartTime) {
-      let durationTime = ''
-      let stime = new Date(StartTime).getTime()
-      let etime = new Date(endTime).getTime()
-      let dateDiff = etime - stime
-      let dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+    durationDate(endTime, StartTime) {
+      let durationTime = "";
+      let stime = new Date(StartTime).getTime();
+      let etime = new Date(endTime).getTime();
+      let dateDiff = etime - stime;
+      let dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); // 计算出相差天数
       if (dayDiff > 0) {
-        durationTime += dayDiff + '天'
+        durationTime += dayDiff + "天";
       }
-      let leave1=dateDiff%(24*3600*1000)    //计算天数后剩余的毫秒数
-      let hours=Math.floor(leave1/(3600*1000))//计算出小时数
+      let leave1 = dateDiff % (24 * 3600 * 1000); // 计算天数后剩余的毫秒数
+      let hours = Math.floor(leave1 / (3600 * 1000)); // 计算出小时数
       if (hours > 0) {
-        durationTime += hours + '小時'
+        durationTime += hours + "小時";
       }
-      //计算相差分钟数
-      let leave2=leave1%(3600*1000)    //计算小时数后剩余的毫秒数
-      let minutes=Math.floor(leave2/(60*1000))//计算相差分钟数
+      // 计算相差分钟数
+      let leave2 = leave1 % (3600 * 1000); // 计算小时数后剩余的毫秒数
+      let minutes = Math.floor(leave2 / (60 * 1000)); // 计算相差分钟数
       if (minutes > 0) {
-        durationTime += minutes + '分鐘'
+        durationTime += minutes + "分鐘";
       }
-      //计算相差秒数
-      let leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
-      let seconds=Math.round(leave3/1000)
-      let leave4=leave3%(60*1000)      //计算分钟数后剩余的毫秒数
-      let minseconds=Math.round(leave4/1000)
+      // 计算相差秒数
+      let leave3 = leave2 % (60 * 1000); // 计算分钟数后剩余的毫秒数
+      let seconds = Math.round(leave3 / 1000);
+      let leave4 = leave3 % (60 * 1000); // 计算分钟数后剩余的毫秒数
+      let minseconds = Math.round(leave4 / 1000);
       if (minseconds > 0) {
-        durationTime += minseconds + '秒'
+        durationTime += minseconds + "秒";
       }
-      return durationTime
+      return durationTime;
     }
   }
 };

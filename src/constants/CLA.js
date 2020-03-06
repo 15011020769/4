@@ -36,3 +36,5 @@ export const GZJ_COS = 'cloudaudit2/ListCosEnableRegion'
 
 //雲审计--查询用户可创建跟踪集数量
 export const GZJ_NUM = 'cloudaudit2/InquireAuditCredit'
+export const CLA_ATT = 'cam2/AttachRolePolicies'
+export const CLA_CAMCREAT = 'cam/CreateRoleByConsole'

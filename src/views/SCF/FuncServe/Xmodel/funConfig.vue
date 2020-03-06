@@ -46,14 +46,18 @@
       <div class="Content" v-if="!Congigload">
         <p>{{$t('SCF.total.sswl')}}</p>
         <p v-if="Vpc_Smb.Vpc===''">{{$t('SCF.total.w')}}</p>
-        <p v-else><a href=""> {{ConfigDate.VpcConfig.VpcId}}</a>
+        <p v-else>
+          <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ ConfigDate.VpcConfig.VpcId + '/ap-taipei'"
+            target="_blank"> {{ConfigDate.VpcConfig.VpcId}}</a>
           ({{Vpc_Smb.Vpc.VpcId}} | {{Vpc_Smb.Vpc.VpcName}} | {{Vpc_Smb.Vpc.CidrBlock}})
         </p>
       </div>
       <div class="Content" v-if="!Congigload">
         <p>{{$t('SCF.total.sszw')}}</p>
         <p v-if="ConfigDate.VpcConfig.SubnetId===''">{{$t('SCF.total.wzw')}}</p>
-        <p v-else><a href=""> {{ConfigDate.VpcConfig.SubnetId}}</a>
+        <p v-else>
+          <a :href="'../VPC/index.html#/subnet/subnetDetailOther/'+ ConfigDate.VpcConfig.SubnetId+ConfigDate.VpcConfig.VpcId + '/ap-taipei'"
+            target=" _blank"> {{ConfigDate.VpcConfig.SubnetId}}</a>
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
       </div>
@@ -162,9 +166,9 @@
             </el-option>
           </el-select>
           <p style="color:#888">{{$t('SCF.total.wlbs')}}
-            <a href="">{{$t('SCF.total.xjsywl')}}</a>
+            <a :href="'../VPC/index.html#/priNetwork/'" target=" _blank">{{$t('SCF.total.xjsywl')}}</a>
             或
-            <a href="">{{$t('SCF.total.xjzw')}}</a> </p>
+            <a :href="'../VPC/index.html#/subnet/'" target=" _blank">{{$t('SCF.total.xjzw')}}</a> </p>
         </div>
       </div>
       <div class="Preservation">

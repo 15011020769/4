@@ -12,14 +12,14 @@ import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 // 引入基本模板
-//const echarts = require('echarts/lib/echarts')
+// const echarts = require('echarts/lib/echarts')
 // 引入折线图组件
 require('echarts/lib/chart/line')
-    // 引入提示框和title组件，图例
+// 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
-    Vue.filter(key, filters[key])
+  Vue.filter(key, filters[key])
 }
 
 Vue.config.productionTip = false
@@ -28,8 +28,8 @@ Vue.use(VueCookie)
 Vue.use(echarts)
 
 new Vue({
-    router,
-    // store,
-    i18n,
-    render: h => h(App)
+  router,
+  // store,
+  i18n,
+  render: h => h(App)
 }).$mount('#app')

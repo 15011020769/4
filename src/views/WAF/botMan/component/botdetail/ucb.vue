@@ -253,7 +253,7 @@ export default {
           result = "" + parseInt(minuteTime) + "分" + result;
       }
       if(hourTime > 0) {
-          result = "" + parseInt(hourTime) + "小时" + result;
+          result = "" + parseInt(hourTime) + "小"+ this.t('时', 'WAF.hour') + result;
       }
       return result;
     },

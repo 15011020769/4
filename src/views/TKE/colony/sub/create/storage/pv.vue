@@ -33,16 +33,27 @@
             <el-form-item label="Provisioner" class="m0">
               <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
                 <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
-                <el-radio-button label="CFS" disabled>文件存储CFS</el-radio-button>
-                <el-radio-button label="CFS" disabled>对象存储COS</el-radio-button>
+                  <el-tooltip class="item" effect="light"  placement="top">
+                    <div slot="content">扩展组件功能处于白名单体验阶段，如需使用，请<a>工单咨询</a></div>
+                    <el-radio-button label="CFS" disabled>文件存储CFS</el-radio-button>
+                 </el-tooltip>
+                  <el-tooltip class="item" effect="light"  placement="top">
+                    <div slot="content">扩展组件功能处于白名单体验阶段，如需使用，请<a>工单咨询</a></div>
+                    <el-radio-button label="CFS" disabled>对象存储COS</el-radio-button>
+                  </el-tooltip>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="读写权利" class="m0">
                 <el-radio-group v-model="pv.rw" style="margin-bottom: 30px;">
                   <el-radio-button label="orw">单机读写</el-radio-button>
-                  <el-radio-button label="tor" :disabled="pv.ps=='CBS'">多机只读
-                  </el-radio-button>
-                  <el-radio-button label="trw" :disabled="pv.ps=='CBS'">多机读写</el-radio-button>
+                  <el-tooltip class="item" effect="light"  placement="top">
+                    <div slot="content">云硬盘CBS仅支持单机读写</div>
+                    <el-radio-button label="tor" :disabled="pv.ps=='CBS'">多机只读</el-radio-button>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="light"  placement="top">
+                    <div slot="content">云硬盘CBS仅支持单机读写</div>
+                    <el-radio-button label="trw" :disabled="pv.ps=='CBS'">多机读写</el-radio-button>
+                  </el-tooltip>
                 </el-radio-group>
               </el-form-item>
             <div v-if="pv.ps=='CBS'">
@@ -311,11 +322,13 @@ export default {
             this.TotalCount = res.Response.TotalCount
             this.loadShow = false
           } else {
+             let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrorTips[res.Response.Error.code],
-              type: "error",
-              showClose: true,
-              duration: 0
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
             })
           }
         })
@@ -345,11 +358,13 @@ export default {
             this.TotalCount = res.Response.TotalCount
             // this.loadShow = false
           } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrorTips[res.Response.Error.code],
-              type: "error",
-              showClose: true,
-              duration: 0
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
             })
           }
         })
@@ -366,11 +381,13 @@ export default {
               this.LoginOptions = res.Response.ZoneSet
               this.form.login = res.Response.ZoneSet[0].Zone
             } else {
+               let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrorTips[res.Response.Error.code],
-                type: "error",
-                showClose: true,
-                duration: 0
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
               })
             }
           })

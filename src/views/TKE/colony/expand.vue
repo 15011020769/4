@@ -52,7 +52,7 @@
         <div class="tke-second-title">已选配置</div>
         <el-form
           ref="form"
-          :model="colonySecond"
+          :model="nodeForm"
           label-width="120px"
           label-position="left"
         >
@@ -99,7 +99,7 @@
           >
             <p>可用区<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="colonySecond.charging">
+              <el-radio-group v-model="nodeForm.charging">
                 <el-radio-button label="1">台北一区</el-radio-button>
               </el-radio-group>
             </div>
@@ -130,23 +130,45 @@
               </el-select>
             </div>
           </div>
+          <el-form-item label="CPU&内存">
+            <div class="tke-second-radio-btn tke-second-icon-btn">
+              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList">
+                <el-option
+                  v-for="item in nodeForm.AllCPU"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList">
+                <el-option
+                  v-for="item in nodeForm.AllRAM"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
+              </el-select>
+            </div>
+          </el-form-item>
           <el-form-item label="实例族">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="colonySecond.buyTime">
-                <el-radio-button label="1">全部实例族</el-radio-button>
-                <el-radio-button label="2">标准型</el-radio-button>
-                <el-radio-button label="3">内存型</el-radio-button>
-                <el-radio-button label="4">计算型</el-radio-button>
+              <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList">
+                <el-radio-button label="all">全部实例族</el-radio-button>
+                <el-radio-button label="S3">标准型</el-radio-button>
+                <el-radio-button label="M3">内存型</el-radio-button>
+                <el-radio-button label="C3">计算型</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
           <el-form-item label="实例类型">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="colonySecond.buyTime">
-                <el-radio-button label="1">全部实例类型</el-radio-button>
-                <el-radio-button label="2">标准型S3</el-radio-button>
-                <el-radio-button label="3">计算型C3</el-radio-button>
-                <el-radio-button label="4">内存型M3</el-radio-button>
+              <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList">
+                <el-radio-button label="all">全部实例类型</el-radio-button>
+                <el-radio-button label="S3" v-show="nodeForm.example === 'all' || nodeForm.example === 'S3'">标准型S3</el-radio-button>
+                <el-radio-button label="C3" v-show="nodeForm.example === 'all' || nodeForm.example === 'M3'">计算型C3</el-radio-button>
+                <el-radio-button label="M3" v-show="nodeForm.example === 'all' || nodeForm.example === 'C3'">内存型M3</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -154,7 +176,7 @@
             <div class="model-bg">
               <el-table
                 ref="singleTable"
-                :data="nodeForm.zoneInfoList"
+                :data="nodeForm.isShowZoneInfoFilterData?nodeForm.zoneInfoFilters:nodeForm.zoneInfoList"
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: 100%"
@@ -262,17 +284,44 @@
                 >购买数据盘</el-checkbox
               >
             </div>
-            <!-- <div
-              class="tke-second-checkbox"
-              style="padding-left:20px;"
-            >
-              <el-checkbox
-                v-model="item.buyDataDisk"
-                @change="BuyDataDisk(index, 1)"
-                >购买数据盘</el-checkbox
-              >
-            </div> -->
+            <div v-if="nodeForm.dataDiskShow" style="margin: 0 120px;background-color: #f2f2f2;" class="tke-second-radio-btn tke-third-radio-btn">
+              <div  >
+                <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;">
+                  <el-radio-group v-model="nodeForm.dataDiskType">
+                    <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
+                    <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
+                  </el-radio-group>
+                  <div class="block">
+                    <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="nodeForm.dataSize" show-input></el-slider>
+                  </div>
+                </el-form-item>
+                <el-form-item label="格式化设置" class="norms" style="padding-left: 10px;">
+                  <el-checkbox v-model="nodeForm.fomatAndMount" @change="isFomatMount">
+                    格式化并挂载          
+                  </el-checkbox>
+                  <div v-if="nodeForm.isShowFomatMount" style="display: flex;">
+                    <el-select v-model="nodeForm.fileSystem" placeholder="请选择" style="padding-right: 10px;">
+                      <el-option
+                        v-for="item in nodeForm.latticeSetOpt"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-input v-model="nodeForm.filePath" placeholder="请输入挂载路径"></el-input>
+                  </div>
+                </el-form-item>
+              </div>
+            </div>
             
+            <div
+              class="add-data-disk" style="margin-left: 120px;margin-top: -15px;"
+              v-if="nodeForm.dataDiskShow"
+              @click="AddDataDisk()"
+            >
+              添加数据盘
+            </div>
           </div>
           <el-form-item label="容器目录">
             <el-checkbox v-model="nodeForm.containerChecked"
@@ -337,7 +386,7 @@
                 <el-radio-button label="auto">自动生成密码</el-radio-button>
                 <el-radio-button label="set">设置密码</el-radio-button>
               </el-radio-group>
-              <p v-if="colonyThird.two">
+              <p v-if="nodeForm.loginSettings === 'auto'">
                 注：创建后，自动生成的密码将通过站内信发送给您。也可登录CVM控制台重置密码。
               </p>
             </div>
@@ -385,8 +434,41 @@
             ></el-input>
           </el-form-item>
           <div class="tke-third-tips">
-            <p>安全组<i class="el-icon-info"></i></p>
-            <div>
+            <p>安全组<el-tooltip
+                content="安全组具有防火墙功能，用于设置云服务器 CVM 的网络访问控制"
+                placement="right"
+                effect="light"
+                ><i class="el-icon-info ml5"></i
+              ></el-tooltip></p>
+              <div class="input-box">
+              <div v-if="nodeForm.safeArr.length > 0">
+                <div v-for="(item, index) in nodeForm.safeArr" :key="index">
+                  <div>
+                    <el-select
+                      placeholder="请选择安全组"
+                      v-model="nodeForm.securityId"
+                    >
+                      <el-option
+                        v-for="x in nodeForm.securityGroups"
+                        :key="x.SecurityGroupId"
+                        :label="x.SecurityGroupName"
+                        :value="x.SecurityGroupId"
+                      >
+                      </el-option>
+                    </el-select>
+                    <i class="el-icon-refresh ml5"></i>
+                    <i
+                      class="el-icon-error ml5"
+                      @click="deleteExceptPrice(index)"
+                    ></i>
+                  </div>
+                </div>
+              </div>
+              <p>
+                <a href="javascript:;" @click="AddSafe">添加安全组</a>
+              </p>
+            </div>
+            <!-- <div>
               <el-select v-model="nodeForm.securityId" placeholder="请选择">
                 <el-option
                   v-for="item in nodeForm.securityGroups"
@@ -399,7 +481,7 @@
               <p>
                 <a href="#">添加安全组</a>
               </p>
-            </div>
+            </div> -->
           </div>
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
@@ -502,97 +584,9 @@
         </div>
       </div>
     </div>
-    <el-dialog :visible.sync="nodeForm.dataDiskShow">
-      <div v-if="nodeForm.dataDiskShow">
-        <div
-          class="tke-second-worker-popover-data-bg"
-          v-for="(x, i) in nodeForm.buyDataDiskArr"
-          :key="i"
-        >
-          <div>
-            <div class="box">
-              <p>云盘设置</p>
-              <div>
-                <el-select
-                  v-model="x.dataDiskVal"
-                  placeholder="请选择"
-                >
-                  <el-option
-                    v-for="item in nodeForm.dataDiskOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  >
-                  </el-option>
-                </el-select>
-                <el-input-number
-                  v-model="x.dataDiskNum"
-                  :min="10"
-                  :max="16000"
-                  :step="10"
-                ></el-input-number>
-                <span>GB</span>
-                <el-checkbox
-                  v-model="x.formatMount"
-                  class="format-and-mount"
-                  >格式化并挂载</el-checkbox
-                >
-                <p>范围：10~16000，步长：10</p>
-              </div>
-              <p
-                style="margin-top:16px;"
-                v-if="x.formatMount"
-              >
-                格式化设置
-              </p>
-              <div
-                style="margin-top:16px;"
-                v-if="x.formatMount"
-              >
-                <el-select
-                  v-model="x.latticeSetVal"
-                  placeholder="请选择"
-                >
-                  <el-option
-                    v-for="x in nodeForm.latticeSetOpt"
-                    :key="x.value"
-                    :label="x.label"
-                    :value="x.value"
-                  >
-                  </el-option>
-                </el-select>
-                <el-input
-                  v-model="x.setValue"
-                ></el-input>
-              </div>
-            </div>
-          </div>
-          <i
-            class="el-icon-error ml5"
-            style="margin-top:10px;"
-            @click="deleteDataDisk(i)"
-          ></i>
-        </div>
-      </div>
-      <div
-        class="add-data-disk"
-        v-if="
-          nodeForm.buyDataDisk &&
-            nodeForm.buyDataDiskArr.length != 0
-        "
-        @click="AddDataDisk(index)"
-      >
-        添加数据盘
-      </div>
-      <div class="btn">
-        <el-button @click="DataDiskSure(index, 1)"
-          >确定</el-button
-        >
-        <el-button @click="nodeForm.dataDiskShow = false"
-          >取消</el-button
-        >
-      </div>
-    </el-dialog>
+    <!-- <el-dialog :visible.sync="nodeForm.dataDiskShow">
+      
+    </el-dialog> -->
   </div>
 </template>
 
@@ -608,7 +602,9 @@ import { ALL_CITY,
   TKE_WORKER_METWORK,
   TKE_SSH,
   TKE_MISG,
-  TKE_ADD_NODE } from "@/constants";
+  TKE_ADD_NODE,
+  TKE_OPERAT_SYSTEM,
+  TKE_PRICE } from "@/constants";
 export default {
   name: "create",
   data() {
@@ -637,6 +633,12 @@ export default {
         securityGroups: [],//安全组列表
         systemDiskType: 'CLOUD_PREMIUM',//系统盘类型
         systemSize: 50,//系统盘大小
+        dataDiskType : 'CLOUD_PREMIUM',//系统盘类型
+        dataSize: 10,//数据盘大小
+        fomatAndMount: false,//数据盘是否格式化
+        isShowFomatMount: false,//是否显示数据挂载
+        fileSystem: 'ext4',//数据类型
+        filePath: '/var/lib/docker',//文件路径
         modelType: {},//实例机型对象
         instanceType: 'S1.SMALL1',//实例机型类型
         isShowDataDisk: false,//是否购买数据盘
@@ -651,7 +653,7 @@ export default {
             value: "CLOUD_SSD",
             label: "SSD云硬盘"
           }
-        ],
+        ], 
         latticeSetOpt: [
           { value: "ext3", label: "ext3" },
           { value: "ext4", label: "ext4" },
@@ -673,6 +675,140 @@ export default {
         securityService: true,//云服务器
         monitorService: true,//云监控
         instanceCount: 1,//购买实例数量
+        safeArr: [],//安全组
+        charging: 1,
+        imageId: '',//镜像ID
+        memory: 'all',//内存
+        cpu: 'all',//cpu
+        example: 'all',//实例族
+        exampleType: 'all',//实例类型
+        zoneInfoFilters: [],//机型过滤数据列表
+        isShowZoneInfoFilterData: false,//列表是否显示过滤数据
+        AllCPU: [
+          {
+            label: "全部CPU",
+            value: "all"
+          },
+          {
+            value: 1,
+            label: "1核"
+          },
+          {
+            value: 2,
+            label: "2核"
+          },
+          {
+            value: 4,
+            label: "4核"
+          },
+          {
+            value: 8,
+            label: "8核"
+          },
+          {
+            value: 12,
+            label: "12核"
+          },
+          {
+            value: 16,
+            label: "16核"
+          },
+          {
+            value: 24,
+            label: "24核"
+          },
+          {
+            value: 32,
+            label: "32核"
+          },
+          {
+            value: 48,
+            label: "48核"
+          },
+          {
+            value: 64,
+            label: "64核"
+          },
+          {
+            value: 80,
+            label: "80核"
+          }
+        ],
+        AllRAM: [
+          {
+            value: "all",
+            label: "全部内存"
+          },
+          {
+            value: 1,
+            label: "1GB"
+          },
+          {
+            value: 2,
+            label: "2GB"
+          },
+          {
+            value: 4,
+            label: "4GB"
+          },
+          {
+            value: 8,
+            label: "8GB"
+          },
+          {
+            value: 16,
+            label: "16GB"
+          },
+          {
+            value: 24,
+            label: "24GB"
+          },
+          {
+            value: 32,
+            label: "32GB"
+          },
+          {
+            value: 48,
+            label: "48GB"
+          },
+          {
+            value: 64,
+            label: "64GB"
+          },
+          {
+            value: 96,
+            label: "96GB"
+          },
+          {
+            value: 128,
+            label: "128GB"
+          },
+          {
+            value: 144,
+            label: "144GB"
+          },
+          {
+            value: 192,
+            label: "192GB"
+          },
+          {
+            value: 256,
+            label: "256GB"
+          },
+          {
+            value: 320,
+            label: "320GB"
+          },
+          {
+            value: 384,
+            label: "384GB"
+          },
+          {
+            value: 512,
+            label: "512GB"
+          }
+        ],
+        projectId: '',//项目id
       },
       rules: {
         container: [
@@ -690,148 +826,7 @@ export default {
           }
         ]
       },
-      // 第二步
-      colonySecond: {
-        source: 1,
-        master: 1,
-        workerShow: false,
-        worker: 1,
-        buyTime: 1, // 购买时长
-        renew: true, // 自动续费
-        charging: 1,
-        chargingShow: false,
-        usableArea: 1,
-        // 机型
-        tableData: [
-          {
-            date: "2016-05-02",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-04",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1517 弄"
-          },
-          {
-            date: "2016-05-01",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1519 弄"
-          },
-          {
-            date: "2016-05-03",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1516 弄"
-          },
-          {
-            date: "2016-05-01",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1519 弄"
-          },
-          {
-            date: "2016-05-03",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1516 弄"
-          }
-        ],
-        // 机型
-        modelShow: false,
-        // 系统盘
-        systemDiskNum: 50,
-        systemDiskShow: false,
-        systemDiskOptions: [
-          {
-            value: "1",
-            label: "高性能云硬盘"
-          },
-          {
-            value: "2",
-            label: "SSD云硬盘"
-          }
-        ],
-        systemDiskVal: "1",
-        systemDiskValue: "高性能云硬盘",
-        systemDiskNumber: "50",
-        // 数据盘
-        dataDiskValue: "暂不购买",
-        dataDiskShow: false,
-        buyDataWidth: 300,
-        buyDataDisk: false,
-        formatMount: false,
-        dataDiskNum: 10,
-        dataDiskOptions: [
-          {
-            value: "1",
-            label: "高性能云硬盘"
-          },
-          {
-            value: "2",
-            label: "SSD云硬盘"
-          }
-        ],
-        dataDiskVal: "1",
-        dataDiskNumber: "10",
-        // 公网宽带
-        broadbandValue: "暂不购买",
-        broadbandShow: false,
-        broadbandWidth: 300,
-        broadbandDisk: false,
-
-        broadbandNum: 10,
-        broadbandOptions: [
-          {
-            value: "1",
-            label: "按宽带计费"
-          },
-          {
-            value: "2",
-            label: "按使用流量"
-          }
-        ],
-        broadbandVal: "1",
-        broadbandNumber: "10"
-      },
-      // 第三步
-      colonyThird: {
-        
-        containerInput: "",
-        // 登录方式
-        loginModeRadio: 1,
-        one: true,
-        two: false,
-        three: false,
-        // 密码
-        password: "",
-        // 确认密码
-        confirmPassword: "",
-        // 安全加固
-        safetyChecked: true,
-        // 云监控
-        cloudwatchChecked: true
-      },
       radio1: 1,
-      options: [
-        {
-          value: "选项1",
-          label: "黄金糕"
-        },
-        {
-          value: "选项2",
-          label: "双皮奶"
-        },
-        {
-          value: "选项3",
-          label: "蚵仔煎"
-        },
-        {
-          value: "选项4",
-          label: "龙须面"
-        },
-        {
-          value: "选项5",
-          label: "北京烤鸭"
-        }
-      ],
       value: "50",
       num: 1,
       checked: true,
@@ -864,24 +859,49 @@ export default {
       } else {
         LoginSettings.Password = this.nodeForm.password;
       }
-      let SecurityGroupIds = [];//未做完
+      let SecurityGroupIds = [];
       SecurityGroupIds.push(this.nodeForm.securityId);
+      let safeArr = this.nodeForm.safeArr;
+      for(let i = 0; i < safeArr.length; i++) {
+        SecurityGroupIds.push(safeArr[i]);
+      }
+      // buyDataDiskArr.push({
+      //   dataDiskType: "CLOUD_PREMIUM",
+      //   dataSize: 10,
+      //   isShowFomatMount: false,
+      //   fileSystem: "ext4",
+      //   filePath: "/var/lib/docker"
+      // });
+      
       let RunInstancePara = {
         InstanceChargeType: this.nodeForm.instanceChargeType,
-        Placement: {Zone: "ap-taipei-1", ProjectId: 0},
+        Placement: {Zone: "ap-taipei-1", ProjectId: this.nodeForm.projectId},
         InstanceType: this.nodeForm.instanceType,
         SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
-        DataDisks:[],//未做完
         VirtualPrivateCloud: {VpcId: this.nodeForm.groupVps, SubnetId: this.nodeForm.subnetId, AsVpcGateway: false},
         InternetAccessible: {InternetChargeType: this.nodeForm.internetChargeType,
             InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),PublicIpAssigned: this.nodeForm.publicIpAssigned},
         InstanceCount: this.nodeForm.instanceCount,
-        ImageId: '',//未取值
+        ImageId: this.nodeForm.imageId,
         InstanceName: this.nodeForm.instanceName,
         LoginSettings: LoginSettings,
         SecurityGroupIds: SecurityGroupIds,
         EnhancedService: {SecurityService: {Enabled: this.nodeForm.securityService}, MonitorService: {Enabled: this.nodeForm.monitorService}}
       };
+      if(this.nodeForm.dataDisks) {
+        let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+        let dataDisks = [];
+        if(buyDataDiskArr.length > 0) {
+          for(let i = 0; i < buyDataDiskArr.length; i++) {
+            let buyDataDisk = {
+              DiskType: buyDataDiskArr[i].dataDiskType,
+              DiskSize: buyDataDiskArr[i].dataSize
+            };
+            dataDisks.push(buyDataDisk);
+          }
+        }
+        RunInstancePara.DataDisks = dataDisks;
+      }
       let containerInput = "";
       if(this.nodeForm.containerChecked) {
         containerInput = this.nodeForm.containerInput;
@@ -945,6 +965,40 @@ export default {
         }
       });
     },
+    //计算价格
+    costPrice() {
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+        let dataDisks = [];
+        if(buyDataDiskArr.length > 0) {
+          for(let i = 0; i < buyDataDiskArr.length; i++) {
+            let buyDataDisk = {
+              DiskType: buyDataDiskArr[i].dataDiskType,
+              DiskSize: buyDataDiskArr[i].dataSize
+            };
+            dataDisks.push(buyDataDisk);
+          }
+        }
+      let param = {
+        DataDisks:dataDisks,
+        ImageId: this.nodeForm.imageId,
+        InstanceChargeType: this.nodeForm.instanceChargeType,
+        InstanceCount: this.nodeForm.instanceCount,
+        InstanceType: this.nodeForm.instanceType,
+        Placement: {ProjectId: this.nodeForm.projectId, Zone: 'ap-taipei-1'},
+        SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
+        Version: "2017-03-12", 
+        PurchaseSource: "MC",
+        InternetAccessible: {
+          InternetChargeType: this.nodeForm.internetChargeType,
+          InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),
+          PublicIpAssigned: this.nodeForm.publicIpAssigned
+        }
+      }
+    },
+    //获取镜像 
+    async getImagesList() {
+      
+    },
     //获取集群信息
     async getColonyInfo () {
       this.loadShow = true;
@@ -962,6 +1016,7 @@ export default {
         this.nodeForm.os = response.ClusterOs;
         this.clusterInfo = response;
         this.nodeForm.groupVps = response.ClusterNetworkSettings.VpcId;
+        this.nodeForm.projectId = response.ProjectId;
         this.loadShow = false;
         this.loadShow = true;
         let params = {
@@ -969,6 +1024,34 @@ export default {
           Offset: 0,
           Limit: 100,
         };
+        this.loadShow = true;
+        let paramImage = {
+          Version: "2018-05-25"
+        }
+        
+        await this.axios.post(TKE_OPERAT_SYSTEM, paramImage).then(resImage => {
+          if(resImage.Response === undefined) {
+            let images = resImage.Response.ImageInstanceSet;
+            if(images.length > 0) {
+              for (let i = 0; i < images.length; i++) {
+                if(response.ClusterOs === images[i].Alias) {
+                  this.nodeForm.imageId = images[i].ImageId;
+                  continue;
+                }
+              }
+            }
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[resImage.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
         await this.axios.post(TKE_VPC_METWORK, params).then( async(res2) => {
           if(res2.Response.Error === undefined) {
             this.describeVpcs = res2.Response.VpcSet;
@@ -1176,20 +1259,48 @@ export default {
         }
       });
     },
+    //根据条件过滤条件 zoneInfoList
+    getFilterZoneList() {
+      this.nodeForm.isShowZoneInfoFilterData = true;
+      let zoneInfoList = this.nodeForm.zoneInfoList;
+      let exampleType = this.nodeForm.exampleType;
+      let cpu = this.nodeForm.cpu;
+      let memory = this.nodeForm.memory;
+      let example = this.nodeForm.example;
+      let zoneInfoFilters = [];
+      if(example === 'all' && exampleType === 'all' && cpu === 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList;
+      } else if(example !== 'all' && cpu === 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === example);
+      } else if(example !== 'all' && cpu !== 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList.filter( 
+          res => res.InstanceFamily === example && res.Cpu === cpu);
+      } else if(example !== 'all' && cpu !== 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter( 
+          res => res.InstanceFamily === example && res.Cpu === cpu && res.Memory === memory);
+      } else if (example !== 'all' && cpu === 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter(res => res.InstanceFamily === example && res.Memory === memory);
+      } else if(example === 'all' && exampleType !== 'all' && cpu === 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === exampleType);
+      } else if(example === 'all' && exampleType !== 'all' && cpu !== 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList.filter(res => res.InstanceFamily === exampleType && res.Cpu === cpu);
+      } else if(example === 'all' && exampleType !== 'all' && cpu !== 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === exampleType && res.Cpu === cpu && res.Memory === memory);
+      } else if(example === 'all' && exampleType !== 'all' && cpu === 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.InstanceFamily === exampleType && res.Memory === memory);
+      } else if(example === 'all' && exampleType === 'all' && cpu === 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.Memory === memory);
+      } else if (example === 'all' && exampleType === 'all' && cpu !== 'all' && memory === 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.Cpu === cpu);
+      }
+      this.nodeForm.zoneInfoFilters = zoneInfoFilters;
+    },
     // 返回上一层
     goBack() {
       this.$router.go(-1);
     },
     // -------------------------------------- 第二步 ---------------------------------
-    // Master 节点
-    SecondMaster(val) {
-      // console.log(val)
-      if (val === "2") {
-        this.colonySecond.workerShow = true;
-      } else {
-        this.colonySecond.workerShow = false;
-      }
-    },
+    
     // 计费模式
     SecondCharging(val) {
       this.getDescribeZoneInstanceConfigInfos()
@@ -1200,14 +1311,30 @@ export default {
       this.nodeForm.instanceType = val.InstanceType;
     },
 
-    // 购买数据盘
-    BuyDataDisk(val) {
-      if (val === true) {
-        this.colonySecond.buyDataWidth = 764;
+    DataDiskChange() {
+
+    },
+
+    isFomatMount() {
+      if(this.nodeForm.fomatAndMount) {
+        this.nodeForm.isShowFomatMount = true;
       } else {
-        this.colonySecond.buyDataWidth = 300;
+        this.nodeForm.isShowFomatMount = false;
       }
     },
+
+    // 购买数据盘 添加数据盘
+    AddDataDisk(index) {
+      this.nodeForm.buyDataDiskArr.push({
+        dataDiskType: "CLOUD_PREMIUM",
+        dataSize: 10,
+        isShowFomatMount: false,
+        fileSystem: "ext4",
+        filePath: "/var/lib/docker"
+      });
+    },
+
+    // 购买数据盘
     // 数据盘 弹框确认
     DataDiskSure() {},
     // 第二步 下一步
@@ -1219,20 +1346,7 @@ export default {
     // ----------------------------------------- 第三步 -------------------------------------
     // 登录方式
     LoginMode(val) {
-      console.log(val);
-      if (val === "1") {
-        this.colonyThird.one = true;
-        this.colonyThird.two = false;
-        this.colonyThird.three = false;
-      } else if (val === "2") {
-        this.colonyThird.one = false;
-        this.colonyThird.two = true;
-        this.colonyThird.three = false;
-      } else {
-        this.colonyThird.one = false;
-        this.colonyThird.two = false;
-        this.colonyThird.three = true;
-      }
+      
     },
     // 第三步 上一步
     thirdPrev() {
@@ -1262,7 +1376,11 @@ export default {
     },
     //是否购买数据盘
     isBuyDataDisk() {
-      this.nodeForm.dataDiskShow = true;
+      if(this.nodeForm.isShowDataDisk) {
+        this.nodeForm.dataDiskShow = true;
+      } else {
+        this.nodeForm.dataDiskShow = false;
+      }
     },
     // 删除
     deleteDataDisk(index) {
@@ -1272,14 +1390,14 @@ export default {
       //   this.colonySecond.buyDataWidth = 300;
       // }
     },
-    // 购买数据盘 添加数据盘
-    AddDataDisk(index) {
-      this.nodeForm.buyDataDiskArr.push({
-        dataDiskVal: "CLOUD_PREMIUM",
-        dataDiskNum: "10",
-        formatMount: false,
-        latticeSetVal: "ext3",
-        setValue: "/var/lib/docker"
+    //删除安全组
+    deleteExceptPrice(index) {
+      this.nodeForm.safeArr.splice(index, 1);
+    },
+    //添加安全组
+    AddSafe() {
+      this.nodeForm.safeArr.push({
+        securityId:''
       });
     },
     //选择带宽

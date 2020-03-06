@@ -71,7 +71,7 @@
       <!-- table -->
       <div class="deal-box">
         <el-table :data="dataList" class="table-content" v-loading="dataListLoading">
-          <template slot="empty">{{$t('BILL.Overview.none')}}</template>
+          <template slot="empty">{{$t('BILL.Overview.none')}}</template>
           <el-table-column
             prop="orderId"
             header-align="center"
@@ -166,12 +166,7 @@
             width="160"
             :label="$t('BILL.Deal.createTime')"
           ></el-table-column>
-          <el-table-column
-            fixed="right"
-            header-align="center"
-            align="center"
-            label="操作"
-          >
+          <el-table-column fixed="right" header-align="center" align="center" label="操作">
             <template slot-scope="scope">
               <el-button
                 type="text"
@@ -203,20 +198,20 @@
 </template>
 
 <script>
-import Detail from "./Dealdetail";
-import { PROJECT_LIST, ORDER_LIST } from "@/constants/BILL.js"; // 获取接口
+import Detail from './Dealdetail'
+import { PROJECT_LIST, ORDER_LIST } from '@/constants/BILL.js' // 获取接口
 export default {
-  data() {
+  data () {
     return {
       dataForm: {
         // 搜索控件
-        projectId: "", // 项目id
-        orderId: "", // 订单id
-        date: "" // 时间
+        projectId: '', // 项目id
+        orderId: '', // 订单id
+        date: '' // 时间
       },
       TotalCount: 0,
       pagesize: 10,
-      currpage: 1,
+      currpage: 1,
       dataList: [], // 列表数组
       getprojectList: [], // 项目列表
       pageIndex: 1,
@@ -227,89 +222,89 @@ export default {
         shortcuts: [
           {
             text: this.$t('BILL.Deal.oneweek'),
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
             }
           },
           {
             text: this.$t('BILL.Deal.oneMonth'),
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
             text: this.$t('BILL.Deal.threeMonth'),
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
       }
-    };
+    }
   },
   components: {
     Detail
   },
-  mounted() {
-    this.getProjectListInfo(); // 获取项目列表
+  mounted () {
+    this.getProjectListInfo() // 获取项目列表
   },
   methods: {
-    handleCurrentChange(val){
-      this.currpage = val;
+    handleCurrentChange (val) {
+      this.currpage = val
       this.getDataList()
     },
     // 获取项目名称
-    getProjectListInfo() {
+    getProjectListInfo () {
       // 配置默认的项目，这个接口不返回默认项目
       var defaultProject = [
         {
-          projectId: "",
-          projectInfo: this.$t("BILL.Deal.allProject"),
-          projectName: this.$t("BILL.Deal.allProject")
+          projectId: '',
+          projectInfo: this.$t('BILL.Deal.allProject'),
+          projectName: this.$t('BILL.Deal.allProject')
         },
         {
           projectId: 0,
-          projectInfo: this.$t("BILL.Deal.defaultProject"),
-          projectName: this.$t("BILL.Deal.defaultProject")
+          projectInfo: this.$t('BILL.Deal.defaultProject'),
+          projectName: this.$t('BILL.Deal.defaultProject')
         }
-      ];
+      ]
       var params = {
         allList: 0
-      };
+      }
       this.axios
         .post(`${process.env.VUE_APP_serverUrl + PROJECT_LIST}`, params)
         .then(data => {
           if (data && data.code === 0) {
-            let projectArr = data.data;
-            this.getprojectList = defaultProject.concat(projectArr);
-            this.pageIndex = 1;
-            this.getDataList(); // 获取项目成功之后 获取订单列表
+            let projectArr = data.data
+            this.getprojectList = defaultProject.concat(projectArr)
+            this.pageIndex = 1
+            this.getDataList() // 获取项目成功之后 获取订单列表
           } else {
-            this.getprojectList = [];
+            this.getprojectList = []
           }
-        });
+        })
     },
 
     // 点击日期获取数据
-    dataPick() {
-      this.pageIndex = 1;
-      this.getDataList();
+    dataPick () {
+      this.pageIndex = 1
+      this.getDataList()
     },
 
     // 获取数据列表
-    getDataList() {
-      console.log(this.dataForm.date);
+    getDataList () {
+      console.log(this.dataForm.date)
       if (this.dataForm.date == null) {
-        this.dataForm.date = "";
+        this.dataForm.date = ''
       }
       var params = {
         // page: this.currpage * this.pagesize - this.pagesize,
@@ -317,147 +312,146 @@ export default {
         limit: this.pagesize,
         projectId: this.dataForm.projectId,
         orderId: this.dataForm.orderId,
-        orderOwner: this.$cookie.get("uin"),
+        orderOwner: this.$cookie.get('uin'),
         beginDate: this.dataForm.date[0],
         endDate: this.dataForm.date[1]
-      };
+      }
       this.axios
         .post(`${process.env.VUE_APP_adminUrl + ORDER_LIST}`, params)
         .then(data => {
           if (data && data.code === 0) {
-            this.dataList = [];
-            let dataArr = data.page.list;
-            this.TotalCount = data.page.totalCount;
+            this.dataList = []
+            let dataArr = data.page.list
+            this.TotalCount = data.page.totalCount
             // 根据项目id获取name
             dataArr.map(item1 => {
               this.getprojectList.map(item2 => {
                 if (String(item1.projectId) === String(item2.projectId)) {
-                  item1.projectName = item2.projectName;
-                  this.dataList.push(item1);
+                  item1.projectName = item2.projectName
+                  this.dataList.push(item1)
                 }
-              });
-            });
-            this.dataListLoading = false;
+              })
+            })
+            this.dataListLoading = false
           } else {
-            this.dataList = [];
-            this.TotalCount = 0;
+            this.dataList = []
+            this.TotalCount = 0
           }
-        });
+        })
     },
 
     // 搜索
-    search() {
-      this.currpage = 1;
-      this.getDataList();
+    search () {
+      this.currpage = 1
+      this.getDataList()
     },
 
     // 过滤订单状态
-    formatterStatus(row, column, cellValue) {
-      if (cellValue === "1") {
-        return this.$t("BILL.Deal.noPay");
-      } else if (cellValue === "2") {
-        return this.$t("BILL.Deal.paid");
-      } else if (cellValue === "3") {
-        return this.$t("BILL.Deal.delivering");
-      } else if (cellValue === "4") {
-        return this.$t("BILL.Deal.delivered");
-      } else if (cellValue === "5") {
-        return this.$t("BILL.Deal.deliverFail");
-      } else if (cellValue === "6") {
-        return this.$t("BILL.Deal.refund");
-      } else if (cellValue === "7") {
-        return this.$t("BILL.Deal.close");
-      } else if (cellValue === "8") {
-        return this.$t("BILL.Deal.past");
-      } else if (cellValue === "9") {
-        return this.$t("BILL.Deal.orderInvalid");
-      } else if (cellValue === "10") {
-        return this.$t("BILL.Deal.proInvalid");
-      } else if (cellValue === "11") {
-        return this.$t("BILL.Deal.refuse");
-      } else if (cellValue === "12") {
-        return this.$t("BILL.Deal.paying");
+    formatterStatus (row, column, cellValue) {
+      if (cellValue === '1') {
+        return this.$t('BILL.Deal.noPay')
+      } else if (cellValue === '2') {
+        return this.$t('BILL.Deal.paid')
+      } else if (cellValue === '3') {
+        return this.$t('BILL.Deal.delivering')
+      } else if (cellValue === '4') {
+        return this.$t('BILL.Deal.delivered')
+      } else if (cellValue === '5') {
+        return this.$t('BILL.Deal.deliverFail')
+      } else if (cellValue === '6') {
+        return this.$t('BILL.Deal.refund')
+      } else if (cellValue === '7') {
+        return this.$t('BILL.Deal.close')
+      } else if (cellValue === '8') {
+        return this.$t('BILL.Deal.past')
+      } else if (cellValue === '9') {
+        return this.$t('BILL.Deal.orderInvalid')
+      } else if (cellValue === '10') {
+        return this.$t('BILL.Deal.proInvalid')
+      } else if (cellValue === '11') {
+        return this.$t('BILL.Deal.refuse')
+      } else if (cellValue === '12') {
+        return this.$t('BILL.Deal.paying')
       }
     },
 
     // 下载
-    download() {
+    download () {
       var params = {
         projectId: this.dataForm.projectId,
         orderId: this.dataForm.orderId,
-        orderOwner: this.$cookie.get("uin")
-      };
-      this.downloadLoading = true;
+        orderOwner: this.$cookie.get('uin')
+      }
+      this.downloadLoading = true
       this.axios
         .post(
           `${process.env.VUE_APP_adminUrl}taifucloud/torderproduct/exportList`,
           params,
-          { responseType: "blob" ,timeout: 1920000}
+          { responseType: 'blob', timeout: 1920000 }
         )
         .then(res => {
-          const content = res;
-          const blob = new Blob([content]);
-          const fileName = "訂單明細.csv";
-          if ("download" in document.createElement("a")) {
+          const content = res
+          const blob = new Blob([content])
+          const fileName = '訂單明細.csv'
+          if ('download' in document.createElement('a')) {
             // 非IE下载
-            const elink = document.createElement("a");
-            elink.download = fileName;
-            elink.style.display = "none";
-            elink.href = URL.createObjectURL(blob);
-            document.body.appendChild(elink);
-            elink.click();
-            URL.revokeObjectURL(elink.href);
+            const elink = document.createElement('a')
+            elink.download = fileName
+            elink.style.display = 'none'
+            elink.href = URL.createObjectURL(blob)
+            document.body.appendChild(elink)
+            elink.click()
+            URL.revokeObjectURL(elink.href)
             // 释放URL 对象
-            document.body.removeChild(elink);
+            document.body.removeChild(elink)
           } else {
             // IE10+下载
-            navigator.msSaveBlob(blob, fileName);
+            navigator.msSaveBlob(blob, fileName)
           }
-          this.downloadLoading = false;
-        });
+          this.downloadLoading = false
+        })
     },
 
     // 每页数
-    sizeChangeHandle(val) {
-      this.pagesize = val;
-      this.pageIndex = 1;
-      this.getDataList();
+    sizeChangeHandle (val) {
+      this.pagesize = val
+      this.pageIndex = 1
+      this.getDataList()
     },
 
     // 当前页
-    currentChangeHandle(val) {
-      this.pageIndex = val;
-      this.getDataList();
+    currentChangeHandle (val) {
+      this.pageIndex = val
+      this.getDataList()
     },
 
     // 点击详情
-    detailHandle(rowData) {
+    detailHandle (rowData) {
       this.$nextTick(() => {
-        this.$refs.Detail.init(rowData);
-      });
+        this.$refs.Detail.init(rowData)
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
-
 .Deal {
-.Right-style{
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-}
-.pagstyle{
-  padding: 5px;
-  .pagtotal{
-    font-size: 13px;
-    font-weight: 400;
-    color: #565656;
-    line-height: 32px;
+  .Right-style {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
   }
-}
-.top {
+  .pagstyle {
+    padding: 5px;
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 32px;
+    }
+  }
+  .top {
     height: 50px;
     line-height: 50px;
     margin-bottom: 15px;
@@ -474,8 +468,8 @@ export default {
       .item-1 {
         float: left;
       }
-      .item-1-time{
-        width:400px;
+      .item-1-time {
+        width: 400px;
       }
       .item-2,
       .item-3 {

@@ -1,16 +1,16 @@
 <template>
   <div class="header">
     <i class="el-icon-back" v-show="backShow" @click="back"></i>
-    {{title}}
+    {{ title }}
     <slot></slot>
   </div>
 </template>
 
 <script>
 export default {
-  name: "headerCom",
-  data() {
-    return {};
+  name: 'headerCom',
+  data () {
+    return {}
   },
   props: {
     backShow: {
@@ -21,11 +21,11 @@ export default {
     }
   },
   methods: {
-    back() {
-      this.$emit("_back");
+    back () {
+      this.$emit('_back')
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

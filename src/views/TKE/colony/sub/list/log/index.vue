@@ -173,7 +173,8 @@ export default {
       ],
       value1: "default",
       value2: "Deployment",
-      value3: "Workload列表为空",
+      // value3: "Workload列表为空",
+      value3: "",
       value4: "Pod列表为空",
       value5: "Container列表为空",
       value6: "显示100条数据",
@@ -230,11 +231,12 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
     },
+
     getList1() {
       // var params = {
       //   Method: "GET",
@@ -267,7 +269,7 @@ export default {
               newarrs.push({ str: data + x });
             });
           this.htmls = newarrs;
-         
+
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -276,7 +278,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -318,12 +320,16 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
     },
     getWorkload() {
+      //     Method: "GET"
+// Path: "/apis/apps/v1beta2/namespaces/default/deployments"
+// Version: "2018-05-25"
+// ClusterName: "cls-h3phnkpy"
       var params = {
         Method: "GET",
         Path: "/apis/apps/v1beta2/namespaces/" + this.value1 + "/deployments",
@@ -358,7 +364,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });

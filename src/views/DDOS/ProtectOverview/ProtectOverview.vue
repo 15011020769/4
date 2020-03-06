@@ -1,27 +1,29 @@
 <template>
   <div>
-    <div class="overviewTit">{{$t('DDOS.Protective.ProtectiveName')}}</div>
+    <div class="overviewTit">{{ $t("DDOS.Protective.ProtectiveName") }}</div>
     <div class="allConMain">
       <div class="allConMainOne">
-        <div class="allConMainOneTit">{{$t('DDOS.Protective.Protectiveoverview')}}</div>
+        <div class="allConMainOneTit">
+          {{ $t("DDOS.Protective.Protectiveoverview") }}
+        </div>
         <div class="allConMainOneCon">
           <el-row :gutter="20">
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>{{$t('DDOS.Protective.Protectivesecurity')}}</h3>
+                <h3>{{ $t("DDOS.Protective.Protectivesecurity") }}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="8" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.ProtectiveAttack')}}</p>
-                    <p>{{attackData[1].Value}}</p>
+                    <p>{{ $t("DDOS.Protective.ProtectiveAttack") }}</p>
+                    <p>{{ attackData[1].Value }}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConTwo LeftConRow">
-                    <p>{{$t('DDOS.Protective.ProtectiveSeal')}}</p>
-                    <p>{{attackData[2].Value}}</p>
+                    <p>{{ $t("DDOS.Protective.ProtectiveSeal") }}</p>
+                    <p>{{ attackData[2].Value }}</p>
                   </el-col>
                   <el-col :span="8" class="LeftConThree LeftConRow">
-                    <p>{{$t('DDOS.Protective.Protectivepeak')}}</p>
+                    <p>{{ $t("DDOS.Protective.Protectivepeak") }}</p>
                     <p>
-                      {{attackData[3].Value}}
+                      {{ attackData[3].Value }}
                       <span>Mbps</span>
                     </p>
                   </el-col>
@@ -30,19 +32,19 @@
             </el-col>
             <el-col :span="12">
               <div class="allConMainOneLeft">
-                <h3>{{$t('DDOS.Protective.CurrentState')}}</h3>
+                <h3>{{ $t("DDOS.Protective.CurrentState") }}</h3>
                 <el-row class="allConMainOneRow">
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.Protectivewash')}}</p>
+                    <p>{{ $t("DDOS.Protective.Protectivewash") }}</p>
                     <!-- 移除高仿包相关数据 -->
                     <!-- <p>{{(+packDataIP[1].Value) + (+packDataBgp[1].Value)}}</p> -->
-                    <p>{{(+packDataIP[1].Value)}}</p>
+                    <p>{{ +packDataIP[1].Value }}</p>
                   </el-col>
                   <el-col :span="12" class="LeftConOne LeftConRow">
-                    <p>{{$t('DDOS.Protective.blockIng')}}</p>
+                    <p>{{ $t("DDOS.Protective.blockIng") }}</p>
                     <!-- 移除高仿包相关数据 -->
                     <!-- <p>{{(+packDataIP[2].Value) + (+packDataBgp[2].Value)}}</p> -->
-                    <p>{{(+packDataIP[2].Value)}}</p>
+                    <p>{{ +packDataIP[2].Value }}</p>
                   </el-col>
                 </el-row>
               </div>
@@ -51,7 +53,9 @@
         </div>
       </div>
       <div class="allConMainTwo allConMainOne">
-        <div class="allConMainTwoTit allConMainOneTit">{{$t('DDOS.Protective.myProduct')}}</div>
+        <div class="allConMainTwoTit allConMainOneTit">
+          {{ $t("DDOS.Protective.myProduct") }}
+        </div>
         <div class="allConMainOneCon allConMainTwoCon">
           <el-row :gutter="20">
             <el-col :span="12">
@@ -59,61 +63,63 @@
               <!-- <div class="allConMainOneLeft allConMainTwoLeft">
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
-                    {{$t('DDOS.Protective.ProtectiveExclusive')}}
-                    <span>{{packDataBgp[0].Value}}</span>
+                    {{ $t("DDOS.Protective.ProtectiveExclusive") }}
+                    <span>{{ packDataBgp[0].Value }}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2">
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Protectivewash')}}</span>
-                      <span>{{packDataBgp[1].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Protectivewash") }}</span>
+                      <span>{{ packDataBgp[1].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.blockIng')}}</span>
-                      <span>{{packDataBgp[2].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.blockIng") }}</span>
+                      <span>{{ packDataBgp[2].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.aboutExpire')}}</span>
-                      <span>{{packDataBgp[4].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.aboutExpire") }}</span>
+                      <span>{{ packDataBgp[4].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Expiring')}}</span>
-                      <span>{{packDataBgp[3].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Expiring") }}</span>
+                      <span>{{ packDataBgp[3].Value }}</span>
                     </p>
                   </el-col>
                 </el-row>
               </div> -->
             </el-col>
             <el-col :span="12">
-              <div class="allConMainOneRight allConMainTwoRight allConMainTwoLeft">
+              <div
+                class="allConMainOneRight allConMainTwoRight allConMainTwoLeft"
+              >
                 <el-row class="productRow">
                   <el-col :span="12" class="productRow1">
-                    {{$t('DDOS.Protective.professionalEdition')}}
-                    <span>{{packDataIP[0].Value}}</span>
+                    {{ $t("DDOS.Protective.professionalEdition") }}
+                    <span>{{ packDataIP[0].Value }}</span>
                   </el-col>
                   <el-col :span="12" class="productRow2">
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Protectivewash')}}</span>
-                      <span>{{packDataIP[1].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Protectivewash") }}</span>
+                      <span>{{ packDataIP[1].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.blockIng')}}</span>
-                      <span>{{packDataIP[2].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.blockIng") }}</span>
+                      <span>{{ packDataIP[2].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.aboutExpire')}}</span>
-                      <span>{{packDataIP[4].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.aboutExpire") }}</span>
+                      <span>{{ packDataIP[4].Value }}</span>
                     </p>
                     <p>
                       <span></span>
-                      <span>{{$t('DDOS.Protective.Expiring')}}</span>
-                      <span>{{packDataIP[3].Value}}</span>
+                      <span>{{ $t("DDOS.Protective.Expiring") }}</span>
+                      <span>{{ packDataIP[3].Value }}</span>
                     </p>
                   </el-col>
                 </el-row>
@@ -124,19 +130,20 @@
       </div>
       <div class="allConMainThree">
         <div class="allConMainThreeTit">
-          <div>{{$t('DDOS.Protective.AttackLog')}}</div>
+          <div>{{ $t("DDOS.Protective.AttackLog") }}</div>
           <div class="rightCon">
-            <a
-              href="#"
-              class="downloadTable"
-              @click="exportExcel"
-            >{{$t('DDOS.Protective.DownTable')}}</a>
+            <a href="#" class="downloadTable" @click="exportExcel">
+              {{ $t("DDOS.Protective.DownTable") }}
+            </a>
             <el-input
               class="rightIptSearch"
               v-model="searchInputID"
               :placeholder="$t('DDOS.Protective.pleaSearchVal')"
             />
-            <el-button @click="doFilter" class="searcHBthn el-icon-search"></el-button>
+            <el-button
+              @click="doFilter"
+              class="searcHBthn el-icon-search"
+            ></el-button>
           </div>
         </div>
         <div class="allConMainThreeCon">
@@ -152,65 +159,100 @@
               >{{$t('DDOS.Protective.shareExclusive')}}</el-button> -->
               <el-button
                 @click="btnClick('net')"
-                :class="{'addColor':type=='net'}"
-              >{{$t('DDOS.Protective.professionalEdition')}}</el-button>
+                :class="{ addColor: type == 'net' }"
+                >{{ $t("DDOS.Protective.professionalEdition") }}</el-button
+              >
             </el-button-group>
           </div>
           <div class="tableOverView">
             <el-table
               id="exportTable"
-              :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+              :data="
+                tableDataBegin.slice(
+                  (currentPage - 1) * pageSize,
+                  currentPage * pageSize
+                )
+              "
               height="450"
               v-loading="loading"
-              empty-text='暫無數據'
+              empty-text="暫無數據"
             >
-              <el-table-column prop="StartTime" :label="$t('DDOS.Protective.AgainstTime')">
+              <el-table-column
+                prop="StartTime"
+                :label="$t('DDOS.Protective.AgainstTime')"
+              >
                 <template slot-scope="scope">
-                  {{scope.row.StartTime}}
+                  {{ scope.row.StartTime }}
                   <!-- <a href="#" @click="toDoDetail(scope.$index, scope.row)">{{scope.row.funName}}</a> -->
                 </template>
               </el-table-column>
-              <el-table-column prop="durationTime" :label="$t('DDOS.Protective.durationTime')">
-                <template slot-scope="scope">{{scope.row.EndTime - scope.row.StartTime}}</template>
+              <el-table-column
+                prop="durationTime"
+                :label="$t('DDOS.Protective.durationTime')"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.EndTime - scope.row.StartTime }}
+                </template>
               </el-table-column>
               <el-table-column prop :label="$t('DDOS.Protective.productName')">
                 <template slot-scope="scope">-</template>
               </el-table-column>
-              <el-table-column prop="ResourceName" :label="$t('DDOS.Protective.AssetName')">
-                <template slot-scope="scope">{{scope.row.ResourceName}}</template>
+              <el-table-column
+                prop="ResourceName"
+                :label="$t('DDOS.Protective.AssetName')"
+              >
+                <template slot-scope="scope">
+                  {{ scope.row.ResourceName }}
+                </template>
               </el-table-column>
               <el-table-column
                 prop
                 :label="$t('DDOS.Protective.AssetType')"
-                v-if="type=='net'?false:true"
+                v-if="type == 'net' ? false : true"
               >
                 <template slot-scope="scope">-</template>
               </el-table-column>
               <el-table-column prop="Vip" label="IP">
-                <template slot-scope="scope">{{scope.row.Vip}}</template>
+                <template slot-scope="scope">{{ scope.row.Vip }}</template>
               </el-table-column>
               <el-table-column
                 prop="AttackType"
                 :label="$t('DDOS.Protective.AgainstType')"
                 width="70px"
               >
-                <template slot-scope="scope">{{scope.row.AttackType}}</template>
-              </el-table-column>
-              <el-table-column prop="Mbps" :label="$t('DDOS.Protective.AgainstBandwidth')">
-                <template slot-scope="scope">{{scope.row.Mbps}}</template>
-              </el-table-column>
-              <el-table-column prop="Pps" :label="$t('DDOS.Protective.AgainstMaximum')">
-                <template slot-scope="scope">{{scope.row.Pps}}</template>
-              </el-table-column>
-              <el-table-column prop :label="$t('DDOS.Protective.TriggerBanned')" width="180">
                 <template slot-scope="scope">
-                  <el-button type="text" size="small">{{$t('DDOS.Protective.TriggerBanned')}}</el-button>
+                  {{ scope.row.AttackType }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="Mbps"
+                :label="$t('DDOS.Protective.AgainstBandwidth')"
+              >
+                <template slot-scope="scope">{{ scope.row.Mbps }}</template>
+              </el-table-column>
+              <el-table-column
+                prop="Pps"
+                :label="$t('DDOS.Protective.AgainstMaximum')"
+              >
+                <template slot-scope="scope">{{ scope.row.Pps }}</template>
+              </el-table-column>
+              <el-table-column
+                prop
+                :label="$t('DDOS.Protective.TriggerBanned')"
+                width="180"
+              >
+                <template slot-scope="scope">
+                  <el-button type="text" size="small">
+                    {{ $t("DDOS.Protective.TriggerBanned") }}
+                  </el-button>
                 </template>
               </el-table-column>
             </el-table>
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+            <span class="pagtotal">
+              共&nbsp;{{ totalItems }}&nbsp;{{ $t("DDOS.UnsealCode.tiao") }}
+            </span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -227,7 +269,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST} from "@/constants";
+import { DDOS_SECINDEX, DDOS_PACKINDEX, DDOS_EV_LIST } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
@@ -298,7 +340,7 @@ export default {
       for (let i in this.packParams) {
         this.business = this.packParams[i];
         switch (
-          this.business //[bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
+          this.business // [bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         ) {
           case "net":
             this.describePackIndex(this.packDataIP);
@@ -370,7 +412,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
-        Business: this.type, //[bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
+        Business: this.type, // [bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         StartTime: this.startTime,
         EndTime: this.endTime,
         Id: this.searchInputID
@@ -396,18 +438,18 @@ export default {
     getDateString(date) {
       let o = {
         y: date.getFullYear(),
-        M: date.getMonth()+1,
+        M: date.getMonth() + 1,
         d: date.getDate(),
         h: date.getHours(),
         m: date.getMinutes(),
         s: date.getSeconds()
-      }
+      };
       for (const i in o) {
-        o[i] = (o[i]+"").length == 1 ? "0"+o[i] : o[i]
+        o[i] = (o[i] + "").length == 1 ? "0" + o[i] : o[i];
       }
-      return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
+      return o.y + "-" + o.M + "-" + o.d + " " + o.h + ":" + o.m + ":" + o.s;
     },
-    //下面tab切换表格
+    // 下面tab切换表格
     btnClick(param) {
       this.type = param;
       // 移除高仿包相关数据
@@ -416,7 +458,7 @@ export default {
       // } else
       // if (param == "bgp-multip") {
       //   this.downloadName = "共享包攻擊記錄";
-      // } else 
+      // } else
       if (param == "net") {
         this.downloadName = "高防IP專業版攻擊記錄";
       }
@@ -436,13 +478,13 @@ export default {
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      //需要判断是否检索
+      // 需要判断是否检索
       if (!this.flag) {
         this.currentChangePage(this.tableDataEnd);
       } else {
         this.currentChangePage(this.filterTableDataEnd);
       }
-    }, //组件自带监控当前页码
+    }, // 组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;

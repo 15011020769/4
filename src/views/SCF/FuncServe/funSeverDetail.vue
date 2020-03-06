@@ -52,7 +52,8 @@
         <div class="dialog">
           <p class="p1">{{$t('SCF.total.ms')}}</p>
           <p class="p2">
-            <el-input type="textarea" :rows="4" :placeholder="$t('SCF.total.qsrbbms')" v-model="textarea" @blur='_check'>
+            <el-input type="textarea" :rows="4" :placeholder="$t('SCF.total.qsrbbms')" v-model="textarea"
+              @blur='_check'>
             </el-input>
           </p>
         </div>
@@ -115,6 +116,7 @@
       monitInfo
     },
     created() {
+      this.activeName = this.$route.query.num
       this.GetVersion()
     },
     methods: {

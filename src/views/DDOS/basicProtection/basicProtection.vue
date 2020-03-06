@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div class="basicProtTit">
-      <span>{{$t('DDOS.basicProtection.jcfh')}}</span>
+      <span>{{ $t("DDOS.basicProtection.jcfh") }}</span>
       <el-select v-model="selectedSubarea" placeholder class="codeOrigin">
         <el-option
           v-for="item in subareas"
@@ -10,7 +10,7 @@
           :value="item.subarea"
         ></el-option>
       </el-select>
-      <el-button>{{region}}</el-button>
+      <el-button>{{ region }}</el-button>
     </div>
     <div class="basicProtCon">
       <div class="newClear">
@@ -27,99 +27,153 @@
       <div class="tableBasic">
         <div class="tableBasicCon">
           <el-table
-            :data="tableDataBegin.slice((currentPage-1)*pageSize,currentPage*pageSize)"
+            :data="
+              tableDataBegin.slice(
+                (currentPage - 1) * pageSize,
+                currentPage * pageSize
+              )
+            "
             v-loading="loading"
             height="450"
           >
-            <el-table-column prop="Name" :label="$t('DDOS.basicProtection.zjm')">
+            <el-table-column
+              prop="Name"
+              :label="$t('DDOS.basicProtection.zjm')"
+            >
               <template slot-scope="scope">
-                <el-button type="text"
-                  v-if="selectedSubarea=='cvm'"
+                <el-button
+                  type="text"
+                  v-if="selectedSubarea == 'cvm'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.InstanceName}}</el-button>
-                <el-button type="text"
-                  v-else-if="selectedSubarea=='clb'"
+                  >{{ scope.row.InstanceName }}</el-button
+                >
+                <el-button
+                  type="text"
+                  v-else-if="selectedSubarea == 'clb'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.LoadBalancerName}}</el-button>
-                <el-button type="text"
-                  v-else-if="selectedSubarea=='nat'"
+                  >{{ scope.row.LoadBalancerName }}</el-button
+                >
+                <el-button
+                  type="text"
+                  v-else-if="selectedSubarea == 'nat'"
                   @click="toDoDetail(scope.row)"
-                >{{scope.row.NatGatewayName}}</el-button>
+                  >{{ scope.row.NatGatewayName }}</el-button
+                >
               </template>
             </el-table-column>
             <el-table-column prop="IP" :label="$t('DDOS.basicProtection.bdip')">
               <template slot-scope="scope">
-                <div v-if="selectedSubarea=='cvm'">
-                  <span v-for="(item,index) in scope.row.PublicIpAddresses" :key="index">{{item}}</span>
-                </div>
-                <div v-else-if="selectedSubarea=='clb'">
-                  <span v-for="(item,index) in scope.row.LoadBalancerVips" :key="index">{{item}}</span>
-                </div>
-                <div v-else-if="selectedSubarea=='nat'">
+                <div v-if="selectedSubarea == 'cvm'">
                   <span
-                    v-for="(item,index) in scope.row.PublicIpAddressSet"
+                    v-for="(item, index) in scope.row.PublicIpAddresses"
                     :key="index"
-                  >{{item.PublicIpAddress}}</span>
+                    >{{ item }}</span
+                  >
+                </div>
+                <div v-else-if="selectedSubarea == 'clb'">
+                  <span
+                    v-for="(item, index) in scope.row.LoadBalancerVips"
+                    :key="index"
+                    >{{ item }}</span
+                  >
+                </div>
+                <div v-else-if="selectedSubarea == 'nat'">
+                  <span
+                    v-for="(item, index) in scope.row.PublicIpAddressSet"
+                    :key="index"
+                    >{{ item.PublicIpAddress }}</span
+                  >
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="InstanceType" :label="$t('DDOS.basicProtection.zjlx')">
-              <span v-if="selectedSubarea=='cvm'">{{$t('DDOS.basicProtection.yzj')}}</span>
-              <span v-else-if="selectedSubarea=='clb'">{{$t('DDOS.basicProtection.fzjh')}}</span>
-              <span v-else-if="selectedSubarea=='nat'">NAT</span>
-              <span v-else-if="selectedSubarea=='net'">{{$t('DDOS.basicProtection.hlw')}}</span>
+            <el-table-column
+              prop="InstanceType"
+              :label="$t('DDOS.basicProtection.zjlx')"
+            >
+              <span v-if="selectedSubarea == 'cvm'">{{
+                $t("DDOS.basicProtection.yzj")
+              }}</span>
+              <span v-else-if="selectedSubarea == 'clb'">{{
+                $t("DDOS.basicProtection.fzjh")
+              }}</span>
+              <span v-else-if="selectedSubarea == 'nat'">NAT</span>
+              <span v-else-if="selectedSubarea == 'net'">{{
+                $t("DDOS.basicProtection.hlw")
+              }}</span>
             </el-table-column>
-            <el-table-column prop="Status" :label="$t('DDOS.basicProtection.aqzt')">
+            <el-table-column
+              prop="Status"
+              :label="$t('DDOS.basicProtection.aqzt')"
+            >
               <template slot-scope="scope">
-                <div v-if="selectedSubarea=='cvm'">
-                  <span
-                    v-if="scope.row.InstanceState == 'PENDING'"
-                  >{{$t('DDOS.basicProtection.cjz')}}</span>
+                <div v-if="selectedSubarea == 'cvm'">
+                  <span v-if="scope.row.InstanceState == 'PENDING'">{{
+                    $t("DDOS.basicProtection.cjz")
+                  }}</span>
                   <span
                     v-else-if="scope.row.InstanceState == 'LAUNCH_FAILED'"
-                  >{{$t('DDOS.basicProtection.cjsb')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'RUNNING'"
-                  >{{$t('DDOS.AssetList.Running')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'STOPPED'"
-                  >{{$t('DDOS.basicProtection.gj')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'STARTING'"
-                  >{{$t('DDOS.basicProtection.kjz')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'STOPPING'"
-                  >{{$t('DDOS.basicProtection.gjz')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'REBOOTING'"
-                  >{{$t('DDOS.basicProtection.cqz')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'SHUTDOWN'"
-                  >{{$t('DDOS.basicProtection.tzdxh')}}</span>
-                  <span
-                    v-else-if="scope.row.InstanceState == 'TERMINATING'"
-                  >{{$t('DDOS.basicProtection.xhz')}}</span>
+                    >{{ $t("DDOS.basicProtection.cjsb") }}</span
+                  >
+                  <span v-else-if="scope.row.InstanceState == 'RUNNING'">{{
+                    $t("DDOS.AssetList.Running")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPED'">{{
+                    $t("DDOS.basicProtection.gj")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STARTING'">{{
+                    $t("DDOS.basicProtection.kjz")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'STOPPING'">{{
+                    $t("DDOS.basicProtection.gjz")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'REBOOTING'">{{
+                    $t("DDOS.basicProtection.cqz")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'SHUTDOWN'">{{
+                    $t("DDOS.basicProtection.tzdxh")
+                  }}</span>
+                  <span v-else-if="scope.row.InstanceState == 'TERMINATING'">{{
+                    $t("DDOS.basicProtection.xhz")
+                  }}</span>
                 </div>
-                <div v-else-if="selectedSubarea=='clb'">
-                  <span v-if="scope.row.Status == '0'">{{$t('DDOS.basicProtection.cjz')}}</span>
-                  <span v-else-if="scope.row.Status == '1'">{{$t('DDOS.basicProtection.zcyx')}}</span>
+                <div v-else-if="selectedSubarea == 'clb'">
+                  <span v-if="scope.row.Status == '0'">{{
+                    $t("DDOS.basicProtection.cjz")
+                  }}</span>
+                  <span v-else-if="scope.row.Status == '1'">{{
+                    $t("DDOS.basicProtection.zcyx")
+                  }}</span>
                 </div>
-                <div v-else-if="selectedSubarea=='nat'">
-                  <span v-if="scope.row.State == 'PENDING'">{{$t('DDOS.basicProtection.scz')}}</span>
-                  <span v-else-if="scope.row.State == 'DELETING'">{{$t('DDOS.basicProtection.del')}}</span>
-                  <span v-else-if="scope.row.State == 'AVAILABLE'">{{$t('DDOS.AssetList.Running')}}</span>
-                  <span v-else-if="scope.row.State == 'UPDATING'">{{$t('DDOS.basicProtection.sjz')}}</span>
-                  <span v-else-if="scope.row.State == 'FAILED'">{{$t('DDOS.basicProtection.sb')}}</span>
+                <div v-else-if="selectedSubarea == 'nat'">
+                  <span v-if="scope.row.State == 'PENDING'">{{
+                    $t("DDOS.basicProtection.scz")
+                  }}</span>
+                  <span v-else-if="scope.row.State == 'DELETING'">{{
+                    $t("DDOS.basicProtection.del")
+                  }}</span>
+                  <span v-else-if="scope.row.State == 'AVAILABLE'">{{
+                    $t("DDOS.AssetList.Running")
+                  }}</span>
+                  <span v-else-if="scope.row.State == 'UPDATING'">{{
+                    $t("DDOS.basicProtection.sjz")
+                  }}</span>
+                  <span v-else-if="scope.row.State == 'FAILED'">{{
+                    $t("DDOS.basicProtection.sb")
+                  }}</span>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column  label="操作">
+            <el-table-column label="操作">
               <a href="#/choose">升級防護</a>
             </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+          <span class="pagtotal"
+            >共&nbsp;{{ totalItems }}&nbsp;{{
+              $t("DDOS.UnsealCode.tiao")
+            }}</span
+          >
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -133,7 +187,13 @@
   </div>
 </template>
 <script>
-import { CVM_LIST, CLB_LIST, NAT_LIST, ALL_CITY, DESCRIBE_CHANNEL_DEVICE_RESOURCE } from "@/constants";
+import {
+  CVM_LIST,
+  CLB_LIST,
+  NAT_LIST,
+  ALL_CITY,
+  DESCRIBE_CHANNEL_DEVICE_RESOURCE
+} from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
@@ -144,7 +204,7 @@ export default {
       subareas: [
         { subarea: "cvm", lable: "雲伺服器專區" },
         { subarea: "clb", lable: "負載均衡專區" },
-        { subarea: "nat", lable: "NAT伺服器專區" },
+        { subarea: "nat", lable: "NAT伺服器專區" }
         // { subarea: "net", lable: "網際網路通道" }
       ],
       // 地域选择
@@ -203,16 +263,18 @@ export default {
       }
     },
     describeNetInstances() {
-       this.axios.post(DESCRIBE_CHANNEL_DEVICE_RESOURCE, {
-         Version: '2018-07-09',
-         BasicRegion: 'tpe',
-         BasicBizType: 'channel',
-       }).then(res => {
-         console.log(res)
-       })
+      this.axios
+        .post(DESCRIBE_CHANNEL_DEVICE_RESOURCE, {
+          Version: "2018-07-09",
+          BasicRegion: "tpe",
+          BasicBizType: "channel"
+        })
+        .then(res => {
+          console.log(res);
+        });
     },
     describeInstances() {
-    // 1.1.查询云服务器实例列表
+      // 1.1.查询云服务器实例列表
       this.loading = true;
       let params = {
         Version: "2017-03-12",
@@ -225,25 +287,25 @@ export default {
           this.tableDataBegin = res.Response.InstanceSet;
           this.totalItems = res.Response.TotalCount;
         } else {
-					let ErrTips = {
-						"InternalServerError": "操作內部錯誤",
-            "InvalidFilter": "無效的過濾器",
+          let ErrTips = {
+            InternalServerError: "操作內部錯誤",
+            InvalidFilter: "無效的過濾器",
             "InvalidFilterValue.LimitExceeded": "Filter參數值數量超過限制",
-            "InvalidHostId.Malformed":  "無效CDH ID，指定的CDH ID格式錯誤",
+            "InvalidHostId.Malformed": "無效CDH ID，指定的CDH ID格式錯誤",
             "InvalidInstanceId.Malformed": "無效實例ID，指定的實例ID格式錯誤",
-            "InvalidParameter": "無效參數",
-            "InvalidParameterValue": "無效參數值",
+            InvalidParameter: "無效參數",
+            InvalidParameterValue: "無效參數值",
             "InvalidParameterValue.LimitExceeded": "參數值數量超過限制",
             "InvalidZone.MismatchRegion": "指定的zone不存在"
-					};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -260,25 +322,26 @@ export default {
           this.tableDataBegin = res.Response.LoadBalancerSet;
           this.totalItems = res.Response.TotalCount;
         } else {
-					let ErrTips = {
-            'FailedOperation': '操作失敗',
-            'InternalError': '必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）',
-            'InvalidParameterValue.MaxResult': '內部錯誤',
-            'InvalidParameter': '參數錯誤',
-            'InvalidParameter.FormatError': '參數格式錯誤',
-            'InvalidParameterValue': '參數取值錯誤',
-            'InvalidParameterValue.InvalidFilter': 'Filter參數輸入錯誤',
-            'InvalidParameterValue.Length': '參數長度錯誤',
-            'UnauthorizedOperation': '未授權操作',
-					};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          let ErrTips = {
+            FailedOperation: "操作失敗",
+            InternalError:
+              "必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）",
+            "InvalidParameterValue.MaxResult": "內部錯誤",
+            InvalidParameter: "參數錯誤",
+            "InvalidParameter.FormatError": "參數格式錯誤",
+            InvalidParameterValue: "參數取值錯誤",
+            "InvalidParameterValue.InvalidFilter": "Filter參數輸入錯誤",
+            "InvalidParameterValue.Length": "參數長度錯誤",
+            UnauthorizedOperation: "未授權操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -295,15 +358,15 @@ export default {
           this.tableDataBegin = res.Response.NatGatewaySet;
           this.totalItems = res.Response.TotalCount;
         } else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -311,32 +374,36 @@ export default {
     doFilter() {
       this.loading = true;
       if (this.searchInputVal != null && this.searchInputVal != "") {
-        //每次手动将数据置空,因为会出现多次点击搜索情况
+        // 每次手动将数据置空,因为会出现多次点击搜索情况
         this.tableDataBegin = new Array();
         this.filterTableDataEnd = new Array();
         var arr = [];
-        let cb
+        let cb;
         switch (this.selectedSubarea) {
-          case 'cvm':
+          case "cvm":
             cb = item => {
-              return item.InstanceName.includes(this.searchInputVal)
-                    || item.PrivateIpAddresses.includes(this.searchInputVal)
-                    || item.PublicIpAddresses.includes(this.searchInputVal)
-            }
-            break
-          case 'clb':
+              return (
+                item.InstanceName.includes(this.searchInputVal) ||
+                item.PrivateIpAddresses.includes(this.searchInputVal) ||
+                item.PublicIpAddresses.includes(this.searchInputVal)
+              );
+            };
+            break;
+          case "clb":
             cb = item => {
-              return item.LoadBalancerName.includes(this.searchInputVal)
-                    || item.LoadBalancerVips.includes(this.searchInputVal)
-            }
-            break
-          case 'nat':
-            cb = item => item.NatGatewayName.includes(this.searchInputVal)
-            break
+              return (
+                item.LoadBalancerName.includes(this.searchInputVal) ||
+                item.LoadBalancerVips.includes(this.searchInputVal)
+              );
+            };
+            break;
+          case "nat":
+            cb = item => item.NatGatewayName.includes(this.searchInputVal);
+            break;
           // case 'cvm':
           //   break
         }
-        this.tableDataBegin = this.allData.filter(cb)
+        this.tableDataBegin = this.allData.filter(cb);
         // this.allData.forEach((val, index) => {
         //   if (val.InstanceName.includes(this.searchInputVal)) {
         //     arr.push(val);
@@ -348,12 +415,12 @@ export default {
         this.tableDataBegin = this.allData;
       }
 
-      //页面数据改变重新统计数据数量和当前页
+      // 页面数据改变重新统计数据数量和当前页
       this.currentPage = 1;
       this.totalItems = this.tableDataBegin.length;
-      //渲染表格,根据值
+      // 渲染表格,根据值
       this.currentChangePage(this.tableDataBegin);
-      //页面初始化数据需要判断是否检索过
+      // 页面初始化数据需要判断是否检索过
       this.flag = true;
       this.loading = false;
     },
@@ -382,13 +449,13 @@ export default {
     handleCurrentChange(val) {
       // console.log(`当前页: ${val}`);
       this.currentPage = val;
-      //需要判断是否检索
+      // 需要判断是否检索
       if (!this.flag) {
         this.currentChangePage(this.tableDataEnd);
       } else {
         this.currentChangePage(this.filterTableDataEnd);
       }
-    }, //组件自带监控当前页码
+    }, // 组件自带监控当前页码
     currentChangePage(list) {
       let from = (this.currentPage - 1) * this.pageSize;
       let to = this.currentPage * this.pageSize;
@@ -399,7 +466,7 @@ export default {
         }
       }
     },
-    //跳转详情页
+    // 跳转详情页
     toDoDetail(basicRow) {
       let insTemp = {};
       // 判断专区类型，转换传参对象

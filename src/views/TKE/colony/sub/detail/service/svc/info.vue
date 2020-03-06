@@ -11,15 +11,16 @@
           <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.namespace}}</div>
         </el-form-item>
         <el-form-item label="描述">
-          <div class="tke-form-item_text">-</div>
+          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.annotations.description||'-'}}</div>
         </el-form-item>
         <el-form-item label="Labels">
-          <div class="tke-form-item_text">
+          <div class="tke-form-item_text" v-if="detailData.metadata &&detailData.metadata.labels">
             <!-- {{detailData.metadata && detailData.metadata.labels}} -->
             <span v-for="(v,i) in detailData.metadata && detailData.metadata.labels" :key="v">
               {{i}}:{{v+'  '}}
               </span>
           </div>
+          <div class="tke-form-item_text" v-else>-</div>
         </el-form-item>
         <el-form-item label="创建时间">
           <div class="tke-form-item_text">{{upTime(detailData.metadata && detailData.metadata.creationTimestamp)}}</div>
@@ -75,10 +76,13 @@
       <h4  class="tke-formpanel-title">高级设置</h4>
       <el-form  class="tke-form" label-position='left' label-width="130px" size="mini">
         <el-form-item label="ExternalTrafficPolicy">
-          <div class="tke-form-item_text">Cluster</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.externalTrafficPolicy||'-'}}</div>
         </el-form-item>
         <el-form-item label="Session Affinity">
-          <div class="tke-form-item_text">None</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinity}}</div>
+        </el-form-item>
+        <el-form-item label="最大会话保持时间" v-if="detailData.spec&&detailData.spec.sessionAffinity==='ClientIP'">
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinityConfig.clientIP.timeoutSeconds+'秒'}}</div>
         </el-form-item>
       </el-form>
     </div>
@@ -141,7 +145,7 @@ export default {
           this.detailData.qcloudApp = this.detailData.spec.selector && this.detailData.spec.selector['qcloud-app']
           this.list = response.spec.ports
           // console.log(this.detailData, 'detail')
-          // console.log(this.list)
+          // console.log(response)
         } else {
           this.loadShow = false
           let ErrTips = {

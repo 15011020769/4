@@ -222,12 +222,14 @@ export default {
               console.log(this.info)
               // this.loadShow = false
             } else {
-              this.$message({
-                message: ErrorTips[res.Response.Error.code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              })
+               let ErrTips = {};
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                })
             }
           })
     },
@@ -257,11 +259,13 @@ export default {
                 }
               })
             } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrorTips[res.Response.Error.code],
-                type: "error",
-                showClose: true,
-                duration: 0
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
               })
             }
           })
