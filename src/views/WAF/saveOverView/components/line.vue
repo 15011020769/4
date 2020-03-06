@@ -82,6 +82,9 @@ export default {
         tooltip: {
           trigger: 'axis',
           // formatter: `{b}<br/>{a} {c}次`
+          // formatter: function (val) {
+          //   return val.data
+          // }
         },
         legend: {
             data: this.legendText,

@@ -99,6 +99,9 @@ export default {
     }
   },
   mounted() {
+    this.$router.afterEach((to, from, next) => {
+        window.scrollTo(0, 0)
+    })
     this.getDescribeHost()
   },
   methods: {
@@ -160,6 +163,11 @@ export default {
             }
           })
           this.options = arr
+        }
+      }).then(() => {
+        if (this.$route.query.domain) {
+          this.domainValue = this.$route.query.domain
+        } else {
           this.domainValue = this.options[0].Domain;
         }
       })

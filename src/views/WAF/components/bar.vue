@@ -36,7 +36,7 @@ export default {
       default: () => []
     },
     legendText: {
-      type: String,
+      type: Array,
     }
   },
   watch: {

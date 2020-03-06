@@ -12,44 +12,47 @@
         :color="colorLine"
       />
     </div>
-    <el-row class="secondShow">
-      <el-col :span="8" class="pieShow">
-        <h3 class="topfont">
-          {{t('返回响应码占比', 'WAF.fhxymzb')}}
-        </h3>
-        <EPie
-          :series="seriesPieStatus"
-          :color="colorPie"
-          :legendText="legendTextPieStatus"
-          :radius="['40%', '55%']"
-          :left="'50%'"
-        />
-      </el-col>
-      <el-col :span="8" class="pieShow">
-        <h3 class="topfont">
-          {{t('请求方法占比', 'WAF.qqffzb')}}
-        </h3>
-        <EPie
-          :series="seriesPieMethod"
-          :color="colorPieMethod"
-          :legendText="legendTextPieMethod"
-          :radius="['37%', '50%']"
-          :left="'50%'"
-        />
-      </el-col>
-      <el-col :span="8" class="pieShow">
-        <h3 class="topfont">
-          {{t('HTTP协议版本占比', 'WAF.httpxybb')}}
-        </h3>
-        <EPie
-          :series="seriesPieProtocal"
-          :color="colorPie"
-          :legendText="legendTextPieProtocal"
-          :radius="['40%', '55%']"
-          :left="'50%'"
-        />
-      </el-col>
-    </el-row>
+    <div class="secondShow">
+      <el-row >
+        <el-col :span="8" class="pieShow">
+          <h3 class="topfont">
+            {{t('返回响应码占比', 'WAF.fhxymzb')}}
+          </h3>
+          <EPie
+            :series="seriesPieStatus"
+            :color="colorPie"
+            :legendText="legendTextPieStatus"
+            :radius="['40%', '55%']"
+            :left="'50%'"
+          />
+        </el-col>
+        <el-col :span="8" class="pieShow">
+          <h3 class="topfont">
+            {{t('请求方法占比', 'WAF.qqffzb')}}
+          </h3>
+          <EPie
+            :series="seriesPieMethod"
+            :color="colorPieMethod"
+            :legendText="legendTextPieMethod"
+            :radius="['37%', '50%']"
+            :left="'50%'"
+          />
+        </el-col>
+        <el-col :span="8" class="pieShow">
+          <h3 class="topfont">
+            {{t('HTTP协议版本占比', 'WAF.httpxybb')}}
+          </h3>
+          <EPie
+            :series="seriesPieProtocal"
+            :color="colorPie"
+            :legendText="legendTextPieProtocal"
+            :radius="['40%', '55%']"
+            :left="'50%'"
+          />
+        </el-col>
+      </el-row>
+        <p class="pieTip">{{t('统计数据源为会话前600条数据', 'WAF.tjsjy')}}</p>
+    </div>
     <el-row class="thirdShow">
       <el-col :span="8" class="wrapperCol" v-if="recordDetail.length">
         <h3 class="botTitle">
@@ -576,6 +579,12 @@ export default {
     .pieShow {
       padding: 0 10px;
       box-sizing: border-box;
+    }
+    .pieTip {
+      color: #bbb;
+      text-align: center;
+      position: relative;
+      bottom: 20px;
     }
   }
   .thirdShow {

@@ -1,30 +1,32 @@
 <template>
   <el-row class="echartsShowThird">
     <el-col :span="12">
-    <h3 class="topfont">
-      {{t('访问类型占比', 'WAF.fwlxzb')}}
-      <span style="color:#bbb;">(%)</span>
-    </h3>
-    <EPie
-      :series="seriesPie"
-      :color="colorPie"
-      :legendText="legendTextPie"
-      v-loading="loading"
-    />
+      <h3 class="topfont">
+        {{t('访问类型占比', 'WAF.fwlxzb')}}
+        <span style="color:#bbb;">(%)</span>
+      </h3>
+      <el-row class="empty" v-if="seriesPie.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+      <EPie
+        :series="seriesPie"
+        :color="colorPie"
+        :legendText="legendTextPie"
+        v-loading="loading"
+        v-else
+      />
     </el-col>
     <el-col :span="12">
-    <h3 class="topfont">
-      {{t('攻击类型占比', 'WAF.gjlxzb')}}
-      <span style="color:#bbb;">(次)</span>
-    </h3>
-    <el-row class="empty" v-if="seriesPieAttack.length == 0 ? true : false">暂无数据</el-row>
-    <EPie
-      :series="seriesPieAttack"
-      :color="colorPie"
-      :legendText="legendTextPieAttack"
-      v-loading="loading"
-      v-else
-    />
+      <h3 class="topfont">
+        {{t('攻击类型占比', 'WAF.gjlxzb')}}
+        <span style="color:#bbb;">(次)</span>
+      </h3>
+      <el-row class="empty" v-if="seriesPieAttack.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+      <EPie
+        :series="seriesPieAttack"
+        :color="colorPie"
+        :legendText="legendTextPieAttack"
+        v-loading="loading"
+        v-else
+      />
     </el-col>
   </el-row>
 </template>
