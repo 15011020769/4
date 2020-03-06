@@ -79,7 +79,7 @@
                   type="text"
                   size="small"
                 >
-                  {{ $t("DDOS.Automatic_unsealing." + scope.row.ActionType) }}
+                  解封
                 </el-button>
               </template>
             </el-table-column>
@@ -120,8 +120,8 @@ export default {
       tableDatalist: [],
       loading: true,
       doalogRenewModel: false, // 解封弹框
-      dataUnsealingIP: '',
-      dataUnsealingStatus: ''
+      dataUnsealingIP: ''
+
     }
   },
   components: {
@@ -136,7 +136,6 @@ export default {
     RenewModel (val) {
       this.doalogRenewModel = true
       this.dataUnsealingIP = val.Ip
-      this.dataUnsealingStatus = val.ActionType
     },
     // 解封弹框关闭按钮
     closeRenewModel (isShow) {
@@ -150,8 +149,9 @@ export default {
         Version: '2018-07-09',
         Region: localStorage.getItem('regionv2'),
         Ip: this.dataUnsealingIP,
-        ActionType: this.dataUnsealingStatus // 解封类型
+        ActionType: 'user'
       }
+      console.log(params, 'params')
       this.axios.post(Create_UnblockIp, params).then(res => {
         if (res.Response.Error === undefined) {
           this.describeIpBlockList()
