@@ -628,7 +628,7 @@
 
   .demo-table-expand>>>.el-form-item__label {
     font-size: 12px;
-    width: 80px;
+    width: 110px;
   }
 
   .demo-table-expand>>>.el-form-item__content span {
