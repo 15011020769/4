@@ -30,6 +30,14 @@ export default new Router({
       }
     },
     {
+      path: '/colonyMonitor', // 集群监控
+      name: 'colonyMonitor',
+      component: () => import('./colony/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/create', // 创建集群
       name: 'clusterCreate',
       component: () => import('./colony/create.vue'),
