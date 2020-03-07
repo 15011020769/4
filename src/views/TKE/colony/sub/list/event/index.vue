@@ -196,7 +196,6 @@ export default {
   },
 
   created() {
-    // this.getEventList();
     this.nameSpaceList();
     this.refresh();
   },
@@ -300,33 +299,46 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
-          this.total = mes.items.length;
-          if (mes.items != []) {
-            this.nameFlag = false;
-          }
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+        var mes = JSON.parse(res.Response.ResponseBody);
+        this.list = mes.items;
+        this.total = mes.items.length;
+        if (mes.items != []) {
+          this.nameFlag = false;
         }
+        this.loadShow = false;
+        // if (res.Response.Error === undefined) {
+        // } else {
+        //   let ErrTips = {};
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
       //       Method: "GET"
       // Path: "/api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=CronJob&limit=20"
       // Version: "2018-05-25"
       // ClusterName: "cls-h3phnkpy"
+
+      // var params = {
+      //   Method: "GET",
+      //   Path:
+      //     "/apis/apps/v1beta2/namespaces/" +
+      //     this.nsValue +
+      //     "/events？fieldSelector=involvedObject.kind=" +
+      //     this.typeValue +
+      //     "b&limit=20",
+      //   ClusterName: this.$route.query.clusterId,
+      //   Version: "2018-05-25"
+      // };
+      // /api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=CronJob&limit=20
       var params = {
         Method: "GET",
         Path:
-          "/apis/apps/v1beta2/namespaces/" +
+          "/api/v1/namespaces/" +
           this.nsValue +
           "/events？fieldSelector=involvedObject.kind=" +
           this.typeValue +
@@ -335,21 +347,21 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody);
-          this.list = mes.items;
-          this.total = mes.items.length;
-          this.loadShow = false;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
+        var mes = JSON.parse(res.Response.ResponseBody);
+        this.list = mes.items;
+        this.total = mes.items.length;
+        this.loadShow = false;
+        // if (res.Response.Error === undefined) {
+        // } else {
+        //   let ErrTips = {};
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
       });
     },
     // 分页
