@@ -109,7 +109,7 @@
                       <div>
                         <span style="font-size:18px; font-weight:700">{{item.n1||'--'}}</span>
                         <span class="font-small" style="color:black;"
-                          >&nbsp;内存利用率</span
+                          >&nbsp;{{$t('TKE.overview.nclyl')}}</span
                         >
                       </div>
                       <div class="font-small" style="margin-top:10px;">

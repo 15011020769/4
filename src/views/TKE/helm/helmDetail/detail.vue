@@ -2,34 +2,34 @@
     <div class="room">
         <div class="room-padding" v-if="this.Data&&this.info">
             <el-card >
-                <h3>基本信息</h3>
+                <h3>{{$t('TKE.overview.jbxx')}}</h3>
                  <el-form  class="tke-form top"  label-position='left' label-width="120px" size="mini">
-                    <el-form-item label="Helm名称">
+                    <el-form-item :label="$t('TKE.overview.helmmc')">
                         <div class="tke-form-item_text">{{info.name}}</div>
                     </el-form-item>
-                    <el-form-item label="所属命名空间">
+                    <el-form-item :label="$t('TKE.overview.ssmmkj')">
                         <div class="tke-form-item_text">{{info.namespace}}</div>
                     </el-form-item>
                     <el-form-item label="Helm描述">
                         <div class="tke-form-item_text">{{Data.chart.metadata.description}}</div>
                     </el-form-item>
-                    <el-form-item label="首次部署时间">
+                    <el-form-item :label="$t('TKE.overview.scbssj')">
                         <div class="tke-form-item_text">{{info.info.first_deployed|creationTimestamps}}</div>
                     </el-form-item>
-                    <el-form-item label="最后一次部署时间">
+                    <el-form-item :label="$t('TKE.overview.zhbssj')">
                         <div class="tke-form-item_text">{{info.info.last_deployed|creationTimestamps}}</div>
                     </el-form-item>
                 </el-form>
             </el-card>
             <el-card class="top">
-                <h3>资源列表</h3>
+                <h3>{{$t('TKE.overview.zylb')}}</h3>
                  <el-table
                     style="width: 100%"
                     class="top"
                     :data="tableDate">
                     <el-table-column
                         prop="resource"
-                        label="资源"
+                        :label="$t('TKE.overview.zy')"
                         max-width="33%">
                         <template slot-scope="scope" >
                             <a style="cursor:pointer;" @click="getJump(scope.row)" v-if="scope.$index!=3">{{scope.row.resource}}</a>
@@ -38,7 +38,7 @@
                     </el-table-column>
                     <el-table-column
                         prop="type"
-                        label="类型"
+                        :label="$t('TKE.overview.lx')"
                         max-width="33%">
                     </el-table-column>
                     <el-table-column
@@ -46,21 +46,21 @@
                         max-width="34%"
                         prop="yaml">
                         <template slot-scope="scope" >
-                            <a style="cursor:pointer;" @click="getYaml(scope.row.yaml)">查看YAML</a>
+                            <a style="cursor:pointer;" @click="getYaml(scope.row.yaml)">{{$t('TKE.overview.ckyaml')}}</a>
                         </template>
                     </el-table-column>
                  </el-table>
             </el-card>
             <el-card class="top" v-show="see">
-                <h3>自定义参数列表</h3>
+                <h3>{{$t('TKE.overview.zdycslb')}}</h3>
                 <div class="top">
                     <div class="background" ><p v-for="(item,index) in count" :key="index" style="color:white">{{index+1}}&nbsp{{item}}</p></div>
                 </div>
             </el-card>
             <el-card class="top" v-if="info">
-                <h3>资源状态</h3>
+                <h3>{{$t('TKE.overview.zyzt')}}</h3>
                 <div  class="pose">
-                    <span>自动刷新</span><el-switch v-model="flag" ></el-switch>
+                    <span>{{$t('TKE.overview.zdsx')}}</span><el-switch v-model="flag" ></el-switch>
                 </div>
                 <div class="top">
                     <div class="background">
@@ -72,7 +72,7 @@
             </el-card>
         </div>
         <el-dialog
-            title="查看YAML"
+            :title="$t('TKE.overview.ckyaml')"
             :visible.sync="centerDialogVisible"
             width="60%"
             >
