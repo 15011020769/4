@@ -404,7 +404,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+          workload:'deployments'
         }
       });
       sessionStorage.setItem('namespace',rowData.metadata.namespace)
@@ -416,7 +417,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       });
     },
@@ -428,6 +430,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
@@ -439,6 +442,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
@@ -450,7 +454,8 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
-          rowData:rowData
+          rowData:rowData,
+           workload:'deployments'
         }
       })
     },

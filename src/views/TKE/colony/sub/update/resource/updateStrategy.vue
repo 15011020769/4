@@ -209,6 +209,7 @@ export default {
       clusterId:'',
       name:'',
       spaceName:'',
+      workload:'',
     };
   },
   components: {
@@ -218,6 +219,7 @@ export default {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
      this.spaceName=this.$route.query.spaceName;
+     this.workload=this.$route.query.workload
      this.findNodeData();
      this.findNode();
      this.baseData()
@@ -232,7 +234,7 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
         RequestBody:{
           spec:{
             template:{
@@ -356,7 +358,7 @@ export default {
     baseData(){
         var params={
               Method: "GET",
-              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +
+              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
                 this.name,
               Version: "2018-05-25",
               ClusterName: this.clusterId
@@ -522,9 +524,6 @@ export default {
         };
         this.needCondition.push(obj)
     },
-    labelKeyOver(val){
-      console.log(1)
-    }
   }
 };
 </script>

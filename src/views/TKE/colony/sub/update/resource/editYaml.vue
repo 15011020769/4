@@ -82,6 +82,7 @@ export default {
       clusterId:'',
       name:'',
       spaceName:'',
+      workload:'',
       rowData:{},//路由接受对象
     };
   },
@@ -92,7 +93,8 @@ export default {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
      this.spaceName=this.$route.query.spaceName;
-     this.rowData=this.$route.query.rowData
+     this.rowData=this.$route.query.rowData;
+     this.workload=this.$route.query.workload
      console.log(this.rowData)
      this.baseYamlData()
      this.baseData()
@@ -109,7 +111,7 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/yaml",
         Method: "PUT",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
         Version: "2018-05-25",
         RequestBody:this.yamlInfo
       }
@@ -144,23 +146,12 @@ export default {
       })
 
     },
-    baseData(){
-      var params={
-          Method: "GET",
-          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
-          Version: "2018-05-25",
-          ClusterName: this.clusterId
-      }
-      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-        console.log(res)
-      })
-    },
     baseYamlData(){
       var params={
         Accept: "application/yaml",
         ClusterName: this.clusterId,
         Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
         Version: "2018-05-25",
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
