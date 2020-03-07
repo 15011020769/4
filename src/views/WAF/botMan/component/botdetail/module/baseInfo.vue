@@ -69,32 +69,41 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话平均速度', 'WAF.hhpjsd')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.avg_speed}}{{t('次/分钟', 'WAF.cfz')}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.avg_speed}}{{t('次/分钟', 'WAF.cfz')}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话窗口速度', 'WAF.hhcksd')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.win_speed}}{{t('次/分钟', 'WAF.cfz')}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.win_speed}}{{t('次/分钟', 'WAF.cfz')}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话起始时间', 'WAF.hhqssj')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].start_ts | formatMillisecond}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].start_ts | formatMillisecond}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('最新检测时间', 'WAF.zxjcsh')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].timestamp | formatMillisecond}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].timestamp | formatMillisecond}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话存在', 'WAF.hhcz')}}Robots.txt</span></el-col>
           <el-col :span="14">
             <span class="rightFont">
-              <!-- {{recordDetail[0].stat.req_analyze_res.req_robots_exist ? "是" : "否"}} -->
               {{recordDetail[0].stat.req_analyze_res.req_robots_exist | fromatValue}}
             </span>
           </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('会话持续时间', 'WAF.hhcxsj')}}</span></el-col>
-          <el-col :span="14"><span class="addRed">{{recordDetail[0].session_duration | formatSessionDuration}}</span></el-col>
+          <el-col :span="14">
+            <span class="addRed">{{recordDetail[0].session_duration | formatSessionDuration}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('敏感接口访问', 'WAF.mgjkfw')}}</span></el-col>
@@ -131,7 +140,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('BOT类型', 'WAF.botlx')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{BOTS_TYPES_CFG[recordDetail[0].bot_type]}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{BOTS_TYPES_CFG[recordDetail[0].bot_type]}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">BOT得分</span></el-col>
@@ -139,7 +150,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{botLabel}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{fromatBOTInfos(recordDetail[0].rule_name)}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{fromatBOTInfos(recordDetail[0].rule_name)}}</span>
+          </el-col>
         </el-row>
          <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('动作', 'WAF.dz')}}</span></el-col>
@@ -164,7 +177,6 @@
       <el-col :span="8" class="wrapperCol" v-if="recordDetail.length">
         <el-row>
           <h3 class="botTitle">
-            <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
             IP{{t('基础信息', 'WAF.jcxx')}}  
           </h3>
         </el-row>
@@ -189,19 +201,33 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('类型', 'WAF.lx')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{formatIpType(recordDetail[0].ip_info.ip_type)}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{formatIpType(recordDetail[0].ip_info.ip_type)}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('运营商', 'WAF.yys')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.province}}&nbsp;{{recordDetail[0].ip_info.operator}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].ip_info.province}}&nbsp;{{recordDetail[0].ip_info.operator}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP{{t('地区', 'WAF.dq')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.country}}&nbsp;{{recordDetail[0].ip_info.city ? recordDetail[0].ip_info.city: ""}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].ip_info.country}}&nbsp;{{recordDetail[0].ip_info.city ? recordDetail[0].ip_info.city: ""}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">IP所有者</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.detail == "" ? "空" : recordDetail[0].ip_info.detail}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].ip_info.detail == "" ? "空" : recordDetail[0].ip_info.detail}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('经度', 'WAF.jingdu')}}</span></el-col>
@@ -209,21 +235,28 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('维度', 'WAF.wd')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.dimensionality}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].ip_info.dimensionality}}</span>
+          </el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
-            <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
             UA信息
           </h3>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].stat.ua_analyze_res.ua_exist | fromatValue}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA存在比</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_valid_rate}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_valid_rate}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA{{t('种类', 'WAF.zl')}}</span></el-col>
@@ -231,41 +264,56 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA{{t('类型', 'WAF.lx')}}</span></el-col>
-          <el-col :span="14"><span class="addRed">{{formatUaType(recordDetail[0].stat.ua_analyze_res.ua_type)}}</span></el-col>
+          <el-col :span="14">
+            <span class="addRed">{{formatUaType(recordDetail[0].stat.ua_analyze_res.ua_type)}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA{{t('随机性指数', 'WAF.sjxzs')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_kind_random_rate}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_kind_random_rate}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('出现', 'WAF.cx')}}最多的UA</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_max}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_max}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('公开BOT伪造', 'WAF.gkbotwz')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_not_match_ip | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.ua_not_match_ip | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
-            <!-- {{t('访问类型占比', 'WAF.fwlxzb')}} -->
             其他HTTP{{t('头部信息', 'WAF.tbxx')}}
           </h3>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.http_header.accept_exist | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept-Language存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_language_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.http_header.accept_language_exist | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Accept-Encoding存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.accept_encoding_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.http_header.accept_encoding_exist | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Connection存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.http_header.connection_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.http_header.connection_exist | fromatValue}}</span>
+          </el-col>
         </el-row>
       </el-col>
       <el-col :span="8" class="wrapperCol" v-if="recordDetail.length">
@@ -292,7 +340,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('参数重复比', 'WAF.cscfb')}}</span></el-col>
-          <el-col :span="14"><span class="addRed">{{recordDetail[0].stat.req_analyze_res.req_query_repeat_rate}}</span></el-col>
+          <el-col :span="14">
+            <span class="addRed">{{recordDetail[0].stat.req_analyze_res.req_query_repeat_rate}}</span>
+          </el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
@@ -324,7 +374,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">COOKIE{{t('滥用', 'WAF.lanyong')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_abuse | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.cookie_analyze_res.cookie_abuse | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row>
           <h3 class="topTitle botTitle">
@@ -333,7 +385,9 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer存在性</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_exist | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_exist | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer存在比</span></el-col>
@@ -349,11 +403,15 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('出现', 'WAF.cx')}}最多的Referer</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_max | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_max | fromatValue}}</span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer{{t('滥用', 'WAF.lanyong')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_abuse | fromatValue}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_abuse | fromatValue}}</span>
+          </el-col>
         </el-row>
       </el-col>
     </el-row>
@@ -527,6 +585,12 @@ export default {
       if (isShow === 'refresh') {
         this.getActioned()
       }
+      this.$message({
+        message: this.t('添加IP黑名单成功，您可以前往IP管理模块查看。', 'WAF.tjipcg'),
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
     },
     // 获取黑白名单列表
     getActioned() {
@@ -538,7 +602,6 @@ export default {
       this.axios.post(DESCRIBE_ACTIONED, params).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           this.ipInfo = Data.Res
-          console.log(Data)
           // console.log(this.ipInfo[0])
           let arr = []
           Data.Res.forEach(item => {
@@ -619,7 +682,7 @@ export default {
       let protocalArr = []
       this.axios.post(DESCRIBE_BOT_RECORD_DETAIL, params).then((resp) => {
         this.generalRespHandler(resp, ({Res}) => {
-          console.log(JSON.parse(Res[0]))
+          // console.log(JSON.parse(Res[0]))
           this.recordDetail.push(JSON.parse(Res[0])) // 基础信息
           const statusTemp = this.recordDetail[0].stat.status
           const methodTemp = this.recordDetail[0].stat.method

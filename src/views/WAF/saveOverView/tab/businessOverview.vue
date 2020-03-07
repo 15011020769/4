@@ -194,6 +194,12 @@ export default {
       this.showModules = [...this.showModulesCopy]
       this.showModules = moduleNames.filter(name => this.showModules.includes(name))
       localStorage.setItem(BUSINESS_SHOWMODULE_KEY, JSON.stringify(this.showModules))
+      this.$message({
+        message: "保存成功",
+        type: "success",
+        showClose: true,
+        duration: 0
+      });
     },
     cancelModuleDisplaySet() {
       this.dialogSetVisible = false
