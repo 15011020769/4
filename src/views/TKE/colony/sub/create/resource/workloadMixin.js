@@ -2,7 +2,6 @@ import { ErrorTips } from '@/components/ErrorTips.js'
 // 实例内容器
 let instanceContent = {
   addInstanceContent: function () {
-    console.log(123)
     this.wl.instanceContent.push({
       name: '', // 名称
       mirrorImg: '', // 镜像
@@ -54,9 +53,11 @@ let instanceContent = {
       editStatus: true // 编辑状态
     })
   },
-  editInstanceContent: function () {
+  editInstanceContent: function (index) {
+    this.wl.instanceContent[index].editStatus = !this.wl.instanceContent[index].editStatus
   },
-  delInstanceContent: function () {
+  delInstanceContent: function (index) {
+    this.wl.instanceContent.splice(index, 1)
   }
 }
 

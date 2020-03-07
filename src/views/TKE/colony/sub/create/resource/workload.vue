@@ -155,7 +155,24 @@
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例内容器</label>
             <div style="margin-left: 120px">
               <div v-for="(v,i) in wl.instanceContent" :key="i">
-                <div v-show="v.completed" class="case-content" style="margin-bottom: 18px">
+                <div v-show="v.editStatus" class="case-content" style="margin-bottom: 18px">
+                  <el-form-item style="margin-bottom: 0px">
+                    <div style="float: right">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                        <i class="el-icon-check"
+                           style="font-size:20px;margin-left:20px;"
+                           :style="{cursor: v.completed?'pointer':'no-drop'}"
+                           @click="v.completed?editInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                        <i class="el-icon-close"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                    </div>
+                  </el-form-item>
                   <el-form-item label="名称">
                     <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
                     <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
@@ -448,9 +465,27 @@
                     </el-button>
                   </div>
                 </div>
-                <div v-show="!v.completed" class="case-content" style="margin-bottom: 18px"></div>
+                <div v-show="!v.editStatus" class="case-content" style="margin-bottom: 18px">
+                  <el-form-item style="margin-bottom: 0px" label-width="0px">
+                    <div style="float: left">{{v.name}} ({{v.mirrorImg}}) </div>
+                    <div style="float: right">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                        <i class="el-icon-edit-outline"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="v.completed?editInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                        <i class="el-icon-close"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                    </div>
+                  </el-form-item>
+                </div>
               </div>
-              <p class="addcontent" @click="isAddContainer?addInstanceContent():''">添加容器</p>
+              <p class="addcontent" :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent():''">添加容器</p>
               <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
             </div>
           </div>
