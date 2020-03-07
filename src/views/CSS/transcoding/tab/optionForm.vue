@@ -117,7 +117,7 @@ export default {
         );
       }
       callback();
-      ƒ;
+
     };
 
     return {

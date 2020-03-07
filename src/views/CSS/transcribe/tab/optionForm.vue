@@ -200,7 +200,7 @@ export default {
         if (
           parameters["HlsSpecialParam.FlowContinueDuration"] >
           maxHLSFlowContinueDuration ||
-          parameters["HlsSpecialParam.FlowContinueDuration"] >= 0
+          parameters["HlsSpecialParam.FlowContinueDuration"] < 0
         ) {
           this.$message.error("HLS續錄超時時長範圍0~300秒");
           return false;
@@ -335,7 +335,7 @@ export default {
 
           if (this.tableParams[key].StorageTime) {
             this.tableParams[key].StorageTime =
-              this.tableParams[key].StorageTime / 60 / 24;
+              this.tableParams[key].StorageTime / 3600 / 24;
           }
         });
       }

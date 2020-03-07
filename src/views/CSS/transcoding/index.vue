@@ -60,9 +60,13 @@ export default {
       selectItem: {},
       selectIndex: 0,
       modalVisible: false,
-      loading: true,
-      showRight: false
+      loading: true
     };
+  },
+  computed: {
+    showRight: function() {
+      return this.configList.length > 0 || this.formShow === true;
+    }
   },
   components: {
     HeaderCom,
@@ -79,7 +83,6 @@ export default {
     _add() {
       this.selectItem = {};
       this.formShow = true;
-      this.showRight = true;
     },
 
     _close() {
@@ -87,20 +90,16 @@ export default {
     },
 
     _cancel() {
-
       this.formShow = false;
 
       if (this.configList.length === 0) {
-        this.showRight = false;
         return;
       }
 
       this.selectItem = this.configList[this.selectIndex];
-      this.showRight = true;
     },
 
     handleDelete() {
-
       if (this.configList.length === 0) {
         return;
       }
@@ -143,11 +142,9 @@ export default {
             if (result.length > 0) {
               this.configList = result;
               this.selectItem = this.configList[0];
-              this.showRight = true;
             } else {
               this.configList = [];
               this.selectItem = {};
-              this.showRight = false;
             }
             return;
           }
