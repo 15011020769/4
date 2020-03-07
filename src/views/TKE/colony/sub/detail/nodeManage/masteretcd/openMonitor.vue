@@ -66,7 +66,70 @@
         </div>
         <div class="box-bottom-right">
           <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="事件" name="first">事件</el-tab-pane>
+            <el-tab-pane label="事件" name="first">
+                <!-- option = {
+                    title: {
+                        text: '折线图堆叠'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '邮件营销',
+                            type: 'line',
+                            stack: '总量',
+                            data: [120, 132, 101, 134, 90, 230, 210]
+                        },
+                        {
+                            name: '联盟广告',
+                            type: 'line',
+                            stack: '总量',
+                            data: [220, 182, 191, 234, 290, 330, 310]
+                        },
+                        {
+                            name: '视频广告',
+                            type: 'line',
+                            stack: '总量',
+                            data: [150, 232, 201, 154, 190, 330, 410]
+                        },
+                        {
+                            name: '直接访问',
+                            type: 'line',
+                            stack: '总量',
+                            data: [320, 332, 301, 334, 390, 330, 320]
+                        },
+                        {
+                            name: '搜索引擎',
+                            type: 'line',
+                            stack: '总量',
+                            data: [820, 932, 901, 934, 1290, 1330, 1320]
+                        }
+                    ]
+                }; -->
+            </el-tab-pane>
             <el-tab-pane label="CPU" name="second">CPU</el-tab-pane>
             <el-tab-pane label="内存" name="third">内存</el-tab-pane>
             <el-tab-pane label="网络" name="fourth">网络</el-tab-pane>
@@ -134,7 +197,7 @@ export default {
             onClick(picker) {
               const end = new Date();
               const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
               picker.$emit("pick", [start, end]);
             }
           }
@@ -157,12 +220,22 @@ export default {
         this.InstancesAll = []
         this.list=[]
         this.getNodeList()
-        this.getNodeJob()
       }
     },
-    // value2(val){
-    //   // console.log(new.Date(val[0]),val[1])
-    // }
+    value2(val){
+      if(this.isCollapse == "k8s_pod"){
+        this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.getPodList()
+      } else {
+        this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.list=[]
+        this.getNodeList()
+      }
+    }
   },
   created() {
     let{ title, clusterId } = this.$route.query
@@ -170,8 +243,8 @@ export default {
     this.title = title
     // this.pickerOptions.shortcuts[0].onClick(picker)
     this.getNodeList()
-    this.getNodeJob()
-    // this.getDataJob()
+    
+    // this.getPodJob()
     // this.GetNode()
   },
   methods: {
@@ -262,8 +335,9 @@ export default {
             }
             this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
             this.valueLast = this.value.split("|")
-            // this.getDataJob()
+            // this.getPodJob()
             console.log(this.podData)
+            this.getNodeJob()
           }
         } else {
           this.loadShow = false;
@@ -299,12 +373,12 @@ export default {
           this.checkedInstances = dataPod
           this.instances =  dataPod
           this.InstancesAll = dataPod
-          this.getDataJob()
+          this.getPodJob()
         }
       })
     },
 
-    getDataJob(){
+    getPodJob(){
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
@@ -346,16 +420,20 @@ export default {
       param["GroupBys.0"] = "timestamp(60s)";
       param["GroupBys.1"] = "pod_name";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          console.log(res)
+        //   console.log(res)
         if(res.Response.Error === undefined) {
-            console.log(res.Response.JobId)
+            // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-            this.getResult()
-
+             if(this.value2){
+                setTimeout(()=>{
+                    this.getResult()
+                },4000)
+            }
         }
       })
     },
     getNodeJob(){
+        console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
@@ -381,13 +459,19 @@ export default {
       param["Fields.8"] = "max(k8s_node_tcp_curr_estab)";
       param["Fields.9"] = "max(k8s_node_rate_gpu_used)";
       param["Fields.10"] = "max(k8s_node_rate_gpu_memory_used)";
+      param["GroupBys.0"] = "timestamp(60s)";
+      param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
           console.log()
           console.log(res)
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-            this.getResult()
+             if(this.value2){
+                setTimeout(()=>{
+                    this.getResult()
+                },4000)
+            }
         }
       })
     },
@@ -399,8 +483,9 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+        //   console.log(res)
         if(res.Response.Error === undefined) {
-          console.log(res.Response.Data)
+          console.log(JSON.parse(res.Response.Data))
         }
       })
     },

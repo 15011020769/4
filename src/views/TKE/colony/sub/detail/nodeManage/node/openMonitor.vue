@@ -399,8 +399,10 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+          console.log(res)
         if(res.Response.Error === undefined) {
-          console.log(res.Response.Data)
+        //   console.log(JSON.stringify(res.Response.Data[0]))
+        // console.log(res.Response.Data)
         }
       })
     },
