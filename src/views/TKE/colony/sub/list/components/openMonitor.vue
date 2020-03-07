@@ -42,7 +42,7 @@
                 v-for="item in podData"
                 :key="item.InstanceId"
                 :label="item.InstanceId+'('+item.InstanceName+')'"
-                :value="item.PrivateIpAddresses"
+                :value="item.PrivateIpAddresses+'|'+item.InstanceId"
               ></el-option>
             </el-select>
           </div>
@@ -106,6 +106,7 @@ export default {
       isFlag:true,
       list:[],
       podData:[],
+      valueLast:"",
       pickerOptions: {
         shortcuts: [
           {
@@ -155,6 +156,9 @@ export default {
         this.InstancesAll = []
         this.getNodeList()
       }
+    },
+    value2(val){
+      // console.log(new.Date(val[0]),val[1])
     }
   },
   created() {
@@ -163,6 +167,7 @@ export default {
     this.title = title
     // this.pickerOptions.shortcuts[0].onClick(picker)
     this.getNodeList()
+    // this.getDataJob()
     // this.GetNode()
   },
   methods: {
@@ -193,7 +198,9 @@ export default {
       this.$emit("setTime", this.value2);
     },
     getChange(val){
-      this.value = val
+      console.log(val)
+      this.valueLast = val.split("|")
+      console.log(this.valueLast)
       this.getPodList()
     },
     // getPod(val){
@@ -242,6 +249,7 @@ export default {
         if(nodeRes.Response.Error === undefined) {
           // this.loadShow = false;
           this.podData = []
+          // 数据合并
           if(nodeRes.Response.InstanceSet.length > 0) {
             console.log(nodeRes.Response.InstanceSet)
             for(let i in ids){
@@ -255,22 +263,28 @@ export default {
                 }  
               }
             }
-            this.value = this.podData[0].PrivateIpAddresses
-            // if(ids.length!= this.podData.length){
-            //    for(let i in ids){
-            //      this.podData.filter(item=>{
-            //        if(item.InstanceId.indexof(ids[i])===-1){
-            //           this.podData.push({
-            //             InstanceId:ids[i],
-            //             InstanceName:""
-            //           })
-            //           return
-            //        }
-            //      })
-            //    }
+            // let arr = [];
+            // for(let i =0; i< ids.length; i++) {
+            //   debugger
+            //   for(let j =0; j< nodeRes.Response.InstanceSet.length; j++) {
+            //     debugger
+            //     let c = {};
+            //     if(ids[i] === nodeRes.Response.InstanceSet[j].InstanceId) {
+            //       c.id = ids[i];
+            //       c.name = nodeRes.Response.InstanceSet[j].InstanceName;
+            //       ids.splice(i, 1);
+            //     } else {
+            //       c.id = ids[i];
+            //       c.name = '';
+            //       ids.splice(i, 1);
+            //     }
+            //     arr.push(c);
+            //   }
             // }
+            // console.log(arr,222)
+            this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
+            this.valueLast = this.value.split("|")
             console.log(this.podData)
-            // console.log(this.podData)
           }
         } else {
           this.loadShow = false;
@@ -291,7 +305,7 @@ export default {
       this.list = [];
       const param = {
         Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.value+'&limit=50',
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast[0]+'&limit=50',
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
@@ -306,26 +320,81 @@ export default {
           this.checkedInstances = dataPod
           this.instances =  dataPod
           this.InstancesAll = dataPod
+          this.getDataJob()
         }
       })
     },
 
-    // getDataJob(){
-    //    const param = {
-    //     Conditions: ["["tke_cluster_instance_id","=","cls-59yq0hoi"]", "["node_role","!=","Node"]",…]
-    //     EndTime: 1583511737000
-    //     Fields: ["sum(k8s_node_pod_restart_total)", "min(k8s_node_status_ready)", "max(k8s_node_cpu_usage)",…]
-    //     GroupBys: ["timestamp(60s)", "unInstanceId"]
-    //     Limit: 65535
-    //     Module: "/front/v1"
-    //     NamespaceName: "k8s_node"
-    //     Offset: 0
-    //     Order: "asc"
-    //     OrderBy: "timestamp"
-    //     StartTime: 1583508137000
-    //     Version: "2019-06-06"
-    //   }
-    // }
+    getDataJob(){
+       const param = {
+        // Conditions: ["['tke_cluster_instance_id','=',"+this.clusterId+"]", "['unInstanceId','='',"+this.valueLast[1]+"]"],
+        // "Conditions.0":"['tke_cluster_instance_id','=',"+"'"+this.clusterId+"'"+"]",
+        // "Conditions.1":"['unInstanceId','=',"+"'"+this.valueLast[1]+"'"+"]",
+        // "Conditions.0":["tke_cluster_instance_id","=","cls-59yq0hoi"],
+        // "Conditions.1":["tke_cluster_instance_id","=","cls-59yq0hoi"],
+        // EndTime: 1583511737000,
+        // "Fields.0": "min(k8s_pod_status_ready)",
+        // "Fields.1": "max(k8s_pod_cpu_core_used)",
+        // "Fields.2": "max(k8s_pod_rate_cpu_core_used_node)",
+        // "Fields.3": "max(k8s_pod_rate_cpu_core_used_request)",
+        // "Fields.4": "max(k8s_pod_rate_cpu_core_used_limit)",
+        // "Fields.5": "max(k8s_pod_mem_usage_bytes)",
+        // "Fields.6": "max(k8s_pod_mem_no_cache_bytes)",
+        // "Fields.7": "max(k8s_pod_rate_mem_usage_node)",
+        // "Fields.8": "max(k8s_pod_rate_mem_no_cache_node)",
+        // "Fields.9": "max(k8s_pod_rate_mem_usage_request)",
+        // "Fields.10": "max(k8s_pod_rate_mem_no_cache_request)",
+        // "Fields.11": "max(k8s_pod_rate_mem_usage_limit)",
+        // "Fields.12": "max(k8s_pod_rate_mem_no_cache_limit)",
+        // "Fields.13": "max(k8s_pod_network_receive_bytes_bw)",
+        // "Fields.14": "max(k8s_pod_network_transmit_bytes_bw)",
+        // "Fields.15": "max(k8s_pod_network_receive_bytes)",
+        // "Fields.16": "max(k8s_pod_network_transmit_bytes)",
+        // "Fields.17": "max(k8s_pod_network_receive_packets)",
+        // "Fields.18": "max(k8s_pod_network_transmit_packets)",
+        // "Fields.19": "max(k8s_pod_gpu_used)",
+        // "Fields.20": "max(k8s_pod_gpu_memory_used_bytes)",
+        // "Fields.21": "max(k8s_pod_rate_gpu_used_node)",
+        // "Fields.22": "max(k8s_pod_rate_gpu_memory_used_node)",
+        // "Fields.23": "max(k8s_pod_rate_gpu_used_request)",
+        // "Fields.24": "max(k8s_pod_rate_gpu_memory_used_request)",
+        // // GroupBys: ["timestamp(60s)", "unInstanceId"],
+        // "GroupBys.0": "timestamp(60s)",
+        // "GroupBys.1": "unInstanceId",
+        // Limit: 65535,
+        // Module: "/front/v1",
+        // NamespaceName: "k8s_node",
+        // Offset: 0,
+        // Order: "asc",
+        // OrderBy: "timestamp",
+        // StartTime: 1583508137000,
+        // Version: "2019-06-06"
+        EndTime: 1583511737000,
+        NamespaceName: "k8s_node",
+        Offset: 0,
+        Order: "desc",
+        OrderBy:"timestamp",
+        Module:"/font/v1",
+        StartTime: 1583508137000,
+        "Fields.0":"timestamp",
+        "Fields.1":"avg(k8s_cluster_cpu_core_total)",
+        Limit:10,
+        "GroupBys.0":"timestamp"
+      }
+      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+        if(res.Response.Error === undefined) {
+          console.log(JSON.parse(res.Response.ResponseBody))
+          // JSON.parse(res.Response.ResponseBody)
+          // let dataPod = []
+          // dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
+          //   return item.metadata.name
+          // })
+          // this.checkedInstances = dataPod
+          // this.instances =  dataPod
+          // this.InstancesAll = dataPod
+        }
+      })
+    }
     
     // TKE_GETTKEDATAJOB
     // GetNode () { 
