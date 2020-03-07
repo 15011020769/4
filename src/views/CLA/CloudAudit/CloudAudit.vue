@@ -245,7 +245,8 @@
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
-          Region: localStorage.getItem("regionv2"),
+          // Region: localStorage.getItem("regionv2"),
+          Region: 'ap-guangzhou',
           EndTime: this.nowtime,
           StartTime: this.oldTime,
           MaxResults: this.MaxResults
