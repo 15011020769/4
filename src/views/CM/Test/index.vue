@@ -116,7 +116,6 @@
         ],
         time: [1, 2, 3, 4, 5, 6, 7],
         series: [{
-
             type: 'line',
             stack: '总量',
             data: [220, 182, 191, 234, 290, 330, 310]
@@ -128,7 +127,14 @@
             data: [150, 232, 201, 154, 190, 330, 410]
           },
         ],
-        period: '10'
+        period: '10',
+        shuian: [{
+          name: 'Pod重启次数',
+          id: 'podid',
+          danwei: '(次)',
+          y: [2, 244, 52, 52]
+        }]
+
       }
     },
     components: {
@@ -138,6 +144,15 @@
     methods: {
       GetDat(data) {
         console.log(data)
+        data.forEach(item => {
+          this.shuian.forEach(element => {
+            if (element.id === item.id && item.podid == element.podid) {
+              console.log(item)
+              element.y = item.y
+            }
+          });
+
+        });
       }
     },
   }

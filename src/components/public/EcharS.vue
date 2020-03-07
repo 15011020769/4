@@ -113,7 +113,7 @@
             y: "bottom"
           },
           grid: {
-            x: 50,
+            x: 100,
             y: 45,
             x2: 5,
             y2: 20,
@@ -163,7 +163,7 @@
 
   #id {
     min-width: 500px;
-    min-height: 120px;
+    min-height: 300px;
     height: 100%;
   }
 
