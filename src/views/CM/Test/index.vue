@@ -2,10 +2,13 @@
   <div>
     <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'D'"
       v-on:switchData="GetDat" />
+
+    <EcharS :time='time' :series='series' :period='period' />
   </div>
 </template>
 <script>
   import TimeDropDown from '@/components/public/TimeDropDown'
+  import EcharS from '@/components/public/EcharS'
   export default {
     data() {
       return {
@@ -110,11 +113,27 @@
             name: '近30天',
             Time: 'Nearly_30_days',
           },
-        ]
+        ],
+        time: [1, 2, 3, 4, 5, 6, 7],
+        series: [{
+
+            type: 'line',
+            stack: '总量',
+            data: [220, 182, 191, 234, 290, 330, 310]
+          },
+          {
+
+            type: 'line',
+            stack: '总量',
+            data: [150, 232, 201, 154, 190, 330, 410]
+          },
+        ],
+        period: '10'
       }
     },
     components: {
-      TimeDropDown
+      TimeDropDown,
+      EcharS
     },
     methods: {
       GetDat(data) {
