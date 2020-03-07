@@ -3,8 +3,8 @@
     <h4>轉碼配置</h4>
     <el-form
       :model="ruleForm"
-      :rules="rules"
       ref="ruleForm"
+      :rules="rules"
       label-width="120px"
       class="demo-ruleForm"
     >
@@ -20,26 +20,26 @@
           <el-radio v-show="ruleForm.AiTransCode !== '1'" key="voice" label="純音頻" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="範本名稱" prop="TemplateName">
+      <el-form-item label="範本名稱" prop="TemplateName" :show-message="false">
         <el-input
           v-model="ruleForm.TemplateName"
           style="width:330px;"
           :disabled="Object.keys(selectItem).length > 0"
         />
-        <span class="inputTip">仅支持字母、数字组合，请输入3-10个字符</span>
+        <span class="inputTip">僅支持字母、數字組合，請輸入3-10字符</span>
       </el-form-item>
       <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
-        <span class="textTip">仅支持中文、英文、数字、_、-</span>
+        <span class="textTip">僅支持中文、英文、數字、_、-</span>
       </el-form-item>
       <template v-if="selectType !== '純音頻'">
-        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate">
+        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate" :show-message="false">
           <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
-          <span class="textTip">必填，编码范围 100K-8000K,1000K以内仅支持整百填写，1000Kbps以上仅支持整500填写</span>
+          <span class="textTip">必填，編碼範圍 100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫</span>
         </el-form-item>
-        <el-form-item label="影音高度(px)" prop="Height">
+        <el-form-item label="影音高度(px)" prop="Height" :show-message="false">
           <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
-          <span class="textTip">视频高度范围为0-3000，要求为4的倍数，宽度按等比例缩放</span>
+          <span class="textTip">視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
         </el-form-item>
       </template>
       <el-form-item>
@@ -54,7 +54,7 @@
 import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from "../constance";
 import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from '../../components/CSSErrorTips';
+import { CSSErrorTips } from "../../components/CSSErrorTips";
 
 export default {
   name: "optionForm",
@@ -66,60 +66,6 @@ export default {
   },
 
   data() {
-    let checkVideoBitrate = (rule, value, callback) => {
-      if (value.length === 0) {
-        callback(new Error("請輸入影音碼率"));
-      }
-
-      if (value < 100 || value > 8000) {
-        callback(
-          new Error(
-            "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
-          )
-        );
-      }
-
-      if (value >= 100 && value <= 1000) {
-        if (value % 100 !== 0) {
-          callback(
-            new Error(
-              "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
-            )
-          );
-        }
-      } else if (value > 1000 && value <= 8000) {
-        if (value % 500 !== 0) {
-          callback(
-            new Error(
-              "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
-            )
-          );
-        }
-      }
-
-      callback();
-    };
-
-    let checkVideoHeight = (rule, value, callback) => {
-      if (value.length === 0) {
-        callback(new Error("請輸入影音高度"));
-      }
-
-      if (value < 0 || value > 3000) {
-        callback(
-          new Error("視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放")
-        );
-      }
-
-      if (value % 4 !== 0) {
-        callback(
-          new Error("視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放")
-        );
-      }
-      callback();
-
-    };
-
     return {
       form: {
         desc: "", //範本描述
@@ -136,25 +82,10 @@ export default {
       },
 
       rules: {
-        TemplateName: [
-          {
-            required: true,
-            message: "請輸入範本名稱，長度不能超過30個字符",
-            trigger: "blur"
-          },
-          {
-            min: 1,
-            max: 30,
-            message: "請輸入範本名稱，長度不能超過30個字符",
-            trigger: "blur"
-          }
-        ],
-        desc: [
-          { required: false },
-          { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
-        ],
-        Height: [{ validator: checkVideoHeight, trigger: "blur" }],
-        VideoBitrate: [{ validator: checkVideoBitrate, trigger: "blur" }]
+        TemplateName: [{ required: true }],
+        desc: [{ required: false }],
+        Height: [{ required: true }],
+        VideoBitrate: [{ required: true }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -169,31 +100,88 @@ export default {
   },
 
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          // 如果有selectItem则为修改
+    validateForm() {
+      const TemplateNameRegex = /^[a-zA-Z0-9]{3,10}$/;
 
-          const params = Object.assign(this.ruleForm, {
-            Version: "2018-08-01"
-          });
+      if (!TemplateNameRegex.test(this.ruleForm.TemplateName)) {
+        this.$message.error("範本名稱不符合要求");
+        return false;
+      }
 
-          if (this.selectType === "純音頻") {
-            params.Height = 0;
-            params.VideoBitrate = 100;
-          }
+      const descRegex = /^[\w_-]*$/;
 
-          if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId;
-            delete params.AiTransCode;
-            delete params.TemplateName;
-            this.handleUpdate(params);
-            return;
-          }
+      if (!descRegex.test(this.ruleForm.desc)) {
+        this.$message.error("範本名稱不符合要求");
+        return false;
+      }
 
-          this.handleAdd(params);
+      const VideoBitrate = this.ruleForm.VideoBitrate;
+
+      if (VideoBitrate.length === 0) {
+        this.$message.error("請輸入影音碼率");
+        return false;
+      }
+
+      if (VideoBitrate < 100 || VideoBitrate > 8000) {
+        this.$message.error("編碼範圍為100K-8000K");
+        return false;
+      }
+
+      if (VideoBitrate >= 100 && VideoBitrate <= 1000) {
+        if (VideoBitrate % 100 !== 0) {
+          this.$message.error("編碼範圍1000K以內僅支持整百填寫");
+          return false;
         }
+      } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
+        if (VideoBitrate % 500 !== 0) {
+          this.$message.error("編碼範圍1000Kbps以上僅支持整500填寫");
+          return false;
+        }
+      }
+
+      const Height = this.ruleForm.Height;
+
+      if (Height.length === 0) {
+        this.$message.error("請輸入影音高度");
+        return false;
+      }
+
+      if (Height < 0 || Height > 3000) {
+        this.$message.error("影音高度範圍為0-3000");
+        return false;
+      }
+
+      if (Height % 4 !== 0) {
+        this.$message.error("視頻高度要求為4的倍數，寬度按等比例縮放");
+        return false;
+      }
+
+      return true;
+    },
+
+    submitForm(formName) {
+      if (!this.validateForm()) {
+        return;
+      }
+
+      const params = Object.assign(this.ruleForm, {
+        Version: "2018-08-01"
       });
+
+      if (this.selectType === "純音頻") {
+        params.Height = 0;
+        params.VideoBitrate = 100;
+      }
+
+      if (Object.keys(this.selectItem).length) {
+        params.TemplateId = this.selectItem.TemplateId;
+        delete params.AiTransCode;
+        delete params.TemplateName;
+        this.handleUpdate(params);
+        return;
+      }
+
+      this.handleAdd(params);
     },
 
     handleAdd(params) {
