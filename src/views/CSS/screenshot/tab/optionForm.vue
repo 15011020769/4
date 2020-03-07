@@ -69,7 +69,7 @@ export default {
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入模板名稱", trigger: "blur" },
+          { required: true, message: "請輸入範本名稱", trigger: "blur" },
           { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
         ],
         desc: [

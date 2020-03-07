@@ -8,17 +8,17 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="可用模板" prop="template">
+      <el-form-item label="可用範本" prop="template">
         <el-radio-group v-model="ruleForm.template" @change="radioChange">
           <el-radio label="FLV" />
           <el-radio label="MP4" />
           <el-radio label="HLS" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="模板名稱" prop="TemplateName">
+      <el-form-item label="範本名稱" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="模板描述" prop="Description">
+      <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
       <el-form-item label="錄製文件類型">
@@ -101,9 +101,9 @@ export default {
   data() {
     return {
       form: {
-        desc: "", //模板描述
-        template: "", //可用模板
-        name: "" //模板名称
+        desc: "", //範本描述
+        template: "", //可用範本
+        name: "" //範本名称
       },
 
       ruleForm: {
@@ -113,7 +113,7 @@ export default {
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入模板名稱", trigger: "blur" },
+          { required: true, message: "請輸入範本名稱", trigger: "blur" },
           { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
         ],
         desc: [
