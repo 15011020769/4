@@ -173,7 +173,7 @@
         },
         loading: true,
         pagesize: 10,
-        currpage: 1,
+        currpage: 0,
         TotalCount: 0, //函数列表总条数
         SpaceList: [], //命名空间列表下拉
         SpaceListK: [], //命名空间列表管理
@@ -310,7 +310,7 @@
       },
       // 分页
       handleCurrentChange(val) {
-        this.currpage = val;
+        this.currpage = (val - 1) * this.pagesize;
         this._GetFuncList();
       },
       //删除命名空间
