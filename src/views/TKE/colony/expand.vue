@@ -390,7 +390,7 @@
             </div>
           </el-form-item>
           <el-form-item v-show="nodeForm.instanceNameType === 'manual'" style="margin-top: 20px;">
-            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" ></el-input>
+            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" @blur="nameManual(nodeForm.instanceName)" ></el-input>
             <p>实例名称不超过60个字符</p>
           </el-form-item>
           <el-form-item label="登录方式">
@@ -432,6 +432,7 @@
             <el-input
               placeholder="请输入主机密码"
               v-model="nodeForm.password"
+              @blur="PasswordInput(nodeForm.password)"
               show-password
             ></el-input>
             <p>
@@ -447,6 +448,7 @@
             <el-input
               placeholder="请输入主机密码"
               v-model="nodeForm.confirmPassword"
+              @blur="confirmPasswordInput(nodeForm.confirmPassword)"
               show-password
             ></el-input>
           </el-form-item>
@@ -532,7 +534,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="thirdPrev">上一步</el-button>
-          <el-button size="small" type="primary" @click="thirdNext('nodeForm')"
+          <el-button size="small" type="primary" :disabled="nodeForm.isShowathirdNext?true:false" @click="thirdNext('nodeForm')"
             >下一步</el-button
           >
         </div>
@@ -868,6 +870,7 @@ export default {
         totalPrice: '',//报年报月费用
         allocationCost: '',//配置费用
         networkCost: '',//网络费用
+        isShowathirdNext: false,//是否禁用第三步下一步
       },
       rules: {
         container: [
@@ -1329,8 +1332,80 @@ export default {
     changeInternetType() {
       this.costPrice();
     },
+    // 设置密码
+    PasswordInput(val) {
+      if (val == "") {
+        this.$message({
+          message: "密码不能为空",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+        // this.colonyThird.passwordTips = "密码不能为空";
+        // this.colonyThird.passwordWran = true;
+      } else if (val.length < 8 || val.length > 16) {
+        this.$message({
+          message: "密码必须为8到16位",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else if (
+        !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
+          val
+        )
+      ) {
+        this.$message({
+          message: "密码必须包含数字、字母、特殊字符中至少两项",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
+    },
+    //确认密码
+    confirmPasswordInput(val) {
+      if(this.nodeForm.password !== val) {
+        this.$message({
+          message: "两次输入端密码不一致",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
+    },
+    //手动命名
+    nameManual(val) {
+      if(val === '') {
+        this.$message({
+          message: "实例名称不能为空",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else if (val.length > 60) {
+        this.$message({
+          message: "实例名称长度不能超过60个字符",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
+    },
     // ----------------------------------------- 第四步 ---------------------------------------
-    // 第三步 下一步
+    // 第四步 上一步
     fourthPrev() {
       this.secondBox = false;
       this.thirdBox = true;

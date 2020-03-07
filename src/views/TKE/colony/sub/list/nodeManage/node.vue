@@ -13,8 +13,8 @@
         <el-button size="small" @click='toMonitor' >监控</el-button>
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showDeleteModal()">移出</el-button>
-        <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showBlockModal()">封锁</el-button>
-        <el-button size="small" :disabled="this.multipleSelection.length > 0 ? false : true" @click="showUnBlockModal()">解除封锁</el-button>
+        <el-button size="small" :disabled="this.multipleSelection.length > 0 && unBlockadeType? false : true" @click="showBlockModal()">封锁</el-button>
+        <el-button size="small" :disabled="this.multipleSelection.length > 0 && blockadeType? false : true" @click="showUnBlockModal()">解除封锁</el-button>
       </div>
       <!-- 右侧 -->
       <div class="tool">
@@ -43,7 +43,9 @@
         style="width: 100%"
         id="exportTable"
       >
-        <el-table-column type="selection" width="55"> </el-table-column>
+        <el-table-column type="selection" :selectable='checkboxT' disabled='true' width="55" > 
+
+        </el-table-column>
         <el-table-column label="ID/节点名">
           <template slot-scope="scope">
             <span @click="goNodeDetail(scope.row)" class="tke-text-link"
@@ -58,27 +60,28 @@
                 scope.row.status !== 'running' ? 'text-red' : 'text-green'
               ]" >{{scope.row.status | changeStatus}}
             </span>
+            <p v-if="scope.row.unschedulable" class="text-red">已封锁</p>
           </template>
         </el-table-column>
         <el-table-column prop="" label="可用区">
           <template slot-scope="scope">
-            <!-- <el-tooltip effect="light" content="" placement="top"> -->
+            <el-tooltip effect="light" :content="scope.row.Placement.Zone | zone" placement="top">
               <span>{{scope.row.Placement.Zone | zone}}</span>
-            <!-- </el-tooltip> -->
+            </el-tooltip>
           </template>
         </el-table-column>
 
         <el-table-column prop="" label="kubernetes版本">
           <template slot-scope="scope">
-            <el-tooltip effect="light" content="v1.10.5-tke.6" placement="top">
+            <el-tooltip effect="light" :content="scope.row.kubeletVersion" placement="top">
               <span>{{scope.row.kubeletVersion}}</span>
             </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column prop="address" width="200" label="配置">
           <template slot-scope="scope">
-            标准型{{scope.row.InstanceFamily}} <br />
-            {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , 1 Mbps<br />
+            {{scope.row.InstanceType | instanceType}} <br />
+            {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , {{scope.row.InternetAccessible.InternetMaxBandwidthOut}} Mbps<br />
             系统盘: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB 高性能云硬盘<br />
           </template>
         </el-table-column>
@@ -107,22 +110,31 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <p class="tke-text-link" @click="showDeleteModal(scope.row)">移出</p>
-
+            <el-button :disabled="(scope.row.status === 'initializing' || scope.row.status === 'upgrading')?true:false" 
+              class="tke-text-link" type="text" @click="showDeleteModal(scope.row)">移出
+            </el-button>
+            <p ></p>
             <el-dropdown class=" tke-dropdown">
               <span class="el-dropdown-link ">
                 更多<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="a"
-                  ><span class="tke-text-link" @click="showBlockModal(scope.row)">封锁</span></el-dropdown-item
+                <el-dropdown-item command="a">
+                  <el-button :disabled="(scope.row.status === 'initializing' || scope.row.status === 'upgrading') || scope.row.unschedulable ? true : false" 
+                    class="tke-text-link" type="text" @click="showBlockModal(scope.row)">封锁
+                  </el-button>
+                </el-dropdown-item
                 >
-                <el-dropdown-item command="a"
-                  ><span class="tke-text-link" @click="showUnBlockModal(scope.row)">取消封锁</span></el-dropdown-item
-                >
-                <el-dropdown-item command="b"
-                  ><span class="tke-text-link" @click="showExpelDialog(scope.row)">驱逐</span></el-dropdown-item
-                >
+                <el-dropdown-item command="a">
+                  <el-button :disabled="(scope.row.status === 'initializing' || scope.row.status === 'upgrading') || !scope.row.unschedulable?true:false" 
+                    class="tke-text-link" type="text" @click="showUnBlockModal(scope.row)">取消封锁
+                  </el-button>
+                </el-dropdown-item>
+                <el-dropdown-item command="b">
+                  <el-button :disabled="(scope.row.status === 'initializing' || scope.row.status === 'upgrading')?true:false" 
+                    class="tke-text-link" type="text" @click="showExpelDialog(scope.row)">驱逐
+                  </el-button>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -243,6 +255,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
 import XLSX from "xlsx";
 import FileSaver from "file-saver";
+import { type } from 'os';
 import { ALL_CITY, NODE_INFO, NODE_LIST, POINT_REQUEST, OBJ_LIST, DELETE_NODE, BLOCK_NODE, 
   NODE_ID_LIST, NODE_POD_LIST, JOB_ID, MOMITOR_TKE } from '@/constants';
 export default {
@@ -270,6 +283,8 @@ export default {
       ChoiceValue: '', //搜索选择
       searchValue: '', //搜索值
       multipleSelection: [],//选中的列表
+      blockadeType: false,//是否显示批量封锁
+      unBlockadeType: false,//是否显示批量取消封锁
       podList: [],
       clusterIds: [],
       instanceId: '',
@@ -323,14 +338,13 @@ export default {
       };
       if(this.ChoiceValue !== '' && this.searchValue !== '') {
         let clusterIds = this.clusterIds;
-        params.InstanceIds = [];
-        clusterIds.map(o => {
-          params.InstanceIds.push(o);
-        })
+        for(let i = 0; i < clusterIds.length; i++) {
+          params["InstanceIds." + i] = clusterIds[i];
+        }
       }
       const res = await this.axios.post(NODE_INFO, params);
       if(res.Response.Error === undefined) {
-        this.loadShow = false;
+        // this.loadShow = false;
         let ids = [];
         if (res.Response.InstanceSet.length > 0) {
           res.Response.InstanceSet.map(obj => {
@@ -373,17 +387,15 @@ export default {
             param['InstanceIds.'+i] = ids[i];
           }
           let k8sNodeList = [];
-          this.loadShow = true;
+          // this.loadShow = true;
           let k8sRes = await this.axios.post(POINT_REQUEST,param1);
           if(k8sRes.Response.Error === undefined) {
             let response = JSON.parse(k8sRes.Response.ResponseBody);
             k8sNodeList = response.items;
-            this.loadShow = false;
+            // this.loadShow = false;
           } else {
             this.loadShow = false;
-            let ErrTips = {
-              
-            };
+            let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
               message: ErrOr[k8sRes.Response.Error.Code],
@@ -401,7 +413,7 @@ export default {
           
           let jobRes22 = await this.axios.post(MOMITOR_TKE, param3);
           
-          this.loadShow = true;
+          // this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
           if(nodeRes.Response.Error === undefined) {
             this.loadShow = false;
@@ -426,7 +438,7 @@ export default {
               this.list = nodeRes.Response.InstanceSet;
               console.log(this.list);
             }
-            this.total = res.Response.TotalCount;
+            this.total = nodeRes.Response.TotalCount;
           } else {
             this.loadShow = false;
             let ErrTips = {
@@ -443,16 +455,14 @@ export default {
         }
       } else {
         this.loadShow = false;
-          let ErrTips = {
-            
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
 
@@ -554,6 +564,12 @@ export default {
       }
       await this.axios.post(BLOCK_NODE, param).then(res => {
         if(res.code === 0) {
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.showUnBlockademodal = false;
           this.getNodeList();
           this.multipleSelection = [];
@@ -585,6 +601,12 @@ export default {
       }
       await this.axios.post(BLOCK_NODE, param).then(res => {
         if(res.code === 0) {
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.showBlockademodal = false;
           this.getNodeList();
           this.multipleSelection = [];
@@ -623,6 +645,12 @@ export default {
       }
       await this.axios.post(DELETE_NODE, param).then(res => {
         if(res.Response.RequestId) {
+          this.$message({
+            message: '移出成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.showDelModal = false;
           this.getNodeList();
           this.multipleSelection = [];
@@ -708,8 +736,6 @@ export default {
     //搜索
     _search() {
       if (this.ChoiceValue !== '' && this.searchValue !== '') {
-        console.log(this.ChoiceValue,"ChoiceValue")
-        console.log(this.searchValue,"searchValue")
         let choiceValue = this.ChoiceValue;
         let searchValue = this.searchValue;
         if(choiceValue === 'name') {
@@ -732,6 +758,7 @@ export default {
           this.getClusterNodeIds(param);
         } else if (choiceValue === 'id') {
           this.clusterIds.push(searchValue);
+          this.getNodeList();
         }
         // this._GetFuncList()
       } else {
@@ -742,6 +769,15 @@ export default {
           duration: 0
         });
       }
+    },
+
+    checkboxT(row,index) {
+      if(row.status === 'initializing' || row.status === 'upgrading') {
+        return 0;
+      } else {
+        return 1;
+      }
+      
     },
 
     // 新建节点跳转
@@ -778,6 +814,18 @@ export default {
     // 全选
     handleSelectionChange(val) {
       this.multipleSelection = val;
+      if(val.length > 0) {
+        for(let i = 0; i < val.length; i++) {
+          if(val[i].unschedulable) {
+            this.blockadeType = true;
+            break;
+          }
+          if(val[i].unschedulable === undefined) {
+            this.unBlockadeType = true;
+            break;
+          }
+        }
+      }
     },
 
     // 详情
@@ -827,6 +875,8 @@ export default {
         return '报年报月';
       } else if(type === 'SPOTPAID') {
         return '按量计费-竞价';
+      } else if (type === 'CDHPAID') {
+        return 'CDH付费';
       }
     },
     //可用区
@@ -834,6 +884,28 @@ export default {
       if(val) {
         if (val.substring(3, val.length - 2) === "taipei") {
           return "台北" + val.substring(val.length - 1, val.length) + "区";
+        }
+      }
+    },
+    //机型
+    instanceType(val) {
+      if(val) {
+        if(val.substring(0,1) === 'S') {
+          return '标准型'+ val.substring(0,2);
+        } else if (val.substring(0,1) === 'M') {
+          return '内存型'+ val.substring(0,2);
+        } else if (val.substring(0,1) === 'C') {
+          return '计算型'+ val.substring(0,2);
+        }
+      }
+    },
+    //系统盘类型
+    diskType(val) {
+      if(val) {
+        if(val === 'CLOUD_SSD') {
+          return 'SSD云硬盘';
+        } else {
+          return '高性能云硬盘';
         }
       }
     }

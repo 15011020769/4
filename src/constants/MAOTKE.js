@@ -14,7 +14,7 @@ export const CLUSTERS_INSTANCES = 'tke2/DescribeCcnInstances'
 export const NODE_INFO = 'tke2/DescribeClusterInstances'
 
 //节点列表
-export const NODE_LIST = 'cvm/DescribeInstances'
+export const NODE_LIST = 'cvm2/DescribeInstances'
 
 //删除节点
 export const DELETE_NODE = 'tke2/DeleteClusterInstances'
