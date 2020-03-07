@@ -26,9 +26,6 @@
           </P>
         </div>
         <div>
-          <!-- <p class="CourseRight">
-            <a href="">Python2.7 开发教程</a>
-          </p> -->
           <p>
             <el-button size="small" @click="_Clone">
               下载代码包
@@ -105,6 +102,20 @@
         </div>
 
       </div>
+
+
+      <div class="functest">
+        <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
+        <el-button size="small">测试</el-button>
+        <span class="testmb">测试当前模板</span>
+        <el-select v-model="testvalue" placeholder="请选择">
+          <el-option v-for="item in modeloptions" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+        <span class="testmb">
+          <el-button type="text" size="small" @click="_newmodel">新建模板</el-button>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -115,7 +126,8 @@
   import {
     SCF_DETAILS,
     LIST_VERSION,
-    CLONE_SCF
+    CLONE_SCF,
+    TEST_MODEL
   } from "@/constants";
   import {
     ErrorTips
@@ -129,7 +141,7 @@
         functionversion: '',
         SubmissionValue: 'Inline', //提交方法
         implementInput: '', //执行方法
-        ScienceValue: 'Python2.7', //运行环境
+        ScienceValue: '', //运行环境
         SubmissionArr: [{ //提交方法数组
             label: '在线编辑',
             value: 'Inline'
@@ -150,11 +162,14 @@
         textarea: '测试',
         input1: '',
         fileBase64zip: '', //zip上传
-        fileBase64clip: '', //文件夹上传
+        fileBase64clip: '',
+        fileBase64clip1: '', //文件夹上传
         input2: '',
         Cosoptions: [],
         cosvalue: '', //cos
         input3: '', //cos路径
+        modeloptions: [], //模板列表
+        testvalue: '',
       }
     },
     created() {
@@ -173,6 +188,7 @@
             this.funDate = res.Response
             this.implementInput = res.Response.Handler
             this.functionversion = res.Response.FunctionVersion
+            this.ScienceValue = res.Response.Runtime
           } else {
             let ErrTips = {
               'InternalError': '內部錯誤',
@@ -251,8 +267,8 @@
           };
         });
       },
+      //上传zip
       filezip(file) {
-        console.log(file)
         let fileName = file.name
         let pos = fileName.lastIndexOf('.')
         let lastName = fileName.substring(pos, fileName.length)
@@ -266,7 +282,6 @@
           this.$message.error('最大支持50M（如果zip大于10M，仅显示入口文件）')
         }
         this.input1 = file.name
-        console.log(file.raw)
         this.getBase64(file.raw).then(resBase64 => {
           this.fileBase64zip = resBase64.split(',')[1] //直接拿到base64信息
         })
@@ -275,31 +290,84 @@
       _fileClip() {
         document.getElementById('webk').click()
       },
+      //上传文件夹
       fileClip(file) {
+        const that = this
         let clip = file.target.files
-        console.log(clip.length)
-        console.log(clip)
-        // this.getBase64(clip).then(resBase64 => {
-        //   this.fileBase64clip = resBase64.split(',')[1] //直接拿到base64信息
-        // })
+        var JSZip = require("jszip");
+        const zip = new JSZip()
+        var FileApi = require('file-save');
+        Array.from(clip).forEach((item) => {
+          const fixedPath = item.name
+          zip.file(fixedPath, item, {
+            compression: 'DEFLATE',
+            compressionOptions: {
+              level: '6'
+            }
+          })
+        })
+        const zipcontent = zip.generateAsync({
+          type: 'blob'
+        }).then(function (content) {
+          return new File([content], 'index.zip')
+        });
+        Promise.resolve(zipcontent)
+        zipcontent.then((result) => {
+          that.fileBase64clip = result
+        }).then((result) => {
+          const isLt = that.fileBase64clip.size / 1024 / 1024 / 100 <= 2.5
+          if (!isLt) {
+            this.$message.error('请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M')
+            return
+          }
+          this.getBase64(this.fileBase64clip).then(resBase64 => {
+            this.fileBase64clip1 = resBase64.split(',')[1] //直接拿到base64信息
+          })
+        })
 
-        // var JSZip = require("jszip");
-        // var zip = new JSZip();
-        // zip.file('sss', '222');
-        // var img = zip.folder("zipllll");
-        // img.file(clip[0].name, clip[0].webkitRelativePath, {
-        //   base64: true
-        // });
-        // zip.generateAsync({
-        //     type: "blob"
-        //   })
-        //   .then(function (content) {
-        //     // see FileSaver.js
-        //     saveAs(content, "example.zip");
-        //   });
 
       },
+      _newmodel() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          TestModelName: 'ceshi',
+          TestModelValue: '123456789',
+        };
+        this.axios.post(TEST_MODEL, param).then(res => {
+          console.log(res)
+          if (res.Response.Error === undefined) {
 
+          } else {
+            let ErrTips = {
+              'InternalError': '内部错误',
+              'InvalidParameterValue': '参数取值错误',
+              'InvalidParameterValue.TestModelName': 'TestModelName传入错误',
+              'InvalidParameterValue.TestModelValue': 'testModelValue长度超限',
+              'LimitExceeded.FunctionTestModel': 'FunctionTestModel数量超出最大限制',
+              'LimitExceeded.TestModel': '同一个函数下测试模版配额个数已达限制',
+              'ResourceInUse.TestModel': '测试模版已存在',
+              'ResourceInUse.TestModelName': 'TestModelName已存在',
+              'ResourceNotFound.Function': '函数不存在',
+              'ResourceNotFound.FunctionName': '函数不存在',
+              'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //保存
+      _Preservation() {
+
+
+      }
 
     }
   }
@@ -307,7 +375,6 @@
 </script>
 <style lang="scss" scoped>
   .CodeContent {
-    height: 500px;
     background-color: #fff;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
     padding: 20px;
@@ -361,13 +428,13 @@
     }
 
     .content {
-      ::v-deep .el-input {
-        width: 200px;
-      }
-
       background: #f2f2f2;
       padding: 20px;
       margin: 20px 0;
+
+      ::v-deep .el-input {
+        width: 200px;
+      }
 
       .ZipFile {
         display: flex;
@@ -385,7 +452,14 @@
       }
     }
 
+    .functest {
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
 
+      .testmb {
+        margin: 0 20px;
+      }
+    }
   }
 
 </style>
