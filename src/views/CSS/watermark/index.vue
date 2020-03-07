@@ -25,11 +25,12 @@
             <li
               v-for="item in configList"
               @click="onSelectRecording(item)"
+              :key="item.WatermarkId"
               :class="selectItem.WatermarkId === item.WatermarkId && 'is-selected'"
             >{{item.WatermarkName}}</li>
           </ul>
         </div>
-        <div class="right">
+        <div class="right" v-show="showRight">
           <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
           <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
         </div>
@@ -43,6 +44,8 @@ import HeaderCom from "@/components/public/Head";
 import OptionForm from "./tab/optionForm";
 import ConfigDetail from "./tab/configDetail";
 import DeleteModal from "./modal/modal";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../components/CSSErrorTips";
 import {
   LIVE_DELETELIVEWATERMARK,
   LIVE_DESCRIBELIVEWATERMARKS
@@ -56,7 +59,8 @@ export default {
       selectItem: {},
       selectIndex: 0,
       modalVisible: false,
-      loading: true
+      loading: true,
+      showRight: false
     };
   },
   components: {
@@ -81,11 +85,24 @@ export default {
     },
 
     _cancel() {
-      this.selectItem = this.configList[this.selectIndex];
+
       this.formShow = false;
+
+      if (this.configList.length === 0) {
+        this.showRight = false;
+        return;
+      }
+
+      this.selectItem = this.configList[this.selectIndex];
+      this.showRight = true;
     },
 
     _delete() {
+
+      if (this.configList.length === 0) {
+        return;
+      }
+
       this.$confirm(
         `${this.$t("CSS.watermark.6")}: ${this.selectItem.WatermarkName}`,
         "删除水印配置",
@@ -101,7 +118,7 @@ export default {
             WatermarkId: this.selectItem.WatermarkId
           })
           .then(data => {
-            if (data.Response.Error == undefined) {
+            if (data.Response.Error === undefined) {
               this.modalVisible = false;
               this.$message({
                 message: "删除成功",
@@ -110,7 +127,8 @@ export default {
               this.fetchRecordingList();
               return;
             }
-            this.$message.error(data.Response.Error.Message);
+            let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+            this.$message.error(ErrOr[data.Response.Error.Code]);
           });
       });
     },
@@ -122,12 +140,21 @@ export default {
           Version: "2018-08-01"
         })
         .then(data => {
-          if (data.Response.Error == undefined) {
-            this.configList = data.Response.WatermarkList;
-            this.selectItem = this.configList[0];
+          if (data.Response.Error === undefined) {
+            const result = data.Response.WatermarkList;
+            if (result.length > 0) {
+              this.configList = result;
+              this.selectItem = this.configList[0];
+              this.showRight = true;
+            } else {
+              this.configList = [];
+              this.selectItem = {};
+              this.showRight = false;
+            }
             return;
           }
-          this.$message.error(data.Response.Error.Message);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
         })
         .then(() => {
           this.loading = false;
@@ -139,7 +166,7 @@ export default {
       this.formShow = false;
       this.selectItem = item;
       this.selectIndex = this.configList.findIndex(
-        _item => item.WatermarkId === _item.WatermarkId
+        tempItem => item.TemplateId === tempItem.TemplateId
       );
     }
   }

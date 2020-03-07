@@ -11,8 +11,7 @@
       <div class="explain">
         <p>
           範本設置完成，需關聯推流域名方可生效，請點擊
-          <router-link to="/domainManagement">域名管理</router-link>
-          進行關聯設置。
+          <router-link to="/domainManagement">域名管理</router-link>進行關聯設置。
           <!-- <a href="#">参考文档</a> -->
           範本配置完後續大約5分鐘生效
         </p>
@@ -20,16 +19,17 @@
       <div class="main-box" v-loading="loading">
         <div class="left">
           <i class="el-icon-plus" @click="_add" />
-          <i class="el-icon-delete" @click="modalVisible=true" />
+          <i class="el-icon-delete" @click="handleDelete" />
           <ul class="recording-list-box">
             <li
               v-for="item in configList"
               @click="onSelectRecording(item)"
+              :key="item.TemplateId"
               :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
             >{{item.TemplateName}}</li>
           </ul>
         </div>
-        <div class="right">
+        <div class="right" v-show="showRight">
           <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
           <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
         </div>
@@ -46,18 +46,7 @@ import ConfigDetail from "./tab/configDetail";
 import DeleteModal from "./modal/modal";
 import { DELETE_CALLBACK_TEMPLATES, GET_CALLBACK_TEMPLATES } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-let ErrTips = {
-  InternalError: "內部錯誤",
-  "InternalError.ArgsNotMatch": "針對添加轉碼範本的接口",
-  InvalidParameter: "參數錯誤",
-  MissingParameter: "缺少參數錯誤",
-  ResourceUnavailable: "資源不可用",
-  UnauthorizedOperation: "未授權操作",
-  "InternalError.ConfInUsed": "範本使用中",
-  "InternalError.ConfNotFound":"範本不存在",
-  "InternalError.ConfOutLimit": "範本數量超過顯示",
-  "InternalError.ConfigNotExist": "配置不存在"
-};
+import { CSSErrorTips } from "../components/CSSErrorTips";
 export default {
   name: "transcribe",
   data() {
@@ -67,7 +56,8 @@ export default {
       selectItem: {},
       selectIndex: 0,
       modalVisible: false,
-      loading: true
+      loading: true,
+      showRight: false
     };
   },
   components: {
@@ -92,10 +82,24 @@ export default {
     },
 
     _cancel() {
-      this.selectItem = this.configList[this.selectIndex];
-      this.formShow = false;
-    },
 
+      this.formShow = false;
+
+      if (this.configList.length === 0) {
+        this.showRight = false;
+        return;
+      }
+
+      this.selectItem = this.configList[this.selectIndex];
+      this.showRight = true;
+    },
+    handleDelete() {
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.modalVisible = true;
+    },
     _delete() {
       this.axios
         .post(DELETE_CALLBACK_TEMPLATES, {
@@ -118,15 +122,23 @@ export default {
     },
 
     fetchRecordingList() {
-      this.loading = true
+      this.loading = true;
       this.axios
         .post(GET_CALLBACK_TEMPLATES, {
           Version: "2018-08-01"
         })
         .then(data => {
           if (data.Response.Error === undefined) {
-            this.configList = data.Response.Templates;
-            this.selectItem = this.configList[0];
+            const result = data.Response.Templates;
+            if (result.length > 0) {
+              this.configList = result;
+              this.selectItem = this.configList[0];
+              this.showRight = true;
+            } else {
+              this.configList = [];
+              this.selectItem = {};
+              this.showRight = false;
+            }
             return;
           }
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -142,7 +154,7 @@ export default {
       this.formShow = false;
       this.selectItem = item;
       this.selectIndex = this.configList.findIndex(
-        _item => item.TemplateId === _item.TemplateId
+        tempItem => item.TemplateId === tempItem.TemplateId
       );
     }
   }
