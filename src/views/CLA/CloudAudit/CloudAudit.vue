@@ -38,9 +38,9 @@
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item :label="$t('CLA.total.fwmy')">
+                <!-- <el-form-item :label="$t('CLA.total.fwmy')">
                   <span>{{ props.row.SecretId }}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="$t('CLA.total.qy')">
                   <span>{{ props.row.EventRegion }}</span>
                 </el-form-item>
