@@ -1,7 +1,11 @@
 <template>
   <div class="Monitor">
-    <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
-      v-on:switchData="GetDat" />
+    <div class="Monitortip">
+      <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+        v-on:switchData="GetDat" />
+      <p @click="_GetBase">刷新</p>
+    </div>
+
     <div class="box-dis">
       <p>
         <i class="el-icon-info"></i>{{$t('SCF.total.zs')}}
@@ -262,6 +266,7 @@
       },
       //获取基础指标详情
       _GetBase() {
+        this.TableLoad = true
         let parms = {
           Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
@@ -341,6 +346,16 @@
     -moz-box-shadow: 0px 3px 3px #c8c8c8;
     box-shadow: 0px 3px 3px #c8c8c8;
     padding: 20px;
+
+    .Monitortip {
+      display: flex;
+      justify-content: space-between;
+
+      p {
+        color: #006eff;
+        cursor: pointer;
+      }
+    }
 
     .box-dis {
       margin-top: 20px;
