@@ -482,19 +482,16 @@
    import SelectMirrorImg from '../../create/resource/components/selectMirrorImg'
    import FileSaver from "file-saver";
    import XLSX from "xlsx";
-   import {
-     ALL_CITY,
-     POINT_REQUEST
-   } from "@/constants";
+   import {TKE_COLONY_QUERY} from '@/constants'
    export default {
      name: "svcCreate",
      data() {
        return {
          loadShow: false,
          dialogFormVisible: false,
-         clusterId: this.$route.query.clusterId,
-         spaceName: this.$route.query.spaceName,
-         name: this.$route.query.name,//路由传过来的工作负载数据
+         clusterId: '',
+         np:'',
+         name: '',//路由传过来的工作负载数据
          // 更新pod数量
          upn: {
            type: '1',
@@ -631,47 +628,43 @@
        SelectMirrorImg
      },
      created() {
-       console.log(this.type)
-      this.getTriggerList();
+        this.clusterId=this.$route.query.clusterId;
+     this.name=this.$route.query.name;
+     this.np=this.$route.query.spaceName;
+     this.baseData()
      },
      methods: {
-       //获取更新pod自动调节触发策略数据
-       async getTriggerList() {
-         this.loadShow = true;
-         let param = {
-            Method: "GET",
-            Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name+"/horizontalpodautoscalers",
-            Version: "2018-05-25",
-            ClusterName: this.clusterId
-         }
 
-        await this.axios.post(POINT_REQUEST, param).then(res => {
-        if(res.Response.Error === undefined) {
-          this.loadShow = false;
-          let response = JSON.parse(res.Response.ResponseBody);
-          // if(response.items.length > 0) {
-          //   response.items.map(deployment => {
-          //     deployment.k8sApp = deployment.metadata.labels && deployment.metadata.labels.k8s,
-          //     deployment.qcloudApp = deployment.metadata.labels && deployment.metadata.labels.qcloud
-          //   });
-          // }
-          console.log(response,"response");
-          // this.list = response.items;
-          // this.total = response.items.lenght;
-        } else {
-          this.loadShow = false;
-          let ErrTips = {
-            
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+      baseData(){
+        var params={
+          Method: "GET",
+          Path:"/apis/apps/v1beta2/namespaces/" +this.np +"/deployments?fieldSelector=metadata.name=" +this.name,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+      }
+      this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
+        console.log(res)
+        if(res.Response.Error === undefined){
+            let response = JSON.parse(res.Response.ResponseBody);
+            // let response = res.Response.ResponseBody;
+            console.log(response)
+            let {items:[{spec:{template:{spec:{containers:[obj]}}}}]}=response;
+            console.log(obj)
+          }else{
+             let ErrTips = {};
+               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+               this.$message({
+                 message: ErrOr[res.Response.Error.Code],
+                 type: "error",
+                 showClose: true,
+                 duration: 0
+               });
+           }
+      })
+    },
+        //返回上一层
+       goBack() {
+         this.$router.go(-1);
        },
        newAddTarget() { //新增指标
          var obj = {
@@ -680,10 +673,6 @@
            size: ''
          }
          this.touchTactics.push(obj)
-       },
-       //返回上一层
-       goBack() {
-         this.$router.go(-1);
        },
        addDataJuan() { //新增数据卷
          this.dataFlag = true;
@@ -719,46 +708,10 @@
        importAddCs(){
            this.upc.caseContent.environmentVar2.push({data1:'',data2:'',data3:'',elseName:''})
        },
-        close(val){
+      close(val){
         this.SelectMirrorImgFlag=val;
         console.log(val)
       },
-      //更新实例数目
-      async updatePodNumber() {
-        this.loadShow = true;
-        let param = {
-          Method: "PATCH",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
-          Version: "2018-05-25",
-          RequestBody: {spec: {replices: this.upn.num}},
-          ContentType: "application/strategic-merge-patch+json",
-          ClusterName: this.clusterId
-        }
-
-        await this.axios.post(POINT_REQUEST, param).then(res => {
-          if(res.Response.Error === undefined) {
-            this.loadShow = false;
-            this.$router.push({
-              name: "colonyResourceDeployment",
-              query: {
-                
-              }
-            });
-          } else {
-            this.loadShow = false;
-            let ErrTips = {
-              
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
-      }  
      },
      watch: {
        upc: {

@@ -51,6 +51,11 @@
         :empty-text="t('暂无数据', 'WAF.zwsj')"
         v-loading="loading"
       >
+        <el-table-column
+          type="selection"
+          class-name="hide"
+          width="1"
+        />
         <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -72,7 +77,12 @@
             </el-form>
           </template>
         </el-table-column>
-        <el-table-column :label="t('请求时间', 'WAF.qqsj')" prop="timestamp" sortable>
+        <el-table-column :label="t('请求时间', 'WAF.qqsj')" prop="timestamp">
+          <el-button type="text" slot="header" style="padding: 0; color: #444;" @click="setSort('timestamp')">
+            {{t('请求时间', 'WAF.qqsj')}}
+            <i class="el-icon-caret-top" v-if="sort === 'timestamp:1'"></i>
+            <i class="el-icon-caret-bottom" v-if="sort === 'timestamp:-1'"></i>
+          </el-button>
           <template slot-scope="scope">
             {{ scope.row.timestamp | formatMillisecond }}
           </template>
@@ -150,6 +160,7 @@ export default {
       condi: "", // select绑定
       condis: [],
       keyword: "",
+      sort: 'timestamp:-1',
       queryCopy: [
         {
           label: 'ua',
@@ -202,12 +213,23 @@ export default {
     },
   },
   methods: {
-    // showInfo() {
-    //   this.infoIcon = true
-    // },
-    // hideInfo() {
-    //    this.infoIcon = false
-    // },
+    setSort(key) {
+      if (this.sort.includes(key)) { // 升降序
+        if (this.sort.includes('-')) {
+          this.sort = `${key}:1`
+          this.tableData = this.tableDataCopy.sort((a, b) => {
+            return a.timestamp - b.timestamp
+          })
+        } else {
+          this.sort = `${key}:-1`
+          this.tableData = this.tableDataCopy.sort((a, b) => {
+            return b.timestamp - a.timestamp
+          })
+        }
+      } else { // 换个排序字段 默认降序
+        this.sort = `${key}:-1`
+      }
+    },
     addCondi() {
       const { condi, keyword, condis, queryCopy, query } = this
       if (condi.label && keyword && keyword.trim()) {
@@ -342,7 +364,9 @@ export default {
                   http_upgrade_insecure_requests: array[12]
               });
           });
-          this.tableData = items
+          this.tableData = items.sort((a, b) => {
+            return b.timestamp - a.timestamp
+          })
           this.tableDataCopy = items
           this.total = items.length
         })
@@ -390,7 +414,9 @@ export default {
   position: absolute;
   right: calc(100% + 16px);
 }
-
+::v-deep .hide {
+  visibility: hidden;
+}
 .wrapper_item {
   .header_top {
     width: 100%;

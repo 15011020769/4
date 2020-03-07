@@ -9,25 +9,27 @@
         :on-change="fileChange"
         :auto-upload="false"
       >
-        <el-button type="primary" size="small">导入</el-button>
+        <el-button type="primary" size="small">{{t('导入', 'WAF.dr')}}</el-button>
       </el-upload>
-      <p class="imp-tip" v-if="tip === 'default'">点击按钮，选择文件。</p>
-      <p class="imp-tip" v-if="tip === 'parse'" style="color: #FF9D00;">正在解析文件，请稍后。</p>
-      <p class="imp-tip" v-if="tip === 'format'" style="color: #e1504a;">仅支持.xlsx，.xls。</p>
-      <p class="imp-tip" v-if="tip === 'contenterror'" style="color: #e1504a;">文件内容，必须包含类别，IP地址，截止时间三列</p>
-      <p class="imp-tip" v-if="tip === 'timeerror'" style="color: #e1504a;">时间格式错误 或 截止时间大于2033-12-30 23:59:59</p>
-      <p class="imp-tip" v-if="tip === 'success'" style="color: #007e3b;">解析成功，您准备导入{{count}}条数据。请点击 “确认导入”，开始传输。</p>
+      <p class="imp-tip" v-if="tip === 'default'">{{t('点击按钮，选择文件。', 'WAF.djan')}}</p>
+      <p class="imp-tip" v-if="tip === 'parse'" style="color: #FF9D00;">{{t('正在解析文件，请稍后。', 'WAF.zzjxsj')}}</p>
+      <p class="imp-tip" v-if="tip === 'format'" style="color: #e1504a;">{{t('仅支持', 'WAF.jzc')}}.xlsx，.xls。</p>
+      <p class="imp-tip" v-if="tip === 'contenterror'" style="color: #e1504a;">{{t('文件内容，必须包含类别，IP地址，截止时间三列', 'WAF.wjnr')}}</p>
+      <p class="imp-tip" v-if="tip === 'timeerror'" style="color: #e1504a;">{{t('时间格式错误 或 截止时间大于', 'WAF.sjgscw')}}2033-12-30 23:59:59</p>
+      <p class="imp-tip" v-if="tip === 'success'" style="color: #007e3b;">{{t('解析成功，您准备导入', 'WAF.jxcg')}}{{count}}{{t('条数据。请点击 “确认导入”，开始传输。', 'WAF.tjs')}}</p>
     </div>
     <div class="tip">
-      <p>说明</p>
-      <p>1.格式，仅支持.xlsx，.xls。</p>
-      <p>2.数量，目前只支持单个文件上传。</p>
-      <p>3.内容，必须包含类别，IP地址，截止时间三列；具体可参考导出数据excel格式。</p>
-      <p>4.截止时间，必须在2033/12/30 23:59:59之前，格式YYYY/MM/DD HH:MM:SS。</p>
+      <p>{{t('说明', 'WAF.sm')}}</p>
+      <p>1.格式，{{t('仅支持', 'WAF.jzc')}}.xlsx，.xls。</p>
+      <p>2.{{t('数量，目前只支持单个文件上传。', 'WAF.dr')}}</p>
+      <p>3.{{t('内容，必须包含类别，IP地址，截止时间三列；具体可参考导出数据excel格式。', 'WAF.nrbxbh')}}</p>
+      <p>4.{{t('截止时间，必须', 'WAF.jzsjbx')}}在2033/12/30 23:59:59之前，格式YYYY/MM/DD HH:MM:SS。</p>
     </div>
     <el-row type="flex" align="middle" justify="center">
-      <el-button type="primary" size="small" @click="_import" :loading="loading" :disabled="tip !== 'success'">确认导入</el-button>
-      <el-button class="reset" size="small" :disabled="loading" @click="reset">重置</el-button>
+      <el-button type="primary" size="small" @click="_import" :loading="loading" :disabled="tip !== 'success'">
+        {{t('确认导入', 'WAF.qedt')}}
+      </el-button>
+      <el-button class="reset" size="small" :disabled="loading" @click="reset">{{t('重置', 'WAF.nrbxbh')}}</el-button>
     </el-row>
   </div>
 </template>
@@ -36,7 +38,6 @@ import XLSX from 'xlsx'
 import moment from 'moment'
 import { UPSERTIP_ACCESS_CONTROL } from '@/constants'
 import { COMMON_ERROR } from '../../constants'
-const titles = ['类别',	'截止时间',	'备注',	'IP地址',]
 export default {
   props: {
     domain: String,
@@ -74,9 +75,9 @@ export default {
         const titles = data.shift() // 删除第一行表头
         const infoIndex = {}
         if (
-          !titles.includes('类别')
+          !titles.includes(this.t('类别', 'WAF.lb'))
           || !titles.includes('IP地址')
-          || !titles.includes('截止时间')
+          || !titles.includes(this.t('截止时间', 'WAF.jzsj'))
         ) {
           this.tip = 'contenterror'
           return
@@ -86,19 +87,19 @@ export default {
             case 'IP地址':
               infoIndex.ip = i
               break;
-            case '类别':
+            case this.t('类别', 'WAF.lb'):
               infoIndex.action = i
               break;
-            case '截止时间':
+            case this.t('截止时间', 'WAF.jzsj'):
               infoIndex.valid = i
               break;
-            case '备注':
+            case this.t('备注', 'WAF.bz'):
               infoIndex.note = i
               break;
           }
         })
         this.add(data, infoIndex)
-			};
+			}
 			reader.readAsBinaryString(file.raw);
     },
     add(data, di) {
@@ -112,7 +113,7 @@ export default {
         }
         Items[`Items.${i}`] = JSON.stringify({
           ip: data[i][di.ip],
-          action: data[i][di.action] === '白名单' ? 40 : 42,
+          action: data[i][di.action] === this.t('白名单', 'WAF.bmd') ? 40 : 42,
           source: 'custom',
           note: data[i][di.note],
           valid_ts: Number(moment(data[i][di.valid], 'YYYY/MM/DD HH:mm:ss').format('X'))

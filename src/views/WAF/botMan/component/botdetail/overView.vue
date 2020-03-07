@@ -13,6 +13,7 @@
         :legendText="legendTextLineFlow"
         :color="colorLine"
         v-loading="loading"
+        :tooltip="tooltip"
         v-else
       />
     </div>
@@ -70,7 +71,7 @@
               ></el-option>
             </el-select>  
         </el-row>
-      <world-map :series="seriesWorldMap" v-if="radio == 'global'" v-loading="loading"/>
+      <world-map :series="seriesWorldMap" v-if="radio == 'global'" v-loading="loading" :max="100"/>
       <china-map :series="seriesWorldMap" v-else v-loading="loading"/>
     </div>
   </div>
@@ -112,6 +113,16 @@ export default {
         {value: 'UB', label: this.t('未知类型', 'WAF.wzlx')},
       ],
       loading: true,
+      tooltip: {
+        trigger: 'axis',
+        formatter(params) {
+          let relVal = params[0].name;
+          params.forEach(v => {
+            relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "次";
+          })  
+          return relVal;  
+        }
+      },
     }
   },
   props: {

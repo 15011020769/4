@@ -4,7 +4,7 @@
       <Headcom :title="$t('CAM.userList.userAddGroup')" :backShow="true" @_back="back" />
     </div>
     <div class="policyToUser">
-      <div class="step">
+      <div class="step">洒洒水
         <el-steps
           :active="active"
           direction="vertical"

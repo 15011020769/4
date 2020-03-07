@@ -218,7 +218,7 @@ export default {
       }
       params.Sort = this.sort
       if (this.action) {
-        params.Action = this.action
+        params.Operate = this.action
       }
       if (this.sourceIp) {
         if (isValidIPAddressNew(this.sourceIp)) {

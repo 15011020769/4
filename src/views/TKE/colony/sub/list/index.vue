@@ -15,7 +15,7 @@
         </div>
         <!-- 右侧 -->
         <div class="grid-right">
-          <el-button size="small" type="primary">YAML创建资源</el-button>
+          <el-button size="small" type="primary" @click="createYaml()">YAML创建资源</el-button>
         </div>
       </div>
     </div>
@@ -108,8 +108,15 @@ export default {
         name:'colony'
       })
     },
-
-  }
+    createYaml() {
+      this.$router.push({
+        name:'createYaml',
+        query: {
+          clusterId: this.$route.query.clusterId
+        }
+      });
+    }
+  },
 };
 </script>
 

@@ -204,7 +204,7 @@
           <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.detail == "" ? "空" : recordDetail[0].ip_info.detail}}</span></el-col>
         </el-row>
         <el-row type="flex">
-          <el-col :span="10"><span class="leftFont">{{t('经度', 'WAF.jd')}}</span></el-col>
+          <el-col :span="10"><span class="leftFont">{{t('经度', 'WAF.jingdu')}}</span></el-col>
           <el-col :span="14"><span class="rightFont">{{recordDetail[0].ip_info.longitude}}</span></el-col>
         </el-row>
         <el-row type="flex">

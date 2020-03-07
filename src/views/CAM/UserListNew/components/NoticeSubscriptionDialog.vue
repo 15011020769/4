@@ -11,8 +11,8 @@
     <div class="container">
       <div class="explain">
         <p>
-          要管理不同消息類型的接收人及接收方式可以前往
-          <el-link type="primary" href="../../MGC/index.html#/message" target="_blank">消息中心-消息訂閱</el-link>
+          要管理不同訊息類型的接收人及接收方式可以前往
+          <el-link type="primary" href="../../MGC/index.html#/message" target="_blank">訊息中心-訊息訂閱</el-link>
         </p>
       </div>
       <div class="user">

@@ -167,9 +167,12 @@ export default {
   },
   methods: {
     init() {
-      this.getBotUcbList()
+      if(this.domain) {
+        this.getBotUcbList()
+      }
     },
     handleCommand(action) {
+      console.log(action)
       this.action = action
       this.getBotUcbList()
     },
@@ -197,7 +200,7 @@ export default {
       }
       params.Sort = this.sort
       if (this.action) {
-        params.Action = this.action
+        params.Operate = this.action
       }
       if (this.sourceIp) {
         if (isValidIPAddressNew(this.sourceIp)) {

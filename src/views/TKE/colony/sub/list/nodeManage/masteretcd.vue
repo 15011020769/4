@@ -1,7 +1,7 @@
  <!-- Master&Etcd列表 -->
 <template>
   <div >
-    <!-- <subTitle :title='name'></subTitle> -->
+    <subTitle :title='name'></subTitle>
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
       <!-- 左侧 -->
@@ -164,7 +164,8 @@ export default {
       this.$router.push({
         name:"colonyOpenMonitor",
         query:{
-          title:this.name
+          title:this.name,
+          clusterId: this.$route.query.clusterId,
         }
       })
     },

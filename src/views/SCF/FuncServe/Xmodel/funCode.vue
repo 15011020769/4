@@ -49,24 +49,75 @@
       </div>
 
       <div v-if="SubmissionValue==='ZipFile'" class="content">
-        <div>
-          <p>函数代码</p>
-          <div>
+        <div class="ZipFile">
+          <p class="ZipFilename">函数代码</p>
+          <div class="ZipFilecontent">
             <p>
-              <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" multiple :limit="3"
-                :on-exceed="handleExceed" :file-list="fileList">
-                <el-button size="small" type="primary">点击上传</el-button>
+              <el-input v-model="input1" :disabled="true">
+              </el-input>
+            </p>
+            <p>
+              <el-upload action="" :show-file-list="false" :auto-upload="false" :on-change="filezip">
+                <el-button size="small" accept="application/x-zip-compressed">上传</el-button>
               </el-upload>
             </p>
-            <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+
           </div>
+
         </div>
+        <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+      </div>
+
+
+      <div v-if="SubmissionValue==='TempCos'" class="content">
+        <div class="ZipFile">
+          <p class="ZipFilename">函数代码</p>
+          <div class="ZipFilecontent">
+            <p>
+              <el-input v-model="input2" :disabled="true">
+              </el-input>
+            </p>
+            <p>
+              <el-button size="small" @click="_fileClip">上传</el-button>
+            </p>
+
+          </div>
+
+        </div>
+        <input type="file" multiple directory mozdirectory webkitdirectory @change="fileClip" class="inputfile"
+          id="webk" v-show="false" />
+
+        <p>请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M</p>
+      </div>
+
+      <div v-if="SubmissionValue==='Cos'" class="content">
+        <div class="ZipFile">
+          <p class="ZipFilename">COS Bucket</p>
+          <div class="ZipFilecontent">
+            <el-select v-model="cosvalue" placeholder="请选择">
+              <el-option v-for="item in Cosoptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </div>
+
+        </div>
+        <div class="ZipFile">
+          <p class="ZipFilename">COS对象文件</p>
+          <div class="ZipFilecontent">
+            <el-input v-model="input3" :disabled="true">
+            </el-input>
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>
 </template>
 <script>
-  // import JsZip from 'jszip'
+  import
+  JsZip
+  from 'jszip'
   import {
     SCF_DETAILS,
     LIST_VERSION
@@ -96,8 +147,14 @@
             value: 'Cos'
           }
         ],
-        fileList: [],
-        textarea: '测试'
+        textarea: '测试',
+        input1: '',
+        fileBase64zip: '', //zip上传
+        fileBase64clip: '', //文件夹上传
+        input2: '',
+        Cosoptions: [],
+        cosvalue: '', //cos
+        input3: '', //cos路径
       }
     },
     created() {},
@@ -113,20 +170,76 @@
 
         });
       },
-      handleExceed(files, fileList) {
-        console.log(files, fileList)
-        this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+      //转base64
+      getBase64(file) {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader();
+          let fileResult = "";
+          reader.readAsDataURL(file);
+          //开始转
+          reader.onload = function () {
+            fileResult = reader.result;
+          };
+          //转 失败
+          reader.onerror = function (error) {
+            reject(error);
+          };
+          //转 结束 咱就 resolve 出去
+          reader.onloadend = function () {
+            resolve(fileResult);
+          };
+        });
       },
-      successUpload(response, file, fileList) {
-        let new_zip = new JsZip()
-        new_zip.loadAsync(file.raw)
-          .then(function (zip) {
-            new_zip.file("test.txt").async("string") // 此处是压缩包中的test.txt文件,返回String类型(此时在回调的参数中已经可以获取到上传的zip压缩包下的所有文件)
-              .then(function (content) {
-                console.log(content) // 这个就是.txt文件中的内容
-              })
-          })
-      }
+      filezip(file) {
+        console.log(file)
+        let fileName = file.name
+        let pos = fileName.lastIndexOf('.')
+        let lastName = fileName.substring(pos, fileName.length)
+        if (lastName.toLowerCase() !== '.zip' && lastName.toLowerCase() !== '.rar') {
+          this.$message.error('文件必须为.zip或者.rar类型')
+          return
+        }
+        // 限制上传文件的大小
+        const isLt = file.size / 1024 / 1024 / 100 <= 0.5
+        if (!isLt) {
+          this.$message.error('最大支持50M（如果zip大于10M，仅显示入口文件）')
+        }
+        this.input1 = file.name
+        console.log(file.raw)
+        this.getBase64(file.raw).then(resBase64 => {
+          this.fileBase64zip = resBase64.split(',')[1] //直接拿到base64信息
+        })
+        return isLt
+      },
+      _fileClip() {
+        document.getElementById('webk').click()
+      },
+      fileClip(file) {
+        let clip = file.target.files
+        console.log(clip.length)
+        console.log(clip)
+        // this.getBase64(clip).then(resBase64 => {
+        //   this.fileBase64clip = resBase64.split(',')[1] //直接拿到base64信息
+        // })
+
+        // var JSZip = require("jszip");
+        // var zip = new JSZip();
+        // zip.file('sss', '222');
+        // var img = zip.folder("zipllll");
+        // img.file(clip[0].name, clip[0].webkitRelativePath, {
+        //   base64: true
+        // });
+        // zip.generateAsync({
+        //     type: "blob"
+        //   })
+        //   .then(function (content) {
+        //     // see FileSaver.js
+        //     saveAs(content, "example.zip");
+        //   });
+
+      },
+
+
     }
   }
 
@@ -187,8 +300,31 @@
     }
 
     .content {
+      ::v-deep .el-input {
+        width: 200px;
+      }
+
+      background: #f2f2f2;
+      padding: 20px;
       margin: 20px 0;
+
+      .ZipFile {
+        display: flex;
+        margin-bottom: 20px;
+
+        .ZipFilename {
+          line-height: 32px;
+          color: #888;
+          width: 100px;
+        }
+
+        .ZipFilecontent {
+          display: flex;
+        }
+      }
     }
+
+
   }
 
 </style>

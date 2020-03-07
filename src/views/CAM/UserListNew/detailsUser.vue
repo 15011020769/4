@@ -33,11 +33,27 @@
           <div class="bodyRight" style="flex:1">
             <p>
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
-              <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}</span>
+              <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}
+                <el-tooltip v-if="userData.PhoneFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
+                    <el-badge is-dot class="item">
+                      發送驗證鏈接&nbsp;&nbsp;
+                    </el-badge>
+                  </el-button>
+                </el-tooltip>
+              </span>
             </p>
             <p>
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
-              <span>{{userData.Email ? userData.Email : '-'}}</span>
+              <span>{{userData.Email ? userData.Email : '-'}}
+                <el-tooltip v-if="userData.EmailFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
+                    <el-badge is-dot class="item">
+                      發送驗證鏈接&nbsp;&nbsp;
+                    </el-badge>
+                  </el-button>
+                </el-tooltip>
+              </span>
             </p>
             <!-- <p>
               <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
@@ -116,7 +132,7 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click="deleteStrage(scope.row.PolicyId)"
+                  @click="deleteStrage(scope.row)"
                 >{{$t('CAM.userList.Remove')}}</el-button>
               </template>
             </el-table-column>
@@ -198,7 +214,7 @@
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">111共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
@@ -217,13 +233,16 @@
     </div>
     <!-- 策略 -->
     <el-dialog
-      :title="StrategyTitle"
+      :title="batchRemoveStrategies ? '批量解除策略' : '解除策略'"
       :visible.sync="StrategyLoading"
       width="30%"
       :before-close="handleClose"
     >
-      <span v-if="showStrategyMore">{{$t('CAM.userList.StrategyExplain')}}</span>
-      <span v-if="showStrategyRow">{{$t('CAM.userList.StrategyExplains')}}</span>
+      <span v-if="batchRemoveStrategies">解除策略將失去策略包含的操作許可權。特別的，解除隨組關聯類型的策略是通過將用戶從關聯該策略的用戶組中移出。</span>
+      <template v-else>
+        <span v-if="isRemoveGroup">是否確定將該用戶移出用戶組來解除此隨組關聯策略？移出用戶組後該用戶將無法獲得該策略所描述的相關許可權。</span>
+        <span v-else>是否確定為該用戶解除此策略？解除後該用戶將無法獲得該策略所描述的相關許可權。</span>
+      </template>
       <span slot="footer" class="dialog-footer">
         <el-button @click="StrategyLoading = false">{{$t('CAM.userList.handClose')}}</el-button>
         <el-button type="primary" @click="moveStrategy">{{$t('CAM.userList.suerAdd')}}</el-button>
@@ -308,6 +327,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "./components/Head"; //头部组件引入
 import {
   QUERY_USER,
+  LIST_SUBACCOUNTS,
   QUERY_USER_ALLPOLICY,
   RELATE_USER,
   REMOVEBIND_USER,
@@ -316,7 +336,8 @@ import {
   USER_LIST,
   UPDATA_USER,
   DEL_USERTOGROUP,
-  GROUP_POLICY
+  GROUP_POLICY,
+  BATCH_OPERATE_CAM_STRATEGY
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
 import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
@@ -342,8 +363,8 @@ export default {
       currpages: 1,
       infoLoad: true,
       ConsoleLogin: {
-        1: "可以登入控制台",
-        2: "無法登入控制台"
+        1: "控制台訪問、編程訪問",
+        0: "編程訪問"
       },
       userData: [], //获取用户详情数据
       activeName: "first",
@@ -352,9 +373,8 @@ export default {
       groupData: [], //存放用户组数据
       disabled: true, //按钮禁用状态
       StrategyLoading: false, //移出策略弹框
-      StrategyTitle: "", //弹出框title
-      showStrategyRow: false, //对批量与单条解除数据进行判断
-      showStrategyMore: false, //对批量与单条解除数据进行判断
+      isRemoveGroup: false, // 删除策略移出该组
+      batchRemoveStrategies: false, // 是否批量解除
       valArr: [], //存放多选框选中数据
       GroupLoading: false, //用户组弹框
       groupTitle: "", //用户组弹出框title
@@ -373,7 +393,8 @@ export default {
       },
       noticeSubscriptionVisible: false,
       subscriberId: 0,
-      subscriberName: ""
+      subscriberName: "",
+      strategy: undefined,
     };
   },
   methods: {
@@ -543,12 +564,14 @@ export default {
       this.infoLoad = true;
       let params = {
         Version: "2019-01-16",
-        Name: this.$route.query.detailsData
+        Uid: this.$route.query.uid
       };
-      this.axios.post(QUERY_USER, params).then(res => {
+      this.axios.post(LIST_SUBACCOUNTS, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.userData = res.Response;
+          this.userData = res.Response.UserInfo[0];
           this.infoLoad = false;
+          this.ploicyData()
+          this.groupListData()
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -564,50 +587,43 @@ export default {
     //获取每一个用户下的权限
     ploicyData() {
       this.loading = true;
-      let params = {
+      let ploicyParams = {
         Version: "2019-01-16",
-        Name: this.$route.query.detailsData
+        TargetUin: this.userData.Uin,
+        Rp: this.pagesizes,
+        Page: this.currpages,
+        AttachType: 0
       };
-      this.axios.post(QUERY_USER, params).then(res => {
-        this.userData = res.Response;
-        let ploicyParams = {
-          Version: "2019-01-16",
-          TargetUin: this.userData.Uin,
-          Rp: this.pagesizes,
-          Page: this.currpages,
-          AttachType: 0
-        };
-        this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams).then(res => {
-          if (res.Response.Error === undefined) {
-            if (res != "") {
-              this.loading = false;
-              const strategies = res.Response.PolicyList;
-              this.StrategyData = strategies;
-              this.TotalCounts = res.Response.TotalNum;
-              this.totalNum = "許可權(" + res.Response.TotalNum + ")";
-            } else {
-              this.loading = false;
-              this.$message({
-                type: "info",
-                message: "無響應數據！",
-                duration: 0,
-                showClose: true
-              });
-            }
+      this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams).then(res => {
+        if (res.Response.Error === undefined) {
+          if (res != "") {
+            this.loading = false;
+            const strategies = res.Response.PolicyList;
+            this.StrategyData = strategies;
+            this.TotalCounts = res.Response.TotalNum;
+            this.totalNum = "許可權(" + res.Response.TotalNum + ")";
           } else {
-            let ErrTips = {
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.ParamError": "非法入參"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.loading = false;
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
+              type: "info",
+              message: "無響應數據！",
+              duration: 0,
+              showClose: true
             });
           }
-        });
+        } else {
+          let ErrTips = {
+            "InternalError.SystemError": "內部錯誤",
+            "InvalidParameter.ParamError": "非法入參"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     handleCurrentChanges(val) {
@@ -621,79 +637,60 @@ export default {
     //获取每一个子用户下的用户组
     groupListData() {
       this.loading = true;
-      let params = {
+      let groupParams = {
         Version: "2019-01-16",
-        Name: this.$route.query.detailsData
+        Uid: this.userData.Uid
       };
-      this.axios.post(QUERY_USER, params).then(res => {
+      this.axios.post(RELATE_USER, groupParams).then(res => {
         if (res.Response.Error === undefined) {
-          this.userData = res.Response;
-          let groupParams = {
-            Version: "2019-01-16",
-            Uid: this.userData.Uid
-          };
-          this.axios.post(RELATE_USER, groupParams).then(res => {
-            if (res.Response.Error === undefined) {
-              this.TotalCount = res.Response.GroupInfo.length;
-              this.groupData = res.Response.GroupInfo.slice(
-                (this.currpage - 1) * this.pagesize,
-                this.currpage * this.pagesize
-              );
-              this.groupNum = "組(" + res.Response.GroupInfo.length + ")";
-              if (this.groupData.length != 0) {
-                this.groupData.forEach(item => {
-                  item.policy = [];
-                  const params = {
-                    Version: "2019-01-16",
-                    TargetGroupId: item.GroupId,
-                    Rp: this.pagesize
+          this.TotalCount = res.Response.GroupInfo.length;
+          this.groupData = res.Response.GroupInfo.slice(
+            (this.currpage - 1) * this.pagesize,
+            this.currpage * this.pagesize
+          );
+          this.groupNum = "組(" + res.Response.GroupInfo.length + ")";
+          if (this.groupData.length != 0) {
+            this.groupData.forEach(item => {
+              item.policy = [];
+              const params = {
+                Version: "2019-01-16",
+                TargetGroupId: item.GroupId,
+                Rp: this.pagesize
+              };
+              this.axios.post(GROUP_POLICY, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  res.Response.List.forEach(val => {
+                    const obj = {
+                      PolicyName: val.PolicyName,
+                      PolicyId: val.PolicyId
+                    };
+                    item.policy.push(obj);
+                    this.loading = false;
+                  });
+                } else {
+                  let ErrTips = {
+                    "InternalError.SystemError": "內部錯誤",
+                    "InvalidParameter.ParamError": "非法入參"
                   };
-                  this.axios.post(GROUP_POLICY, params).then(res => {
-                    if (res.Response.Error === undefined) {
-                      res.Response.List.forEach(val => {
-                        const obj = {
-                          PolicyName: val.PolicyName,
-                          PolicyId: val.PolicyId
-                        };
-                        item.policy.push(obj);
-                        this.loading = false;
-                      });
-                    } else {
-                      let ErrTips = {
-                        "InternalError.SystemError": "內部錯誤",
-                        "InvalidParameter.ParamError": "非法入參"
-                      };
-                      let ErrOr = Object.assign(ErrorTips, ErrTips);
-                      this.$message({
-                        message: ErrOr[res.Response.Error.Code],
-                        type: "error",
-                        showClose: true,
-                        duration: 0
-                      });
-                      this.loading = false;
-                    }
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
                   });
                   this.loading = false;
-                });
-              } else {
-                this.loading = false;
-              }
-            } else {
-              let ErrTips = {
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
+                }
               });
               this.loading = false;
-            }
-          });
+            });
+          } else {
+            this.loading = false;
+          }
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "ResourceNotFound.UserNotExist": "用戶不存在"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -715,61 +712,51 @@ export default {
     },
     //确定解除策略
     moveStrategy() {
-      if (this.StrategyTitle == "批量解除策略") {
-        var removeIndex = [];
-        this.valArr.forEach(item => {
-          removeIndex.unshift(item.PolicyId);
-        });
-        removeIndex.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            PolicyId: item,
-            DetachUin: this.userData.Uin
-          };
-          this.axios.post(REMOVEBIND_USER, params).then(data => {
-            if (data.Response.Error === undefined) {
-              this.ploicyData();
-              this.$message({
-                showClose: true,
-                message: "批量解除成功",
-                type: "success",
-                duration: 0,
-                showClose: true
-              });
-            } else {
-              let ErrTips = {
-                "InternalError.SystemError": "內部錯誤",
-                "InvalidParameter.AttachmentFull":
-                  "principal欄位的授權對象關聯策略數已達到上限",
-                "InvalidParameter.ParamError": "非法入參",
-                "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-                "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-                "InvalidParameter.UserNotExist":
-                  "principal欄位的授權對象不存在",
-                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[data.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
-        });
-        this.StrategyLoading = false;
+      if (this.batchRemoveStrategies) { // 批量解除
+        this.removeStrategy(this.valArr)
+      } else {
+        this.removeStrategy([this.strategy])
       }
-      if (this.StrategyTitle == "解除策略") {
-        let params = {
-          Version: "2019-01-16",
-          PolicyId: this.PolicyId,
-          DetachUin: this.userData.Uin
-        };
-        this.axios.post(REMOVEBIND_USER, params).then(data => {
+    },
+    //解除当前行策略
+    deleteStrage(strategy) {
+      this.isRemoveGroup = false
+      if (strategy.Groups.length) {
+        this.isRemoveGroup = true
+      }
+      this.strategy = strategy;
+      this.StrategyLoading = true;
+    },
+    removeStrategy(strategys) {
+      const strategyIds = []
+      const groupIds = []
+
+      strategys.forEach(strategy => {
+        if (strategy.Groups.length) {
+          groupIds.push(...strategy.Groups.map(group => group.GroupId))
+        } else {
+          strategyIds.push(strategy.PolicyId)
+        }
+      })
+      this.unbindStrategies(strategyIds)
+      this.delGroups(groupIds, '解除')
+      
+    },
+    unbindStrategies(strategyIds) {
+      if (strategyIds && strategyIds.length) {
+        const param = {
+          Version: '2019-01-16',
+          ActionType: 2, // 解绑
+          'RelateUin.0': this.userData.Uin
+        }
+        strategyIds.forEach((strategyId, i) => {
+          param[`StrategyId.${i}`] = strategyId
+        })
+        this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
+        .then(data => {
           if (data.Response.Error === undefined) {
             this.ploicyData();
+            this.StrategyLoading = false
             this.$message({
               showClose: true,
               message: "解除成功",
@@ -797,70 +784,58 @@ export default {
               duration: 0
             });
           }
-        });
-        this.StrategyLoading = false;
+        })
       }
-    },
-    //解除当前行策略
-    deleteStrage(PolicyId) {
-      this.PolicyId = PolicyId;
-      this.StrategyLoading = true;
-      this.StrategyTitle = "解除策略";
-      this.showStrategyMore = false;
-      this.showStrategyRow = true;
     },
     //批量解除按钮
     delMoreStrateg() {
+      this.batchRemoveStrategies = true
       this.StrategyLoading = true;
-      this.StrategyTitle = "批量解除策略";
-      this.showStrategyMore = true;
-      this.showStrategyRow = false;
     },
     //将用户移出用户组
     removeGroupUser() {
       if (this.groupTitle == "移出組") {
-        var groupId = [];
-        this.valArr.forEach(item => {
-          groupId.unshift(item.GroupId);
-        });
-        groupId.forEach(item => {
-          this.delGroup(item);
-        });
-        this.GroupLoading = false;
+        this.delGroups(this.valArr.map(group => group.GroupId), '移出')
       }
       if (this.groupTitle == "確認移出") {
-        this.delGroup(this.GroupId);
-        this.GroupLoading = false;
+        this.delGroups([this.GroupId], '移出')
       }
+      this.GroupLoading = false;
     },
-    delGroup(val) {
-      let params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.userData.Uid,
-        "Info.0.GroupId": val
-      };
-      this.axios.post(DEL_USERTOGROUP, params).then(data => {
-        if (data.Response.Error === undefined) {
-          this.$message({
-            showClose: true,
-            message: "移出成功",
-            type: "success",
-            duration: 0,
-            showClose: true
-          });
-          this.groupListData();
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: "移除失敗" + ErrOr[data.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-          this.groupListData();
-        }
-      });
+    delGroups(groupIds, msg) {
+      if (groupIds && groupIds.length) {
+        const params = {
+          Version: "2019-01-16",
+        };
+        groupIds.forEach((groupId, i) => {
+          params[`Info.${i}.Uid`] = this.userData.Uid
+          params[`Info.${i}.GroupId`] = groupId
+        })
+        this.axios.post(DEL_USERTOGROUP, params).then(data => {
+          if (data.Response.Error === undefined) {
+            this.$message({
+              showClose: true,
+              message: `${msg}成功`,
+              type: "success",
+              duration: 0,
+              showClose: true
+            });
+            this.StrategyLoading = false
+            this.groupListData();
+            this.ploicyData();
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: msg + "失敗" + ErrOr[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.groupListData()
+          }
+        });
+      }
     },
     //当前一行移出组
     removeGroup(val) {
@@ -888,7 +863,8 @@ export default {
         path: "/addPolicyToUser",
         query: {
           Uin: this.userData.Uin,
-          Uid: this.userData.Uid
+          Uid: this.userData.Uid,
+          Name: this.$route.query.detailsData,
         }
       });
     },
@@ -920,6 +896,8 @@ export default {
       this.StrategyLoading = false;
       this.delDialog = false;
       this.updataUser = false;
+      this.batchRemoveStrategies = false
+      done()
     },
     subsribe() {},
     back() {
@@ -939,8 +917,8 @@ export default {
   },
   created() {
     this.init(); //获取当前用户的详情
-    this.ploicyData(); //获取策略数据
-    this.groupListData(); //获取用户组数据
+    // this.ploicyData(); //获取策略数据
+    // this.groupListData(); //获取用户组数据
   }
 };
 </script>
