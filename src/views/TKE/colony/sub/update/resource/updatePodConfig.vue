@@ -65,31 +65,31 @@
              </p>
            </el-form-item>
            <el-form-item label="实例内容器">
-             <div class='add-content'>   <span></span>  <span><i class="el-icon-edit"></i><i class="el-icon-close ml10"></i></span> </div>
+             <div class='add-content' v-if="false">   <span></span>  <span><i class="el-icon-edit"></i><i class="el-icon-close ml10"></i></span> </div>
              <div class="case-content">
                <el-form :model='upc' label-position="left" label-width="120px" size="mini">
                  <el-form-item label="名称">
-                   <el-input class="w192" v-model="upc.caseContent.name" placeholder="请输入容器名称"></el-input>
+                   <el-input class="w192" v-model="caseContent.name" placeholder="请输入容器名称"></el-input>
                    <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
                  </el-form-item>
                  <el-form-item label="镜像">
-                   <el-input class="w192" v-model="upc.caseContent.mirrorImg"></el-input>
+                   <el-input class="w192" v-model="caseContent.image"></el-input>
                    <span> <a @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
                    <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
                  </el-form-item>
                  <el-form-item label="镜像版本（Tag）">
-                   <el-input class="w192" v-model="upc.caseContent.versions"></el-input>
+                   <el-input class="w192" v-model="caseContent.version"></el-input>
                  </el-form-item>
                  <el-form-item label="镜像拉取策略">
                    <template>
-                     <el-radio-group v-model="upc.caseContent.mirrorPullTactics" style="margin-bottom: 5px;">
+                     <el-radio-group v-model="caseContent.imagePullPolicy" style="margin-bottom: 5px;">
                        <el-radio-button label="Always">Always</el-radio-button>
                        <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
                        <el-radio-button label="Never">Never</el-radio-button>
                      </el-radio-group>
-                     <p v-show="upc.caseContent.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
-                     <p v-show="upc.caseContent.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                     <p v-show="upc.caseContent.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                     <p v-show="selectRadio=='Always'">总是从远程拉取该镜像</p>
+                     <p v-show="selectRadio=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
+                     <p v-show="selectRadio=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                    </template>
                  </el-form-item>
                  <el-form-item label="CPU/内存限制">
@@ -99,11 +99,11 @@
                        <div style="display:flex">
                          <div class="cpu-limit2">
                            <span>request</span>
-                           <el-input class="w192" v-model="upc.caseContent.requestCpu"></el-input>
+                           <el-input class="w192" v-model="caseContent"></el-input>
                          </div>-
                          <div class="cpu-limit2">
                            <span>limit</span>
-                           <el-input class="w192" v-model="upc.caseContent.limitCpu"></el-input>
+                           <el-input class="w192" v-model="caseContent"></el-input>
                          </div>核
                        </div>
                      </div>
@@ -112,11 +112,11 @@
                        <div style="display:flex">
                          <div class="cpu-limit2">
                            <span>request</span>
-                           <el-input class="w192" v-model="upc.caseContent.requestMemory"></el-input>
+                           <el-input class="w192" v-model="caseContent"></el-input>
                          </div>-
                          <div class="cpu-limit2">
                            <span>limit</span>
-                           <el-input class="w192" v-model="upc.caseContent.limitMemory"></el-input>
+                           <el-input class="w192" v-model="caseContent"></el-input>
                          </div>Mib
                        </div>
                      </div>
@@ -125,20 +125,20 @@
                      Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
                  </el-form-item>
                  <el-form-item label="GPU限制">
-                   <el-input-number v-model="upc.caseContent.limitNum" size="small" :min="0"></el-input-number>个
+                   <el-input-number v-model="caseContent.limitNum" size="small" :min="0"></el-input-number>个
                  </el-form-item>
                  <el-form-item label="环境变量">
                    <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                      <i class="el-icon-info  setPosition"></i>
                    </el-tooltip>
-                   <div style="padding:0px 0px 6px;" v-for="(v,i) in upc.caseContent.environmentVar1" :key="i">
+                   <div style="padding:0px 0px 6px;" v-for="(v,i) in caseContent.environmentVar1" :key="i">
                      <el-input class="w100" v-model="v.key" placeholder="变量名"></el-input> =
                      <el-input class="w192" v-model="v.value" placeholder="变量值"></el-input>
                      <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
-                       @click="upc.caseContent.environmentVar1.splice(i,1)"></i>
+                       @click="caseContent.environmentVar1.splice(i,1)"></i>
                    </div>
-                   <hr v-if="upc.caseContent.environmentVar1.length>0&&upc.caseContent.environmentVar2.length>0">
-                   <div v-for="(v,i) in upc.caseContent.environmentVar2" :key="i">
+                   <!-- <hr v-if="caseContent.environmentVar1.length>0&&caseContent.environmentVar2.length>0"> -->
+                   <div v-for="(v,i) in caseContent.environmentVar2" :key="i">
                      <el-select   v-model="v.data1" class="w100">
                        <el-option value="1" label='1'> </el-option>
                      </el-select>
@@ -149,7 +149,7 @@
                         <el-option value="1"  label='1'> </el-option>
                      </el-select>以
                      <el-input class="w150" v-model="v.elseName"></el-input> 为别名
-                     <i class="el-icon-close"  @click="upc.caseContent.environmentVar2.splice(i,1)"    style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                     <i class="el-icon-close"  @click="caseContent.environmentVar2.splice(i,1)"    style="font-size:20px;margin-left:20px;cursor:pointer"></i>
                    </div>
                    <a href="javascript:;" @click='addEnvironmentVar'>新增变量</a>
                    <a href="javascript:;" style="margin-left:4px;" @click="importAddCs">引用ConfigMap/Secret</a>
@@ -158,15 +158,15 @@
                  <a href="javascript:;" @click="highLevelSetShow=true" v-show="!highLevelSetShow">显示高级设置</a>
                  <div v-show="highLevelSetShow">
                    <el-form-item label="工作目录">
-                     <el-input class="w192" v-model="upc.name"></el-input>
+                     <el-input class="w192" v-model="caseContent.workingDir"></el-input>
                      <p> 指定容器运行后的工作目录，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="运行命令">
-                     <el-input type="textarea" class="w400" v-model="upc.name" rows="3" resize="none"></el-input>
+                     <el-input type="textarea" class="w400" v-model="caseContent.command[0]" rows="3" resize="none"></el-input>
                      <p> 控制容器运行的输入命令，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="运行参数">
-                     <el-input type="textarea" class="w400" v-model="upc.name" rows="3" resize="none"></el-input>
+                     <el-input type="textarea" class="w400" v-model="caseContent.args[0]" rows="3" resize="none"></el-input>
                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="容器健康检查">
@@ -492,6 +492,7 @@
          clusterId: '',
          np:'',
          name: '',//路由传过来的工作负载数据
+         selectRadio:'Always',
          // 更新pod数量
          upn: {
            type: '1',
@@ -536,20 +537,24 @@
          // 更新pod配置
          upc: {
            dataJuan: [],
-           caseContent:{
-            name:'',
-            mirrorImg:'',
-            versions:'',
-            mirrorPullTactics: 'Always', //镜像拉取策略
-            requestCpu:'',
-            limitCpu:'',
-            requestMemory:'',
-            limitMemory:'',
-            limitNum:0,
-            environmentVar1:[],
-            environmentVar2:[],
-            citeCs:[],
-          },
+         },
+        caseContent:{
+        name:'',
+        image:'',
+        version:'',
+        imagePullPolicy:'',
+        workingDir:'',
+        command:[],
+        args:[],
+        // mirrorPullTactics: 'Always', //镜像拉取策略
+        // requestCpu:'',
+        // limitCpu:'',
+        // requestMemory:'',
+        // limitMemory:'',
+        // limitNum:0,
+        // environmentVar1:[],
+        // environmentVar2:[],
+        // citeCs:[],
          },
          containerCheck: {
           type: 'TCP端口检查',
@@ -650,6 +655,7 @@
             console.log(response)
             let {items:[{spec:{template:{spec:{containers:[obj]}}}}]}=response;
             console.log(obj)
+            this.caseContent=obj
           }else{
              let ErrTips = {};
                let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
@@ -703,10 +709,10 @@
 
       //  
        addEnvironmentVar(){
-         this.upc.caseContent.environmentVar1.push({key:'',value:''})
+         this.caseContent.environmentVar1.push({key:'',value:''})
        } ,
        importAddCs(){
-           this.upc.caseContent.environmentVar2.push({data1:'',data2:'',data3:'',elseName:''})
+           this.caseContent.environmentVar2.push({data1:'',data2:'',data3:'',elseName:''})
        },
       close(val){
         this.SelectMirrorImgFlag=val;
