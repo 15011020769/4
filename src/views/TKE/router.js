@@ -519,6 +519,14 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/nodeManage/masteretcd/openMonitor', // 节点管理-Master&Etcd-详情
+      name: 'masteretcdMonitor',
+      component: () => import('./colony/sub/detail/nodeManage/masteretcd/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      },
+    },
+    {
       path: '/colony/sub/detail/hpa', // 命名空间-详情
       name: 'namespaceDetail',
       component: () => import('./colony/sub/detail/namespace/index.vue'),

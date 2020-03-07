@@ -162,7 +162,7 @@ export default {
     toMonitor(){
       //跳转监控页面
       this.$router.push({
-        name:"colonyOpenMonitor",
+        name:"masteretcdMonitor",
         query:{
           title:this.name,
           clusterId: this.$route.query.clusterId,
