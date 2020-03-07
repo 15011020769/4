@@ -533,6 +533,7 @@ module.exports = {
       zddc: '最多導出10000條數據。',
       ksdc: '開始導出',
       jdd: '進度',
+      wafyyjckhlj: 'WAF用於檢查客戶域名健康狀態的撥測服務，請勿設置為攔截。',
     },
     COM: require('@/components/language/ft'),
 }

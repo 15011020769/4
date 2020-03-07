@@ -398,6 +398,9 @@ export default {
     };
   },
   methods: {
+    sengyz() {
+
+    },
     //跳转到策略列表
     goToPolicyList() {
       this.$router.push({
