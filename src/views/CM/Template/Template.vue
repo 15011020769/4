@@ -19,27 +19,29 @@
           <el-button icon="el-icon-search" @click="clickSerch(triggerInput)" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
-      <el-table style="width: 100%" height="450" :data="tableData" v-loading="loadShow"
+      <el-table style="width: 100%" height="500" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
         <el-table-column prop="groupName" label="模板名称">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.groupName}`">
-              <span class="tke-text-link" slot="reference">{{scope.row.groupName}}</span>
+              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{scope.row.groupName}}</span>
             </el-popover>
           </template>
         </el-table-column>
         <el-table-column prop="chufa" label="触发条件">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right">
-              <p>
-                <p style="color:#999">指标告警(任意):</p>
-                {{ `${scope.row.conditions[0].metricShowName}>${scope.row.conditions[0].calcValue}${scope.row.conditions[0].unit},持续${scope.row.conditions[0].continueTime}秒,按${scope.row.conditions[0].calcType}天重复告警` }}
-              </p>
-              <p>
-                <p style="color:#999">事件告警:</p>
-                {{ `${scope.row.eventConditions[0].eventShowName},不重复告警` }}
-              </p>
+              <div>
+                <p style="color:#999;font-size:12px">指标告警(任意):</p>
+                <p v-for="(it,i) in scope.row.conditions" :key="i" style="font-size:12px">
+                  {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}</p>
+              </div>
+              <div>
+                <p style="color:#999;font-size:12px">事件告警:</p>
+                <p v-for="(it,i) in scope.row.eventConditions" :key="i" style="font-size:12px">
+                  {{ `${it.eventShowName},不重复告警` }}</p>
+              </div>
               <div slot="reference" class="name-wrapper">
                 <p class="textEps">
                   {{ `${scope.row.conditions[0].metricShowName}>${scope.row.conditions[0].calcValue}${scope.row.conditions[0].unit},持续${scope.row.conditions[0].continueTime}秒,按${scope.row.conditions[0].calcType}天重复告警` }}
@@ -54,7 +56,7 @@
         <el-table-column prop="type" label="策略类型"></el-table-column>
         <el-table-column prop="YS" label="备注">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" :content="scope.row.remark">
+            <el-popover trigger="hover" placement="right" :content="scope.row.remark||'-'">
               <span class="textEps" slot="reference">{{scope.row.remark || '-'}}</span>
             </el-popover>
           </template>
@@ -123,6 +125,7 @@ import Dialog from './components/dialog'
 import Loading from '@/components/public/Loading'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips'
+import { COPY_TEMPLATE, DELETE_TEMPLATE } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -304,7 +307,7 @@ export default {
   created () {
     // this.getReportUserLastVisit()
     this.getList()
-    console.log(this.upTime(1583490304))
+    // console.log(this.upTime(1583490304))
   },
   methods: {
 
@@ -332,7 +335,7 @@ export default {
       }
       if (this.triggerInput !== '') params.groupName = this.triggerInput
       await this.axios.post('monitor/GetConditionsTemplateList', params).then(res => {
-        console.log(res.data.templateGroupList)
+        // console.log(res.data.templateGroupList)
         this.TotalCount = res.data.total
         let msg = res.data.templateGroupList
         this.tableData = msg
@@ -358,13 +361,9 @@ export default {
     upTime (value) {
       return moment(value).format('YYYY/MM/DD HH :mm:ss')
     },
-    // 搜索框的事件
-    // changeInput (val) {
-    //   this.triggerInput = val
-    // },
     // 点击所搜按钮的事件
     clickSerch (val) {
-      console.log(val)
+      // console.log(val)
       this.triggerInput = val
       this.getList()
     },
@@ -386,11 +385,11 @@ export default {
         groupId: this.groupId,
         lang: 'zh'
       }
-      await this.axios.post('monitor/CopyConditionsTemplate', params).then(res => {
+      await this.axios.post(COPY_TEMPLATE, params).then(res => {
         if (res.codeDesc == 'Success') {
           this.showCopyDialog = false
           this.getList()
-          console.log(res)
+          // console.log(res)
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -405,7 +404,7 @@ export default {
         isDelRelatedPolicy: 2,
         lang: 'zh'
       }
-      await this.axios.post('monitor/DeleteConditionsTemplate', params).then(res => {
+      await this.axios.post(DELETE_TEMPLATE, params).then(res => {
         if (res.codeDesc == 'Success') {
           this.getList()
           this.showDelDialog = false
@@ -435,6 +434,16 @@ export default {
         type: 'error',
         showClose: true,
         duration: 0
+      })
+    },
+    // 去详情页
+    goDetail (id) {
+      this.$router.push({
+        name: 'TemplateDetail',
+        query: {
+          grounpId: id
+        }
+        // path: `/Template/Detail/index/${id}`
       })
     },
     // 设置弹框//新建实例分组

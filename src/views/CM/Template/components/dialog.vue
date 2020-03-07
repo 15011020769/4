@@ -1,26 +1,32 @@
 <template>
   <div class="dialog">
     <el-dialog title="新建" :visible.sync="dialogVisible">
-      <p class="rowCont">
-        <span>策略名称</span>
-        <el-input
-          style="width:330px;margin:0"
-          v-model="formInline.strategy_name"
-          placeholder="1-20个中英文字符或下划线"
-        ></el-input>
-      </p>
-      <p class="rowCont">
-        <span style="margin-bottom:110px">备注</span>
-        <el-input
-          style="width:330px;"
-          :autosize="{ minRows: 5, maxRows: 2}"
-          type="textarea"
-          placeholder="1-100个中英文字符或下划线"
-          v-model="formInline.textarea"
-          maxlength="100"
-          show-word-limit
-        ></el-input>
-      </p>
+      <el-form :model="formInline" :rules="rules" ref="form">
+        <p class="rowCont">
+          <span>策略名称</span>
+          <el-form-item style="display:inline-block" prop="strategy_name">
+            <el-input
+              style="width:330px;margin:0"
+              v-model="formInline.strategy_name"
+              placeholder="1-20个中英文字符或下划线"
+            ></el-input>
+          </el-form-item>
+        </p>
+        <p class="rowCont">
+          <span style="vertical-align:top">备注</span>
+          <el-form-item style="display:inline-block" prop="textareas">
+            <el-input
+              style="width:330px;"
+              :autosize="{ minRows: 5, maxRows: 2}"
+              type="textarea"
+              placeholder="1-100个中英文字符或下划线"
+              v-model="formInline.textareas"
+              maxlength="100"
+              show-word-limit
+            ></el-input>
+          </el-form-item>
+        </p>
+      </el-form>
       <p class="rowCont">
         <span>策略类型</span>
         <el-select v-model="formInline.strategy" style="width:200px;">
@@ -34,7 +40,9 @@
         </el-select>
         <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
-          <i class="el-icon-info"></i>
+          <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
+            <i class="el-icon-info" slot="reference"></i>
+          </el-popover>
         </el-checkbox>
       </p>
       <div class="rowCont cont">
@@ -158,7 +166,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save">保 存</el-button>
+        <el-button type="primary" @click="save('form')">保 存</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -166,74 +174,104 @@
 </template>
 <script>
 export default {
-  data() {
+  data () {
     return {
-      backShow: "true",
+      backShow: 'true',
 
       value1: new Date(2020, 1, 10, 18, 40),
       value2: new Date(2020, 1, 10, 18, 40),
 
-      showChufa1: false, //触发条件1显示开关
-      showChufa2: true, //触发条件2显示开关
+      showChufa1: false, // 触发条件1显示开关
+      showChufa2: true, // 触发条件2显示开关
 
-      showQudao1: false, //渠道选择1显示开关
-      showQudao2: false, //渠道选择2显示开关
+      showQudao1: false, // 渠道选择1显示开关
+      showQudao2: false, // 渠道选择2显示开关
 
-      errorTip1: false, //触发条件模板错误提示
-      errorTip2: true, //配置触发条件错误提示
-      checkedZhibiao: false, //指示告警
-      checkedUse: false, //使用预置触发条件
+      errorTip1: false, // 触发条件模板错误提示
+      errorTip2: true, // 配置触发条件错误提示
+      checkedZhibiao: false, // 指示告警
+      checkedUse: false, // 使用预置触发条件
       formInline: {
-        jieshou: "接收组",
+        jieshou: '接收组',
         jieshouArr: [
-          { value: "0", name: "接收组" },
+          { value: '0', name: '接收组' },
           {
-            value: "1",
-            name: "接收人"
+            value: '1',
+            name: '接收人'
           }
         ],
-        apiStr: "http", //接口回调
+        apiStr: 'http', // 接口回调
         apiArr: [
           {
             value: 0,
-            name: "http"
+            name: 'http'
           },
           {
             value: 1,
-            name: "https"
+            name: 'https'
           }
-        ], //接口回调数据
-        strategy_name: "", //策略名称
-        textarea: "", //备注
-        strategy: "云服务器-基础监控",
+        ], // 接口回调数据
+        strategy_name: '', // 策略名称
+        textareas: '', // 备注
+        strategy: '云服务器-基础监控',
         strategy_kind: [
           {
             value: 0,
-            name: "云服务器-基础监控"
+            name: '云服务器-基础监控'
           }
-        ], //策略类型
-        alarm: "", //策略类型
-        projectName: "默认项目",
+        ], // 策略类型
+        alarm: '', // 策略类型
+        projectName: '默认项目',
         project: [
           {
             value: 0,
-            name: "默认项目"
+            name: '默认项目'
           }
         ]
       },
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
         delivery: false,
         type: [],
-        resource: "",
-        desc: ""
+        resource: '',
+        desc: ''
       },
-      checkedGaojing: "" //告警
+      checkedGaojing: '', // 告警
       // dialogFormVisible: false //监控面板的开关
-    };
+      rules: {
+        strategy_name: [
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('名称不能为空'))
+              } else if (!(/[\u4e00-\u9fa5_a-zA-Z_]{1,20}/.test(value))) {
+                callback(new Error('名称格式不正确'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur',
+            required: true
+          }
+        ],
+        textareas: [
+          {
+            validator: (rule, value, callback) => {
+              if (value.length === 100) {
+                callback(new Error('描述不能超过100个字'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change',
+            required: true
+          }
+        ]
+      }// 名称和备注的验证
+    }
   },
   props: {
     dialogVisible: {
@@ -242,34 +280,42 @@ export default {
     }
   },
   methods: {
-    cancel() {
-      this.$emit("cancel");
+    cancel () {
+      this.$emit('cancel')
     },
-    save() {
-      this.$emit("save");
+    save (form) {
+      // this.$emit('save')
+      this.$refs[form].validate((valid) => {
+        if (valid) {
+          // this.submitFound()
+          console.log('完成', form)
+        } else {
+          return false
+        }
+      })
     },
-    //类型
-    msgBtn(index) {
-      this.liIndex = index;
+    // 类型
+    msgBtn (index) {
+      this.liIndex = index
     },
-    addZhibiao() {
-      //添加触发条件的指标告警
-      alert("你要添加此项触发条件的指标告警");
+    addZhibiao () {
+      // 添加触发条件的指标告警
+      alert('你要添加此项触发条件的指标告警')
     },
-    delZhibiao() {
-      //删除触发条件的指标告警
-      alert("你要删除此项触发条件的指标告警");
+    delZhibiao () {
+      // 删除触发条件的指标告警
+      alert('你要删除此项触发条件的指标告警')
     },
-    addShijian() {
-      //添加触发条件的事件告警
-      alert("你要添加此项触发条件的事件告警");
+    addShijian () {
+      // 添加触发条件的事件告警
+      alert('你要添加此项触发条件的事件告警')
     },
-    delShijian() {
-      //删除触发条件的事件告警
-      alert("你要删除此项触发条件的事件告警");
+    delShijian () {
+      // 删除触发条件的事件告警
+      alert('你要删除此项触发条件的事件告警')
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .dialog >>> .el-button,
@@ -311,7 +357,7 @@ export default {
   }
   p.rowCont {
     line-height: 30px;
-    padding: 10px 0;
+    // padding: 10px 0;
     span {
       display: inline-block;
       width: 70px;
