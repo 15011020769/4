@@ -1,6 +1,35 @@
 module.exports = {
-    TME: {
-
+    TKE: {
+        overview: {
+            gl: '概览',
+            zygl: '资源概览',
+            ge: '个',
+            jd: '节点',
+            yc: '异常',
+            gzfz: '工作负载',
+            fbsbfhyq: 'Pod副本数不符合预期',
+            jqjk: '集群健康',
+            zgtb: '台湾台北',
+            gjq: '个集群',
+            zs: '总数',
+            nclyl: '内存利用率',
+            mmkj: '命名空间',
+            cksj: '查看事件',
+            kscj: '通过固定流程，快速创建容器服务',
+            kssy: '开始使用',
+            bzwd: '帮助文档',
+            rhsy: '容器服务如何使用',
+            nxgn: '容器服务提供了哪些功能',
+            rhjf: '容器服务如何计费',
+            gjjx: '如何构建docker镜像',
+            rhdl: '如何登陆到容器',
+            zdyjd: 'TKE支持自定义节点',
+            nc: '内测',
+            pzxe: '配置限额',
+            sqpe: '申请配额',
+            jx: '镜像',
+            jxbb: '镜像版本'
+        }
     },
     COM: require('@/components/language/jt'),
 }

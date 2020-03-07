@@ -1,6 +1,35 @@
 module.exports = {
-    TME: {
-
+    TKE: {
+        overview: {
+            gl: '概覽',
+            zygl: '資源概覽',
+            ge: '個',
+            jd: '節點',
+            yc: '異常',
+            gzfz: '工作負載',
+            fbsbfhyq: 'Pod副本數不符合預期',
+            jqjk: '集群健康',
+            zgtb: '台灣台北',
+            gjq: '個集群',
+            zs: '總數',
+            nclyl: '記憶體利用率',
+            mmkj: '命名空間',
+            cksj: '檢視事件',
+            kscj: '通過固定流程，快速創建容器服務',
+            kssy: '開始使用',
+            bzwd: '幫助文件',
+            rhsy: '容器服務如何使用',
+            nxgn: '容器服務提供了哪些功能',
+            rhjf: '容器服務如何計費',
+            gjjx: '如何構建docker映像',
+            rhdl: '如何登入到容器',
+            zdyjd: 'TKE支持自定義節點',
+            nc: '內測',
+            pzxe: '配置限額',
+            sqpe: '申請配額',
+            jx: '映像',
+            jxbb: '映像版本'
+        }
     },
     COM: require('@/components/language/ft'),
 }
