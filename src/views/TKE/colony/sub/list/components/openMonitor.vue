@@ -332,25 +332,13 @@ export default {
         EndTime: 1583511737000,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: "k8s_node",
+        NamespaceName: "k8s_pod",
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
         StartTime: 1583508137000,
         Version: "2019-06-06"
-        // EndTime: 1583511737000,
-        // NamespaceName: "k8s_node",
-        // Offset: 0,
-        // Order: "desc",
-        // OrderBy:"timestamp",
-        // Module:"/font/v1",
-        // StartTime: 1583508137000,
-        // "Fields.0":"timestamp",
-        // "Fields.1":"avg(k8s_cluster_cpu_core_total)",
-        // Limit:10,
-        // "GroupBys.0":"timestamp"
       }
-      // param['Fields.0'] = 'avg(k8s_node_cpu_core_request_total)';
       param['Fields.0'] = 'min(k8s_pod_status_ready)';
       param["Fields.1"] = "max(k8s_pod_cpu_core_used)";
       param["Fields.2"] = "max(k8s_pod_rate_cpu_core_used_node)";
