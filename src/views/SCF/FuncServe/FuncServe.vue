@@ -538,7 +538,11 @@
       //跳转新建
       _newCreateFun() {
         this.$router.push({
-          path: "/createFun"
+          path: "/createFun",
+          query: {
+            Namespace: this.SpaceValue
+          }
+
         });
       },
       //跳转详情页点击事件
@@ -572,14 +576,14 @@
     }
 
     ::v-deep .el-input__inner {
-      height: 36px !important;
-      line-height:36px !important;
+      height: 32px !important;
+      line-height: 32px !important;
       width: 180px !important;
     }
 
     ::v-deep .el-input {
       height: 32px !important;
-      line-height:32px !important;
+      line-height: 32px !important;
     }
 
     .title {

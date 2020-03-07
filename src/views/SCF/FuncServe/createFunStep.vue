@@ -294,6 +294,7 @@
       },
       //添加子函数
       compileSucc() {
+
         this.loading = false;
         let params = {
           Version: "2018-04-16",
@@ -303,7 +304,8 @@
           Handler: this.formShowable.runFun, //执行方法
           Runtime: this.formShowable.runMoentStep, //运行环境
           Description: this.formShowable.descStep, //描述
-          Role: this.formShowable.runRole
+          Role: this.formShowable.runRole,
+          Namespace: this.$route.query.Namespace
         };
 
         if (this.Vpcvalue != "" && this.Subnetvalue != "") {

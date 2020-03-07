@@ -15,8 +15,8 @@
       </div>
       <div class="mainContForm">
         <el-form :model="createFunTable" label-width="80px" :rules="rules" ref="createFunTable">
-          <el-form-item :label="$t('SCF.total.hsmc')"  prop="funName">
-            <el-input class="funNameIpt" v-model="createFunTable.funName" ></el-input>
+          <el-form-item :label="$t('SCF.total.hsmc')" prop="funName">
+            <el-input class="funNameIpt" v-model="createFunTable.funName"></el-input>
             <p class="tipCon" :class="{activeColor:reg}">{{ $t('SCF.total.ts1') }}</p>
             <p class="tipCon" :class="{activeColor:reg}">{{ $t('SCF.total.ts2') }}</p>
           </el-form-item>
@@ -155,20 +155,20 @@
   } from "@/constants";
   export default {
     data() {
-       var validatefunName = (rule, value, callback) => {
+      var validatefunName = (rule, value, callback) => {
         if (value === '') {
-          this.reg=true;
+          this.reg = true;
           callback();
         } else {
-            let reg=/^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
-            let flag=reg.test(this.createFunTable.funName)
-            if(!flag){
-               this.reg=true;
+          let reg = /^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
+          let flag = reg.test(this.createFunTable.funName)
+          if (!flag) {
+            this.reg = true;
             callback();
-            }else{
-               this.reg=false;
-              callback();
-            }
+          } else {
+            this.reg = false;
+            callback();
+          }
         }
       };
       return {
@@ -182,11 +182,13 @@
           modelNameSpace: "",
           runMoment: "Python2.7"
         },
-        reg:false,
-        rules:{
-          funName:[
-            { validator: validatefunName, trigger: 'blur' ,required:true}
-          ],
+        reg: false,
+        rules: {
+          funName: [{
+            validator: validatefunName,
+            trigger: 'blur',
+            required: true
+          }],
         },
         clickTab: true,
         tableDataBegin: [], //函数模板列表
@@ -242,7 +244,7 @@
           param["SearchKey.0.Value"] = this.searchName;
         }
         this.axios.post(TEMPLATE_LIST, param).then(data => {
-          if(data.Response.Demos){
+          if (data.Response.Demos) {
             this.tableDataBegin = data.Response.Demos;
             this.DemoId = this.tableDataBegin[0].DemoId;
             this.isactive = 0;
@@ -311,19 +313,22 @@
         }
 
         //判断函数名是否合理
-       let reg=/^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
-       let flag=reg.test(this.createFunTable.funName)
-       if(flag){
+        let reg = /^[A-Za-z]([A-Za-z0-9]|-|_){0,58}([A-Za-z0-9])$/;
+        let flag = reg.test(this.createFunTable.funName)
+        if (flag) {
           window.sessionStorage.setItem("funNameSess", this.createFunTable.funName);
           window.sessionStorage.setItem("runMoent", this.createFunTable.runMoment);
           window.sessionStorage.setItem("DemoId", this.DemoId);
-           this.$router.push({
-             path: "/createFunStep"
-           });
-       }
-       
+          this.$router.push({
+            path: "/createFunStep",
+            query: {
+              Namespace: this.$route.query.Namespace
+            }
+          });
+        }
 
-       
+
+
       },
       lookFunDetails(DemoId) {
         this.DemoId = DemoId;
@@ -411,9 +416,11 @@
     line-height: 30px !important;
     border-radius: 0 !important;
   }
-  .mainContForm .activeColor{
+
+  .mainContForm .activeColor {
     color: #F56C6C !important;
   }
+
   .funListBoxConP span {
     margin-bottom: 5px;
     display: inline-block;
