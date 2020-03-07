@@ -6,7 +6,7 @@
         :visible.sync="isShow"
         :before-close="handleClose">
         <div class="newClear">
-          <p class="tip">範本選擇（如需添加新的範本，請前往）<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
+          <p class="tip">範本選擇（如需添加新的範本，請前往<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
           <div class="tableCon">
             <el-table
               :data="callbackconfigData"

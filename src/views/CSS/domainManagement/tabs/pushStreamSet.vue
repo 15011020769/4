@@ -226,7 +226,7 @@ export default {
       if (!this.streamName || !this.streamName.trim()) {
         this.$message({
           type: "warning",
-          message: "请输入 StreamName"
+          message: "請輸入 StreamName"
         });
         return;
       }

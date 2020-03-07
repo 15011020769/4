@@ -2,7 +2,7 @@
   <div class="wrap">
     <p class="down">
       <el-row>
-        <h3 style="font-size: 14px;font-weight: 700;">转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
+        <h3 style="font-size: 14px;font-weight: 700;">轉碼時長{{StartTIme}} 到 {{EndTIme}}（單位：分鐘）</h3>
       </el-row>
       <el-row class="iconBtn">
         <i class="el-icon-download"></i>
@@ -10,22 +10,22 @@
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading" />
     <div class="table">
-      <h3>近30天消费量</h3>
+      <h3>近30天消費量</h3>
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
         v-loading="loading"
       >
         <el-table-column prop="StreamName" label="StreamName"></el-table-column>
-        <el-table-column prop="StartTime" label="开始转码时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束转码时间"></el-table-column>
-        <el-table-column prop="Duration" label="转码时长（分钟）"></el-table-column>
-        <el-table-column prop="ModuleCodec" label="编码方式"></el-table-column>
-        <el-table-column prop="Bitrate" label="码率（Kbps）"></el-table-column>
-        <el-table-column prop="Type" label="类型"></el-table-column>
+        <el-table-column prop="StartTime" label="開始轉碼時間"></el-table-column>
+        <el-table-column prop="EndTime" label="結束轉碼時間"></el-table-column>
+        <el-table-column prop="Duration" label="轉碼時長（分鐘）"></el-table-column>
+        <el-table-column prop="ModuleCodec" label="編碼方式"></el-table-column>
+        <el-table-column prop="Bitrate" label="碼率（Kbps）"></el-table-column>
+        <el-table-column prop="Type" label="類型"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pageSize"
           :pager-count="7"

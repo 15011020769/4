@@ -2,7 +2,7 @@
   <div class="wrap">
     <p class="down">
       <el-row>
-        <h3 style="font-size: 14px;font-weight: 700;">录制任务个数{{StartTIme}} 到 {{EndTIme}}（单位：个）</h3>
+        <h3 style="font-size: 14px;font-weight: 700;">錄製任務個數{{StartTIme}} 到 {{EndTIme}}（單位：個）</h3>
       </el-row>
       <el-row class="iconBtn">
         <i class="el-icon-download"></i>
@@ -10,16 +10,16 @@
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
     <div class="table">
-      <h3>月度消费量</h3>
+      <h3>月度消費量</h3>
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
       >
         <el-table-column prop="time" label="月份"></el-table-column>
-        <el-table-column prop="num" label="录制任务数量（个）"></el-table-column>
+        <el-table-column prop="num" label="錄製任務數量（個）"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pageSize"
           :pager-count="7"
@@ -95,7 +95,7 @@ export default {
           if (res.Response.Error) {
             this.$message.error(res.Response.Error.Message);
           } else {
-            arrTotal.push(res.Response.DataInfoList) 
+            arrTotal.push(res.Response.DataInfoList)
             arrDetail = arrTotal.reduce(function (a, b) { return a.concat(b)})
             let obj = arrDetail
             var mon = [];

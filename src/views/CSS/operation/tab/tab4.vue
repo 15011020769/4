@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <h3>
-      并发连接数趋势
-      <span style="color:#bbb;">(单位:MB)</span>
+      併發連接數趨勢
+      <span style="color:#bbb;">(單位:MB)</span>
     </h3>
     <Echart color="#e54545" :xAxis="xAxis" :series="series" v-loading="loading" />
     <div class="table">
@@ -12,11 +12,11 @@
         height="450"
         v-loading="loading"
       >
-        <el-table-column prop="Time" label="时间点"></el-table-column>
-        <el-table-column prop="Online" label="并发连接数"></el-table-column>
+        <el-table-column prop="Time" label="時間點"></el-table-column>
+        <el-table-column prop="Online" label="併發連接數"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -102,7 +102,7 @@ export default {
                 res.Response.Error.Message ==
                 "EndTime minus StartTime should smaller than 86400 s"
               ) {
-                this.$message.error("该模式暂不支持查询一天之外的数据");
+                this.$message.error("該模式暫不支持查詢一天之外的數據");
               } else {
                 this.$message.error(res.Response.Error.Message);
               }

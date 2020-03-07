@@ -148,30 +148,30 @@ export default {
         AppName: [
           {
             required: true,
-            message: "请输入AppName",
+            message: "請输入AppName",
             trigger: "blur"
           },
           {
             pattern: /^[\u0000-\u00FF]*$/g,
-            message: "仅支持英文字母、数字和符号"
+            message: "僅支持英文字母、數字和符號"
           }
         ],
         StreamName: [
           {
             required: true,
-            message: "请输入StreamName",
+            message: "請输入StreamName",
             trigger: "blur"
           },
           {
             pattern: /^[\u0000-\u00FF]*$/g,
-            message: "仅支持英文字母、数字和符号"
+            message: "僅支持英文字母、數字和符號"
           }
         ],
         date: [
           {
             type: "date",
             required: true,
-            message: "请选择过期时间",
+            message: "請選擇過期時間",
             trigger: "change"
           }
         ]

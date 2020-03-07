@@ -6,7 +6,7 @@
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
-        <el-tab-pane label="基本信息" name="first">
+        <el-tab-pane label="基本訊息" name="first">
           <div class="wrapper">
             <BasicInfo :info="info" />
           </div>

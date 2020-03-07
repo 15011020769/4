@@ -86,7 +86,7 @@
         <el-button size="small" type="primary" @click="getTrend" style="margin-left: 30px">{{$t('CSS.overview.12')}}</el-button>
       </div>
       <el-tabs v-model="activeName" style="margin-top:10px;">
-        <el-tab-pane :label="$t('CSS.overview.10')" name="带宽">
+        <el-tab-pane :label="$t('CSS.overview.10')" name="帶寬">
         </el-tab-pane>
         <el-tab-pane :label="$t('CSS.overview.11')" name="流量"></el-tab-pane>
       </el-tabs>
@@ -95,8 +95,8 @@
         :series="series"
         :legendText="activeName"
         :tooltip="{
-          trigger: 'axis',   
-          formatter: `{b}<br/>{a} {c}${activeName === '带宽' ? 'Mpbs' : 'MB'}`
+          trigger: 'axis',
+          formatter: `{b}<br/>{a} {c}${activeName === '帶寬' ? 'Mpbs' : 'MB'}`
         }"
       />
     </div>
@@ -108,7 +108,7 @@ import moment from 'moment'
 import HeaderCom from "@/components/public/Head";
 import TimeX from "@/components/public/TimeY";
 import ELine from "../components/line";
-import { 
+import {
   ALL_CITY,
   CSS_MBPS,
   LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST,
@@ -134,7 +134,7 @@ export default {
       fluxPackageCount: 0,
       value: 1,
       granularity: 0,
-      activeName: '带宽',
+      activeName: '帶寬',
       region: '',
       StartTime: '',
       EndTime: '',
@@ -156,7 +156,7 @@ export default {
   },
   watch: {
     activeName() {
-      if (this.activeName === '带宽') {
+      if (this.activeName === '帶寬') {
         this.series = [...this.bandwidthData]
       } else {
         this.series = [...this.fluxData]
@@ -182,7 +182,7 @@ export default {
       if (this.domainCheckedList.length === 0) {
         this.$message({
           type: 'warning',
-          message: '请选择域名'
+          message: '請選擇域名'
         })
       } else {
         this.$refs.doaminRef.visible = false
@@ -224,7 +224,7 @@ export default {
         this.domainCheckedListCopy = domains
       })
     },
-    // 实时下行带宽 今日下行流量 直播在线数
+    // 实时下行帶寬 今日下行流量 直播在线数
     getHeadData() {
       const params = {
         ...defaultParams,
@@ -237,7 +237,7 @@ export default {
         this.todayFlux = Response.SumFlux
         this.totalBandwidth = Response.PeakBandwidth > 1 ? `${Response.PeakBandwidth} Mbps` : `${Response.PeakBandwidth * 1000} Kbps`
       })
-      // 查询实时总带宽 实时总连接数
+      // 查询实时总帶寬 实时总连接数
       this.axios.post(LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST, defaultParams).then(({ Response }) => {
         this.online = Response.TotalOnline
       })
@@ -259,7 +259,7 @@ export default {
           this.usedFlux = (usedFlux / 1000 / 1000 / 1000).toFixed(2)
         }
       })
-      
+
     },
     // 统计趋势数据
     getTrend() {
@@ -287,7 +287,7 @@ export default {
         this.timeData = times
         this.bandwidthData = bandwidthData
         this.fluxData = fluxData
-        if (this.activeName === '带宽') {
+        if (this.activeName === '帶寬') {
           this.series = bandwidthData
         } else {
           this.series = fluxData

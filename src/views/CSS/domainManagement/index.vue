@@ -97,7 +97,7 @@
                   type="text"
                   size="small"
                   @click="startBtn(scope.$index, scope.row)"
-                >启用</el-button>
+                >啟用</el-button>
                 <el-button
                   v-if="scope.row.Status==1"
                   type="text"

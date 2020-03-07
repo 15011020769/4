@@ -90,7 +90,7 @@ export default {
         `${this.$t("CSS.watermark.6")}: ${this.selectItem.WatermarkName}`,
         "删除水印配置",
         {
-          confirmButtonText: "确定",
+          confirmButtonText: "確定",
           cancelButtonText: "取消",
           type: "warning"
         }

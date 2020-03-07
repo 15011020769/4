@@ -7,11 +7,11 @@
         width="45%"
         :before-close="handleClose">
         <div>
-          <span class="tip">确定禁用：{{getCon}}?</span>
+          <span class="tip">確定禁用：{{getCon}}?</span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="stopDominSure">确 定</el-button>
+          <el-button type="primary" @click="stopDominSure">確 定</el-button>
         </span>
       </el-dialog>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="basicinfo">
-      <h1>基本信息</h1>
+      <h1>基本訊息</h1>
       <div class="newClear">
         <div class="newClear newList">
           <p>CNAME</p>
