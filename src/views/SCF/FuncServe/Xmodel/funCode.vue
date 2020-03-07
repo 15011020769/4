@@ -26,19 +26,13 @@
           </P>
         </div>
         <div>
-          <p class="CourseRight">
+          <!-- <p class="CourseRight">
             <a href="">Python2.7 开发教程</a>
-          </p>
+          </p> -->
           <p>
-            <el-dropdown trigger="click">
-              <el-button size="small">
-                下载
-              </el-button>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>下载代码包</el-dropdown-item>
-                <el-dropdown-item>下载YAML文件</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button size="small" @click="_Clone">
+              下载代码包
+            </el-button>
           </p>
         </div>
       </div>
@@ -120,13 +114,19 @@
   from 'jszip'
   import {
     SCF_DETAILS,
-    LIST_VERSION
+    LIST_VERSION,
+    CLONE_SCF
   } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
   export default {
     props: ['FunctionVersion'],
     data() {
       return {
         functionName: this.$route.query.functionName,
+        funDate: {}, //函数详情
+        functionversion: '',
         SubmissionValue: 'Inline', //提交方法
         implementInput: '', //执行方法
         ScienceValue: 'Python2.7', //运行环境
@@ -157,7 +157,9 @@
         input3: '', //cos路径
       }
     },
-    created() {},
+    created() {
+      this.GetDate()
+    },
     methods: {
       //获取详情数据
       GetDate() {
@@ -167,7 +169,66 @@
           FunctionName: this.functionName,
         };
         this.axios.post(SCF_DETAILS, param).then(res => {
-
+          if (res.Response.Error === undefined) {
+            this.funDate = res.Response
+            this.implementInput = res.Response.Handler
+            this.functionversion = res.Response.FunctionVersion
+          } else {
+            let ErrTips = {
+              'InternalError': '內部錯誤',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
+              'UnauthorizedOperation': '未授權操作',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.CodeSecret': '無訪問程式碼權限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //下载
+      _Clone() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          Qualifier: this.functionversion,
+        };
+        this.axios.post(CLONE_SCF, param).then(res => {
+          if (res.Response.Error === undefined) {
+            window.open(res.Response.Url)
+          } else {
+            let ErrTips = {
+              'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
+              'InternalError': '内部错误',
+              'InternalError.System': '内部系统错误',
+              'InvalidParameter.Payload': '请求参数不合法',
+              'InvalidParameterValue': ' 参数取值错误',
+              'ResourceNotFound.Function': '函数不存在',
+              'ResourceNotFound.FunctionName': '函数不存在',
+              'ResourceNotFound.FunctionVersion': '函数版本不存在',
+              'ResourceNotFound.Version': '版本不存在',
+              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
+              'UnauthorizedOperation.CodeSecret': ' 无访问代码权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       },
       //转base64
