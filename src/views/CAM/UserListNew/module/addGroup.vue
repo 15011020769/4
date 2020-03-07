@@ -4,7 +4,7 @@
       <Headcom :title="$t('CAM.userList.userAddGroup')" :backShow="true" @_back="back" />
     </div>
     <div class="policyToUser">
-      <div class="step">洒洒水
+      <div class="step">
         <el-steps
           :active="active"
           direction="vertical"
@@ -34,7 +34,6 @@
             </div>
 
             <el-table
-              v-model="searchGroupValue"
               ref="multipleOption"
               tooltip-effect="dark"
               height="400"
