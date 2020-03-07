@@ -97,8 +97,10 @@ export default {
           if (data.Response.Error == undefined) {
             this.modalVisible = false;
             this.$message({
-              message: "删除成功",
-              type: "success"
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
             });
             this.fetchRecordingList();
             return;

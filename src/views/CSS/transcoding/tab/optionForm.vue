@@ -26,16 +26,20 @@
           style="width:330px;"
           :disabled="Object.keys(selectItem).length > 0"
         />
+        <span class="inputTip">仅支持字母、数字组合，请输入3-10个字符</span>
       </el-form-item>
       <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
+        <span class="textTip">仅支持中文、英文、数字、_、-</span>
       </el-form-item>
       <template v-if="selectType !== '純音頻'">
         <el-form-item label="影音碼率(kbps)" prop="VideoBitrate">
           <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
+          <span class="textTip">必填，编码范围 100K-8000K,1000K以内仅支持整百填写，1000Kbps以上仅支持整500填写</span>
         </el-form-item>
         <el-form-item label="影音高度(px)" prop="Height">
           <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
+          <span class="textTip">视频高度范围为0-3000，要求为4的倍数，宽度按等比例缩放</span>
         </el-form-item>
       </template>
       <el-form-item>
@@ -278,6 +282,25 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  .inputTip {
+    position: absolute;
+    top: 33px;
+    left: 0;
+    font-size: 12px;
+    color: #888;
+    vertical-align: middle;
+  }
+  .textTip {
+    position: absolute;
+    top: 43px;
+    left: 0;
+    font-size: 12px;
+    color: #888;
+    vertical-align: middle;
+  }
+  .el-form-item {
+    margin-bottom: 38px;
   }
 }
 </style>
