@@ -383,6 +383,19 @@ export default {
         }
       });
     },
+     // 详情.
+    goDeploymentDetail(rowData) {
+      console.log(rowData)
+      this.$router.push({
+        name: "deploymentDetail",
+        query: {
+          clusterId: this.clusterId,
+          spaceName: this.nameSpaceName,
+          rowData: rowData
+        }
+      });
+    },
+
     //更新pod
     goPodUpdate(rowData) {
       console.log(rowData)
@@ -404,19 +417,6 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace
-        }
-      });
-    },
-
-    // 详情.
-    goDeploymentDetail(rowData) {
-      console.log(rowData)
-      this.$router.push({
-        name: "deploymentDetail",
-        query: {
-          clusterId: this.clusterId,
-          spaceName: this.nameSpaceName,
-          rowData: rowData
         }
       });
     },

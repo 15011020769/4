@@ -57,7 +57,7 @@
                <i class="el-icon-close" @click="upc.dataJuan.splice(index, 1)"></i>
              </div>
              <p style="margin-top:8px">
-               <el-button type="primary" :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
+               <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
              </p>
              <p>
                为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。<span
@@ -65,7 +65,7 @@
              </p>
            </el-form-item>
            <el-form-item label="实例内容器">
-             <div class='add-content' v-if="false">   <span></span>  <span><i class="el-icon-edit"></i><i class="el-icon-close ml10"></i></span> </div>
+             <div class='add-content' v-if="false">   <span></span>  <span><i class="el-icon-edit-outline"></i><i class="el-icon-close ml10"></i></span> </div>
              <div class="case-content">
                <el-form :model='upc' label-position="left" label-width="120px" size="mini">
                  <el-form-item label="名称">
