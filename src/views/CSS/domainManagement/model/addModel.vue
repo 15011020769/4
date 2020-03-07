@@ -2,7 +2,7 @@
   <div>
     <div>
       <!-- <el-dialog
-        title="选择域名类型"
+        title="選擇域名类型"
         :visible.sync="addDominModel"
         width="45%"
         :before-close="handleClose">
@@ -89,7 +89,7 @@ export default {
       speedAre1:false,//监测加速区域select  全球
       speedAre2:false,//监测加速区域select  境外
 
-      checkDomin:'',//选择域名类型
+      checkDomin:'',//選擇域名类型
       addDominModel2:false,//添加域名
       addDominModel3:false,
     }

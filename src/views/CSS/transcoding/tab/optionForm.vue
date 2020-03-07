@@ -49,6 +49,8 @@
 <script>
 import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from "../constance";
 import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from '../../components/CSSErrorTips';
 
 export default {
   name: "optionForm",
@@ -60,6 +62,60 @@ export default {
   },
 
   data() {
+    let checkVideoBitrate = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error("請輸入影音碼率"));
+      }
+
+      if (value < 100 || value > 8000) {
+        callback(
+          new Error(
+            "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
+          )
+        );
+      }
+
+      if (value >= 100 && value <= 1000) {
+        if (value % 100 !== 0) {
+          callback(
+            new Error(
+              "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
+            )
+          );
+        }
+      } else if (value > 1000 && value <= 8000) {
+        if (value % 500 !== 0) {
+          callback(
+            new Error(
+              "編碼範圍為100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫"
+            )
+          );
+        }
+      }
+
+      callback();
+    };
+
+    let checkVideoHeight = (rule, value, callback) => {
+      if (value.length === 0) {
+        callback(new Error("請輸入影音高度"));
+      }
+
+      if (value < 0 || value > 3000) {
+        callback(
+          new Error("視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放")
+        );
+      }
+
+      if (value % 4 !== 0) {
+        callback(
+          new Error("視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放")
+        );
+      }
+      callback();
+      ƒ;
+    };
+
     return {
       form: {
         desc: "", //範本描述
@@ -77,19 +133,24 @@ export default {
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入範本名稱，長度不能超過30個字符", trigger: "blur" },
-          { min: 1, max: 30, message: "請輸入範本名稱，長度不能超過30個字符", trigger: "blur" }
+          {
+            required: true,
+            message: "請輸入範本名稱，長度不能超過30個字符",
+            trigger: "blur"
+          },
+          {
+            min: 1,
+            max: 30,
+            message: "請輸入範本名稱，長度不能超過30個字符",
+            trigger: "blur"
+          }
         ],
         desc: [
           { required: false },
           { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
         ],
-        Height: [
-          { required: true, message: "請輸入影音高度", trigger: "blur" }
-        ],
-        VideoBitrate: [
-          { required: true, message: "請輸入影音碼率", trigger: "blur" }
-        ]
+        Height: [{ validator: checkVideoHeight, trigger: "blur" }],
+        VideoBitrate: [{ validator: checkVideoBitrate, trigger: "blur" }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -142,7 +203,8 @@ export default {
           this.$emit("update:formShow", false);
           return;
         }
-        this.$message.error(data.Response.Error.Message);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+        this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },
 
@@ -157,7 +219,8 @@ export default {
           this.$emit("update:formShow", false);
           return;
         }
-        this.$message.error(data.Response.Error.Message);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+        this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },
 

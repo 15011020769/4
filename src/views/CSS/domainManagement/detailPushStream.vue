@@ -16,7 +16,7 @@
             <pushStreamSet />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="模板配置" name="third">
+        <el-tab-pane label="範本配置" name="third">
           <div class="wrapper">
             <templateconfig />
           </div>
