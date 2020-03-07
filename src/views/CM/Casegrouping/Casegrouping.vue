@@ -337,14 +337,6 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.ListInit();
-    },
-    //取消设置弹框
-    cancel() {
-      this.dialogVisible = false;
-    },
-    //确定设置弹框
-    save() {
-      this.dialogVisible = false;
     }
   },
   filters: {

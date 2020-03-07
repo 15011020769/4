@@ -25,8 +25,8 @@ export default {
               label: "存储监控"
             },
             {
-              value: "基础监控",
-              label: "存储监控"
+              value: "cvm_device",
+              label: "基础监控"
             }
           ]
         },
@@ -39,19 +39,19 @@ export default {
               label: "VPN网关"
             },
             {
-              value: "VPN通道",
+              value: "vpn_tunnel",
               label: "VPN通道"
             },
             {
-              value: "共享带宽包",
+              value: "BANDWIDTHPACKAGE",
               label: "共享带宽包"
             },
             {
-              value: "NAT网关",
+              value: "nat_tc_stat",
               label: "NAT网关"
             },
             {
-              value: "对等连接",
+              value: "vpc_region_conn",
               label: "对等连接"
             },
             {
@@ -67,11 +67,11 @@ export default {
               label: "云联网",
               children: [
                 {
-                  value: "地域间",
+                  value: "VBC_BETWEEN_REGIONS",
                   label: "地域间"
                 },
                 {
-                  value: "单地域",
+                  value: "VBC_SINGLE_REGION_BM",
                   label: "单地域"
                 }
               ]
@@ -85,11 +85,11 @@ export default {
               label: "弹性公网IPv6"
             },
             {
-              value: "弹性公网IP",
+              value: "EIP",
               label: "弹性公网IP"
             },
             {
-              value: "Anycast弹性公网IP",
+              value: "AnycastEIP",
               label: "Anycast弹性公网IP"
             }
           ]
@@ -121,21 +121,21 @@ export default {
               label: "Redis",
               children: [
                 {
-                  value: "其他版本",
+                  value: "redisUuid",
                   label: "其他版本"
                 },
                 {
-                  value: "社区集群版",
+                  value: "REDIS-CLUSTER",
                   label: "社区集群版"
                 }
               ]
             },
             {
-              value: "SQL_Server",
+              value: "sqlserver_instance",
               label: "SQL_Server"
             },
             {
-              value: "PostgreSQL",
+              value: "POSTGRESQL",
               label: "PostgreSQL"
             },
             {
@@ -143,7 +143,7 @@ export default {
               label: "CynosDB",
               children: [
                 {
-                  value: "MySQL",
+                  value: "CYNOSDB_MYSQL",
                   label: "MySQL"
                 }
               ]
@@ -167,7 +167,7 @@ export default {
               label: "SSL VPN网关"
             },
             {
-              value: "网络探测",
+              value: "BM_NETDETECT",
               label: "网络探测"
             },
             {
@@ -189,11 +189,11 @@ export default {
           label: "容器服务",
           children: [
             {
-              value: "服务",
+              value: "DOCKER_SERVICE",
               label: "服务"
             },
             {
-              value: "容器",
+              value: "DOCKER_CONTAINER",
               label: "容器"
             },
             {
@@ -205,7 +205,7 @@ export default {
               label: "pod"
             },
             {
-              value: "节点",
+              value: "DOCKER_NODE",
               label: "节点"
             }
           ]
@@ -227,9 +227,9 @@ export default {
           value: "CDN",
           label: "CDN",
           children: [
-            { value: "CDN域名国内", label: "CDN域名国内" },
-            { value: "CDN项目国内", label: "CDN项目国内" },
-            { value: "CDN域名海外", label: "CDN域名海外" },
+            { value: "cdn_domain", label: "CDN域名国内" },
+            { value: "cdn_project", label: "CDN项目国内" },
+            { value: "OV_CDN_DOMAIN", label: "CDN域名海外" },
             { value: "OV_CDN_PROJECT", label: "CDN项目海外" }
           ]
         },
@@ -250,11 +250,11 @@ export default {
               value: "ConsumerGroup",
               label: "ConsumerGroup",
               children: [
-                { value: "Topic", label: "Topic" },
-                { value: "Partition", label: "Partition" }
+                { value: "CKAFKA_TOPIC", label: "Topic" },
+                { value: "CKAFKA_CONSUMERGROUP", label: "Partition" }
               ]
             },
-            { value: "Topic", label: "Topic" }
+            { value: "CKAFKA_TOPIC", label: "Topic" }
           ]
         },
         {
@@ -271,9 +271,12 @@ export default {
               children: [
                 { value: "hdfs_datanode", label: "DataNode" },
                 { value: "hdfs_overview_aggregation", label: "概览" },
-                { value: "JournalNode", label: "JournalNode" },
+                { value: "hdfs_journalnode", label: "JournalNode" },
                 { value: "hdfs_namenode", label: "NameNode" },
-                { value: "ZKFailoverController", label: "ZKFailoverController" }
+                {
+                  value: "hdfs_zkfailovercontroller",
+                  label: "ZKFailoverController"
+                }
               ]
             },
             {
@@ -281,7 +284,7 @@ export default {
               label: "YARN",
               children: [
                 { value: "yarn_nodemanager", label: "NodeManager" },
-                { value: "概览", label: "概览" },
+                { value: "yarn_overview_aggregation", label: "概览" },
                 { value: "yarn_resourcemanager", label: "ResourceManager" },
                 { value: "yarn_jobhistoryserver", label: "JobHistoryServer" }
               ]
@@ -290,9 +293,12 @@ export default {
               value: "PRESTO",
               label: "PRESTO",
               children: [
-                { value: "Presto_Coordinator", label: "Presto_Coordinator" },
+                {
+                  value: "presto_presto_coordinator",
+                  label: "Presto_Coordinator"
+                },
                 { value: "presto_overview", label: "概览" },
-                { value: "Presto_Worker", label: "Presto_Worker" }
+                { value: "presto_presto_worker", label: "Presto_Worker" }
               ]
             },
             {
@@ -300,7 +306,7 @@ export default {
               label: "HBASE",
               children: [
                 { value: "hbase_hmaster", label: "HMaster" },
-                { value: "概览", label: "概览" },
+                { value: "hbase_overview_aggregation", label: "概览" },
                 { value: "hbase_regionserver", label: "RegionServer" }
               ]
             },
@@ -328,10 +334,10 @@ export default {
               label: "主机监控",
               children: [
                 { value: "node_memory", label: "内存" },
-                { value: "网络", label: "网络" },
+                { value: "node_network", label: "网络" },
                 { value: "node_filehandle", label: "文件句柄" },
                 { value: "node_cpu", label: "CPU" },
-                { value: "进程", label: "进程" }
+                { value: "node_process", label: "进程" }
               ]
             },
             {
@@ -346,7 +352,7 @@ export default {
           label: "全球应用加速",
           children: [
             { value: "QAAP_TUNNEL_RULE", label: "加速通道规则" },
-            { value: "加速通道", label: "加速通道" },
+            { value: "QAAP_TUNNEL", label: "加速通道" },
             { value: "QAAP_TUNNEL_LISTENER", label: "加速通道监听器" }
           ]
         },
@@ -354,15 +360,15 @@ export default {
           value: "TSF",
           label: "TSF",
           children: [
-            { value: "日志告警", label: "日志告警" },
-            { value: "部署组告警", label: "部署组告警" },
-            { value: "服务告警", label: "服务告警" }
+            { value: "TSF_LOG", label: "日志告警" },
+            { value: "TSF_GROUP", label: "部署组告警" },
+            { value: "TSF", label: "服务告警" }
           ]
         },
         {
           value: "DDoS防护",
           label: "DDoS防护",
-          children: [{ value: "高防IP", label: "高防IP" }]
+          children: [{ value: "BGPIP", label: "高防IP" }]
         },
         {
           value: "tcaplusdb",
@@ -372,10 +378,10 @@ export default {
           value: "负载均衡",
           label: "负载均衡",
           children: [
-            { value: "外网监听器", label: "外网监听器" },
+            { value: "CLB_LISTENER_PUBLIC", label: "外网监听器" },
             { value: "CLB_LISTENER_PRIVATE", label: "内网监听器" },
             {
-              value: "服务器端口(传统型内网) ",
+              value: "CLB_PORT_PRIVATE ",
               label: "服务器端口(传统型内网) "
             },
             {
@@ -383,7 +389,7 @@ export default {
               label: "服务器端口(其他)",
               children: [
                 { value: "LB_RS_PORT_STATUS", label: "监听器维度" },
-                { value: "服务器端口维度", label: "服务器端口维度" }
+                { value: "CLB_PORT_PUBLIC_NEW", label: "服务器端口维度" }
               ]
             },
             { value: "LB-SEVEN-LAYER-MONITOR", label: "七层协议监控" },
@@ -395,16 +401,16 @@ export default {
           label: "SCDN",
           children: [
             { value: "scdn_domain", label: "域名国内" },
-            { value: "项目国内", label: "项目国内" },
-            { value: "用户国内 ", label: "用户国内" }
+            { value: "scdn_projectid", label: "项目国内" },
+            { value: "scdn_appid ", label: "用户国内" }
           ]
         },
         {
           value: "存储网关",
           label: "存储网关",
           children: [
-            { value: "卷网关", label: "卷网关" },
-            { value: "文件网关", label: "文件网关" }
+            { value: "CSG", label: "卷网关" },
+            { value: "csgfs", label: "文件网关" }
           ]
         },
         {
@@ -423,12 +429,12 @@ export default {
             {
               value: "队列",
               label: "队列",
-              children: [{ value: "消息请求", label: "消息请求" }]
+              children: [{ value: "cmq-queue", label: "消息请求" }]
             },
             {
               value: "主题",
               label: "主题",
-              children: [{ value: "消息请求", label: "消息请求" }]
+              children: [{ value: "CMQ-TOPIC", label: "消息请求" }]
             }
           ]
         },
@@ -436,7 +442,7 @@ export default {
           value: "ECDN",
           label: "ECDN",
           children: [
-            { value: "ECDN域名", label: "ECDN域名" },
+            { value: "DSA_DOMAIN", label: "ECDN域名" },
             { value: "dsa_project", label: "ECDN项目" }
           ]
         },
@@ -445,18 +451,18 @@ export default {
           label: "流计算 Oceanus"
         },
         {
-          value: "无服务器云函数",
+          value: "SCF",
           label: "无服务器云函数"
         },
         {
           value: "云直播",
           label: "云直播",
-          children: [{ value: "直播域名", label: "直播域名" }]
+          children: [{ value: "livestat", label: "直播域名" }]
         },
         {
           value: "分布式数据库",
           label: "分布式数据库",
-          children: [{ value: "TDSQL", label: "TDSQL" }]
+          children: [{ value: "DCDB", label: "TDSQL" }]
         },
         {
           value: "cfs_monitor",
@@ -467,8 +473,8 @@ export default {
           label: "snova数据仓库",
           children: [
             { value: "snova_cluster_node", label: "计算节点监控" },
-            { value: "主节点监控", label: "主节点监控" },
-            { value: "集群监控", label: "集群监控" }
+            { value: "SMNM", label: "主节点监控" },
+            { value: "SCM", label: "集群监控" }
           ]
         },
         {
@@ -476,14 +482,14 @@ export default {
           label: "小游戏联机对战引擎",
           children: [
             { value: "pod", label: "实例监控" },
-            { value: "实时服务器监控", label: "实时服务器监控" }
+            { value: "server", label: "实时服务器监控" }
           ]
         },
         {
           value: "黑石负载均衡",
           label: "黑石负载均衡",
           children: [
-            { value: "外网监听器", label: "外网监听器" },
+            { value: "BM_LB_ON_LISTENER", label: "外网监听器" },
             { value: "BM_LB_IN_LISTENER", label: "内网监听器" }
           ]
         },
@@ -500,7 +506,7 @@ export default {
           label: "API网关",
           children: [
             { value: "APIGW_ENV", label: "环境" },
-            { value: "API", label: "API" }
+            { value: "APIGW_API", label: "API" }
           ]
         },
         {
@@ -513,7 +519,7 @@ export default {
   },
   methods: {
     handleChange(value) {
-      console.log(value);
+      this.$emit("handleChangeChild", value);
     }
   }
 };
