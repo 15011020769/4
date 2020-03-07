@@ -55,16 +55,16 @@
         <el-table-column prop="" label="状态">
           <template slot-scope="scope">
             <span :class="[
-                scope.row.ClusterStatus !== 'Running' ? 'text-red' : 'text-green'
+                scope.row.status !== 'running' ? 'text-red' : 'text-green'
               ]" >{{scope.row.status | changeStatus}}
             </span>
           </template>
         </el-table-column>
         <el-table-column prop="" label="可用区">
           <template slot-scope="scope">
-            <el-tooltip effect="light" content="台北一区" placement="top">
-              <span></span>
-            </el-tooltip>
+            <!-- <el-tooltip effect="light" content="" placement="top"> -->
+              <span>{{scope.row.Placement.Zone | zone}}</span>
+            <!-- </el-tooltip> -->
           </template>
         </el-table-column>
 
@@ -96,7 +96,7 @@
         </el-table-column>
         <el-table-column prop="" label="所属伸缩组">
           <template slot-scope="scope">
-            <p></p>
+            <p>-</p>
           </template>
         </el-table-column>
         <el-table-column width="200" prop="" label="计费模式">
@@ -827,6 +827,14 @@ export default {
         return '报年报月';
       } else if(type === 'SPOTPAID') {
         return '按量计费-竞价';
+      }
+    },
+    //可用区
+    zone(val) {
+      if(val) {
+        if (val.substring(3, val.length - 2) === "taipei") {
+          return "台北" + val.substring(val.length - 1, val.length) + "区";
+        }
       }
     }
   }  

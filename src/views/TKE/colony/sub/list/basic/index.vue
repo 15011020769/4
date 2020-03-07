@@ -28,8 +28,8 @@
             </el-form-item>
             <el-form-item label="kubernetes版本">
               <div class="tke-form-item_text">
-                <p>Master {{clusterVersion.ClusterVersion}}</p>
-                <p>Node {{clusterVersion.InstanceVersions && clusterVersion.InstanceVersions[0].InstanceVersion}}</p>
+                <p>Master {{clusterVersion.ClusterVersion || ''}}</p>
+                <p>Node {{clusterVersion.InstanceVersions && clusterVersion.InstanceVersions.length > 0 && clusterVersion.InstanceVersions[0].InstanceVersion || ''}}</p>
               </div>
             </el-form-item>
             <el-form-item label="运行时组件">
@@ -74,7 +74,9 @@
             <el-form-item label="云联网">
               <div class="tke-form-item_text" v-if="vpcList.length > 0">
                 <el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
+                <span>{{autoRefresh ? '已注册' : '未注册'}}</span>
               </div>
+              
               <div class="tke-form-item_text" v-else><span>当前VPC尚未关联云联网</span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
@@ -226,7 +228,7 @@
       <p style="#e54545;">关闭注册容器网络到云联网，可能会造成已有的云联网和容器间路由不通</p>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="closeNet">提 交</el-button>
-        <el-button @click="showCloseCidr = false">取 消</el-button>
+        <el-button @click="unRegister">取 消</el-button>
       </div>
     </el-dialog>
     
@@ -337,49 +339,45 @@ export default {
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
         this.clusterInfo = res.Response.Clusters[0];
-        console.log(this.clusterInfo);
         this.loadShow = false;
         let params1 = {
           VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
           Version: "2018-05-25"
         }
-
         await this.axios.post(CLUSTERS_INSTANCES, params1).then(async (res1) => {
           if(res1.Response.Error === undefined) {
             this.loadShow = false;
             this.vpcList = res1.Response.InstanceSet;
-            let param = {
-              VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
-              ClusterCIDR: res1.Response.InstanceSet[0].Cidrs[0],
-              Version: "2018-05-25"
-            }
-            this.loadShow = true;
-            await this.axios.post(TKE_CCN_ROUTES, param).then(res2 => {
-              if(res2.Response.Error === undefined) {
-                this.loadShow = false;
-                if(res2.Response.RouteSet.length > 0) {
-                  this.autoRefresh = true;
-                }
-                this.routeSets = res2.Response.RouteSet;
-              } else {
-                this.loadShow = false;
-                let ErrTips = {
-                  
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res2.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
+            if(res1.Response.InstanceSet.length > 0) {
+              let param = {
+                VpcId: res.Response.Clusters[0].ClusterNetworkSettings.VpcId,
+                ClusterCIDR: res1.Response.InstanceSet[0].Cidrs[0],
+                Version: "2018-05-25"
               }
-            })
+              this.loadShow = true;
+              await this.axios.post(TKE_CCN_ROUTES, param).then(res2 => {
+                if(res2.Response.Error === undefined) {
+                  this.loadShow = false;
+                  if(res2.Response.RouteSet.length > 0) {
+                    this.autoRefresh = true;
+                  }
+                  this.routeSets = res2.Response.RouteSet;
+                } else {
+                  this.loadShow = false;
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res2.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            }
           } else {
             this.loadShow = false;
-            let ErrTips = {
-              
-            };
+            let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
               message: ErrOr[res1.Response.Error.Code],
@@ -475,7 +473,6 @@ export default {
       if (res.Error) {
         this.loadShow = false
       } else {
-        // console.log(res)
         this.security = res.Response
         this.loadShow = false
       }
@@ -559,6 +556,12 @@ export default {
       });
     },
 
+    //关闭注册弹窗
+    unRegister() {
+      this.getColonyInfo();
+      this.showCloseCidr = false
+    },
+
     //注册、关闭网络
     async changeSwitch() {
       let autoRefresh = this.autoRefresh;
@@ -574,6 +577,12 @@ export default {
         await this.axios.post(ADD_CIDE_TO_CCN, param).then(res => {
           if(res.Response.Error === undefined) {
             this.getColonyInfo();
+            this.$message({
+              message: '操作成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
             this.loadShow = false;
           } else {
             this.loadShow = false;
@@ -602,10 +611,16 @@ export default {
         VpcId: vpcid,
         ClusterCIDR: cidr
       }
-      debugger
       await this.axios.post(CLOSE_CIDE_TO_CCN, param).then(res => {
         if(res.Response.Error === undefined) {
           this.getColonyInfo();
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.showCloseCidr = false
           this.loadShow = false;
         } else {
           this.loadShow = false;
@@ -627,7 +642,6 @@ export default {
         if (valid) {
           this.updateDescribe();
         } else {
-          console.log('error submit!!')
           return false
         }
       });
@@ -666,8 +680,6 @@ export default {
           });
         }
       });
-      // 
-      console.log(this.os,"os");
     },
 
     //修改项目名
@@ -699,7 +711,6 @@ export default {
         if (valid) {
           this.updateProject();
         } else {
-          console.log('error submit!!')
           return false
         }
       });
@@ -731,6 +742,8 @@ export default {
         return 'TKE定制镜像';
       } else if (type === 'GENERAL') {
         return '基础镜像';
+      } else {
+        return '基础镜像';
       }
     },
 
@@ -745,7 +758,6 @@ export default {
 
     //关闭弹窗
     closeDialog(type) {
-      console.log(type);
       if(type === '1') {
         this.showUpdateName = false;
         this.ruleForm.name = "";

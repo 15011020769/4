@@ -327,60 +327,57 @@ export default {
 
     getDataJob(){
        const param = {
-        // Conditions: ["['tke_cluster_instance_id','=',"+this.clusterId+"]", "['unInstanceId','='',"+this.valueLast[1]+"]"],
-        // "Conditions.0":"['tke_cluster_instance_id','=',"+"'"+this.clusterId+"'"+"]",
-        // "Conditions.1":"['unInstanceId','=',"+"'"+this.valueLast[1]+"'"+"]",
-        // "Conditions.0":["tke_cluster_instance_id","=","cls-59yq0hoi"],
-        // "Conditions.1":["tke_cluster_instance_id","=","cls-59yq0hoi"],
-        // EndTime: 1583511737000,
-        // "Fields.0": "min(k8s_pod_status_ready)",
-        // "Fields.1": "max(k8s_pod_cpu_core_used)",
-        // "Fields.2": "max(k8s_pod_rate_cpu_core_used_node)",
-        // "Fields.3": "max(k8s_pod_rate_cpu_core_used_request)",
-        // "Fields.4": "max(k8s_pod_rate_cpu_core_used_limit)",
-        // "Fields.5": "max(k8s_pod_mem_usage_bytes)",
-        // "Fields.6": "max(k8s_pod_mem_no_cache_bytes)",
-        // "Fields.7": "max(k8s_pod_rate_mem_usage_node)",
-        // "Fields.8": "max(k8s_pod_rate_mem_no_cache_node)",
-        // "Fields.9": "max(k8s_pod_rate_mem_usage_request)",
-        // "Fields.10": "max(k8s_pod_rate_mem_no_cache_request)",
-        // "Fields.11": "max(k8s_pod_rate_mem_usage_limit)",
-        // "Fields.12": "max(k8s_pod_rate_mem_no_cache_limit)",
-        // "Fields.13": "max(k8s_pod_network_receive_bytes_bw)",
-        // "Fields.14": "max(k8s_pod_network_transmit_bytes_bw)",
-        // "Fields.15": "max(k8s_pod_network_receive_bytes)",
-        // "Fields.16": "max(k8s_pod_network_transmit_bytes)",
-        // "Fields.17": "max(k8s_pod_network_receive_packets)",
-        // "Fields.18": "max(k8s_pod_network_transmit_packets)",
-        // "Fields.19": "max(k8s_pod_gpu_used)",
-        // "Fields.20": "max(k8s_pod_gpu_memory_used_bytes)",
-        // "Fields.21": "max(k8s_pod_rate_gpu_used_node)",
-        // "Fields.22": "max(k8s_pod_rate_gpu_memory_used_node)",
-        // "Fields.23": "max(k8s_pod_rate_gpu_used_request)",
-        // "Fields.24": "max(k8s_pod_rate_gpu_memory_used_request)",
-        // // GroupBys: ["timestamp(60s)", "unInstanceId"],
-        // "GroupBys.0": "timestamp(60s)",
-        // "GroupBys.1": "unInstanceId",
-        // Limit: 65535,
-        // Module: "/front/v1",
-        // NamespaceName: "k8s_node",
-        // Offset: 0,
-        // Order: "asc",
-        // OrderBy: "timestamp",
-        // StartTime: 1583508137000,
-        // Version: "2019-06-06"
+        'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
+        'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
         EndTime: 1583511737000,
+        Limit: 65535,
+        Module: "/front/v1",
         NamespaceName: "k8s_node",
         Offset: 0,
-        Order: "desc",
-        OrderBy:"timestamp",
-        Module:"/font/v1",
+        Order: "asc",
+        OrderBy: "timestamp",
         StartTime: 1583508137000,
-        "Fields.0":"timestamp",
-        "Fields.1":"avg(k8s_cluster_cpu_core_total)",
-        Limit:10,
-        "GroupBys.0":"timestamp"
+        Version: "2019-06-06"
+        // EndTime: 1583511737000,
+        // NamespaceName: "k8s_node",
+        // Offset: 0,
+        // Order: "desc",
+        // OrderBy:"timestamp",
+        // Module:"/font/v1",
+        // StartTime: 1583508137000,
+        // "Fields.0":"timestamp",
+        // "Fields.1":"avg(k8s_cluster_cpu_core_total)",
+        // Limit:10,
+        // "GroupBys.0":"timestamp"
       }
+      // param['Fields.0'] = 'avg(k8s_node_cpu_core_request_total)';
+      param['Fields.0'] = 'min(k8s_pod_status_ready)';
+      param["Fields.1"] = "max(k8s_pod_cpu_core_used)";
+      param["Fields.2"] = "max(k8s_pod_rate_cpu_core_used_node)";
+      param["Fields.3"] = "max(k8s_pod_rate_cpu_core_used_request)";
+      param["Fields.4"] = "max(k8s_pod_rate_cpu_core_used_limit)";
+      param["Fields.5"] = "max(k8s_pod_mem_usage_bytes)";
+      param["Fields.6"] = "max(k8s_pod_mem_no_cache_bytes)";
+      param["Fields.7"] = "max(k8s_pod_rate_mem_usage_node)";
+      param["Fields.8"] = "max(k8s_pod_rate_mem_no_cache_node)";
+      param["Fields.9"] = "max(k8s_pod_rate_mem_usage_request)";
+      param["Fields.10"] = "max(k8s_pod_rate_mem_no_cache_request)";
+      param["Fields.11"] = "max(k8s_pod_rate_mem_usage_limit)";
+      param["Fields.12"] = "max(k8s_pod_rate_mem_no_cache_limit)";
+      param["Fields.13"] = "max(k8s_pod_network_receive_bytes_bw)";
+      param["Fields.14"] = "max(k8s_pod_network_transmit_bytes_bw)";
+      param["Fields.15"] = "max(k8s_pod_network_receive_bytes)";
+      param["Fields.16"] = "max(k8s_pod_network_transmit_bytes)";
+      param["Fields.17"] = "max(k8s_pod_network_receive_packets)";
+      param["Fields.18"] = "max(k8s_pod_network_transmit_packets)";
+      param["Fields.19"] = "max(k8s_pod_gpu_used)";
+      param["Fields.20"] = "max(k8s_pod_gpu_memory_used_bytes)";
+      param["Fields.21"] = "max(k8s_pod_rate_gpu_used_node)";
+      param["Fields.22"] = "max(k8s_pod_rate_gpu_memory_used_node)";
+      param["Fields.23"] = "max(k8s_pod_rate_gpu_used_request)";
+      param["Fields.24"] = "max(k8s_pod_rate_gpu_memory_used_request)";
+      param["GroupBys.0"] = "timestamp(60s)";
+      param["GroupBys.1"] = "pod_name";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
         if(res.Response.Error === undefined) {
           console.log(JSON.parse(res.Response.ResponseBody))
