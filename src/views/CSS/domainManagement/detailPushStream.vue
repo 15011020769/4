@@ -2,7 +2,7 @@
   <div v-loading="loadShow">
     <div class="topHead">
       <i class="el-icon-back" @click="returnBack"></i>
-      {{$route.params.domain}}
+      {{$route.query.TargetDomain}}
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
@@ -57,7 +57,6 @@ export default {
       Version: "2018-08-01",
       DomainName: this.$route.query.Name
     };
-
     this.loading = true;
     this.axios.post(DOMAIN_DELTILS, params).then(res => {
       this.loading = false;
