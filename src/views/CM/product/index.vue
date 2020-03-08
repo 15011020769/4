@@ -28,19 +28,19 @@
             <div class="error">
               <p>异常事件</p>
               <p>
-                <span>202</span>个
+                <span>{{unNormalEventAmount}}</span>个
               </p>
             </div>
             <div class="noerror">
               <p>未恢复异常事件</p>
               <p style="color:red">
-                <span>27</span>个
+                <span>{{unRecoverAmount}}</span>个
               </p>
             </div>
             <div class="nopageerror">
               <p>未配置告警异常事件</p>
               <p>
-                <span>139</span>个
+                <span>{{unConfigAlarmAmount}}</span>个
               </p>
             </div>
           </div>
@@ -48,7 +48,7 @@
             <div class="pages">
               <p>状态变更</p>
               <p>
-                <span>0</span>个
+                <span>{{statusChangeAmount}}</span>个
               </p>
             </div>
           </div>
@@ -121,6 +121,10 @@ export default {
   name: "product",
   data() {
     return {
+      statusChangeAmount: 0, // 状态变更
+      unConfigAlarmAmount: 0, // 未配置异常事件
+      unNormalEventAmount: 0, // 异常事件
+      unRecoverAmount: 0, // 未恢复异常事件
       activeName: "first",
       value: 13,
       dialogVisible: false, //弹框
@@ -163,16 +167,17 @@ export default {
   },
   
   mounted() {
-    this.getProductList();
+    
   },
   methods: {
     // 获取时间戳
     GetDat(data) {
-        let StartTIme = new Date(data[1].StartTIme)
-        let EndTIme = new Date(data[1].EndTIme)
+        let StartTIme = new Date(data[1].StartTIme);
+        let EndTIme = new Date(data[1].EndTIme);
 
         this.StartTime = StartTIme.getTime()/1000;
         this.EndTime = EndTIme.getTime()/1000;
+        this.getProductList();
       },
       // 将时间戳转为日期格式
     getConvDate(data){
@@ -204,7 +209,11 @@ export default {
         
 
         if (res.Response.Error === undefined) {
-          this.tableData = res.Response.Events
+          this.tableData = res.Response.Events; //列表数据
+          this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
+          this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
+          this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
+          this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
           console.log(this.tableData);
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
