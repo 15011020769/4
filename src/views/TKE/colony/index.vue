@@ -251,7 +251,7 @@
       <div>
         <el-form label-width="80px">
           <el-form-item label="原名称">
-            <p>集群测试</p>
+            <p>{{ oldnName }}</p>
           </el-form-item>
           <el-form-item label="新名称">
             <el-input
@@ -406,6 +406,7 @@ export default {
       listStatus: [], // 集群列表节点数状态
       listStatusArr: [], // 集群列表节点数状态
       editClusterId: "",
+      oldnName: "",
       editSearchVal: "", // 编辑名称
       total: 0,
       pageSize: 10,
@@ -689,6 +690,7 @@ export default {
     },
     // 编辑集群弹窗相关
     showEditNameDlg(row) {
+      this.oldnName = row.ClusterName;
       this.editNameDialogVisible = true;
       this.editClusterId = row.ClusterId;
     },
