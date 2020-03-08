@@ -4,7 +4,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary">编辑YAML</el-button>
+        <el-button size="small" type="primary" @click="toYmal">编辑YAML</el-button>
       </div>
     </div>
 
@@ -61,6 +61,16 @@ export default {
             showClose: true,
             duration: 2000
           })
+        }
+      })
+    },
+    toYmal: function () {
+      this.$router.push({
+        path: '/colony/sub/modify/service/ingress',
+        query: {
+          clusterId: this.clusterId,
+          np: this.namespace,
+          resourceIns: this.ingressName
         }
       })
     }

@@ -377,6 +377,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/modify/service/ingress', // 集群-Service--编辑yaml
+      name: 'ingressUpdateYaml',
+      component: () => import('./colony/sub/modify/service/ingress.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/config/secret', // 集群-新建Secret
       name: 'secretCreate',
       component: () => import('./colony/sub/create/config/secret.vue'),

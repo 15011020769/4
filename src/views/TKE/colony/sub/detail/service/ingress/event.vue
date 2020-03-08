@@ -12,72 +12,48 @@
 
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
-      <el-table
-        :data="list"
-        v-loading="loadShow"
-        style="width: 100%">
-        <el-table-column
-          label="首次出现时间"
-        >
+      <el-table :data="list" v-loading="loadShow" style="width: 100%">
+        <el-table-column label="首次出现时间">
           <template slot-scope="scope">
-            <p>2020-01-09 19:10:37</p>
+            <p>{{scope.row.firstTimestamp}}</p>
           </template>
         </el-table-column>
-        <el-table-column
-          label="最后出现时间"
-        >
+        <el-table-column label="最后出现时间">
           <template slot-scope="scope">
-            <p>2020-01-10 17:01:02</p>
+            <p>{{scope.row.lastTimestamp}}</p>
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="级别"
-        >
+        <el-table-column prop="" label="级别">
           <template slot-scope="scope">
-            <span class="text-red">Warning</span>
+            <span :class="{'text-red': scope.row.type === 'Warning'}">{{scope.row.type}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="资源类型"
-        >
+        <el-table-column prop="" label="资源类型">
           <template slot-scope="scope">
-            <span>HorizontalPodAutoscaler</span>
+            <span>{{scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
-
-        <el-table-column
-          prop=""
-          label="资源名称"
-        >
+        <el-table-column prop="" label="资源名称">
           <template slot-scope="scope">
-            <span>asdas.15e83372c763e97e</span>
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="address"
-          label="内容">
+        <el-table-column prop="address" label="内容">
           <template slot-scope="scope">
-            <span>FailedGetPodsMetric</span>
+            <span>{{scope.row.reason}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="nodeTotal"
-          label="详细描述">
+        <el-table-column prop="nodeTotal" label="详细描述">
           <template slot-scope="scope">
-            <p>Error: ImagePullBackOff</p>
+            <p style="width: 100%;overflow: hidden;white-space: nowrap;text-overflow: ellipsis">{{scope.row.message}}</p>
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="出现次数">
+        <el-table-column prop="" label="出现次数">
           <template slot-scope="scope">
-            <p>2617</p>
+            <p>{{scope.row.count}}</p>
           </template>
         </el-table-column>
       </el-table>
-
     </div>
   </div>
 </template>
@@ -121,9 +97,9 @@ export default {
       this.loadShow = true
       let param = {
         Method: 'GET',
-        Path: '/apis/extensions/v1beta1/namespaces/default/ingresses/ee/events',
+        Path: `/apis/extensions/v1beta1/namespaces/${this.namespace}/ingresses/${this.ingressName}/events`,
         Version: '2018-05-25',
-        ClusterName: 'cls-a7rua9ae'
+        ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {

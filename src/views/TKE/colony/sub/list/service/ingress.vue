@@ -93,7 +93,7 @@
         >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="toUpdateConfigure(scope.row)">更新转发配置</span>
-            <span class="tke-text-link ml10">编辑YAML</span>
+            <span class="tke-text-link ml10" @click="toYmal(scope.row)">编辑YAML</span>
             <span class="tke-text-link ml10" @click="showDeleteDialog(scope.row)">删除</span>
           </template>
         </el-table-column>
@@ -328,6 +328,16 @@ export default {
 
     upTime (value) {
       return moment(value).format('YYYY-MM-DD HH:mm:ss').split(' ')
+    },
+    toYmal: function (val) {
+      this.$router.push({
+        path: '/colony/sub/modify/service/ingress',
+        query: {
+          clusterId: this.clusterId,
+          np: val.metadata.namespace,
+          resourceIns: val.metadata.name
+        }
+      })
     }
 
   },
