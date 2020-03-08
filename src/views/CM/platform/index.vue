@@ -12,11 +12,12 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <TimeX v-on:switchData="GetPlatformList" :classsvalue="value"></TimeX>
+            <TimeDropDown :TimeArr='TimeArr' :classsvalue="value" :Datecontrol='true' :Graincontrol='false' :Difference="'D'"
+      v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
-              <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
-              <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+              <el-input v-model="input" size="small" placeholder="请输入实例组名搜索"></el-input>
+              <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
                 <i class="el-icon-setting" @click="dialog"></i>
@@ -54,15 +55,15 @@
 
 <script>
 import Header from "@/components/public/Head";
-import TimeX from "@/components/public/TimeN";
-import Dialog from "./custom/custom"
+import TimeDropDown from '@/components/public/TimeDropDown';
+import Dialog from "./custom/custom";
 
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { PLATFORM_EVENT_LIST } from "@/constants";
 export default {
   name: "platform",
-  created() {
+  mounted() {
     this.GetPlatformList()
   },
   data() {
@@ -72,25 +73,58 @@ export default {
       dialogVisible: false, //弹出框
       input: "", //搜索框的值
       tableData: [],
+      StartTime: "", //起始时间
+      EndTime: "", //结束时间
       //分页
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      currpage: 1, // 当前页码
+      TimeArr: [
+          
+          {
+            name: '近7天',
+            Time: 'Nearly_7_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+           {
+            name: '近30天',
+            Time: 'Nearly_30_days',
+          },
+        ]
     };
   },
   components: {
     Header,
-    TimeX,
+    TimeDropDown,
     Dialog
   },
   methods: {
+    // 获取时间戳
+    GetDat(data) {
+        
+        let StartTIme = new Date(data[1].StartTIme)
+        let EndTIme = new Date(data[1].EndTIme)
+
+        this.StartTime = StartTIme.getTime()/1000;
+        this.EndTime = EndTIme.getTime()/1000;
+      },
    //获取数据
     GetPlatformList(data) {
       this.loadShow = true; //加载
       const params = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        StartTime: this.StartTime,
+        EndTime: this.EndTime
       };
 
       //  monitor2/DescribeAccidentEventList   //接口
@@ -133,9 +167,7 @@ export default {
    width: 240px;
         display: flex;
 }
-.type_data{
-  margin-top:-20px;
-}
+
 .platform-wrap > header {
   width: 100%;
   background: #fff;
@@ -174,9 +206,7 @@ export default {
           cursor: pointer;
         }
       }
-      .type_data{
-        margin-left:-20px;
-      }
+     
   }
   
   .table {
