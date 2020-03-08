@@ -66,7 +66,6 @@ let label = {
   addLabel: function () {
     // 填写名称后将名称默认复制给标签第一条
     this.wl.labels.push({ key: '', value: '' })
-    this.wl.labels[0].value = this.wl.name
     /* if (labels.length > 0) {
       for (let i = 0; i < labels.length; i++) {
         if (labels[i].key === 'k8s-app') {
@@ -129,8 +128,9 @@ let touchTactics = {
   addTouchTactics: function () {
     this.wl.touchTactics.push({
       key: Date.now(),
-      touch1: 'CPU',
-      touch2: 'CPU使用量',
+      touch1: 1,
+      touch2Option: this.touchOptions2[0],
+      touch2: 1,
       size: ''
     })
   },
@@ -227,9 +227,165 @@ let change = {
     this.getPersistentvolumeclaims()
     this.getSecrets()
     this.getConfigmaps()
+  },
+  citeCsValue1Change: function (event, val) {
+    val.value2 = ''
+    if (event === 'ConfigMap') {
+      this.configMap.items.map(item => {
+        return { name: item.metadata.name, option: Object.keys(item.data) }
+      })
+    }
+    if (event === 'Secret') {
+      val.option2 = this.secrets.items.map(item => {
+        return { name: item.metadata.name, option: Object.keys(item.data) }
+      })
+    }
+  },
+  citeCsValue2Change: function (event, val) {
+    val.value3 = ''
+    let option = val.option2.filter(item => event === item.name)[0].option
+    val.option3 = option
   }
 }
 export default {
+  data: function () {
+    return {
+      nameValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('Workload名称不能为空'))
+          } else if (value.length > 40) {
+            callback(new Error('Workload名称不能超过40个字符'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      labelKeyValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('Key不能为空'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      labelValueValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('Value不能为空'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      executionStrategyValidator: [{
+        validator: (rule, value, callback) => {
+          if (this.wl.type !== 'cronJob') {
+            callback()
+            return
+          }
+          if (value === '') {
+            callback(new Error('执行策略不能为空'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      instanceContentNameValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('容器名称不能为空'))
+          } else if (value.length > 63) {
+            callback(new Error('容器名称不能超过63个字符'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      instanceContentMirrorImgValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('镜像不能为空'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      jobSettingRepeatValidator: [{
+        validator: (rule, value, callback) => {
+          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+            callback()
+            return
+          }
+          if (value === '') {
+            callback(new Error('执行次数至少为1'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      jobSettingParallelValidator: [{
+        validator: (rule, value, callback) => {
+          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+            callback()
+            return
+          }
+          if (value === '') {
+            callback(new Error('Job并行度至少为1'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      portMappingConPortValidator: [{
+        validator: (rule, value, callback) => {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+            callback()
+            return
+          }
+          if (value === '') {
+            callback(new Error('请输入容器端口'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      portMappingServicePortValidator: [{
+        validator: (rule, value, callback) => {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+            callback()
+            return
+          }
+          if (value === '') {
+            callback(new Error('请输入服务端口'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }]
+    }
+  },
   methods: {
     ...label,
     ...instanceContent,
@@ -243,8 +399,8 @@ export default {
     ...portMapping,
     ...change,
     axiosUtils: function (res, func) {
-      func()
-      /* if (res.info !== undefined) {
+      // func()
+      if (res.info !== undefined) {
         this.$message({
           message: res.info,
           type: 'error',
@@ -256,7 +412,6 @@ export default {
       if (res.Response.Error === undefined) {
         func()
       } else {
-        console.log('error', res)
         let ErrTips = {}
         let ErrOr = Object.assign(ErrorTips, ErrTips)
         this.$message({
@@ -265,7 +420,7 @@ export default {
           showClose: true,
           duration: 2000
         })
-      } */
+      }
     }
   }
 }
