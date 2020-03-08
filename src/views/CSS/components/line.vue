@@ -3,8 +3,8 @@
 </template>
 
 <script>
-import 'echarts/lib/component/legend'
-import 'echarts/lib/component/tooltip'
+import "echarts/lib/component/legend";
+import "echarts/lib/component/tooltip";
 export default {
   name: "myChart",
   data() {
@@ -22,7 +22,7 @@ export default {
     tooltip: {
       type: Object,
       default: function() {
-        return {trigger: 'axis'}
+        return { trigger: "axis" };
       }
     },
     xAxis: {
@@ -34,7 +34,7 @@ export default {
       default: () => []
     },
     legendText: {
-      type: String,
+      type: String
     }
   },
   watch: {
@@ -62,7 +62,7 @@ export default {
     getDay(day) {
       var today = new Date();
       var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
-      today.setTime(targetday_milliseconds); //注意，这行是关键代码
+      today.setTime(targetday_milliseconds); // 注意，这行是关键代码
       var tYear = today.getFullYear();
       var tMonth = today.getMonth();
       var tDate = today.getDate();
@@ -72,35 +72,35 @@ export default {
     },
     echart() {
       // var myChart = this.$echarts.init(document.getElementById("myChart"));
-      var myChart = this.$echarts.init(this.$refs.line_dv)
+      var myChart = this.$echarts.init(this.$refs.line_dv);
       myChart.setOption({
         color: this.color,
         tooltip: this.tooltip,
         grid: {
-            left: '3%',
-            right: '4%',
-            bottom: '6%',
-            containLabel: true
+          left: "3%",
+          right: "4%",
+          bottom: "6%",
+          containLabel: true
         },
         legend: {
-            data: [this.legendText],
-            bottom: 0,
-            icon: 'rect',
+          data: [this.legendText],
+          bottom: 0,
+          icon: "rect"
         },
         xAxis: {
           type: "category",
           axisLabel: {
-            color: '#B0B0B0',
-            fontSize: 10,
+            color: "#B0B0B0",
+            fontSize: 10
           },
           axisTick: {
             lineStyle: {
-              color: '#B0B0B0',
+              color: "#B0B0B0"
             }
           },
           axisLine: {
             lineStyle: {
-              color: '#B0B0B0'
+              color: "#B0B0B0"
             }
           },
           data:
@@ -123,9 +123,9 @@ export default {
             show: false
           },
           axisLabel: {
-            color: '#B0B0B0',
+            color: "#B0B0B0",
             fontSize: 10,
-            verticalAlign: 'top'
+            verticalAlign: "top"
           }
         },
         series: [
@@ -138,8 +138,8 @@ export default {
             itemStyle: {
               normal: {
                 color: this.color,
-                lineStyle:{
-                  width:3//设置线条粗细
+                lineStyle: {
+                  width: 3 // 设置线条粗细
                 }
               }
             }
@@ -149,5 +149,4 @@ export default {
     }
   }
 };
-
 </script>
