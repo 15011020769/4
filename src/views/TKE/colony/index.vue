@@ -9,7 +9,7 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <h2 class="header-title">集群管理</h2>
-          <el-button size="small">台湾台北</el-button>
+          <el-button size="small" type="primary">台湾台北</el-button>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -111,7 +111,7 @@
           </el-table-column>
           <el-table-column prop="nodeTotal" label="节点数">
             <template slot-scope="scope">
-              <a href="javascript:;" @click="NodeTotal(scope.row.ClusterId)"
+              <a href="javascript:;" @click="NodeTotal(scope.row)"
                 >{{ scope.row.ClusterNodeNum }}台</a
               >
               (
@@ -161,7 +161,7 @@
                 >配置告警</span
               > -->
               <span
-                @click="goAddExist(scope.row.ClusterId)"
+                @click="goAddExist(scope.row)"
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="tke-text-link ml10"
                 >添加已有节点</span
@@ -443,7 +443,8 @@ export default {
       detaleTableData: [],
       detaleTableData_ETCD: [],
       deteleCheck: true,
-      deleteLoadShow: true
+      deleteLoadShow: true,
+      oldnName: ""
     };
   },
   components: {
@@ -665,11 +666,12 @@ export default {
       });
     },
     // 节点数跳转
-    NodeTotal(id) {
+    NodeTotal(row) {
       this.$router.push({
         name: "colonyNodeManageNode",
         query: {
-          clusterId: id
+          clusterId: row.ClusterId,
+          ProjectId: row.ProjectId
         }
       });
     },
@@ -690,6 +692,7 @@ export default {
     },
     // 编辑集群弹窗相关
     showEditNameDlg(row) {
+      console.log(row);
       this.oldnName = row.ClusterName;
       this.editNameDialogVisible = true;
       this.editClusterId = row.ClusterId;
@@ -878,11 +881,12 @@ export default {
       });
     },
     // 添加已有节点跳转呢
-    goAddExist(id) {
+    goAddExist(row) {
       this.$router.push({
         name: "clusterAddExist",
         query: {
-          clusterId: id
+          clusterId: row.ClusterId,
+          ProjectId: row.ProjectId
         }
       });
     },

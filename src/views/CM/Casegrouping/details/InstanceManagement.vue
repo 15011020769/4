@@ -90,7 +90,7 @@
                   <el-table
                     :data="tableData"
                     height="420"
-                    @selection-change="handleSelectionChange"
+                    @selection-change="AddHandleSelectionChange"
                   >
                     <el-table-column
                       type="selection"
@@ -199,6 +199,7 @@ export default {
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         // if (res.Response.Error === undefined) {
         console.log(res.data.instanceList);
+        console.log(res.data);
         var _enterList = res.data.instanceList;
         this.total = res.data.total;
         let params = {};
@@ -229,7 +230,7 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
-    handleSelectionChange1(val) {
+    AddHandleSelectionChange(val) {
       this.multipleSelection1 = val;
     },
     // 分页

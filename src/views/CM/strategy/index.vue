@@ -11,12 +11,19 @@
           label-position="left"
         >
           <el-form-item label="策略名称">
-            <el-input v-model="formInline.strategy_name" style="width:360px;"></el-input>
+            <el-input
+              v-model="formInline.strategy_name"
+              style="width:360px;"
+            ></el-input>
           </el-form-item>
           <el-form-item label="产品/策略类型">
-            <el-select filterable v-model="formInline.product_name" style="width:100px;">
+            <el-select
+              filterable
+              v-model="formInline.product_name"
+              style="width:100px;"
+            >
               <el-option
-                v-for="(item,index) in formInline.product_kind"
+                v-for="(item, index) in formInline.product_kind"
                 :key="index"
                 :label="item.name"
                 :value="item.id"
@@ -41,7 +48,7 @@
                 >{{item.name}}</el-checkbox>
               </el-checkbox-group>-->
               <el-option
-                v-for="(item,index) in formInline.strategy_kind"
+                v-for="(item, index) in formInline.strategy_kind"
                 :key="index"
                 :label="item.name"
                 :value="item.value"
@@ -63,7 +70,7 @@
           <el-form-item label="用户/组">
             <el-select v-model="formInline.user" style="width:100px;">
               <el-option
-                v-for="(item,index) in formInline.user_kind"
+                v-for="(item, index) in formInline.user_kind"
                 :key="index"
                 :label="item.name"
                 :value="item.value"
@@ -76,7 +83,7 @@
               style="width:250px;margin-left:10px;margin-right:20px;"
             >
               <el-option
-                v-for="(item,index) in formInline.kind_list"
+                v-for="(item, index) in formInline.kind_list"
                 :key="index"
                 :label="item.name"
                 :value="item.value"
@@ -110,8 +117,12 @@
       <p class="addBtn">
         <el-row>
           <el-button type="primary" @click="addCreate">新增</el-button>
-          <el-button :disable="operationFlag==-1?true:false">删除</el-button>
-          <el-button :disable="operationFlag==-1?true:false">修改告警渠道</el-button>
+          <el-button :disable="operationFlag == -1 ? true : false"
+            >删除</el-button
+          >
+          <el-button :disable="operationFlag == -1 ? true : false"
+            >修改告警渠道</el-button
+          >
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-setting" @click="buyMessgae"></i>
@@ -126,7 +137,7 @@
         style="width: 100%"
         height="450"
         v-loading="dataListLoading"
-        :default-sort="{prop: 'changeData', order: 'descending'}"
+        :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
@@ -134,7 +145,8 @@
             <a
               class="defaultDialog"
               @click="defaultClick(scope.row.grounpId)"
-            >{{scope.row.groupName}}</a>
+              >{{ scope.row.groupName }}</a
+            >
             <i v-show="defaultIconFlag" class="el-icon-edit"></i>
           </template>
         </el-table-column>
@@ -143,29 +155,29 @@
             <!-- {{scope.chufa1}} -->
             <p v-if="scope.row.chufa1.tiaojian">
               <span>触发条件：</span>
-              <span>{{scope.row.chufa1.tiaojian}}</span>
+              <span>{{ scope.row.chufa1.tiaojian }}</span>
             </p>
             <p v-if="scope.row.chufa1.zhiling">
               <span>指令告警：</span>
-              <span>{{scope.row.chufa1.zhiling}}</span>
+              <span>{{ scope.row.chufa1.zhiling }}</span>
             </p>
             <p v-if="scope.row.chufa1.shijian">
               <span>事件告警：</span>
-              <span>{{scope.row.chufa1.shijian}}</span>
+              <span>{{ scope.row.chufa1.shijian }}</span>
             </p>
           </template>
         </el-table-column>
         <el-table-column prop="object" label="所属项目"></el-table-column>
         <el-table-column label="策略类型">
           <template slot-scope="scope">
-            <b>{{scope.row.type}}</b>
+            <b>{{ scope.row.type }}</b>
           </template>
         </el-table-column>
         <el-table-column prop="YS" label="已启用/实例数"></el-table-column>
         <el-table-column label="最后修改">
           <template slot-scope="scope">
-            <p>{{scope.row.lastChange.id}}</p>
-            <p>{{scope.row.lastChange.data}}</p>
+            <p>{{ scope.row.lastChange.id }}</p>
+            <p>{{ scope.row.lastChange.data }}</p>
           </template>
         </el-table-column>
         <el-table-column label="告警渠道">
@@ -173,15 +185,15 @@
             <div v-if="scope.row.qudao">
               <p class="qudaoInfo">
                 <span>接收组：</span>
-                <span>{{scope.row.qudao.jieshou}}个</span>
+                <span>{{ scope.row.qudao.jieshou }}个</span>
               </p>
               <p class="qudaoInfo">
                 <span>有效期：</span>
-                <span>{{scope.row.qudao.youxiao}}</span>
+                <span>{{ scope.row.qudao.youxiao }}</span>
               </p>
               <p class="qudaoInfo">
                 <span>渠道：</span>
-                <span>{{scope.row.qudao.qudao}}</span>
+                <span>{{ scope.row.qudao.qudao }}</span>
               </p>
             </div>
             <div v-else>-</div>
@@ -189,7 +201,11 @@
         </el-table-column>
         <el-table-column label="告警启停">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.zanting" active-color="#13ce66" inactive-color="#eee"></el-switch>
+            <el-switch
+              v-model="scope.row.zanting"
+              active-color="#13ce66"
+              inactive-color="#eee"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -200,15 +216,18 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-        <el-pagination
-          :page-size="pagesize"
-          :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="TotalCount"
-        ></el-pagination>
+      <div class="tke-page">
+        <div class="block">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pageIndex"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next"
+            :total="total"
+          ></el-pagination>
+        </div>
       </div>
     </div>
     <!-- 点击设置 -->
@@ -218,6 +237,8 @@
 <script>
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CM_ALARM_LIST } from "@/constants";
 export default {
   name: "strategy",
   data() {
@@ -451,9 +472,9 @@ export default {
         }
       ], //表格数据
       //分页
-      TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      total: 0, //总条数
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
       operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
       dialogVisible: false, //设置弹出框
@@ -465,7 +486,33 @@ export default {
     Header,
     Dialog
   },
+  mounted() {
+    this.ListInit();
+  },
   methods: {
+    async ListInit() {
+      let params = {
+        Version: "2018-07-24",
+        // Region:"",
+        Module: "monitor",
+        Limit: this.pageSize,
+        Offset: this.pageIndex
+      };
+      await this.axios.post(CM_ALARM_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     handleCheckAllChange(val) {
       this.checkedCities = val ? cityOptions : [];
       this.isIndeterminate = false;
@@ -479,9 +526,16 @@ export default {
     onSubmit() {
       console.log("submit!");
     },
-    //分页
+    // 分页
     handleCurrentChange(val) {
-      this.currpage = val;
+      this.pageIndex = val - 1;
+      this.ListInit();
+      this.pageIndex += 1;
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.ListInit();
     },
     //设置弹框
     buyMessgae() {
@@ -500,7 +554,7 @@ export default {
       //点击默认按钮
       console.log(id, "id");
       //这里是写死的:id动态路由，写数据的时候改成动态的id
-      this.$router.push({path: "/strategy/create:"+id});
+      this.$router.push({ path: "/strategy/create:" + id });
       // this.$router.push({
       //   path: "/strategy/create:"+"id", // 新增告警策略默认点击按钮（详情），写死了，到时候可动态访问
       //   name: "strategy",

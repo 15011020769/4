@@ -18,3 +18,11 @@ export const CM_GROUPING_MANAGE = 'monitor/GetInstanceGroup'
 
 // 实例分组 详情 实例管理 移出
 export const CM_GROUPING_MOVE = 'monitor/DeleteInstancesInInstanceGroup'
+
+
+
+// 告警策略 列表
+export const CM_ALARM_LIST = 'monitor2/DescribePolicyGroupList'
+
+// 告警策略 列表
+export const CM_ALARM_L = 'monitor2/DescribeProductEventList'
