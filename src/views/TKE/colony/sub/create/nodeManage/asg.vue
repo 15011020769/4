@@ -905,6 +905,17 @@ export default {
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara),
         InstanceAdvancedSettings: InstanceAdvancedSettings
       };
+//       Version: "2018-05-25"
+// ClusterId: "cls-h3phnkpy"
+// AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"
+// LaunchConfigurePara: "{"LaunchConfigurationName":"","InstanceType":"S3.SMALL1","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"LoginSettings":{"Password":"asdasd123"},"SecurityGroupIds":["sg-81y1wst4","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"InstanceChargeType":"POSTPAID_BY_HOUR"}"
+// InstanceAdvancedSettings: {MountTarget: "", DockerGraphPath: "", UserScript: "", Unschedulable: 0, ExtraArgs: {Kubelet: []}}
+// MountTarget: ""
+// DockerGraphPath: ""
+// UserScript: ""
+// Unschedulable: 0
+// ExtraArgs: {Kubelet: []}
+// Kubelet: []
 
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
