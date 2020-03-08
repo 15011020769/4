@@ -5,8 +5,8 @@
     <div class="platform-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
-          事件中心概述，产品事件与平台事件区别
-          <a>点击了解</a>
+          事件中心概述，平台事件與平台事件區別
+          <a>點擊了解</a>
         </p>
       </div>
       <div class="box">
@@ -16,7 +16,7 @@
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
-              <el-input v-model="input" size="small" placeholder="请输入实例组名搜索"></el-input>
+              <el-input v-model="input" size="small" placeholder="請輸入實例組名搜索"></el-input>
               <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
@@ -28,11 +28,11 @@
           <el-table :data="tableData" style="width: 100%" height="450">
             <el-table-column prop="date" label="事件" class="el-icon-info"></el-table-column>
             <el-table-column prop="region" label="地域" ></el-table-column>
-            <el-table-column prop="state" label="状态" ></el-table-column>
-            <el-table-column prop="influence" label="影响对象" ></el-table-column>
-            <el-table-column prop="starttime" label="开始时间" ></el-table-column>
-            <el-table-column prop="updatatime" label="更新时间" ></el-table-column>
-            <el-table-column prop="alarm" label="事件类型"></el-table-column>
+            <el-table-column prop="state" label="狀態" ></el-table-column>
+            <el-table-column prop="influence" label="影響對象" ></el-table-column>
+            <el-table-column prop="starttime" label="開始時間" ></el-table-column>
+            <el-table-column prop="updatatime" label="更新時間" ></el-table-column>
+            <el-table-column prop="alarm" label="事件類型"></el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -63,9 +63,6 @@ import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { PLATFORM_EVENT_LIST } from "@/constants";
 export default {
   name: "platform",
-  mounted() {
-    this.GetPlatformList()
-  },
   data() {
     return {
       activeName: "first",
@@ -115,6 +112,20 @@ export default {
 
         this.StartTime = StartTIme.getTime()/1000;
         this.EndTime = EndTIme.getTime()/1000;
+        this.GetPlatformList()
+      },
+      // 将时间戳转为日期格式
+    getConvDate(data){
+        var _data = data;
+          _data = data*1000
+        const time = new Date(_data);    
+        const Y = time.getFullYear();
+        const Mon = time.getMonth() + 1;
+        const Day = time.getDate();
+        const H = time.getHours();
+        const Min = time.getMinutes();
+        const S = time.getSeconds();
+          return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`
       },
    //获取数据
     GetPlatformList(data) {
@@ -132,12 +143,30 @@ export default {
       console.log(params);
       this.axios.post(PLATFORM_EVENT_LIST, params).then(res => {
         console.log(res);
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.Events; //列表数据
+          console.log(this.tableData);
+          this.TotalCount = res.Response.Total;
+          this.loadShow = false; //取消加载
+          this.showNameSpaceModal = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
       // console.log(data);
     },
      //分页
     handleCurrentChange(val) {
       this.currpage = val;
+      this.GetPlatformList();
     },
      //弹框
     dialog(){
