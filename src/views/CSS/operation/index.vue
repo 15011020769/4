@@ -1,10 +1,10 @@
 <template>
   <div class="operation-wrap">
-    <Header title="运营数据" />
+    <Header title="運營數據" />
     <div class="explain">
       <p>
-        您可以在云监控中设置告警，配置流量/带宽等参数超过设定值时通过短信/邮件/站内信等通知您。
-        <a href="#">设置告警</a>
+        您可以在雲監控中設置告警，配置流量/帶寬等參數超過設定值時通過簡訊/郵件/站內信等通知您。
+        <a href="#">設置告警</a>
       </p>
     </div>
     <div class="seek">
@@ -12,7 +12,7 @@
     </div>
     <div class="seek seek-box">
       <p style="margin-left:20px;">
-        <span>选择域名</span>
+        <span>選擇域名</span>
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -41,7 +41,7 @@
         </el-dropdown>
       </p>
       <p style="margin-left:20px;">
-        <span>选择运营商</span>
+        <span>選擇運營商</span>
         <el-select v-model="operator" placeholder="请选择" style="margin-left:10px;">
           <el-option
             v-for="item in options"
@@ -52,7 +52,7 @@
         </el-select>
       </p>
       <el-button type="primary" style="margin-left:20px;">{{region}}</el-button>
-      <el-button style="margin-left:20px;" type="primary" @click="search">查询</el-button>
+      <el-button style="margin-left:20px;" type="primary" @click="search">查詢</el-button>
     </div>
     <div class="operation-main">
       <div class="tab-box">
@@ -131,21 +131,39 @@ export default {
       options: [
         {
           value: "",
-          label: "全部运营商"
+          label: "全部運營商"
         },
         {
           value: "China Telecom",
-          label: "中国电信"
+          label: "中國電信"
         },
         {
           value: "China Unicom",
-          label: "中国联通"
+          label: "中國聯通"
         },
         {
           value: "China Mobile",
-          label: "中国移动"
+          label: "中國移動"
         },
       ],
+      // options: [
+      //   {
+      //     value: "",
+      //     label: "全部運營商"
+      //   },
+      //   {
+      //     value: "Chunghwa Telecom",
+      //     label: "中华电信"
+      //   },
+      //   {
+      //     value: "Taiwan Mobile",
+      //     label: "台湾大哥大"
+      //   },
+      //   {
+      //     value: "Far EasTone",
+      //     label: "远传电信"
+      //   },
+      // ],
       domain: [],
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
@@ -153,22 +171,22 @@ export default {
       //tab内容
       tab: [
         {
-          name: "带宽峰值",
+          name: "帶寬峰值",
           code: "Mbps",
           value: 0
         },
         {
-          name: "总流量",
+          name: "總流量",
           code: "MB",
           value: 0
         },
         {
-          name: "总请求数",
+          name: "總請求數",
           code: "次",
           value: 0
         },
         {
-          name: "并发连接数峰值",
+          name: "併發連接數峰值",
           code: "次",
           value: 0
         }
@@ -319,7 +337,9 @@ export default {
       if (this.domainCheckedList.length === 0) {
         this.$message({
           type: 'warning',
-          message: '请选择域名'
+          message: '請選擇域名',
+          showClose: true,
+          duration: 0
         })
       } else {
         this.$refs.doaminRef.visible = false
