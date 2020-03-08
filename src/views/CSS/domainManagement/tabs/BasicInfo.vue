@@ -15,6 +15,10 @@
           <p>{{$t('CSS.domainManagement.3')}}</p>
           <p>{{info.Type|typeCh}}</p>
         </div>
+        <div class="newClear newList" v-if="info.Type === 1">
+          <p>播放區域</p>
+          <p>{{info.PlayType|playType}}</p>
+        </div>
         <div class="newClear newList">
           <p>API Key</p>
           <p>{{apiKey}}</p>
@@ -43,6 +47,16 @@ export default {
         return "推流域名";
       } else if (val === 1) {
         return "播放域名";
+      }
+    },
+    playType(val) {
+      switch (val) {
+        case 1:
+          return '中國大陸'
+        case 2:
+          return '全球加速'
+        case 3:
+          return '中國港澳台地區及海外地區'
       }
     }
   },

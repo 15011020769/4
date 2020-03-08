@@ -147,3 +147,27 @@ export const LIVE_DESCRIBE_LIVEPACKAGEINFO = 'live2/DescribeLivePackageInfo'
 /** 日志服务 */
 // 批量获取日志服务
 export const GET_LOG_DOWNLOAD_LIST = 'live2/DescribeLogDownloadList'
+// 获取转码规则列表
+export const DESCRIBE_LIVE_TRANSCODE_RULES = 'live2/DescribeLiveTranscodeRules'
+// 获取单个转码模板
+export const DESCRIBE_LIVE_TRANSCODE_TEMPLATE = 'live2/DescribeLiveTranscodeTemplate'
+// 删除转码规则
+export const DELETE_LIVE_TRANSCODE_RULE = 'live2/DeleteLiveTranscodeRule'
+// 创建转码规则
+export const CREATE_LIVE_TRANSCODE_RULE = 'live2/CreateLiveTranscodeRule'
+// 修改播放鉴权key
+export const MODIFY_LIVE_PLAY_AUTH_KEY = 'live2/ModifyLivePlayAuthKey'
+// 获取带宽封顶配置
+export const DESCRIBE_LIVE_BAND_LIMIT = 'live2/DescribeLiveBandLimit'
+// 获取源站设置
+export const DESCRIBE_SOURCE_STREAM_INFO = 'live2/DescribeSourceStreamInfo'
+// 获取域名证书信息
+export const DESCRIBE_LIVE_DOMAIN_CERT = 'live2/DescribeLiveDomainCert'
+// 添加证书
+export const CREATE_LIVE_CERT = 'live2/CreateLiveCert'
+// 修改域名和证书绑定信息
+export const MODIFY_LIVE_DOMAIN_CERT = 'live2/ModifyLiveDomainCert'
+// 添加证书
+export const MODIFY_LIVE_CERT = 'live2/ModifyLiveCert'
+// 修改带宽封顶
+export const MODIFY_LIVE_BAND_LIMIT = 'live2/ModifyLiveBandLimit'

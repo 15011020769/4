@@ -62,7 +62,22 @@ import DraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import COS from 'cos-js-sdk-v5'
 import moment from 'moment'
-
+import Vue from 'vue'
+const cos = new COS({
+  getAuthorization: async (_, callback) => {
+    const res = await Vue.prototype.axios({
+      url: "bucket/uploadKey3",
+      method: "get",
+    })
+    console.log(res)
+    callback({
+      TmpSecretId: res.data.secretId,
+      TmpSecretKey: res.data.secretKey,
+      XCosSecurityToken: res.data.sessionToken,
+      ExpiredTime: res.data.extra.expiredTime, // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
+    })
+  },
+})
 export default {
   name: "optionForm",
   components: {
@@ -151,35 +166,19 @@ export default {
         })
         return isLt2M
       }
-      // new一个cos的对象 获取签名
-      let cos = new COS({
-        getAuthorization: (options, callback) => {
-          console.log(options)
-          this.axios({
-            url: "bucket/uploadKey2",
-            data: {method:  (options.Method || "get").toLowerCase(), pathname: '/' + (options.Key || "")},
-            method: "post",
-            withCredentials: true
-          }).then(data => {
-            console.log(data)
-            callback(data.data);
-          });
-        }
-      });
-      // 获取异步签名之后 调用cos 上传文件 获取返回文件的网络url 上传的文件名为时间戳
-      cos.sliceUploadFile(
-        {
-          Bucket: 'livewatermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
-          Region: "ap-taipei",
-          StorageClass: "STANDARD",
-          Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,
-          Body: file
-        },
-        (err, data) => {
-          console.log(data)
-          this.ruleForm.PictureUrl = `https://${data.Location}`
-        }
-      );
+       
+      console.log(cos)
+      cos.putObject({
+        Bucket: 'wjtest-1301459465', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
+        Region: "ap-taipei",
+        StorageClass: "STANDARD",
+        Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,
+        Body: file, // 上传文件对象
+      },
+      (err, data) => {
+        console.log(err, data)
+      },
+    )
       return true
     },
     xblur() {

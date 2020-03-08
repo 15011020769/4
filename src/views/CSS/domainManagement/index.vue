@@ -37,7 +37,7 @@
           >
             <el-table-column prop="Name" label="域名" width>
               <template slot-scope="scope">
-                <a href="#" @click="toDetail(scope.row)">{{scope.row.Name}}</a>
+                <el-button type="text" @click="toDetail(scope.row)">{{scope.row.Name}}</el-button>
               </template>
             </el-table-column>
             <el-table-column prop="CurrentCName" label="CNAME" width>
@@ -321,13 +321,12 @@ export default {
     },
     //跳转详情页
     toDetail(row) {
-      console.log(row);
-      if (row.Type === 1) {
+      if (row.Type === 1) { // 播放域名
         this.$router.push({
-          name: "deletaPlay",
+          name: "detailPlay",
           query: row
         });
-      } else if (row.Type === 0) {
+      } else if (row.Type === 0) { // 推流域名
         this.$router.push({
           name: "detailPushStream",
           query: row
