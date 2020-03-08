@@ -637,10 +637,11 @@ export default {
     init() {
       this.loading = true;
       let userList = {
-        Version: "2019-01-16"
+        Version: "2019-01-16",
+        
       };
       this.axios
-        .post(USER_LIST, userList)
+        .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
           // console.log(data);
 

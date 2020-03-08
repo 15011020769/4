@@ -34,7 +34,7 @@
         </div>
         <div class="newClear newList1">
           <p>推流域名</p>
-          <p>{{$route.params.domain}}</p>
+          <p>{{$route.query.Name}}</p>
         </div>
       </div>
       <div class="dateOut">
@@ -161,6 +161,9 @@ import { toUTF8Array } from "@/utils";
 import moment from "moment";
 import md5 from "js-md5";
 export default {
+  props: {
+    info: Object,
+  },
   data() {
     return {
       editSetModel: false, //编辑弹框

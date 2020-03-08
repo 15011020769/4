@@ -35,9 +35,10 @@
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
               <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}
                 <el-tooltip v-if="userData.PhoneFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
-                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
-                    <el-badge is-dot class="item">
-                      發送驗證鏈接&nbsp;&nbsp;
+                  <el-button :disabled="phoneTimer && phoneInterval > 0" type="text" @click="sengyz(1)" style="font-size: 12px;">
+                    <el-badge is-dot>
+                      <span v-if="phoneTimer && phoneInterval > 0">{{phoneInterval}}秒後重發&nbsp;</span>
+                      <span v-else>{{sendPhone && '重新' || ''}}發送驗證鏈接&nbsp;</span>
                     </el-badge>
                   </el-button>
                 </el-tooltip>
@@ -47,9 +48,10 @@
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
               <span>{{userData.Email ? userData.Email : '-'}}
                 <el-tooltip v-if="userData.EmailFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
-                  <el-button type="text" @click="sengyz" style="font-size: 12px;">
-                    <el-badge is-dot class="item">
-                      發送驗證鏈接&nbsp;&nbsp;
+                  <el-button :disabled="emailTimer && emailInterval > 0" type="text" @click="sengyz(2)" style="font-size: 12px;">
+                    <el-badge is-dot>
+                      <span v-if="emailTimer && emailInterval > 0">{{emailInterval}}秒後重發&nbsp;</span>
+                      <span v-else>{{sendEmail && '重新' || ''}}發送驗證鏈接&nbsp;</span>
                     </el-badge>
                   </el-button>
                 </el-tooltip>
@@ -337,7 +339,8 @@ import {
   UPDATA_USER,
   DEL_USERTOGROUP,
   GROUP_POLICY,
-  BATCH_OPERATE_CAM_STRATEGY
+  BATCH_OPERATE_CAM_STRATEGY,
+  SEND_AUTH_CODE,
 } from "@/constants";
 // import Subscribe from './components/subscribeNew'
 import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
@@ -395,11 +398,58 @@ export default {
       subscriberId: 0,
       subscriberName: "",
       strategy: undefined,
+      phoneInterval: 60,
+      emailInterval: 60,
+      sendPhone: false,
+      sendEmail: false,
+      phoneTimer: undefined,
+      emailTimer: undefined,
     };
   },
+  destroyed() {
+    if (this.phoneTimer) clearInterval(this.phoneTimer)
+    if (this.emailTimer) clearInterval(this.emailTimer)
+  },
   methods: {
-    sengyz() {
-
+    sengyz(type) {
+      this.axios.post(SEND_AUTH_CODE, {
+        "Version": "2018-12-25",
+        "Uid": this.userData.Uid,
+        "Type": type, // 1短信 2邮件
+      }).then(res => {
+        if (res.Response.Error) {
+          this.$message({
+            showClose: true,
+            message: "發送失敗",
+            duration: 0,
+            type: "error"
+          })
+        } else {
+          if (type === 1) {
+            this.sendPhone = true
+            this.phoneTimer = setInterval(() => {
+              if (this.phoneInterval > 0) {
+                this.phoneInterval -= 1
+              } else {
+                this.phoneInterval = 60
+                clearInterval(this.phoneTimer)
+                this.phoneTimer = undefined
+              }
+            }, 1000)
+          } else {
+            this.sendEmail = true
+            this.emailTimer = setInterval(() => {
+              if (this.emailInterval > 0) {
+                this.emailInterval -= 1
+              } else {
+                this.emailInterval = 60
+                clearInterval(this.emailTimer)
+                this.emailTimer = undefined
+              }
+            }, 1000)
+          }
+        }
+      })
     },
     //跳转到策略列表
     goToPolicyList() {

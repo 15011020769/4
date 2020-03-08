@@ -57,6 +57,7 @@ export const DELETE_SAML_PROVIDER = 'cam2/DeleteSAMLProvider'
 export const GET_SAML_PROVIDER = 'cam2/GetSAMLProvider'
 export const UPDATE_SAML_PROVIDER = 'cam2/UpdateSAMLProvider'
 export const DESCRIBE_ATTACHED_ENTITY_POLICIES = 'cam2/DescribeAttachedEntityPolicies'
+export const SEND_AUTH_CODE = 'account2/SendAuthCode'
 
 // V2接口
 export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
