@@ -27,6 +27,37 @@
         <div class="box-top-left">
           <EcharTKE :time='times' :series='seriesPod' style="width:1000px;height: 200px;" />
         </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpu' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpuRate' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpuUsed' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoy' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoyRate' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoyUsed' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesInternet' style="width:1000px;height: 200px;" />
+        </div>
+
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesGpu' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesGpuUesd' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesInternet' style="width:1000px;height: 200px;" />
+        </div>
       </div>
     </div>
   </div>
@@ -97,6 +128,19 @@ export default {
       times: [],//时间轴
       series: [],//节点y轴数据
       seriesPod: [],//Pod数量
+      title: 'asdsad',
+      legend: { data: ['节点数量']},
+      seriesCpu: [],//cpuY轴
+      seriesCpuRate: [],//CPU利用率
+      seriesCpuUsed: [],//CPU使用量
+      seriesMemoy: [],//内存总配置
+      seriesMemoyRate: [],//内存利用率
+      seriesMemoyUsed: [],//内存使用量
+      seriesInternet: [],//网络带宽
+      gpuTimes: [],//gpu时间轴
+      seriesGpu: [],//gpu
+      seriesGpuUesd: [],//gpu使用率
+      seriesInternet: [],//gpu分配率
     }
   },
   watch:{
@@ -118,8 +162,7 @@ export default {
       this.startTime = new Date(data[1].StartTIme).getTime();
       this.endTime = new Date(data[1].EndTIme).getTime();
       this.getDataJob();
-      // data.forEach(item => {
-      // });
+      this.getGpuDataJob();
     },
     //返回上一层
     goBack() {
@@ -201,45 +244,100 @@ export default {
         }
       })
     },
-    // getNodeJob(){
-    //    const param = {
-    //     'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-    //     'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
-    //     'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
-    //     EndTime: this.value2[1].getTime(),
-    //     Limit: 65535,
-    //     Module: "/front/v1",
-    //     NamespaceName: this.isCollapse,
-    //     Offset: 0,
-    //     Order: "asc",
-    //     OrderBy: "timestamp",
-    //     StartTime: this.value2[0].getTime(),
-    //     Version: "2019-06-06"
-    //   }
-    //   param['Fields.0'] = 'sum(k8s_node_pod_restart_total)';
-    //   param["Fields.1"] = "min(k8s_node_status_ready)";
-    //   param["Fields.2"] = "max(k8s_node_cpu_usage)";
-    //   param["Fields.3"] = "max(k8s_node_mem_usage)";
-    //   param["Fields.4"] = "max(k8s_node_lan_intraffic)";
-    //   param["Fields.5"] = "max(k8s_node_lan_outtraffic)";
-    //   param["Fields.6"] = "max(k8s_node_wan_intraffic)";
-    //   param["Fields.7"] = "max(k8s_node_wan_outtraffic)";
-    //   param["Fields.8"] = "max(k8s_node_tcp_curr_estab)";
-    //   param["Fields.9"] = "max(k8s_node_rate_gpu_used)";
-    //   param["Fields.10"] = "max(k8s_node_rate_gpu_memory_used)";
-    //   this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-    //       console.log()
-    //       console.log(res)
-    //     if(res.Response.Error === undefined) {
-    //         console.log(res.Response.JobId)
-    //         this.JobId = res.Response.JobId
-    //         this.getResult()
-    //     }
-    //   })
-    // },
+    getGpuDataJob(){
+      this.loadShow = true;
+      const param = {
+        EndTime: this.endTime,
+        Limit: 65535,
+        Module: "/front/v1",
+        NamespaceName: "k8s_cluster",
+        Offset: 0,
+        Order: "asc",
+        OrderBy: "timestamp",
+        StartTime: this.startTime,
+        Version: "2019-06-06"
+      }
+      param['Conditions.0'] = JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]);
+      param["GroupBys.0"] = `timestamp(${this.timestamp}s)`;
+      param['Fields.0'] = 'max(k8s_cluster_gpu_total)';
+      param["Fields.1"] = "max(k8s_cluster_rate_gpu_used_cluster)";
+      param["Fields.2"] = "max(k8s_cluster_rate_gpu_request_cluster)";
+      param["Fields.3"] = "max(k8s_cluster_rate_gpu_memory_used_cluster)";
+      param["Fields.4"] = "max(k8s_cluster_rate_gpu_memory_request_cluster)";
+      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+        if(res.Response.Error === undefined) {
+            console.log(res.Response.JobId)
+            this.JobId = res.Response.JobId
+            this.getGpuResult();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+    },
+    getGpuResult() {
+      this.loadShow = false;
+      const param = {
+        JobId: this.JobId,
+        Module: "/front/v1",
+        Version: "2019-06-06"
+      }
+      this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+        if(res.Response.Error === undefined) {
+          let data = JSON.parse(res.Response.Data);
+          let gpuTimes = [], gpus = [], gpuUseds = [], gpuRequests = [], gpuMems = [], gpuMemRequests = [];//时间
+          if(data.length > 0) {
+            for(let i = 0; i < data.length; i++) {
+              let item = data[i];
+              let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+              let gpu = item[1];
+              let gpuUsed = item[2];
+              let gpuRequest = item[3];
+              let gpuMem = item[4];
+              let gpuMemRequest = item[5];
+              gpuTimes.push(time);
+              gpus.push(gpu);
+              gpuUseds.push(gpuUsed);
+              gpuRequests.push(gpuRequest);
+              gpuMems.push(gpuMem);
+              gpuMemRequests.push(gpuMemRequest);
+            }
+          }
+          this.gpuTimes = gpuTimes;
+          this.seriesGpu = [
+            {name: 'GPU 总配置',type: 'line', data: gpus}
+          ];
+          this.seriesGpuUesd = [
+            {name: 'GPU利用率',type: 'line', data: gpuUseds},
+            {name: 'GPU分配率(Request)',type: 'line', data: gpuRequests}
+          ];
+          this.seriesInternet = [
+            {name: '显存利用率',type: 'line', data: gpuMems},
+            {name: '显存分配率(Request)',type: 'line', data: gpuMemRequests}
+          ];
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     getResult() {
       this.loadShow = false;
-    //   this.list = [];
       const param = {
         JobId: this.JobId,
         Module: "/front/v1",
@@ -291,7 +389,27 @@ export default {
           this.times = times;
           this.series = [{name: '节点数量',type: 'line', data: clusters}];
           this.seriesPod = [{name: 'Allocatable Pod数量',type: 'line', data: allocatablePods},{name: 'Pod数量',type: 'line', data: pods}];
-          this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: clusters}];
+          this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: cpus}];
+
+          this.seriesCpuRate = [
+            {name: 'CPU分配率(Request)',type: 'line', data: cpuRequests},
+            {name: 'CPU利用率',type: 'line', data: cpuUseds}
+          ];
+          this.seriesCpuUsed = [{name: 'CPU使用量',type: 'line', data: cpuUsedmaxs}];
+          this.seriesMemoy = [{name: '内存总配置',type: 'line', data: memorys}];
+          this.seriesMemoyRate = [
+            {name: '内存分配率(Request)',type: 'line', data: memrequests},
+            {name: '内存利用率',type: 'line', data: memusages},
+            {name: '内存利用率(不含cache)',type: 'line', data: menNocaches}
+          ];
+          this.seriesMemoyUsed = [
+            {name: '内存使用率',type: 'line', data: memUsageBytes},
+            {name: '内存使用率(不含cache)',type: 'line', data: memNoYsages}
+          ];
+          this.seriesInternet = [
+            {name: '网络入带宽',type: 'line', data: receives},
+            {name: '网络出带宽',type: 'line', data: transmits}
+          ];
           this.loadShow = false;
         } else {
           this.loadShow = false;
