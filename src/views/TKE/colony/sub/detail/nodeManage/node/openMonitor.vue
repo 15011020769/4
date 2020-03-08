@@ -16,18 +16,10 @@
     <div class="room-bottom">
       <div class="box-top">
         <div class="box-top-left">
-          <span class="span-1">实时</span>
+          <!-- <span class="span-1">实时</span> -->
           <div class="block">
-            <el-date-picker
-              v-model="value2"
-              type="datetimerange"
-              :picker-options="pickerOptions"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              align="right"
-              size="mini"
-              @change="setTime()"
-            ></el-date-picker>
+            <!-- 时间组件 -->
+            <TimeDropDown :TimeArr='TimeArr' :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDat" :Difference="'D'"></TimeDropDown>
           </div>
           <!-- 对比维度 -->
           <div v-show="isFlag">
@@ -65,13 +57,7 @@
           </el-checkbox-group>
         </div>
         <div class="box-bottom-right">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="事件" name="first">事件</el-tab-pane>
-            <el-tab-pane label="CPU" name="second">CPU</el-tab-pane>
-            <el-tab-pane label="内存" name="third">内存</el-tab-pane>
-            <el-tab-pane label="网络" name="fourth">网络</el-tab-pane>
-            <el-tab-pane label="GPU" name="five">GPU</el-tab-pane>
-          </el-tabs>
+          <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
         </div>
       </div>
     </div>
@@ -81,6 +67,8 @@
 // import subTitle from "@/views/TKE/components/subTitle";
 import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO} from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips";
+import TimeDropDown from "@/components/public/TimeDropDown.vue"
+import moment from 'moment';
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -90,6 +78,7 @@ export default {
       default: false
     },
   },
+  components:{TimeDropDown},
   data() {
     return {
       activeName: "first",
@@ -108,40 +97,51 @@ export default {
       podData:[],
       valueLast:"",
       JobId:"",// 后台返回id
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "实时",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000);
-              start.setTime(start.getTime());
-              picker.$emit("pick", [start, end]);
+      StartTime:"",
+      EndTIme:"",
+      timeAll:[],
+      TimeArr: [{
+          name: '实时',
+          Time: 'realTime',
+          TimeGranularity: [
+            {
+              value: "60",
+              label: "1分鐘"
+            },
+            {
+              value: "300",
+              label: "5分鐘"
             }
-          },
-          {
-            text: "近1天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近一天',
+          Time: 'Nearly_24_hours',
+          TimeGranularity: [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
             }
-          },
-          {
-            text: "近7天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近7天',
+          Time: 'Nearly_7_days',
+          TimeGranularity: [{
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "24小时"
             }
-          }
-        ]
-      },
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: [new Date(Date.parse(new Date())- 3600 * 1000),new Date(Date.parse(new Date()))]
+          ]
+        }
+      ],
     }
   },
   watch:{
@@ -157,24 +157,121 @@ export default {
         this.InstancesAll = []
         this.list=[]
         this.getNodeList()
-        this.getNodeJob()
       }
     },
-    // value2(val){
-    //   // console.log(new.Date(val[0]),val[1])
-    // }
   },
   created() {
     let{ title, clusterId } = this.$route.query
     this.clusterId = clusterId
     this.title = title
-    // this.pickerOptions.shortcuts[0].onClick(picker)
-    this.getNodeList()
-    this.getNodeJob()
-    // this.getDataJob()
-    // this.GetNode()
+  },
+   mounted(){
+    this.inits();
   },
   methods: {
+    GetDat(val){
+      this.StartTime = new Date(val[1].StartTIme).getTime();
+      this.EndTIme = new Date(val[1].EndTIme).getTime();
+      console.log(this.StartTime,this.EndTIme)
+      if(this.isCollapse == "k8s_pod"){
+        this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.getPodList()
+      } else {
+        this.checkedInstances = []
+        this.instances =  []
+        this.InstancesAll = []
+        this.list=[]
+        this.getNodeList()
+      }
+    },
+    // inits(){
+    //   var myChart = this.$echarts.init(this.$refs.main)
+    // // 绘制图表
+    // myChart.setOption({
+    //     title: {
+    //           text: '折线图堆叠'
+    //       },
+    //       tooltip: {
+    //           trigger: 'axis'
+    //       },
+    //       // legend: {
+    //       //     data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+    //       // },
+    //        grid: {
+    //         x: 50,
+    //         y: 45,
+    //         x2: 5,
+    //         y2: 20,
+    //         borderWidth: 1
+    //       },
+    //       toolbox: {
+    //           feature: {
+    //               saveAsImage: {}
+    //           }
+    //       },
+    //       xAxis: {
+    //           type: 'category',
+    //           boundaryGap: false,
+    //           data: this.timeAll,
+    //            axisTick: {
+    //           // 决定是否显示坐标刻度
+    //             alignWithLabel: true,
+    //             show: false
+    //           },
+    //           splitLine: {
+    //             show: false
+    //           },
+    //           axisLabel: {
+    //             // 决定是否显示数据
+    //             show: false
+    //           },
+    //       },
+    //       yAxis: {
+    //           type: 'value',
+    //            splitLine: {
+    //             // 网格线
+    //             show: false
+    //           },
+    //           axisLine: {
+    //             // X轴显示
+    //             show: false
+    //           },
+    //       },
+    //       series: [  {
+    //               name: '邮件营销',
+    //               type: 'line',
+    //               stack: '总量',
+    //               data: this.timeAll
+    //           },
+    //           {
+    //               name: '联盟广告',
+    //               type: 'line',
+    //               stack: '总量',
+    //               data: this.timeAll
+    //           },
+    //           {
+    //               name: '视频广告',
+    //               type: 'line',
+    //               stack: '总量',
+    //               data: this.timeAll
+    //           },
+    //           {
+    //               name: '直接访问',
+    //               type: 'line',
+    //               stack: '总量',
+    //               data: this.timeAll
+    //           },
+    //           {
+    //               name: '搜索引擎',
+    //               type: 'line',
+    //               stack: '总量',
+    //               data: this.timeAll
+    //           },
+    //       ]
+    //   });
+    // },
     //返回上一层
     goBack() {
       this.$router.go(-1);
@@ -262,8 +359,10 @@ export default {
             }
             this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
             this.valueLast = this.value.split("|")
-            // this.getDataJob()
+            // this.getPodJob()
+            
             console.log(this.podData)
+            this.getNodeJob()
           }
         } else {
           this.loadShow = false;
@@ -299,23 +398,23 @@ export default {
           this.checkedInstances = dataPod
           this.instances =  dataPod
           this.InstancesAll = dataPod
-          this.getDataJob()
+          this.getPodJob()
         }
       })
     },
 
-    getDataJob(){
+    getPodJob(){
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
-        EndTime: this.value2[1].getTime(),
+        EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
         NamespaceName: this.isCollapse,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
-        StartTime: this.value2[0].getTime(),
+        StartTime: this.StartTime,
         Version: "2019-06-06"
       }
       param['Fields.0'] = 'min(k8s_pod_status_ready)';
@@ -346,28 +445,30 @@ export default {
       param["GroupBys.0"] = "timestamp(60s)";
       param["GroupBys.1"] = "pod_name";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          console.log(res)
+        //   console.log(res)
         if(res.Response.Error === undefined) {
-            console.log(res.Response.JobId)
+            // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-            this.getResult()
-
+                setTimeout(()=>{
+                    this.getResult()
+                },4000)
         }
       })
     },
     getNodeJob(){
+        console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
         'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
-        EndTime: this.value2[1].getTime(),
+        EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
         NamespaceName: this.isCollapse,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
-        StartTime: this.value2[0].getTime(),
+        StartTime: this.StartTime,
         Version: "2019-06-06"
       }
       param['Fields.0'] = 'sum(k8s_node_pod_restart_total)';
@@ -381,13 +482,17 @@ export default {
       param["Fields.8"] = "max(k8s_node_tcp_curr_estab)";
       param["Fields.9"] = "max(k8s_node_rate_gpu_used)";
       param["Fields.10"] = "max(k8s_node_rate_gpu_memory_used)";
+      param["GroupBys.0"] = "timestamp(60s)";
+      param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
           console.log()
           console.log(res)
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-            this.getResult()
+                setTimeout(()=>{
+                    this.getResult()
+                },4000)
         }
       })
     },
@@ -399,10 +504,17 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
-          console.log(res)
+        //   console.log(res)
         if(res.Response.Error === undefined) {
-        //   console.log(JSON.stringify(res.Response.Data[0]))
-        // console.log(res.Response.Data)
+          let dataCount = JSON.parse(res.Response.Data)
+          console.log(JSON.parse(res.Response.Data))
+          this.timeAll=dataCount.map(item=>{
+              return  moment(item[0]).format("YYYY-MM-DD HH:mm:ss")
+              // return time
+          })
+          console.log(this.timeAll)
+          // this.timeAll.push(JSON.parse(res.Response.Data).)
+          
         }
       })
     },
@@ -451,12 +563,9 @@ export default {
       }
     }
     .box-bottom-right {
-      width: 65%;
+      width: 85%;
       margin-right: 5%;
-      .el-tab-pane {
-        height: auto;
-        overflow-y: scroll;
-      }
+      height: auto;
     }
   }
 }
