@@ -117,25 +117,26 @@ export default {
         this.isSureIP = false
       } else {
         this.isSureIP = true
+        if (this.resource.SourceServerType == 1 && !regYuMing.test(this.resource.SourceServerAddress)) {
+          this.msg('请输入域名', 'error')
+          this.isSureYM = false
+        } else {
+          this.isSureYM = true
+          if (this.resource.CdnStreamFormat.length === 0) {
+            this.msg('请选择CDN播放格式', 'error')
+            this.isSureCDN = false
+          } else {
+            this.isSureCDN = true
+            if (this.resource.SourceServerAddress === '') {
+              this.msg('源站地址为空', 'error')
+              this.isSureNULL = false
+            } else {
+              this.isSureNULL = true
+            }
+          }
+        }
       }
-      if (this.resource.SourceServerType == 1 && !regYuMing.test(this.resource.SourceServerAddress)) {
-        this.msg('请输入域名', 'error')
-        this.isSureYM = false
-      } else {
-        this.isSureYM = true
-      }
-      if (this.resource.CdnStreamFormat.length === 0) {
-        this.msg('请选择CDN播放格式', 'error')
-        this.isSureCDN = false
-      } else {
-        this.isSureCDN = true
-      }
-      if (this.resource.SourceServerAddress === '') {
-        this.msg('源站地址为空', 'error')
-        this.isSureNULL = false
-      } else {
-        this.isSureNULL = true
-      }
+
       if (this.isSureIP && this.isSureYM && this.isSureCDN && this.isSureNULL) {
         this.axios.post(MODIFY_SOURCE_STREAM_INFO, param)
           .then(res => {
