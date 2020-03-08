@@ -14,14 +14,26 @@
       </el-row>
       <el-row type="flex" v-for="(limit, i) in info" :key="limit.key">
         <el-col :span="10">
-          <el-select size="small" style="width: 210px" v-model="limit.playType" :disabled="playType !== 2">
+          <el-select
+            size="small"
+            style="width: 210px"
+            v-model="limit.playType"
+            :disabled="playType !== 2"
+          >
             <el-option label="中国大陆" :value="1"></el-option>
             <el-option label="全球加速" :value="2"></el-option>
             <el-option label="中国港澳台地区及海外地区" :value="3"></el-option>
           </el-select>
         </el-col>
         <el-col :span="12">
-          <el-input style="width: 140px" size="small"  placeholder="请输入整数" :maxlength="13" v-model="limit.value" @input="v => limit.value = v.replace(/[^\d]/g,'')"/>&nbsp;
+          <el-input
+            style="width: 140px"
+            size="small"
+            placeholder="请输入整数"
+            :maxlength="13"
+            v-model="limit.value"
+            @input="v => (limit.value = v.replace(/[^\d]/g, ''))"
+          />&nbsp;
           <el-select style="width: 190px" size="small" v-model="limit.unit">
             <el-option label="Mbps" :value="1"></el-option>
             <el-option label="Gbps" :value="2"></el-option>
@@ -38,7 +50,9 @@
     </div>
     <el-row type="flex" justify="center" class="oper">
       <el-button size="small" type="primary" @click="save">保存</el-button>
-      <el-button size="small" @click="$emit('update:visible', false)">取消</el-button>
+      <el-button size="small" @click="$emit('update:visible', false)"
+        >取消</el-button
+      >
     </el-row>
   </div>
 </template>
@@ -50,28 +64,28 @@ export default {
     bandLimit: Object,
     playType: Number
   },
-  data() {
+  data () {
     return {
       enable: false,
       info: []
     }
   },
   watch: {
-    enable(n) {
+    enable (n) {
       if (!n) {
         this.info = []
       }
-    },
+    }
   },
   computed: {
-    playTypes() {
+    playTypes () {
       return this.info.map(l => l.playType)
     },
-    showAdd() {
+    showAdd () {
       return this.enable && (this.playType === 2 && !this.playTypes.includes(2) || this.info.length === 0)
     }
   },
-  mounted() {
+  mounted () {
     if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
       // if ()
       this.enable = true
@@ -95,15 +109,15 @@ export default {
       this.info.push({
         key,
         ...info,
-        playType: this.playType,
+        playType: this.playType
       })
     }
   },
   methods: {
 
-    save() {
+    save () {
       const req = {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         DomainName: this.$route.query.Name,
         BandLimitEnable: Number(this.enable),
         AbroadBandLimitEnable: 0, // 港澳台启用禁用
@@ -111,7 +125,7 @@ export default {
         DomesticBandLimitEnable: 0, // 国内
         DomesticBandLimitValue: 100,
         GlobalBandLimitEnable: 0, // 全球
-        GlobalBandLimitValue: 100,
+        GlobalBandLimitValue: 100
       }
       if (this.enable && this.info.length === 0) {
         return void this.msg('带宽封顶已开启，请添加限制条件')
@@ -141,7 +155,7 @@ export default {
           this.$emit('success')
         })
     },
-    toMbps(info) {
+    toMbps (info) {
       if (info.unit === 2) { // Gbps
         return info.value * 1000
       }
@@ -150,18 +164,18 @@ export default {
       }
       return info.value
     },
-    add() {
+    add () {
       this.info.push({
         key: ++key,
         playType: this.playType,
         value: 100,
-        unit: 1,
+        unit: 1
       })
     },
-    remove(i) {
+    remove (i) {
       this.info.splice(i, 1)
     },
-    msg(msg, type = 'error') {
+    msg (msg, type = 'error') {
       this.$message({
         message: msg,
         type,
@@ -187,7 +201,7 @@ export default {
     border-top: none;
     & > div {
       &:first-of-type {
-      line-height: 40px;
+        line-height: 40px;
         height: 40px;
       }
       padding-left: 10px;

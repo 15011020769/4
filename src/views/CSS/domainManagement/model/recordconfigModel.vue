@@ -4,23 +4,32 @@
       <el-dialog
         title="錄製配置"
         :visible.sync="isShow"
-        :before-close="handleClose">
+        :before-close="handleClose"
+      >
         <div class="newClear">
-          <p class="tip">範本選擇（如需添加新範本，請前往<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
+          <p class="tip">
+            範本選擇（如需添加新範本，請前往<a
+              >【功能範本】<i class="el-icon-share"></i></a
+            >中進行設置）
+          </p>
           <div class="tableCon">
             <el-table
               :data="recordData"
               ref="multipleTable"
-              @selection-change="handleSelectionChange">
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column type="selection" width="55"> </el-table-column>
               <el-table-column
-                type="selection"
-                width="55">
-              </el-table-column>
-              <el-table-column prop="TemplateName" label="範本名稱"></el-table-column>
-              <el-table-column prop="TemplateId" label="範本ID"></el-table-column>
+                prop="TemplateName"
+                label="範本名稱"
+              ></el-table-column>
+              <el-table-column
+                prop="TemplateId"
+                label="範本ID"
+              ></el-table-column>
               <el-table-column prop="TemplateName" label="錄製格式">
                 <template slot-scope="scope">
-                  {{scope.row | format}}
+                  {{ scope.row | format }}
                 </template>
               </el-table-column>
             </el-table>
@@ -37,23 +46,23 @@
 <script>
 import { RECORDING_DELTILS, LIVE_DELETELIVERECORDRULE, LIVERULE_DELTILS } from '@/constants'
 export default {
-  props:{
-    isShow:{
-      required:false,
-      type:Boolean
+  props: {
+    isShow: {
+      required: false,
+      type: Boolean
     },
     checkedTemplateId: {
-      required: false,
-    },
+      required: false
+    }
   },
-  data(){
-    return{
-      recordData:[],//表格
-      selection: [],
+  data () {
+    return {
+      recordData: [], // 表格
+      selection: []
     }
   },
   filters: {
-    format(record) {
+    format (record) {
       const format = []
       if (record.FlvParam.Enable === 1) format.push('FLV')
       if (record.HlsParam.Enable === 1) format.push('HLS')
@@ -64,7 +73,7 @@ export default {
     }
   },
   watch: {
-    isShow(newVal) {
+    isShow (newVal) {
       if (newVal === true) {
         if (this.checkedTemplateId) {
           this.$nextTick(() => {
@@ -78,28 +87,28 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.axios.post(RECORDING_DELTILS, {
       Version: '2018-08-01'
     }).then(({ Response }) => {
       this.recordData = Response.Templates
     })
   },
-  methods:{
-    //checkbox
-    handleSelectionChange(val) {
+  methods: {
+    // checkbox
+    handleSelectionChange (val) {
       this.selection = val
       if (val.length > 1) {
         this.$refs.multipleTable.clearSelection()
         this.$refs.multipleTable.toggleRowSelection(val.pop())
       }
     },
-    //关闭弹框
-    handleClose(){
-      this.$emit("closeRecordModel",false)
+    // 关闭弹框
+    handleClose () {
+      this.$emit('closeRecordModel', false)
     },
-    //保存
-    saverecordEdit(){
+    // 保存
+    saverecordEdit () {
       this.axios.post(LIVE_DELETELIVERECORDRULE, {
         Version: '2018-08-01',
         DomainName: this.$route.query.Name,
@@ -112,10 +121,10 @@ export default {
             AppName: '',
             TemplateId: this.selection[0].TemplateId
           }).then(() => {
-            this.$emit("closeRecordModel",false)
+            this.$emit('closeRecordModel', false)
           })
         } else {
-          this.$emit("closeRecordModel",false)
+          this.$emit('closeRecordModel', false)
         }
       })
     }
@@ -123,30 +132,30 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.newClear:after{
+.newClear:after {
   display: block;
-  content:'';
-  clear:both;
+  content: "";
+  clear: both;
 }
-::v-deep .el-dialog__header{
-  font-size:14px;
+::v-deep .el-dialog__header {
+  font-size: 14px;
   font-weight: 600;
 }
-::v-deep .el-dialog__footer{
-  text-align:center;
+::v-deep .el-dialog__footer {
+  text-align: center;
 }
-.tip{
+.tip {
   font-size: 12px;
 }
-.tableCon{
-  width:100%;
-  border:1px solid #ddd;
+.tableCon {
+  width: 100%;
+  border: 1px solid #ddd;
 }
 ::v-deep thead {
-    .el-table-column--selection {
-      .cell {
-        display: none;
-      }
+  .el-table-column--selection {
+    .cell {
+      display: none;
     }
   }
+}
 </style>
