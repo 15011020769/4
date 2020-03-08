@@ -8,15 +8,14 @@ export default new Router({
   redirect: {
     name: 'Cloudapi'
   },
-  routes: [
-    {
+  routes: [{
       path: '/',
       redirect: '/overview'
     },
     {
       path: '/overview', // 概览
       name: 'overview',
-      component: () => import(/* webpackChunkName: "overview" */ './overview/overview.vue'),
+      component: () => import( /* webpackChunkName: "overview" */ './overview/overview.vue'),
       meta: {
         keepAlive: true
       }
@@ -61,7 +60,8 @@ export default new Router({
           component: () => import('./colony/sub/list/basic/index.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 节点列表
@@ -70,7 +70,8 @@ export default new Router({
           component: () => import('./colony/sub/list/nodeManage/node.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // Master&Etcd列表
@@ -79,7 +80,8 @@ export default new Router({
           component: () => import('./colony/sub/list/nodeManage/masteretcd.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 伸缩组列表
@@ -88,7 +90,8 @@ export default new Router({
           component: () => import('./colony/sub/list/nodeManage/asg.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 命名空间
@@ -97,7 +100,8 @@ export default new Router({
           component: () => import('./colony/sub/list/namespace/index.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 工作负载-Deployment
@@ -106,7 +110,8 @@ export default new Router({
           component: () => import('./colony/sub/list/resource/deployment.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 工作负载-StatefulSet
@@ -115,7 +120,8 @@ export default new Router({
           component: () => import('./colony/sub/list/resource/statefulSet.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 工作负载-DaemonSet
@@ -124,7 +130,8 @@ export default new Router({
           component: () => import('./colony/sub/list/resource/daemonSet.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 工作负载-Job
@@ -133,7 +140,8 @@ export default new Router({
           component: () => import('./colony/sub/list/resource/job.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 工作负载-CronJob
@@ -142,7 +150,8 @@ export default new Router({
           component: () => import('./colony/sub/list/resource/cronJob.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 自动伸缩
@@ -151,7 +160,8 @@ export default new Router({
           component: () => import('./colony/sub/list/hpa/index.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 服务-Service
@@ -160,7 +170,8 @@ export default new Router({
           component: () => import('./colony/sub/list/service/svc.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 服务-Ingress
@@ -169,7 +180,8 @@ export default new Router({
           component: () => import('./colony/sub/list/service/ingress.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 配置管理-ConfigMap
@@ -178,7 +190,8 @@ export default new Router({
           component: () => import('./colony/sub/list/config/configMap.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 配置管理-Secret
@@ -187,7 +200,8 @@ export default new Router({
           component: () => import('./colony/sub/list/config/secret.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 储存-PersistentVolume
@@ -196,7 +210,8 @@ export default new Router({
           component: () => import('./colony/sub/list/storage/pv.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 储存-PersistentVolumeClaim
@@ -205,7 +220,8 @@ export default new Router({
           component: () => import('./colony/sub/list/storage/pvc.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 储存-StorageClass
@@ -214,7 +230,8 @@ export default new Router({
           component: () => import('./colony/sub/list/storage/sc.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 日志
@@ -223,7 +240,8 @@ export default new Router({
           component: () => import('./colony/sub/list/log/index.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
         { // 事件
@@ -232,7 +250,8 @@ export default new Router({
           component: () => import('./colony/sub/list/event/index.vue'),
           meta: {
             keepAlive: true,
-            clusterId: true
+            clusterId: true,
+            ProjectId: true
           }
         },
 
@@ -345,7 +364,7 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/updateStrategy',//更新调度策略
+      path: '/colony/sub/update/resource/updateStrategy', //更新调度策略
       name: 'updateStrategy',
       component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
       meta: {
@@ -353,7 +372,7 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/editYaml',//编辑YAML
+      path: '/colony/sub/update/resource/editYaml', //编辑YAML
       name: 'updateYamlWorkLoad',
       component: () => import('./colony/sub/update/resource/editYaml.vue'),
       meta: {
@@ -1177,7 +1196,7 @@ export default new Router({
     {
       path: '/helm', // helm应用
       name: 'helm',
-      component: () => import(/* webpackChunkName: "helm" */ './helm/index.vue'),
+      component: () => import( /* webpackChunkName: "helm" */ './helm/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1185,15 +1204,14 @@ export default new Router({
     {
       path: '/helmDetail', // helm详情
       name: 'helmDetail',
-      component: () => import(/* webpackChunkName: "helm" */ './helm/helmDetail/index.vue'),
+      component: () => import( /* webpackChunkName: "helm" */ './helm/helmDetail/index.vue'),
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: 'detail', // 应用详情
           name: 'helmDetailDetail',
-          component: () => import(/* webpackChunkName: "myMirror" */ './helm/helmDetail/detail.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './helm/helmDetail/detail.vue'),
           meta: {
             keepAlive: true,
             flag: true
@@ -1202,7 +1220,7 @@ export default new Router({
         {
           path: 'history', // 版本命名
           name: 'helmDetailHistory',
-          component: () => import(/* webpackChunkName: "myMirror" */ './helm/helmDetail/history.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './helm/helmDetail/history.vue'),
           meta: {
             keepAlive: true,
             flag: false
@@ -1213,7 +1231,7 @@ export default new Router({
     {
       path: '/helmCreate', // helm应用
       name: 'helmCreate',
-      component: () => import(/* webpackChunkName: "helm" */ './helmCreate/index.vue'),
+      component: () => import( /* webpackChunkName: "helm" */ './helmCreate/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1221,16 +1239,15 @@ export default new Router({
     {
       path: '/myMirror', // 我的镜像
       name: 'myMirror',
-      component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/index.vue'),
+      component: () => import( /* webpackChunkName: "myMirror" */ './myMirror/index.vue'),
       redirect: '/myMirror/user',
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: 'user', // 我的镜像
           name: 'myMirrorUser',
-          component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './myMirror/user.vue'),
           meta: {
             keepAlive: true,
             flag: true
@@ -1239,7 +1256,7 @@ export default new Router({
         {
           path: 'local', // 命名空间
           name: 'myMirrorLocal',
-          component: () => import(/* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './myMirror/local.vue'),
           meta: {
             keepAlive: true,
             flag: false
@@ -1250,16 +1267,15 @@ export default new Router({
     {
       path: '/mirrorDetail', // 镜像详情
       name: 'mirrorDetail',
-      component: () => import(/* webpackChunkName: "myFavorite" */ './mirrorDetail/index.vue'),
+      component: () => import( /* webpackChunkName: "myFavorite" */ './mirrorDetail/index.vue'),
       redirect: '/mirrorDetail/info',
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: 'info', // 镜像信息
           name: 'mirrorDetailInfo',
-          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/info.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './mirrorDetail/info.vue'),
           meta: {
             keepAlive: true,
             flag: 1
@@ -1268,7 +1284,7 @@ export default new Router({
         {
           path: 'detail', // 镜像详情
           name: 'mirrorDetailDetail',
-          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/detail.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './mirrorDetail/detail.vue'),
           meta: {
             keepAlive: true,
             flag: 2
@@ -1277,7 +1293,7 @@ export default new Router({
         {
           path: 'build', // 镜像构建
           name: 'mirrorDetailBuild',
-          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/build/build.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './mirrorDetail/build/build.vue'),
           meta: {
             keepAlive: true,
             flag: 3
@@ -1286,7 +1302,7 @@ export default new Router({
         {
           path: 'touch', // 触发器
           name: 'mirrorDetailTouch',
-          component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/touch.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './mirrorDetail/touch.vue'),
           meta: {
             keepAlive: true,
             flag: 4
@@ -1297,7 +1313,7 @@ export default new Router({
     {
       path: '/config', // 构建配置
       name: 'mirrorDetailConfig',
-      component: () => import(/* webpackChunkName: "myMirror" */ './mirrorDetail/build/config.vue'),
+      component: () => import( /* webpackChunkName: "myMirror" */ './mirrorDetail/build/config.vue'),
       meta: {
         keepAlive: true
       }
@@ -1305,7 +1321,7 @@ export default new Router({
     {
       path: '/myFavorite', // 我的收藏
       name: 'myFavorite',
-      component: () => import(/* webpackChunkName: "myFavorite" */ './myFavorite/index.vue'),
+      component: () => import( /* webpackChunkName: "myFavorite" */ './myFavorite/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1313,7 +1329,7 @@ export default new Router({
     {
       path: '/DockerHub', // DockerHub
       name: 'DockerHub',
-      component: () => import(/* webpackChunkName: "DockerHub" */ './DockerHub/index.vue'),
+      component: () => import( /* webpackChunkName: "DockerHub" */ './DockerHub/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1321,15 +1337,14 @@ export default new Router({
     {
       path: '/DockerHubDetail', // DockerHubDetail
       name: 'DockerHubDetail',
-      component: () => import(/* webpackChunkName: "DockerHub" */ './DockerHubDetail/index.vue'),
+      component: () => import( /* webpackChunkName: "DockerHub" */ './DockerHubDetail/index.vue'),
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: 'info', // 基本信息
           name: 'DockerHubDetailInfo',
-          component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/info.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './DockerHubDetail/info.vue'),
           meta: {
             keepAlive: true,
             flag: true
@@ -1338,7 +1353,7 @@ export default new Router({
         {
           path: 'detail', // 详情描述
           name: 'DockerHubDetailDetail',
-          component: () => import(/* webpackChunkName: "myMirror" */ './DockerHubDetail/detail.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './DockerHubDetail/detail.vue'),
           meta: {
             keepAlive: true,
             flag: false
@@ -1349,7 +1364,7 @@ export default new Router({
     {
       path: '/totalMirror', // 共有镜像
       name: 'totalMirror',
-      component: () => import(/* webpackChunkName: "totalMirror" */ './totalMirror/index.vue'),
+      component: () => import( /* webpackChunkName: "totalMirror" */ './totalMirror/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1357,15 +1372,14 @@ export default new Router({
     {
       path: '/totalMirrorDetail', // DockerHubDetail
       name: 'totalMirrorDetail',
-      component: () => import(/* webpackChunkName: "DockerHub" */ './totalMirrorDetail/index.vue'),
+      component: () => import( /* webpackChunkName: "DockerHub" */ './totalMirrorDetail/index.vue'),
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: 'version', // 镜像版本
           name: 'totalMirrorDetailVersion',
-          component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/version.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './totalMirrorDetail/version.vue'),
           meta: {
             keepAlive: true,
             flag: true
@@ -1374,7 +1388,7 @@ export default new Router({
         {
           path: 'info', // 镜像信息
           name: 'totalMirrorDetailInfo',
-          component: () => import(/* webpackChunkName: "myMirror" */ './totalMirrorDetail/info.vue'),
+          component: () => import( /* webpackChunkName: "myMirror" */ './totalMirrorDetail/info.vue'),
           meta: {
             keepAlive: true,
             flag: false
@@ -1385,7 +1399,7 @@ export default new Router({
     {
       path: '/logCollection', // 日志采集
       name: 'logCollection',
-      component: () => import(/* webpackChunkName: "logCollection" */ './logCollection/index.vue'),
+      component: () => import( /* webpackChunkName: "logCollection" */ './logCollection/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1393,7 +1407,7 @@ export default new Router({
     {
       path: '/logCreate', // 日志新建
       name: 'logCreate',
-      component: () => import(/* webpackChunkName: "logCreate" */ './logCreate/index.vue'),
+      component: () => import( /* webpackChunkName: "logCreate" */ './logCreate/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1401,7 +1415,7 @@ export default new Router({
     {
       path: '/logDetail', // 日志详情
       name: 'logDetail',
-      component: () => import(/* webpackChunkName: "logCreate" */ './logCollection/detail.vue'),
+      component: () => import( /* webpackChunkName: "logCreate" */ './logCollection/detail.vue'),
       meta: {
         keepAlive: true
       }
@@ -1409,7 +1423,7 @@ export default new Router({
     {
       path: '/warnings', // 告警设置
       name: 'warnings',
-      component: () => import(/* webpackChunkName: "warnings" */ './warnings/index.vue'),
+      component: () => import( /* webpackChunkName: "warnings" */ './warnings/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1417,7 +1431,7 @@ export default new Router({
     {
       path: '/warningDetail', // 告警设置
       name: 'warningDetail',
-      component: () => import(/* webpackChunkName: "warnings" */ './warnings/detail.vue'),
+      component: () => import( /* webpackChunkName: "warnings" */ './warnings/detail.vue'),
       meta: {
         keepAlive: true
       }
@@ -1425,7 +1439,7 @@ export default new Router({
     {
       path: '/warningCreate',
       name: 'warningCreate',
-      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/index.vue'),
+      component: () => import( /* webpackChunkName: "warningCreate" */ './warningCreate/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1433,7 +1447,7 @@ export default new Router({
     {
       path: '/warningUpdate',
       name: 'warningUpdate',
-      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/update.vue'),
+      component: () => import( /* webpackChunkName: "warningCreate" */ './warningCreate/update.vue'),
       meta: {
         keepAlive: true
       }
@@ -1441,7 +1455,7 @@ export default new Router({
     {
       path: '/warningCopy',
       name: 'warningCopy',
-      component: () => import(/* webpackChunkName: "warningCreate" */ './warningCreate/copy.vue'),
+      component: () => import( /* webpackChunkName: "warningCreate" */ './warningCreate/copy.vue'),
       meta: {
         keepAlive: true
       }
@@ -1449,7 +1463,7 @@ export default new Router({
     {
       path: '/persistence', // 事件持久化
       name: 'persistence',
-      component: () => import(/* webpackChunkName: "persistence" */ './persistence/index.vue'),
+      component: () => import( /* webpackChunkName: "persistence" */ './persistence/index.vue'),
       meta: {
         keepAlive: true
       }
@@ -1458,7 +1472,7 @@ export default new Router({
       path: '/persistenceSetting/:uid', // 设置事件持久化
       props: true,
       name: 'persistenceSetting',
-      component: () => import(/* webpackChunkName: "persistenceSetting" */ './persistenceSetting/index.vue'),
+      component: () => import( /* webpackChunkName: "persistenceSetting" */ './persistenceSetting/index.vue'),
       meta: {
         keepAlive: true
       }

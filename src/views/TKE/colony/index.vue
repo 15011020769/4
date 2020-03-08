@@ -57,7 +57,7 @@
                 ]"
                 @click="
                   scope.row.ClusterStatus == 'Running'
-                    ? goColonySub(scope.row.ClusterId)
+                    ? goColonySub(scope.row)
                     : ''
                 "
                 >{{ scope.row.ClusterId }}</span
@@ -656,12 +656,13 @@ export default {
       });
     },
     // 查看详情跳转
-    goColonySub(id) {
+    goColonySub(row) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({
         name: "colonyResourceDeployment",
         query: {
-          clusterId: id
+          clusterId: row.ClusterId,
+          ProjectId: row.ProjectId
         }
       });
     },
