@@ -7,19 +7,19 @@
       <div class="newClear">
         <div class="newClear newList">
           <p>播放地址（RTMP）</p>
-          <p>rtmp://{{$route.query.Name}}/live/StreamName?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)</p>
+          <p>rtmp://{{$route.query.Name}}/live/StreamName</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（FLV）</p>
-          <p> http://{{$route.query.Name}}/live/StreamName.flv?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)</p>
+          <p> http://{{$route.query.Name}}/live/StreamName.flv</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（HLS）</p>
-          <p> http://{{$route.query.Name}}/live/StreamName.m3u8?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)</p>
+          <p> http://{{$route.query.Name}}/live/StreamName.m3u8</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（UDP）</p>
-          <p> webrtc://{{$route.query.Name}}/live/StreamName.m3u8?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)</p>
+          <p> webrtc://{{$route.query.Name}}/live/StreamName.m3u8</p>
         </div>
       </div>
     </div>

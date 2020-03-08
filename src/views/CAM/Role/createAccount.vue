@@ -63,7 +63,7 @@
               <p class="jscontent">
                 <el-input v-model="inputRoleDesc" placeholder size="mini"></el-input>
               </p>
-              <p class="jscontent text">{{$t('CAM.Role.serveRole')}}-mps.cloud.tencent.com</p>
+              <p class="jscontent text">賬號-{{input_num}}</p>
             </div>
           </div>
           <div class="content_table">
@@ -111,7 +111,7 @@ export default {
   data() {
     return {
       active: 1,
-      input_num: "100011921910",
+      input_num: this.$cookie.get('uin'),
       inputRoleName: "",
       inputRoleDesc: "",
       have: false,
@@ -147,8 +147,15 @@ export default {
         }
         this.active = this.active + 1;
       } else if (this.active == 2) {
-        this.policiesSelectedData = this.$refs.tansferStep.getData();
-        console.log(this.policiesSelectedData);
+        this.policiesSelectedData = this.$refs.tansferStep.selectedStrategies;
+        if (this.policiesSelectedData.length === 0) {
+          return void this.$message({
+                        message: "請選擇策略",
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                      })
+        }
         if (this.active == 3) {
           return;
         }
@@ -183,7 +190,7 @@ export default {
     },
     // 校验主账号，暂时没有发现接口先不校验；点击下一步或者光标离开输入框时校验。
     checkAccount() {
-      // let url = "cam2/CheckAccount";
+      // let url = "cam/CheckAccount";
       // let params = {
       //   Action: "CheckAccount",
       //   Version: "2019-01-16",

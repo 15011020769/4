@@ -37,15 +37,15 @@
               <p>带宽封顶</p>
               <p>{{bandLimit.BandLimitEnable === 1 ? '开启' : '关闭'}}</p>
             </div>
-            <div class="newClear newList1" v-if="bandLimit.AbroadBandLimitEnable === 1">
+            <div class="newClear newList1" v-if="bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3">
                 <p>港澳台及海外地区带宽阈值</p>
                 <p>{{bandLimit.AbroadBandLimitValue | unit}}</p>
             </div>
-            <div class="newClear newList1" v-if="bandLimit.DomesticBandLimitEnable === 1">
+            <div class="newClear newList1" v-if="bandLimit.DomesticBandLimitEnable === 1 && domainInfo.PlayType === 1">
                 <p>中国大陆带宽阈值</p>
                 <p>{{bandLimit.DomesticBandLimitValue | unit}}</p>
             </div>
-            <div class="newClear newList1" v-if="bandLimit.GlobalBandLimitEnable === 1">
+            <div class="newClear newList1" v-if="bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2">
                 <p>全球带宽阈值</p>
                 <p>{{bandLimit.GlobalBandLimitValue | unit}}</p>
             </div>
