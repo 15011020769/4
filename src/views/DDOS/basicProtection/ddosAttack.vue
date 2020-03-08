@@ -82,7 +82,7 @@
   </div>
 </template>
 <script>
-import moment, { now, min } from 'moment'
+import moment, { now, min, months } from 'moment'
 import { DDOS_EV_LIST, DDOS_TREND } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
@@ -118,17 +118,17 @@ export default {
       defTime: ['00:00:00', '23:59:59'],
       pickerOptions: {
         disabledDate (date) {
-          let nowDate = moment(Date.now()).add(1, 'days').toDate().getTime()
+          let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
           let Date6Moths = moment(Date.now()).subtract(180, 'days').toDate().getTime()
           if (that.chclikMinDate === '') {
-            return date.getTime() < Date6Moths || date.getTime() > nowDate - 86400000
+            return date.getTime() < Date6Moths || date.getTime() > nowDate
           } else {
-            let maxDate = moment(that.chclikMinDate).add(29, 'days').toDate().getTime()
-            let minDate = moment(that.chclikMinDate).subtract(29, 'days').toDate().getTime()
-            minDate = minDate < Date6Moths ? Date6Moths : minDate
             if (that.chclikMaxDate === '') {
+              let maxDate = moment(that.chclikMinDate).add(29, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(29, 'days').toDate().getTime()
+              minDate = minDate < Date6Moths ? Date6Moths : minDate
               maxDate = maxDate > nowDate ? nowDate : maxDate
-              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate - 86400000 || date.getTime() < Date6Moths
+              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
             } else {
               return date.getTime() < Date6Moths || date.getTime() > nowDate
             }
