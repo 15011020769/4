@@ -122,13 +122,13 @@ export default {
     getProductList(data) {
       this.loadShow = true; //加载
       const params = {
-        Region: localStorage.getItem('regionv2'),
+        Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor"
       };
 
       //  monitor2/DescribeProductEventList   //接口
-    
+
       console.log(params);
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         console.log(res);

@@ -26,7 +26,7 @@
       <el-form-item
         :label="t('惩罚时长（分钟)', 'WAF.cfscfz')"
         prop="validTime"
-        v-if="formValue.action === UCB_ACTION.拦截 || formValue.action === UCB_ACTION.验证码"
+        v-if="formValue.action === UCB_ACTION.攔截 || formValue.action === UCB_ACTION.驗證碼"
         :rules="[
           { required: true, message: t('请输入5~10080以内的整数', 'WAF.qsr51zs') },
           {
@@ -62,7 +62,7 @@ export default {
       loading: false,
       formValue: {
         action: '',
-        time: ''
+        validTime: ''
       },
     }
   },
@@ -108,7 +108,7 @@ export default {
             Name: this.info.name,
             Status: this.info.on_off,
             Operate: this.formValue.action,
-            ValidTime: this.formValue.time,
+            ValidTime: this.formValue.validTime,
           }).then(resp => {
             this.generalRespHandler(resp, () => {
               this.$emit('success')

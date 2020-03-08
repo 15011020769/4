@@ -1,18 +1,18 @@
 <template>
   <div class="streamlookup-wrap">
-    <Header title="流详情查询" />
+    <Header title="流詳情查詢" />
     <div class="toolbar">
       <div class="search-wrap">
-        <p>可对单个视频流查询推流和播放数据详情</p>
+        <p>可對單個視頻流查詢推流和播放數據詳情</p>
         <div class="search">
-          <el-input v-model="StreamName" placeholder="输入StreamName(流ID)进行查询"></el-input>
-          <el-button type="primary" size="small" class="searchbtn" @click="search">查询</el-button>
+          <el-input v-model="StreamName" placeholder="輸入StreamName(流ID)進行查詢"></el-input>
+          <el-button type="primary" size="small" class="searchbtn" @click="search">查詢</el-button>
         </div>
       </div>
     </div>
     <div class="streamlookup-main" v-if="showMain">
-      <p class="title">StreamName(流ID)：{{streamIDAfterSearch}} 详细数据</p>
-      <p class="sontitle">播放数据查询只能查询最近30天，查询时间段小于24小时</p>
+      <p class="title">StreamName(流ID)：{{streamIDAfterSearch}} 詳細數據</p>
+      <p class="sontitle">播放數據查詢只能查詢最近30天，查詢時間段小於24小時</p>
       <div class="seek">
         <el-select size="small" v-model="selectStream" @change="changeOption">
           <el-option
@@ -55,11 +55,11 @@ export default {
       options: [
         {
           value: "1",
-          label: "查看播放数据"
+          label: "查看播放數據"
         },
         {
           value: "2",
-          label: "查看推流数据"
+          label: "查看推流數據"
         }
       ],
       StartTime: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
@@ -76,7 +76,7 @@ export default {
   methods: {
     search() {
       if (this.StreamName == "" && this.showMain == false) {
-        this.$message.error("请输入流id");
+        this.$message.error("請輸入流id");
       } else {
         this.streamIDAfterSearch = this.StreamName;
         this.showMain = true;

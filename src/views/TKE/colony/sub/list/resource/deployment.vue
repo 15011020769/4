@@ -383,32 +383,7 @@ export default {
         }
       });
     },
-    //更新pod
-    goPodUpdate(rowData) {
-      console.log(rowData)
-      this.$router.push({
-        name: "podUpdate",
-        query: {
-          clusterId: this.clusterId,
-          name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
-        }
-      });
-      sessionStorage.setItem('namespace',rowData.metadata.namespace)
-    },
-    //更新pod配置
-    goPodConfigUpdate(rowData) {
-      this.$router.push({
-        name: "podConfigUpdate",
-        query: {
-          clusterId: this.clusterId,
-          name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
-        }
-      });
-    },
-
-    // 详情.
+     // 详情.
     goDeploymentDetail(rowData) {
       console.log(rowData)
       this.$router.push({
@@ -420,6 +395,33 @@ export default {
         }
       });
     },
+
+    //更新pod
+    goPodUpdate(rowData) {
+      console.log(rowData)
+      this.$router.push({
+        name: "podUpdate",
+        query: {
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace,
+          workload:'deployments'
+        }
+      });
+      sessionStorage.setItem('namespace',rowData.metadata.namespace)
+    },
+    //更新pod配置
+    goPodConfigUpdate(rowData) {
+      this.$router.push({
+        name: "podConfigUpdate",
+        query: {
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace,
+           workload:'deployments'
+        }
+      });
+    },
     //设置更新策略
     goSetUpdateTactics(rowData){
       this.$router.push({
@@ -428,6 +430,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
@@ -439,6 +442,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
@@ -450,7 +454,8 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
-          rowData:rowData
+          rowData:rowData,
+           workload:'deployments'
         }
       })
     },

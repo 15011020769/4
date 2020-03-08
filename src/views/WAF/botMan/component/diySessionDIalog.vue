@@ -121,7 +121,7 @@
           >
           </el-option>
         </el-select>&nbsp;
-        <span v-if="form.action === CUSTOM_SESSION_ACTION.验证码" class="sub-text"> {{t('仅用于浏览器访问场景 (强烈建议配置 UA类型 属于 browser后使用)', 'WAF.jyyllqfwcj')}}</span>
+        <span v-if="form.action === CUSTOM_SESSION_ACTION.驗證碼" class="sub-text"> {{t('仅用于浏览器访问场景 (强烈建议配置 UA类型 属于 browser后使用)', 'WAF.jyyllqfwcj')}}</span>
       </el-form-item>
       <div class="name-input" style="display: inline-block;" v-if="form.action === CUSTOM_SESSION_ACTION.重定向">
         <el-form-item
@@ -138,7 +138,7 @@
       </div>
     </el-row>
     <el-form-item
-      v-if="form.action !== CUSTOM_SESSION_ACTION.监控 && form.action !== CUSTOM_SESSION_ACTION.放行"
+      v-if="form.action !== CUSTOM_SESSION_ACTION.監控 && form.action !== CUSTOM_SESSION_ACTION.放行"
       :label="t('惩罚时长', 'WAF.cfsc')"
       prop="valid_time"
       :rules="[
@@ -220,13 +220,13 @@ export default {
           if (ucbrule.action !== CUSTOM_SESSION_ACTION.重定向) {
             ucbrule.addition_arg = ''
           }
-          if (ucbrule.action === CUSTOM_SESSION_ACTION.监控 || ucbrule.action === CUSTOM_SESSION_ACTION.放行) {
+          if (ucbrule.action === CUSTOM_SESSION_ACTION.監控 || ucbrule.action === CUSTOM_SESSION_ACTION.放行) {
             ucbrule.valid_time = ''
           }
           this.form = ucbrule
         } else {
           this.form = {
-            action: CUSTOM_SESSION_ACTION.监控,
+            action: CUSTOM_SESSION_ACTION.監控,
             rule: [],
             status: false,
           }

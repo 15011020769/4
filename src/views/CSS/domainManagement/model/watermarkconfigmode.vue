@@ -6,7 +6,7 @@
         :visible.sync="isShow"
         :before-close="handleClose">
         <div class="newClear">
-          <p class="tip">模板选择（如需添加新模板，请前往<a>【 功能模板】<i class="el-icon-share"></i></a>中进行设置）</p>
+          <p class="tip">範本選擇（如需添加新範本，請前往<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
           <div class="tableCon">
             <el-table
               :data="waterData"
@@ -16,8 +16,8 @@
                 type="selection"
                 width="55">
               </el-table-column>
-              <el-table-column prop="WatermarkName" label="模板名称"></el-table-column>
-              <el-table-column prop="WatermarkId" label="模板ID"></el-table-column>
+              <el-table-column prop="WatermarkName" label="範本名稱"></el-table-column>
+              <el-table-column prop="WatermarkId" label="範本ID"></el-table-column>
               <el-table-column prop="water" label="水印位置">
                 <template slot-scope="scope">
                   {{scope.row | position}}
@@ -25,7 +25,7 @@
               </el-table-column>
               <el-table-column prop="action" label="操作">
                   <template slot-scope="scope">
-                    <a href="#" @click="previewWatermark(scope.row)">预览</a>
+                    <a href="#" @click="previewWatermark(scope.row)">預覽</a>
                   </template>
               </el-table-column>
             </el-table>
@@ -33,7 +33,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="waterEdit">保存</el-button>
-          <el-button @click="handleClose">取 消</el-button>
+          <el-button @click="handleClose">取消</el-button>
         </span>
       </el-dialog>
     </div>
@@ -114,14 +114,14 @@ export default {
     waterEdit(){
       this.axios.post(LIVE_DELETELIVEWATERMARKRULE, {
         Version: '2018-08-01',
-        DomainName: this.$route.params.domain,
+        DomainName: this.$route.query.Name,
         AppName: '',
         StreamName: '',
       }).then(res => {
         if (this.selection.length > 0) {
           this.axios.post(LIVE_CREATELIVEWATERMARKRULE, {
             Version: '2018-08-01',
-            DomainName: this.$route.params.domain,
+            DomainName: this.$route.query.Name,
             AppName: '',
             StreamName: '',
             TemplateId: this.selection[0].WatermarkId

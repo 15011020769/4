@@ -9,7 +9,7 @@
         <p style="width: 99%">{{t('BOT 行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。了解更多', 'WAF.botxwgl')}}</p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <div class="timeList">
+      <el-row class="timeList">
         <el-button-group class="buttonDateCheck">
           <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">近1小{{t('时', 'WAF.hour')}}</el-button>
           <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">近6小{{t('时', 'WAF.hour')}}</el-button>
@@ -27,7 +27,8 @@
           :clearable= false
           @change="changeTimeValue"
         ></el-date-picker>
-      </div>
+        <i class="el-icon-refresh" @click="id+=1" />
+      </el-row>
       <div class="showChart">
         <el-row>
           <h3 class="topfont">
@@ -134,6 +135,7 @@ export default {
       legendTextBarIp: [this.t("Bot记录", 'WAF.jl')], // 柱状图legend
       topValue: 5, // 下拉默认选中top5
       domainStat: [],
+      id: 0,
       options: [{
           value: 5,
           label: 'TOP5'
@@ -171,6 +173,9 @@ export default {
     topValue() {
       this.getBotDomainStat()
     },
+    id() {
+      this.getBotDomainStat()
+    }
   },
   mounted() {
     this.getBotDomainStat()
@@ -251,6 +256,12 @@ export default {
 
 </script>
 <style lang='scss' scoped>
+.el-icon-refresh {
+  font-size: 18px !important;
+  position: absolute;
+  right: 0;
+  cursor: pointer;
+}
 .topHeader {
   width: 100%;
   height: 50px;

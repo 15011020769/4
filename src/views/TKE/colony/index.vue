@@ -78,7 +78,7 @@
                 class="icon-chart"
                 @click="
                   scope.row.ClusterStatus == 'Running'
-                    ? goColonySub(scope.row.ClusterId)
+                    ? goMonitor(scope.row)
                     : ''
                 "
               ></i>
@@ -881,6 +881,16 @@ export default {
         name: "clusterAddExist",
         query: {
           clusterId: id
+        }
+      });
+    },
+    //跳转监控页面
+    goMonitor(cluster) {
+      this.$router.push({
+        name: "colonyMonitor",
+        query: {
+          clusterId: cluster.ClusterId,
+          name: cluster.ClusterName
         }
       });
     },

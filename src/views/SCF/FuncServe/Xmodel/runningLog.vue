@@ -2,21 +2,11 @@
   <div class="Journal">
     <div class="Choice">
       <el-select v-model="ChoiceValue" class="select" @change="_GetJournal">
-        <el-option
-          v-for="item in ChoiceOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        ></el-option>
+        <el-option v-for="item in ChoiceOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
-      <TimeDropDown
-        :TimeArr="TimeArr"
-        :Datecontrol="true"
-        :Graincontrol="false"
-        :Difference="'H'"
-        v-on:switchData="GetDat"
-        class="TimeDropDown"
-      />
+      <TimeDropDown :TimeArr="TimeArr" :Datecontrol="true" :Graincontrol="false" :Difference="'H'"
+        v-on:switchData="GetDat" />
+      <el-button size="small" @click="_Reset" class="TimeDropDown">重置</el-button>
       <el-input :placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
       <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
     </div>
@@ -104,254 +94,258 @@
   </div>
 </template>
 <script>
-import { FUN_LOG } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-import TimeDropDown from "@/components/public/TimeDropDown"; //引入时间组件
-export default {
-  props: ["FunctionVersion"],
-  data() {
-    return {
-      functionName: this.$route.query.functionName,
-      ChoiceOptions: [
-        {
-          label: "全部日誌",
-          value: ""
-        },
-        {
-          label: "正確日誌",
-          value: "is0"
-        },
-        {
-          label: "錯誤日誌",
-          value: "not0"
-        }
-      ],
-      ChoiceValue: "",
-      TimeArr: [
-        {
-          name: "實時",
-          Time: "realTime",
-          TimeGranularity: [
-            {
-              value: "",
-              label: ""
-            }
-          ]
-        },
-        {
-          name: "近24小時",
-          Time: "Nearly_24_hours",
-          TimeGranularity: [
-            {
-              value: "",
-              label: ""
-            }
-          ]
-        }
-      ],
-      requestId: "",
-      Time: {},
-      JournalList: [], //日志列表
-      contentID: "",
-      contentshow: true,
-      content: {}
-    };
-  },
-  components: {
-    TimeDropDown
-  },
-  created() {},
-  methods: {
-    GetDat(data) {
-      this.Time = data[1];
-      this._GetJournal();
-    },
-    _GetJournal() {
-      let param = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2018-04-16",
-        FunctionName: this.functionName,
-        StartTime: this.Time.StartTIme,
-        EndTime: this.Time.EndTIme,
-        "Filter.RetCode": this.ChoiceValue,
-        Qualifier: this.FunctionVersion
-      };
-      if (this.requestId != "") {
-        param["FunctionRequestId"] = this.requestId;
-      }
-      this.axios.post(FUN_LOG, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.JournalList = res.Response.Data;
-          if (this.JournalList.length !== 0) {
-            this.contentshow = true;
-            if (this.contentID === "") {
-              this.contentID = this.JournalList[0].RequestId;
-            }
-            this.JournalList.forEach(item => {
-              if (this.contentID === item.RequestId) {
-                this.content = item;
-              }
-            });
-          } else {
-            this.contentshow = false;
+  import {
+    FUN_LOG
+  } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import TimeDropDown from "@/components/public/TimeDropDown"; //引入时间组件
+  export default {
+    props: ["FunctionVersion"],
+    data() {
+      return {
+        functionName: this.$route.query.functionName,
+        ChoiceOptions: [{
+            label: "全部日誌",
+            value: ""
+          },
+          {
+            label: "正確日誌",
+            value: "is0"
+          },
+          {
+            label: "錯誤日誌",
+            value: "not0"
           }
-        } else {
-          let ErrTips = {
-            InternalError: "內部錯誤",
-            "nternalError.ES": "ES錯誤",
-            "InternalError.System": "內部系統錯誤",
-            "InvalidParameter.Payload": "請求參數不合法",
-            InvalidParameterValue: "參數取值錯誤",
-            "InvalidParameterValue.DateTime": "DateTime傳入錯誤",
-            "InvalidParameterValue.StartTimeOrEndTime":
-              "開始時間與結束時間僅可相差一天"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+        ],
+        ChoiceValue: "",
+        TimeArr: [{
+            name: "實時",
+            Time: "realTime",
+            TimeGranularity: [{
+              value: "",
+              label: ""
+            }]
+          },
+          {
+            name: "近24小時",
+            Time: "Nearly_24_hours",
+            TimeGranularity: [{
+              value: "",
+              label: ""
+            }]
+          }
+        ],
+        requestId: "",
+        Time: {},
+        JournalList: [], //日志列表
+        contentID: "",
+        contentshow: true,
+        content: {}
+      };
     },
-    _search() {
-      if (this.requestId == "") {
+    components: {
+      TimeDropDown
+    },
+    created() {},
+    methods: {
+      GetDat(data) {
+        this.Time = data[1];
         this._GetJournal();
+      },
+      _GetJournal() {
+        let param = {
+          Region: localStorage.getItem("regionv2"),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          "Filter.RetCode": this.ChoiceValue,
+          Qualifier: this.FunctionVersion
+        };
+        if (this.requestId != "") {
+          param["FunctionRequestId"] = this.requestId;
+        }
+        this.axios.post(FUN_LOG, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.JournalList = res.Response.Data;
+            if (this.JournalList.length !== 0) {
+              this.contentshow = true;
+              if (this.contentID === "") {
+                this.contentID = this.JournalList[0].RequestId;
+              }
+              this.JournalList.forEach(item => {
+                if (this.contentID === item.RequestId) {
+                  this.content = item;
+                }
+              });
+            } else {
+              this.contentshow = false;
+            }
+          } else {
+            let ErrTips = {
+              InternalError: "內部錯誤",
+              "nternalError.ES": "ES錯誤",
+              "InternalError.System": "內部系統錯誤",
+              "InvalidParameter.Payload": "請求參數不合法",
+              InvalidParameterValue: "參數取值錯誤",
+              "InvalidParameterValue.DateTime": "DateTime傳入錯誤",
+              "InvalidParameterValue.StartTimeOrEndTime": "開始時間與結束時間僅可相差一天"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      _Reset() {
+        this.requestId = ''
+        this._GetJournal();
+      },
+      _search() {
+        if (this.requestId == "") {
+          this._GetJournal();
+        }
+      },
+      _switch(data) {
+        this.contentID = data.RequestId;
+        this.JournalList.forEach(item => {
+          if (this.contentID === item.RequestId) {
+            this.content = item;
+          }
+        });
       }
     },
-    _switch(data) {
-      this.contentID = data.RequestId;
-      this.JournalList.forEach(item => {
-        if (this.contentID === item.RequestId) {
-          this.content = item;
-        }
-      });
+    filters: {
+      UpMB(value) {
+        return (value / 1048576).toFixed(3);
+      }
     }
-  },
-  filters: {
-    UpMB(value) {
-      return (value / 1048576).toFixed(3);
-    }
-  }
-};
+  };
+
 </script>
 <style lang="scss" scoped>
-// .Journal >>> .el-time-spinner__list {
-//   margin: -12px;
-// }
-// .Journal
-//   >>> .el-time-panel__content
-//   .el-scrollbar__wrap
-//   ul.el-time-spinner__list {
-//   margin: -12px !important;
-//   margin-left: -12px !important;
-//   margin-right: 12px !important;
-//   margin-top: -12px !important;
-//   margin-bottom: -12px !important;
-// }
-.Journal >>> .el-input__inner {
-  height: 36px !important;
-  line-height: 36px !important;
-}
-.Journal {
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  padding: 20px;
-
-  .Choice {
-    display: flex;
-
-    .TimeDropDown {
-      margin-right: 20%;
-    }
-
-    .el-input {
-      width: 160px;
-      height: 36px !important;
-      line-height: 36px !important;
-    }
-
-    .el-select {
-      width: 120px;
-    }
-
-    .select {
-      margin-right: 20px;
-    }
+  // .Journal >>> .el-time-spinner__list {
+  //   margin: -12px;
+  // }
+  // .Journal
+  //   >>> .el-time-panel__content
+  //   .el-scrollbar__wrap
+  //   ul.el-time-spinner__list {
+  //   margin: -12px !important;
+  //   margin-left: -12px !important;
+  //   margin-right: 12px !important;
+  //   margin-top: -12px !important;
+  //   margin-bottom: -12px !important;
+  // }
+  .Journal>>>.el-input__inner {
+    height: 32px !important;
+    line-height: 32px !important;
   }
 
-  .content {
-    display: flex;
-    margin-top: 30px;
+  .Journal {
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    padding: 20px;
 
-    .menu {
-      height: 800px;
-      width: 260px;
-      border-right: 1px solid #ddd;
+    .Choice {
+      display: flex;
 
-      ul {
-        li {
-          cursor: pointer;
-          line-height: 50px;
-          border-bottom: 1px solid #ddd;
+      .TimeDropDown {
+        margin-right: 20%;
+      }
 
-          .success {
-            padding-left: 20px;
-            color: #0abf5b;
-          }
+      .el-input {
+        width: 160px;
+        height: 32px !important;
+        line-height: 32px !important;
+      }
 
-          .fail {
-            padding-left: 30px;
-            color: #e54545;
-          }
-        }
+      .el-select {
+        width: 120px;
+      }
+
+      .select {
+        margin-right: 20px;
       }
     }
 
-    .contentx {
-      width: 100%;
-      margin-left: 20px;
+    .content {
+      display: flex;
+      margin-top: 30px;
 
-      .contentID {
-        font-size: 14px;
-      }
-
-      .information {
-        margin-top: 20px;
-        display: flex;
-        background-color: rgb(242, 242, 242);
-        padding: 10px;
-
-        p {
-          padding-right: 20px;
-          color: #888;
-
-          span {
-            padding-left: 6px;
-            color: black;
-          }
-        }
-      }
-
-      .RetMsg_Log {
-        font-size: 14px;
-        margin-top: 20px;
-        padding-left: 20px;
-        background-color: rgb(242, 242, 242);
+      .menu {
         height: 800px;
+        width: 260px;
+        border-right: 1px solid #ddd;
 
-        div {
-          padding-top: 20px;
+        ul {
+          li {
+            cursor: pointer;
+            line-height: 50px;
+            border-bottom: 1px solid #ddd;
 
-          .title {
-            color: rgb(48, 127, 220);
-            padding-bottom: 10px;
+            .success {
+              padding-left: 20px;
+              color: #0abf5b;
+            }
+
+            .fail {
+              padding-left: 30px;
+              color: #e54545;
+            }
+          }
+        }
+      }
+
+      .contentx {
+        width: 100%;
+        margin-left: 20px;
+
+        .contentID {
+          font-size: 14px;
+        }
+
+        .information {
+          margin-top: 20px;
+          display: flex;
+          background-color: rgb(242, 242, 242);
+          padding: 10px;
+
+          p {
+            padding-right: 20px;
+            color: #888;
+
+            span {
+              padding-left: 6px;
+              color: black;
+            }
+          }
+        }
+
+        .RetMsg_Log {
+          font-size: 14px;
+          margin-top: 20px;
+          padding-left: 20px;
+          background-color: rgb(242, 242, 242);
+          height: 800px;
+
+          div {
+            padding-top: 20px;
+
+            .title {
+              color: rgb(48, 127, 220);
+              padding-bottom: 10px;
+            }
           }
         }
       }
     }
   }
-}
+
 </style>

@@ -109,7 +109,7 @@
           >
           </el-option>
         </el-select>&nbsp;
-        <el-tooltip v-show="form.ActionType === POLICY_RULE_ACTION.人机识别" placement="right-end" :content="t('交互式行为验证码，可智能感知并切换验证难度。该功能需JavaScript支持；部分采用Ajax发送的post请求以及非WEB应用（例如App），可能无法支持', 'WAF.rjsbtip')" effect="light">
+        <el-tooltip v-show="form.ActionType === POLICY_RULE_ACTION.人機識別" placement="right-end" :content="t('交互式行为验证码，可智能感知并切换验证难度。该功能需JavaScript支持；部分采用Ajax发送的post请求以及非WEB应用（例如App），可能无法支持', 'WAF.rjsbtip')" effect="light">
           <i class="el-icon-info"></i>
         </el-tooltip>
         <div class="name-input" style="display: inline-block;" v-if="form.ActionType === POLICY_RULE_ACTION.重定向">
@@ -225,7 +225,7 @@ export default {
           this.form = {
             Name: '',
             ExpireTimeType: 0,
-            ActionType: POLICY_RULE_ACTION.阻断,
+            ActionType: POLICY_RULE_ACTION.阻斷,
             SortId: 100,
             Strategies: [{
               Field: DEFAULT_MATCH_KEY_Field,

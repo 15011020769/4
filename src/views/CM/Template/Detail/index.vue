@@ -1,0 +1,161 @@
+<template>
+  <div class='detail-container'>
+    <div class="header">
+      <div class="header1">
+        <div class="header2">
+          <span class="goback" @click="goBack()">
+            <i class="el-icon-back"></i>
+          </span>
+          <h2 class="header-title">msg</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- 详情子菜单导航 -->
+    <div class="detial-nav">
+      <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'query: {}}">模板信息</router-link> -->
+      <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">变更日志</router-link> -->
+      <router-link class="nav-item" :to="{path:'/Template/Detail/Info'}">模板信息</router-link>
+      <router-link class="nav-item" :to="{path:'/Template/Detail/Update'}">变更日志</router-link>
+    </div>
+
+    <!-- 子页面 -->
+    <keep-alive>
+        <transition name="fade" mode="out-in">
+          <router-view></router-view>
+        </transition>
+    </keep-alive>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'TemplateDetail',
+  data () {
+    return {
+
+    }
+  },
+  created () {
+    // console.log(this.$route.query)
+  },
+  methods: {
+    // 返回上一层
+    goBack () {
+      this.$router.push({
+        name: 'Template'
+      })
+    }
+  }
+}
+</script>
+
+<style scoped lang='scss'>
+.detail-container{
+  .container-min{
+    padding: 20px;
+    box-sizing: border-box;
+  }
+}
+.header{
+  color: rgb(0, 0, 0);
+  // border-bottom: 1px solid rgb(221, 221, 221);
+  padding: 9px 20px;
+  background: rgb(255, 255, 255);
+  .header1{
+    display: flex;
+    align-items: center;
+    .header2{
+      flex: 1;
+      display: flex;
+      align-items: center;
+      .goback{
+        margin-right: 10px;
+        cursor: pointer;
+        i{
+          font-size: 16px;
+          color: #006eff;
+          font-weight: 800;
+          height: 30px;
+          line-height: 30px;
+          display: inline-block;
+          margin-right: 5px;
+        }
+        &:hover {
+            color: #006eff;
+        }
+      }
+      .header-title{
+        font-size: 16px;
+        font-weight: 700;
+        height: 30px;
+        line-height: 30px;
+        margin-right: 20px;
+      }
+    }
+  }
+  // &.headers {
+  //   border-bottom: none;
+  // }
+}
+.detial-nav {
+    padding: 0 20px;
+    background: #fff;
+    position: relative;
+    display: flex;
+
+    &:after {
+        position: absolute;
+        content: "";
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .nav-item {
+        height: 30px;
+        line-height: 30px;
+        margin-right: 20px;
+        padding: 0 10px;
+        font-size: 14px;
+        color: #000;
+        display: inline-block;
+        position: relative;
+        z-index: 2;
+
+        &:after {
+            position: absolute;
+            content: "";
+            bottom: 0;
+            left: 0;
+            width: 0;
+            border-bottom: 2px solid transparent;
+        }
+
+        &.router-link-active {
+            font-weight: 800;
+        }
+
+        &.router-link-active:after,
+        &:hover:after {
+            width: 100%;
+            border-bottom-color: #006eff;
+            -webkit-transition: border-color .15s ease-in-out, width .15s ease-in-out, height .15s ease-in-out;
+            transition: border-color .15s ease-in-out, width .15s ease-in-out, height .15s ease-in-out;
+        }
+    }
+}
+// 子页面切换动画
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity .2s;
+    transition: transform .2s;
+}
+
+.fade-enter,
+.fade-leave-to {
+    transform: translateY(5px);
+    opacity: 0;
+}
+</style>

@@ -13,41 +13,41 @@
     <div class='room'>
       <el-card class="box-card">
         <el-form label-width="150px" class='tke-form' label-position="left">
-          <h3 style='margin-bottom:20px;'>基本信息</h3>
-          <el-form-item label="日志规则名称">
+          <h3 style='margin-bottom:20px;'>{{$t('TKE.overview.jbxx')}}</h3>
+          <el-form-item :label="$t('TKE.overview.rzgzmc')">
             {{$route.query.stashName}}
           </el-form-item>
-          <el-form-item label="所属集群">
+          <el-form-item :label="$t('TKE.overview.ssjq')">
             <a @click="goCluster()">{{$route.query.clusterId}}</a>
           </el-form-item>
-          <el-form-item label="创建时间">
+          <el-form-item :label="$t('TKE.overview.cjsj')">
             {{timeFormat(createTime)}}
           </el-form-item>
           <el-divider></el-divider>
-          <h3 style='margin-bottom:20px;'>日志信息</h3>
-          <el-form-item label="日志类型">
-            <span v-if="$route.query.type == 'host-log'">指定容器日志</span>
-            <span v-if="$route.query.type == 'container-log'">容器标准输出</span>
-            <span v-if="$route.query.type == 'pod-log'">指定容器文件</span>
+          <h3 style='margin-bottom:20px;'>{{$t('TKE.overview.rzxx')}}</h3>
+          <el-form-item :label="$t('TKE.overview.rzlx')">
+            <span v-if="$route.query.type == 'host-log'">{{$t('TKE.overview.zdrqrz')}}</span>
+            <span v-if="$route.query.type == 'container-log'">{{$t('TKE.overview.rqbzsc')}}</span>
+            <span v-if="$route.query.type == 'pod-log'">{{$t('TKE.overview.zdrqwj')}}</span>
           </el-form-item>
-          <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   label="日志源">
-            <span>所有容器</span>
+          <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   :label="$t('TKE.overview.rzy')">
+            <span>{{$t('TKE.overview.syrq')}}</span>
           </el-form-item>
           <div  v-if="$route.query.type == 'pod-log'">
-             <el-form-item label="工作负载">
+             <el-form-item :label="$t('TKE.overview.gzfz')">
                   kube-system / Deployment / -
               </el-form-item>
-             <el-form-item label="采集路径">
-                  容器名称：-路径：-
+             <el-form-item :label="$t('TKE.overview.cjlj')">
+                  {{$t('TKE.overview.rqmclj')}}
               </el-form-item>
           </div>
           <el-divider></el-divider>
-          <h3 style='margin-bottom:20px;'>消费端</h3>
-          <el-form-item label="类型">
+          <h3 style='margin-bottom:20px;'>{{$t('TKE.overview.xfd')}}</h3>
+          <el-form-item :label="$t('TKE.overview.lx')">
             {{type}}
           </el-form-item>
           <div v-if="type=='ckafka'">
-              <el-form-item label="CKafka实例">
+              <el-form-item :label="$t('TKE.overview.sl')">
                {{ckafka.case}}
               </el-form-item>
               <el-form-item label="CKafka Topic">
@@ -55,13 +55,13 @@
               </el-form-item>
           </div>
           <div v-if="type=='kafka'">
-              <el-form-item label="访问地址IP">
+              <el-form-item :label="$t('TKE.overview.fwdzip')">
                {{kafka.ip}}
               </el-form-item>
-              <el-form-item label="访问地址端口">
+              <el-form-item :label="$t('TKE.overview.fwdzdk')">
                {{kafka.port}}
               </el-form-item>
-              <el-form-item label="主题（Topic）">
+              <el-form-item :label="$t('TKE.overview.zti')">
                 {{kafka.topic}}
               </el-form-item>
           </div>

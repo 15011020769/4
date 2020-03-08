@@ -82,7 +82,7 @@ export default {
     //保存按钮
     saveSet(){
       this.axios.post(LIVE_MODIFYLIVEPUSHAUTHKEY, {
-        DomainName: this.$route.params.domain,
+        DomainName: this.$route.query.Name,
         Version: '2018-08-01',
         Enable: Number(this.switchvalue),
         MasterAuthKey: this.mainKey,
@@ -93,7 +93,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped> 
+<style lang="scss" scoped>
 .newClear:after{
   content:"";
   display: block;

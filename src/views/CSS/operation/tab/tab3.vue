@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <h3>
-      流量趋势
-      <span style="color:#bbb;">(单位:MB)</span>
+      流量趨勢
+      <span style="color:#bbb;">(單位:MB)</span>
     </h3>
     <Echart
       color="#fa970c"
@@ -17,11 +17,11 @@
         style="width: 100%;margin-top:20px;"
         v-loading="loading"
       >
-        <el-table-column prop="Time" label="时间点"></el-table-column>
-        <el-table-column prop="Request" label="请求数"></el-table-column>
+        <el-table-column prop="Time" label="時間點"></el-table-column>
+        <el-table-column prop="Request" label="請求數"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -46,7 +46,7 @@ export default {
       //图表数据
       xAxis: [],
       series: [],
-      legendText: '请求数',
+      legendText: '請求數',
       tableData: [], //表格数据
       currpage: 1, //页数
       pagesize: 10, //每页数量
@@ -80,7 +80,7 @@ export default {
             res.Response.Error.Message ==
             "EndTime minus StartTime should smaller than 86400 s"
           ) {
-            this.$message.error("该模式暂不支持查询一天之外的数据");
+            this.$message.error("該模式暫不支持查詢一天之外的數據");
           } else {
             this.$message.error(res.Response.Error.Message);
           }

@@ -10,7 +10,7 @@
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
     <div class="table">
-      <h3>月度消费量</h3>
+      <h3>月度消費量</h3>
       <!-- <el-button @click="exportExcel">导出表格</el-button> -->
       <el-table
         :data="tableData"
@@ -18,10 +18,10 @@
         v-loading="loading"
       >
         <el-table-column prop="time" label="月份"></el-table-column>
-        <el-table-column prop="num" label="截图数量（张）"></el-table-column>
+        <el-table-column prop="num" label="截圖數量（張）"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pageSize"
           :pager-count="7"
@@ -51,7 +51,7 @@ export default {
       loading: true, //加载状态
       xAxis: [],
       series: [],
-      legendText: '截图',
+      legendText: '截圖',
     };
   },
   components: {

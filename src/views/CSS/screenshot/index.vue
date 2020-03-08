@@ -11,8 +11,7 @@
       <div class="explain">
         <p>
           範本設置完成，需關聯推流域名方可生效，請點擊
-          <router-link to="/domainManagement">域名管理</router-link>
-          進行關聯設置。
+          <router-link to="/domainManagement">域名管理</router-link>進行關聯設置。
           <!-- <a href="#">参考文档</a> -->
           範本配置完後續大約5分鐘生效
         </p>
@@ -20,16 +19,17 @@
       <div class="main-box" v-loading="loading">
         <div class="left">
           <i class="el-icon-plus" @click="_add" />
-          <i class="el-icon-delete" @click="modalVisible=true" />
+          <i class="el-icon-delete" @click="handleDelete" />
           <ul class="recording-list-box">
             <li
               v-for="item in configList"
               @click="onSelectRecording(item)"
+              :key="item.TemplateId"
               :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
             >{{item.TemplateName}}</li>
           </ul>
         </div>
-        <div class="right">
+        <div class="right" v-show="showRight">
           <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
           <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
         </div>
@@ -45,6 +45,8 @@ import OptionForm from "./tab/optionForm";
 import ConfigDetail from "./tab/configDetail";
 import DeleteModal from "./modal/modal";
 import { DELETE_SNAPSHOT_TEMPLATE, GET_SNAPSHOT_TEMPLATE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../components/CSSErrorTips";
 export default {
   name: "transcribe",
   data() {
@@ -56,6 +58,11 @@ export default {
       modalVisible: false,
       loading: true
     };
+  },
+  computed: {
+    showRight: function () {
+      return this.configList.length > 0 || this.formShow === true;
+    }
   },
   components: {
     HeaderCom,
@@ -79,10 +86,22 @@ export default {
     },
 
     _cancel() {
-      this.selectItem = this.configList[this.selectIndex];
-      this.formShow = false;
-    },
 
+      this.formShow = false;
+
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.selectItem = this.configList[this.selectIndex];
+    },
+    handleDelete() {
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.modalVisible = true;
+    },
     _delete() {
       this.axios
         .post(DELETE_SNAPSHOT_TEMPLATE, {
@@ -99,7 +118,8 @@ export default {
             this.fetchRecordingList();
             return;
           }
-          this.$message.error(data.Response.Error.Message);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
         });
     },
 
@@ -111,11 +131,18 @@ export default {
         })
         .then(data => {
           if (data.Response.Error == undefined) {
-            this.configList = data.Response.Templates;
-            this.selectItem = this.configList[0];
+            const result = data.Response.Templates;
+            if (result.length > 0) {
+              this.configList = result;
+              this.selectItem = this.configList[0];
+            } else {
+              this.configList = [];
+              this.selectItem = {};
+            }
             return;
           }
-          this.$message.error(data.Response.Error.Message);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
         })
         .then(() => {
           this.loading = false;
@@ -127,7 +154,7 @@ export default {
       this.formShow = false;
       this.selectItem = item;
       this.selectIndex = this.configList.findIndex(
-        _item => item.TemplateId === _item.TemplateId
+        tempItem => item.TemplateId === tempItem.TemplateId
       );
     }
   }

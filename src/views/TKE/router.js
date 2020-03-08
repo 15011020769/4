@@ -30,6 +30,14 @@ export default new Router({
       }
     },
     {
+      path: '/colonyMonitor', // 集群监控
+      name: 'colonyMonitor',
+      component: () => import('./colony/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/create', // 创建集群
       name: 'clusterCreate',
       component: () => import('./colony/create.vue'),
@@ -393,6 +401,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/create/yaml', // 集群详情 --创建yaml
+      name: 'createYaml',
+      component: () => import('./colony/sub/create/yaml/yaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/storage/pvc', // 集群-新建PersistentVolumeClaim
       name: 'pvcCreate',
       component: () => import('./colony/sub/create/storage/pvc.vue'),
@@ -509,6 +525,14 @@ export default new Router({
           }
         }
       ]
+    },
+    {
+      path: '/colony/sub/detail/nodeManage/masteretcd/openMonitor', // 节点管理-Master&Etcd-详情
+      name: 'masteretcdMonitor',
+      component: () => import('./colony/sub/detail/nodeManage/masteretcd/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      },
     },
     {
       path: '/colony/sub/detail/hpa', // 命名空间-详情

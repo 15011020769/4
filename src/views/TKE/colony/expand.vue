@@ -60,7 +60,7 @@
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ nodeForm.kuValue }}</p>
+            <p>{{ nodeForm.clusterVersion.ClusterVersion | ClusterVersion }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
@@ -85,7 +85,7 @@
                 @change="SecondCharging();costPrice()"
               >
                 <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
-                <el-radio-button label="PREPAID">包年包月</el-radio-button>
+                <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
               </el-radio-group>
               <a href="#">详细对比</a>
             </div>
@@ -132,7 +132,7 @@
           </div>
           <el-form-item label="CPU&内存">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList;costPrice">
+              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList()">
                 <el-option
                   v-for="item in nodeForm.AllCPU"
                   :key="item.value"
@@ -141,7 +141,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList;costPrice">
+              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList()">
                 <el-option
                   v-for="item in nodeForm.AllRAM"
                   :key="item.value"
@@ -154,7 +154,7 @@
           </el-form-item>
           <el-form-item label="实例族">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList;costPrice">
+              <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList()">
                 <el-radio-button label="all">全部实例族</el-radio-button>
                 <el-radio-button label="S3">标准型</el-radio-button>
                 <el-radio-button label="M3">内存型</el-radio-button>
@@ -164,7 +164,7 @@
           </el-form-item>
           <el-form-item label="实例类型">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList;costPrice">
+              <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList()">
                 <el-radio-button label="all">全部实例类型</el-radio-button>
                 <el-radio-button label="S3" v-show="nodeForm.example === 'all' || nodeForm.example === 'S3'">标准型S3</el-radio-button>
                 <el-radio-button label="C3" v-show="nodeForm.example === 'all' || nodeForm.example === 'M3'">计算型C3</el-radio-button>
@@ -243,7 +243,7 @@
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ nodeForm.kuValue }}</p>
+            <p>{{ nodeForm.clusterVersion.ClusterVersion | ClusterVersion }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
@@ -268,12 +268,12 @@
           </el-form-item>
           <el-form-item label="系统盘">
             <div class="tke-second-radio-btn tke-third-radio-btn">
-              <el-radio-group v-model="nodeForm.systemDiskType">
+              <el-radio-group v-model="nodeForm.systemDiskType" @change="changeSyetemType">
                 <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
                 <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input></el-slider>
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input @change="changeSyetem"></el-slider>
               </div>
             </div>
           </el-form-item>
@@ -288,13 +288,13 @@
               <div>
                 <div v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i" style="display: flex;"><!--v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i"-->
                   <div style="flex: 1;">
-                    <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;">
-                      <el-radio-group v-model="item.dataDiskType">
+                    <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;" >
+                      <el-radio-group v-model="item.dataDiskType" @change="changeDataDiskType">
                         <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
                       </el-radio-group>
                       <div class="block">
-                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize" show-input></el-slider>
+                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize" show-input @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
                     <el-form-item label="格式化设置" class="norms" style="padding-left: 10px;">
@@ -324,23 +324,23 @@
                   </span>
                 </div>
               </div>
-              <div class="btn">
+              <!-- <div class="btn">
                 <el-button @click="DataDiskSure()" style="color: #006eff;"
                   >确定</el-button
                 >
                 <el-button @click="closeDataDisk"
                   >取消</el-button
                 >
-              </div>
+              </div> -->
               <div
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
               >
-                <el-button @click="AddDataDisk()" style="color: #006eff;">添加机型</el-button> 
+                <el-button @click="AddDataDisk()" style="color: #006eff;">添加数据盘</el-button> 
               </div>
             </div>
           </div>
-          <el-form-item label="容器目录">
+          <el-form-item label="容器目录" v-if="nodeForm.dataDiskShow">
             <el-checkbox v-model="nodeForm.containerChecked"
               >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
             >
@@ -354,7 +354,7 @@
           <div class="tke-second-tips tke-third-broadband">
             <p>公网宽带<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-third-radio-btn">
-              <el-radio-group v-model="nodeForm.internetChargeType">
+              <el-radio-group v-model="nodeForm.internetChargeType" @change="changeInternetType">
                 <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">按带宽计费</el-radio-button>
                 <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button>
               </el-radio-group>
@@ -390,7 +390,7 @@
             </div>
           </el-form-item>
           <el-form-item v-show="nodeForm.instanceNameType === 'manual'" style="margin-top: 20px;">
-            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" ></el-input>
+            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" @blur="nameManual(nodeForm.instanceName)" ></el-input>
             <p>实例名称不超过60个字符</p>
           </el-form-item>
           <el-form-item label="登录方式">
@@ -432,6 +432,7 @@
             <el-input
               placeholder="请输入主机密码"
               v-model="nodeForm.password"
+              @blur="PasswordInput(nodeForm.password)"
               show-password
             ></el-input>
             <p>
@@ -447,6 +448,7 @@
             <el-input
               placeholder="请输入主机密码"
               v-model="nodeForm.confirmPassword"
+              @blur="confirmPasswordInput(nodeForm.confirmPassword)"
               show-password
             ></el-input>
           </el-form-item>
@@ -458,8 +460,8 @@
                 ><i class="el-icon-info ml5"></i
               ></el-tooltip></p>
               <div class="input-box">
-              <div v-if="nodeForm.safeArr.length > 0">
-                <div v-for="(item, index) in nodeForm.safeArr" :key="index">
+              <!-- <div v-if="nodeForm.safeArr.length > 0"> -->
+                <!-- <div v-for="(item, index) in nodeForm.safeArr" :key="index"> -->
                   <div>
                     <el-select
                       placeholder="请选择安全组"
@@ -473,17 +475,17 @@
                       >
                       </el-option>
                     </el-select>
-                    <i class="el-icon-refresh ml5"></i>
+                    <!-- <i class="el-icon-refresh ml5"></i>
                     <i
                       class="el-icon-error ml5"
                       @click="deleteExceptPrice(index)"
-                    ></i>
+                    ></i> -->
                   </div>
-                </div>
-              </div>
-              <p>
+                <!-- </div> -->
+              <!-- </div> -->
+              <!-- <p>
                 <a href="javascript:;" @click="AddSafe">添加安全组</a>
-              </p>
+              </p> -->
             </div>
             <!-- <div>
               <el-select v-model="nodeForm.securityId" placeholder="请选择">
@@ -532,7 +534,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" @click="thirdPrev">上一步</el-button>
-          <el-button size="small" type="primary" @click="thirdNext('nodeForm')"
+          <el-button size="small" type="primary" :disabled="nodeForm.isShowathirdNext?true:false" @click="thirdNext('nodeForm')"
             >下一步</el-button
           >
         </div>
@@ -548,7 +550,7 @@
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
-            <p>{{ nodeForm.kuValue }}</p>
+            <p>{{ nodeForm.clusterVersion.ClusterVersion | ClusterVersion }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
@@ -573,22 +575,60 @@
           </el-form-item>
           <el-form-item label="数据盘">
             <p v-if="!nodeForm.isShowDataDisk">暂不购买</p>
-            <p v-else>dataDiskType</p>
+            <p v-else>{{nodeForm.buyDataDiskArr | buyDataDiskArr}}</p>
             
           </el-form-item>
           <el-form-item label="公网带宽" class="tke-fourth-broadband">
             <p>{{nodeForm.internetChargeType | internetChargeType}} ({{nodeForm.internetMaxBandwidthOut}}Mbps)</p>
           </el-form-item>
-          <el-form-item label="云服务器数量" class="cvm-num">
-            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="10"></el-input-number>
+          <el-form-item label="云服务器数量" class="cvm-num" v-if="nodeForm.instanceChargeType === 'PREPAID'">
+            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="10" @change="costPrice"></el-input-number>
           </el-form-item>
-          <el-form-item label="总计费用">
+          <el-form-item label="云服务器数量" class="cvm-num" v-else>
+            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="1" @change="costPrice"></el-input-number>
+          </el-form-item>
+          <el-form-item
+            label="购买时长"
+            v-if="nodeForm.instanceChargeType === 'PREPAID' "
+            class="tke-second-radio-time"
+          >
+            <div class="tke-second-radio-btn">
+              <el-radio-group
+                v-model="nodeForm.buyTime"
+                @change="BuyTime"
+              >
+                <el-radio-button label="1">1个月</el-radio-button>
+                <el-radio-button label="2">2个月</el-radio-button>
+                <el-radio-button label="3">3个月</el-radio-button>
+                <el-radio-button label="4">6个月</el-radio-button>
+                <el-radio-button label="12">1年</el-radio-button>
+                <el-radio-button label="24">2年</el-radio-button>
+                <el-radio-button label="36">3年</el-radio-button>
+              </el-radio-group>
+            </div>
+          </el-form-item>
+          <el-form-item label="自动续费" v-if="nodeForm.instanceChargeType === 'PREPAID'">
+            <div class="tke-second-checkbox">
+              <el-checkbox v-model="nodeForm.renew"
+                >账户余额足够时，设备到期后按月自动续费</el-checkbox
+              >
+            </div>
+          </el-form-item>
+          <el-form-item label="总计费用" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">0.16</span
+              <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span
+              ><span class="tke-second-cost-h">元</span
+              >
+            
+            </div>
+          </el-form-item>
+          <el-form-item label="总计费用" v-else>
+            <div class="tke-second-cost">
+              <span class="tke-second-cost-num">{{nodeForm.allocationCost}}</span
               ><span class="tke-second-cost-h">元/小时</span
               ><span class="tke-second-cost-t">(配置费用)</span>
               <i>|</i>
-              <span class="tke-second-cost-num">0.06</span
+              <span class="tke-second-cost-num">{{nodeForm.networkCost}}</span
               ><span class="tke-second-cost-h">元/小时</span
               ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
             </div>
@@ -601,9 +641,6 @@
         </div>
       </div>
     </div>
-    <!-- <el-dialog :visible.sync="nodeForm.dataDiskShow">
-      
-    </el-dialog> -->
   </div>
 </template>
 
@@ -621,7 +658,8 @@ import { ALL_CITY,
   TKE_MISG,
   TKE_ADD_NODE,
   TKE_OPERAT_SYSTEM,
-  TKE_PRICE } from "@/constants";
+  TKE_PRICE,
+  CLUSTER_VERSION } from "@/constants";
 export default {
   name: "create",
   data() {
@@ -640,6 +678,7 @@ export default {
         cityRadio: "台湾台北",//区域
         container: "",//容器网络
         os:'',//操作系统
+        clusterVersion: {},//kubernetes版本
         instanceChargeType: 'POSTPAID_BY_HOUR',//付费方式
         describeVpcs: [],//vpsc列表
         subNetList: [],//子网列表
@@ -657,7 +696,7 @@ export default {
         fileSystem: 'ext4',//数据类型
         filePath: '/var/lib/docker',//文件路径
         modelType: {},//实例机型对象
-        instanceType: 'S1.SMALL1',//实例机型类型
+        instanceType: 'S3.SMALL1',//实例机型类型
         isShowDataDisk: false,//是否购买数据盘
         dataDiskShow: false,//是否显示购买数据盘modal
         buyDataDiskArr: [],//数据盘购买列表
@@ -826,12 +865,17 @@ export default {
           }
         ],
         projectId: '',//项目id
+        buyTime: 36, // 购买时长
+        renew: false, // 自动续费
+        totalPrice: '',//报年报月费用
+        allocationCost: '',//配置费用
+        networkCost: '',//网络费用
+        isShowathirdNext: false,//是否禁用第三步下一步
       },
       rules: {
         container: [
           {
             validator: (rule, value, callback) => {
-              debugger
               if (this.nodeForm.containerChecked && value === '') {
                 callback(new Error('容器目录不能为空'))
               } else {
@@ -862,197 +906,12 @@ export default {
     // this.getDescribeVpcs();
     this.getSecretList();
     this.getSecurityGroups();
+    this.getClusterVersion();
   },
   methods: {
     //提交保存
     
-    //新建节点
-    async submitOk() {
-      let LoginSettings = {};
-      if(this.nodeForm.loginSettings === 'relation') {
-        LoginSettings.KeyIds = [this.nodeForm.keyIds];
-      } else if (this.nodeForm.loginSettings === 'auto') {
-        LoginSettings = {};
-      } else {
-        LoginSettings.Password = this.nodeForm.password;
-      }
-      let SecurityGroupIds = [];
-      SecurityGroupIds.push(this.nodeForm.securityId);
-      let safeArr = this.nodeForm.safeArr;
-      for(let i = 0; i < safeArr.length; i++) {
-        SecurityGroupIds.push(safeArr[i]);
-      }
-      // buyDataDiskArr.push({
-      //   dataDiskType: "CLOUD_PREMIUM",
-      //   dataSize: 10,
-      //   isShowFomatMount: false,
-      //   fileSystem: "ext4",
-      //   filePath: "/var/lib/docker"
-      // });
-      
-      let RunInstancePara = {
-        InstanceChargeType: this.nodeForm.instanceChargeType,
-        Placement: {Zone: "ap-taipei-1", ProjectId: this.nodeForm.projectId},
-        InstanceType: this.nodeForm.instanceType,
-        SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
-        VirtualPrivateCloud: {VpcId: this.nodeForm.groupVps, SubnetId: this.nodeForm.subnetId, AsVpcGateway: false},
-        InternetAccessible: {InternetChargeType: this.nodeForm.internetChargeType,
-            InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),PublicIpAssigned: this.nodeForm.publicIpAssigned},
-        InstanceCount: this.nodeForm.instanceCount,
-        ImageId: this.nodeForm.imageId,
-        InstanceName: this.nodeForm.instanceName,
-        LoginSettings: LoginSettings,
-        SecurityGroupIds: SecurityGroupIds,
-        EnhancedService: {SecurityService: {Enabled: this.nodeForm.securityService}, MonitorService: {Enabled: this.nodeForm.monitorService}}
-      };
-      if(this.nodeForm.dataDisks) {
-        let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
-        let dataDisks = [];
-        if(buyDataDiskArr.length > 0) {
-          for(let i = 0; i < buyDataDiskArr.length; i++) {
-            let buyDataDisk = {
-              DiskType: buyDataDiskArr[i].dataDiskType,
-              DiskSize: buyDataDiskArr[i].dataSize
-            };
-            dataDisks.push(buyDataDisk);
-          }
-        }
-        RunInstancePara.DataDisks = dataDisks;
-      }
-      let containerInput = "";
-      if(this.nodeForm.containerChecked) {
-        containerInput = this.nodeForm.containerInput;
-      }
-      let InstanceAdvancedSettings = {
-        DockerGraphPath: containerInput,
-        UserScript: '',
-        Unschedulable: Number(0)
-        ,Labels: []
-        ,ExtraArgs: {Kubelet: []}
-      }
-      // InstanceAdvancedSettings['Labels'] = '';
-      // InstanceAdvancedSettings.ExtraArgs = {};
-      // InstanceAdvancedSettings.ExtraArgs['Kubelet'] = '';
-      let param = {
-        Version: '2018-05-25',
-        ClusterId: this.clusterId,
-        RunInstancePara: JSON.stringify(RunInstancePara),
-        InstanceAdvancedSettings: InstanceAdvancedSettings
-      }
-      await this.axios.post(TKE_ADD_NODE, param).then(res => {
-        debugger
-        if(res.Response.Error === undefined) {
-          
-        } else {
-          this.loadShow = false;
-          let ErrTips = {
-            "FailedOperation":"操作失败",
-            "InternalError": "内部错误",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
-            "InternalError.CvmNotFound": "cvm不存在。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DbRecordNotFound": "记录未找到。",
-            "InternalError.ImageIdNotFound": "镜像未找到。",
-            "InternalError.OsNotSupport": "镜像OS不支持。",
-            "InternalError.Param": "Param。",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-            "InternalError.QuotaMaxNodLimit":"超过配额限制。",
-            "InternalError.QuotaMaxRtLimit":"超过配额限制。",
-            "InternalError.UnexceptedInternal":"内部错误",
-            "InternalError.VpcCommon":"VPC报错。",
-            "InternalError.VpcPeerNotFound":"对等连接不存在。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            "InvalidParameter": "参数错误",
-            "MissingParameter":"缺少参数错误",
-            "ResourceInUse":"资源被占用",
-            "ResourceNotFound":	"资源不存在",
-            "ResourceUnavailable":	"资源不可用",
-            "UnauthorizedOperation":"未授权操作",
-            "UnknownParameter": "未知参数错误",
-            "UnsupportedOperation": "操作不支持"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //计算价格
-    async costPrice() {
-      
-      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
-        let dataDisks = [];
-        if(buyDataDiskArr.length > 0) {
-          for(let i = 0; i < buyDataDiskArr.length; i++) {
-            let buyDataDisk = {
-              DiskType: buyDataDiskArr[i].dataDiskType,
-              DiskSize: buyDataDiskArr[i].dataSize
-            };
-            dataDisks.push(buyDataDisk);
-          }
-        }
-      let param = {
-        DataDisks:dataDisks,
-        // ImageId: this.nodeForm.imageId,
-        ImageId: "img-6yudrskj",
-        InstanceChargeType: this.nodeForm.instanceChargeType,
-        InstanceCount: this.nodeForm.instanceCount,
-        InstanceType: this.nodeForm.instanceType,
-        Placement: {ProjectId: this.nodeForm.projectId, Zone: 'ap-taipei-1'},
-        SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
-        Version: "2017-03-12", 
-        PurchaseSource: "MC",
-        InternetAccessible: {
-          InternetChargeType: this.nodeForm.internetChargeType,
-          InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),
-          PublicIpAssigned: this.nodeForm.publicIpAssigned
-        }
-      }
-
-      await this.axios.post(TKE_PRICE, param).then(res => {
-        if(res.Response === undefined) {
-
-        } else {
-          let ErrTips = {
-            "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
-            "InstancesQuotaLimitExceeded":
-              "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
-            "InvalidClientToken.TooLong":
-              "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
-            "InvalidHostId.NotFound":
-              "指定的HostId不存在，或不属于该请求账号所有。",
-            "InvalidInstanceName.TooLong":
-              "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
-            "InvalidInstanceType.Malformed":
-              "指定InstanceType参数格式不合法。",
-            "InvalidParameterCombination": "表示参数组合不正确。",
-            "InvalidParameterValue":
-              "无效参数值。参数值格式错误或者参数值不被支持等。",
-            "InvalidParameterValue.Range":
-              "无效参数值。参数值取值范围不合法。",
-            "InvalidPassword":
-              "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
-            "InvalidPeriod":
-              "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-            "InvalidPermission": "账户不支持该操作。",
-            "InvalidZone.MismatchRegion": "指定的zone不存在。",
-            "MissingParameter": "参数缺失。请求没有带必选参数。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
+    
     //获取镜像 
     async getImagesList() {
       
@@ -1275,10 +1134,10 @@ export default {
       }
       params["Filters.0.Name"] = "project-id";
       params["Filters.0.Values.0"] = 0;
-
       await this.axios.post(TKE_MISG, params).then(res => {
         if(res.Response.Error === undefined) {
           this.nodeForm.securityGroups = res.Response.SecurityGroupSet;
+          this.nodeForm.securityId = res.Response.SecurityGroupSet[0].SecurityGroupId;
           // this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
           this.loadShow = false;
         } else {
@@ -1294,6 +1153,31 @@ export default {
         }
       });
     },
+    //获取k8s版本
+    async getClusterVersion () {
+      this.loadShow = true;
+      let params = {
+        Version: "2018-05-25"
+      }
+      params["ClusterId.0"] = this.clusterId;
+      const res = await this.axios.post(CLUSTER_VERSION, params);
+      if (res.Response.Error === undefined) {
+        this.nodeForm.clusterVersion = res.Response.Clusters[0];
+        this.loadShow = false;
+      } else {
+        this.loadShow = false;
+        let ErrTips = {
+          
+        };
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
     //获取ssh秘钥密码
     async getSecretList() {
       this.loadShow = true;
@@ -1304,6 +1188,7 @@ export default {
       await this.axios.post(TKE_SSH, params).then(res => {
         if(res.Response.Error === undefined) {
           this.nodeForm.secretList = res.Response.KeyPairSet;
+          this.nodeForm.keyIds = res.Response.KeyPairSet[0].KeyId;
           this.loadShow = false;
         } else {
           this.loadShow = false;
@@ -1353,6 +1238,9 @@ export default {
         zoneInfoFilters = zoneInfoList.filter( res => res.Cpu === cpu);
       }
       this.nodeForm.zoneInfoFilters = zoneInfoFilters;
+      this.nodeForm.modelType = zoneInfoFilters[0];
+      this.nodeForm.instanceType = zoneInfoFilters[0].InstanceType;
+      this.costPrice();
     },
     // 返回上一层
     goBack() {
@@ -1372,6 +1260,7 @@ export default {
     handleCurrentChange(val) {
       this.nodeForm.modelType = val;
       this.nodeForm.instanceType = val.InstanceType;
+      this.costPrice();
     },
 
     DataDiskChange() {
@@ -1391,21 +1280,19 @@ export default {
       this.nodeForm.buyDataDiskArr.push({
         dataDiskType: "CLOUD_PREMIUM",
         dataSize: 10,
-        isShowFomatMount: false,
+        fomatAndMount: false,
         fileSystem: "ext4",
         filePath: "/var/lib/docker"
       });
-      console.log("this.nodeForm.buyDataDiskArr",this.nodeForm.buyDataDiskArr);
+      this.costPrice();
     },
 
-    // 购买数据盘
-    // 数据盘 弹框确认
-    DataDiskSure() {},
     // 第二步 下一步
     secondNext() {
       this.secondBox = false;
       this.thirdBox = true;
       this.fourthBox = false;
+      this.costPrice();
     },
     // ----------------------------------------- 第三步 -------------------------------------
     // 登录方式
@@ -1429,10 +1316,96 @@ export default {
           return false
         }
       });
-      
+    },
+    changeSyetemType() {
+      this.costPrice();
+    },
+    changeSyetem() {
+      this.costPrice();
+    },
+    changeDataDiskType() {
+      this.costPrice();
+    },
+    changeDataDisk() {
+      this.costPrice();
+    },
+    changeInternetType() {
+      this.costPrice();
+    },
+    // 设置密码
+    PasswordInput(val) {
+      if (val == "") {
+        this.$message({
+          message: "密码不能为空",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+        // this.colonyThird.passwordTips = "密码不能为空";
+        // this.colonyThird.passwordWran = true;
+      } else if (val.length < 8 || val.length > 16) {
+        this.$message({
+          message: "密码必须为8到16位",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else if (
+        !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
+          val
+        )
+      ) {
+        this.$message({
+          message: "密码必须包含数字、字母、特殊字符中至少两项",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
+    },
+    //确认密码
+    confirmPasswordInput(val) {
+      if(this.nodeForm.password !== val) {
+        this.$message({
+          message: "两次输入端密码不一致",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
+    },
+    //手动命名
+    nameManual(val) {
+      if(val === '') {
+        this.$message({
+          message: "实例名称不能为空",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else if (val.length > 60) {
+        this.$message({
+          message: "实例名称长度不能超过60个字符",
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        this.nodeForm.isShowathirdNext = true;
+      } else {
+        this.nodeForm.isShowathirdNext = false;
+      }
     },
     // ----------------------------------------- 第四步 ---------------------------------------
-    // 第三步 下一步
+    // 第四步 上一步
     fourthPrev() {
       this.secondBox = false;
       this.thirdBox = true;
@@ -1447,13 +1420,14 @@ export default {
         this.nodeForm.dataDiskShow = false;
       }
     },
+    // 购买时长
+    BuyTime(val) {
+      this.costPrice();
+    },
     // 删除
     deleteDataDisk(index) {
       this.nodeForm.buyDataDiskArr.splice(index, 1);
-      // if (this.colonySecond.workerOneList[index].buyDataDiskArr.length === 0) {
-      //   this.colonySecond.buyDataDisk = false;
-      //   this.colonySecond.buyDataWidth = 300;
-      // }
+      this.costPrice();
     },
     //删除安全组
     deleteExceptPrice(index) {
@@ -1473,6 +1447,254 @@ export default {
       } else {
         this.nodeForm.publicIpAssigned = true;
         this.nodeForm.disabled = false;
+      }
+      this.costPrice();
+    },
+    //新建节点
+    async submitOk() {
+      this.loadShow = true;
+      let LoginSettings = {};
+      if(this.nodeForm.loginSettings === 'relation') {
+        LoginSettings.KeyIds = [this.nodeForm.keyIds];
+      } else if (this.nodeForm.loginSettings === 'auto') {
+        LoginSettings = {};
+      } else {
+        LoginSettings.Password = this.nodeForm.password;
+      }
+      let SecurityGroupIds = [];
+      SecurityGroupIds.push(this.nodeForm.securityId);
+      let safeArr = this.nodeForm.safeArr;
+      for(let i = 0; i < safeArr.length; i++) {
+        SecurityGroupIds.push(safeArr[i]);
+      }
+      let RunInstancePara = {
+        InstanceChargeType: this.nodeForm.instanceChargeType,
+        Placement: {Zone: "ap-taipei-1", ProjectId: this.nodeForm.projectId},
+        InstanceType: this.nodeForm.instanceType,
+        SystemDisk: {DiskType: this.nodeForm.systemDiskType, DiskSize: Number(this.nodeForm.systemSize)},
+        VirtualPrivateCloud: {VpcId: this.nodeForm.groupVps, SubnetId: this.nodeForm.subnetId, AsVpcGateway: false},
+        InternetAccessible: {InternetChargeType: this.nodeForm.internetChargeType,
+            InternetMaxBandwidthOut: Number(this.nodeForm.internetMaxBandwidthOut),PublicIpAssigned: this.nodeForm.publicIpAssigned},
+        InstanceCount: this.nodeForm.instanceCount,
+        ImageId: this.nodeForm.imageId,
+        InstanceName: this.nodeForm.instanceName,
+        LoginSettings: LoginSettings,
+        SecurityGroupIds: SecurityGroupIds,
+        EnhancedService: {SecurityService: {Enabled: this.nodeForm.securityService}, MonitorService: {Enabled: this.nodeForm.monitorService}}
+      };
+      if(this.nodeForm.dataDisks) {
+        let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+        let dataDisks = [];
+        if(buyDataDiskArr.length > 0) {
+          for(let i = 0; i < buyDataDiskArr.length; i++) {
+            let buyDataDisk = {
+              DiskType: buyDataDiskArr[i].dataDiskType,
+              DiskSize: buyDataDiskArr[i].dataSize
+            };
+            dataDisks.push(buyDataDisk);
+          }
+        }
+        RunInstancePara.DataDisks = dataDisks;
+      }
+      let containerInput = "";
+      if(this.nodeForm.containerChecked) {
+        containerInput = this.nodeForm.containerInput;
+      }
+      
+      let param = {
+        Version: '2018-05-25',
+        ClusterId: this.clusterId,
+        RunInstancePara: JSON.stringify(RunInstancePara)
+      }
+      param["InstanceAdvancedSettings.DockerGraphPath"] = containerInput;
+      param["InstanceAdvancedSettings.UserScript"] = "";
+      param["InstanceAdvancedSettings.Unschedulable"] = 0;
+      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+
+      // param["InstanceAdvancedSettings.ExtraArgs.Kubelet"] = [];
+      // param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0.Value"] = "";
+
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      if(buyDataDiskArr.length > 0) {
+        for(let i = 0; i < buyDataDiskArr.length; i++) {
+          param["InstanceAdvancedSettings.DataDisks." + i + ".DiskSize"] = Number(buyDataDiskArr[i].dataSize);
+          param["InstanceAdvancedSettings.DataDisks." + i + ".DiskType"] = buyDataDiskArr[i].dataDiskType;
+          param["InstanceAdvancedSettings.DataDisks." + i + ".AutoFormatAndMount"] = buyDataDiskArr[i].isShowFomatMount;
+          param["InstanceAdvancedSettings.DataDisks." + i + ".FileSystem"] = buyDataDiskArr[i].fileSystem;
+          param["InstanceAdvancedSettings.DataDisks." + i + ".MountTarget"] = buyDataDiskArr[i].filePath;
+        }
+      }
+
+      await this.axios.post(TKE_ADD_NODE, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.$message({
+            message: "创建成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.goBack();
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {
+            "FailedOperation":"操作失败",
+            "InternalError": "内部错误",
+            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "InternalError.CvmNotFound": "cvm不存在。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.DbRecordNotFound": "记录未找到。",
+            "InternalError.ImageIdNotFound": "镜像未找到。",
+            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Param": "Param。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit":"超过配额限制。",
+            "InternalError.QuotaMaxRtLimit":"超过配额限制。",
+            "InternalError.UnexceptedInternal":"内部错误",
+            "InternalError.VpcCommon":"VPC报错。",
+            "InternalError.VpcPeerNotFound":"对等连接不存在。",
+            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
+            "InvalidParameter": "参数错误",
+            "MissingParameter":"缺少参数错误",
+            "ResourceInUse":"资源被占用",
+            "ResourceNotFound":	"资源不存在",
+            "ResourceUnavailable":	"资源不可用",
+            "UnauthorizedOperation":"未授权操作",
+            "UnknownParameter": "未知参数错误",
+            "UnsupportedOperation": "操作不支持"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    //计算价格
+    async costPrice() {
+      this.loadShow = true;
+      let param = {
+        // DataDisks:dataDisks,
+        ImageId: this.nodeForm.imageId,//镜像id
+        InstanceChargeType: this.nodeForm.instanceChargeType,//付费类型
+        InstanceCount: Number(this.nodeForm.instanceCount),//购买数量
+        InstanceType: this.nodeForm.instanceType,//规格
+        "Placement.ProjectId": this.nodeForm.projectId,
+        "Placement.Zone": "ap-taipei-1",
+        "SystemDisk.DiskSize": Number(this.nodeForm.systemSize),
+        "SystemDisk.DiskType": this.nodeForm.systemDiskType,
+        Version: "2017-03-12", 
+        PurchaseSource: "MC"
+      }
+      //公网
+      param["InternetAccessible.InternetChargeType"] = this.nodeForm.internetChargeType;
+      param["InternetAccessible.InternetMaxBandwidthOut"] = Number(this.nodeForm.internetMaxBandwidthOut);
+      param["InternetAccessible.PublicIpAssigned"] = this.nodeForm.publicIpAssigned;
+      let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      if(buyDataDiskArr.length > 0) {
+        for(let i = 0; i < buyDataDiskArr.length; i++) {
+          param["DataDisks." + i + ".DiskSize"] = Number(buyDataDiskArr[i].dataSize);
+          param["DataDisks." + i + ".DiskType"] = buyDataDiskArr[i].dataDiskType;
+        }
+      }
+      if(this.nodeForm.instanceChargeType === "PREPAID") {
+         //云监控、云服务
+        param["EnhancedService.SecurityService.Enabled"] = this.nodeForm.securityService;
+        param["EnhancedService.MonitorService.Enabled"] = this.nodeForm.monitorService;
+        param["InstanceChargePrepaid.Period"] = Number(this.nodeForm.buyTime);
+        param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_MANUAL_RENEW";
+        param["InstanceChargePrepaid.TimeUnit"] = "MONTH";
+      }
+      if(this.nodeForm.instanceChargeType === "POSTPAID_BY_HOUR") {
+        await this.axios.post(TKE_PRICE, param).then(res => {
+          if(res.Response.Error === undefined) {
+            let price = res.Response.Price;
+            this.nodeForm.allocationCost = price.InstancePrice.UnitPrice;
+            this.nodeForm.networkCost = price.BandwidthPrice.UnitPrice;
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
+              "InstancesQuotaLimitExceeded":
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              "InvalidParameterCombination": "表示参数组合不正确。",
+              "InvalidParameterValue":
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              "InvalidPassword":
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              "InvalidPeriod":
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              "InvalidPermission": "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              "MissingParameter": "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      } else {
+        await this.axios.post(TKE_PRICE, param).then(res => {
+          if(res.Response.Error === undefined) {
+            // let price = res.Response.Price;
+            // this.nodeForm.networkCost = price.InstancePrice.UnitPrice.toFixed(2);
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
+              "InstancesQuotaLimitExceeded":
+                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不属于该请求账号所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType参数格式不合法。",
+              "InvalidParameterCombination": "表示参数组合不正确。",
+              "InvalidParameterValue":
+                "无效参数值。参数值格式错误或者参数值不被支持等。",
+              "InvalidParameterValue.Range":
+                "无效参数值。参数值取值范围不合法。",
+              "InvalidPassword":
+                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+              "InvalidPeriod":
+                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
+              "InvalidPermission": "账户不支持该操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              "MissingParameter": "参数缺失。请求没有带必选参数。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
       }
     }
   },
@@ -1524,6 +1746,20 @@ export default {
         } else {
           return '按使用流量';
         }
+      }
+    },
+    //数据盘
+    buyDataDiskArr(val) {
+      let res = '';
+      if(val.length > 0) {
+        for(let i = 0; i< val.length; i++) {
+          res += '';
+        }
+      }
+    },
+    ClusterVersion(val) {
+      if(val) {
+        return val.substring(0, 6);
       }
     }
   },

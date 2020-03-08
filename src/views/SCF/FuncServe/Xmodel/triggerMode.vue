@@ -127,6 +127,9 @@
     UPDATE_TRIGGER,
     DEL_TRIGGER
   } from "@/constants";
+  import {
+    ErrorTips
+  } from '@/components/ErrorTips'
   export default {
     props: ['FunctionVersion'],
     data() {
@@ -234,17 +237,35 @@
               Qualifier: this.FunctionVersion
             };
             let functionName = this.$route.query.functionName;
+            if (this.triggerShow === true) {
+              params['TriggerDesc'] = this.formTriggerForm.cronlist
+            }
             if (functionName != "" && functionName != null) {
               params["FunctionName"] = functionName;
             }
             this.axios.post(CREAT_TRIGGER, params).then(res => {
-              _this.getfunction();
-              _this.formTriggerForm.tasksName = "";
-              _this.formTriggerForm.writeIsTrue = "false";
-              _this.formTriggerForm.triggerType = "timer";
-              _this.formTriggerForm.triggerTime =
-                "每5分鐘（每5分鐘的0秒执行一次）";
-              _this.formTriggerForm.CustomArgument = "";
+              if (res.Response.Error == undefined) {
+                this.formTriggerForm.cronlist = ''
+                _this.getfunction();
+                _this.formTriggerForm.tasksName = "";
+                _this.formTriggerForm.writeIsTrue = "false";
+                _this.formTriggerForm.triggerType = "timer";
+                _this.formTriggerForm.triggerTime =
+                  "每5分鐘（每5分鐘的0秒执行一次）";
+                _this.formTriggerForm.CustomArgument = "";
+              } else {
+                let ErrTips = {
+                  'InvalidParameterValue.TriggerDesc': 'TriggerDesc參數不合法 (定時觸發器Cron表達式不正確(cron表達式分段數必須是5或7))',
+                  'LimitExceeded.Trigger': 'Trigger數量超出最大限制',
+                }
+                let ErrOr = Object.assign(ErrorTips, ErrTips)
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "warning",
+                  showClose: true,
+                  duration: 0
+                });
+              }
             });
           } else {
             this.warnFlag = true;

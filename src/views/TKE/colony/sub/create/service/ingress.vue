@@ -41,7 +41,7 @@
             <div v-if="ing.fz=='yy'">
               <div>使用已有应用CLB型创建ingress，不覆盖已有监听规则，请勿手动修改由TKE创建CLB监听器，<a href="">查看更多说明</a><i
                 class="el-icon-edit-outline"></i></div>
-              <el-select v-model="ing.describeLoadBalancersValue" placeholder="请选择" class="borderRed">
+              <el-select v-model="ing.describeLoadBalancersValue" placeholder="请选择" class="borderRed" @change="describeLoadBalancersChange">
                 <el-option
                   v-for="item in ing.describeLoadBalancersOption"
                   :key="item.LoadBalancerId"
@@ -55,7 +55,6 @@
               </el-tooltip>
             </div>
           </el-form-item>
-          <el-form-item label=""></el-form-item>
           <el-form-item label="命名空间">
             <el-select v-model="ing.nameSpaceValue" placeholder="请选择">
               <el-option
@@ -171,7 +170,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitAdd('form')">创建Ingress</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="()=>$router.back()">取消</el-button>
           <div class="tke-fe-alert tke-fe-alert--error" v-if="submitErrorMessage">{{submitErrorMessage}}</div>
         </div>
       </div>
@@ -358,6 +357,9 @@ export default {
           return
         }
       }
+    },
+    describeLoadBalancersChange: function (val) {
+      console.log(val)
     },
     protocolChange: function (event, key) {
       this.selectIngList(key, (result) => {

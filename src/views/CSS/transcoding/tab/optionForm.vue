@@ -3,8 +3,8 @@
     <h4>轉碼配置</h4>
     <el-form
       :model="ruleForm"
-      :rules="rules"
       ref="ruleForm"
+      :rules="rules"
       label-width="120px"
       class="demo-ruleForm"
     >
@@ -14,28 +14,32 @@
           <el-option label="極速高清" value="1" key="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="可用模板">
+      <el-form-item label="可用範本">
         <el-radio-group v-model="selectType" @change="radioChange">
           <el-radio v-for="item in tableData" :key="item.key" :label="item.value" />
           <el-radio v-show="ruleForm.AiTransCode !== '1'" key="voice" label="純音頻" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="模板名稱" prop="TemplateName">
+      <el-form-item label="範本名稱" prop="TemplateName" :show-message="false">
         <el-input
           v-model="ruleForm.TemplateName"
           style="width:330px;"
           :disabled="Object.keys(selectItem).length > 0"
-        />
+        /> <br />
+        <span>僅支持字母、數字組合，請輸入3-10字符</span>
       </el-form-item>
-      <el-form-item label="模板描述" prop="Description">
-        <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
+      <el-form-item label="範本描述" prop="Description">
+        <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" /><br />
+        <span>僅支持中文、英文、數字、_、-</span>
       </el-form-item>
       <template v-if="selectType !== '純音頻'">
-        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate">
-          <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" />
+        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate" :show-message="false">
+          <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" /><br />
+          <span>必填，編碼範圍 100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫</span>
         </el-form-item>
-        <el-form-item label="影音高度(px)" prop="Height">
-          <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" />
+        <el-form-item label="影音高度(px)" prop="Height" :show-message="false">
+          <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" /><br />
+          <span>視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
         </el-form-item>
       </template>
       <el-form-item>
@@ -49,6 +53,8 @@
 <script>
 import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from "../constance";
 import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../../components/CSSErrorTips";
 
 export default {
   name: "optionForm",
@@ -62,9 +68,9 @@ export default {
   data() {
     return {
       form: {
-        desc: "", //模板描述
-        template: "", //可用模板
-        name: "" //模板名称
+        desc: "", //範本描述
+        template: "", //可用範本
+        name: "" //範本名称
       },
 
       ruleForm: {
@@ -76,20 +82,10 @@ export default {
       },
 
       rules: {
-        TemplateName: [
-          { required: true, message: "請輸入模板名稱，長度不能超過30個字符", trigger: "blur" },
-          { min: 1, max: 30, message: "請輸入模板名稱，長度不能超過30個字符", trigger: "blur" }
-        ],
-        desc: [
-          { required: false },
-          { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
-        ],
-        Height: [
-          { required: true, message: "請輸入影音高度", trigger: "blur" }
-        ],
-        VideoBitrate: [
-          { required: true, message: "請輸入影音碼率", trigger: "blur" }
-        ]
+        TemplateName: [{ required: true }],
+        desc: [{ required: false }],
+        Height: [{ required: true }],
+        VideoBitrate: [{ required: true }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -104,31 +100,133 @@ export default {
   },
 
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          // 如果有selectItem则为修改
+    validateForm() {
+      const TemplateNameRegex = /^[a-zA-Z0-9]{3,10}$/;
 
-          const params = Object.assign(this.ruleForm, {
-            Version: "2018-08-01"
-          });
+      if (!TemplateNameRegex.test(this.ruleForm.TemplateName)) {
+          this.$message({
+            message: "範本名稱不符合要求",
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+        return false;
+      }
 
-          if (this.selectType === "純音頻") {
-            params.Height = 0;
-            params.VideoBitrate = 100;
-          }
+      const descRegex = /^[\w_-]*$/;
 
-          if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId;
-            delete params.AiTransCode;
-            delete params.TemplateName;
-            this.handleUpdate(params);
-            return;
-          }
+      if (!descRegex.test(this.ruleForm.desc)) {
+        this.$message({
+          message: "範本描述不符合要求",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
 
-          this.handleAdd(params);
+      const VideoBitrate = this.ruleForm.VideoBitrate;
+
+      if (VideoBitrate.length === 0) {
+        this.$message({
+          message: "請輸入影音碼率",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
+
+      if (VideoBitrate < 100 || VideoBitrate > 8000) {
+        this.$message({
+          message: "編碼範圍為100K-8000K",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
+
+      if (VideoBitrate >= 100 && VideoBitrate <= 1000) {
+        if (VideoBitrate % 100 !== 0) {
+          this.$message({
+            message: "編碼範圍1000K以內僅支持整百填寫",
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+          return false;
         }
+      } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
+        if (VideoBitrate % 500 !== 0) {
+          this.$message({
+            message: "編碼範圍1000Kbps以上僅支持整500填寫",
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+          return false;
+        }
+      }
+
+      const Height = this.ruleForm.Height;
+
+      if (Height.length === 0) {
+        this.$message({
+          message: "請輸入影音高度",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
+
+      if (Height < 0 || Height > 3000) {
+        this.$message({
+          message: "影音高度範圍為0-3000",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
+
+      if (Height % 4 !== 0) {
+        this.$message({
+          message: "視頻高度要求為4的倍數，寬度按等比例縮放",
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        return false;
+      }
+
+      return true;
+    },
+
+    submitForm(formName) {
+      if (!this.validateForm()) {
+        return;
+      }
+
+      const params = Object.assign(this.ruleForm, {
+        Version: "2018-08-01"
       });
+
+      if (this.selectType === "純音頻") {
+        params.Height = 0;
+        params.VideoBitrate = 100;
+      }
+
+      if (Object.keys(this.selectItem).length) {
+        params.TemplateId = this.selectItem.TemplateId;
+        delete params.AiTransCode;
+        delete params.TemplateName;
+        this.handleUpdate(params);
+        return;
+      }
+
+      this.handleAdd(params);
     },
 
     handleAdd(params) {
@@ -136,13 +234,16 @@ export default {
         if (data.Response.Error == undefined) {
           this.$message({
             message: "添加成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0
           });
           this.$parent.fetchRecordingList();
           this.$emit("update:formShow", false);
           return;
         }
-        this.$message.error(data.Response.Error.Message);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+        this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },
 
@@ -151,13 +252,16 @@ export default {
         if (data.Response.Error == undefined) {
           this.$message({
             message: "修改成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0
           });
           this.$parent.fetchRecordingList();
           this.$emit("update:formShow", false);
           return;
         }
-        this.$message.error(data.Response.Error.Message);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+        this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },
 
@@ -215,6 +319,10 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  span {
+    font-size: 12px;
+    color: #888;
   }
 }
 </style>

@@ -45,15 +45,15 @@ export default {
       //tab内容
       tab: [
         {
-          name: "截图累计值",
+          name: "截圖累計值",
           value: 0
         },
         {
-          name: "转码总时长",
+          name: "轉碼總時長",
           value: 0
         },
         {
-          name: "录制峰值",
+          name: "錄製峰值",
           value: 0
         }
       ],

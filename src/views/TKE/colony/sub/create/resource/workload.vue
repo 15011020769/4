@@ -5,7 +5,7 @@
       <div class="tke-grid ">
         <!-- 左侧 -->
         <div class="grid-left">
-          <span class="goback" @click="goBack">
+          <span class="goback" @click="()=>$router.back()">
             <i class="el-icon-back"></i>
           </span>
           <h2 class="header-title">新建Workload</h2>
@@ -16,37 +16,48 @@
     </div>
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
-        <el-form class="tke-form special" :model="wl" :rules="rules" ref="wl" label-position="left" label-width="120px" size="mini">
+        <el-form class="tke-form special" :model="wl" :rules="rules" ref="wl" label-position="left" label-width="120px"
+                 size="mini">
           <el-form-item label="名称" prop="name">
-            <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称" @blur="addLabel(e)"></el-input>
+            <el-input class="w200" v-model="wl.name" placeholder="请输入Workload名称" @blur="addLabel()"></el-input>
             <p>
               最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
             </p>
           </el-form-item>
           <el-form-item label="描述">
-            <el-input class="w420" type="textarea" :rows="6" placeholder="请输入描述信息，不超过1000个字符" v-model="wl.desc">
+            <el-input class="w420" type="textarea" :rows="6" placeholder="请输入描述信息，不超过1000个字符" v-model="wl.description">
             </el-input>
           </el-form-item>
-
-          <el-form-item label="标签" >
-            <div v-for="(v,i) in wl.labels" :key="i">
-             <el-input :disabled="v.key=='k8s-app'" class="w100" v-model="v.key"></el-input> = <el-input class="w100"  v-model="v.value" prop="labels"></el-input>
-              <el-tooltip class="item" effect="light" content="默认标签不可删除" placement="right" v-if="v.key=='k8s-app'">
-                <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
-              </el-tooltip>
-              <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer" v-else @click="delAddVar(i)"></i>
+          <!--  标签  用div包裹用于做验证   -->
+          <div style="margin-bottom: 18px">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">标签</label>
+            <div style="margin-left: 120px;">
+              <div v-for="(v,i) in wl.labels" :key="i">
+                <el-form-item style="display: inline-block" label-width="0px">
+                  <el-input :disabled="i===0" class="w100" v-model="v.key"></el-input>
+                </el-form-item>
+                =
+                <el-form-item style="display: inline-block" label-width="0px" >
+                  <el-input class="w100" v-model="v.value" prop="labels"></el-input>
+                </el-form-item>
+                <el-tooltip class="item" effect="light" content="默认标签不可删除" placement="right"
+                            :disabled="i===0">
+                  <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
+                     @click="i!==0?delLabel(i):''"></i>
+                </el-tooltip>
+              </div>
+              <el-button type="text" size="mini" :disabled="!addLabelFlag" @click="addLabelFlag?addLabel():''">新增变量</el-button>
+              <p style="line-height: 28px">
+                最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
+              </p>
             </div>
-             <span class="disable" v-if="addVarFlag">新增变量</span>
-             <span class="use" v-if="!addVarFlag" @click="addVar">新增变量</span>
-            <p>
-              最长40个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
-            </p>
-          </el-form-item>
-           <el-form-item label="命名空间">
-              <el-select v-model="wl.nameSpace"  placeholder="请选择">
-                <el-option v-for="item in nameSpaceList" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name">
-                </el-option>
-              </el-select>
+          </div>
+          <el-form-item label="命名空间">
+            <el-select v-model="wl.namespace" placeholder="请选择" @change="namespaceChange">
+              <el-option v-for="item in namespaceOptions" :key="item.metadata.name" :label="item.metadata.name"
+                         :value="item.metadata.name">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="类型">
             <div class="form-controls" style="width:350px">
@@ -60,38 +71,38 @@
             </div>
           </el-form-item>
           <el-form-item label="执行策略" v-show="wl.type=='cronJob'">
-            <el-input class="w192"  placeholder="请输入执行策略,如0 0 2 1 *"></el-input>
+            <el-input class="w192" placeholder="请输入执行策略,如0 0 2 1 *" v-model="wl.executionStrategy"></el-input>
           </el-form-item>
-          <el-form-item label="Job设置" v-show="wl.type=='cronJob'||wl.type=='job'">
-            <div class="form-controls" style="width:350px">
-               <el-form :model="wl" label-position="left" label-width="120px" size="mini">
-                 <el-form-item label="重复次数" >
-                    <el-tooltip class="item" effect="light" content="该Job下的Pod需要重复执行次数" placement="right">
-                    <i class="el-icon-info  setPosition"></i>
-                  </el-tooltip>
-                  <el-input class="w192" ></el-input>
-                 </el-form-item>
-                 <el-form-item label="并行度" >
-                    <el-tooltip class="item" effect="light" content="该Job下Pod并行执行的数量" placement="right">
-                    <i class="el-icon-info  setPosition4"></i>
-                  </el-tooltip>
-                  <el-input class="w192" ></el-input>
-                 </el-form-item>
-                 <el-form-item label="失败重启策略" >
-                    <el-tooltip class="item" effect="light" content="Pod下容器异常推出后的重启策略， Never：不重启容器，直至Pod下所有容器退出; OnFailure : Pod继续运行，容器将重新启动" placement="right">
-                    <i class="el-icon-info  setPosition2"></i>
-                  </el-tooltip>
-                   <el-select v-model="value"  placeholder="请选择">
-                <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-                 
-                 </el-form-item>
-               </el-form>
+          <!-- Job设置 -->
+          <div style="margin-bottom: 18px" v-show="wl.type=='cronJob'||wl.type=='job'">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">Job设置</label>
+            <div style="margin-left: 120px;background-color: #f2f2f2;padding: 10px;width: 350px">
+              <el-form-item label="重复次数">
+                <el-tooltip class="item" effect="light" content="该Job下的Pod需要重复执行次数" placement="right">
+                  <i class="el-icon-info setPosition"></i>
+                </el-tooltip>
+                <el-input class="w192" v-model="wl.jobSettings.repeatNumber"></el-input>
+              </el-form-item>
+              <el-form-item label="并行度">
+                <el-tooltip class="item" effect="light" content="该Job下Pod并行执行的数量" placement="right">
+                  <i class="el-icon-info  setPosition4"></i>
+                </el-tooltip>
+                <el-input class="w192" v-model="wl.jobSettings.parallelNumber"></el-input>
+              </el-form-item>
+              <el-form-item label="失败重启策略">
+                <el-tooltip class="item" effect="light"
+                            content="Pod下容器异常推出后的重启策略， Never：不重启容器，直至Pod下所有容器退出; OnFailure : Pod继续运行，容器将重新启动"
+                            placement="right">
+                  <i class="el-icon-info  setPosition2"></i>
+                </el-tooltip>
+                <el-select v-model="wl.jobSettings.failedRestartPolicy" placeholder="请选择" class="w192">
+                  <el-option v-for="item in failedRestartPolicyOption"
+                             :key="item" :label="item" :value="item">
+                  </el-option>
+                </el-select>
+              </el-form-item>
             </div>
-          </el-form-item>
-
-          <!--  <div> -->
+          </div>
           <el-form-item label="数据卷（选填）">
             <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataJuan" :key="index">
               <el-select v-model="item.name1" placeholder="请选择">
@@ -132,625 +143,764 @@
               </div>
               <i class="el-icon-close" @click="delDataJuan(index)"></i>
             </div>
-            <p style="margin-top:8px">
-              <el-button type="primary" :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
-            </p>
             <p>
-              为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。<span
-                style="color:#409eff;cursor:pointer">使用指引</span>
+              <el-button type="text" :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
+            </p>
+            <p>为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
+              <span style="color:#409eff;cursor:pointer">使用指引</span>
             </p>
           </el-form-item>
-          <el-form-item label="实例内容器">
-            <div class="case-content" v-for="(v,i) in wl.container" :key="i">
-              <el-form :model="wl" label-position="left" label-width="120px" size="mini">
-                <el-form-item label="名称">
-                  <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
-                  <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
-                </el-form-item>
-                <el-form-item label="镜像">
-                  <el-input class="w192" v-model="v.mirrorImg"></el-input>
-                  <span> <a  @click="SelectMirrorImgFlag=true"> 选择镜像</a> </span>
-                  <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @close='close'></SelectMirrorImg>
-                </el-form-item>
-                <el-form-item label="镜像版本（Tag）">
-                  <el-input class="w192" v-model="v.versions"></el-input>
-                </el-form-item>
-                <el-form-item label="镜像拉取策略">
-                  <template>
-                    <el-radio-group v-model="v.mirrorPullTactics" style="margin-bottom: 5px;">
-                      <el-radio-button label="Always">Always</el-radio-button>
-                      <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
-                      <el-radio-button label="Never">Never</el-radio-button>
-                    </el-radio-group>
-                    <p v-show="v.mirrorPullTactics=='Always'">总是从远程拉取该镜像</p>
-                    <p v-show="v.mirrorPullTactics=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                    <p v-show="v.mirrorPullTactics=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
-                  </template>
-                </el-form-item>
-                <el-form-item label="挂载点" v-show="wl.dataJuan.length > 0">
-                  <div v-show="showMountPoint" v-for="(i,point) in wl.pointList" :key="i">
-                    <el-select v-model="wl.pointName"></el-select>
-                    <el-input v-model="wl.mountPath"></el-input>
-                    <el-input v-model="wl.subPath"></el-input>
-                    <el-select></el-select>
-                  </div>
-                  <el-button type="text" @click="changIsShowmount()">添加挂载点</el-button>
-                </el-form-item>
-                <el-form-item label="CPU/内存限制">
-                  <div class="cpu-limit">
-                    <div>
-                      <p>CPU限制</p>
-                      <div style="display:flex">
-                        <div class="cpu-limit2">
-                          <span>request</span>
-                          <el-input class="w192" v-model="v.requestCpu"></el-input>
-                        </div>-
-                        <div class="cpu-limit2">
-                          <span>limit</span>
-                          <el-input class="w192" v-model="v.limitCpu"></el-input>
-                        </div>核
+          <!-- 实例内容器 -->
+          <div style="margin-bottom: 18px">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例内容器</label>
+            <div style="margin-left: 120px">
+              <div v-for="(v,i) in wl.instanceContent" :key="i">
+                <div v-show="v.editStatus" class="case-content" style="margin-bottom: 18px">
+                  <el-form-item style="margin-bottom: 0px">
+                    <div style="float: right">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                        <i class="el-icon-check"
+                           style="font-size:20px;margin-left:20px;"
+                           :style="{cursor: v.completed?'pointer':'no-drop'}"
+                           @click="v.completed?editInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                        <i class="el-icon-close"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                    </div>
+                  </el-form-item>
+                  <el-form-item label="名称">
+                    <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
+                    <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
+                  </el-form-item>
+                  <el-form-item label="镜像">
+                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
+                    <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">选择镜像</el-button>
+                    <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
+                  </el-form-item>
+                  <el-form-item label="镜像版本（Tag）">
+                    <el-input class="w192" v-model="v.versions"></el-input>
+                  </el-form-item>
+                  <el-form-item label="镜像拉取策略">
+                    <template>
+                      <el-radio-group v-model="v.mirrorPullTactics" style="margin-bottom: 5px;">
+                        <el-radio-button label="Always">Always</el-radio-button>
+                        <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
+                        <el-radio-button label="Never">Never</el-radio-button>
+                      </el-radio-group>
+                      <p v-show="v.mirrorPullTactics === ''">若不设置镜像拉取策略，当镜像版本为空或:latest时，使用Always策略，否则使用IfNotPresent策略</p>
+                      <p v-show="v.mirrorPullTactics === 'Always'">总是从远程拉取该镜像</p>
+                      <p v-show="v.mirrorPullTactics === 'IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
+                      <p v-show="v.mirrorPullTactics === 'Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                    </template>
+                  </el-form-item>
+                  <el-form-item label="挂载点" v-show="wl.dataJuan.length > 0">
+                    <div v-show="showMountPoint" v-for="(point,i) in wl.pointList" :key="i">
+                      <el-select v-model="wl.pointName"></el-select>
+                      <el-input v-model="wl.mountPath"></el-input>
+                      <el-input v-model="wl.subPath"></el-input>
+                      <el-select></el-select>
+                    </div>
+                    <el-button type="text" @click="changIsShowmount()">添加挂载点</el-button>
+                  </el-form-item>
+                  <el-form-item label="CPU/内存限制">
+                    <div class="cpu-limit">
+                      <div>
+                        <p>CPU限制</p>
+                        <div style="display:flex">
+                          <div class="cpu-limit2">
+                            <span>request</span>
+                            <el-input class="w192" v-model="v.requestCpu"></el-input>
+                          </div>
+                          -
+                          <div class="cpu-limit2">
+                            <span>limit</span>
+                            <el-input class="w192" v-model="v.limitCpu"></el-input>
+                          </div>
+                          核
+                        </div>
+                      </div>
+                      <div>
+                        <p>内存限制</p>
+                        <div style="display:flex">
+                          <div class="cpu-limit2">
+                            <span>request</span>
+                            <el-input class="w192" v-model="v.requestMemory"></el-input>
+                          </div>
+                          -
+                          <div class="cpu-limit2">
+                            <span>limit</span>
+                            <el-input class="w192" v-model="v.limitMemory"></el-input>
+                          </div>
+                          Mib
+                        </div>
                       </div>
                     </div>
-                    <div>
-                      <p>内存限制</p>
-                      <div style="display:flex">
-                        <div class="cpu-limit2">
-                          <span>request</span>
-                          <el-input class="w192" v-model="v.requestMemory"></el-input>
-                        </div>-
-                        <div class="cpu-limit2">
-                          <span>limit</span>
-                          <el-input class="w192" v-model="v.limitMemory"></el-input>
-                        </div>Mib
+                    <p style="margin-top:10px;">
+                      Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
+                  </el-form-item>
+                  <el-form-item label="GPU限制">
+                    <el-input-number v-model="v.gpuNum" size="small" :min="0"></el-input-number> 个
+                  </el-form-item>
+                  <div style="margin-bottom: 18px">
+                    <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">环境变量</label>
+                    <div style="margin-left: 120px; position: relative">
+                      <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
+                        <i class="el-icon-info  setPosition"></i>
+                      </el-tooltip>
+                      <!-- 新增变量 -->
+                      <div v-for="val in v.environmentVar" :key="val.onlyId">
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-input class="w100" v-model="val.key" placeholder="变量名"></el-input>
+                        </el-form-item>
+                        =
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-input class="w192" v-model="val.value" placeholder="变量值"></el-input>
+                        </el-form-item>
+                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="delEnvironmentVar(i, val.onlyId)"></i>
                       </div>
+                      <el-divider v-if="v.environmentVar.length>0&&v.citeCs.length>0"></el-divider>
+                      <!-- 引用ConfigMap/Secret -->
+                      <div v-for="val in v.citeCs" :key="val.key">
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-select v-model="val.value1" class="w100">
+                            <el-option v-for="item in val.option1" :key="item" :label="item" :value="item">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-select v-model="val.value2" class="w100" style="margin:0px 10px;">
+                            <el-option v-for="item in val.option2" :key="item" :label="item"
+                                       :value="item">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-select v-model="val.value3" class="w100">
+                            <el-option v-for="item in val.option3" :key="item" :label="item"
+                                       :value="item">
+                            </el-option>
+                          </el-select></el-form-item>
+                        以
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                          <el-input class="w150" v-model="val.input1"></el-input>
+                        </el-form-item>
+                        为别名
+                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="delCiteCs(i, val.key)"></i>
+                      </div>
+                      <el-button type="text" size="mini" @click='addEnvironmentVar(i)'>新增变量</el-button>
+                      <el-button type="text" size="mini" @click='addCiteCs(i)'>引用ConfigMap/Secret</el-button>
+                      <p>只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母开头</p>
                     </div>
                   </div>
-                  <p style="margin-top:10px;">
-                    Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
-                </el-form-item>
-                <el-form-item label="GPU限制">
-                  <el-input-number  v-model="v.gpuNum"   size="small" :min="0"></el-input-number>个
-                </el-form-item>
-                <el-form-item label="环境变量">
-                  <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
-                    <i class="el-icon-info  setPosition"></i>
-                  </el-tooltip>
-                  <div style="padding:0px 0px 6px;" v-for="(itemValue,i) in v.environmentVar"  :key="i">
-                    <el-input class="w100" v-model="itemValue.key" placeholder="变量名"></el-input> = 
-                    <el-input class="w192" v-model="itemValue.value" placeholder="变量值"></el-input> 
-                    <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="v.environmentVar.splice(i,1)"></i> 
+                  <div v-show="v.disAdvancedSetting">
+                    <el-form-item label="工作目录">
+                      <el-input class="w192" v-model="wl.name"></el-input>
+                      <p> 指定容器运行后的工作目录，<a href="#">查看详情</a></p>
+                    </el-form-item>
+                    <el-form-item label="运行命令">
+                      <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
+                      <p> 控制容器运行的输入命令，<a href="#">查看详情</a></p>
+                    </el-form-item>
+                    <el-form-item label="运行参数">
+                      <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
+                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a></p>
+                    </el-form-item>
+                    <el-form-item label="容器健康检查">
+                      <el-tooltip class="item" effect="light" content="健康检查可以帮助你探测容器是否正常，以保证服务的正常运作" placement="top">
+                        <i class="el-icon-info  setPosition2"></i>
+                      </el-tooltip>
+                      <p>
+                        <el-checkbox v-model="v.surviveExamine">存活检查</el-checkbox>
+                        <span>检查容器是否正常，不正常则重启实例</span>
+                      </p>
+                      <!-- 存活检查 -->
+                      <div v-show="v.surviveExamine" class="from-1">
+                        <!-- 存活检查 -->
+                        <div style="background: #f2f2f2;padding: 6px;">
+                          <el-form-item label="检查方法">
+                            <el-select v-model="v.surviveExamineContent.inspectMethodValue">
+                              <el-option v-for="item in v.surviveExamineContent.inspectMethodOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="检查协议" v-show="v.surviveExamineContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-select v-model="v.surviveExamineContent.inspectProtocolValue">
+                              <el-option v-for="item in v.surviveExamineContent.inspectProtocolOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="执行命令" v-show="v.surviveExamineContent.inspectMethodValue==='执行命令检查'">
+                            <el-input type="textarea" class="w192" v-model="v.surviveExamineContent.executiveOrder" rows="4" resize="none"></el-input>
+                          </el-form-item>
+                          <el-form-item label="检查端口" v-show="v.surviveExamineContent.inspectMethodValue!=='执行命令检查'">
+                            <el-input class="w100" v-model="v.surviveExamineContent.inspectPort"></el-input>
+                            <span>端口范围：1~65535</span>
+                          </el-form-item>
+                          <el-form-item label="请求路径" v-show="v.surviveExamineContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-input class="w100" v-model="v.surviveExamineContent.requestPath"></el-input>
+                          </el-form-item>
+                          <el-form-item label="启动延时">
+                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.startDelay"></el-input>
+                            <span>范围：0~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="响应超时">
+                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.responseTimeout"></el-input>
+                            <span>范围：2~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="间隔时间">
+                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.intervalTime"></el-input>
+                            <span>范围：2~300秒</span>
+                          </el-form-item>
+                          <el-form-item label="健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.healthyThreshold"></el-input>
+                            <span>范围：1次</span>
+                          </el-form-item>
+                          <el-form-item label="不健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                              <i class="el-icon-info  setPosition3"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.unhealthyThreshold"></el-input>
+                            <span>范围：1~10次</span>
+                          </el-form-item>
+                        </div>
+                      </div>
+                      <p>
+                        <el-checkbox v-model="v.readyToCheck">就绪检查</el-checkbox>
+                        <span>检查容器是否就绪，不就绪则停止转发流量到当前实例</span>
+                      </p>
+                      <!-- 存活检查 -->
+                      <div v-show="v.readyToCheck" class="from-1">
+                        <!-- 就绪检查 -->
+                        <div style="background: #f2f2f2;padding: 6px;">
+                          <el-form-item label="检查方法">
+                            <el-select v-model="v.readyToCheckContent.inspectMethodValue">
+                              <el-option v-for="item in v.readyToCheckContent.inspectMethodOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="检查协议" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-select v-model="v.readyToCheckContent.inspectProtocolValue">
+                              <el-option v-for="item in v.readyToCheckContent.inspectProtocolOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="执行命令" v-show="v.readyToCheckContent.inspectMethodValue==='执行命令检查'">
+                            <el-input type="textarea" class="w192" v-model="v.readyToCheckContent.executiveOrder" rows="4" resize="none"></el-input>
+                          </el-form-item>
+                          <el-form-item label="检查端口" v-show="v.readyToCheckContent.inspectMethodValue!=='执行命令检查'">
+                            <el-input class="w100" v-model="v.readyToCheckContent.inspectPort"></el-input>
+                            <span>端口范围：1~65535</span>
+                          </el-form-item>
+                          <el-form-item label="请求路径" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-input class="w100" v-model="v.readyToCheckContent.requestPath"></el-input>
+                          </el-form-item>
+                          <el-form-item label="启动延时">
+                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.startDelay"></el-input>
+                            <span>范围：0~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="响应超时">
+                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.responseTimeout"></el-input>
+                            <span>范围：2~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="间隔时间">
+                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.intervalTime"></el-input>
+                            <span>范围：2~300秒</span>
+                          </el-form-item>
+                          <el-form-item label="健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.healthyThreshold"></el-input>
+                            <span>范围：1次</span>
+                          </el-form-item>
+                          <el-form-item label="不健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                              <i class="el-icon-info  setPosition3"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.unhealthyThreshold"></el-input>
+                            <span>范围：1~10次</span>
+                          </el-form-item>
+                        </div>
+                      </div>
+                      <p>查看健康检查和就绪检查<a href="#">使用指引</a></p>
+                    </el-form-item>
+                    <el-form-item label="特权级容器">
+                      <el-switch active-color="#006eff" inactive-color="#888" v-model="v.privilegeLevelContainer"></el-switch>
+                      <p> 容器开启特权级，将拥有宿主机的root权限 </p>
+                    </el-form-item>
                   </div>
-                  <hr v-if="v.environmentVar.length>0&&v.citeCs.length>0">
                   <div>
-                      <el-select v-model="containerCheck.type" class="w100">
-                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                      </el-select>
-                      <el-select v-model="containerCheck.type" class="w100" style="margin:0px 10px;">
-                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                      </el-select>
-                      <el-select v-model="containerCheck.type" class="w100">
-                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                      </el-select>以
-                      <el-input class="w150" v-model="wl.name"></el-input> 为别名
-                       <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i> 
-                  </div>
-                  <a href="#"@click='addEnvironmentVar'>新增变量</a>
-                  <a href="#" style="margin-left:4px;">引用ConfigMap/Secret</a>
-                  <p>只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母开头</p>
-                </el-form-item>
-                <a href="#" @click="highLevelSetShow=true" v-show="!highLevelSetShow">显示高级设置</a>
-                <div v-show="highLevelSetShow">
-                  <el-form-item label="工作目录">
-                    <el-input class="w192" v-model="wl.name"></el-input>
-                    <p> 指定容器运行后的工作目录，<a href="#">查看详情</a> </p>
-                  </el-form-item>
-                  <el-form-item label="运行命令">
-                    <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
-                    <p> 控制容器运行的输入命令，<a href="#">查看详情</a> </p>
-                  </el-form-item>
-                  <el-form-item label="运行参数">
-                    <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
-                    <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a> </p>
-                  </el-form-item>
-                  <el-form-item label="容器健康检查">
-                    <el-tooltip class="item" effect="light" content="健康检查可以帮助你探测容器是否正常，以保证服务的正常运作" placement="top">
-                      <i class="el-icon-info  setPosition2"></i>
-                    </el-tooltip>
-                    <p>
-                      <el-checkbox v-model="surviveExamine">存活检查</el-checkbox> <span>检查容器是否正常，不正常则重启实例</span>
-                    </p>
-                    <div v-show="surviveExamine" class="from-1">
-                      <!--存活检查 -->
-                      <el-form :model="containerCheck" label-position="left" label-width="120px" size="mini"
-                        class="from-set">
-                        <el-form-item label="检查方法">
-                          <el-select v-model="containerCheck.type">
-                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="检查协议" v-show="containerCheck.type=='HTTP请求检查'">
-                          <el-select v-model="containerCheck.http.type">
-                            <el-option label="HTTP" value="HTTP"> </el-option>
-                            <el-option label="HTTPS" value="HTTPS"> </el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="执行命令" v-show="containerCheck.type=='执行命令检查'">
-                          <el-input type="textarea" class="w192" v-model="wl.name" rows="4" resize="none"></el-input>
-                        </el-form-item>
-                        <el-form-item label="检查端口" v-show="containerCheck.type!='执行命令检查'">
-                          <el-input class="w100" v-model="value"></el-input>
-                          <span>端口范围：1~65535</span>
-                        </el-form-item>
-                        <el-form-item label="请求路径" v-show="containerCheck.type=='HTTP请求检查'">
-                          <el-input class="w100" v-model="value"></el-input>
-                        </el-form-item>
-                        <el-form-item label="启动延时">
-                          <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="value"></el-input>
-                          <span>范围：0~60秒</span>
-                        </el-form-item>
-                        <el-form-item label="响应超时">
-                          <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：2~60秒</span>
-                        </el-form-item>
-                        <el-form-item label="间隔时间">
-                          <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：2~300秒</span>
-                        </el-form-item>
-                        <el-form-item label="健康阙值">
-                          <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：1次</span>
-                        </el-form-item>
-                        <el-form-item label="不健康阙值">
-                          <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
-                            <i class="el-icon-info  setPosition3"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：1~10次</span>
-                        </el-form-item>
-                      </el-form>
-                    </div>
-                    <p>
-                      <el-checkbox v-model="readyToCheck">就绪检查</el-checkbox> <span>检查容器是否就绪，不就绪则停止转发流量到当前实例</span>
-                    </p>
-                    <div v-show="readyToCheck" class="from-1">
-                      <!--就绪检查 -->
-                      <el-form :model="containerCheck" label-position="left" label-width="120px" size="mini"
-                        class="from-set">
-                        <el-form-item label="检查方法">
-                          <el-select v-model="containerCheck.type">
-                            <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                              :value="item.value">
-                            </el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="检查协议" v-show="containerCheck.type=='HTTP请求检查'">
-                          <el-select v-model="containerCheck.http.type">
-                            <el-option label="HTTP" value="HTTP"> </el-option>
-                            <el-option label="HTTPS" value="HTTPS"> </el-option>
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="执行命令" v-show="containerCheck.type=='执行命令检查'">
-                          <el-input type="textarea" class="w192" v-model="wl.name" rows="4" resize="none"></el-input>
-                        </el-form-item>
-                        <el-form-item label="检查端口" v-show="containerCheck.type!='执行命令检查'">
-                          <el-input class="w100" v-model="value"></el-input>
-                          <span>端口范围：1~65535</span>
-                        </el-form-item>
-                        <el-form-item label="请求路径" v-show="containerCheck.type=='HTTP请求检查'">
-                          <el-input class="w100" v-model="value"></el-input>
-                        </el-form-item>
-                        <el-form-item label="启动延时">
-                          <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="value"></el-input>
-                          <span>范围：0~60秒</span>
-                        </el-form-item>
-                        <el-form-item label="响应超时">
-                          <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：2~60秒</span>
-                        </el-form-item>
-                        <el-form-item label="间隔时间">
-                          <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：2~300秒</span>
-                        </el-form-item>
-                        <el-form-item label="健康阙值">
-                          <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
-                            <i class="el-icon-info  setPosition"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：1次</span>
-                        </el-form-item>
-                        <el-form-item label="不健康阙值">
-                          <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
-                            <i class="el-icon-info  setPosition3"></i>
-                          </el-tooltip>
-                          <el-input class="w100" v-model="wl.name"></el-input>
-                          <span>范围：1~10次</span>
-                        </el-form-item>
-                      </el-form>
-                    </div>
-
-                    <p>查看健康检查和就绪检查<a href="#">使用指引</a> </p>
-                  </el-form-item>
-                  <el-form-item label="特权级容器">
-                    <el-switch active-color="#006eff" inactive-color="#888">
-                    </el-switch>
-                    <p> 容器开启特权级，将拥有宿主机的root权限 </p>
-                  </el-form-item>
-                  <a href="#" @click="highLevelSetShow=false">隐藏高级设置</a>
-                </div>
-
-              </el-form>
-            </div>
-            <p class="addcontent">添加容器</p>
-            <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
-          </el-form-item>
-          <el-form-item label="实例数量">
-            <el-radio-group v-model="wl.caseNum.adjustType">
-              <el-radio label="handAdjust">手动调节</el-radio>
-              <el-radio label="autoAdjust">自动调节</el-radio>
-            </el-radio-group>
-            <div v-show="wl.caseNum.adjustType=='handAdjust'">
-              <p>直接设定实例数量</p>
-              <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
-                <span>实例数量</span>
-                <el-input-number class="ml100" v-model="wl.replicas" size="small" :min="0"></el-input-number>个
-              </p>
-            </div>
-            <div v-show="wl.caseNum.adjustType=='autoAdjust'">
-              <p>满足任一设定条件，则自动调节实例（pod）数目<a href="#">查看更多</a> </p>
-              <el-form :model="wl" label-position="left" label-width="120px" size="mini" class="form-2">
-                <el-form-item label="触发策略" style="margin-top:10px">
-                  <div class="flex bottom10" v-for="(item,index) in touchTactics" :key="index">
-                    <el-select class="w100" v-model="item.touch1">
-                      <el-option v-for="item in  touchOptions1" :key="item.value" :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                    <el-select class="w192  margin-middle" v-model="item.touch2">
-                      <el-option v-for="item in  touchOptions2" :key="item.value" :label="item.label"
-                        :value="item.value">
-                      </el-option>
-                    </el-select>
-                    <el-input class="w100" v-model="item.size"></el-input>核
-                    <el-tooltip effect="light" content="至少保留一个指标" placement="right" v-if="touchTactics.length==1">
-                      <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
-                    </el-tooltip>
-                    <i v-else class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
-                      @click="delTarget(index)"></i>
-                  </div>
-                  <a href="#" @click="newAddTarget">新增指标</a>
-                </el-form-item>
-                <el-form-item label="实例范围">
-                  <el-input class="w100"></el-input>~<el-input class="w100"></el-input>
-                </el-form-item>
-              </el-form>
-            </div>
-          </el-form-item>
-          <a href="#" @click="highLevelSetShow2=true" v-show="!highLevelSetShow2">显示高级设置</a>
-          <div v-show="highLevelSetShow2">
-            <el-form-item label="imagePullSecrets">
-              <el-select style="margin-top:10px" v-model="wl.name" :disabled="checkTypeOptions.length == 0"
-                :placeholder="
-                  checkTypeOptions.length == 0 ? '暂无数据' : '请选择'
-                ">
-                <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select><br>
-              <el-select style="margin-top:10px" v-model="wl.name" :disabled="checkTypeOptions.length == 0"
-                :placeholder="
-                  checkTypeOptions.length == 0 ? '暂无数据' : '请选择'
-                ">
-                <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-              <p>添加</p>
-            </el-form-item>
-            <!--  -->
-            <div v-show="wl.type!='cronJob'&&wl.type!='job'">
-            <el-form-item label="更新方式" >
-              <el-select v-model="wl.updateWay">
-                <el-option label="滚动更新（推荐）" value="滚动更新（推荐）"> </el-option>
-                <el-option label="快速更新" value="快速更新"> </el-option>
-              </el-select>
-              <p v-show="wl.updateWay=='滚动更新（推荐）'"> 对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>
-              <p v-show="wl.updateWay=='快速更新'"> 直接关闭所有实例，启动相同数量的新实例</p>
-            </el-form-item>
-            <div v-show="wl.updateWay=='滚动更新（推荐）'">
-              <el-form-item label="更新间隔">
-                <el-input class="w100"></el-input>秒
-              </el-form-item>
-              <el-form-item label="更新策略">
-                <el-radio-group v-model="wl.updateTactics">
-                  <el-radio label="1">启动新的Pod,停止旧的Pod</el-radio>
-                  <el-radio label="2">停止旧的Pod，启动新的Pod</el-radio>
-                  <el-radio label="3">自定义</el-radio>
-                </el-radio-group>
-                <p v-show="wl.updateTactics==1">请确认集群有足够的CPU和内存用于启动新的Pod, 否则可能导致集群崩溃</p>
-              </el-form-item>
-              <el-form-item label="策略配置" >
-                <div class="flex bg" v-show="wl.updateTactics!=3">
-                  <span>Pods</span>
-                  <div style="margin-left:150px;">
-                    <el-input class="w192"></el-input>
-                    <p> Pod将批量启动或停止</p>
+                    <el-button type="text" size="mini" @click="v.disAdvancedSetting = !v.disAdvancedSetting">
+                      {{v.disAdvancedSetting?'隐藏高级设置':'显示高级设置'}}
+                    </el-button>
                   </div>
                 </div>
-                <div class="bg" v-show="wl.updateTactics==3">
-                  <div class="flex">
-                    <span>MaxSurge</span>
-                    <div style="margin-left:150px;">
-                      <el-input class="w192"></el-input>
-                      <p>允许超出所需规模的最大Pod数量</p>
+                <div v-show="!v.editStatus" class="case-content" style="margin-bottom: 18px">
+                  <el-form-item style="margin-bottom: 0px" label-width="0px">
+                    <div style="float: left">{{v.name}} ({{v.mirrorImg}}) </div>
+                    <div style="float: right">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                        <i class="el-icon-edit-outline"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="v.completed?editInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
+                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                        <i class="el-icon-close"
+                           style="font-size:20px;margin-left:20px;cursor:pointer"
+                           @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
+                        </i>
+                      </el-tooltip>
                     </div>
-                  </div>
-                  <div class="flex">
-                    <span>MaxUnavailable</span>
-                    <div style="margin-left:114px;">
-                      <el-input class="w192"></el-input>
-                      <p>允许最大不可用的Pod数量</p>
-                    </div>
-                  </div>
-                </div>
-              </el-form-item>
-            </div>
-            </div>
-            <el-form-item label="节点调度策略">
-              <el-radio-group v-model="wl.nodeTactics">
-                <el-radio label="1">不使用调度策略</el-radio>
-                <el-radio label="2">指定节点调度</el-radio>
-                <el-radio label="3">自定义调度规则</el-radio>
-              </el-radio-group>
-              <p>可根据调度规则，将Pod调度到符合预期的Label的节点中。设置工作负载的调度规则指引</p>
-              <div v-show="wl.nodeTactics==2" class="bg">
-                <p>台北一区</p>
-                <div style="height:70px;overflow:auto">
-                  <p>
-                    <el-checkbox></el-checkbox>ins-4bhved3k(as-变化的2)
-                  </p>
-                  <p>
-                    <el-checkbox></el-checkbox>ins-5ic5rvb2(as-qewq)
-                  </p>
+                  </el-form-item>
                 </div>
               </div>
-            </el-form-item>
-            <div  v-show="wl.nodeTactics==3">
-              <el-form-item label="强制满足条件">
-                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则调度失败。"
-                  placement="right">
-                  <i class="el-icon-info  setPosition2"></i>
-                </el-tooltip>
-                <div class="bg2" v-for="(val,idx) in mustCondition" :key="idx">
-                  <i class="el-icon-close set-i1" @click="delMustCondition(idx)"></i>
-                  <div style="clear: both; margin-bottom:10px"></div>
-                  <p style="float:left">条件
-                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
-                      <i class="el-icon-info "></i>
-                    </el-tooltip>
-                  </p>
-                  <div style="float:right;">
-                    <div v-for="(i,index) in val" :key="index" style="margin-bottom:6px;" class="flex">
-                      <el-input class="w150" v-model="i.name"></el-input>
-                      <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
-                        <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
-                          :value="item.value">
+              <p class="addcontent" :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent():''">添加容器</p>
+              <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
+            </div>
+          </div>
+          <!-- 实例数量 -->
+          <div style="margin-bottom: 18px">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例数量</label>
+            <div style="margin-left: 120px">
+              <el-form-item label-width="0px">
+                <el-radio-group v-model="wl.caseNum">
+                  <el-radio label="handAdjust">手动调节</el-radio>
+                  <el-radio label="autoAdjust">自动调节</el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- 手动调节 -->
+              <div v-show="wl.caseNum==='handAdjust'">
+                <p style="line-height: 28px">直接设定实例数量</p>
+                <div class="case-content" style="background-color: #f2f2f2;margin-top:6px;padding:20px;">
+                  <el-form-item label="实例数量" style="margin-bottom: 0px">
+                    <el-input-number v-model="wl.replicas" size="small" :min="0"></el-input-number> 个
+                  </el-form-item>
+                </div>
+              </div>
+              <!-- 自动调节 -->
+              <div v-show="wl.caseNum==='autoAdjust'">
+                <p style="line-height: 28px">满足任一设定条件，则自动调节实例（pod）数目<a href="#">查看更多</a></p>
+                <div class="case-content" style="background-color: #f2f2f2;margin-top:6px;padding:20px;">
+                  <el-form-item label="触发策略">
+                    <div class="flex bottom10" v-for="(item,index) in wl.touchTactics" :key="index">
+                      <el-select class="w100" v-model="item.touch1">
+                        <el-option v-for="item in touchOptions1" :key="item.value" :label="item.label"
+                                   :value="item.value">
                         </el-option>
                       </el-select>
-                      <el-input class="w150" v-model="i.rule"></el-input>
-                      <el-tooltip v-if="val.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
-                        <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
+                      <el-select class="w192  margin-middle" v-model="item.touch2">
+                        <el-option v-for="item in  touchOptions2" :key="item.value" :label="item.label"
+                                   :value="item.value">
+                        </el-option>
+                      </el-select>
+                      <el-input class="w100" v-model="item.size"></el-input>核
+                      <el-tooltip effect="light" content="至少保留一个指标" placement="right" :disabled="wl.touchTactics.length!==1">
+                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="wl.touchTactics.length>1?delTouchTactics(item.key):''"></i>
                       </el-tooltip>
-                      <i class="el-icon-close" v-else @click="val.splice(index,1)"
-                        style="font-size:20px;cursor:pointer"></i>
                     </div>
-                    <a href="#" @click="addRule1(idx)">添加规则</a>
-                  </div>
-                  <div style="clear: both;"></div>
+                    <el-button type="text" size="mini" @click="addTouchTactics">新增指标</el-button>
+                  </el-form-item>
+                  <el-form-item label="实例范围">
+                    <el-input class="w100" v-model="wl.caseScope1"></el-input> ~ <el-input class="w100" v-model="wl.caseScope2"></el-input>
+                    <p>在设定的实例范围内自动调节，不会超出该设定范围</p>
+                  </el-form-item>
                 </div>
-                <a href="#" @click="addCondition">添加条件</a>
+              </div>
+            </div>
+          </div>
+          <!-- 高级设置 -->
+          <div v-show="highLevelSetShow2">
+            <!-- imagePullSecrets -->
+            <div style="margin-bottom: 18px">
+              <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">imagePullSecrets</label>
+              <div style="margin-left: 120px">
+                <el-form-item label-width="0px">
+                  <el-select v-model="wl.imagePullSecrets.value1" :disabled="wl.imagePullSecrets.option1.length == 0" :placeholder="wl.imagePullSecrets.option1.length == 0 ? '暂无数据' : '请选择'">
+                    <el-option v-for="item in wl.imagePullSecrets.option1" :key="item" :label="item" :value="item"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label-width="0px">
+                  <el-select v-model="wl.imagePullSecrets.value2" :disabled="wl.imagePullSecrets.option2.length == 0" :placeholder="wl.imagePullSecrets.option2.length == 0 ? '暂无数据' : '请选择'">
+                    <el-option v-for="item in wl.imagePullSecrets.option2" :key="item" :label="item" :value="item"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-button type="text" size="mini" :disabled="true">添加</el-button>
+              </div>
+            </div>
+            <div v-show="wl.type!=='cronJob'&&wl.type!=='job'">
+              <el-form-item label="更新方式">
+                <el-select v-model="wl.updateWay">
+                  <el-option label="滚动更新（推荐）" value="滚动更新（推荐）"></el-option>
+                  <el-option label="快速更新" value="快速更新"></el-option>
+                </el-select>
+                <p v-show="wl.updateWay=='滚动更新（推荐）'"> 对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>
+                <p v-show="wl.updateWay=='快速更新'"> 直接关闭所有实例，启动相同数量的新实例</p>
               </el-form-item>
-              <el-form-item label="尽量满足条件">
-                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
-                  placement="right">
+              <div v-show="wl.updateWay=='滚动更新（推荐）'">
+                <el-form-item label="更新间隔">
+                  <el-input class="w100" v-model="wl.updateInterval"></el-input> 秒
+                </el-form-item>
+                <el-form-item label="更新策略">
+                  <el-radio-group v-model="wl.updateTactics">
+                    <el-radio :label="1">启动新的Pod,停止旧的Pod</el-radio>
+                    <el-radio :label="2">停止旧的Pod，启动新的Pod</el-radio>
+                    <el-radio :label="3">自定义</el-radio>
+                  </el-radio-group>
+                  <p v-show="wl.updateTactics===1">请确认集群有足够的CPU和内存用于启动新的Pod, 否则可能导致集群崩溃</p>
+                </el-form-item>
+                <!-- 策略配置 -->
+                <div style="margin-bottom: 18px">
+                  <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">策略配置</label>
+                  <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics !== 3">
+                    <el-form-item label="Pods">
+                      <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）" v-model="wl.configTacticsPods"></el-input>
+                      <p>Pod将批量启动或停止</p>
+                    </el-form-item>
+                  </div>
+                  <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics === 3">
+                    <el-form-item label="MaxSurge">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxSurge"></el-input>
+                      <p>允许超出所需规模的最大Pod数量</p>
+                    </el-form-item>
+                    <el-form-item label="MaxUnavailable">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxUnavailable"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </el-form-item>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="margin-bottom: 18px">
+              <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">节点调度策略</label>
+              <div style="margin-left: 120px">
+                <el-form-item label-width="0px">
+                  <el-radio-group v-model="wl.nodeTactics">
+                    <el-radio :label="1">不使用调度策略</el-radio>
+                    <el-radio :label="2">指定节点调度</el-radio>
+                    <el-radio :label="3">自定义调度规则</el-radio>
+                  </el-radio-group>
+                </el-form-item>
+                <p>可根据调度规则，将Pod调度到符合预期的Label的节点中。设置工作负载的调度规则指引</p>
+              </div>
+            </div>
+            <!-- 指定节点调度 -->
+            <div style="margin-bottom: 18px" v-show="wl.nodeTactics===2">
+              <div style="margin-left: 120px;width: 350px" class="form-controls">
+                <p style="line-height: 28px">台北一区</p>
+                <el-form-item label-width="0px">
+                  <el-checkbox-group v-model="wl.specifyNodeDispatchValue">
+                    <div v-for="item in specifyNodeDispatchOption" :key="item">
+                      <el-checkbox :label="item"></el-checkbox>
+                    </div>
+                  </el-checkbox-group>
+                </el-form-item>
+              </div>
+            </div>
+            <!-- 自定义调度规则 -->
+            <!-- 强制满足条件 -->
+            <div style="margin-bottom: 18px" v-show="wl.nodeTactics===3">
+              <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">强制满足条件</label>
+              <div style="margin-left: 120px; position: relative">
+                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则调度失败。"
+                            placement="right">
                   <i class="el-icon-info  setPosition2"></i>
                 </el-tooltip>
-                <div class="bg2" v-for="(val,idx) in needCondition" :key="idx">
+                <div class="case-content" style="margin-bottom: 18px" v-for="(val1,index1) in wl.mustCondition" :key="index1">
+                  <i class="el-icon-close set-i1" @click="delMustCondition(idx)"></i>
+                  <div style="clear: both; margin-bottom:10px"></div>
+                  <div>
+                    <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">条件</label>
+                    <div style="margin-left: 120px; position: relative">
+                      <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                        <i class="el-icon-info setPosition"></i>
+                      </el-tooltip>
+                      <div v-for="(val2,index2) in val1" :key="index2">
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-input class="w150" v-model="val2.name"></el-input>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-select v-model="val2.connect" class="w100" style="margin:0px 10px;">
+                            <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-input class="w150" v-model="val2.rule"></el-input>
+                        </el-form-item>
+                        <el-tooltip class="item" effect="light" content="至少配置一个选择器" placement="right" :disabled="val1.length!==1">
+                          <i class="el-icon-close" style="font-size: 18px; padding-left: 20px;cursor:pointer" @click="val1.length>1?delMustRule(index1, index2):''"></i>
+                        </el-tooltip>
+                      </div>
+                      <p>
+                        <el-button type="text" size="mini" @click="addMustRule(index1)">添加规则</el-button>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <el-button type="text" size="mini" @click="addMustCondition">添加条件</el-button>
+              </div>
+            </div>
+            <!-- 尽量满足条件 -->
+            <div style="margin-bottom: 18px" v-show="wl.nodeTactics===3">
+              <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">尽量满足条件</label>
+              <div style="margin-left: 120px;position: relative">
+                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
+                            placement="right">
+                  <i class="el-icon-info  setPosition2"></i>
+                </el-tooltip>
+                <div class="case-content" style="margin-bottom: 18px"  v-for="(val1,index1) in wl.needCondition" :key="index1">
                   <i class="el-icon-close set-i1" @click="delNeedCondition(idx)"></i>
                   <div style="clear: both; margin-bottom:10px"></div>
-                  <div style="float:left">
-                  <p style="margin-bottom:10px">权重</p>
-                    <p>条件
-                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
-                      <i class="el-icon-info "></i>
-                    </el-tooltip></p>
+                  <div>
+                    <el-form-item label="权重">
+                      <el-input v-model="val1.weight" class="w150"></el-input>
+                    </el-form-item>
                   </div>
-                  <div style="float:right;">
-                      <div style="margin-bottom:10px"><el-input   v-model="val.weight" class="w150" ></el-input></div>
-                      <div v-for="(i,index) in val.arr" :key="index" style="margin-bottom:6px;" class="flex">
-                        <el-input class="w150" v-model="i.name"></el-input>
-                        <el-select v-model="i.connect" class="w100" style="margin:0px 10px;">
-                          <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
-                            :value="item.value">
-                          </el-option>
-                        </el-select>
-                        <el-input class="w150" v-model="i.rule"></el-input>
-                        <el-tooltip v-if="val.arr.length==1" class="item" effect="light" content="至少配置一个选择器"
-                          placement="top">
-                          <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
-                        </el-tooltip>
-                        <i class="el-icon-close" v-else @click="val.arr.splice(index,1)"
-                          style="font-size:20px;cursor:pointer"></i>
-                      </div>
-                      <a href="#" @click="addRule2(idx)">添加规则</a>
-                  </div>
-                  <div style="clear: both;"></div>
-                </div>
-                <a href="#" @click="addCondition2">添加条件</a>
-              </el-form-item>
-            </div>
-            <a href="#" @click="highLevelSetShow2=false">隐藏高级设置</a>
-          </div>
-          <!--  </el-form> -->
-        </el-form>
-        <el-form  class="tke-form" :model="wl" label-position='left' label-width="120px" size="mini">
-            <!-- <Service></Service> -->
-          <div class="card">
-            <h3 style="margin-bottom:11px;">访问设置(Service)</h3>
-            <el-form-item label="Service">
-              <el-checkbox v-model="wl.serviceEnbel" @change="changEnbel()">启用</el-checkbox> 
-            </el-form-item>
-            <div v-if="showServiceModal">
-              <el-form-item label="服务访问方式">
-                <el-radio v-model="wl.radio" label="1">提供公网访问</el-radio>
-                <el-radio v-model="wl.radio" label="2">仅在集群内访问</el-radio>
-                <el-radio v-model="wl.radio" label="3">VPC内网访问</el-radio>
-                <el-radio v-model="wl.radio" label="4">主机端口访问</el-radio>
-                <a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
-                <!-- 方式介绍 -->
-                <div>
-                  <div v-if="wl.radio=='1'">
-                    <div>
-                      自动创建公网CLB（<span class="text-warning">0.02元/小时</span>）以提供Internet访问入口，支持TCP/UDP协议，如web前台类服务可以选择公网访问。
-                    </div>
-                    <div>
-                      如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="">查看详情</a><i class="el-icon-edit-outline"></i>
-                    </div>
-                  </div>
-                  <div v-if="wl.radio=='2'">
-                    <div>将提供一个可以被集群内其他服务或容器访问的入口，支持TCP/UDP协议，数据库类服务如Mysql可以选择集群内访问,来保证服务网络隔离性。</div>
-                    <div>
-                      <el-checkbox v-model="wl.handlessChecked">Headless&nbsp;Service</el-checkbox>
-                      <el-tooltip content="不创建用于集群内访问的ClusterIP,访问Service名称时返回后端Pods IP地址,用于适配自有的服务发现机制。" placement="top" effect="light">
-                      <i class="el-icon-question" style="margin-left:5px;"></i>
+                  <div>
+                    <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">条件</label>
+                    <div style="margin-left: 120px; position: relative">
+                      <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                        <i class="el-icon-info setPosition"></i>
                       </el-tooltip>
-                      （Headless&nbsp;Service只支持创建时选择，<span class="text-error">创建完成后不支持变更访问方式）</span>
+                      <div v-for="(val2,index2) in val1.arr" :key="index2">
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-input class="w150" v-model="val2.name"></el-input>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-select v-model="val2.connect" class="w100" style="margin:0px 10px;">
+                            <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item style="display: inline-block" label-width="0px">
+                          <el-input class="w150" v-model="val2.rule"></el-input>
+                        </el-form-item>
+                        <el-tooltip class="item" effect="light" content="至少配置一个选择器" placement="right" :disabled="val1.arr.length!==1">
+                          <i class="el-icon-close" style="font-size: 18px; padding-left: 20px;cursor:pointer" @click="val1.arr.length>1?delNeedRule(index1, index2):''"></i>
+                        </el-tooltip>
+                      </div>
+                      <p>
+                        <el-button type="text" size="mini" @click="addNeedRule(index1)">添加规则</el-button>
+                      </p>
                     </div>
                   </div>
-                  <div v-if="wl.radio=='3'">
-                    <div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
-                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
-                  </div>
-                  <div v-if="wl.radio=='4'">
-                    <div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
-                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
-                  </div>
                 </div>
-              </el-form-item>
-              <el-form-item v-show="wl.radio === '3'">
-                <el-select ></el-select> 
-                <el-select ></el-select> 
-                <span>共253个子网IP，剩247个可用</span>
-              </el-form-item>
-              <el-form-item label="负载均衡器" v-show="wl.radio=='1' || wl.radio=='3'">
-                <div class="radio1">
-                <el-radio-group   v-model='wl.loadBalance' style="margin-bottom: 5px;">
+                <el-button type="text" size="mini" @click="addNeedCondition">添加条件</el-button>
+              </div>
+            </div>
+          </div>
+          <div><el-button type="text" size="mini" @click="highLevelSetShow2=!highLevelSetShow2">{{highLevelSetShow2?'隐藏高级设置':'显示高级设置'}}</el-button></div>
+          <el-divider></el-divider>
+          <h3 style="margin-bottom:11px;">访问设置(Service)</h3>
+          <el-form-item label="Service">
+            <el-checkbox v-model="wl.serviceEnbel">启用</el-checkbox>
+          </el-form-item>
+          <div v-if="wl.serviceEnbel">
+            <el-form-item label="服务访问方式">
+              <el-radio v-model="wl.serviceAccess" label="1">提供公网访问</el-radio>
+              <el-radio v-model="wl.serviceAccess" label="2">仅在集群内访问</el-radio>
+              <el-radio v-model="wl.serviceAccess" label="3">VPC内网访问</el-radio>
+              <el-radio v-model="wl.serviceAccess" label="4">主机端口访问</el-radio>
+              <a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
+            </el-form-item>
+            <!-- 服务访问方式介绍 -->
+            <div style="margin-bottom: 18px">
+              <div style="margin-left: 120px">
+                <el-form-item v-if="wl.serviceAccess=='1'" label-width="0px">
+                  <div>
+                    自动创建公网CLB（<span class="text-warning">0.02元/小时</span>）以提供Internet访问入口，支持TCP/UDP协议，如web前台类服务可以选择公网访问。
+                  </div>
+                  <div>
+                    如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="">查看详情</a><i
+                    class="el-icon-edit-outline"></i>
+                  </div>
+                </el-form-item>
+                <el-form-item v-if="wl.serviceAccess=='2'" label-width="0px">
+                  <div>将提供一个可以被集群内其他服务或容器访问的入口，支持TCP/UDP协议，数据库类服务如Mysql可以选择集群内访问,来保证服务网络隔离性。</div>
+                  <div>
+                    <el-checkbox v-model="wl.handlessChecked">Headless&nbsp;Service</el-checkbox>
+                    <el-tooltip content="不创建用于集群内访问的ClusterIP,访问Service名称时返回后端Pods IP地址,用于适配自有的服务发现机制。"
+                                placement="top" effect="light">
+                      <i class="el-icon-question" style="margin-left:5px;"></i>
+                    </el-tooltip>
+                    （Headless&nbsp;Service只支持创建时选择，<span class="text-error">创建完成后不支持变更访问方式）</span>
+                  </div>
+                </el-form-item>
+                <el-form-item v-if="wl.serviceAccess=='3'" label-width="0px">
+                  <div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
+                  <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                </el-form-item>
+                <el-form-item v-if="wl.serviceAccess=='4'" label-width="0px">
+                  <div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
+                  <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                </el-form-item>
+              </div>
+            </div>
+            <div style="margin-bottom: 18px" v-show="wl.serviceAccess === '3'">
+              <div style="margin-left: 120px">
+                <el-form-item style="display: inline-block" label-width="0px">
+                  <el-select v-model="wl.subnetOneValue" placeholder="请选择" :disabled="true">
+                    <el-option
+                      v-for="item in subnetOneOption"
+                      :key="item"
+                      :label="item"
+                      :value="item">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item style="display: inline-block" label-width="0px">
+                  <el-select v-model="wl.subnetTwoValue" placeholder="请选择">
+                    <el-option
+                      v-for="item in subnetTwoOption"
+                      :key="item.SubnetName"
+                      :label="item.SubnetName"
+                      :value="item.SubnetName">
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <span>共{{subnetOrder.TotalIpAddressCount}}个子网IP，剩{{subnetOrder.AvailableIpAddressCount}}个可用</span>
+                <p>如现有的网络不合适，您可以去控制台<el-button type="text" size="mini">新建子网</el-button></p>
+              </div>
+            </div>
+            <el-form-item label="负载均衡器" v-show="wl.serviceAccess=='1' || wl.serviceAccess=='3'">
+              <div class="radio1">
+                <el-radio-group v-model='wl.loadBalance' style="margin-bottom: 5px;">
                   <el-radio-button label="1">自动创建</el-radio-button>
                   <el-radio-button label="2">使用已有</el-radio-button>
                 </el-radio-group>
-                </div>
-                <p v-show="wl.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，<a href="javascript:;">查看更多说明</a></p>
-                <div v-show="wl.loadBalance=='2'">使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<a href="javascript:;">查看更多说明</a>
-                </div>
-              </el-form-item>
-              <el-form-item v-show="wl.loadBalance=='2'">
-                <el-select >
-
-                </el-select>  
-              </el-form-item>
-              <el-form-item label="端口映射" v-show="wl.radio !=='4'">
-                <div class="port">
+              </div>
+              <p v-show="wl.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，
+                <a href="javascript:;">查看更多说明</a>
+              </p>
+              <div v-show="wl.loadBalance=='2'">
+                <div>使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<el-button type="text" size="mini">查看更多说明</el-button></div>
+                <el-select v-show="wl.loadBalance=='2'" v-model="wl.describeLoadBalancersValue" placeholder="请选择" class="borderRed">
+                  <el-option
+                    v-for="item in describeLoadBalancersOption"
+                    :key="item.LoadBalancerId"
+                    :label="`${item.LoadBalancerId} (${item.LoadBalancerName})`"
+                    :value="item.LoadBalancerId">
+                  </el-option>
+                </el-select>
+              </div>
+            </el-form-item>
+            <div style="margin-bottom: 18px">
+              <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">端口映射</label>
+              <div style="margin-left: 120px">
+                <div class="port" :style="{width: wl.serviceAccess === '4'?'950px':'680px'}">
                   <!-- 头部 -->
                   <div class="flex">
                     <div style="width:140px;padding-left:14px">协议
                       <el-tooltip content="使用公网/内网负载均衡时，TCP和UDP协议不能混合使用" placement="top" effect="light">
-                      <i class="el-icon-warning"></i>
+                        <i class="el-icon-warning"></i>
                       </el-tooltip>
                     </div>
                     <div style="width:250px;">容器端口
                       <el-tooltip content="端口范围1~65535" placement="top" effect="light">
-                      <i class="el-icon-warning"></i>
+                        <i class="el-icon-warning"></i>
+                      </el-tooltip>
+                    </div>
+                    <div style="width:250px;"  v-if="wl.serviceAccess === '4'">主机端口
+                      <el-tooltip content="可通过云服务器IP+主机端口访问服务，端口范围30000~32767，不填自动分配" placement="top" effect="light">
+                        <i class="el-icon-warning"></i>
                       </el-tooltip>
                     </div>
                     <div>服务端口
-                      <el-tooltip content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务" placement="top" effect="light">
-                      <i class="el-icon-warning"></i>
+                      <el-tooltip content="可通过服务名+服务端口可直接访问该服务" placement="top" effect="light">
+                        <i class="el-icon-warning"></i>
                       </el-tooltip>
                     </div>
                   </div>
                   <!-- 内容 -->
                   <div style="border-top:1px solid #ddd;padding: 10px;">
-                    <div style="padding:5px 0;" v-for="(it,i) in wl.list" :key="i">
-                      <el-select class="w100" v-model="wl.portValue" placeholder="请选择">
-                        <el-option
-                          v-for="item in wl.options"
-                          :key="item.value"
-                          :label="item.label"
-                          :value="item.value">
-                        </el-option>
-                      </el-select>
-                      <el-input class="w250" style="padding-left:30px;" v-model="wl.conPort" placeholder="容器内应用程序监听的端口"></el-input>
-                      <el-input class="w250" style="padding-left:30px;" v-model="wl.servicePort" placeholder="建议与容器端口一致"></el-input>
-                      <el-tooltip class="item" effect="dark" content="不能删除，在至少指定一个设置端口" placement="right" v-if="i === 0">
-                        <i style="font-size:18px;padding-left:20px;" class="el-icon-close"></i>
+                    <div style="padding:5px 0;" v-for="(val,index) in wl.portMapping" :key="index">
+                      <el-form-item style="display: inline-block" label-width="0px">
+                        <el-select class="w100" v-model="val.portValue" placeholder="请选择">
+                          <el-option
+                            v-for="item in protocolOption"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item style="display: inline-block" label-width="0px">
+                        <el-input class="w250" style="padding-left:30px;" v-model="val.conPort"
+                                  placeholder="容器内应用程序监听的端口"></el-input>
+                      </el-form-item>
+                      <el-form-item style="display: inline-block" label-width="0px" v-if="wl.serviceAccess === '4'">
+                        <el-input class="w250" style="padding-left:30px;" v-model="val.host"
+                                  placeholder="范围：30000~32767"></el-input>
+                      </el-form-item>
+                      <el-form-item style="display: inline-block" label-width="0px">
+                        <el-input class="w250" style="padding-left:30px;" v-model="val.servicePort"
+                                  placeholder="建议与容器端口一致"></el-input>
+                      </el-form-item>
+                      <el-tooltip class="item" effect="dark" content="不能删除，在至少指定一个设置端口" placement="right"
+                                  :disabled="wl.portMapping!==1">
+                        <i style="font-size:18px;padding-left:20px;" class="el-icon-close"
+                           @click="wl.portMapping.length>1?removeProtMapping(it): ''"></i>
                       </el-tooltip>
-                      <i class="el-icon-close"  style="font-size:20px;margin-left:20px;cursor:pointer" v-else @click="removeprot(it)"></i>
-                    </div>					
+                    </div>
                   </div>
                 </div>
-                <a href="javascript:;" @click="addport()">添加端口映射</a>
-              </el-form-item>
-              <!-- 高级设置 -->
-              <div v-if="wl.isShowAdvancedSet">
-                <h3 style="padding-bottom:10px;">高级设置（选填）</h3>
-                <el-form-item label-width="150px" label="ExtermalTrafficPolicy">
-                  <el-radio v-model="wl.ETP" label="1">Cluster</el-radio>
-                  <el-radio v-model="wl.ETP" label="2">Local</el-radio>
-                  <div v-if="wl.ETP=='1'">默认均衡转发到工作负载的所有Pod</div>
-                  <div v-if="wl.ETP=='2'">能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。</div>
-                </el-form-item>
-                <div>
-                  <el-form-item label-width="150px" label="Session Affinity">
-                    <el-radio v-model="wl.SA" label="1">ClienIP</el-radio>
-                    <el-radio v-model="wl.SA" label="2">None</el-radio>
-                  </el-form-item>
-                  <div v-if="wl.SA=='1'">
-                    <el-form-item label-width="150px" label="最大会话保持时间">
-                      <el-input v-model="wl.time" class="w200"></el-input>
-                      <div>会话保持时间范围为0~86400</div>
-                    </el-form-item>
-                  </div>
-                </div>
+                <el-button type="text" size="mini" @click="addProtMapping()">添加端口映射</el-button>
               </div>
-              <div v-if="!wl.isShowAdvancedSet"><a href="javascript:;" @click="showAdvancedSet()">显示高级设置</a></div>
-              <div v-if="wl.isShowAdvancedSet"><a href="javascript:;" @click="showAdvancedSet()">隐藏高级设置</a></div>
             </div>
+            <!-- 高级设置 -->
+            <div v-if="wl.isShowAdvancedSet">
+              <el-form-item label-width="150px" label="ExtermalTrafficPolicy">
+                <el-radio v-model="wl.ETP" label="1">Cluster</el-radio>
+                <el-radio v-model="wl.ETP" label="2">Local</el-radio>
+                <div v-if="wl.ETP==='1'">默认均衡转发到工作负载的所有Pod</div>
+                <div v-if="wl.ETP==='2'">
+                  能够保留来源IP，并可以保证公网、VPC内网访问（LoadBalancer）和主机端口访问（NodePort）模式下流量仅在本节点转发。Local转发使部分没有业务Pod存在的节点健康检查失败，可能存在流量不均衡的转发的风险。
+                </div>
+              </el-form-item>
+              <el-form-item label-width="150px" label="Session Affinity">
+                <el-radio v-model="wl.SA" label="1">ClienIP</el-radio>
+                <el-radio v-model="wl.SA" label="2">None</el-radio>
+                <p v-if="wl.SA === '1'">基于来源IP做会话保持。</p>
+              </el-form-item>
+              <el-form-item v-if="wl.SA==='1'" label-width="150px" label="最大会话保持时间">
+                <el-input v-model="wl.maxSessionTime" class="w200"></el-input>
+                <div>会话保持时间范围为30-3600，若您的访问方式是公网或VPC内网访问（LoadBalancer）模式，设置成CLB监听器的会话保持时间一致。</div>
+              </el-form-item>
+            </div>
+            <el-button type="text" size="mini" @click="wl.isShowAdvancedSet = !wl.isShowAdvancedSet">{{wl.isShowAdvancedSet?'隐藏高级设置':'显示高级设置'}}</el-button>
           </div>
         </el-form>
         <!-- 设置主机路径 -->
@@ -773,12 +923,11 @@
             <el-button @click="dialogVisiblePath = false">取 消</el-button>
           </span>
         </el-dialog>
-
         <!-- 选择云硬盘 -->
         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="40%">
           <div class="select-yun">
             <el-select v-model="usePvcOptions" :disabled="usePvcOptions.length == 0"
-              :placeholder="usePvcOptions.length == 0 ? '暂无数据' : '请选择'">
+                       :placeholder="usePvcOptions.length == 0 ? '暂无数据' : '请选择'">
               <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -787,7 +936,8 @@
             </el-input>
           </div>
           <div class="select-yun-body">
-            <el-table ref="multipleTable" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" tooltip-effect="dark" style="width: 100%">
+            <el-table ref="multipleTable" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+                      tooltip-effect="dark" style="width: 100%">
               <el-table-column width="55">
                 <template slot-scope="scope">
                   <el-radio v-model="id" :label="scope.row.id">&nbsp;</el-radio>
@@ -806,8 +956,8 @@
               <span>共&nbsp;{{ TotalCount }}&nbsp;项</span>
               <div class="pagestyle_right">
                 <el-pagination :page-size="pagesize" :pager-count="7" :page-sizes="[50, 40, 30, 20, 10]"
-                  layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
-                  @size-change="handleSizeChange" :total="TotalCount"></el-pagination>
+                               layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
+                               @size-change="handleSizeChange" :total="TotalCount"></el-pagination>
               </div>
             </div>
           </div>
@@ -816,7 +966,6 @@
             <el-button @click="dialogVisibleYun = false">取 消</el-button>
           </span>
         </el-dialog>
-
         <!-- 设置Configmap -->
         <el-dialog title="设置ConfigMap" :visible.sync="dialogVisibleConfig" width="30%">
           <el-form :model="setConfigMapData" label-position="left" label-width="120px" size="mini">
@@ -847,7 +996,6 @@
             <el-button @click="dialogVisibleConfig = false">取 消</el-button>
           </span>
         </el-dialog>
-
         <!-- 设置Configmap -->
         <el-dialog title="设置Secret" :visible.sync="dialogVisibleSecret" width="30%">
           <el-form :model="setSecretData" label-position="left" label-width="120px" size="mini">
@@ -878,597 +1026,839 @@
             <el-button @click="dialogVisibleSecret = false">取 消</el-button>
           </span>
         </el-dialog>
-
-
-
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submit()">创建Workload</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="()=>$router.back()">取消</el-button>
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<script>
-  import Service from '../service/components/Service'
-  import SelectMirrorImg from './components/selectMirrorImg'
-  import { ErrorTips } from "@/components/ErrorTips";
-  import {
-    ALL_CITY,
-    POINT_REQUEST
-  } from "@/constants";
-  export default {
-    name: "workloadCreate",
-    data() {
-      var validateName = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('Workload名称不能为空'));
-        } else if(value.length > 40) {
-          callback(new Error('Workload名称不能超过40个字符'));
-        } else {
-          callback();
-        }
+<script type="text/javascript">
+import Service from '../service/components/Service'
+import SelectMirrorImg from './components/selectMirrorImg'
+import { ErrorTips } from '@/components/ErrorTips'
+import workloadMixin from './workloadMixin'
+import {
+  ALL_CITY,
+  POINT_REQUEST,
+  ZONE_CVM2_LIST,
+  TKE_COLONY_LIST,
+  TKE_DELETE_XS,
+  TKE_EDSCRIBELOADBALANCERS,
+  TKE_EXIST_NODES,
+  JOB_ID,
+  DISK_LIST,
+  TKE_VPC_METWORK,
+  TKE_GETTKEDATAJOB,
+  TKE_GETTKEDATARESULT,
+  TKE_WORKER_METWORK
+} from '@/constants'
+
+export default {
+  name: 'workloadCreate',
+  mixins: [workloadMixin],
+  data () {
+    var validateName = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Workload名称不能为空'))
+      } else if (value.length > 40) {
+        callback(new Error('Workload名称不能超过40个字符'))
+      } else {
+        callback()
       }
-      var validateLabel = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('Value不能为空'));
-        } else {
-          callback();
-        }
+    }
+    var validateLabel = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Value不能为空'))
+      } else {
+        callback()
       }
-      return {
-        nameSpaceList: [],//命名空间列表
-        clusterId: '',//集群id
-        loadShow: false,//是否显示加载
-        showServiceModal: true,//是否显示service
-        showMountPoint: false,//是否显示添加挂载点
-        wl: {
-          name: "",
-          desc: "",
-          type: "",
-          labels:[{key:'k8s-app',value: name}],
-          nameSpace:'',
-          dataJuan: [],
-          container:[
-            {
-            name:'',
-            mirrorImg:'',
-            versions:'',
-            mirrorPullTactics: '', //镜像拉取策略
-            requestCpu:'0.25',
-            limitCpu:'0.5',
-            requestMemory:'256',
-            limitMemory:'1024',
-            gpuNum: 0,
-            environmentVar:[],
-            citeCs:[],
-          }],
-          caseNum: {
-            adjustType: 'handAdjust',
-          },
-          updateWay: '滚动更新（推荐）',
-          updateTactics: '1',
-          nodeTactics: "1",
-          replicas: 0,
-          serviceEnbel: true,//是否启用service
-          radio: '1',
-          handlessChecked: false,
-          loadBalance: "1",
-          list:[],
-          portValue: 'TCP',
-          options: [
-            {
-              value: 'TCP',
-              label: 'TCP'
-            },
-            {
-              value: 'UDP',
-              label: 'UDP'
-            }
-          ],
-          conPort: '',
-          servicePort: '',
-          isShowAdvancedSet: true,
-          ETP: '1',
-          SA: '2',
-          time: 30,
-          pointList:[],
-          mountPath: '',
-          subPath: '',
-          pointName: '',
+    }
+    return {
+      clusterId: '', // 集群id
+      namespaceOptions: [], // 命名空间列表
+      vpcId: '',
+      loadShow: false, // 是否显示加载
+      showMountPoint: false, // 是否显示添加挂载点
+      addLabelFlag: false, // 是否可以新建标签
+      failedRestartPolicyOption: ['OnFailure', 'Never'],
+      specifyNodeDispatchOption: ['ins-4bhved3k(as-变化的2)', 'ins-5ic5rvb2(as-qewq)'], // 指点节点调度
+      subnetOneOption: [], // LB所在子网 option1
+      subnetTwoOption: [], // LB所在子网 option2
+      subnetOrder: {}, // LB所在子网 显示子网IP,剩余可用
+      describeLoadBalancersOption: [], // 负载均衡数组
+      protocolOption: ['TCP', 'UDP'], // 协议 option
+      jobId: '',
+      isAddContainer: false, // 是否可以点击 添加容器
+      wl: {
+        name: '', // 名称
+        description: '', // 描述
+        labels: [{ key: 'k8s-app', value: '' }], // 标签
+        type: '', // 类型
+        namespace: '', // 命名空间
+        executionStrategy: '', // 执行策略
+        jobSettings: {
+          repeatNumber: 1,
+          parallelNumber: 1,
+          failedRestartPolicy: 'OnFailure'
         },
-        nameSpaceOptions:[{value:'tfy-pub',label:'tfy-pub'},{value:'default',label:'default'},{value:'kube-public',label:'kube-public'},{value:'kube-system',label:'kube-system'},],
-        
-        addVarFlag:true,
-        	svc:{
-            show: true,
-            time: 30,
-            checked:false,
-            name: '',
-            value: 'default',
-            options: ['default','kube-public','kube-system','tfy-pub'],
-            radio: '1',
-            ETP: '1',
-            SA: '2',
-            input: '',
-            list: [{}],
-            workload: [],
-            tabPosition: 'dep'
-          },
-        // 实例数量自动调节下拉框内容
+        instanceContent: [], // 实例内容器
+        dataJuan: [],
+        caseNum: 'handAdjust',
+        replicas: 0, // 实例数量-》手动调节-》实例数量
         touchTactics: [{
           touch1: 'CPU',
           touch2: 'CPU使用量',
           size: ''
-        }], //触发策略
-        touchOptions1: [{
-          value: 'CPU',
-          label: 'CPU'
-        }, {
-          value: '内存',
-          label: '内存'
-        }, {
-          value: '硬盘',
-          label: '硬盘'
-        }, {
-          value: '网络',
-          label: '网络'
-        }, ],
-        touchOptions2: [{
-          value: 'CPU使用量',
-          label: 'CPU使用量'
-        }, {
-          value: 'CPU利用率（占节点）',
-          label: 'CPU利用率（占节点）'
-        }, {
-          value: 'CPU利用率（占Request）',
-          label: 'CPU利用率（占Request）'
-        }, {
-          value: 'CPU利用率（占Limit）',
-          label: 'CPU利用率（占Limit）'
-        }, ],
-        setConfigMapData: {
-          select: "",
-          checked: ""
+        }], // 实例数量-》自动调节-》触发策略
+        caseScope1: '', // 实例数量-》自动调节-》实例范围
+        caseScope2: '',
+        imagePullSecrets: {
+          option1: [],
+          value1: '',
+          option2: [],
+          value2: ''
         },
-        setSecretData: {
-          select: "",
-          checked: ""
-        },
-        containerCheck: {
-          type: 'TCP端口检查',
-          http: {
-            type: 'HTTP'
-          }
-        },
-        dataFlag: false,
-        yesOrnoAddDataJuan: false,
-        input: "",
-        setIndex: "",
-        searchOptions: [{
-            value: "useMenu",
-            label: "使用临时目录"
-          },
-          {
-            value: "usePath",
-            label: "使用主机路径"
-          },
-          {
-            value: "useNFS",
-            label: "使用NFS盘"
-          },
-          {
-            value: "usePVC",
-            label: "使用已有PVC"
-          },
-          {
-            value: "useYun",
-            label: "使用腾讯云硬盘"
-          },
-          {
-            value: "useConfig",
-            label: "使用ConfigMap"
-          },
-          {
-            value: "useSecret",
-            label: "使用Secret"
-          }
-        ],
-        containerTypeOptions: [{
-            value: 'TCP端口检查',
-            key: 'TCP端口检查'
-          },
-          {
-            value: 'HTTP请求检查',
-            key: 'HTTP请求检查'
-          },
-          {
-            value: '执行命令检查',
-            key: '执行命令检查'
-          },
-        ],
-        //条件
-        conditionOptions: [{
-            value: 'In',
-            label: 'In'
-          },
-          {
-            value: 'NotIn',
-            label: 'NotIn'
-          },
-          {
-            value: 'Exists',
-            label: 'Exists'
-          },
-          {
-            value: 'DoesNotExist',
-            label: 'DoesNotExist'
-          },
-          {
-            value: 'Gt',
-            label: 'Gt'
-          },
-          {
-            value: 'Lt',
-            label: 'Lt'
-          },
-        ],
-        mustCondition: [], //强制满足条件
-        needCondition: [], //尽量满足条件
-        condition: [{
-          name: '',
-          rule: '',
-          connect: 'In'
-        }, ],
-        value: "",
-        usePvcOptions: [],
-        checkTypeOptions: [],
-        tableData: [],
-        //分页
-        TotalCount: 0,
-        pagesize: 10,
-        currpage: 1,
-
-        searchYun: "",
-
-        dialogVisiblePath: false,
-        dialogVisibleYun: false,
-        dialogVisibleConfig: false,
-        dialogVisibleSecret: false,
-       
-        surviveExamine: false, //存活检查
-        readyToCheck: false, //就绪检查
-        highLevelSetShow: false,
-        highLevelSetShow2: false,
-        SelectMirrorImgFlag:false,
-        rules:{
-          name: [
-            {validator: validateName, trigger: "blur", required: true}
-          ],
-          labels: [
-            {validator: validateLabel, trigger: "blur", required: true}
-          ]
+        updateWay: '滚动更新（推荐）',
+        updateTactics: 1, // 更新策略 单选
+        updateInterval: '', // 更新间隔
+        configTacticsPods: '', // 配置策略-》pods
+        configTacticsMaxSurge: '', // 配置策略-》MaxSurge
+        configTacticsMaxUnavailable: '', // 配置策略-》MaxUnavailable
+        mustCondition: [], // 强制满足条件
+        needCondition: [], // 尽量满足条件
+        nodeTactics: 1, // 节点调度 单选
+        specifyNodeDispatchValue: [], // 指点节点调度 选中项
+        serviceEnbel: true, // 是否启用service
+        serviceAccess: '1', // 服务访问方式 单选
+        handlessChecked: false, // 仅在集群内访问 多选按钮
+        subnetOneValue: '', // LB所在子网 value1
+        subnetTwoValue: '', // LB所在子网 value2
+        loadBalance: '1', // 负载均衡器 1.自动创建 2.使用已有
+        portMapping: [], // 端口映射 数组
+        isShowAdvancedSet: false, // 访问设置 显示隐藏高级设置
+        describeLoadBalancersValue: '暂无数据', // 负载均衡值
+        ETP: '1', // 访问设置-》高级设置-》ExternalTrafficPolicy
+        SA: '2', // 访问设置-》高级设置-》Session Affinity
+        maxSessionTime: 30, // 最大会话保持时间
+        pointList: [],
+        mountPath: '',
+        subPath: '',
+        pointName: ''
+      },
+      // 暂时用不着
+      // svc: {
+      //   show: true,
+      //   time: 30,
+      //   checked: false,
+      //   name: '',
+      //   value: 'default',
+      //   options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
+      //   radio: '1',
+      //   ETP: '1',
+      //   SA: '2',
+      //   input: '',
+      //   list: [{}],
+      //   workload: [],
+      //   tabPosition: 'dep'
+      // },
+      // 实例数量自动调节下拉框内容, // 触发策略
+      touchOptions1: [{
+        value: 'CPU',
+        label: 'CPU'
+      }, {
+        value: '内存',
+        label: '内存'
+      }, {
+        value: '硬盘',
+        label: '硬盘'
+      }, {
+        value: '网络',
+        label: '网络'
+      }],
+      touchOptions2: [{
+        value: 'CPU使用量',
+        label: 'CPU使用量'
+      }, {
+        value: 'CPU利用率（占节点）',
+        label: 'CPU利用率（占节点）'
+      }, {
+        value: 'CPU利用率（占Request）',
+        label: 'CPU利用率（占Request）'
+      }, {
+        value: 'CPU利用率（占Limit）',
+        label: 'CPU利用率（占Limit）'
+      }],
+      setConfigMapData: {
+        select: '',
+        checked: ''
+      },
+      setSecretData: {
+        select: '',
+        checked: ''
+      },
+      containerCheck: {
+        type: 'TCP端口检查',
+        http: {
+          type: 'HTTP'
         }
-      };
-    },
-    components: {Service, SelectMirrorImg},
-    watch: {
-     
-      wl:{
-        handler(val){
-          //监听标签
-          val.labels.forEach(v=>{
-            if(v.value==''){
-              this.addVarFlag=true
-            }else{
-               this.addVarFlag=false
-            }
-          });
-          //监听数据卷
-          val.dataJuan.forEach(item => {
-            if (item.name1 == "useMenu" && item.name2) {
-              this.yesOrnoAddDataJuan = false;
-            } else if (item.name1 && item.name2 && item.name3) {
-              this.yesOrnoAddDataJuan = false;
-            } else {
-              this.yesOrnoAddDataJuan = true;
-            }
-          });
-          if (val.dataJuan.length == 0) {
-            this.yesOrnoAddDataJuan = false;
+      },
+      dataFlag: false,
+      yesOrnoAddDataJuan: false,
+      input: '',
+      setIndex: '',
+      searchOptions: [{
+        value: 'useMenu',
+        label: '使用临时目录'
+      }, {
+        value: 'usePath',
+        label: '使用主机路径'
+      }, {
+        value: 'useNFS',
+        label: '使用NFS盘'
+      }, {
+        value: 'usePVC',
+        label: '使用已有PVC'
+      }, {
+        value: 'useYun',
+        label: '使用腾讯云硬盘'
+      }, {
+        value: 'useConfig',
+        label: '使用ConfigMap'
+      }, {
+        value: 'useSecret',
+        label: '使用Secret'
+      }],
+      containerTypeOptions: [{
+        value: 'TCP端口检查',
+        key: 'TCP端口检查'
+      }, {
+        value: 'HTTP请求检查',
+        key: 'HTTP请求检查'
+      }, {
+        value: '执行命令检查',
+        key: '执行命令检查'
+      }],
+      // 条件
+      conditionOptions: [{
+        value: 'In',
+        label: 'In'
+      }, {
+        value: 'NotIn',
+        label: 'NotIn'
+      }, {
+        value: 'Exists',
+        label: 'Exists'
+      }, {
+        value: 'DoesNotExist',
+        label: 'DoesNotExist'
+      }, {
+        value: 'Gt',
+        label: 'Gt'
+      }, {
+        value: 'Lt',
+        label: 'Lt'
+      }],
+      condition: [{
+        name: '',
+        rule: '',
+        connect: 'In'
+      }],
+      value: '',
+      usePvcOptions: [],
+      checkTypeOptions: [],
+      tableData: [],
+      // 分页
+      TotalCount: 0,
+      pagesize: 10,
+      currpage: 1,
+      searchYun: '',
+      dialogVisiblePath: false,
+      dialogVisibleYun: false,
+      dialogVisibleConfig: false,
+      dialogVisibleSecret: false,
+      highLevelSetShow: false,
+      highLevelSetShow2: false, // 是否显示高级设置
+      SelectMirrorImgFlag: false,
+      rules: {
+        name: [
+          { validator: validateName, trigger: 'blur', required: true }
+        ],
+        labels: [
+          { validator: validateLabel, trigger: 'blur', required: true }
+        ]
+      }
+    }
+  },
+  components: { Service, SelectMirrorImg },
+  watch: {
+    wl: {
+      handler (val) {
+        // 监听数据卷
+        val.dataJuan.forEach(item => {
+          if (item.name1 === 'useMenu' && item.name2) {
+            this.yesOrnoAddDataJuan = false
+          } else if (item.name1 && item.name2 && item.name3) {
+            this.yesOrnoAddDataJuan = false
+          } else {
+            this.yesOrnoAddDataJuan = true
           }
-        },
-        deep:true,
+        })
+        if (val.dataJuan.length === 0) {
+          this.yesOrnoAddDataJuan = false
+        }
+      },
+      deep: true
+    },
+    // 监听标签
+    'wl.labels': {
+      handler: function (val) {
+        for (let i = 0; i < val.length; i++) {
+          if (val[i].value === '' || val[i].value === '') {
+            this.addLabelFlag = false
+            return
+          } else {
+            this.addLabelFlag = true
+          }
+        }
+      },
+      deep: true
+    },
+    'wl.subnetTwoValue': {
+      handler: function (val) {
+        this.subnetOrder = this.subnetTwoOption.find(item => {
+          return item.SubnetName === val
+        })
       }
     },
-    created() {
-      // 从路由获取类型
-      this.wl.type = this.$route.query.type;
-      this.nameSpaceList = this.$route.query.nameSpaceList;
-      this.clusterId = this.$route.query.clusterId;
-      this.wl.nameSpace = this.$route.query.spaceName;
-      console.log(this.labels,"nameSpaceList");
-    },
-    methods: {
-      //返回上一层
-      goBack() {
-        this.$router.go(-1);
-      },
-      addDataJuan() { //新增数据卷
-        this.dataFlag = true;
-        var obj = {
-          name1: "",
-          name2: "",
-          name3: ""
-        };
-        this.wl.dataJuan.push(obj);
-      },
-      delDataJuan(index) {//删除数据卷
-        this.wl.dataJuan.splice(index, 1);
-      },
-      newAddTarget() { //新增指标
-        var obj = {
-          touch1: 'CPU',
-          touch2: 'CPU使用量',
-          size: ''
-        }
-        this.touchTactics.push(obj)
-      },
-      delTarget(index) {
-        this.touchTactics.splice(index, 1)
-      },
-
-       addEnvironmentVar(){
-         this.wl.container.environmentVar.push({key:'',value:''})
-       } ,
-      //  delEnvironmentVar(index){
-      //      this.wl.caseContent.environmentVar.splice()
-      //  },
-
-
-       //节点调度策略
-      addRule1(index) {//添加规则1
-        this.mustCondition[index].push({
-          name: '',
-          rule: '',
-          connect: 'In'
-        })
-      },
-      addRule2(index) {//添加规则2
-        this.needCondition[index].arr.push({
-          name: '',
-          rule: '',
-          connect: 'In'
-        })
-      },
-      //节点调度策略
-      addCondition() {// 添加强制满足条件
-        var arr = [{
-          name: '',
-          connect: 'In',
-          rule: ''
-        }];
-        this.mustCondition.push(arr)
-      },
-      addCondition2() {// 添加尽可能满足条件
-        var obj = {
-          weight:'',
-          arr:[{
-            name: '',
-            connect: 'In',
-            rule: ''
-          }]
-        };
-        this.needCondition.push(obj)
-      },
-      //节点调度策略
-      delMustCondition(index) {// 删除强制满足条件
-        this.mustCondition.splice(index, 1)
-      },
-      delNeedCondition(index) {//删除尽可能满足条件
-        this.needCondition.splice(index, 1)
-      },
-      //选择云硬盘
-      selectYun() {
-        this.dialogVisibleYun = true;
-      },
-      selectConfig() {
-        this.dialogVisibleConfig = true;
-      },
-      selectSecret() {
-        this.dialogVisibleSecret = true;
-      },
-      handleSizeChange(val) {
-        console.log(`每頁 ${val} 條`);
-      },
-      // 改变页数
-      handleCurrentChange(val) {
-        this.currpage = val;
-      },
-      close(val){
-        this.SelectMirrorImgFlag=val;
-        console.log(val)
-      },
-      //新增变量
-      addVar(){
-        this.wl.labels.push({key:'',value:''});
-        console.log(this.wl.labels);
-      },
-      //填写名称后将名称默认复制给标签第一条
-      addLabel(e){
-        let labels = this.wl.labels;
-        if(labels.length > 0) {
-          for(let i = 0; i < labels.length; i++) {
-            if(labels[i].key === 'k8s-app') {
-              labels[i].value = this.wl.name;
-              return;
-            }
+    'wl.instanceContent': {
+      handler: function (val) {
+        let isAddContainer = true
+        val.forEach(item => {
+          let completed = true
+          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent } = item
+          if (name === '' || mirrorImg === '') {
+            completed = false
           }
-        }
-      },
-      delAddVar(index){
-        this.wl.labels.splice(index,1)
-      },
-      //选择是否启用service
-      changEnbel() {
-        if(this.serviceEnbel) {
-          this.showServiceModal = true;
-        } else {
-          this.showServiceModal = false;
-        }
-      },
-      // 删除端口
-		removeprot(item){
-			var index = this.wl.list.indexOf(item)
-			if(index !== -1){
-				this.wl.list.splice(index,1)
-			}
-		},
-		// 新增端口
-		addport(){
-			this.wl.list.push({
-				value: '',
-				key: Date.now()
-			})
-    },
-    //是否显示高级设置
-    showAdvancedSet() {
-      this.wl.isShowAdvancedSet = !this.wl.isShowAdvancedSet;
-    },
-    //
-    changIsShowmount() {
-      this.showMountPoint = true;
-    },
-      //提交新增
-      async submit() {
-        this.loadShow = true;
-        let labels = 'qcloud-app:' + this.wl.labels[0].value + ",";
-        if(this.wl.labels.length > 0) {
-          for(var i = 0; i < this.wl.labels.length; i++) {
-            labels += this.wl.labels[i].key + ":" + this.wl.labels[i].value + ",";
-          }
-        }
-        labels = labels.substring(0,labels.length - 1);
-        let container = this.wl.container;
-        let containerObj = {};
-        let containerList = [];
-        if(container.length > 0) {
-          for(var i = 0; i < container.length; i++) {
-            containerObj = {
-              name: container[i].name,
-              image: container[i].mirrorImg + ":" + container[i].versions,//'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
-              imagePullPolicy: container[i].mirrorPullTactics,
-              volumeMounts:[],
-              resources: {
-                limits: 
-                {cpu: container[i].limitCpu, 
-                  memory: container[i].limitMemory + "Mi",
-                  'nvidia.com/gpu': container[i].gpuNum
-                },
-                requests: 
-                {
-                  cpu: container[i].requestCpu,
-                  memory: container[i].requestMemory+'Mi'
-                }
-              },
-              env:[{name:"resource-huanjing","value":"resourcehuajingvalue"},{"name":"resourcebieming",
-"valueFrom":{"secretKeyRef":{"key":".dockercfg","name":"qcloudregistrykey","optional":false}}}],
-              workingDir: "",
-              command:[],
-              args:[],
-              securityContext: {privileged:false}
-            }
-            containerList.push(containerObj);
-          }
-        }
-        console.log("labels",labels);
-        console.log("containerList",containerList);
-        let requestBody = {
-          kind: "Deployment",
-          apiVersion: "apps/v1beta2",
-          metadata:{
-            name: this.wl.name,
-            namespace: this.spaceName,
-            labels:{labels},
-            annotations: {description: this.wl.desc}
-          },
-          spec: {
-            replicas: this.wl.replicas,
-            template:{
-              metadata: {
-                labels: {labels},
-                spec: {
-                  volumes: [],
-                  containers: containerList,
-                  restartPolicy: this.wl.mirrorPullTactics,
-                  imagePullSecrets: [{name: 'qcloudregistrykey'},{name:'tencenthubkey'}]
-                }
-              },
-              selector: {matchLabels: {labels}},
-              minReadySeconds: 0,
-              strategy: {
-                type: "RollingUpdate",
-                rollingUpdate: {maxSurge:1,maxUnavailable:0}
+          if (environmentVar.length > 0) { // 新增变量
+            for (let i = 0; i < environmentVar.length; i++) {
+              if (environmentVar[i].key === '') {
+                completed = false
               }
             }
           }
-        }
-        let requestBody1 = {
-          kind: "Service",
-          apiVersion: "v1",
-          metadata:{
-            name: this.wl.name,
-            namespace: this.spaceName
-            ,annotations: {"service.kubernetes.io/service.extensiveParameters": {AddressIPVersion:"IPV4"}}
-          },
-          spec:{
-            type: "LoadBalancer",
-            ports: [{name:this.wl.conPort+'-'+this.wl.servicePort+'-tcp',port:this.wl.conPort,targetPort:this.wl.servicePort,protocol:this.wl.portValue}],
-            selector:{labels},
-            externalTrafficPolicy:this.wl.ETP,
-            sessionAffinity: this.wl.SA,
-            sessionAffinityConfig:{}
+          if (citeCs.length > 0) { // 引用ConfigMap/Secret
+            for (let i = 0; i < citeCs.length; i++) {
+              let { value1, value2, value3, input1 } = citeCs[i]
+              if (value1 === '' || value2 === '' || value3 === '' || input1 === '') {
+                completed = false
+              }
+            }
           }
+          if (disAdvancedSetting) { // 高级设置为显示时
+            if (surviveExamine) { // 存活检查
+              let { inspectMethodOption, executiveOrder, responseTimeout, intervalTime, unhealthyThreshold, inspectPort } = surviveExamineContent
+              if (inspectMethodOption === '执行命令检查') {
+                if (executiveOrder === '' || responseTimeout === '' || intervalTime === '' || unhealthyThreshold === '') {
+                  completed = false
+                }
+              } else {
+                if (inspectPort === '') {
+                  completed = false
+                }
+              }
+            }
+            if (readyToCheck) { // 就绪检查
+              let { inspectMethodOption, executiveOrder, responseTimeout, intervalTime, healthyThreshold, unhealthyThreshold, inspectPort } = readyToCheck
+              if (inspectMethodOption === '执行命令检查') {
+                if (executiveOrder === '' || responseTimeout === '' || intervalTime === '' || healthyThreshold === '' || unhealthyThreshold === '') {
+                  completed = false
+                }
+              } else {
+                if (inspectPort === '') {
+                  completed = false
+                }
+              }
+            }
+          }
+          if (!completed) {
+            isAddContainer = false
+          }
+          item.completed = completed
+        })
+        console.log(this.isAddContainer)
+        this.isAddContainer = isAddContainer
+      },
+      deep: true
+    }
+  },
+  created () {
+    // 从路由获取类型
+    let { type, clusterId, spaceName } = this.$route.query
+    console.log(this.$route.query)
+    this.wl.type = type
+    this.clusterId = clusterId
+    this.wl.namespace = spaceName
+    this.initNetworkRequery()
+    this.addProtMapping()
+    this.addInstanceContent()
+  },
+  methods: {
+    initNetworkRequery: async function () {
+      this.getZoneCvmList()
+      await this.getColonyList()
+      await this.getDescribeVpcs()
+      await this.getDescribeSubnets()
+      this.getStorageClasses()
+      this.getConfigmaps()
+      this.getSecrets()
+      this.getPersistentvolumeclaims()
+      await this.getDescribeClusterInstances()
+      await this.getDescribeInstances()
+      this.getDescribeLoadBalancers()
+      await this.getTkeDataJob()
+      await this.getTkeDataResult()
+      this.getNodes()
+      this.getDescribeDisks()
+      this.getNameSpaceInfo()
+    },
+    getZoneCvmList: async function () {
+      await this.axios.post(ZONE_CVM2_LIST, { Version: '2017-03-12' }).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('cvm2/DescribeZones', JSON.stringify(res))
+        })
+      })
+    },
+    // 获取集群列表
+    getColonyList: async function () {
+      let param = {
+        'ClusterIds.0': this.clusterId,
+        Version: '2018-05-25'
+      }
+      await this.axios.post(TKE_COLONY_LIST, param).then(res => {
+        this.axiosUtils(res, () => {
+          this.vpcId = res.Response.Clusters[0].ClusterNetworkSettings.VpcId
+        })
+      })
+    },
+    getStorageClasses: async function () {
+      let param = {
+        Method: 'GET',
+        Path: '/apis/storage.k8s.io/v1/storageclasses',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          console.log('getStorageClasses', JSON.parse(ResponseBody))
+        })
+      })
+    },
+    getConfigmaps: async function () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.wl.namespace}/configmaps`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          console.log(`/api/v1/namespaces/${this.wl.namespace}/configmaps`, JSON.parse(ResponseBody))
+        })
+      })
+    },
+    getSecrets: async function () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.wl.namespace}/secrets`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          console.log(`/api/v1/namespaces/${this.wl.namespace}/secrets`, JSON.parse(ResponseBody))
+        })
+      })
+    },
+    getPersistentvolumeclaims: async function () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.wl.namespace}/persistentvolumeclaims`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          console.log(`/api/v1/namespaces/${this.wl.namespace}/persistentvolumeclaims`, JSON.parse(ResponseBody))
+        })
+      })
+    },
+    getDescribeClusterInstances: async function () {
+      let param = {
+        ClusterId: this.clusterId,
+        Offset: 0,
+        Limit: 20,
+        Version: '2018-05-25',
+        InstanceRole: 'WORKER'
+      }
+      await this.axios.post(TKE_DELETE_XS, param).then(res => {
+        this.axiosUtils(res, () => {
+          this.describeClustersInstances = res.Response.InstanceSet
+        })
+      })
+    },
+    // 获取负载均衡器
+    getDescribeLoadBalancers: async function () {
+      let param = {
+        Version: '2018-03-17',
+        Forward: 1,
+        Offset: 0,
+        Limit: 100
+      }
+      await this.axios.post(TKE_EDSCRIBELOADBALANCERS, param).then(res => {
+        this.axiosUtils(res, () => {
+          let { Response: { LoadBalancerSet } } = res
+          LoadBalancerSet.forEach((item, index) => {
+            let { LoadBalancerId, LoadBalancerName, LoadBalancerType } = item
+            if (index === 0) this.wl.describeLoadBalancersValue = LoadBalancerId
+            this.describeLoadBalancersOption.push({ LoadBalancerId, LoadBalancerName, LoadBalancerType })
+          })
+        })
+      })
+    },
+    getDescribeInstances: async function () {
+      let param = {
+        Version: '2017-03-12',
+        Limit: 20
+      }
+      this.describeClustersInstances.forEach((item, index) => {
+        param[`InstanceIds.${index}`] = item.InstanceId
+      })
+      await this.axios.post(TKE_EXIST_NODES, param).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('cvm2/DescribeInstances', res)
+        })
+      })
+    },
+    getTkeDataJob: async function () {
+      let param = {
+        'Conditions.0': JSON.stringify(['tke_cluster_instance_id', '=', this.clusterId]),
+        'Conditions.1': JSON.stringify(['node_role', '=', 'Node']),
+        EndTime: new Date().getTime(),
+        'Fields.0': 'avg(k8s_node_cpu_core_request_total)',
+        'Fields.1': 'avg(k8s_node_memory_request_bytes_total)',
+        'GroupBys.0': 'timestamp(60s)',
+        'GroupBys.1': 'unInstanceId',
+        Limit: 65535,
+        Module: '/front/v1',
+        NamespaceName: 'k8s_node',
+        Offset: 0,
+        Order: 'desc',
+        OrderBy: 'timestamp',
+        StartTime: new Date().getTime(),
+        Version: '2019-06-06'
+      }
+      await this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+        this.axiosUtils(res, () => {
+          this.jobId = res.Response.JobId
+        })
+      })
+    },
+    getNodes: async function () {
+      let param = {
+        Method: 'GET',
+        Path: '/api/v1/nodes',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          console.log('/api/v1/nodes', JSON.parse(ResponseBody))
+        })
+      })
+    },
+    getDescribeDisks: async function () {
+      let param = {
+        'Version': '2017-03-12',
+        'Offset': 0,
+        'Limit': 20,
+        // 'Filters': [
+        //   { 'Name': 'disk-usage', 'Values': ['DATA_DISK'] },
+        //   { 'Name': 'portable', 'Values': ['TRUE'] },
+        //   { 'Name': 'disk-state', 'Values': ['UNATTACHED'] },
+        //   { 'Name': 'zone', 'Values': ['ap-taipei-1'] }
+        // ],
+        'Filters.0.Name': 'disk-usage',
+        'Filters.0.Values.0': 'DATA_DISK',
+        'Filters.1.Name': 'portable',
+        'Filters.1.Values.0': 'TRUE',
+        'Filters.2.Name': 'disk-state',
+        'Filters.2.Values.0': 'UNATTACHED',
+        'Filters.3.Name': 'zone',
+        'Filters.3.Values.0': 'ap-taipei-1'
+      }
+      await this.axios.post(DISK_LIST, param).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('cbs2/DescribeDisks', res)
+        })
+      })
+    },
+    getDescribeVpcs: async function () {
+      let param = {
+        Version: '2017-03-12',
+        'VpcIds.0': this.vpcId,
+        Offset: 0,
+        Limit: 100
+      }
+      await this.axios.post(TKE_VPC_METWORK, param).then(res => {
+        this.axiosUtils(res, () => {
+          let { Response: { VpcSet } } = res
+          VpcSet.forEach((item, index) => {
+            if (index === 0) {
+              this.wl.subnetOneValue = item.VpcName
+            }
+            this.subnetOneOption.push(item.VpcName)
+          })
+        })
+      })
+    },
+    getTkeDataResult: async function () {
+      let param = {
+        JobId: this.jobId,
+        Version: '2019-06-06',
+        Module: '/front/v1'
+      }
+      await this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('tsm2/GetTkeDataResult', res)
+        })
+      })
+    },
+    // 获取子网列表
+    getDescribeSubnets: async function () {
+      let param = {
+        Version: '2017-03-12',
+        'Filters.0.Name': 'vpc-id',
+        'Filters.0.Values.0': this.vpcId,
+        Offset: 0,
+        Limit: 100
+      }
+      await this.axios.post(TKE_WORKER_METWORK, param).then(res => {
+        this.axiosUtils(res, () => {
+          let { Response: { SubnetSet } } = res
+          this.subnetTwoOption = []
+          SubnetSet.forEach((item, index) => {
+            let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
+            if (index === 0) {
+              this.wl.subnetTwoValue = SubnetName
+              this.subnetOrder = { TotalIpAddressCount, AvailableIpAddressCount }
+            }
+            this.subnetTwoOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+          })
+        })
+      })
+    },
+    // 获取命名空间列表
+    getNameSpaceInfo: async function () {
+      let param = {
+        Method: 'GET',
+        Path: '/api/v1/namespaces',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let searchOpt = JSON.parse(res.Response.ResponseBody).items
+          searchOpt.forEach((item, index) => {
+            if (index === 0) {
+              this.wl.namespace = item.metadata.name
+            }
+            item.value = item.metadata.name
+            item.label = item.metadata.name
+          })
+          this.namespaceOptions = searchOpt
+        })
+      })
+    },
+    addDataJuan () { // 新增数据卷
+      this.dataFlag = true
+      var obj = {
+        name1: '',
+        name2: '',
+        name3: ''
+      }
+      this.wl.dataJuan.push(obj)
+    },
+    delDataJuan (index) { // 删除数据卷
+      this.wl.dataJuan.splice(index, 1)
+    },
+    // 选择云硬盘
+    selectYun () {
+      this.dialogVisibleYun = true
+    },
+    selectConfig () {
+      this.dialogVisibleConfig = true
+    },
+    selectSecret () {
+      this.dialogVisibleSecret = true
+    },
+    handleSizeChange (val) {
+      console.log(`每頁 ${val} 條`)
+    },
+    // 改变页数
+    handleCurrentChange (val) {
+      this.currpage = val
+    },
+    changIsShowmount () {
+      this.showMountPoint = true
+    },
+    // 点击确定绑定镜像
+    confirmMirrorImg: function (val, index) {
+      console.log(val, index)
+      this.wl.instanceContent[index].mirrorImg = val
+    },
+    // 提交新增
+    async submit () {
+      this.loadShow = true
+      let labels = 'qcloud-app:' + this.wl.labels[0].value + ','
+      if (this.wl.labels.length > 0) {
+        for (let i = 0; i < this.wl.labels.length; i++) {
+          labels += this.wl.labels[i].key + ':' + this.wl.labels[i].value + ','
         }
-        if(this.wl.SA === 'ClientIP') {
-          requestBody1.spec.sessionAffinityConfig = {
-            clientIP: {
-              timeoutSeconds: this.wl.time
+      }
+      labels = labels.substring(0, labels.length - 1)
+      let container = this.wl.instanceContent
+      let containerObj = {}
+      let containerList = []
+      if (container.length > 0) {
+        for (let i = 0; i < container.length; i++) {
+          containerObj = {
+            name: container[i].name,
+            image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
+            imagePullPolicy: container[i].mirrorPullTactics,
+            volumeMounts: [],
+            resources: {
+              limits:
+                {
+                  cpu: container[i].limitCpu,
+                  memory: container[i].limitMemory + 'Mi',
+                  'nvidia.com/gpu': container[i].gpuNum
+                },
+              requests:
+                {
+                  cpu: container[i].requestCpu,
+                  memory: container[i].requestMemory + 'Mi'
+                }
+            },
+            env: [{ name: 'resource-huanjing', 'value': 'resourcehuajingvalue' }, {
+              'name': 'resourcebieming',
+              'valueFrom': { 'secretKeyRef': { 'key': '.dockercfg', 'name': 'qcloudregistrykey', 'optional': false } }
+            }],
+            workingDir: '',
+            command: [],
+            args: [],
+            securityContext: { privileged: false }
+          }
+          containerList.push(containerObj)
+        }
+      }
+      console.log('labels', labels)
+      console.log('containerList', containerList)
+      let requestBody = {
+        kind: 'Deployment',
+        apiVersion: 'apps/v1beta2',
+        metadata: {
+          name: this.wl.name,
+          namespace: this.spaceName,
+          labels: { labels },
+          annotations: { description: this.wl.description }
+        },
+        spec: {
+          replicas: this.wl.replicas,
+          template: {
+            metadata: {
+              labels: { labels },
+              spec: {
+                volumes: [],
+                containers: containerList,
+                restartPolicy: this.wl.mirrorPullTactics,
+                imagePullSecrets: [{ name: 'qcloudregistrykey' }, { name: 'tencenthubkey' }]
+              }
+            },
+            selector: { matchLabels: { labels } },
+            minReadySeconds: 0,
+            strategy: {
+              type: 'RollingUpdate',
+              rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
             }
           }
         }
-        console.log("requestBody1",requestBody1);
-        let params = {
-          Method: "POST",
-          Path: "/apis/platform.tke/v1/clusters/"+this.clusterId+"/apply?notUpdate=true",
-          Version: "2018-05-25",
-          RequestBody: JSON.stringify(requestBody1)+JSON.stringify(requestBody),
-          ClusterName: this.clusterId
-        }
-
-        await this.axios.post(POINT_REQUEST, params).then(res => {
-          if(res.Response.Error === undefined) {
-            this.loadShow = false;
-            this.goBack();
-          } else {
-            this.loadShow = false;
-            let ErrTips = {
-              
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
       }
+      let requestBody1 = {
+        kind: 'Service',
+        apiVersion: 'v1',
+        metadata: {
+          name: this.wl.name,
+          namespace: this.spaceName,
+          annotations: { 'service.kubernetes.io/service.extensiveParameters': { AddressIPVersion: 'IPV4' } }
+        },
+        spec: {
+          type: 'LoadBalancer',
+          ports: [{
+            name: this.wl.conPort + '-' + this.wl.servicePort + '-tcp',
+            port: this.wl.conPort,
+            targetPort: this.wl.servicePort,
+            protocol: this.wl.portValue
+          }],
+          selector: { labels },
+          externalTrafficPolicy: this.wl.ETP,
+          sessionAffinity: this.wl.SA,
+          sessionAffinityConfig: {}
+        }
+      }
+      if (this.wl.SA === 'ClientIP') {
+        requestBody1.spec.sessionAffinityConfig = {
+          clientIP: {
+            timeoutSeconds: this.wl.time
+          }
+        }
+      }
+      console.log('requestBody1', requestBody1)
+      let params = {
+        Method: 'POST',
+        Path: '/apis/platform.tke/v1/clusters/' + this.clusterId + '/apply?notUpdate=true',
+        Version: '2018-05-25',
+        RequestBody: JSON.stringify(requestBody1) + JSON.stringify(requestBody),
+        ClusterName: this.clusterId
+      }
+
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false
+          this.$route.back()
+        } else {
+          this.loadShow = false
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
     }
-  };
+  }
+}
 
 </script>
 
@@ -1478,15 +1868,17 @@
       display: block;
     }
 
-    .el-radio+.el-radio {
+    .el-radio + .el-radio {
       margin-left: 0;
       margin-top: 10px;
 
     }
   }
-a{
-  cursor: pointer;
-}
+
+  a {
+    cursor: pointer;
+  }
+
   .w192 {
     width: 192px;
   }
@@ -1494,6 +1886,7 @@ a{
   .w100 {
     width: 100px;
   }
+
   .w150 {
     width: 150px;
   }
@@ -1501,10 +1894,12 @@ a{
   .margin-middle {
     margin: 0px 10px;
   }
-.special{
-  border-bottom: solid 1px #f2f2f2;
+
+  .special {
+    border-bottom: solid 1px #f2f2f2;
     padding: 0px 0px 26px;
-}
+  }
+
   .search-one {
     display: flex;
     align-items: center;
@@ -1556,17 +1951,11 @@ a{
   .w400 {
     width: 400px;
   }
-  .disable{
-    cursor: not-allowed;
-  }
-  .use{
-    color: #409EFF;
-    cursor: pointer;
-  }
+
   .w150 {
     width: 150px;
   }
-  
+
   .pagstyle {
     display: flex;
     justify-content: space-between;
@@ -1589,18 +1978,13 @@ a{
     background: #f2f2f2;
     overflow: hidden;
     box-sizing: border-box;
-    padding: 20px 20px 0px;
-
-    &>>>.el-form-item:nth-of-type(1) {
-      margin-top: 30px;
-    }
-
+    padding: 20px;
   }
 
   .cpu-limit {
     display: flex;
 
-    &>div:nth-of-type(1) {
+    & > div:nth-of-type(1) {
       margin-right: 60px;
 
     }
@@ -1636,6 +2020,7 @@ a{
     left: -38px;
     top: 8px;
   }
+
   .setPosition4 {
     position: absolute;
     left: -78px;
@@ -1654,7 +2039,7 @@ a{
     box-sizing: border-box;
     padding: 10px;
 
-    &>>>.el-form-item:nth-of-type(1) {
+    & > > > .el-form-item:nth-of-type(1) {
       margin-top: 0px !important;
     }
 
@@ -1714,15 +2099,14 @@ a{
     margin-bottom: 10px;
   }
 
-  .card {
-    padding: 10px;border-bottom:1px solid #dcdfe6;
-  }
   .text-error {
     color: #e54545;
   }
+
   .text-warning {
-  color: #ff9d00
+    color: #ff9d00
   }
+
   .ms {
     width: 330px;
     padding: 5px 8px 8px 5px;
@@ -1731,8 +2115,17 @@ a{
     border: 1px solid #dcdfe6;
     resize: none;
   }
+
   .w250 {
-    width:250px;
+    width: 250px;
+  }
+
+  .port{
+    border: 1px solid #ddd;
+    color: #888888;
+    .flex {
+      line-height: 28px;
+    }
   }
 
 </style>

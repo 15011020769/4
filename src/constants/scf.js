@@ -43,11 +43,12 @@ export const UPD_FUN_CODE = 'scf2/UpdateFunctionCode' //更新函数代码
 export const INVOKE = 'scf2/Invoke' //运行函数
 
 export const CREAT_TRIGGER = 'scf2/CreateTrigger' //设置函数触发方式
-export const UPDATE_TRIGGER='scf2/UpdateTriggerStatus'//更新触发器状态
+export const UPDATE_TRIGGER = 'scf2/UpdateTriggerStatus'//更新触发器状态
 
 
 export const TEMPLATE_LIST = 'scf2/ListDemo' //函数模板列表
 export const TEMPLATE_DETAIL = 'scf2/GetDemoDetail' //函数模板列表
 
-
+export const CLONE_SCF = 'scf2/GetFunctionAddress' //下载
 export const SUBNET_LIST = 'vpc2/DescribeSubnets' //子网列表
+export const TEST_MODEL = 'scf2/CreateFunctionTestModel' //新建测试模板

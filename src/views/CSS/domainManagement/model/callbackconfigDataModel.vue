@@ -2,11 +2,11 @@
   <div>
     <div>
       <el-dialog
-        title="回调配置"
+        title="回調配置"
         :visible.sync="isShow"
         :before-close="handleClose">
         <div class="newClear">
-          <p class="tip">模板选择（如需添加新模板，请前往<a>【 功能模板】<i class="el-icon-share"></i></a>中进行设置）</p>
+          <p class="tip">範本選擇（如需添加新的範本，請前往<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
           <div class="tableCon">
             <el-table
               :data="callbackconfigData"
@@ -17,15 +17,15 @@
                 type="selection"
                 width="55">
               </el-table-column>
-              <el-table-column prop="TemplateName" label="模板名称"></el-table-column>
-              <el-table-column prop="TemplateId" label="模板ID"></el-table-column>
-              <el-table-column prop="StreamBeginNotifyUrl" label="回调地址"></el-table-column>
+              <el-table-column prop="TemplateName" label="範本名稱"></el-table-column>
+              <el-table-column prop="TemplateId" label="範本ID"></el-table-column>
+              <el-table-column prop="StreamBeginNotifyUrl" label="回調地址"></el-table-column>
             </el-table>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="saveCallEdit">保存</el-button>
-          <el-button @click="handleClose">取 消</el-button>
+          <el-button @click="handleClose">取消</el-button>
         </span>
       </el-dialog>
     </div>
@@ -87,13 +87,13 @@ export default {
     saveCallEdit(){
       this.axios.post(LIVE_DELETELIVECALLBACKRULE, {
         Version: '2018-08-01',
-        DomainName: this.$route.params.domain,
+        DomainName: this.$route.query.Name,
         AppName: ''
       }).then(res => {
         if (this.selection.length > 0) {
           this.axios.post(BACKRULE_DELTILS, {
             Version: '2018-08-01',
-            DomainName: this.$route.params.domain,
+            DomainName: this.$route.query.Name,
             AppName: '',
             TemplateId: this.selection[0].TemplateId
           }).then(() => {

@@ -6,14 +6,14 @@
             v-loading="loadShow">
             <el-table-column
                 prop="release"
-                label="应用名">
+                :label="$t('TKE.overview.yym')">
                  <template slot-scope="scope">
                     {{scope.row.release.name}}
                 </template>
             </el-table-column>
             <el-table-column
                 prop="release"
-                label="部署详情">
+                :label="$t('TKE.overview.bsxq')">
                 <template slot-scope="scope">
                     {{scope.row.release.chart.metadata.name}}@{{scope.row.release.chart.metadata.version}}
                 </template>
@@ -27,21 +27,21 @@
             </el-table-column> 
             <el-table-column
              prop="release"
-                label="状态">
+                :label="$t('TKE.overview.zt')">
                 <template slot-scope="scope">
                     {{scope.row.release.info.status.code|codes}}
                 </template>
             </el-table-column>
             <el-table-column
                 prop="release"
-                label="版本号">
+                :label="$t('TKE.overview.bbh')">
                 <template slot-scope="scope">
                     {{scope.row.release.version}}
                 </template>
             </el-table-column>
             <el-table-column
                 prop="release"
-                label="部署时间">
+                :label="$t('TKE.overview.bssj')">
                  <template slot-scope="scope">
                     {{scope.row.release.info.first_deployed|creationTimestamps}}
                 </template>
@@ -100,15 +100,15 @@ import { POINT_REQUEST } from '@/constants'
             if(value == "DEPLOYED"){
                 return "正常"
             } else if (value == "DELETED"){
-                return "已删除"
+                return "已刪除"
             } else if (value == "DELETING"){
-                return "正在删除"
+                return "正在刪除"
             } else if (value == "SUPERSEDED"){
-                return "已废弃"
+                return "已廢棄"
             } else if (value == "FAILED"){
-                return "异常"
+                return "異常"
             } else if (value == "UNHEALTHY"){
-                return "异常"
+                return "異常"
             } else {
                 return "-"
             }

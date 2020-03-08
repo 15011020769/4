@@ -2,11 +2,11 @@
   <div v-loading="loadShow">
     <div class="topHead">
       <i class="el-icon-back" @click="returnBack"></i>
-      {{$route.params.domain}}
+      {{$route.query.TargetDomain}}
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
-        <el-tab-pane label="基本信息" name="first">
+        <el-tab-pane label="基本訊息" name="first">
           <div class="wrapper">
             <BasicInfo :info="info" />
           </div>
@@ -16,7 +16,7 @@
             <pushStreamSet />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="模板配置" name="third">
+        <el-tab-pane label="範本配置" name="third">
           <div class="wrapper">
             <templateconfig />
           </div>
@@ -57,7 +57,6 @@ export default {
       Version: "2018-08-01",
       DomainName: this.$route.query.Name
     };
-
     this.loading = true;
     this.axios.post(DOMAIN_DELTILS, params).then(res => {
       this.loading = false;

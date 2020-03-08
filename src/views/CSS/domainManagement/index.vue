@@ -90,14 +90,14 @@
                 <el-button
                   type="text"
                   size="small"
-                  @click="$router.push(`/detailPushStream/${scope.row.Name}`)"
+                  @click="toDetail(scope.row)"
                 >管理</el-button>
                 <el-button
                   v-if="scope.row.Status==0"
                   type="text"
                   size="small"
                   @click="startBtn(scope.$index, scope.row)"
-                >启用</el-button>
+                >啟用</el-button>
                 <el-button
                   v-if="scope.row.Status==1"
                   type="text"
@@ -300,7 +300,7 @@ export default {
       if (this.checkArr.length == 0) {
         this.$message({
           showClose: true,
-          message: "没有选择域名"
+          message: "没有選擇域名"
         });
         return false;
       } else {
@@ -322,12 +322,12 @@ export default {
     //跳转详情页
     toDetail(row) {
       console.log(row);
-      if (row.Type == "1") {
+      if (row.Type === 1) {
         this.$router.push({
           name: "deletaPlay",
           query: row
         });
-      } else if (row.Type == "0") {
+      } else if (row.Type === 0) {
         this.$router.push({
           name: "detailPushStream",
           query: row

@@ -493,7 +493,7 @@ module.exports = {
       hbmdsx: '黑白名單屬性',
       yys: '運營商',
       dq: '地區',
-      jd: '經度',
+      jingdu: '經度',
       wd: '維度',
       zl: '種類',
       sjxzs: '隨機性指數',
@@ -532,7 +532,8 @@ module.exports = {
       sllddsh: '數量量大的時候，導出可能比較慢，請耐心等待。',
       zddc: '最多導出10000條數據。',
       ksdc: '開始導出',
-      jd: '進度',
+      jdd: '進度',
+      wafyyjckhlj: 'WAF用於檢查客戶域名健康狀態的撥測服務，請勿設置為攔截。',
     },
     COM: require('@/components/language/ft'),
 }

@@ -1,7 +1,7 @@
  <!-- Master&Etcd列表 -->
 <template>
   <div >
-    <!-- <subTitle :title='name'></subTitle> -->
+    <subTitle :title='name'></subTitle>
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
       <!-- 左侧 -->
@@ -37,17 +37,17 @@
             label="状态"
             >
             <template slot-scope="scope">
-               <span v-if="scope.row.status===true" class="text-green"></span>
-               <span v-else class="text-red"></span>
+              <span :class="[
+                scope.row.status !== 'running' ? 'text-red' : 'text-green'
+                ]" >{{scope.row.status | changeStatus}}
+              </span>
             </template>
           </el-table-column>
           <el-table-column
             prop=""
             label="类型"
             >
-            <template slot-scope="scope">
-             <p>-</p>
-            </template>
+             <p>MASTER_ETCD</p>
           </el-table-column>
           
           <el-table-column
@@ -55,8 +55,8 @@
             label="可用区"
             >
             <template slot-scope="scope">
-              <el-tooltip effect="light" content="台北一区" placement="top">
-                <span></span>
+              <el-tooltip effect="light" :content="scope.row.Placement.Zone | zone" placement="top">
+                <span>{{scope.row.Placement.Zone | zone}}</span>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -64,7 +64,7 @@
             prop=""
             label="主机类型">
             <template slot-scope="scope">
-             <p>-</p>
+             <p>{{scope.row.InstanceType | instanceType}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -72,9 +72,8 @@
              width="200"
             label="配置">
             <template slot-scope="scope">
-              标准型{{scope.row.InstanceFamily}} <br />
-              {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , 1 Mbps<br />
-              系统盘: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB 高性能云硬盘<br />
+              {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , {{scope.row.InternetAccessible.InternetMaxBandwidthOut}} Mbps<br />
+              系统盘: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB {{scope.row.SystemDisk.DiskType | diskType}}<br />
             </template>
           </el-table-column>
           <el-table-column
@@ -98,7 +97,7 @@
             prop=""
             label="计费模式">
             <template slot-scope="scope">
-              <p></p>
+              <p>{{scope.row.InstanceChargeType | changeChargeType}}</p>
               <p>{{scope.row.addTime}}创建</p>
             </template>
           </el-table-column>
@@ -131,8 +130,9 @@
 <script>
 import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
-import { NODE_INFO, NODE_LIST, ALL_CITY } from "@/constants";
+import { NODE_INFO, NODE_LIST, ALL_CITY, POINT_REQUEST  } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
   data() {
@@ -162,9 +162,10 @@ export default {
     toMonitor(){
       //跳转监控页面
       this.$router.push({
-        name:"colonyOpenMonitor",
+        name:"masteretcdMonitor",
         query:{
-          title:this.name
+          title:this.name,
+          clusterId: this.$route.query.clusterId,
         }
       })
     },
@@ -179,45 +180,67 @@ export default {
         InstanceRole: "MASTER_ETCD"
       };
       const res = await this.axios.post(NODE_INFO, params);
-      this.loadShow = false;
-      let ids = [];
-      if (res.Response.InstanceSet.length > 0) {
-        res.Response.InstanceSet.map(obj => {
-          ids.push(obj.InstanceId);
-        });
-      }
-      let param = {
-        Version: "2017-03-12",
-        Limit: this.pageSize
-      }
-      if(ids.length > 0) {
-        for(let i = 0; i < ids.length; i++) {
-          param['InstanceIds.'+i] = ids[i];
-        }
-        this.loadShow = true;
-        let nodeRes = await this.axios.post(NODE_LIST, param);
-        if(nodeRes.Response.Error === undefined) {
-          this.loadShow = false;
-          if(nodeRes.Response.InstanceSet.length > 0) {
-            nodeRes.Response.InstanceSet.map(node => {
-              node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
-            });
-            this.list = nodeRes.Response.InstanceSet;
-          }
-          this.total = res.Response.TotalCount;
-        } else {
-          this.loadShow = false;
-          let ErrTips = {
-            
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
+      if(res.Response.Error === undefined) {
+        let ids = [];
+        if (res.Response.InstanceSet.length > 0) {
+          res.Response.InstanceSet.map(obj => {
+            ids.push(obj.InstanceId);
           });
         }
+        let nodeInfoList = res.Response.InstanceSet;
+        let param = {
+          Version: "2017-03-12",
+          Limit: this.pageSize
+        }
+        if(ids.length > 0) {
+          for(let i = 0; i < ids.length; i++) {
+            param['InstanceIds.'+i] = ids[i];
+          }
+          // this.loadShow = true;
+          this.loadShow = true;
+          let nodeRes = await this.axios.post(NODE_LIST, param);
+          if(nodeRes.Response.Error === undefined) {
+            this.loadShow = false;
+            if(nodeRes.Response.InstanceSet.length > 0) {
+              nodeRes.Response.InstanceSet.map(node => {
+                node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
+                nodeInfoList.map(info => {
+                  if(node.InstanceId === info.InstanceId) {
+                    node.status = info.InstanceState;
+                  }
+                });
+                return node;
+              });
+              this.list = nodeRes.Response.InstanceSet;
+            }
+            this.total = nodeRes.Response.TotalCount;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {
+              
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[nodeRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+        else {
+          this.loadShow = false;
+        }
+      } else {
+        this.loadShow = false;
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
      // 详情
@@ -248,6 +271,62 @@ export default {
     },
     setTime (data) {
       console.log(data)
+    }
+  },
+  filters: {
+    //返回状态
+    changeStatus(status) {
+      if(status === 'failed') {
+        return '异常';
+      } else if(status === 'initializing') {
+        return '创建中';
+      } else if(status === 'upgrading') {
+        return "升级中";
+      } else if(status === 'running') {
+        return '健康';
+      }
+    },
+    //返回计费模式
+    changeChargeType(type) {
+      if(type === 'POSTPAID_BY_HOUR') {
+        return '按量计费';
+      } else if(type === 'PREPAID') {
+        return '报年报月';
+      } else if(type === 'SPOTPAID') {
+        return '按量计费-竞价';
+      } else if (type === 'CDHPAID') {
+        return 'CDH付费';
+      }
+    },
+    //可用区
+    zone(val) {
+      if(val) {
+        if (val.substring(3, val.length - 2) === "taipei") {
+          return "台北" + val.substring(val.length - 1, val.length) + "区";
+        }
+      }
+    },
+    //机型
+    instanceType(val) {
+      if(val) {
+        if(val.substring(0,1) === 'S') {
+          return '标准型'+ val.substring(0,2);
+        } else if (val.substring(0,1) === 'M') {
+          return '内存型'+ val.substring(0,2);
+        } else if (val.substring(0,1) === 'C') {
+          return '计算型'+ val.substring(0,2);
+        }
+      }
+    },
+    //系统盘类型
+    diskType(val) {
+      if(val) {
+        if(val === 'CLOUD_SSD') {
+          return 'SSD云硬盘';
+        } else {
+          return '高性能云硬盘';
+        }
+      }
     }
   }
 };

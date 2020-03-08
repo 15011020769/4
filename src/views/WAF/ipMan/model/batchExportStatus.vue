@@ -2,7 +2,7 @@
   <div class="container">
     <div type="flex" align="middle" justify="center" class="import-wrap">
       <el-row type="flex" align="middle">
-        <span style="color: #888; font-size: 12px; width: 40px; display: inline-block;">{{t('进度', 'WAF.jd')}}：</span>
+        <span style="color: #888; font-size: 12px; width: 40px; display: inline-block;">{{t('进度', 'WAF.jdd')}}：</span>
         <el-col>
         <el-progress :percentage="(progress/count)*100" :show-text="false"></el-progress>
         </el-col>
