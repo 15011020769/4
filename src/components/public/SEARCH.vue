@@ -1,6 +1,6 @@
 <template>
   <div class="search-style">
-    <el-select v-model="searchvalue" placeholder="請選擇" @change="changeValue" size="small">
+    <el-select v-if="isshow" v-model="searchvalue" placeholder="請選擇" @change="changeValue" size="small">
       <el-option
         v-for="item in searchOptions"
         :key="item.value"
@@ -21,7 +21,7 @@
       class="btn-style"
       size="small"
     ></el-button>
-    <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
+    <el-tooltip v-if="isshow" class="tooltip" effect="dark" content="導出表格" placement="top">
       <el-button @click="exportExcel" icon="el-icon-download"></el-button>
     </el-tooltip>
   </div>
@@ -42,13 +42,22 @@ export default {
     searchInput: {
       required: true,
       type: String
+    },
+    isSHows:{
+      type: Boolean
     }
   },
   data() {
     return {
       searchvalue: this.searchValue,
-      searchinput: this.searchInput
+      searchinput: this.searchInput,
+      isshow: true,
     };
+  },
+  mounted(){
+    if(this.isSHows){
+      this.isshow = false;
+    }
   },
   methods: {
     //导出表格

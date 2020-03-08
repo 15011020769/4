@@ -20,8 +20,10 @@ export const PROHIBIT_DOMAIN = 'live2/ForbidLiveDomain'
 export const ENABLE_DOMAIN = 'live2/EnableLiveDomain'
 // 域名详情
 export const DOMAIN_DELTILS = 'live2/DescribeLiveDomain'
-// 统计分析
-// 查询直播转码统计信息
+//统计分析
+// 统计分析运营数据
+export const DESCRIBE_PLAY_STAT_INFOLIST = 'live2/DescribePlayStatInfoList'
+//查询直播转码统计信息
 export const CSS_CODE = 'live2/DescribeLiveTranscodeDetailInfo'
 // 查询直播转码统计图表信息
 export const CSS_CODECHARTS = 'live2/DescribeLiveTranscodeTotalInfo'

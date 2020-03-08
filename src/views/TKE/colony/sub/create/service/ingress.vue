@@ -293,7 +293,8 @@ export default {
         },
         trigger: 'change',
         required: true
-      }]
+      }],
+      describeLoadBalancers: []
     }
   },
   components: {},
@@ -319,13 +320,7 @@ export default {
     },
     // 切换公网/内网
     'ing.tabPosition': function (val) {
-      this.getInquiryPrice()
-      if (val === 'gw') {
-        this.getDescribeLoadBalancers()
-      } else {
-        this.ing.describeLoadBalancersOption = []
-        this.ing.describeLoadBalancersValue = '暂无数据'
-      }
+      this.changeTabPosition()
     }
   },
   created () {
@@ -554,11 +549,27 @@ export default {
     },
     // 绑定负载均衡器到下拉框
     bindingDescribeLoadBalancers: function (val) {
-      val.forEach((item, index) => {
-        let { LoadBalancerId, LoadBalancerName } = item
-        if (index === 0) this.ing.describeLoadBalancersValue = LoadBalancerId
-        this.ing.describeLoadBalancersOption.push({ LoadBalancerId, LoadBalancerName })
+      let arr = val.filter(item => item.VpcId === this.vpcId)
+      arr.forEach((item, index) => {
+        let { LoadBalancerId, LoadBalancerName, LoadBalancerType } = item
+        this.describeLoadBalancers.push({ LoadBalancerId, LoadBalancerName, LoadBalancerType })
       })
+      this.changeTabPosition()
+    },
+    // 切换网络类型时，改变负载均衡器
+    changeTabPosition: function () {
+      this.ing.describeLoadBalancersOption = []
+      this.ing.describeLoadBalancersValue = '暂无数据'
+      let oneDes = []
+      if (this.ing.tabPosition === 'gw'){
+        oneDes = this.describeLoadBalancers.filter(item => item.LoadBalancerType === 'OPEN')
+      } else {
+        oneDes = this.describeLoadBalancers.filter(item => item.LoadBalancerType === 'INTERNAL')
+      }
+      this.ing.describeLoadBalancersOption = oneDes
+      if (oneDes.length !== 0) {
+        this.ing.describeLoadBalancersValue = oneDes[0].LoadBalancerName
+      }
     },
     // 获取子网列表
     getWorkerNetwork: async function () {

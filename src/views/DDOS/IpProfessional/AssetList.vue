@@ -69,6 +69,7 @@
               "
               v-if="listSelect == 'resourceList'"
               v-loading="loading"
+              empty-text='暫無數據'
             >
               <el-table-column
                 prop="Record"
@@ -233,6 +234,7 @@
               v-if="listSelect == 'businessList'"
               v-loading="loading"
               height="450"
+              empty-text='暫無數據'
             >
               <el-table-column prop="Record" label="CNAME/ID">
                 <template slot-scope="scope">

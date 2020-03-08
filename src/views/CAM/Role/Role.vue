@@ -298,22 +298,10 @@ export default {
       this.init()
     },
     toAccount() {
-      // this.$router.push("/createAccount");
-      this.$message({
-        type: "info",
-        message: "內測中...",
-        duration: 0,
-        showClose: true
-      });
+      this.$router.push("/createAccount");
     },
     toProvider() {
-      // this.$router.push("/createProvider");
-      this.$message({
-        type: "info",
-        message: "內測中...",
-        duration: 0,
-        showClose: true
-      });
+      this.$router.push("/createProvider");
     }
   }
 };

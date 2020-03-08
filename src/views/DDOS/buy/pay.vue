@@ -34,8 +34,8 @@
                 </td>
                 <td>
                   <p><span>地域{{allData1.address}}</span></p>
-                  <p><span>防護帶寬峰值：{{allData1.savePeak}}</span></p>
-                  <p><span>彈性防護峰值：{{allData1.elasticPeak}}</span></p>
+                  <p><span>防護帶寬峰值：{{allData1.savePeak}}Gbps</span></p>
+                  <p><span>彈性防護峰值：{{allData1.elasticPeak}}Gbps</span></p>
                   <p><span>自動續約：{{allData1.autoPay}}</span></p>
                   <p><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
                   <p><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
@@ -43,7 +43,7 @@
                   <p><span>轉發規則數(个)：{{allData1.shareNum}}</span></p>
                 </td>
                 <td>
-                  <span>{{allData1.payMoney}}元/月</span>
+                  <span>{{this.showPrice(allData1.payMoney,2)}}元/月</span>
                 </td>
                 <td>
                   <span>1</span>
@@ -58,7 +58,7 @@
                   <span>無</span>
                 </td>
                 <td>
-                  <span class="tableTdLast">{{allData1.payMoney}}元</span>
+                  <span class="tableTdLast">{{this.showPrice(allData1.payMoney,2)}}元</span>
                 </td>
               </tr>
             </table>
@@ -66,7 +66,7 @@
         <div class="bottomPay">
           <div class="pay-submit">
             <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span>
-            <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{allData1.payMoney}}</span></span></span>
+            <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
             <el-button class="payBtnOne">代理支付</el-button>
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>
           </div>
@@ -93,6 +93,25 @@ export default{
   methods:{
     next() {
       if (this.active++ > 2) this.active = 0;
+    },
+
+    // 价格展示
+    showPrice  (number, decimals = 0, decPoint = '.') {
+      number = (number + '').replace(/[^0-9+-Ee.]/g, '')
+      let n = !isFinite(+number) ? 0 : +number
+      let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals)
+      let dec = (typeof decPoint === 'undefined') ? '.' : decPoint
+      let s = ''
+      let toFixedFix = function (n, prec) {
+        let k = Math.pow(10, prec)
+        return '' + Math.ceil(n * k) / k
+      }
+       s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.')
+      if ((s[1] || '').length < prec) {
+        s[1] = s[1] || ''
+        s[1] += new Array(prec - s[1].length + 1).join('0')
+      }
+       return s.join(dec)
     }
   }
 }
@@ -168,7 +187,6 @@ export default{
           .tableTdLast{
             color:#ed711f;
           }
-          
         }
         :hover{
             background-color:#dfecff

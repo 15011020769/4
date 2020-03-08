@@ -16,36 +16,12 @@
     <div class="room-bottom">
       <div class="box-top">
         <div class="box-top-left">
-          <span class="span-1">实时</span>
+          <!-- <span class="span-1">实时</span> -->
           <div class="block">
-            <el-date-picker
-              v-model="value2"
-              type="datetimerange"
-              :picker-options="pickerOptions"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              align="right"
-              size="mini"
-              @change="setTime()"
-            ></el-date-picker>
+            <!-- 时间组件 -->
+            <TimeDropDown :TimeArr='TimeArr' :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDat" :Difference="'D'"></TimeDropDown>
           </div>
           <!-- 对比维度 -->
-          <div v-show="isFlag">
-            <span class="span-2">对比维度</span>
-            <el-radio-group v-model="isCollapse" size="mini" >
-              <el-radio-button :label="true">节点</el-radio-button>
-              <el-radio-button :label="false">pod</el-radio-button>
-            </el-radio-group>
-            <span class="span-2" v-show="!isCollapse">所属节点</span>
-            <el-select v-model="value" placeholder="请选择" size="mini" v-show="!isCollapse" @change="getChange($event)">
-              <el-option
-                v-for="item in podData"
-                :key="item.InstanceId"
-                :label="item.InstanceId+'('+item.InstanceName+')'"
-                :value="item.PrivateIpAddresses+'|'+item.InstanceId"
-              ></el-option>
-            </el-select>
-          </div>
         </div>
       </div>
       <div class="box-bottom">
@@ -54,24 +30,23 @@
             :indeterminate="isIndeterminate"
             v-model="checkAll"
             @change="handleCheckAllChange"
-          >全选(共{{this.instances.length}}个)</el-checkbox>
+          >全选(共{{this.list.length}}个)</el-checkbox>
           <!-- <div style="margin: 15px 0;"></div> -->
           <el-checkbox-group
             v-model="checkedInstances"
             @change="handleCheckedCitiesChange"
             class="check-flex"
           >
-            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
+            <el-checkbox v-for="(item, i) in list" :label="item.metadata.name" :key="i">{{item.metadata.name}}</el-checkbox>
           </el-checkbox-group>
         </div>
         <div class="box-bottom-right">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="事件" name="first">事件</el-tab-pane>
-            <el-tab-pane label="CPU" name="second">CPU</el-tab-pane>
-            <el-tab-pane label="内存" name="third">内存</el-tab-pane>
-            <el-tab-pane label="网络" name="fourth">网络</el-tab-pane>
-            <el-tab-pane label="GPU" name="five">GPU</el-tab-pane>
-          </el-tabs>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='series' style="height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesError' style="height:200px;" />
+          </div>
         </div>
       </div>
     </div>
@@ -81,6 +56,9 @@
 // import subTitle from "@/views/TKE/components/subTitle";
 import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO} from '@/constants'
 import { ErrorTips } from "@/components/ErrorTips";
+import TimeDropDown from "@/components/public/TimeDropDown.vue"
+import moment from 'moment';
+import EcharTKE from '@/components/public/EcharTKE'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -90,13 +68,12 @@ export default {
       default: false
     },
   },
+  components:{TimeDropDown,EcharTKE},
   data() {
     return {
-      activeName: "first",
-      value: "",
       checkAll: true,
       options: [],
-      isCollapse: true,
+      isCollapse: "k8s_node",
       checkedInstances: [],// 全选
       isIndeterminate: false,
       instances: [], // 单选
@@ -107,70 +84,81 @@ export default {
       list:[],
       podData:[],
       valueLast:"",
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "实时",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000);
-              start.setTime(start.getTime());
-              picker.$emit("pick", [start, end]);
+      times:[],
+      series:[],
+      seriesError:[],
+      TimeArr: [{
+          name: '实时',
+          Time: 'realTime',
+          TimeGranularity: [
+            {
+              value: "60",
+              label: "1分鐘"
+            },
+            {
+              value: "300",
+              label: "5分鐘"
             }
-          },
-          {
-            text: "近1天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近一天',
+          Time: 'Nearly_24_hours',
+          TimeGranularity: [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
             }
-          },
-          {
-            text: "近7天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近7天',
+          Time: 'Nearly_7_days',
+          TimeGranularity: [{
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "24小时"
             }
-          }
-        ]
-      },
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: [new Date(Date.parse(new Date())- 3600 * 1000),new Date(Date.parse(new Date()))]
+          ]
+        }
+      ],
+      title: '',//title
+      type: '',//类型
+      list: [],//列表
+      spaceName: '',//空间名称
+      JobId:"",// 后台返回id
+      StartTime:0,//开始时间
+      EndTime:0,//结束时间
+      timestamp: '',//粒度长度
     }
   },
   watch:{
-    isCollapse(val){
-      if(!val){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.getPodList()
-      } else {
-         this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.getNodeList()
-      }
-    },
-    value2(val){
-      // console.log(new.Date(val[0]),val[1])
-    }
+    
   },
   created() {
-    let{ title, clusterId } = this.$route.query
-    this.clusterId = clusterId
-    this.title = title
-    // this.pickerOptions.shortcuts[0].onClick(picker)
-    this.getNodeList()
-    // this.getDataJob()
-    // this.GetNode()
+    this.title = this.$route.query.title;
+    this.type = this.$route.query.type;
+    this.list = this.$route.query.list;
+    this.clusterId = this.$route.query.clusterId;
+    this.spaceName = this.$route.query.spaceName;
   },
+  // mounted(){
+  //   this.inits();
+  // },
   methods: {
+    GetDat(val){
+      this.StartTime = new Date(val[1].StartTIme).getTime();
+      this.EndTime = new Date(val[1].EndTIme).getTime();
+      this.timestamp = val[0];
+      this.getDataJob();
+    },
     //返回上一层
     goBack() {
       this.$router.go(-1);
@@ -179,15 +167,14 @@ export default {
       this.$emit("changeFlag", false);
     },
     handleCheckAllChange(val) {
-      console.log(val)
+      debugger
       this.checkedInstances = val ? this.InstancesAll : [];
-      console.log(this.checkedInstances)
       this.isIndeterminate = false;
     },
     handleCheckedCitiesChange(value) {
       console.log(value)
       let checkedInstances = value.length;
-      this.checkAll = checkedInstances === this.instances.length;
+      this.checkAll = checkedInstances === this.list.length;
       this.isIndeterminate =
         checkedInstances > 0 && checkedInstances < this.instances.length;
     },
@@ -203,94 +190,55 @@ export default {
       console.log(this.valueLast)
       this.getPodList()
     },
-    // getPod(val){
-    //   for()
-    // },
-    // getRoom(e) {
-    //   console.log(e)
-    //   this.isCollapse = e;
-    // },
-        //获取节点列表
-    async getNodeList () {
-      let params = {
-        ClusterId: this.clusterId,
+
+    getDataJob(){
+      const param = {
+        EndTime: this.EndTime,
+        Limit: 65535,
+        Module: "/front/v1",
+        NamespaceName: "k8s_workload",
         Offset: 0,
-        Limit: 20,
-        Version: "2018-05-25",
-        InstanceRole: "MASTER_ETCD"
-      };
-      const res = await this.axios.post(NODE_INFO, params);
-      // this.loadShow = false;
-      // 节点
-      let ids = [];
-      if (res.Response.InstanceSet.length > 0) {
-        res.Response.InstanceSet.map(obj => {
-          ids.push(obj.InstanceId);
+        Order: "asc",
+        OrderBy: "timestamp",
+        StartTime: this.StartTime,
+        Version: "2019-06-06"
+      }
+      let list = this.list;
+      let arr = [];
+      if(list.length > 0) {
+        list.forEach(element => {
+          arr.push(element.metadata.name);
         });
       }
-      console.log(res.Response.InstanceSet)
-      // check选择部分
-      this.checkedInstances = ids
-      this.instances =  ids
-      this.InstancesAll = ids
-      // this.list = ids
-      // this.value = ids[0]
-      let param = {
-        Version: "2017-03-12",
-        Limit: 20
-      }
-      if(ids.length > 0) {
-        for(let i = 0; i < ids.length; i++) {
-          param['InstanceIds.'+i] = ids[i];
-        }
-        // this.loadShow = true;
-        let nodeRes = await this.axios.post(NODE_LIST, param);
-        // console.log(nodeRes)
-        if(nodeRes.Response.Error === undefined) {
-          // this.loadShow = false;
-          this.podData = []
-          // 数据合并
-          if(nodeRes.Response.InstanceSet.length > 0) {
-            console.log(nodeRes.Response.InstanceSet)
-            for(let i in ids){
-              for(let  j in nodeRes.Response.InstanceSet){
-                if(nodeRes.Response.InstanceSet[j].InstanceId == ids[i]){
-                  this.podData.push({
-                    InstanceId:ids[i],
-                    InstanceName:nodeRes.Response.InstanceSet[j].InstanceName,
-                    PrivateIpAddresses:nodeRes.Response.InstanceSet[j].PrivateIpAddresses[0]
-                  })
-                }  
-              }
-            }
-            // let arr = [];
-            // for(let i =0; i< ids.length; i++) {
-            //   debugger
-            //   for(let j =0; j< nodeRes.Response.InstanceSet.length; j++) {
-            //     debugger
-            //     let c = {};
-            //     if(ids[i] === nodeRes.Response.InstanceSet[j].InstanceId) {
-            //       c.id = ids[i];
-            //       c.name = nodeRes.Response.InstanceSet[j].InstanceName;
-            //       ids.splice(i, 1);
-            //     } else {
-            //       c.id = ids[i];
-            //       c.name = '';
-            //       ids.splice(i, 1);
-            //     }
-            //     arr.push(c);
-            //   }
-            // }
-            // console.log(arr,222)
-            this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
-            this.valueLast = this.value.split("|")
-            console.log(this.podData)
-          }
+      param['Conditions.0'] = JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]);
+      param['Conditions.1'] = JSON.stringify(["workload_kind","=",this.type]);
+      param['Conditions.2'] = JSON.stringify(["namespace","=",this.spaceName]);
+      param['Conditions.3'] = JSON.stringify(["workload_name","in",arr]);
+      param['Fields.0'] = 'max(k8s_workload_pod_total)';
+      param["Fields.1"] = "sum(k8s_workload_pod_restart_total)";
+      param["Fields.2"] = "max(k8s_workload_cpu_core_used)";
+      param["Fields.3"] = "max(k8s_workload_rate_cpu_core_used_cluster)";
+      param["Fields.4"] = "max(k8s_workload_mem_usage_bytes)";
+      param["Fields.5"] = "max(k8s_workload_rate_mem_usage_bytes_cluster)";
+      param["Fields.6"] = "max(k8s_workload_network_receive_bytes_bw)";
+      param["Fields.7"] = "max(k8s_workload_network_transmit_bytes_bw)";
+      param["Fields.8"] = "max(k8s_workload_network_receive_bytes)";
+      param["Fields.9"] = "max(k8s_workload_network_transmit_bytes)";
+      param["Fields.10"] = "max(k8s_workload_network_receive_packets)";
+      param["Fields.11"] = "max(k8s_workload_network_transmit_packets)";
+      param["Fields.12"] = "max(k8s_workload_gpu_used)";
+      param["Fields.13"] = "max(k8s_workload_gpu_memory_used_bytes)";
+      param["Fields.14"] = "max(k8s_workload_rate_gpu_used_cluster)";
+      param["Fields.15"] = "max(k8s_workload_rate_gpu_memory_used_cluster)";
+      param["GroupBys.0"] = `timestamp(${this.timestamp}s)`;
+      param["GroupBys.1"] = "workload_name";
+      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.JobId = res.Response.JobId
+          this.getResult()
         } else {
           this.loadShow = false;
-          let ErrTips = {
-            
-          };
+          let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -299,121 +247,111 @@ export default {
             duration: 0
           });
         }
-      }
-    },
-    getPodList() {
-      this.list = [];
-      const param = {
-        Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast[0]+'&limit=50',
-        Version: '2018-05-25',
-        ClusterName: this.clusterId
-      }
-      this.axios.post(POINT_REQUEST, param).then(res => {
-        if(res.Response.Error === undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
-          // JSON.parse(res.Response.ResponseBody)
-          let dataPod = []
-          dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
-            return item.metadata.name
-          })
-          this.checkedInstances = dataPod
-          this.instances =  dataPod
-          this.InstancesAll = dataPod
-          this.getDataJob()
-        }
       })
     },
-
-    getDataJob(){
-       const param = {
-        'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
-        EndTime: 1583511737000,
-        Limit: 65535,
+    getResult() {
+      const param = {
+        JobId: this.JobId,
         Module: "/front/v1",
-        NamespaceName: "k8s_pod",
-        Offset: 0,
-        Order: "asc",
-        OrderBy: "timestamp",
-        StartTime: 1583508137000,
         Version: "2019-06-06"
       }
-      param['Fields.0'] = 'min(k8s_pod_status_ready)';
-      param["Fields.1"] = "max(k8s_pod_cpu_core_used)";
-      param["Fields.2"] = "max(k8s_pod_rate_cpu_core_used_node)";
-      param["Fields.3"] = "max(k8s_pod_rate_cpu_core_used_request)";
-      param["Fields.4"] = "max(k8s_pod_rate_cpu_core_used_limit)";
-      param["Fields.5"] = "max(k8s_pod_mem_usage_bytes)";
-      param["Fields.6"] = "max(k8s_pod_mem_no_cache_bytes)";
-      param["Fields.7"] = "max(k8s_pod_rate_mem_usage_node)";
-      param["Fields.8"] = "max(k8s_pod_rate_mem_no_cache_node)";
-      param["Fields.9"] = "max(k8s_pod_rate_mem_usage_request)";
-      param["Fields.10"] = "max(k8s_pod_rate_mem_no_cache_request)";
-      param["Fields.11"] = "max(k8s_pod_rate_mem_usage_limit)";
-      param["Fields.12"] = "max(k8s_pod_rate_mem_no_cache_limit)";
-      param["Fields.13"] = "max(k8s_pod_network_receive_bytes_bw)";
-      param["Fields.14"] = "max(k8s_pod_network_transmit_bytes_bw)";
-      param["Fields.15"] = "max(k8s_pod_network_receive_bytes)";
-      param["Fields.16"] = "max(k8s_pod_network_transmit_bytes)";
-      param["Fields.17"] = "max(k8s_pod_network_receive_packets)";
-      param["Fields.18"] = "max(k8s_pod_network_transmit_packets)";
-      param["Fields.19"] = "max(k8s_pod_gpu_used)";
-      param["Fields.20"] = "max(k8s_pod_gpu_memory_used_bytes)";
-      param["Fields.21"] = "max(k8s_pod_rate_gpu_used_node)";
-      param["Fields.22"] = "max(k8s_pod_rate_gpu_memory_used_node)";
-      param["Fields.23"] = "max(k8s_pod_rate_gpu_used_request)";
-      param["Fields.24"] = "max(k8s_pod_rate_gpu_memory_used_request)";
-      param["GroupBys.0"] = "timestamp(60s)";
-      param["GroupBys.1"] = "pod_name";
-      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+      this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         if(res.Response.Error === undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
-          // JSON.parse(res.Response.ResponseBody)
-          // let dataPod = []
-          // dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
-          //   return item.metadata.name
-          // })
-          // this.checkedInstances = dataPod
-          // this.instances =  dataPod
-          // this.InstancesAll = dataPod
+          let data = JSON.parse(res.Response.Data)
+          console.log(data);
+          // let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
+          // cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
+          // memUsageBytes = [], memNoYsages = [], receives = [], transmits = [];
+          let monitor = {};
+          if(data.length > 0) {
+            for(let i = 0; i < data.length; i++) {
+              let item = data[i];
+              let key = item[0];
+              let value = monitor[key];
+              if(value) {
+                value.push(data[i]);
+              } else {
+                value = [];
+                value.push(data[i]);
+              }
+              monitor[key] = value;
+
+
+
+              // let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+              // let podId = item[1];//节点ID
+              // let pod = item[2];//实例数量
+              // let statuErr = item[3];//异常
+              // let cpu = item[4];//cpu总配置
+              // let cpuUsed = item[5];//cpu使用率
+              // let cpuRequest = item[6];//cpu分配率
+              // let cpuUsedmax = item[7];//cpu使用量
+              // let memory = item[8];//内存总量
+              // let memusage = item[9];
+              // let memrequest = item[10];
+              // let menNocache = item[11];
+              // let memUsageByte = item[12];
+              // let memNoYsage = item[13];
+              // let receive = item[14];
+              // let transmit = item[15];
+              // times.push(time);
+              // podIds.push(podId);
+              // pods.push(pod);
+              // statuErrs.push(statuErr);
+              // cpus.push(cpu);
+              // cpuUseds.push(cpuUsed);
+              // cpuRequests.push(cpuRequest);
+              // cpuUsedmaxs.push(cpuUsedmax);
+              // memorys.push(memory);
+              // memusages.push(memusage);
+              // memrequests.push(memrequest);
+              // menNocaches.push(menNocache);
+              // memUsageBytes.push(memUsageByte);
+              // memNoYsages.push(memNoYsage);
+              // receives.push(receive);
+              // transmits.push(transmit);
+            }
+          }
+          for(let key in monitor) {
+            let item = monitor[key];
+            let time = moment(key).format("YYYY-MM-DD HH:mm:ss");//时间
+            
+            for(let j = 0; j < item.length; j++) {
+              let monItem = item[j];
+              let pod = item[2];//实例数量
+              let restart = item[3];//重启次数
+              let cpu = item[4];//cpu总配置
+              let cpuUsed = item[5];//cpu使用率
+              let cpuRequest = item[6];//cpu分配率
+              let cpuUsedmax = item[7];//cpu使用量
+              let memory = item[8];//内存总量
+              let memusage = item[9];
+              let memrequest = item[10];
+              let menNocache = item[11];
+              let memUsageByte = item[12];
+              let memNoYsage = item[13];
+              let receive = item[14];
+              let transmit = item[15];
+            }
+          }
+          // this.times = times;
+          // this.series = [{name: '节点数量',type: 'line', data: pods}];
+          // this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
-    }
+    },
     
-    // TKE_GETTKEDATAJOB
-    // GetNode () { 
-    //   const param = {
-    //     ClusterName: "cls-59yq0hoi",
-    //     Method: "GET",
-    //     Path: "/api/v1/nodes?limit=20",
-    //     Version: "2018-05-25"
-    //   }
-    //   this.axios.post(POINT_REQUEST, param).then(res => {
-    //     if (res.Error == undefined) {
-    //     console.log(JSON.parse(res.Response.ResponseBody))
-    //     this.options = JSON.parse(res.Response.ResponseBody).items
-    //       // this.instances = res.Response.InstanceSet
-    //       // for(let i in this.instances){
-    //       //     this.checkedInstances.push(this.instances[i].InstanceId)
-    //       //     this.InstancesAll.push(this.instances[i].InstanceId)
-    //       // }
-    //     } else {
-    //       let ErrTips = {};
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 2000
-    //       });
-    //     }
-    //   })
-    // },
   },
-  // components: {
-  //   subTitle
-  // }
 };
 </script>
 <style lang='scss' scoped>
@@ -457,12 +395,9 @@ export default {
       }
     }
     .box-bottom-right {
-      width: 65%;
+      width: 85%;
       margin-right: 5%;
-      .el-tab-pane {
-        height: auto;
-        overflow-y: scroll;
-      }
+      height: auto;
     }
   }
 }

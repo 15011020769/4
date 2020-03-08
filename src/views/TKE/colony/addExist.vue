@@ -473,7 +473,7 @@ export default {
       containerListCheck: false,
       containerList: "/var/lib/docker",
       projectName: "",
-      projectId: "",
+      projectId: this.$route.query.ProjectId,
       sshKey: [],
       sshKeySel: "",
       sshKeySelId: "",
@@ -491,7 +491,9 @@ export default {
     HeadCom,
     SEARCH
   },
-  created() {},
+  created() {
+    console.log(this.projectId);
+  },
   mounted() {
     this.getColonyList();
     this.SSHKey();
@@ -608,73 +610,33 @@ export default {
       });
     },
     ExistingNodes() {
-      const param = {
-        Region: "ap-taipei",
-        Version: "2017-03-12"
-      };
-      for (var i in this.rightList) {
-        param["InstanceIds." + i] = this.rightList[i].InstanceId;
-      }
-      this.axios
-        .post(TKE_EXIST_NODES, param)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            var projectArr = res.Response.InstanceSet;
-            this.projectId =
-              projectArr[projectArr.length - 1].Placement.ProjectId;
-          } else {
-            let ErrTips = {
-              InternalServerError: "操作內部錯誤",
-              InvalidFilter: "無效的過濾器",
-              "InvalidFilterValue.LimitExceeded": "Filter參數值數量超過限制",
-              "InvalidHostId.Malformed":
-                "無效CDH ID。指定的CDH ID格式錯誤。例如ID長度錯誤host-1122",
-              "InvalidInstanceId.Malformed":
-                "無效實例ID。指定的實例ID格式錯誤。例如實例ID長度錯誤ins-1122",
-              InvalidParameter: "無效參數。參數不合要求或者參數不被支持等",
-              InvalidParameterValue:
-                "無效參數值。參數值格式錯誤或者參數值不被支持等",
-              "InvalidParameterValue.LimitExceeded": "參數值數量超過限制",
-              "InvalidZone.MismatchRegion": "指定的zone不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .then(() => {
-          this.axios.get(ALL_PROJECT).then(res => {
-            if (res.codeDesc === "Success") {
-              var arr = res.data;
-              for (var i in arr) {
-                if (this.projectId === 0) {
-                  this.projectName = "默认项目";
-                } else {
-                  if (this.projectId === arr[i].projectId) {
-                    this.projectName = arr[i].projectName;
-                  }
-                }
-              }
-              this.SecurityGroup();
+      this.axios.get(ALL_PROJECT).then(res => {
+        if (res.codeDesc === "Success") {
+          var arr = res.data;
+          for (var i in arr) {
+            if (this.projectId == 0) {
+              this.projectName = "默认项目";
             } else {
-              let ErrTips = {
-                InternalError: "内部错误",
-                UnauthorizedOperation: "未授权操作"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+              if (this.projectId === arr[i].projectId) {
+                this.projectName = arr[i].projectName;
+              }
             }
+          }
+          this.SecurityGroup();
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
-        });
+        }
+      });
     },
     // SSH密钥
     SSHKey() {

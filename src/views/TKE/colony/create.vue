@@ -4826,6 +4826,13 @@ export default {
       param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
+      param["InstanceAdvancedSettings.MountTarget"] = "";
+      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      param["InstanceAdvancedSettings.UserScript"] = "";
+      param["InstanceAdvancedSettings.Unschedulable"] = 0;
+      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
           console.log(res.Response);
@@ -5158,7 +5165,8 @@ export default {
       } else if (val.length <= 8 || val.length > 16) {
         this.colonyThird.passwordTips = "密码必须为8到16位";
         this.colonyThird.passwordWran = true;
-      } else if (
+      }
+      else if (
         !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
           val
         )
@@ -5167,7 +5175,8 @@ export default {
         this.colonyThird.passwordTips =
           "密码必须包含数字、字母、特殊字符中至少两项";
         this.colonyThird.passwordWran = true;
-      } else {
+      }
+      else {
         this.colonyThird.passwordWran = false;
       }
     },

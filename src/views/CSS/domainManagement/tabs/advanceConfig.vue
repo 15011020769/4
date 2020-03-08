@@ -29,46 +29,32 @@
       </div>
       <!-- </el-card> -->
       <!-- <el-card> -->
-      <div class="basicinfo" v-loading="loading2">
-        <el-row type="flex" justify="space-between">
-          <h1 class="">
-            带宽封顶配置
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="您可设置域名加速区域的下行带宽封顶值，在一个统计周期内、若峰值带宽达到阈值，后续访问将被拒绝。若您的域名加速区域为全球，可设置全球带宽封顶值。"
-              placement="right"
-            >
-              <i class="el-icon-info" />
-            </el-tooltip>
-          </h1>
-          <el-button @click="editBandLimit" type="text">编辑</el-button>
-        </el-row>
-        <div class="bgGray">
-          <div class="newClear newList1">
-            <p>带宽封顶</p>
-            <p>{{ bandLimit.BandLimitEnable === 1 ? "开启" : "关闭" }}</p>
-          </div>
-          <div
-            class="newClear newList1"
-            v-if="bandLimit.AbroadBandLimitEnable === 1"
-          >
-            <p>港澳台及海外地区带宽阈值</p>
-            <p>{{ bandLimit.AbroadBandLimitValue | unit }}</p>
-          </div>
-          <div
-            class="newClear newList1"
-            v-if="bandLimit.DomesticBandLimitEnable === 1"
-          >
-            <p>中国大陆带宽阈值</p>
-            <p>{{ bandLimit.DomesticBandLimitValue | unit }}</p>
-          </div>
-          <div
-            class="newClear newList1"
-            v-if="bandLimit.GlobalBandLimitEnable === 1"
-          >
-            <p>全球带宽阈值</p>
-            <p>{{ bandLimit.GlobalBandLimitValue | unit }}</p>
+        <div class="basicinfo" v-loading="loading2">
+          <el-row type="flex" justify="space-between">
+            <h1 class="">带宽封顶配置
+              <el-tooltip class="item" effect="dark" content="您可设置域名加速区域的下行带宽封顶值，在一个统计周期内、若峰值带宽达到阈值，后续访问将被拒绝。若您的域名加速区域为全球，可设置全球带宽封顶值。" placement="right">
+                <i class="el-icon-info" />
+              </el-tooltip>
+            </h1>
+            <el-button @click="editBandLimit" type="text">编辑</el-button>
+          </el-row>
+          <div class="bgGray">
+            <div class="newClear newList1">
+              <p>带宽封顶</p>
+              <p>{{bandLimit.BandLimitEnable === 1 ? '开启' : '关闭'}}</p>
+            </div>
+            <div class="newClear newList1" v-if="bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3">
+                <p>港澳台及海外地区带宽阈值</p>
+                <p>{{bandLimit.AbroadBandLimitValue | unit}}</p>
+            </div>
+            <div class="newClear newList1" v-if="bandLimit.DomesticBandLimitEnable === 1 && domainInfo.PlayType === 1">
+                <p>中国大陆带宽阈值</p>
+                <p>{{bandLimit.DomesticBandLimitValue | unit}}</p>
+            </div>
+            <div class="newClear newList1" v-if="bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2">
+                <p>全球带宽阈值</p>
+                <p>{{bandLimit.GlobalBandLimitValue | unit}}</p>
+            </div>
           </div>
         </div>
       </div>

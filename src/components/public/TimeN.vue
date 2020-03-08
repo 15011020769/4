@@ -31,8 +31,18 @@
             <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">選擇日期
             </el-button>
           </el-popover>
-          <el-date-picker v-if="datetime" v-model="datetimeval" type="datetimerange" range-separator="至"
-            start-placeholder="開始日期" end-placeholder="結束日期" :clearable="false" class="dateheight" @change="ReSelection">
+          <el-date-picker
+            v-if="datetime"
+            v-model="datetimeval"
+            type="datetimerange"
+            range-separator="至"
+            start-placeholder="開始日期"
+            end-placeholder="結束日期"
+            :clearable="false"
+            class="dateheight"
+            @change="ReSelection"
+            :picker-options="pickerOptions"
+          >
           </el-date-picker>
         </el-button-group>
       </el-row>
@@ -45,6 +55,7 @@
 
   export default {
     data() {
+      let vue = this
       return {
         datevalueStart: new Date(), // 日期（从）
         timevalueStart: new Date(), // 时间（从）
@@ -54,11 +65,29 @@
         visible: false, // 时间选择器的变化
         datetim: true, // 时间选择器的变化
         datetime: false, // 时间选择器的变化
+        timeOptionRange: "",
         Start_End: {
           StartTIme: "",
           EndTIme: ""
         },
-        classvalue: 1
+        classvalue: 1,
+        pickerOptions: {
+          disabledDate(time) {
+            let timeOptionRange = vue.timeOptionRange;
+            if(timeOptionRange){
+              return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+            }
+            return time > moment()
+          },
+          onPick(time){
+            if(time.minDate && !time.maxDate){
+                vue.timeOptionRange = time.minDate;
+            }
+            if(time.maxDate){
+                vue.timeOptionRange = null;
+            }
+          }
+        }
       };
     },
     props: {

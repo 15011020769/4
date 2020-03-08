@@ -1,6 +1,12 @@
 <template>
   <div class="operation-wrap">
     <Header title="運營數據" />
+    <div class="explain">
+      <p>
+        您可以在雲監控中設置告警，配置流量/帶寬等參數超過設定值時通過簡訊/郵件/站內信等通知您。
+        <a href="#">設置告警</a>
+      </p>
+    </div>
     <div class="seek">
       <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
     </div>
@@ -36,7 +42,7 @@
       </p>
       <p style="margin-left:20px;">
         <span>選擇運營商</span>
-        <el-select v-model="operator" placeholder="請選擇" style="margin-left:10px;">
+        <el-select v-model="operator" placeholder="请选择" style="margin-left:10px;">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -56,7 +62,16 @@
           :class="tabIndex == index ? 'active' : ''"
           @click="tabClick(index)"
         >
-          <dt>{{item.name}}</dt>
+          <dt>
+            {{item.name}}
+            <el-tooltip placement="top" effect="light" class="mode-tooltip" v-if="item.name=='併發連接數峰值'">
+              <i class="el-icon-info"></i>
+              <span slot="content">
+                若播放協議為RTMP和FLV，並發連接數即在線人數；<br/>
+                若播放協議為HLS，此數據不可作為在線人數的參考
+              </span>
+            </el-tooltip>
+          </dt>
           <dd>
             {{item.value}}
             <span style="font-size:16px;color:black;">{{item.code}}</span>
@@ -76,6 +91,7 @@
         <Tab2
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
+          :operator="operator"
           v-if="tabIndex == 1"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -86,14 +102,17 @@
           :EndTIme="EndTIme"
           :operator="operator"
           v-if="tabIndex == 2"
-          :domain="domain"
+          :domainsData="domainsData"
+          :domainCheckedListCopy="domainCheckedListCopy"
           ref="tab3"
         />
         <Tab4
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
+          :operator="operator"
           v-if="tabIndex == 3"
-          :domain="domain"
+          :domainsData="domainsData"
+          :domainCheckedListCopy="domainCheckedListCopy"
           ref="tab4"
         />
       </div>
@@ -105,7 +124,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, DOMAIN_LIST, CSS_MBPS } from "@/constants";
+import { ALL_CITY, DOMAIN_LIST, CSS_MBPS, DESCRIBE_PLAY_STAT_INFOLIST } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -136,6 +155,24 @@ export default {
           label: "中國移動"
         },
       ],
+      // options: [
+      //   {
+      //     value: "",
+      //     label: "全部運營商"
+      //   },
+      //   {
+      //     value: "Chunghwa Telecom",
+      //     label: "中华电信"
+      //   },
+      //   {
+      //     value: "Taiwan Mobile",
+      //     label: "台湾大哥大"
+      //   },
+      //   {
+      //     value: "Far EasTone",
+      //     label: "远传电信"
+      //   },
+      // ],
       domain: [],
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
@@ -180,6 +217,11 @@ export default {
     this.getDomains();
     this.getTotal()
   },
+  watch: {
+    tabIndex() {
+      this.search();
+    }
+  },
   methods: {
     doHandleMonth(month) {
       var m = month;
@@ -207,13 +249,12 @@ export default {
     search() {
       this.StartTIme = this.timeData[0].StartTIme;
       this.EndTIme = this.timeData[0].EndTIme;
+      this.getTotal()
       if (this.tabIndex == 0) {
-        this.getTotal()
         this.$nextTick(() => {
           this.$refs.tab1.init();
         })
       } else if (this.tabIndex == 1) {
-        this.getTotal()
         this.$nextTick(() => {
           this.$refs.tab2.init();
         })
@@ -248,21 +289,45 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        Granularity: 5,
+        Granularity: 60,
+        "CountryOrAreaNames.0": "Taiwan"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
           params["PlayDomains." + index] = item;
         });
       }
-      this.axios.post(CSS_MBPS, params).then(res => {
-        if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
-        } else {
-          this.tab[0].value = res.Response.PeakBandwidth
-          this.tab[1].value = res.Response.SumFlux
-        }
-      });
+      //  if (this.operator) {
+        // params["IspNames.0"] = this.operator // 运营商暂不做
+        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
+          if (res.Response.Error) {
+            this.$message.error(res.Response.Error.Message);
+          } else {
+            this.tab[0].value = res.Response.MaxBandwidth
+            this.tab[1].value = res.Response.TotalFlux
+            this.tab[2].value = res.Response.TotalRequest
+            this.tab[3].value = res.Response.MaxOnline
+          }
+        });
+      // }
+      // else {
+      //   this.axios.post(CSS_MBPS, params).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message.error(res.Response.Error.Message);
+      //     } else {
+      //       this.tab[0].value = res.Response.PeakBandwidth
+      //       this.tab[1].value = res.Response.SumFlux
+      //     }
+      //   });
+      //   this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message.error(res.Response.Error.Message);
+      //     } else {
+      //       this.tab[2].value = res.Response.TotalRequest
+      //       this.tab[3].value = res.Response.MaxOnline
+      //     }
+      //   });
+      // }
     },
     checkDomainAll(checked) {
       if (checked) {
@@ -282,7 +347,9 @@ export default {
       if (this.domainCheckedList.length === 0) {
         this.$message({
           type: 'warning',
-          message: '請選擇域名'
+          message: '請選擇域名',
+          showClose: true,
+          duration: 0
         })
       } else {
         this.$refs.doaminRef.visible = false
@@ -331,6 +398,24 @@ export default {
       span {
         font-size: 13px;
         color: #888;
+      }
+    }
+  }
+  .explain {
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    padding: 10px 30px 10px 20px;
+    margin: 20px 0 0 20px;
+    border-radius: 2px;
+    p {
+      line-height: 18px;
+
+      a {
+        color: #006eff;
+      }
+      a:hover {
+        border-bottom: 1px #006eff solid;
       }
     }
   }

@@ -88,18 +88,12 @@ let label = {
 let environmentVariable = {
   addEnvironmentVar (index) {
     this.wl.instanceContent[index].environmentVar.push({
-      onlyId: Date.now(),
-      key: '',
+      name: '',
       value: ''
     })
   },
-  delEnvironmentVar (index, key) {
-    let environmentArr = this.wl.instanceContent[index].environmentVar
-    for (let i = 0; i < environmentArr.length; i++) {
-      if (environmentArr[i].onlyId === key) {
-        this.wl.instanceContent[index].environmentVar.splice(i, 1)
-      }
-    }
+  delEnvironmentVar (index,ie) {
+    this.wl.instanceContent[index].environmentVar.splice(ie, 1)
   }
 }
 
@@ -232,6 +226,21 @@ let change = {
     this.getConfigmaps()
   }
 }
+
+
+let dataReel={//数据卷
+  addDataJuan() { //新增数据卷
+    this.dataFlag = true;
+    var obj = {
+      name1: "useMenu",
+      name2: "",
+      name3: ""
+    };
+    this.upc.dataJuan.push(obj);
+  },
+
+
+}
 export default {
   methods: {
     ...label,
@@ -245,6 +254,7 @@ export default {
     ...needRule,
     ...portMapping,
     ...change,
+    ...dataReel,
     axiosUtils: function (res, func) {
       func()
       /* if (res.info !== undefined) {
