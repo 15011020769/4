@@ -220,6 +220,7 @@ export default {
     //    /api/v1/namespaces//events?limit=20
     //命名空间选项
     nameSpaceList() {
+      this.loadShow = true;
       var params = {
         Method: "GET",
         Path: "/api/v1/namespaces",
@@ -255,6 +256,7 @@ export default {
     },
     getKind() {
       //获取类型的数据
+      this.loadShow = true;
       var params = {
         Method: "GET",
         Path: "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20",
@@ -282,6 +284,7 @@ export default {
     },
     getEventList() {
       //事件列表
+      this.loadShow = true;
       var typeValues = this.typeValue;
       if (typeValues.charAt(typeValues.length - 1) == "s") {
         typeValues =
