@@ -19,12 +19,13 @@
          <!-- config -->
          <el-form class="tke-form" :model="upc" label-position="left" label-width="120px" size="mini">
            <el-form-item label="数据卷（选填）">
+             <!-- <div @click="a">sssssss</div> -->
              <div class="search-one" v-for="(item, index) in  upc.dataJuan" :key="index">
                <el-select v-model="item.name1" placeholder="请选择">
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                  </el-option>
                </el-select>
-               <el-input class="search-input" v-model="item.name2" placeholder="请输入内容"></el-input>
+               <el-input class="search-input" v-model="item.name2" placeholder="名称  如val"  ></el-input>
                <div class="search-hidden">
                  <p v-if="item.name1 == 'usePath'">
                    暂未设置主机路径设置主机路径
@@ -61,7 +62,7 @@
              </p>
              <p>
                为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。<span
-                 style="color:#409eff;cursor:pointer">使用指引</span>
+                 style="color:#409eff;cursor:pointer" >使用指引</span>
              </p>
            </el-form-item>
            <el-form-item label="实例内容器">
@@ -148,11 +149,11 @@
                    <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
                      <i class="el-icon-info  setPosition"></i>
                    </el-tooltip>
-                   <div v-for="val in v.environmentVar" :key="val.onlyId">
-                     <el-input class="w100" v-model="v.key" placeholder="变量名"></el-input> =
-                     <el-input class="w192" v-model="v.value" placeholder="变量值"></el-input>
+                   <div v-for="(ve,ie) in v.environmentVar" :key="ie">
+                     <el-input class="w100" v-model="ve.name" placeholder="变量名"></el-input> =
+                     <el-input class="w192" v-model="ve.value" placeholder="变量值"></el-input>
                      <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
-                      @click="delEnvironmentVar(i, val.onlyId)"></i>
+                      @click="delEnvironmentVar(i,ie)"></i>
                    </div>
                     <el-divider v-if="v.environmentVar.length>0&&v.citeCs.length>0"></el-divider>
                      <!-- 引用ConfigMap/Secret -->
@@ -390,9 +391,6 @@
             </el-form-item>
             <a @click="highLevelSetShow2=!highLevelSetShow2">隐藏高级设置</a>
          </div>
-
-
-
          </el-form>
 
          <!-- 设置主机路径 -->
@@ -694,7 +692,7 @@ export default {
           containerObj = {
             name: container[i].name,
             image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
-            imagePullPolicy: container[i].mirrorPullTactics,
+            imagePullPolicy: container[i].imagePullPolicy,
             volumeMounts: [],
             resources: {
               limits:
@@ -709,10 +707,11 @@ export default {
                   memory: container[i].requestMemory + 'Mi'
                 }
             },
-            env: [{ name: 'resource-huanjing', 'value': 'resourcehuajingvalue' }, {
-              'name': 'resourcebieming',
-              'valueFrom': { 'secretKeyRef': { 'key': '.dockercfg', 'name': 'qcloudregistrykey', 'optional': false } }
-            }],
+            terminationMessagePath:"/dev/termination-log",
+            terminationMessagePolicy:"File",
+            livenessProbe:null,
+            readinessProbe:null,
+            env: container[i].environmentVar,
             workingDir: '',
             command: [],
             args: [],
@@ -721,6 +720,7 @@ export default {
           containerList.push(containerObj)
         }
       }
+      console.log(containerList)
       var params={
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
@@ -749,7 +749,7 @@ export default {
         } else {
           this.loadShow = false
           let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          let ErrOr = Object.assign(this.$ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
             type: 'error',
@@ -778,12 +778,14 @@ export default {
           for(let v of arr){
             console.log(v)
             this.addInstanceContent(
-            v.name,v.image,'',v.imagePullPolicy,
+            v.name,v.image.split(':')[0],v.image.split(':')[1],v.imagePullPolicy,
             parseInt(v.resources.requests.cpu),
             parseInt(v.resources.limits.cpu),
-            parseInt(v.resources.requests.memory),
-            parseInt(v.resources.limits.memory),
-            Number(v.resources.limits['nvidia.com/gpu']) )
+            this.formatData(v.resources.requests.memory),
+            this.formatData(v.resources.limits.memory),
+            Number(v.resources.limits['nvidia.com/gpu']),
+            v.env,//环境变量
+            )
           }
         }else{
             let ErrTips = {};
@@ -796,6 +798,14 @@ export default {
               });
           }
     })
+  },
+  formatData(num){
+      if(num.indexOf('Gi')!=-1){
+         num=parseInt(num)*1024
+      }else{
+        num =parseInt(num)
+      }
+      return num
   },
   //返回上一层
   goBack() {
@@ -814,15 +824,6 @@ export default {
     }
     this.touchTactics.push(obj)
   },
-  addDataJuan() { //新增数据卷
-    this.dataFlag = true;
-    var obj = {
-      name1: "",
-      name2: "",
-      name3: ""
-    };
-    this.upc.dataJuan.push(obj);
-  },
   selectYun() {
     this.dialogVisibleYun = true;
   },
@@ -839,12 +840,6 @@ export default {
   // 改变页数
   handleCurrentChange(val) {
     this.currpage = val;
-  },
-
-  
-  close(val){
-    this.SelectMirrorImgFlag=val;
-    console.log(val)
   },
 },
 watch: {
