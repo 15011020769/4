@@ -311,7 +311,7 @@ export default {
         Offset: 0,
         Limit: 20,
         Version: "2018-05-25",
-        InstanceRole: "MASTER_ETCD"
+        InstanceRole: "WORKER"
       };
       const res = await this.axios.post(NODE_INFO, params);
       // this.loadShow = false;

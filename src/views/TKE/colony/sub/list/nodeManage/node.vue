@@ -288,6 +288,7 @@ export default {
       podList: [],
       clusterIds: [],
       instanceId: '',
+      name:"节点",
       searchTypes: [
         {
           value: 'name',
@@ -319,10 +320,11 @@ export default {
   methods: {
     toMonitor(){
       //跳转监控页面
-      this.$router.push({
-        name:"colonyOpenMonitor",
+       this.$router.push({
+        name:"nodeMonitor",
         query:{
-          title:this.tit
+          title:this.name,
+          clusterId: this.$route.query.clusterId,
         }
       })
     },

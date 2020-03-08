@@ -122,7 +122,19 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: this.time
+            data: this.time,
+            splitLine: {
+                show: false
+              },
+              axisLabel: {
+                // 决定是否显示数据
+                show: false
+              },
+              axisTick: {
+            // 决定是否显示坐标刻度
+              alignWithLabel: true,
+              show: false
+            },
           },
           yAxis: [{
             splitLine: {

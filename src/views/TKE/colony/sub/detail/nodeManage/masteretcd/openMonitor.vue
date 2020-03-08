@@ -58,6 +58,12 @@
         </div>
         <div class="box-bottom-right">
           <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='series' style="height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesError' style="height:200px;" />
+          </div>
         </div>
       </div>
     </div>
@@ -69,6 +75,7 @@ import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO
 import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
+import EcharTKE from '@/components/public/EcharTKE'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -78,7 +85,7 @@ export default {
       default: false
     },
   },
-  components:{TimeDropDown},
+  components:{TimeDropDown,EcharTKE},
   data() {
     return {
       activeName: "first",
@@ -99,7 +106,9 @@ export default {
       JobId:"",// 后台返回id
       StartTime:"",
       EndTIme:"",
-      timeAll:[],
+      times:[],
+      series:[],
+      seriesError:[],
       TimeArr: [{
           name: '实时',
           Time: 'realTime',
@@ -165,9 +174,9 @@ export default {
     this.clusterId = clusterId
     this.title = title
   },
-   mounted(){
-    this.inits();
-  },
+  // mounted(){
+  //   this.inits();
+  // },
   methods: {
     GetDat(val){
       this.StartTime = new Date(val[1].StartTIme).getTime();
@@ -186,92 +195,6 @@ export default {
         this.getNodeList()
       }
     },
-    // inits(){
-    //   var myChart = this.$echarts.init(this.$refs.main)
-    // // 绘制图表
-    // myChart.setOption({
-    //     title: {
-    //           text: '折线图堆叠'
-    //       },
-    //       tooltip: {
-    //           trigger: 'axis'
-    //       },
-    //       // legend: {
-    //       //     data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-    //       // },
-    //        grid: {
-    //         x: 50,
-    //         y: 45,
-    //         x2: 5,
-    //         y2: 20,
-    //         borderWidth: 1
-    //       },
-    //       toolbox: {
-    //           feature: {
-    //               saveAsImage: {}
-    //           }
-    //       },
-    //       xAxis: {
-    //           type: 'category',
-    //           boundaryGap: false,
-    //           data: this.timeAll,
-    //            axisTick: {
-    //           // 决定是否显示坐标刻度
-    //             alignWithLabel: true,
-    //             show: false
-    //           },
-    //           splitLine: {
-    //             show: false
-    //           },
-    //           axisLabel: {
-    //             // 决定是否显示数据
-    //             show: false
-    //           },
-    //       },
-    //       yAxis: {
-    //           type: 'value',
-    //            splitLine: {
-    //             // 网格线
-    //             show: false
-    //           },
-    //           axisLine: {
-    //             // X轴显示
-    //             show: false
-    //           },
-    //       },
-    //       series: [  {
-    //               name: '邮件营销',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '联盟广告',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '视频广告',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '直接访问',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '搜索引擎',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //       ]
-    //   });
-    // },
     //返回上一层
     goBack() {
       this.$router.go(-1);
@@ -506,13 +429,57 @@ export default {
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         //   console.log(res)
         if(res.Response.Error === undefined) {
-          let dataCount = JSON.parse(res.Response.Data)
+          let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
-          this.timeAll=dataCount.map(item=>{
-              return  moment(item[0]).format("YYYY-MM-DD HH:mm:ss")
-              // return time
-          })
-          console.log(this.timeAll)
+           let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
+            cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
+            memUsageBytes = [], memNoYsages = [], receives = [], transmits = [];
+            if(data.length > 0) {
+              for(let i = 0; i < data.length; i++) {
+                let item = data[i];
+                let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+                let podId = item[1];//节点ID
+                let pod = item[2];//实例数量
+                let statuErr = item[3];//异常
+                let cpu = item[4];//cpu总配置
+                let cpuUsed = item[5];//cpu使用率
+                let cpuRequest = item[6];//cpu分配率
+                let cpuUsedmax = item[7];//cpu使用量
+                let memory = item[8];//内存总量
+                let memusage = item[9];
+                let memrequest = item[10];
+                let menNocache = item[11];
+                let memUsageByte = item[12];
+                let memNoYsage = item[13];
+                let receive = item[14];
+                let transmit = item[15];
+                times.push(time);
+                podIds.push(podId);
+                pods.push(pod);
+                statuErrs.push(statuErr);
+                cpus.push(cpu);
+                cpuUseds.push(cpuUsed);
+                cpuRequests.push(cpuRequest);
+                cpuUsedmaxs.push(cpuUsedmax);
+                memorys.push(memory);
+                memusages.push(memusage);
+                memrequests.push(memrequest);
+                menNocaches.push(menNocache);
+                memUsageBytes.push(memUsageByte);
+                memNoYsages.push(memNoYsage);
+                receives.push(receive);
+                transmits.push(transmit);
+              }
+            }
+            this.times = times;
+            this.series = [{name: '节点数量',type: 'line', data: pods}];
+            this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
+            console.log(statuErrs)
+          // this.timeAll=dataCount.map(item=>{
+          //     return  moment(item[0]).format("YYYY-MM-DD HH:mm:ss")
+          //     // return time
+          // })
+          // console.log(this.timeAll)
           // this.timeAll.push(JSON.parse(res.Response.Data).)
           
         }
