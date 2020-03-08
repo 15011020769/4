@@ -7,11 +7,11 @@
         width="45%"
         :before-close="handleClosede">
         <div>
-          <span class="tip">确定删除：{{getCon[0]}}?</span>
+          <span class="tip">確定删除：{{getCon[0]}}?</span>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClosede">取 消</el-button>
-          <el-button type="primary" @click="deleteDominSure">确 定</el-button>
+          <el-button type="primary" @click="deleteDominSure">確 定</el-button>
         </span>
       </el-dialog>
     </div>

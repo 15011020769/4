@@ -1,7 +1,6 @@
 <template>
   <div class="product-wrap">
-    <Header title="产品事件">
-    </Header>
+    <Header title="产品事件"></Header>
     <div class="product-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
@@ -12,15 +11,15 @@
       <div class="box">
         <div class="table_top">
           <div class="type_data">
-            <TimeX v-on:switchData="GetDat" :classsvalue="value"></TimeX>
+            <TimeX v-on:switchData="getProductList" :classsvalue="value"></TimeX>
           </div>
           <div class="writeput">
-              <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
-              <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+            <el-input v-model="input" placeholder="请输入实例组名搜索"></el-input>
+            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
-                <i class="el-icon-setting" @click="dialog"></i>
-                <i class="el-icon-download"></i>
+            <i class="el-icon-setting" @click="dialog"></i>
+            <i class="el-icon-download"></i>
           </div>
         </div>
         <div class="table_head">
@@ -33,7 +32,7 @@
             </div>
             <div class="noerror">
               <p>未恢复异常事件</p>
-              <p  style="color:red">
+              <p style="color:red">
                 <span>27</span>个
               </p>
             </div>
@@ -54,7 +53,7 @@
           </div>
         </div>
         <div class="table">
-          <el-table :data="tableData" style="width: 100%" height="450">
+          <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450">
             <el-table-column prop="date" label="事件" width="200"></el-table-column>
             <el-table-column prop="type" label="类型" width="100"></el-table-column>
             <el-table-column prop="producttype" label="产品类型" width="90"></el-table-column>
@@ -81,7 +80,7 @@
         </div>
       </div>
     </div>
-    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
+    <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
   </div>
 </template>
 
@@ -89,6 +88,11 @@
 import Header from "@/components/public/Head";
 import TimeX from "@/components/public/TimeN";
 import Dialog from "./custom/custom";
+
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { PRODUCT_EVENT_LIST } from "@/constants";
+
 export default {
   name: "product",
   data() {
@@ -97,6 +101,7 @@ export default {
       value: 13,
       dialogVisible: false, //弹框
       input: "", //搜索框的值
+      loadShow: true, // 加载是否显示
       tableData: [],
       //分页
       TotalCount: 0, //总条数
@@ -107,28 +112,58 @@ export default {
   components: {
     Header,
     Dialog,
-    TimeX,
+    TimeX
+  },
+  created() {
+    this.getProductList();
   },
   methods: {
     //获取数据
-    GetDat(data) {
-      // console.log(data);
+    getProductList(data) {
+      this.loadShow = true; //加载
+      const params = {
+        Region: localStorage.getItem("regionv2"),
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+
+      //  monitor2/DescribeProductEventList   //接口
+
+      console.log(params);
+      this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
+        console.log(res);
+
+        // if (res.Response.Error === undefined) {
+        //   this.loadShow = false; //取消加载
+        //   this.showNameSpaceModal = false;
+        // } else {
+        //   this.loadShow = false;
+        //   let ErrTips = {};
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
     },
-     //分页
+    //分页
     handleCurrentChange(val) {
       this.currpage = val;
     },
     //弹框
-    dialog(){
+    dialog() {
       this.dialogVisible = true;
     },
-    cancel(){
+    cancel() {
       this.dialogVisible = false;
     },
-    save(){
+    save() {
       this.dialogVisible = false;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -141,9 +176,9 @@ export default {
   line-height: 30px;
   font-size: 12px;
 }
-.writeput{
-   width: 240px;
-        display: flex;
+.writeput {
+  width: 240px;
+  display: flex;
 }
 .product-wrap > header {
   width: 100%;
@@ -165,24 +200,24 @@ export default {
 }
 .box {
   width: 100%;
-  .table_top{
-    width:100%;
-    margin:15px 0;
+  .table_top {
+    width: 100%;
+    margin: 15px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     line-height: auto;
-      .icons {
-        display: flex;
-        font-size: 16px;
-        align-items: center;
-      }
-      .type_data{
-        margin-left:-20px;
-      }
-      .type_data{
-        margin-top:-20px;
-      }
+    .icons {
+      display: flex;
+      font-size: 16px;
+      align-items: center;
+    }
+    .type_data {
+      margin-left: -20px;
+    }
+    .type_data {
+      margin-top: -20px;
+    }
   }
   .table_head {
     width: 100%;
@@ -199,35 +234,35 @@ export default {
       flex: 4;
       border: 1px solid #ccc;
       display: flex;
-      padding:10px;
+      padding: 10px;
       .error {
         flex: 3;
         // background: #97c7ff;
-        margin:10px;
-        padding:10px;
-        padding-bottom:20px;
-        border-right:1px solid #ccc;
+        margin: 10px;
+        padding: 10px;
+        padding-bottom: 20px;
+        border-right: 1px solid #ccc;
       }
       .noerror {
-        margin:10px; 
-        padding:10px; 
-        padding-bottom:20px;
+        margin: 10px;
+        padding: 10px;
+        padding-bottom: 20px;
         flex: 3;
       }
       .nopageerror {
-        margin:10px;
-        padding:10px ;
-        padding-bottom:20px;
+        margin: 10px;
+        padding: 10px;
+        padding-bottom: 20px;
         flex: 4;
       }
     }
     .table_head_right {
-      margin-left:20px;
-      flex:2;
+      margin-left: 20px;
+      flex: 2;
       border: 1px solid #ccc;
-      .pages{
-        margin:20px 20px;
-        padding:10px;
+      .pages {
+        margin: 20px 20px;
+        padding: 10px;
       }
     }
   }
@@ -267,7 +302,7 @@ export default {
     line-height: 32px;
   }
 }
-.icons i{
+.icons i {
   font-size: 19px;
   display: inline-block;
   margin: 0 5px;

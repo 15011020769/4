@@ -1,32 +1,31 @@
 <template>
   <div class="form-wrap">
     <h4>截圖鑒黃配置</h4>
-    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-      <el-form-item label="模板名稱" prop="TemplateName">
+    <el-form
+      :model="ruleForm"
+      :rules="rules"
+      ref="ruleForm"
+      label-width="120px"
+      class="demo-ruleForm"
+    >
+      <el-form-item label="範本名稱" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="模板描述" prop="Description">
+      <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
       <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
       </el-form-item>
-      <el-form-item label="啟用智能鑒黃" prop="PornFlag">
-      <el-switch v-model="ruleForm.PornFlag" />
-      <div class="explain" v-if="ruleForm.PornFlag">
-        <p>
-          启用智能鉴黄后，需配置回调才可收到鉴黄结果，请参考文档
-          <a href="#">回调配置</a>
-        </p>
-      </div>
+      <el-form-item label="啟用智慧鑒黃" prop="PornFlag">
+        <el-switch v-model="ruleForm.PornFlag" />
+        <div class="explain" v-if="ruleForm.PornFlag">
+          <p>啟用智慧鑑黃後，需配置回調才可收到鑑黃結果</p>
+        </div>
       </el-form-item>
       <el-form-item label="儲存位置">
         <div class="explain">
-          <p>
-            截图将存储在您配置的 COS bucket 中，请您确认 COS bucket 已授权云直播写入，
-            创建 COS bucket 及授权
-            <a href="#">参考文档</a>
-          </p>
+          <p>截圖將儲存在您配置的 COS bucket 中，請您確認 COS bucket 已授權雲直播寫入</p>
         </div>
       </el-form-item>
       <el-form-item label="CosAppId" prop="CosAppId">
@@ -47,7 +46,9 @@
 </template>
 
 <script>
-import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from "@/constants"
+import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from "@/constants";
+
+const regex = /^[\w_-]{1,30}$/;
 
 export default {
   name: "optionForm",
@@ -59,28 +60,55 @@ export default {
   },
 
   data() {
+    let checkTemplateName = (rule, value, callback) => {
+      let result = regex.test(value);
+      if (!result) {
+        callback(new Error("範本僅支持中文、英文、數字、_、-，不超過30個字符"));
+      }
+      callback();
+    };
+
+    let checkDesc = (rule, value, callback) => {
+      let result = regex.test(value);
+      if (!result) {
+        callback(
+          new Error("範本描述僅支持中文、英文、數字、_、-，不超過100個字符")
+        );
+      }
+      callback();
+    };
+
+    let checkSnapshotInterval = (rule, value, callback) => {
+      if (value < 5 || value > 300) {
+        callback(new Error("截圖間隔取值範圍為5秒-300秒，必須為5的倍數"));
+      }
+
+      if (value % 5 !== 0) {
+        callback(new Error("截圖間隔取值範圍為5秒-300秒，必須為5的倍數"));
+      }
+      callback();
+    };
+
     return {
       ruleForm: {
         TemplateName: "",
         Description: "",
         SnapshotInterval: 10, // 截圖間隔
         PornFlag: 0, // 是否开启鉴黄，0：不开启，1：开启。默认：0。
-        CosAppId: '',
-        CosBucket: '',
-        CosRegion: ''
+        CosAppId: "",
+        CosBucket: "",
+        CosRegion: ""
       },
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入模板名稱", trigger: "blur" },
-          { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
+          { required: true, message: "請輸入範本名稱", trigger: "blur" },
+          { validator: checkTemplateName, trigger: "blur" }
         ],
-        desc: [
-          { required: false },
-          { max: 100, message: "長度不能超過100個字符", trigger: 'blur' }
-        ],
+        desc: [{ required: false }, { validator: checkDesc, trigger: "blur" }],
         SnapshotInterval: [
-          { required: true, message: "請輸入截圖間隔", trigger: "blur" }
+          { required: true },
+          { validator: checkSnapshotInterval, trigger: "blur" }
         ],
         CosAppId: [
           { required: true, message: "請輸入CosAppId", trigger: "blur" }
@@ -90,13 +118,13 @@ export default {
         ],
         CosRegion: [
           { required: true, message: "請輸入CosRegion", trigger: "blur" }
-        ],
-      },
-    }
+        ]
+      }
+    };
   },
 
   mounted() {
-    this.initTableParams()
+    this.initTableParams();
   },
 
   methods: {
@@ -105,60 +133,59 @@ export default {
         if (valid) {
           // 如果有selectItem则为修改
 
-          const params = { ...this.ruleForm }
-          params.Version = '2018-08-01'
-          params.PornFlag = this.ruleForm.PornFlag ? 1 : 0
+          const params = { ...this.ruleForm };
+          params.Version = "2018-08-01";
+          params.PornFlag = this.ruleForm.PornFlag ? 1 : 0;
 
           if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId
-            params.CosAppId = Number(params.CosAppId)
-            this.handleUpdate(params)
-            return
+            params.TemplateId = this.selectItem.TemplateId;
+            params.CosAppId = Number(params.CosAppId);
+            this.handleUpdate(params);
+            return;
           }
 
-          this.handleAdd(params)
-
+          this.handleAdd(params);
         }
-      })
+      });
     },
 
     handleAdd(params) {
       this.axios.post(ADD_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: '添加成功',
-            type: 'success'
-          })
-          this.$parent.fetchRecordingList()
-          this.$emit('update:formShow', false)
-          return
+            message: "添加成功",
+            type: "success"
+          });
+          this.$parent.fetchRecordingList();
+          this.$emit("update:formShow", false);
+          return;
         }
-        this.$message.error(data.Response.Error.Message)
-      })
+        this.$message.error(data.Response.Error.Message);
+      });
     },
 
     handleUpdate(params) {
       this.axios.post(UPDATE_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: '修改成功',
-            type: 'success'
-          })
-          this.$parent.fetchRecordingList()
-          this.$emit('update:formShow', false)
-          return
+            message: "修改成功",
+            type: "success"
+          });
+          this.$parent.fetchRecordingList();
+          this.$emit("update:formShow", false);
+          return;
         }
-        this.$message.error(data.Response.Error.Message)
-      })
+        this.$message.error(data.Response.Error.Message);
+      });
     },
 
     initTableParams() {
       if (Object.keys(this.selectItem).length) {
-        const currentParams = {}
+        const currentParams = {};
         Object.keys(this.ruleForm).forEach(key => {
-          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
-          this.ruleForm.PornFlag = this.selectItem.PornFlag > 0
-        })
+          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
+          this.ruleForm.PornFlag = this.selectItem.PornFlag > 0;
+        });
       }
     }
   }

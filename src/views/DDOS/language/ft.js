@@ -2,7 +2,8 @@ module.exports = {
   DDOS: {
     total: {
       address: '台灣台北',
-      btn: 'Cloud Virtual Machine'
+      btn: 'Cloud Virtual Machine',
+      new_buy: '新購'
     },
     Protective: {
       ProtectiveName: '防護概覽',
@@ -84,7 +85,6 @@ module.exports = {
     AssetList: {
       resourceList: '資源清單',
       businessList: '業務清單',
-      newPurchases: '新購',
       willExpire: '即將過期',
       RunningState: '運行狀態',
       Running: '運行中',
@@ -132,6 +132,7 @@ module.exports = {
       JustPay: '立即支付'
     },
     AccesstoCon: {
+      AccessConfig: '接入配置',
       NonWebsite: '非網站業務',
       searchAccess: '請輸入要查詢的ID或名稱',
       addNewAccess: '新建',
@@ -244,7 +245,6 @@ module.exports = {
     },
     Statistical_forms: {
       form_title: '統計報表',
-      new_bug: '新購',
       DDoS_Protection: 'DDoS攻擊防護',
       CC_attack_protection: 'CC攻擊防護',
       business: '業務',

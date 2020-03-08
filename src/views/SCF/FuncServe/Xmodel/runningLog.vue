@@ -2,11 +2,11 @@
   <div class="Journal">
     <div class="Choice">
       <el-select v-model="ChoiceValue" class="select" @change="_GetJournal">
-        <el-option v-for="item in ChoiceOptions" :key="item.value" :label="item.label" :value="item.value">
-        </el-option>
+        <el-option v-for="item in ChoiceOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
-      <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
-        v-on:switchData="GetDat" class="TimeDropDown" />
+      <TimeDropDown :TimeArr="TimeArr" :Datecontrol="true" :Graincontrol="false" :Difference="'H'"
+        v-on:switchData="GetDat" />
+      <el-button size="small" @click="_Reset" class="TimeDropDown">重置</el-button>
       <el-input :placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
       <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
     </div>
@@ -14,23 +14,31 @@
       <div class="menu">
         <ul v-for="(item,index) in JournalList" :key="index">
           <li @click="_switch(item)">
-            <span> {{item.StartTime}}</span>
-            <span v-if="item.RetCode===0" class="success">
-              {{$t('SCF.total.dycg')}}
-            </span>
-            <span v-else class="fail">
-              {{$t('SCF.total.dysb')}}
-            </span>
+            <span>{{item.StartTime}}</span>
+            <span v-if="item.RetCode===0" class="success">{{$t('SCF.total.dycg')}}</span>
+            <span v-else class="fail">{{$t('SCF.total.dysb')}}</span>
           </li>
         </ul>
       </div>
       <div class="contentx">
         <p class="contentID">{{$t('SCF.total.qqid')}}:&nbsp;&nbsp;&nbsp;{{content.RequestId}}</p>
         <div class="information">
-          <p>{{$t('SCF.total.sj')}}:<span>{{content.StartTime}}</span></p>
-          <p>{{$t('SCF.total.yxsj')}}:<span>{{content.Duration}}ms</span></p>
-          <p>{{$t('SCF.total.jfsj')}}:<span>{{content.BillDuration}}ms</span></p>
-          <p>{{$t('SCF.total.yxnc')}}:<span>{{content.MemUsage |UpMB()}}MB</span></p>
+          <p>
+            {{$t('SCF.total.sj')}}:
+            <span>{{content.StartTime}}</span>
+          </p>
+          <p>
+            {{$t('SCF.total.yxsj')}}:
+            <span>{{content.Duration}}ms</span>
+          </p>
+          <p>
+            {{$t('SCF.total.jfsj')}}:
+            <span>{{content.BillDuration}}ms</span>
+          </p>
+          <p>
+            {{$t('SCF.total.yxnc')}}:
+            <span>{{content.MemUsage |UpMB()}}MB</span>
+          </p>
         </div>
         <div class="RetMsg_Log">
           <div>
@@ -48,18 +56,28 @@
     <div class="content" v-if="contentshow===false">
       <div class="menu">
         <ul>
-          <li>
-            {{$t('SCF.total.zwrzxx')}}
-          </li>
+          <li>{{$t('SCF.total.zwrzxx')}}</li>
         </ul>
       </div>
       <div class="contentx">
         <p class="contentID">{{$t('SCF.total.qqid')}}:&nbsp;&nbsp;&nbsp;</p>
         <div class="information">
-          <p>{{$t('SCF.total.sj')}}:<span></span></p>
-          <p>{{$t('SCF.total.yxsj')}}:<span>0ms</span></p>
-          <p>{{$t('SCF.total.jfsj')}}:<span>0ms</span></p>
-          <p>{{$t('SCF.total.yxnc')}}:<span>0MB</span></p>
+          <p>
+            {{$t('SCF.total.sj')}}:
+            <span></span>
+          </p>
+          <p>
+            {{$t('SCF.total.yxsj')}}:
+            <span>0ms</span>
+          </p>
+          <p>
+            {{$t('SCF.total.jfsj')}}:
+            <span>0ms</span>
+          </p>
+          <p>
+            {{$t('SCF.total.yxnc')}}:
+            <span>0MB</span>
+          </p>
         </div>
         <div class="RetMsg_Log">
           <div>
@@ -82,100 +100,98 @@
   import {
     ErrorTips
   } from "@/components/ErrorTips";
-  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
+  import TimeDropDown from "@/components/public/TimeDropDown"; //引入时间组件
   export default {
-    props: ['FunctionVersion'],
+    props: ["FunctionVersion"],
     data() {
       return {
         functionName: this.$route.query.functionName,
         ChoiceOptions: [{
-            label: '全部日誌',
-            value: ''
+            label: "全部日誌",
+            value: ""
           },
           {
-            label: '正確日誌',
-            value: 'is0'
+            label: "正確日誌",
+            value: "is0"
           },
           {
-            label: '錯誤日誌',
-            value: 'not0'
-          },
+            label: "錯誤日誌",
+            value: "not0"
+          }
         ],
-        ChoiceValue: '',
+        ChoiceValue: "",
         TimeArr: [{
-            name: '實時',
-            Time: 'realTime',
+            name: "實時",
+            Time: "realTime",
             TimeGranularity: [{
               value: "",
               label: ""
             }]
           },
           {
-            name: '近24小時',
-            Time: 'Nearly_24_hours',
+            name: "近24小時",
+            Time: "Nearly_24_hours",
             TimeGranularity: [{
               value: "",
               label: ""
             }]
-          },
+          }
         ],
-        requestId: '',
+        requestId: "",
         Time: {},
         JournalList: [], //日志列表
-        contentID: '',
+        contentID: "",
         contentshow: true,
         content: {}
-      }
+      };
     },
     components: {
       TimeDropDown
     },
-    created() {
-
-    },
+    created() {},
     methods: {
       GetDat(data) {
-        this.Time = data[1]
-        this._GetJournal()
+        this.Time = data[1];
+        this._GetJournal();
       },
       _GetJournal() {
         let param = {
-          Region: localStorage.getItem('regionv2'),
+          Region: localStorage.getItem("regionv2"),
           Version: "2018-04-16",
           FunctionName: this.functionName,
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
-          'Filter.RetCode': this.ChoiceValue,
+          "Filter.RetCode": this.ChoiceValue,
           Qualifier: this.FunctionVersion
         };
-        if (this.requestId != '') {
-          param['FunctionRequestId'] = this.requestId
+        if (this.requestId != "") {
+          param["FunctionRequestId"] = this.requestId;
         }
         this.axios.post(FUN_LOG, param).then(res => {
           if (res.Response.Error === undefined) {
-            this.JournalList = res.Response.Data
+            this.JournalList = res.Response.Data;
             if (this.JournalList.length !== 0) {
-              this.contentshow = true
-              if (this.contentID === '') {
-                this.contentID = this.JournalList[0].RequestId
+              this.contentshow = true;
+              if (this.contentID === "") {
+                this.contentID = this.JournalList[0].RequestId;
               }
               this.JournalList.forEach(item => {
                 if (this.contentID === item.RequestId) {
-                  this.content = item
+                  this.content = item;
                 }
               });
             } else {
-              this.contentshow = false
+              this.contentshow = false;
             }
           } else {
             let ErrTips = {
-              'InternalError': '內部錯誤',
-              'nternalError.ES': 'ES錯誤',
-              'InternalError.System': '內部系統錯誤',
-              'InvalidParameter.Payload': '請求參數不合法',
-              'InvalidParameterValue': '參數取值錯誤',
-              'InvalidParameterValue.DateTime': 'DateTime傳入錯誤',
-              'InvalidParameterValue.StartTimeOrEndTime': '開始時間與結束時間僅可相差一天'
+              InternalError: "內部錯誤",
+              "nternalError.ES": "ES錯誤",
+              "InternalError.System": "內部系統錯誤",
+              "InvalidParameter.Payload": "請求參數不合法",
+              InvalidParameterValue: "參數取值錯誤",
+              "InvalidParameterValue.DateTime": "DateTime傳入錯誤",
+              "InvalidParameterValue.StartTimeOrEndTime": "開始時間與結束時間僅可相差一天"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -185,34 +201,56 @@
               duration: 0
             });
           }
-        })
+        });
+      },
+      _Reset() {
+        this.requestId = ''
+        this._GetJournal();
       },
       _search() {
-        if (this.requestId == '') {
-          this._GetJournal()
+        if (this.requestId == "") {
+          this._GetJournal();
         }
       },
       _switch(data) {
-        this.contentID = data.RequestId
+        this.contentID = data.RequestId;
         this.JournalList.forEach(item => {
           if (this.contentID === item.RequestId) {
-            this.content = item
+            this.content = item;
           }
         });
       }
     },
     filters: {
       UpMB(value) {
-        return (value / 1048576).toFixed(3)
+        return (value / 1048576).toFixed(3);
       }
     }
-  }
+  };
 
 </script>
 <style lang="scss" scoped>
+  // .Journal >>> .el-time-spinner__list {
+  //   margin: -12px;
+  // }
+  // .Journal
+  //   >>> .el-time-panel__content
+  //   .el-scrollbar__wrap
+  //   ul.el-time-spinner__list {
+  //   margin: -12px !important;
+  //   margin-left: -12px !important;
+  //   margin-right: 12px !important;
+  //   margin-top: -12px !important;
+  //   margin-bottom: -12px !important;
+  // }
+  .Journal>>>.el-input__inner {
+    height: 32px !important;
+    line-height: 32px !important;
+  }
+
   .Journal {
     background-color: #fff;
-    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     padding: 20px;
 
     .Choice {
@@ -224,6 +262,8 @@
 
       .el-input {
         width: 160px;
+        height: 32px !important;
+        line-height: 32px !important;
       }
 
       .el-select {
@@ -231,7 +271,7 @@
       }
 
       .select {
-        margin-right: 20px
+        margin-right: 20px;
       }
     }
 
@@ -252,12 +292,12 @@
 
             .success {
               padding-left: 20px;
-              color: #0abf5b
+              color: #0abf5b;
             }
 
             .fail {
               padding-left: 30px;
-              color: #e54545
+              color: #e54545;
             }
           }
         }
@@ -286,7 +326,6 @@
               color: black;
             }
           }
-
         }
 
         .RetMsg_Log {
@@ -307,7 +346,6 @@
         }
       }
     }
-
   }
 
 </style>

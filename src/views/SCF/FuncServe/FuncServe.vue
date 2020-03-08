@@ -173,7 +173,7 @@
         },
         loading: true,
         pagesize: 10,
-        currpage: 1,
+        currpage: 0,
         TotalCount: 0, //函数列表总条数
         SpaceList: [], //命名空间列表下拉
         SpaceListK: [], //命名空间列表管理
@@ -310,7 +310,7 @@
       },
       // 分页
       handleCurrentChange(val) {
-        this.currpage = val;
+        this.currpage = (val - 1) * this.pagesize;
         this._GetFuncList();
       },
       //删除命名空间
@@ -538,7 +538,11 @@
       //跳转新建
       _newCreateFun() {
         this.$router.push({
-          path: "/createFun"
+          path: "/createFun",
+          query: {
+            Namespace: this.SpaceValue
+          }
+
         });
       },
       //跳转详情页点击事件
@@ -573,11 +577,13 @@
 
     ::v-deep .el-input__inner {
       height: 32px !important;
+      line-height: 32px !important;
       width: 180px !important;
     }
 
     ::v-deep .el-input {
       height: 32px !important;
+      line-height: 32px !important;
     }
 
     .title {

@@ -61,26 +61,42 @@
                       <i class="el-icon-info "></i>
                     </el-tooltip>
                   </p>
-                  <div style="float:right;">
+                  <div style="float:right;" >
                     <div v-for="(i,index) in val.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
-                      <el-input class="w150" v-model="i.key"></el-input>
+                        <el-tooltip
+                          effect="light"
+                          content="标签名不能为空"
+                          placement="bottom"
+                          :disabled="i.key!=''"
+                        >
+                      <el-input   :class="{warn:i.key==''}" class="w150" v-model.trim="i.key"></el-input>
+                      </el-tooltip>
                       <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                         <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
                           :value="item.value">
                         </el-option>
                       </el-select>
-                      <el-input class="w150" v-model="i.values"></el-input>
+                      <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  placeholder="DoesNotExist,Exists操作符不需要填写value" ></el-input>
+                       <el-tooltip
+                          v-else
+                          effect="light"
+                          content="自定义规则不能为空"
+                          placement="bottom"
+                          :disabled="i.values!=''"
+                        >
+                      <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
+                      </el-tooltip>
                       <el-tooltip v-if="val.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
                         <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
                       </el-tooltip>
                       <i class="el-icon-close" v-else @click="val.matchExpressions.splice(index,1)"
                         style="font-size:20px;cursor:pointer"></i>
                     </div>
-                    <a  @click="addRule1(idx)">添加规则</a>
+                    <a  class="cursor"  @click="addRule1(idx)">添加规则</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a @click="addCondition">添加条件</a>
+                <a @click="addCondition"  class="cursor">添加条件</a>
               </el-form-item>
               <el-form-item label="尽量满足条件">
                 <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
@@ -100,13 +116,29 @@
                   <div style="float:right;">
                       <div style="margin-bottom:10px"><el-input   v-model="val.weight" class="w150" ></el-input></div>
                       <div v-for="(i,index) in val.preference.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
-                        <el-input class="w150" v-model="i.key"></el-input>
+                          <el-tooltip
+                          effect="light"
+                          content="标签名不能为空"
+                          placement="bottom"
+                          :disabled="i.key!=''"
+                        >
+                      <el-input  :class="{warn:i.key==''}" class="w150" v-model.trim="i.key"></el-input>
+                      </el-tooltip>
                         <el-select v-model="i.operator" class="w100" style="margin:0px 10px;">
                           <el-option v-for="item in conditionOptions" :key="item.value" :label="item.label"
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-input class="w150" v-model="i.values"></el-input>
+                        <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  placeholder="DoesNotExist,Exists操作符不需要填写value" ></el-input>
+                        <el-tooltip
+                          v-else
+                          effect="light"
+                          content="自定义规则不能为空"
+                          placement="bottom"
+                          :disabled="i.values!=''"
+                        >
+                           <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
+                        </el-tooltip>
                         <el-tooltip v-if="val.preference.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器"
                           placement="top">
                           <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
@@ -114,11 +146,11 @@
                         <i class="el-icon-close" v-else @click="val.preference.matchExpressions.splice(index,1)"
                           style="font-size:20px;cursor:pointer"></i>
                       </div>
-                      <a @click="addRule2(idx)">添加规则</a>
+                      <a @click="addRule2(idx)"  class="cursor">添加规则</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a @click="addCondition2">添加条件</a>
+                <a @click="addCondition2"  class="cursor">添加条件</a>
               </el-form-item>
             </div>
         </el-form>
@@ -177,6 +209,7 @@ export default {
       clusterId:'',
       name:'',
       spaceName:'',
+      workload:'',
     };
   },
   components: {
@@ -186,6 +219,7 @@ export default {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
      this.spaceName=this.$route.query.spaceName;
+     this.workload=this.$route.query.workload
      this.findNodeData();
      this.findNode();
      this.baseData()
@@ -200,7 +234,7 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
         RequestBody:{
           spec:{
             template:{
@@ -210,7 +244,15 @@ export default {
         Version: "2018-05-25",
       }
       if(this.se.radio=='1'){
-        params.RequestBody.spec.template.spec.affinity=null
+        let jsonobj={
+              spec:{
+                template:{
+                  spec:{affinity:null}
+                }
+              }
+            }
+      params.RequestBody=JSON.stringify(jsonobj)
+
       }else if(this.se.radio=='2'){
         params.RequestBody.spec.template.spec.affinity={
 						"nodeAffinity": {
@@ -241,6 +283,12 @@ export default {
         console.log(res)
          if(res.Response.Error === undefined){
            this.$router.go(-1)
+            this.$message({
+                message: '更新成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+            });  
          }else{
             let ErrTips = {};
             let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
@@ -310,7 +358,7 @@ export default {
     baseData(){
         var params={
               Method: "GET",
-              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +
+              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
                 this.name,
               Version: "2018-05-25",
               ClusterName: this.clusterId
@@ -340,7 +388,9 @@ export default {
                           for(let item of obj.matchExpressions){
                               item.key=item.key;
                               item.operator=item.operator;
-                              item.values=item.values[0]
+                              if(item.values){
+                                item.values=item.values[0]
+                              }
                           }
                           arr.push(obj)
                         });
@@ -357,7 +407,9 @@ export default {
                              for(let item of obj.preference.matchExpressions){
                               item.key=item.key;
                               item.operator=item.operator;
-                              item.values=item.values[0]
+                              if(item.values){
+                                item.values=item.values[0]
+                              }
                           }
                         arr.push(obj)
                         })
@@ -381,10 +433,17 @@ export default {
             for(let item of obj.matchExpressions){
                     item.key=item.key;
                     item.operator=item.operator;
-                    item.values=[item.values]
+                    if( item.operator=='DoesNotExist'||item.operator=='Exists'){
+                        delete item.values
+                      }else{
+                        if(item.values!=''){
+                          item.values=[item.values]
+                        }
+                    }
               }
            arr.push(obj)
           });
+
          return arr
        }else{
          return null
@@ -395,13 +454,19 @@ export default {
         let arr=[];
         this.needCondition.forEach(element=>{
               let obj={}
-              obj.weight=element.weight;
+              obj.weight=Number(element.weight) ;
               obj.preference=JSON.parse(JSON.stringify(element.preference));
                 for(let item of obj.preference.matchExpressions){
                     item.key=item.key;
                     item.operator=item.operator;
-                    item.values=[item.values]
+                    if( item.operator=='DoesNotExist'||item.operator=='Exists'){
+                        delete item.values
+                      }else{
+                       if(item.values!=''){
+                          item.values=[item.values]
+                        }
                     }
+              }
               arr.push(obj)
           })
         return arr
@@ -471,7 +536,7 @@ export default {
     padding: 10px;
   }
 	.bg2 {
-    width: 60%;
+    width: 64%;
     background: #f2f2f2;
     box-sizing: border-box;
     padding: 10px 20px;
@@ -487,6 +552,15 @@ export default {
     cursor: pointer;
     float: right;
   }
+  .cursor{
+    cursor: pointer;
+  }
+  .warn {
+  ::v-deep .el-input__inner {
+    color: #e1504a;
+    border-color: #e1504a;
+  }
+}
 
 </style>
 

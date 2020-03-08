@@ -819,7 +819,8 @@ export default {
       this.$router.push({
         path: "/detailsUser",
         query: {
-          detailsData: val.Name
+          detailsData: val.Name,
+          uid: val.Uid,
         }
       });
     },
@@ -1010,12 +1011,6 @@ export default {
     },
     subscriptionConfirm() {
       this.noticeSubscriptionVisible = false;
-    },
-    getAllSubscriptionType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
-    },
-    getAllSubscriptionParentType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
     },
     matchAllSubscriptionByUserId(uid, row) {
       let that = this;

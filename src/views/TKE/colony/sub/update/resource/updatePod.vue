@@ -112,6 +112,7 @@
          clusterId: this.$route.query.clusterId,
          spaceName: this.$route.query.spaceName,
          name: this.$route.query.name,//路由传过来的工作负载数据
+         workload: this.$route.query.workload,
          name2:'',//处理过的name
          caseNum:'',
          // 更新pod数量
@@ -229,7 +230,7 @@
        baseData(){
          var params={
           Method: "GET",
-          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +this.name,
+          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +this.name,
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -245,7 +246,7 @@
        baseDataJudge(){
          var params={
           Method: "GET",
-          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments/" +this.name+"/horizontalpodautoscalers",
+          Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"/" +this.name+"/horizontalpodautoscalers",
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };

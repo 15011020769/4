@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="basicinfo">
-      <h1 class="newClear">{{$t('CSS.domainManagement.22')}}<a @click="editSet">{{$t('CSS.domainManagement.10')}}</a></h1>
+      <h1 class="newClear">
+        {{$t('CSS.domainManagement.22')}}
+        <a @click="editSet">{{$t('CSS.domainManagement.10')}}</a>
+      </h1>
       <div class="newClear">
         <div class="newClear newList">
           <p>{{$t('CSS.domainManagement.23')}}</p>
@@ -16,11 +19,7 @@
           <p>{{pushAuthKeyInfo.BackupAuthKey}}</p>
         </div>
       </div>
-      <editSet
-        :isShow="editSetModel"
-        :pushAuthKeyInfo="pushAuthKeyInfo"
-        @closeModel="closeModel"
-      />
+      <editSet :isShow="editSetModel" :pushAuthKeyInfo="pushAuthKeyInfo" @closeModel="closeModel" />
     </div>
     <div class="basicinfo">
       <h1 class="newClear">推流地址生成器</h1>
@@ -40,20 +39,23 @@
       </div>
       <div class="dateOut">
         <span class="spanBlod">{{$t('CSS.domainManagement.27')}}</span>
-        <el-date-picker class="dataDateTime"
+        <el-date-picker
+          class="dataDateTime"
           :clearable="false"
           v-model="dataDateTime"
           type="date"
-          :placeholder="$t('CSS.domainManagement.31')">
-        </el-date-picker>
-        <el-time-picker :clearable="false"
-          v-model="dateValue" class="dateValue">
-        </el-time-picker>
-        <span class="spanBlod">StreamName </span>
-        <el-input :placeholder="$t('CSS.domainManagement.28')" v-model="streamName" class="streamName"></el-input>
+          :placeholder="$t('CSS.domainManagement.31')"
+        ></el-date-picker>
+        <el-time-picker :clearable="false" v-model="dateValue" class="dateValue"></el-time-picker>
+        <span class="spanBlod">StreamName</span>
+        <el-input
+          :placeholder="$t('CSS.domainManagement.28')"
+          v-model="streamName"
+          class="streamName"
+        ></el-input>
         <el-button @click="generatePushUrl">生成堆流地址</el-button>
       </div>
-      <div class="newClear ">
+      <div class="newClear">
         <span class="leftCon">推流地址</span>
         <span v-if="pushUrl">{{pushUrl}}</span>
         <span class="rightCon" v-else>{{$t('CSS.domainManagement.29')}}</span>
@@ -77,7 +79,7 @@
       }
       return "rtmp://".$domain."/live/".$streamName . (isset($ext_str) ? $ext_str : "");
     }
-    
+
     echo getPushUrl("123.test.com","123456","69e0daf7234b01f257a7adb9f807ae9f","2016-09-11 20:08:07");
             </pre>
           </div>
@@ -86,13 +88,13 @@
           <div class="greyContent">
             <pre>
     package com.test;
-			
+
     import java.io.UnsupportedEncodingException;
     import java.security.MessageDigest;
     import java.security.NoSuchAlgorithmException;
-    
+
     public class Test {
-			
+
       public static void main(String[] args) {
             System.out.println(getSafeUrl("txrtmp", "11212122", 1469762325L));
       }
@@ -108,7 +110,7 @@
                           append(key).
                           append(streamName).
                           append(Long.toHexString(txTime).toUpperCase()).toString();
-			
+
         String txSecret = null;
         try {
               MessageDigest messageDigest = MessageDigest.getInstance("MD5");
@@ -129,7 +131,7 @@
                           append(Long.toHexString(txTime).toUpperCase()).
                           toString();
       }
-			
+
       private static String byteArrayToHexString(byte[] data) {
         char[] out = new char[data.length << 1];
 
@@ -140,7 +142,7 @@
         return new String(out);
       }
     }
-			
+
             </pre>
           </div>
         </el-tab-pane>
@@ -149,224 +151,234 @@
   </div>
 </template>
 <script>
-import editSet from '../model/editSet'
-import { LIVE_DESCRIBELIVE_PUSHAUTHKEY, RULELIST_DELTILS, SINGLECALLBACK_DELTILS } from '@/constants'
-import { toUTF8Array } from '@/utils'
-import moment from 'moment'
-import md5 from 'js-md5'
+import editSet from "../model/editSet";
+import {
+  LIVE_DESCRIBELIVE_PUSHAUTHKEY,
+  RULELIST_DELTILS,
+  SINGLECALLBACK_DELTILS
+} from "@/constants";
+import { toUTF8Array } from "@/utils";
+import moment from "moment";
+import md5 from "js-md5";
 export default {
-  data(){
-    return{
-      editSetModel:false,//编辑弹框
-      dataDateTime: new Date(),//过期时间月份
-      dateValue: new Date(moment().endOf('d')),//时间
-      streamName:'',//streamName
-      activeName:'first',//tab
+  data() {
+    return {
+      editSetModel: false, //编辑弹框
+      dataDateTime: new Date(), //过期时间月份
+      dateValue: new Date(moment().endOf("d")), //时间
+      streamName: "", //streamName
+      activeName: "first", //tab
       pushAuthKeyInfo: {},
       callBackTemplate: {},
-      pushUrl: '',
-    }
+      pushUrl: ""
+    };
   },
   watch: {
     streamName(newVal, oldVal) {
-      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g,'')
+      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g, "");
     }
   },
-  components:{
-    editSet:editSet
+  components: {
+    editSet: editSet
   },
   mounted() {
-    this.getAuthConf()
-    const domain = this.$route.params.domain
-
+    this.getAuthConf();
+    const domain = this.$route.query.Name;
     const param = {
-      Version: '2018-08-01',
+      Version: "2018-08-01"
     };
     this.axios.post(RULELIST_DELTILS, param).then(data => {
       if (data.Response.Error == undefined) {
-        let callbackrule = data.Response.Rules
+        let callbackrule = data.Response.Rules;
         callbackrule.forEach(item => {
           if (item.DomainName === domain) {
             let parms = {
-              Version: '2018-08-01',
+              Version: "2018-08-01",
               TemplateId: item.TemplateId
-            }
+            };
             this.axios.post(SINGLECALLBACK_DELTILS, parms).then(data => {
               if (data.Response.Error == undefined) {
-                this.callBackTemplate = data.Response.Template
+                this.callBackTemplate = data.Response.Template;
               } else {
                 this.$message.error(data.Response.Error.Message);
               }
             });
           }
-        })
+        });
       } else {
         this.$message.error(data.Response.Error.Message);
       }
-    })
+    });
   },
-  methods:{
+  methods: {
     getAuthConf() {
-      const domain = this.$route.params.domain
-      this.axios.post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
-        Version: "2018-08-01",
-        DomainName: domain
-      }).then(({ Response: { PushAuthKeyInfo } }) => {
-        this.pushAuthKeyInfo = PushAuthKeyInfo
-      })
+      const domain = this.$route.query.Name;
+      this.axios
+        .post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
+          Version: "2018-08-01",
+          DomainName: domain
+        })
+        .then(({ Response: { PushAuthKeyInfo } }) => {
+          this.pushAuthKeyInfo = PushAuthKeyInfo;
+        });
     },
     generatePushUrl() {
       if (!this.streamName || !this.streamName.trim()) {
         this.$message({
-          type: 'warning',
-          message: '请输入 StreamName'
-        })
-        return
+          type: "warning",
+          message: "請輸入 StreamName"
+        });
+        return;
       }
-      const timeHex = moment(`${moment(this.dataDateTime).format('YYYY-MM-DD')} ${moment(this.dateValue).format('HH:mm:ss')}`).unix().toString(16).toUpperCase()
-      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`
-      const txSecret = md5.hex(str)
-      this.pushUrl = `rtmp://${this.$route.params.domain}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`
+      const timeHex = moment(
+        `${moment(this.dataDateTime).format("YYYY-MM-DD")} ${moment(
+          this.dateValue
+        ).format("HH:mm:ss")}`
+      )
+        .unix()
+        .toString(16)
+        .toUpperCase();
+      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`;
+      const txSecret = md5.hex(str);
+      this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`;
     },
     //编辑
-    editSet(){
-      this.editSetModel=true;
+    editSet() {
+      this.editSetModel = true;
     },
     //关闭
-    closeModel(isShow){
-      this.getAuthConf()
-      this.editSetModel=isShow;
+    closeModel(isShow) {
+      this.getAuthConf();
+      this.editSetModel = isShow;
     },
     //tab
-    handleClick(){
-      
-    }
+    handleClick() {}
   }
-}
+};
 </script>
 <style lang="scss" scoped>
-.newClear:after{
-  display:block;
-  content:'';
-  clear:both;
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
 }
-::v-deep input{
-  height:30px;
-  border-radius: 0;
-  width:100%;
-}
-::v-deep button{
+::v-deep input {
   height: 30px;
-  padding:0 20px;
-  line-height: 30px;
-  color:#fff;
-  background-color:#006eff;
   border-radius: 0;
-  border:1px solid #006eff;
+  width: 100%;
 }
-.bgGray{
-  background-color:#f2f2f2;
-  width:100%;
-  padding:20px;
-  margin-bottom:20px;
-  .newList1{
-    margin-bottom:30px;
-    p:nth-child(1){
-      font-size:12px;
-      color:#999;
-      float:left;
-      width:120px;
+::v-deep button {
+  height: 30px;
+  padding: 0 20px;
+  line-height: 30px;
+  color: #fff;
+  background-color: #006eff;
+  border-radius: 0;
+  border: 1px solid #006eff;
+}
+.bgGray {
+  background-color: #f2f2f2;
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 20px;
+  .newList1 {
+    margin-bottom: 30px;
+    p:nth-child(1) {
+      font-size: 12px;
+      color: #999;
+      float: left;
+      width: 120px;
     }
-    p:nth-child(2){
-      font-size:12px;
-      color:#000;
-      float:left;
-      width:calc(100% - 120px);
+    p:nth-child(2) {
+      font-size: 12px;
+      color: #000;
+      float: left;
+      width: calc(100% - 120px);
     }
   }
 }
-.basicinfo{
-  width:100%;
-  min-height:100px;
-  background-color:#fff;
-  border:1px solid #ddd;
-  box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
+.basicinfo {
+  width: 100%;
+  min-height: 100px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   padding: 20px;
-  margin-bottom:20px;
-  h1{
-    font-size:14px;
+  margin-bottom: 20px;
+  h1 {
+    font-size: 14px;
     font-weight: 600;
-    color:#000;
-    margin-bottom:30px;
-    a{
-      float:right;
-      font-size:12px;
+    color: #000;
+    margin-bottom: 30px;
+    a {
+      float: right;
+      font-size: 12px;
       font-weight: 100;
     }
   }
-  .newList{
-    margin-bottom:30px;
-    p:nth-child(1){
-      font-size:12px;
-      color:#999;
-      float:left;
-      width:70px;
+  .newList {
+    margin-bottom: 30px;
+    p:nth-child(1) {
+      font-size: 12px;
+      color: #999;
+      float: left;
+      width: 70px;
     }
-    p:nth-child(2){
-      font-size:12px;
-      color:#000;
-      float:left;
-      width:calc(100% - 70px);
+    p:nth-child(2) {
+      font-size: 12px;
+      color: #000;
+      float: left;
+      width: calc(100% - 70px);
     }
   }
 }
-.dateOut{
-  padding-bottom:20px;
-  border-bottom:1px solid #ddd;
-  margin-bottom:20px;
-  .spanBlod{
+.dateOut {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+  .spanBlod {
     font-size: 12px;
     color: #888;
     font-weight: 600;
   }
 }
-.dataDateTime{
-  width:132px;
-  margin:0 20px 0 12px;
-  font-size:12px;
-  ::v-deep .el-input__icon{
+.dataDateTime {
+  width: 132px;
+  margin: 0 20px 0 12px;
+  font-size: 12px;
+  ::v-deep .el-input__icon {
     line-height: 1;
   }
 }
-.dateValue{
-  width:120px;
-  margin-right:20px;
-  ::v-deep .el-input__icon{
+.dateValue {
+  width: 120px;
+  margin-right: 20px;
+  ::v-deep .el-input__icon {
     line-height: 1;
   }
 }
-.streamName{
-  width:200px;
-  margin:0 30px 0 0;
-  font-size:12px;
-}
-.leftCon{
-  display:inline-block;
-  width:70px;
+.streamName {
+  width: 200px;
+  margin: 0 30px 0 0;
   font-size: 12px;
-  color:#999;
 }
-.rightCon{
-  display:inline-block;
-  width:calc(100% - 70px);
+.leftCon {
+  display: inline-block;
+  width: 70px;
   font-size: 12px;
-  color:#999;
+  color: #999;
 }
-.greyContent{
-  width:100%;
-  height:285px;
+.rightCon {
+  display: inline-block;
+  width: calc(100% - 70px);
+  font-size: 12px;
+  color: #999;
+}
+.greyContent {
+  width: 100%;
+  height: 285px;
   overflow-y: auto;
-  background-color:#f5f2f0;
+  background-color: #f5f2f0;
   border-radius: 4px;
 }
 </style>

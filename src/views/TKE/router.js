@@ -30,6 +30,14 @@ export default new Router({
       }
     },
     {
+      path: '/colonyMonitor', // 集群监控
+      name: 'colonyMonitor',
+      component: () => import('./colony/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/create', // 创建集群
       name: 'clusterCreate',
       component: () => import('./colony/create.vue'),
@@ -345,6 +353,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/editYaml',//编辑YAML
+      name: 'updateYamlWorkLoad',
+      component: () => import('./colony/sub/update/resource/editYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/create/service/ingress', // 集群-新建Ingress
       name: 'ingressCreate',
       component: () => import('./colony/sub/create/service/ingress.vue'),
@@ -380,6 +396,14 @@ export default new Router({
       path: '/colony/sub/update/storage/pvYaml', // 集群-更新PersistentVolume yaml
       name: 'pvUpdate',
       component: () => import('./colony/sub/update/storage/pvYaml.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/create/yaml', // 集群详情 --创建yaml
+      name: 'createYaml',
+      component: () => import('./colony/sub/create/yaml/yaml.vue'),
       meta: {
         keepAlive: true
       }
@@ -501,6 +525,14 @@ export default new Router({
           }
         }
       ]
+    },
+    {
+      path: '/colony/sub/detail/nodeManage/masteretcd/openMonitor', // 节点管理-Master&Etcd-详情
+      name: 'masteretcdMonitor',
+      component: () => import('./colony/sub/detail/nodeManage/masteretcd/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      },
     },
     {
       path: '/colony/sub/detail/hpa', // 命名空间-详情
@@ -820,6 +852,14 @@ export default new Router({
       path: '/colony/sub/update/hpa', // 自动伸缩-编辑
       name: 'updateHpa',
       component: () => import('./colony/sub/update/hpa/updatePz.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/hpa/editYaml', // 自动伸缩-编辑yaml
+      name: 'updateHpaYaml',
+      component: () => import('./colony/sub/update/hpa/editYaml.vue'),
       meta: {
         keepAlive: true
       }

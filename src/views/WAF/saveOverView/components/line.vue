@@ -13,19 +13,18 @@ export default {
   mounted() {
     this.echart();
     window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
-    console.log(this.legendText)
   },
   props: {
     color: {
       type: Array,
       default: () => []
     },
-    // tooltip: {
-    //   type: Object,
-    //   default: function() {
-    //     return {trigger: 'axis'}
-    //   }
-    // },
+    tooltip: {
+      type: Object,
+      default: function() {
+        return {trigger: 'axis'}
+      }
+    },
     xAxis: {
       type: Array,
       default: () => []
@@ -48,6 +47,11 @@ export default {
     }
   },
   watch: {
+    tooltip(val) {
+      console.log(val)
+      this.tooltip = val
+      this.echart();
+    },
     xAxis(val) {
       this.xAxis = val;
       this.echart();
@@ -74,18 +78,26 @@ export default {
       var myChart = this.$echarts.init(this.$refs.line_dv)
       myChart.setOption({
         grid: {
-          left: '3%',
-          right: '4%',
+          left: '4%',
+          right: '6%',
           bottom: '10%',
+          top: '14%',
           containLabel: true
         },
-        tooltip: {
-          trigger: 'axis',
-          // formatter: `{b}<br/>{a} {c}次`
-          // formatter: function (val) {
-          //   return val.data
-          // }
-        },
+        tooltip: this.tooltip,
+        // tooltip: {
+        //   trigger: 'axis',
+        //   formatter(params) {
+        //     var relVal = params[0].name;  
+        //     for (var i = 0, l = params.length; i < l; i++) {
+        //       if(params[i].seriesName == "上行帶寬" || params[i].seriesName == "下行帶寬") {
+        //         relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"bps";
+        //       }
+        //       relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"次";
+        //     }
+        //     return relVal;  
+        //   }
+        // },
         legend: {
             data: this.legendText,
             bottom: 0,

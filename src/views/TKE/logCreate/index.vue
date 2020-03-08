@@ -4,56 +4,56 @@
       <router-link :to="'/logCollection'">
         <i class="el-icon-back hd-icon-back"></i>
       </router-link>
-      <h3 v-if="editStatus">编辑日志采集规则</h3>
-      <h3 v-else>新建日志采集规则</h3>
+      <h3 v-if="editStatus">{{$t('TKE.overview.bjgz')}}</h3>
+      <h3 v-else>{{$t('TKE.overview.xjrzcj')}}</h3>
     </div>
     <div class="tf-g app-tke-fe-content__inner">
       <div class="event-persistence font">
         <el-form ref="form" :model="form" :rules="rules" label-width="100px" class="tke-form" label-position="left">
-          <el-form-item label="收集规则名称" prop="name">
+          <el-form-item :label="$t('TKE.overview.sjgzmc')" prop="name">
             <div v-if="editStatus">
               {{ $route.query.stashName }}
             </div>
             <div v-else>
-              <el-input size="mini" class="el-input" placeholder="请输入日志收集规则名称" v-model="form.name"></el-input>
+              <el-input size="mini" class="el-input" :placeholder="$t('TKE.overview.qsrrzgzmc')" v-model="form.name"></el-input>
               <div :class="{ activeColor: fontColor }">
-                最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾
+                {{$t('TKE.overview.xz')}}
               </div>
             </div>
           </el-form-item>
           <el-form-item label="所在地域">
-            <div>中国台北</div>
+            <div>{{$t('TKE.overview.zgtb')}}</div>
           </el-form-item>
-          <el-form-item label="所属集群">
+          <el-form-item :label="$t('TKE.overview.ssjq')">
             <div>{{ $route.query.clusterId }}</div>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item :label="$t('TKE.overview.lx')">
             <div v-if="!editStatus">
               <el-radio-group v-model="tabPosition" size="mini">
-                <el-radio-button label="one">容器标准输出</el-radio-button>
-                <el-radio-button label="two">容器文件路径</el-radio-button>
-                <el-radio-button label="three">节点文件路径</el-radio-button>
+                <el-radio-button label="one">{{$t('TKE.overview.rqbzsc')}}</el-radio-button>
+                <el-radio-button label="two">{{$t('TKE.overview.rqwjlj')}}</el-radio-button>
+                <el-radio-button label="three">{{$t('TKE.overview.jdwjlj')}}</el-radio-button>
               </el-radio-group>
               <p v-if='tabPosition=="one"'>
-                采集集群内任意服务下的容器日志，仅支持Stderr和Stdout的日志
-                <a href="" style="margin-left:10px;">查看示例</a>
+                {{$t('TKE.overview.jzc')}}
+                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
               </p>
               <p v-if='tabPosition=="two"'>
-                采集集群内指定容器内的文件日志，仅支持挂载了数据卷并将日志输出到数据卷的工作负载
-                <a href="" style="margin-left:10px;">查看示例</a>
+                {{$t('TKE.overview.cjzdrq')}}
+                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
               </p>
               <p v-if='tabPosition=="three"'>
-                采集集群内指定节点路径的文件
-                <a href="" style="margin-left:10px;">查看示例</a>
+                {{$t('TKE.overview.zdlj')}}
+                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
               </p>
             </div>
             <div v-else>
-              <span v-if="$route.query.type == 'host-log'">节点文件路径</span>
-              <span v-if="$route.query.type == 'container-log'">容器标准输出</span>
-              <span v-if="$route.query.type == 'pod-log'"> 容器文件路径</span>
+              <span v-if="$route.query.type == 'host-log'">{{$t('TKE.overview.jdwjlj')}}</span>
+              <span v-if="$route.query.type == 'container-log'">{{$t('TKE.overview.rqbzsc')}}</span>
+              <span v-if="$route.query.type == 'pod-log'"> {{$t('TKE.overview.rqwjlj')}}</span>
             </div>
           </el-form-item>
-          <el-form-item label="日志源">
+          <el-form-item :label="$t('TKE.overview.rzy')">
             <el-radio-group v-model="vlog" size="mini" v-if="tabPosition == 'one'">
               <el-radio-button label="one">所有容器</el-radio-button>
               <el-radio-button label="two">指定容器</el-radio-button>
@@ -65,9 +65,9 @@
                 <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
-                  <span>Namespace:</span><span>{{item.value1}}</span>|<span>采集对象:</span>
+                  <span>Namespace:</span><span>{{item.value1}}</span>|<span>{{$t('TKE.overview.cjdx')}}</span>
                   <span v-show="item.radio=='1'">全部容器</span>
-                  <span v-show="item.radio!='1'">{{item.workload}}个工作负载</span>
+                  <span v-show="item.radio!='1'">{{item.workload}}{{$t('TKE.overview.ggzfz')}}</span>
                 </div>
               </div>
 
@@ -76,24 +76,24 @@
                 ">
                 <i class="el-icon-check icon-check" @click="roomShow(index)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
-                <el-form-item label="所属Namespace" label-width="150px">
-                  <el-select placeholder="请选择" size="mini" v-model="item.value1">
+                <el-form-item :label="$t('TKE.overview.ssnmkj')" label-width="150px">
+                  <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" v-model="item.value1">
                     <el-option v-for="item in namespaceOptions1" :key="item" :value="item">
                       <!-- <el-option v-for="item in namespaceOptions" :key="item.value" :label="item.label" :value="item.value"> -->
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="所属集群">
+                <el-form-item :label="$t('TKE.overview.ssjq')">
                   <el-radio-group v-model="item.radio">
-                    <el-radio label="1">全部容器包含该Namespace下所有的容器</el-radio>
-                    <el-radio label="2">按工作负载（Workload）选择</el-radio>
+                    <el-radio label="1">{{$t('TKE.overview.qbrq')}}</el-radio>
+                    <el-radio label="2">{{$t('TKE.overview.agzfzxz')}}</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item v-show="item.radio == 2">
                   <div class="border-room">
                     <div class="border-text">
-                      <div class="border-left">工作负载类型</div>
-                      <div class="border-right">列表</div>
+                      <div class="border-left">{{$t('TKE.overview.gzfzlx')}}</div>
+                      <div class="border-right">{{$t('TKE.overview.lb')}}</div>
                     </div>
                     <!-- <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName" -->
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
@@ -107,7 +107,7 @@
                           </el-checkbox-group>
 
                         </div>
-                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
                         <div v-show="workload1.length!='0'" style="overflow:auto">
@@ -117,7 +117,7 @@
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
                         <div v-show="workload1.length!='0'" style="overflow:auto">
@@ -127,7 +127,7 @@
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
                         <div v-show="workload1.length!='0'" style="overflow:auto">
@@ -137,7 +137,7 @@
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
                         <div v-show="workload1.length!='0'" style="overflow:auto">
@@ -147,7 +147,7 @@
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">当前命名空间下，该工作负载类型列表为空</span>
+                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                     </el-tabs>
                   </div>
@@ -160,105 +160,105 @@
             </el-button>
             <div class="form-form" v-if="tabPosition == 'two'">
               <el-form :model="formTwo" label-width="100px" class="tke-form" label-position="left">
-                <el-form-item label="工作负载选项">
-                  <el-select placeholder="请选择namespace" :disabled='editStatus' size="mini" v-model="formTwo.value1">
+                <el-form-item :label="$t('TKE.overview.gzfzxx')">
+                  <el-select :placeholder="$t('TKE.overview.qxzmmkj')" :disabled='editStatus' size="mini" v-model="formTwo.value1">
                     <el-option v-for="item in namespaceOptions" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <el-select placeholder="请选择" size="mini" :disabled='editStatus' class="ml10" v-model="formTwo.value2">
+                  <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" :disabled='editStatus' class="ml10" v-model="formTwo.value2">
                     <el-option v-for="item in formTwo.option2" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <el-select placeholder="请选择" :disabled="formTwo.value3=='无'||editStatus" size="mini" class="ml10"
+                  <el-select :placeholder="$t('TKE.overview.qxz')" :disabled="formTwo.value3=='無'||editStatus" size="mini" class="ml10"
                     v-model="formTwo.value3">
                     <el-option v-for="item in formTwo.option3" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
-                  <p v-show="wlFlag" style="color:red"> 请选择workload</p>
+                  <p v-show="wlFlag" style="color:red"> {{$t('TKE.overview.qxzgz')}}</p>
                 </el-form-item>
-                <el-form-item label="配置采集路径" v-if="formTwo.value3!='无'">
+                <el-form-item :label="$t('TKE.overview.pzlj')" v-if="formTwo.value3!='無'">
                   <div v-for="(domain, index) in formTwo.optionAll" :key="index">
                     <el-form-item label="容器名">
-                      <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value4">
+                      <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" class="ml10" v-model="domain.value4">
                         <el-option v-for="item in domain.option4" :key="item" :label="item" :value="item">
                         </el-option>
                       </el-select>
                     </el-form-item>
-                    <el-form-item label="文件路径">
+                    <el-form-item :label="$t('TKE.overview.wjlj')">
                       <span v-if="!editStatus">
-                        <el-select placeholder="请选择" size="mini" class="ml10" v-model="domain.value5">
+                        <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" class="ml10" v-model="domain.value5">
                           <el-option v-for="item in domain.option5" :key="item" :label="item" :value="item">
                           </el-option>
                         </el-select>
-                        <el-input class="w180" size="mini" v-model="domain.value6" placeholder="请输入文件路径"></el-input>
+                        <el-input class="w180" size="mini" v-model="domain.value6" :placeholder="$t('TKE.overview.qsrwjlj')"></el-input>
                       </span>
                       <span v-else>
-                        <el-input class="w180" size="mini" v-model="domain.value7" placeholder="请输入文件路径"></el-input>
+                        <el-input class="w180" size="mini" v-model="domain.value7" :placeholder="$t('TKE.overview.qsrwjlj')"></el-input>
                       </span>
-                      <el-tooltip class="item" effect="dark" content="删除" placement="right" v-if="index != 0">
+                      <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right" v-if="index != 0">
                         <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
                     </el-form-item>
                   </div>
-                  <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">新增变量</el-link>
-                  <p v-show="pathFlag" style="color:red">容器名、文件路径不能为空,请输入正确文件路径,路径必须以`/`开头，支持通配符（*），</p>
+                  <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addDomain">{{$t('TKE.overview.xzbl')}}</el-link>
+                  <p v-show="pathFlag" style="color:red">{{$t('TKE.overview.tj')}}</p>
                   <p>
-                    可配置多个路径，路径必须以`/`开头，支持通配符（*），请保证容器的日志文件保存在数据卷，否则收集规则无法生效
+                    {{$t('TKE.overview.pzdglj')}}
                   </p>
                 </el-form-item>
               </el-form>
             </div>
 
             <div class="form-form" v-if="tabPosition == 'three'">
-              <el-form-item label="收集路径">
-                <el-input size="mini" class="el-input" placeholder="请输入日志收集路径" v-model="formThree.value"></el-input>
-                <div :class="{active2:colFlag}">指定采集日志的文件路径，支持通配符(*)，必须以`/`开头</div>
+              <el-form-item :label="$t('TKE.overview.sjlj')">
+                <el-input size="mini" class="el-input" :placeholder="$t('TKE.overview.qsrrzsjlj')" v-model="formThree.value"></el-input>
+                <div :class="{active2:colFlag}">{{$t('TKE.overview.zctpf')}}</div>
               </el-form-item>
               <el-form-item label="metadata">
                 <div style="width:300px;">
                   <div class="form-input" v-for="(domain, index) in formThree.domains" :key="index">
-                    <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                    <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                     <span>=</span>
-                    <el-input v-model="domain.valueKey" size="mini" placeholder="变量值"></el-input>
-                    <el-tooltip class="item" effect="light" content="删除" placement="right">
+                    <el-input v-model="domain.valueKey" size="mini" :placeholder="$t('TKE.overview.blz')"></el-input>
+                    <el-tooltip class="item" effect="light" :content="$t('TKE.overview.sc')" placement="right">
                       <i class="el-icon-close" @click.prevent="removeMetadata(domain)"></i>
                     </el-tooltip>
                   </div>
                 </div>
                 <el-link type="primary" style="cursor: pointer;font-size:12px;" @click="addMetadata">新增metadata
                 </el-link>
-                <div>收集规则收集的日志会带上metadata，并上报到消费端</div>
-                <p v-show="metaFlag" class="active2">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾,请输入完整</p>
+                <div>{{$t('TKE.overview.sbxfd')}}</div>
+                <p v-show="metaFlag" class="active2">{{$t('TKE.overview.qsrwz')}}</p>
               </el-form-item>
             </div>
           </el-form-item>
-          <el-form-item label="消费端">
+          <el-form-item :label="$t('TKE.overview.xfduan')">
             <div class="form-form">
               <!-- 内表单 -->
               <el-form :model="form" ref="form" :rules="rules" label-width="90px" size="mini">
-                <el-form-item label="类型">
+                <el-form-item :label="$t('TKE.overview.lx')">
                   <el-radio-group v-model="consumer">
                     <el-radio-button label="one">Kafka</el-radio-button>
                     <!-- <el-radio-button label="two">日志服务CLS</el-radio-button>
                       <el-radio-button label="three">Elasticsearch</el-radio-button> -->
                   </el-radio-group>
                   <div style="font-size:10px;">
-                    将采集的日志消费到消息服务Kafka中。
-                    <a href="">查看示例</a>
+                    {{$t('TKE.overview.xxfw')}}
+                    <a href="">{{$t('TKE.overview.cksl')}}</a>
                   </div>
                 </el-form-item>
                 <div v-if="consumer == 'one'">
-                  <el-form-item label="Kafka类型">
+                  <el-form-item :label="$t('TKE.overview.kfklx')">
                     <div class="flex">
-                      <el-checkbox v-model="checked">使用腾讯云消息队列CKafka</el-checkbox>
+                      <el-checkbox v-model="checked">{{$t('TKE.overview.sytfy')}}</el-checkbox>
                     </div>
                   </el-form-item>
-                  <el-form-item label="CKafka实例" v-if="checked">
+                  <el-form-item :label="$t('TKE.overview.sl')" v-if="checked">
                     <div class="flex">
                       <el-col :span="10">
                         <el-form-item prop="CKafka">
                           <!-- <el-select v-model="form.Ckafka" placeholder="请选择" style='margin-right:10px;'> -->
-                          <el-select v-model="Ckafka.value" placeholder="请选择" class="setwidth2"
+                          <el-select v-model="Ckafka.value" :placeholder="$t('TKE.overview.qxz')" class="setwidth2"
                             style="margin-right:5px;">
                             <el-option v-for="item in Ckafka.options" :key="item" :value="item">
                             </el-option>
@@ -268,7 +268,7 @@
                       <el-col :span="10">
                         <el-form-item prop="Topic">
                           <!-- <el-select placeholder="请选择" :disabled='Topic.options.length=="1"' v-model="form.Topic"> -->
-                          <el-select placeholder="请选择" class="setwidth" :disabled="Topic.options.length == '1'"
+                          <el-select :placeholder="$t('TKE.overview.qxz')" class="setwidth" :disabled="Topic.options.length == '1'"
                             v-model="Topic.value">
                             <el-option v-for="item in Topic.options" :key="item" :value="item">
                             </el-option>
@@ -277,16 +277,16 @@
                       </el-col>
                     </div>
                   </el-form-item>
-                  <el-form-item label="访问地址" label-width="100px" v-if="!checked">
-                    <el-input placeholder="请输入IP地址" style="margin-right:10px;" v-model="output2.host"></el-input>
-                    <el-input placeholder="请输入IP端口号" v-model="output2.port"></el-input>
+                  <el-form-item :label="$t('TKE.overview.fwdz')" label-width="100px" v-if="!checked">
+                    <el-input :placeholder="$t('TKE.overview.qsripdz')" style="margin-right:10px;" v-model="output2.host"></el-input>
+                    <el-input :placeholder="$t('TKE.overview.qsrdk')" v-model="output2.port"></el-input>
                   </el-form-item>
-                  <el-form-item label="主题（Topic）" label-width="100px" v-if="!checked">
-                    <el-input placeholder="请输入Topic" v-model="output2.topic"></el-input>
+                  <el-form-item :label="$t('TKE.overview.zti')" label-width="100px" v-if="!checked">
+                    <el-input :placeholder="$t('TKE.overview.qsrt')" v-model="output2.topic"></el-input>
                     <p>
-                      最长64个字符，只能包含字母、数字、下划线、(".")及分隔符("-")
+                      {{$t('TKE.overview.zc')}}
                     </p>
-                    <p v-show="kafkaFlag" style="color:red">请输入正确ip地址、端口号以及Topic格式</p>
+                    <p v-show="kafkaFlag" style="color:red">{{$t('TKE.overview.qsrzqgs')}}</p>
                   </el-form-item>
                 </div>
 
@@ -322,12 +322,12 @@
         <div class="tke-formpanel-footer footer">
           <p>
             <el-button size="small" v-if="editStatus" @click="editSure" type="primary">完成</el-button>
-            <el-button size="small" v-else :disabled="show1" @click="logCreat" type="primary">立即创建</el-button>
+            <el-button size="small" v-else :disabled="show1" @click="logCreat" type="primary">{{$t('TKE.overview.ljcj')}}</el-button>
             <el-button size="small" @click="$router.go(-1)">取消</el-button>
           </p>
           <p v-show="show1">
-            当前日志采集器状态（checking）下无法创建日志采集规则
-            <el-tooltip class="item" effect="dark" content="刷新日志采集器状态" placement="bottom-start">
+            {{$t('TKE.overview.wfcjgz')}}
+            <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sxrzzt')" placement="bottom-start">
               <i class="el-icon-refresh"></i>
             </el-tooltip>
           </p>
@@ -396,13 +396,13 @@
         },
         formTwo: {
           option1: [],
-          option2: ['请选择工作负载类型', 'Deployment', 'Daemonset', 'StatefulSet', 'Cronjob'],
-          option3: ['请选择workload'],
+          option2: ['請選擇工作負載類型', 'Deployment', 'Daemonset', 'StatefulSet', 'Cronjob'],
+          option3: ['請選擇workload'],
           optionAll: [{
-            option4: ['请选择容器名称'],
-            option5: ['请选择挂载目录'],
+            option4: ['請選擇容器名稱'],
+            option5: ['請選擇掛載目錄'],
             value4: "", //容器名
-            value5: "请选择挂载目录", //挂载目录文件路径1
+            value5: "請選擇掛載目錄", //挂载目录文件路径1
             value6: '', //路径
             value7: '', //编辑状态下的路径
             valueKey: ""
@@ -427,11 +427,11 @@
         value: "jq",
         Ckafka: {
           value: "",
-          options: ["请选择CKafka"]
+          options: ["請選擇CKafka"]
         },
         Topic: {
           value: "",
-          options: ["请选择Topic"]
+          options: ["請選擇Topic"]
         },
         newroomFlag: true,
         options: [],
@@ -493,12 +493,12 @@
           this.output.port = filtdata[0].vport;
           this.axios.post(TKE_TOPIC_LIST, params).then(res => {
             if (res.codeDesc === "Success") {
-              var arr = ["请选择Topic"];
+              var arr = ["請選擇Topic"];
               res.data.topicList.forEach(item => {
                 arr.push(item.topicId + "(" + item.topicName + ")");
               });
               if (arr.length == '1') {
-                this.Topic.value = "无"
+                this.Topic.value = "無"
               } else {
                 this.Topic.value = arr[1]
               }
@@ -510,7 +510,7 @@
       },
       Topic: {
         handler(val) {
-          if (val.value != "无" && val.value != "请选择Topic") {
+          if (val.value != "無" && val.value != "請選擇Topic") {
             this.output.topic_id = val.value.split("(")[0];
             this.output.topic = val.value.split(")")[0].split('(')[1];
           } else {
@@ -532,7 +532,7 @@
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
-              this.formTwo.option3 = ['请选择workload'];
+              this.formTwo.option3 = ['請選擇workload'];
               var data = JSON.parse(res.Response.ResponseBody);
               if (data.items.length != 0) {
                 data.items.forEach(item => {
@@ -545,7 +545,7 @@
                 if (needData.length != 0) {
                   //容器名称选项
                   val.optionAll.forEach(v => {
-                    v.option4 = ['请选择容器名称']
+                    v.option4 = ['請選擇容器名稱']
                   })
                   var optionData = needData[0].spec.template.spec.containers; //存放容器名
                   optionData.forEach(val2 => {
@@ -561,7 +561,7 @@
                     if (needData2.length != 0) {
                       if (needData2[0].volumeMounts) {
                         val.optionAll.forEach(v => {
-                          v.option5 = ['请选择挂载目录']
+                          v.option5 = ['請選擇掛載目錄']
                         })
                         needData2[0].volumeMounts.forEach(val4 => {
                           val.optionAll.forEach(v => {
@@ -571,13 +571,13 @@
                         })
                       } else {
                         val.optionAll.forEach(v => {
-                          v.value5 = "无"
+                          v.value5 = "無"
                         })
                       }
                     }
                   })
                 } else {
-                  val.optionAll[0].value4 = '无'
+                  val.optionAll[0].value4 = '無'
                 }
                 // val.optionAll[0].option4.push({})
                 // this.formTwo.value3=this.formTwo.option3[1];
@@ -665,7 +665,7 @@
         if (this.form.name == "") {
           this.$refs.form.validateField("name");
           this.$message({
-            message:"规则名不能為空",
+            message:"規則名不能為空",
             type:'warning',
             showClose: true,
             duration: 0
@@ -753,14 +753,14 @@
           }
         } else if (this.tabPosition == "two") {
           //容器文件路径
-          if (!this.formTwo.value3 | this.formTwo.value3 == '请选择workload') { //工作负载选项判断
+          if (!this.formTwo.value3 | this.formTwo.value3 == '請選擇workload') { //工作负载选项判断
             this.wlFlag = true
             return false
           } else {
             this.wlFlag = false
           }
           this.formTwo.optionAll.forEach(v => { //采集路径选项判断
-            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value5 == '请选择挂载目录' || v.value6 == '' || v.value6 ==
+            if (v.value4 == '請選擇容器名稱' || v.value4 == '無' || v.value5 == '請選擇掛載目錄' || v.value6 == '' || v.value6 ==
               undefined || v.value6[0] != '/') {
               this.pathFlag = true
               return false
@@ -883,12 +883,12 @@
                 for (let j in data3[i]) {
                   var obj = new Object();
                   obj['value4'] = i;
-                  obj['value5'] = '请选择挂载目录';
+                  obj['value5'] = '請選擇掛載目錄';
                   obj['value6'] = '';
                   obj['valueKey'] = '';
                   obj['value7'] = data3[i][j].path;
-                  obj['option4'] = ['请选择容器名称'];
-                  obj['option5'] = ['请选择挂载目录'];
+                  obj['option4'] = ['請選擇容器名稱'];
+                  obj['option5'] = ['請選擇掛載目錄'];
                   arr.push(obj)
                 }
               }
@@ -1082,14 +1082,14 @@
           }
         } else if (this.tabPosition == "two") {
           //容器文件路径
-          if (!this.formTwo.value3 | this.formTwo.value3 == '请选择workload') { //工作负载选项判断
+          if (!this.formTwo.value3 | this.formTwo.value3 == '請選擇workload') { //工作负载选项判断
             this.wlFlag = true
             return false
           } else {
             this.wlFlag = false
           }
           this.formTwo.optionAll.forEach(v => { //采集路径选项判断
-            if (v.value4 == '请选择容器名称' || v.value4 == '无' || v.value7 == '' ||  v.value7==
+            if (v.value4 == '請選擇容器名稱' || v.value4 == '無' || v.value7 == '' ||  v.value7==
               undefined || v.value7[0] != '/') {
               this.pathFlag = true
               return false
@@ -1155,7 +1155,7 @@
             if (res.Response.Error === undefined) {
                this.$message({
                   type: "success",
-                  message: "编辑完成",
+                  message: "編輯完成",
                   duration: 0,
                   showClose: true
                 });
@@ -1384,7 +1384,7 @@
           }
           if(s==0){
              this.$message({
-                  message: '已选工作负载项为0个，请至少选择一个工作负载项或者选择全部容器',
+                  message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
                   type: "warning",
                   showClose: true,
                   duration: 0

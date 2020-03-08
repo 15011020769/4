@@ -7,56 +7,46 @@
           温馨提示：截圖鑒黃功能为增值收费项，详细计费规则请
           <a href="#">参考文档</a>
         </p>
-      </div> -->
+      </div>-->
       <div class="explain">
         <p>
-          模板设置完成，需关联推流域名方可生效，请点击
-          <a href="#">域名管理</a>进行关联设置。
+          範本設置完成，需關聯推流域名方可生效，請點擊
+          <router-link to="/domainManagement">域名管理</router-link>進行關聯設置。
           <!-- <a href="#">参考文档</a> -->
-          模板配置完后续大约5分鐘生效
+          範本配置完後續大約5分鐘生效
         </p>
       </div>
-      <div class="main-box">
+      <div class="main-box" v-loading="loading">
         <div class="left">
           <i class="el-icon-plus" @click="_add" />
-          <i class="el-icon-delete" @click="modalVisible=true"/>
+          <i class="el-icon-delete" @click="handleDelete" />
           <ul class="recording-list-box">
             <li
               v-for="item in configList"
               @click="onSelectRecording(item)"
+              :key="item.TemplateId"
               :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
-              >
-                {{item.TemplateName}}
-              </li>
+            >{{item.TemplateName}}</li>
           </ul>
         </div>
-        <div class="right">
-          <OptionForm
-            :formShow.sync="formShow"
-            :selectItem="selectItem"
-            v-if="formShow"
-            />
-          <ConfigDetail
-            v-if="!formShow"
-            :selectItem="selectItem"
-            :formShow.sync="formShow"
-            />
+        <div class="right" v-show="showRight">
+          <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
+          <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
         </div>
-          <DeleteModal
-            :modalVisible.sync="modalVisible"
-            :domainName="selectItem.TemplateName"
-          />
+        <DeleteModal :modalVisible.sync="modalVisible" :domainName="selectItem.TemplateName" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import HeaderCom from "@/components/public/Head"
-import OptionForm from "./tab/optionForm"
-import ConfigDetail from "./tab/configDetail"
-import DeleteModal from './modal/modal'
-import {DELETE_SNAPSHOT_TEMPLATE, GET_SNAPSHOT_TEMPLATE } from "@/constants"
+import HeaderCom from "@/components/public/Head";
+import OptionForm from "./tab/optionForm";
+import ConfigDetail from "./tab/configDetail";
+import DeleteModal from "./modal/modal";
+import { DELETE_SNAPSHOT_TEMPLATE, GET_SNAPSHOT_TEMPLATE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../components/CSSErrorTips";
 export default {
   name: "transcribe",
   data() {
@@ -65,8 +55,14 @@ export default {
       configList: [],
       selectItem: {},
       selectIndex: 0,
-      modalVisible: false
+      modalVisible: false,
+      loading: true
     };
+  },
+  computed: {
+    showRight: function () {
+      return this.configList.length > 0 || this.formShow === true;
+    }
   },
   components: {
     HeaderCom,
@@ -76,12 +72,12 @@ export default {
   },
 
   mounted() {
-    this.fetchRecordingList()
+    this.fetchRecordingList();
   },
 
   methods: {
     _add() {
-      this.selectItem = {}
+      this.selectItem = {};
       this.formShow = true;
     },
 
@@ -90,46 +86,76 @@ export default {
     },
 
     _cancel() {
-      this.selectItem = this.configList[this.selectIndex]
-      this.formShow = false;
-    },
 
+      this.formShow = false;
+
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.selectItem = this.configList[this.selectIndex];
+    },
+    handleDelete() {
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.modalVisible = true;
+    },
     _delete() {
-      this.axios.post(DELETE_SNAPSHOT_TEMPLATE, {
-        Version: '2018-08-01',
-        TemplateId: this.selectItem.TemplateId
-      }).then(data => {
-       if (data.Response.Error == undefined) {
-         this.modalVisible = false
-         this.$message({
-           message: '删除成功',
-           type: 'success'
-         })
-          this.fetchRecordingList()
-          return
-        }
-        this.$message.error(data.Response.Error.Message)
-      })
+      this.axios
+        .post(DELETE_SNAPSHOT_TEMPLATE, {
+          Version: "2018-08-01",
+          TemplateId: this.selectItem.TemplateId
+        })
+        .then(data => {
+          if (data.Response.Error == undefined) {
+            this.modalVisible = false;
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+            this.fetchRecordingList();
+            return;
+          }
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
+        });
     },
 
     fetchRecordingList() {
-      this.axios.post(GET_SNAPSHOT_TEMPLATE, {
-        Version: '2018-08-01'
-      }).then(data => {
-        if (data.Response.Error == undefined) {
-          this.configList = data.Response.Templates
-          this.selectItem=this.configList[0]
-          return
-        }
-        this.$message.error(data.Response.Error.Message)
-      })
+      this.loading = true;
+      this.axios
+        .post(GET_SNAPSHOT_TEMPLATE, {
+          Version: "2018-08-01"
+        })
+        .then(data => {
+          if (data.Response.Error == undefined) {
+            const result = data.Response.Templates;
+            if (result.length > 0) {
+              this.configList = result;
+              this.selectItem = this.configList[0];
+            } else {
+              this.configList = [];
+              this.selectItem = {};
+            }
+            return;
+          }
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
+        })
+        .then(() => {
+          this.loading = false;
+        });
     },
 
     // 选中模板
     onSelectRecording(item) {
-      this.formShow = false
-      this.selectItem = item
-      this.selectIndex = this.configList.findIndex(_item => item.TemplateId === _item.TemplateId)
+      this.formShow = false;
+      this.selectItem = item;
+      this.selectIndex = this.configList.findIndex(
+        tempItem => item.TemplateId === tempItem.TemplateId
+      );
     }
   }
 };

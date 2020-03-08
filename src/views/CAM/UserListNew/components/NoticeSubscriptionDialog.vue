@@ -9,6 +9,12 @@
     @closed="handleClosed"
   >
     <div class="container">
+      <div class="explain">
+        <p>
+          要管理不同訊息類型的接收人及接收方式可以前往
+          <el-link type="primary" href="../../MGC/index.html#/message" target="_blank">訊息中心-訊息訂閱</el-link>
+        </p>
+      </div>
       <div class="user">
         <label class="title">{{$t('CAM.noticeSubscriptionDialog.subscriber')}}</label>
         <label class="value">{{subscriberName}}</label>
@@ -20,6 +26,7 @@
           :data="tableData"
           tooltip-effect="dark"
           row-key="key"
+          width="100%"
           @expand-change="handleRowExpaneChanged"
           v-loading="loading"
         >
@@ -28,7 +35,7 @@
               <el-checkbox v-model="isSelectAll" :indeterminate="isAllIndeterminate"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column width="263" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
+          <el-table-column width="180" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
             <template slot-scope="scope">
               <el-checkbox
                 v-model="scope.row.isChecked"
@@ -42,7 +49,7 @@
 
           <el-table-column
             :label="$t('CAM.noticeSubscriptionDialog.znx')"
-            width="200"
+            width="220"
             prop="stationLetterChecked"
             align="center"
           >
@@ -55,7 +62,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('CAM.noticeSubscriptionDialog.cz')" width="149">
+          <el-table-column :label="$t('CAM.noticeSubscriptionDialog.cz')" align="center">
             <template slot-scope="scope">
               <el-button
                 type="text"
@@ -79,10 +86,7 @@
 </template>
 
 <script>
-import {
-  MODIFY_SUBSCRIPTION,
-  GET_ALL_SUBSCRIPTION_TYPE
-} from "@/constants";
+import { MODIFY_SUBSCRIPTION, GET_ALL_SUBSCRIPTION_TYPE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import { datasource } from "./NoticeCategoryData";
 let ErrTips = {
@@ -339,7 +343,9 @@ export default {
         if (res.code === 0) {
           this.$message({
             message: "訂閱成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0
           });
         } else {
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -351,12 +357,6 @@ export default {
           });
         }
       });
-    },
-    getAllSubscriptionType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_TYPE);
-    },
-    getAllSubscriptionParentType() {
-      return this.axios.post(GET_ALL_SUBSCRIPTION_PARENT_TYPE);
     },
     isThisTypeSubscribedByUser(typeKey, types) {
       if (!Array.isArray(types)) {
@@ -391,7 +391,6 @@ export default {
         .post(GET_ALL_SUBSCRIPTION_TYPE)
         .then(res => {
           if (res.code === 0 && Array.isArray(res.data)) {
-            const dataLength = res.data.length;
             const parentLength = datasource.length;
             for (let i = 0; i < parentLength; i++) {
               const parent = datasource[i];
@@ -439,6 +438,15 @@ export default {
   border-bottom: none;
   height: 0px;
 }
+
+>>> .el-dialog__body {
+  padding: 0;
+}
+>>> .el-link {
+  font-size: 10px;
+  line-height: 13px;
+}
+
 .title {
   vertical-align: baseline;
   color: #888;
@@ -449,6 +457,19 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
+  padding: 10px 20px 20px 20px;
+  .explain {
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    padding: 10px 30px 10px 20px;
+    margin-bottom: 20px;
+    border-radius: 2px;
+    font-size: 10px;
+    p {
+      line-height: 13px;
+    }
+  }
   .user {
     flex: 1;
     .value {
@@ -478,7 +499,6 @@ export default {
     flex: 1;
     margin-top: 10px;
     flex-direction: row;
-    align-self: flex-end;
   }
 }
 </style>

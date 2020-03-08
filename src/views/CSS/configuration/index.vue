@@ -1,6 +1,6 @@
 <template>
   <div class="configuration-wrap">
-    <Header :backShow="false" title="模板配置" />
+    <Header :backShow="false" title="範本配置" />
     <div class="content">
       <el-tabs v-model="activeName" @tab-click="handleClick" class="detailsTabs">
         <el-tab-pane label="录制配置" name="first">

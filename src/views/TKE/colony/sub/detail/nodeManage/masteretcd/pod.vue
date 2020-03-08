@@ -94,7 +94,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">{{scope.row.status.phase}}</span>
+              <span :class="[scope,row.redStatus?'text-red':'text-green']">{{scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -331,6 +331,13 @@ export default {
                 o.memory = '无限制';
               }
               o.restart = restart;
+              if(o.status.conditions) {
+                for(let i = 0; i < o.status.conditions.length; i++) {
+                  if(o.status.conditions.length[i].status !== 'True') {
+                    o.redStatus = true;
+                  }
+                }
+              }
             });
             this.list = response.items;
             this.total = response.items.length;

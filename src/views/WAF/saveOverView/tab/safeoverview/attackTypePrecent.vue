@@ -79,7 +79,7 @@ export default {
         {value: 0, name: this.t('CC攻击次数', 'WAF.ccgjcs')},
         {value: 0, name: ''},
       ],
-      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
+      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C", '#8D62AE'],
       legendTextPie: [this.t('正常访问', 'WAF.zzfw'), this.t('WEB攻击次数', 'WAF.webgjcs'), this.t('CC攻击次数', 'WAF.ccgjcs'), ''],
       seriesPieAttack: [],
       legendTextPieAttack: [],

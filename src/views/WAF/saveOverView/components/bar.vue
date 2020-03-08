@@ -64,8 +64,9 @@ export default {
         color: ["#006eff"],
         grid: {
           left: '3%',
-          right: '4%',
+          right: '2%',
           bottom: '4%',
+          top: '10%',
           containLabel: true,
         },
         tooltip: {
@@ -89,6 +90,8 @@ export default {
           axisLabel: {
             color: '#606060',
             fontSize: 11,
+            interval:0,//横轴信息全部显示    
+            // rotate:-15,//-15度角倾斜显示
           },
           axisTick: {
             show: false
@@ -123,8 +126,7 @@ export default {
             type: "bar",
             smooth: true,
             symbol: "none",
-            barWidth: 20,
-            // barMaxWidth: 30
+            barWidth: 18,
             itemStyle: {        //上方显示数值
               normal: {
                   label: {

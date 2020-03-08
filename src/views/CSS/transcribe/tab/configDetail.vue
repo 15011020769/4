@@ -107,12 +107,12 @@ export default {
       if (item.TemplateName === 'HLS') {
         return '無時長限制'
       }
-      return item.RecordInterval / 60 //单位为分钟 
+      return item.RecordInterval / 60 //单位为分钟
     },
 
     StorageTimeFilter(item) {
       if (item.StorageTime > 0) {
-        return item.StorageTime / 60 / 24 // 单位为天
+        return item.StorageTime / 60 / 60 / 24 // 单位为天
       }
       return '永久保存'
     },

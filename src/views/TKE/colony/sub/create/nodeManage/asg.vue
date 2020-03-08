@@ -142,29 +142,27 @@
                 :value="item.SecurityGroupId"
               ></el-option>
             </el-select>
-            <i class="el-icon-refresh ml10"></i>
+            <i class="el-icon-refresh ml10" @click="refresh()"></i>
             <i
               class="el-icon-error ml10"
               v-show="this.domains.length?true:false"
               @click.prevent="deleteAll()"
             ></i>
-            <!-- <el-form-item
-                    v-for="(domain, index) in domains"
-                    :key="domain.key"
-                  >
-                  <el-select v-model="values" placeholder="请选择"  class='w200'>
-                    <el-option
-                      v-for="item in securityGroups"
-                      :key="item.SecurityGroupId"
-                      :label="changeSecurity(item)"
-                      :value="item.SecurityGroupId"
-                    >
-                    </el-option>
-                  </el-select><i class="el-icon-refresh ml10"></i><i class="el-icon-error ml10" @click.prevent="removeDomain(domain)"></i>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="text"  @click="addDomain" >新增安全组</el-button>
-            </el-form-item>-->
+            <el-form-item v-for="(domain) in domains" :key="domain.key">
+              <el-select v-model="values" placeholder="请选择" class="w200">
+                <el-option
+                  v-for="item in securityGroups"
+                  :key="item.SecurityGroupId"
+                  :label="changeSecurity(item)"
+                  :value="item.SecurityGroupId"
+                ></el-option>
+              </el-select>
+              <i class="el-icon-refresh ml10" @click="refresh()"></i>
+              <i class="el-icon-error ml10" @click.prevent="removeDomain(domain)"></i>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="text" @click="addDomain">新增安全组</el-button>
+            </el-form-item>
           </el-form-item>
 
           <el-form-item label="安全加固">
@@ -192,21 +190,19 @@
             </el-form-item>
           </el-form-item>
 
-          <!-- <el-form-item label="Label">
-                 <el-form-item
-                    v-for="(domain, index) in domainstion"
-                    :key="domain.key"
-                  >
-                   <div class="form-input">
-                      <el-input v-model="domain.value" size="mini"  class='w70'></el-input>
-                      <span>=</span>
-                      <el-input v-model="domain.valueKey" size="mini"  class='w70'></el-input><i class="el-icon-error ml10" @click.prevent="removeDomain2(domain)"></i>
-                    </div>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="text"  @click="addDomain2" >新增Lable</el-button>
-                </el-form-item>
-          </el-form-item>-->
+          <el-form-item label="Label">
+            <el-form-item v-for="(domain) in domainstion" :key="domain.key">
+              <div class="form-input">
+                <el-input v-model="domain.value" size="mini" class="w70"></el-input>
+                <span>=</span>
+                <el-input v-model="domain.valueKey" size="mini" class="w70"></el-input>
+                <i class="el-icon-error ml10" @click.prevent="removeDomain2(domain)"></i>
+              </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="text" @click="addDomain2">新增Lable</el-button>
+            </el-form-item>
+          </el-form-item>
           <p>
             <i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
             <el-button type="text" style="font-size:12px;" @click="isActive=!isActive">高级设置</el-button>
@@ -346,25 +342,26 @@
               </el-select>
             </div>
             <div style="margin-top:16px;">
-              <el-radio-group>
-                <el-radio-button label="1">全部实例族</el-radio-button>
-                <el-radio-button label="2">标准型</el-radio-button>
-                <el-radio-button label="3">内存型</el-radio-button>
-                <el-radio-button label="4">计算型</el-radio-button>
+              <el-radio-group v-model="asg.familyObj" @change="changeObj">
+                <el-radio-button label="all1">全部实例族</el-radio-button>
+                <el-radio-button label="standard1">标准型</el-radio-button>
+                <el-radio-button label="Memory1">内存型</el-radio-button>
+                <el-radio-button label="Calculation1">计算型</el-radio-button>
               </el-radio-group>
             </div>
             <div style="margin-top:16px;">
-              <el-radio-group>
-                <el-radio-button label="1">全部实例类型</el-radio-button>
-                <el-radio-button label="2">标准型S3</el-radio-button>
-                <el-radio-button label="3">计算型C3</el-radio-button>
-                <el-radio-button label="4">内存型M3</el-radio-button>
+              <el-radio-group v-model="asg.familyType" @change="changeType">
+                <el-radio-button label="all2">全部实例类型</el-radio-button>
+                <el-radio-button v-show="v1" label="standard2">标准型S3</el-radio-button>
+                <el-radio-button v-show="v2" label="Memory2">计算型C3</el-radio-button>
+                <el-radio-button v-show="v3" label="Calculation2">内存型M3</el-radio-button>
               </el-radio-group>
             </div>
             <div style="margin-top:16px;">
               <el-table
                 ref="singleTable"
                 :data="zoneInfoList"
+                v-loading="loadShow"
                 highlight-current-row
                 @current-change="handleCurrentChange"
                 style="width: 100%"
@@ -404,6 +401,7 @@
         <el-button @click="typeModelShow = false">取 消</el-button>
       </span>
     </el-dialog>
+
     <el-dialog :visible.sync="diskModelShow" width="35%">
       <div class="tke-second-worker-popover-disk">
         <div>
@@ -521,6 +519,7 @@
 <script>
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
+import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   ALL_CITY,
@@ -541,6 +540,7 @@ export default {
       checked: false,
       checkedOne: true,
       checkedTwo: true,
+      loadShow: true, // 加载是否显示
       checkedThree: false,
       typeModelShow: false, //是否打开机型modal
       diskModelShow: false, //是否打开系统盘modal
@@ -598,8 +598,13 @@ export default {
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR", //带宽类型
         broadbandNum: 1, //带宽大小
         pubBroadbandShow: true, //是否分配免费IP
-        shrinkage: "RELEASE_MODE" //扩缩容模式
+        shrinkage: "RELEASE_MODE", //扩缩容模式
+        familyObj: "all1", //实例族
+        familyType: "all2" //实例类型
       },
+      v1: true,
+      v2: true,
+      v3: true,
       systemDisk: [
         {
           label: "高性能云硬盘",
@@ -944,7 +949,37 @@ export default {
         }
       });
     },
-    //返回上一层
+    refresh(){
+      this.getSecurityGroups();
+    },
+    changeObj() {
+      if (this.asg.familyObj == "all1") {
+        this.getDescribeZoneInstanceConfigInfos();
+        this.asg.familyType = "all2";
+        this.v1 = true;
+        this.v2 = true;
+        this.v3 = true;
+      } else if (this.asg.familyObj == "standard1") {
+        this.asg.familyType = "standard2";
+        this.v1 = true;
+        this.v2 = false;
+        this.v3 = false;
+        this.getDescribeZoneInstanceConfigInfos();
+      } else if (this.asg.familyObj == "Memory1") {
+        this.asg.familyType = "Memory2";
+        this.v1 = false;
+        this.v2 = true;
+        this.v3 = false;
+        this.getDescribeZoneInstanceConfigInfos();
+      } else if (this.asg.familyObj == "Calculation1") {
+        this.asg.familyType = "Calculation2";
+        this.v2 = false;
+        this.v3 = true;
+        this.v1 = false;
+        this.getDescribeZoneInstanceConfigInfos();
+      }
+    },
+    changeType() {},
     goBack() {
       this.$router.go(-1);
     },
@@ -1015,22 +1050,50 @@ export default {
     },
     //获取可用区机型配置信息
     async getDescribeZoneInstanceConfigInfos() {
-      let param = {
+      this.loadShow = true;
+      var param = {
         Version: "2017-03-12"
       };
       param["Filters.0.Name"] = "instance-charge-type";
       param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+        var dataList = res.Response.InstanceTypeQuotaSet;
         if (res.Response.Error === undefined) {
-          this.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+          this.loadShow = false;
+          if (this.asg.familyObj !== "all1" && this.v1 == true) {
+            var list = [];
+            dataList.map((v, i) => {
+              if (v.InstanceFamily == "S3") {
+                return list.push(v);
+              }
+            });
+            dataList = list;
+          } else if (this.asg.familyObj !== "all1" && this.v2 == true) {
+            var list = [];
+            dataList.map((v, i) => {
+              if (v.InstanceFamily == "M3") {
+                return list.push(v);
+              }
+            });
+            dataList = list;
+          } else if (this.asg.familyObj !== "all1" && this.v3 == true) {
+            var list = [];
+            dataList.map((v, i) => {
+              if (v.InstanceFamily == "C3") {
+                return list.push(v);
+              }
+            });
+            dataList = list;
+          }
+          this.zoneInfoList = dataList;
           this.asg.zoneInstanceConfigInfo =
-            res.Response.InstanceTypeQuotaSet[0].InstanceType +
+            dataList[0].InstanceType +
             "(" +
-            this.ModelTypeName(res.Response.InstanceTypeQuotaSet[0].TypeName) +
+            this.ModelTypeName(dataList[0].TypeName) +
             "," +
-            res.Response.InstanceTypeQuotaSet[0].Cpu +
+            dataList[0].Cpu +
             "核" +
-            res.Response.InstanceTypeQuotaSet[0].Memory +
+            dataList[0].Memory +
             "GB)";
         } else {
           this.loadShow = false;
@@ -1127,11 +1190,10 @@ export default {
       };
       params["Filters.0.Name"] = "project-id";
       params["Filters.0.Values.0"] = 0;
-
       await this.axios.post(TKE_MISG, params).then(res => {
         if (res.Response.Error === undefined) {
           this.securityGroups = res.Response.SecurityGroupSet;
-          // this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName
+          this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName;
           this.loadShow = false;
         } else {
           this.loadShow = false;

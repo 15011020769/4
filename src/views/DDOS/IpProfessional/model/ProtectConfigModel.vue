@@ -237,7 +237,7 @@ export default {
         { label: "清洗流量", value: 2}
       ],
       cleanNumOption: [
-        { label: "默认", value: "0" },
+        { label: "默認", value: "0" },
         { label: "60Mbps", value: "60" },
         { label: "80Mbps", value: "80" },
         { label: "100Mbps", value: "100" },

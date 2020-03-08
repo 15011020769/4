@@ -34,7 +34,6 @@
             </div>
 
             <el-table
-              v-model="searchGroupValue"
               ref="multipleOption"
               tooltip-effect="dark"
               height="400"

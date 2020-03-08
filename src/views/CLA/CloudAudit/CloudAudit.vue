@@ -38,9 +38,9 @@
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
-                <el-form-item :label="$t('CLA.total.fwmy')">
+                <!-- <el-form-item :label="$t('CLA.total.fwmy')">
                   <span>{{ props.row.SecretId }}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item :label="$t('CLA.total.qy')">
                   <span>{{ props.row.EventRegion }}</span>
                 </el-form-item>
@@ -74,7 +74,9 @@
           <el-table-column :label="$t('CLA.total.sjsj')" prop="EventTime"></el-table-column>
           <el-table-column :label="$t('CLA.total.yhm')" prop="Username">
             <template slot-scope="scope">
-              <p style="color:#006eff">{{scope.row.Username}}</p>
+              <p>
+                {{scope.row.Username}}
+              </p>
             </template>
           </el-table-column>
           <el-table-column :label="$t('CLA.total.sjmc')" width="350">
@@ -243,7 +245,8 @@
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
-          Region: localStorage.getItem("regionv2"),
+          // Region: localStorage.getItem("regionv2"),
+          Region: 'ap-guangzhou',
           EndTime: this.nowtime,
           StartTime: this.oldTime,
           MaxResults: this.MaxResults
@@ -625,7 +628,7 @@
 
   .demo-table-expand>>>.el-form-item__label {
     font-size: 12px;
-    width: 80px;
+    width: 110px;
   }
 
   .demo-table-expand>>>.el-form-item__content span {

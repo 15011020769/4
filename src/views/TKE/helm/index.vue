@@ -1,12 +1,12 @@
 <template>
   <div class="helm-wrap">
-    <HeadCom title="Helm应用">
+    <HeadCom :title="$t('TKE.overview.helmyy')">
       <slot>
         <div class="head-address">
           <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
           <div class="head-cluster">
             <span style="font-size:12px;">集群</span>
-            <el-select v-model="value" slot="prepend" placeholder="请选择" size="mini" style="width:100px" @change="setCusId()">
+            <el-select v-model="value" slot="prepend" :placeholder="$t('TKE.overview.qxz')" size="mini" style="width:100px" @change="setCusId()">
               <el-option v-for="item in options"
                         :key="item.ClusterId"
                         :label="item.ClusterName"
@@ -23,51 +23,51 @@
       </div>
        <div class="room-center" v-show="flagSE">
          <div class="explain" v-show="flagAgin == 1 ? true:false">
-            <p>该集群暂未开通Helm应用，开通需在集群内安装Helm tiller组件，需要占用一定资源，如需使用请<a @click="centerDialogVisible3 = true" style="cursor:pointer">申请开通</a></p>
+            <p>{{$t('TKE.overview.wktxaz')}}<a @click="centerDialogVisible3 = true" style="cursor:pointer">{{$t('TKE.overview.qskt')}}</a></p>
           </div>
           <div class="explain" v-show="flagAgin == 2 ? true:false">
-            <p>开通失败，请确认集群保留足够的空闲资源，并<a @click="centerDialogVisible3 = true" style="cursor:pointer">重新开通</a></p>
+            <p>{{$t('TKE.overview.ktsb')}}<a @click="centerDialogVisible3 = true" style="cursor:pointer">{{$t('TKE.overview.cxkt')}}</a></p>
           </div>
           <div class="explain" v-show="flagAgin == 3 ? true:false">
-            <p> 正在校验Helm应用管理功能<i class="el-icon-loading"></i></p>
+            <p> {{$t('TKE.overview.jygn')}}<i class="el-icon-loading"></i></p>
           </div>
       </div>
       <div class="room-center" v-show="getflags">
          <div class="explain-o">
-            <p>正在创建新的Helm应用<i class="el-icon-loading"></i><a style="cursor:pointer" @click="centerDialogVisible4 = true">查看详情</a></p>
+            <p>{{$t('TKE.overview.cjxyy')}}<i class="el-icon-loading"></i><a style="cursor:pointer" @click="centerDialogVisible4 = true">{{$t('TKE.overview.ckxq')}}</a></p>
           </div>
       </div>
       <div class="helm-table">
         <template>
-          <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow">
-            <el-table-column label="应用名" max-width="10%" prop="name">
+          <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow" :empty-text="$t('TKE.overview.zwsj')">
+            <el-table-column :label="$t('TKE.overview.yym')" max-width="10%" prop="name">
                 <template slot-scope="scope">
                       <div @click="jumpDetail(scope.row)">
                          <a style="cursor:pointer;">{{scope.row.name}}</a>
                       </div>
                 </template>
             </el-table-column>
-            <el-table-column label="状态" max-width="10%" prop="info">
+            <el-table-column :label="$t('TKE.overview.zt')" max-width="10%" prop="info">
               <template slot-scope="scope">
                  <div>{{scope.row.info.status.code|codes}}</div>
                </template>
             </el-table-column>
-            <el-table-column label="版本号" max-width="15%" prop="version">
+            <el-table-column :label="$t('TKE.overview.bbh')" max-width="15%" prop="version">
                <template slot-scope="scope">
                  <div>{{scope.row.version}}</div>
                </template>
             </el-table-column>
-            <el-table-column label="创建时间" max-width="15%" prop="info"> 
+            <el-table-column :label="$t('TKE.overview.cjsj')" max-width="15%" prop="info"> 
               <template slot-scope="scope">
                  <div class="point-white">{{scope.row.info.first_deployed|creationTimestamps}}</div>
                </template>
             </el-table-column>
-            <el-table-column label="Chart仓库" max-width="15%" prop="chart_metadata">
+            <el-table-column :label="$t('TKE.overview.chartck')" max-width="15%" prop="chart_metadata">
               <template slot-scope="scope">
                  <div>{{scope.row.chart_metadata.repo}}</div>
                </template>
             </el-table-column>
-            <el-table-column label="Chart命名空间" max-width="15%"></el-table-column>
+            <el-table-column :label="$t('TKE.overview.chartmmkj')" max-width="15%"></el-table-column>
             <el-table-column label="Chart版本" max-width="10%" prop="chart_metadata">
               <template slot-scope="scope">
                  <div>{{scope.row.chart_metadata.version}}</div>
@@ -75,8 +75,8 @@
             </el-table-column>
             <el-table-column label="操作" max-width="10%">
                <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">更新应用</el-button>
-                <el-button @click="handleDelete(scope.row)"  type="text" size="small">删除</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.gxyy')}}</el-button>
+                <el-button @click="handleDelete(scope.row)"  type="text" size="small">{{$t('TKE.overview.sc')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -85,36 +85,36 @@
     </div>
     <!-- 更新helm应用弹窗 -->
     <el-dialog
-      title="更新Helm应用"
+      :title="$t('TKE.overview.gxhelm')"
       :visible.sync="centerDialogVisible"
       width="45%">
       <div>
         <div class="explain" style="margin-bottom:20px;">
-          <p>注意，若您重新填写了任意变量，将覆盖应用下所有自定义变量。不填写变量时，将会使用上次填写的变量更新应用。
+          <p>{{$t('TKE.overview.zyi')}}
           </p>
         </div>
         <el-form  class="tke-form m0" :model="ruleForm" ref="ruleForm" label-position='left' label-width="100px" size="mini">
-            <el-form-item label="应用名">
+            <el-form-item :label="$t('TKE.overview.yym')">
                 {{ruleForm.name}}
             </el-form-item>
-            <el-form-item label="Chart名称">
+            <el-form-item :label="$t('TKE.overview.chartmc')">
                 {{ruleForm.chart}}
             </el-form-item>
              <el-form-item label="Chart_Url">
-                <el-input class="w200" v-model="ruleForm.address" placeholder="请输入Chart_Url"></el-input>
-                <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+                <el-input class="w200" v-model="ruleForm.address" :placeholder="$t('TKE.overview.qsr')"></el-input>
+                <p>{{$t('TKE.overview.xz')}}</p>
             </el-form-item>
-            <el-form-item label="类型">
+            <el-form-item :label="$t('TKE.overview.lx')">
               <el-radio-group v-model="isCollapse"  size="mini">
                   <el-radio-button :label="true" >公有</el-radio-button>
                   <el-radio-button :label="false">私有</el-radio-button>
                 </el-radio-group>
                  <div v-show="!isCollapse" class="user-room">
                     <!-- <el-form :model="ruleForm" status-icon ref="ruleForm" label-width="60px" class="demo-ruleForm"> -->
-                        <el-form-item label="用户名" prop="name" class="margin-length">
+                        <el-form-item :label="$t('TKE.overview.yhm')" prop="name" class="margin-length">
                             <el-input type="text" v-model="ruleForm.nameTwo" size="mini" style="width:180px;"></el-input>
                         </el-form-item>
-                          <el-form-item label="密码" prop="pass" class="margin-length">
+                          <el-form-item :label="$t('TKE.overview.mm')" prop="pass" class="margin-length">
                             <el-input type="password" v-model="ruleForm.pass" size="mini" style="width:180px;"></el-input>
                         </el-form-item>
                     <!-- </el-form> -->
@@ -126,58 +126,58 @@
                   v-for="(domain, index) in domains"
                   :key="domain.key"
                   :prop="'domains.' + index + '.value'">
-                      <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                      <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                       <span>=</span>
-                      <el-input v-model="domain.valueKey" size="mini" placeholder="变量值"></el-input>
-                        <el-tooltip class="item" effect="dark" content="删除" placement="right">
+                      <el-input v-model="domain.valueKey" size="mini" :placeholder="$t('TKE.overview.blz')"></el-input>
+                        <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
                           <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
                   </div>
                 </div>
-                <p v-show="domains.length?true:false" class="form-p">可通过设置自定义参数替换Chart包的默认配置，如：image.repository = nginx</p>
-                <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">新增变量</el-link>
+                <p v-show="domains.length?true:false" class="form-p">{{$t('TKE.overview.zdycsth')}}：image.repository = nginx</p>
+                <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">{{$t('TKE.overview.xzbl')}}</el-link>
             </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="getUpdate()">确 定</el-button>
+        <el-button type="primary" @click="getUpdate()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="centerDialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 删除 -->
     <el-dialog
-      :title="'您确定要删除吗'+ruleForm.name"
+      :title="'您確定要刪除嗎'+ruleForm.name"
       :visible.sync="centerDialogVisible2"
       width="40%">
-      <span>删除应用将删除该应用创建的所有K8S资源，删除后所有数据将被清除且不可恢复,请提前备份数据。</span>
+      <span>{{$t('TKE.overview.scqbf')}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteRow()">确 定</el-button>
+        <el-button type="primary" @click="deleteRow()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="centerDialogVisible2 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 重新开通弹窗 -->
     <el-dialog
-      title="集群Helm应用管理功能"
+      :title="$t('TKE.overview.yyglgn')"
       :visible.sync="centerDialogVisible3"
       width="40%"
       center>
       <div>
-        <p>新建Helm应用需要先开通Helm应用，当前所选集群暂未开通。</p>
-        <p>开通Helm应用功能：</p>
-        <p>1.将在集群内安装Helm tiller组件</p>
-        <p>2.将占用集群<span style="color: #ff9d00"> 0.28核 CPU 180Mi 内存</span> 的资源</p>
+        <p>{{$t('TKE.overview.xjxxktyy')}}</p>
+        <p>{{$t('TKE.overview.ktyygn')}}</p>
+        <p>{{$t('TKE.overview.jqnazzj')}}</p>
+        <p>{{$t('TKE.overview.zyjq')}}<span style="color: #ff9d00"> 0.28核 CPU 180Mi {{$t('TKE.overview.ncun')}}</span> 的{{$t('TKE.overview.zy')}}</p>
       </div>
       <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 1">
-        <el-button type="primary" @click="ApplyOpen()">确 定</el-button>
+        <el-button type="primary" @click="ApplyOpen()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="centerDialogVisible3 = false">取 消</el-button>
       </span>
       <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 2">
-        <el-button type="primary" @click="openContect()">确 定</el-button>
+        <el-button type="primary" @click="openContect()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="centerDialogVisible3 = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="Helm应用安装日志"
+      :title="$t('TKE.overview.yyazrz')"
       :visible.sync="centerDialogVisible4"
       width="60%">
       <div style="width:100%;height:400px;">
@@ -193,18 +193,18 @@
               type="selection">
             </el-table-column>
             <el-table-column
-              label="Helm名称"
+              :label="$t('TKE.overview.helmmc')"
               prop="name">
               <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
             </el-table-column>
-            <el-table-column  label="状态" prop="status">
+            <el-table-column  :label="$t('TKE.overview.zt')" prop="status">
               <!-- <template slot-scope="scope">{{ scope.row.date }}</template> -->
             </el-table-column>
             <el-table-column
               fixed="right"
               label="操作">
               <template slot-scope="scope">
-                <el-button @click="deleteStatus(scope)" type="text" size="small">取消安装</el-button>
+                <el-button @click="deleteStatus(scope)" type="text" size="small">{{$t('TKE.overview.qxaz')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -300,7 +300,7 @@ export default {
               if(this.number == 1){
                 this.newData.push({
                   name:key,
-                  status:"创建中",
+                  status:"創建中",
                 })
               }
               clearInterval(this.timeIds)
@@ -338,12 +338,12 @@ export default {
                 if(arr.length != this.newData.length){
                   this.newData.push({
                         name:key,
-                        status:"失败",
+                        status:"失敗",
                   })
                 }
                 if(arr.length == this.newData.length){
                   this.newData = this.newData.filter(item=>{
-                    if(item.status == "失败"){
+                    if(item.status == "失敗"){
                           return item
                     }
                   })
@@ -369,7 +369,7 @@ export default {
               } else {
                 this.number = 1
                  this.newData = this.newData.filter(item=>{
-                  if(item.status == "失败"){
+                  if(item.status == "失敗"){
                         return item
                   }
                 })
@@ -818,15 +818,15 @@ export default {
         if(value == "DEPLOYED"){
             return "正常"
         } else if (value == "DELETED"){
-            return "已删除"
+            return "已刪除"
         } else if (value == "DELETING"){
-            return "正在删除"
+            return "正在刪除"
         } else if (value == "SUPERSEDED"){
-            return "已废弃"
+            return "已廢棄"
         } else if (value == "FAILED"){
-            return "异常"
+            return "異常"
         } else if (value == "UNHEALTHY"){
-            return "异常"
+            return "異常"
         } else {
             return "-"
         }

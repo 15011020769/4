@@ -2,7 +2,6 @@
   <el-row class="echartsShowfirst">
     <h3 class="topfont">
       {{t('业务峰值趋势', 'WAF.ywfzqs')}}
-      <span style="color:#bbb;">(次)</span>
     </h3>
     <el-row class="empty" v-if="series1.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     <ELine
@@ -13,6 +12,7 @@
       :color="color"
       :legendText="legendText1"
       v-loading="loading"
+      :tooltip="tooltip"
       v-else
     />
   </el-row>
@@ -40,6 +40,20 @@ export default {
       legendText1: ['QPS', this.t('上行带宽', 'WAF.sxdk'), this.t('下行带宽', 'WAF.xxdk')], // 业务攻击趋势
       color: ["#006eff", "#29CC85", "#FF9D00"],
       loading: true,
+      tooltip: {
+        trigger: 'axis',
+        formatter(params) {
+          let relVal = params[0].name;
+          params.forEach(v => {
+            if(v.seriesName == "QPS") {
+              relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value;
+            } else {
+              relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "bps";
+            }
+          })  
+          return relVal;  
+        }
+      },
     }
   },
   watch: {

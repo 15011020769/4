@@ -7,17 +7,17 @@
                 :prop="'domains.' + index + '.value'"
             >
             <div class="form-input">
-                <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                 <span>=</span>
-                <el-input v-model="domain.valueKey" size="mini" placeholder="变量值"></el-input>
-                 <el-tooltip class="item" effect="dark" content="删除" placement="right">
+                <el-input v-model="domain.valueKey" size="mini" :placeholder="$t('TKE.overview.blz')"></el-input>
+                 <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
                     <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                 </el-tooltip>
             </div>
             </el-form-item>
-            <p v-show="domains.length?true:false" class="form-p">可通过设置自定义参数替换Chart包的默认配置，如：image.repository = nginx</p>
+            <p v-show="domains.length?true:false" class="form-p">{{$t('TKE.zdycsth.yym')}}：image.repository = nginx</p>
         </el-form>
-        <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">新增变量</el-link>
+        <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">{{$t('TKE.overview.xzbl')}}</el-link>
     </div>
 </template>
 <script>

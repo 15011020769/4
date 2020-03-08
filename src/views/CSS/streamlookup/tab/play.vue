@@ -7,11 +7,11 @@
       v-loading="loading"
       v-if="showEchart"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}Mbps`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <Echart
       :xAxis="xAxis1"
       :series="series2"
@@ -20,11 +20,11 @@
       v-if="showEchart"
       color="#0accac"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}MB`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <Echart
       :xAxis="xAxis1"
       :series="series3"
@@ -33,7 +33,7 @@
       v-if="showEchart"
       color="#fa970c"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
   </div>
 </template>
 
@@ -94,16 +94,16 @@ export default {
               res.Response.Error.Message ==
               "param=StreamName,value=, length is zero."
             ) {
-              this.$message.error("请输入流id");
+              this.$message.error("請輸入流id");
             } else {
               this.$message.error(res.Response.Error.Message);
             }
         } else {
           if (res.Response.DataInfoList.length != 0) {
             this.showEchart = true
-            this.legendText1 = '带宽'
+            this.legendText1 = '帶寬'
             this.legendText2 = '流量'
-            this.legendText3 = '并发连接数'
+            this.legendText3 = '併發連接數'
             res.Response.DataInfoList.map(v => {
               axix1.push(moment(v.Time).format('YYYY-MM-DD HH:mm:ss'))
               series1.push(v.Bandwidth)

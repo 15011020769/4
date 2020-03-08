@@ -2,14 +2,14 @@
   <div class="logCollection-wrap">
     <!-- 头部 -->
     <div class="back-hd flex">
-      <h2 style="padding-top:3px;">日志采集</h2>
+      <h2 style="padding-top:3px;">{{$t('TKE.overview.rzcj')}}</h2>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">地域</div>
-      &nbsp;<el-button type="primary" class="init hd-button" style="margin-top:2px;">中国台北</el-button>
+      &nbsp;<el-button type="primary" class="init hd-button" style="margin-top:2px;">{{$t('TKE.overview.zgtb')}}</el-button>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div>
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择" style="margin-bottom:5px;">
+      <el-select size="mini" v-model="value" :placeholder="$t('TKE.overview.qxz')" style="margin-bottom:5px;">
         <el-option v-for="item in options" :key="item.value" :value="item.value">
         </el-option>
       </el-select>
@@ -24,45 +24,45 @@
           <!-- </router-link> -->
         </div>
         <div style="position: relative;" class="flex">
-          <div class="font" style="margin-top:29px;margin-right:10px;">命名空间</div>
-          <el-select size="small" v-model="Name.value" placeholder="请选择Namespace" style="margin-top:19px;">
+          <div class="font" style="margin-top:29px;margin-right:10px;">{{$t('TKE.overview.mmkj')}}</div>
+          <el-select size="small" v-model="Name.value" :placeholder="$t('TKE.overview.qxzmmkj')" style="margin-top:19px;">
             <el-option v-for="item in Name.options" :key="item" :value="item">
             </el-option>
           </el-select>
-          <input type="search" placeholder="请输入集群名称" @keyup.enter='conSearch' :disabled="Name.value=='请选择Namespace'"
+          <input type="search" :placeholder="$t('TKE.overview.qsrjqmc')" @keyup.enter='conSearch' :disabled="Name.value=='請選擇Namespace'"
             class="search" v-model='search'>
           <button class="el-icon-search ip-btn" @click="conSearch"></button>
         </div>
           <i class="el-icon-download" @click="exportExcel()"></i>
       </div>
       <!-- 内容 -->
-      <el-table   id="exportTable" :data="tableData" style="width: 100%" v-loading="tableFlag">
-        <el-table-column label="名称" width="180">
+      <el-table   id="exportTable" :data="tableData" style="width: 100%" v-loading="tableFlag"  :empty-text="$t('TKE.overview.zwsj')">
+        <el-table-column :label="$t('TKE.overview.mc')" width="180">
            <template slot-scope="scope">
             <a @click='goLogDetail(scope.row)'>{{scope.row.metadata.name}}</a>
           </template>
         </el-table-column>
-        <el-table-column prop="name" label="状态" width="180">
+        <el-table-column prop="name" :label="$t('TKE.overview.zt')" width="180">
           <span style="color:#0abf5b;">Running</span>
         </el-table-column>
-        <el-table-column label="类型">
+        <el-table-column :label="$t('TKE.overview.lx')">
           <template slot-scope="scope">
-            <span v-if="scope.row.spec.input.type=='host-log'">指定主机文件</span>
-            <span v-if="scope.row.spec.input.type=='container-log'">容器标准输出</span>
+            <span v-if="scope.row.spec.input.type=='host-log'">{{$t('TKE.overview.zdzjwj')}}</span>
+            <span v-if="scope.row.spec.input.type=='container-log'">{{$t('TKE.overview.rqbzsc')}}</span>
             <span v-if="scope.row.spec.input.type=='pod-log'">指定容器文件</span>
           </template>
         </el-table-column>
-        <el-table-column prop="metadata.namespace" label="命名空间" width="180">
+        <el-table-column prop="metadata.namespace" :label="$t('TKE.overview.mmkj')" width="180">
         </el-table-column>
-        <el-table-column label="创建时间" width="180">
+        <el-table-column :label="$t('TKE.overview.cjsj')" width="180">
           <template slot-scope="scope">
             <span>{{timeFormat(scope.row.metadata.creationTimestamp)}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="editLogCollection(scope.row)" type="text" size="small">编辑日志采集规则</el-button>
-            <el-button type="text" size="small" @click="delLog(scope.row)">删除</el-button>
+            <el-button @click="editLogCollection(scope.row)" type="text" size="small">{{$t('TKE.overview.bjgz')}}</el-button>
+            <el-button type="text" size="small" @click="delLog(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,31 +71,31 @@
     <div>
       <el-dialog :visible.sync="delLogFlag" width="550px" center>
         <div slot="title">
-          删除日志收集规则
+          {{$t('TKE.overview.scrz')}}
         </div>
-        <p>您确定要删除日志收集规则"{{delLogName}}"吗？</p>
-        <p>删除日志收集规则后将不再继续按照规则收集日志，但已收集日志仍存于消费端不受影响</p>
+        <p>{{$t('TKE.overview.qdscrz')}}"{{delLogName}}"嗎？</p>
+        <p>{{$t('TKE.overview.schbyx')}}</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="sureDel">确 定</el-button>
+          <el-button type="primary" @click="sureDel">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="delLogFlag = false">取 消</el-button>
         </span>
       </el-dialog>
     </div>
   <!-- 新建弹框 -->
     <el-dialog
-  title="集群日志采集功能"
+  :title="$t('TKE.overview.jqrzcj')"
   :visible.sync="dialogVisible"
   width="40%"
   center
   :before-close="handleClose">
   <div>
-    <p>新建日志收集规则，需要先开通日志收集功能。当前您所选的集群尚未开通。</p>
-    <p>开通日志收集功能：</p>
-    <p>1. 将在集群内所有节点（包括后续新增节点）创建日志采集服务。</p>
-    <p>2.请为每个节点预留 <span style="color:#ff9d00">0.3核 250M</span> 以上可用资源。</p>
+    <p>{{$t('TKE.overview.xjrzsjgz')}}</p>
+    <p>{{$t('TKE.overview.ktrzsj')}}</p>
+    <p>{{$t('TKE.overview.cjrzcjfw')}}</p>
+    <p>{{$t('TKE.overview.wjdyl')}} <span style="color:#ff9d00">0.3核 250M</span> {{$t('TKE.overview.yskyzy')}}</p>
   </div>
   <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="newCread2">确 定</el-button>
+    <el-button type="primary" @click="newCread2">$t('TKE.overview.qd')</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   </span>
 </el-dialog>
@@ -128,8 +128,8 @@
         value: '',//集群名
         value2: '',
         Name: {
-          value: '请选择Namespace',
-          options: ['请选择Namespace']
+          value: '請選擇Namespace',
+          options: ['請選擇Namespace']
         }
       }
     },
@@ -146,7 +146,7 @@
     watch: {
       value(val) {
         this.funllscreenLoading = true;
-        this.Name.value = '请选择Namespace'
+        this.Name.value = '請選擇Namespace'
         let params = {
           ClusterInstanceId: (val.split('('))[0],
           Limit: this.pageSize,
@@ -155,7 +155,7 @@
         }
         this.value2 = (val.split('('))[0];
         this.findList();
-        this.Name.options = ['请选择Namespace'];
+        this.Name.options = ['請選擇Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
           console.log(res)
@@ -180,7 +180,7 @@
       },
       Name: {
         handler(val) {
-          if (this.value2 && val.value != '请选择Namespace') {
+          if (this.value2 && val.value != '請選擇Namespace') {
             var params = {
               ClusterName: this.value2,
               Method: "GET",
@@ -243,18 +243,18 @@
           }
         } else {
           let ErrTips = {
-            "InternalError": '内部错误',
-            "InternalError.CamNoAuth": '没有权限',
-            "InternalError.Db": 'db错误',
-            "InternalError.DbAffectivedRows": 'DB错误',
+            "InternalError": '內部錯誤',
+            "InternalError.CamNoAuth": '沒有權限',
+            "InternalError.Db": 'db錯誤',
+            "InternalError.DbAffectivedRows": 'DB錯誤',
             "InternalError.Param": 'Param',
-            "InternalError.PublicClusterOpNotSupport": '集群不支持当前操作',
-            "InternalError.QuotaMaxClsLimit": '超过配额限制',
-            "InternalError.QuotaMaxNodLimit": '超过配额限制',
-            "InvalidParameter": '参数错误',
-            "InvalidParameter.Param": '参数错误',
-            "LimitExceeded": '超过配额限制',
-            "ResourceNotFound": '资源不存在',
+            "InternalError.PublicClusterOpNotSupport": '集群不支持當前操作',
+            "InternalError.QuotaMaxClsLimit": '超過配額限制',
+            "InternalError.QuotaMaxNodLimit": '超過配額限制',
+            "InvalidParameter": '參數錯誤',
+            "InvalidParameter.Param": '參數錯誤',
+            "LimitExceeded": '超過配額限制',
+            "ResourceNotFound": '資源不存在',
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

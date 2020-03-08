@@ -16,7 +16,8 @@
             value="businessList"
           ></el-option>
         </el-select>
-        <!-- <el-button class="ReportTitBtn" type="primary" @click="newBuy">新购</el-button> -->
+        <!-- 新购 -->
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
       </div>
       <div class="mainContentCenter">
         <div class="textAlignTop newClear">
@@ -367,6 +368,7 @@ import resouseListModel from './model/resouseListModel'
 import upgradeModel from './model/upgradeModel'
 import RenewModel from './model/RenewModel'
 import ProtectConfigModel from './model/ProtectConfigModel'
+import { ErrorTips } from "@/components/ErrorTips"
 
 export default {
   data () {
@@ -759,11 +761,12 @@ export default {
       this.describeResourceList()
     },
 
-    // 跳转新购页面
-    newBuy () {
-      this.$router.push({
-        path: '/choose'
-      })
+    //跳转新购页面
+    newBuy() {
+      let routeUrl = this.$router.resolve({
+        path: "/choose"
+      });
+      window.open(routeUrl.href, '_blank');
     },
     // 转发规则个数设置按钮
     toAccest (record) {

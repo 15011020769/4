@@ -15,7 +15,7 @@
           :placeholder="$t('CAM.userList.policyPlaceholder')"
           @keyup.enter.native="toQuery"
         >
-          <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+          <i slot="suffix" class="el-input__icon el-icon-search" style="cursor: pointer;" @click="toQuery"></i>
         </el-input>
         <el-table
           class="table-left"
@@ -25,8 +25,8 @@
           :height="tableHeight"
           tooltip-effect="dark"
           style="width: 100%"
-          @row-click="selectedRow"
-          @selection-change="handleSelectionChange"
+          @select="togglePolicy"
+          @select-all="toggleAllPolicy"
           :empty-text="$t('CAM.strategy.zwsj')"
           v-loading="loading"
         >
@@ -117,6 +117,7 @@ export default {
       rp: 100,
       page: 1,
       loading: true,
+      selectedPolicyId: [],
     };
   },
   mounted() {
@@ -125,6 +126,20 @@ export default {
       window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
   },
   methods: {
+    togglePolicy(a, b) {
+      if (this.selectedPolicyId.includes(b.PolicyId)) {
+        this.selectedPolicyId = this.selectedPolicyId.filter(selected => selected !== b.PolicyId)
+      } else {
+        this.selectedPolicyId.push(b.PolicyId)
+      }
+    },
+    toggleAllPolicy(all) {
+      if (this.selectedPolicyId.length === this.policiesData.length) {
+        this.selectedPolicyId = []
+      } else {
+        this.selectedPolicyId = all.map(g => g.PolicyId)
+      }
+    },
     init() {
       if (this.totalNum && this.page * this.rp > this.totalNum) return
       let params = {
@@ -168,14 +183,6 @@ export default {
           console.log(error);
         });
     },
-    handleSelectionChange(val) {
-      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
-      this.policiesSelectedData = val;
-    },
-    selectedRow(row, column, event) {
-      // 设置选中或者取消状态
-      this.$refs.multipleOption.toggleRowSelection(row);
-    },
     deleteRow(index, rows) {
       // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
       this.$refs.multipleOption.toggleRowSelection(rows[index], false);
@@ -186,6 +193,15 @@ export default {
       } else {
         this.policiesData = [...this.policiesDataCopy]
       }
+      if (this.selectedPolicyId.length) {
+          this.$nextTick(() => {
+            this.policiesData.forEach(strategy => {
+              if (this.selectedPolicyId.includes(strategy.PolicyId)) {
+                this.$refs.multipleOption.toggleRowSelection(strategy, true)
+              }
+            })
+          })
+        }
     },
     getDaata() {
       return this.policiesSelectedData;

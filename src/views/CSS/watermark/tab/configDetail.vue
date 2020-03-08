@@ -16,7 +16,9 @@
       <li>
         <el-row type="flex">
           <label>{{$t('CSS.watermark.7')}}</label>
-          <div class="watermark-wrap"><img :src="selectItem.PictureUrl" /></div>
+          <div class="watermark-wrap">
+            <img :src="selectItem.PictureUrl" />
+          </div>
         </el-row>
       </li>
       <li>
@@ -51,38 +53,43 @@
       </li>
       <li>
         <el-row type="flex">
-          <div><el-button type="text" @click="previewDialog=true">预览</el-button></div>
+          <div>
+            <el-button type="text" @click="previewDialog=true">預覽</el-button>
+          </div>
           <!-- <div class="text-black">{{ selectItem.CosBucket }}</div> -->
         </el-row>
       </li>
     </ul>
     <el-dialog
+      width="800px"
       :visible.sync="previewDialog"
       :title="$t('CSS.watermark.11')"
+      @open="handleOpen"
     >
-    <div style="position: relative;" v-if="selectItem">
-      <img src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png">
-      <img :src="selectItem.PictureUrl" :style="'position: absolute;width: 60px;left:' + .01 * selectItem.XPosition * 760 + 'px;top:' + .01 * selectItem.YPosition * 430 + 'px'">
-    </div>
+      <div style="position: relative;" v-if="selectItem">
+        <img
+          src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png"
+        />
+        <img
+          :src="selectItem.PictureUrl"
+          :style="'position: absolute;width:' + .01 * selectItem.Width * 760 + 'px;left:' + .01 * selectItem.XPosition * 760 + 'px;top:' + .01 * selectItem.YPosition * 430 + 'px'"
+        />
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'configDetail',
+  name: "configDetail",
   filters: {
     position(b) {
-      if (!b) return
-      if (b.XPosition < 50 && b.YPosition < 50)
-        return '左上角';
-      if (b.XPosition >= 50 && b.YPosition < 50)
-        return '右上角';
-      if (b.XPosition < 50 && b.YPosition >= 50)
-        return '左下角';
-      if (b.XPosition >= 50 && b.YPosition >= 50)
-        return '右下角'
-    },
+      if (!b) return;
+      if (b.XPosition < 50 && b.YPosition < 50) return "左上角";
+      if (b.XPosition >= 50 && b.YPosition < 50) return "右上角";
+      if (b.XPosition < 50 && b.YPosition >= 50) return "左下角";
+      if (b.XPosition >= 50 && b.YPosition >= 50) return "右下角";
+    }
   },
   props: {
     selectItem: {
@@ -93,20 +100,17 @@ export default {
   data() {
     return {
       previewDialog: false
-    }
+    };
   },
-
-  mounted() {
-  },
-
   methods: {
     onEdit() {
-      this.$emit('update:formShow', true)
+      this.$emit("update:formShow", true);
+    },
+    handleOpen() {
+      console.log(this.selectItem);
     }
-  },
-
-}
-
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -116,7 +120,7 @@ export default {
     height: 100px;
     img {
       max-width: 100%;
-      max-height: 100%
+      max-height: 100%;
     }
   }
   .content-box {

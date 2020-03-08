@@ -1,14 +1,11 @@
 <template>
 <!-- 统计报表 -->
-  <div class="wrap">
+  <div id="ipConfigFourth" class="wrap">
     <div class="statistReportTit">
       <div class="ReportTit newClear">
         <h3 class="ReportTitH3">{{$t('DDOS.Statistical_forms.form_title')}}</h3>
-        <!-- <el-button
-        class="ReportTitBtn"
-        type="primary"
-        @click="newBuy"
-        >{{$t('DDOS.Statistical_forms.new_bug')}}</el-button>-->
+        <!-- 新购 -->
+        <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
       </div>
     </div>
     <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -57,10 +54,12 @@ export default {
         this.$refs.servers.getDataService();
       }
     },
+    //跳转新购页面
     newBuy() {
-      this.$router.push({
+      let routeUrl = this.$router.resolve({
         path: "/choose"
       });
+      window.open(routeUrl.href, '_blank');
     },
     //时间按钮
     thisTime(thisTime) {
@@ -146,37 +145,40 @@ export default {
   display: block;
   clear: both;
 }
-
-.statistReportTit {
-  width: 100%;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
-  padding: 0 20px;
-  box-sizing: border-box;
-
-  .ReportTit {
-    height: 50px;
-    display: flex;
-    align-items: center;
-  }
-
-  .ReportTitH3 {
-    float: left;
-    font-size: 16px;
-    font-weight: 600;
-  }
-
-  .ReportTitBtn {
-    float: right;
-    height: 30px;
-    width: 52px;
-    padding: 0;
-    color: #fff;
-    border-radius: 0;
-    background-color: #006eff;
-    line-height: 30px;
-    padding: 0;
-    text-align: center;
+#ipConfigFourth {
+  .statistReportTit {
+    width: 100%;
+    // padding: 12px 20px 0;
+    .mainContentCenter {
+      width: 100%;
+      padding: 0 20px 20px;
+    }
+    .ReportTit {
+      width: 100%;
+      height: 50px;
+      background-color: #fff;
+      // border-bottom: 1px solid #ddd;
+      padding: 0 20px;
+      line-height: 50px;
+      // margin-bottom: 20px;
+      .ReportTitH3 {
+        float: left;
+        font-size: 16px;
+        font-weight: 600;
+        margin-right: 20px;
+      }
+      .ReportTitBtn {
+        float: right;
+        height: 30px;
+        line-height: 30px;
+        padding: 0;
+        margin-top: 8px;
+        width: 52px;
+        border-radius: 0;
+        text-align: center;
+        background-color: #006eff;
+      }
+    }
   }
 }
 

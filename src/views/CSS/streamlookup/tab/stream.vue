@@ -7,11 +7,11 @@
       v-loading="loading"
       v-if="showEchart"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}fps`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <Echart
       :xAxis="xAxis1"
       :series="series2"
@@ -19,11 +19,11 @@
       v-loading="loading"
       v-if="showEchart"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}bps`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <Echart
       :xAxis="xAxis1"
       :series="series3"
@@ -31,11 +31,11 @@
       v-loading="loading"
       v-if="showEchart"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}fps`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <Echart
       :xAxis="xAxis1"
       :series="series4"
@@ -43,11 +43,11 @@
       v-loading="loading"
       v-if="showEchart"
       :tooltip="{
-        trigger: 'axis',   
+        trigger: 'axis',
         formatter: `{b}<br/>{a}  {c}bps`
       }"
     />
-    <div class="empty" v-else>暂无数据</div>
+    <div class="empty" v-else>暫無數據</div>
     <div class="stream-table">
       <p>详细信息</p>
       <!-- <XTimeD v-on:switchData="GetDat" :classsvalue="value"></XTimeD> -->
@@ -117,17 +117,17 @@ export default {
               res.Response.Error.Message ==
               "param=StreamName,value=, length is zero."
             ) {
-              this.$message.error("请输入流id");
+              this.$message.error("請輸入流id");
             } else {
               this.$message.error(res.Response.Error.Message);
             }
         } else {
           if (res.Response.DataInfoList.length != 0) {
             this.showEchart = true
-            this.legendText1 = res.Response.DataInfoList[0].ClientIp + '视频帧率'
-            this.legendText2 = res.Response.DataInfoList[0].ClientIp + '视频码率'
-            this.legendText3 = res.Response.DataInfoList[0].ClientIp + '音频帧率'
-            this.legendText4 = res.Response.DataInfoList[0].ClientIp + '音频码率'
+            this.legendText1 = res.Response.DataInfoList[0].ClientIp + '視頻帧率'
+            this.legendText2 = res.Response.DataInfoList[0].ClientIp + '視頻碼率'
+            this.legendText3 = res.Response.DataInfoList[0].ClientIp + '音頻帧率'
+            this.legendText4 = res.Response.DataInfoList[0].ClientIp + '音頻碼率'
             res.Response.DataInfoList.map(v => {
               axix1.push(moment(v.Time).format('YYYY-MM-DD HH:mm:ss'))
               series1.push(v.VideoFps)

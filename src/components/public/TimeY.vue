@@ -34,7 +34,11 @@
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="Start_End.StartTIme" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker
+                  class="width-date"
+                  v-model="Start_End.StartTIme"
+                  placeholder="任意時間點"
+                ></el-time-picker>
               </p>
               <p class="p-dis">
                 <span>至</span>
@@ -68,6 +72,7 @@
               :clearable="false"
               class="dateheight"
               @change="ReSelection"
+              :picker-options="pickerOptions"
             ></el-date-picker>
           </el-button-group>
         </el-row>
@@ -92,6 +97,8 @@ import moment from "moment";
 
 export default {
   data() {
+    let _minTime = null;
+    let _maxTime = null;
     return {
       datetimeval: [], // 选择时间数据
       visible: false, // 时间选择器的变化
@@ -113,7 +120,43 @@ export default {
         StartTIme: "",
         EndTIme: ""
       },
-      classvalue: 1
+      classvalue: 1,
+      pickerOptions: {
+        onPick(time) {
+
+          // 如果选择了只选择了一个时间
+          if (!time.maxDate) {
+            let timeRange = 30 * 24 * 60 * 60 * 1000; // 30天内，
+            _minTime = time.minDate.getTime() - timeRange; // 最小时间
+
+            const tempMaxTime = time.minDate.getTime() + timeRange; // 最大时间
+            const now = Date.now();
+
+            if (tempMaxTime > now) {
+              _maxTime = now;
+            }
+            else {
+              _maxTime = tempMaxTime;
+            }
+            // 如果选了两个时间，那就清空本次范围判断数据，以备重选
+          }
+          else {
+            _minTime = _maxTime = null;
+          }
+        },
+        disabledDate(time) {
+          // onPick后触发
+          // 该方法会轮询当3个月内的每一个日期，返回false表示该日期禁选
+          if (_minTime && _maxTime) {
+            return time.getTime() < _minTime || time.getTime() > _maxTime;
+          }
+          else if (_minTime == null && _maxTime == null) {
+            // 如果都没有选择要限制不能笔今天更晚的日期
+            const now = Date.now();
+            return time.getTime() > now;
+          }
+        }
+      }
     };
   },
   props: {
@@ -123,7 +166,7 @@ export default {
     granularity: {
       required: false,
       type: Boolean,
-      default: true,
+      default: true
     }
   },
   created() {
@@ -146,13 +189,21 @@ export default {
         }
       ];
       if (time === 1) {
-        const KTime = moment().startOf('d').format("YYYY-MM-DD HH:mm:ss");
+        const KTime = moment()
+          .startOf("d")
+          .format("YYYY-MM-DD HH:mm:ss");
         const ETime = moment().format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.StartTIme = KTime;
         this.Start_End.EndTIme = ETime;
-      } else if(time === -1) {
-        const KTime = moment().subtract('d', 1).startOf('d').format("YYYY-MM-DD HH:mm:ss");
-        const ETime = moment().subtract('d', 1).endOf('d').format("YYYY-MM-DD HH:mm:ss");
+      } else if (time === -1) {
+        const KTime = moment()
+          .subtract("d", 1)
+          .startOf("d")
+          .format("YYYY-MM-DD HH:mm:ss");
+        const ETime = moment()
+          .subtract("d", 1)
+          .endOf("d")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.StartTIme = KTime;
         this.Start_End.EndTIme = ETime;
       } else if (time === 1 * 24 * 7) {
@@ -163,7 +214,10 @@ export default {
             label: "一天"
           }
         ];
-        this.Start_End.StartTIme = moment().subtract('d', 6).startOf('d').format("YYYY-MM-DD HH:mm:ss");;
+        this.Start_End.StartTIme = moment()
+          .subtract("d", 6)
+          .startOf("d")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
       } else if (time === 1 * 24 * 30) {
         options = [
@@ -173,10 +227,13 @@ export default {
             label: "一天"
           }
         ];
-        this.Start_End.StartTIme = moment().subtract('d', 29).startOf('d').format("YYYY-MM-DD HH:mm:ss");;
+        this.Start_End.StartTIme = moment()
+          .subtract("d", 29)
+          .startOf("d")
+          .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
       }
-      this.options = options
+      this.options = options;
       this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
     },
     switchData() {
@@ -204,6 +261,14 @@ export default {
     },
     // 时间重新选择---确定
     ReSelection() {
+      if (
+        this.datetimeval === null ||
+        this.datetimeval === undefined ||
+        this.datetimeval.length === 0
+      ) {
+        return;
+      }
+
       this.value = "";
       this.TimeAfter();
     },
@@ -219,7 +284,7 @@ export default {
       const hdate = moment(this.datetimeval[1]);
       this.value = "300";
       this.classvalue = "";
-      if (hdate.diff(qdate, 'd') < 6) {
+      if (hdate.diff(qdate, "d") < 6) {
         this.options = [
           {
             value: "300",

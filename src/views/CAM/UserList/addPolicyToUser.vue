@@ -10,7 +10,7 @@
       font-weight: 900;
       cursor:pointer;"
       ></i>
-      <span class="title-left">添加策略</span>
+      <span class="title-left">添加3333策略</span>
     </div>
     <div class="box-ctr">
       <div class="step">

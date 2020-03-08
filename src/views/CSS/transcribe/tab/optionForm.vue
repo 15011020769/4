@@ -8,20 +8,20 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="可用模板" prop="template">
+      <el-form-item label="可用範本" prop="template">
         <el-radio-group v-model="ruleForm.template" @change="radioChange">
           <el-radio label="FLV" />
           <el-radio label="MP4" />
           <el-radio label="HLS" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="模板名稱" prop="TemplateName">
+      <el-form-item label="範本名稱" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="模板描述" prop="Description">
+      <el-form-item label="範本描述" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="錄製文件類型">
+      <el-form-item label="錄製文件類型" prop="TemplateType">
         <el-table
           ref="multipleTable"
           :data="tableData"
@@ -54,6 +54,7 @@
             <template slot-scope="scope">
               <el-input
                 v-if="scope.row.TemplateName==='HLS'"
+                placeholder="1-300s，0為不續錄"
                 v-model="tableParams.HlsSpecialParam.FlowContinueDuration"
               />
               <el-input v-else disabled placeholder="不支持續錄" />
@@ -101,25 +102,27 @@ export default {
   data() {
     return {
       form: {
-        desc: "", //模板描述
-        template: "", //可用模板
-        name: "" //模板名称
+        desc: "", //範本描述
+        template: "", //可用範本
+        name: "" //範本名称
       },
 
       ruleForm: {
         TemplateName: "",
-        Description: ""
+        Description: "",
+        TemplateType: " " // 此处为“ ”是为了让表单校验通过
       },
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入模板名稱", trigger: "blur" },
+          { required: true, message: "請輸入範本名稱", trigger: "blur" },
           { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
         ],
         desc: [
           { required: false },
           { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
-        ]
+        ],
+        TemplateType: [{ required: true }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -174,6 +177,17 @@ export default {
     },
     validateTableParameters(parameters) {
       // 验证table中各个参数的正确性
+
+      if (
+        parameters["HlsParam.Enable"] === 0 &&
+        parameters["Mp4Param.Enable"] === 0 &&
+        parameters["FlvParam.Enable"] === 0 &&
+        parameters["AacParam.Enable"] === 0
+      ) {
+        this.$message.error("至少填寫選擇一種錄製文件類型");
+        return false;
+      }
+
       const maxStorageSeconds = 1080 * 24 * 3600; // 秒
       const maxHLSFlowContinueDuration = 300; // 秒
 
@@ -185,15 +199,16 @@ export default {
         }
         if (
           parameters["HlsSpecialParam.FlowContinueDuration"] >
-          maxHLSFlowContinueDuration
+          maxHLSFlowContinueDuration ||
+          parameters["HlsSpecialParam.FlowContinueDuration"] < 0
         ) {
           this.$message.error("HLS續錄超時時長範圍0~300秒");
           return false;
         }
       }
 
-      const maxRecordInterval = 120 * 60;  // 分
-      const minRecordInterval = 5 * 60;  // 分
+      const maxRecordInterval = 120 * 60; // 分
+      const minRecordInterval = 5 * 60; // 分
 
       // 如果启用了MP4
       if (parameters["Mp4Param.Enable"] === 1) {
@@ -241,15 +256,16 @@ export default {
           return false;
         }
       }
+
+      return true;
     },
     handleAdd(params) {
-
       if (!this.validateTableParameters(params)) {
         return;
       }
 
       this.axios.post(ADD_RECORDING_CONFIG, params).then(data => {
-        if (data.Response.Error == undefined) {
+        if (data.Response.Error === undefined) {
           this.$message({
             message: "添加成功",
             type: "success"
@@ -261,7 +277,6 @@ export default {
 
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message.error(ErrOr[data.Response.Error.Code]);
-
       });
     },
 
@@ -320,7 +335,7 @@ export default {
 
           if (this.tableParams[key].StorageTime) {
             this.tableParams[key].StorageTime =
-              this.tableParams[key].StorageTime / 60 / 24;
+              this.tableParams[key].StorageTime / 3600 / 24;
           }
         });
       }

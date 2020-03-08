@@ -78,6 +78,7 @@
                   @click.native.prevent="RenewModel(scope.row)"
                   type="text"
                   size="small"
+                  :disabled="scope.row.Status === 'UnBlocking'"
                 >
                   解封
                 </el-button>

@@ -100,6 +100,7 @@ export default {
       clusterId:'',
       name:'',
       spaceName:'',
+      workload:'',
       type:'RollingUpdate',
     };
   },
@@ -110,6 +111,7 @@ export default {
     this.clusterId=this.$route.query.clusterId;
     this.name=this.$route.query.name;
     this.spaceName=this.$route.query.spaceName;
+    this.workload=this.$route.query.workload;
     this.baseData();
   },
   methods: {
@@ -124,7 +126,7 @@ export default {
           ClusterName: this.clusterId,
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
           RequestBody: {"spec":{"minReadySeconds":0,"strategy":{"type":"Recreate","rollingUpdate":null}}},
           Version: "2018-05-25",
         }
@@ -134,7 +136,7 @@ export default {
           ClusterName:this.clusterId,
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
           RequestBody:{"spec":{"minReadySeconds":this.cl.timeInterval,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":this.cl.maxPodOver,"maxUnavailable":this.cl.maxPodNot}}}},
           Version: "2018-05-25",
         }
@@ -167,7 +169,7 @@ export default {
     baseData(){
         var params={
               Method: "GET",
-              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/deployments?fieldSelector=metadata.name=" +
+              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
                 this.name,
               Version: "2018-05-25",
               ClusterName: this.clusterId

@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <h3>
-      流量趋势
-      <span style="color:#bbb;">(单位:MB)</span>
+      流量趨勢
+      <span style="color:#bbb;">(單位:MB)</span>
     </h3>
     <Echart
       color="#0accac"
@@ -17,11 +17,11 @@
         style="width: 100%;margin-top:20px;"
         v-loading="loading"
       >
-        <el-table-column prop="Time" label="时间点"></el-table-column>
+        <el-table-column prop="Time" label="時間點"></el-table-column>
         <el-table-column prop="Flux" label="流量(MB)"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"

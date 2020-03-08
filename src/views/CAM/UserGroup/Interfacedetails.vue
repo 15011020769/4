@@ -132,7 +132,7 @@
             <el-tab-pane :label="userLabel" name="second">
               <div class="addbtn">
                 <el-button @click="openUser" size="small" type="primary">添加</el-button>
-                <el-button size="small" type="primary" :disabled="btnVisible" @click="delAll">移除</el-button>
+                <el-button size="small" type="primary" :disabled="btnVisible" @click="delAll">移出用戶</el-button>
               </div>
               <div>
                 <el-table
@@ -291,6 +291,17 @@
       </div>
       <!-- 用户组详情下半部分页面 end -->
     </div>
+    <el-dialog
+      title="移出組"
+      :visible.sync="GroupLoading"
+      width="30%"
+    >
+      <span>{{$t('CAM.userList.delRowUser')}}</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="GroupLoading = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button type="primary" @click="removeGroupUser">{{$t('CAM.userList.suerAdd')}}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -312,6 +323,7 @@ import {
 export default {
   data() {
     return {
+      GroupLoading: false,
       rolePolicies: [],
       title: "",
       loading: true,
@@ -365,7 +377,7 @@ export default {
   },
   methods: {
     delPolicy(id) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm("是否確定為該用戶組解除此策略？解除後該用戶組內用戶將無法獲得該策略所描述的相關許可權。", "解除策略", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
@@ -436,21 +448,26 @@ export default {
         });
     },
     delAll() {
-      this.userRemSelData.forEach(item => {
-        this.deleteUser(item.Uid);
-      });
+      this.GroupLoading = true
+    },
+    removeGroupUser() {
+      this.deleteUser(this.userRemSelData.map(user => user.Uid))
     },
     // 删除用户
-    deleteUser(uid) {
+    deleteUser(uids) {
       let params = {
         Version: "2019-01-16"
       };
-      params["Info.0.Uid"] = uid;
-      params["Info.0.GroupId"] = this.$route.query.GroupId;
+      const groupId = this.$route.query.GroupId
+      uids.forEach((uid, i) => {
+        params[`Info.${i}.Uid`] = uid
+        params[`Info.${i}.GroupId`] = groupId
+      })
       this.axios
         .post(DEL_USERTOGROUP, params)
         .then(data => {
           if (data.Response.Error === undefined) {
+            this.GroupLoading = false
             this.selectGroup(); // 重新加载页面
           } else {
             let ErrTips = {};
@@ -710,12 +727,12 @@ export default {
     },
     // 从用户组移除子用户信息，单条移除
     deleteRow(uid) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm("移出后，该用户将无法接收到该组的站內信通知", "移出用戶", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        this.deleteUser(uid);
+        this.deleteUser([uid]);
       });
     },
     // 子用户多选事件，移除多条用户组子用户使用

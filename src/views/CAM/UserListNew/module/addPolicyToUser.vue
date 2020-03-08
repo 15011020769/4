@@ -3,7 +3,7 @@
     <div class="head">
       <Headcom :title="$t('CAM.userList.addUsertoStrag')" :backShow="true" @_back="back" />
     </div>
-    <div class="policyToUser">
+    <div class="policyToUser" v-loading="loading">
       <div class="step">
         <el-steps :active="active" direction="vertical" simple :space="200">
           <el-step :title="$t('CAM.userList.permissions')"></el-step>
@@ -12,39 +12,19 @@
       </div>
       <div v-show="active==1" class="table">
         <Step3
-          :totalNum="totalNum"
-          :tableData="tableData"
-          :userData="userData"
-          :userNum="userNums"
-          :userDatas="userDatas"
-          @handleSelectionChange="handleSelectionChange"
-          @acitiveName="_acitiveName"
-          @loadMore="_loadMore"
-          @_policySearch="_policySearch"
-          @_policyInp="_policyInp"
-          @_userSearch="_userSearch"
-          @_userInp="_userInp"
-          @_userRadio="_userRadio"
+          :groupIds="groupIds"
+          :policyIds="policyIds"
+          ref="step3"
         />
       </div>
       <div v-show="active==2">
         <el-table
           :data="multipleSelection"
           style="width: 96%; margin: 0 auto;"
-          v-show="activeName != 'third'"
           :empty-text="$t('CAM.strategy.zwsj')"
         >
-          <el-table-column :label="$t('CAM.userList.strategyNames')" prop="PolicyName"></el-table-column>
-          <el-table-column :label="$t('CAM.userList.descs')" prop="Description"></el-table-column>
-        </el-table>
-        <el-table
-          :data="multipleSelection"
-          style="width: 96%; margin: 0 auto;"
-          v-show="activeName == 'third'"
-          :empty-text="$t('CAM.strategy.zwsj')"
-        >
-          <el-table-column :label="$t('CAM.userList.GroupName')" prop="GroupName"></el-table-column>
-          <el-table-column :label="$t('CAM.userList.userRemark')" prop="Remark"></el-table-column>
+          <el-table-column label="策略名" prop="PolicyName"></el-table-column>
+          <el-table-column label="描述" prop="Description"></el-table-column>
         </el-table>
       </div>
       <div class="button">
@@ -53,22 +33,30 @@
           type="primary"
           size="medium"
           @click="prev()"
-          v-if="active==2"
-        >{{$t('CAM.userList.prev')}}</el-button>
+          v-if="active==2" 
+        >
+        {{$t('CAM.userList.prev')}}
+        <!-- 上一步 -->
+        </el-button>
         <el-button
           style="margin-top:70px;"
           type="primary"
           size="medium"
           @click="next()"
           v-if="active==0 || active==1"
-        >{{$t('CAM.userList.next')}}</el-button>
+        >
+        {{$t('CAM.userList.next')}}
+        <!-- 下一步 -->
+        </el-button>
         <el-button
           style="margin-top:70px;"
           type="primary"
           size="medium"
           @click="complete()"
           v-if="active==2"
-        >{{$t('CAM.userList.complete')}}</el-button>
+        >{{$t('CAM.userList.complete')}}
+        <!-- 完成 -->
+        </el-button>
       </div>
     </div>
   </div>
@@ -84,7 +72,11 @@ import {
   USER_LIST,
   QUERY_POLICY,
   GROUP_POLICY,
-  RELATE_USER
+  RELATE_USER,
+  QUERY_USER_ALLPOLICY,
+  COPY_USER_POLICY,
+  BATCH_OPERATE_CAM_STRATEGY,
+  ADD_GROUPTOLIST,
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
@@ -96,6 +88,7 @@ export default {
   },
   data() {
     return {
+      loading: true,
       active: 1,
       totalNum: 0,
       tableData: [],
@@ -111,396 +104,174 @@ export default {
       policyPage: 1,
       userPage: 1,
       policyArr: [],
-      groupArr: []
+      groupArr: [],
+      pagesizes: 200,
+      currpages: 1,
+      policyIds: [], // 用户关联的策略ID
+      groupIds: [], // 用户关联的组ID
+      attachGroupIds: [], // 待綁定到用戶的用戶組id
     };
   },
   methods: {
-    commonPolicy() {
-      const params = {
+    getStrategies(strategies=[]) {
+      let ploicyParams = {
         Version: "2019-01-16",
-        TargetUin: this.$route.query.Uin
-      };
-      this.axios.post(QUERY_POLICY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.policyArr = res.Response.List;
-          this._getList();
-        }
-        // else {
-        //   let ErrTips = {
-        //     "InternalError.SystemError": "内部错误",
-        //     "InvalidParameter.ParamError": "非法入参"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
-      const param = {
-        Version: "2019-01-16",
-        Uid: this.$route.query.Uid
-      };
-      this.axios.post(RELATE_USER, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.groupArr = res.Response.GroupInfo;
-          this._userList();
-        }
-        // else {
-        //   let ErrTips = {
-        //     "ResourceNotFound.UserNotExist": "用户不存在"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
-    },
-    //用户组列表
-    _userList(val) {
-      const params = {
-        Version: "2019-01-16",
-        // Rp: this.userNum,
-        Rp: 10,
-        Page: this.userPage,
-      };
-      if (val) {
-        params["Keyword"] = val;
+        TargetUin: this.$route.query.Uin,
+        Rp: this.pagesizes,
+        Page: this.currpages,
+        AttachType: 0
       }
-      this.axios.post(USER_GROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          // this.userData = res.Response.GroupInfo
-          res.Response.GroupInfo.forEach(item => {
-            this.userData.push(item)
-          })
-          this.userNums = res.Response.TotalNum;
-          this.userData.forEach(item => {
-            item.status = 0;
-            this.groupArr.forEach(val => {
-              if (val.GroupId == item.GroupId) {
-                item.status = 1;
-              }
-            });
-          });
-          var data = [].concat(this.userData);
-          data.forEach(item => {
-            const params = {
-              Version: "2019-01-16",
-              TargetGroupId: item.GroupId
-            };
-            this.axios.post(GROUP_POLICY, params).then(res => {
-              if (res.Response.Error === undefined) {
-                item.policy = res.Response.List;
-              }
-              // else {
-              //   let ErrTips = {
-              //     "nternalError.SystemError": "内部错误",
-              //     "InvalidParameter.ParamError": "非法入参"
-              //   };
-              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-              //   this.$message({
-              //     message: ErrOr[res.Response.Error.Code],
-              //     type: "error",
-              //     showClose: true,
-              //     duration: 0
-              //   });
-              // }
-            });
-          });
+      this.axios.post(QUERY_USER_ALLPOLICY, ploicyParams)
+      .then(resp => {
+        this.currpages += 1
+        strategies = strategies.concat(resp.Response.PolicyList)
+        if (strategies.length < resp.Response.TotalNum) {
+          this.getStrategies(strategies)
         } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          const policyIds = []
+          const groupIds = new Set()
+          strategies.forEach(strategy => {
+            if (strategy.Groups.length) {
+              strategy.Groups.forEach(group => groupIds.add(Number(group.GroupId)))
+            } else {
+              policyIds.push(Number(strategy.PolicyId))
+            }
+          })
+          this.policyIds = policyIds
+          console.log(groupIds)
+          this.groupIds = Array.from(groupIds)
+          this.loading = false
         }
-      });
+      })
     },
     //初始化用户列表数据
     init() {
-      let userList = {
-        Version: "2019-01-16"
-      };
-      this.axios.post(USER_LIST, userList).then(data => {
-        if (data.Response.Error === undefined) {
-          var json = data.Response.Data;
-          json.forEach(item => {
-            const params = {
-              Version: "2019-01-16",
-              TargetUin: item.Uin
-            };
-            this.axios.post(QUERY_POLICY, params).then(res => {
-              if (res.Response.Error === undefined) {
-                item.policy = res.Response.List;
-              } 
-              // else {
-              //   let ErrTips = {
-              //     "InternalError.SystemError": "内部错误",
-              //     "InvalidParameter.ParamError": "非法入参"
-              //   };
-              //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-              //   this.$message({
-              //     message: ErrOr[data.Response.Error.Code],
-              //     type: "error",
-              //     showClose: true,
-              //     duration: 0
-              //   });
-              // }
-            });
-          });
-          this.userDatas = json;
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    //策略列表
-    _getList(val, bool) {
-      const params = {
-        Version: "2019-01-16",
-        Rp: 100,
-        Page: this.policyPage
-      };
-      if (val) {
-        params["Keyword"] = val;
-      }
-      this.axios.post(POLICY_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          if (!bool) {
-            this.tableData = res.Response.List;
-            this.tableData.forEach(item => {
-              item.status = 0;
-              this.policyArr.forEach(val => {
-                if (val.PolicyId == item.PolicyId) {
-                  item.status = 1;
-                }
-              });
-            });
-          } else {
-            res.Response.List.forEach(item => {
-              this.tableData.push(item);
-            });
-          }
-          this.totalNum = res.Response.TotalNum;
-        }
-        //  else {
-        //   let ErrTips = {
-        //     "InternalError.SystemError": "内部错误",
-        //     "InvalidParameter.GroupIdError": "GroupId字段不合法",
-        //     "InvalidParameter.KeywordError": "Keyword字段不合法",
-        //     "InvalidParameter.ParamError": "非法入参",
-        //     "InvalidParameter.ScopeError": "Scope字段不合法",
-        //     "InvalidParameter.ServiceTypeError": "ServiceType字段不合法",
-        //     "InvalidParameter.UinError": "Uin字段不合法"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
-    },
-    _userRadio(val) {
-      const params = {
-        Version: "2019-01-16",
-        Name: val
-        // Name: this.ruleForm.Name
-      };
-      this.axios
-        .post(QUERY_USER, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.userUin = res.Response.Uin;
-          } 
-          // else {
-          //   let ErrTips = {};
-          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-          //   this.$message({
-          //     message: ErrOr[res.Response.Error.Code],
-          //     type: "error",
-          //     showClose: true,
-          //     duration: 0
-          //   });
-          // }
-        })
-        //获取关联的策略
-        .then(data => {
-          const params = {
-            Version: "2019-01-16",
-            TargetUin: this.userUin
-          };
-          this.axios.post(QUERY_POLICY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.multipleSelection = res.Response.List;
-            }
-            // else {
-            //   let ErrTips = {
-            //     "InternalError.SystemError": "内部错误",
-            //     "InvalidParameter.ParamError": "非法入参"
-            //   };
-            //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-            //   this.$message({
-            //     message: ErrOr[res.Response.Error.Code],
-            //     type: "error",
-            //     showClose: true,
-            //     duration: 0
-            //   });
-            // }
-          });
-        });
-    },
-    //全选
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    //tab标签名称
-    _acitiveName(val) {
-      this.activeName = val;
-    },
-    //步骤三表格懒加载
-    _loadMore(val) {
-      if (val == "first") {
-        this.policyPage++;
-        // this.policyNum = this.policyNum + 10;
-        this._getList(this.policyVal, 1);
-      } else if (val == "third") {
-        this.userPage++;
-        // this.userNum = this.userNum + 10;
-        this._userList(this.userVal);
-      }
-    },
-    //策略列表搜索
-    _policySearch(val) {
-      this.policyVal = val;
-      this._getList(val);
-    },
-    _policyInp(val) {
-      if (val == "") {
-        this._getList();
-      }
-    },
-    //用户列表搜索
-    _userSearch(val) {
-      this.userVal = val;
-      this._userList(val);
-    },
-    _userInp(val) {
-      if (val == "") {
-        this._userList();
-      }
-    },
-    //绑定用户组
-    _userGroup(id) {
-      const params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.$route.query.Uid,
-        "Info.0.GroupId": id
-      };
-      this.axios.post(ADD_USERTOGROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res);
-        } else {
-          let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用戶組不存在",
-            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
-            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    _policy(id) {
-      const params = {
-        Version: "2019-01-16",
-        PolicyId: id,
-        AttachUin: this.$route.query.Uin
-      };
-      this.axios.post(POLICY_USER, params).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res);
-        } else {
-          let ErrTips = {
-            "FailedOperation.PolicyFull": "用戶策略數超過上限",
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.AttachmentFull":
-              "principal欄位的授權對象關聯策略數已達到上限",
-            "InvalidParameter.ParamError": "非法入參",
-            "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-            "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-            "InvalidParameter.UserNotExist": "principal欄位的授權對象不存在",
-            "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+      this.getStrategies()
     },
     prev() {
       --this.active;
       if (this.active < 0) this.active = 0;
     },
     next() {
+      const step3Ref = this.$refs.step3
+      //从策略列表中选取策略关联
+      if (step3Ref.activeName == "first") {
+        if (step3Ref.selectedPolicyId.join() === this.policyIds.join()) {
+          this.$message({
+            message: '請選擇策略',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return
+        }
+        const strategies = step3Ref.getSelectedStrategiesForStrategies()
+        this.multipleSelection = strategies.filter(strategy => !this.policyIds.includes(strategy.PolicyId))
+      }
+      // //复用现有用户策略
+      else if (step3Ref.activeName == "second") {
+        if (!step3Ref.selectedUser) {
+          this.$message({
+            message: '請選擇用戶',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return
+        }
+        this.multipleSelection = step3Ref.getSelectedStrategiesForUser()
+      }
+      // //添加至组获得随机权限
+      else if (step3Ref.activeName == "third") {
+        if (step3Ref.selectedUserGroupId.join() === this.groupIds.join()) {
+          this.$message({
+            message: '請選擇用戶組',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return
+        }
+        const result = step3Ref.getSelectedStrategiesForUserGroup()
+        const strategies = []
+        const attachGroupIds = []
+        Object.keys(result).forEach(groupId => {
+          if (!this.groupIds.includes(Number(groupId))) {
+            attachGroupIds.push(groupId)
+            strategies.push(...result[groupId])
+          }
+        })
+        this.attachGroupIds = attachGroupIds
+        this.multipleSelection = strategies
+      }
       if (this.active++ > 3) this.active = 0;
     },
-    complete() {
-      this.multipleSelection.forEach(item => {
-        //从策略列表中选取策略关联
-        if (this.activeName == "first") {
-          this._policy(item.PolicyId);
+    async complete() {
+      const step3Ref = this.$refs.step3
+      let res
+      //从策略列表中选取策略关联
+      if (step3Ref.activeName === "first") {
+        const param = {
+          Version: "2019-01-16",
+          "ActionType": 1, // 绑定
+          "RelateUin.0": this.$route.query.Uin
         }
-        //复用现有用户策略
-        if (this.activeName == "second") {
-          this._policy(item.PolicyId);
+        this.strategies.forEach((strategy, i) => {
+          param[`StrategyId.${i}`] = strategy.PolicyId
+        })
+        res = await this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
+      } else if (step3Ref.activeName === "second") { // 复用现有用户策略
+        const param = {
+          Version: "2019-01-16",
+          "FromUin": step3Ref.selectedUser, // 绑定
+          "ToUin.0": this.$route.query.Uin
         }
-        //添加至组获得随机权限
-        if (this.activeName == "third") {
-          this._userGroup(item.GroupId);
+        res = await this.axios.post(COPY_USER_POLICY, param)
+      }
+      // //添加至组获得随机权限
+      else {
+        const param = {
+          Version: "2019-01-16",
         }
-      });
-      this.$router.go(-1);
+        this.attachGroupIds.forEach((groupId, i) => {
+          param[`Info.${i}.Uid`] = this.$route.query.Uid
+          param[`Info.${i}.GroupId`] = groupId
+        })
+        res = await this.axios.post(ADD_GROUPTOLIST, param)
+      }
+      if (res.Response.Error) {
+        let ErrTips = {
+          "InvalidParameter.GroupNotExist": "用戶組不存在",
+          "InvalidParameter.GroupUserFull":
+            "用戶組中的子用戶數量達到上限",
+          "InvalidParameter.UserGroupFull":
+            "子用戶加入的用戶組數量達到上限",
+          "ResourceNotFound.UserNotExist": "用戶不存在"
+        }
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+        this.loading = false
+        return
+      } else {
+        this.$router.push(`/detailsUser?detailsData=${this.$route.query.Name}`)
+        this.$message({
+          message: '修改成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        })
+      }
     },
     back() {
       this.$router.go(-1);
     }
   },
   created() {
-    this.commonPolicy();
     this.init();
   }
 };

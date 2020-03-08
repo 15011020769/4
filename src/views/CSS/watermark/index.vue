@@ -7,40 +7,32 @@
           {{$t('CSS.watermark.1')}}
           <a href="#">{{$t('CSS.watermark.2')}}</a>
         </p>
-      </div> -->
+      </div>-->
       <div class="explain">
         <p>
           {{$t('CSS.watermark.3')}}
-          <a href="#">域名管理</a>{{$t('CSS.watermark.4')}}
+          <router-link to="/domainManagement">域名管理</router-link>
+          {{$t('CSS.watermark.4')}}
           <!-- <a href="#">{{$t('CSS.watermark.2')}}</a> -->
           {{$t('CSS.watermark.5')}}
         </p>
       </div>
-      <div class="main-box">
+      <div class="main-box" v-loading="loading">
         <div class="left">
           <i class="el-icon-plus" @click="_add" />
-          <i class="el-icon-delete" @click="_delete"/>
+          <i class="el-icon-delete" @click="_delete" />
           <ul class="recording-list-box">
             <li
               v-for="item in configList"
               @click="onSelectRecording(item)"
+              :key="item.WatermarkId"
               :class="selectItem.WatermarkId === item.WatermarkId && 'is-selected'"
-              >
-                {{item.WatermarkName}}
-              </li>
+            >{{item.WatermarkName}}</li>
           </ul>
         </div>
-        <div class="right">
-          <OptionForm
-            :formShow.sync="formShow"
-            :selectItem="selectItem"
-            v-if="formShow"
-            />
-          <ConfigDetail
-            v-if="!formShow"
-            :selectItem="selectItem"
-            :formShow.sync="formShow"
-            />
+        <div class="right" v-show="showRight">
+          <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
+          <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
         </div>
       </div>
     </div>
@@ -48,11 +40,16 @@
 </template>
 
 <script>
-import HeaderCom from "@/components/public/Head"
-import OptionForm from "./tab/optionForm"
-import ConfigDetail from "./tab/configDetail"
-import DeleteModal from './modal/modal'
-import {LIVE_DELETELIVEWATERMARK, LIVE_DESCRIBELIVEWATERMARKS } from "@/constants"
+import HeaderCom from "@/components/public/Head";
+import OptionForm from "./tab/optionForm";
+import ConfigDetail from "./tab/configDetail";
+import DeleteModal from "./modal/modal";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../components/CSSErrorTips";
+import {
+  LIVE_DELETELIVEWATERMARK,
+  LIVE_DESCRIBELIVEWATERMARKS
+} from "@/constants";
 export default {
   name: "transcribe",
   data() {
@@ -61,8 +58,14 @@ export default {
       configList: [],
       selectItem: {},
       selectIndex: 0,
-      modalVisible: false
+      modalVisible: false,
+      loading: true
     };
+  },
+  computed: {
+    showRight: function () {
+      return this.configList.length > 0 || this.formShow === true;
+    }
   },
   components: {
     HeaderCom,
@@ -72,12 +75,12 @@ export default {
   },
 
   mounted() {
-    this.fetchRecordingList()
+    this.fetchRecordingList();
   },
 
   methods: {
     _add() {
-      this.selectItem = {}
+      this.selectItem = {};
       this.formShow = true;
     },
 
@@ -86,52 +89,85 @@ export default {
     },
 
     _cancel() {
-      this.selectItem = this.configList[this.selectIndex]
+
       this.formShow = false;
+
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.selectItem = this.configList[this.selectIndex];
     },
 
     _delete() {
-      this.$confirm(`${$t('CSS.watermark.6')}: ${this.selectItem.WatermarkName}`, '删除水印配置', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.axios.post(LIVE_DELETELIVEWATERMARK, {
-          Version: '2018-08-01',
-          WatermarkId: this.selectItem.WatermarkId
-        }).then(data => {
-        if (data.Response.Error == undefined) {
-          this.modalVisible = false
-          this.$message({
-            message: '删除成功',
-            type: 'success'
+
+      if (this.configList.length === 0) {
+        return;
+      }
+
+      this.$confirm(
+        `${this.$t("CSS.watermark.6")}: ${this.selectItem.WatermarkName}`,
+        "删除水印配置",
+        {
+          confirmButtonText: "確定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
+        this.axios
+          .post(LIVE_DELETELIVEWATERMARK, {
+            Version: "2018-08-01",
+            WatermarkId: this.selectItem.WatermarkId
           })
-            this.fetchRecordingList()
-            return
-          }
-          this.$message.error(data.Response.Error.Message)
-        })
-      })
+          .then(data => {
+            if (data.Response.Error === undefined) {
+              this.modalVisible = false;
+              this.$message({
+                message: "删除成功",
+                type: "success"
+              });
+              this.fetchRecordingList();
+              return;
+            }
+            let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+            this.$message.error(ErrOr[data.Response.Error.Code]);
+          });
+      });
     },
 
     fetchRecordingList() {
-      this.axios.post(LIVE_DESCRIBELIVEWATERMARKS, {
-        Version: '2018-08-01'
-      }).then(data => {
-        if (data.Response.Error == undefined) {
-          this.configList = data.Response.WatermarkList
-          this.selectItem=this.configList[0]
-          return
-        }
-        this.$message.error(data.Response.Error.Message)
-      })
+      this.loading = true;
+      this.axios
+        .post(LIVE_DESCRIBELIVEWATERMARKS, {
+          Version: "2018-08-01"
+        })
+        .then(data => {
+          if (data.Response.Error === undefined) {
+            const result = data.Response.WatermarkList;
+            if (result.length > 0) {
+              this.configList = result;
+              this.selectItem = this.configList[0];
+            } else {
+              this.configList = [];
+              this.selectItem = {};
+            }
+            return;
+          }
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          this.$message.error(ErrOr[data.Response.Error.Code]);
+        })
+        .then(() => {
+          this.loading = false;
+        });
     },
 
     // 选中模板
     onSelectRecording(item) {
-      this.formShow = false
-      this.selectItem = item
-      this.selectIndex = this.configList.findIndex(_item => item.WatermarkId === _item.WatermarkId)
+      this.formShow = false;
+      this.selectItem = item;
+      this.selectIndex = this.configList.findIndex(
+        tempItem => item.TemplateId === tempItem.TemplateId
+      );
     }
   }
 };

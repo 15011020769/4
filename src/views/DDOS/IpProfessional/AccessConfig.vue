@@ -1,6 +1,11 @@
 <template>
   <div class="wrap">
-    <HeaderCom title="接入配置" />
+    <h3 class="ReportTitH3">
+      {{ $t("DDOS.AccesstoCon.AccessConfig") }}
+    </h3>
+    <!-- 新购 -->
+    <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
+    <br/>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <div class="box" style="padding:0 20px;">
         <el-tab-pane :label="$t('DDOS.AccesstoCon.NonWebsite')" name="first">
@@ -215,6 +220,7 @@ import batchExport from "./model/batchExport";
 import accessConfigEdit from "./model/accessConfigEdit";
 import accessConfigCopy from "./model/accessConfigCopy";
 import { RESOURCE_LIST, L4_RULES, L4DEL_CREATE, GET_ID } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
@@ -301,7 +307,11 @@ export default {
           } else {
             this.resourceId = this.$route.query.resourceId;
           }
-          this.describleL4Rules();
+          if(this.resourceId == "") {
+            this.loading = false;
+          } else {
+            this.describleL4Rules();
+          }
 				} else {
 					let ErrTips = {};
 					let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -332,11 +342,11 @@ export default {
     //点击批量删除
     partDel(){
       if(this.partD2.length==0){
-          this.$message({
-            showClose: true,
-            message: "請選擇刪除項",
-            type: "warning"
-          });
+        this.$message({
+          showClose: true,
+          message: "請選擇刪除項",
+          type: "warning"
+        });
       }else{
         this.dialogDelete_2=true;
       }
@@ -425,7 +435,16 @@ export default {
     },
     //新建按钮弹框
     newCreate() {
-      this.dialogVisible = true;
+      if(this.resourceId == "") {
+        this.$message({
+          showClose: true,
+          message: "需要選中資源新建",
+          type: "warning"
+        });
+        this.describleL4Rules();
+      } else {
+        this.dialogVisible = true;
+      }
     },
     //新建规则弹框确定按钮
     addRulesSure(isShowFalse) {
@@ -592,22 +611,30 @@ export default {
   display: block;
   clear: both;
 }
-.statistReportTit {
+.wrap {
   width: 100%;
-  height: 84px;
+  height: 50px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  padding: 12px 20px 0;
+  padding: 0 20px;
+  line-height: 50px;
+  margin-bottom: 20px;
   .ReportTitH3 {
     float: left;
     font-size: 16px;
     font-weight: 600;
+    margin-right: 20px;
   }
   .ReportTitBtn {
     float: right;
-    height: 32px;
-    line-height: 32px;
+    height: 30px;
+    line-height: 30px;
     padding: 0;
+    margin-top: 8px;
+    width: 52px;
+    border-radius: 0;
+    text-align: center;
+    background-color: #006eff;
   }
 }
 .mainContent {

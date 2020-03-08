@@ -1,6 +1,6 @@
 <template>
   <div class="overview-wrap">
-    <HeadCom title="概览"></HeadCom>
+    <HeadCom :title="$t('TKE.overview.gl')"></HeadCom>
     <div class="app-tke-fe-content__inner">
       <div class="tf-g">
         <el-row>
@@ -9,36 +9,36 @@
           <!-- <el-col :span="16"> -->
             <!-- 第一行内容 -->
             <div class="resource-overview">
-              <h3 class="font" style="margin-bottom:20px">资源概览</h3>
+              <h3 class="font" style="margin-bottom:20px">{{$t('TKE.overview.zygl')}}</h3>
               <ul class="ro-data-card"  v-loading="shows">
                 <li class="ro-data-card-list">
                   <div class="font ">
                     <h3 class="ro-data-card-hd font">集群</h3>
                     <div>
                       <span class="font-big">{{ TotalCount }}</span>
-                      <span class="ro-data-card-value">个</span>
+                      <span class="ro-data-card-value">{{$t('TKE.overview.ge')}}</span>
                     </div>
                   </div>
                 </li>
                 <li class="ro-data-card-list" >
                   <div class="font  border-set">
-                    <h3 class="ro-data-card-hd font">节点</h3>
+                    <h3 class="ro-data-card-hd font">{{$t('TKE.overview.jd')}}</h3>
                     <div>
                       <span class="font-big">{{ nodeNum }}</span>
-                      <span>个（</span>
-                      <span class="font-red">异常{{ abnormalNodeNum }}个</span>
+                      <span>{{$t('TKE.overview.ge')}}（</span>
+                      <span class="font-red">{{$t('TKE.overview.yc')}}{{ abnormalNodeNum }}{{$t('TKE.overview.ge')}}</span>
                       <span>）</span>
                     </div>
                   </div>
                 </li>
                 <li class="ro-data-card-list">
                   <div class="font  ">
-                    <h5 class="ro-data-card-hd font">工作负载</h5>
+                    <h5 class="ro-data-card-hd font">{{$t('TKE.overview.gzfz')}}</h5>
                     <div>
                       <span class="font-big">{{ workLoad }}</span>
-                      <span>个（</span>
-                      <span class="font-red">异常{{ abWorkLoad }}个</span>
-                      <el-tooltip content="Pod副本数不符合预期" placement="top">
+                      <span>{{$t('TKE.overview.ge')}}（</span>
+                      <span class="font-red">{{$t('TKE.overview.yc')}}{{ abWorkLoad }}{{$t('TKE.overview.ge')}}</span>
+                      <el-tooltip :content="$t('TKE.overview.fbsbfhyq')" placement="top">
                         <i
                           style="margin-left:5px"
                           class="data-card-icon el-icon-info"
@@ -70,9 +70,9 @@
                   class="el-icon-caret-right data-card-icon"
                   style="margin-right:5px"
                 ></i
-                >中国台北
+                >{{$t('TKE.overview.zgtb')}}
                 <span class="font-small"
-                  >共&nbsp;{{ TotalCount }}&nbsp;个集群</span
+                  >共&nbsp;{{ TotalCount }}&nbsp;{{$t('TKE.overview.gjq')}}</span
                 >
                 <i
                   class="data-card-icon el-icon-info font-red"
@@ -102,18 +102,18 @@
                         >
                       </div>
                       <div class="font-small" style="margin-top:10px;">
-                        总数：{{item.c2||'--'}}核&nbsp;Request已分配：{{item.c3||'--'}}
+                        {{$t('TKE.overview.zs')}}：{{item.c2||'--'}}核&nbsp;Request已分配：{{item.c3||'--'}}
                       </div>
                     </div>
                     <div class="twoROW-data-card-list">
                       <div>
                         <span style="font-size:18px; font-weight:700">{{item.n1||'--'}}</span>
                         <span class="font-small" style="color:black;"
-                          >&nbsp;内存利用率</span
+                          >&nbsp;{{$t('TKE.overview.nclyl')}}</span
                         >
                       </div>
                       <div class="font-small" style="margin-top:10px;">
-                        总数：{{item.n2||'--'}}GB&nbsp;Request已分配：{{item.n3||'--'}}
+                        {{$t('TKE.overview.zs')}}：{{item.n2||'--'}}GB&nbsp;Request已分配：{{item.n3||'--'}}
                       </div>
                     </div>
                     <div
@@ -122,43 +122,43 @@
                     >
                       <div style="padding-top:0;">
                         <span class="set-span">
-                          <span>节点</span>
-                          <a @click="goNode(item.name)">（{{item.nodetotal}}个）</a>
+                          <span>{{$t('TKE.overview.jd')}}</span>
+                          <a @click="goNode(item.name)">（{{item.nodetotal}}{{$t('TKE.overview.ge')}}）</a>
                         </span>
                         <span v-if="item.nodeab==0"  class="font-green"
                           >正常</span
                         >
                         <span  v-if="item.nodeab!=0" class="font-red"
-                          >异常&nbsp;{{item.nodeab}}&nbsp;个</span
+                          >{{$t('TKE.overview.yc')}}&nbsp;{{item.nodeab}}&nbsp;{{$t('TKE.overview.ge')}}</span
                         >
                       </div>
                       <div style="padding-top:17px;">
                         <span class="set-span"> 
                           <span>Master&Etcd</span>
-                          <a @click="goMasteretcd(item.name)">（{{item.matotal}}个）</a>
+                          <a @click="goMasteretcd(item.name)">（{{item.matotal}}{{$t('TKE.overview.ge')}}）</a>
                         </span>
                         <span  v-if="item.maab==0"  class="font-green"
                           >正常</span
                         >
                          <span v-if="item.maab!=0"  class="font-red"
-                          >异常&nbsp;{{item.maab}}&nbsp;个</span
+                          >{{$t('TKE.overview.yc')}}&nbsp;{{item.maab}}&nbsp;{{$t('TKE.overview.ge')}}</span
                         >
                       </div>
                       <div style="padding-top:17px;">
                         <span class="set-span">
-                        <span>工作负载</span>
-                        <a @click="goWorkload(item.name)">（{{item.workloadtotal}}个）</a>
+                        <span>{{$t('TKE.overview.gzfz')}}</span>
+                        <a @click="goWorkload(item.name)">（{{item.workloadtotal}}{{$t('TKE.overview.ge')}}）</a>
                          </span>
                          <span  v-if="item.workloadab==0"  class="font-green"
                           >正常</span
                         >
                         <span v-if="item.workloadab!=0"   class="font-red"
-                          >异常&nbsp;{{item.workloadab}}&nbsp;个</span
+                          >{{$t('TKE.overview.yc')}}&nbsp;{{item.workloadab}}&nbsp;{{$t('TKE.overview.ge')}}</span
                         >
                         <el-tooltip placement="right" effect="light">
                           <div slot="content" style="width:200px;height:200px">
                             <div class="font-small">
-                              <span>命名空间</span>
+                              <span>{{$t('TKE.overview.mmkj')}}</span>
                               <div class="hsd"></div>
                               <span>Deployment</span>
                             </div>
@@ -166,7 +166,7 @@
                               <span>kube-system</span>
                               <a style="margin-left:55px;" href="">coredns</a>
                               <br />
-                              <a style="margin-left:130px" href="">查看事件</a>
+                              <a style="margin-left:130px" href="">{{$t('TKE.overview.cksj')}}</a>
                             </div>
                           </div>
                           <i
@@ -197,8 +197,8 @@
                 <div class="data-card-img">
                   <div class="font-small" style="color:black">使用指引</div>
                   <div class="font-small">
-                    通过固定流程，快速创建容器服务
-                    <a href="">开始使用</a>
+                    {{$t('TKE.overview.kscj')}}
+                    <a href="">{{$t('TKE.overview.kssy')}}</a>
                   </div>
                 </div>
               </div>
@@ -296,18 +296,18 @@ export default {
         console.log(this.clusters);
       } else {
         let ErrTips = {
-          InternalError: "内部错误",
-          "InternalError.CamNoAuth": "没有权限",
-          "InternalError.Db": "db错误",
-          "InternalError.DbAffectivedRows": "DB错误",
+          InternalError: "內部錯誤",
+          "InternalError.CamNoAuth": "沒有權限",
+          "InternalError.Db": "db錯誤",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制",
-          InvalidParameter: "参数错误",
-          "InvalidParameter.Param": "参数错误",
-          LimitExceeded: "超过配额限制",
-          ResourceNotFound: "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制",
+          InvalidParameter: "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤",
+          LimitExceeded: "超過配額限制",
+          ResourceNotFound: "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({

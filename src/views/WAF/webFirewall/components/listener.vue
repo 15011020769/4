@@ -18,7 +18,7 @@
           <ul class="lb-container">
             <li v-for="item in clbs" :key="item.LoadBalancerId">
               <p>
-                <span>{{item.LoadBalancerName}}（{{item.LoadBalancerId}}）</span>
+                <span class="lbname">{{item.LoadBalancerName}}（{{item.LoadBalancerId}}）</span>
                 <el-button type="text" @click="openListenDialog(item)">
                   <span v-if="item.checkedListeners.length">
                     {{t('重新选择', 'WAF.resel')}}
@@ -55,17 +55,25 @@
         <el-col>
           <el-input class="listener-input" v-model="keyword" :placeholder="t('请输入关键字', 'WAF.qsrgjz')" />
           <ul class="listener-container">
-            <li v-for="item in listeners" :key="item.ListenerId">
-              <label>
-                <div class="listen">
-                  <el-checkbox :label="item.ListenerId" v-model="checkedListenerIds">
-                    <div>
-                      <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
-                      <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
-                    </div>
-                  </el-checkbox>
-                </div> 
-              </label>
+            <li class="listen-tip" v-if="queryListenerLoading">{{t('加载中', 'WAF.jzz')}} <i class="el-icon-loading"/></li>
+            <template v-if="listeners.length > 0">
+              <li v-for="item in listeners" :key="item.ListenerId">
+                <label>
+                  <div class="listen">
+                    <el-checkbox :label="item.ListenerId" v-model="checkedListenerIds">
+                      <div>
+                        <p class="ellipsis">{{item.ListenerName}}({{item.ListenerId}})</p>
+                        <p>{{item.Protocol.toLowerCase()}}://{{domain.domain}}:{{item.Port}}</p>
+                      </div>
+                    </el-checkbox>
+                  </div> 
+                </label>
+              </li>
+            </template>
+            <li class="listen-tip" v-if="!queryListenerLoading && listeners.length === 0">
+              {{t('没有找到对应域名的监听器，前往', 'WAF.myzddyym')}}
+              <el-link type="primary" target="_blank" href="../CLB/index.html#/LB">{{t('负载均衡', 'WAF.clb')}}</el-link>
+              配置
             </li>
           </ul>
         </el-col>
@@ -119,6 +127,7 @@ export default {
       checkedListenerIds: [],
       dialogVisible: false,
       reqLoading: false,
+      queryListenerLoading: true,
     }
   },
   watch: {
@@ -137,27 +146,21 @@ export default {
     this.reqLoading = false
     this.axios.post(CLB_LIST, {
       Version: '2018-03-17',
-      Region: 'ap-guangzhou', // ,'ap-taipei'
+      Region: 'ap-taipei', // ,'ap-taipei'
       Forward: 1,
       LoadBalancerType: 'OPEN',
       Offset: 0,
       Limit: 100
-    }).then(({ Response }) => {
-      if (Response.Error) {
-        this.$message({
-          message: ErrorTips[Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-      } else {
-        const clbs = Response.LoadBalancerSet
+    })
+    .then(resp => {
+      this.generalRespHandler(resp, ({ LoadBalancerSet }) => {
+        const clbs = LoadBalancerSet
         const existsClbs = this.domain.LoadBalancerSet || []
         clbs.forEach(clb => {
           clb.checkedListeners = existsClbs.filter(eclb => eclb.LoadBalancerId === clb.LoadBalancerId)
         })
         this.clbs = clbs
-      }
+      })
     })
   },
   methods: {
@@ -179,7 +182,7 @@ export default {
             LoadBalancerName: clb.LoadBalancerName,
             Vip: clb.LoadBalancerVips[0],
             Zone: '',
-            Region: 'gz',
+            Region: 'tpe', // tp1
           }))
         )
       })
@@ -188,28 +191,18 @@ export default {
         Host: {
           Domain: this.domain.Domain,
           IsCdn: this.domain.IsCdn,
-          Region: 'gz', // tp
+          Region: 'tpe', // tp1
           LoadBalancerSet: lbset,
           DomainId: this.domain.DomainId || '',
         }
-      })).then(({ Response }) => {
-        if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
-          this.$message({
-            message: ErrOr[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          this.$message({
-            message: `${this.domain.DomainId ? this.t('编辑', 'WAF.bj') : '添加'}成功`,
-            type: "success",
-            showClose: true,
-            duration: 0
-          })
+      }))
+      .then(resp => {
+        this.generalRespHandler(resp, () => {
           this.$router.push({name: 'protectionSettings'})
-        }
+        }, COMMON_ERROR, `${this.domain.DomainId ? this.t('编辑', 'WAF.bj') : '添加'}成功`)
+      })
+      .then(() => {
+        this.reqLoading = false
       })
     },
     confirm() {
@@ -229,6 +222,7 @@ export default {
     },
     openListenDialog(clb) {
       this.selectedCLB = clb
+      this.queryListenerLoading = true
       this.queryListener(this.selectedCLB.LoadBalancerId)
       this.dialogVisible = true
     },
@@ -236,22 +230,19 @@ export default {
       this.axios.post(DESCRIBE_LISTENERS, {
         LoadBalancerId: lbId,
         Version: '2018-03-17',
-        Region: 'ap-guangzhou', // 'ap-taipei',
-      }).then(({ Response }) => {
-        if (Response.Error) {
-          this.$message({
-            message: ErrorTips[Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        } else {
+        Region: 'ap-taipei', // 'ap-taipei',
+      })
+      .then(resp => {
+        this.generalRespHandler(resp, ({ Listeners }) => {
           // 过滤非当前域名的监听器
-          const listeners = Response.Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.Domain))
+          const listeners = Listeners.filter(listener => listener.Rules && listener.Rules.some(rule => rule.Domain === this.domain.Domain))
           this.listeners = listeners
           this.listenersCopy = listeners
           this.checkedListenerIds = [...this.selectedCLB.checkedListeners.map(checkedListener => checkedListener.ListenerId)]
-        }
+        })
+      })
+      .then(() => {
+        this.queryListenerLoading = false
       })
     }
   }
@@ -288,12 +279,21 @@ export default {
 .lb-container, .listener-container {
   border: 1px solid #dcdfe6;
   border-top: none;
+  max-height: 440px;
+  overflow-y: scroll;
   li {
     padding: 0 10px;
     border-bottom: 1px solid #dcdfe6;
-    // &:last-of-type {
-    //   border-bottom: none;
-    // }
+    .lbname {
+      display: inline-block;
+      width: 281px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    &:last-of-type {
+      border-bottom: none;
+    }
     p {
       height: 28px;
       line-height: 28px;
@@ -366,5 +366,9 @@ export default {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+.listen-tip {
+  line-height: 40px;
+  text-align: center;
 }
 </style>

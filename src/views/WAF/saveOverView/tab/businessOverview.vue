@@ -154,7 +154,7 @@ export default {
     this.getDominList()
 　},
   watch: {
-    showModules(val, oldVal) {
+    showModulesCopy(val, oldVal) {
       if (val.length === 1) {
         this.$message({
           message: this.t('至少选择2个', 'WAF.zsxz2g'),
@@ -162,9 +162,20 @@ export default {
           showClose: true,
           duration: 0
         })
-        this.showModules = [...oldVal]
+        this.showModulesCopy = [...oldVal]
       }
     }
+    // showModules(val, oldVal) {
+    //   if (val.length === 1) {
+    //     this.$message({
+    //       message: this.t('至少选择2个', 'WAF.zsxz2g'),
+    //       type: 'error',
+    //       showClose: true,
+    //       duration: 0
+    //     })
+    //     this.showModules = [...oldVal]
+    //   }
+    // }
   },
   methods: {
     openSetDialog() {
@@ -183,6 +194,12 @@ export default {
       this.showModules = [...this.showModulesCopy]
       this.showModules = moduleNames.filter(name => this.showModules.includes(name))
       localStorage.setItem(BUSINESS_SHOWMODULE_KEY, JSON.stringify(this.showModules))
+      this.$message({
+        message: "保存成功",
+        type: "success",
+        showClose: true,
+        duration: 0
+      });
     },
     cancelModuleDisplaySet() {
       this.dialogSetVisible = false

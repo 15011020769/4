@@ -125,6 +125,7 @@
                    <el-button
                     type="text"
                      v-else
+                     @click="goUpdateYaml(scope.row)"
                   >编辑YAML</el-button>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
@@ -382,6 +383,19 @@ export default {
         }
       });
     },
+     // 详情.
+    goDeploymentDetail(rowData) {
+      console.log(rowData)
+      this.$router.push({
+        name: "deploymentDetail",
+        query: {
+          clusterId: this.clusterId,
+          spaceName: this.nameSpaceName,
+          rowData: rowData
+        }
+      });
+    },
+
     //更新pod
     goPodUpdate(rowData) {
       console.log(rowData)
@@ -390,7 +404,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+          workload:'deployments'
         }
       });
       sessionStorage.setItem('namespace',rowData.metadata.namespace)
@@ -402,19 +417,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
-        }
-      });
-    },
-
-    // 详情.
-    goDeploymentDetail(rowData) {
-      this.$router.push({
-        name: "deploymentDetail",
-        query: {
-          clusterId: this.clusterId,
-          spaceName: this.nameSpaceName,
-          rowData: rowData
+          spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       });
     },
@@ -426,6 +430,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
@@ -436,12 +441,24 @@ export default {
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+           workload:'deployments'
         }
       })
     },
-
-
+    //编辑Yaml
+    goUpdateYaml(rowData){
+      this.$router.push({
+        name:'updateYamlWorkLoad',
+        query:{
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace,
+          rowData:rowData,
+           workload:'deployments'
+        }
+      })
+    },
     //是否打开重新部署弹窗
     redeployment(rowData) {
       this.isShowRedeployment = true;

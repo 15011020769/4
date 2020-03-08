@@ -5,36 +5,36 @@
         <router-link to="/helm">
           <li>
             <i class="el-icon-back"></i>
-            <span>新建 Helm 应用</span>
+            <span>{{$t('TKE.overview.xjyy')}}</span>
           </li>
         </router-link>
       </ul>
     </div>
     <div class="room-center">
         <div class="explain" style="margin-bottom:20px;">
-            <p v-show="data.flag">创建Helm应用，若应用中包含了公网CLB类型的Services或Ingress，将按照腾讯云CLB对应价格收费。若应用中包含PV/PVC/StorageClass，其创建的存储资源将按对应的产品价格收费。</p>
+            <p v-show="data.flag">{{$t('TKE.overview.cjyyts')}}</p>
         </div>
         <el-card class="box-card">
             <el-form  class="tke-form m0" :model="ruleForm" :rules="rules" label-position='left' label-width="100px" size="mini" ref="ruleForm">
-              <el-form-item label="应用名" prop="name"> 
-                <el-input class="w200" v-model="ruleForm.name" placeholder="请输入StorageClass名称" ></el-input>
-                <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+              <el-form-item :label="$t('TKE.overview.yym')" prop="name"> 
+                <el-input class="w200" v-model="ruleForm.name" :placeholder="$t('TKE.overview.qsrmc')" ></el-input>
+                <p>{{$t('TKE.overview.xz')}}</p>
               </el-form-item>
               <el-form-item label="所在地域">
-                <div>中国台北</div>
+                <div>{{$t('TKE.overview.zgtb')}}</div>
               </el-form-item>
-               <el-form-item label="运行集群">
+               <el-form-item :label="$t('TKE.overview.yxjq')">
                 <div>{{ruleForm.colony}}</div>
               </el-form-item>
               <hr class="hr-mod">
-               <el-form-item label="来源">
-                <div class="li-box">第三方仓库</div>
+               <el-form-item :label="$t('TKE.overview.ly')">
+                <div class="li-box">{{$t('TKE.overview.dsfck')}}</div>
               </el-form-item>
-              <el-form-item label="下载地址" prop="address">
-                 <el-input class="w200" v-model="ruleForm.address" placeholder="请输入Chart的下载地址"></el-input>
-                 <p>请输入Helm Chart压缩包的可下载地址，压缩包文件一般为.tgz格式</p>
+              <el-form-item :label="$t('TKE.overview.xzdz')" prop="address">
+                 <el-input class="w200" v-model="ruleForm.address" :placeholder="$t('TKE.overview.qsrxzdz')"></el-input>
+                 <p>{{$t('TKE.overview.qsrgs')}}</p>
               </el-form-item>
-              <el-form-item label="类型">
+              <el-form-item :label="$t('TKE.overview.lx')">
                 <el-radio-group v-model="isCollapse"  size="mini" @change="setPrivate('rulePass')">
                   <el-radio-button :label="true" >公有</el-radio-button>
                   <el-radio-button :label="false">私有</el-radio-button>
@@ -42,10 +42,10 @@
                  <div v-show="!isCollapse" class="user-room">
                       <div class="demo-ruleForm">
                         <el-form :model="rulePass" :rules="rules" ref="rulePass" label-width="100px" size="mini" label-position='left'  class="tke-form">
-                          <el-form-item label="用户名" prop="nameTwo" class="margin-length">
+                          <el-form-item :label="$t('TKE.overview.yhm')" prop="nameTwo" class="margin-length">
                               <el-input type="text" v-model="rulePass.nameTwo" size="mini" style="width:150px;"></el-input>
                           </el-form-item>
-                            <el-form-item label="密码" prop="pass" class="margin-length">
+                            <el-form-item :label="$t('TKE.overview.mm')" prop="pass" class="margin-length">
                               <el-input type="password" v-model="rulePass.pass" size="mini" style="width:150px;"></el-input>
                           </el-form-item>
                         </el-form>
@@ -59,16 +59,16 @@
                   v-for="(domain, index) in domains"
                   :key="domain.key"
                   :prop="'domains.' + index + '.value'">
-                      <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                      <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                       <span>=</span>
-                      <el-input v-model="domain.valueKey" size="mini" placeholder="变量值"></el-input>
-                        <el-tooltip class="item" effect="dark" content="删除" placement="right">
+                      <el-input v-model="domain.valueKey" size="mini" :placeholder="$t('TKE.overview.blz')"></el-input>
+                        <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
                           <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
                   </div>
                 </div>
-                <p v-show="domains.length?true:false" class="form-p">可通过设置自定义参数替换Chart包的默认配置，如：image.repository = nginx</p>
-                <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">新增变量</el-link>
+                <p v-show="domains.length?true:false" class="form-p">{{$t('TKE.overview.zdycsth')}}：image.repository = nginx</p>
+                <el-link type="primary" style="cursor: pointer;"  @click="addDomain" :disabled="flag">{{$t('TKE.overview.xzbl')}}</el-link>
               </el-form-item>
               <hr class="hr-mod">
               <el-button type="primary" size="mini" @click="submitForm('ruleForm','rulePass')">完成</el-button>
@@ -90,7 +90,7 @@ export default {
   data () {
     var validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请输入密码'))
+        callback(new Error('請輸入密碼'))
       } else {
         callback()
       }
@@ -98,7 +98,7 @@ export default {
     var validatePass2 = (rule, value, callback) => {
 
       if (value === '') {
-        callback(new Error('请输入用户名'))
+        callback(new Error('請輸入用戶名'))
       }  else {
         callback()
       }
@@ -106,11 +106,11 @@ export default {
     var validatePass3 = (rule, value, callback) => {
       const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
       if (value === '') {
-        callback(new Error('请输入应用户名'))
+        callback(new Error('請輸入應用戶名'))
       } else if(!version.test(value)){
-        callback(new Error('格式不正确'))
+        callback(new Error('格式不正確'))
       } else if(value.length>63){
-        callback(new Error('长度不能超过63个字符'))
+        callback(new Error('長度不能超過63個字元'))
       }else {
         callback()
       }
@@ -118,9 +118,9 @@ export default {
      var validatePass4 = (rule, value, callback) => {
       const version2 = /^http[\d\D]*tgz$/
       if (value === '') {
-        callback(new Error('请输入Chart_url'))
+        callback(new Error('請輸入Chart_url'))
       } else if(!version2.test(value)){
-        callback(new Error('格式不正确'))
+        callback(new Error('格式不正確'))
       } else {
         callback()
       }

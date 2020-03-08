@@ -1,7 +1,12 @@
 <template>
   <!-- 防护配置 -->
   <div class="wrap">
-    <HeaderCom title="防護配置" />
+    <h3 class="ReportTitH3">
+      {{ $t("DDOS.Proteccon_figura.Proteccon_title") }}
+    </h3>
+    <!-- 新购 -->
+    <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
+    <br/>
     <el-tabs v-model="activeName" @tab-click="handleClick">
       <!-- DDOS攻击防护 -->
       <el-tab-pane
@@ -348,7 +353,7 @@ export default {
           <div>
             <span> {option.key} </span>
             <br />
-            <span>{option.label}</span>
+            <span>{option.label.substring(0, option.label.indexOf(option.key))}</span>
           </div>
         );
       }, //穿梭框
@@ -381,6 +386,7 @@ export default {
   },
   created() {
     this.describeResourceList();
+    this.describeDDoSPolicy();
   },
   methods: {
     // 1.1.获取资源列表
@@ -690,7 +696,10 @@ export default {
       });
       // 循环资源列表
       this.tableDataBegin.forEach(resource => {
-        const objTemp = {};
+        const objTemp = {
+          key: '',
+          label: ''
+        };
         for (const i in resource.Record) {
           if (resource.Record.hasOwnProperty(i)) {
             const element = resource.Record[i];
@@ -699,7 +708,6 @@ export default {
             } else if (element.Key == "GroupIpList") {
               //175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1
               let arr = element.Value.split(";");
-              objTemp.label = "";
               for (const j in arr) {
                 if (arr.hasOwnProperty(j)) {
                   const ipStr = arr[j];
@@ -709,6 +717,7 @@ export default {
             }
           }
         }
+        objTemp.label += objTemp.key;
         if (binded.length > 0 && binded.indexOf(objTemp.key) < 0) {
           this.resData.push(objTemp);
         } else if (binded.length == 0) {
@@ -795,24 +804,30 @@ a {
   clear: both;
 }
 
-.statistReportTit {
+.wrap {
   width: 100%;
-  height: 84px;
+  height: 99px;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  padding: 12px 20px 0;
-
+  padding: 0 20px;
+  line-height: 50px;
+  margin-bottom: 20px;
   .ReportTitH3 {
     float: left;
     font-size: 16px;
     font-weight: 600;
+    margin-right: 20px;
   }
-
   .ReportTitBtn {
     float: right;
     height: 32px;
     line-height: 32px;
     padding: 0;
+    margin-top: 8px;
+    width: 52px;
+    border-radius: 0;
+    text-align: center;
+    background-color: #006eff;
   }
 }
 
@@ -873,10 +888,10 @@ button.el-icon-search {
   width: 50px;
   height: 30px;
   padding: 0;
-  line-height: 30px;
+  // line-height: 30px;
   text-align: center;
   border-radius: 0;
-  float: right;
+  // float: right;
 }
 
 .mainConListOneIpt {

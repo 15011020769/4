@@ -489,7 +489,7 @@
                   @change="SecondCharging"
                 >
                   <el-radio-button label="1">按量计费</el-radio-button>
-                  <el-radio-button label="2">包年包月</el-radio-button>
+                  <!-- <el-radio-button label="2">包年包月</el-radio-button> -->
                 </el-radio-group>
                 <a href="#">详细对比</a>
               </div>
