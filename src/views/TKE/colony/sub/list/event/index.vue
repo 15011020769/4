@@ -181,14 +181,14 @@ export default {
       ],
       typeValue: "全部類型",
       nameOptions: [
-        {
-          value: "aaa",
-          label: "aaa"
-        },
-        {
-          value: "bbb",
-          label: "bbb"
-        }
+        // {
+        //   value: "aaa",
+        //   label: "aaa"
+        // },
+        // {
+        //   value: "bbb",
+        //   label: "bbb"
+        // }
       ],
       nameValue: "",
       autoRefresh: true

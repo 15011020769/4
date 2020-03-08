@@ -243,7 +243,6 @@ export default {
       arr.forEach(v => {
         obj[v.value] = btoa(v.valueKey);
       });
-      console.log(obj, "obj");
       if (arr[0].value == "") {
         this.$message({
           message: "变量名不能為空，至少设置一项",
@@ -261,6 +260,7 @@ export default {
         Version: "2018-05-25"
       };
       if (this.se.tabPosition == "jt") {
+        console.log(obj, "obj");
         params.RequestBody = {
           kind: "Secret",
           apiVersion: "v1",
@@ -298,8 +298,7 @@ export default {
           '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
           this.se.name +
           '"}},"type":"Opaque","data":' +
-          obj +
-          "}";
+          {asdasd: "YXNkYXNk"} + "}";
       } else {
         if (this.se.value.length > 1) {
           params.RequestBody =
@@ -339,7 +338,7 @@ export default {
       console.log(params)
       if (!this.errorShow) {
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          console.log(res.Response.Error.Message);
+          console.log(res.Response);
           // this.$router.push({ name: "secret" });//预留跳转
           if (res.Response.Error == undefined) {
             this.$router.go(-1);
