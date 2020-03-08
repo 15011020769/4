@@ -16,8 +16,17 @@
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
-              <el-input v-model="input" size="small" placeholder="請輸入實例組名搜索"></el-input>
-              <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button>
+            <SEARCH
+              :isSHows = "true"
+             :searchOptions="searchOptions"
+             :searchValue="searchValue" 
+             :searchInput="searchInput" 
+              @changeValue="changeValue"
+              @changeinput="changeinput" 
+              @clicksearch="clicksearch" 
+              @exportExcel="exportExcel">
+            </SEARCH>
+              
           </div>
           <div class="icons">
                 <i class="el-icon-setting" @click="dialog"></i>
@@ -26,13 +35,29 @@
         </div>
         <div class="table">
           <el-table :data="tableData" style="width: 100%" height="450">
-            <el-table-column prop="date" label="事件" class="el-icon-info"></el-table-column>
-            <el-table-column prop="region" label="地域" ></el-table-column>
-            <el-table-column prop="state" label="狀態" ></el-table-column>
-            <el-table-column prop="influence" label="影響對象" ></el-table-column>
-            <el-table-column prop="starttime" label="開始時間" ></el-table-column>
-            <el-table-column prop="updatatime" label="更新時間" ></el-table-column>
-            <el-table-column prop="alarm" label="事件類型"></el-table-column>
+            <el-table-column prop="BusinessTypeDesc" label="事件" class="el-icon-info"></el-table-column>
+            <el-table-column prop label="地域" >
+              <template slot-scope="scope">
+                <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="EventStatus" label="狀態" ></el-table-column>
+            <el-table-column prop label="影響對象" >
+              <template slot-scope="scope">
+                <p>{{scope.row.AffectResource}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop label="開始時間" >
+              <template slot-scope="scope">
+                  <p>{{getConvDate(scope.row.OccurTime)}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop label="更新時間" >
+              <template slot-scope="scope">
+                  <p>{{getConvDate(scope.row.UpdateTime)}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="AccidentTypeDesc" label="事件類型"></el-table-column>
           </el-table>
 
           <!-- 分页 -->
@@ -57,7 +82,7 @@
 import Header from "@/components/public/Head";
 import TimeDropDown from '@/components/public/TimeDropDown';
 import Dialog from "./custom/custom";
-
+import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { PLATFORM_EVENT_LIST } from "@/constants";
@@ -66,9 +91,14 @@ export default {
   data() {
     return {
       activeName: "first",
-      value: 1,
+      value: 13,
       dialogVisible: false, //弹出框
-      input: "", //搜索框的值
+
+      searchInput: "", //搜索框的值
+      searchOptions: [],
+      searchValue: "", //inp输入的值
+
+      loadShow: true, // 加载是否显示
       tableData: [],
       StartTime: "", //起始时间
       EndTime: "", //结束时间
@@ -101,7 +131,8 @@ export default {
   components: {
     Header,
     TimeDropDown,
-    Dialog
+    Dialog,
+    SEARCH
   },
   methods: {
     // 获取时间戳
@@ -133,19 +164,23 @@ export default {
       const params = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-07-24",
+        Offset: this.currpage * this.pagesize - this.pagesize,
         Module: "monitor",
         StartTime: this.StartTime,
         EndTime: this.EndTime
       };
-
+      if (this.searchValue !== "" && this.searchInput !== "") {
+          param["Filters.0.Name"] = this.searchValue;
+          param["Filters.0.Values.0"] = this.searchInput;
+        }
       //  monitor2/DescribeAccidentEventList   //接口
     
-      console.log(params);
+      console.log(JSON.stringify(params));
       this.axios.post(PLATFORM_EVENT_LIST, params).then(res => {
         console.log(res);
         if (res.Response.Error === undefined) {
-          this.tableData = res.Response.Events; //列表数据
-          console.log(this.tableData);
+          this.tableData = res.Response.Alarms; //列表数据
+
           this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
@@ -179,6 +214,31 @@ export default {
     save(){
       this.dialogVisible = false;
     },
+
+    //选择搜索条件
+      changeValue(val) {
+        this.searchValue = val;
+      },
+      changeinput(val) {
+        this.searchInput = val;
+        if (this.searchInput === "") {
+          this.currpage = 1;
+          this.getProductList();
+        }
+      },
+      clicksearch(val) {
+        this.currpage = 1;
+        this.searchInput = val;
+        if (this.searchInput !== "" && this.searchValue !== "") {
+          this.getProductList();
+        } else {
+          this.$message.error("請輸入正確搜索信息");
+        }
+      },
+    //导出表格
+      exportExcel() {
+        return '';
+      }
   },
 };
 </script>

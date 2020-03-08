@@ -26,8 +26,6 @@
               @clicksearch="clicksearch" 
               @exportExcel="exportExcel">
             </SEARCH>
-            <!-- <el-input v-model="searchinput" size="small" placeholder="請輸入實例組名搜索"></el-input>
-            <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button> -->
           </div>
           <div class="icons">
             <i class="el-icon-setting" @click="dialog"></i>
@@ -67,13 +65,13 @@
         <div class="table">
           <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
             <el-table-column prop="EventCName" label="事件" width="100"></el-table-column>
-            <el-table-column prop="Type" label="類型" width="100">
+            <el-table-column prop label="類型" width="100">
               <template slot-scope="scope">
                 <p>{{scope.row.Type === 'abnormal' ? '異常事件' : ''}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
-            <el-table-column prop="Region" label="地域" width="100">
+            <el-table-column prop label="地域" width="100">
               <template slot-scope="scope">
                 <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
               </template>
@@ -147,6 +145,7 @@ export default {
       activeName: "first",
       value: 13,
       dialogVisible: false, //弹框
+
       searchInput: "", //搜索框的值
       searchOptions: [],
       searchValue: "", //inp输入的值
