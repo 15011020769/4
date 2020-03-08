@@ -1,11 +1,11 @@
 <template>
   <div class="product-wrap">
-    <Header title="产品事件"></Header>
+    <Header title="產品事件"></Header>
     <div class="product-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
-          事件中心概述，产品事件与平台事件区别
-          <a>点击了解</a>
+          事件中心概述，產品事件與平台事件區別
+          <a>點擊了解</a>
         </p>
       </div>
       <div class="box">
@@ -15,7 +15,7 @@
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
-            <el-input v-model="searchinput" size="small" placeholder="请输入实例组名搜索"></el-input>
+            <el-input v-model="searchinput" size="small" placeholder="請輸入實例組名搜索"></el-input>
             <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button>
           </div>
           <div class="icons">
@@ -26,19 +26,19 @@
         <div class="table_head">
           <div class="table_head_left">
             <div class="error">
-              <p>异常事件</p>
+              <p>異常事件</p>
               <p>
                 <span>{{unNormalEventAmount}}</span>个
               </p>
             </div>
             <div class="noerror">
-              <p>未恢复异常事件</p>
+              <p>未恢復異常事件</p>
               <p style="color:red">
                 <span>{{unRecoverAmount}}</span>个
               </p>
             </div>
             <div class="nopageerror">
-              <p>未配置告警异常事件</p>
+              <p>未配置告警異常事件</p>
               <p>
                 <span>{{unConfigAlarmAmount}}</span>个
               </p>
@@ -46,7 +46,7 @@
           </div>
           <div class="table_head_right">
             <div class="pages">
-              <p>状态变更</p>
+              <p>狀態變更</p>
               <p>
                 <span>{{statusChangeAmount}}</span>个
               </p>
@@ -54,31 +54,39 @@
           </div>
         </div>
         <div class="table">
-          <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450">
+          <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
             <el-table-column prop="EventCName" label="事件" width="100"></el-table-column>
-            <el-table-column prop="Type" label="类型" width="100"></el-table-column>
-            <el-table-column prop="ProductCName" label="产品类型" width="90"></el-table-column>
-            <el-table-column prop="Region" label="地域" width="100"></el-table-column>
-            <el-table-column prop label="影响对象" width="205">
+            <el-table-column prop="Type" label="類型" width="100">
+              <template slot-scope="scope">
+                <p>{{scope.row.Type === 'abnormal' ? '異常事件' : ''}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
+            <el-table-column prop="Region" label="地域" width="100">
+              <template slot-scope="scope">
+                <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
+              </template>
+            </el-table-column>
+            <el-table-column prop label="影響對象" width="205">
               <template slot-scope="scope">
                 <p>{{scope.row.InstanceId}}</p>
                 <p>{{scope.row.InstanceName}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="对象详情" width="200">
+            <el-table-column prop label="對象詳情" width="200">
               <template slot-scope="scope">
                 <div v-for="item in scope.row.Dimensions">
                   <p><span>{{item.Name}}：</span>{{item.Value}}</p>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="Status" label="状态" width="70"></el-table-column>
-            <el-table-column prop label="开始时间" width="90">
+            <el-table-column prop="Status" label="狀態" width="70"></el-table-column>
+            <el-table-column prop label="開始時間" width="90">
               <template slot-scope="scope">
                   <p>{{getConvDate(scope.row.StartTime)}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="更新时间" width="90">
+            <el-table-column prop label="更新時間" width="90">
               <template slot-scope="scope">
                   <p>{{getConvDate(scope.row.UpdateTime)}}</p>
               </template>
@@ -135,7 +143,7 @@ export default {
       EndTime: "", //结束时间
       //分页
       TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
+      pagesize: 20, // 分页条数
       currpage: 1, // 当前页码
       TimeArr: [
           
@@ -165,10 +173,7 @@ export default {
     Dialog,
     TimeDropDown
   },
-  
-  mounted() {
-    
-  },
+
   methods: {
     // 获取时间戳
     GetDat(data) {
@@ -215,6 +220,7 @@ export default {
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
           console.log(this.tableData);
+          this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
         } else {
@@ -233,6 +239,7 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
+      this.getProductList()
     },
     //弹框
     dialog() {
