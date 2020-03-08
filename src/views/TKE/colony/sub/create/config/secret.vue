@@ -243,6 +243,7 @@ export default {
       arr.forEach(v => {
         obj[v.value] = btoa(v.valueKey);
       });
+      // obj=JSON.stringify(obj);
       if (arr[0].value == "") {
         this.$message({
           message: "变量名不能為空，至少设置一项",
