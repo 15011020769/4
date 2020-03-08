@@ -62,7 +62,16 @@
           :class="tabIndex == index ? 'active' : ''"
           @click="tabClick(index)"
         >
-          <dt>{{item.name}}</dt>
+          <dt>
+            {{item.name}}
+            <el-tooltip placement="top" effect="light" class="mode-tooltip" v-if="item.name=='併發連接數峰值'">
+              <i class="el-icon-info"></i>
+              <span slot="content">
+                若播放協議為RTMP和FLV，並發連接數即在線人數；<br/>
+                若播放協議為HLS，此數據不可作為在線人數的參考
+              </span>
+            </el-tooltip>
+          </dt>
           <dd>
             {{item.value}}
             <span style="font-size:16px;color:black;">{{item.code}}</span>
@@ -281,15 +290,15 @@ export default {
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
         Granularity: 60,
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
           params["PlayDomains." + index] = item;
         });
       }
-       if (this.operator) {
-        params["IspNames.0"] = this.operator
+      //  if (this.operator) {
+        // params["IspNames.0"] = this.operator // 运营商暂不做
         this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
           if (res.Response.Error) {
             this.$message.error(res.Response.Error.Message);
@@ -300,24 +309,25 @@ export default {
             this.tab[3].value = res.Response.MaxOnline
           }
         });
-      } else {
-        this.axios.post(CSS_MBPS, params).then(res => {
-          if (res.Response.Error) {
-            this.$message.error(res.Response.Error.Message);
-          } else {
-            this.tab[0].value = res.Response.PeakBandwidth
-            this.tab[1].value = res.Response.SumFlux
-          }
-        });
-        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
-          if (res.Response.Error) {
-            this.$message.error(res.Response.Error.Message);
-          } else {
-            this.tab[2].value = res.Response.TotalRequest
-            this.tab[3].value = res.Response.MaxOnline
-          }
-        });
-      }
+      // }
+      // else {
+      //   this.axios.post(CSS_MBPS, params).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message.error(res.Response.Error.Message);
+      //     } else {
+      //       this.tab[0].value = res.Response.PeakBandwidth
+      //       this.tab[1].value = res.Response.SumFlux
+      //     }
+      //   });
+      //   this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message.error(res.Response.Error.Message);
+      //     } else {
+      //       this.tab[2].value = res.Response.TotalRequest
+      //       this.tab[3].value = res.Response.MaxOnline
+      //     }
+      //   });
+      // }
     },
     checkDomainAll(checked) {
       if (checked) {

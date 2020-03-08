@@ -90,13 +90,13 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan" // 直接传台湾
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
@@ -116,9 +116,9 @@ export default {
         params1["Granularity"] = 1440
         params2["Granularity"] = 60
       }
-      if (this.operator) {
-        params1["IspNames.0"] = this.operator
-        params2["IspNames.0"] = this.operator
+      // if (this.operator) {
+        // params1["IspNames.0"] = this.operator // 运营商暂不做
+        // params2["IspNames.0"] = this.operator // 运营商暂不做
         this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
           if (res.Response.Error) {
             this.$message({
@@ -155,45 +155,45 @@ export default {
           }
           this.loading = false;
         });
-      } else {
-        this.axios.post(CSS_MBPS, params1).then(res => {
-          if (res.Response.Error) {
-            this.$message({
-              message: res.Response.Error.Message,
-              type: "error",
-              showClose: true,
-              duration: 0
-            })
-          } else {
-            // 表格数据
-            this.tableData = res.Response.DataInfoList;
-            this.totalItems = res.Response.DataInfoList.length;
-          }
-          this.loading = false;
-        });
-        this.axios.post(CSS_MBPS, params2).then(res => {
-          if (res.Response.Error) {
-            // this.$message.error(res.Response.Error.Message);
-            this.$message({
-              message: res.Response.Error.Message,
-              type: "error",
-              showClose: true,
-              duration: 0
-            })
-          } else {
-            // 图表数据
-            var xAxis = [];
-            var series = [];
-            res.Response.DataInfoList.forEach(item => {
-              xAxis.push(item.Time);
-              series.push(item.Bandwidth);
-            });
-            this.xAxis = xAxis;
-            this.series = series;
-          }
-          this.loading = false;
-        });
-      }
+      // } 
+      // else {
+      //   this.axios.post(CSS_MBPS, params1).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message({
+      //         message: res.Response.Error.Message,
+      //         type: "error",
+      //         showClose: true,
+      //         duration: 0
+      //       })
+      //     } else {
+      //       // 表格数据
+      //       this.tableData = res.Response.DataInfoList;
+      //       this.totalItems = res.Response.DataInfoList.length;
+      //     }
+      //     this.loading = false;
+      //   });
+      //   this.axios.post(CSS_MBPS, params2).then(res => {
+      //     if (res.Response.Error) {
+      //       this.$message({
+      //         message: res.Response.Error.Message,
+      //         type: "error",
+      //         showClose: true,
+      //         duration: 0
+      //       })
+      //     } else {
+      //       // 图表数据
+      //       var xAxis = [];
+      //       var series = [];
+      //       res.Response.DataInfoList.forEach(item => {
+      //         xAxis.push(item.Time);
+      //         series.push(item.Bandwidth);
+      //       });
+      //       this.xAxis = xAxis;
+      //       this.series = series;
+      //     }
+      //     this.loading = false;
+      //   });
+      // }
     },
   }
 };

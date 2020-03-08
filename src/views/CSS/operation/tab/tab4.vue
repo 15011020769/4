@@ -37,7 +37,7 @@
 
 <script>
 import Echart from "../../components/line";
-import { CSS_PLAY, CSS_MBPS, DESCRIBE_PLAY_STAT_INFOLIST } from "@/constants";
+import { CSS_PLAY, DESCRIBE_PLAY_STAT_INFOLIST } from "@/constants";
 import moment from "moment";
 export default {
   name: "tab4",
@@ -85,13 +85,13 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:MM:SS"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:MM:SS"),
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       if (this.operator) {
         params1["IspNames.0"] = this.operator
