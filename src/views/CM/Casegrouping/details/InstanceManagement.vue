@@ -150,7 +150,6 @@
   </div>
 </template>
 <script>
-import AddDialog from "./dialog/addDialog";
 import { ErrorTips } from "@/components/ErrorTips";
 import { CM_GROUPING_MANAGE } from "@/constants";
 export default {
@@ -184,9 +183,7 @@ export default {
       default: () => []
     }
   },
-  components: {
-    AddDialog
-  },
+  components: {},
   created() {
     this.ListInit();
     console.log(this.Rules.instanceGroupId);

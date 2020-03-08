@@ -223,7 +223,11 @@ export default {
       this.$router.push({
         name: "colonyOpenMonitor",
         query: {
-          title: this.tit + "(deployment)"
+          title: this.tit + "(Deployment)",
+          type: 'Deployment',
+          list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          clusterId: this.clusterId,
+          spaceName: this.nameSpaceName
         }
       });
     },

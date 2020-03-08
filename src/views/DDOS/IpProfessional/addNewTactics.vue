@@ -667,6 +667,7 @@
 </template>
 <script>
 import { DDOS_POLICY_CREATE, DDOS_POLICY_MODIFY } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   props: {
     isShow: Boolean,
@@ -1103,31 +1104,50 @@ export default {
         }
         if (bl) {
           params.Name = this.tacticsName;
-          console.log(params, "tianjia");
+          // console.log(params, "tianjia");
           this.axios.post(DDOS_POLICY_CREATE, params).then(res => {
-            if (res.Response.Error) {
+            if (res.Response.Error === undefined) {
               this.$message({
-                message: res.Response.Error.Message,
-                type: "warning"
+                message: "添加成功",
+                type: "success",
+                showClose: true,
+                duration: 0
               });
-            } else {
-              this.$message("添加成功");
+              // 关闭添加页面
               this.closeAddPage();
+            } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
         } else {
           params.PolicyId = this.policy.PolicyId;
-          console.log(params, "xiugai");
+          // console.log(params, "xiugai");
           this.axios.post(DDOS_POLICY_MODIFY, params).then(res => {
-            console.log(res)
-            if (res.Response.Success) {
-              this.$message("修改成功");
+            if (res.Response.Error === undefined) {
+              this.$message({
+                message: "修改成功",
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
               // 关闭修改页面
               this.closeAddPage();
             } else {
-              this.$message("修改失败"+res.Response.Error.Message);
-              // 关闭修改页面
-              this.closeAddPage();
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
         }

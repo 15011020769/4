@@ -15,8 +15,17 @@
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
-            <el-input v-model="searchinput" size="small" placeholder="請輸入實例組名搜索"></el-input>
-            <el-button icon="el-icon-search" size="small" style="margin-left:-1px;"></el-button>
+            <!-- 搜索 -->
+            <SEARCH
+              :isSHows = "true"
+             :searchOptions="searchOptions"
+             :searchValue="searchValue" 
+             :searchInput="searchInput" 
+              @changeValue="changeValue"
+              @changeinput="changeinput" 
+              @clicksearch="clicksearch" 
+              @exportExcel="exportExcel">
+            </SEARCH>
           </div>
           <div class="icons">
             <i class="el-icon-setting" @click="dialog"></i>
@@ -56,13 +65,13 @@
         <div class="table">
           <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
             <el-table-column prop="EventCName" label="事件" width="100"></el-table-column>
-            <el-table-column prop="Type" label="類型" width="100">
+            <el-table-column prop label="類型" width="100">
               <template slot-scope="scope">
                 <p>{{scope.row.Type === 'abnormal' ? '異常事件' : ''}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
-            <el-table-column prop="Region" label="地域" width="100">
+            <el-table-column prop label="地域" width="100">
               <template slot-scope="scope">
                 <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
               </template>
@@ -92,8 +101,8 @@
               </template>
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置">
-              <template slot-scope>
-                  <p><span>未配置</span> <a href="#">新增配置</a></p>
+              <template slot-scope="scope">
+                  <p><span>未配置</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
               </template>
             </el-table-column>
           </el-table>
@@ -120,7 +129,7 @@
 import Header from "@/components/public/Head";
 import TimeDropDown from '@/components/public/TimeDropDown';
 import Dialog from "./custom/custom";
-
+import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { PRODUCT_EVENT_LIST } from "@/constants";
@@ -136,7 +145,11 @@ export default {
       activeName: "first",
       value: 13,
       dialogVisible: false, //弹框
-      searchinput: "", //搜索框的值
+
+      searchInput: "", //搜索框的值
+      searchOptions: [],
+      searchValue: "", //inp输入的值
+
       loadShow: true, // 加载是否显示
       tableData: [],
       StartTime: "", //起始时间
@@ -171,7 +184,8 @@ export default {
   components: {
     Header,
     Dialog,
-    TimeDropDown
+    TimeDropDown,
+    SEARCH
   },
 
   methods: {
@@ -204,10 +218,14 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor",
+        Offset: this.currpage * this.pagesize - this.pagesize,
         StartTime: this.StartTime,
         EndTime: this.EndTime
       };
-
+      if (this.searchValue !== "" && this.searchInput !== "") {
+          param["Filters.0.Name"] = this.searchValue;
+          param["Filters.0.Values.0"] = this.searchInput;
+        }
             //  monitor2/DescribeProductEventList   //接口
       console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
@@ -219,7 +237,6 @@ export default {
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
-          console.log(this.tableData);
           this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
@@ -250,9 +267,43 @@ export default {
     },
     save() {
       this.dialogVisible = false;
-    }
+    },
+
+    //导出表格
+      exportExcel() {
+        return '';
+      },
+    //选择搜索条件
+      changeValue(val) {
+        this.searchValue = val;
+      },
+      changeinput(val) {
+        this.searchInput = val;
+        if (this.searchInput === "") {
+          this.currpage = 1;
+          this.getProductList();
+        }
+      },
+      clicksearch(val) {
+        this.currpage = 1;
+        this.searchInput = val;
+        if (this.searchInput !== "" && this.searchValue !== "") {
+          this.getProductList();
+        } else {
+          this.$message.error("請輸入正確搜索信息");
+        }
+      },
+      jump(id) {
+        this.$router.push({
+          name: "strategy",
+          query: {
+            id
+          }
+        });
+      }
+    
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

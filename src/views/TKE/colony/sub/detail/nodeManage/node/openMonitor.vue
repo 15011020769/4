@@ -51,13 +51,122 @@
           <el-checkbox-group
             v-model="checkedInstances"
             @change="handleCheckedCitiesChange"
-            class="check-flex"
+            class="check-flex point-white"
           >
             <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
           </el-checkbox-group>
         </div>
-        <div class="box-bottom-right">
+        <!-- 节点监控数据 -->
+        <div class="box-bottom-right"  v-show="isCollapse=='k8s_node'">
           <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='series' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesError' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesCpus' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesCpuUsedmaxs' style="width:400px;height:200px;" />
+          </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesMemory' style="width:400px;height:200px;" />
+          </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesemusages' style="width:400px;height:200px;" />
+          </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesMemrequests' style="width:400px;height:200px;" />
+          </div>
+          <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesMenNocaches' style="width:400px;height:200px;" />
+          </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+            <EcharTKE :time='times' :series='seriesMemUsageBytes' style="width:400px;height:200px;" />
+          </div>
+        </div>
+        <!-- pod监控数据 -->
+        <div class="box-bottom-right"  v-show="isCollapse=='k8s_pod'">
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podStatuErrs' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podCpuUseds' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podCpuUsedCenters' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podCpuUsedRequests' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podCpuUsedLimits' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemorys' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryNocaches' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryCenters' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryCenterNocaches' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryRequestNocaches' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryLimits' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podMemoryLimitNocaches' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podInNetworks' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podOutNetworks' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podInFlows' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podOutFlows' style="width:400px;height:200px;" />
+           </div>
+            <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podInPacketFlows' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podOutPacketFlows' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUUses' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUSeeUses' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUUseNodes' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUSeeUseNodes' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUUseRequests' style="width:400px;height:200px;" />
+           </div>
+           <div class="box-top-left" style="margin-bottom:20px;">
+              <EcharTKE :time='podTimes' :series='podGPUSeeUseRequests' style="width:400px;height:200px;" />
+           </div>
         </div>
       </div>
     </div>
@@ -69,6 +178,7 @@ import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO
 import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
+import EcharTKE from '@/components/public/EcharTKE'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -78,7 +188,7 @@ export default {
       default: false
     },
   },
-  components:{TimeDropDown},
+  components:{TimeDropDown,EcharTKE},
   data() {
     return {
       activeName: "first",
@@ -97,9 +207,48 @@ export default {
       podData:[],
       valueLast:"",
       JobId:"",// 后台返回id
-      StartTime:"",
-      EndTIme:"",
-      timeAll:[],
+      StartTime:"",// 开始时间
+      EndTIme:"", // 结束时间
+      grain:"" ,//粒数
+      times:[],
+      series:[],
+      seriesError:[],
+      seriesCpus:[],
+      seriesCpuUseds:[],
+      seriesCpuUsedmaxs:[],
+      seriesMemory:[],
+      seriesemusages:[],
+      seriesMemrequests:[],
+      seriesMenNocaches:[],
+      seriesMemUsageBytes:[],
+
+      podTimes:[],                
+      podsIds:[],                 
+      podStatuErrs:[],            
+      podCpuUseds:[],             
+      podCpuUsedCenters:[],       
+      podCpuUsedRequests:[],      
+      podCpuUsedLimits:[],        
+      podMemorys:[],              
+      podMemoryNocaches:[],       
+      podMemoryCenters:[],        
+      podMemoryCenterNocaches:[], 
+      podMemoryRequests:[],       
+      podMemoryRequestNocaches:[],
+      podMemoryLimits:[],         
+      podMemoryLimitNocaches:[],  
+      podInNetworks:[],           
+      podOutNetworks:[],          
+      podInFlows:[],              
+      podOutFlows:[],            
+      podInPacketFlows:[],        
+      podOutPacketFlows:[],       
+      podGPUUses:[],              
+      podGPUSeeUses:[],           
+      podGPUUseNodes:[],          
+      podGPUSeeUseNodes:[],       
+      podGPUUseRequests:[],       
+      podGPUSeeUseRequests:[],
       TimeArr: [{
           name: '实时',
           Time: 'realTime',
@@ -165,11 +314,13 @@ export default {
     this.clusterId = clusterId
     this.title = title
   },
-   mounted(){
-    this.inits();
-  },
+  // mounted(){
+  //   this.inits();
+  // },
   methods: {
     GetDat(val){
+      // console.log(val)
+      this.grain = val[0]
       this.StartTime = new Date(val[1].StartTIme).getTime();
       this.EndTIme = new Date(val[1].EndTIme).getTime();
       console.log(this.StartTime,this.EndTIme)
@@ -186,92 +337,6 @@ export default {
         this.getNodeList()
       }
     },
-    // inits(){
-    //   var myChart = this.$echarts.init(this.$refs.main)
-    // // 绘制图表
-    // myChart.setOption({
-    //     title: {
-    //           text: '折线图堆叠'
-    //       },
-    //       tooltip: {
-    //           trigger: 'axis'
-    //       },
-    //       // legend: {
-    //       //     data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-    //       // },
-    //        grid: {
-    //         x: 50,
-    //         y: 45,
-    //         x2: 5,
-    //         y2: 20,
-    //         borderWidth: 1
-    //       },
-    //       toolbox: {
-    //           feature: {
-    //               saveAsImage: {}
-    //           }
-    //       },
-    //       xAxis: {
-    //           type: 'category',
-    //           boundaryGap: false,
-    //           data: this.timeAll,
-    //            axisTick: {
-    //           // 决定是否显示坐标刻度
-    //             alignWithLabel: true,
-    //             show: false
-    //           },
-    //           splitLine: {
-    //             show: false
-    //           },
-    //           axisLabel: {
-    //             // 决定是否显示数据
-    //             show: false
-    //           },
-    //       },
-    //       yAxis: {
-    //           type: 'value',
-    //            splitLine: {
-    //             // 网格线
-    //             show: false
-    //           },
-    //           axisLine: {
-    //             // X轴显示
-    //             show: false
-    //           },
-    //       },
-    //       series: [  {
-    //               name: '邮件营销',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '联盟广告',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '视频广告',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '直接访问',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //           {
-    //               name: '搜索引擎',
-    //               type: 'line',
-    //               stack: '总量',
-    //               data: this.timeAll
-    //           },
-    //       ]
-    //   });
-    // },
     //返回上一层
     goBack() {
       this.$router.go(-1);
@@ -442,7 +507,7 @@ export default {
       param["Fields.22"] = "max(k8s_pod_rate_gpu_memory_used_node)";
       param["Fields.23"] = "max(k8s_pod_rate_gpu_used_request)";
       param["Fields.24"] = "max(k8s_pod_rate_gpu_memory_used_request)";
-      param["GroupBys.0"] = "timestamp(60s)";
+      param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "pod_name";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
         //   console.log(res)
@@ -482,7 +547,7 @@ export default {
       param["Fields.8"] = "max(k8s_node_tcp_curr_estab)";
       param["Fields.9"] = "max(k8s_node_rate_gpu_used)";
       param["Fields.10"] = "max(k8s_node_rate_gpu_memory_used)";
-      param["GroupBys.0"] = "timestamp(60s)";
+      param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
           console.log()
@@ -506,20 +571,169 @@ export default {
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         //   console.log(res)
         if(res.Response.Error === undefined) {
-          let dataCount = JSON.parse(res.Response.Data)
+          let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
-          this.timeAll=dataCount.map(item=>{
-              return  moment(item[0]).format("YYYY-MM-DD HH:mm:ss")
-              // return time
-          })
-          console.log(this.timeAll)
-          // this.timeAll.push(JSON.parse(res.Response.Data).)
-          
-        }
-      })
+          if(this.isCollapse == "k8s_node"){
+            let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
+            cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
+            memUsageBytes = []
+              if(data.length > 0) {
+                for(let i = 0; i < data.length; i++) {
+                  let item = data[i];
+                  let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+                  let podId = item[1];//节点ID
+                  let pod = item[2];//实例数量
+                  let statuErr = item[3];//异常
+                  let cpu = item[4];//cpu总配置
+                  let cpuUsed = item[5];//内存利用率
+                  let cpuRequest = item[6];//内网入带宽
+                  let cpuUsedmax = item[7];//内网出带宽
+                  let memory = item[8];//外网入带宽
+                  let memusage = item[9];// 外网出带宽
+                  let memrequest = item[10];//TCP连接数
+                  let menNocache = item[11];// GPU利用率
+                  let memUsageByte = item[12];//GPU显存利用率
+                  times.push(time);
+                  podIds.push(podId);
+                  pods.push(pod);
+                  statuErrs.push(statuErr);
+                  cpus.push(cpu);
+                  cpuUseds.push(cpuUsed);
+                  cpuRequests.push(cpuRequest);
+                  cpuUsedmaxs.push(cpuUsedmax);
+                  memorys.push(memory);
+                  memusages.push(memusage);
+                  memrequests.push(memrequest);
+                  menNocaches.push(menNocache);
+                  memUsageBytes.push(memUsageByte);
+                }
+              }
+              this.times = times;
+              this.series = [{name: '节点数量',type: 'line', data: pods}];
+              this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
+              this.seriesCpus = [{name: '节点数量',type: 'line', data: cpus}];
+              this.seriesCpuUseds = [{name: '节点数量',type: 'line', data: cpuUseds}];
+              this.seriesCpuRequests = [{name: '节点数量',type: 'line', data: cpuRequests}];
+              this.seriesCpuUsedmaxs = [{name: '节点数量',type: 'line', data: cpuUsedmaxs}];
+              this.seriesMemory = [{name: '节点数量',type: 'line', data: memorys}];
+              this.seriesemusages = [{name: '节点数量',type: 'line', data: memusages}];
+              this.seriesMemrequests = [{name: '节点数量',type: 'line', data: memrequests}];
+              this.seriesMenNocaches = [{name: '节点数量',type: 'line', data: menNocaches}];
+              this.seriesMemUsageBytes = [{name: '节点数量',type: 'line', data: memUsageBytes}];
+            } else {
+            let podTimes=[],                
+                podsIds=[],                 
+                podStatuErrs=[],            
+                podCpuUseds=[],             
+                podCpuUsedCenters=[],       
+                podCpuUsedRequests=[],      
+                podCpuUsedLimits=[],        
+                podMemorys=[],              
+                podMemoryNocaches=[],       
+                podMemoryCenters=[],        
+                podMemoryCenterNocaches=[], 
+                podMemoryRequests=[],       
+                podMemoryRequestNocaches=[],
+                podMemoryLimits=[],         
+                podMemoryLimitNocaches=[],  
+                podInNetworks=[],           
+                podOutNetworks=[],          
+                podInFlows=[],              
+                podOutFlows=[],            
+                podInPacketFlows=[],        
+                podOutPacketFlows=[],       
+                podGPUUses=[],              
+                podGPUSeeUses=[],           
+                podGPUUseNodes=[],          
+                podGPUSeeUseNodes=[],       
+                podGPUUseRequests=[],       
+                podGPUSeeUseRequests=[]   
+              for(let i = 0; i < data.length; i++) {
+                  let items = data[i];
+                  let podTime = moment(items[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+                  let podsId  = items[1];//节点ID
+                  let podStatuErr = items[2];//异常
+                  let podCpuUsed = items[3];//CPU使用量
+                  let podCpuUsedCenter = items[4];//CPU利用率(占主机)
+                  let podCpuUsedRequest = items[5];//CPU利用率(占Request)
+                  let podCpuUsedL = items[6];//CPU利用率(占Limit)
+                  let podMemory  = items[7];//内存使用量
+                  let podMemoryNocache  = items[8];//内存使用量(不含cache)
+                  let podMemoryCenter  = items[9];// 内存利用率(占主机)
+                  let podMemoryCenterNocache = items[10];//内存利用率(占主机,不含cache)
+                  let podMemoryRequest  = items[11];// 内存利用率(占Request)
+                  let podMemoryRequestNoc = items[12];//内存利用率(占Request,不含cache)
+                  let podMemoryLimit  = items[13];//内存利用率(占Limit)
+                  let podMemoryLimitNocache = items[14];//内存利用率(占Limit,不含cache)
+                  let podInNetwork = items[15];//网络入带宽
+                  let podOutNetwork = items[16];//网络出带宽
+                  let podInFlow = items[17];//网络入流量
+                  let podOutFlow = items[18];//网络出流量
+                  let podInPacketFlow = items[19];//网络入包量
+                  let podOutPacketFlow= items[20];//网络出包量
+                  let podGPUUse = items[21];//GPU使用量
+                  let podGPUSeeUse = items[22];//GPU显存使用量
+                  let podGPUUseNode = items[23];//GPU利用率（占节点）
+                  let podGPUSeeUseNode = items[24];//GPU显存利用率（占节点）
+                  let podGPUUseRequest = items[25];//GPU利用率（占Request）
+                  let podGPUSeeUseRequest = items[26];//GPU显存利用率（占Request）
+                  podTimes.push(podTime)                
+                  // podsIds.push(podsId)                 
+                  podStatuErrs.push(podStatuErr)            
+                  podCpuUseds.push(podCpuUsed)             
+                  podCpuUsedCenters.push(podCpuUsedCenter)       
+                  podCpuUsedRequests.push(podCpuUsedRequest)      
+                  podCpuUsedLimits.push(podCpuUsedL)        
+                  podMemorys.push(podMemory)              
+                  podMemoryNocaches.push(podMemoryNocache)      
+                  podMemoryCenters.push(podMemoryCenter) 
+                  podMemoryCenterNocaches.push(podMemoryCenterNocache) 
+                  podMemoryRequests.push(podMemoryRequest)       
+                  podMemoryRequestNocaches.push(podMemoryRequestNoc)
+                  podMemoryLimits.push(podMemoryLimit)         
+                  podMemoryLimitNocaches.push(podMemoryLimitNocache)  
+                  podInNetworks.push(podInNetwork)          
+                  podOutNetworks.push(podOutNetwork)          
+                  podInFlows.push(podInFlow)              
+                  podOutFlows.push(podOutFlow)            
+                  podInPacketFlows.push(podInPacketFlow)        
+                  podOutPacketFlows.push(podOutPacketFlow)       
+                  podGPUUses.push(podGPUUse)              
+                  podGPUSeeUses.push(podGPUSeeUse)           
+                  podGPUUseNodes.push(podGPUUseNode)          
+                  podGPUSeeUseNodes.push(podGPUSeeUseNode)       
+                  podGPUUseRequests.push(podGPUUseRequest)       
+                  podGPUSeeUseRequests.push(podGPUSeeUseRequest)  
+                }
+                this.podTimes = podTimes;
+                this.podStatuErrs = [{name: '节点数量',type: 'line', data: podStatuErrs}];
+                this.podCpuUseds = [{name: '节点数量',type: 'line', data: podCpuUseds}];
+                this.podCpuUsedCenters = [{name: '节点数量',type: 'line', data: podCpuUsedCenters}];
+                this.podCpuUsedRequests = [{name: '节点数量',type: 'line', data: podCpuUsedRequests}];
+                this.podCpuUsedLimits = [{name: '节点数量',type: 'line', data: podCpuUsedLimits}];
+                this.podMemoryNocaches = [{name: '节点数量',type: 'line', data: podMemoryNocaches}];
+                this.podMemoryCenters = [{name: '节点数量',type: 'line', data: podMemoryCenters}];
+                this.podMemoryRequests = [{name: '节点数量',type: 'line', data: podMemoryCenterNocaches}];
+                this.podMemoryRequestNocaches = [{name: '节点数量',type: 'line', data: podMemoryRequestNocaches}];
+                this.podMemoryLimits = [{name: '节点数量',type: 'line', data: podMemoryLimits}];
+                this.podMemoryLimitNocaches = [{name: '节点数量',type: 'line', data: podMemoryLimitNocaches}];
+                this.podInNetworks = [{name: '节点数量',type: 'line', data: podInNetworks}];
+                this.podOutNetworks = [{name: '节点数量',type: 'line', data: podOutNetworks}];
+                this.podInFlows = [{name: '节点数量',type: 'line', data: podInFlows}];
+                this.podOutFlows = [{name: '节点数量',type: 'line', data: podOutFlows}];
+                this.podInPacketFlows = [{name: '节点数量',type: 'line', data: podInPacketFlows}];
+                this.podOutPacketFlows = [{name: '节点数量',type: 'line', data: podOutPacketFlows}];
+                this.podGPUUses = [{name: '节点数量',type: 'line', data: podGPUUses}];
+                this.podGPUSeeUses = [{name: '节点数量',type: 'line', data: podGPUSeeUses}];
+                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes}];
+                this.podGPUSeeUseNodes = [{name: '节点数量',type: 'line', data: podGPUSeeUseNodes}];
+                this.podGPUUseRequests = [{name: '节点数量',type: 'line', data: podGPUUseRequests}];
+                this.podGPUSeeUseRequests = [{name: '节点数量',type: 'line', data: podGPUSeeUseRequests}];
+              }
+            }
+        })
+      },
     },
-    
-  },
 };
 </script>
 <style lang='scss' scoped>
@@ -560,12 +774,14 @@ export default {
         display: flex;
         flex-direction: column;
         margin-top: 15px;
+        // width: 100%;
       }
     }
     .box-bottom-right {
-      width: 85%;
-      margin-right: 5%;
+      width: 100%;
+      // margin-right: 5%;
       height: auto;
+      overflow-y: scroll;
     }
   }
 }

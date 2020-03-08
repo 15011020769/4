@@ -191,15 +191,15 @@
                  
                  <div v-show="v.disAdvancedSetting">
                    <el-form-item label="工作目录">
-                     <el-input class="w192" v-model="v.workingDir"></el-input>
+                     <el-input class="w192" v-model="v.workDirectory"></el-input>
                      <p> 指定容器运行后的工作目录，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="运行命令">
-                     <el-input type="textarea" class="w400"  rows="3" resize="none"></el-input>
+                     <el-input type="textarea"  v-model="v.runCommand" class="w400"  rows="3" resize="none"></el-input>
                      <p> 控制容器运行的输入命令，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="运行参数">
-                     <el-input type="textarea" class="w400"  rows="3" resize="none"></el-input>
+                     <el-input type="textarea"  v-model="v.runParam"   class="w400"  rows="3" resize="none"></el-input>
                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a> </p>
                    </el-form-item>
                    <el-form-item label="容器健康检查">
@@ -344,7 +344,7 @@
                      <p>查看健康检查和就绪检查<a href="#">使用指引</a> </p>
                    </el-form-item>
                    <el-form-item label="特权级容器">
-                     <el-switch active-color="#006eff" inactive-color="#888">
+                     <el-switch  v-model="v.privilegeLevelContainer" active-color="#006eff" inactive-color="#888">
                      </el-switch>
                      <p> 容器开启特权级，将拥有宿主机的root权限 </p>
                    </el-form-item>
@@ -785,6 +785,14 @@ export default {
             this.formatData(v.resources.limits.memory),
             Number(v.resources.limits['nvidia.com/gpu']),
             v.env,//环境变量
+            [],//引用ConfigMap/Secret
+            false,// 显示高级设置false
+            v.workingDir,// 工作目录
+            v.command[0],//运行命令
+            v.args[0],//运行参数
+            false, // 存活检查
+            false, // 就绪检查
+            v.securityContext.privileged// 特权级容器开关
             )
           }
         }else{
