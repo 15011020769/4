@@ -112,7 +112,7 @@ export default {
       this.axios
         .post(LIVE_DELETELIVESNAPSHOTRULE, {
           Version: "2018-08-01",
-          DomainName: this.$route.params.domain,
+          DomainName: this.$route.query.Name,
           AppName: ""
         })
         .then(res => {
@@ -120,7 +120,7 @@ export default {
             this.axios
               .post(LIVE_CREATELIVESNAPSHOTRULE, {
                 Version: "2018-08-01",
-                DomainName: this.$route.params.domain,
+                DomainName: this.$route.query.Name,
                 AppName: "",
                 TemplateId: this.selection[0].TemplateId
               })
