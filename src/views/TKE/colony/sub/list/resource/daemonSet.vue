@@ -46,7 +46,7 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table
-        :data="list"
+        :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
         @selection-change="handleSelectionChange"
         v-loading="loadShow"
         id="exportTable"
@@ -185,7 +185,7 @@ export default {
       list: [], //列表
       total: 0,
       pageSize: 10,
-      pageIndex: 0,
+      pageIndex: 1,
       multipleSelection: [], //全选数据
       flag: false, //是否显示抽屉
       searchOptions: [], //命名空间列表
@@ -237,8 +237,7 @@ export default {
               Path:
                 "/apis/apps/v1beta2/namespaces/" +
                 nameSpace.metadata.name +
-                "/daemonsets?limit=" +
-                this.pageSize,
+                "/daemonsets?limit=100",
               Version: "2018-05-25",
               ClusterName: this.clusterId
             };
@@ -302,8 +301,7 @@ export default {
           Path:
             "/apis/apps/v1beta2/namespaces/" +
             this.searchType +
-            "/daemonsets?limit=" +
-            this.pageSize,
+            "/daemonsets?limit=100", 
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -506,13 +504,13 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getDaemonSetList();
+      // this.getDaemonSetList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.getDaemonSetList();
+      // this.getDaemonSetList();
     },
     //全选
     handleSelectionChange(val) {

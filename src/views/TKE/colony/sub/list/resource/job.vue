@@ -44,7 +44,7 @@
 
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
-      <el-table :data="list" v-loading="loadShow" id="exportTable" style="width: 100%">
+      <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id="exportTable" style="width: 100%">
         <el-table-column label="名称">
           <template slot-scope="scope">
             <span
@@ -147,7 +147,7 @@ export default {
       list: [], //列表
       total: 0,
       pageSize: 10,
-      pageIndex: 0,
+      pageIndex: 1,
       multipleSelection: [], //全选数据
       //搜索下拉框
       searchOptions: [],
@@ -190,8 +190,7 @@ export default {
               Path:
                 "/apis/batch/v1/namespaces/" +
                 nameSpace.metadata.name +
-                "/jobs?limit=" +
-                this.pageSize,
+                "/jobs?limit=100" ,
               Version: "2018-05-25",
               ClusterName: this.clusterId
             };
@@ -255,8 +254,7 @@ export default {
           Path:
             "/apis/batch/v1/namespaces/" +
             this.searchType +
-            "/jobs?limit=" +
-            this.pageSize,
+            "/jobs?limit=100", 
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -408,13 +406,13 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getJobList();
+      // this.getJobList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.getJobList();
+      // this.getJobList();
     }
   },
   filters: {

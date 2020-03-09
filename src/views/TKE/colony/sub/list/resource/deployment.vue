@@ -47,7 +47,7 @@
     <div class="tke-card mt10">
       <el-table
         @selection-change="handleSelectionChange"
-        :data="list"
+        :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)"
         v-loading="loadShow"
         id="exportTable"
         style="width: 100%"
@@ -199,7 +199,7 @@ export default {
       list: [], //列表
       total: 0,
       pageSize: 10,
-      pageIndex: 0,
+      pageIndex: 1,
       multipleSelection: [], //选择的内容
       flag: false, //是否开启抽屉
       searchOptions: [], //命名空间列表
@@ -262,8 +262,8 @@ export default {
               Path:
                 "/apis/apps/v1beta2/namespaces/" +
                 nameSpace.metadata.name +
-                "/deployments?limit=" +
-                this.pageSize,
+                "/deployments?limit=100" ,
+                // this.pageSize,
               Version: "2018-05-25",
               ClusterName: this.clusterId
             };
@@ -285,6 +285,7 @@ export default {
               let response = JSON.parse(res.Response.ResponseBody);
               this.list = response.items;
               console.log(response.items)
+                console.log( response.items.length)
               this.total = response.items.length;
             } else {
               this.loadShow = false;
@@ -322,8 +323,7 @@ export default {
           Path:
             "/apis/apps/v1beta2/namespaces/" +
             this.nameSpaceName +
-            "/deployments?limit=" +
-            this.pageSize,
+            "/deployments?limit=100",
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -355,6 +355,7 @@ export default {
             });
           }
           this.list = response.items;
+          console.log( response.items.length)
           this.total = response.items.length;
         } else {
           this.loadShow = false;
@@ -527,12 +528,12 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getDeploymentList();
+      // this.getDeploymentList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       this.pageSize = val;
-      this.getDeploymentList();
+      // this.getDeploymentList();
     },
     //全选
     handleSelectionChange(val) {
