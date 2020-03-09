@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" ></el-switch>
+        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
       </div>
     </div>
 
@@ -95,6 +95,7 @@ export default {
     return {
       loadShow: false, // 加载是否显示
       autoRefresh: true, // 自动刷新
+      timer: null, // 定时器
       list: [
         {
           status: false
@@ -124,6 +125,14 @@ export default {
     this.spaceName = spaceName
     this.serviceName = serviceName
     this.handleEvent()
+    let autoRefresh = this.autoRefresh
+    if (autoRefresh) {
+      if (!this.timer) {
+        this.timer = setInterval(() => {
+          this.handleEvent()
+        }, 1000 * 20)
+      }
+    }
   },
   methods: {
     // 返回上一层
@@ -157,6 +166,22 @@ export default {
           })
         }
       })
+    },
+    // 是否刷新
+    changeSwitch () {
+      // console.log(this.autoRefresh, 'val')
+      let autoRefresh = this.autoRefresh
+      if (autoRefresh) {
+        if (!this.timer) {
+          this.timer = setInterval(() => {
+            this.handleEvent()
+          }, 1000 * 20)
+        }
+      } else {
+        if (this.timer) { // 如果定时器在运行则关闭
+          clearInterval(this.timer)
+        }
+      }
     },
     // 处理时间格式
     upTime (value) {

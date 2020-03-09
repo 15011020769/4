@@ -97,7 +97,6 @@ export default {
      this.workload=this.$route.query.workload
      console.log(this.rowData)
      this.baseYamlData()
-     this.baseData()
   },
   methods: {
     //返回上一层
@@ -106,14 +105,27 @@ export default {
 		},
 		submit(){
       // RequestBody
-      var params={
-        Accept: "application/json",
-        ClusterName: this.clusterId,
-        ContentType: "application/yaml",
-        Method: "PUT",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-        Version: "2018-05-25",
-        RequestBody:this.yamlInfo
+      var params=null;
+      if(this.workload=='jobs'){
+         params={
+          Accept: "application/json",
+          ClusterName: this.clusterId,
+          ContentType: "application/yaml",
+          Method: "PUT",
+          Path:`/apis/batch/v1/namespaces/${this.spaceName}/jobs/${this.name}`,
+          Version: "2018-05-25",
+          RequestBody:this.yamlInfo
+        }
+      }else{
+        params={
+          Accept: "application/json",
+          ClusterName: this.clusterId,
+          ContentType: "application/yaml",
+          Method: "PUT",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
+          Version: "2018-05-25",
+          RequestBody:this.yamlInfo
+        }
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
         console.log(res)
@@ -124,14 +136,47 @@ export default {
                 showClose: true,
                 duration: 0
           });
-          this.$router.push({
-            name:'deploymentDetailEvent',
-            query:{
-              clusterId: this.clusterId,
-              spaceName: this.spaceName,
-              rowData: this.rowData
-            }
-          })
+          if(this.workload=='deployments'){
+            this.$router.push({
+              name:'deploymentDetailEvent',
+              query:{
+                clusterId: this.clusterId,
+                spaceName: this.spaceName,
+                rowData: this.rowData,
+                workload:this.workload
+              }
+            })
+          }else if(this.workload=='statefulsets'){
+              this.$router.push({
+                name:'statefulSetDetailEvent',
+                query:{
+                  clusterId: this.clusterId,
+                  spaceName: this.spaceName,
+                  rowData: this.rowData,
+                  workload:this.workload
+                }
+              })
+          }else if(this.workload=='daemonsets'){
+                this.$router.push({
+                  name:'daemonSetDetailEvent',
+                  query:{
+                    clusterId: this.clusterId,
+                    spaceName: this.spaceName,
+                    rowData: this.rowData,
+                    workload:this.workload
+                  }
+                })
+          }else if(this.workload=='jobs'){
+                  this.$router.push({
+                    name:'jobDetailEvent',
+                    query:{
+                      clusterId: this.clusterId,
+                      spaceName: this.spaceName,
+                      rowData: this.rowData,
+                      workload:this.workload
+                    }
+                  })
+          }
 
         }else{
           let ErrTips = {};
@@ -147,12 +192,23 @@ export default {
 
     },
     baseYamlData(){
-      var params={
-        Accept: "application/yaml",
-        ClusterName: this.clusterId,
-        Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-        Version: "2018-05-25",
+      var params=null;
+      if(this.workload=='jobs'){
+         params={
+           Accept: "application/yaml",
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path:`/apis/batch/v1/namespaces/${this.spaceName}/jobs/${this.name}`,
+          Version: "2018-05-25",
+        }
+      }else{
+        params={
+          Accept: "application/yaml",
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
+          Version: "2018-05-25",
+        }
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
         console.log(res) 

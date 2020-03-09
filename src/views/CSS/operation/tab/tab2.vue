@@ -1,9 +1,12 @@
 <template>
   <div class="wrap">
-    <h3>
-      流量趨勢
-      <span style="color:#bbb;">(單位:MB)</span>
-    </h3>
+    <el-row type="flex" justify="space-between">
+      <h3>
+        流量趨勢
+        <span style="color:#bbb;">(單位:MB)</span>
+      </h3>
+        <p class="iconBtn"><i class="el-icon-download" @click="_export"></i></p>
+    </el-row>
     <Echart
       color="#0accac"
       :xAxis="xAxis"
@@ -36,9 +39,10 @@
 </template>
 
 <script>
+import moment from "moment";
+import XLSX from 'xlsx'
 import Echart from "../../components/line";
 import { CSS_MBPS, DESCRIBE_PLAY_STAT_INFOLIST } from "@/constants";
-import moment from "moment";
 export default {
   name: "tab2",
   data() {
@@ -51,7 +55,8 @@ export default {
       currpage: 1, //页数
       pagesize: 10, //每页数量
       totalItems: 0, //总条数
-      loading: true //加载状态
+      loading: true, //加载状态
+      json: []
     };
   },
   components: {
@@ -67,6 +72,12 @@ export default {
     this.init();
   },
   methods: {
+    _export() {
+      var ws = XLSX.utils.json_to_sheet(this.json);/* 新建空workbook，然后加入worksheet */
+      var wb = XLSX.utils.book_new();/*新建book*/
+      XLSX.utils.book_append_sheet(wb, ws, "People");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "统计数据.csv");/*写文件(book,xlsx文件名称)*/
+    },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
@@ -139,12 +150,15 @@ export default {
             // 图表数据
             var xAxis = [];
             var series = [];
+            let _json = []
             res.Response.DataInfoList.forEach(item => {
               xAxis.push(item.Time);
               series.push(item.Flux);
+              _json.push({"Time": item.Time, "Flux (MB)": item.Flux})
             });
             this.xAxis = xAxis;
             this.series = series;
+            this.json = _json
           }
           this.loading = false;
         });
@@ -213,6 +227,19 @@ export default {
       color: #565656;
       line-height: 32px;
     }
+  }
+}
+.iconBtn {
+  font-size: 16px;
+  color: #888;
+  display: flex;
+  align-items: center;
+  > i {
+    margin: 0 10px;
+    font-weight: 600;
+  }
+  i:hover {
+    cursor: pointer;
   }
 }
 </style>

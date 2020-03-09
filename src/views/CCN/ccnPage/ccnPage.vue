@@ -5,9 +5,12 @@
     </div>
     <div class="tea-content__body">
       <div>
-        <el-button type="primary" size="small" @click="dialogFormVisible = true" :disabled='newCreateshow'>
-          {{$t('CCN.total.newCreate')}}
-        </el-button>
+        <el-tooltip class="item" effect="light" content="雲聯網最多只能創建5條數據" placement="right-end">
+          <el-button type="primary" size="small" @click="dialogFormVisible = true" :disabled='newCreateshow'>
+            {{$t('CCN.total.newCreate')}}
+          </el-button>
+        </el-tooltip>
+
       </div>
     </div>
     <div class="tables">

@@ -19,14 +19,14 @@
           label="首次出现时间"
           >
           <template slot-scope="scope">
-            <p></p>
+            <p>{{scope.row.firstTime}}</p>
           </template>
         </el-table-column>
         <el-table-column
           label="最后出现时间"
           >
           <template slot-scope="scope">
-            <p></p>
+            <p>{{scope.row.lastTime}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -34,7 +34,7 @@
           label="级别"
           >
           <template slot-scope="scope">
-              <span class="text-red"></span>
+            <span :class="[scope.row.type !== 'Normal'?'text-red':'']">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -42,7 +42,7 @@
           label="资源类型"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.involvedObject.kind}}</span>
           </template>
         </el-table-column>
         
@@ -51,28 +51,28 @@
           label="资源名称"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="address"
           label="内容">
           <template slot-scope="scope">
-            <span></span>
+            <span>{{scope.row.reason}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="nodeTotal"
           label="详细描述">
           <template slot-scope="scope">
-            <p></p>
+            <p>{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
           label="出现次数">
           <template slot-scope="scope">
-            <p></p>
+            <p>{{scope.row.count}}</p>
           </template>
         </el-table-column>
       </el-table>
@@ -128,6 +128,10 @@ export default {
         if(res.Response.Error === undefined) {
           let response = JSON.parse(res.Response.ResponseBody);
           if(response.items.length > 0) {
+            response.items.map(event => {
+              event.firstTime = moment(event.firstTimestamp).format("YYYY-MM-DD HH:mm:ss");
+              event.lastTime = moment(event.lastTimestamp).format("YYYY-MM-DD HH:mm:ss");
+            });
             this.list = response.items;
           }
         } else {

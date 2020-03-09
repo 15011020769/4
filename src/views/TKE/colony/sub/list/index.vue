@@ -30,6 +30,7 @@
           <el-menu
             default-active="/colony/sub/list/basic"
             :router="true"
+            style="height: 100%"
             :default-active="this.$route.path"
           >
             <el-menu-item index="/colony/sub/list/basic">基本信息</el-menu-item>

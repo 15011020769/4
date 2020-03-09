@@ -80,7 +80,7 @@ import {
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
-import Step3 from "../addUser/Tab/Step3";
+import Step3 from "../addUser/Tab/Step31";
 export default {
   components: {
     Headcom, //头部组件

@@ -19,7 +19,7 @@
             placeholder="请选择"
             size="mini"
             class="ml10"
-            @change="getDefault"
+            @change="nameSpaceList()"
           >
             <el-option
               v-for="item in option1"
@@ -28,7 +28,13 @@
               :value="item.metadata.name"
             ></el-option>
           </el-select>
-          <el-select v-model="value2" placeholder="请选择工作负载类型" size="mini" class="ml10">
+          <el-select
+            v-model="value2"
+            placeholder="请选择工作负载类型"
+            size="mini"
+            class="ml10"
+            @change="getWorkload()"
+          >
             <el-option
               v-for="item in option2"
               :key="item.value"
@@ -101,7 +107,8 @@
     </el-card>
     <el-card class="box-card">
       <div class="box-black">
-        <ul>
+        <ul v-if="htmls==''">1.暂无日志</ul>
+        <ul v-else>
           <li
             v-for="(item,index) in htmls"
             :key="index"
@@ -188,22 +195,23 @@ export default {
   },
   created() {
     this.nameSpaceList();
+  },
+  mounted() {
     this.refresh();
-    this.getList1();
   },
   methods: {
     refresh() {
-      if (this.autoRefresh == true) {
+      if (this.autoRefresh === true) {
         var timeId = setInterval(() => {
           this.nameSpaceList();
+          window.clearInterval(timeId);
         }, 20000);
       } else {
         window.clearInterval(timeId);
-        this.nameSpaceList();
       }
     },
     getDefault() {
-      this.getWorkload();
+      // this.getWorkload();
     },
     getPod() {
       this.getPodData();
@@ -213,6 +221,8 @@ export default {
       this.$router.go(-1);
     },
     nameSpaceList() {
+      //第一项命名空间
+      this.loadShow = true;
       var params = {
         Method: "GET",
         Path: "/api/v1/namespaces",
@@ -224,6 +234,7 @@ export default {
           var mes = JSON.parse(res.Response.ResponseBody).items;
           this.option1 = mes;
           this.loadShow = false;
+          this.getWorkload();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -236,27 +247,24 @@ export default {
         }
       });
     },
-
-    getList1() {
-      // var params = {
-      //   Method: "GET",
-      //   Path:
-      //     "/api/v1/namespaces/" +
-      //     this.value1 +
-      //     "/pods/coredns-6bdbddfcf-j9f2x/log?container=cbs-provisioner&timestamps=" +
-      //     this.listNumFlag +
-      //     "&tailLines="+this.value6.replace(/[^\d]/g,' '),
-      //   Version: "2018-05-25",
-      //   ClusterName: this.$route.query.clusterId
-      // };
+    getLog() {
       var params = {
         Method: "GET",
         Path:
-          "/api/v1/namespaces/kube-system/pods/coredns-6bdbddfcf-j9f2x/log?container=coredns&timestamps=true&tailLines=100",
+          "/api/v1/namespaces/" +
+          this.value1 +
+          "/pods/" +
+          this.value4 +
+          "/log?container=" +
+          this.value5 +
+          "&timestamps=" +
+          this.autoRefresh +
+          "&tailLines=" +
+          this.value6.replace(/[^\d]/g, ""),
         Version: "2018-05-25",
-        ClusterName: "cls-n1xokuh6"
+        ClusterName: this.$route.query.clusterId
       };
-
+      console.log(params);
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = res.Response.ResponseBody;
@@ -285,14 +293,16 @@ export default {
     },
     getPodData() {
       var v = this.value3;
-      v = v.replace(v[0], v[0].toLowerCase()) + "s";
+      v = v.replace(v[0], v[0].toLowerCase());
+      var v1 = this.value2;
+      v1 = v1.replace(v1, v1.toLowerCase()) + "s";
       var params = {
         Method: "GET",
         Path:
           "/apis/apps/v1beta2/namespaces/" +
           this.value1 +
           "/" +
-          this.value2 +
+          v1 +
           "/" +
           v +
           "/pods",
@@ -300,18 +310,37 @@ export default {
         ClusterName: this.$route.query.clusterId
       };
 
-      // /apis/apps/v1beta2/namespaces/kube-system/deployments/l7-lb-controller/pods
-
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
-          // mes.items.forEach(item => {
-          //   this.option1.push({
-          //     value: item.metadata.name,
-          //     label: item.metadata.name
-          //   });
-          // });
+          if (mes.items != []) {
+            this.option4 = [];
+            mes.items.forEach(item => {
+              this.option4.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
+            });
+            this.value4 = this.option4[0].value;
+          } else {
+            this.value4 = "Pod列表为空";
+            return;
+          }
+          if (mes.items != []) {
+            this.option5 = [];
+            mes.items.forEach(item => {
+              item.spec.containers.map(i => {
+                return this.option5.push({
+                  value: i.name,
+                  label: i.name
+                });
+              });
+            });
+            this.value5 = this.option5[0].value;
+            this.getLog();
+          } else {
+            this.value5 = "Container列表为空";
+          }
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -326,36 +355,40 @@ export default {
       });
     },
     getWorkload() {
-      //     Method: "GET"
-// Path: "/apis/apps/v1beta2/namespaces/default/deployments"
-// Version: "2018-05-25"
-// ClusterName: "cls-h3phnkpy"
-      var params = {
-        Method: "GET",
-        Path: "/apis/apps/v1beta2/namespaces/" + this.value1 + "/deployments",
-        Version: "2018-05-25",
-        ClusterName: this.$route.query.clusterId
-      };
+      var v = this.value2;
+      v = v.replace(v, v.toLowerCase()) + "s";
+      if (v == "jobs") {
+        var params = {
+          Method: "GET",
+          Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
+          Version: "2018-05-25",
+          ClusterName: this.$route.query.clusterId
+        };
+      } else {
+        var params = {
+          Method: "GET",
+          Path: "/apis/apps/v1beta2/namespaces/" + this.value1 + "/" + v,
+          Version: "2018-05-25",
+          ClusterName: this.$route.query.clusterId
+        };
+      }
+
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody).items;
-          console.log(mes);
           this.option3 = mes;
-          if (mes == []) {
+          if (mes === []) {
             this.value3 = "Workload列表为空";
             this.value4 = "Pod列表为空";
             this.value5 = "Container列表为空";
             this.listNumFlag = true;
             return;
           } else {
-            this.getPodData();
-
             this.listNumFlag = false;
             this.value3 = mes[0].metadata.name;
-            // this.value4 = mes[0].metadata.name;
-            // this.value5 = mes[0].metadata.name;
+            
+            this.getPodData();
           }
-
           this.loadShow = false;
         } else {
           let ErrTips = {};

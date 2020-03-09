@@ -3,20 +3,21 @@
     <HeaderCom :title="$t('CSS.overview.0')" />
     <div class="overview-main">
       <div class="main-box">
-        <h3>{{$t('CSS.overview.5')}}</h3>
+        <h3>{{ $t("CSS.overview.5") }}</h3>
         <div class="overview">
           <dl>
             <dt>
-              <span>{{totalBandwidth && totalBandwidth.split(' ')[0]}}</span>
-              {{totalBandwidth && totalBandwidth.split(' ')[1]}}
+              <span>{{ totalBandwidth && totalBandwidth.split(" ")[0] }}</span>
+              {{ totalBandwidth && totalBandwidth.split(" ")[1] }}
             </dt>
             <dd>
-              <p>{{$t('CSS.overview.6')}}</p>
+              <p>{{ $t("CSS.overview.6") }}</p>
             </dd>
           </dl>
           <dl>
             <dt>
-              <span>{{todayFlux}}</span>MB
+              <span>{{ todayFlux }}</span
+              >MB
             </dt>
             <dd>
               <p>今日下行流量</p>
@@ -24,11 +25,12 @@
           </dl>
           <dl>
             <dt>
-              <span>{{online}}</span>人
+              <span>{{ online }}</span
+              >人
             </dt>
             <dd>
               <p>
-                {{$t('CSS.overview.7')}}
+                {{ $t("CSS.overview.7") }}
                 <el-tooltip
                   class="item"
                   effect="dark"
@@ -44,20 +46,33 @@
           </dl>
           <dl>
             <dt>
-              <span>{{fluxPackageCount}}</span>个
+              <span>{{ fluxPackageCount }}</span
+              >個
             </dt>
             <dd>
               <p>流量包</p>
-              <p style="margin-top:10px;">{{$t('CSS.overview.9')}} {{totalFlux}} GB</p>
-              <p>已使用 {{usedFlux}} GB</p>
+              <p style="margin-top:10px;">
+                {{ $t("CSS.overview.9") }} {{ totalFlux }} GB
+              </p>
+              <p>已使用 {{ usedFlux }} GB</p>
             </dd>
           </dl>
         </div>
       </div>
       <div class="box">
-        <el-button size="small" type="primary" v-show="!btnload">{{region}}</el-button>
-        <el-button v-show="btnload" icon="el-icon-loading" type="primary"></el-button>
-        <TimeX @switchData="GetDat" :classsvalue="value" style="margin-left:10px;"></TimeX>
+        <el-button size="small" type="primary" v-show="!btnload">{{
+          region
+        }}</el-button>
+        <el-button
+          v-show="btnload"
+          icon="el-icon-loading"
+          type="primary"
+        ></el-button>
+        <TimeX
+          @switchData="GetDat"
+          :classsvalue="value"
+          style="margin-left:10px;"
+        ></TimeX>
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -65,10 +80,12 @@
           style="margin-left: 30px"
         >
           <el-button type="primary" size="small">
-            {{domainCheckedListCopy.length === domainData.length ? '全部域名' : domainCheckedListCopy.join()}}
-            <i
-              class="el-icon-arrow-down el-icon--right"
-            ></i>
+            {{
+              domainCheckedListCopy.length === domainData.length
+                ? "全部域名"
+                : domainCheckedListCopy.join()
+            }}
+            <i class="el-icon-arrow-down el-icon--right"></i>
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
@@ -85,15 +102,13 @@
                   @change="checked => doaminChange(checked, item)"
                   :value="domainCheckedList.includes(item)"
                 />
-                {{item}}
+                {{ item }}
               </label>
             </el-dropdown-item>
             <el-row class="doamin-btn-container">
-              <el-button
-                size="small"
-                type="primary"
-                @click="comfirmDomain"
-              >{{$t('CSS.overview.12')}}</el-button>
+              <el-button size="small" type="primary" @click="comfirmDomain">{{
+                $t("CSS.overview.12")
+              }}</el-button>
               <el-button size="small" @click="cancelDomain">取消</el-button>
             </el-row>
           </el-dropdown-menu>
@@ -103,7 +118,8 @@
           type="primary"
           @click="getTrend"
           style="margin-left: 30px"
-        >{{$t('CSS.overview.12')}}</el-button>
+          >{{ $t("CSS.overview.12") }}</el-button
+        >
       </div>
       <el-tabs v-model="activeName" style="margin-top:10px;">
         <el-tab-pane :label="$t('CSS.overview.10')" name="帶寬"></el-tab-pane>
@@ -223,10 +239,10 @@ export default {
       const startDatetime = moment(this.StartTime, "YYYY-MM-DD HH:mm:ss");
       const endDatetime = moment(this.EndTime, "YYYY-MM-DD HH:mm:ss");
 
-      // if (endDatetime.diff(startDatetime, "days") >= 31) {
-      //   this.$message.error("只能查詢31天內的趨勢數據");
-      //   return;
-      // }
+      if (endDatetime.diff(startDatetime, "days") >= 31) {
+        this.$message.error("只能查詢31天內的趨勢數據");
+        return;
+      }
 
       this.$nextTick(this.getTrend);
     },
@@ -248,7 +264,9 @@ export default {
           const domains = [];
           if (Array.isArray(DomainList)) {
             DomainList.forEach(domain => {
-              domains.push(domain.Name);
+              if (domain.Type === 1) {
+                domains.push(domain.Name);
+              }
             });
           }
           this.domainCheckedList = domains;
@@ -308,7 +326,6 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
         Granularity: Number(this.granularity) / 60,
-        MainlandOrOversea: "Mainland"
       };
 
       if (this.domainCheckedListCopy.length !== this.domainData.length) {

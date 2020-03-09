@@ -48,6 +48,10 @@
               ></i>
             </span>
           </p>
+          <p v-if="roleCarrierType === 'federated'">
+            <span class="spns">控制台訪問</span>
+            <el-checkbox v-model="consoleLogin" @change="onChangeConsoleLogin">允許當前角色訪問控制台</el-checkbox>
+          </p>
           <p>
             <span class="spns">{{$t('CAM.userList.createTime')}}</span>
             <span>{{roleInfo.AddTime}}</span>
@@ -170,6 +174,15 @@
                   <el-table-column :label="$t('CAM.Role.roleCarrier')">
                     <template slot-scope="scope" show-overflow-tooltip>
                       <span>{{scope.row}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column label="條件" v-if="condition.length">
+                    <template slot-scope="scope" show-overflow-tooltip>
+                      <span v-if="condition[scope.$index]">
+                        {{condition[scope.$index][0].key}} - {{condition[scope.$index][0].condi}} - {{condition[scope.$index][0].val}}
+                        <el-button type="text" style="font-size: 12px;" v-if="condition[scope.$index].length > 1">以及({{condition[scope.$index].length - 1}})項</el-button>
+                      </span>
+                      <span v-else>-</span>
                     </template>
                   </el-table-column>
                   <el-table-column label="操作" width="180">
@@ -331,6 +344,7 @@ import {
   UPDATE_POLICY,
   LOGOUT_ROLE_SESSIONS,
   CREATE_POLICY,
+  UPDATE_ROLE_CONSOLE_LOGIN,
 } from "@/constants";
 export default {
   components: {
@@ -403,7 +417,10 @@ export default {
       checkedRoleServeCarrier: [],
       Relievesure_dialogVisible: false,
       rolePolicyType: "",
-      multipleSelection: []
+      multipleSelection: [],
+      condition: [],
+      consoleLogin: false,
+      roleCarrierType: '',
     };
   },
   mounted() {
@@ -411,8 +428,28 @@ export default {
     this.init();
   },
   methods: {
+    onChangeConsoleLogin(status) {
+      this.axios.post(UPDATE_ROLE_CONSOLE_LOGIN, {
+        roleId: this.$route.query.RoleId,
+        consoleLogin: Number(status)
+      }).then(res => {
+        if (res.code === 0) {
+          return void this.$message({
+            message: '修改狀態成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
+        }
+        this.$message({
+          message: '修改狀態失敗',
+          type: "error",
+          showClose: true,
+          duration: 0
+        })
+      })
+    },
     _multipleSelection(val) {
-      console.log(val)
       this.multipleSelection = val;
     },
     //返回上一级
@@ -438,38 +475,58 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             let resInfo = res.Response.RoleInfo;
-            console.log(resInfo)
             let PolicyDocument = JSON.parse(resInfo.PolicyDocument);
+            this.consoleLogin = !!resInfo.ConsoleLogin
             this.TotalCounts =
-              (PolicyDocument.statement[0].principal.service || PolicyDocument.statement[0].principal.qcs).length
-              console.log((PolicyDocument.statement[0].principal.service || PolicyDocument.statement[0].principal.qcs).length)
-            if (typeof PolicyDocument.statement[0].principal.qcs === "object") {
-              _this.roleCarrier = PolicyDocument.statement[0].principal.qcs;
-              resInfo.PolicyDocument =
-                PolicyDocument.statement[0].principal.qcs[0];
-            }
-            if (typeof PolicyDocument.statement[0].principal.qcs === "string") {
-              _this.roleCarrier.push(PolicyDocument.statement[0].principal.qcs);
-              resInfo.PolicyDocument =
-                PolicyDocument.statement[0].principal.qcs;
-            }
-            if (
-              typeof PolicyDocument.statement[0].principal.service === "object"
-            ) {
-              _this.roleCarrier = PolicyDocument.statement[0].principal.service;
-              resInfo.PolicyDocument =
-                PolicyDocument.statement[0].principal.service[0];
-            }
-            if (
-              typeof PolicyDocument.statement[0].principal.service === "string"
-            ) {
-              _this.roleCarrier.push(
+              (
                 PolicyDocument.statement[0].principal.service
-              );
-              resInfo.PolicyDocument =
-                PolicyDocument.statement[0].principal.service;
+                || PolicyDocument.statement[0].principal.qcs
+                || PolicyDocument.statement[0].principal.federated
+              ).length
+
+            resInfo.PolicyDocument = `qcs::cam::uin/${this.$cookie.get('uin')}:roleName/${resInfo.RoleName}`
+            if (PolicyDocument.statement[0].principal.service) {
+              this.roleCarrierType = 'service'
+              // if (typeof PolicyDocument.statement[0].principal.service === 'string') {
+              //   _this.roleCarrier = PolicyDocument.statement[0].principal.service
+              // } else {
+              //   _this.roleCarrier = PolicyDocument.statement[0].principal.service
+              // }
+              _this.roleCarrier.push(...PolicyDocument.statement[0].principal.service)
             }
-            console.log(resInfo)
+            if (PolicyDocument.statement[0].principal.qcs) {
+              this.roleCarrierType = 'qcs'
+              // if (typeof PolicyDocument.statement[0].principal.qcs === 'string') {
+              //   _this.roleCarrier = PolicyDocument.statement[0].principal.qcs
+              // } else {
+              //   _this.roleCarrier = PolicyDocument.statement[0].principal.qcs
+              // }
+              _this.roleCarrier.push(...PolicyDocument.statement[0].principal.qcs)
+            }
+            if (PolicyDocument.statement[0].principal.federated) {
+              this.roleCarrierType = 'federated'
+              _this.roleCarrier = PolicyDocument.statement.map(s => typeof s.principal.federated === 'string' ? s.principal.federated : s.principal.federated[0])
+              PolicyDocument.statement.forEach(s => {
+                const condition = []
+                if (s.condition) {
+                  const condis = Object.keys(s.condition)
+                  if (condis.length) {
+                    condis.forEach(condi => {
+                      Object.keys(s.condition[condi]).forEach(key => {
+                        s.condition[condi][key].forEach(val => {
+                          condition.push({
+                            key,
+                            condi,
+                            val
+                          })
+                        })
+                      })
+                    })
+                  }
+                }
+                this.condition.push(condition)
+              })
+            }
             this.roleInfo = resInfo;
             this.loading = false;
           } else {
@@ -485,8 +542,9 @@ export default {
               showClose: true,
               duration: 0
             });
-          }
           this.infoLoad = false;
+          }
+          
         }) 
         .catch(error => {});
     },

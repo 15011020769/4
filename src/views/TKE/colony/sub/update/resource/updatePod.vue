@@ -281,7 +281,7 @@
               }  
             param = {
               Method: "PATCH",
-              Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/deployments/"+this.name,
+              Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
               Version: "2018-05-25",
               RequestBody: {spec: {replicas: this.upn.num}},
               ContentType: "application/strategic-merge-patch+json",
@@ -313,6 +313,18 @@
 
            if(this.adjustType==''){//新建自动调节
             let hpaName='hpa-'+this.name+'-'+Date.now().toString(36);
+            let kind=null;
+            if(this.workload=='deployments'){
+              kind='Deployment';
+            }else if(this.workload=='statefulsets'){
+              kind='StatefulSet'
+            }else if(this.workload=='cronjobs'){
+              kind='CronJob'
+            }else if(this.workload=='daemonsets'){
+              kind='DaemonSet'
+            }else if(this.workload=='jobs'){
+              kind='Job'
+            }
             param={
               ClusterName:this.clusterId,
               Method: "POST",
@@ -326,7 +338,7 @@
                     "minReplicas":this.vLeft,
                     "maxReplicas":this.vRight,
                     "metrics":this.useData(),
-                    "scaleTargetRef":{"apiVersion":"apps/v1beta2","kind":"Deployment","name":this.name}}},
+                    "scaleTargetRef":{"apiVersion":"apps/v1beta2","kind":kind,"name":this.name}}},
               Version: "2018-05-25",
             }
            }else{//修改自动调节

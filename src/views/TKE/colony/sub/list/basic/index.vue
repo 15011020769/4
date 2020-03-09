@@ -242,7 +242,7 @@ import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
 import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, 
   UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES, 
-  TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN } from '@/constants'
+  TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN, TKE_COLONY_DES } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
@@ -505,19 +505,31 @@ export default {
     async updateName () {
       this.loadShow = true;
       let param = {
-        clusterId: this.clusterId,
-        clusterName: this.ruleForm.name
+        Version: "2018-05-25",
+        ClusterId: this.clusterId,
+        ClusterName: this.ruleForm.name
       }
-      await this.axios.post(UPDATE_CLUSTER_NAME, param).then(res => {
-        if(res.code === 0) {
+      
+      await this.axios.post(TKE_COLONY_DES, param).then(res => {
+        if(res.Response.Error === undefined) {
           this.getColonyInfo();
           this.showUpdateName = false;
           this.loadShow = false;
+          this.$message({
+            message: "修改成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: res.message,
-            type: 'error'
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });
@@ -538,19 +550,30 @@ export default {
     async updateDescribe () {
       this.loadShow = true;
       let param = {
-        clusterId: this.clusterId,
-        clusterName: this.ruleForm.textarea
+        ClusterId: this.clusterId,
+        ClusterDesc: this.ruleForm.textarea,
+        Version: "2018-05-25"
       }
-      await this.axios.post(UPDATE_CLUSTER_NAME, param).then(res => {
-        if(res.code === 0) {
+      await this.axios.post(TKE_COLONY_DES, param).then(res => {
+        if(res.Response.Error === undefined) {
           this.getColonyInfo();
           this.showUpdateDescribe = false;
           this.loadShow = false;
+          this.$message({
+            message: "修改成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: res.message,
-            type: 'error'
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });
@@ -666,6 +689,12 @@ export default {
           this.getColonyInfo();
           this.showUpdateOs = false;
           this.loadShow = false;
+          this.$message({
+            message: '修改成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -686,20 +715,31 @@ export default {
     async updateProject() {
       this.loadShow = true;
       let param = {
-        clusterId: this.clusterId,
-        projectId: this.ruleForm.projectId
+        ClusterId: this.clusterId,
+        ProjectId: this.ruleForm.projectId,
+        Version: "2018-05-25"
       }
-      await this.axios.post(UPDATE_PROJECT, param).then(res => {
-        if(res.code === 0) {
+      await this.axios.post(TKE_COLONY_DES, param).then(res => {
+        if(res.Response.Error === undefined) {
           this.getColonyInfo();
           this.getAllPorject();
           this.showUpdateProject = false;
           this.loadShow = false;
+          this.$message({
+            message: "修改成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: res.message,
-            type: 'error'
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
           });
         }
       });

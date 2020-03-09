@@ -4,7 +4,7 @@
       <div class="left">
           <h3>
           選擇策略
-          <span>（共{{strategiesTotalNum}}条）</span>
+          <span>（共{{strategiesTotalNum}}條）</span>
           <el-input
             placeholder="請輸入策略名稱/描述"
             v-model="policyInp"
@@ -98,6 +98,9 @@ import { ErrorTips } from "@/components/ErrorTips";
 import InfiniteLoading from 'vue-infinite-loading'
 export default {
   name: "transfer",
+  props: {
+    groupId: String,
+  },
   data() {
     return {
       strategiesInfiniteId: 1,
@@ -117,9 +120,11 @@ export default {
   components: {
     InfiniteLoading,
   },
+  mounted() {
+    this.loadStrategies()
+  },
   methods: {
     togglePolicy(a, b) {
-      console.log(a)
       this.selectedStrategies = a
       if (this.selectedPolicyId.includes(b.PolicyId)) {
         this.selectedPolicyId = this.selectedPolicyId.filter(selected => selected !== b.PolicyId)
@@ -142,13 +147,17 @@ export default {
       this.$refs.strategiesTable.toggleRowSelection(this.strategies.find(s => s.PolicyId === row.PolicyId), false)
     },
     loadStrategies($state) {
-      this.axios.post(POLICY_LIST, {
+      const param = {
         Version: '2019-01-16',
         Page: this.strategiesPage,
         Rp: this.strategiesRp,
         Keyword: this.policyInp,
         Scope: 'QCS', // 自取预设策略
-      }).then(res => {
+      }
+      if (this.groupId) {
+        param.FlagGroupId = this.groupId
+      }
+      this.axios.post(POLICY_LIST, param).then(res => {
         this.strategiesPage += 1
         this.strategiesTotalNum = res.Response.TotalNum
         this.strategies = this.strategies.concat(res.Response.List)

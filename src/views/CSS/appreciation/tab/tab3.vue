@@ -5,7 +5,7 @@
         <h3 style="font-size: 14px;font-weight: 700;">錄製任務個數{{StartTIme}} 到 {{EndTIme}}（單位：個）</h3>
       </el-row>
       <el-row class="iconBtn">
-        <i class="el-icon-download"></i>
+        <i class="el-icon-download" @click="exportEchart"></i>
       </el-row>
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" />
@@ -17,6 +17,11 @@
       >
         <el-table-column prop="time" label="月份"></el-table-column>
         <el-table-column prop="num" label="錄製任務數量（個）"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="exportTable(scope)">導出詳情</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
@@ -33,9 +38,10 @@
 </template>
 
 <script>
+import moment from "moment";
+import XLSX from 'xlsx'
 import Echart from "../../components/line";;
 import { CSS_CODE, CSS_RECORDSTREAM } from "@/constants";
-import moment from "moment";
 export default {
   name: "tab2",
   data() {
@@ -47,8 +53,10 @@ export default {
       loading: true, //加载状态
       xAxis: [],
       series: [],
-      legendText: '录制任务个数',
+      legendText: '錄製任務個數',
       start: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+      line_json: [],
+      table_json: []
     };
   },
   components: {
@@ -73,6 +81,31 @@ export default {
     this.getCharts()
   },
   methods: {
+    exportEchart() {
+      const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
+      const wb = XLSX.utils.book_new();/*新建book*/
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "統計數據.csv");/*写文件(book,xlsx文件名称)*/
+    },
+    exportTable(scope) {
+      let temp = []
+      let sheetArr = []
+      temp = this.table_json.filter(item => {
+        return item.Time.substring(0,7) == scope.row.time
+      })
+      temp.forEach(v => {
+        if(v.Num !== 0) {
+          sheetArr.push({"時間": v.Time, "數目": v.Num})
+        }
+      })
+      if (!sheetArr.length) {
+        sheetArr=[{"時間": '', "數目": ''}]
+      }
+      const ws = XLSX.utils.json_to_sheet(sheetArr)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, "錄製任務個數詳情")
+      XLSX.writeFile(wb, "錄製任務個數詳情.csv")
+    },
     //分页
     handleCurrentChange(val) {
       this.current = val;
@@ -86,7 +119,7 @@ export default {
       for (let i = 0 ; i < 6; i++) {
         const params = {
           Version: "2018-08-01",
-          // MainlandOrOversea: "Oversea",
+          MainlandOrOversea: "Oversea",
           LiveType: "NormalLive",
         };
         params.StartTime =  moment().subtract(i, "months").startOf("months").format('YYYY-MM-DD HH:mm:ss')
@@ -97,6 +130,7 @@ export default {
           } else {
             arrTotal.push(res.Response.DataInfoList)
             arrDetail = arrTotal.reduce(function (a, b) { return a.concat(b)})
+            this.table_json = arrDetail
             let obj = arrDetail
             var mon = [];
             for (var i = 0; i < obj.length; i++) {
@@ -143,9 +177,10 @@ export default {
         Version: "2018-08-01",
         StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
-        // MainlandOrOversea: "Oversea",
+        MainlandOrOversea: "Oversea",
         LiveType: "NormalLive",
       };
+      let numArr = []
       this.axios.post(CSS_RECORDSTREAM, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
@@ -153,9 +188,11 @@ export default {
           res.Response.DataInfoList.map(v => {
             axixArr.push(v.Time)
             seriesArr.push(v.Num)
+            numArr.push({Time: v.Time, Name: "录制", "RecordPeakTime": v.Num})
           })
           this.xAxis = axixArr
           this.series = seriesArr
+          this.line_json = numArr
         }
         this.loading = false;
       });

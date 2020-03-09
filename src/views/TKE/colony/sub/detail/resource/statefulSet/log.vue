@@ -79,6 +79,7 @@ export default {
       loadShow: false,//是否显示加载
       clusterId:'',//集群id
       rowData: {},//传过来的数据
+      workload:'',//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
       logData: null,//日志数据
       cmOptions: {
@@ -107,8 +108,11 @@ export default {
     this.clusterId=this.$route.query.clusterId
     this.potList = this.$route.query.potList;
     this.spaceName = this.$route.query.spaceName;
+    this.workload=this.$route.query.workload;
     this.rowData = this.$route.query.rowData;
-    this.currPod = this.$route.query.potList[0].metadata.name;
+    if(this.$route.query.potList.length > 0) {
+      this.currPod = this.$route.query.potList[0].metadata.name;
+    }
     this.statefulSetList = this.$route.query.rowData.spec.template.spec.containers;
     this.currStateful = this.$route.query.rowData.spec.template.spec.containers[0].name;
     this.getstatefulLog();

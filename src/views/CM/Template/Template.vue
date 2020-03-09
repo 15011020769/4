@@ -53,32 +53,32 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="策略类型"></el-table-column>
-        <el-table-column prop="YS" label="备注">
+        <el-table-column prop="type" label="策略类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.Name}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop label="备注">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="scope.row.remark||'-'">
               <span class="textEps" slot="reference">{{scope.row.remark || '-'}}</span>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="绑定告警策略数">
+        <el-table-column prop label="绑定告警策略数">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" content="点击查看详情">
               <span class="tke-text-link" slot="reference">{{`${scope.row.policyGroups.length}个`}}</span>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="qudao" sortable label="最后修改">
+        <el-table-column prop sortable label="最后修改">
           <template slot-scope="scope">
-            <span class="textEps">{{scope.row.lastEditUin}}</span>
-            <span>{{upTime(scope.row.updateTime)}}</span>
+            <p>{{ scope.row.lastEditUin }}</p>
+            <p>{{ scope.row.updateTime | formatDate }}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <!-- <template :slot-scope="$scope.row">
-            <el-button type="text" class="cloneBtn">复制</el-button>
-            <el-button type="text" class="deleteBtn" @click="delDate(scope.row.grounpId)">删除</el-button>
-          </template> -->
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId)">复制</el-button>
             <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.groupId)">删除</el-button>
@@ -125,7 +125,7 @@ import Dialog from './components/dialog'
 import Loading from '@/components/public/Loading'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips'
-import { COPY_TEMPLATE, DELETE_TEMPLATE } from '@/constants/CM-yhs.js'
+import { COPY_TEMPLATE, DELETE_TEMPLATE, GET_POLICY_GROUP_TYPE, GET_TEMPLATE_LIST } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -306,7 +306,7 @@ export default {
   },
   created () {
     // this.getReportUserLastVisit()
-    this.getList()
+    this.getListData()
     // console.log(this.upTime(1583490304))
   },
   methods: {
@@ -324,48 +324,61 @@ export default {
       })
     },
     // 获取列表数据
-    async getList () {
+    async getListData () {
       this.loadShow = true
       let params = {
         groupName: '',
         lang: 'zh',
-        limit: 20,
+        limit: this.pageSize,
         offset: 0
         // Version: '2018-07-24'
       }
       if (this.triggerInput !== '') params.groupName = this.triggerInput
-      await this.axios.post('monitor/GetConditionsTemplateList', params).then(res => {
+      await this.axios.post(GET_TEMPLATE_LIST, params).then(res => {
         // console.log(res.data.templateGroupList)
         this.TotalCount = res.data.total
         let msg = res.data.templateGroupList
-        this.tableData = msg
-        this.loadShow = false
-        var abc = {
-          // let ary = []
-          // msg.forEach(ele => {
-          //   let newTableData = {}
-          //   let{ grounpId, groupName } = ele
-          //   // let{ metricShowName, calcValue, unit, continueTime, calcType } = ele.conditions[0]
-          //   newTableData.grounpId = grounpId
-          //   newTableData.groupName = groupName
-          //   newTableData.chufa = ele
-          //   // newTableData.chufa = `${metricShowName}>${calcValue}${unit},持续${continueTime}秒,按${calcType}天重复告警`
-
-          //   ary.unshift(newTableData)
-          // })
-          // this.tableData = ary
+        let params = {
+          Version: '2018-07-24',
+          // Region:"",
+          Module: 'monitor'
         }
+        this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
+          // console.log(res.Response.Conditions)
+          if (res.Response.Error === undefined) {
+            let Conditions = res.Response.Conditions
+            for (let i in msg) {
+              for (let j in Conditions) {
+                if (msg[i].viewName === Conditions[j].PolicyViewName) {
+                  msg[i]['Name'] = Conditions[j].Name
+                }
+              }
+            }
+            this.tableData = msg
+            this.loadShow = false
+          } else {
+            this.loadShow = false
+            let ErrTips = {}
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
+          }
+        })
       })
     },
     // 格式化时间
     upTime (value) {
       return moment(value).format('YYYY/MM/DD HH :mm:ss')
     },
-    // 点击所搜按钮的事件
+    // 搜索按钮
     clickSerch (val) {
       // console.log(val)
       this.triggerInput = val
-      this.getList()
+      this.getListData()
     },
     // 删除按钮
     delBtn (id) {
@@ -379,17 +392,18 @@ export default {
       this.groupId = id
     },
     // 复制数据
-    async coptData () {
+    coptData () {
       this.loadShow = true
       let params = {
         groupId: this.groupId,
         lang: 'zh'
       }
-      await this.axios.post(COPY_TEMPLATE, params).then(res => {
+      this.axios.post(COPY_TEMPLATE, params).then(res => {
         if (res.codeDesc == 'Success') {
           this.showCopyDialog = false
-          this.getList()
+          this.getListData()
           // console.log(res)
+          this.$message.success('复制成功')
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -406,7 +420,7 @@ export default {
       }
       await this.axios.post(DELETE_TEMPLATE, params).then(res => {
         if (res.codeDesc == 'Success') {
-          this.getList()
+          this.getListData()
           this.showDelDialog = false
           this.$message.success('删除成功')
         } else {
@@ -477,6 +491,23 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+    }
+  },
+  filters: {
+    formatDate (value) {
+      let date = new Date(value * 1000)
+      let y = date.getFullYear()
+      let MM = date.getMonth() + 1
+      MM = MM < 10 ? '0' + MM : MM
+      let d = date.getDate()
+      d = d < 10 ? '0' + d : d
+      let h = date.getHours()
+      h = h < 10 ? '0' + h : h
+      let m = date.getMinutes()
+      m = m < 10 ? '0' + m : m
+      let s = date.getSeconds()
+      s = s < 10 ? '0' + s : s
+      return y + '/' + MM + '/' + d + ' ' + h + ':' + m + ':' + s
     }
   }
 }

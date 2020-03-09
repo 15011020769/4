@@ -223,15 +223,22 @@ let portMapping = {
 }
 
 let change = {
-  namespaceChange: function () {
+  namespaceChange: async function () {
     this.getPersistentvolumeclaims()
-    this.getSecrets()
-    this.getConfigmaps()
+    await this.getSecrets()
+    await this.getConfigmaps()
+    console.log(this.wl.instanceContent)
+    this.wl.instanceContent.forEach(item1 => {
+      item1.citeCs.forEach(item2 => {
+        this.citeCsValue1Change(item2.value1, item2)
+        item2.value3 = ''
+      })
+    })
   },
   citeCsValue1Change: function (event, val) {
     val.value2 = ''
     if (event === 'ConfigMap') {
-      this.configMap.items.map(item => {
+      val.option2 = this.configMap.items.map(item => {
         return { name: item.metadata.name, option: Object.keys(item.data) }
       })
     }

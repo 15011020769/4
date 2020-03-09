@@ -185,13 +185,14 @@ export default {
     delSure() {
       this.dialogVisible = false;
       var params = {
-        ClusterName: "cls-a7rua9ae",
+        ClusterName: this.clusterId,
         Method: "DELETE",
         Path: "/api/v1/namespaces/" + this.np + "/configmaps/" + this.name,
         RequestBody: { propagationPolicy: "Background" },
         Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        console.log(res)
         if (res.Response.Error == undefined) {
           this.tableListData();
         }

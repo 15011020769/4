@@ -2,43 +2,44 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p style="margin-bottom:20px">{{$t('CAM.userList.choosepolicy')}}（共{{totalNum}}{{$t('CAM.strip')}}）</p>
-        <!-- <el-input size="mini" custom-class="dialogStyle" v-model="search" style="width:100%"
+        <p style="margin-bottom:20px">{{$t('CAM.userList.choosepolicy')}}（共{{strategiesTotalNum}}{{$t('CAM.strip')}}）</p>
+        <!-- <el-input size="mini" custom-class="dialogStyle" v-model="policyInp" style="width:100%"
           @keyup.enter.native="toQuery" />
         <i class="el-icon-search ifier" @click="toQuery"></i>-->
         <el-input
           clearable
           size="mini"
           custom-class="dialogStyle"
-          v-model="search"
+          v-model="policyInp"
           style="width:100%"
           :placeholder="$t('CAM.userList.policyPlaceholder')"
-          @keyup.enter.native="toQuery"
+          @keyup.enter.native="_policySearch"
         >
-          <i slot="suffix" class="el-input__icon el-icon-search" style="cursor: pointer;" @click="toQuery"></i>
+          <i slot="suffix" class="el-input__icon el-icon-search" style="cursor: pointer;" @click="_policySearch"></i>
         </el-input>
         <el-table
-          class="table-left"
-          ref="multipleOption"
-          :data="policiesData"
+          :data="strategies"
           size="small"
-          :height="tableHeight"
-          tooltip-effect="dark"
+          max-height="520"
           style="width: 100%"
           @select="togglePolicy"
           @select-all="toggleAllPolicy"
           :empty-text="$t('CAM.strategy.zwsj')"
-          v-loading="loading"
+          class="strategies-table"
+          ref="strategiesTable"
         >
           <el-table-column type="selection" prop="PolicyId" width="29"></el-table-column>
           <el-table-column
             prop="PolicyName"
             :label="$t('CAM.userList.strategyNames')"
-            show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <p>{{scope.row.PolicyName}}</p>
-              <p>{{scope.row.Description}}</p>
+              <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
+                  <div>
+                    <p>{{scope.row.PolicyName}}</p>
+                    <p class="desc">{{scope.row.Description}}</p>
+                  </div>
+                </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="Type" :label="$t('CAM.userList.clType')" width="100">
@@ -47,6 +48,14 @@
               <p v-show="scope.row.Type == 2">{{$t('CAM.userList.ysStrategy')}}</p>
             </template>
           </el-table-column>
+          <infinite-loading
+            slot="append"
+            :identifier="strategiesInfiniteId"
+            @infinite="loadStrategies"
+            force-use-infinite-wrapper=".strategies-table .el-table__body-wrapper">
+            <div slot="no-more"></div>
+            <div slot="no-results"></div>
+          </infinite-loading>
         </el-table>
       </div>
       <div class="direction">
@@ -55,25 +64,24 @@
         </div>
       </div>
       <div class="container-right">
-        <span style="margin-bottom:20px">{{$t('CAM.userList.choose')}}</span>
+        <span style="margin-bottom:20px">{{$t('CAM.userList.choose')}} {{selectedStrategies.length}} {{$t('CAM.strip')}}</span>
         <el-table
-          class="table-left"
-          ref="multipleSelected"
-          :data="policiesSelectedData"
-          tooltip-effect="dark"
+          :data="selectedStrategies"
           size="small"
-          :height="tableHeight"
           style="width: 100%"
           :empty-text="$t('CAM.strategy.zwsj')"
         >
           <el-table-column
             prop="PolicyName"
             :label="$t('CAM.userList.strategyNames')"
-            show-overflow-tooltip
           >
             <template slot-scope="scope">
-              <p>{{scope.row.PolicyName}}</p>
-              <p>{{scope.row.Description}}</p>
+              <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
+                <div>
+                  <p>{{scope.row.PolicyName}}</p>
+                  <p class="desc">{{scope.row.Description}}</p>
+                </div>
+              </el-tooltip>
             </template>
           </el-table-column>
           <el-table-column prop="Type" :label="$t('CAM.userList.clType')" width="100">
@@ -86,7 +94,7 @@
             &lt;!&ndash;
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, policiesSelectedData)"
+                @click.native.prevent="deleteRow(scope.$index, scope.row)"
                 type="text"
                 size="small"
               >x</el-button>
@@ -101,6 +109,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import { POLICY_LIST } from "@/constants";
+import InfiniteLoading from 'vue-infinite-loading'
 export default {
   props: {
     // policiesSelectedData: () => []
@@ -108,25 +117,26 @@ export default {
   },
   data() {
     return {
-      tableHeight: 300,
-      policiesData: [],
-      policiesDataCopy: [],
-      policiesSelectedData: [],
-      totalNum: "",
-      search: "",
-      rp: 100,
-      page: 1,
+      strategiesInfiniteId: 1,
+      selectedStrategies: [],
+      selectedPolicyId: [],
+      strategiesPage: 1,
+      policyInp: "",
+      strategiesTotalNum: 0,
+      strategies: [],
       loading: true,
       selectedPolicyId: [],
     };
   },
+  components: {
+    InfiniteLoading
+  },
   mounted() {
-    this.init();
-    this.tableHeight =
-      window.innerHeight - this.$refs.multipleOption.$el.offsetTop - 50;
+    this.loadStrategies()
   },
   methods: {
     togglePolicy(a, b) {
+      this.selectedStrategies = a
       if (this.selectedPolicyId.includes(b.PolicyId)) {
         this.selectedPolicyId = this.selectedPolicyId.filter(selected => selected !== b.PolicyId)
       } else {
@@ -134,77 +144,54 @@ export default {
       }
     },
     toggleAllPolicy(all) {
-      if (this.selectedPolicyId.length === this.policiesData.length) {
+      this.selectedStrategies = all
+      if (this.selectedPolicyId.length === this.strategies.length) {
         this.selectedPolicyId = []
       } else {
         this.selectedPolicyId = all.map(g => g.PolicyId)
       }
     },
-    init() {
-      if (this.totalNum && this.page * this.rp > this.totalNum) return
-      let params = {
-        Version: "2019-01-16",
-        Rp: this.rp,
-        Page: this.page,
-      };
-      this.axios
-        .post(POLICY_LIST, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.totalNum = res.Response.TotalNum;
-            this.policiesDataCopy = this.policiesDataCopy.concat(res.Response.List);
-            this.policiesData = this.policiesData.concat(res.Response.List);
-            this.page += 1
-            if (this.rp * this.page < res.Response.TotalNum) {
-              this.init()
-            } else {
-              this.loading = false
-            }
-          } else {
-            let ErrTips = {
-              "InternalError.SystemError": "內部錯誤",
-              "InvalidParameter.GroupIdError": "GroupId欄位不合法",
-              "InvalidParameter.KeywordError": "Keyword欄位不合法",
-              "InvalidParameter.ParamError": "非法入參",
-              "InvalidParameter.ScopeError": "Scope欄位不合法",
-              "InvalidParameter.ServiceTypeError": "ServiceType欄位不合法",
-              "InvalidParameter.UinError": "Uin欄位不合法"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    deleteRow(index, rows) {
-      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
-      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
-    },
-    toQuery() {
-      if (this.search) {
-        this.policiesData = this.policiesDataCopy.filter(item => item.PolicyName.indexOf(this.search) > -1 || item.Description.indexOf(this.search) > -1)
-      } else {
-        this.policiesData = [...this.policiesDataCopy]
-      }
-      if (this.selectedPolicyId.length) {
+    loadStrategies($state) {
+      this.axios.post(POLICY_LIST, {
+        Version: '2019-01-16',
+        Page: this.strategiesPage,
+        Rp: this.strategiesRp,
+        Keyword: this.policyInp,
+        Scope: 'QCS', // 自取预设策略
+      }).then(res => {
+        this.strategiesPage += 1
+        this.strategiesTotalNum = res.Response.TotalNum
+        this.strategies = this.strategies.concat(res.Response.List)
+        if (this.selectedPolicyId.length) {
           this.$nextTick(() => {
-            this.policiesData.forEach(strategy => {
+            this.strategies.forEach(strategy => {
               if (this.selectedPolicyId.includes(strategy.PolicyId)) {
-                this.$refs.multipleOption.toggleRowSelection(strategy, true)
+                this.$refs.strategiesTable.toggleRowSelection(strategy, true)
               }
             })
           })
         }
+        if (this.strategies.length === res.Response.TotalNum) {
+          $state && $state.complete()
+        } else {
+          $state && $state.loaded()
+        }
+      })
+    },
+    deleteRow(i, row) {
+      this.selectedStrategies.splice(i, 1)
+      this.selectedPolicyId.splice(i, 1)
+      
+      this.$refs.strategiesTable.toggleRowSelection(this.strategies.find(s => s.PolicyId === row.PolicyId), false)
+    },
+    //策略搜索
+    _policySearch() {
+      this.strategies = []
+      this.strategiesPage = 1
+      this.strategiesInfiniteId += 1
     },
     getDaata() {
-      return this.policiesSelectedData;
+      return this.selectedStrategies;
     }
   }
 };

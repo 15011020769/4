@@ -300,15 +300,15 @@
                   </div>
                   <div v-show="v.disAdvancedSetting">
                     <el-form-item label="工作目录">
-                      <el-input class="w192" v-model="wl.name"></el-input>
+                      <el-input class="w192" v-model="v.workDirectory"></el-input>
                       <p> 指定容器运行后的工作目录，<a href="#">查看详情</a></p>
                     </el-form-item>
                     <el-form-item label="运行命令">
-                      <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
+                      <el-input type="textarea" class="w400" v-model="v.runCommand" rows="3" resize="none"></el-input>
                       <p> 控制容器运行的输入命令，<a href="#">查看详情</a></p>
                     </el-form-item>
                     <el-form-item label="运行参数">
-                      <el-input type="textarea" class="w400" v-model="wl.name" rows="3" resize="none"></el-input>
+                      <el-input type="textarea" class="w400" v-model="v.runParam" rows="3" resize="none"></el-input>
                       <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a></p>
                     </el-form-item>
                     <el-form-item label="容器健康检查">
@@ -372,7 +372,7 @@
                             <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
-                            <el-input class="w100" v-model="v.surviveExamineContent.healthyThreshold"></el-input>
+                            <el-input class="w100" v-model="v.surviveExamineContent.healthyThreshold" :disabled="true"></el-input>
                             <span>范围：1次</span>
                           </el-form-item>
                           <el-form-item label="不健康阙值">
@@ -442,7 +442,7 @@
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.healthyThreshold"></el-input>
-                            <span>范围：1次</span>
+                            <span>范围：1~10次</span>
                           </el-form-item>
                           <el-form-item label="不健康阙值">
                             <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
@@ -632,8 +632,8 @@
                 <p style="line-height: 28px">台北一区</p>
                 <el-form-item label-width="0px">
                   <el-checkbox-group v-model="wl.specifyNodeDispatchValue">
-                    <div v-for="item in specifyNodeDispatchOption" :key="item">
-                      <el-checkbox :label="item"></el-checkbox>
+                    <div v-for="item in specifyNodeDispatchOption" :key="item.id">
+                      <el-checkbox :label="item.id" :disabled="item.disabled">{{item.id}}({{item.name}})</el-checkbox>
                     </div>
                   </el-checkbox-group>
                 </el-form-item>
@@ -1083,7 +1083,7 @@ export default {
       showMountPoint: false, // 是否显示添加挂载点
       addLabelFlag: false, // 是否可以新建标签
       failedRestartPolicyOption: ['OnFailure', 'Never'],
-      specifyNodeDispatchOption: ['ins-4bhved3k(as-变化的2)', 'ins-5ic5rvb2(as-qewq)'], // 指点节点调度
+      specifyNodeDispatchOption: [], // 指定节点调度
       subnetOneOption: [], // LB所在子网 option1
       subnetTwoOption: [], // LB所在子网 option2
       subnetOrder: {}, // LB所在子网 显示子网IP,剩余可用
@@ -1107,7 +1107,7 @@ export default {
         instanceContent: [], // 实例内容器
         dataJuan: [],
         caseNum: 'handAdjust',
-        replicas: 0, // 实例数量-》手动调节-》实例数量
+        replicas: 1, // 实例数量-》手动调节-》实例数量
         touchTactics: [], // 实例数量-》自动调节-》触发策略
         caseScope1: '', // 实例数量-》自动调节-》实例范围
         caseScope2: '',
@@ -1126,7 +1126,7 @@ export default {
         mustCondition: [], // 强制满足条件
         needCondition: [], // 尽量满足条件
         nodeTactics: 1, // 节点调度 单选
-        specifyNodeDispatchValue: [], // 指点节点调度 选中项
+        specifyNodeDispatchValue: [], // 指定节点调度 选中项
         serviceEnbel: true, // 是否启用service
         serviceAccess: '1', // 服务访问方式 单选
         handlessChecked: false, // 仅在集群内访问 多选按钮
@@ -1179,73 +1179,95 @@ export default {
       touchOptions2: [
         [{
           value: 1,
-          label: 'CPU使用量'
+          label: 'CPU使用量',
+          type: 'k8s_pod_cpu_core_used'
         }, {
           value: 2,
-          label: 'CPU利用率(占节点)'
+          label: 'CPU利用率(占节点)',
+          type: 'k8s_pod_rate_cpu_core_used_node'
         }, {
           value: 3,
-          label: 'CPU利用率(占Request)'
+          label: 'CPU利用率(占Request)',
+          type: 'k8s_pod_rate_cpu_core_used_request'
         }, {
           value: 4,
-          label: 'CPU利用率(占Limit)'
+          label: 'CPU利用率(占Limit)',
+          type: 'k8s_pod_rate_cpu_core_used_limit'
         }],
         [{
           value: 5,
-          label: '内存使用量'
+          label: '内存使用量',
+          type: 'k8s_pod_mem_usage_bytes'
         }, {
           value: 6,
-          label: '内存使用量(不含Cache)'
+          label: '内存使用量(不含Cache)',
+          type: 'k8s_pod_mem_no_cache_bytes'
         }, {
           value: 7,
-          label: '内存使用量(占节点)'
+          label: '内存使用量(占节点)',
+          type: 'k8s_pod_rate_mem_usage_node'
         }, {
           value: 8,
-          label: '内存使用量(占节点、不含Cache)'
+          label: '内存使用量(占节点、不含Cache)',
+          type: 'k8s_pod_rate_mem_no_cache_node'
         }, {
           value: 9,
-          label: '内存使用量(占Request)'
+          label: '内存使用量(占Request)',
+          type: 'k8s_pod_rate_mem_usage_request'
         }, {
           value: 10,
-          label: '内存使用量(占Request、不含Cache)'
+          label: '内存使用量(占Request、不含Cache)',
+          type: 'k8s_pod_rate_mem_no_cache_request'
         }, {
           value: 11,
-          label: '内存使用量(占Limit)'
+          label: '内存使用量(占Limit)',
+          type: 'k8s_pod_rate_mem_usage_limit'
         }, {
           value: 12,
-          label: '内存使用量(占Limit、不含Cache)'
+          label: '内存使用量(占Limit、不含Cache)',
+          type: 'k8s_pod_rate_mem_no_cache_limit'
         }],
         [{
           value: 13,
-          label: '硬盘写流量'
+          label: '硬盘写流量',
+          type: 'k8s_pod_fs_write_bytes'
         }, {
           value: 14,
-          label: '硬盘读流量'
+          label: '硬盘读流量',
+          type: 'k8s_pod_fs_read_bytes'
         }, {
           value: 15,
-          label: '硬盘读IOPS'
+          label: '硬盘读IOPS',
+          type: 'k8s_pod_fs_read_times'
         }, {
           value: 16,
-          label: '硬盘写IOPS'
+          label: '硬盘写IOPS',
+          type: 'k8s_pod_fs_write_times'
         }],
         [{
           value: 17,
-          label: '网络出带宽'
+          label: '网络出带宽',
+          type: 'k8s_pod_network_receive_bytes_bw'
         }, {
           value: 18,
-          label: '网络入带宽'
+          label: '网络入带宽',
+          type: 'k8s_pod_network_transmit_bytes_bw'
         }, {
           value: 19,
-          label: '网络出流量'
+          label: '网络出流量',
+          type: 'k8s_pod_network_receive_bytes'
         }, {
           value: 20,
-          label: '网络入流量'
+          label: '网络入流量',
+          type: 'k8s_pod_network_transmit_bytes'
         }, {
           value: 21,
-          label: '网络出包量'
+          label: '网络出包量',
+          type: 'k8s_pod_network_receive_packets'
         }, {
           value: 22,
-          label: '网络入包量'
+          label: '网络入包量',
+          type: 'k8s_pod_network_transmit_packets'
         }]
       ],
       setConfigMapData: {
@@ -1327,7 +1349,8 @@ export default {
       highLevelSetShow2: false, // 是否显示高级设置
       SelectMirrorImgFlag: false,
       secrets: {}, // 引用ConfigMap/Secret secrets
-      configMap: {} // 引用ConfigMap/Secret ConfigMap
+      configMap: {}, // 引用ConfigMap/Secret ConfigMap
+      describeClustersInstances: []
     }
   },
   components: { Service, SelectMirrorImg },
@@ -1461,7 +1484,7 @@ export default {
     // 从路由获取类型
     let { type, clusterId, spaceName } = this.$route.query
     console.log(this.$route.query)
-    this.wl.type = type === 'deployment' ? 'Deployment' : type
+    this.wl.type = type
     this.clusterId = clusterId
     this.wl.namespace = spaceName
     this.initNetworkRequery()
@@ -1614,7 +1637,6 @@ export default {
       if (oneDes.length !== 0) {
         this.wl.describeLoadBalancersValue = oneDes[0].LoadBalancerName
       }
-      // if (serviceEnbel)
     },
     getDescribeInstances: async function () {
       let param = {
@@ -1626,7 +1648,10 @@ export default {
       })
       await this.axios.post(TKE_EXIST_NODES, param).then(res => {
         this.axiosUtils(res, () => {
-          console.log('cvm2/DescribeInstances', res)
+          let { Response: { InstanceSet } } = res
+          this.specifyNodeDispatchOption = InstanceSet.map(item => {
+            return { id: item.InstanceId, name: item.InstanceName, disabled: item.NewCreationIdentify }
+          })
         })
       })
     },
@@ -1814,39 +1839,119 @@ export default {
       })
     },
     submit: async function () {
-      let { name, labels, type, namespace, description, replicas, updateWay, configTacticsPods, updateInterval, mirrorPullTactics, instanceContent, portMapping } = this.wl
+      let {
+        name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
+        updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
+        caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
+        serviceEnbel
+      } = this.wl
       let labelsObj = {}
       labels.forEach(item => {
         labelsObj[item.key] = item.value
       })
       labelsObj['qcloud-app'] = name
       this.loadShow = true
+      // 存活检查，就绪检查 共用赋值函数
+      let inspectFunc = (obj) => {
+        let {
+          inspectMethodValue,
+          inspectProtocolValue,
+          executiveOrder, // 执行命令
+          inspectPort, // 检查端口
+          requestPath, // 请求路径
+          startDelay, // 启动延时
+          responseTimeout, // 响应超时,
+          intervalTime, // 间隔时间
+          healthyThreshold, // 健康阀值
+          unhealthyThreshold // 不健康阀值
+        } = obj
+        let newObj = {
+          failureThreshold: parseInt(unhealthyThreshold),
+          successThreshold: parseInt(healthyThreshold),
+          timeoutSeconds: parseInt(responseTimeout),
+          periodSeconds: parseInt(intervalTime)
+        }
+        if (parseInt(startDelay) !== 0) {
+          newObj.initialDelaySeconds = parseInt(startDelay)
+        }
+        if (inspectMethodValue === 'TCP端口检查') {
+          newObj.tcpSocket = { port: parseInt(inspectPort) }
+        } else if (inspectMethodValue === 'HTTP请求检查') {
+          newObj.httpGet = {
+            path: requestPath,
+            port: parseInt(inspectPort),
+            scheme: inspectProtocolValue
+          }
+        } else if (inspectMethodValue === '执行命令检查' && executiveOrder !== '') {
+          newObj.exec = {
+            command: executiveOrder.split('\n')
+          }
+        }
+        return newObj
+      }
+      // 实例内容器 赋值
       let containerList = instanceContent.map(item => {
-        let { name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory, limitMemory, gpuNum, privilegeLevelContainer } = item
+        let {
+          name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory,
+          limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
+          runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
+        } = item
         if (versions !== '') mirrorImg = `${mirrorImg}:${versions}`
-        return {
+        let oneContainer = {
           name: iName,
           image: mirrorImg,
           volumeMounts: [],
           resources: {
-            limits: {
-              cpu: limitCpu,
-              memory: `${limitMemory}Mi`,
-              'nvidia.com/gpu': gpuNum.toString()
-            },
-            requests: {
-              cpu: requestCpu,
-              memory: `${requestMemory}Mi`
-            }
+            limits: {},
+            requests: {}
           },
           env: [],
-          workingDir: '',
+          workingDir: workDirectory,
           command: [],
           args: [],
           securityContext: {
             privileged: privilegeLevelContainer
           }
         }
+        // 镜像拉取策略
+        if (mirrorPullTactics) oneContainer.restartPolicy = mirrorPullTactics
+        if (limitCpu) oneContainer.resources.limits.cpu = limitCpu
+        if (requestCpu) oneContainer.resources.requests.cpu = requestCpu
+        if (limitMemory) oneContainer.resources.limits.memory = limitMemory + 'Mi'
+        if (requestMemory) oneContainer.resources.requests.memory = requestMemory + 'Mi'
+        if (gpuNum !== 0) oneContainer.resources.limits['nvidia.com/gpu'] = gpuNum.toString()
+        // 新增变量
+        if (environmentVar.length > 0) {
+          let environmentVarArr = environmentVar.map(item => {
+            return { name: item.key, value: item.value }
+          })
+          oneContainer.env = [...oneContainer.env, ...environmentVarArr]
+        }
+        // 新增引用
+        if (citeCs.length > 0) {
+          let citeCsArr = citeCs.map(item => {
+            return {
+              name: item.input1,
+              valueFrom: {
+                secretKeyRef: {
+                  key: item.value3,
+                  name: item.value2,
+                  optional: false
+                }
+              }
+            }
+          })
+          oneContainer.env = [...oneContainer.env, ...citeCsArr]
+        }
+        // 运行命令
+        if (runCommand !== '') oneContainer.command = runCommand.split('\n')
+        // 运行参数
+        if (runParam !== '') oneContainer.args = runParam.split('\n')
+        // 存活检查
+        if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
+        // 就绪检查
+        if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
+        return oneContainer
       })
       let requestBody = {
         kind: type,
@@ -1865,8 +1970,16 @@ export default {
             },
             spec: {
               volumes: [],
-              restartPolicy: !mirrorPullTactics ? 'Always' : mirrorPullTactics,
-              containers: containerList
+              containers: containerList,
+              restartPolicy: 'Always',
+              imagePullSecrets: [
+                {
+                  'name': 'qcloudregistrykey'
+                },
+                {
+                  'name': 'tencenthubkey'
+                }
+              ]
             }
           },
           selector: {
@@ -1875,35 +1988,89 @@ export default {
           strategy: {}
         }
       }
+      let queryBodyJson = ''
+      // 实例数量为自动调节时
+      if (caseNum === 'autoAdjust') {
+        let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
+        let metrics = touchTactics.map(item => {
+          let { touch2, touch2Option, size } = item
+          let oneOption = touch2Option.find(item2 => item2.value === touch2)
+          return {
+            type: 'Pods',
+            pods: {
+              metricName: oneOption.type,
+              targetAverageValue: size
+            }
+          }
+        })
+        let hpaRequestBody = {
+          kind: 'HorizontalPodAutoscaler',
+          apiVersion: 'autoscaling/v2beta1',
+          metadata: {
+            name: hpaName,
+            namespace: namespace,
+            labels: {
+              'qcloud-app': hpaName
+            }
+          },
+          spec: {
+            minReplicas: parseInt(caseScope1),
+            maxReplicas: parseInt(caseScope2),
+            metrics: metrics,
+            scaleTargetRef: {
+              apiVersion: 'apps/v1beta2',
+              kind: type,
+              name: name
+            }
+          }
+        }
+        console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
+        queryBodyJson += JSON.stringify(hpaRequestBody)
+      }
       // 判断 描述
       if (description !== '') requestBody.metadata = { description: description }
       // 判断 更新方式
       if (updateWay === '滚动更新（推荐）') {
-        requestBody.spec.strategy = {
+        let strategy = {
           type: 'RollingUpdate',
           rollingUpdate: {
-            maxSurge: configTacticsPods,
+            maxSurge: 0,
             maxUnavailable: 0
           }
         }
+        switch (updateTactics) {
+          case 1:
+            strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
+            break
+          case 2:
+            strategy.rollingUpdate.maxUnavailable = parseInt(configTacticsPods)
+            break
+          case 3:
+            strategy.rollingUpdate = {
+              maxSurge: configTacticsMaxSurge,
+              maxUnavailable: configTacticsMaxUnavailable
+            }
+            break
+        }
+        requestBody.spec.strategy = strategy
       } else { // 快速更新
         requestBody.spec.strategy = {
           type: 'Recreate',
           rollingUpdate: null
         }
       }
-      let requestBody1 = ''
-      let ports = portMapping.map(item => {
-        let { portValue, conPort, host, servicePort } = item
-        return {
-          'name': `${conPort}-${servicePort}-${portValue.toLowerCase()}`,
-          'port': parseInt(servicePort),
-          'targetPort': parseInt(conPort),
-          'protocol': portValue
-        }
-      })
-      if (type === 'Deployment' || type === 'statefulSet') {
-        requestBody1 = {
+      // 类型为 Deployment 或 statefulSet 需要提交 Services
+      if ((type === 'Deployment' || type === 'statefulSet') && serviceEnbel) {
+        let ports = portMapping.map(item => {
+          let { portValue, conPort, host, servicePort } = item
+          return {
+            'name': `${conPort}-${servicePort}-${portValue.toLowerCase()}`,
+            'port': parseInt(servicePort),
+            'targetPort': parseInt(conPort),
+            'protocol': portValue
+          }
+        })
+        let serviceRequestBody = {
           kind: 'Service',
           apiVersion: 'v1',
           metadata: {
@@ -1920,23 +2087,25 @@ export default {
             sessionAffinityConfig: {}
           }
         }
-      }
-      if (this.wl.SA === 'ClientIP') {
-        requestBody1.spec.sessionAffinityConfig = {
-          clientIP: {
-            timeoutSeconds: this.wl.time
+        if (this.wl.SA === 'ClientIP') {
+          serviceRequestBody.spec.sessionAffinityConfig = {
+            clientIP: {
+              timeoutSeconds: this.wl.time
+            }
           }
         }
+        console.log('serviceRequestBody', JSON.stringify(serviceRequestBody))
+        queryBodyJson += JSON.stringify(serviceRequestBody)
       }
+      console.log('requestBody', JSON.stringify(requestBody))
+      queryBodyJson += JSON.stringify(requestBody)
       let params = {
         Method: 'POST',
         Path: `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`,
         Version: '2018-05-25',
-        RequestBody: JSON.stringify(requestBody1) + JSON.stringify(requestBody),
+        RequestBody: queryBodyJson,
         ClusterName: this.clusterId
       }
-      console.log('requestBody', JSON.stringify(requestBody))
-      console.log('requestBody1', JSON.stringify(requestBody1))
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false
@@ -1944,6 +2113,12 @@ export default {
           if (type === 'Deployment') {
             routerName = 'deploymentDetailEvent'
           }
+          this.$message({
+            message: '新建成功',
+            type: 'success',
+            showClose: true,
+            duration: 2000
+          })
           this.$router.replace({
             name: routerName,
             query: {

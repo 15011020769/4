@@ -8,9 +8,10 @@
       >
         <div class="newClear">
           <p class="tip">
-            範本選擇（如需添加新範本，請前往<a
-              >【功能範本】<i class="el-icon-share"></i></a
-            >中進行設置）
+            範本选择（如需添加新範本，請前往 【<router-link
+              to="/transcribe"
+              >功能範本</router-link
+            >】 <i class="el-icon-share"></i>中進行設置）
           </p>
           <div class="tableCon">
             <el-table

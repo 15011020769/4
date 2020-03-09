@@ -12,7 +12,7 @@
           label="版本号"
           >
           <template slot-scope="scope">
-            <span></span>
+            <span>V{{scope.row.metadata.annotations['deployment.kubernetes.io/revision']}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -30,8 +30,8 @@
           label="镜像"
           >
           <template slot-scope="scope">
-              <p></p>
-              <p></p>
+              <p>镜像: {{scope.row.spec && scope.row.spec.template && scope.row.spec.template.spec && scope.row.spec.template.spec.containers && scope.row.spec.template.spec.containers.length > 0 && scope.row.spec.template.spec.containers[0].image}}</p>
+              <p>版本(tag) {{scope.row.spec && scope.row.spec.template && scope.row.spec.template.spec && scope.row.spec.template.spec.containers && scope.row.spec.template.spec.containers.length > 0 && scope.row.spec.template.spec.containers[0].Tag}}</p>
           </template>
         </el-table-column>
         <el-table-column
@@ -45,8 +45,8 @@
         <el-table-column
           label="操作"
           >
-          <template>
-            <span class="tke-text-link">回滚</span>
+          <template slot-scope="scope">
+            <el-button type='text' class="tke-text-link" @click="isShowRollBack(scope.row)">回滚</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -56,6 +56,13 @@
       </codemirror>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="isShowYamlModal = false">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="回滚资源" :visible.sync="showRollBack" width="35%">
+      <span>您确定要回滚Deployment：{{this.rowData.metadata.name}} 至 版本v{{this.version}}吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="rollBack">确 定</el-button>
+        <el-button @click="showRollBack = false">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -76,6 +83,7 @@ import XLSX from "xlsx";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
+import * as yaml from 'js-yaml'
 export default {
   name: "deploymentDetailHistory",
   data() {
@@ -100,7 +108,10 @@ export default {
         foldGutter: true,
         matchBrackets: true,  //括号匹配
         autoCloseBrackets: true
-      }
+      },
+      history: {},//历史数据
+      showRollBack: false,//是否打开回滚弹窗
+      version: '',//版本
     };
   },
   components: {
@@ -133,7 +144,6 @@ export default {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response);
           if(response.items.length > 0) {
             response.items.map(pod => {
               pod.addTime = moment(pod.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
@@ -159,6 +169,54 @@ export default {
     viewYaml(rowData) {
       this.isShowYamlModal = true;
       this.yamlInfo = JSON.stringify(rowData);
+    },
+
+    //打开回滚弹窗
+    isShowRollBack(rowData) {
+      this.history = rowData;
+      this.version = rowData.metadata.annotations['deployment.kubernetes.io/revision'];
+      this.showRollBack = true;
+    },
+
+    //回滚数据 disabled
+    async rollBack() {
+      this.loadShow = true;
+      let RequestBody = {
+        kind: 'DeploymentRollback',
+        apiVersion: 'extensions/v1beta1',
+        name: this.rowData.metadata.name,
+        rollbackTo: {revision: Number(this.history.metadata.annotations['deployment.kubernetes.io/revision'])}
+      }
+      let param = {
+        Method: "POST",
+        Path: `/apis/extensions/v1beta1/namespaces/${this.rowData.metadata.namespace}/deployments/${this.rowData.metadata.name}/rollback`,
+        Version: "2018-05-25",
+        RequestBody: JSON.stringify(RequestBody),
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.getHistoryList();
+          this.showRollBack = false;
+          this.$message({
+            message: '回滚成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   }
 };
