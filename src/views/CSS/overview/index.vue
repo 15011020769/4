@@ -239,10 +239,10 @@ export default {
       const startDatetime = moment(this.StartTime, "YYYY-MM-DD HH:mm:ss");
       const endDatetime = moment(this.EndTime, "YYYY-MM-DD HH:mm:ss");
 
-      // if (endDatetime.diff(startDatetime, "days") >= 31) {
-      //   this.$message.error("只能查詢31天內的趨勢數據");
-      //   return;
-      // }
+      if (endDatetime.diff(startDatetime, "days") >= 31) {
+        this.$message.error("只能查詢31天內的趨勢數據");
+        return;
+      }
 
       this.$nextTick(this.getTrend);
     },
