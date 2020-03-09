@@ -220,11 +220,11 @@ export default {
         Module: "monitor",
         Offset: this.currpage * this.pagesize - this.pagesize,
         StartTime: this.StartTime,
-        EndTime: this.EndTime
+        EndTime: this.EndTime,
       };
       if (this.searchValue !== "" && this.searchInput !== "") {
-          param["Filters.0.Name"] = this.searchValue;
-          param["Filters.0.Values.0"] = this.searchInput;
+          params["EventName.N"] = this.searchValue;
+          params["EventName.N"] = this.searchInput;
         }
             //  monitor2/DescribeProductEventList   //接口
       console.log(JSON.stringify(params));
@@ -233,10 +233,12 @@ export default {
 
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据
+
           this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
+          
           this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
@@ -285,9 +287,11 @@ export default {
         }
       },
       clicksearch(val) {
+        console.log(this.searchInput)
         this.currpage = 1;
         this.searchInput = val;
         if (this.searchInput !== "" && this.searchValue !== "") {
+          
           this.getProductList();
         } else {
           this.$message.error("請輸入正確搜索信息");
