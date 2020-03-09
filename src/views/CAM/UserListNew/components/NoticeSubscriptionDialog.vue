@@ -35,7 +35,7 @@
               <el-checkbox v-model="isSelectAll" :indeterminate="isAllIndeterminate"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column width="180" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
+          <el-table-column width="220" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
             <template slot-scope="scope">
               <el-checkbox
                 v-model="scope.row.isChecked"
