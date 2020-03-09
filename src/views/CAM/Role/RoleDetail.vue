@@ -93,22 +93,7 @@
                     >{{scope.row.PolicyName}}</el-button>
                   </template>
                 </el-table-column>
-                <el-table-column align="center">
-                  <template slot="header" slot-scope="scope">
-                    <el-dropdown trigger="click" @command="handleCommand" size="mini">
-                      <span style="color:#909399">
-                        {{ tableTitle }}
-                        <i class="el-icon-arrow-down el-icon--right"></i>
-                      </span>
-                      <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item
-                          v-for="item in optionPolicies"
-                          :key="item.value"
-                          :command="item"
-                        >{{item.label}}</el-dropdown-item>
-                      </el-dropdown-menu>
-                    </el-dropdown>
-                  </template>
+                <el-table-column align="center" label="策略類型">
                   <template slot-scope="scope">
                     <div v-if="scope.row.PolicyType == 'User'">{{$t('CAM.userList.strategySelf')}}</div>
                     <div v-else-if="scope.row.PolicyType == 'QCS'">{{$t('CAM.userList.ysStrategy')}}</div>

@@ -148,7 +148,7 @@ export default {
       total: 0,
       loading: true,
       stream: {},
-      visible: false,
+      visible: true,
     };
   },
   components: {

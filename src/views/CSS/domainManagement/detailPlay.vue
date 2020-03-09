@@ -17,7 +17,7 @@
           lazy
         >
           <div class="wrapper">
-            <play-config />
+            <play-config :active="activeName" />
           </div>
         </el-tab-pane>
         <el-tab-pane
@@ -58,6 +58,7 @@ import PlayTemplate from './tabs/playTemplate'
 import AccessControl from './tabs/accessControl'
 import AdvanceConfig from './tabs/advanceConfig'
 import { DOMAIN_DELTILS } from '@/constants'
+import { ErrorTips } from "@/components/ErrorTips";
 
 let ErrTips = {
   'InternalError.SystemError': '內部錯誤',

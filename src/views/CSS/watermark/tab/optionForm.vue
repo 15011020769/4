@@ -63,7 +63,21 @@ import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import COS from 'cos-js-sdk-v5'
 import moment from 'moment'
 import Vue from 'vue'
-
+const cos = new COS({
+        getAuthorization: async (_, callback) => {
+          const res = await Vue.prototype.axios({
+            url: "bucket/uploadKey3",
+            method: "get",
+          })
+          console.log(res)
+          callback({
+            TmpSecretId: res.data.secretId,
+            TmpSecretKey: res.data.secretKey,
+            XCosSecurityToken: res.data.sessionToken,
+            ExpiredTime: res.data.extra.expiredTime, // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
+          })
+        },
+      })
 export default {
   name: "optionForm",
   components: {
@@ -153,23 +167,9 @@ export default {
         return isLt2M
       }
        
-      const cos = new COS({
-        getAuthorization: async (_, callback) => {
-          const res = await Vue.prototype.axios({
-            url: "bucket/uploadKey3",
-            method: "get",
-          })
-          console.log(res)
-          callback({
-            TmpSecretId: res.data.secretId,
-            TmpSecretKey: res.data.secretKey,
-            XCosSecurityToken: res.data.sessionToken,
-            ExpiredTime: res.data.extra.expiredTime, // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
-          })
-        },
-      })
+      
       cos.putObject({
-        Bucket: 'watermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
+        Bucket: 'wjtest-1301459465', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
         Region: "ap-taipei",
         StorageClass: "STANDARD",
         Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,

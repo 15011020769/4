@@ -10,22 +10,30 @@ export default {
   },
   data() {
     return {
-      loading: true
+      loading: true,
+      player: undefined,
     }
   },
   mounted() {
-      this.axios.post(DOMAIN_LIST, {
-        Version: "2018-08-01",
-        PageSize: 100, //分页大小，范围：10~100。默认10
-        PageNum: 1
+    this.axios.post(DOMAIN_LIST, {
+      Version: "2018-08-01",
+      PageSize: 100, //分页大小，范围：10~100。默认10
+      PageNum: 1
+    })
+      .then(({ Response }) => {
+        const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
+        let domainName = '68922.liveplay.myqcloud.com '
+        if (domain) {
+          domainName = domain.Name
+        }
+        this.play(domainName)
       })
-        .then(({ Response }) => {
-          const domain = Response.DomainList.find((domain, i) => i !==0 && domain.BCName === 1)
-          this.play(domain.Name)
-        })
-        .then(() => {
-          this.loading = false
-        })
+      .then(() => {
+        this.loading = false
+      })
+  },
+  destroyed() {
+    this.player && this.player.destroy()
   },
   methods: {
     play(domainName) {
@@ -57,10 +65,13 @@ export default {
             2048: "无法加载视频文件，跨域访问被拒绝。",
         },
       };
-      new TcPlayer('player', options)
+      this.player = new TcPlayer('player', options)
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.player {
+  height: 620px;
+}
 </style>
