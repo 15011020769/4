@@ -122,7 +122,7 @@
           <el-form-item label="容器目录">
             <el-checkbox v-model="checked">设置容器和镜像存储目录，建议存储到数据盘</el-checkbox>
             <el-form-item v-show="checked">
-              <el-input class="w200" v-model="inputRoom"></el-input>
+              <el-input class="w200" v-model="inputRoom" @change="changeValue()"></el-input>
             </el-form-item>
           </el-form-item>
 
@@ -149,7 +149,7 @@
               @click.prevent="deleteAll()"
             ></i>
             <el-form-item v-for="(domain,w) in domains" :key="domain.key">
-              <el-select v-model="values" placeholder="请选择" class="w200"  @change="a1(w)">
+              <el-select v-model="values" placeholder="请选择" class="w200" @change="a1(w)">
                 <el-option
                   v-for="item in securityGroups"
                   :key="item.SecurityGroupId"
@@ -202,7 +202,7 @@
             <el-form-item>
               <el-button type="text" @click="addDomain2">新增Lable</el-button>
             </el-form-item>
-          </el-form-item> -->
+          </el-form-item>-->
           <p>
             <i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
             <el-button type="text" style="font-size:12px;" @click="isActive=!isActive">高级设置</el-button>
@@ -369,7 +369,7 @@
               >
                 <el-table-column width="50">
                   <template slot-scope="scope">
-                    <el-radio v-model="modeRadio" :label="scope.$index">
+                    <el-radio v-model="modeRadio" :label="scope.row">
                       <i></i>
                     </el-radio>
                   </template>
@@ -553,7 +553,7 @@ export default {
       cpuValue: "0", //选中的cpu类型
       memeryValue: "0", //选中的内存类型
       zoneInfoList: [], //电脑机型列表
-      modeRadio: "0", //默认选中的机型
+      modeRadio: {}, //默认选中的机型
       modeData: {}, //机型表格中选中的数据
       describeVpcs: [], //支持的网络
       subNetList: [], //子网列表
@@ -818,8 +818,10 @@ export default {
     this.clusterId = this.$route.query.clusterId;
   },
   methods: {
-    a1(w,e){
+    changeValue(val) {
+      console.log(this.inputRoom);
     },
+    a1(w, e) {},
     //提交添加伸缩组
     async submitGroup() {
       this.loadShow = true;
@@ -832,13 +834,14 @@ export default {
       }
       let AutoScalingGroupPara = {
         AutoScalingGroupName: this.asg.name,
-        MaxSize: this.asg.maxSize,
-        MinSize: this.asg.minSize,
+        MaxSize: Number(this.asg.maxSize),
+        MinSize: Number(this.asg.minSize),
         VpcId: this.asg.groupVps,
         SubnetIds: subNetList,
         RetryPolicy: this.asg.restart,
         ServiceSettings: { ScalingMode: "CLASSIC_SCALING" } //不确定
       };
+
       let LoginSettings = {};
       if (this.asg.pwdRadio === "pwd1") {
         LoginSettings = {
@@ -854,25 +857,23 @@ export default {
         InstanceType: this.asg.instanceType,
         SystemDisk: {
           DiskType: this.asg.diskType,
-          DiskSize: this.asg.diskCapacity
+          DiskSize: Number(this.asg.diskCapacity)
         },
         InternetAccessible: {
           InternetChargeType: this.asg.broadbandVal,
-          InternetMaxBandwidthOut: this.asg.broadbandNum,
+          InternetMaxBandwidthOut: Number(this.asg.broadbandNum),
           PublicIpAssigned: this.asg.pubBroadbandShow
         },
         LoginSettings: LoginSettings,
         SecurityGroupIds: [this.asg.security], //未做完整
-        EnhancedService: {
-          SecurityService: { Enabled: this.asg.securityService }
-        },
-        MonitorService: { Enabled: this.asg.monitor },
-        InstanceChargeType: this.asg.typeRadio,
-        InstanceMarketOptions: { SpotOptions: { MaxPrice: this.asg.maxPrice } }
+
+        InstanceChargeType: this.asg.typeRadio
+        // InstanceMarketOptions: { SpotOptions: { MaxPrice: this.asg.maxPrice } }//最高价格
       };
+
       let InstanceAdvancedSettings = {
         MountTarget: "",
-        DockerGraphPath: "/var/lib/docker",
+        DockerGraphPath: this.inputRoom,
         UserScript: "",
         Unschedulable: 0,
         ExtraArgs: { Kubelet: [] }
@@ -903,22 +904,35 @@ export default {
       let params = {
         Version: "2018-05-25",
         ClusterId: this.clusterId,
-        AutoScalingGroupPara: JSON.stringify(AutoScalingGroupPara),
-        LaunchConfigurePara: JSON.stringify(LaunchConfigurePara),
-        InstanceAdvancedSettings: InstanceAdvancedSettings
+        AutoScalingGroupPara: JSON.stringify(AutoScalingGroupPara), //伸缩组配置
+        LaunchConfigurePara: JSON.stringify(LaunchConfigurePara) //启动配置
+        // InstanceAdvancedSettings: InstanceAdvancedSettings
       };
-//       Version: "2018-05-25"
-// ClusterId: "cls-h3phnkpy"
-// AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"
-// LaunchConfigurePara: "{"LaunchConfigurationName":"","InstanceType":"S3.SMALL1","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"LoginSettings":{"Password":"asdasd123"},"SecurityGroupIds":["sg-81y1wst4","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"InstanceChargeType":"POSTPAID_BY_HOUR"}"
-// InstanceAdvancedSettings: {MountTarget: "", DockerGraphPath: "", UserScript: "", Unschedulable: 0, ExtraArgs: {Kubelet: []}}
-// MountTarget: ""
-// DockerGraphPath: ""
-// UserScript: ""
-// Unschedulable: 0
-// ExtraArgs: {Kubelet: []}
-// Kubelet: []
+      params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
+      params["InstanceAdvancedSettings.UserScript"] = "";
+      params["InstanceAdvancedSettings.Unschedulable"] = 0;
+      params["InstanceAdvancedSettings.Labels.0.Name"] = "";
+      params["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
+      // params[ //不能传递参数
+      //   "EnhancedService.SecurityService.Enabled"
+      // ] = this.asg.securityService;
+      // params["EnhancedService.MonitorService.Enabled"] = this.asg.monitor;
+
+
+      // Version: "2018-05-25"
+      // ClusterId: "cls-h3phnkpy"
+      // AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"
+      // LaunchConfigurePara: "{"LaunchConfigurationName":"","InstanceType":"S3.SMALL1","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"LoginSettings":{"Password":"asdasd123"},"SecurityGroupIds":["sg-81y1wst4","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"InstanceChargeType":"POSTPAID_BY_HOUR"}"
+      // InstanceAdvancedSettings: {MountTarget: "", DockerGraphPath: "", UserScript: "", Unschedulable: 0, ExtraArgs: {Kubelet: []}}
+      // MountTarget: ""
+      // DockerGraphPath: ""
+      // UserScript: ""
+      // Unschedulable: 0
+      // ExtraArgs: {Kubelet: []}
+      // Kubelet: []
+
+      console.log(params);
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
@@ -962,7 +976,7 @@ export default {
         }
       });
     },
-    refresh(){
+    refresh() {
       this.getSecurityGroups();
     },
     changeObj() {
@@ -1033,6 +1047,7 @@ export default {
     //机型表格选中的数据
     handleCurrentChange(val) {
       this.modeData = val;
+      console.log(val);
     },
     //机型model确定选择数据
     ModelSure() {
@@ -1070,8 +1085,9 @@ export default {
       param["Filters.0.Name"] = "instance-charge-type";
       param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
-        var dataList = res.Response.InstanceTypeQuotaSet;
         if (res.Response.Error === undefined) {
+          var dataList = res.Response.InstanceTypeQuotaSet;
+          this.modeRadio = res.Response.InstanceTypeQuotaSet[0];
           this.loadShow = false;
           if (this.asg.familyObj !== "all1" && this.v1 == true) {
             var list = [];
@@ -1142,7 +1158,7 @@ export default {
         dataDiskNum: "10",
         formatMount: false,
         latticeSetVal: "ext3",
-        setValue: "/var/lib/docker"
+        setValue: this.inputRoom
       });
     },
     //根据数据盘选择显示
@@ -1206,7 +1222,8 @@ export default {
       await this.axios.post(TKE_MISG, params).then(res => {
         if (res.Response.Error === undefined) {
           this.securityGroups = res.Response.SecurityGroupSet;
-          this.asg.security = res.Response.SecurityGroupSet[0].SecurityGroupName;
+          this.asg.security =
+            res.Response.SecurityGroupSet[0].SecurityGroupName;
           this.loadShow = false;
         } else {
           this.loadShow = false;

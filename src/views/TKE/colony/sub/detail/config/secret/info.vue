@@ -54,7 +54,6 @@ export default {
   created() {
     // 从路由获取类型
     this.clusterId = this.$route.query.clusterId;
-    console.log(this.$route.query);
     if (this.$route.query.name && this.$route.query.np) {
       this.Info.name = this.$route.query.name;
       this.Info.np = this.$route.query.np;
@@ -78,11 +77,9 @@ export default {
           Version: "2018-05-25",
           ClusterName: this.$route.query.clusterId
         };
-        console.log(params);
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var mes = JSON.parse(res.Response.ResponseBody);
-            console.log(mes);
             this.Info.labels = mes.metadata.labels;
             this.Info.time = mes.metadata.creationTimestamp;
             this.secretData = mes;

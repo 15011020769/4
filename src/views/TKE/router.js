@@ -1111,6 +1111,14 @@ export default new Router({
         }
       ]
     },
+    { // 配置管理更新配置configmap yaml
+      path: '/colony/sub/update/config/yamlSecret',
+      name: 'updateYamlSecret',
+      component: () => import('./colony/sub/update/config/yamlSecret.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
     {
       path: '/colony/sub/detail/storage/pv', // 存储-PersistentVolume-详情
       name: 'pvDetail',

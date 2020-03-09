@@ -65,7 +65,7 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="editYaml">编辑YAML</span>
+            <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
             <span class="tke-text-link ml10" @click="deleteNameSpace(scope.row)">删除</span>
           </template>
         </el-table-column>
@@ -103,6 +103,7 @@ import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { ALL_CITY, POINT_REQUEST, TKE_COLONY_QUERY } from "@/constants";
 import XLSX from "xlsx";
+import FileSaver from "file-saver";
 export default {
   name: "colonyConfigSecret",
   data() {
@@ -216,18 +217,18 @@ export default {
         }
       });
     },
-    editYaml(){
-      console.log("不用编辑yaml");
-      //  this.$router.push({
-      //   name: "secretCreate",
-      //   query: {
-      //     clusterId: this.clusterId
-      //   }
-      // });
+    editYaml(item){//编辑
+       this.$router.push({
+        name: "updateYamlSecret",
+        query: {
+          clusterId: this.clusterId,
+          name: item.metadata.name,
+          np: item.metadata.namespace
+        }
+      });
     },
     // 详情
     goSecretDetail(data) {
-      console.log(this.$route);
       this.$router.push({
         name: "secretDetail",
         query: {
