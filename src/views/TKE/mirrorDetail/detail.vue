@@ -6,7 +6,7 @@
             <div class="tke-form-item_text"><span>{{name}}</span></div>
           </el-form-item>
           <el-form-item label="类型">
-            <div class="tke-form-item_text"><span>{{region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
+            <div class="tke-form-item_text"><span>{{form.region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
           </el-form-item>
           <el-form-item label="仓库地址">
             <div class="tke-form-item_text"><span>{{server}}/{{name}}</span>
@@ -24,7 +24,7 @@
         <el-dialog title="修改镜像仓库类型" :visible.sync="dialogFormVisible">
           <el-form :model="form" class="tke-form">
             <el-form-item label="类型" :label-width="formLabelWidth">
-              <el-select v-model="form.region" placeholder="请选择活动区域" @change="setPublic()" size="mini">
+              <el-select v-model="form.region" placeholder="请选择活动区域"  size="mini">
                 <el-option label="私有" value='0'></el-option>
                 <el-option label="公有" value='1'></el-option>
               </el-select>
@@ -32,7 +32,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="setPublic()">确 定</el-button>
           </div>
         </el-dialog>
         <!-- 修改描述 -->
@@ -92,12 +92,18 @@ export default {
   created () {
     this.GetMyMirror()
   },
+  // watch:{
+  //   'form.region'(val){
+  //     console.log(val)
+  //   }
+  // },
   methods: {
     getEdit () {
       this.dialogFormVisible = true
     },
     setPublic () {
       this.SetMyMirrorPublic()
+      this.dialogFormVisible = false
     },
     submitForm (formName) {
       console.log(formName)
