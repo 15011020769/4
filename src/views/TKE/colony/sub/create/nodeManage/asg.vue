@@ -148,8 +148,8 @@
               v-show="this.domains.length?true:false"
               @click.prevent="deleteAll()"
             ></i>
-            <el-form-item v-for="(domain) in domains" :key="domain.key">
-              <el-select v-model="values" placeholder="请选择" class="w200">
+            <el-form-item v-for="(domain,w) in domains" :key="domain.key">
+              <el-select v-model="values" placeholder="请选择" class="w200"  @change="a1(w)">
                 <el-option
                   v-for="item in securityGroups"
                   :key="item.SecurityGroupId"
@@ -190,7 +190,7 @@
             </el-form-item>
           </el-form-item>
 
-          <el-form-item label="Label">
+          <!-- <el-form-item label="Label">
             <el-form-item v-for="(domain) in domainstion" :key="domain.key">
               <div class="form-input">
                 <el-input v-model="domain.value" size="mini" class="w70"></el-input>
@@ -202,7 +202,7 @@
             <el-form-item>
               <el-button type="text" @click="addDomain2">新增Lable</el-button>
             </el-form-item>
-          </el-form-item>
+          </el-form-item> -->
           <p>
             <i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
             <el-button type="text" style="font-size:12px;" @click="isActive=!isActive">高级设置</el-button>
@@ -818,6 +818,8 @@ export default {
     this.clusterId = this.$route.query.clusterId;
   },
   methods: {
+    a1(w,e){
+    },
     //提交添加伸缩组
     async submitGroup() {
       this.loadShow = true;
@@ -905,6 +907,17 @@ export default {
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara),
         InstanceAdvancedSettings: InstanceAdvancedSettings
       };
+//       Version: "2018-05-25"
+// ClusterId: "cls-h3phnkpy"
+// AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"
+// LaunchConfigurePara: "{"LaunchConfigurationName":"","InstanceType":"S3.SMALL1","SystemDisk":{"DiskType":"CLOUD_PREMIUM","DiskSize":50},"InternetAccessible":{"InternetChargeType":"BANDWIDTH_POSTPAID_BY_HOUR","InternetMaxBandwidthOut":1,"PublicIpAssigned":true},"LoginSettings":{"Password":"asdasd123"},"SecurityGroupIds":["sg-81y1wst4","sg-p8r1uybc"],"EnhancedService":{"SecurityService":{"Enabled":true},"MonitorService":{"Enabled":true}},"InstanceChargeType":"POSTPAID_BY_HOUR"}"
+// InstanceAdvancedSettings: {MountTarget: "", DockerGraphPath: "", UserScript: "", Unschedulable: 0, ExtraArgs: {Kubelet: []}}
+// MountTarget: ""
+// DockerGraphPath: ""
+// UserScript: ""
+// Unschedulable: 0
+// ExtraArgs: {Kubelet: []}
+// Kubelet: []
 
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {

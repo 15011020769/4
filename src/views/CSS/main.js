@@ -18,6 +18,11 @@ require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
 require('echarts/lib/component/legend')
+
+const player = document.createElement('script')
+player.src = 'https://imgcache.qq.com/open/qcloud/video/vcplayer/TcPlayer-2.3.2.js'
+
+document.body.append(player)
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
     Vue.filter(key, filters[key])

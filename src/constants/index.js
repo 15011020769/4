@@ -34,4 +34,6 @@ export * from './TKE-wyr' // 容器服务
 
 export * from './MAOTKE' // 容器服务
 
-export * from './CM-wzh'//容器服务
+export * from './CM-wzh' //容器服务
+
+export * from './CM-wxy' // 云监控 实例分组

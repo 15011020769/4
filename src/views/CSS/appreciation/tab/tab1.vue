@@ -5,7 +5,7 @@
         <h3 style="font-size: 14px;font-weight: 700;">{{$t('CSS.appreciation.4')}}{{StartTIme}} 到 {{EndTIme}}{{$t('CSS.appreciation.5')}}</h3>
       </el-row>
       <el-row class="iconBtn">
-        <i class="el-icon-download"></i>
+        <i class="el-icon-download" @click="exportEchart"></i>
       </el-row>
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
@@ -35,11 +35,11 @@
 </template>
 
 <script>
+import moment from "moment";
+import XLSX from 'xlsx'
 import FileSaver from "file-saver";
-import XLSX from "xlsx";
 import Echart from "../../components/line";
 import { CSS_SCREEN } from "@/constants";
-import moment from "moment";
 export default {
   name: "tab2",
   data() {
@@ -52,6 +52,7 @@ export default {
       xAxis: [],
       series: [],
       legendText: '截圖',
+      line_json: [],
     };
   },
   components: {
@@ -91,6 +92,12 @@ export default {
     //     }
     //     return wbout;
     //   },
+    exportEchart() {
+      const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
+      const wb = XLSX.utils.book_new();/*新建book*/
+      XLSX.utils.book_append_sheet(wb, ws, "统计数据");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "统计数据.csv");/*写文件(book,xlsx文件名称)*/
+    },
     //分页
     handleCurrentChange(val) {
       this.current = val;
@@ -111,6 +118,7 @@ export default {
           this.$message.error(res.Response.Error.Message);
         } else {
           let obj = res.Response.DataInfoList
+          console.log(res.Response.DataInfoList)
           var mon = [];
             for (var i = 0; i < obj.length; i++) {
               var repeat = false;
@@ -158,6 +166,7 @@ export default {
         StartTime: moment(this.StartTIme).utc().format(),
         EndTime: moment(this.EndTIme).utc().format(),
       };
+      let numArr = []
       this.axios.post(CSS_SCREEN, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
@@ -165,9 +174,11 @@ export default {
           res.Response.DataInfoList.map(v => {
             axixArr.push(moment(v.Time).format('YYYY-MM-DD HH:mm:ss'))
             seriesArr.push(v.Num)
+            numArr.push({Time: moment(v.Time).format('YYYY-MM-DD HH:mm:ss'), Name: "截图", "ScreenshotCount": v.Num})
           })
           this.xAxis = axixArr
           this.series = seriesArr
+          this.line_json = numArr
         }
         this.loading = false;
       })

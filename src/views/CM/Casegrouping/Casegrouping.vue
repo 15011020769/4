@@ -42,7 +42,15 @@
           >
             <el-table-column label="实例组名称">
               <template slot-scope="scope">
-                <a href="javascript:;">{{ scope.row.groupName }}</a>
+                <div class="case-name">
+                  <a href="javascript:;" @click="DetailsTo(scope.row)">{{
+                    scope.row.groupName
+                  }}</a>
+                  <i
+                    class="el-icon-edit ml5"
+                    @click="showEditNameDlg(scope.row)"
+                  ></i>
+                </div>
               </template>
             </el-table-column>
             <el-table-column label="分组类型">
@@ -90,6 +98,27 @@
         </div>
       </div>
     </div>
+    <!-- 编辑集群名称弹窗 -->
+    <el-dialog
+      title="修改实例组名称"
+      :visible.sync="editNameDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+    >
+      <div class="edit-dialog">
+        <el-input
+          size="small"
+          placeholder="请输入实例组名称，20字以内"
+          v-model="editSearchVal"
+          @input="EditTips"
+        ></el-input>
+        <p v-if="tipsShow">实例组名称不能为空</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="setColonyName">保存</el-button>
+        <el-button @click="editNameDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
     <!-- 复制 -->
     <el-dialog
       title="确定复制所选实例组"
@@ -126,7 +155,8 @@ import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_GROUPING_LIST,
   CM_GROUPING_LIST_TYPE,
-  CM_GROUPING_LIST_DELETE
+  CM_GROUPING_LIST_DELETE,
+  CM_GROUPING_LIST_EDIT
 } from "@/constants";
 export default {
   name: "group",
@@ -147,7 +177,11 @@ export default {
       newBuildByVal: {
         // 新建
         newBuildState: false
-      }
+      },
+      editSearchVal: "",
+      editGroupId: "",
+      editNameDialogVisible: false,
+      tipsShow: false
     };
   },
   components: {
@@ -170,7 +204,7 @@ export default {
       };
       await this.axios.post(CM_GROUPING_LIST, param).then(res => {
         // if (res.Response.Error === undefined) {
-        console.log(res.data.instanceGroupList);
+        // console.log(res.data.instanceGroupList);
         var _tableData = res.data.instanceGroupList;
         // this.total = res.Response.TotalCount;
         this.total = res.data.total;
@@ -183,13 +217,13 @@ export default {
           if (res.Response.Error === undefined) {
             console.log(res.Response.Conditions);
             let Conditions = res.Response.Conditions;
-            for (let k in Conditions) {
-              console.log(
-                Conditions[k].Name,
-                "-------",
-                Conditions[k].PolicyViewName
-              );
-            }
+            // for (let k in Conditions) {
+            //   console.log(
+            //     Conditions[k].Name,
+            //     "-------",
+            //     Conditions[k].PolicyViewName
+            //   );
+            // }
             for (let i in _tableData) {
               for (let j in Conditions) {
                 if (_tableData[i].viewName === Conditions[j].PolicyViewName) {
@@ -270,6 +304,43 @@ export default {
         //     duration: 0
         //   });
         // }
+      });
+    },
+    // 详情跳转
+    DetailsTo(row) {
+      this.$router.push({
+        name: "CasegroupingDetails",
+        query: {
+          instanceGroupId: row.instanceGroupId
+        }
+      });
+    },
+    // 编辑名称
+    showEditNameDlg(row) {
+      console.log(row);
+      this.editSearchVal = row.groupName;
+      this.editNameDialogVisible = true;
+      this.editGroupId = row.instanceGroupId;
+    },
+    EditTips() {
+      if (this.editSearchVal == "") {
+        this.tipsShow = true;
+      } else {
+        this.tipsShow = false;
+      }
+    },
+    // 修改集群名称
+    setColonyName() {
+      const param = {
+        groupId: this.editGroupId,
+        groupType: 2,
+        key: "groupName",
+        lang: "zh",
+        value: this.editSearchVal
+      };
+      this.axios.post(CM_GROUPING_LIST_EDIT, param).then(res => {
+        this.editNameDialogVisible = false;
+        this.ListInit();
       });
     },
     // 复制
@@ -407,6 +478,12 @@ export default {
 
     .table {
       background: white;
+      .case-name {
+        i {
+          margin-left: 4px;
+          cursor: pointer;
+        }
+      }
     }
 
     .table-top {
@@ -440,6 +517,26 @@ export default {
 .tke-dialog {
   ::v-deep .el-dialog__footer {
     text-align: center;
+  }
+  .edit-dialog {
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    p {
+      color: #b43537;
+      border: 1px solid #f6b5b5;
+      background-color: #fcecec;
+      width: 258px;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    ::v-deep .el-dialog__footer {
+      text-align: center;
+    }
   }
 }
 </style>

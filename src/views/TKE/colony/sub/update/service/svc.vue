@@ -568,6 +568,12 @@ export default {
               clusterId: this.clusterId
             }
           })
+          this.$message({
+            message: '更新成功',
+            type: 'success',
+            duration: 0,
+            showClose: true
+          })
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)

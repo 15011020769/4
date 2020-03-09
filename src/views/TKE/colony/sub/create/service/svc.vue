@@ -543,11 +543,15 @@ export default {
               serviceName: this.svc.name
             }
           })
+          this.$message({
+            message: '新建成功',
+            type: 'success',
+            duration: 0,
+            showClose: true
+          })
         } else {
           this.loadShow = false
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[Response.Error.Code],

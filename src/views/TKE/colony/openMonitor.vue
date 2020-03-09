@@ -7,7 +7,7 @@
         <div class="grid-left">
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
-            <span>{{name}} / 监控</span>
+            <span>集群({{name}}) / 监控</span>
           </span>
         </div>
       </div>
@@ -16,70 +16,57 @@
     <div class="room-bottom">
       <div class="box-top">
         <div class="box-top-left">
-          <span class="span-1">实时</span>
-          <div class="block">
-            <el-date-picker
-              v-model="value2"
-              type="datetimerange"
-              :picker-options="pickerOptions"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              align="right"
-              size="mini"
-              @change="setTime()"
-            ></el-date-picker>
-          </div>
-          <!-- 对比维度 -->
-          <div v-show="isFlag">
-            <span class="span-2">对比维度</span>
-            <el-radio-group v-model="isCollapse" size="mini" >
-              <el-radio-button label="k8s_node">节点</el-radio-button>
-              <el-radio-button label="k8s_pod">pod</el-radio-button>
-            </el-radio-group>
-            <span class="span-2" v-show="isCollapse=='k8s_pod'">所属节点</span>
-            <el-select v-model="value" placeholder="请选择" size="mini" v-show="isCollapse=='k8s_pod'" @change="getChange($event)">
-              <el-option
-                v-for="item in podData"
-                :key="item.InstanceId"
-                :label="item.InstanceId+'('+item.InstanceName+')'"
-                :value="item.PrivateIpAddresses+'|'+item.InstanceId"
-              ></el-option>
-            </el-select>
-          </div>
+          <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'D'"
+                  v-on:switchData="GetDat" />
         </div>
       </div>
-      <div class="box-bottom">
-        <div class="box-bottom-left">
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选(共{{this.instances.length}}个)</el-checkbox>
-          <!-- <div style="margin: 15px 0;"></div> -->
-          <el-checkbox-group
-            v-model="checkedInstances"
-            @change="handleCheckedCitiesChange"
-            class="check-flex"
-          >
-            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
-          </el-checkbox-group>
+      <div class="box-top">
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='series' style="width:1000px;height: 200px;" />
         </div>
-        <div class="box-bottom-right">
-          <el-tabs v-model="activeName" @tab-click="handleClick">
-            <el-tab-pane label="事件" name="first">事件</el-tab-pane>
-            <el-tab-pane label="CPU" name="second">CPU</el-tab-pane>
-            <el-tab-pane label="内存" name="third">内存</el-tab-pane>
-            <el-tab-pane label="网络" name="fourth">网络</el-tab-pane>
-            <el-tab-pane label="GPU" name="five">GPU</el-tab-pane>
-          </el-tabs>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesPod' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpu' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpuRate' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesCpuUsed' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoy' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoyRate' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesMemoyUsed' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='times' :series='seriesInternet' style="width:1000px;height: 200px;" />
+        </div>
+
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesGpu' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesGpuUesd' style="width:1000px;height: 200px;" />
+        </div>
+        <div class="box-top-left">
+          <EcharTKE :time='gpuTimes' :series='seriesInternet' style="width:1000px;height: 200px;" />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-// import subTitle from "@/views/TKE/components/subTitle";
 import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO} from '@/constants'
+import TimeDropDown from '@/components/public/TimeDropDown'
+import EcharTKE from '@/components/public/EcharTKE'
+import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
@@ -92,86 +79,91 @@ export default {
   },
   data() {
     return {
-      activeName: "first",
-      value: "",
-      checkAll: true,
-      options: [],
-      isCollapse: "k8s_node",
-      checkedInstances: [],// 全选
-      isIndeterminate: false,
-      instances: [], // 单选
-      clusterId:"",//集群id
-      name: '',//集群名称
-      InstancesAll:[],
-      isFlag:true,
-      list:[],
-      podData:[],
-      valueLast:"",
-      JobId:"",// 后台返回id
-      pickerOptions: {
-        shortcuts: [
-          {
-            text: "实时",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000);
-              start.setTime(start.getTime());
-              picker.$emit("pick", [start, end]);
+      TimeArr: [{
+          name: '实时',
+          Time: 'realTime',
+          TimeGranularity: [
+            {
+              value: "60",
+              label: "1分鐘"
+            },
+            {
+              value: "300",
+              label: "5分鐘"
             }
-          },
-          {
-            text: "近1天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 1);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近一天',
+          Time: 'Nearly_24_hours',
+          TimeGranularity: [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
             }
-          },
-          {
-            text: "近7天",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+          ]
+        },
+        {
+          name: '近7天',
+          Time: 'Nearly_7_days',
+          TimeGranularity: [{
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "24小时"
             }
-          }
-        ]
-      },
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: [new Date(Date.parse(new Date())- 3600 * 1000),new Date(Date.parse(new Date()))]
+          ]
+        }
+      ],
+      list: [],//列表数据
+      startTime: 0,//开始时间
+      endTime: 0,//结束时间
+      timestamp: '',//粒度
+      times: [],//时间轴
+      series: [],//节点y轴数据
+      seriesPod: [],//Pod数量
+      title: 'asdsad',
+      legend: { data: ['节点数量']},
+      seriesCpu: [],//cpuY轴
+      seriesCpuRate: [],//CPU利用率
+      seriesCpuUsed: [],//CPU使用量
+      seriesMemoy: [],//内存总配置
+      seriesMemoyRate: [],//内存利用率
+      seriesMemoyUsed: [],//内存使用量
+      seriesInternet: [],//网络带宽
+      gpuTimes: [],//gpu时间轴
+      seriesGpu: [],//gpu
+      seriesGpuUesd: [],//gpu使用率
+      seriesInternet: [],//gpu分配率
     }
   },
   watch:{
-    isCollapse(val){
-      if(val == "k8s_pod"){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.getPodList()
-      } else if (val == "k8s_node") {
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.list=[]
-        this.getNodeList()
-        this.getNodeJob()
-      }
-    },
-    // value2(val){
-    //   // console.log(new.Date(val[0]),val[1])
-    // }
+    
+  },
+  components: {
+    TimeDropDown,
+    EcharTKE
   },
   created() {
     let{ name, clusterId } = this.$route.query
     this.clusterId = clusterId
     this.name = name
-    this.getNodeList()
-    this.getNodeJob()
   },
   methods: {
+    //获取数据
+    GetDat(data) {
+      this.timestamp = data[0];
+      this.startTime = new Date(data[1].StartTIme).getTime();
+      this.endTime = new Date(data[1].EndTIme).getTime();
+      this.getDataJob();
+      this.getGpuDataJob();
+    },
     //返回上一层
     goBack() {
       this.$router.go(-1);
@@ -204,69 +196,44 @@ export default {
       console.log(this.valueLast)
       this.getPodList()
     },
-        //获取节点列表
-    async getNodeList () {
-      let params = {
-        ClusterId: this.clusterId,
+   
+    getDataJob(){
+      this.loadShow = true;
+      const param = {
+        EndTime: this.endTime,
+        Limit: 65535,
+        Module: "/front/v1",
+        NamespaceName: "k8s_cluster",
         Offset: 0,
-        Limit: 20,
-        Version: "2018-05-25",
-        InstanceRole: "MASTER_ETCD"
-      };
-      const res = await this.axios.post(NODE_INFO, params);
-      // this.loadShow = false;
-      // 节点
-      let ids = [];
-      if (res.Response.InstanceSet.length > 0) {
-        res.Response.InstanceSet.map(obj => {
-          ids.push(obj.InstanceId);
-        });
+        Order: "asc",
+        OrderBy: "timestamp",
+        StartTime: this.startTime,
+        Version: "2019-06-06",
       }
-      console.log(res.Response.InstanceSet)
-      // check选择部分
-      this.checkedInstances = ids
-      this.instances =  ids
-      this.InstancesAll = ids
-      this.list = ids
-      // this.value = ids[0]
-      let param = {
-        Version: "2017-03-12",
-        Limit: 20
-      }
-      if(ids.length > 0) {
-        for(let i = 0; i < ids.length; i++) {
-          param['InstanceIds.'+i] = ids[i];
-        }
-        // this.loadShow = true;
-        let nodeRes = await this.axios.post(NODE_LIST, param);
-        // console.log(nodeRes)
-        if(nodeRes.Response.Error === undefined) {
-          // this.loadShow = false;
-          this.podData = []
-          // 数据合并
-          if(nodeRes.Response.InstanceSet.length > 0) {
-            console.log(nodeRes.Response.InstanceSet)
-            for(let i in ids){
-              for(let  j in nodeRes.Response.InstanceSet){
-                if(nodeRes.Response.InstanceSet[j].InstanceId == ids[i]){
-                  this.podData.push({
-                    InstanceId:ids[i],
-                    InstanceName:nodeRes.Response.InstanceSet[j].InstanceName,
-                    PrivateIpAddresses:nodeRes.Response.InstanceSet[j].PrivateIpAddresses[0]
-                  })
-                }  
-              }
-            }
-            this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
-            this.valueLast = this.value.split("|")
-            // this.getDataJob()
-            console.log(this.podData)
-          }
+      param['Conditions.0'] = JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]);
+      param['Fields.0'] = "max(k8s_cluster_node_total)";
+      param["Fields.1"] = "max(k8s_cluster_pods_used_total)";
+      param["Fields.2"] = "max(k8s_cluster_allocatable_pods_total)";
+      param["Fields.3"] = "max(k8s_cluster_cpu_core_total)";
+      param["Fields.4"] = "max(k8s_cluster_rate_cpu_core_used_cluster)";
+      param["Fields.5"] = "max(k8s_cluster_rate_cpu_core_request_cluster)";
+      param["Fields.6"] = "max(k8s_cluster_cpu_core_used)";
+      param["Fields.7"] = "max(k8s_cluster_memory_total)";
+      param["Fields.8"] = "max(k8s_cluster_rate_mem_usage_bytes_cluster)";
+      param["Fields.9"] = "max(k8s_cluster_rate_mem_request_bytes_cluster)";
+      param["Fields.10"] = "max(k8s_cluster_rate_mem_no_cache_bytes_cluster)";
+      param["Fields.11"] = "max(k8s_cluster_mem_usage_bytes)";
+      param["Fields.12"] = "max(k8s_cluster_mem_no_cache_bytes)";
+      param["Fields.13"] = "max(k8s_cluster_network_receive_bytes_bw)";
+      param["Fields.14"] = "max(k8s_cluster_network_transmit_bytes_bw)";
+      param["GroupBys.0"] = `timestamp(${this.timestamp}s)`;
+      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
+        if(res.Response.Error === undefined) {
+            this.JobId = res.Response.JobId
+            this.getResult()
         } else {
           this.loadShow = false;
-          let ErrTips = {
-            
-          };
+          let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -275,121 +242,48 @@ export default {
             duration: 0
           });
         }
-      }
+      })
     },
-    getPodList() {
-    //   this.list = [];
+    getGpuDataJob(){
+      this.loadShow = true;
       const param = {
-        Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast[0]+'&limit=50',
-        Version: '2018-05-25',
-        ClusterName: this.clusterId
-      }
-      this.axios.post(POINT_REQUEST, param).then(res => {
-        if(res.Response.Error === undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody))
-          // JSON.parse(res.Response.ResponseBody)
-          let dataPod = []
-          dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
-            return item.metadata.name
-          })
-          this.checkedInstances = dataPod
-          this.instances =  dataPod
-          this.InstancesAll = dataPod
-          this.getDataJob()
-        }
-      })
-    },
-
-    getDataJob(){
-       const param = {
-        'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
-        EndTime: this.value2[1].getTime(),
+        EndTime: this.endTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: "k8s_cluster",
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
-        StartTime: this.value2[0].getTime(),
+        StartTime: this.startTime,
         Version: "2019-06-06"
       }
-      param['Fields.0'] = 'min(k8s_pod_status_ready)';
-      param["Fields.1"] = "max(k8s_pod_cpu_core_used)";
-      param["Fields.2"] = "max(k8s_pod_rate_cpu_core_used_node)";
-      param["Fields.3"] = "max(k8s_pod_rate_cpu_core_used_request)";
-      param["Fields.4"] = "max(k8s_pod_rate_cpu_core_used_limit)";
-      param["Fields.5"] = "max(k8s_pod_mem_usage_bytes)";
-      param["Fields.6"] = "max(k8s_pod_mem_no_cache_bytes)";
-      param["Fields.7"] = "max(k8s_pod_rate_mem_usage_node)";
-      param["Fields.8"] = "max(k8s_pod_rate_mem_no_cache_node)";
-      param["Fields.9"] = "max(k8s_pod_rate_mem_usage_request)";
-      param["Fields.10"] = "max(k8s_pod_rate_mem_no_cache_request)";
-      param["Fields.11"] = "max(k8s_pod_rate_mem_usage_limit)";
-      param["Fields.12"] = "max(k8s_pod_rate_mem_no_cache_limit)";
-      param["Fields.13"] = "max(k8s_pod_network_receive_bytes_bw)";
-      param["Fields.14"] = "max(k8s_pod_network_transmit_bytes_bw)";
-      param["Fields.15"] = "max(k8s_pod_network_receive_bytes)";
-      param["Fields.16"] = "max(k8s_pod_network_transmit_bytes)";
-      param["Fields.17"] = "max(k8s_pod_network_receive_packets)";
-      param["Fields.18"] = "max(k8s_pod_network_transmit_packets)";
-      param["Fields.19"] = "max(k8s_pod_gpu_used)";
-      param["Fields.20"] = "max(k8s_pod_gpu_memory_used_bytes)";
-      param["Fields.21"] = "max(k8s_pod_rate_gpu_used_node)";
-      param["Fields.22"] = "max(k8s_pod_rate_gpu_memory_used_node)";
-      param["Fields.23"] = "max(k8s_pod_rate_gpu_used_request)";
-      param["Fields.24"] = "max(k8s_pod_rate_gpu_memory_used_request)";
-      param["GroupBys.0"] = "timestamp(60s)";
-      param["GroupBys.1"] = "pod_name";
+      param['Conditions.0'] = JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]);
+      param["GroupBys.0"] = `timestamp(${this.timestamp}s)`;
+      param['Fields.0'] = 'max(k8s_cluster_gpu_total)';
+      param["Fields.1"] = "max(k8s_cluster_rate_gpu_used_cluster)";
+      param["Fields.2"] = "max(k8s_cluster_rate_gpu_request_cluster)";
+      param["Fields.3"] = "max(k8s_cluster_rate_gpu_memory_used_cluster)";
+      param["Fields.4"] = "max(k8s_cluster_rate_gpu_memory_request_cluster)";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          console.log(res)
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-            this.getResult()
-
+            this.getGpuResult();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
     },
-    getNodeJob(){
-       const param = {
-        'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
-        'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
-        EndTime: this.value2[1].getTime(),
-        Limit: 65535,
-        Module: "/front/v1",
-        NamespaceName: this.isCollapse,
-        Offset: 0,
-        Order: "asc",
-        OrderBy: "timestamp",
-        StartTime: this.value2[0].getTime(),
-        Version: "2019-06-06"
-      }
-      param['Fields.0'] = 'sum(k8s_node_pod_restart_total)';
-      param["Fields.1"] = "min(k8s_node_status_ready)";
-      param["Fields.2"] = "max(k8s_node_cpu_usage)";
-      param["Fields.3"] = "max(k8s_node_mem_usage)";
-      param["Fields.4"] = "max(k8s_node_lan_intraffic)";
-      param["Fields.5"] = "max(k8s_node_lan_outtraffic)";
-      param["Fields.6"] = "max(k8s_node_wan_intraffic)";
-      param["Fields.7"] = "max(k8s_node_wan_outtraffic)";
-      param["Fields.8"] = "max(k8s_node_tcp_curr_estab)";
-      param["Fields.9"] = "max(k8s_node_rate_gpu_used)";
-      param["Fields.10"] = "max(k8s_node_rate_gpu_memory_used)";
-      this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          console.log()
-          console.log(res)
-        if(res.Response.Error === undefined) {
-            console.log(res.Response.JobId)
-            this.JobId = res.Response.JobId
-            this.getResult()
-        }
-      })
-    },
-    getResult() {
-    //   this.list = [];
+    getGpuResult() {
+      this.loadShow = false;
       const param = {
         JobId: this.JobId,
         Module: "/front/v1",
@@ -397,7 +291,136 @@ export default {
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
         if(res.Response.Error === undefined) {
-          console.log(res.Response.Data)
+          let data = JSON.parse(res.Response.Data);
+          let gpuTimes = [], gpus = [], gpuUseds = [], gpuRequests = [], gpuMems = [], gpuMemRequests = [];//时间
+          if(data.length > 0) {
+            for(let i = 0; i < data.length; i++) {
+              let item = data[i];
+              let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+              let gpu = item[1];
+              let gpuUsed = item[2];
+              let gpuRequest = item[3];
+              let gpuMem = item[4];
+              let gpuMemRequest = item[5];
+              gpuTimes.push(time);
+              gpus.push(gpu);
+              gpuUseds.push(gpuUsed);
+              gpuRequests.push(gpuRequest);
+              gpuMems.push(gpuMem);
+              gpuMemRequests.push(gpuMemRequest);
+            }
+          }
+          this.gpuTimes = gpuTimes;
+          this.seriesGpu = [
+            {name: 'GPU 总配置',type: 'line', data: gpus}
+          ];
+          this.seriesGpuUesd = [
+            {name: 'GPU利用率',type: 'line', data: gpuUseds},
+            {name: 'GPU分配率(Request)',type: 'line', data: gpuRequests}
+          ];
+          this.seriesInternet = [
+            {name: '显存利用率',type: 'line', data: gpuMems},
+            {name: '显存分配率(Request)',type: 'line', data: gpuMemRequests}
+          ];
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    getResult() {
+      this.loadShow = false;
+      const param = {
+        JobId: this.JobId,
+        Module: "/front/v1",
+        Version: "2019-06-06"
+      }
+      this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+        if(res.Response.Error === undefined) {
+          let data = JSON.parse(res.Response.Data);
+          let times = [], clusters = [], pods = [], allocatablePods = [], cpus = [], cpuUseds = [],
+            cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
+            memUsageBytes = [], memNoYsages = [], receives = [], transmits = [];
+          if(data.length > 0) {
+            for(let i = 0; i < data.length; i++) {
+              let item = data[i];
+              let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+              let cluster = item[1];//节点数量
+              let pod = item[2];//实例数量
+              let allocatablePod = item[3];//allocatable实例数量
+              let cpu = item[4];//cpu总配置
+              let cpuUsed = item[5];//cpu使用率
+              let cpuRequest = item[6];//cpu分配率
+              let cpuUsedmax = item[7];//cpu使用量
+              let memory = item[8];//内存总量
+              let memusage = item[9];
+              let memrequest = item[10];
+              let menNocache = item[11];
+              let memUsageByte = item[12];
+              let memNoYsage = item[13];
+              let receive = item[14];
+              let transmit = item[15];
+              times.push(time);
+              clusters.push(cluster);
+              pods.push(pod);
+              allocatablePods.push(allocatablePod);
+              cpus.push(cpu);
+              cpuUseds.push(cpuUsed);
+              cpuRequests.push(cpuRequest);
+              cpuUsedmaxs.push(cpuUsedmax);
+              memorys.push(memory);
+              memusages.push(memusage);
+              memrequests.push(memrequest);
+              menNocaches.push(menNocache);
+              memUsageBytes.push(memUsageByte);
+              memNoYsages.push(memNoYsage);
+              receives.push(receive);
+              transmits.push(transmit);
+            }
+          }
+          this.times = times;
+          this.series = [{name: '节点数量',type: 'line', data: clusters}];
+          this.seriesPod = [{name: 'Allocatable Pod数量',type: 'line', data: allocatablePods},{name: 'Pod数量',type: 'line', data: pods}];
+          this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: cpus}];
+
+          this.seriesCpuRate = [
+            {name: 'CPU分配率(Request)',type: 'line', data: cpuRequests},
+            {name: 'CPU利用率',type: 'line', data: cpuUseds}
+          ];
+          this.seriesCpuUsed = [{name: 'CPU使用量',type: 'line', data: cpuUsedmaxs}];
+          this.seriesMemoy = [{name: '内存总配置',type: 'line', data: memorys}];
+          this.seriesMemoyRate = [
+            {name: '内存分配率(Request)',type: 'line', data: memrequests},
+            {name: '内存利用率',type: 'line', data: memusages},
+            {name: '内存利用率(不含cache)',type: 'line', data: menNocaches}
+          ];
+          this.seriesMemoyUsed = [
+            {name: '内存使用率',type: 'line', data: memUsageBytes},
+            {name: '内存使用率(不含cache)',type: 'line', data: memNoYsages}
+          ];
+          this.seriesInternet = [
+            {name: '网络入带宽',type: 'line', data: receives},
+            {name: '网络出带宽',type: 'line', data: transmits}
+          ];
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
     },

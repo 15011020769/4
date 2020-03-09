@@ -279,7 +279,7 @@ export default {
       let params = {
         Version: "2017-03-12",
         Region: this.selectedRegion,
-        Limit: 100
+        Limit: 100,
       };
       this.axios.post(CVM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {

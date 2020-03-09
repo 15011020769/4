@@ -13,7 +13,7 @@
           <el-date-picker
             v-model="dateChoice3"
             type="daterange"
-            class="newDataTime newDataTimethree"
+            class="newDataTimethree"
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
@@ -55,7 +55,7 @@ export default {
     return {
       loading: true,
       activeName2: "traffic", //业务-二级tab标识
-      IpList: "",
+      IpList: [],
       inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
@@ -70,7 +70,7 @@ export default {
       metricNameService2s: ["connum", "inactive_conn"],
       ywTimeBtnSelect2: "總覽", //业务 时间按钮下面第二个下拉
 
-      dateChoice3: {}, //日期选择
+      dateChoice3: [], //日期选择
       periodService: 3600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       endTimeService: this.getDateString(new Date()),
       startTimeService: this.getDateString(
@@ -80,29 +80,38 @@ export default {
   },
   watch: {
     dateChoice3: function(value) {
-      this.periodService = 86400;
+      if(this.inputIdService == "") {
+        return
+      }
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
-      var arr = [];
-      for (var i = 0; i <= num / 86400000; i++) {
-        //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
-        var d = new Date(value[1].getTime() - 86400000 * i);
-        arr.push(moment(d).format("MM-DD"));
+      if(num == 0) {//选择时间为一天
+        this.periodService = 3600;
+        var arr = [];
+        for (var i = 24; i >= 0; i--) {
+          var d = new Date(value[1].getTime() + 3600000 * i);
+          arr.push(moment(d).format("MM-DD HH:mm:ss"));
+        }
+        this.endTimeService = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
+      } else {
+        this.periodService = 86400;
+        var arr = [];
+        for (var i = 0; i <= num / 86400000; i++) {
+          //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+          var d = new Date(value[1].getTime() - 86400000 * i);
+          arr.push(moment(d).format("MM-DD"));
+        }
+        this.endTimeService = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       }
       this.timey = arr;
       this.startTimeService = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.endTimeService = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      
       this.describeTransmitStatis();
     }
   },
-
   created() {
-    this.gettableshow();
     this.GetID();
   },
   methods: {
-    gettableshow() {
-      this.thisTime(1);
-    },
     getDataService() {
       this.describleL4Rules();
       this.describeTransmitStatis();
@@ -119,12 +128,29 @@ export default {
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource;
-        for (let i = 0; i < IpList.length; i++) {
-          this.inputIdService = IpList[i].Id;
-          this.IpList = IpList[i].IpList;
-          this.loading = false;
-        }
+        if (res.Response.Error === undefined) {
+          if (res.Response.Resource.length === 0) {
+            this.$message({
+              message: '暫無服務',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.loading = false
+            return
+          }
+          this.IpList = res.Response.Resource[0].IpList;
+          this.inputIdService = res.Response.Resource[0].Id;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // 3.1.获取L4转发规则
@@ -224,68 +250,65 @@ export default {
       });
     },
     thisTime(thisTime) {
+      if(this.inputIdService == "") {
+        return
+      }
       var ipt1 = document.querySelector(".newDataTimethree input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTimethree input:nth-child(4)");
       const end = new Date();
       const start = new Date();
-      if (thisTime == "1") {
-        this.periodService = 3600;
-        start.setTime(start.getTime() - 3600 * 1000);
-        var num =
-          end.getTime() -
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime()
-          ).getTime();
+      if (thisTime == "1") {//'今天'，时间从00：00：00到new Date()
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        var zeroTime = new Date(moment(end).format("YYYY-MM-DD 00:00:00"));
+        var maxI = Math.floor((end.getTime()-zeroTime.getTime())/3600000);
         var arr = [];
-        for (var i = 0; i <= 86400000 / 3600000; i++) {
-          var d = new Date(end.getTime() - 3600000 * i);
+        for (var i = maxI; i >= 0; i--) {
+          var d = new Date(zeroTime.getTime() + 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
-        this.startTimeService = moment(
-          new Date(end.getTime() - 86400000)
-        ).format("YYYY-MM-DD HH:mm:ss");
+
+        this.startTimeService = moment(end).format("YYYY-MM-DD 00:00:00");
         this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.periodService = 3600;
         this.timey = arr;
       } else if (thisTime == "2") {
-        // console.log(this.inqpsdata,this.dropqps)
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeService = ipt1.value;
-        this.endTimeService = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 7);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeService = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodService = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeService = ipt1.value;
-        this.endTimeService = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 15);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeService = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodService = 86400;
-
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeService = ipt1.value;
-        this.endTimeService = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeService = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodService = 86400;
         this.timedone(end, start, 86400000);
-        // console.log(end,start)
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeService = ipt1.value;
-        this.endTimeService = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30 * 6);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeService = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeService = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodService = 86400;
         this.timedone(end, start, 86400000);
       }
@@ -510,7 +533,7 @@ export default {
     border-radius: 0;
   }
 }
-.newDataTime {
+.newDataTimethree {
   float: left;
   height: 30px;
   line-height: 30px;

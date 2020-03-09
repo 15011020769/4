@@ -4,17 +4,17 @@
     <el-form :inline="true"  size="small">
       <el-form-item v-if='typeSelect' :label="typeLabel">
         <el-select v-model='selectValue'  @change="changeType">
-          <el-option 
-            v-for="item in typeOptions" 
+          <el-option
+            v-for="item in typeOptions"
             :key="item.value"
-            :label="item.label" 
+            :label="item.label"
             :value="item.value"
           ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-          <el-input 
-            v-model="inputValue" 
+          <el-input
+            v-model="inputValue"
             :placeholder="inputPlaceholder"
             @input="changeInput"
           ></el-input>
@@ -23,7 +23,7 @@
             <el-tooltip class="tooltip" effect="dark" content="刷新" placement="top">
               <i @click="refresh" class="el-icon-refresh tke-refresh "></i>
             </el-tooltip>
-             
+
           </span>
           <span v-if='exportData'>
             <el-tooltip class="tooltip" effect="dark" content="導出表格" placement="top">
@@ -78,7 +78,11 @@ export default {
       inputValue: this.searchInput,
     };
   },
- 
+  watch: {
+    typeValue: function (val) {
+      this.selectValue = val
+    }
+  },
   methods: {
     //选择搜索条件
     changeType(val) {
@@ -126,7 +130,7 @@ export default {
       height: 32px;
     }
   }
-  
+
   .tke-search  .el-input__inner,
   .tke-search  .el-button {
     border-radius: 0;

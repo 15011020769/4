@@ -7,14 +7,8 @@
       >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button
-              class="buttonGroup"
-              @click="choiceTime(1)"
-            >{{$t('DDOS.Statistical_forms.Today')}}</el-button>
-            <el-button
-              class="buttonGroup"
-              @click="choiceTime(2)"
-            >{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
+            <el-button class="buttonGroup" @click="choiceTime(1)">{{$t('DDOS.Statistical_forms.Today')}}</el-button>
+            <el-button class="buttonGroup" @click="choiceTime(2)">{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
             <el-button class="buttonGroup" @click="choiceTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="choiceTime(4)">近30天</el-button>
             <el-button class="buttonGroup" @click="choiceTime(5)">近半年</el-button>
@@ -158,7 +152,7 @@ export default {
       ),
       timey: [],
       tableDataEnd: [],
-      period: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
+      period: 3600 //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
     };
   },
   watch: {
@@ -166,17 +160,28 @@ export default {
       if(this.selectId == "") {
         return
       }
-      this.period = 86400;
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
-      var arr = [];
-      for (var i = 0; i <= num / 86400000; i++) {
-        //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
-        var d = new Date(value[1].getTime() - 86400000 * i);
-        arr.push(moment(d).format("MM-DD"));
+      if(num == 0) {//选择时间为一天
+        this.period = 3600;
+        var arr = [];
+        for (var i = 24; i >= 0; i--) {
+          var d = new Date(value[1].getTime() + 3600000 * i);
+          arr.push(moment(d).format("MM-DD HH:mm:ss"));
+        }
+        this.endTime = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
+      } else {
+        this.period = 86400;
+        var arr = [];
+        for (var i = 0; i <= num / 86400000; i++) {
+          //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+          var d = new Date(value[1].getTime() - 86400000 * i);
+          arr.push(moment(d).format("MM-DD"));
+        }
+        this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       }
       this.timey = arr;
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      
       this.describeDDoSNetTrend(this.timey);
       this.describeDDoSNetEvList();
       for (let index in this.metricNames) {
@@ -368,21 +373,24 @@ export default {
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();
       const start = new Date();
-      if (thisTime == "1") {
+      if (thisTime == "1") {//'今天'，时间从00：00：00到new Date()
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        var zeroTime = new Date(moment(end).format("YYYY-MM-DD 00:00:00"));
+        var maxI = Math.floor((end.getTime()-zeroTime.getTime())/3600000);
         var arr = [];
-        for (var i = 0; i <= 86400000 / 3600000; i++) {
-          var d = new Date(end.getTime() - 3600000 * i);
+        for (var i = maxI; i >= 0; i--) {
+          var d = new Date(zeroTime.getTime() + 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
-        this.startTime = moment(new Date(end.getTime() - 86400000)).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
+
+        this.startTime = moment(end).format("YYYY-MM-DD 00:00:00");
         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.period = 3600;
         this.timey = arr;
       } else if (thisTime == "2") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 7);
         ipt1.value = moment(start).format("YYYY-MM-DD");
         ipt2.value = moment(end).format("YYYY-MM-DD");
         this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
@@ -392,7 +400,7 @@ export default {
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 15);
         ipt1.value = moment(start).format("YYYY-MM-DD");
         ipt2.value = moment(end).format("YYYY-MM-DD");
         this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
@@ -402,7 +410,7 @@ export default {
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30);
         ipt1.value = moment(start).format("YYYY-MM-DD");
         ipt2.value = moment(end).format("YYYY-MM-DD");
         this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
@@ -412,7 +420,7 @@ export default {
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30 * 6);
         ipt1.value = moment(start).format("YYYY-MM-DD");
         ipt2.value = moment(end).format("YYYY-MM-DD");
         this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");

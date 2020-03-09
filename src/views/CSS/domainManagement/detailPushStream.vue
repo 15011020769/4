@@ -2,7 +2,7 @@
   <div v-loading="loadShow">
     <div class="topHead">
       <i class="el-icon-back" @click="returnBack"></i>
-      {{$route.query.TargetDomain}}
+      {{$route.query.Name}}
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
@@ -11,9 +11,9 @@
             <BasicInfo :info="info" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="推流配置" name="second" v-if="info.Type === 0">
+        <el-tab-pane label="推流配置" name="second">
           <div class="wrapper">
-            <pushStreamSet />
+            <pushStreamSet :info="info" />
           </div>
         </el-tab-pane>
         <el-tab-pane label="範本配置" name="third">
@@ -99,9 +99,10 @@ export default {
   font-size: 16px;
   font-weight: 600;
   .el-icon-back {
-    margin-right: 40px;
+    margin-right: 15px;
     font-size: 24px;
     color: #006eff;
+    cursor: pointer;
   }
 }
 .conTabs {

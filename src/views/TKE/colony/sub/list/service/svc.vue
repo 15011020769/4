@@ -250,9 +250,7 @@ export default {
           this.showNameSpaceModal = false
           this.$message.success('删除成功')
         } else {
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],

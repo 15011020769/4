@@ -110,6 +110,14 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      :title="playUrl"
+      :visible.sync="visible"
+      destroy-on-close
+      width="840px"
+    >
+      <test-stream :stream="stream" :url.sync="playUrl" />
+    </el-dialog>
   </div>
 </template>
 
@@ -121,29 +129,40 @@ import {
   LIVE_DESCRIBE_LIVEFORBIDSTREAMLIST,
   LIVE_FORBIDLIVESTREAM,
   LIVE_RESUMELIVESTREAM,
-  LIVE_DROPLIVESTREAM
+  LIVE_DROPLIVESTREAM,
+  DOMAIN_LIST,
+  LIVE_DESCRIBE_LIVEPLAYAUTHKEY,
 } from "@/constants";
 import moment from "moment";
+import TestStream from './testStream'
 export default {
-  components: {
-    HeadCom
-  },
   name: "streamManagement",
   data() {
     return {
+      playUrl: '',
       type: this.$t("CSS.domainManagement.33"),
       tableData: [],
       streamName: "",
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      loading: true
+      loading: true,
+      stream: {},
+      visible: false,
     };
+  },
+  components: {
+    TestStream,
+    HeadCom
   },
   mounted() {
     this.onTypeChange(this.type);
   },
   methods: {
+    test(row) {
+      this.stream = row
+      this.visible = true
+    },
     format(utcDate) {
       return moment(utcDate).format("YYYY-MM-DD HH:mm:ss");
     },
@@ -186,7 +205,6 @@ export default {
         this.total = Response.TotalNum;
       });
     },
-    test(row) {},
     disable(row) {
       this.$confirm(
         `${this.$t("CSS.domainManagement.46")}${row.StreamName}?`,

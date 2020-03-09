@@ -37,16 +37,3 @@ export const OBJ_LIST = 'bucket/list' // 列表
 
 //弹性公网IP
 export const NETIP_LIST = 'vpc2/DescribeAddresses' // 列表
-
-
-// 实例分组
-export const CM_GROUPING_LIST = 'monitor/GetInstanceGroupList' // 列表
-
-// 实例分组 列表 分组类型
-export const CM_GROUPING_LIST_TYPE = 'monitor2/DescribePolicyConditionList'
-
-// 实例分组 列表 删除
-export const CM_GROUPING_LIST_DELETE = 'monitor/DeleteInstanceGroup'
-
-// 实例分组 列表 复制
-export const CM_GROUPING_LIST_COPY = 'monitor/CopyInstanceGroup'

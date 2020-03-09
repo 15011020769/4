@@ -13,7 +13,7 @@
           <el-date-picker
             v-model="dateChoice2"
             type="daterange"
-            class="newDataTime newDataTimetwo"
+            class="newDataTimetwo"
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
@@ -90,7 +90,7 @@ export default {
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
       ccTimeBtnSelect2: "總覽", //cc时间按钮下面第二个下拉
-      dateChoice2: {}, //日期选择
+      dateChoice2: [], //日期选择
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
       startTime: this.getDateString(
@@ -110,25 +110,42 @@ export default {
   },
   watch: {
     dateChoice2: function(value) {
-      this.periodCC = 86400;
+      if(this.inputIdCC == "") {
+        return
+      }
       var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
-      var arr = [];
+      if(num == 0) {//选择时间为一天
+        this.periodCC = 3600;
+        var arr = [];
+        for (var i = 24; i >= 0; i--) {
+          var d = new Date(value[1].getTime() + 3600000 * i);
+          arr.push(moment(d).format("MM-DD HH:mm:ss"));
+        }
+        this.endTimeCC = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
+      } else {
+        this.periodCC = 86400;
+        var arr = [];
+        for (var i = 0; i <= num / 86400000; i++) {
+          //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+          var d = new Date(value[1].getTime() - 86400000 * i);
+          arr.push(moment(d).format("MM-DD"));
+        }
+        this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      }
       for (var i = 0; i <= num / 86400000; i++) {
         //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
         var d = new Date(value[1].getTime() - 86400000 * i);
         arr.push(moment(d).format("MM-DD"));
       }
       this.timey = arr;
-
       this.startTimeCC = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.endTimeCC = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      
       this.every();
       this.describeCCEvList();
     }
   },
   created() {
     this.$nextTick(function() {
-      this.getDataCC();
       this.GetID();
     });
   },
@@ -140,11 +157,29 @@ export default {
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
-        let IpList = res.Response.Resource;
-        for (let i = 0; i < IpList.length; i++) {
-          this.inputIdCC = IpList[i].Id;
-          this.IpList = IpList[i].IpList;
-        }
+        if (res.Response.Error === undefined) {
+          if (res.Response.Resource.length === 0) {
+            this.$message({
+              message: '暫無服務',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            this.loading = false
+            return
+          }
+          this.IpList = res.Response.Resource[0].IpList;
+          this.inputIdCC = res.Response.Resource[0].Id;
+				} else {
+					let ErrTips = {};
+					let ErrOr = Object.assign(ErrorTips, ErrTips);
+					this.$message({
+						message: ErrOr[res.Response.Error.Code],
+						type: "error",
+						showClose: true,
+						duration: 0
+					});
+				}
       });
     },
     // CC资源Id变化时，重新获取数据
@@ -220,68 +255,65 @@ export default {
     },
     //获取时间
     thisTime(thisTime) {
+      if(this.inputIdCC == "") {
+        return
+      }
       var ipt1 = document.querySelector(".newDataTimetwo input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTimetwo input:nth-child(4)");
       const end = new Date();
       const start = new Date();
-      if (thisTime == "1") {
-        this.periodCC = 3600;
-        start.setTime(start.getTime() - 3600 * 1000);
-        var num =
-          end.getTime() -
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime()
-          ).getTime();
+      if (thisTime == "1") {//'今天'，时间从00：00：00到new Date()
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        var zeroTime = new Date(moment(end).format("YYYY-MM-DD 00:00:00"));
+        var maxI = Math.floor((end.getTime()-zeroTime.getTime())/3600000);
         var arr = [];
-        for (var i = 0; i <= 86400000 / 3600000; i++) {
-          var d = new Date(end.getTime() - 3600000 * i);
+        for (var i = maxI; i >= 0; i--) {
+          var d = new Date(zeroTime.getTime() + 3600000 * i);
           arr.push(moment(d).format("MM-DD HH:mm:ss"));
         }
-        this.startTimeCC = moment(new Date(end.getTime() - 86400000)).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
+
+        this.startTimeCC = moment(end).format("YYYY-MM-DD 00:00:00");
         this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
+        this.periodCC = 3600;
         this.timey = arr;
       } else if (thisTime == "2") {
-        // console.log(this.inqpsdata,this.dropqps)
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeCC = ipt1.value;
-        this.endTimeCC = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 7);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeCC = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "3") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeCC = ipt1.value;
-        this.endTimeCC = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 15);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeCC = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodCC = 86400;
-
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "4") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeCC = ipt1.value;
-        this.endTimeCC = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeCC = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodCC = 86400;
         this.timedone(end, start, 86400000);
-        // console.log(end,start)
         //ddos攻击-攻击流量带宽
       } else if (thisTime == "5") {
         //ddos攻击-攻击流量带宽
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30 * 6);
-        ipt1.value = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        ipt2.value = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.startTimeCC = ipt1.value;
-        this.endTimeCC = ipt2.value;
+        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30 * 6);
+        ipt1.value = moment(start).format("YYYY-MM-DD");
+        ipt2.value = moment(end).format("YYYY-MM-DD");
+        this.startTimeCC = moment(start).format("YYYY-MM-DD HH:mm:ss");
+        this.endTimeCC = moment(end).format("YYYY-MM-DD HH:mm:ss");
         this.periodCC = 86400;
         this.timedone(end, start, 86400000);
         //ddos攻击-攻击流量带宽
@@ -448,6 +480,19 @@ export default {
   line-height: 30px !important;
   border-radius: 0 !important;
   padding-top: 0;
+}
+.newDataTimetwo {
+  float: left;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 0;
+  .el-input__icon {
+    line-height: 26px;
+  }
+  .el-range-separator {
+    line-height: 26px;
+    width: 7%;
+  }
 }
 .newClear {
   display: flex;

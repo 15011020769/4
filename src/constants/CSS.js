@@ -8,22 +8,24 @@
  */
 // 断流诊断 列表
 export const CUTOUT_LIST = 'live2/DescribeLiveStreamEventList'
-//域名列表
+// 域名列表
 export const DOMAIN_LIST = 'live2/DescribeLiveDomains'
-//添加域名
+// 添加域名
 export const ADD_DOMAIN = 'live2/AddLiveDomain'
-//删除域名
+// 删除域名
 export const DEL_DOMAIN = 'live2/DeleteLiveDomain'
-//禁用域名
+// 禁用域名
 export const PROHIBIT_DOMAIN = 'live2/ForbidLiveDomain'
-//启用域名
+// 启用域名
 export const ENABLE_DOMAIN = 'live2/EnableLiveDomain'
-//域名详情
+// 域名详情
 export const DOMAIN_DELTILS = 'live2/DescribeLiveDomain'
 //统计分析
+// 统计分析运营数据
+export const DESCRIBE_PLAY_STAT_INFOLIST = 'live2/DescribePlayStatInfoList'
 //查询直播转码统计信息
 export const CSS_CODE = 'live2/DescribeLiveTranscodeDetailInfo'
-//查询直播转码统计图表信息
+// 查询直播转码统计图表信息
 export const CSS_CODECHARTS = 'live2/DescribeLiveTranscodeTotalInfo'
 // 查询截图张数
 export const CSS_SCREEN = 'live2/DescribeScreenShotSheetNumList'
@@ -39,23 +41,23 @@ export const CSS_STREAMPUSH = 'live2/DescribeStreamPushInfoList'
 export const CSS_STREAMPLAY = 'live2/DescribeStreamPlayInfoList'
 // 查询推流鉴权key
 export const FLOWKEY_DELTILS = 'live2/DescribeLivePushAuthKey'
-//查询拉流配置
+// 查询拉流配置
 export const FLOW_DELTILS = 'live2/DescribePullStreamConfigs'
-//获取回调模板列表
+// 获取回调模板列表
 export const CALLBACK_DELTILS = 'live2/DescribeLiveCallbackTemplates'
-//获取录制模板列表
+// 获取录制模板列表
 export const RECORDING_DELTILS = 'live2/DescribeLiveRecordTemplates'
 // 获取直播回调规则列表
 export const RULELIST_DELTILS = 'live2/DescribeLiveCallbackRules'
-//获取单个回调模板
+// 获取单个回调模板
 export const SINGLECALLBACK_DELTILS = 'live2/DescribeLiveCallbackTemplate'
 // 获取录制规则列表
 export const LIVELIST_DELTILS = 'live2/DescribeLiveRecordRules'
-//获取单个录制模板
+// 获取单个录制模板
 export const SINGLELIVE_DELTILS = 'live2/DescribeLiveRecordTemplate'
-//创建回调规则
+// 创建回调规则
 export const BACKRULE_DELTILS = 'live2/CreateLiveCallbackRule'
-//创建录制规则
+// 创建录制规则
 export const LIVERULE_DELTILS = 'live2/CreateLiveRecordRule'
 
 /** 功能模板 */
@@ -89,7 +91,6 @@ export const GET_CALLBACK_TEMPLATES = 'live2/DescribeLiveCallbackTemplates'
 export const UPDATE_CALLBACK_TEMPLATES = 'live2/ModifyLiveCallbackTemplate'
 // 删除回调模板
 export const DELETE_CALLBACK_TEMPLATES = 'live2/DeleteLiveCallbackTemplate'
-
 
 /** 查询实时总带宽 实时总连接数 */
 export const LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST = 'live2/DescribeLiveDomainPlayInfoList'
@@ -147,3 +148,31 @@ export const LIVE_DESCRIBE_LIVEPACKAGEINFO = 'live2/DescribeLivePackageInfo'
 /** 日志服务 */
 // 批量获取日志服务
 export const GET_LOG_DOWNLOAD_LIST = 'live2/DescribeLogDownloadList'
+// 获取转码规则列表
+export const DESCRIBE_LIVE_TRANSCODE_RULES = 'live2/DescribeLiveTranscodeRules'
+// 获取单个转码模板
+export const DESCRIBE_LIVE_TRANSCODE_TEMPLATE = 'live2/DescribeLiveTranscodeTemplate'
+// 删除转码规则
+export const DELETE_LIVE_TRANSCODE_RULE = 'live2/DeleteLiveTranscodeRule'
+// 创建转码规则
+export const CREATE_LIVE_TRANSCODE_RULE = 'live2/CreateLiveTranscodeRule'
+// 修改播放鉴权key
+export const MODIFY_LIVE_PLAY_AUTH_KEY = 'live2/ModifyLivePlayAuthKey'
+// 获取带宽封顶配置
+export const DESCRIBE_LIVE_BAND_LIMIT = 'live2/DescribeLiveBandLimit'
+// 获取源站设置
+export const DESCRIBE_SOURCE_STREAM_INFO = 'live2/DescribeSourceStreamInfo'
+// 获取域名证书信息
+export const DESCRIBE_LIVE_DOMAIN_CERT = 'live2/DescribeLiveDomainCert'
+// 添加证书
+export const CREATE_LIVE_CERT = 'live2/CreateLiveCert'
+// 修改域名和证书绑定信息
+export const MODIFY_LIVE_DOMAIN_CERT = 'live2/ModifyLiveDomainCert'
+// 添加证书
+export const MODIFY_LIVE_CERT = 'live2/ModifyLiveCert'
+// 修改带宽封顶
+export const MODIFY_LIVE_BAND_LIMIT = 'live2/ModifyLiveBandLimit'
+// 区域配置
+export const MODIFY_LIVE_PLAY_DOMAIN = 'live2/ModifyLivePlayDomain'
+// 源站设置
+export const MODIFY_SOURCE_STREAM_INFO = 'live2/ModifySourceStreamInfo'

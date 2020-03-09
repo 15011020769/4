@@ -27,9 +27,10 @@
           </el-form-item>
         </p>
       </el-form>
-      <p class="rowCont">
+      <p class="rowCont" style="display: flex">
         <span>策略类型</span>
-        <el-select v-model="formInline.strategy" style="width:200px;">
+        <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type>
+        <!-- <el-select v-model="formInline.strategy" style="width:200px;">
           <el-option
             v-for="(item,index) in formInline.strategy_kind"
             :key="index"
@@ -37,7 +38,7 @@
             :value="item.value"
             label-width="40px"
           ></el-option>
-        </el-select>
+        </el-select> -->
         <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
           <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
@@ -173,6 +174,7 @@
   </div>
 </template>
 <script>
+import GroupingType from '@/components/GroupingType'
 export default {
   data () {
     return {
@@ -247,7 +249,7 @@ export default {
             validator: (rule, value, callback) => {
               if (value === '') {
                 callback(new Error('名称不能为空'))
-              } else if (!(/[\u4e00-\u9fa5_a-zA-Z_]{1,20}/.test(value))) {
+              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,20}$/.test(value))) {
                 callback(new Error('名称格式不正确'))
               } else {
                 callback()
@@ -272,6 +274,9 @@ export default {
         ]
       }// 名称和备注的验证
     }
+  },
+  components: {
+    GroupingType
   },
   props: {
     dialogVisible: {
@@ -313,6 +318,10 @@ export default {
     delShijian () {
       // 删除触发条件的事件告警
       alert('你要删除此项触发条件的事件告警')
+    },
+    // 新建
+    showMsgfromChild (val) {
+      console.log('val', val)
     }
   }
 }

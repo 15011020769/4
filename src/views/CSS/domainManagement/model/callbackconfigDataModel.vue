@@ -4,22 +4,33 @@
       <el-dialog
         title="回調配置"
         :visible.sync="isShow"
-        :before-close="handleClose">
+        :before-close="handleClose"
+      >
         <div class="newClear">
-          <p class="tip">範本選擇（如需添加新的範本，請前往<a>【功能範本】<i class="el-icon-share"></i></a>中進行設置）</p>
+          <p class="tip">
+            範本選擇（如需添加新的範本，請前往<a
+              >【功能範本】<i class="el-icon-share"></i></a
+            >中進行設置）
+          </p>
           <div class="tableCon">
             <el-table
               :data="callbackconfigData"
               ref="multipleTable"
               @selection-change="handleSelectionChange"
             >
+              <el-table-column type="selection" width="55"> </el-table-column>
               <el-table-column
-                type="selection"
-                width="55">
-              </el-table-column>
-              <el-table-column prop="TemplateName" label="範本名稱"></el-table-column>
-              <el-table-column prop="TemplateId" label="範本ID"></el-table-column>
-              <el-table-column prop="StreamBeginNotifyUrl" label="回調地址"></el-table-column>
+                prop="TemplateName"
+                label="範本名稱"
+              ></el-table-column>
+              <el-table-column
+                prop="TemplateId"
+                label="範本ID"
+              ></el-table-column>
+              <el-table-column
+                prop="StreamBeginNotifyUrl"
+                label="回調地址"
+              ></el-table-column>
             </el-table>
           </div>
         </div>
@@ -34,23 +45,23 @@
 <script>
 import { CALLBACK_DELTILS, LIVE_DELETELIVECALLBACKRULE, BACKRULE_DELTILS } from '@/constants'
 export default {
-  props:{
-    isShow:{
-      required:false,
-      type:Boolean
+  props: {
+    isShow: {
+      required: false,
+      type: Boolean
     },
     checkedTemplateId: {
-      required: false,
-    },
+      required: false
+    }
   },
-  data(){
-    return{
-      callbackconfigData:[],//表格
-      selection: [],
+  data () {
+    return {
+      callbackconfigData: [], // 表格
+      selection: []
     }
   },
   watch: {
-    isShow(newVal) {
+    isShow (newVal) {
       if (newVal === true) {
         if (this.checkedTemplateId) {
           this.$nextTick(() => {
@@ -64,27 +75,27 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.axios.post(CALLBACK_DELTILS, {
       Version: '2018-08-01'
     }).then(({ Response }) => {
       this.callbackconfigData = Response.Templates
     })
   },
-  methods:{
-    handleSelectionChange(val) {
+  methods: {
+    handleSelectionChange (val) {
       this.selection = val
       if (val.length > 1) {
         this.$refs.multipleTable.clearSelection()
         this.$refs.multipleTable.toggleRowSelection(val[1], true)
       }
     },
-    //关闭弹框
-    handleClose(){
-      this.$emit("closeModel",false)
+    // 关闭弹框
+    handleClose () {
+      this.$emit('closeModel', false)
     },
-    //保存
-    saveCallEdit(){
+    // 保存
+    saveCallEdit () {
       this.axios.post(LIVE_DELETELIVECALLBACKRULE, {
         Version: '2018-08-01',
         DomainName: this.$route.query.Name,
@@ -97,10 +108,10 @@ export default {
             AppName: '',
             TemplateId: this.selection[0].TemplateId
           }).then(() => {
-            this.$emit("closeModel",false)
+            this.$emit('closeModel', false)
           })
         } else {
-          this.$emit("closeModel",false)
+          this.$emit('closeModel', false)
         }
       })
     }
@@ -108,30 +119,30 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.newClear:after{
+.newClear:after {
   display: block;
-  content:'';
-  clear:both;
+  content: "";
+  clear: both;
 }
-::v-deep .el-dialog__header{
-  font-size:14px;
+::v-deep .el-dialog__header {
+  font-size: 14px;
   font-weight: 600;
 }
-::v-deep .el-dialog__footer{
-  text-align:center;
+::v-deep .el-dialog__footer {
+  text-align: center;
 }
-.tip{
+.tip {
   font-size: 12px;
 }
-.tableCon{
-  width:100%;
-  border:1px solid #ddd;
+.tableCon {
+  width: 100%;
+  border: 1px solid #ddd;
 }
 ::v-deep thead {
-    .el-table-column--selection {
-      .cell {
-        display: none;
-      }
+  .el-table-column--selection {
+    .cell {
+      display: none;
     }
   }
+}
 </style>
