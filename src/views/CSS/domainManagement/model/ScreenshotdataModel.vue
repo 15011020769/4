@@ -1,14 +1,17 @@
 <template>
   <div>
     <div>
-      <el-dialog title="截圖&鑒黃配置" :visible.sync="isShow" :before-close="handleClose">
+      <el-dialog
+        title="截圖&鑒黃配置"
+        :visible.sync="isShow"
+        :before-close="handleClose"
+      >
         <div class="newClear">
           <p class="tip">
-            範本选择（如需添加新範本，請前往
-            <a>
-              【功能範本】
-              <i class="el-icon-share"></i>
-            </a>中進行設置）
+            範本选择（如需添加新範本，請前往 【<router-link
+              to="/screenshot"
+              >功能範本</router-link
+            >】 <i class="el-icon-share"></i>中進行設置）
           </p>
           <div class="tableCon">
             <el-table
@@ -17,11 +20,22 @@
               @selection-change="handleSelectionChange"
             >
               <el-table-column type="selection" width="55"></el-table-column>
-              <el-table-column prop="TemplateName" label="範本名稱"></el-table-column>
-              <el-table-column prop="TemplateId" label="範本ID"></el-table-column>
-              <el-table-column prop="SnapshotInterval" label="截圖間隔(秒)"></el-table-column>
+              <el-table-column
+                prop="TemplateName"
+                label="範本名稱"
+              ></el-table-column>
+              <el-table-column
+                prop="TemplateId"
+                label="範本ID"
+              ></el-table-column>
+              <el-table-column
+                prop="SnapshotInterval"
+                label="截圖間隔(秒)"
+              ></el-table-column>
               <el-table-column prop="selec" label="智慧鉴黄">
-                <template slot-scope="scope">{{scope.row.PornFlag === 0 ? '不開啟' : '開啟'}}</template>
+                <template slot-scope="scope">{{
+                  scope.row.PornFlag === 0 ? "不開啟" : "開啟"
+                }}</template>
               </el-table-column>
             </el-table>
           </div>
