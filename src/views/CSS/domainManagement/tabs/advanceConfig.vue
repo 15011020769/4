@@ -179,7 +179,7 @@
         destroy-on-close
         width="550px"
       >
-        <cert :cert="cert" @success="getCert" :visible="visibleHttps" />
+        <cert :cert="cert" @success="getCert" :visible.sync="visibleHttps" />
       </el-dialog>
       <el-dialog
         :title="$t('CSS.detailPlay.bandwidthCapping') + '配置'"
@@ -191,11 +191,11 @@
           :playType="domainInfo.PlayType"
           :bandLimit="bandLimit"
           @success="getBandLimit"
-          :visible="visibleBandLimit"
+          :visible.sync="visibleBandLimit"
         />
       </el-dialog>
       <el-dialog
-        :title="取消 + '配置'"
+        title="区域配置"
         :visible.sync="visibleRegional"
         destroy-on-close
         width="500px"

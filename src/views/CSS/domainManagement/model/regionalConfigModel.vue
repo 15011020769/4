@@ -24,14 +24,12 @@
             <span style="color:red;padding-right:20px"
               ><i class="el-icon-warning"></i></span
             >{{ $t("CSS.detailPlay.16") }}
-            <span style="color:#006eff">参考</span>
           </p>
           <p v-if="limitChangeGAT">
             <span style="color:red;padding-right:20px">
               <i class="el-icon-warning"></i>
             </span>
             {{ $t("CSS.detailPlay.17") }}
-            <span style="color:#006eff">参考</span>
           </p>
           <p v-if="limitChange">
             <span style="color:red;padding-right:20px"
@@ -138,7 +136,7 @@ export default {
     margin-bottom: 15px;
   }
   .oper {
-    margin-top: 100px;
+    margin-top: 15px;
   }
 }
 .sub-text {
