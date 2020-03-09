@@ -231,11 +231,11 @@ export default {
       if (this.se.name == "") {
         this.$refs.form.validateField("name");
         this.$message({
-            message: "名称不能为空",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          message: "名称不能为空",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
         return false;
       }
       var arr = this.dynamicValidateForm.domains;
@@ -243,7 +243,6 @@ export default {
       arr.forEach(v => {
         obj[v.value] = btoa(v.valueKey);
       });
-      // obj=JSON.stringify(obj);
       if (arr[0].value == "") {
         this.$message({
           message: "变量名不能為空，至少设置一项",
@@ -293,13 +292,14 @@ export default {
           '","namespace":"default","labels":{"qcloud-app":"' +
           this.se.name +
           '"}},"type":"Opaque","data":' +
-          obj +
+          JSON.stringify(obj) +
           '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
           this.se.name +
           '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
           this.se.name +
           '"}},"type":"Opaque","data":' +
-          {asdasd: "YXNkYXNk"} + "}";
+          JSON.stringify(obj) +
+          "}";
       } else {
         if (this.se.value.length > 1) {
           params.RequestBody =
@@ -308,15 +308,15 @@ export default {
             '","namespace":"default","labels":{"qcloud-app":"' +
             this.se.name +
             '"}},"type":"Opaque","data":' +
-            obj +
+            JSON.stringify(obj) +
             '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
             this.se.name +
             '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
             this.se.name +
             '"}},"type":"Opaque","data":' +
-            obj +
+            JSON.stringify(obj) +
             "}";
-        } else if (this.se.value.length == 1){
+        } else if (this.se.value.length == 1) {
           params.RequestBody =
             '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
             this.se.name +
@@ -325,10 +325,10 @@ export default {
             '","labels":{"qcloud-app":"' +
             this.se.name +
             '"}},"type":"Opaque","data":' +
-            obj +
+            JSON.stringify(obj) +
             "}}";
-        }else{
-           this.$message({
+        } else {
+          this.$message({
             message: "至少值定一项命名空间",
             type: "error",
             showClose: true,
@@ -336,15 +336,17 @@ export default {
           });
         }
       }
-      console.log(params)
+      console.log(params);
       if (!this.errorShow) {
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-          console.log(res.Response);
-          // this.$router.push({ name: "secret" });//预留跳转
-          if (res.Response.Error == undefined) {
-            this.$router.go(-1);
-          }
-        });
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        console.log(res.Response);
+        if (res.Response.Error == undefined) {
+          this.$router.push({
+            name: "colonyConfigSecret"
+            // query: this.$route.query.clusterId
+          });
+        }
+      });
       }
     },
     //命名空间选项
