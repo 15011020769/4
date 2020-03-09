@@ -1,5 +1,6 @@
 <template>
   <div class="stream-wrap">
+    <el-button type="text" size="mini" class="excel_part" @click="exportEchart">导出数据</el-button>
     <Echart
       :xAxis="xAxis1"
       :series="series1"
@@ -49,15 +50,16 @@
     />
     <div class="empty" v-else>暫無數據</div>
     <div class="stream-table">
-      <p>详细信息</p>
+      <!-- <p>详细信息</p> -->
       <!-- <XTimeD v-on:switchData="GetDat" :classsvalue="value"></XTimeD> -->
     </div>
   </div>
 </template>
 
 <script>
-import Echart from "../../components/line";
 import moment from "moment";
+import XLSX from 'xlsx'
+import Echart from "../../components/line";
 import XTimeD from "@/components/public/TimeD";
 import { CSS_STREAMPUSH } from "@/constants";
 export default {
@@ -76,6 +78,7 @@ export default {
       legendText2: '',
       legendText3: '',
       legendText4: '',
+      line_json: [],
     }
   },
   components: {
@@ -97,6 +100,12 @@ export default {
     this.init();
   },
   methods: {
+    exportEchart() {
+      const ws = XLSX.utils.json_to_sheet(this.line_json);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "推流质量");
+      XLSX.writeFile(wb, "推流质量.csv");
+    },
     init() {
       this.loading = true;
       const axix1 = []
@@ -110,6 +119,7 @@ export default {
         StartTime: moment(this.StartTime).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTime).format("YYYY-MM-DD HH:mm:ss"),
       };
+      let tempArr = []
       this.axios.post(CSS_STREAMPUSH, params).then(res => {
         if (res.Response.Error) {
           this.showEchart = false
@@ -134,14 +144,31 @@ export default {
               series2.push(v.VideoRate)
               series3.push(v.AudioFps)
               series4.push(v.AudioRate)
+              tempArr.push({
+                Time: moment(v.Time).format('YYYY-MM-DD HH:mm:ss'),
+                ClientIp: v.ClientIp,
+                VideoFps: v.VideoFps,
+                "VideoRate(bps)": v.VideoRate,
+                AudioFps: v.AudioFps,
+                "AudioRate(bps)": v.AudioRate
+              })
             })
             this.xAxis1 = axix1
             this.series1 = series1
             this.series2 = series2
             this.series3 = series3
             this.series4 = series4
+            this.line_json = tempArr
           } else {
             this.showEchart = false
+            this.line_json = [{
+                Time: "",
+                ClientIp: "",
+                VideoFps: "",
+                "VideoRate(bps)": "",
+                AudioFps: "",
+                "AudioRate(bps)": ""
+              }]
           }
         }
         this.loading = false;
@@ -174,6 +201,11 @@ export default {
       justify-content: center;
       align-items: center;
       margin-top: 20px;
+    }
+    .excel_part {
+      position: relative;
+      left: calc(100% - 60px);
+      bottom: 80px;
     }
   }
 </style>
