@@ -138,15 +138,16 @@
             <p>{{ $t("CSS.detailPlay.sourceStationSetup") }}</p>
 
             <p v-if="resource.Status === 0">部署中</p>
-            <p v-if="resource.Status === 1">
-              {{ $t("CSS.domainManagement.32") }}
-            </p>
-            <p v-if="resource.Status === 2">
-              {{ $t("CSS.domainManagement.20") }}中
-            </p>
-            <p v-if="resource.Status === 3">
+            <p v-else-if="resource.Status === 1">
               {{ $t("CSS.domainManagement.20") }}
             </p>
+            <p v-else-if="resource.Status === 2">
+              {{ $t("CSS.domainManagement.32") }}中
+            </p>
+            <p v-else-if="resource.Status === 3">
+              {{ $t("CSS.domainManagement.32") }}
+            </p>
+            <p v-else>关闭</p>
           </div>
           <div class="newClear newList1">
             <p>{{ $t("CSS.detailPlay.6") }}</p>
@@ -158,7 +159,7 @@
           </div>
           <div class="newClear newList1">
             <p>源站地址ip/domain</p>
-            <p>{{ resource.SourceServerType === 0 ? "ip" : "domain" }}</p>
+            <p>{{ resource.SourceServerType === 0 ? "ip" : (resource.SourceServerType === 1 ? 'domain' : '暂无')}}</p>
           </div>
           <div class="newClear newList1">
             <p>主源地址</p>
@@ -252,7 +253,8 @@ export default {
       loading1: true,
       loading2: true,
       loading3: true,
-      loading4: true
+      loading4: true,
+      timer: undefined,
     }
   },
   components: {
@@ -347,9 +349,11 @@ export default {
         DomainName: this.$route.query.Name
       })
         .then(({ Response }) => {
-          this.resource = Response
-          if (Response.CdnStreamFormat.length !== 0) {
-            this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
+          if (!Response.Error) {
+            this.resource = Response
+            if (Response.CdnStreamFormat.length !== 0) {
+              this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
+            }
           }
         })
         .then(() => {
@@ -357,13 +361,13 @@ export default {
         })
     },
     // 这是一个定时器
-    timer () {
-      return setTimeout(() => {
+    refreshResource () {
+      this.timer = setTimeout(() => {
         this.getResource()
-      }, 2000)
+      }, 3000)
     },
     editResource () {
-      this.getResource()
+      // this.getResource()
       if (this.resource.Status == 2) {
         this.$message({
           message: '请等待上一次的操作关闭完成',
@@ -396,16 +400,15 @@ export default {
   },
   watch: {
     resource () {
-      if (this.resource.Status == 0 || this.resource.Status == 2) {
-        this.timer()
+      if ([0, 2].includes(this.resource.Status)) {
+        this.refreshResource()
       } else {
         clearTimeout(this.timer)
       }
     }
-
   },
   destroyed () {
-    clearTimeout(this.timer)
+    this.timer && clearTimeout(this.timer)
   }
 }
 </script>

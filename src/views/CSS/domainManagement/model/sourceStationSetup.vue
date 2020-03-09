@@ -31,8 +31,8 @@
         </span>
         <el-col>
           <el-checkbox-group v-model="resource.CdnStreamFormat">
+            <el-checkbox label="flv" v-if="resource.SourceStreamFormat !== 'hls'">flv</el-checkbox>
             <el-checkbox label="hls">hls</el-checkbox>
-            <el-checkbox label="flv">flv</el-checkbox>
           </el-checkbox-group>
         </el-col>
       </el-row>
@@ -51,7 +51,7 @@
       <el-row type="flex" :gutter="20" class="limit">
         <span style="display: inline-block; width: 200px;">主源地址</span>
         <el-col>
-          <el-input v-model="resource.SourceServerAddress"></el-input>
+          <el-input v-model="resource.SourceServerAddress" :placeholder="$t('CSS.detailPlay.ipordomain')" size="small"></el-input>
         </el-col>
       </el-row>
     </div>
@@ -62,15 +62,17 @@
   </div>
 </template>
 <script>
-import { MODIFY_SOURCE_STREAM_INFO } from '@/constants'
+import { MODIFY_SOURCE_STREAM_INFO, CLOSE_SOURCE_STREAM } from '@/constants'
 
-let key = 1
 export default {
   props: {
     bandLimit: Object,
     playType: Number,
     resourceData: {
-
+      type: Object,
+      default() {
+        return {}
+      }
     }
     // Status:''
     // SourceStreamFormat1: this.SourceStreamFormat
@@ -84,34 +86,47 @@ export default {
       isSureYM: true,
       isSureCDN: true,
       isSureNULL: true,
-      resource: JSON.parse(JSON.stringify(this.resourceData))
-
+      resource: {
+        Status: false,
+        SourceServerType: 0,
+        CdnStreamFormat: [],
+        SourceStreamFormat: 'rtmp'
+      }
+    }
+  },
+  watch: {
+    'resource.SourceStreamFormat'(n) {
+      if (n === 'hls' && this.resource.CdnStreamFormat.includes('flv')) {
+        this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.filter(f => f !== 'flv')
+      }
     }
   },
   created () {
-    this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.split('|')
-    this.resource.SourceServerAddress = this.resource.SourceServerAddress[0]
+    if (this.resourceData.DomainName) {
+      this.resource = JSON.parse(JSON.stringify(this.resourceData))
+      this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.split('|')
+      this.resource.SourceServerAddress = this.resource.SourceServerAddress[0]
+    }
   },
 
   methods: {
     save () {
       let req = {
         DomainName: this.$route.query.Name,
-        'SourceServerAddress.0': this.resource.SourceServerAddress,
-        SourceServerType: this.resource.SourceServerType,
-        SourceStreamFormat: this.resource.SourceStreamFormat,
-        Version: '2018-08-01'
+        Version: "2018-08-01",
       }
-      this.resource.CdnStreamFormat.forEach((cdn, i) => {
-        req[`CdnStreamFormat.${i}`] = cdn
-      })
-      let unreq = {}
-      let param = {}
-
-      if (this.resource.Status) {
-        param = req
-      } else {
-        param = unreq
+      let url = CLOSE_SOURCE_STREAM // 关闭源站设置
+      if (this.resource.Status) { // 如果打开直接修改
+        url = MODIFY_SOURCE_STREAM_INFO
+        req = {
+          ...req,
+          'SourceServerAddress.0': this.resource.SourceServerAddress,
+          SourceServerType: this.resource.SourceServerType,
+          SourceStreamFormat: this.resource.SourceStreamFormat,
+        }
+        this.resource.CdnStreamFormat.forEach((cdn, i) => {
+          req[`CdnStreamFormat.${i}`] = cdn
+        })
       }
 
       let regIP = /^((([1-9][0-9])|([0-9])|((1[0-9][0-9])|(2[0-4][0-9])|(25[0-5])))\.){3}(([1-9][0-9])|([0-9])|((1[0-9][0-9])|(2[0-4][0-9])|(25[0-5])))$/
@@ -141,9 +156,8 @@ export default {
           }
         }
       }
-
       if (this.isSureIP && this.isSureYM && this.isSureCDN && this.isSureNULL) {
-        this.axios.post(MODIFY_SOURCE_STREAM_INFO, param)
+        this.axios.post(url, req)
           .then(res => {
             if (res.Response.Error) {
               this.msg('保存失败', 'error')

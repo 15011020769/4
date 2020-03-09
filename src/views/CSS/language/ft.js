@@ -208,8 +208,8 @@ module.exports = {
       certificateExpirationTime: '證書到期時間',
       bandwidthCapping: '帶寬封頂',
       rgional: '區域',
-      sourceStationSetup: '源站設置'
-
+      sourceStationSetup: '源站設置',
+      ipordomain: '請填寫域名或IP',
     }
   },
   COM: require('@/components/language/ft')
