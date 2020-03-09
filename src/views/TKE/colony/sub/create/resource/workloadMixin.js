@@ -363,7 +363,7 @@ export default {
       }],
       portMappingConPortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
             callback()
             return
           }
@@ -378,7 +378,7 @@ export default {
       }],
       portMappingServicePortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
             callback()
             return
           }
