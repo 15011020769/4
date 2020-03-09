@@ -122,11 +122,11 @@
                     class="notuse"
                     >编辑YAML</el-button>
                   </el-tooltip>
-                   <el-button
-                    type="text"
+                   <span
+                    class="tke-text-link"
                      v-else
                      @click="goUpdateYaml(scope.row)"
-                  >编辑YAML</el-button>
+                  >编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
                   <el-tooltip  v-if="nameSpaceName=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
@@ -135,11 +135,11 @@
                     class="notuse"
                     >删除</el-button>
                   </el-tooltip>
-                  <el-button
+                  <span
                     v-else
-                    type="text"
+                    class="tke-text-link"
                     @click="deleteDeployment(scope.row)"
-                  >删除</el-button>
+                  >删除</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -386,6 +386,7 @@ export default {
           nameSpaceList: this.searchOptions
         }
       });
+       sessionStorage.setItem('namespace',this.nameSpaceName)
     },
      // 详情.
     goDeploymentDetail(rowData) {
@@ -395,9 +396,11 @@ export default {
         query: {
           clusterId: this.clusterId,
           spaceName: this.nameSpaceName,
-          rowData: rowData
+          rowData: rowData,
+          workload:'deployments'
         }
       });
+      sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
 
     //更新pod
@@ -425,6 +428,7 @@ export default {
            workload:'deployments'
         }
       });
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //设置更新策略
     goSetUpdateTactics(rowData){
@@ -437,6 +441,7 @@ export default {
            workload:'deployments'
         }
       })
+      sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //更新调度策略
     goUpdateTactics(rowData){
@@ -446,14 +451,15 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
-           workload:'deployments'
+          workload:'deployments'
         }
       })
+      sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //编辑Yaml
     goUpdateYaml(rowData){
       this.$router.push({
-        name:'updateYamlWorkLoad',
+        name:'updateDeployment',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
@@ -462,6 +468,7 @@ export default {
            workload:'deployments'
         }
       })
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //是否打开重新部署弹窗
     redeployment(rowData) {

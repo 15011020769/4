@@ -9,7 +9,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新调度策略</h2>
+          <h2 class="header-title">更新调度策略s</h2>
         </div>
         <!-- 右侧 -->
       </div>
@@ -165,7 +165,6 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
 import {TKE_COLONY_QUERY,TKE_COLONY_INSTANCES} from '@/constants'
 export default {
   name: "updateStrategy",
@@ -212,9 +211,7 @@ export default {
       workload:'',
     };
   },
-  components: {
-    HeadCom
-  },
+  components: {  },
   created() {
      this.clusterId=this.$route.query.clusterId;
      this.name=this.$route.query.name;
@@ -234,11 +231,11 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
+        Path:  "/apis/batch/v1beta1/namespaces/"+this.spaceName+"/cronjobs/"+this.name,
         RequestBody:{
           spec:{
-            template:{
-              spec:{affinity:''}
+            jobTemplate:{
+              spec:{template:{spec: {affinity:''}}}
             }
         }},
         Version: "2018-05-25",
@@ -246,15 +243,15 @@ export default {
       if(this.se.radio=='1'){
         let jsonobj={
               spec:{
-                template:{
-                  spec:{affinity:null}
-                }
+                jobTemplate:{
+                  spec:{template:{spec: {affinity:null}}}
+                 }
               }
             }
       params.RequestBody=JSON.stringify(jsonobj)
 
       }else if(this.se.radio=='2'){
-        params.RequestBody.spec.template.spec.affinity={
+        params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
 						"nodeAffinity": {
 							"requiredDuringSchedulingIgnoredDuringExecution": {
 								"nodeSelectorTerms": [{
@@ -269,7 +266,7 @@ export default {
 						}
 					}
       }else if(this.se.radio=='3'){
-         params.RequestBody.spec.template.spec.affinity={
+         params.RequestBody.spec.jobTemplate.spec.template.spec.affinity={
            "nodeAffinity":{
              "requiredDuringSchedulingIgnoredDuringExecution":{
                "nodeSelectorTerms":this.muserDefinedData()
@@ -357,30 +354,34 @@ export default {
     },
     baseData(){
 
-       var params={
-            Method: "GET",
-            Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
-              this.name,
-            Version: "2018-05-25",
-            ClusterName: this.clusterId
-          }
+       var params=null;
+       if(this.workload=='cronjobs'){
+         params={
+          ClusterName: this.clusterId,
+          Method: "GET",
+          Path:"/apis/batch/v1beta1/namespaces/" +this.spaceName +"/cronjobs?fieldSelector=metadata.name=" +this.name,
+          Version: "2018-05-25"
+         }
+       }
+  console.log(params)
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
           if(res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
                 let obj=response.items[0];
-                if(obj.spec.template.spec['affinity']!=undefined){
-                  if(obj.spec.template.spec.affinity.nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
-                    this.se.radio='2';
-                    let nd=obj.spec.template.spec.affinity.nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].values;
-                    this.appointNode=nd;
+              console.log(obj)
+                if(obj.spec.jobTemplate!=undefined){
+                  if(obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
+                       this.se.radio='2';
+                      let nd=obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].values;
+                       this.appointNode=nd;
+                  }else if(obj.spec.jobTemplate.spec.template.spec['affinity']==undefined){
+                      this.se.radio='1';
                   }else{
-                    let nd2=obj.spec.template.spec.affinity.nodeAffinity;
-                      console.log(nd2)
-                      this.se.radio='3';
-                      let qzCondition=nd2['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms;
-                      let jlCondition=nd2['preferredDuringSchedulingIgnoredDuringExecution'];
-                      
-                      if(qzCondition){//强制条件还原
+                       this.se.radio='3';
+                       let nd2=obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity;
+                       let qzCondition=nd2['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms;
+                       let jlCondition=nd2['preferredDuringSchedulingIgnoredDuringExecution'];
+                       if(qzCondition){//强制条件还原
                         let arr=[];
                         qzCondition.forEach(element => {
                           let obj={}
@@ -394,7 +395,6 @@ export default {
                           }
                           arr.push(obj)
                         });
-                         console.log(arr)
                         this.mustCondition=arr
                       }
 
@@ -415,9 +415,19 @@ export default {
                         })
                         this.needCondition=arr
                       }
-
                   }
+
                 }
+               
+              }else{
+                let ErrTips = {};
+                let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+                this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                });
               }
 
          })

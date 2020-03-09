@@ -79,7 +79,6 @@
         </el-table-column>
         <el-table-column label="操作"  width="240">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="goPodUpdate(scope.row)">更新Pod数量</span>
              <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
                    <el-button
                     type="text"
@@ -87,24 +86,19 @@
                     >更新Pod配置</el-button>
                   </el-tooltip>
             <span class="tke-text-link ml10" v-else @click="goPodConfigUpdate(scope.row)">更新Pod配置</span>
+             <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >设置更新策略</el-button>
+                  </el-tooltip>
+            <span v-else class="tke-text-link  ml10" @click="goSetUpdateTactics(scope.row)">设置更新策略</span>
             <el-dropdown class="tke-dropdown"  trigger="click">
               <span class="el-dropdown-link ml10" style="cursor:pointer">
                 更多
                 <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown" >
-                <el-dropdown-item command="a">
-                  <span class="tke-text-link">重新部署</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="a">
-                  <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
-                   <el-button
-                    type="text"
-                    class="notuse"
-                    >设置更新策略</el-button>
-                  </el-tooltip>
-                  <span v-else class="tke-text-link" @click="goSetUpdateTactics(scope.row)">设置更新策略</span>
-                </el-dropdown-item>
                 <el-dropdown-item command="b">
                   <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
                    <el-button
@@ -122,23 +116,24 @@
                     class="notuse"
                     >编辑YAML</el-button>
                   </el-tooltip>
-                   <el-button
-                    type="text"
+                   <span
+                    class="tke-text-link"
                      v-else
                      @click="goUpdateYaml(scope.row)"
-                  >编辑YAML</el-button>
+                  >编辑YAML</span>
                 </el-dropdown-item>
-                <el-dropdown-item command="c">
+                <el-dropdown-item command="d">
                   <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
                    <el-button
                     type="text"
                     class="notuse"
                     >删除</el-button>
                   </el-tooltip>
-                  <el-button
+                  <span
                     v-else
-                    type="text"
-                  >删除</el-button>
+                    class="tke-text-link"
+                   @click="deleteDeployment(scope.row)"
+                  >删除</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -159,6 +154,14 @@
           ></el-pagination>
         </div>
       </div>
+      <el-dialog title="删除资源" :visible.sync="isShowDeleteModal" width="35%">
+        <p style="font-weight: bolder;color: #444;">您确定要删除Deployment：{{deploymentName}}吗？</p>
+        <p style="color:#e54545;">该Workload下所有Pods将一并销毁，销毁后不可恢复，请谨慎操作。</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitDelete()">确 定</el-button>
+          <el-button @click="isShowDeleteModal = false">取 消</el-button>
+        </span>
+    </el-dialog>
     </div>
   </div>
 </template>
@@ -187,7 +190,9 @@ export default {
       flag: false, //是否显示抽屉
       searchOptions: [], //命名空间列表
       searchType: "", //下拉选中的值
-      searchInput: "" //输入的搜索关键字
+      searchInput: "",//输入的搜索关键字
+      isShowDeleteModal:false,
+      deploymentName:'',
     };
   },
 
@@ -351,7 +356,8 @@ export default {
           clusterId: this.clusterId,
           spaceName: this.searchType,
           rowData: rowData,
-          daemonSetList: this.list
+          daemonSetList: this.list,
+           workload:'daemonsets'
         }
       });
     },
@@ -363,7 +369,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+           workload:'daemonsets'
         }
       });
       sessionStorage.setItem('namespace',rowData.metadata.namespace)
@@ -375,7 +382,8 @@ export default {
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
-          spaceName:rowData.metadata.namespace
+          spaceName:rowData.metadata.namespace,
+          workload:'daemonsets'
         }
       });
     },
@@ -387,6 +395,7 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'daemonsets'
         }
       })
     },
@@ -398,20 +407,59 @@ export default {
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
+           workload:'daemonsets'
         }
       })
     },
     //编辑Yaml
     goUpdateYaml(rowData){
       this.$router.push({
-        name:'updateYamlWorkLoad',
+        name:'updateDaemonSet',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
           spaceName:rowData.metadata.namespace,
-          rowData:rowData
+          rowData:rowData,
+          workload:'daemonsets'
         }
       })
+    },
+    //是否打开删除弹窗
+    deleteDeployment(rowData) {
+      this.isShowDeleteModal = true;
+      this.deploymentName = rowData.metadata.name;
+    },
+     //删除资源
+    async submitDelete() {
+      this.loadShow = true;
+      let params = {
+        Method: "DELETE",
+        Path:
+          "/apis/apps/v1beta2/namespaces/" +
+          this.searchType +
+          "/daemonsets/" +
+          this.deploymentName,
+        Version: "2018-05-25",
+        RequestBody: JSON.stringify({ propagationPolicy: "Background" }),
+        ClusterName: this.clusterId
+      };
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.isShowDeleteModal = false;
+          this.getDaemonSetList();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     //选择搜索条件
     changeSearchType(val) {

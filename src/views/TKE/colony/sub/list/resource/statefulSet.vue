@@ -93,9 +93,6 @@
               </span>
               <el-dropdown-menu slot="dropdown" >
                 <el-dropdown-item command="a">
-                  <span class="tke-text-link">重新部署</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="a">
                   <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
                    <el-button
                     type="text"
@@ -121,11 +118,11 @@
                     class="notuse"
                     >编辑YAML</el-button>
                   </el-tooltip>
-                   <el-button
-                    type="text"
+                   <span
                      v-else
+                     class="tke-text-link"
                      @click="goUpdateYaml(scope.row)"
-                  >编辑YAML</el-button>
+                  >编辑YAML</span>
                 </el-dropdown-item>
                 <el-dropdown-item command="c">
                   <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
@@ -134,11 +131,12 @@
                     class="notuse"
                     >删除</el-button>
                   </el-tooltip>
-                  <el-button
+                  <span
                     v-else
+                    class="tke-text-link"
                     type="text"
                     @click="deleteDeployment(scope.row)"
-                  >删除</el-button>
+                  >删除</span>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -159,6 +157,14 @@
           ></el-pagination>
         </div>
       </div>
+       <el-dialog title="删除资源" :visible.sync="isShowDeleteModal" width="35%">
+      <p style="font-weight: bolder;color: #444;">您确定要删除Deployment：{{deploymentName}}吗？</p>
+      <p style="color:#e54545;">该Workload下所有Pods将一并销毁，销毁后不可恢复，请谨慎操作。</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitDelete()">确 定</el-button>
+        <el-button @click="isShowDeleteModal = false">取 消</el-button>
+      </span>
+    </el-dialog>
     </div>
   </div>
 </template>
@@ -187,7 +193,9 @@ export default {
       flag: false, //是否显示抽屉
       searchOptions: [], //命名空间列表
       searchType: "", //命名空间下拉选中的值
-      searchInput: "" //输入的搜索关键字
+      searchInput: "" ,//输入的搜索关键字
+      isShowDeleteModal:false,
+      deploymentName:'',
     };
   },
 
@@ -351,9 +359,11 @@ export default {
           clusterId: this.clusterId,
           spaceName: this.searchType,
           rowData: rowData,
-          statefulSetList: this.list
+          statefulSetList: this.list,
+          workload:'statefulsets'
         }
       });
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //更新pod
     goPodUpdate(rowData) {
@@ -380,11 +390,12 @@ export default {
           workload:'statefulsets'
         }
       });
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //设置更新策略
     goSetUpdateTactics(rowData){
       this.$router.push({
-        name:'setStrategy',
+        name:'statefulSetsetStrategy',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
@@ -392,6 +403,7 @@ export default {
           workload:'statefulsets'
         }
       })
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //更新调度策略
     goUpdateTactics(rowData){
@@ -404,11 +416,12 @@ export default {
           workload:'statefulsets'
         }
       })
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
     //编辑Yaml
     goUpdateYaml(rowData){
       this.$router.push({
-        name:'updateYamlWorkLoad',
+        name:'updateStatefulSet',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
@@ -417,7 +430,46 @@ export default {
           workload:'statefulsets'
         }
       })
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
     },
+    //是否打开删除弹窗
+    deleteDeployment(rowData) {
+      this.isShowDeleteModal = true;
+      this.deploymentName = rowData.metadata.name;
+    },
+     //删除资源
+    async submitDelete() {
+      this.loadShow = true;
+      let params = {
+        Method: "DELETE",
+        Path:
+          "/apis/apps/v1beta2/namespaces/" +
+          this.searchType +
+          "/statefulsets/" +
+          this.deploymentName,
+        Version: "2018-05-25",
+        RequestBody: JSON.stringify({ propagationPolicy: "Background" }),
+        ClusterName: this.clusterId
+      };
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.isShowDeleteModal = false;
+          this.getStatefulSetList();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
     //选择搜索条件
     changeSearchType(val) {
       this.getStatefulSetList();

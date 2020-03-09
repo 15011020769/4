@@ -224,6 +224,25 @@ let change = {
     this.getPersistentvolumeclaims()
     this.getSecrets()
     this.getConfigmaps()
+  },
+  citeCsValue1Change: function (event, val) {
+    val.value2 = ''
+    if (event === 'ConfigMap') {
+      // val.value2='暂无数据'
+      val.option2 = this.configMap.items.map(item => {
+        return { name: item.metadata.name, option: Object.keys(item.data) }
+      })
+    }
+    if (event === 'Secret') {
+      val.option2 = this.secrets.items.map(item => {
+        return { name: item.metadata.name, option: Object.keys(item.data) }
+      }).splice(0,3)
+    }
+  },
+  citeCsValue2Change: function (event, val) {
+    val.value3 = ''
+    let option = val.option2.filter(item => event === item.name)[0].option
+    val.option3 = option
   }
 }
 
