@@ -63,18 +63,18 @@
             <div class="form-controls" style="width:350px">
               <el-radio-group class="tke-radio-group" v-model="wl.type">
                 <el-radio label="Deployment">Deployment（可扩展的部署Pod）</el-radio>
-                <el-radio label="daemonSet">DaemonSet（在每个主机上运行Pod）</el-radio>
-                <el-radio label="statefulSet">StatefulSet（有状态集的运行Pod）</el-radio>
-                <el-radio label="cronJob">CronJob（按照Cron的计划定时运行）</el-radio>
-                <el-radio label="job">Job（单次任务）</el-radio>
+                <el-radio label="DaemonSet">DaemonSet（在每个主机上运行Pod）</el-radio>
+                <el-radio label="StatefulSet">StatefulSet（有状态集的运行Pod）</el-radio>
+                <el-radio label="CronJob">CronJob（按照Cron的计划定时运行）</el-radio>
+                <el-radio label="Job">Job（单次任务）</el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item label="执行策略" v-show="wl.type=='cronJob'" :prop="'executionStrategy'" :rules="executionStrategyValidator">
+          <el-form-item label="执行策略" v-show="wl.type=='CronJob'" :prop="'executionStrategy'" :rules="executionStrategyValidator">
             <el-input class="w192" placeholder="请输入执行策略,如0 0 2 1 *" v-model="wl.executionStrategy"></el-input>
           </el-form-item>
           <!-- Job设置 -->
-          <div style="margin-bottom: 18px" v-show="wl.type==='cronJob'||wl.type==='job'">
+          <div style="margin-bottom: 18px" v-show="wl.type==='CronJob'||wl.type==='Job'">
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">Job设置</label>
             <div style="margin-left: 120px;background-color: #f2f2f2;padding: 10px;width: 350px">
               <el-form-item label="重复次数" :prop="'jobSettings.repeatNumber'" :rules="jobSettingRepeatValidator">
@@ -570,7 +570,7 @@
                 <el-button type="text" size="mini" :disabled="true">添加</el-button>
               </div>
             </div>
-            <div v-show="wl.type!=='cronJob'&&wl.type!=='job'">
+            <div v-show="wl.type!=='CronJob'&&wl.type!=='Job'">
               <el-form-item label="更新方式">
                 <el-select v-model="wl.updateWay">
                   <el-option label="滚动更新（推荐）" value="滚动更新（推荐）"></el-option>
@@ -633,7 +633,7 @@
                 <el-form-item label-width="0px">
                   <el-checkbox-group v-model="wl.specifyNodeDispatchValue">
                     <div v-for="item in specifyNodeDispatchOption" :key="item.id">
-                      <el-checkbox :label="item.id" :disabled="item.disabled">{{item.id}}({{item.name}})</el-checkbox>
+                      <el-checkbox :label="item.id">{{item.id}}({{item.name}})</el-checkbox>
                     </div>
                   </el-checkbox-group>
                 </el-form-item>
@@ -736,7 +736,7 @@
           </div>
           <div><el-button type="text" size="mini" @click="highLevelSetShow2=!highLevelSetShow2">{{highLevelSetShow2?'隐藏高级设置':'显示高级设置'}}</el-button></div>
           <el-divider></el-divider>
-          <div v-show="wl.type === 'Deployment' || wl.type==='statefulSet'">
+          <div v-show="wl.type === 'Deployment' || wl.type==='StatefulSet'">
             <h3 style="margin-bottom:11px;">访问设置(Service)</h3>
             <el-form-item label="Service">
               <el-checkbox v-model="wl.serviceEnbel">启用</el-checkbox>
@@ -1650,7 +1650,7 @@ export default {
         this.axiosUtils(res, () => {
           let { Response: { InstanceSet } } = res
           this.specifyNodeDispatchOption = InstanceSet.map(item => {
-            return { id: item.InstanceId, name: item.InstanceName, disabled: item.NewCreationIdentify }
+            return { id: item.InstanceId, name: item.InstanceName, PrivateIpAddresses: item.PrivateIpAddresses }
           })
         })
       })
@@ -1843,7 +1843,7 @@ export default {
         name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
         updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
         caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
-        serviceEnbel
+        serviceEnbel, nodeTactics, specifyNodeDispatchValue
       } = this.wl
       let labelsObj = {}
       labels.forEach(item => {
@@ -2052,6 +2052,35 @@ export default {
             }
             break
         }
+        switch (nodeTactics) {
+          case 2:
+            let matchExpressionsValue = specifyNodeDispatchValue.map(item => {
+              let oneSpecify = this.specifyNodeDispatchOption.find(item2 => {
+                return item2.id === item
+              })
+              return oneSpecify.PrivateIpAddresses
+            })
+            let affinity = {
+              nodeAffinity: {
+                requiredDuringSchedulingIgnoredDuringExecution: {
+                  nodeSelectorTerms: [
+                    {
+                      matchExpressions: [
+                        {
+                          key: 'kubernetes.io/hostname',
+                          operator: 'In',
+                          values: matchExpressionsValue
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+            console.log(affinity)
+            requestBody.spec.template.spec.affinity = affinity
+            break
+        }
         requestBody.spec.strategy = strategy
       } else { // 快速更新
         requestBody.spec.strategy = {
@@ -2060,7 +2089,7 @@ export default {
         }
       }
       // 类型为 Deployment 或 statefulSet 需要提交 Services
-      if ((type === 'Deployment' || type === 'statefulSet') && serviceEnbel) {
+      if ((type === 'Deployment' || type === 'StatefulSet') && serviceEnbel) {
         let ports = portMapping.map(item => {
           let { portValue, conPort, host, servicePort } = item
           return {
@@ -2110,8 +2139,22 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false
           let routerName = ''
-          if (type === 'Deployment') {
-            routerName = 'deploymentDetailEvent'
+          switch (type) {
+            case 'Deployment':
+              routerName = 'deploymentDetailEvent'
+              break
+            case 'DaemonSet':
+              routerName = 'daemonSetDetailEvent'
+              break
+            case 'StatefulSet':
+              routerName = 'statefulSetDetailEvent'
+              break
+            case 'CronJob':
+              routerName = 'cronJobDetailEvent'
+              break
+            case 'Job':
+              routerName = 'jobDetailEvent'
+              break
           }
           this.$message({
             message: '新建成功',

@@ -7,7 +7,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button @click="goWorkloadCreate('job')" size="small" type="primary">新建</el-button>
+        <el-button @click="goWorkloadCreate('Job')" size="small" type="primary">新建</el-button>
         <!-- <el-button size="small" >监控</el-button> -->
       </div>
       <!-- 右侧 -->
@@ -289,7 +289,7 @@ export default {
         }
       });
     },
-    
+
     // 新建
     goWorkloadCreate(type) {
       this.$router.push({
@@ -300,7 +300,7 @@ export default {
         }
       });
     },
-   
+
     //跳转详情
     goJobDetail(rowData) {
       this.$router.push({
