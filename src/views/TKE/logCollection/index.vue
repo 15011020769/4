@@ -95,7 +95,7 @@
     <p>{{$t('TKE.overview.wjdyl')}} <span style="color:#ff9d00">0.3核 250M</span> {{$t('TKE.overview.yskyzy')}}</p>
   </div>
   <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="newCread2">$t('TKE.overview.qd')</el-button>
+    <el-button type="primary" @click="newCread2">{{$t('TKE.overview.qd')}}</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   </span>
 </el-dialog>
@@ -314,6 +314,15 @@
                  }
                  })
              sessionStorage.setItem('clusterId', this.value2)
+            }else{
+               let ErrTips = { };
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
          })
       },
@@ -464,14 +473,11 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(this.xjF)
-            console.log(res)
             if (res.Response.Error == undefined) {
               this.xjF=false;
               this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
               this.tableData = data.items;
-              console.log(this.tableData)
             }else if(res.Response.Error.Code=='ResourceNotFound'){
               console.log(res.Response.Error)
               this.xjF=true;
