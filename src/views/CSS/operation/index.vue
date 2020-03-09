@@ -478,4 +478,7 @@ export default {
 .doamin-btn-container {
   margin-left: 20px;
 }
+.el-icon-info {
+  color: #ccc;
+}
 </style>

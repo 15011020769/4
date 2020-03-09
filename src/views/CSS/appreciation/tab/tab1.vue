@@ -19,6 +19,11 @@
       >
         <el-table-column prop="time" label="月份"></el-table-column>
         <el-table-column prop="num" label="截圖數量（張）"></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button type="text" size="small" @click="exportTable(scope)">導出詳情</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
@@ -53,6 +58,7 @@ export default {
       series: [],
       legendText: '截圖',
       line_json: [],
+      table_json: []
     };
   },
   components: {
@@ -95,8 +101,27 @@ export default {
     exportEchart() {
       const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
       const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, "统计数据");/* 生成xlsx文件(book,sheet数据,sheet命名) */
-      XLSX.writeFile(wb, "统计数据.csv");/*写文件(book,xlsx文件名称)*/
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "統計數據.csv");/*写文件(book,xlsx文件名称)*/
+    },
+    exportTable(scope) {
+      let temp = []
+      let sheetArr = []
+      temp = this.table_json.filter(item => {
+        return item.Time.substring(0,7) == scope.row.time
+      })
+      temp.forEach(v => {
+        if(v.Num !== 0) {
+          sheetArr.push({Time: v.Time, ScreenshotCount: v.Num})
+        }
+      })
+      if (!sheetArr.length) {
+        sheetArr=[{Time: '', ScreenshotCount: ''}]
+      }
+      const ws = XLSX.utils.json_to_sheet(sheetArr)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, "截圖詳情")
+      XLSX.writeFile(wb, "截圖詳情.csv")
     },
     //分页
     handleCurrentChange(val) {
@@ -117,8 +142,11 @@ export default {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
+          res.Response.DataInfoList.map(item => {
+            item.Time = moment(item.Time).format("YYYY-MM-DD HH:mm:ss")
+          })
           let obj = res.Response.DataInfoList
-          console.log(res.Response.DataInfoList)
+          this.table_json = res.Response.DataInfoList
           var mon = [];
             for (var i = 0; i < obj.length; i++) {
               var repeat = false;
