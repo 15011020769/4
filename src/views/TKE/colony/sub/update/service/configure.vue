@@ -279,10 +279,6 @@ export default {
           }
           this.ing.certOption.push({ alias, id })
         })
-        console.log('this.ing.certOption', this.ing.certOption)
-        if (this.ing.certOption.length > 0) {
-          this.ing.certValue = this.ing.certOption[0].id
-        }
       })
     },
     // 获取负载均衡器

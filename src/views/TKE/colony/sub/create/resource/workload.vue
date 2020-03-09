@@ -180,8 +180,7 @@
                   <el-form-item label="镜像" :rules="instanceContentMirrorImgValidator" :prop="`instanceContent.${i}.mirrorImg`">
                     <el-input class="w192" v-model="v.mirrorImg"></el-input>
                     <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">选择镜像</el-button>
-                    <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
-                  </el-form-item>
+                    </el-form-item>
                   <el-form-item label="镜像版本（Tag）">
                     <el-input class="w192" v-model="v.versions"></el-input>
                   </el-form-item>
@@ -485,6 +484,7 @@
                     </div>
                   </el-form-item>
                 </div>
+                <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
               </div>
               <p class="addcontent" :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent():''">添加容器</p>
               <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
@@ -583,7 +583,7 @@
                 <el-form-item label="更新间隔">
                   <el-input class="w100" v-model="wl.updateInterval"></el-input> 秒
                 </el-form-item>
-                <el-form-item label="更新策略">
+                <el-form-item label="更新策略" v-show="wl.type==='Deployment'">
                   <el-radio-group v-model="wl.updateTactics">
                     <el-radio :label="1">启动新的Pod,停止旧的Pod</el-radio>
                     <el-radio :label="2">停止旧的Pod，启动新的Pod</el-radio>
@@ -594,21 +594,23 @@
                 <!-- 策略配置 -->
                 <div style="margin-bottom: 18px">
                   <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">策略配置</label>
-                  <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics !== 3">
-                    <el-form-item label="Pods">
-                      <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）" v-model="wl.configTacticsPods"></el-input>
-                      <p>Pod将批量启动或停止</p>
-                    </el-form-item>
-                  </div>
-                  <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics === 3">
-                    <el-form-item label="MaxSurge">
-                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxSurge"></el-input>
-                      <p>允许超出所需规模的最大Pod数量</p>
-                    </el-form-item>
-                    <el-form-item label="MaxUnavailable">
-                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxUnavailable"></el-input>
-                      <p>允许最大不可用的Pod数量</p>
-                    </el-form-item>
+                  <div v-show="wl.type!=='CronJob' && wl.type!=='Job'">
+                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics !== 3">
+                      <el-form-item label="Pods">
+                        <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）" v-model="wl.configTacticsPods"></el-input>
+                        <p>Pod将批量启动或停止</p>
+                      </el-form-item>
+                    </div>
+                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics === 3">
+                      <el-form-item label="MaxSurge">
+                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxSurge"></el-input>
+                        <p>允许超出所需规模的最大Pod数量</p>
+                      </el-form-item>
+                      <el-form-item label="MaxUnavailable">
+                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxUnavailable"></el-input>
+                        <p>允许最大不可用的Pod数量</p>
+                      </el-form-item>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1144,22 +1146,6 @@ export default {
         subPath: '',
         pointName: ''
       },
-      // 暂时用不着
-      // svc: {
-      //   show: true,
-      //   time: 30,
-      //   checked: false,
-      //   name: '',
-      //   value: 'default',
-      //   options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
-      //   radio: '1',
-      //   ETP: '1',
-      //   SA: '2',
-      //   input: '',
-      //   list: [{}],
-      //   workload: [],
-      //   tabPosition: 'dep'
-      // },
       // 实例数量自动调节下拉框内容, // 触发策略
       touchOptions1: [
         {
@@ -1635,7 +1621,7 @@ export default {
       }
       this.describeLoadBalancersOption = oneDes
       if (oneDes.length !== 0) {
-        this.wl.describeLoadBalancersValue = oneDes[0].LoadBalancerName
+        this.wl.describeLoadBalancersValue = oneDes[0].LoadBalancerId
       }
     },
     getDescribeInstances: async function () {
@@ -1758,12 +1744,12 @@ export default {
           let { Response: { SubnetSet } } = res
           this.subnetTwoOption = []
           SubnetSet.forEach((item, index) => {
-            let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
+            let { SubnetId, SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
             if (index === 0) {
               this.wl.subnetTwoValue = SubnetName
               this.subnetOrder = { TotalIpAddressCount, AvailableIpAddressCount }
             }
-            this.subnetTwoOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+            this.subnetTwoOption.push({ SubnetId, SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
           })
         })
       })
@@ -1834,6 +1820,7 @@ export default {
         if (valid) {
           this.submit()
         } else {
+          console.error('有些验证失败')
           return false
         }
       })
@@ -1843,7 +1830,9 @@ export default {
         name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
         updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
         caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
-        serviceEnbel, nodeTactics, specifyNodeDispatchValue
+        serviceEnbel, nodeTactics, specifyNodeDispatchValue, mustCondition, needCondition,
+        serviceAccess, ETP, SA, time, describeLoadBalancersValue, loadBalance, handlessChecked, subnetTwoValue,
+        jobSettings, executionStrategy
       } = this.wl
       let labelsObj = {}
       labels.forEach(item => {
@@ -1851,6 +1840,7 @@ export default {
       })
       labelsObj['qcloud-app'] = name
       this.loadShow = true
+      // 实例内容器 赋值
       // 存活检查，就绪检查 共用赋值函数
       let inspectFunc = (obj) => {
         let {
@@ -1889,7 +1879,6 @@ export default {
         }
         return newObj
       }
-      // 实例内容器 赋值
       let containerList = instanceContent.map(item => {
         let {
           name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory,
@@ -1953,6 +1942,7 @@ export default {
         if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
         return oneContainer
       })
+      // 基本 requestBody
       let requestBody = {
         kind: type,
         apiVersion: 'apps/v1beta2',
@@ -1986,6 +1976,24 @@ export default {
             matchLabels: labelsObj
           },
           strategy: {}
+        }
+      }
+      let template = {
+        metadata: {
+          labels: labelsObj
+        },
+        spec: {
+          volumes: [],
+          containers: containerList,
+          restartPolicy: 'Always',
+          imagePullSecrets: [
+            {
+              'name': 'qcloudregistrykey'
+            },
+            {
+              'name': 'tencenthubkey'
+            }
+          ]
         }
       }
       let queryBodyJson = ''
@@ -2038,6 +2046,7 @@ export default {
             maxUnavailable: 0
           }
         }
+        // 更新策略
         switch (updateTactics) {
           case 1:
             strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
@@ -2052,35 +2061,6 @@ export default {
             }
             break
         }
-        switch (nodeTactics) {
-          case 2:
-            let matchExpressionsValue = specifyNodeDispatchValue.map(item => {
-              let oneSpecify = this.specifyNodeDispatchOption.find(item2 => {
-                return item2.id === item
-              })
-              return oneSpecify.PrivateIpAddresses
-            })
-            let affinity = {
-              nodeAffinity: {
-                requiredDuringSchedulingIgnoredDuringExecution: {
-                  nodeSelectorTerms: [
-                    {
-                      matchExpressions: [
-                        {
-                          key: 'kubernetes.io/hostname',
-                          operator: 'In',
-                          values: matchExpressionsValue
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-            console.log(affinity)
-            requestBody.spec.template.spec.affinity = affinity
-            break
-        }
         requestBody.spec.strategy = strategy
       } else { // 快速更新
         requestBody.spec.strategy = {
@@ -2088,43 +2068,142 @@ export default {
           rollingUpdate: null
         }
       }
+      // 节点调度策略
+      if (nodeTactics === 2) {
+        let matchExpressionsValue = specifyNodeDispatchValue.map(item => {
+          let oneSpecify = this.specifyNodeDispatchOption.find(item2 => {
+            return item2.id === item
+          })
+          return oneSpecify.PrivateIpAddresses
+        })
+        let affinity = {
+          nodeAffinity: {
+            requiredDuringSchedulingIgnoredDuringExecution: {
+              nodeSelectorTerms: [
+                {
+                  matchExpressions: [
+                    {
+                      key: 'kubernetes.io/hostname',
+                      operator: 'In',
+                      values: matchExpressionsValue
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+        console.log(affinity)
+        template.spec.affinity = affinity
+      } else if (nodeTactics === 3) {
+        let affinity = { nodeAffinity: {} }
+        if (mustCondition.length > 0) {
+          // 强制满足条件
+          affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution = {
+            nodeSelectorTerms: mustCondition.map(item => {
+              return {
+                matchExpressions: item.map(item2 => {
+                  let item2Obj = {
+                    key: item2.name,
+                    operator: item2.connect,
+                    values: item2.rule.split(';')
+                  }
+                  return item2Obj
+                })
+              }
+            })
+          }
+        }
+        if (needCondition.length > 0) {
+          // 尽量满足条件
+          affinity.nodeAffinity.preferredDuringSchedulingIgnoredDuringExecution = needCondition.map(item => {
+            return {
+              weight: parseInt(item.weight),
+              preference: {
+                matchExpressions: item.arr.map(item2 => {
+                  return {
+                    key: item2.name,
+                    operator: item2.connect,
+                    values: item2.rule.split(';')
+                  }
+                })
+              }
+            }
+          })
+        }
+        template.spec.affinity = affinity
+      }
       // 类型为 Deployment 或 statefulSet 需要提交 Services
       if ((type === 'Deployment' || type === 'StatefulSet') && serviceEnbel) {
         let ports = portMapping.map(item => {
           let { portValue, conPort, host, servicePort } = item
-          return {
+          let onePort = {
             'name': `${conPort}-${servicePort}-${portValue.toLowerCase()}`,
             'port': parseInt(servicePort),
             'targetPort': parseInt(conPort),
             'protocol': portValue
           }
+          if (serviceAccess === '4') onePort.nodePort = parseInt(host)
+          return onePort
         })
         let serviceRequestBody = {
           kind: 'Service',
           apiVersion: 'v1',
           metadata: {
             name: name,
-            namespace: namespace,
-            annotations: { 'service.kubernetes.io/service.extensiveParameters': JSON.stringify({ AddressIPVersion: 'IPV4' }) }
+            namespace: namespace
           },
           spec: {
-            type: 'LoadBalancer',
             ports: ports,
             selector: labelsObj,
-            externalTrafficPolicy: this.wl.ETP,
-            sessionAffinity: this.wl.SA,
-            sessionAffinityConfig: {}
+            sessionAffinity: SA
           }
         }
-        if (this.wl.SA === 'ClientIP') {
+        // 服务访问方式 不同选项传不同值
+        if (serviceAccess === '1') {
+          serviceRequestBody.metadata.annotations = {}
+          serviceRequestBody.spec.type = 'LoadBalancer'
+          serviceRequestBody.spec.externalTrafficPolicy = ETP
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = JSON.stringify({ AddressIPVersion: 'IPV4' })
+        } else if (serviceAccess === '2') {
+          serviceRequestBody.spec.type = 'ClusterIP'
+          if (handlessChecked) serviceRequestBody.spec.clusterIP = 'None'
+        } else if (serviceAccess === '3') {
+          serviceRequestBody.metadata.annotations = {}
+          serviceRequestBody.spec.type = 'LoadBalancer'
+          serviceRequestBody.spec.externalTrafficPolicy = ETP
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
+          let oneSubOption = this.subnetTwoOption.find(item => item.SubnetName === subnetTwoValue)
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption
+        } else if (serviceAccess === '4') {
+          serviceRequestBody.spec.externalTrafficPolicy = ETP
+          serviceRequestBody.spec.type = 'NodePort'
+        }
+        if ((serviceAccess === '1' || serviceAccess === '3') && loadBalance === '2') {
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = describeLoadBalancersValue
+        }
+        if (SA === 'ClientIP') {
           serviceRequestBody.spec.sessionAffinityConfig = {
             clientIP: {
-              timeoutSeconds: this.wl.time
+              timeoutSeconds: time
             }
           }
         }
         console.log('serviceRequestBody', JSON.stringify(serviceRequestBody))
         queryBodyJson += JSON.stringify(serviceRequestBody)
+      }
+      if (type === 'Job' || type === 'CronJob') {
+        template.spec.restartPolicy = jobSettings.failedRestartPolicy
+        requestBody.spec.completions = jobSettings.repeatNumber
+        requestBody.spec.parallelism = jobSettings.parallelNumber
+      }
+      if (type === 'CronJob') {
+        requestBody.spec.schedule = executionStrategy
+        requestBody.spec.jobTemplate = {}
+        requestBody.spec.jobTemplate.spec = {}
+        requestBody.spec.jobTemplate.spec.template = template
+      } else {
+        requestBody.spec.template = template
       }
       console.log('requestBody', JSON.stringify(requestBody))
       queryBodyJson += JSON.stringify(requestBody)
