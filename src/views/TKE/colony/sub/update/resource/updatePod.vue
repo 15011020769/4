@@ -60,7 +60,7 @@
                  </el-select>
                  <!-- <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }"  -->
                  <el-input class="w100" 
-                 :class="{ 'pod-wran':index===matchIndex}"
+                 :class="{ 'pod-warn':index===matchIndex}"
                  @focus="matchOneFocus(val.valueKey,index)"
                  @blur="matchOneBlur(val.valueKey,index)"
                 v-model="val.valueKey" style="margin-right:6px"></el-input>
@@ -916,38 +916,21 @@
              this.optionsData[index].value2=17 
         }
        },
-      //  podMathFocus(val){
-      //    console.log('focus')
-      //     let reg=/^\d+$/
-      //    console.log(val)
-      //   if(val==''||!reg.test(val)){
-      //      this.mathWarn=true
-      //    }else{
-      //      this.mathWarn=false;
-      //    }
-        
-      //  },
-      //  podMathBlur(val){
-      //    let reg=/^\d+$/
-      //    if(val==''||!reg.test(val)){
-      //      this.mathWarn=true
-      //    }else{
-      //      this.mathWarn=false;
-      //    }
-      //  },
+     
        //返回上一层
        goBack() {
          this.$router.go(-1);
        },
        matchOneFocus(v,i){
-         if(v==''){
+         if(v==''||!this.reg.test(v)){
            this.matchIndex=i
+           console.log(this.matchIndex)
          }else{
            this.matchIndex=''
          }
        },
        matchOneBlur(v,i){
-         if(v==''){
+         if(v==''||!this.reg.test(v)){
            this.matchIndex=i
          }else{
            this.matchIndex=''
