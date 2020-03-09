@@ -118,8 +118,6 @@
       },
       //切换粒度
       SwitchGrain() {
-        this.Start_End.StartTIme = moment(new Date(this.Start_End.StartTIme)).format("YYYY-MM-DD HH:mm:ss")
-        this.Start_End.EndTIme = moment(new Date(this.Start_End.EndTIme)).format("YYYY-MM-DD HH:mm:ss")
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
       //根据字段获取响应时间
