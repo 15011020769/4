@@ -42,7 +42,7 @@
                 </el-table-column>
                 <el-table-column prop="" label="镜像版本号" >
                   <template slot-scope="scope1">
-                    <span>{{scope1.row.imageID}}</span>
+                    <span>{{scope1.row.image}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Request" >
@@ -66,13 +66,13 @@
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="重启次数" >
-                  <template>
-                    <span>{{scope.row.restart}}</span>
+                  <template slot-scope="scope1">
+                    <span>{{scope1.row.restartCount}}次</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="状态" >
-                  <template>
-                    <span class="text-green">{{scope.row.status.phase}}</span>
+                  <template slot-scope="scope1">
+                    <span :class="[scope1.row.state === 'running'?'text-green':'']">{{scope1.row.state}}</span>
                   </template>
                 </el-table-column>
             </el-table>
@@ -94,7 +94,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">{{scope.row.status.phase}}</span>
+              <span :class="[scope.row.status.phase === 'Running'?'text-green':'']">{{scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -168,7 +168,7 @@
           >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="reconstruction(scope.row)">销毁重建</span>
-            <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span>
+            <span><el-button size="small" disabled type="text" class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</el-button></span>
           </template>
         </el-table-column>
       </el-table>
@@ -304,9 +304,17 @@ export default {
             response.items.map(o => {
               o.addTime = moment(o.metadata.creationTimestamp).format("YYYY-MM-DD HH:mm:ss");
               let cpu = 0, memory = 0, restart = 0;
-
               if(o.spec && o.spec.containers.length > 0) {
                 for(var i = 0; i < o.spec.containers.length; i++) {
+                  if(o.status && o.status.containerStatuses && o.status.containerStatuses.length > 0) {
+                    for(let j = 0; j < o.status.containerStatuses.length; j++) {
+                      if(o.spec.containers[i].name = o.status.containerStatuses[j].name) {
+                        o.spec.containers[i].containerID = o.status.containerStatuses[j].containerID;
+                        o.spec.containers[i].restartCount = o.status.containerStatuses[j].restartCount;
+                        o.spec.containers[i].state = Object.keys(o.status.containerStatuses[j].state)[0];
+                      }
+                    }
+                  }
                   let containers = o.spec.containers[i];
                   cpu += containers.resources && containers.resources.requests && containers.resources.requests.cpu 
                     && Number(containers.resources.requests.cpu.substring(0,containers.resources.requests.cpu.length - 1)) || 0;
@@ -405,7 +413,7 @@ export default {
       this.loadShow = true;
       let param = {
         Method: "DELETE",
-        Path: "/api/v1/namespaces/kube-system/pods/"+this.podName,
+        Path: "/api/v1/namespaces/"+this.nameSpace+"/pods/"+this.podName,
         Version: "2018-05-25",
         RequestBody: JSON.stringify({'propagationPolicy': 'Background'}),
         ClusterName: this.clusterId
@@ -415,12 +423,12 @@ export default {
           this.loadShow = false;
           this.showReconstModal = false;
           this.getPodList();
-          // this.$message({
-          //   message: '删除成功',
-          //   type: "success",
-          //   showClose: true,
-          //   duration: 0
-          // });
+          this.$message({
+            message: '删除成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {

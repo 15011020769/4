@@ -108,7 +108,9 @@ export default {
     this.potList = this.$route.query.list;
     this.spaceName = this.$route.query.spaceName;
     this.rowData = this.$route.query.rowData;
-    this.currPod = this.$route.query.list[0].metadata.name;
+    if(this.$route.query.list.length > 0) {
+      this.currPod = this.$route.query.list[0].metadata.name;
+    }
     this.deploymentList = this.$route.query.rowData.spec.template.spec.containers;
     this.currDeployment = this.$route.query.rowData.spec.template.spec.containers[0].name;
     this.getdeploymentLog();

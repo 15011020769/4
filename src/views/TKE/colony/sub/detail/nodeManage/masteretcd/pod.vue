@@ -412,7 +412,7 @@ export default {
       this.loadShow = true;
       let param = {
         Method: "DELETE",
-        Path: "/api/v1/namespaces/kube-system/pods/"+this.podName,
+        Path: "/api/v1/namespaces/"+this.nameSpace+"/pods/"+this.podName,
         Version: "2018-05-25",
         RequestBody: JSON.stringify({'propagationPolicy': 'Background'}),
         ClusterName: this.clusterId
@@ -422,12 +422,12 @@ export default {
           this.loadShow = false;
           this.showReconstModal = false;
           this.getPodList();
-          // this.$message({
-          //   message: '删除成功',
-          //   type: "success",
-          //   showClose: true,
-          //   duration: 0
-          // });
+          this.$message({
+            message: '删除成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {

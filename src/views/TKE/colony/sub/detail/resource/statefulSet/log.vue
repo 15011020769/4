@@ -110,7 +110,9 @@ export default {
     this.spaceName = this.$route.query.spaceName;
     this.workload=this.$route.query.workload;
     this.rowData = this.$route.query.rowData;
-    this.currPod = this.$route.query.potList[0].metadata.name;
+    if(this.$route.query.potList.length > 0) {
+      this.currPod = this.$route.query.potList[0].metadata.name;
+    }
     this.statefulSetList = this.$route.query.rowData.spec.template.spec.containers;
     this.currStateful = this.$route.query.rowData.spec.template.spec.containers[0].name;
     this.getstatefulLog();

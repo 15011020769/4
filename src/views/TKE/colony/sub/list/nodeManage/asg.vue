@@ -105,7 +105,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">{{ChangeStatus(scope.row.status)}}</span>
+              <span :class="[scope.row.status === 'enabled' ? 'text-green' : '']">{{ChangeStatus(scope.row.status)}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -540,12 +540,13 @@ export default {
     // 修改全局配置
     async DetailGroupsList () { 
       let param = {
-        ClusterAsGroupOption:this.global,
         ClusterId: this.$route.query.clusterId,
         Version: "2018-05-25"
       }
+      param['ClusterAsGroupOption'] = this.global;
       console.log(param)
       const res = await this.axios.post(MODIFY_ATTRIBUTE, param);
+      debugger
       console.log(res)
     },
 
@@ -647,6 +648,7 @@ export default {
         });
       }
       if(ids.length > 0) {
+        this.list = [];
         this.loadShow = true;
         let param = {
           Limit: this.pageSize,
@@ -686,6 +688,9 @@ export default {
             duration: 0
           });
         }
+      } else {
+        this.list = [];
+        this.loadShow = false;
       }
     },
     //打开停止伸缩组modal
@@ -737,6 +742,12 @@ export default {
           this.loadShow = false;
           this.showModifyNameModal = false;
           this.GetGroupsList();
+          this.$message({
+            message: '修改成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -798,13 +809,19 @@ export default {
       }
       await this.axios.post(DELETE_GROUP, param).then(res => {
         if(res.Response.Error === undefined) {
-          this.GetGroupsList();
           this.loadShow = false;
           if(type === 'all') {
             this.iSdialogDeleteAll = false;
           } else {
             this.deleteSingleModal = false;
           }
+          this.$message({
+            message: '删除成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.GetGroupsList();
         } else {
           this.loadShow = false;
           let ErrTips = {
@@ -844,32 +861,30 @@ export default {
       let param = {}
       if(enableType === 'tingyong') {
         param = {
-          Action: 'ModifyClusterAsGroupAttribute',
-          Region: 39,
           Version: "2018-05-25",
-          ClusterId: this.clusterId,
-          ClusterAsGroupAttribute: {
-            AutoScalingGroupId: this.groupId,
-            AutoScalingGroupEnabled: false
-          }
+          ClusterId: this.clusterId
         }
+        param["ClusterAsGroupAttribute.AutoScalingGroupId"] = this.groupId;
+        param["ClusterAsGroupAttribute.AutoScalingGroupEnabled"] = false;
       } else {
         param = {
-          Action: 'ModifyClusterAsGroupAttribute',
-          Region: 39,
           Version: "2018-05-25",
-          ClusterId: this.clusterId,
-          ClusterAsGroupAttribute:{
-            AutoScalingGroupId: this.groupId,
-            AutoScalingGroupEnabled: true
-          }
+          ClusterId: this.clusterId
         }
+        param["ClusterAsGroupAttribute.AutoScalingGroupId"] = this.groupId;
+        param["ClusterAsGroupAttribute.AutoScalingGroupEnabled"] = true;
       }
       await this.axios.post(MODIFY_GROUP_STATUS, param).then(res => {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           this.showUseModal = false;
           this.showStopModal = false;
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.GetGroupsList();
         } else {
           this.loadShow = false;
@@ -909,22 +924,23 @@ export default {
     async submitToConfigure() {
       this.loadShow = true;
       let param = {
-        Action: 'ModifyClusterAsGroupAttribute',
-        Region: 39,
         Version: "2018-05-25",
-        ClusterId: this.clusterId,
-        ClusterAsGroupAttribute:{
-          AutoScalingGroupId: this.groupId,
-          AutoScalingGroupRange: {
-            MinSize: this.minSize,
-            MaxSize: this.maxSize
-          }
-        }
+        ClusterId: this.clusterId
       }
+      param["ClusterAsGroupAttribute.AutoScalingGroupId"] = this.groupId;
+      param["ClusterAsGroupAttribute.AutoScalingGroupRange.MinSize"] = Number(this.minSize);
+      param["ClusterAsGroupAttribute.AutoScalingGroupRange.MaxSize"] = Number(this.maxSize);
+
       await this.axios.post(MODIFY_GROUP_STATUS, param).then(res => {
         if(res.Response.Error === undefined) {
           this.loadShow = false;
           this.showToConfigureModal = false;
+          this.$message({
+            message: '调整成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.GetGroupsList();
         } else {
           this.loadShow = false;
