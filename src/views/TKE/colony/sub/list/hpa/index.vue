@@ -88,6 +88,7 @@
           </el-table-column>
           <el-table-column
             label="操作"
+            width="220"
             >
             <template slot-scope="scope">
               <div v-if="scope.row.metadata.namespace=='kube-system'">
@@ -248,6 +249,12 @@ export default {
           this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
 
             if (res.Response.Error==undefined) {
+               this.$message({
+                    message: "删除成功",
+                    type: "success",
+                    showClose: true,
+                    duration: 0,
+                     });
                  this.tableListData();
             }
           })

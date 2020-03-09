@@ -94,7 +94,7 @@ export default {
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
           Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/${this.workload}/${this.name}`,
-          RequestBody: {"spec":{"updateStrategy":{"type":"OnDelete","rollingUpdate":null}}},
+          RequestBody:  JSON.stringify({"spec":{"updateStrategy":{"type":"OnDelete","rollingUpdate":null}}}) ,
           Version: "2018-05-25"
        }
       }else if(this.updateWay==1){//滚动更新
@@ -103,7 +103,7 @@ export default {
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
           Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/${this.workload}/${this.name}`,
-          RequestBody: {"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":Number(this.cl.podNum)}}}},
+          RequestBody:  JSON.stringify({"spec":{"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"partition":Number(this.cl.podNum)}}}}) , 
           Version: "2018-05-25",
         }
       }

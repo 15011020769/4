@@ -85,9 +85,9 @@
                       </el-tooltip>
                     </div>
                   </el-form-item>
-                 <el-form-item label="名称" style="margin-bottom: 0px">
-                   <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
-                   <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
+                 <el-form-item label="名称" style="margin-bottom: 10px">
+                   <span  v-if='lengths==wl.instanceContent.length'  v-text="v.name"></span>
+                    <el-input v-else class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
                  </el-form-item>
                  <el-form-item label="镜像">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
@@ -207,138 +207,138 @@
                        <i class="el-icon-info  setPosition2"></i>
                      </el-tooltip>
                      <p>
-                       <el-checkbox v-model="surviveExamine">存活检查</el-checkbox> <span>检查容器是否正常，不正常则重启实例</span>
+                       <el-checkbox v-model="v.surviveExamine">存活检查</el-checkbox> <span>检查容器是否正常，不正常则重启实例</span>
                      </p>
-                     <div v-show="surviveExamine" class="from-1">
+                     <div v-show="v.surviveExamine"  class="from-1">
                        <!--存活检查 -->
-                       <el-form :model="containerCheck" label-position="left" label-width="120px" size="mini"
-                         class="from-set">
+                       <div style="background: #f2f2f2;box-sizing:border-box;padding: 6px;">
                          <el-form-item label="检查方法">
-                           <el-select v-model="containerCheck.type">
-                             <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                               :value="item.value">
+                           <el-select v-model="v.surviveExamineContent.inspectMethodValue">
+                             <el-option v-for="item in v.surviveExamineContent.inspectMethodOption" :key="item" :label="item"
+                               :value="item">
                              </el-option>
                            </el-select>
                          </el-form-item>
-                         <el-form-item label="检查协议" v-show="containerCheck.type=='HTTP请求检查'">
-                           <el-select v-model="containerCheck.http.type">
-                             <el-option label="HTTP" value="HTTP"> </el-option>
-                             <el-option label="HTTPS" value="HTTPS"> </el-option>
-                           </el-select>
+                         <el-form-item label="检查协议" v-show="v.surviveExamineContent.inspectMethodValue=='HTTP请求检查'">
+                           <el-select v-model="v.surviveExamineContent.inspectProtocolValue">
+                              <el-option v-for="item in v.surviveExamineContent.inspectProtocolOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
                          </el-form-item>
-                         <el-form-item label="执行命令" v-show="containerCheck.type=='执行命令检查'">
-                           <el-input type="textarea" class="w192" v-model="upc.name" rows="4" resize="none"></el-input>
+                         <el-form-item label="执行命令" v-show="v.surviveExamineContent.inspectMethodValue==='执行命令检查'">
+                           <el-input type="textarea" class="w192" v-model="v.surviveExamineContent.executiveOrder" rows="4" resize="none"></el-input>
                          </el-form-item>
-                         <el-form-item label="检查端口" v-show="containerCheck.type!='执行命令检查'">
-                           <el-input class="w100" ></el-input>
-                           <span>端口范围：1~65535</span>
-                         </el-form-item>
-                         <el-form-item label="请求路径" v-show="containerCheck.type=='HTTP请求检查'">
-                           <el-input class="w100"></el-input>
-                         </el-form-item>
-                         <el-form-item label="启动延时">
-                           <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" ></el-input>
-                           <span>范围：0~60秒</span>
-                         </el-form-item>
-                         <el-form-item label="响应超时">
-                           <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：2~60秒</span>
-                         </el-form-item>
-                         <el-form-item label="间隔时间">
-                           <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：2~300秒</span>
-                         </el-form-item>
-                         <el-form-item label="健康阙值">
-                           <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：1次</span>
-                         </el-form-item>
-                         <el-form-item label="不健康阙值">
-                           <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
-                             <i class="el-icon-info  setPosition3"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：1~10次</span>
-                         </el-form-item>
-                       </el-form>
+                         <el-form-item label="检查端口" v-show="v.surviveExamineContent.inspectMethodValue!=='执行命令检查'">
+                            <el-input class="w100" v-model="v.surviveExamineContent.inspectPort"></el-input>
+                            <span>端口范围：1~65535</span>
+                          </el-form-item>
+                          <el-form-item label="请求路径" v-show="v.surviveExamineContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-input class="w100" v-model="v.surviveExamineContent.requestPath"></el-input>
+                          </el-form-item>
+                          <el-form-item label="启动延时">
+                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.startDelay"></el-input>
+                            <span>范围：0~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="响应超时">
+                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.responseTimeout"></el-input>
+                            <span>范围：2~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="间隔时间">
+                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.intervalTime"></el-input>
+                            <span>范围：2~300秒</span>
+                          </el-form-item>
+                          <el-form-item label="健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.healthyThreshold" :disabled="true"></el-input>
+                            <span>范围：1次</span>
+                          </el-form-item>
+                          <el-form-item label="不健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                              <i class="el-icon-info  setPosition3"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.surviveExamineContent.unhealthyThreshold"></el-input>
+                            <span>范围：1~10次</span>
+                          </el-form-item>
+                       </div>
                      </div>
                      <p>
-                       <el-checkbox v-model="readyToCheck">就绪检查</el-checkbox> <span>检查容器是否就绪，不就绪则停止转发流量到当前实例</span>
+                       <el-checkbox v-model="v.readyToCheck">就绪检查</el-checkbox> <span>检查容器是否就绪，不就绪则停止转发流量到当前实例</span>
                      </p>
-                     <div v-show="readyToCheck" class="from-1">
+                     <div v-show="v.readyToCheck" class="from-1">
                        <!--就绪检查 -->
-                       <el-form :model="containerCheck" label-position="left" label-width="120px" size="mini"
-                         class="from-set">
-                         <el-form-item label="检查方法">
-                           <el-select v-model="containerCheck.type">
-                             <el-option v-for="item in containerTypeOptions" :key="item.value" :label="item.label"
-                               :value="item.value">
-                             </el-option>
-                           </el-select>
-                         </el-form-item>
-                         <el-form-item label="检查协议" v-show="containerCheck.type=='HTTP请求检查'">
-                           <el-select v-model="containerCheck.http.type">
-                             <el-option label="HTTP" value="HTTP"> </el-option>
-                             <el-option label="HTTPS" value="HTTPS"> </el-option>
-                           </el-select>
-                         </el-form-item>
-                         <el-form-item label="执行命令" v-show="containerCheck.type=='执行命令检查'">
-                           <el-input type="textarea" class="w192" v-model="upc.name" rows="4" resize="none"></el-input>
-                         </el-form-item>
-                         <el-form-item label="检查端口" v-show="containerCheck.type!='执行命令检查'">
-                           <el-input class="w100" ></el-input>
-                           <span>端口范围：1~65535</span>
-                         </el-form-item>
-                         <el-form-item label="请求路径" v-show="containerCheck.type=='HTTP请求检查'">
-                           <el-input class="w100" ></el-input>
-                         </el-form-item>
-                         <el-form-item label="启动延时">
-                           <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" ></el-input>
-                           <span>范围：0~60秒</span>
-                         </el-form-item>
-                         <el-form-item label="响应超时">
-                           <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：2~60秒</span>
-                         </el-form-item>
-                         <el-form-item label="间隔时间">
-                           <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：2~300秒</span>
-                         </el-form-item>
-                         <el-form-item label="健康阙值">
-                           <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
-                             <i class="el-icon-info  setPosition"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：1次</span>
-                         </el-form-item>
-                         <el-form-item label="不健康阙值">
-                           <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
-                             <i class="el-icon-info  setPosition3"></i>
-                           </el-tooltip>
-                           <el-input class="w100" v-model="upc.name"></el-input>
-                           <span>范围：1~10次</span>
-                         </el-form-item>
-                       </el-form>
+                       <div style="background: #f2f2f2;padding: 6px;">
+                        <el-form-item label="检查方法">
+                            <el-select v-model="v.readyToCheckContent.inspectMethodValue">
+                              <el-option v-for="item in v.readyToCheckContent.inspectMethodOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="检查协议" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-select v-model="v.readyToCheckContent.inspectProtocolValue">
+                              <el-option v-for="item in v.readyToCheckContent.inspectProtocolOption" :key="item" :label="item"
+                                         :value="item">
+                              </el-option>
+                            </el-select>
+                          </el-form-item>
+                          <el-form-item label="执行命令" v-show="v.readyToCheckContent.inspectMethodValue==='执行命令检查'">
+                            <el-input type="textarea" class="w192" v-model="v.readyToCheckContent.executiveOrder" rows="4" resize="none"></el-input>
+                          </el-form-item>
+                          <el-form-item label="检查端口" v-show="v.readyToCheckContent.inspectMethodValue!=='执行命令检查'">
+                            <el-input class="w100" v-model="v.readyToCheckContent.inspectPort"></el-input>
+                            <span>端口范围：1~65535</span>
+                          </el-form-item>
+                          <el-form-item label="请求路径" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                            <el-input class="w100" v-model="v.readyToCheckContent.requestPath"></el-input>
+                          </el-form-item>
+                          <el-form-item label="启动延时">
+                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.startDelay"></el-input>
+                            <span>范围：0~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="响应超时">
+                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.responseTimeout"></el-input>
+                            <span>范围：2~60秒</span>
+                          </el-form-item>
+                          <el-form-item label="间隔时间">
+                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.intervalTime"></el-input>
+                            <span>范围：2~300秒</span>
+                          </el-form-item>
+                          <el-form-item label="健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                              <i class="el-icon-info  setPosition"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.healthyThreshold"></el-input>
+                            <span>范围：1~10次</span>
+                          </el-form-item>
+                          <el-form-item label="不健康阙值">
+                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                              <i class="el-icon-info  setPosition3"></i>
+                            </el-tooltip>
+                            <el-input class="w100" v-model="v.readyToCheckContent.unhealthyThreshold"></el-input>
+                            <span>范围：1~10次</span>
+                          </el-form-item>
+                       </div>
                      </div>
 
                      <p>查看健康检查和就绪检查<a href="#">使用指引</a> </p>
@@ -373,7 +373,7 @@
                   </el-form-item>
                 </div>
              </div>
-             <p class="addcontent"    style='cursor:pointer' :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent():''">添加容器</p>
+             <p class="addcontent"    style='cursor:pointer' :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent0():''">添加容器</p>
              <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
            </el-form-item>
            <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">显示高级设置</a>
@@ -713,6 +713,7 @@ export default {
       setSecret: {
         checked: 'all'
       },
+      lengths:'',
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {} // 引用ConfigMap/Secret ConfigMap
 
@@ -738,10 +739,103 @@ export default {
 
     submit(){
       let container = this.wl.instanceContent
+      console.log(container)
       let containerObj = {}
       let containerList = []
+      //  存活检查，就绪检查 共用赋值函数
+      let inspectFunc = (obj) => {
+        let {
+          inspectMethodValue,
+          inspectProtocolValue,
+          executiveOrder, // 执行命令
+          inspectPort, // 检查端口
+          requestPath, // 请求路径
+          startDelay, // 启动延时
+          responseTimeout, // 响应超时,
+          intervalTime, // 间隔时间
+          healthyThreshold, // 健康阀值
+          unhealthyThreshold // 不健康阀值
+        } = obj
+        let newObj = {
+          failureThreshold: parseInt(unhealthyThreshold),
+          successThreshold: parseInt(healthyThreshold),
+          timeoutSeconds: parseInt(responseTimeout),
+          periodSeconds: parseInt(intervalTime)
+        }
+        if (parseInt(startDelay) !== 0) {
+          newObj.initialDelaySeconds = parseInt(startDelay)
+        }
+        if (inspectMethodValue === 'TCP端口检查') {
+          newObj.tcpSocket = { port: parseInt(inspectPort) }
+        } else if (inspectMethodValue === 'HTTP请求检查') {
+          newObj.httpGet = {
+            path: requestPath,
+            port: parseInt(inspectPort),
+            scheme: inspectProtocolValue
+          }
+        } else if (inspectMethodValue === '执行命令检查' && executiveOrder !== '') {
+          newObj.exec = {
+            command: executiveOrder.split('\n')
+          }
+        }
+        return newObj
+      }
       if (container.length > 0) {
+        
         for (let i = 0; i < container.length; i++) {
+        let {
+          name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory,
+          limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
+          runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
+        } = container[i]
+        let oneContainer = {
+         
+        }
+
+        //  // 运行命令
+        // if (runCommand !== '') oneContainer.command = runCommand.split('\n')
+        // // 运行参数
+        // if (runParam !== '') oneContainer.args = runParam.split('\n')
+        // // 存活检查
+        if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
+        // // 就绪检查
+        if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
+
+        console.log(oneContainer)
+          // 新增变量
+         var environmentVarArr=[];
+        if (container[i].environmentVar.length > 0) {
+           environmentVarArr = container[i].environmentVar.map(item => {
+            return { name: item.name, value: item.value }
+          })
+        }
+        // 新增引用
+        var citeCsArr=[] ;
+        if (container[i].citeCs.length > 0) {
+           citeCsArr = container[i].citeCs.map(item => {
+            return {
+              name: item.input1,
+              valueFrom: {
+                secretKeyRef: {
+                  key: item.value3,
+                  name: item.value2,
+                  optional: false
+                }
+              }
+            }
+          })
+        }
+        console.log(environmentVarArr)
+        console.log( citeCsArr )
+        //运行指令
+        if (container[i].runCommand.length > 0) {
+         var command=container[i].runCommand.split('\n')
+        }
+        //运行参数
+        if (container[i].runParam.length > 0) {
+         var args=container[i].runParam.split('\n')
+        }
+       
           containerObj = {
             name: container[i].name,
             image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
@@ -752,7 +846,7 @@ export default {
                 {
                   cpu: container[i].limitCpu,
                   memory: container[i].limitMemory + 'Mi',
-                  'nvidia.com/gpu': container[i].gpuNum
+                  'nvidia.com/gpu': Number(container[i].gpuNum)
                 },
               requests:
                 {
@@ -762,13 +856,13 @@ export default {
             },
             terminationMessagePath:"/dev/termination-log",
             terminationMessagePolicy:"File",
-            livenessProbe:null,
-            readinessProbe:null,
-            env: container[i].environmentVar,
-            workingDir: '',
-            command: [],
-            args: [],
-            securityContext: { privileged: false }
+            livenessProbe:oneContainer.livenessProbe!=undefined?oneContainer.livenessProbe:null,
+            readinessProbe:oneContainer.readinessProbe!=undefined?oneContainer.readinessProbe:null,
+            env: [...environmentVarArr,...citeCsArr],
+            workingDir: container[i].workDirectory,
+            command: command,
+            args: args,
+            securityContext: { privileged: container[i].privilegeLevelContainer }
           }
           containerList.push(containerObj)
         }
@@ -870,6 +964,35 @@ export default {
           }
           let arr2=[],arr3=[];
           console.log(arr)
+          this.lengths=arr.length;
+          let surviveExamineContentObj={
+             inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+            inspectMethodValue: 'TCP端口检查',
+            inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
+            inspectProtocolValue: '',
+            executiveOrder: '', // 执行命令
+            inspectPort: '0', // 检查端口
+            requestPath: '', // 请求路径
+            startDelay: '', // 启动延时
+            responseTimeout: '2', // 响应超时,
+            intervalTime: '3', // 间隔时间
+            healthyThreshold: 1, // 健康阀值
+            unhealthyThreshold: '1' // 不健康阀值
+          }
+          let readyToCheckContentObj={
+              inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+              inspectMethodValue: 'TCP端口检查',
+              inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
+              inspectProtocolValue: '',
+              executiveOrder: '', // 执行命令
+              inspectPort: '0', // 检查端口
+              requestPath: '', // 请求路径
+              startDelay: '', // 启动延时
+              responseTimeout: '2', // 响应超时,
+              intervalTime: '3', // 间隔时间
+              healthyThreshold: '1', // 健康阀值
+              unhealthyThreshold: '1' // 不健康阀值
+          }
           for(let v of arr){
             console.log(v)
             console.log(v.env)
@@ -879,8 +1002,8 @@ export default {
                    if(item['value']!=undefined){
                       arr2.push(item) //环境变量
                    }else{
-                     for(let i in item){
                      let obj={}
+                     for(let i in item){
                        obj.key=Date.now();
                        obj.option1=['ConfigMap', 'Secret'];
                        obj.value1='Secret';
@@ -889,8 +1012,8 @@ export default {
                        obj.value2=item.valueFrom.secretKeyRef.name;
                        obj.value3=item.valueFrom.secretKeyRef.key;
                        obj.input1=item.name
-                       arr3.push(obj)
                      }
+                      arr3.push(obj)
                    }
                  })
               }
@@ -906,11 +1029,13 @@ export default {
             arr3,//引用ConfigMap/Secret
             false,// 显示高级设置false
             v.workingDir,// 工作目录
-           '',//运行命令
-            '',//运行参数
-            false, // 存活检查
-            false, // 就绪检查
-            v.securityContext.privileged// 特权级容器开关
+            v.command?v.command.join('\n'):'',//运行命令
+            v.args? v.args.join('\n'):'',//运行参数
+            v.livenessProbe?true:false, // 存活检查
+            v.readinessProbe?true:false, // 就绪检查
+            v.securityContext.privileged,// 特权级容器开关
+            v.livenessProbe?v.livenessProbe:surviveExamineContentObj,//存活检查内容
+            v.readinessProbe?v.readinessProbe:readyToCheckContentObj,//就绪检查
             )
           }
         }else{
@@ -1097,6 +1222,21 @@ watch: {
 
   .text-error {
     color: #e54545;
+  }
+   .from-1 {
+    width: 80%;
+    background: white;
+    box-sizing: border-box;
+    padding: 10px;
+
+    & > > > .el-form-item:nth-of-type(1) {
+      margin-top: 0px !important;
+    }
+
+    .from-set {
+      background: #f2f2f2;
+      padding: 6px;
+    }
   }
 
   .text-warning {

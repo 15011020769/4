@@ -222,22 +222,22 @@
               arr.push(item.ClusterId);
               return item;
             })
-            if (sessionStorage.getItem('clusterId')){
-              if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
-                sessionStorage.setItem('clusterId','')
-              }
-            }
+            // if (sessionStorage.getItem('clusterId')){
+            //   if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
+            //     sessionStorage.setItem('clusterId','')
+            //   }
+            // }
 
             // 放到页面上
             for (let i = 0; i < ids.length; i++) {
               let option = {}
               option.value = ids[i]
               this.options.push(option)
-              if (sessionStorage.getItem('clusterId')) {
-                this.value = sessionStorage.getItem('clusterId');
-              } else {
+              // if (sessionStorage.getItem('clusterId')) {
+              //   this.value = sessionStorage.getItem('clusterId');
+              // } else {
                 this.value = this.options[0].value
-              }
+              // }
             }
             this.value2 = this.value.split('(')[0]
           }
@@ -288,7 +288,7 @@
             clusterId: this.value
           }
         })
-        sessionStorage.setItem('clusterId', this.value)
+        // sessionStorage.setItem('clusterId', this.value)
       },
       //新建2
       newCread2() {
@@ -313,7 +313,7 @@
                    clusterId: this.value2
                  }
                  })
-             sessionStorage.setItem('clusterId', this.value2)
+            //  sessionStorage.setItem('clusterId', this.value2)
             }else{
                let ErrTips = { };
               let ErrOr = Object.assign(this.$ErrorTips, ErrTips);

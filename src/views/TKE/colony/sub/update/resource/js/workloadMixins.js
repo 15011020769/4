@@ -4,7 +4,32 @@ import { ErrorTips } from '@/components/ErrorTips.js'
 
 
 let instanceContent = {
-  addInstanceContent: function (n1='',n2='',n3='',n4='',n5='',n6='',n7='',n8='',n9='',a1=[],a2=[],t1=false,n10='',n11='',n12='',t2=false,t3=false,t4=false) {
+  addInstanceContent: function (n1='',n2='',n3='',n4='',n5='',n6='',n7='',n8='',n9='',a1=[],a2=[],t1=false,n10='',n11='',n12='',t2=false,t3=false,t4=false,v,v2) {
+
+    let typeSelect=(val)=>{
+        if(val.tcpSocket){
+            return "TCP端口检查"
+        }else if(val.httpGet){
+          return 'HTTP请求检查'
+        }else if(val.exec){
+          return '执行命令检查'
+        }
+    }
+    let inspectPortSelect=(val)=>{
+      if(val.tcpSocket){
+        return val.tcpSocket.port
+      }else if(val.httpGet){
+        return  val.httpGet.port
+      }
+    }
+    let requestPathSelect=(val)=>{
+      if(val.httpGet){
+        return  val.httpGet.path
+      }else{
+        return   val.successThreshold
+      }
+    }
+    console.log(v)
     this.wl.instanceContent.push({
       name: n1, // 名称
       mirrorImg: n2, // 镜像
@@ -23,6 +48,58 @@ let instanceContent = {
       runParam: n12, // 运行参数
       surviveExamine: t2, // 存活检查
       readyToCheck: t3, // 就绪检查
+      surviveExamineContent: {
+        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+        inspectMethodValue: typeSelect(v),
+        inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
+        inspectProtocolValue: v.httpGet?v.httpGet.scheme:'HTTP',
+        executiveOrder: v.exec?v.exec.command[0]:'', // 执行命令
+        inspectPort: inspectPortSelect(v)?inspectPortSelect(v):v.inspectPort, // 检查端口
+        requestPath: requestPathSelect(v)?requestPathSelect(v):v.requestPath, // 请求路径
+        startDelay: v.initialDelaySeconds?v.initialDelaySeconds:v.startDelay, // 启动延时
+        responseTimeout: v.timeoutSeconds?v.timeoutSeconds:v.responseTimeout, // 响应超时,
+        intervalTime: v.periodSeconds?v.periodSeconds:v.intervalTime, // 间隔时间
+        healthyThreshold: 1, // 健康阀值
+        unhealthyThreshold: v.failureThreshold?v.failureThreshold:v.unhealthyThreshold // 不健康阀值
+      },
+      readyToCheckContent: {
+        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+        inspectMethodValue: typeSelect(v2),
+        inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
+        inspectProtocolValue:v2.httpGet?v2.httpGet.scheme:'HTTP',
+        executiveOrder: v2.exec?v2.exec.command[0]:'', // 执行命令
+        inspectPort: inspectPortSelect(v2)?inspectPortSelect(v2):v2.inspectPort,  // 检查端口
+        requestPath:requestPathSelect(v2)?requestPathSelect(v2):v2.requestPath , // 请求路径
+        startDelay:  v2.initialDelaySeconds?v2.initialDelaySeconds:v2.startDelay, // 启动延时
+        responseTimeout:v2.timeoutSeconds?v2.timeoutSeconds:v2.responseTimeout, // 响应超时,
+        intervalTime:  v2.periodSeconds?v2.periodSeconds:v2.intervalTime, // 间隔时间
+        healthyThreshold: v2.successThreshold?v2.successThreshold:v2.healthyThreshold, // 健康阀值
+        unhealthyThreshold: v2.failureThreshold?v2.failureThreshold:v2.unhealthyThreshold // 不健康阀值
+      },
+      privilegeLevelContainer: t4, // 特权级容器
+      completed: false, // 判断是否该验证的都验证完成
+      editStatus: true // 编辑状态
+    })
+  },
+  addInstanceContent0: function () {
+    this.wl.instanceContent.push({
+      name: '', // 名称
+      mirrorImg: '', // 镜像
+      versions: '', // 镜像版本
+      mirrorPullTactics: '', // 镜像拉取策略
+      requestCpu: '0.25', // cpu 限制
+      limitCpu: '0.5',
+      requestMemory: '256', // 内存限制
+      limitMemory: '1024',
+      gpuNum: 0, // gpu 限制
+      environmentVar: [], // 新增变量
+      citeCs: [], // 引用ConfigMap/Secret
+      disAdvancedSetting: false, // 显示高级设置
+      workDirectory: '', // 工作目录
+      runCommand: '', // 运行命令
+      runParam: '', // 运行参数
+      surviveExamine: false, // 存活检查
+      readyToCheck: false, // 就绪检查
       surviveExamineContent: {
         inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
         inspectMethodValue: 'TCP端口检查',
@@ -51,11 +128,12 @@ let instanceContent = {
         healthyThreshold: '', // 健康阀值
         unhealthyThreshold: '' // 不健康阀值
       },
-      privilegeLevelContainer: t4, // 特权级容器
+      privilegeLevelContainer: false, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
       editStatus: true // 编辑状态
     })
   },
+  
   editInstanceContent: function (index) {
     this.wl.instanceContent[index].editStatus = !this.wl.instanceContent[index].editStatus
   },
