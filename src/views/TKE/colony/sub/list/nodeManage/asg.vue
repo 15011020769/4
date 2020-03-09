@@ -218,14 +218,14 @@
               </el-form-item>
             </el-form-item>
             <el-form-item label="扩容算法" :label-width="formLabelWidth">
-                <el-radio-group v-model="form.radio" class='left' @change='setRadio($event)'>
-                  <el-radio :label="1">随机</el-radio>
-                  <el-radio :label="2">most-pods</el-radio>
-                  <el-radio :label="3">least-waste</el-radio>
+                <el-radio-group v-model="global.Expander" class='left' @change='setRadio($event)'>
+                  <el-radio label="random">随机</el-radio>
+                  <el-radio label="most-pods">most-pods</el-radio>
+                  <el-radio label="least-waste">least-waste</el-radio>
                 </el-radio-group>
-              <p class='left' v-if="form.radio == 1">随机选择一个伸缩组进行扩容</p>
-              <p class='left' v-else-if="form.radio == 2">选择能调度更多pod的伸缩组进行扩容</p>
-              <p class='left' v-else-if="form.radio == 3">选择pod调度后资源剩余更少的伸缩组进行扩容</p>
+              <p class='left' v-if="global.Expander === 'random'">随机选择一个伸缩组进行扩容</p>
+              <p class='left' v-else-if="global.Expander === 'most-pods'">选择能调度更多pod的伸缩组进行扩容</p>
+              <p class='left' v-else-if="global.Expander === 'least-waste'">选择pod调度后资源剩余更少的伸缩组进行扩容</p>
             </el-form-item>
         </el-form>
       </el-card>
@@ -539,15 +539,43 @@ export default {
     },
     // 修改全局配置
     async DetailGroupsList () { 
+      this.loadShow = true;
       let param = {
         ClusterId: this.$route.query.clusterId,
         Version: "2018-05-25"
       }
-      param['ClusterAsGroupOption'] = this.global;
-      console.log(param)
+      param['ClusterAsGroupOption.IsScaleDownEnabled'] = this.global.IsScaleDownEnabled;
+      param['ClusterAsGroupOption.MaxEmptyBulkDelete'] = Number(this.global.MaxEmptyBulkDelete);
+      param['ClusterAsGroupOption.ScaleDownDelay'] = Number(this.global.ScaleDownDelay);
+      param['ClusterAsGroupOption.ScaleDownUtilizationThreshold'] = Number(this.global.ScaleDownUtilizationThreshold);
+      param['ClusterAsGroupOption.SkipNodesWithLocalStorage'] = this.global.SkipNodesWithLocalStorage;
+      param['ClusterAsGroupOption.SkipNodesWithSystemPods'] = this.global.SkipNodesWithSystemPods;
+      param['ClusterAsGroupOption.Expander'] = this.global.Expander;
+      param['ClusterAsGroupOption.IgnoreDaemonSetsUtilization'] = this.global.IgnoreDaemonSetsUtilization;
+      param['ClusterAsGroupOption.ScaleDownUnneededTime'] = this.global.ScaleDownUnneededTime;
       const res = await this.axios.post(MODIFY_ATTRIBUTE, param);
-      debugger
-      console.log(res)
+      if(res.Response.Error === undefined) {
+        this.GetGroupsOption();
+        this.GetGroupsList();
+        this.$message({
+          message: "更新成功",
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+        this.dialogFormVisible = false;
+        this.loadShow = false;
+      } else {
+        this.loadShow = false;
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
     },
 
     // 获取伸缩组列表ID
@@ -1030,6 +1058,10 @@ export default {
     Expanders:function(val){
       if(val == 'random'){
         return "随机"
+      } else if (val == 'most-pods') {
+        return 'most-pods';
+      } else if (val == 'least-waste') {
+        return 'least-waste';
       }
     }
   }

@@ -47,7 +47,7 @@
                 </el-table-column>
                 <el-table-column prop="" label="CPU Request" >
                   <template slot-scope="scope1">
-                    <span>{{scope1.row.resources && scope1.row.resources.requests && scope1.row.resources.requests.cpu && scope1.row.resources.requests.cpu  || '无限制'}}</span>
+                    <span>{{scope1.row.resources && scope1.row.resources.requests && scope1.row.resources.requests.cpu && scope1.row.resources.requests.cpu || '无限制'}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="" label="CPU Limit" >
