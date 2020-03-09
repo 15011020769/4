@@ -174,7 +174,7 @@ export default {
    //更新pod配置
     goPodConfigUpdate(rowData) {
       this.$router.push({
-        name: "podConfigUpdate",
+        name: "podCronjobUpdate",
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,

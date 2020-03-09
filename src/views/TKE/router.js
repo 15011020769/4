@@ -356,6 +356,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/cronJob/updatePodConfig', // 集群-podcronjob--更新pod配置
+      name: 'podCronjobUpdate',
+      component: () => import('./colony/sub/update/resource/cronJob/updatePodConfig.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/update/resource/setStrategy', //设置更新策略
       name: 'setStrategy',
       component: () => import('./colony/sub/update/resource/setStrategy.vue'),
