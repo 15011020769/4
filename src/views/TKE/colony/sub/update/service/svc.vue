@@ -309,11 +309,20 @@ export default {
       // 端口映射的验证
       verifyPort1: [// 容器端口的验证
         { validator: (rule, value, callback) => {
+          let ls = this.svc.list
+          let flog = false
+          if (ls.length > 1) {
+            for (let i = 0; i < ls.length - 1; i++) {
+              ls[i].port === Number(value) ? flog = true : flog = false
+            }
+          }
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
           if (!value) {
             callback(new Error('端口号不能为空'))
           } else if (!portNumber.test(value)) {
             callback(new Error('端口号格式不正确'))
+          } else if (flog) {
+            callback(new Error('端口不可重复映射'))
           } else {
             callback()
           }
