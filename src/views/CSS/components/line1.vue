@@ -5,12 +5,10 @@
 <script>
 import "echarts/lib/component/legend";
 import "echarts/lib/component/tooltip";
-import "echarts/lib/component/toolbox";
 export default {
   name: "myChart",
   data() {
-    return {
-    };
+    return {};
   },
   mounted() {
     this.echart();
@@ -77,32 +75,6 @@ export default {
       var myChart = this.$echarts.init(this.$refs.line_dv);
       myChart.setOption({
         color: this.color,
-        toolbox: {
-          left: 26,
-          itemGap: 24,
-          iconStyle:{
-            normal:{
-              // color:'white',//设置颜色
-            }
-          },
-           emphasis:{//触发时
-              iconStyle:{
-                borderColor:"#006eff"//图形的描边颜色
-              }
-            },
-          feature: {
-            dataZoom: {
-              title: {
-                zoom: '缩放',
-                // back: ''
-              },
-              yAxisIndex: 'none'
-            },
-            restore: {
-              title: '重置',
-            },
-          }
-        },
         tooltip: this.tooltip,
         grid: {
           left: "3%",

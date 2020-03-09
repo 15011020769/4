@@ -119,7 +119,7 @@ export default {
       for (let i = 0 ; i < 6; i++) {
         const params = {
           Version: "2018-08-01",
-          // MainlandOrOversea: "Oversea",
+          MainlandOrOversea: "Oversea",
           LiveType: "NormalLive",
         };
         params.StartTime =  moment().subtract(i, "months").startOf("months").format('YYYY-MM-DD HH:mm:ss')
@@ -177,7 +177,7 @@ export default {
         Version: "2018-08-01",
         StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
-        // MainlandOrOversea: "Oversea",
+        MainlandOrOversea: "Oversea",
         LiveType: "NormalLive",
       };
       let numArr = []

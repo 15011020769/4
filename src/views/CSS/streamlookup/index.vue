@@ -126,8 +126,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.streamlookup-wrap >>> .el-input {
-  width: 300px;
+::v-deep .el-input {
+  width: 320px;
 }
 .streamlookup-wrap {
   .toolbar {
