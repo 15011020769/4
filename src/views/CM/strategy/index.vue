@@ -493,7 +493,7 @@ export default {
     async ListInit() {
       let params = {
         Version: "2018-07-24",
-        // Region:"",
+        Region: "ap-guangzhou",
         Module: "monitor",
         Limit: this.pageSize,
         Offset: this.pageIndex
