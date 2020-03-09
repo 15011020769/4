@@ -22,7 +22,7 @@
       <el-table style="width: 100%" height="500" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column prop="groupName" label="模板名称">
+        <el-table-column prop label="模板名称">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.groupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{scope.row.groupName}}</span>
@@ -68,7 +68,7 @@
         <el-table-column prop label="绑定告警策略数">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" content="点击查看详情">
-              <span class="tke-text-link" slot="reference">{{`${scope.row.policyGroups.length}个`}}</span>
+              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{`${scope.row.policyGroups.length}个`}}</span>
             </el-popover>
           </template>
         </el-table-column>
@@ -392,13 +392,13 @@ export default {
       this.groupId = id
     },
     // 复制数据
-    coptData () {
+    async coptData () {
       this.loadShow = true
       let params = {
         groupId: this.groupId,
         lang: 'zh'
       }
-      this.axios.post(COPY_TEMPLATE, params).then(res => {
+      await this.axios.post(COPY_TEMPLATE, params).then(res => {
         if (res.codeDesc == 'Success') {
           this.showCopyDialog = false
           this.getListData()
@@ -453,11 +453,11 @@ export default {
     // 去详情页
     goDetail (id) {
       this.$router.push({
-        name: 'TemplateDetail',
-        query: {
-          grounpId: id
-        }
-        // path: `/Template/Detail/index/${id}`
+        // name: 'TemplateDetail',
+        // query: {
+        //   grounpId: id
+        // }
+        path: `/Template/Detail/index/${id}`
       })
     },
     // 设置弹框//新建实例分组

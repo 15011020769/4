@@ -118,7 +118,7 @@
             </div>
           </el-form-item>
           <el-form-item label="端口映射">
-            <div class="port">
+            <div class="port" :class="{ports:svc.radio=='4'}">
               <!-- 头部 -->
               <div class="flex">
                 <div style="width:140px;padding-left:14px">
@@ -127,13 +127,19 @@
                     <i class="el-icon-warning"></i>
                   </el-tooltip>
                 </div>
-                <div style="width:250px;">
+                <div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'">
                   容器端口
                   <el-tooltip content="端口范围1~65535" placement="top" effect="light">
                     <i class="el-icon-warning"></i>
                   </el-tooltip>
                 </div>
-                <div>
+                <div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'" v-if="svc.radio=='4'">
+                  主机端口
+						      <el-tooltip content="可通过云服务器IP+主机端口访问服务，端口范围30000~32767，不填自动分配" placement="top" effect="light">
+						      <i class="el-icon-warning"></i>
+						      </el-tooltip>
+					      </div>
+                <div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'':'padding-left:30px'">
                   服务端口
                   <el-tooltip
                     content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务"
@@ -148,32 +154,43 @@
               <div style="border-top:1px solid #ddd;padding: 10px;">
                 <div style="padding:5px 0;" v-for="(it,i) in svc.list" :key="i">
 									<!-- 下拉框协议 -->
-                  <el-select class="w100" v-model="it.protocol" placeholder="请选择">
-										<el-option
-                      v-for="item in svc.options"
-                      :key="item"
-                      :label="item"
-                      :value="item"
-                    ></el-option>
-                    <!-- <el-option
-                      v-for="item in svc.options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    ></el-option> -->
-                  </el-select>
-									<!-- 容器器端口 -->
-                  <el-input class="w250" style="padding-left:30px;" v-model="it.port" placeholder="请输入内容"></el-input>
-									<!-- 服务端口 -->
-                  <el-input class="w250" style="padding-left:30px;" v-model="it.targetPort" placeholder="请输入内容"></el-input>
-									<!-- 关闭按钮 -->
-                  <el-tooltip class="item" effect="dark" content="删除" placement="right">
+                  <el-form-item style="display: inline-block" :prop="`list.${i}.protocol`" :rules="ProtocolValidation">
+                    <el-select class="w100" v-model="it.protocol" placeholder="请选择">
+									  	<el-option v-for="item in svc.options" :key="item" :label="item" :value="item"></el-option>
+                    </el-select>
+                  </el-form-item>
+									<!-- 容器端口 -->
+                  <el-form-item :prop="`list.${i}.port`" :rules="verifyPort1" class="w250" :class="{cons:svc.radio=='4'}"
+                   style="display: inline-block;padding-left:30px;">
+                    <el-input v-model="it.port" placeholder="请输入内容"></el-input>
+									</el-form-item>
+                  <!-- 主机端口 -->
+                  <el-form-item :class="{cons:svc.radio=='4'}" v-if="svc.radio=='4'"
+						      style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.nodePort`" :rules="verifyPort3">
+						        <el-input class="w250" v-model="it.nodePort" placeholder="范围: 30000~32767"></el-input>
+						      </el-form-item>
+                  <!-- 服务端口 -->
+                  <el-form-item :prop="`list.${i}.targetPort`" :rules="verifyPort2" class="w250"
+                   :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;">
+                    <el-input v-model="it.targetPort" placeholder="请输入内容"></el-input>
+									</el-form-item>
+                  <!-- 关闭按钮 -->
+                  <el-tooltip class="item" effect="dark" content="不可删除，至少指定一个端口映射" placement="left" v-if="svc.list.length===1">
                     <i
                       style="font-size:18px;padding-left:20px;"
+                      :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'"
+                      class="el-icon-close"
+                    ></i>
+                  </el-tooltip>
+                  <el-tooltip class="item" effect="dark" content="删除" placement="right" v-else>
+                    <i
+                      style="font-size:18px;padding-left:20px;"
+                      :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'"
                       class="el-icon-close"
                       @click="removeprot(it)"
                     ></i>
                   </el-tooltip>
+
                 </div>
               </div>
             </div>
@@ -239,7 +256,7 @@ export default {
         time: 30, // 会话时间
         checked: false, // 仅在集群内访问的多选框
         name: '',
-        loadBalance: '1', // 负载平衡选项
+        loadBalance: '', // 负载平衡选项
         val: '', // 自有创建的id
         value: '', // 使用已有均衡器
         LBvalue2: '', // LB所在子网
@@ -252,6 +269,7 @@ export default {
         SA: '2',
         input1: '', // 容器端口
         input2: '', // 服务端口
+        input3: '', // 主机端口
         list: [],
         workload: [],
         tabPosition: 'dep',
@@ -287,7 +305,88 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }]
+      }],
+      // 端口映射的验证
+      verifyPort1: [// 容器端口的验证
+        { validator: (rule, value, callback) => {
+          let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
+          if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (!portNumber.test(value)) {
+            callback(new Error('端口号格式不正确'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true }
+      ],
+      verifyPort2: [// 服务端口的验证
+        { validator: (rule, value, callback) => {
+          let ls = this.svc.list
+          let flog = false
+          if (ls.length > 1) {
+            for (let i = 0; i < ls.length - 1; i++) {
+              ls[i].targetPort === Number(value) ? flog = true : flog = false
+            }
+          }
+          let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
+          if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (!portNumber.test(value)) {
+            callback(new Error('端口号格式不正确'))
+          } else if (flog) {
+            callback(new Error('端口不可重复映射'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true }
+      ],
+      verifyPort3: [{// 主机端口的验证
+        validator: (rule, value, callback) => {
+          let ls = this.svc.list
+          let flog = false
+          if (ls.length > 1) {
+            for (let i = 0; i < ls.length - 1; i++) {
+              ls[i].nodePort === Number(value) ? flog = true : flog = false
+            }
+          }
+          if (flog) {
+            callback(new Error('端口不可重复映射'))
+          }
+          if (value > 30000 && value <= 32767) {
+            callback()
+          } else if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (value < 0 && value > 32767) {
+            callback(new Error('超出端口号范围'))
+          } else if (!(/^\d+$/.test(value))) {
+            callback(new Error('端口号格式不正确'))
+          } else {
+            callback(new Error('端口格式不正确'))
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }],
+      ProtocolValidation: [// 协议的验证
+        { validator: (rule, value, callback) => {
+          let ls = this.svc.list
+          let flog = false
+          if (ls.length > 1) {
+            for (let i = 0; i < ls.length - 1; i++) {
+              ls[i].protocol === value ? flog = true : flog = false
+            }
+          }
+          if (!flog) {
+            callback(new Error('协议必须一致'))
+          }
+        },
+        trigger: 'change',
+        required: true }
+      ]
     }
   },
   components: {
@@ -523,24 +622,26 @@ export default {
       // 会话时间的参数判断
       if (session == 'ClientIP') jsonStr.spec.sessionAffinityConfig = sessionTime
       // 访问方式1参数
-      if (radio == '1') {
+      if (radio === '1' && loadBalance === '1') {
         jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
-      }
-      if (radio == '1' && loadBalance == '2') {
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
+      } else if (radio === '1' && loadBalance === '2') {
+        jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
-        // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
       }
       // 高级选项ExtermalTrafficPolicy的参数
       if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy
       // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
-      if (radio == '3' && loadBalance == '1') {
+      if (radio === '3' && loadBalance === '1') {
         this.getSubnetId()
         // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
         // this.svc.value = ''
-      } else if (radio == '3' && loadBalance == '2') {
+      } else if (radio === '3' && loadBalance === '2') {
         this.getSubnetId()
         // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
         // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
@@ -601,7 +702,6 @@ export default {
           let msg = JSON.parse(res.Response.ResponseBody)
           this.serviceInfo = msg
           this.svc.list = msg.spec.ports
-          // var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
           if (msg.spec.type === 'NodePort') { // 判断服务访问方式
             this.svc.radio = '4'
           } else if (msg.spec.type === 'ClusterIP') {
@@ -624,29 +724,20 @@ export default {
           // var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
           }
           // 获取使用已有均衡器的id
-          // if (this.svc.loadBalance === '2') {
-          this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] || ''
-          // }
+          if (msg.metadata.annotations && msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']) {
+            this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+          }
           // console.log(this.svc.value)
           // 获取描述信息
           if (msg.metadata.annotations) {
             this.svc.describe = msg.metadata.annotations.description
           }
           // console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
-          if (this.svc.val !== '') {
-            this.svc.loadBalance = '1'
-          } else {
+          if (this.svc.value) {
             this.svc.loadBalance = '2'
+          } else {
+            this.svc.loadBalance = '1'
           }
-          // if (msg.spec.type == 'NodePort') { // 判断服务访问方式
-          //   this.svc.radio = '4'
-          // } else if (msg.spec.type == 'ClusterIP') {
-          //   this.svc.radio = '2'
-          // } else if (msg.spec.type == 'LoadBalancer' && isart) {
-          //   this.svc.radio = '3'
-          // } else {
-          //   this.svc.radio = '1'
-          // }
           if (msg.spec.externalTrafficPolicy === 'Cluster') { // 高级选项ExtermalTrafficPolicy判断
             this.svc.ETP = '1'
           } else {
@@ -681,9 +772,6 @@ export default {
         }
       })
     },
-    // isdisable(){
-    //   if
-    // }
     handleClose (done) {
       this.$confirm('确认关闭？')
         .then(_ => {
@@ -715,7 +803,10 @@ export default {
     // 新增端口
     addport () {
     	this.svc.list.push({
-    		value: '',
+        protocol: 'TCP',
+        port: '',
+        targetPort: '',
+        nodePort: '',
     		key: Date.now()
     	})
     },
@@ -750,8 +841,11 @@ export default {
   display: flex;
 }
 .port {
-  max-width: 680px;
+  max-width: 700px;
   border: 1px solid #ddd;
+}
+.ports{
+  max-width: 848px;
 }
 .card {
   padding: 10px;
@@ -770,5 +864,17 @@ export default {
   border-radius: 4px;
   border: 1px solid #dcdfe6;
   resize: none;
+}
+.titles{
+	width: 204px;
+	.el-input{
+		width: 184px
+	}
+}
+.cons{
+	width: 204px;
+	.el-input{
+		width: 200px
+	}
 }
 </style>

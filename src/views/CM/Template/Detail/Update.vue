@@ -57,20 +57,22 @@ export default {
       showDelDialog: false, // 是否显示弹框
       transLogData: [],
       IndexAlarm: [], // 指标告警
-      EventAlarm: []// 事件告警
+      EventAlarm: [], // 事件告警
+      groudId: ''
     }
   },
   components: {
     Loading
   },
   created () {
+    this.groudId = this.$route.params.id
     this.getTransLog()
   },
   methods: {
     async getTransLog () {
       this.loadShow = true
       let params = {
-        dId: '3433360',
+        dId: this.groudId,
         lang: 'zh',
         limit: 20,
         moduleId: 1,

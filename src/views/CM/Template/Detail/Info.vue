@@ -39,11 +39,23 @@
     </el-card>
     <el-card class="card3">
       <h4 class="title-text">关联告警策略</h4>
-      <el-table border>
-        <el-table-column label="策略名称"></el-table-column>
+      <el-table border :data="groupList">
+        <el-table-column label="策略名称" prop="groupName"></el-table-column>
         <el-table-column label="所属项目"></el-table-column>
-        <el-table-column label="已启用/实例数"></el-table-column>
-        <el-table-column label="告警渠道"></el-table-column>
+        <el-table-column label="已启用/实例数">
+           <template slot-scope="scope">
+              <p>{{scope.row.useSum+' / '+scope.row.noShieldedSum}}</p>
+              <p>{{'组: '+scope.row.instanceGroup.groupName}}</p>
+           </template>
+        </el-table-column>
+        <el-table-column label="告警渠道">
+          <template slot-scope="scope" v-if="groupList.receiverInfos.length>0">
+            <p>{{'接收组: '+scope.row.receiverGroup}}</p>
+            <p>{{'有效期:00:00:00 - 23:59:59'}}</p>
+            <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it}}</span></p>
+          </template>
+          <span v-else>{{'-'}}</span>
+        </el-table-column>
       </el-table>
     </el-card>
     <!-- 修改名称弹框 -->
@@ -207,9 +219,9 @@ export default {
   name: 'templateInfo',
   data () {
     return {
-      showDelDialog1: false, // 是否显示弹框
-      showDelDialog2: false, // 是否显示弹框
-      showDelDialog3: false, // 是否显示弹框
+      showDelDialog1: false, // 是否显示修改名称弹框
+      showDelDialog2: false, // 是否显示修改备注弹框
+      showDelDialog3: false, // 是否显示条件编辑弹框
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
       id: '', // 模板id
@@ -256,6 +268,8 @@ export default {
       },
       conditionsData: [], // 触发条件数据
       conditions: ['任意', '所有'], // 满足条件
+      groupList: [], // 策略组列表
+      channelList: [], // 渠道列表
       rules: {
         groupName: [// 验证名字
           {
@@ -292,7 +306,7 @@ export default {
     Loading
   },
   created () {
-    this.id = this.$route.query.groupId
+    this.id = this.$route.params.id
     this.getInfo()
     // this.getInfo2()
     // this.getDetailInfo()
@@ -377,8 +391,24 @@ export default {
       }
       await this.axios.post(GET_GROUP_LIST, params).then(res => {
         if (res.codeDesc === 'Success') {
+          let msg = res.data.groupList
+          msg.forEach(ele => {
+            ele.receiverGroup = ele.receiverInfos && ele.receiverInfos[0].receiverGroupList.length
+            if (ele.receiverInfos.length > 0) {
+              ele.receiverInfos.notifyWay.forEach(item => {
+                if (item === 'EMAIL') {
+                  this.channelList.push('邮件')
+                } else if (item === 'SMS') {
+                  this.channelList.push('短信')
+                } else if (item === 'WECHAT') {
+                  this.channelList.push('微信')
+                }
+              })
+            }
+          })
+          this.groupList = msg
           this.loadShow = false
-          // console.log(res)
+          console.log(res)
         } else {
           this.loadShow = false
           let ErrTips = {}
