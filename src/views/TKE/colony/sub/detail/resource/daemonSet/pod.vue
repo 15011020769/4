@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" >监控</el-button>
+        <!-- <el-button size="small" >监控</el-button> -->
       </div>
     </div>
     
@@ -112,7 +112,7 @@
           >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="redeployment(scope.row)">销毁重建</span>
-            <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span>
+            <!-- <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span> -->
           </template>
         </el-table-column>
       </el-table>

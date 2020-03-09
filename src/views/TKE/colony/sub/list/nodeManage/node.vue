@@ -10,7 +10,7 @@
         <el-button size="small" @click="goExpand" type="primary"
           >新建节点</el-button
         >
-        <el-button size="small" @click="toMonitor">监控</el-button>
+        <!-- <el-button size="small" @click="toMonitor">监控</el-button> -->
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button
           size="small"
