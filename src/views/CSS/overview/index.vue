@@ -239,10 +239,10 @@ export default {
       const startDatetime = moment(this.StartTime, "YYYY-MM-DD HH:mm:ss");
       const endDatetime = moment(this.EndTime, "YYYY-MM-DD HH:mm:ss");
 
-      // if (endDatetime.diff(startDatetime, "days") >= 31) {
-      //   this.$message.error("只能查詢31天內的趨勢數據");
-      //   return;
-      // }
+      if (endDatetime.diff(startDatetime, "days") >= 31) {
+        this.$message.error("只能查詢31天內的趨勢數據");
+        return;
+      }
 
       this.$nextTick(this.getTrend);
     },
@@ -264,7 +264,9 @@ export default {
           const domains = [];
           if (Array.isArray(DomainList)) {
             DomainList.forEach(domain => {
-              domains.push(domain.Name);
+              if (domain.Type === 1) {
+                domains.push(domain.Name);
+              }
             });
           }
           this.domainCheckedList = domains;
@@ -324,7 +326,6 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
         Granularity: Number(this.granularity) / 60,
-        MainlandOrOversea: "Mainland"
       };
 
       if (this.domainCheckedListCopy.length !== this.domainData.length) {

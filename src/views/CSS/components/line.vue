@@ -1,14 +1,29 @@
 <template>
-  <div ref="line_dv" style="width: 100%;height: 400px;"></div>
+  <div>
+    <el-row style="margin-top: 8px">
+      <el-switch
+        v-model="toogle"
+        active-text="缩放"
+        @change="datazoom"
+        class="topSwitch"
+      >
+      </el-switch>
+      <el-button @click="reset" size="mini">重置</el-button>
+    </el-row>
+    <div ref="line_dv" style="width: 100%;height: 400px;"></div>
+  </div>
 </template>
 
 <script>
 import "echarts/lib/component/legend";
 import "echarts/lib/component/tooltip";
+import "echarts/lib/component/toolbox";
 export default {
   name: "myChart",
   data() {
-    return {};
+    return {
+      toogle: false,
+    };
   },
   mounted() {
     this.echart();
@@ -52,6 +67,21 @@ export default {
     }
   },
   methods: {
+    datazoom() {
+      var myChart = this.$echarts.init(this.$refs.line_dv);
+      myChart.dispatchAction({
+        type: "takeGlobalCursor",
+        key: "dataZoomSelect",
+        dataZoomSelectActive: this.toogle
+      })
+      console.log(1111)
+    },
+    reset() {
+      var myChart = this.$echarts.init(this.$refs.line_dv);
+      myChart.dispatchAction({
+          type: 'restore'
+      })
+    },
     doHandleMonth(month) {
       var m = month;
       if (month.toString().length == 1) {
@@ -75,11 +105,37 @@ export default {
       var myChart = this.$echarts.init(this.$refs.line_dv);
       myChart.setOption({
         color: this.color,
+        toolbox: {
+          left: 26,
+          itemGap: 24,
+          itemSize: 0,
+          iconStyle:{
+            normal:{
+              // color:'white',//设置颜色
+            }
+          },
+           emphasis:{//触发时
+              iconStyle:{
+                borderColor:"#006eff"//图形的描边颜色
+              }
+            },
+          feature: {
+            dataZoom: {
+              show: true,
+              yAxisIndex: 'none'
+            },
+            restore: {
+              show: true,
+              title: '重置',
+            },
+          }
+        },
         tooltip: this.tooltip,
         grid: {
           left: "3%",
           right: "4%",
           bottom: "6%",
+          top: "6%",
           containLabel: true
         },
         legend: {
@@ -150,3 +206,22 @@ export default {
   }
 };
 </script>
+<style lang='scss' scoped>
+::v-deep button {
+  padding: 8px 22px;
+  &:hover {
+    background-color: #f2f2f2;
+    border-color: #ddd;
+    color: #000;
+  }
+  &:focus {
+    background-color: #f2f2f2;
+    border-color: #ddd;
+    color: #000;
+  }
+}
+  .topSwitch {
+    margin-left:40px;
+    margin-right: 20px;
+  }
+</style>

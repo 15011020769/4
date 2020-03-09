@@ -364,7 +364,15 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/updateStrategy', //更新调度策略
+      path: '/colony/sub/update/resource/statefulSet/setStrategy', //设置更新策略
+      name: 'statefulSetsetStrategy',
+      component: () => import('./colony/sub/update/resource/statefulSet/setStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/updateStrategy',//更新调度策略
       name: 'updateStrategy',
       component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
       meta: {
@@ -372,7 +380,15 @@ export default new Router({
       }
     },
     {
-      path: '/colony/sub/update/resource/editYaml', //编辑YAML
+      path: '/colony/sub/update/resource/cronJob/updateStrategy',//更新调度策略
+      name: 'updateCronjobStrategy',
+      component: () => import('./colony/sub/update/resource/cronJob/updateStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/colony/sub/update/resource/editYaml',//编辑YAML
       name: 'updateYamlWorkLoad',
       component: () => import('./colony/sub/update/resource/editYaml.vue'),
       meta: {

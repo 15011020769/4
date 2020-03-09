@@ -2,31 +2,39 @@
   <div>
     <div class="basicinfo" v-loading="loading">
       <el-row type="flex" justify="space-between">
-        <h1 class="">鉴权配置</h1>
-        <el-button @click="edit" type="text">编辑</el-button>
+        <h1 class="">{{ $t("CSS.domainManagement.22") }}</h1>
+        <el-button @click="edit" type="text">
+          {{ $t("CSS.watermark.12") }}
+        </el-button>
       </el-row>
       <div class="bgGray">
         <div class="newClear newList1">
-          <p>播放鉴权</p>
-          <p>{{playAuthKeyInfo.Enable === 1 ? '开启' : '关闭'}}</p>
+          <p>{{ $t("CSS.detailPlay.playauthentication") }}</p>
+          <p>
+            {{
+              playAuthKeyInfo.Enable === 1
+                ? $t("CSS.domainManagement.20")
+                : $t("CSS.domainManagement.32")
+            }}
+          </p>
         </div>
         <div class="newClear newList1">
           <p>主KEY</p>
-          <p>{{playAuthKeyInfo.AuthKey}}</p>
+          <p>{{ playAuthKeyInfo.AuthKey }}</p>
         </div>
         <div class="newClear newList1">
           <p>备KEY</p>
-          <p>{{playAuthKeyInfo.AuthBackKey}}</p>
+          <p>{{ playAuthKeyInfo.AuthBackKey }}</p>
         </div>
         <div class="newClear newList1">
-          <p>有效时间(秒)</p>
-          <p>{{playAuthKeyInfo.AuthDelta}}</p>
+          <p>{{ $t("CSS.detailPlay.effectivetime") }}(秒)</p>
+          <p>{{ playAuthKeyInfo.AuthDelta }}</p>
         </div>
       </div>
     </div>
     <el-dialog
       :visible.sync="visible"
-      title="鉴权配置"
+      :title="$t('CSS.domainManagement.22')"
       width="550px"
     >
       <auth-config
@@ -39,44 +47,44 @@
 </template>
 <script>
 import {
-  LIVE_DESCRIBE_LIVEPLAYAUTHKEY,
-} from "@/constants"
+  LIVE_DESCRIBE_LIVEPLAYAUTHKEY
+} from '@/constants'
 import AuthConfig from '../model/authConfig'
 import moment from 'moment'
-import md5 from "js-md5"
+import md5 from 'js-md5'
 export default {
-  data() {
+  data () {
     return {
       playAuthKeyInfo: {},
       loading: true,
-      visible: false,
-    };
+      visible: false
+    }
   },
   components: {
-    AuthConfig,
+    AuthConfig
   },
-  mounted() {
-    this.getAuthConf();
+  mounted () {
+    this.getAuthConf()
   },
   methods: {
-    getAuthConf() {
+    getAuthConf () {
       this.loading = true
       this.visible = false
       this.axios
         .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           DomainName: this.$route.query.Name
         })
         .then(({ Response: { PlayAuthKeyInfo } }) => {
           this.loading = false
           this.playAuthKeyInfo = PlayAuthKeyInfo
-        });
+        })
     },
-    edit() {
+    edit () {
       this.visible = true
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

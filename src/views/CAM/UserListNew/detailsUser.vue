@@ -34,7 +34,7 @@
             <p>
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
               <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}
-                <el-tooltip v-if="userData.PhoneFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                <el-tooltip v-if="userData.PhoneNum && userData.PhoneFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
                   <el-button :disabled="phoneTimer && phoneInterval > 0" type="text" @click="sengyz(1)" style="font-size: 12px;">
                     <el-badge is-dot>
                       <span v-if="phoneTimer && phoneInterval > 0">{{phoneInterval}}秒後重發&nbsp;</span>
@@ -47,7 +47,7 @@
             <p>
               <span class="spns">{{$t('CAM.userList.userEmail')}}</span>
               <span>{{userData.Email ? userData.Email : '-'}}
-                <el-tooltip v-if="userData.EmailFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
+                <el-tooltip v-if="userData.Email && userData.EmailFlag === 0" effect="dark" content="請儘快驗證當前消息渠道，保證賬號可正常接收消息。" placement="top">
                   <el-button :disabled="emailTimer && emailInterval > 0" type="text" @click="sengyz(2)" style="font-size: 12px;">
                     <el-badge is-dot>
                       <span v-if="emailTimer && emailInterval > 0">{{emailInterval}}秒後重發&nbsp;</span>

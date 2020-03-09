@@ -8,7 +8,7 @@
           <span class="goback" @click="goBack()">
 						<i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新Namespace</h2>
+          <h2 class="header-title">更新DaemonSet</h2>
         </div>
       </div>
     </div>

@@ -81,7 +81,7 @@ export default {
     _export() {
       const ws = XLSX.utils.json_to_sheet(this.json);/* 新建空workbook，然后加入worksheet */
       const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, "People");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.utils.book_append_sheet(wb, ws, "统计数据");/* 生成xlsx文件(book,sheet数据,sheet命名) */
       XLSX.writeFile(wb, "统计数据.csv");/*写文件(book,xlsx文件名称)*/
     },
     //分页
@@ -100,13 +100,13 @@ export default {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        // "CountryOrAreaNames.0": "Taiwan"
+        "CountryOrAreaNames.0": "Taiwan"
       };
       const params2 = { // 图表
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        // "CountryOrAreaNames.0": "Taiwan" // 直接传台湾
+        "CountryOrAreaNames.0": "Taiwan" // 直接传台湾
       };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {

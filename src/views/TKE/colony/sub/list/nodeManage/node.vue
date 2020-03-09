@@ -21,7 +21,7 @@
         <el-button
           size="small"
           :disabled="
-            this.multipleSelection.length > 0 && unBlockadeType ? false : true
+            this.multipleSelection.length > 0 && blockadeType ? false : true
           "
           @click="showBlockModal()"
           >封锁</el-button
@@ -29,7 +29,7 @@
         <el-button
           size="small"
           :disabled="
-            this.multipleSelection.length > 0 && blockadeType ? false : true
+            this.multipleSelection.length > 0 && unBlockadeType ? false : true
           "
           @click="showUnBlockModal()"
           >解除封锁</el-button
@@ -471,8 +471,8 @@ export default {
       ChoiceValue: "", //搜索选择
       searchValue: "", //搜索值
       multipleSelection: [], //选中的列表
-      blockadeType: false, //是否显示批量封锁
-      unBlockadeType: false, //是否显示批量取消封锁
+      blockadeType: true, //是否显示批量封锁
+      unBlockadeType: true, //是否显示批量取消封锁
       podList: [],
       clusterIds: [],
       instanceId: "",
@@ -555,10 +555,7 @@ export default {
           ClusterName: this.clusterId
         };
         let paramJob = {
-          // Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
           EndTime: new Date().getTime(),
-          // Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
-          // GroupBys: ["timestamp(60s)", "unInstanceId"],
           Limit: 65535,
           Module: "/front/v1",
           NamespaceName: "k8s_node",
@@ -579,6 +576,8 @@ export default {
         paramJob["GroupBys.0"] = "timestamp(60s)";
         paramJob["GroupBys.1"] = "unInstanceId";
         if (ids.length > 0) {
+          this.list = [];
+          // debugger
           for (let i = 0; i < ids.length; i++) {
             param["InstanceIds." + i] = ids[i];
           }
@@ -640,6 +639,7 @@ export default {
               console.log(this.list);
             }
             this.total = nodeRes.Response.TotalCount;
+            this.clusterIds = [];
           } else {
             this.loadShow = false;
             let ErrTips = {};
@@ -651,6 +651,10 @@ export default {
               duration: 0
             });
           }
+        } else {
+          this.loadShow = false;
+          this.list = [];
+          this.clusterIds = [];
         }
       } else {
         this.loadShow = false;
@@ -900,9 +904,9 @@ export default {
     },
 
     //根据节点名称获取集id列表
-    async getClusterNodeIds(param) {
+    getClusterNodeIds(param) {
       this.loadShow = true;
-      await this.axios.post(NODE_ID_LIST, param).then(res => {
+      this.axios.post(NODE_ID_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           if (res.Response.InstanceIdSet.length > 0) {
@@ -1006,18 +1010,24 @@ export default {
 
     // 全选
     handleSelectionChange(val) {
+      // debugger
       this.multipleSelection = val;
       if (val.length > 0) {
         for (let i = 0; i < val.length; i++) {
           if (val[i].unschedulable) {
-            this.blockadeType = true;
-            break;
-          }
-          if (val[i].unschedulable === undefined) {
-            this.unBlockadeType = true;
+            this.blockadeType = false;
             break;
           }
         }
+        for (let j = 0; j < val.length; j++) {
+          if (val[j].unschedulable === undefined) {
+            this.unBlockadeType = false;
+            break;
+          }
+        }
+      } else {
+        this.blockadeType = true;
+        this.unBlockadeType = true;
       }
     },
 

@@ -1,6 +1,6 @@
 <template>
   <div class="search-style">
-    <el-select v-if="isshow" v-model="searchvalue" placeholder="請選擇" @change="changeValue" size="small">
+    <el-select v-if="isshow"  v-model="searchvalue" placeholder="請選擇" @change="changeValue" size="small">
       <el-option
         v-for="item in searchOptions"
         :key="item.value"

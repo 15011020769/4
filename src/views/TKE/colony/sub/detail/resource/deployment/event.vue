@@ -34,7 +34,7 @@
           label="级别"
           >
           <template slot-scope="scope">
-              <span class="text-red">{{scope.row.type}}</span>
+              <span :class="[scope.row.type !== 'Normal'?'text-red':'']">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -134,7 +134,7 @@ export default {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           console.log(response);
-          if(response.items.length > 0) {
+          if(response.items && response.items.length > 0) {
             response.items.map(event => {
               event.firstTime = moment(event.firstTimestamp).format("YYYY-MM-DD HH:mm:ss");
               event.lastTime = moment(event.lastTimestamp).format("YYYY-MM-DD HH:mm:ss");

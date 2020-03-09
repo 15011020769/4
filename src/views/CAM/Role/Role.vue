@@ -7,83 +7,43 @@
         <p>{{$t('CAM.Role.roleTitle2')}}</p>
       </div>
       <div class="opration">
-          <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button> 
+        <el-button type="primary" size="small" @click="created_user">{{$t('CAM.Role.addBtn')}}</el-button>
       </div>
       <div class="container_table">
         <div class="table">
-          <el-table
-            :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
-            v-loading="loading"
-            height="450"
-            style="width: 100%"
-            :row-style="{height:0}"
-            :cell-style="{padding:'10px'}"
-            :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}"
-          >
+          <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" v-loading="loading" height="450" style="width: 100%" :row-style="{height:0}" :cell-style="{padding:'10px'}" :header-cell-style="{height:'20px',padding:'10px',fontSize:'12px'}">
             <el-table-column prop="RoleName" :label="$t('CAM.Role.roleName')" width="180">
               <template slot-scope="scope">
-                <el-button
-                  @click="handleClick(scope.row)"
-                  type="text"
-                  size="small"
-                >{{scope.row.RoleName}}</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{scope.row.RoleName}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="PolicyDocument"
-              :label="$t('CAM.Role.roleCarrier')"
-              show-overflow-tooltip
-            >
+            <el-table-column prop="PolicyDocument" :label="$t('CAM.Role.roleCarrier')" show-overflow-tooltip>
               <template slot-scope="scope">
-                <span v-show="scope.row.PolicyDocument.len != undefined">
-                  <p>{{$t('CAM.Role.service')}}-{{scope.row.PolicyDocument.val}}</p>
-                  <p v-show="scope.row.PolicyDocument.len > 1">
+                {{scope.row.type === 'qcs' ? '雲賬號' : (scope.row.type === 'service' ? '產品服務' : '身份提供商')}}
+                <span>- {{scope.row.PolicyDocument.val}}</span>
+                <span v-show="scope.row.PolicyDocument.len > 0">
                     以及
-                    <el-button
-                      @click.native.prevent="handleClick(scope.row)"
-                      type="text"
-                      size="small"
-                    >其他{{scope.row.PolicyDocument.len}}{{$t('CAM.Role.item')}}</el-button>
-                  </p>
-                </span>
-                <span v-show="scope.row.PolicyDocument.len === undefined">
-                  <p>{{$t('CAM.Role.account')}}-{{scope.row.PolicyDocument.val}}</p>
-                </span>
+                    <el-button @click.native.prevent="handleClick(scope.row)" type="text" size="small">其他{{scope.row.PolicyDocument.len}}{{$t('CAM.Role.item')}}</el-button>
+                  </span>
               </template>
             </el-table-column>
-            <el-table-column
-              prop="Description"
-              :label="$t('CAM.Role.roleDesc')"
-              show-overflow-tooltip
-            >
-            <template slot-scope="scope">
-               <span v-show="!scope.row.Description">-</span>
-               <span v-show="scope.row.Description">{{scope.row.Description}}</span>
+            <el-table-column prop="Description" :label="$t('CAM.Role.roleDesc')" show-overflow-tooltip>
+              <template slot-scope="scope">
+                <span v-show="!scope.row.Description">-</span>
+                <span v-show="scope.row.Description">{{scope.row.Description}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="oper" :label="$t('CAM.Role.colHandle')" width="100">
               <template slot-scope="scope">
-                <el-button
-                  @click="delete_Role(scope.row.RoleId)"
-                  type="text"
-                  size="small"
-                >{{$t('CAM.Role.delBtn')}}</el-button>
+                <el-button @click="delete_Role(scope.row.RoleId)" type="text" size="small">{{$t('CAM.Role.delBtn')}}</el-button>
               </template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
-        <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
-        <el-pagination
-          :page-size="pagesize"
-          :pager-count="7"
-          layout="prev, sizes, pager, next"
-          :page-sizes="[10, 20, 30, 40, 50]"
-          @current-change="handleCurrentChange"
-          @size-change="handleSizeChange"
-          :total="TotalCount"
-        >
-        </el-pagination>
-      </div>
+            <span class='pagtotal'>共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+            <el-pagination :page-size="pagesize" :pager-count="7" layout="prev, sizes, pager, next" :page-sizes="[10, 20, 30, 40, 50]" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="TotalCount">
+            </el-pagination>
+          </div>
         </div>
       </div>
       <el-dialog :visible.sync="create_dialogVisible" width="30%" :before-close="handleClose">
@@ -162,24 +122,37 @@ export default {
                   len: String
                 };
                 let policyObj = JSON.parse(item.PolicyDocument);
-                if (policyObj.statement[0].principal.service != undefined) {
-                  if (
-                    typeof policyObj.statement[0].principal.service === "object"
-                  ) {
+
+                if (policyObj.statement[0].principal.service) {
+                  // if (typeof policyObj.statement[0].principal.service === 'string') {
+                  //    policyObj.val = policyObj.statement[0].principal.service
+                  //    policyObj.len = 0
+                  // } else {
                     policyObj.val = policyObj.statement[0].principal.service[0];
-                    policyObj.len =
-                      policyObj.statement[0].principal.service.length - 1;
-                  }
-                  if (
-                    typeof policyObj.statement[0].principal.service === "string"
-                  ) {
-                    policyObj.val = policyObj.statement[0].principal.service;
-                    policyObj.len = 0;
-                  }
+                    policyObj.len = policyObj.statement[0].principal.service.length;
+                  // }
+                  item.type = 'service'
                 }
-                if (policyObj.statement[0].principal.qcs != undefined) {
-                  policyObj.val = policyObj.statement[0].principal.qcs[0];
+                if (policyObj.statement[0].principal.qcs) {
+                  // if (typeof policyObj.statement[0].principal.qcs === 'string') {
+                  //    policyObj.val = policyObj.statement[0].principal.qcs
+                  //    policyObj.len = 0
+                  // } else {
+                    policyObj.val = policyObj.statement[0].principal.qcs[0];
+                    policyObj.len += policyObj.statement[0].principal.qcs.length;
+                  // }
+                  item.type = 'qcs'
                 }
+                if (policyObj.statement[0].principal.federated) {
+                  policyObj.len = policyObj.statement.length
+                  if (typeof policyObj.statement[0].principal.federated === 'string') {
+                    policyObj.val = policyObj.statement[0].principal.federated
+                  } else {
+                    policyObj.val = policyObj.statement[0].principal.federated[0];
+                  }
+                  item.type = 'federated'
+                }
+                policyObj.len -= 1
                 item.PolicyDocument = policyObj;
               });
               this.tableData = resData;
@@ -224,8 +197,8 @@ export default {
                   this.$message({
                     type: "success",
                     message: this.$t("CAM.Role.delInfo") + "!",
-                    duration: 0,
-                    showClose: true
+                    duration: 0,
+                    showClose: true
                   });
                   this.init();
                   this.loading = false;
@@ -249,8 +222,8 @@ export default {
               this.$message({
                 type: "success",
                 message: error,
-                duration: 0,
-                showClose: true
+                duration: 0,
+                showClose: true
               });
               console.log(error);
             });
@@ -266,7 +239,7 @@ export default {
     handleClose() {
       (this.dialogVisible = false), (this.create_dialogVisible = false);
     },
-    handleCommand(command) {},
+    handleCommand(command) { },
     handleClick(scope) {
       this.$router.push({
         path: "/RoleDetail",

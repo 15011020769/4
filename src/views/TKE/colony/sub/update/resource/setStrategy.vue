@@ -131,14 +131,18 @@ export default {
           Version: "2018-05-25",
         }
       }else if(this.updateWay==1){//滚动更新
+        
 
-        params={
-          ClusterName:this.clusterId,
-          ContentType: "application/strategic-merge-patch+json",
-          Method: "PATCH",
-          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-          RequestBody:{"spec":{"minReadySeconds":this.cl.timeInterval,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":this.cl.maxPodOver,"maxUnavailable":this.cl.maxPodNot}}}},
-          Version: "2018-05-25",
+        if(this.updateTactics==1){
+          
+          params={
+            ClusterName:this.clusterId,
+            ContentType: "application/strategic-merge-patch+json",
+            Method: "PATCH",
+            Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
+            RequestBody:{"spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":Number(this.cl.podNum) ,"maxUnavailable":0}}}},
+            Version: "2018-05-25",
+          }
         }
       }
       console.log(params)
@@ -176,12 +180,14 @@ export default {
         }
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
            let response = JSON.parse(res.Response.ResponseBody);
+           console.log(response)
            let obj=response.items[0];
           console.log(obj)
-        this.type=obj.spec.strategy.type;
+          this.type=obj.spec.strategy.type;
 
          if(this.type=='RollingUpdate'){
             this.updateWay='1'//滚动更新
+            this.cl.timeInterval=obj.spec.minReadySeconds;
            }else{
            this.updateWay='2'//快速更新
          }

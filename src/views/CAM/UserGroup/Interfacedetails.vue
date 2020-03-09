@@ -114,9 +114,8 @@
                 :before-close="handleClosePolicies"
               >
                 <transfer
-                  :multipleSelection="multipleSelection"
-                  @_multipleSelection="_multipleSelection"
-                  :rolePolicies="rolePolicies"
+                  :groupId="groupId"
+                  ref="policiesRef"
                 />
                 <div slot="footer" class="dialog-footer">
                   <el-button
@@ -306,7 +305,7 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import transfer from "../Role/component/transfer";
+import transfer from "../Role/component/transfer2";
 import Headcom from "@/components/public/Head"; //头部组件引入
 import {
   GET_GROUP,
@@ -318,7 +317,8 @@ import {
   ADD_GROUPTOLIST,
   POLICY_LIST,
   DETACH_POLICY,
-  ATTACH_GROUP
+  ATTACH_GROUP,
+  ATTACH_GROUP_POLICIES
 } from "@/constants";
 export default {
   data() {
@@ -389,9 +389,6 @@ export default {
       if (this.searchUser == "") {
         this.userData = this.userAllData;
       }
-    },
-    _multipleSelection(val) {
-      this.multipleSelection = val;
     },
     handleSizeChange(val) {
       this.pagesize = val
@@ -768,7 +765,8 @@ export default {
       this.$router.push({
         path: "/detailsUser",
         query: {
-          detailsData: val.Name
+          detailsData: val.Name,
+          uid: val.Uid
         }
       });
     },
@@ -894,7 +892,7 @@ export default {
     // 打开策略信息穿梭框
     openPolicies() {
       this.dialogVisible = true;
-      this.selectAllPolicies();
+      // this.selectAllPolicies();
     },
     handleSelectionChangePolicies(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
@@ -911,27 +909,46 @@ export default {
     deleteRows(index, rows) {
       this.$refs.multipleOptionUser.toggleRowSelection(rows[index], false);
     },
-    // 按条件查询策略信息
-    toQueryPolicies() {
-      this.selectAllPolicies();
-    },
     // 添加策略信息到用户组
     addPoliciesToGroup() {
-      if (this.multipleSelection.length == 0) {
+      const policies = this.$refs.policiesRef.selectedStrategiesWithoutGroup
+      if (policies.length == 0) {
         this.$message({
           showClose: true,
           message: "請選中數據",
           duration: 0
         });
       } else {
-        this.multipleSelection.forEach(item => {
-          this.addPolicies(item.PolicyId);
-        });
-        this.dialogVisible = false;
-        this.loading = true;
-        setTimeout(() => {
-          this.selectGroupPolicies();
-        }, 2000);
+        const param = {
+          Version: '2019-01-16',
+          GroupId: this.groupId,
+        }
+        policies.forEach((s, i) => {
+          param[`PolicyId.${i}`] = s.PolicyId
+        })
+        this.axios.post(ATTACH_GROUP_POLICIES, param)
+          .then(res => {
+            if (res.Response.Error) {
+              this.$message({
+                showClose: true,
+                message: "關聯失敗",
+                duration: 0,
+                type: "error"
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: "關聯成功",
+                duration: 0,
+                type: "success"
+              });
+              this.loading = true;
+              this.selectGroupPolicies();
+            }
+          })
+          .then(() => {
+            this.dialogVisible = false;
+          })
       }
     },
     // 添加策略信息

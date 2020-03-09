@@ -43,6 +43,7 @@
       <el-form :model="addModel" size="mini" ref="ruleForm" label-width="100px">
         <el-form-item :label="$t('CAM.strategy.dataFile')" prop="metadataDocument" :error="metadataDocumentError">
           <el-upload
+            ref="upload"
             size="mini"
             accept="text/xml, application/xml"
             class="upload-demo"
@@ -74,173 +75,192 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import { GET_SAML_PROVIDER, UPDATE_SAML_PROVIDER, CHECK_SAML_METADATA } from "@/constants";
+import {
+  GET_SAML_PROVIDER,
+  UPDATE_SAML_PROVIDER,
+  CHECK_SAML_METADATA
+} from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 
 export default {
   components: {
-   HeadCom
+    HeadCom
   },
   data() {
     return {
-      metadataDocumentError: '',
-      base64encode: '',
+      metadataDocumentError: "",
+      base64encode: "",
       addModel: {
         metadataDocument: ""
       },
       loading: false,
       dialogVisible: false,
       showEditDescription: false,
-      description: '',
+      description: "",
       info: {}
-    }
+    };
   },
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     cancelUpload() {
-      this.addModel.metadataDocument = ''
-      this.metadataDocumentError = ''
-      this.dialogVisible = false
+      this.addModel.metadataDocument = "";
+      this.metadataDocumentError = "";
+      this.dialogVisible = false;
+      this.$refs.upload.clearFiles();
     },
     handleChange(file) {
-      this.loading = true
-      this.metadataDocumentError = ''
-      if (!file.name.endsWith('.xml')) {
-        this.metadataDocumentError = '文件类型无效，请上传类型为xml的文件'
-        return
+      this.loading = true;
+      this.metadataDocumentError = "";
+      if (!file.name.endsWith(".xml")) {
+        this.$refs.upload.clearFiles();
+        this.metadataDocumentError = "文件类型无效，请上传类型为xml的文件";
+        return;
       }
+
       this.addModel.metadataDocument = file.name;
       var reader = new FileReader();
+
       reader.onload = e => {
         let textxml = e.currentTarget.result;
-        let base64encode
+        let base64encode;
         try {
-          base64encode = btoa(textxml)
-          this.axios.post(CHECK_SAML_METADATA, {
-            Version: '2019-01-16',
-            SAMLMetadataDocument: base64encode
-          }).then(res => {
-            if (res.Response.Error) {
-              this.metadataDocumentError = '元數據文檔內容有誤'
-            } else  {
-              this.base64encode = base64encode
-            }
-          }).then(() => {
-            this.loading = false
-          })
+          base64encode = btoa(textxml);
+          this.axios
+            .post(CHECK_SAML_METADATA, {
+              Version: "2019-01-16",
+              SAMLMetadataDocument: base64encode
+            })
+            .then(res => {
+              if (res.Response.Error) {
+                this.metadataDocumentError = "元數據文檔內容有誤";
+              } else {
+                this.base64encode = base64encode;
+              }
+              this.$refs.upload.clearFiles();
+            })
+            .then(() => {
+              this.loading = false;
+              this.$refs.upload.clearFiles();
+            });
         } catch (err) {
-          this.loading = false
-          this.metadataDocumentError = '元數據文檔內容有誤'
+          this.loading = false;
+          this.metadataDocumentError = "元數據文檔內容有誤";
+          this.$refs.upload.clearFiles();
+          console.log("======");
         }
       };
       reader.readAsText(file.raw);
     },
     init() {
-      this.axios.post(GET_SAML_PROVIDER, {
-        Version: '2019-01-16',
-        Name: this.$route.params.name
-      }).then(res => {
-        if (res.Response.Error === undefined) {
-          this.info = res.Response
-          this.description = res.Response.Description
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      })
+      this.axios
+        .post(GET_SAML_PROVIDER, {
+          Version: "2019-01-16",
+          Name: this.$route.params.name
+        })
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.info = res.Response;
+            this.description = res.Response.Description;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
     },
     updateDescription() {
       const info = {
         ...this.info,
         Description: this.description
-      }
+      };
       this.update(info, () => {
-        this.showEditDescription = false
-      })
+        this.showEditDescription = false;
+      });
     },
     updateSAMLMetadata() {
       if (!this.addModel.metadataDocument) {
-        this.metadataDocumentError = '請選擇元數據文件'
-        return
+        this.metadataDocumentError = "請選擇元數據文件";
+        return;
       }
-      if (this.metadataDocumentError) return
+      if (this.metadataDocumentError) return;
       this.$refs.ruleForm.validate(valid => {
         if (valid) {
           const info = {
             ...this.info,
             SAMLMetadata: this.base64encode
-          }
+          };
           this.update(info, () => {
-            this.addModel.metadataDocument = ''
-            this.dialogVisible = false
-            this.base64encode = ''
-          })
+            this.addModel.metadataDocument = "";
+            this.dialogVisible = false;
+            this.base64encode = "";
+          });
         }
       });
     },
     update(info, cb) {
-      this.axios.post(UPDATE_SAML_PROVIDER, {
-        Version: '2019-01-16',
-        Name: info.Name,
-        Description: info.Description,
-        SAMLMetadataDocument: info.SAMLMetadata
-      }).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$message({
-            message: '修改成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-          this.init()
-          cb()
-        } else {
-          let ErrTips = {
-            'ResourceNotFound.IdentityNotExist': '身份提供商不存在'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      })
+      this.axios
+        .post(UPDATE_SAML_PROVIDER, {
+          Version: "2019-01-16",
+          Name: info.Name,
+          Description: info.Description,
+          SAMLMetadataDocument: info.SAMLMetadata
+        })
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: "修改成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.init();
+            cb();
+          } else {
+            let ErrTips = {
+              "ResourceNotFound.IdentityNotExist": "身份提供商不存在"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
     },
     _back() {
       this.$router.go(-1);
     },
     download() {
-      const e = atob(this.info.SAMLMetadata)
-      const t = 'meta.xml'
+      const e = atob(this.info.SAMLMetadata);
+      const t = "meta.xml";
       if (window.Uint8Array && window.Blob) {
         try {
-          var n = new Blob([new Uint8Array([239, 187, 191]), e],{
-              type: "text/plain;charset=utf-8"
+          var n = new Blob([new Uint8Array([239, 187, 191]), e], {
+            type: "text/plain;charset=utf-8"
           });
           if (window.navigator.msSaveOrOpenBlob)
-              window.navigator.msSaveOrOpenBlob(n, t);
-          else if ("download"in document.createElement("a")) {
-              var r = document.createElement("a")
-                , a = URL.createObjectURL(n);
-              r.href = a,
-              r.download = t,
+            window.navigator.msSaveOrOpenBlob(n, t);
+          else if ("download" in document.createElement("a")) {
+            var r = document.createElement("a"),
+              a = URL.createObjectURL(n);
+            (r.href = a),
+              (r.download = t),
               document.body.appendChild(r),
               r.click(),
               document.body.removeChild(r),
-              window.URL.revokeObjectURL(a)
+              window.URL.revokeObjectURL(a);
           } else {
             this.$message({
-              message: '浏览器暂不支持',
+              message: "浏览器暂不支持",
               type: "error",
               showClose: true,
               duration: 0
@@ -248,7 +268,7 @@ export default {
           }
         } catch (e) {
           this.$message({
-            message: '浏览器暂不支持',
+            message: "浏览器暂不支持",
             type: "error",
             showClose: true,
             duration: 0
@@ -256,7 +276,7 @@ export default {
         }
       } else {
         this.$message({
-          message: '浏览器暂不支持',
+          message: "浏览器暂不支持",
           type: "error",
           showClose: true,
           duration: 0
@@ -264,25 +284,25 @@ export default {
       }
     }
   }
-}
+};
 </script>
 <style lang="scss" scope>
-  .container {
-    margin: 20px 24px;
-    .item {
-      display: flex;
-      height: 40px;
-      line-height: 40px;
-      .el-icon-edit {
-        cursor: pointer;
-      }
-      span {
-        font-size: 12px;
-        color: #888;
-      }
-      button span {
-        color: inherit;
-      }
+.container {
+  margin: 20px 24px;
+  .item {
+    display: flex;
+    height: 40px;
+    line-height: 40px;
+    .el-icon-edit {
+      cursor: pointer;
+    }
+    span {
+      font-size: 12px;
+      color: #888;
+    }
+    button span {
+      color: inherit;
     }
   }
+}
 </style>

@@ -17,7 +17,12 @@
           <el-button type="primary" @click="addDominSure">确 定</el-button>
         </span>
       </el-dialog>-->
-      <el-dialog title="添加域名" :visible.sync="addDominModel" width="45%" :before-close="handleClose">
+      <el-dialog
+        title="添加域名"
+        :visible.sync="addDominModel"
+        width="45%"
+        :before-close="handleClose"
+      >
         <div class="newClear">
           <div class="newClear conList">
             <p>域名</p>
@@ -32,19 +37,33 @@
           <div class="newClear conList">
             <p>類型</p>
             <p>
-              <el-select v-model="dominForm.DomainType" @change="selectDominType" class="ipt">
+              <el-select
+                v-model="dominForm.DomainType"
+                @change="selectDominType"
+                class="ipt"
+              >
                 <el-option label="推流域名" :value="0"></el-option>
                 <el-option label="播放域名" :value="1"></el-option>
               </el-select>
             </p>
           </div>
-          <div class="newClear conList" v-if="dominForm.DomainType==1?true:false">
+          <div
+            class="newClear conList"
+            v-if="dominForm.DomainType == 1 ? true : false"
+          >
             <p>加速區域</p>
             <p>
-              <el-select v-model="PlayType" @change="changePlayType" class="ipt">
+              <el-select
+                v-model="PlayType"
+                @change="changePlayType"
+                class="ipt"
+              >
                 <el-option label="中國大陸" :value="1"></el-option>
                 <el-option label="全球加速" :value="2"></el-option>
-                <el-option label="中國港澳台地區及海外地區" value="3"></el-option>
+                <el-option
+                  label="中國港澳台地區及海外地區"
+                  value="3"
+                ></el-option>
               </el-select>
             </p>
           </div>
@@ -52,13 +71,17 @@
             <p>
               <i class="el-icon-warning"></i>
             </p>
-            <p class="spe">您正申請開通全球加速，海外直播價格與國內直播價格不同，請知悉。</p>
+            <p class="spe">
+              您正申請開通全球加速，海外直播價格與國內直播價格不同，請知悉。
+            </p>
           </div>
           <div class="newClear conList" v-if="speedAre2">
             <p>
               <i class="el-icon-warning"></i>
             </p>
-            <p class="spe">您正申請開通中國港澳台地區及海外地區直播加速，中國大陸的請求將無法解析，請知悉。</p>
+            <p class="spe">
+              您正申請開通中國港澳台地區及海外地區直播加速，中國大陸的請求將無法解析，請知悉。
+            </p>
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
@@ -71,6 +94,8 @@
 </template>
 <script>
 import { ADD_DOMAIN } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CSSErrorTips } from "../../components/CSSErrorTips";
 export default {
   props: {
     isShow: Boolean
@@ -119,6 +144,19 @@ export default {
     //添加域名确定按钮
     addDominSure() {
       // console.log(this.dominForm, this.PlayType);
+
+      if (
+        !/[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/.test(
+          this.dominForm.DominName
+        )
+      ) {
+      this.$message({
+        type: "error",
+        message: "域名格式錯誤，請輸入正確格式。"
+      });
+        return;
+      }
+
       //TODO
       let params = {
         Version: "2018-08-01",
@@ -127,9 +165,11 @@ export default {
       };
       this.axios.post(ADD_DOMAIN, params).then(({ Response }) => {
         if (Response.Error) {
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+          let errorMessage = ErrOr[Response.Error.Code];
           this.$message({
             type: "error",
-            message: "添加失敗"
+            message: (errorMessage !== undefined && errorMessage.length > 0) ? errorMessage : "添加失敗"
           });
           return;
         }

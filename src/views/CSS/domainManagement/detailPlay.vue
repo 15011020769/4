@@ -6,27 +6,43 @@
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
-        <el-tab-pane label="基本訊息" name="first">
+        <el-tab-pane :label="$t('CSS.detailPlay.basicMessage')" name="first">
           <div class="wrapper">
             <BasicInfo :info="info" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="播放配置" name="second" lazy>
+        <el-tab-pane
+          :label="$t('CSS.detailPlay.playbackConfiguration')"
+          name="second"
+          lazy
+        >
           <div class="wrapper">
             <play-config />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="模板配置" name="third" lazy>
+        <el-tab-pane
+          :label="$t('CSS.detailPlay.accessControl')"
+          name="third"
+          lazy
+        >
           <div class="wrapper">
             <play-template />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="訪問控制" name="fourth" lazy>
+        <el-tab-pane
+          :label="$t('CSS.detailPlay.templateConfiguration')"
+          name="fourth"
+          lazy
+        >
           <div class="wrapper">
             <access-control />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="高級配置" name="fifth" lazy>
+        <el-tab-pane
+          :label="$t('CSS.detailPlay.advancedConfiguration')"
+          name="fifth"
+          lazy
+        >
           <div class="wrapper">
             <advance-config />
           </div>

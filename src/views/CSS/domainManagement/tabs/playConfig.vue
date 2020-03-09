@@ -7,19 +7,19 @@
       <div class="newClear">
         <div class="newClear newList">
           <p>播放地址（RTMP）</p>
-          <p>rtmp://{{$route.query.Name}}/live/StreamName</p>
+          <p>rtmp://{{ $route.query.Name }}/live/StreamName</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（FLV）</p>
-          <p> http://{{$route.query.Name}}/live/StreamName.flv</p>
+          <p>http://{{ $route.query.Name }}/live/StreamName.flv</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（HLS）</p>
-          <p> http://{{$route.query.Name}}/live/StreamName.m3u8</p>
+          <p>http://{{ $route.query.Name }}/live/StreamName.m3u8</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（UDP）</p>
-          <p> webrtc://{{$route.query.Name}}/live/StreamName.m3u8</p>
+          <p>webrtc://{{ $route.query.Name }}/live/StreamName.m3u8</p>
         </div>
       </div>
     </div>
@@ -27,42 +27,65 @@
       <h1 class="newClear">播放地址生成器</h1>
       <div class="bgGray">
         <div class="newClear newList1">
-          <p>播放防盜鏈Key</p>
-          <p>{{playAuthKeyInfo.AuthKey}}</p>
+          <p>{{ $t("CSS.detailPlay.basicMessage") }}</p>
+          <p>{{ playAuthKeyInfo.AuthKey }}</p>
         </div>
         <div class="newClear newList1">
-          <p>有效時間</p>
-          <p>{{playAuthKeyInfo.AuthDelta}}秒</p>
+          <p>{{ $t("CSS.detailPlay.effectivetime") }}</p>
+          <p>{{ playAuthKeyInfo.AuthDelta }}秒</p>
         </div>
         <div class="newClear newList1">
           <p>播放域名</p>
-          <p>{{$route.query.Name}}</p>
+          <p>{{ $route.query.Name }}</p>
         </div>
       </div>
       <div class="dateOut">
-        <span class="spanBlod">时间设置</span>&nbsp;
-        <el-tooltip class="item" effect="dark" content="實際過期時間為設置時間戳加播放鑒權設置的有效時間。" placement="bottom-start">
+        <span class="spanBlod">{{ $t("CSS.detailPlay.timeSetting") }}</span
+        >&nbsp;
+        <el-tooltip
+          class="item"
+          effect="dark"
+          :content="$t('CSS.detailPlay.0')"
+          placement="bottom-start"
+        >
           <i class="el-icon-info" />
         </el-tooltip>
-        <el-date-picker class="dataDateTime" :clearable="false" v-model="dataDateTime" type="date" :placeholder="$t('CSS.domainManagement.31')"></el-date-picker>
-        <el-time-picker :clearable="false" v-model="dateValue" class="dateValue"></el-time-picker>
+        <el-date-picker
+          class="dataDateTime"
+          :clearable="false"
+          v-model="dataDateTime"
+          type="date"
+          :placeholder="$t('CSS.domainManagement.31')"
+        ></el-date-picker>
+        <el-time-picker
+          :clearable="false"
+          v-model="dateValue"
+          class="dateValue"
+        ></el-time-picker>
         <span class="spanBlod">StreamName&nbsp;&nbsp;</span>
-        <el-input :placeholder="$t('CSS.domainManagement.28')" v-model.trim="streamName" class="streamName"></el-input>
+        <el-input
+          :placeholder="$t('CSS.domainManagement.28')"
+          v-model.trim="streamName"
+          class="streamName"
+        ></el-input>
         <el-button @click="handlePlayCreateUrl">生成播放地址</el-button>
       </div>
       <div class="basicinfo" v-show="playUrls.length">
-        <h3 class="newClear" style="margin-bottom: 15px">生成结果<span class="sub-text">(根据上面设置项生成以下地址)</span></h3>
-        <div class="newClear" v-for="url in playUrls">
+        <h3 class="newClear" style="margin-bottom: 15px">
+          {{ $t("CSS.builder.10")
+          }}<span class="sub-text">({{ $t("CSS.detailPlay.1") }})</span>
+        </h3>
+        <div class="newClear" v-for="(url, index) in playUrls" :key="index">
           <div class="newList">
-            <p>{{url.name}}</p>
-            <p>{{url.value}}</p>
+            <p>{{ url.name }}</p>
+            <p>{{ url.value }}</p>
           </div>
-          <p class="tip">{{url.tip}}</p>
+          <p class="tip">{{ url.tip }}</p>
         </div>
         <div class="newClear">
           <div class="newClear newList">
-            <p>过期时间</p>
-            <p>{{validTime}}</p>
+            <p>{{ $t("CSS.builder.5") }}</p>
+            <p>{{ validTime }}</p>
           </div>
         </div>
       </div>
@@ -71,96 +94,96 @@
 </template>
 <script>
 import {
-  LIVE_DESCRIBE_LIVEPLAYAUTHKEY,
-} from "@/constants"
+  LIVE_DESCRIBE_LIVEPLAYAUTHKEY
+} from '@/constants'
 import moment from 'moment'
-import md5 from "js-md5"
+import md5 from 'js-md5'
 export default {
-  data() {
+  data () {
     return {
       playAuthKeyInfo: {},
       streamName: '',
-      dataDateTime: moment(), //过期时间月份
-      dateValue: moment().endOf("d"), //时间
+      dataDateTime: moment(), // 过期时间月份
+      dateValue: moment().endOf('d'), // 时间
       playUrls: [],
-      validTime: '',
-    };
+      validTime: ''
+    }
   },
-  mounted() {
-    this.getAuthConf();
+  mounted () {
+    this.getAuthConf()
   },
   methods: {
-    getAuthConf() {
+    getAuthConf () {
       this.axios
         .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           DomainName: this.$route.query.Name
         })
         .then(({ Response: { PlayAuthKeyInfo } }) => {
-          this.playAuthKeyInfo = PlayAuthKeyInfo;
-        });
+          this.playAuthKeyInfo = PlayAuthKeyInfo
+        })
     },
     handlePlayCreateUrl: function () {
       var b = this
-        , c = b.streamName;
+      var c = b.streamName
       if (!c) {
         return void this.$message({
-          type: "warning",
-          message: "请输入 StreamName"
-        });
+          type: 'warning',
+          message: '请输入 StreamName'
+        })
       }
       var d = b.dataDateTime.format('YYYY-MM-DD')
-        , e = b.dateValue.format('HH:mm:ss')
-      d = d.replace(/-/g, "/");
-      var h = new Date(d + " " + e);
+      var e = b.dateValue.format('HH:mm:ss')
+      d = d.replace(/-/g, '/')
+      var h = new Date(d + ' ' + e)
       b.validTime = `${b.dataDateTime.format('YYYY-MM-DD')} ${e}`
-      b.generatePlayAddress(b.$route.query.Name, "live", c, h)
+      b.generatePlayAddress(b.$route.query.Name, 'live', c, h)
     },
     generatePlayAddress: function (a, b, c, d) {
       var e = this
-        , h
-        , g = e.playAuthKeyInfo;
-      if (1 == g.Enable) {
-        e.calculatePlayUrlWithAuth(a, b, c, g, d);
+      var h
+      var g = e.playAuthKeyInfo
+      if (g.Enable == 1) {
+        e.calculatePlayUrlWithAuth(a, b, c, g, d)
       } else {
-        e.calculatePlayUrlWithAuth(a, b, c, null, d);
+        e.calculatePlayUrlWithAuth(a, b, c, null, d)
       }
     },
     calculatePlayUrlWithAuth: function (a, b, c, d, e) {
-      var g = "";
+      var g = ''
       if (d) {
         var h = (e.getTime() - 1e3 * d.AuthDelta) / 1e3
-          , i = parseInt(h).toString(16).toUpperCase()
-          , j = {
-            txSecret: md5(d.AuthKey + c + i),
-            txTime: i
-          };
+        var i = parseInt(h).toString(16).toUpperCase()
+        var j = {
+          txSecret: md5(d.AuthKey + c + i),
+          txTime: i
+        }
         g = `?txSecret=${j.txSecret}&txTime=${j.txTime}`
       }
       var k = [{
         name: '播放地址 (RTMP)',
-        value: "rtmp://" + a + "/" + b + "/" + c + g,
-        qrcode: !0,
+        value: 'rtmp://' + a + '/' + b + '/' + c + g,
+        qrcode: !0
         // txTime: n.format(new Date(e.getTime()), "yyyy-MM-dd hh:ii:ss")
       }, {
         name: '播放地址 (FLV)',
-        value: "http://" + a + "/" + b + "/" + c + ".flv" + g,
+        value: 'http://' + a + '/' + b + '/' + c + '.flv' + g,
         qrcode: !0
       }, {
         name: '播放地址 (HLS)',
-        value: "http://" + a + "/" + b + "/" + c + ".m3u8" + g,
+        value: 'http://' + a + '/' + b + '/' + c + '.m3u8' + g,
         qrcode: !0
-      }];
+      }]
       k.push({
         name: '播放地址 (UDP)',
         tip: '快直播(UDP)流量/带宽费用与标准直播不同',
-        value: "webrtc://" + a + "/" + b + "/" + c + ".m3u8" + g,
+        value: 'webrtc://' + a + '/' + b + '/' + c + '.m3u8' + g,
         qrcode: !0
       }),
       this.playUrls = k
-    },
+    }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {
@@ -223,7 +246,6 @@ export default {
     }
   }
   .newClear {
-
     margin-bottom: 30px;
   }
   .newList {

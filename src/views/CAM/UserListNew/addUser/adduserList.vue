@@ -2,7 +2,7 @@
   <div class="adduserlist-wrap">
     <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
     <div class="adduserlist-main" v-loading="loading">
-      <el-steps :active="active" simple>{{active}}
+      <el-steps :active="active" simple>
         <el-step :title="$t('CAM.userList.chooserType')"></el-step>
         <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
         <el-step :title="$t('CAM.userList.setStrage')" v-if="ruleForm.ConsoleLogin == 1"></el-step>

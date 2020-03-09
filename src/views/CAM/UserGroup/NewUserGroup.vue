@@ -2,7 +2,7 @@
   <div class="Cam wrap" id="app">
     <Headcom :title="$t('CAM.userGroup.addBtn')" :backShow="true" @_back="goback" />
     <div class="container">
-      <div class="step">{{active}}
+      <div class="step">
         <el-steps :space="200" :active="active" simple style="padding-left: 10px;">
           <el-step :title="$t('CAM.userGroup.createWrite')"></el-step>
           <el-step :title="$t('CAM.userGroup.createRelevance')"></el-step>
@@ -86,6 +86,7 @@ export default {
       if (this.addModel.groupName != "") {
         if (this.addModel.groupName.length < 31) {
           if (this.active == 2) {
+            console.log(this.$refs.secondStep.getDaata())
             this.policiesSelectedData = this.$refs.secondStep.getDaata();
           }
           const addModel = this.addModel;

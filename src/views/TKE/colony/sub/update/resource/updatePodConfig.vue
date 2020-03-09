@@ -159,20 +159,20 @@
                      <!-- 引用ConfigMap/Secret -->
                    <div v-for="val in v.citeCs" :key="val.key">
                      <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
-                          <el-select v-model="val.value1" class="w100">
+                          <el-select v-model="val.value1" class="w100"  @change="citeCsValue1Change($event, val)">
                             <el-option v-for="item in val.option1" :key="item" :label="item" :value="item">
                             </el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
-                          <el-select v-model="val.value2" class="w100" style="margin:0px 10px;">
-                            <el-option v-for="item in val.option2" :key="item" :label="item"
-                                       :value="item">
+                          <el-select v-model="val.value2"  placeholder="请选择资源" :disabled="val.value1===''||val.value2=='暂无数据'" class="w100" style="margin:0px 10px;"  @change="citeCsValue2Change($event, val)">
+                            <el-option v-for="item in val.option2" :key="item.name" :label="item.name"
+                                       :value="item.name">
                             </el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
-                          <el-select v-model="val.value3" class="w100">
+                          <el-select v-model="val.value3" :disabled="val.value1===''||val.value2=='暂无数据'" class="w100">
                             <el-option v-for="item in val.option3" :key="item" :label="item"
                                        :value="item">
                             </el-option>
@@ -533,7 +533,7 @@ import SelectMirrorImg from '../../create/resource/components/selectMirrorImg';
 import workLoadMixin from './js/workloadMixins'
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import {TKE_COLONY_QUERY} from '@/constants'
+import {TKE_COLONY_QUERY, POINT_REQUEST} from '@/constants'
 export default {
   name: "svcCreate",
   mixins:[workLoadMixin],
@@ -593,7 +593,56 @@ export default {
         dataJuan: [],
       },
       wl:{
-        instanceContent:[]
+        name: '', // 名称
+        description: '', // 描述
+        labels: [{ key: 'k8s-app', value: '' }], // 标签
+        type: '', // 类型
+        namespace: '', // 命名空间
+        executionStrategy: '', // 执行策略
+        jobSettings: {
+          repeatNumber: 1,
+          parallelNumber: 1,
+          failedRestartPolicy: 'OnFailure'
+        },
+        instanceContent: [], // 实例内容器
+        dataJuan: [],
+        caseNum: 'handAdjust',
+        replicas: 0, // 实例数量-》手动调节-》实例数量
+        touchTactics: [], // 实例数量-》自动调节-》触发策略
+        caseScope1: '', // 实例数量-》自动调节-》实例范围
+        caseScope2: '',
+        imagePullSecrets: {
+          option1: [],
+          value1: '',
+          option2: [],
+          value2: ''
+        },
+        updateWay: '滚动更新（推荐）',
+        updateTactics: 1, // 更新策略 单选
+        updateInterval: 0, // 更新间隔
+        configTacticsPods: 1, // 配置策略-》pods
+        configTacticsMaxSurge: '', // 配置策略-》MaxSurge
+        configTacticsMaxUnavailable: '', // 配置策略-》MaxUnavailable
+        mustCondition: [], // 强制满足条件
+        needCondition: [], // 尽量满足条件
+        nodeTactics: 1, // 节点调度 单选
+        specifyNodeDispatchValue: [], // 指点节点调度 选中项
+        serviceEnbel: true, // 是否启用service
+        serviceAccess: '1', // 服务访问方式 单选
+        handlessChecked: false, // 仅在集群内访问 多选按钮
+        subnetOneValue: '', // LB所在子网 value1
+        subnetTwoValue: '', // LB所在子网 value2
+        loadBalance: '1', // 负载均衡器 1.自动创建 2.使用已有
+        portMapping: [], // 端口映射 数组
+        isShowAdvancedSet: false, // 访问设置 显示隐藏高级设置
+        describeLoadBalancersValue: '暂无数据', // 负载均衡值
+        ETP: 'Cluster', // 访问设置-》高级设置-》ExternalTrafficPolicy
+        SA: 'None', // 访问设置-》高级设置-》Session Affinity
+        maxSessionTime: 30, // 最大会话保持时间
+        pointList: [],
+        mountPath: '',
+        subPath: '',
+        pointName: ''
       },
       containerCheck: {
       type: 'TCP端口检查',
@@ -663,7 +712,9 @@ export default {
       },
       setSecret: {
         checked: 'all'
-      }
+      },
+      secrets: {}, // 引用ConfigMap/Secret secrets
+      configMap: {} // 引用ConfigMap/Secret ConfigMap
 
     };
   },
@@ -676,9 +727,11 @@ export default {
     this.clusterId=clusterId;
     this.name=name;
     this.np=spaceName;
-    this.workload=workload
+    this.workload=workload;
+    this.wl.namespace = spaceName
     this.baseData()
-    // this.addInstanceContent()
+    this.getConfigmaps();
+    this.getSecrets()
     console.log(this.wl.instanceContent)
   },
   methods: {
@@ -760,23 +813,88 @@ export default {
       })
 
     },
+    getConfigmaps: async function () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.wl.namespace}/configmaps`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          this.configMap = JSON.parse(ResponseBody)
+        })
+      })
+    },
+    getSecrets: async function () {
+      let param = {
+        Method: 'GET',
+        Path: `/api/v1/namespaces/${this.wl.namespace}/secrets`,
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
+      await this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody = res.Response.ResponseBody
+          this.secrets = JSON.parse(ResponseBody)
+        })
+      })
+    },
 
     baseData(){
-      var params={
-        Method: "GET",
-        Path:"/apis/apps/v1beta2/namespaces/" +this.np +"/"+this.workload+"?fieldSelector=metadata.name=" +this.name,
-        Version: "2018-05-25",
-        ClusterName: this.clusterId
-       }
+      var params=null;
+      if(this.workload=='cronjobs'){
+        params={
+          Method: "GET",
+          Path:"/apis/batch/v1beta1/namespaces/" +this.np +"/cronjobs?fieldSelector=metadata.name=" +this.name,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+         }
+      }else{
+        params={
+          Method: "GET",
+          Path:"/apis/apps/v1beta2/namespaces/" +this.np +"/"+this.workload+"?fieldSelector=metadata.name=" +this.name,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+         }
+      }
        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
-      console.log(res)
-       if(res.Response.Error === undefined){
-          let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response)
-          let {items:[{spec:{template:{spec:{containers:arr}}}}]}=response;
+         if(res.Response.Error === undefined){
+           let response = JSON.parse(res.Response.ResponseBody);
+           console.log(response)
+          if(this.workload=='cronjobs'){
+            var {items:[{spec:{jobTemplate:{spec:{template:{spec:{containers:arr}}}}}}]}=response;
+          }else{
+            var {items:[{spec:{template:{spec:{containers:arr}}}}]}=response;
+          }
+          let arr2=[],arr3=[];
           console.log(arr)
           for(let v of arr){
             console.log(v)
+            console.log(v.env)
+            if(v.env){
+              if(v.env.length){
+                 v.env.forEach(item=>{
+                   if(item['value']!=undefined){
+                      arr2.push(item) //环境变量
+                   }else{
+                     for(let i in item){
+                     let obj={}
+                       obj.key=Date.now();
+                       obj.option1=['ConfigMap', 'Secret'];
+                       obj.value1='Secret';
+                       obj.option2=[];
+                       obj.option3=[];
+                       obj.value2=item.valueFrom.secretKeyRef.name;
+                       obj.value3=item.valueFrom.secretKeyRef.key;
+                       obj.input1=item.name
+                       arr3.push(obj)
+                     }
+                   }
+                 })
+              }
+            }
             this.addInstanceContent(
             v.name,v.image.split(':')[0],v.image.split(':')[1],v.imagePullPolicy,
             parseInt(v.resources.requests.cpu),
@@ -784,12 +902,12 @@ export default {
             this.formatData(v.resources.requests.memory),
             this.formatData(v.resources.limits.memory),
             Number(v.resources.limits['nvidia.com/gpu']),
-            v.env,//环境变量
-            [],//引用ConfigMap/Secret
+            arr2,//环境变量
+            arr3,//引用ConfigMap/Secret
             false,// 显示高级设置false
             v.workingDir,// 工作目录
-            v.command[0],//运行命令
-            v.args[0],//运行参数
+           '',//运行命令
+            '',//运行参数
             false, // 存活检查
             false, // 就绪检查
             v.securityContext.privileged// 特权级容器开关

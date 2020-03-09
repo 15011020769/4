@@ -2,13 +2,43 @@
   <div class="container">
     <div class="content">
       <el-row type="flex" :gutter="20" class="limit">
-        <span style="display: inline-block; width: 100px;">加速区域</span>
+        <span style="display: inline-block; width: 100px;">
+          加速{{ $t("CSS.detailPlay.rgional") }}
+        </span>
         <el-col>
-          <el-select size="small" style="width: 210px" v-model="limit">
-            <el-option label="中国大陆" :value="1"></el-option>
+          <el-select
+            size="small"
+            style="width: 210px"
+            v-model="limit"
+            @change="changeSlect"
+          >
+            <el-option :label="$t('CSS.detailPlay.11')" :value="1"></el-option>
             <el-option label="全球加速" :value="2"></el-option>
-            <el-option label="中国港澳台地区及海外地区" :value="3"></el-option>
+            <el-option :label="$t('CSS.detailPlay.12')" :value="3"></el-option>
           </el-select>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col>
+          <p v-if="limitChangeQQ">
+            <span style="color:red;padding-right:20px"
+              ><i class="el-icon-warning"></i></span
+            >{{ $t("CSS.detailPlay.16") }}
+            <span style="color:#006eff">参考</span>
+          </p>
+          <p v-if="limitChangeGAT">
+            <span style="color:red;padding-right:20px">
+              <i class="el-icon-warning"></i>
+            </span>
+            {{ $t("CSS.detailPlay.17") }}
+            <span style="color:#006eff">参考</span>
+          </p>
+          <p v-if="limitChange">
+            <span style="color:red;padding-right:20px"
+              ><i class="el-icon-warning"></i>
+            </span>
+            {{ $t("CSS.detailPlay.18") }}
+          </p>
         </el-col>
       </el-row>
     </div>
@@ -23,14 +53,17 @@ import { MODIFY_LIVE_PLAY_DOMAIN } from '@/constants'
 
 export default {
   props: {
-    bandLimit: Object,
-    playType: Number
+    bandLimit: Number
+
   },
   data () {
     return {
       limit: this.bandLimit,
       enable: false,
-      info: []
+      info: [],
+      limitChange: false,
+      limitChangeQQ: false,
+      limitChangeGAT: false
     }
   },
   watch: {
@@ -48,14 +81,18 @@ export default {
         Action: 'ModifyLivePlayDomain',
         Version: '2018-08-01',
         Region: '',
-        DomainName: 'taiwan.cn',
+        DomainName: this.$route.query.Name,
         PlayType: this.limit
       }
 
       this.axios.post(MODIFY_LIVE_PLAY_DOMAIN, req)
         .then(res => {
-          this.msg('保存成功', 'success')
-          this.$emit('success')
+          if (res.Response.Error) {
+            this.msg('保存失败', 'error')
+          } else {
+            this.msg('保存成功', 'success')
+            this.$emit('success')
+          }
         })
     },
 
@@ -69,7 +106,27 @@ export default {
     },
     handleClose () {
       this.$emit('handleClose')
+    },
+    changeSlect (val) {
+      if (val === this.bandLimit) {
+        this.limitChange = false
+      } else {
+        this.limitChange = true
+      }
+      if (val === 1) {
+        this.limitChangeQQ = false
+        this.limitChangeGAT = false
+      }
+      if (val === 2) {
+        this.limitChangeQQ = true
+        this.limitChangeGAT = false
+      }
+      if (val === 3) {
+        this.limitChangeGAT = true
+        this.limitChangeQQ = false
+      }
     }
+
   }
 }
 </script>

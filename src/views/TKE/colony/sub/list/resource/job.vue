@@ -44,7 +44,7 @@
 
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
-      <el-table :data="list" v-loading="loadShow" id="exportTable" style="width: 100%">
+      <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id="exportTable" style="width: 100%">
         <el-table-column label="名称">
           <template slot-scope="scope">
             <span
@@ -77,31 +77,29 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="goPodUpdate('number')">更新Pod数量</span>
-            <span class="tke-text-link ml10" @click="goPodUpdate('config')">更新Pod配置</span>
-            <el-dropdown class="tke-dropdown">
-              <span class="el-dropdown-link ml10">
-                更多
-                <i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="a">
-                  <span class="tke-text-link">重新部署</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="a">
-                  <span class="tke-text-link">设置更新策略</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="b">
-                  <span class="tke-text-link">更新调度策略</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="c">
-                  <span class="tke-text-link">编辑YAML</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="c">
-                  <span class="tke-text-link">删除</span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
+             <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的资源不可编辑YAML,如需查看YAML,请前往详情页" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >编辑YAML</el-button>
+                  </el-tooltip>
+                   <span
+                     v-else
+                     class="tke-text-link"
+                     @click="goUpdateYaml(scope.row)"
+                  >编辑YAML</span>
+              <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                   <el-button
+                    type="text"
+                    class="notuse"
+                    >删除</el-button>
+                  </el-tooltip>
+                  <span
+                    v-else
+                    class="tke-text-link ml10"
+                    type="text"
+                    @click="deleteDeployment(scope.row)"
+                  >删除</span>
           </template>
         </el-table-column>
       </el-table>
@@ -119,6 +117,14 @@
           ></el-pagination>
         </div>
       </div>
+      <el-dialog title="删除资源" :visible.sync="isShowDeleteModal" width="35%">
+        <p style="font-weight: bolder;color: #444;">您确定要删除Deployment：{{deploymentName}}吗？</p>
+        <p style="color:#e54545;">该Workload下所有Pods将一并销毁，销毁后不可恢复，请谨慎操作。</p>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="submitDelete()">确 定</el-button>
+          <el-button @click="isShowDeleteModal = false">取 消</el-button>
+        </span>
+     </el-dialog>
     </div>
   </div>
 </template>
@@ -141,12 +147,14 @@ export default {
       list: [], //列表
       total: 0,
       pageSize: 10,
-      pageIndex: 0,
+      pageIndex: 1,
       multipleSelection: [], //全选数据
       //搜索下拉框
       searchOptions: [],
       searchType: "", //下拉选中的值
-      searchInput: "" //输入的搜索关键字
+      searchInput: "", //输入的搜索关键字
+      isShowDeleteModal:false,
+      deploymentName:'',
     };
   },
 
@@ -182,8 +190,7 @@ export default {
               Path:
                 "/apis/batch/v1/namespaces/" +
                 nameSpace.metadata.name +
-                "/jobs?limit=" +
-                this.pageSize,
+                "/jobs?limit=100" ,
               Version: "2018-05-25",
               ClusterName: this.clusterId
             };
@@ -247,8 +254,7 @@ export default {
           Path:
             "/apis/batch/v1/namespaces/" +
             this.searchType +
-            "/jobs?limit=" +
-            this.pageSize,
+            "/jobs?limit=100", 
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
@@ -283,6 +289,7 @@ export default {
         }
       });
     },
+    
     // 新建
     goWorkloadCreate(type) {
       this.$router.push({
@@ -293,16 +300,7 @@ export default {
         }
       });
     },
-    //更新pod
-    goPodUpdate(type) {
-      this.$router.push({
-        name: "podUpdate",
-        query: {
-          type: type,
-          clusterId: this.clusterId
-        }
-      });
-    },
+   
     //跳转详情
     goJobDetail(rowData) {
       this.$router.push({
@@ -312,6 +310,57 @@ export default {
           spaceName: this.searchType,
           rowData: rowData,
           jobList: this.list
+        }
+      });
+    },
+     //编辑Yaml
+    goUpdateYaml(rowData){
+      this.$router.push({
+        name:'updateJob',
+        query:{
+          clusterId: this.clusterId,
+          name: rowData.metadata.name,
+          spaceName:rowData.metadata.namespace,
+          rowData:rowData,
+          workload:'jobs'
+        }
+      })
+       sessionStorage.setItem('namespace',rowData.metadata.namespace)
+    },
+      //是否打开删除弹窗
+    deleteDeployment(rowData) {
+      this.isShowDeleteModal = true;
+      this.deploymentName = rowData.metadata.name;
+    },
+     //删除资源
+    async submitDelete() {
+      this.loadShow = true;
+      let params = {
+        Method: "DELETE",
+        Path:
+          "/apis/batch/v1/namespaces/" +
+          this.searchType +
+          "/jobs/" +
+          this.deploymentName,
+        Version: "2018-05-25",
+        RequestBody: JSON.stringify({ propagationPolicy: "Background" }),
+        ClusterName: this.clusterId
+      };
+      await this.axios.post(POINT_REQUEST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.loadShow = false;
+          this.isShowDeleteModal = false;
+          this.getJobList();
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -357,13 +406,13 @@ export default {
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getJobList();
+      // this.getJobList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.getJobList();
+      // this.getJobList();
     }
   },
   filters: {

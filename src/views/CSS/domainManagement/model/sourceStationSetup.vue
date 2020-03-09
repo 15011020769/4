@@ -2,13 +2,17 @@
   <div class="container">
     <div class="content">
       <el-row type="flex" :gutter="20" class="limit">
-        <span style="display: inline-block; width: 200px;">源站设置</span>
+        <span style="display: inline-block; width: 200px;">
+          {{ $t("CSS.detailPlay.sourceStationSetup") }}
+        </span>
         <el-col>
           <el-switch v-model="resource.Status" />
         </el-col>
       </el-row>
       <el-row type="flex" :gutter="20" class="limit">
-        <span style="display: inline-block; width: 200px;">回源协议</span>
+        <span style="display: inline-block; width: 200px;">
+          {{ $t("CSS.detailPlay.6") }}
+        </span>
         <el-col>
           <el-select
             size="small"
@@ -22,7 +26,9 @@
         </el-col>
       </el-row>
       <el-row type="flex" :gutter="20" class="limit">
-        <span style="display: inline-block; width: 200px;">播放协议</span>
+        <span style="display: inline-block; width: 200px;">
+          {{ $t("CSS.detailPlay.7") }}
+        </span>
         <el-col>
           <el-checkbox-group v-model="resource.CdnStreamFormat">
             <el-checkbox label="hls">hls</el-checkbox>
@@ -85,23 +91,22 @@ export default {
   created () {
     this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.split('|')
     this.resource.SourceServerAddress = this.resource.SourceServerAddress[0]
-    console.log(this.resource, 'this.resource001')
   },
+
   methods: {
     save () {
       let req = {
-        CdnStreamFormat: this.resource.CdnStreamFormat,
         DomainName: this.$route.query.Name,
-        SourceServerAddress: [],
+        'SourceServerAddress.0': this.resource.SourceServerAddress,
         SourceServerType: this.resource.SourceServerType,
         SourceStreamFormat: this.resource.SourceStreamFormat,
         Version: '2018-08-01'
-        // regionId: 1,
-        // serviceType: 'live'
       }
+      this.resource.CdnStreamFormat.forEach((cdn, i) => {
+        req[`CdnStreamFormat.${i}`] = cdn
+      })
       let unreq = {}
       let param = {}
-      req.SourceServerAddress.push(this.resource.SourceServerAddress)
 
       if (this.resource.Status) {
         param = req
@@ -140,28 +145,16 @@ export default {
       if (this.isSureIP && this.isSureYM && this.isSureCDN && this.isSureNULL) {
         this.axios.post(MODIFY_SOURCE_STREAM_INFO, param)
           .then(res => {
-            this.msg('保存成功', 'success')
-            this.$emit('success')
+            if (res.Response.Error) {
+              this.msg('保存失败', 'error')
+            } else {
+              this.msg('保存成功', 'success')
+              this.$emit('success')
+            }
           })
       }
     },
-    toMbps (info) {
-      if (info.unit === 2) { // Gbps
-        return info.value * 1000
-      }
-      if (info.unit === 3) { // Tbps
-        return info.value * 10000
-      }
-      return info.value
-    },
-    add () {
-      this.info.push({
-        key: ++key,
-        playType: this.playType,
-        value: 100,
-        unit: 1
-      })
-    },
+
     handleClose () {
       this.$emit('handleClose')
     },

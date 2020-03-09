@@ -314,7 +314,7 @@ export default {
       }
       console.log(params)
       this.axios.post(TKE_COLONY_INSTANCES,params).then(res=>{
-        // console.log(res)
+        console.log(res)
           if(res.Response.Error === undefined){
               // this.content=res.Response.InstanceSet
               // console.log( this.content)
@@ -356,18 +356,18 @@ export default {
       })
     },
     baseData(){
-        var params={
-              Method: "GET",
-              Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
-                this.name,
-              Version: "2018-05-25",
-              ClusterName: this.clusterId
-        }
+
+       var params={
+            Method: "GET",
+            Path:"/apis/apps/v1beta2/namespaces/" +this.spaceName +"/"+this.workload+"?fieldSelector=metadata.name=" +
+              this.name,
+            Version: "2018-05-25",
+            ClusterName: this.clusterId
+          }
         this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
           if(res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
                 let obj=response.items[0];
-              console.log(obj)
                 if(obj.spec.template.spec['affinity']!=undefined){
                   if(obj.spec.template.spec.affinity.nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
                     this.se.radio='2';

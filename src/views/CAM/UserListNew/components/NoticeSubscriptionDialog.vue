@@ -12,7 +12,7 @@
       <div class="explain">
         <p>
           要管理不同訊息類型的接收人及接收方式可以前往
-          <el-link type="primary" href="../../MGC/index.html#/message" target="_blank">訊息中心-訊息訂閱</el-link>
+          <el-link type="primary" href="../MGC/index.html#/message" target="_blank">訊息中心-訊息訂閱</el-link>
         </p>
       </div>
       <div class="user">
@@ -35,7 +35,7 @@
               <el-checkbox v-model="isSelectAll" :indeterminate="isAllIndeterminate"></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column width="180" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
+          <el-table-column width="220" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
             <template slot-scope="scope">
               <el-checkbox
                 v-model="scope.row.isChecked"

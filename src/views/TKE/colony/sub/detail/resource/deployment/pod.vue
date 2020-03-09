@@ -63,7 +63,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">{{scope.row.status && scope.row.status.phase}}</span>
+              <span :class="[scope.row.phase ==='Running'?'text-green':'']">{{scope.row.status && scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
