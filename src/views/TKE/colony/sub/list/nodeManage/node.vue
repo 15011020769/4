@@ -162,13 +162,13 @@
         </el-table-column>
         <el-table-column prop="address" label="已分配/总资源">
           <template slot-scope="scope">
-            <p>CPU: -/-</p>
-            <p>内存: -/-</p>
+            <p>CPU: -/{{scope.row.cpuTotal}}</p>
+            <p>内存: -/{{scope.row.memoyTotal}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="" label="所属伸缩组">
           <template slot-scope="scope">
-            <p>-</p>
+            <p>{{scope.row.group || '-'}}</p>
           </template>
         </el-table-column>
         <el-table-column width="200" prop="" label="计费模式">
@@ -630,7 +630,10 @@ export default {
                   ) {
                     node.kubeletVersion = k8s.status.nodeInfo.kubeletVersion;
                     node.allocatable = k8s.status.allocatable;
+                    node.cpuTotal =  (Number(k8s.status.allocatable.cpu.substring(0, k8s.status.allocatable.cpu.length -1))/1000).toFixed(2);
+                    node.memoyTotal = (Number(k8s.status.allocatable.memory.substring(0, k8s.status.allocatable.memory.length -2))/(1024*1024)).toFixed(2);
                     node.unschedulable = k8s.spec.unschedulable;
+                    node.group = k8s.metadata.labels['cloud.tencent.com/auto-scaling-group-id'];
                   }
                 });
                 return node;
