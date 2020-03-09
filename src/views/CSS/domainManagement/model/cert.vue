@@ -33,20 +33,20 @@
 <script>
 import { CREATE_LIVE_CERT, MODIFY_LIVE_DOMAIN_CERT, MODIFY_LIVE_CERT } from '@/constants'
 const error = {
-  'InternalError': '内部错误',
-  'InternalError.CrtDateNotLegal': '证书不合法。',
-  'InternalError.CrtDateOverdue': '证书过期。',
-  'InternalError.CrtKeyNotMatch': '证书Key不匹配。',
-  'InternalError.DBError': 'DB执行错误。',
-  'InternalError.InvalidInput': '参数检校不通过。',
-  'InternalError.SystemError': '系统内部错误。',
-  'InvalidParameter': '参数错误',
-  'InvalidParameter.CloudCrtIdError': '腾讯云证书托管ID错误。',
-  'InvalidParameter.CrtDateNotLegal': '证书内容不合法。',
-  'InvalidParameter.CrtOrKeyNotExist': '证书内容或者私钥未提供。',
-  'InvalidParameterValue': '参数取值错误',
-  'MissingParameter': '缺少参数错误',
-  'InternalError.CrtDateInUsing': '证书使用中。',
+  'InternalError': '內部錯誤',
+  'InternalError.CrtDateNotLegal': '證書不合法。',
+  'InternalError.CrtDateOverdue': '證書過期。',
+  'InternalError.CrtKeyNotMatch': '證書Key不匹配。',
+  'InternalError.DBError': 'DB執行錯誤。',
+  'InternalError.InvalidInput': '參數檢校不通過。',
+  'InternalError.SystemError': '系統內部錯誤。',
+  'InvalidParameter': '參數錯誤',
+  'InvalidParameter.CloudCrtIdError': '騰訊雲證書託管ID錯誤。',
+  'InvalidParameter.CrtDateNotLegal': '證書內容不合法。',
+  'InvalidParameter.CrtOrKeyNotExist': '證書內容或者私鑰未提供。',
+  'InvalidParameterValue': '參數取值錯誤',
+  'MissingParameter': '缺少參數錯誤',
+  'InternalError.CrtDateInUsing': '證書使用中。',
 }
 export default {
   props: {

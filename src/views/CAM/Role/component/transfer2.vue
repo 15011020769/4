@@ -25,7 +25,7 @@
             class="strategies-table"
             ref="strategiesTable"
           >
-            <el-table-column type="selection" width="55"></el-table-column>
+            <el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyNames')">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
@@ -58,10 +58,10 @@
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">
           <b style="font-size:13px;">{{$t('CAM.userList.choose')}}</b>
-          &nbsp;({{selectedStrategies.length}}{{$t('CAM.strip')}})
+          &nbsp;({{selectedStrategiesWithoutGroup.length}}{{$t('CAM.strip')}})
         </p>
         <div class="right-main border">
-          <el-table :data="selectedStrategies" style="width: 100%;height: 562px" :empty-text="$t('CAM.strategy.zwsj')">
+          <el-table :data="selectedStrategiesWithoutGroup" style="width: 100%;height: 562px" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column prop="PolicyName" label="策略名">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
@@ -120,10 +120,18 @@ export default {
   components: {
     InfiniteLoading,
   },
-  mounted() {
-    this.loadStrategies()
+  computed: {
+    selectedStrategiesWithoutGroup() {
+      return this.selectedStrategies.filter(s => s.IsAttached !== 1)
+    }
   },
   methods: {
+    selectable(row) {
+      if (row.IsAttached) {
+        return false
+      }
+      return true
+    },
     togglePolicy(a, b) {
       this.selectedStrategies = a
       if (this.selectedPolicyId.includes(b.PolicyId)) {
@@ -160,6 +168,12 @@ export default {
       this.axios.post(POLICY_LIST, param).then(res => {
         this.strategiesPage += 1
         this.strategiesTotalNum = res.Response.TotalNum
+        res.Response.List.forEach(s => {
+          if (s.IsAttached) {
+            this.selectedPolicyId.push(s.PolicyId)
+            this.selectedStrategies.push(s)
+          }
+        })
         this.strategies = this.strategies.concat(res.Response.List)
         if (this.selectedPolicyId.length) {
           this.$nextTick(() => {

@@ -90,18 +90,17 @@ export default {
   methods: {
     save () {
       let req = {
-        CdnStreamFormat: this.resource.CdnStreamFormat,
         DomainName: this.$route.query.Name,
-        SourceServerAddress: [],
+        'SourceServerAddress.0': this.resource.SourceServerAddress,
         SourceServerType: this.resource.SourceServerType,
         SourceStreamFormat: this.resource.SourceStreamFormat,
         Version: '2018-08-01'
-        // regionId: 1,
-        // serviceType: 'live'
       }
+      this.resource.CdnStreamFormat.forEach((cdn, i) => {
+        req[`CdnStreamFormat.${i}`] = cdn
+      })
       let unreq = {}
       let param = {}
-      req.SourceServerAddress.push(this.resource.SourceServerAddress)
 
       if (this.resource.Status) {
         param = req

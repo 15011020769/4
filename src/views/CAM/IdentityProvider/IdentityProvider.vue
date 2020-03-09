@@ -62,7 +62,7 @@
 </template>
 <script>
 import HeadCom from "../UserListNew/components/Head";
-import { LIST_Providers, DELETE_SAML_PROVIDER } from "@/constants";
+import { LIST_PROVIDERS, DELETE_SAML_PROVIDER } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
@@ -133,7 +133,7 @@ export default {
         Version: "2019-01-16"
       };
       this.axios
-        .post(LIST_Providers, params)
+        .post(LIST_PROVIDERS, params)
         .then(data => {
           if (data.Response.Error === undefined) {
             this.tableData = data.Response.SAMLProviderSet;

@@ -258,7 +258,7 @@ module.exports = {
       selectedStar: '已選策略',
       kztfw: '控制台訪問',
       sytj: '使用條件',
-      zwkxsftgs: '暫無可選身份提供商',
+      zwkxsftgs: '請選擇可選身份提供商',
       yxjsfwkzt: '允許當前角色訪問控制台',
       jian: '鍵',
       qxz: '請選擇',

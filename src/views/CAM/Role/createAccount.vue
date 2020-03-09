@@ -27,20 +27,23 @@
               </p>
               <p>
                 <el-input
-                  v-model="input_num"
+                  v-model.trim="input_num"
+                  :maxlength="15"
+                  @input="v => input_num = v.replace(/[^\d]/g, '')"
                   :placeholder="$t('CAM.strategy.inputContent')"
                   size="mini"
                   :disabled="disabledAccount"
                   style="width:150px"
                 ></el-input>
+                <p v-if="notExists" style="color: #e54545;">您輸入的賬號不存在</p>
               </p>
             </div>
           </div>
         </div>
-        <div class="tansfer" v-if="active == 2">
+        <div class="tansfer" v-show="active == 2">
           <transfer ref="tansferStep"></transfer>
         </div>
-        <div class="shenyue" v-if="active == 3">
+        <div class="shenyue" v-show="active == 3">
           <div class="content_flex">
             <div class="content_left">
               <p class="juese">{{$t('CAM.Role.roleName')}}*</p>
@@ -115,6 +118,7 @@ export default {
       inputRoleName: "",
       inputRoleDesc: "",
       have: false,
+      notExists: false,
       radioAccount: "1",
       disabledAccount: true,
       policiesData: [],
@@ -129,7 +133,11 @@ export default {
       ]
     };
   },
-
+  watch: {
+    input_num() {
+      this.notExists = false
+    }
+  },
   methods: {
     //返回上一级
     _back() {
@@ -144,8 +152,9 @@ export default {
         //其他主账号时需要校验账户
         if (_this.radioAccount === "2") {
           _this.checkAccount();
+        } else {
+          this.active = this.active + 1;
         }
-        this.active = this.active + 1;
       } else if (this.active == 2) {
         this.policiesSelectedData = this.$refs.tansferStep.selectedStrategies;
         if (this.policiesSelectedData.length === 0) {
@@ -185,25 +194,32 @@ export default {
         this.input_num = "";
       } else {
         this.disabledAccount = true;
-        this.input_num = "100011921910";
+        this.input_num = this.$cookie.get('uin');
       }
     },
     // 校验主账号，暂时没有发现接口先不校验；点击下一步或者光标离开输入框时校验。
     checkAccount() {
-      // let url = "cam/CheckAccount";
-      // let params = {
-      //   Action: "CheckAccount",
-      //   Version: "2019-01-16",
-      //   Uin: this.input_num
-      // };
-      // this.axios.post(url, params).then(res => {
-      //   if (res != '' && data.Response.data.IsExist != undefined && data.Response.data.IsExist === false) {
-      //     this.have = true;
-      //   } else {
-      //     this.have = false;
-      //   }
-      // }).catch(error => {
-      // });
+      let url = "cam/CheckAccount";
+      let params = {
+        uin: this.input_num
+      };
+        this.axios.post(url, params).then(res => {
+          if (res.code !== 0) {
+            return void this.$message({
+              message: res.message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          }
+          if (res != '' && res.data.IsExist === false) {
+            this.notExists = true;
+          } else {
+            this.active += 1
+            this.notExists = false;
+          }
+        }).catch(error => {
+      });
     },
     //新建自定义角色创建
     complete() {
@@ -224,38 +240,13 @@ export default {
       this.axios.post(CREATE_ROLE, params).then(data => {
         if(data.Response.Error === undefined){
           let roleId = data.Response.RoleId; // 获取创建的角色id
-          if (data.Response.Error) {
-            if (data.Response.Error.Code == "InvalidParameter.RoleNameError") {
-              this.$message({
-              message: "角色名不合法。",
-              type: "error",
-              showClose: true,
-              duration: 0
-            })
-            }
-          } else {
-            this.$message({
-              message: "創建角色成功",
-              type: "success",
-              showClose: true,
-              duration: 0
-            })
-          }
-
-          let policiesArray = this.policiesSelectedData; // 获取权限策略
-          // 根据获取的角色ID创建角色策略
-          if (roleId != undefined && roleId != "" && policiesArray != "") {
-            for (let i = 0; i < policiesArray.length; i++) {
-              let obj = policiesArray[i];
-              let params = {
-                Action: "AttachRolePolicy",
-                Version: "2019-01-16",
-                PolicyId: obj.PolicyId,
-                AttachRoleId: roleId
-              };
-              _this.AttachRolePolicy(params);
-            }
-          }
+          this.attachRolePolicies(roleId)
+          this.$message({
+            message: "創建角色成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          })
           this.back();
         }else{
             let ErrTips = {
@@ -280,29 +271,16 @@ export default {
         }
       });
     },
-    // 绑定权限策略到角色
-    AttachRolePolicy(params) {
-      this.$axios.post(ATTACH_ROLE, params).then(res => {
-        if(res.Response.Error === undefined){
-          console.log(res);
-        }else{
-          let ErrTips = {
-             "InternalError.SystemError":'內部錯誤',
-             "InvalidParameter.AttachmentFull":'principal欄位的授權對象關聯策略數已達到上限',
-             "InvalidParameter.ParamError":'非法入參',
-             "InvalidParameter.PolicyIdNotExist":'策略ID不存在',
-             "InvalidParameter.RoleNotExist":'角色不存在'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    }
+    attachRolePolicies(roleId) {
+      const params = { 
+        "Version": "2019-01-16",
+        RoleId: roleId,
+       }
+      this.policiesSelectedData.forEach((policy, i) => {
+        params[`PolicyId.${i}`] = policy.PolicyId
+      })
+      this.axios.post(ATTACH_ROLE_POLICIES, params)
+    },
   }
 };
 </script>
