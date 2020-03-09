@@ -2,14 +2,14 @@
   <div class="warnings-wrap">
     <!-- 头部 -->
     <div class="back-hd flex">
-      <h2 style="padding-top:3px;">告警设置</h2>
+      <h2 style="padding-top:3px;">{{$t('TKE.overview.gjsz')}}</h2>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">地域</div> 
       &nbsp; <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
       <div style="width:20px"></div>
       <div style="padding-top:6px;">集群</div> 
       &nbsp;
-      <el-select size="mini" v-model="value" placeholder="请选择"
+      <el-select size="mini" v-model="value" :placeholder="$t('TKE.overview.qxz')"
       style="margin-bottom:5px;" @change="getList($event)">
         <el-option
           v-for="item in options"
@@ -26,10 +26,10 @@
           <router-link :to="'/warningCreate'">
              <el-button type="primary" size="mini">新建</el-button>
           </router-link>
-            <el-button  size="mini" style="margin-left:8px;" :disabled="this.multipleSelection.length>=1?false:true" @click="dialogVisible = true">删除</el-button>
+            <el-button  size="mini" style="margin-left:8px;" :disabled="this.multipleSelection.length>=1?false:true" @click="dialogVisible = true">{{$t('TKE.overview.sc')}}</el-button>
         </div>
         <div style="position: relative;">
-          <input type="search" placeholder="请输入集群名称" class="search" v-model ='input'>
+          <input type="search" :placeholder="$t('TKE.overview.qsrjqmc')" class="search" v-model ='input'>
           <button class="el-icon-search ip-btn" @click="getSearch()"></button>
         </div>
       </div>
@@ -41,14 +41,15 @@
           tooltip-effect="dark"
           style="width: 100%"
           @selection-change="handleSelectionChange"
-          v-loading="loadShow">
+          v-loading="loadShow"
+           :empty-text="$t('TKE.overview.zwsj')">
           <el-table-column
             type="selection"
             width="55"
             >
           </el-table-column>
           <el-table-column
-            label="告警策略名称"
+            :label="$t('TKE.overview.gjclmc')"
             min-width="12%"
             prop='AlarmPolicySettings'>
             <template slot-scope="scope">
@@ -57,7 +58,7 @@
           </el-table-column>
           <el-table-column
             prop="AlarmPolicySettings"
-            label="策略类型"
+            :label="$t('TKE.overview.cllx')"
             min-width="18%">
             <template slot-scope="scope">
                 {{scope.row.AlarmPolicySettings.AlarmObjectsType | AlarmObjectsTypes}}
@@ -65,11 +66,11 @@
           </el-table-column>
           <el-table-column
             prop="AlarmPolicySettings"
-            label="触发条件"
+            :label="$t('TKE.overview.cftj')"
             min-width="30%">
              <template slot-scope="scope">
                <div v-for="(item,index) in scope.row.AlarmPolicySettings.AlarmMetrics" :key='index'>
-                  {{item.ArgusPolicyName}}{{item.Evaluator|Evaluators}}{{item.Evaluator|EvaluatorValues}}{{item.Unit}}持续{{item.ContinuePeriod}}分钟告警
+                  {{item.ArgusPolicyName}}{{item.Evaluator|Evaluators}}{{item.Evaluator|EvaluatorValues}}{{item.Unit}}{{$t('TKE.overview.cx')}}{{item.ContinuePeriod}}{{$t('TKE.overview.fzjg')}}
                </div>
             </template>
           </el-table-column>
@@ -78,7 +79,7 @@
             label="告警渠道"
             min-width="20%">
             <template slot-scope="scope">
-                <div>接收组:{{scope.row.NotifySettings.ReceiverGroups.length}}个</div>
+                <div>{{$t('TKE.overview.jsz')}}:{{scope.row.NotifySettings.ReceiverGroups.length}}{{$t('TKE.overview.ge')}}</div>
                 <div>渠道:<span v-for="(item,index) in scope.row.NotifySettings.NotifyWay" :key='index'>{{item|NotifyWays}}</span></div>
             </template>
           </el-table-column>
@@ -91,19 +92,19 @@
                     @click="deleteRow(scope.$index, tableData)"
                     type="text"
                     size="small">
-                    删除
+                    {{$t('TKE.overview.sc')}}
                   </el-button>
                   <el-button
                     type="text"
                     size="small"
                     @click="copyRow(scope.$index, tableData)">
-                    复制
+                    {{$t('TKE.overview.fz')}}
                   </el-button>
                 </template>
           </el-table-column>
         </el-table>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+          <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
           <el-pagination
             :page-size="pagesize"
             layout="prev, pager, next"
@@ -116,25 +117,25 @@
     </div>
       <!-- 全选删除提示信息 -->
       <el-dialog
-        title="删除告警设置"
+        :title="$t('TKE.overview.scgjsz')"
         :visible.sync="dialogVisible"
         width="50%">
-        <div>您确定要删除<span v-for="(item,index) in multipleSelection" :key="index">{{item.AlarmPolicySettings.AlarmPolicyName}}<span v-if="(index+1)!==item.length">,</span></span>吗？</div>
+        <div>{{$t('TKE.overview.qdsc')}}<span v-for="(item,index) in multipleSelection" :key="index">{{item.AlarmPolicySettings.AlarmPolicyName}}<span v-if="(index+1)!==item.length">,</span></span>嗎？</div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible=false">取 消</el-button>
-          <el-button type="primary" @click="deleteAll()">确 定</el-button>
+          <el-button type="primary" @click="deleteAll()">{{$t('TKE.overview.qd')}}</el-button>
         </span>
       </el-dialog>
       <!-- 单选删除 -->
       <el-dialog
-        title="删除告警设置"
+        :title="$t('TKE.overview.scgjsz')"
         :visible.sync="dialogVisibleO"
         width="50%"
         @close='disClose'>
-        <div>您确定要删除<span v-for="(item,index) in name" :key="index">{{item}}</span>吗？</div>
+        <div>{{$t('TKE.overview.qdsc')}}<span v-for="(item,index) in name" :key="index">{{item}}</span>嗎？</div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="disClose()">取 消</el-button>
-          <el-button type="primary" @click="deleteOne()">确 定</el-button>
+          <el-button type="primary" @click="deleteOne()">{{$t('TKE.overview.qd')}}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -357,11 +358,11 @@ export default {
     },
     NotifyWays:function(value){
       if(value == 'SMS'){
-        return "短信 "
+        return "簡訊 "
       } else if(value == 'CALL'){
-        return "电话 "
+        return "電話 "
       } else if(value == 'EMAIL'){
-        return "邮件 "
+        return "郵箱 "
       } else {
         return "微信 "
       }

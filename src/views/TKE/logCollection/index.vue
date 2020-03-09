@@ -327,7 +327,7 @@
          })
       },
        handleClose(done) {
-        this.$confirm('确认关闭？')
+        this.$confirm('確認關閉？')
           .then(_ => {
             done();
           })
@@ -418,7 +418,7 @@
           if (res.Response.Error === undefined) {
             this.xjF=false;
             this.$message({
-              message: '删除成功',
+              message: '刪除成功',
               type: "success",
                duration: 0,
               showClose: true

@@ -5,34 +5,34 @@
         <router-link to="/warnings">
           <li>
             <i class="el-icon-back"></i>
-            <span>告警策略详情</span>
+            <span>{{$t('TKE.overview.gjclxq')}}</span>
           </li>
         </router-link>
       </ul>
     </div>
     <div style="padding:20px">
       <el-card class="box-card">
-        <h3 style="margin-bottom:20px;">基本信息</h3>
+        <h3 style="margin-bottom:20px;">{{$t('TKE.overview.jbxx')}}</h3>
         <router-link :to="{name: 'warningUpdate'}">
-            <el-button size='mini' type="text" class="detail">编辑</el-button>
+            <el-button size='mini' type="text" class="detail">{{$t('TKE.overview.bj')}}</el-button>
         </router-link>
         <el-form label-width="150px" class='tke-form' label-position="left">
-          <el-form-item label="告警策略名称">
+          <el-form-item :label="$t('TKE.overview.gjclmc')">
             <div>1</div>
           </el-form-item>
-          <el-form-item label="备注">
+          <el-form-item :label="$t('TKE.overview.bz')">
             <div>2</div>
           </el-form-item>
-          <el-form-item label="策略类型">
+          <el-form-item :label="$t('TKE.overview.cllx')">
             <div><a>https://hub.docker.com/_/3</a></div>
           </el-form-item>
-          <el-form-item label="策略对象">
+          <el-form-item :label="$t('TKE.overview.cldx')">
             <div>docker pull 4:latest</div>
           </el-form-item>
-          <el-form-item label="触发条件">
+          <el-form-item :label="$t('TKE.overview.cftj')">
             <div>5</div>
           </el-form-item>
-          <el-form-item label="接收组">
+          <el-form-item :label="$t('TKE.overview.jsz')">
             <div>6</div>
           </el-form-item>
           <el-form-item label="接收渠道">
