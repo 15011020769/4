@@ -9,23 +9,32 @@
               size="small"
               @click="TimeChoice(1)"
               :type="classsvalue == 1 ? 'primary' : ''"
-            >今天</el-button>
+              >今天</el-button
+            >
             <el-button
               size="small"
               @click="TimeChoice(-1)"
               :type="classsvalue == -1 ? 'primary' : ''"
-            >昨天</el-button>
+              >昨天</el-button
+            >
             <el-button
               size="small"
-              @click="TimeChoice(1*24*7)"
-              :type="classsvalue == 1*24*7 ? 'primary' : ''"
-            >近7天</el-button>
+              @click="TimeChoice(1 * 24 * 7)"
+              :type="classsvalue == 1 * 24 * 7 ? 'primary' : ''"
+              >近7天</el-button
+            >
             <el-button
               size="small"
-              @click="TimeChoice(1*24*30)"
-              :type="classsvalue == 1*24*30 ? 'primary' : ''"
-            >近30天</el-button>
-            <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
+              @click="TimeChoice(1 * 24 * 30)"
+              :type="classsvalue == 1 * 24 * 30 ? 'primary' : ''"
+              >近30天</el-button
+            >
+            <el-popover
+              placement="bottom"
+              width="400"
+              trigger="manual"
+              v-model="visible"
+            >
               <p class="p-dis">
                 <span>從</span>
                 <el-date-picker
@@ -48,10 +57,16 @@
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="Start_End.EndTIme" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker
+                  class="width-date"
+                  v-model="Start_End.EndTIme"
+                  placeholder="任意時間點"
+                ></el-time-picker>
               </p>
               <el-row class="margin-row">
-                <el-button size="mini" type="primary" @click="Sure">確定</el-button>
+                <el-button size="mini" type="primary" @click="Sure"
+                  >確定</el-button
+                >
                 <el-button size="mini" @click="visible = false">取消</el-button>
               </el-row>
               <el-button
@@ -60,7 +75,8 @@
                 icon="el-icon-search"
                 @click="SelectionTime"
                 slot="reference"
-              >選擇日期</el-button>
+                >選擇日期</el-button
+              >
             </el-popover>
             <el-date-picker
               v-if="datetime"
@@ -78,7 +94,12 @@
         </el-row>
         <div class="drop" v-if="granularity">
           <span style="margin-right:15px">時間粒度:</span>
-          <el-select v-model="value" placeholder="請選擇" @change="switchData()" size="small">
+          <el-select
+            v-model="value"
+            placeholder="請選擇"
+            @change="switchData()"
+            size="small"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -123,24 +144,22 @@ export default {
       classvalue: 1,
       pickerOptions: {
         onPick(time) {
-
           // 如果选择了只选择了一个时间
           if (!time.maxDate) {
-            let timeRange = 30 * 24 * 60 * 60 * 1000; // 30天内，
+            let timeRange = 30 * 24 * 60 * 60 * 1000; // 腾讯接口要求不能超过31天
             _minTime = time.minDate.getTime() - timeRange; // 最小时间
 
             const tempMaxTime = time.minDate.getTime() + timeRange; // 最大时间
             const now = Date.now();
 
+            // 不超过今天
             if (tempMaxTime > now) {
               _maxTime = now;
-            }
-            else {
+            } else {
               _maxTime = tempMaxTime;
             }
             // 如果选了两个时间，那就清空本次范围判断数据，以备重选
-          }
-          else {
+          } else {
             _minTime = _maxTime = null;
           }
         },
@@ -149,8 +168,7 @@ export default {
           // 该方法会轮询当3个月内的每一个日期，返回false表示该日期禁选
           if (_minTime && _maxTime) {
             return time.getTime() < _minTime || time.getTime() > _maxTime;
-          }
-          else if (_minTime == null && _maxTime == null) {
+          } else if (_minTime == null && _maxTime == null) {
             // 如果都没有选择要限制不能笔今天更晚的日期
             const now = Date.now();
             return time.getTime() > now;
