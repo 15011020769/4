@@ -80,9 +80,10 @@ export default {
       this.loadShow = true
       let params = {
         ClusterName: this.$route.query.clusterId,
+        Accept: "application/yaml",
         ContentType: "application/yaml",
         Method: "PUT",
-        Path: "/api/v1/namespaces/default/persistentvolumeclaims/"+this.$route.query.resourceIns,
+        Path: "/api/v1/namespaces/"+this.$route.query.np+"/persistentvolumeclaims/"+this.$route.query.resourceIns,
         RequestBody: this.YAMLData,
        Version: "2018-05-25"
       }
@@ -93,7 +94,8 @@ export default {
             name: 'pvcDetailEvent',
             query: {
               clusterId: this.$route.query.clusterId,
-              resourceIns:this.$route.query.resourceIns
+              resourceIns:this.$route.query.resourceIns,
+              np:this.$route.query.np
             }
           })
         //   this.loadShow = false
@@ -117,7 +119,7 @@ export default {
         Accept: "application/yaml",
         ClusterName: this.$route.query.clusterId,
         Method: "GET",
-        Path: "/api/v1/namespaces/default/persistentvolumeclaims/"+this.$route.query.resourceIns,
+        Path: "/api/v1/namespaces/"+this.$route.query.np+"/persistentvolumeclaims/"+this.$route.query.resourceIns,
         Version: "2018-05-25"
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {

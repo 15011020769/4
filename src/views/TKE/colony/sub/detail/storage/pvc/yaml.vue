@@ -97,7 +97,8 @@ export default {
           name: "pvcUpdate",
           query: {
             clusterId: this.$route.query.clusterId,
-            resourceIns:this.$route.query.resourceIns
+            resourceIns:this.$route.query.resourceIns,
+            np:this.$route.query.np
           }
       });
     }
