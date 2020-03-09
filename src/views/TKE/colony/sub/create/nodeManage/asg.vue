@@ -369,7 +369,7 @@
               >
                 <el-table-column width="50">
                   <template slot-scope="scope">
-                    <el-radio v-model="modeRadio" :label="scope.row">
+                    <el-radio v-model="modeData" :label="scope.row">
                       <i></i>
                     </el-radio>
                   </template>
@@ -553,7 +553,7 @@ export default {
       cpuValue: "0", //选中的cpu类型
       memeryValue: "0", //选中的内存类型
       zoneInfoList: [], //电脑机型列表
-      modeRadio: {}, //默认选中的机型
+      // modeData: {}, //默认选中的机型
       modeData: {}, //机型表格中选中的数据
       describeVpcs: [], //支持的网络
       subNetList: [], //子网列表
@@ -1087,7 +1087,7 @@ export default {
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if (res.Response.Error === undefined) {
           var dataList = res.Response.InstanceTypeQuotaSet;
-          this.modeRadio = res.Response.InstanceTypeQuotaSet[0];
+          this.modeData = res.Response.InstanceTypeQuotaSet[0];
           this.loadShow = false;
           if (this.asg.familyObj !== "all1" && this.v1 == true) {
             var list = [];
@@ -1100,7 +1100,7 @@ export default {
           } else if (this.asg.familyObj !== "all1" && this.v2 == true) {
             var list = [];
             dataList.map((v, i) => {
-              if (v.InstanceFamily == "M3") {
+              if (v.InstanceFamily == "C3") {
                 return list.push(v);
               }
             });
@@ -1108,7 +1108,7 @@ export default {
           } else if (this.asg.familyObj !== "all1" && this.v3 == true) {
             var list = [];
             dataList.map((v, i) => {
-              if (v.InstanceFamily == "C3") {
+              if (v.InstanceFamily == "M3") {
                 return list.push(v);
               }
             });

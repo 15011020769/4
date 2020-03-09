@@ -238,18 +238,21 @@ export default {
         });
         return false;
       }
+
       var arr = this.dynamicValidateForm.domains;
       var obj = {};
       arr.forEach(v => {
         obj[v.value] = btoa(v.valueKey);
       });
-      if (arr[0].value == "") {
-        this.$message({
-          message: "变量名不能為空，至少设置一项",
-          type: "error"
-        });
-        return false;
-      }
+
+      // if (this.se.tabPosition == "jt" && arr[0].value == "") {
+      //   this.$message({
+      //     message: "变量名不能為空，至少设置一项",
+      //     type: "error"
+      //   });
+      //   return false;
+      // }
+
       var params = {
         ClusterName: this.clusterId,
         Method: "POST",
@@ -260,7 +263,13 @@ export default {
         Version: "2018-05-25"
       };
       if (this.se.tabPosition == "jt") {
-        console.log(obj, "obj");
+        if (arr[0].value == "") {
+          this.$message({
+            message: "变量名不能為空，至少设置一项",
+            type: "error"
+          });
+          return false;
+        }
         params.RequestBody = {
           kind: "Secret",
           apiVersion: "v1",
@@ -270,7 +279,7 @@ export default {
             labels: { "qcloud-app": this.se.name }
           },
           type: "Opaque",
-          data: obj
+          data: JSON.stringify(obj)
         };
       } else {
         params.RequestBody = {
@@ -281,9 +290,14 @@ export default {
             namespace: this.se.radio, //
             labels: { "qcloud-app": this.se.name }
           },
-          type: "kubernetes.io/dockercfg",
-          data: { ".dockercfg": "" } //用户密码转码成一堆 转义：btoa();
+          type: "kubernetes.io/dockercfg"
+          // data: {
+          //   ".dockercfg":
+          //     "eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJhc2Rhc2QiLCJwYXNzd29yZCI6ImFzZGFzZCIsImF1dGgiOiJZWE5rWVhOa09tRnpaR0Z6WkE9PSJ9fQ=="
+          // } //用户密码转码成一堆 转义：btoa();
         };
+        params.RequestBody.data[".dockercfg"] =
+          "eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJhc2Rhc2QiLCJwYXNzd29yZCI6ImFzZGFzZCIsImF1dGgiOiJZWE5rWVhOa09tRnpaR0Z6WkE9PSJ9fQ==";
       }
       if (this.se.radio == "1") {
         params.RequestBody =
@@ -338,15 +352,15 @@ export default {
       }
       console.log(params);
       if (!this.errorShow) {
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        console.log(res.Response);
-        if (res.Response.Error == undefined) {
-          this.$router.push({
-            name: "colonyConfigSecret"
-            // query: this.$route.query.clusterId
-          });
-        }
-      });
+        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+          console.log(res.Response);
+          if (res.Response.Error == undefined) {
+            this.$router.push({
+              name: "colonyConfigSecret"
+              // query: this.$route.query.clusterId
+            });
+          }
+        });
       }
     },
     //命名空间选项
