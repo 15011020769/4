@@ -204,7 +204,7 @@ export default {
       };
       await this.axios.post(CM_GROUPING_LIST, param).then(res => {
         // if (res.Response.Error === undefined) {
-        // console.log(res.data.instanceGroupList);
+        // console.log(res);
         var _tableData = res.data.instanceGroupList;
         // this.total = res.Response.TotalCount;
         this.total = res.data.total;

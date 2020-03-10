@@ -13,8 +13,11 @@ export const CM_GROUPING_LIST_COPY = 'monitor/CopyInstanceGroup'
 // 实例分组 列表 编辑名称
 export const CM_GROUPING_LIST_EDIT = 'monitor/instanceGroup'
 
-// 实例分组 详情 实例管理
+// 实例分组 详情 实例管理 列表
 export const CM_GROUPING_MANAGE = 'monitor/GetInstanceGroup'
+
+// 实例分组 详情 实例管理 列表
+export const CM_GROUPING_MANAGELIST = 'cvm2/DescribeInstances'
 
 // 实例分组 详情 实例管理 移出
 export const CM_GROUPING_MOVE = 'monitor/DeleteInstancesInInstanceGroup'
