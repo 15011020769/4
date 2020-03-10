@@ -118,7 +118,7 @@ export default {
             this.fetchRecordingList();
             return;
           }
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
           this.$message.error(ErrOr[data.Response.Error.Code]);
         });
     },
@@ -141,7 +141,7 @@ export default {
             }
             return;
           }
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
           this.$message.error(ErrOr[data.Response.Error.Code]);
         })
         .then(() => {

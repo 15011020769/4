@@ -31,7 +31,9 @@
                 class="ipt"
                 v-model="dominForm.DominName"
                 placeholder="請填寫域名，如：www.test.com"
+                @blur="domainNameInputOnBlur"
               ></el-input>
+              <p class="errorTips" v-show="errorTips.length>0">{{errorTips}}</p>
             </p>
           </div>
           <div class="newClear conList">
@@ -120,7 +122,8 @@ export default {
 
       checkDomin: "", //選擇域名类型
       addDominModel2: false, //添加域名
-      addDominModel3: false
+      addDominModel3: false,
+      errorTips: false
     };
   },
   methods: {
@@ -141,19 +144,37 @@ export default {
       this.dialogmodel = false;
       this.$emit("closeAddModel", this.dialogmodel);
     },
-    //添加域名确定按钮
-    addDominSure() {
-      // console.log(this.dominForm, this.PlayType);
+    validateDomainName() {
+      if (this.dominForm.DominName.length === 0) {
+        this.errorTips = "請輸入域名";
+        return false;
+      }
 
       if (
         !/[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\.?/.test(
           this.dominForm.DominName
         )
       ) {
-      this.$message({
-        type: "error",
-        message: "域名格式錯誤，請輸入正確格式。"
-      });
+        this.errorTips = "域名格式錯誤，請輸入正確格式。";
+        return false;
+      }
+
+      if (this.dominForm.DominName.length > 30) {
+        this.errorTips = "域名超出30位長度限制，請更換域名或者提交工單解決";
+        return false;
+      }
+
+      this.errorTips = "";
+      return true;
+    },
+    domainNameInputOnBlur(e) {
+      this.validateDomainName();
+    },
+    //添加域名确定按钮
+    addDominSure() {
+      // console.log(this.dominForm, this.PlayType);
+
+      if (!this.validateDomainName()) {
         return;
       }
 
@@ -169,7 +190,10 @@ export default {
           let errorMessage = ErrOr[Response.Error.Code];
           this.$message({
             type: "error",
-            message: (errorMessage !== undefined && errorMessage.length > 0) ? errorMessage : "添加失敗"
+            message:
+              errorMessage !== undefined && errorMessage.length > 0
+                ? errorMessage
+                : "添加失敗"
           });
           return;
         }
@@ -258,5 +282,10 @@ export default {
   font-weight: 600;
   font-size: 12px;
   color: gray;
+}
+.errorTips {
+  font-size: 10px;
+  color: red;
+  margin-left: 70px;
 }
 </style>

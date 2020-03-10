@@ -124,7 +124,7 @@ export default {
         this.$refs.ruleForm.resetFields();
         this.ruleForm.AiTransCode = "0";
         // 默认选择普通
-        this.selectCommonType()
+        this.selectCommonType();
       }
     }
   },
@@ -178,9 +178,9 @@ export default {
         return false;
       }
 
-      const descRegex = /^[\w_-]*$/;
+      const descRegex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
 
-      if (!descRegex.test(this.ruleForm.desc)) {
+      if (!descRegex.test(this.ruleForm.Description)) {
         this.$message({
           message: "範本描述不符合要求",
           type: "error",
@@ -398,15 +398,14 @@ export default {
         });
       } else {
         // 默认选择普通
-        this.selectCommonType()
+        this.selectCommonType();
       }
-
     },
     selectCommonType() {
-        const currentItem = TEMPLATE_TYPE.find(item => item.key === "common");
-        this.ruleForm.Height = currentItem.Height;
-        this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
-        this.selectType = currentItem.value;
+      const currentItem = TEMPLATE_TYPE.find(item => item.key === "common");
+      this.ruleForm.Height = currentItem.Height;
+      this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
+      this.selectType = currentItem.value;
     }
   }
 };
