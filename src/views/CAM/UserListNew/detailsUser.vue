@@ -30,7 +30,7 @@
               <span>{{ConsoleLogin[userData.ConsoleLogin]}}</span>
             </p>
           </div>
-          <div class="bodyRight" style="flex:1">
+          <!-- <div class="bodyRight" style="flex:1">
             <p>
               <span class="spns">{{$t('CAM.userList.userPhone')}}</span>
               <span>{{userData.PhoneNum ? userData.PhoneNum : '-'}}
@@ -57,11 +57,7 @@
                 </el-tooltip>
               </span>
             </p>
-            <!-- <p>
-              <span class="spns">{{$t('CAM.userList.userWeChat')}}</span>
-              <span>-</span>
-            </p>-->
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="details-right">
@@ -292,6 +288,7 @@
         ref="ruleForm"
         label-width="80px"
         class="demo-ruleForm"
+        @close="ruleForm.Remark=''"
         style="padding:0 10px;box-sizing:boder-box;"
       >
         <el-form-item :label="$t('CAM.userList.userName')" prop="Name">
@@ -300,14 +297,14 @@
         <el-form-item :label="$t('CAM.userList.userRemark')" prop="Remark">
           <el-input v-model="ruleForm.Remark"></el-input>
         </el-form-item>
-        <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum" class="reg">
+        <!-- <el-form-item :label="$t('CAM.userList.userPhone')" prop="PhoneNum" class="reg">
           <el-input v-model="ruleForm.PhoneNum" @change="tel"></el-input>
           <span v-show="telReg">{{$t('CAM.userList.qsrzqdsjh')}}</span>
         </el-form-item>
         <el-form-item :label="$t('CAM.userList.userEmail')" prop="Email" class="reg">
           <el-input v-model="ruleForm.Email" @change="email"></el-input>
           <span v-show="emailReg">{{$t('CAM.userList.qsrzqdyx')}}</span>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="updataUser = false">{{$t('CAM.userList.handClose')}}</el-button>

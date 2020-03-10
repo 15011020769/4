@@ -28,7 +28,7 @@
 
       <el-input
         clearable
-        placeholder="搜索用戶名/ID/SecretId/手機/郵箱/備註"
+        placeholder="搜索用戶名/ID/SecretId/備註"
         size="small"
         class="inputSearch"
         v-model="inpVal"
@@ -116,7 +116,7 @@
 
           <el-table-column :label="$t('CAM.userList.userId')" prop="Uin"></el-table-column>
 
-          <el-table-column :label="$t('CAM.userList.userText')">
+          <!-- <el-table-column :label="$t('CAM.userList.userText')">
             <template slot-scope="scope">
               <span v-show="scope.row.PhoneNum == '' && scope.row.Email ==''">-</span>
               <i
@@ -130,7 +130,7 @@
                 v-show="scope.row.Email"
               ></i>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="操作" width="140">
             <template slot-scope="scope">
               <el-button type="text" @click="addRight(scope.row)">{{$t('CAM.userList.userStrage')}}</el-button>
@@ -195,21 +195,19 @@
       :visible.sync="authorization"
       width="60%"
       :before-close="handleClose"
+      destroy-on-close
       ref="tab1"
     >
-      <div class="container" v-show="strategyShow">
+      <div class="container" v-if="strategyShow">
         <transfer
           ref="transfer"
-          :multipleSelection="multipleSelection"
-          @_multipleSelection="_multipleSelection"
-          :rolePolicies="rolePolicies"
-          :reload="reload"
+          :uin="Uin"
         />
       </div>
 
       <div class="container" v-show="userGroupShow">
         <div class="container-right">
-          <span>{{$t('CAM.userList.listTitle')}}</span>
+          <span>用戶組清單({{userGroupTotalNum}})</span>
           <div>
             <el-input
               v-model="searchGroupValue"
@@ -223,22 +221,37 @@
             </el-input>
           </div>
 
+            <!-- @row-click="selectedRow"
+            @selection-change="handleSelection" -->
           <el-table
-            v-model="searchGroupValue"
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
             style="width: 80%; border:1px solid #ddd;"
-            @row-click="selectedRow"
-            @selection-change="handleSelection"
             :data="userGroup"
-            v-loading="groupLoading"
+            @select="toggleGroup"
+            @select-all="toggleAllGroup"
+            class="user-group-table"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-input size="mini" style="width:20%" />
             <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
             <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="groupName">
+              <template slot-scope="scope">
+                <el-tooltip effect="dark" :content="scope.row.isSelected === 1 ? '當前用戶已被關聯，如需解除關聯請前往詳情頁操作' : scope.row.groupName" placement="top">
+                  <span>{{scope.row.groupName}}</span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <infinite-loading
+              slot="append"
+              :identifier="userGroupInfiniteId"
+              @infinite="userGroups"
+              force-use-infinite-wrapper=".user-group-table .el-table__body-wrapper">
+              <div slot="no-more"></div>
+              <div slot="no-results"></div>
+            </infinite-loading>
           </el-table>
         </div>
 
@@ -249,15 +262,15 @@
             tooltip-effect="dark"
             height="400"
             style="width: 80%;border:1px solid #ddd"
-            :data="userGroupSelect"
+            :data="selectedStrategiesWithoutGroup"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
-            <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="groupName"></el-table-column>
             <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
               &lt;!&ndash;
               <template slot-scope="scope">
                 <el-button
-                  @click.native.prevent="deleteRow(scope.$index,userGroupSelect)"
+                  @click.native.prevent="deleteRow(scope)"
                   type="text"
                   size="small"
                 >{{$t('CAM.userList.userRemove')}}</el-button>
@@ -327,27 +340,31 @@
 <script>
 import {
   LIST_SUBACCOUNTS,
-  USER_GROUP,
+  LIST_GROUPS_V2,
   POLICY_LIST,
   POLICY_USER,
   ADD_USERTOGROUP,
   DELETE_USER,
   RELATE_USER,
   QUERY_POLICY,
-  GET_ALL_SUBSCRIPTION_TYPE
+  GET_ALL_SUBSCRIPTION_TYPE,
+  BATCH_OPERATE_CAM_STRATEGY,
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import Subscribe from "./components/subscribeNew";
-import transfer from "../Role/component/transfer";
+import transfer from "../Role/component/transfer3";
 import NoticeSubscriptionDialog from "./components/NoticeSubscriptionDialog";
 import { datasource } from "./components/NoticeCategoryData";
+import InfiniteLoading from 'vue-infinite-loading'
 export default {
   components: {
     NoticeSubscriptionDialog,
-    transfer
+    transfer,
+    InfiniteLoading,
   },
   data() {
     return {
+      userGroupInfiniteId: 1,
       loadrowC: true,
       groupLoading: true,
       userArr: [],
@@ -390,10 +407,36 @@ export default {
       value: "", //更多操作多选值
       noticeSubscriptionVisible: false,
       subscriberId: 0,
-      subscriberName: ""
+      subscriberName: "",
+      groupIds: [],
+      groupRp: 10,
+      groupPage: 1,
+      userGroupTotalNum: 0,
+      isInfiniteLoading: false,
     };
   },
+  computed: {
+    selectedStrategiesWithoutGroup() {
+      return this.userGroupSelect.filter(s => s.isSelected !== 1)
+    }
+  },
   methods: {
+    toggleGroup(a, b) {
+      this.userGroupSelect = a
+      if (this.groupIds.includes(b.groupId)) {
+        this.groupIds = this.groupIds.filter(selected => selected !== b.groupId)
+      } else {
+        this.groupIds.push(b.groupId)
+      }
+    },
+    toggleAllGroup(all) {
+      this.userGroupSelect = all
+      if (this.groupIds.length === this.userGroup.length) {
+        this.groupIds = []
+      } else {
+        this.groupIds = all.map(g => g.groupId)
+      }
+    },
     addToGroup() {
       if (this.selectData.length != 0) {
         this.title = "添加到組";
@@ -401,7 +444,13 @@ export default {
         this.userGroupShow = true;
         this.strategyShow = false;
         this.uids = this.selectData.map(user => user.Uid); //调用初始化用户组数据
-        this.userGroups();
+        if (this.isInfiniteLoading) {
+          this.groupPage = 1
+          this.userGroup = []
+          this.groupIds = []
+          this.userGroupSelect = []
+          this.userGroupInfiniteId += 1; //调用初始化用户组数据
+        }
       } else {
         this.$message({
           showClose: true,
@@ -458,7 +507,7 @@ export default {
       });
     },
     checkboxT(row, index) {
-      if (row.status == 1) {
+      if (row.isSelected === 1) {
         return false;
       } else {
         return true;
@@ -721,75 +770,103 @@ export default {
       this.strategy();
     },
     //初始化用户组数据
-    userGroups() {
-      this.userGroup = [];
-      // this.selectData = [];
-      this.groupLoading = true;
+    userGroups($state) {
+      // this.userGroup = [];
+      this.isInfiniteLoading = true;
       let params = {
-        Version: "2019-01-16"
+        isFilter: 3,
+        keyword: this.searchGroupValue,
+        rp: this.groupRp,
+        page: this.groupPage
       };
-      if (this.searchGroupValue != null && this.searchGroupValue != "") {
-        params["Keyword"] = this.searchGroupValue;
-      }
+      this.uids.forEach((uid, i) => {
+        params[`filterUids.${i}`] = uid
+      })
       this.axios
-        .post(USER_GROUP, params)
+        .post(LIST_GROUPS_V2, params)
         .then(res => {
-          if (res.Response.Error === undefined) {
-            this.loading = false;
-            this.userArr = res.Response.GroupInfo;
+          this.groupPage += 1
+          this.userGroupTotalNum = res.data.totalNum
+          this.userGroup = this.userGroup.concat(res.data.groupInfo)
+          res.data.groupInfo.forEach(group => {
+            if (group.isSelected === 1) {
+              this.groupIds.push(group.groupId)
+              this.userGroupSelect.push(group)
+            }
+          })
+          console.log(this.groupIds)
+          if (this.groupIds.length) {
+            this.$nextTick(() => {
+              this.userGroup.forEach(group => {
+                if (this.groupIds.includes(group.groupId)) {
+                  this.$refs.multipleOption.toggleRowSelection(group, true)
+                }
+              })
+            })
+          }
+          if (this.userGroup.length === res.data.totalNum) {
+            $state && $state.complete()
           } else {
-            this.loading = false;
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+            $state && $state.loaded()
           }
         })
-        .then(() => {
-          this.$nextTick(() => {
-            Promise.all(
-              this.uids.map(Uid => {
-                const params = {
-                  Version: "2019-01-16",
-                  Uid
-                };
-                return this.axios.post(RELATE_USER, params);
-              })
-            ).then(ress => {
-              const groupInfo = this.userArr;
-              ress.forEach(res => {
-                if (res.Response.Error === undefined) {
-                  groupInfo.forEach(item => {
-                    res.Response.GroupInfo.forEach(val => {
-                      if (val.GroupId === item.GroupId) {
-                        item.status = 1;
-                      } else if (item.status !== 1) {
-                        item.status = 0;
-                      }
-                    });
-                  });
-                } else {
-                  let ErrTips = {
-                    "ResourceNotFound.UserNotExist": "用戶不存在"
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
-              });
-              this.userGroup = groupInfo;
-              this.groupLoading = false;
-            });
-          });
-        });
+        // .then(res => {
+        //   if (res.Response.Error === undefined) {
+        //     this.loading = false;
+        //     this.userArr = res.Response.GroupInfo;
+        //   } else {
+        //     this.loading = false;
+        //     let ErrTips = {};
+        //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //     this.$message({
+        //       message: ErrOr[res.Response.Error.Code],
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //     });
+        //   }
+        // })
+        // .then(() => {
+        //   this.$nextTick(() => {
+        //     Promise.all(
+        //       this.uids.map(Uid => {
+        //         const params = {
+        //           Version: "2019-01-16",
+        //           Uid
+        //         };
+        //         return this.axios.post(RELATE_USER, params);
+        //       })
+        //     ).then(ress => {
+        //       const groupInfo = this.userArr;
+        //       ress.forEach(res => {
+        //         if (res.Response.Error === undefined) {
+        //           groupInfo.forEach(item => {
+        //             res.Response.GroupInfo.forEach(val => {
+        //               if (val.GroupId === item.GroupId) {
+        //                 item.status = 1;
+        //               } else if (item.status !== 1) {
+        //                 item.status = 0;
+        //               }
+        //             });
+        //           });
+        //         } else {
+        //           let ErrTips = {
+        //             "ResourceNotFound.UserNotExist": "用戶不存在"
+        //           };
+        //           let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //           this.$message({
+        //             message: ErrOr[res.Response.Error.Code],
+        //             type: "error",
+        //             showClose: true,
+        //             duration: 0
+        //           });
+        //         }
+        //       });
+        //       this.userGroup = groupInfo;
+        //       this.groupLoading = false;
+        //     });
+        //   });
+        // });
     },
     //搜索用户组数据
     searchGroup() {
@@ -824,136 +901,167 @@ export default {
       this.authorization = true;
       this.userGroupShow = true;
       this.strategyShow = false;
-      this.userGroups(); //调用初始化用户组数据
+      if (this.isInfiniteLoading) {
+        this.groupPage = 1
+        this.userGroup = []
+        this.groupIds = []
+        this.userGroupSelect = []
+        this.userGroupInfiniteId += 1
+      }
     },
     //点击授权
     addRight(val) {
-      const params = {
-        Version: "2019-01-16",
-        TargetUin: val.Uin
-      };
-      this.axios.post(QUERY_POLICY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.rolePolicies = res.Response.List;
-          this.reload = !this.reload;
-        } else {
-          let ErrTips = {
-            "InternalError.SystemError": "內部錯誤",
-            "InvalidParameter.ParamError": "非法入參"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
       this.Uin = val.Uin;
       this.title = "關聯策略";
       this.authorization = true;
       this.userGroupShow = false;
       this.strategyShow = true;
-      this.multipleSelection = [];
-      if (this.$refs.transfer) {
-        this.$refs.transfer._getList();
-      }
-      this.strategy(); //调动初始化策略数据
     },
     //策略与用户组数据弹框确定按钮
     addUserList() {
       if (this.title == "關聯策略") {
-        var addPloicyId = [];
-        this.multipleSelection.forEach(item => {
-          addPloicyId.push(item);
-        });
-        addPloicyId.forEach(item => {
-          let params = {
-            Version: "2019-01-16",
-            PolicyId: item.PolicyId,
-            AttachUin: this.Uin
-          };
-          this.axios.post(POLICY_USER, params).then(data => {
-            if (data.Response.Error === undefined) {
-              this.init();
-              this.$message({
-                message: "授權成功",
-                showClose: true,
-                duration: 0
-              });
-            } else {
-              let ErrTips = {
-                "FailedOperation.PolicyFull": "用戶策略數超過上限",
-                "InternalError.SystemError": "內部錯誤",
-                "InvalidParameter.AttachmentFull":
-                  "principal欄位的授權對象關聯策略數已達到上限",
-                "InvalidParameter.ParamError": "非法入參",
-                "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
-                "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-                "InvalidParameter.UserNotExist":
-                  "principal欄位的授權對象不存在",
-                "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
-                "ResourceNotFound.UserNotExist": "用戶不存在"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[data.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
+        const policyIds = this.$refs.transfer.selectedPolicyId
+        if (!policyIds.length) {
+          return void this.$message({
+            message: "請選擇策略",
+            type: 'error',
+            showClose: true,
+            duration: 0
           });
-        });
-        this.authorization = false;
-      }
-      if (this.title == "添加到組") {
-        var addGroupId = [];
-        this.userGroupSelect.forEach(item => {
-          addGroupId.push(item);
-        });
-        let msg;
-        const info = [];
-        addGroupId.forEach(item => {
-          this.uids.forEach(uid => {
-            const params = {
-              Version: "2019-01-16"
-            };
-            params[`Info.0.Uid`] = uid;
-            params[`Info.0.GroupId`] = item.GroupId;
-
-            this.axios.post(ADD_USERTOGROUP, params).then(res => {
-              if (msg) msg.close();
+        } else {
+          const param = {
+            Version: '2019-01-16',
+            ActionType: 1, // 綁定
+            'RelateUin.0': this.Uin
+          }
+          policyIds.forEach((id, i) => {
+            param[`StrategyId.${i}`] = id
+          })
+          this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
+            .then(res => {
               if (res.Response.Error === undefined) {
-                msg = this.$message({
-                  showClose: true,
-                  message: "添加成功",
-                  duration: 0,
-                  type: "success"
-                });
                 this.init();
+                this.authorization = false
+                this.$message({
+                  message: "授權成功",
+                  showClose: true,
+                  duration: 0,
+                  type: 'success'
+                });
               } else {
                 let ErrTips = {
-                  "InvalidParameter.GroupNotExist": "用戶組不存在",
-                  "InvalidParameter.GroupUserFull":
-                    "用戶組中的子用戶數量達到上限",
-                  "InvalidParameter.UserGroupFull":
-                    "子用戶加入的用戶組數量達到上限",
+                  "FailedOperation.PolicyFull": "用戶策略數超過上限",
+                  "InternalError.SystemError": "內部錯誤",
+                  "InvalidParameter.AttachmentFull":
+                    "principal欄位的授權對象關聯策略數已達到上限",
+                  "InvalidParameter.ParamError": "非法入參",
+                  "InvalidParameter.PolicyIdError": "輸入參數PolicyId不合法",
+                  "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                  "InvalidParameter.UserNotExist":
+                    "principal欄位的授權對象不存在",
+                  "ResourceNotFound.PolicyIdNotFound": "PolicyId指定的資源不存在",
                   "ResourceNotFound.UserNotExist": "用戶不存在"
                 };
                 let ErrOr = Object.assign(ErrorTips, ErrTips);
-                msg = this.$message({
+                this.$message({
                   message: ErrOr[res.Response.Error.Code],
                   type: "error",
                   showClose: true,
                   duration: 0
                 });
               }
-            });
+            })
+        }
+      }
+      if (this.title == "添加到組") {
+        const groups = this.selectedStrategiesWithoutGroup
+        if (!groups.length) {
+          return void this.$message({
+            message: "請選擇用戶組",
+            type: 'error',
+            showClose: true,
+            duration: 0
           });
-        });
-        this.authorization = false;
+        } else {
+          const params = {
+            Version: "2019-01-16"
+          }
+          groups.forEach((g, i) => {
+            this.uids.forEach(uid => {
+              params[`Info.${i}.Uid`] = uid;
+              params[`Info.${i}.GroupId`] = g.groupId;
+            })
+          })
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.authorization = false;
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
+              });
+              this.init();
+            } else {
+              let ErrTips = {
+                "InvalidParameter.GroupNotExist": "用戶組不存在",
+                "InvalidParameter.GroupUserFull":
+                  "用戶組中的子用戶數量達到上限",
+                "InvalidParameter.UserGroupFull":
+                  "子用戶加入的用戶組數量達到上限",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          })
+        }
+        // var addGroupId = [];
+        // this.userGroupSelect.forEach(item => {
+        //   addGroupId.push(item);
+        // });
+        // addGroupId.forEach(item => {
+        //   this.uids.forEach(uid => {
+        //     const params = {
+        //       Version: "2019-01-16"
+        //     };
+        //     params[`Info.0.Uid`] = uid;
+        //     params[`Info.0.GroupId`] = item.GroupId;
+        //   });
+        // });
+        // this.axios.post(ADD_USERTOGROUP, params).then(res => {
+        //   if (res.Response.Error === undefined) {
+        //     this.authorization = false;
+        //     this.$message({
+        //       showClose: true,
+        //       message: "添加成功",
+        //       duration: 0,
+        //       type: "success"
+        //     });
+        //     this.init();
+        //   } else {
+        //     let ErrTips = {
+        //       "InvalidParameter.GroupNotExist": "用戶組不存在",
+        //       "InvalidParameter.GroupUserFull":
+        //         "用戶組中的子用戶數量達到上限",
+        //       "InvalidParameter.UserGroupFull":
+        //         "子用戶加入的用戶組數量達到上限",
+        //       "ResourceNotFound.UserNotExist": "用戶不存在"
+        //     };
+        //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //     msg = this.$message({
+        //       message: ErrOr[res.Response.Error.Code],
+        //       type: "error",
+        //       showClose: true,
+        //       duration: 0
+        //     });
+        //   }
+        // });
       }
     },
     deleteRowHandl() {
@@ -967,9 +1075,11 @@ export default {
       // 设置选中或者取消状态
       this.$refs.multipleOption.toggleRowSelection(row);
     },
-    deleteRow(index, rows) {
-      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
-      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
+    deleteRow({ $index, row }) {
+      this.userGroupSelect = this.userGroupSelect.filter(g => g.groupId !== row.groupId)
+      this.groupIds = this.groupIds.filter(groupId => groupId !== row.groupId)
+      
+      this.$refs.multipleOption.toggleRowSelection(this.userGroup.find(s => s.groupId === row.groupId), false)
     },
     handleSelection(val) {
       // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。

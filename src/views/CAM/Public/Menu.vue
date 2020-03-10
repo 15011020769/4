@@ -63,7 +63,9 @@ export default {
       activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'deal'        // 默认选中的菜单
     };
   },
- 
+  mounted() {
+
+  },
   methods: {
     // 选中菜单点击事件
     handleSelect(key, keyPath) {

@@ -5,8 +5,16 @@
     </div>
     <div class="edit-main">
       <div class="edit-box">
-        <h3>{{$t('CAM.userList.userMessage')}}</h3>
-        <table width="100%" boder="1" cellspacing="0" cellpadding="1">
+         <h3>{{$t('CAM.userList.userMessage')}}</h3>
+        <el-form label-width="120px">
+          <el-form-item :label="$t('CAM.userList.userName')">
+            {{userInfo.Name}}
+          </el-form-item>
+          <el-form-item label="備註">
+            <el-input v-model="userInfo.Remark" style="width: 330px"></el-input>
+          </el-form-item>
+        </el-form>
+        <!--<table width="100%" boder="1" cellspacing="0" cellpadding="1">
           <thead>
             <tr>
               <td width="280">
@@ -34,12 +42,12 @@
               </td>
             </tr>
           </tbody>
-        </table>
+        </table> -->
       </div>
       <div class="edit-box">
         <h3>{{$t('CAM.userList.askMesg')}}</h3>
         <el-form label-width="120px">
-          <el-form-item :label="$t('CAM.userList.askWay')" required>
+          <el-form-item :label="$t('CAM.userList.askWay')">
             <p v-show="userInfo.ConsoleLogin == 1">{{$t('CAM.userList.consoleAsk')}}</p>
             <p v-show="userInfo.ConsoleLogin == 0">{{$t('CAM.userList.noWayAsk')}}</p>
           </el-form-item>
@@ -53,7 +61,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="edit-box" v-if="userInfo.ConsoleLogin === 1">
+      <div class="edit-box" v-if="userInfo.type.includes('1')">
         <h3>{{$t('CAM.userList.policyMesg')}}</h3>
         <el-table
           :data="strategies"

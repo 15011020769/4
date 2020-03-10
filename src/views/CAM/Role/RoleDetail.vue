@@ -161,14 +161,15 @@
                       <span>{{scope.row}}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="條件" v-if="condition.length">
+                  <el-table-column label="條件" v-if="roleCarrierType === 'federated'">
                     <template slot-scope="scope" show-overflow-tooltip>
-                      <span v-if="condition[scope.$index]">
+                      <span v-if="condition[scope.$index].length">
                         {{condition[scope.$index][0].key}} - {{condition[scope.$index][0].condi}} - {{condition[scope.$index][0].val}}
                         <el-button type="text" style="font-size: 12px;" v-if="condition[scope.$index].length > 1">以及({{condition[scope.$index].length - 1}})項</el-button>
                       </span>
                       <span v-else>-</span>
                     </template>
+                    <!-- <span v-else></span> -->
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
@@ -494,6 +495,7 @@ export default {
               _this.roleCarrier.push(...PolicyDocument.statement[0].principal.qcs)
             }
             if (PolicyDocument.statement[0].principal.federated) {
+
               this.roleCarrierType = 'federated'
               _this.roleCarrier = PolicyDocument.statement.map(s => typeof s.principal.federated === 'string' ? s.principal.federated : s.principal.federated[0])
               PolicyDocument.statement.forEach(s => {

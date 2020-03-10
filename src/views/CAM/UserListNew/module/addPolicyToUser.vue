@@ -216,7 +216,7 @@ export default {
           "ActionType": 1, // 绑定
           "RelateUin.0": this.$route.query.Uin
         }
-        this.strategies.forEach((strategy, i) => {
+        this.multipleSelection.forEach((strategy, i) => {
           param[`StrategyId.${i}`] = strategy.PolicyId
         })
         res = await this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
@@ -258,7 +258,7 @@ export default {
         this.loading = false
         return
       } else {
-        this.$router.push(`/detailsUser?detailsData=${this.$route.query.Name}`)
+        this.$router.push(`/detailsUser?detailsData=${this.$route.query.Name}&uid=${this.$route.query.Uid}`)
         this.$message({
           message: '修改成功',
           type: "success",
