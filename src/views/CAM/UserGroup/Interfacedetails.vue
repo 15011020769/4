@@ -1001,9 +1001,7 @@ export default {
       });
     },
     backoff() {
-      this.$router.push({
-        path: "UserGroup"
-      });
+      this.$router.go(-1)
     },
     handleClick(tab, event) {
       if (tab.name === "first") {

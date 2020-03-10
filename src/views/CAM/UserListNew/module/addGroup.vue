@@ -42,12 +42,21 @@
               @selection-change="handleSelection"
               :data="userGroup"
               v-loading="loading"
+              @cell-mouse-enter="userGroupEnter"
+              @cell-mouse-leave="mouseleave"
               :empty-text="$t('CAM.strategy.zwsj')"
             >
               <el-input size="mini" style="width:20%" />
               <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
               <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
-              <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+              <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName">
+                <template slot-scope="scope">
+                  <el-tooltip v-if="scope.row.status !== 1" :content="scope.row.GroupName" effect="dark" placement="top">
+                    <span>{{scope.row.GroupName}}</span>
+                  </el-tooltip>
+                  <span v-else>{{scope.row.GroupName}}</span>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
 
@@ -114,12 +123,16 @@
         >完成</el-button>
       </div>
     </div>
+    <span class="tooltip" ref="userGroupTip">
+      <div class="arrow" data-popper-arrow></div>
+      當前用戶組已被關聯，如需解除關聯請前往詳情頁操作</span>
   </div>
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
 import { USER_GROUP, ADD_USERTOGROUP, RELATE_USER } from "@/constants";
+import { createPopper } from '@popperjs/core/lib/popper-lite.js'
 export default {
   components: {
     Headcom //头部组件
@@ -137,6 +150,18 @@ export default {
     };
   },
   methods: {
+    userGroupEnter(row, column, cell) {
+      if (row.status === 1) {
+        this.ins = createPopper(cell, this.$refs.userGroupTip, {
+          placement: 'top',
+        })
+      }
+    },
+    mouseleave(row) {
+      if (this.ins) {
+        this.ins.destroy()
+      }
+    },
     checkboxT(row, index) {
       if (row.status == 1) {
         return false;
@@ -271,6 +296,32 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.tooltip {
+  background-color: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 13px;
+  position: fixed;
+  top: 100%;
+}
+.arrow,
+.arrow::before {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  z-index: -1;
+}
+
+.arrow::before {
+  content: '';
+  transform: rotate(45deg);
+  background: #333;
+}
+
+.tooltip[data-popper-placement^='top'] > .arrow {
+  bottom: -4px;
+}
 .wrap >>> .el-form-item__label {
   text-align: left;
 }

@@ -135,6 +135,7 @@ export default {
       htmls: "",
       listNumFlag: true, //条数禁用
       option1: [],
+      timeId:null,
       option2: [
         {
           value: "Deployment",
@@ -180,7 +181,7 @@ export default {
       value4: "",
       value5: "",
       value6: "显示100条数据",
-      autoRefresh: true, //自动刷新
+      autoRefresh: false, //自动刷新
       loadShow: true // 加载是否显示
     };
   },
@@ -197,9 +198,9 @@ export default {
   methods: {
     refresh() {
       if (this.autoRefresh === true) {
-        var timeId = setInterval(() => {
+        this.timeId = setInterval(() => {
           this.nameSpaceList();
-        }, 20000);
+        }, 30000);
       } else {
         this.nameSpaceList();
       }
@@ -422,7 +423,7 @@ export default {
     }
   },
   destroyed() {
-    clearInterval(this.refresh);
+    window.clearInterval(this.timeId);
   }
 };
 </script>

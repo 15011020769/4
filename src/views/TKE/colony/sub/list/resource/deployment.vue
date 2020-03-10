@@ -9,6 +9,7 @@
       <div class="grid-left">
         <el-button @click="goWorkloadCreate('Deployment')" size="small" type="primary">新建</el-button>
         <el-button size="small" @click="toMonitor">监控</el-button>
+        <!-- deploymentMonitor -->
       </div>
 
       <!-- 右侧 -->
@@ -221,11 +222,11 @@ export default {
     toMonitor() {
       //跳转监控页面
       this.$router.push({
-        name: "colonyOpenMonitor",
+        name: "deploymentMonitor",
         query: {
           title: this.tit + "(Deployment)",
           type: 'Deployment',
-          list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
           clusterId: this.clusterId,
           spaceName: this.nameSpaceName
         }
@@ -355,6 +356,7 @@ export default {
             });
           }
           this.list = response.items;
+          console.log(this.list)
           console.log( response.items.length)
           this.total = response.items.length;
         } else {
@@ -599,6 +601,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowDeleteModal = false;
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.getDeploymentList();
         } else {
           this.loadShow = false;

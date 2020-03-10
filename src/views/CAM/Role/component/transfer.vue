@@ -141,8 +141,8 @@ export default {
       }
     },
     deleteRow(i, row) {
-      this.selectedStrategies.splice(i, 1)
-      this.selectedPolicyId.splice(i, 1)
+      this.selectedStrategies = this.selectedStrategies.filter(s => s.PolicyId !== row.PolicyId)
+      this.selectedPolicyId = this.selectedPolicyId.filter(policyId => policyId !== row.PolicyId)
       
       this.$refs.strategiesTable.toggleRowSelection(this.strategies.find(s => s.PolicyId === row.PolicyId), false)
     },

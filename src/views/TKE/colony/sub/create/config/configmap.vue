@@ -215,6 +215,21 @@ export default {
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error == undefined) {
             this.$router.go(-1);
+            this.$message({
+                type: "success",
+                message: "新建成功",
+                duration: 0,
+                showClose: true
+              });
+          }else{
+             let ErrTips = {};
+            let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         });
       }

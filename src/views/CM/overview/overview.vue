@@ -1,23 +1,23 @@
 <template>
   <div class="overview-wrap">
-    <Header title="监控概览" />
+    <Header :title="$t('CVM.jkgl')" />
     <div class="overview-main">
       <div class="explain">
         <p>
-          新版自定义监控已灰度上线，目前处于内测阶段，如需使用可
-          <a>申请内测体验</a>
+          {{$t('CVM.overview.xbysx')}}
+          <a>{{$t('CVM.overview.sqncty')}}</a>
         </p>
         <p>
-          站点监控全新升级，前往
-          <a>流量监控</a> 配置了解更多
+          {{$t('CVM.overview.zdjk')}}
+          <a>{{$t('CVM.lljk')}}</a> {{$t('CVM.overview.pzljgd')}}
         </p>
         <p>
-          [我关注的指标]模块已迁移至
-          <a>dashboard</a>，欢迎前往体验更丰富的监控面板自定义功能
+          [{{$t('CVM.overview.wgzd')}}
+          <a>dashboard</a>，{{$t('CVM.overview.hyty')}}
         </p>
         <p>
-          公网流量监控数据请到
-          <a>流量监控</a>页面查看
+          {{$t('CVM.overview.gwlljksj')}}
+          <a>{{$t('CVM.lljk')}}</a>{{$t('CVM.overview.ymck')}}
         </p>
       </div>
       <div class="main-box">
@@ -25,12 +25,12 @@
           <!-- 近24小时服务健康状态 -->
           <div class="box">
             <div class="head">
-              <h3>近24小时服务健康状态</h3>
+              <h3>{{$t('CVM.overview.fwjkzt')}}</h3>
               <el-button v-show="region != ''">{{region}}</el-button>
               <el-button icon="el-icon-loading" v-show="region == ''"></el-button>
               <el-select
                 v-model="value1"
-                placeholder="请选择"
+                :placeholder="$t('CVM.Dashboard.qxz')"
                 style="width:140px;margin-left:-1px;"
                 @change="getProjectList"
               >
@@ -42,17 +42,17 @@
                 ></el-option>
               </el-select>
             </div>
-            <el-table :data="tableData" style="width: 100%" height="450">
-              <el-table-column prop="projectName" label="服务类型"></el-table-column>
-              <el-table-column prop="name" label="当前状态"></el-table-column>
-              <el-table-column prop="address" label="影响对象数"></el-table-column>
+            <el-table :data="tableData" style="width: 100%" height="450"  :empty-text="$t('CVM.clBload.zwsj')">
+              <el-table-column prop="projectName" :label="$t('CVM.overview.fwlx')"></el-table-column>
+              <el-table-column prop="name" :label="$t('CVM.overview.dqzt')"></el-table-column>
+              <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')"></el-table-column>
             </el-table>
           </div>
           <!-- 近7天监控时间轴 -->
           <div class="box">
             <div class="head">
-              <h3>近7天监控时间轴</h3>
-              <el-select v-model="value2" placeholder="请选择" style="width:140px;margin-left:-1px;">
+              <h3>{{$t('CVM.overview.jksjz')}}</h3>
+              <el-select v-model="value2" :placeholder="$t('CVM.Dashboard.qxz')" style="width:140px;margin-left:-1px;">
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -60,7 +60,7 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-select v-model="value3" placeholder="请选择" style="width:140px;margin-left:-1px;">
+              <el-select v-model="value3" :placeholder="$t('CVM.Dashboard.qxz')" style="width:140px;margin-left:-1px;">
                 <el-option
                   v-for="item in options3"
                   :key="item.value"
@@ -80,44 +80,44 @@
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
-                当月已使用短信统计
+                {{$t('CVM.overview.dxtj')}}
                 <el-tooltip class="item" effect="light" placement="bottom">
                   <div slot="content">
-                    告警短信发送优先扣除每月免费短信配额，免费配额
-                    <br />用完后再扣除用户已购短信配额。
-                    <br />免费配额每个月1号重置为1000条。
+                    {{$t('CVM.overview.gjdx')}}
+                    <br />{{$t('CVM.overview.dxpe')}}
+                    <br />{{$t('CVM.overview.mfpe')}}
                   </div>
                   <i class="el-icon-info cursor"></i>
                 </el-tooltip>
               </h3>
-              <a @click="buyMessgae">购买短信</a>
+              <a @click="buyMessgae">{{$t('CVM.overview.gmdx')}}</a>
             </div>
             <div class="box-main" style="margin-top:10px;">
               <div class="progress">
                 <p>
-                  基础告警
-                  <span>剩余1000条/已使用0条</span>
+                  {{$t('CVM.overview.jcgj')}}
+                  <span>{{$t('CVM.overview.syysy')}}</span>
                 </p>
                 <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  云拨测告警
-                  <span>剩余1000条/已使用0条</span>
+                  {{$t('CVM.overview.ybcgj')}}
+                  <span>{{$t('CVM.overview.syysy')}}</span>
                 </p>
                 <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  自定义监控告警
-                  <span>剩余1000条/已使用0条</span>
+                  {{$t('CVM.overview.zdyjkgj')}}
+                  <span>{{$t('CVM.overview.syysy')}}</span>
                 </p>
                 <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  自定义消息
-                  <span>剩余1000条/已使用0条</span>
+                  {{$t('CVM.overview.zdyxx')}}
+                  <span>{{$t('CVM.overview.syysy')}}</span>
                 </p>
                 <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
               </div>
@@ -147,19 +147,19 @@ export default {
       options1: [
         {
           value: 0,
-          label: "所有项目"
+          label: "所有專案"
         }
       ],
       options2: [
         {
           value: 0,
-          label: "所有项目"
+          label: "所有專案"
         }
       ],
       options3: [],
       //下拉框选中的值
-      value1: "所有项目",
-      value2: "所有项目",
+      value1: "所有專案",
+      value2: "所有專案",
       value3: ""
     };
   },
@@ -206,8 +206,8 @@ export default {
           });
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

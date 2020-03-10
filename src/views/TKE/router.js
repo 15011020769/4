@@ -380,6 +380,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/daemonSet/setStrategy', //设置更新策略
+      name: 'daemonSetStrategy',
+      component: () => import('./colony/sub/update/resource/daemonSet/setStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/update/resource/updateStrategy',//更新调度策略
       name: 'updateStrategy',
       component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
@@ -681,6 +689,14 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/resource/deployment/openMonitor', // 工作负载-Deployment-详情
+      name: 'deploymentMonitor',
+      component: () => import('./colony/sub/detail/resource/deployment/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/detail/resource/statefulSet', // 工作负载-StatefulSet-详情
       name: 'statefulSetDetail',
       component: () => import('./colony/sub/detail/resource/statefulSet/index.vue'),
@@ -733,6 +749,14 @@ export default new Router({
       ]
     },
     {
+      path: '/colony/sub/detail/resource/statefulSet/openMonitor', // 工作负载-Deployment-详情
+      name: 'statefulSetMonitor',
+      component: () => import('./colony/sub/detail/resource/statefulSet/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/detail/resource/daemonSet', // 工作负载-DaemonSet-详情
       name: 'daemonSetDetail',
       component: () => import('./colony/sub/detail/resource/daemonSet/index.vue'),
@@ -783,6 +807,14 @@ export default new Router({
           }
         }
       ]
+    },
+     {
+      path: '/colony/sub/detail/resource/daemonSet/openMonitor', // 工作负载-Deployment-详情
+      name: 'daemonSetMonitor',
+      component: () => import('./colony/sub/detail/resource/daemonSet/openMonitor.vue'),
+      meta: {
+        keepAlive: true
+      }
     },
     {
       path: '/colony/sub/detail/resource/job', // 工作负载-Job-详情

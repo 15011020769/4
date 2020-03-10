@@ -1,7 +1,7 @@
 <template>
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
-      <el-select v-model="panelValue" placeholder="请选择" style="margin:0 20px 0 40px;width:260px">
+      <el-select v-model="panelValue" :placeholder="$t('CVM.Dashboard.qxz')" style="margin:0 20px 0 40px;width:260px">
         <el-option
           v-for="item in options"
           :key="item.value"
@@ -13,16 +13,16 @@
         class="addPanel"
         style="font-size:12px;font-weight:20"
         @click="buyMessgae"
-      >添加监控面板</a>
+      >{{$t('CVM.Dashboard.tjjkmb')}}</a>
       <AddPanel :dialogVisible="panelFlag" @cancel="cancel" @save="save" />
     </Header>
     <div class="Dashboard-main">
       <div class="explain">
-        <p>现已支持配置和查看一批资源的聚合统计数据，请在新建图表配置中选择“聚合视图”。</p>
-        <p>现已支持查看曲线中所有实例的排序列表，原hover展示实例数据改为点击曲线图查看该时刻数据明细与排序结果，并支持报表导出。</p>
+        <p>{{$t('CVM.Dashboard.jhtjsj')}}</p>
+        <p>{{$t('CVM.Dashboard.zcbbdc')}}</p>
       </div>
       <div class="headBtn">
-        <el-button type="primary">添加监控图表</el-button>
+        <el-button type="primary">{{$t('CVM.Dashboard.tjjktb')}}</el-button>
         <div style="display:flex;align-items:center;">
           <TimeX v-on:switchData="GetData" :classsvalue="value"></TimeX>
           <i class="el-icon-refresh"></i>
@@ -31,13 +31,13 @@
               <i class="el-icon-more"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <p style="color:#888;">自动重新整理</p>
-              <el-dropdown-item>暂停</el-dropdown-item>
+              <p style="color:#888;">{{$t('CVM.Dashboard.zdcxzl')}}</p>
+              <el-dropdown-item>{{$t('CVM.Dashboard.zting')}}</el-dropdown-item>
               <el-dropdown-item>30秒</el-dropdown-item>
-              <el-dropdown-item>1分钟</el-dropdown-item>
-              <el-dropdown-item>2分钟</el-dropdown-item>
-              <el-dropdown-item>5分钟</el-dropdown-item>
-              <el-dropdown-item>10分钟</el-dropdown-item>
+              <el-dropdown-item>1{{$t('CVM.Dashboard.fzhong')}}</el-dropdown-item>
+              <el-dropdown-item>2{{$t('CVM.Dashboard.fzhong')}}</el-dropdown-item>
+              <el-dropdown-item>5{{$t('CVM.Dashboard.fzhong')}}</el-dropdown-item>
+              <el-dropdown-item>10{{$t('CVM.Dashboard.fzhong')}}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </div>
@@ -47,7 +47,7 @@
           <div class="chartItem">
             <p>
               <b>
-                明细-CPU利用率
+                {{$t('CVM.Dashboard.mx')}}-CPU利用率
                 <span style="color:#888">（%）</span>
               </b>
               <el-row>
@@ -57,11 +57,11 @@
                     <i class="el-icon-more"></i>
                   </span>
                   <el-dropdown-menu slot="dropdown">
-                    <el-dropdown-item>复制图表</el-dropdown-item>
-                    <el-dropdown-item>编辑</el-dropdown-item>
-                    <el-dropdown-item>导出数据</el-dropdown-item>
-                    <el-dropdown-item>导出图片</el-dropdown-item>
-                    <el-dropdown-item @click="deleteChart">删除</el-dropdown-item>
+                    <el-dropdown-item>{{$t('CVM.Dashboard.fztb')}}</el-dropdown-item>
+                    <el-dropdown-item>{{$t('CVM.Dashboard.bj')}}</el-dropdown-item>
+                    <el-dropdown-item>{{$t('CVM.clBload.dcsj')}}</el-dropdown-item>
+                    <el-dropdown-item>{{$t('CVM.Dashboard.dctp')}}</el-dropdown-item>
+                    <el-dropdown-item @click="deleteChart">{{$t('CVM.Casegrouping.sc')}}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
               </el-row>
@@ -74,15 +74,15 @@
           </div>
           <div class="open">
             <p>
-              <span>共2个实例</span>
+              <span>{{$t('CVM.Dashboard.ygsl')}}</span>
               <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
             </p>
             <p>
               <span v-show="retractChartFlag">
-                <a @click="exportChart">导出</a>
+                <a @click="exportChart">{{$t('CVM.Dashboard.dc')}}</a>
                 <i class="el-icon-info" style="color:#888"></i>
               </span>
-              <a v-show="openChartFlag" @click="openChart" style="margin-left:30px;">展开</a>
+              <a v-show="openChartFlag" @click="openChart" style="margin-left:30px;">{{$t('CVM.Dashboard.zk')}}</a>
               <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
             </p>
           </div>
@@ -102,18 +102,18 @@ export default {
   data() {
     return {
       panelFlag: false, //面板开关
-      panelValue: "监控面板01", //监控面板默认值
+      panelValue: "監控面板01", //监控面板默认值
       options: [
         {
-          value: "选项1",
-          label: "监控面板01"
+          value: "選項1",
+          label: "監控面板01"
         },
         {
-          value: "选项2",
-          label: "监控面板02"
+          value: "選項2",
+          label: "監控面板02"
         }
       ],
-      openName: "展开", //展开收起名字显示
+      openName: "展開", //展开收起名字显示
       openChartFlag: true, //展开图表开关
       retractChartFlag: false,
       value: 13, //时间
@@ -125,19 +125,19 @@ export default {
       options1: [
         {
           value: 0,
-          label: "所有项目"
+          label: "所有專案"
         }
       ],
       options2: [
         {
           value: 0,
-          label: "所有项目"
+          label: "所有專案"
         }
       ],
       options3: [],
       //下拉框选中的值
-      value1: "所有项目",
-      value2: "所有项目",
+      value1: "所有專案",
+      value2: "所有專案",
       value3: ""
     };
   },
@@ -180,7 +180,7 @@ export default {
     }, //收起
     exportChart() {
       //导出图表
-      alert("导出");
+      alert("導出");
     },
     deleteChart() {
       //删除图表

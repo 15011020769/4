@@ -28,13 +28,33 @@
             tooltip-effect="dark"
             style="width: 100%"
             @selection-change="handleSelectionChange"
+            v-loading="loadShow"
+            height="500px"
           >
             <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column label="ID/主机名"></el-table-column>
-            <el-table-column prop="name" label="状态"> </el-table-column>
-            <el-table-column label="网络类型"> </el-table-column>
-            <el-table-column label="IP地址"> </el-table-column>
-            <el-table-column label="地域"> </el-table-column>
+            <el-table-column label="ID/主机名">
+              <template slot-scope="scope">
+                <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                <p>{{ scope.row.InstanceName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态">
+              <template slot-scope="scope">
+                <span>{{ InstanceState(scope.row.InstanceState) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="网络类型">
+              VPC 网络
+            </el-table-column>
+            <el-table-column label="IP地址">
+              <template slot-scope="scope">
+                <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+                <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="地域">
+              中国台北
+            </el-table-column>
             <el-table-column prop="address" label="操作">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="Editor(scope.row)">移出</a>
@@ -151,12 +171,13 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import { CM_GROUPING_MANAGE } from "@/constants";
+import { CM_GROUPING_MANAGE, CM_GROUPING_MANAGELIST } from "@/constants";
 export default {
   data() {
     return {
       activeName: "first",
       enterList: [],
+      loadShow: true,
       multipleSelection: [],
       multipleSelection1: [],
       newBuildByVal: {
@@ -190,6 +211,7 @@ export default {
   },
   methods: {
     async ListInit() {
+      this.loadShow = true;
       let param = {
         instanceGroupId: this.Rules.instanceGroupId,
         lang: "zh",
@@ -198,12 +220,40 @@ export default {
       };
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         // if (res.Response.Error === undefined) {
-        console.log(res.data.instanceList);
-        console.log(res.data);
         var _enterList = res.data.instanceList;
+        console.log(_enterList);
         this.total = res.data.total;
-        let params = {};
-        this.axios.post(CM_GROUPING_MANAGE, params).then(res => {});
+        let params = {
+          Version: "2017-03-12",
+          Limit: this.pageSize
+        };
+        for (let i in _enterList) {
+          params["InstanceIds." + i] = _enterList[i].dimensions.unInstanceId;
+        }
+        this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+          if (res.Response.Error === undefined) {
+            this.enterList = res.Response.InstanceSet;
+            console.log(this.enterList);
+            this.loadShow = false;
+          } else {
+            let ErrTips = {
+              FailedOperation: "操作失败",
+              InternalError: "内部错误",
+              "InternalError.Param": "Param。",
+              "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+              InvalidParameter: "参数错误",
+              ResourceNotFound: "资源不存在",
+              ResourceUnavailable: "资源不可用"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
         // } else {
         //   let ErrTips = {};
         //   let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -215,6 +265,26 @@ export default {
         //   });
         // }
       });
+    },
+    // 状态
+    InstanceState(val) {
+      if (val === "PENDING") {
+        return "创建中";
+      } else if (val === "LAUNCH_FAILED") {
+        return "创建失败";
+      } else if (val === "RUNNING") {
+        return "运行中";
+      } else if (val === "STOPPED") {
+        return "关机";
+      } else if (val === "STARTING") {
+        return "关机中";
+      } else if (val === "REBOOTING") {
+        return "重启中";
+      } else if (val === "SHUTDOWN") {
+        return "停止待销毁";
+      } else if (val === "TERMINATING") {
+        return "销毁中";
+      }
     },
     save() {},
     // 编辑

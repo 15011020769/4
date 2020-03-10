@@ -1,22 +1,6 @@
 <template>
   <div>
     <div>
-      <!-- <el-dialog
-        title="選擇域名类型"
-        :visible.sync="addDominModel"
-        width="45%"
-        :before-close="handleClose">
-        <div>
-          <el-radio-group v-model="checkDomin">
-            <p class="pDomin"><el-radio :label="1">&nbsp;</el-radio><span class="dominChos"><i>自有域名：</i>使用自己现有备案过的域名</span></p>
-            <p><el-radio :label="2">&nbsp;</el-radio><span class="dominChos"><i>域名租赁：</i>若您无自有域名，可付费租赁直播域名供短期使用，租赁需先完成人脸身份核验</span></p>
-          </el-radio-group>
-        </div>
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="addDominSure">确 定</el-button>
-        </span>
-      </el-dialog>-->
       <el-dialog
         title="添加域名"
         :visible.sync="addDominModel"
@@ -87,67 +71,66 @@
           </div>
         </div>
         <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="addDominSure">确定</el-button>
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="addDominSure">確 定</el-button>
         </span>
       </el-dialog>
     </div>
   </div>
 </template>
 <script>
-import { ADD_DOMAIN } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../../components/CSSErrorTips";
+import { ADD_DOMAIN } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
   props: {
     isShow: Boolean
   },
   computed: {
-    addDominModel() {
-      return this.isShow;
+    addDominModel () {
+      return this.isShow
     }
   },
-  data() {
+  data () {
     return {
-      dialogmodel: "", //弹框
-      //添加域名表单
+      dialogmodel: '', // 弹框
+      // 添加域名表单
       dominForm: {
-        DominName: "",
+        DominName: '',
         DomainType: 0,
-        region: "1"
+        region: '1'
       },
       PlayType: 1,
-      speedAre1: false, //监测加速区域select  全球
-      speedAre2: false, //监测加速区域select  境外
+      speedAre1: false, // 监测加速区域select  全球
+      speedAre2: false, // 监测加速区域select  境外
 
-      checkDomin: "", //選擇域名类型
-      addDominModel2: false, //添加域名
+      checkDomin: '', // 選擇域名类型
+      addDominModel2: false, // 添加域名
       addDominModel3: false,
       errorTips: false
-    };
+    }
   },
   methods: {
-    //初始化数据和显示标记
-    initData() {
+    // 初始化数据和显示标记
+    initData () {
       this.dominForm = {
-        DominName: "",
+        DominName: '',
         DomainType: 0,
-        region: "1"
-      };
-      this.PlayType = 1;
-      this.changePlayType();
+        region: '1'
+      }
+      this.PlayType = 1
+      this.changePlayType()
     },
-    //关闭弹框
-    handleClose() {
-      //TODO
-      this.initData();
-      this.dialogmodel = false;
-      this.$emit("closeAddModel", this.dialogmodel);
+    // 关闭弹框
+    handleClose () {
+      // TODO
+      this.initData()
+      this.dialogmodel = false
+      this.$emit('closeAddModel', this.dialogmodel)
     },
-    validateDomainName() {
+    validateDomainName () {
       if (this.dominForm.DominName.length === 0) {
-        this.errorTips = "請輸入域名";
-        return false;
+        this.errorTips = '請輸入域名'
+        return false
       }
 
       if (
@@ -155,73 +138,72 @@ export default {
           this.dominForm.DominName
         )
       ) {
-        this.errorTips = "域名格式錯誤，請輸入正確格式。";
-        return false;
+        this.errorTips = '域名格式錯誤，請輸入正確格式。'
+        return false
       }
 
       if (this.dominForm.DominName.length > 30) {
-        this.errorTips = "域名超出30位長度限制，請更換域名或者提交工單解決";
-        return false;
+        this.errorTips = '域名超出30位長度限制，請更換域名或者提交工單解決'
+        return false
       }
 
-      this.errorTips = "";
-      return true;
+      this.errorTips = ''
+      return true
     },
-    domainNameInputOnBlur(e) {
-      this.validateDomainName();
+    domainNameInputOnBlur (e) {
+      this.validateDomainName()
     },
-    //添加域名确定按钮
-    addDominSure() {
+    // 添加域名确定按钮
+    addDominSure () {
       // console.log(this.dominForm, this.PlayType);
 
       if (!this.validateDomainName()) {
-        return;
+        return
       }
 
-      //TODO
+      // TODO
       let params = {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         DomainName: this.dominForm.DominName,
         DomainType: this.dominForm.DomainType
-      };
+      }
       this.axios.post(ADD_DOMAIN, params).then(({ Response }) => {
         if (Response.Error) {
-          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-          let errorMessage = ErrOr[Response.Error.Code];
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
-            type: "error",
-            message:
-              errorMessage !== undefined && errorMessage.length > 0
-                ? errorMessage
-                : "添加失敗"
-          });
-          return;
+            type: 'error',
+            message: ErrOr[Response.Error.Code],
+            showClose: true,
+            duration: 0
+          })
+          return
         }
-        this.initData();
-        this.dialogmodel = false;
-        this.$emit("closeAddModel", this.dialogmodel);
-        this.$parent.describeLiveDomains();
-      });
+        this.initData()
+        this.dialogmodel = false
+        this.$emit('closeAddModel', this.dialogmodel)
+        this.$parent.describeLiveDomains()
+      })
     },
-    //域名类型change事件
-    selectDominType() {
-      console.log(this.dominForm.DomainType);
+    // 域名类型change事件
+    selectDominType () {
+      console.log(this.dominForm.DomainType)
     },
-    //加速区域change事件
-    changePlayType() {
-      if (this.PlayType == "1") {
-        this.speedAre1 = false;
-        this.speedAre2 = false;
-      } else if (this.PlayType == "2") {
-        this.speedAre1 = true;
-        this.speedAre2 = false;
-      } else if (this.PlayType == "3") {
-        this.speedAre2 = true;
-        this.speedAre1 = false;
+    // 加速区域change事件
+    changePlayType () {
+      if (this.PlayType == '1') {
+        this.speedAre1 = false
+        this.speedAre2 = false
+      } else if (this.PlayType == '2') {
+        this.speedAre1 = true
+        this.speedAre2 = false
+      } else if (this.PlayType == '3') {
+        this.speedAre2 = true
+        this.speedAre1 = false
       }
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

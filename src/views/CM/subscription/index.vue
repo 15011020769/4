@@ -9,14 +9,16 @@
       <el-table :data="tableData" style="width: 100%;">
         <el-table-column label="事件类型" width="180">
           <template slot-scope="scope">
-            <span style="margin-left: 0px;flex-wrap:nowrap">{{ scope.row.type }}</span>
+            <span style="margin-left: 0px;flex-wrap:nowrap">{{
+              scope.row.type
+            }}</span>
             <i class="el-icon-info" style="margin:0 5px;"></i>
           </template>
         </el-table-column>
         <el-table-column label="短信" width="180">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.type==0?false:true"
+              v-if="scope.row.type == 0 ? false : true"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -26,7 +28,7 @@
         <el-table-column label="邮件" width="180">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.email==0?false:true"
+              v-if="scope.row.email == 0 ? false : true"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -36,7 +38,7 @@
         <el-table-column label="站内信" width="180">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.zhanneixin==0?false:true"
+              v-if="scope.row.zhanneixin == 0 ? false : true"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -51,12 +53,23 @@
         </el-table-column>-->
         <el-table-column label>
           <template :slot-scope="$scope.row">
-            <el-button type="text" class="btn subBtn" @click="dialogSubscribe = true">订阅管理</el-button>
-            <el-button type="text" class="btn unSubBtn" @click="dialogcancel = true">取消订阅</el-button>
+            <el-button
+              type="text"
+              class="btn subBtn"
+              @click="dialogSubscribe = true"
+              >订阅管理</el-button
+            >
+            <el-button
+              type="text"
+              class="btn unSubBtn"
+              @click="dialogcancel = true"
+              >取消订阅</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
     </div>
+    <!-- 订阅管理 -->
     <el-dialog title="订阅管理" :visible.sync="dialogSubscribe" width="640px">
       <div class="list">
         <p>
@@ -66,16 +79,21 @@
             :label="city"
             :key="city"
             style="margin:0 10px;"
-          >{{city}}</el-checkbox>
+            >{{ city }}</el-checkbox
+          >
         </p>
-        <p style="display:flex;justify-content: space-between;">
+        <p class="search">
           <span>
             请选择接收人(已选
-            <b>{{num}}</b>人)
+            <b>{{ num }}</b
+            >人)
           </span>
           <el-row class="seek" style="display:flex;">
             <el-input v-model="triggerSearch" placeholder="搜索"></el-input>
-            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+            <el-button
+              icon="el-icon-search"
+              style="margin-left:-1px;"
+            ></el-button>
           </el-row>
         </p>
         <el-table
@@ -87,22 +105,32 @@
           class="receiver"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="用户名" width="120">
+          <el-table-column label="用户名">
             <template slot-scope="scope">{{ scope.row.date }}</template>
           </el-table-column>
-          <el-table-column prop="name" label="手机号" width="120"></el-table-column>
-          <el-table-column prop="address" label="邮箱" show-overflow-tooltip></el-table-column>
+          <el-table-column prop="name" label="手机号"></el-table-column>
+          <el-table-column prop="address" label="邮箱"></el-table-column>
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer center">
-        <el-button class="subscribe" type="primary" @click="dialogSubscribe = false">确定</el-button>
+        <el-button
+          class="subscribe"
+          type="primary"
+          @click="dialogSubscribe = false"
+          >确定</el-button
+        >
         <el-button @click="dialogSubscribe = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog title="取消订阅" :visible.sync="dialogcancel" width="30%">
       <span>取消订阅云服务器存储问题？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button class="cancelsubscribe" type="primary" @click="dialogcancel = false">取消订阅</el-button>
+        <el-button
+          class="cancelsubscribe"
+          type="primary"
+          @click="dialogcancel = false"
+          >取消订阅</el-button
+        >
         <el-button @click="dialogcancel = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -204,8 +232,8 @@ export default {
   line-height: 24px;
   font-size: 14px;
 }
-.subscription-wrap >>> .center{
-    text-align: center;
+.subscription-wrap >>> .center {
+  text-align: center;
 }
 .dialog-footer {
   text-align: center;
@@ -246,8 +274,8 @@ export default {
     position: absolute;
     width: 97%;
     top: 66px;
-    border-bottom: 1px solid #eee;
-    border-top: 1px solid #eee;
+    // border-bottom: 1px solid #eee;
+    // border-top: 1px solid #eee;
     z-index: 100;
     vertical-align: middle;
 
@@ -256,6 +284,30 @@ export default {
     }
     span {
       margin: 0 10px;
+    }
+  }
+}
+.list {
+  ::v-deep .el-table {
+    border: 1px solid #ebeef5;
+    margin-left: 1px;
+    margin-top: 10px;
+  }
+  ::v-deep .el-table__body {
+    width: 98%;
+  }
+  .search {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    ::v-deep .el-input__inner {
+      border-radius: 0;
+      height: 30px;
+    }
+    ::v-deep .el-button {
+      padding: 0 20px;
+      border-radius: 0;
+      height: 30px;
     }
   }
 }

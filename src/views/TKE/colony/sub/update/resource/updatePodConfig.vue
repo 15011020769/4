@@ -92,7 +92,7 @@
                  <el-form-item label="镜像">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
                    <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">选择镜像</el-button>
-                   <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
+                   <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
                  </el-form-item>
                  <el-form-item label="镜像版本（Tag）">
                    <el-input class="w192" v-model="v.versions"></el-input>
@@ -379,15 +379,15 @@
            <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">显示高级设置</a>
            <div v-show="highLevelSetShow2">
             <el-form-item label="imagePullSecrets">
-              <el-select   v-model='upn.type' style="margin-top:10px" >
+              <el-select   v-model='upn.type1' disabled style="margin-top:10px" >
                 <el-option value='1'>
                 </el-option>
               </el-select><br>
-              <el-select  v-model='upn.type' style="margin-top:10px">
+              <el-select  v-model='upn.type2' disabled style="margin-top:10px">
                 <el-option value='1'>
                 </el-option>
               </el-select>
-              <p>添加</p>
+              <p style="cursor:pointer">添加</p>
             </el-form-item>
             <a @click="highLevelSetShow2=!highLevelSetShow2">隐藏高级设置</a>
          </div>
@@ -549,8 +549,8 @@ export default {
       isAddContainer: false, // 是否可以点击 添加容器
       // 更新pod数量
       upn: {
-        type: '1',
-        num: 0,
+        type1: 'qcloudregistrykey',
+        type2: 'tencenthubkey',
       },
       touchTactics: [{
         touch1: 'CPU',
@@ -1057,6 +1057,9 @@ export default {
         num =parseInt(num)
       }
       return num
+  },
+  close(val){
+    console.log(val)
   },
   //返回上一层
   goBack() {

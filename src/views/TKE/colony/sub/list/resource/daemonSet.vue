@@ -205,9 +205,13 @@ export default {
     toMonitor() {
       //跳转监控页面
       this.$router.push({
-        name: "colonyOpenMonitor",
+        name: "daemonSetMonitor",
         query: {
-          title: this.tit + "(daemonSet)"
+          title: this.tit + "(DaemonSet)",
+          type: 'Deployment',
+          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          clusterId: this.clusterId,
+          spaceName: this.searchType
         }
       });
     },
@@ -388,7 +392,7 @@ export default {
     //设置更新策略
     goSetUpdateTactics(rowData){
       this.$router.push({
-        name:'setStrategy',
+        name:'daemonSetStrategy',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
@@ -445,6 +449,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowDeleteModal = false;
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.getDaemonSetList();
         } else {
           this.loadShow = false;

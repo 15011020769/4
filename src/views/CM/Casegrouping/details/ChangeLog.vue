@@ -153,7 +153,9 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.ListInit();
-    }
+    },
+    handleSelectionChange(val) {},
+    handleClose() {}
   }
 };
 </script>

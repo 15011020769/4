@@ -491,7 +491,7 @@
             </div>
           </div>
           <!-- 实例数量 -->
-          <div style="margin-bottom: 18px">
+          <div style="margin-bottom: 18px" v-show="wl.type === 'Deployment' || wl.type === 'StatefulSet'">
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例数量</label>
             <div style="margin-left: 120px">
               <el-form-item label-width="0px">
@@ -594,23 +594,29 @@
                 <!-- 策略配置 -->
                 <div style="margin-bottom: 18px">
                   <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">策略配置</label>
-                  <div v-show="wl.type!=='CronJob' && wl.type!=='Job'">
-                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics !== 3">
-                      <el-form-item label="Pods">
-                        <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）" v-model="wl.configTacticsPods"></el-input>
-                        <p>Pod将批量启动或停止</p>
-                      </el-form-item>
-                    </div>
-                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics === 3">
-                      <el-form-item label="MaxSurge">
-                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxSurge"></el-input>
-                        <p>允许超出所需规模的最大Pod数量</p>
-                      </el-form-item>
-                      <el-form-item label="MaxUnavailable">
-                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxUnavailable"></el-input>
-                        <p>允许最大不可用的Pod数量</p>
-                      </el-form-item>
-                    </div>
+                  <div style="margin-left: 120px;width: 350px;" class="form-controls">
+                    <el-form-item label="Pods" v-show="wl.type === 'Deployment' && wl.updateTactics !== 3">
+                      <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsPods"></el-input>
+                      <p>Pod将批量启动或停止</p>
+                    </el-form-item>
+                    <el-form-item label="MaxSurge" v-show="wl.type === 'Deployment' && wl.updateTactics === 3">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsMaxSurge"></el-input>
+                      <p>允许超出所需规模的最大Pod数量</p>
+                    </el-form-item>
+                    <el-form-item label="MaxUnavailable"
+                                  v-show="(wl.type === 'Deployment' && wl.updateTactics === 3) || wl.type === 'DaemonSet'">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsMaxUnavailable"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </el-form-item>
+                    <el-form-item label="Partition"
+                                  v-show="wl.type === 'StatefulSet'">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsPartition"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -1046,6 +1052,7 @@
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitAdd()">创建Workload</el-button>
           <el-button size="small" @click="()=>$router.back()">取消</el-button>
+          <div class="tke-fe-alert tke-fe-alert--error" v-if="submitErrorMessage">{{submitErrorMessage}}</div>
         </div>
       </div>
     </div>
@@ -1122,9 +1129,10 @@ export default {
         updateWay: '滚动更新（推荐）',
         updateTactics: 1, // 更新策略 单选
         updateInterval: 0, // 更新间隔
-        configTacticsPods: 1, // 配置策略-》pods
-        configTacticsMaxSurge: '', // 配置策略-》MaxSurge
-        configTacticsMaxUnavailable: '', // 配置策略-》MaxUnavailable
+        configTacticsPods: 1, // 配置策略-》pods (出现条件：type === 'Deployment' && updateTactics !== 3)
+        configTacticsMaxSurge: '25%', // 配置策略-》MaxSurge (出现条件：type === 'Deployment' && updateTactics === 3)
+        configTacticsMaxUnavailable: '25%', // 配置策略-》MaxUnavailable (出现条件：(type === 'Deployment' && updateTactics === 3) || type === 'DaemonSet')
+        configTacticsPartition: '0', // 配置策略-》Partition (出现条件：type === 'StatefulSet')
         mustCondition: [], // 强制满足条件
         needCondition: [], // 尽量满足条件
         nodeTactics: 1, // 节点调度 单选
@@ -1336,7 +1344,8 @@ export default {
       SelectMirrorImgFlag: false,
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {}, // 引用ConfigMap/Secret ConfigMap
-      describeClustersInstances: []
+      describeClustersInstances: [],
+      submitErrorMessage: ''
     }
   },
   components: { Service, SelectMirrorImg },
@@ -1826,13 +1835,15 @@ export default {
       })
     },
     submit: async function () {
+      // 注释请求参数
+      this.submitErrorMessage = ''
       let {
         name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
         updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
         caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
         serviceEnbel, nodeTactics, specifyNodeDispatchValue, mustCondition, needCondition,
         serviceAccess, ETP, SA, time, describeLoadBalancersValue, loadBalance, handlessChecked, subnetTwoValue,
-        jobSettings, executionStrategy
+        jobSettings, executionStrategy, configTacticsPartition
       } = this.wl
       let labelsObj = {}
       labels.forEach(item => {
@@ -1943,39 +1954,20 @@ export default {
         return oneContainer
       })
       // 基本 requestBody
+      let params = {
+        Method: 'POST',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
       let requestBody = {
         kind: type,
-        apiVersion: 'apps/v1beta2',
         metadata: {
           name: name,
           namespace: namespace,
           labels: labelsObj
         },
         spec: {
-          minReadySeconds: updateInterval,
-          replicas: replicas,
-          template: {
-            metadata: {
-              labels: labelsObj
-            },
-            spec: {
-              volumes: [],
-              containers: containerList,
-              restartPolicy: 'Always',
-              imagePullSecrets: [
-                {
-                  'name': 'qcloudregistrykey'
-                },
-                {
-                  'name': 'tencenthubkey'
-                }
-              ]
-            }
-          },
-          selector: {
-            matchLabels: labelsObj
-          },
-          strategy: {}
+          minReadySeconds: updateInterval
         }
       }
       let template = {
@@ -1997,77 +1989,8 @@ export default {
         }
       }
       let queryBodyJson = ''
-      // 实例数量为自动调节时
-      if (caseNum === 'autoAdjust') {
-        let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
-        let metrics = touchTactics.map(item => {
-          let { touch2, touch2Option, size } = item
-          let oneOption = touch2Option.find(item2 => item2.value === touch2)
-          return {
-            type: 'Pods',
-            pods: {
-              metricName: oneOption.type,
-              targetAverageValue: size
-            }
-          }
-        })
-        let hpaRequestBody = {
-          kind: 'HorizontalPodAutoscaler',
-          apiVersion: 'autoscaling/v2beta1',
-          metadata: {
-            name: hpaName,
-            namespace: namespace,
-            labels: {
-              'qcloud-app': hpaName
-            }
-          },
-          spec: {
-            minReplicas: parseInt(caseScope1),
-            maxReplicas: parseInt(caseScope2),
-            metrics: metrics,
-            scaleTargetRef: {
-              apiVersion: 'apps/v1beta2',
-              kind: type,
-              name: name
-            }
-          }
-        }
-        console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
-        queryBodyJson += JSON.stringify(hpaRequestBody)
-      }
       // 判断 描述
-      if (description !== '') requestBody.metadata = { description: description }
-      // 判断 更新方式
-      if (updateWay === '滚动更新（推荐）') {
-        let strategy = {
-          type: 'RollingUpdate',
-          rollingUpdate: {
-            maxSurge: 0,
-            maxUnavailable: 0
-          }
-        }
-        // 更新策略
-        switch (updateTactics) {
-          case 1:
-            strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
-            break
-          case 2:
-            strategy.rollingUpdate.maxUnavailable = parseInt(configTacticsPods)
-            break
-          case 3:
-            strategy.rollingUpdate = {
-              maxSurge: configTacticsMaxSurge,
-              maxUnavailable: configTacticsMaxUnavailable
-            }
-            break
-        }
-        requestBody.spec.strategy = strategy
-      } else { // 快速更新
-        requestBody.spec.strategy = {
-          type: 'Recreate',
-          rollingUpdate: null
-        }
-      }
+      if (description !== '') requestBody.metadata.description = description
       // 节点调度策略
       if (nodeTactics === 2) {
         let matchExpressionsValue = specifyNodeDispatchValue.map(item => {
@@ -2174,13 +2097,51 @@ export default {
           serviceRequestBody.spec.externalTrafficPolicy = ETP
           serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
           let oneSubOption = this.subnetTwoOption.find(item => item.SubnetName === subnetTwoValue)
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption.SubnetId
         } else if (serviceAccess === '4') {
           serviceRequestBody.spec.externalTrafficPolicy = ETP
           serviceRequestBody.spec.type = 'NodePort'
         }
         if ((serviceAccess === '1' || serviceAccess === '3') && loadBalance === '2') {
           serviceRequestBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = describeLoadBalancersValue
+        }
+        // 实例数量为自动调节时
+        if (caseNum === 'autoAdjust') {
+          let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
+          let metrics = touchTactics.map(item => {
+            let { touch2, touch2Option, size } = item
+            let oneOption = touch2Option.find(item2 => item2.value === touch2)
+            return {
+              type: 'Pods',
+              pods: {
+                metricName: oneOption.type,
+                targetAverageValue: size
+              }
+            }
+          })
+          let hpaRequestBody = {
+            kind: 'HorizontalPodAutoscaler',
+            apiVersion: 'autoscaling/v2beta1',
+            metadata: {
+              name: hpaName,
+              namespace: namespace,
+              labels: {
+                'qcloud-app': hpaName
+              }
+            },
+            spec: {
+              minReplicas: parseInt(caseScope1),
+              maxReplicas: parseInt(caseScope2),
+              metrics: metrics,
+              scaleTargetRef: {
+                apiVersion: 'apps/v1beta2',
+                kind: type,
+                name: name
+              }
+            }
+          }
+          console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
+          queryBodyJson += JSON.stringify(hpaRequestBody)
         }
         if (SA === 'ClientIP') {
           serviceRequestBody.spec.sessionAffinityConfig = {
@@ -2196,24 +2157,82 @@ export default {
         template.spec.restartPolicy = jobSettings.failedRestartPolicy
         requestBody.spec.completions = jobSettings.repeatNumber
         requestBody.spec.parallelism = jobSettings.parallelNumber
+        requestBody.spec.updateStrategy = {
+          type: 'RollingUpdate',
+          rollingUpdate: {}
+        }
+      } else {
+        // 判断 更新方式
+        if (type === 'Deployment') {
+          if (updateWay === '滚动更新（推荐）') {
+            let strategy = {
+              type: 'RollingUpdate',
+              rollingUpdate: {
+                maxSurge: 0,
+                maxUnavailable: 0
+              }
+            }
+            // 更新策略
+            switch (updateTactics) {
+              case 1:
+                strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
+                break
+              case 2:
+                strategy.rollingUpdate.maxUnavailable = parseInt(configTacticsPods)
+                break
+              case 3:
+                strategy.rollingUpdate = {
+                  maxSurge: configTacticsMaxSurge,
+                  maxUnavailable: configTacticsMaxUnavailable
+                }
+                break
+            }
+            requestBody.spec.strategy = strategy
+          } else { // 快速更新
+            requestBody.spec.strategy = {
+              type: 'Recreate',
+              rollingUpdate: null
+            }
+          }
+        } else if (type === 'DaemonSet') {
+          requestBody.spec.updateStrategy = {
+            type: 'RollingUpdate',
+            rollingUpdate: {
+              maxUnavailable: configTacticsMaxUnavailable
+            }
+          }
+        } else if (type === 'StatefulSet') {
+          requestBody.spec.updateStrategy = {
+            type: 'RollingUpdate',
+            rollingUpdate: {
+              partition: parseInt(configTacticsPartition)
+            }
+          }
+        }
       }
       if (type === 'CronJob') {
         requestBody.spec.schedule = executionStrategy
         requestBody.spec.jobTemplate = {}
         requestBody.spec.jobTemplate.spec = {}
         requestBody.spec.jobTemplate.spec.template = template
+        requestBody.apiVersion = 'batch/v1beta1'
+        params.Path = `/apis/batch/v1beta1/namespaces/${namespace}/cronjobs`
+      } else if (type === 'Job') {
+        requestBody.spec.template = template
+        requestBody.apiVersion = 'batch/v1'
+        params.Path = `/apis/batch/v1/namespaces/${namespace}/jobs`
       } else {
         requestBody.spec.template = template
+        requestBody.spec.replicas = replicas
+        requestBody.spec.selector = {
+          matchLabels: labelsObj
+        }
+        requestBody.apiVersion = 'apps/v1beta2'
+        params.Path = `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`
       }
       console.log('requestBody', JSON.stringify(requestBody))
       queryBodyJson += JSON.stringify(requestBody)
-      let params = {
-        Method: 'POST',
-        Path: `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`,
-        Version: '2018-05-25',
-        RequestBody: queryBodyJson,
-        ClusterName: this.clusterId
-      }
+      params.RequestBody = queryBodyJson
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false
@@ -2256,14 +2275,7 @@ export default {
           })
         } else {
           this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
+          this.submitErrorMessage = JSON.parse(res.Response.Error.Message).message
         }
       })
     }
@@ -2538,4 +2550,26 @@ export default {
     }
   }
 
+  .tke-fe-alert{
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-right: auto;
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 0px;
+    max-width: 750px;
+    max-height: 120px;
+    overflow: auto;
+  }
+  .tke-fe-alert--error{
+    color: #b43537;
+    border-color: #f6b5b5;
+    background-color: #fcecec;
+  }
 </style>

@@ -89,7 +89,6 @@ export default {
   },
   mounted () {
     if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
-      // if ()
       this.enable = true
       const info = {
         unit: 1
@@ -101,11 +100,11 @@ export default {
       } else {
         info.value = this.bandLimit.AbroadBandLimitValue
       }
-      if (info.value >= 1000) {
+      if (info.value >= 1000 && info.value < 1000000) {
         info.value /= 1000
         info.unit = 2
-      } else if (info.value >= 10000) {
-        info.value /= 10000
+      } else if (info.value >= 1000000) {
+        info.value /= 1000000
         info.unit = 3
       }
       this.info.push({
@@ -153,8 +152,13 @@ export default {
       }
       this.axios.post(MODIFY_LIVE_BAND_LIMIT, req)
         .then(res => {
-          this.msg('保存成功', 'success')
-          this.$emit('success')
+          if (res.Response.Error) {
+            this.$emit('update:visible', false)
+            this.msg('保存失败', 'error')
+          } else {
+            this.msg('保存成功', 'success')
+            this.$emit('success')
+          }
         })
     },
     toMbps (info) {

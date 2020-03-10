@@ -99,7 +99,7 @@ import InfiniteLoading from 'vue-infinite-loading'
 export default {
   name: "transfer",
   props: {
-    groupId: String,
+    uin: Number,
   },
   data() {
     return {
@@ -162,8 +162,8 @@ export default {
         Keyword: this.policyInp,
         Scope: 'QCS', // 自取预设策略
       }
-      if (this.groupId) {
-        param.FlagGroupId = this.groupId
+      if (this.uin) {
+        param.FlagUin = this.uin
       }
       this.axios.post(POLICY_LIST, param).then(res => {
         this.strategiesPage += 1

@@ -31,7 +31,11 @@
         </span>
         <el-col>
           <el-checkbox-group v-model="resource.CdnStreamFormat">
-            <el-checkbox label="flv" v-if="resource.SourceStreamFormat !== 'hls'">flv</el-checkbox>
+            <el-checkbox
+              label="flv"
+              v-if="resource.SourceStreamFormat !== 'hls'"
+              >flv</el-checkbox
+            >
             <el-checkbox label="hls">hls</el-checkbox>
           </el-checkbox-group>
         </el-col>
@@ -51,7 +55,11 @@
       <el-row type="flex" :gutter="20" class="limit">
         <span style="display: inline-block; width: 200px;">主源地址</span>
         <el-col>
-          <el-input v-model="resource.SourceServerAddress" :placeholder="$t('CSS.detailPlay.ipordomain')" size="small"></el-input>
+          <el-input
+            v-model="resource.SourceServerAddress"
+            :placeholder="$t('CSS.detailPlay.ipordomain')"
+            size="small"
+          ></el-input>
         </el-col>
       </el-row>
     </div>
@@ -70,12 +78,11 @@ export default {
     playType: Number,
     resourceData: {
       type: Object,
-      default() {
+      default () {
         return {}
       }
     }
-    // Status:''
-    // SourceStreamFormat1: this.SourceStreamFormat
+
   },
   data () {
     return {
@@ -95,7 +102,7 @@ export default {
     }
   },
   watch: {
-    'resource.SourceStreamFormat'(n) {
+    'resource.SourceStreamFormat' (n) {
       if (n === 'hls' && this.resource.CdnStreamFormat.includes('flv')) {
         this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.filter(f => f !== 'flv')
       }
@@ -107,13 +114,18 @@ export default {
       this.resource.CdnStreamFormat = this.resource.CdnStreamFormat.split('|')
       this.resource.SourceServerAddress = this.resource.SourceServerAddress[0]
     }
+    if (this.resourceData.Status === 1) {
+      this.resource.Status = true
+    } else if (this.resourceData.Status === 3) {
+      this.resource.Status = false
+    }
   },
 
   methods: {
     save () {
       let req = {
         DomainName: this.$route.query.Name,
-        Version: "2018-08-01",
+        Version: '2018-08-01'
       }
       let url = CLOSE_SOURCE_STREAM // 关闭源站设置
       if (this.resource.Status) { // 如果打开直接修改
@@ -122,7 +134,7 @@ export default {
           ...req,
           'SourceServerAddress.0': this.resource.SourceServerAddress,
           SourceServerType: this.resource.SourceServerType,
-          SourceStreamFormat: this.resource.SourceStreamFormat,
+          SourceStreamFormat: this.resource.SourceStreamFormat
         }
         this.resource.CdnStreamFormat.forEach((cdn, i) => {
           req[`CdnStreamFormat.${i}`] = cdn
@@ -161,6 +173,8 @@ export default {
           .then(res => {
             if (res.Response.Error) {
               this.msg('保存失败', 'error')
+
+              this.$emit('handleClose', false)
             } else {
               this.msg('保存成功', 'success')
               this.$emit('success')

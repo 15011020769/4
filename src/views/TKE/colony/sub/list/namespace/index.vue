@@ -194,6 +194,12 @@ export default {
           this.getNameSpaceList();
           this.loadShow = false;
           this.showNameSpaceModal = false;
+          this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {

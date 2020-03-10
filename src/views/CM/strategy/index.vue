@@ -11,16 +11,13 @@
           label-position="left"
         >
           <el-form-item label="策略名称">
-            <el-input
-              v-model="formInline.strategy_name"
-              style="width:360px;"
-            ></el-input>
+            <el-input v-model="formInline.strategy_name"></el-input>
           </el-form-item>
           <el-form-item label="产品/策略类型">
             <el-select
               filterable
               v-model="formInline.product_name"
-              style="width:100px;"
+              class="select-option"
             >
               <el-option
                 v-for="(item, index) in formInline.product_kind"
@@ -33,7 +30,7 @@
             <el-select
               multiple
               v-model="formInline.strategy_value"
-              style="width:250px;margin-left:10px;"
+              class="select-option-tow"
             >
               <!-- <el-checkbox
                 :indeterminate="isIndeterminate"
@@ -57,18 +54,22 @@
           </el-form-item>
 
           <el-form-item label="告警对象">
-            <el-select v-model="formInline.alarm" disabled style="width:360px;">
-              <!-- <el-option
-                v-for="(item,index) in formInline.alarm_list"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>-->
-              <el-option label value></el-option>
-            </el-select>
+            <el-tooltip
+              content="搜索告警对象所属告警策略，需先选择确定唯一策略类型"
+              placement="bottom"
+              effect="light"
+            >
+              <el-select
+                v-model="formInline.alarm"
+                disabled
+                style="width:360px;"
+              >
+                <el-option label value></el-option>
+              </el-select>
+            </el-tooltip>
           </el-form-item>
           <el-form-item label="用户/组">
-            <el-select v-model="formInline.user" style="width:100px;">
+            <el-select v-model="formInline.user" class="select-option">
               <el-option
                 v-for="(item, index) in formInline.user_kind"
                 :key="index"
@@ -80,7 +81,7 @@
             <el-select
               multiple
               v-model="formInline.group"
-              style="width:250px;margin-left:10px;margin-right:20px;"
+              class="select-option-tow"
             >
               <el-option
                 v-for="(item, index) in formInline.kind_list"
@@ -117,10 +118,14 @@
       <p class="addBtn">
         <el-row>
           <el-button type="primary" @click="addCreate">新增</el-button>
-          <el-button :disable="operationFlag == -1 ? true : false"
+          <el-button
+            :disable="operationFlag == -1 ? true : false"
+            @click="deleteAllDialogVisible = true"
             >删除</el-button
           >
-          <el-button :disable="operationFlag == -1 ? true : false"
+          <el-button
+            :disable="operationFlag == -1 ? true : false"
+            @click="ModifyDialogVisible = true"
             >修改告警渠道</el-button
           >
         </el-row>
@@ -147,7 +152,7 @@
               @click="defaultClick(scope.row.grounpId)"
               >{{ scope.row.groupName }}</a
             >
-            <i v-show="defaultIconFlag" class="el-icon-edit"></i>
+            <i @click="modifyNameDialogVisible = true" class="el-icon-edit"></i>
           </template>
         </el-table-column>
         <el-table-column label="触发条件">
@@ -203,15 +208,17 @@
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.zanting"
-              active-color="#13ce66"
-              inactive-color="#eee"
+              active-color="#006eff"
+              inactive-color="#888"
             ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作">
-          <template :slot-scope="scope.row">
+          <template slot-scope="scope">
             <el-button type="text" class="cloneBtn">复制</el-button>
-            <el-button type="text" class="deleteBtn">删除</el-button>
+            <el-button type="text" class="deleteBtn" @click="Delete(scope.row)"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -232,6 +239,125 @@
     </div>
     <!-- 点击设置 -->
     <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
+    <!-- 修改名称 -->
+    <el-dialog
+      title="修改告警策略名称"
+      :visible.sync="modifyNameDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+      class="dialog-box"
+    >
+      <div class="edit-dialog">
+        <el-input
+          size="small"
+          placeholder="请输告警策略名称，20字以内"
+          v-model="editSearchVal"
+          @input="EditTips"
+        ></el-input>
+        <p v-if="tipsShow">告警策略名称不能为空</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确定</el-button>
+        <el-button @click="modifyNameDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 删除 -->
+    <el-dialog
+      title="策略删除确认"
+      :visible.sync="deleteDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+      class="dialog-box"
+    >
+      <div>您确定要删除此条告警策略吗？</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="DeleteList()">确定</el-button>
+        <el-button @click="deleteDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 删除策略 -->
+    <el-dialog
+      title="删除策略"
+      :visible.sync="deleteAllDialogVisible"
+      width="600px"
+      custom-class="tke-dialog"
+      class="dialog-box"
+    >
+      <div>
+        <p>您已选择1条策略，详情如下:</p>
+        <div class="delete-table">
+          <el-table :data="deleteTableData" style="width: 100%" height="150px">
+            <el-table-column prop="date" label="策略名"> </el-table-column>
+            <el-table-column prop="name" label="备注"> </el-table-column>
+          </el-table>
+        </div>
+        <p class="tips">无可删除策略</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确定</el-button>
+        <el-button @click="deleteAllDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
+    <!-- 修改告警渠道 -->
+    <el-dialog
+      title="修改告警渠道"
+      :visible.sync="ModifyDialogVisible"
+      width="600px"
+      custom-class="tke-dialog"
+      class="dialog-box"
+    >
+      <div>
+        <p>
+          <el-tooltip
+            effect="light"
+            content="告警渠道为空的策略不支持修改"
+            placement="top"
+          >
+            <i class="el-icon-info"></i>
+          </el-tooltip>
+          您已选择20条策略，其中6条支持修改。接收渠道统计如下:
+        </p>
+        <div class="modify-box">
+          <div>
+            <p>
+              <span>邮件</span>
+              <span>已开通数:5,未开通数:1</span>
+            </p>
+            <el-select>
+              <el-option></el-option>
+            </el-select>
+          </div>
+          <div>
+            <p>
+              <span>短信</span>
+              <span>已开通数:5,未开通数:1</span>
+            </p>
+            <el-select>
+              <el-option></el-option>
+            </el-select>
+          </div>
+          <div>
+            <p>
+              <span>微信</span>
+              <span>已开通数:5,未开通数:1</span>
+            </p>
+            <el-select>
+              <el-option></el-option>
+            </el-select>
+          </div>
+          <div>
+            <p><span>电话</span> <span>已开通数:5,未开通数:1</span></p>
+            <el-select>
+              <el-option></el-option>
+            </el-select>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确定</el-button>
+        <el-button @click="ModifyDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -479,7 +605,35 @@ export default {
       dataListLoading: false,
       dialogVisible: false, //设置弹出框
       value: true,
-      defaultIconFlag: false //鼠标事件
+      defaultIconFlag: false, //鼠标事件
+      deleteDialogVisible: false,
+      deleteAllDialogVisible: false,
+      deleteTableData: [
+        {
+          date: "2016-05-02",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1518 弄"
+        },
+        {
+          date: "2016-05-04",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1517 弄"
+        },
+        {
+          date: "2016-05-01",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1519 弄"
+        },
+        {
+          date: "2016-05-03",
+          name: "王小虎",
+          address: "上海市普陀区金沙江路 1516 弄"
+        }
+      ],
+      ModifyDialogVisible: false,
+      modifyNameDialogVisible: false,
+      editSearchVal: "",
+      tipsShow: false
     };
   },
   components: {
@@ -579,6 +733,19 @@ export default {
     addCreate() {
       // alert('/strategy/create');
       this.$router.push({ path: "/strategy/create" });
+    },
+    // 删除
+    Delete(row) {
+      this.deleteDialogVisible = true;
+      this.instanceGroupId = row.instanceGroupId;
+    },
+    // 修改名称
+    EditTips() {
+      if (this.editSearchVal == "") {
+        this.tipsShow = true;
+      } else {
+        this.tipsShow = false;
+      }
     }
   }
 };
@@ -642,6 +809,35 @@ a:hover {
   .strategy-filter {
     width: 100%;
     height: 100px;
+    ::v-deep .el-form-item__label {
+      padding: 0px;
+      font-size: 12px;
+      color: #888;
+      font-weight: 400;
+    }
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      height: 30px;
+      width: 360px;
+    }
+    .select-option {
+      ::v-deep .el-input__inner {
+        border-radius: 0px;
+        height: 30px;
+        width: 100px;
+      }
+    }
+    .select-option-tow {
+      ::v-deep .el-input__inner {
+        border-radius: 0px;
+        height: 30px;
+        width: 250px;
+        margin-left: 10px;
+      }
+      ::v-deep .el-select__tags {
+        margin-left: 10px;
+      }
+    }
   }
   .table {
     padding: 0 20px 20px 20px;
@@ -665,6 +861,12 @@ a:hover {
         i:hover {
           cursor: pointer;
         }
+      }
+      ::v-deep .el-button {
+        border-radius: 0px;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 20px;
       }
     }
     .Right-style {
@@ -745,6 +947,82 @@ a:hover {
         font-size: 11px;
         line-height: 18px;
       }
+    }
+  }
+}
+.dialog-box {
+  ::v-deep .el-dialog__footer {
+    text-align: center;
+  }
+  ::v-deep .el-dialog__body {
+    padding-top: 15px;
+  }
+  .delete-table {
+    margin-top: 10px;
+    ::v-deep .el-table {
+      border: 1px solid #ebeef5;
+      margin-left: 1px;
+    }
+  }
+  .tips {
+    margin-top: 20px;
+    color: #444 !important;
+    font-size: 12px;
+    vertical-align: middle;
+    font-weight: 700;
+  }
+  .modify-box {
+    & > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f2f2f2;
+      border: 1px solid #ddd;
+      ::v-deep .el-input {
+        width: 155px;
+        margin-right: 30px;
+      }
+      ::v-deep .el-input__inner {
+        border-radius: 0;
+        height: 30px;
+        width: 155px;
+      }
+      & > p {
+        span {
+          &:nth-of-type(1) {
+            margin-right: 10px;
+            font-size: 14px;
+            color: #444;
+          }
+          &:nth-of-type(2) {
+            margin-right: 10px;
+            font-size: 12px;
+            color: #888;
+          }
+        }
+      }
+    }
+  }
+  .edit-dialog {
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    p {
+      color: #b43537;
+      border: 1px solid #f6b5b5;
+      background-color: #fcecec;
+      width: 258px;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    ::v-deep .el-dialog__footer {
+      text-align: center;
     }
   }
 }

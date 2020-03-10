@@ -2,11 +2,11 @@
   <div v-loading="loadShow">
     <div class="topHead">
       <i class="el-icon-back" @click="returnBack"></i>
-      {{$route.query.Name}}
+      {{ $route.query.Name }}
     </div>
     <div class="conTabs">
       <el-tabs v-model="activeName" v-loading="loading">
-        <el-tab-pane label="基本訊息" name="first">
+        <el-tab-pane :label="$t('CSS.detailPlay.basicMessage')" name="first">
           <div class="wrapper">
             <BasicInfo :info="info" />
           </div>
@@ -16,7 +16,7 @@
             <pushStreamSet :info="info" />
           </div>
         </el-tab-pane>
-        <el-tab-pane label="範本配置" name="third">
+        <el-tab-pane :label="$t('CSS.detailPlay.19')" name="third">
           <div class="wrapper">
             <templateconfig />
           </div>
@@ -26,63 +26,63 @@
   </div>
 </template>
 <script>
-import BasicInfo from "./tabs/BasicInfo";
-import pushStreamSet from "./tabs/pushStreamSet";
-import templateconfig from "./tabs/templateconfig";
-import { DOMAIN_DELTILS } from "@/constants";
+import BasicInfo from './tabs/BasicInfo'
+import pushStreamSet from './tabs/pushStreamSet'
+import templateconfig from './tabs/templateconfig'
+import { DOMAIN_DELTILS } from '@/constants'
 
 let ErrTips = {
-  "InternalError.SystemError": "內部錯誤",
-  "InvalidParameter.ParamError": "非法入參",
-  "ResourceNotFound.UserNotExist": "用戶不存在",
-  "ResourceNotFound.DomainNotExist": "域名不存在"
-};
+  'InternalError.SystemError': '內部錯誤',
+  'InvalidParameter.ParamError': '非法入參',
+  'ResourceNotFound.UserNotExist': '用戶不存在',
+  'ResourceNotFound.DomainNotExist': '域名不存在'
+}
 export default {
-  name: "detailPushStream",
-  data() {
+  name: 'detailPushStream',
+  data () {
     return {
-      activeName: "first",
-      loadShow: false, //加载
-      info: {}, //详情内容
+      activeName: 'first',
+      loadShow: false, // 加载
+      info: {}, // 详情内容
       loading: true
-    };
+    }
   },
   components: {
     BasicInfo: BasicInfo,
     pushStreamSet: pushStreamSet,
     templateconfig: templateconfig
   },
-  mounted() {
+  mounted () {
     const params = {
-      Version: "2018-08-01",
+      Version: '2018-08-01',
       DomainName: this.$route.query.Name
-    };
-    this.loading = true;
+    }
+    this.loading = true
     this.axios.post(DOMAIN_DELTILS, params).then(res => {
-      this.loading = false;
+      this.loading = false
       if (res.Response.Error !== undefined) {
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
         this.$message({
           message: ErrOr[res.Response.Error.Code],
-          type: "error",
+          type: 'error',
           showClose: true,
           duration: 0
-        });
-        return;
+        })
+        return
       }
 
-      this.info = res.Response.DomainInfo;
-    });
+      this.info = res.Response.DomainInfo
+    })
   },
   methods: {
-    //返回列表页
-    returnBack() {
+    // 返回列表页
+    returnBack () {
       this.$router.push({
-        name: "domainManagement"
-      });
+        name: 'domainManagement'
+      })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

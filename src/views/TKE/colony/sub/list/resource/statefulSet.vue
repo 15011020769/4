@@ -208,9 +208,13 @@ export default {
      toMonitor(){
       //跳转监控页面
       this.$router.push({
-        name:"colonyOpenMonitor",
+        name:"statefulSetMonitor",
         query:{
-          title:this.tit + "(statefulSet)"
+          title:this.tit + "(StatefulSet)",
+          type: 'StatefulSet',
+          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          clusterId: this.clusterId,
+          spaceName: this.searchType
         }
       })
     },
@@ -451,6 +455,12 @@ export default {
       };
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.loadShow = false;
           this.isShowDeleteModal = false;
           this.getStatefulSetList();

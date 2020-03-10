@@ -84,8 +84,8 @@ export default {
           "FailedOperation.NeedPayTogeter": '一起购买的订单必须同时支付',
           "FailedOperation.PayPriceError": '支付失敗，請聯繫台富雲工作人員處理',
           'FailedOperation.PaySuccDeliverFailed': '支付成功但發貨失敗，請聯繫台富雲工作人員處理',
-          'UnauthorizedOperation.CertificationNeedUpgrade': '因賬號安全升級，支付失敗',
-          'UnauthorizedOperation.NotFinanceAuth': '賬號沒有財務授權，支付失敗'
+          'UnauthorizedOperation.CertificationNeedUpgrade': '因帳號安全升級，支付失敗',
+          'UnauthorizedOperation.NotFinanceAuth': '帳號沒有財務授權，支付失敗'
         }
         this.generalRespHandler(resp, () => {
           this.$router.push('/')

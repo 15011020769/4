@@ -10,6 +10,7 @@
             size="small"
             style="width: 210px"
             v-model="limit"
+            :disabled="this.$route.query.Status == 0"
             @change="changeSlect"
           >
             <el-option :label="$t('CSS.detailPlay.11')" :value="1"></el-option>
@@ -71,7 +72,9 @@ export default {
       }
     }
   },
-
+  created () {
+    // console.log(this.$route.query.Status, '9999')
+  },
   methods: {
 
     save () {
@@ -87,6 +90,7 @@ export default {
         .then(res => {
           if (res.Response.Error) {
             this.msg('保存失败', 'error')
+            this.$emit('handleClose', false)
           } else {
             this.msg('保存成功', 'success')
             this.$emit('success')

@@ -1,14 +1,14 @@
 <template>
   <div class="dialog">
-    <el-dialog title="创建监控面板" :visible.sync="dialogVisible">
+    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="dialogVisible">
       <el-form :model="form">
-        <el-form-item label="名称" label-width="120px">
+        <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="120px">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button type="primary" @click="save">{{$t('CVM.Dashboard.qd')}}</el-button>
       </div>
     </el-dialog>
   </div>
