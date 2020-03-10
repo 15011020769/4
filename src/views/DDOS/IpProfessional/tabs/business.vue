@@ -48,7 +48,7 @@
   </div>
 </template>
 <script>
-import { GET_ID, RESOURCE_LIST, STATIC_LIST } from "@/constants";
+import { GET_ID, RESOURCE_LIST, STATIC_LIST, L4_RULES, DESCRIBE_BARADDATA } from "@/constants";
 import moment from "moment";
 export default {
   data() {
@@ -125,6 +125,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
@@ -157,10 +158,11 @@ export default {
     describleL4Rules() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdService
       };
-      this.axios.post("dayu2/DescribleL4Rules", params).then(res => {
+      this.axios.post(L4_RULES, params).then(res => {
         // console.log(res)
       });
     },
@@ -168,16 +170,17 @@ export default {
     describeBaradData() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdService,
-        Ip: "175.97.142.150", //资源的IP
+        Ip: this.IpList[0], //资源的IP
         MetricName: this.metricNameService2,
         Period: this.periodService, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeService,
         EndTime: this.endTimeService,
         Statistics: this.statistics //统计方式，取值：max表示最大值；min表示最小值；avg表示均值；
       };
-      this.axios.post("dayu2/DescribeBaradData", params).then(res => {
+      this.axios.post(DESCRIBE_BARADDATA, params).then(res => {
         // console.log(res)
       });
     },
@@ -212,6 +215,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdService,
         MetricName: this.metricNameService, //指标名，取值：traffic表示流量带宽，pkg表示包速率
@@ -240,6 +244,7 @@ export default {
     describeResourceList(data) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       if (this.resourceId != "" && this.resourceId != null) {

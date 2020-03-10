@@ -171,7 +171,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -203,7 +203,7 @@ export default {
             message: ErrOr[res.Response.Error.Code],
             type: "error",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         }
       });
@@ -321,7 +321,7 @@ export default {
             message: "删除成功",
             type: "success",
             showClose: true,
-            duration: 2000
+            duration: 0
           });
         } else {
           this.loadShow = false;

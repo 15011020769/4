@@ -184,7 +184,7 @@ module.exports = {
             tab1tr1: 'ID/名稱',
             tab1tr2: '狀態',
             tab1tr3: '實例類型',
-            tab1tr4: '所屬賬號',
+            tab1tr4: '所屬帳號',
             tab1tr5: '關聯時間',
             tab1tr6: '所在地域',
             tab1tr7: '操作',

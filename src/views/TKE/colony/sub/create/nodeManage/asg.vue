@@ -919,7 +919,6 @@ export default {
       // ] = this.asg.securityService;
       // params["EnhancedService.MonitorService.Enabled"] = this.asg.monitor;
 
-
       // Version: "2018-05-25"
       // ClusterId: "cls-h3phnkpy"
       // AutoScalingGroupPara: "{"AutoScalingGroupName":"asdasd","MaxSize":3,"MinSize":2,"VpcId":"vpc-6whh21qa","SubnetIds":["subnet-nn56635p"],"RetryPolicy":"IMMEDIATE_RETRY","ServiceSettings":{"ScalingMode":"CLASSIC_SCALING"}}"

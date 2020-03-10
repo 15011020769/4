@@ -288,10 +288,12 @@ export default {
       // 查询今日总流量
       this.axios.post(CSS_MBPS, params).then(({ Response }) => {
         this.todayFlux = Response.SumFlux;
-        this.totalBandwidth =
-          Response.PeakBandwidth > 1
-            ? `${Response.PeakBandwidth} Mbps`
-            : `${Response.PeakBandwidth * 1000} Kbps`;
+        const list = Response.DataInfoList
+        if (list) {
+          const bandwidth = list[list.length - 1].Bandwidth
+          this.totalBandwidth = `${bandwidth} Mbps`
+
+        }
       });
       // 查询实时总帶寬 实时总连接数
       this.axios

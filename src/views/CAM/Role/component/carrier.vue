@@ -15,11 +15,11 @@
       <div v-show="!loading && (type !== 'federated' || providers.length === 0)">
         <div class="box contant_flex">
           <div class="flex_left">
-            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">雲賬號</p>
+            <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">雲帳號</p>
           </div>
           <div class="flex_right">
             <el-tag closable v-for="(a, i) in accounts" :key="a" @close="removeAccount(i)" style="margin-right: 10px;">{{a}}</el-tag>
-            <el-button style="font-size: 12px;" type="text" @click="visible=true">添加賬戶</el-button>
+            <el-button style="font-size: 12px;" type="text" @click="visible=true">添加帳戶</el-button>
           </div>
         </div>
         <div class="box contant_flex">
@@ -48,21 +48,21 @@
       <provider :visible.sync="visible2" :removeProviders="providers" @add="addProvider" />
     </el-dialog>
     <el-dialog
-      title="添加新賬戶"
+      title="添加新帳戶"
       :visible.sync="visible"
       @close="beforeClose"
       width="500px"
     >
       <el-form :model="form" ref="form" label-width="100px">
-        <el-form-item label="雲賬號類型" prop="accountType" required>
+        <el-form-item label="雲帳號類型" prop="accountType" required>
           <el-radio-group v-model="form.accountType">
-            <el-radio :label="1">當前主賬號</el-radio>
-            <el-radio :label="0">其它主賬號</el-radio>
+            <el-radio :label="1">當前主帳號</el-radio>
+            <el-radio :label="0">其它主帳號</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="賬號ID" prop="uin"
+        <el-form-item label="帳號ID" prop="uin"
           :rules="[{
-            required: true, message: '請輸入正確的賬號', trigger: 'blur'
+            required: true, message: '請輸入正確的帳號', trigger: 'blur'
           }]"
         >
           <el-input :disabled="form.accountType === 1" size="small" style="width: 200px" v-model="form.uin" :maxlength="15" @input="val => form.uin = val.replace(/[^\d]/g, '')" />
@@ -126,7 +126,7 @@ export default {
           if (this.form.accountType === 1) {
             if (this.accounts.includes(this.form.uin)) {
               return void this.$message({
-                message: '該賬號已存在',
+                message: '該帳號已存在',
                 type: 'error',
                 showClose: true,
                 duration: 0
@@ -157,7 +157,7 @@ export default {
         }
         if (res != '' && res.data.IsExist === false) {
           this.$message({
-            message: '該賬號不存在',
+            message: '該帳號不存在',
             type: "error",
             showClose: true,
             duration: 0

@@ -3,10 +3,10 @@
     <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
     <div class="adduserlist-main" v-loading="loading">
       <el-steps :active="active" simple>
-        <el-step :title="$t('CAM.userList.chooserType')"></el-step>
+        <!-- <el-step :title="$t('CAM.userList.chooserType')"></el-step> -->
         <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
-        <el-step :title="$t('CAM.userList.setStrage')" v-if="ruleForm.ConsoleLogin == 1"></el-step>
-        <el-step :title="$t('CAM.userList.userMesg')" v-if="ruleForm.ConsoleLogin == 1"></el-step>
+        <el-step :title="$t('CAM.userList.setStrage')"></el-step>
+        <el-step :title="$t('CAM.userList.userMesg')"></el-step>
       </el-steps>
       <div class="main">
         <el-form
@@ -16,24 +16,10 @@
           label-width="100px"
           class="demo-ruleForm"
         >
-          <div class="step1" v-show="active == 0">
-            <el-form-item :label="$t('CAM.userList.chooserType')" required>
-              <div
-                :class="index == typeIndex ? 'type-box active' : 'type-box'"
-                v-for="(item,index) in type"
-                :key="index"
-                @click="_type(index)"
-              >
-                <p>
-                  <b>{{item.title}}</b>
-                </p>
-                <p>{{item.txt}}</p>
-              </div>
-            </el-form-item>
-          </div>
           <div class="step2" v-show="active == 1">
-            <el-form-item :label="$t('CAM.userList.setUserMesg')">
-              <table width="100%" boder="1" cellspacing="0" cellpadding="1">
+            <el-form-item label="用戶名稱" required>
+              <el-input v-model="ruleForm.Name" style="width: 330px" :placeholder="$t('CAM.userList.userNamePlaceholder')"></el-input>
+              <!-- <table width="100%" boder="1" cellspacing="0" cellpadding="1">
                 <thead>
                   <tr>
                     <td width="280">
@@ -70,7 +56,14 @@
                     </td>
                   </tr>
                 </tbody>
-              </table>
+              </table> -->
+            </el-form-item>
+            <el-form-item label="備註" prop="Remark">
+              <el-input
+                style="width: 330px"
+                v-model="ruleForm.Remark"
+                :placeholder="$t('CAM.userList.userRemarkPlaceholder')"
+              ></el-input>
             </el-form-item>
             <el-form-item :label="$t('CAM.userList.askWay')" required>
               <el-checkbox-group v-model="ruleForm.type" @change="_visitType" class="check">
@@ -139,7 +132,7 @@
         </div>
       </div>
       <div class="btn-box">
-        <el-button @click="_lastStep" v-show="this.active > 0">上一步</el-button>
+        <el-button @click="_lastStep" v-show="this.active > 1">上一步</el-button>
         <el-button type="primary" @click="_nextStep('ruleForm')">{{btnVal}}</el-button>
       </div>
     </div>
@@ -195,7 +188,7 @@ export default {
       totalNum: 0, //策略列表条数
       strategies: [], //全选
       tableData: [],
-      active: 0,
+      active: 1,
       btnVal: "下一步",
       pwdReg: true,
       //选择类型
@@ -204,7 +197,7 @@ export default {
           code: 1,
           title: "可訪問資源並接收消息",
           txt:
-            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子賬號的全部功能"
+            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子帳號的全部功能"
         },
         {
           code: 0,
@@ -352,7 +345,7 @@ export default {
         Version: "2019-01-16",
         Name: this.ruleForm.Name,
         Remark: this.ruleForm.Remark,
-        ConsoleLogin: this.ruleForm.ConsoleLogin,
+        ConsoleLogin: this.ruleForm.type.includes('1') ? 1 : 0,
         Password: this.ruleForm.pwdRadio ? this.ruleForm.Password : "",
         NeedResetPassword: this.ruleForm.pwdType.includes(0) ? 1 : 0,
         PhoneNum: this.ruleForm.PhoneNum,
@@ -366,7 +359,7 @@ export default {
           "InvalidParameter.ParamError": "非法入參",
           "InvalidParameter.PasswordViolatedRules":
             "密碼不符合用戶安全設置",
-          "InvalidParameter.SubUserFull": "子賬號數量達到上限",
+          "InvalidParameter.SubUserFull": "子帳號數量達到上限",
           "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -388,7 +381,7 @@ export default {
         SubAccountname: res.Response.Name
       };
       this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`, params)
-      if (this.ruleForm.ConsoleLogin === 0) {
+      if (!this.ruleForm.type.includes('1')) {
         this.$message({
           message: '創建成功',
           type: "success",
@@ -478,11 +471,6 @@ export default {
       } else {
         this.visitType = false;
       }
-    },
-    //选择类型
-    _type(index) {
-      this.typeIndex = index;
-      this.ruleForm.ConsoleLogin = this.type[index].code;
     },
     //返回上一级
     _back() {
@@ -621,7 +609,8 @@ export default {
                 duration: 0
               });
             } else {
-              if (this.ruleForm.ConsoleLogin === 1) {
+              console.log(this.ruleForm.type)
+              if (this.ruleForm.type.includes('1')) {
                 this.active += 1
               } else {
                 this.active = 3
@@ -638,7 +627,7 @@ export default {
     },
     //上一步
     _lastStep() {
-      if (this.active === 3 && this.ruleForm.ConsoleLogin === 0) {
+      if (this.active === 3 && !this.ruleForm.type.includes('1')) {
         this.active = 1
       } else {
         this.active -= 1

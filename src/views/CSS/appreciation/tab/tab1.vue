@@ -27,13 +27,6 @@
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
-        <el-pagination
-          :page-size="pageSize"
-          :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="totalItems"
-        ></el-pagination>
       </div>
     </div>
   </div>
@@ -218,8 +211,8 @@ export default {
 <style scoped lang='scss'>
 .wrap {
   .Right-style {
-    display: flex;
-    justify-content: flex-end;
+    // display: flex;
+    // justify-content: flex-end;
 
     .esach-inputL {
       width: 300px;
@@ -228,7 +221,6 @@ export default {
   }
   .pagstyle {
     padding: 20px;
-
     .pagtotal {
       font-size: 13px;
       font-weight: 400;

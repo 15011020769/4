@@ -125,6 +125,10 @@ export default {
   height: 30px;
   border-radius: 0;
 }
+::v-deep .el-dialog__headerbtn {
+  background-color: #fff;
+  border: none;
+}
 .conList {
   margin-bottom: 20px;
   p:nth-child(1) {

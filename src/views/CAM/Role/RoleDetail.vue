@@ -161,18 +161,24 @@
                       <span>{{scope.row}}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column label="條件" v-if="condition.length">
+                  <el-table-column label="條件" v-if="roleCarrierType === 'federated'">
                     <template slot-scope="scope" show-overflow-tooltip>
-                      <span v-if="condition[scope.$index]">
+                      <span v-if="condition[scope.$index].length">
                         {{condition[scope.$index][0].key}} - {{condition[scope.$index][0].condi}} - {{condition[scope.$index][0].val}}
                         <el-button type="text" style="font-size: 12px;" v-if="condition[scope.$index].length > 1">以及({{condition[scope.$index].length - 1}})項</el-button>
                       </span>
                       <span v-else>-</span>
                     </template>
+                    <!-- <span v-else></span> -->
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
-                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" :content="$t('CAM.Role.wfscwydzt')" placement="top-start">
+                      <el-tooltip
+                        v-if="roleCarrier.length === 1"
+                        effect="dark"
+                        :content="$t('CAM.Role.wfscwydzt')"
+                        placement="top-start"
+                      >
                       <el-button
                         type="text"
                         size="small"
@@ -489,6 +495,7 @@ export default {
               _this.roleCarrier.push(...PolicyDocument.statement[0].principal.qcs)
             }
             if (PolicyDocument.statement[0].principal.federated) {
+
               this.roleCarrierType = 'federated'
               _this.roleCarrier = PolicyDocument.statement.map(s => typeof s.principal.federated === 'string' ? s.principal.federated : s.principal.federated[0])
               PolicyDocument.statement.forEach(s => {
@@ -592,7 +599,7 @@ export default {
     // 解除角色策略
     relieveRolePolicy(scope, flag = false) {
       if (flag) {
-        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+        this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
           confirmButtonText: "確定",
           cancelButtonText: "取消",
           type: "warning"
@@ -667,7 +674,7 @@ export default {
           showClose: true
         });
       } else {
-        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+        this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
@@ -713,7 +720,7 @@ export default {
         .catch(error => {});
     },
     delRolePolicy(index, rows) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm(this.$t('CAM.Role.jcjsztts'), this.$t('CAM.Role.jcjszt'), {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"

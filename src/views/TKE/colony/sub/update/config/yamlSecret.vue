@@ -104,6 +104,12 @@ export default {
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
+          this.$message({
+            message: "编辑完成",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.$router.push({
             name: "secretDetail",
             query: { clusterId: this.clusterId, name: this.name, np: this.np }

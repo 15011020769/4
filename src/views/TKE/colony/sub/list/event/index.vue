@@ -229,7 +229,7 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           if (mes.items != []) {
-            this.list=[];
+            this.list = [];
             this.list = mes.items;
             this.total = mes.items.length;
             mes.items.forEach(item => {
@@ -381,8 +381,8 @@ export default {
     subTitle,
     Loading
   },
-  destroyed(){
-    window.clearInterval(refresh)
+  destroyed() {
+    window.clearInterval(refresh);
   }
 };
 </script>

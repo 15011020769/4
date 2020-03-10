@@ -19,7 +19,7 @@
             </el-table-column>
             <el-table-column prop="PolicyDocument" :label="$t('CAM.Role.roleCarrier')" show-overflow-tooltip>
               <template slot-scope="scope">
-                {{scope.row.type === 'qcs' ? '雲賬號' : (scope.row.type === 'service' ? '產品服務' : '身份提供商')}}
+                {{scope.row.type === 'qcs' ? '雲帳號' : (scope.row.type === 'service' ? '產品服務' : '身份提供商')}}
                 <span>- {{scope.row.PolicyDocument.val}}</span>
                 <span v-show="scope.row.PolicyDocument.len > 0">
                     以及

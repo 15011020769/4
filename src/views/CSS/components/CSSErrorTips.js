@@ -20,7 +20,9 @@ let CSSErrorTips = {
   "InternalError.DomainTooLong": "域名長度超過限制",
   "InternalError.InvalidUser": "帳號訊息錯誤",
   "InvalidParameter.DomainFormatError": "域名格式錯誤，請輸入合法格式域名",
-  "ResourceNotFound.StopService": "帳號停服，請先衝正開通服務後再操作"
+  "ResourceNotFound.StopService": "帳號停服，請先衝正開通服務後再操作",
+  "ResourceNotFound.DomainNoRecord": "域名沒有備案",
+  "InternalError.ConfInUsed": "範本使用中，請先刪除綁定關係再刪除"
 }
 export {
   CSSErrorTips

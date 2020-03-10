@@ -116,7 +116,7 @@
       destroy-on-close
       width="840px"
     >
-      <test-stream :stream="stream" :url.sync="playUrl" />
+      <test-stream :stream="stream" :visible="visible" :url.sync="playUrl" />
     </el-dialog>
   </div>
 </template>

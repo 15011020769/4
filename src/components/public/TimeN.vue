@@ -14,13 +14,25 @@
           <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
             <p class="p-dis">
               <span>從</span>
-              <el-date-picker class="width-date" v-model="datevalueStart" type="date" placeholder="選擇日期">
+              <el-date-picker
+                class="width-date"
+                v-model="datevalueStart"
+                type="date"
+                placeholder="選擇日期"
+                :picker-options="pickerOptions1"
+              >
               </el-date-picker>
               <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點"></el-time-picker>
             </p>
             <p class="p-dis">
               <span>至</span>
-              <el-date-picker class="width-date" v-model="datevalueEnd" type="date" placeholder="選擇日期">
+              <el-date-picker
+                class="width-date"
+                v-model="datevalueEnd"
+                type="date"
+                placeholder="選擇日期"
+                :picker-options="pickerOptions2"
+              >
               </el-date-picker>
               <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點"></el-time-picker>
             </p>
@@ -71,6 +83,20 @@
           EndTIme: ""
         },
         classvalue: 1,
+        pickerOptions1: {
+          disabledDate(time) {
+            return time > moment()
+          },
+        },
+        pickerOptions2: {
+          disabledDate(time) {
+            let timeOptionRange = vue.datevalueStart;
+            if(timeOptionRange){
+              return moment(time).diff(timeOptionRange, 'days') > 30 || time < moment(timeOptionRange) || time > moment()
+            }
+            return time > moment()
+          },
+        },
         pickerOptions: {
           disabledDate(time) {
             let timeOptionRange = vue.timeOptionRange;

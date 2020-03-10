@@ -133,6 +133,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         "Type.0": "white"
@@ -148,6 +149,7 @@ export default {
     modifyCCIpAllowDeny(ipList) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         Method: this.method, //add表示添加，delete表示删除

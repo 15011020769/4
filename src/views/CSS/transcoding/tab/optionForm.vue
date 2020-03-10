@@ -78,7 +78,7 @@
           label="碼率壓縮比"
           prop="AdaptBitratePercent"
           :show-message="false"
-          v-show="ruleForm.AiTransCode == '1'"
+          v-show="ruleForm.AiTransCode === '1'"
         >
           <el-input
             type="textarea"
@@ -112,7 +112,22 @@ export default {
       type: Object
     }
   },
-
+  computed: {
+    actualItem() {
+      return this.selectItem;
+    }
+  },
+  watch: {
+    actualItem(newValue, oldValue) {
+      // 从编辑页面直接点击添加，需要刷新为空表单的状态
+      if (Object.keys(newValue).length === 0) {
+        this.$refs.ruleForm.resetFields();
+        this.ruleForm.AiTransCode = "0";
+        // 默认选择普通
+        this.selectCommonType();
+      }
+    }
+  },
   data() {
     return {
       form: {
@@ -163,9 +178,9 @@ export default {
         return false;
       }
 
-      const descRegex = /^[\w_-]*$/;
+      const descRegex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
 
-      if (!descRegex.test(this.ruleForm.desc)) {
+      if (!descRegex.test(this.ruleForm.Description)) {
         this.$message({
           message: "範本描述不符合要求",
           type: "error",
@@ -374,16 +389,23 @@ export default {
     },
 
     initTableParams() {
-      console.log(this.selectItem);
-
       if (Object.keys(this.selectItem).length) {
-        const currentParams = {};
         Object.keys(this.ruleForm).forEach(key => {
           this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
           this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString();
-          this.ruleForm.AdaptBitratePercent = this.ruleForm.AdaptBitratePercent * 100;
+          this.ruleForm.AdaptBitratePercent =
+            this.ruleForm.AdaptBitratePercent * 100;
         });
+      } else {
+        // 默认选择普通
+        this.selectCommonType();
       }
+    },
+    selectCommonType() {
+      const currentItem = TEMPLATE_TYPE.find(item => item.key === "common");
+      this.ruleForm.Height = currentItem.Height;
+      this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
+      this.selectType = currentItem.value;
     }
   }
 };

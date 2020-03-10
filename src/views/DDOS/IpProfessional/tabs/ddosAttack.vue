@@ -202,6 +202,7 @@ export default {
     GetID() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
@@ -247,6 +248,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.selectId,
         StartTime: this.startTime,
@@ -274,7 +276,7 @@ export default {
     describeDDoSNetCount() {
       let params = {
         Version: "2018-07-09",
-        // Region: '',
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.selectId,
         StartTime: this.startTime,
@@ -307,7 +309,7 @@ export default {
     describeDDoSNetTrend(date) {
       let params = {
         Version: "2018-07-09",
-        // Region: '',
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.selectId,
         MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]

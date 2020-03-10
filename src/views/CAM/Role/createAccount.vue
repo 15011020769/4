@@ -20,8 +20,12 @@
             <div class="first_left">
               <p style="margin-bottom:40px">
                 {{ $t("CAM.Role.cloudCardType") }}
+                <span style="color:#F56C6C">*</span>
               </p>
-              <p>{{ $t("CAM.Role.cardId") }}</p>
+              <p>
+                {{ $t("CAM.Role.cardId") }}
+                <span style="color:#F56C6C">*</span>
+              </p>
             </div>
             <div class="first_right">
               <p style="margin-bottom:30px">
@@ -46,7 +50,7 @@
                   :disabled="disabledAccount"
                   style="width:150px"
                 ></el-input>
-                <p v-if="notExists" style="color: #e54545;">您輸入的賬號不存在</p>
+                <p v-if="notExists" style="color: #e54545;">您輸入的帳號不存在</p>
               </p>
             </div>
           </div>
@@ -57,7 +61,10 @@
         <div class="shenyue" v-show="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">{{ $t("CAM.Role.roleName") }}*</p>
+              <p class="juese">
+                {{ $t("CAM.Role.roleName") }}
+                <span style="color:#F56C6C">*</span>
+              </p>
               <p class="juese" style="margin-top:55px">
                 {{ $t("CAM.Role.roleDesc") }}
               </p>
@@ -85,7 +92,7 @@
                   size="mini"
                 ></el-input>
               </p>
-              <p class="jscontent text">賬號-{{ input_num }}</p>
+              <p class="jscontent text">帳號-{{ input_num }}</p>
             </div>
           </div>
           <div class="content_table">
@@ -144,7 +151,7 @@
 import { ErrorTips } from '@/components/ErrorTips'
 import transfer from './component/transfer'
 import HeadCom from '../UserListNew/components/Head'
-import { CREATE_ROLE, ATTACH_ROLE } from '@/constants'
+import { CREATE_ROLE, ATTACH_ROLE, ATTACH_ROLE_POLICIES } from '@/constants'
 export default {
   components: {
     transfer,

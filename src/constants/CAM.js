@@ -60,9 +60,10 @@ export const DESCRIBE_ATTACHED_ENTITY_POLICIES = 'cam2/DescribeAttachedEntityPol
 export const SEND_AUTH_CODE = 'account2/SendAuthCode'
 export const DETACH_ROLE_POLICIES = 'cam2/DetachRolePolicies'
 export const ATTACH_GROUP_POLICIES = 'cam2/AttachGroupPolicies'
+export const ATTACH_ROLE_POLICIES = 'cam2/AttachRolePolicies'
 
 // V2接口
 export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'
-export const ATTACH_ROLE_POLICIES = 'cam2/AttachRolePolicies'
+export const LIST_GROUPS_V2 = 'cam/ListGroups'
 export const UPDATE_ROLE_CONSOLE_LOGIN = 'cam/UpdateRoleConsoleLogin'
 

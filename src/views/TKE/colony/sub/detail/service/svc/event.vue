@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
       </div>
     </div>
 
@@ -94,7 +94,7 @@ export default {
   data () {
     return {
       loadShow: false, // 加载是否显示
-      autoRefresh: true, // 自动刷新
+      autoRefresh: false, // 自动刷新
       timer: null, // 定时器
       list: [
         {

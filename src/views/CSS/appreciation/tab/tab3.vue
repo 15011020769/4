@@ -19,19 +19,12 @@
         <el-table-column prop="num" label="錄製任務數量（個）"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="exportTable(scope)">導出詳情</el-button>
+            <el-button type="text" size="small" @click="exportTable(scope)">{{$t('CSS.appreciation.12')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
-        <el-pagination
-          :page-size="pageSize"
-          :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="totalItems"
-        ></el-pagination>
       </div>
     </div>
   </div>
@@ -204,8 +197,8 @@ export default {
 <style scoped lang='scss'>
 .wrap {
   .Right-style {
-    display: flex;
-    justify-content: flex-end;
+    // display: flex;
+    // justify-content: flex-end;
 
     .esach-inputL {
       width: 300px;

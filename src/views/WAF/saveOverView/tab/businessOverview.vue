@@ -21,17 +21,17 @@
           <el-button-group class="buttonDateCheck">
             <el-button
               @click="checkTime(1)"
-              :class="thisType == '1' ? 'addStyleBtn' : ''"
+              :class="selBtn == '1' ? 'addStyleBtn' : ''"
               >今天</el-button
             >
             <el-button
               @click="checkTime(2)"
-              :class="thisType == '2' ? 'addStyleBtn' : ''"
+              :class="selBtn == '2' ? 'addStyleBtn' : ''"
               >昨天</el-button
             >
             <el-button
               @click="checkTime(3)"
-              :class="thisType == '3' ? 'addStyleBtn' : ''"
+              :class="selBtn == '3' ? 'addStyleBtn' : ''"
               >近7天</el-button
             >
           </el-button-group>
@@ -55,6 +55,7 @@
       <component
         class="comp"
         v-for="comp in showModules"
+        :key="comp"
         :is="comp"
         :times="[startTime, endTime]"
         :domain="selectValue"
@@ -131,8 +132,9 @@ export default {
   data () {
     return {
       options: [], // 默认下拉选项
-      dateTimeValue: [(moment(new Date()).format('YYYY-MM-DD HH:mm:ss')), (moment(new Date()).format('YYYY-MM-DD HH:mm:ss'))], // 日期绑定
-      // dateTimeValue: [], //日期绑定
+      // dateTimeValue: [(moment(new Date()).format("YYYY-MM-DD HH:mm:ss")), (moment(new Date()).format("YYYY-MM-DD HH:mm:ss"))], //日期绑定
+      dateTimeValue: [moment().startOf('day'), moment().endOf('day')], // 日期绑定
+      selBtn: 1, // 默认选中今天按钮
       selectValue: '', // 域名下拉菜单
       thisType: '1', // 按钮默认选中
       endTime: moment(new Date()).endOf('days').format('YYYY-MM-DD HH:mm:ss'),
@@ -260,95 +262,57 @@ export default {
     onCancel () {
       this.dialogDownloadVisible = false
     },
-    //  // 获取请求来源地址和ip柱状图、响应时间最慢和页面访问次数top5
-    // getAccessIp(type) {
-    //   const params = {
-    //     Version: '2018-01-25',
-    //     FromTime: this.startTime,
-    //     ToTime: this.endTime,
-    //     Host: "all",
-    //     Edition: "clb-waf",
-    //     QueryField: type,
-    //     Source: "access",
-    //   }
-    //   if (this.selectValue != "") {
-    //     params["Host"] = this.selectValue
-    //   }
-    //   this.axios.post(DESCRIBE_HISTOGRAM, params).then((resp) => {
-    //     let ipArrCount = []
-    //     let ipArr = []
-    //     let localArr = []
-    //     let localArrCount = []
-    //     let artArrCount = []
-    //     let artArr = []
-    //     let urlArrCount = []
-    //     let urlArr = []
-    //     if (type == "ip") {
-    //       this.generalRespHandler(resp, ({Histogram}) => {
-    //         Histogram && Histogram.map(v => {
-    //           ipArrCount.push(v.count)
-    //           ipArr.push(v.ip)
-    //         })
-    //         this.xAxisBarIp = ipArr
-    //         this.seriesBarIp = ipArrCount
-    //       })
-    //     } else if(type == "local") {
-    //       this.generalRespHandler(resp, ({Histogram}) => {
-    //         Histogram && Histogram.map(v => {
-    //           localArrCount.push(v.count)
-    //           localArr.push(v.local)
-    //         })
-    //         this.xAxisBarLocal = localArr
-    //         this.seriesBarLocal = localArrCount
-    //       })
-    //     } else if(type == "art") {
-    //       this.generalRespHandler(resp, ({Histogram}) => {
-    //         Histogram && Histogram.map(v => {
-    //           artArrCount.push(v.count)
-    //           artArr.push(v.url)
-    //         })
-    //         this.xAxisBarArt = artArr
-    //         this.seriesBarArt = artArrCount
-    //       })
-    //     } else if(type == "url") {
-    //       this.generalRespHandler(resp, ({Histogram}) => {
-    //         Histogram && Histogram.map(v => {
-    //           urlArrCount.push(v.count)
-    //           urlArr.push(v.url)
-    //         })
-    //         this.xAxisBarUrl = urlArr
-    //         this.seriesBarUrl = urlArrCount
-    //       })
-    //     }
-    //   })
-    // },
     // 时间点击事件
-    checkTime (type) {
-      this.thisType = type
-      var ipt1 = document.querySelector('.dateTimeValue input:nth-child(2)')
-      var ipt2 = document.querySelector('.dateTimeValue input:nth-child(4)')
-      const end = new Date()
-      const start = new Date()
-      if (type == '1') {
-        start.setTime(start.getTime())
-        end.setTime(end.getTime())
-      } else if (type == '2') {
-        start.setTime(start.getTime() - 3600 * 1000 * 24)
-        end.setTime(end.getTime() - 3600 * 1000 * 24)
-      } else if (type == '3') {
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-        end.setTime(end.getTime())
+    checkTime (val) {
+      let times = [moment().startOf('day'), moment()] // 默认今天
+      this.selBtn = val
+      switch (val) {
+        case 2:
+          times = [moment().subtract(24, 'hours').startOf('day'), moment().subtract(24, 'hours')]
+          break
+        case 3:
+          times = [moment().subtract(7, 'days').startOf('day'), moment()]
+          break
+        default:
+          break
       }
-      ipt1.value = moment(start).format('YYYY-MM-DD')
-      ipt2.value = moment(end).format('YYYY-MM-DD')
-      this.startTime = moment(start).startOf('days').format('YYYY-MM-DD HH:mm:ss')
-      this.endTime = moment(end).endOf('days').format('YYYY-MM-DD HH:mm:ss')
+      times[1] = times[1].endOf('day')
+      this.dateTimeValue = times
+      this.startTime = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
+      this.endTime = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')
     },
     changeTimeValue () {
-      this.thisType = 0
+      this.selBtn = 0
       this.startTime = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
       this.endTime = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
     },
+    // // 时间点击事件
+    //  checkTime(type) {
+    //   this.thisType = type;
+    //   var ipt1 = document.querySelector(".dateTimeValue input:nth-child(2)");
+    //   var ipt2 = document.querySelector(".dateTimeValue input:nth-child(4)");
+    //   const end = new Date();
+    //   const start = new Date();
+    //   if (type == "1") {
+    //     start.setTime(start.getTime());
+    //     end.setTime(end.getTime());
+    //   } else if (type == "2") {
+    //     start.setTime(start.getTime() - 3600 * 1000 * 24);
+    //     end.setTime(end.getTime() - 3600 * 1000 * 24);
+    //   } else if (type == "3") {
+    //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+    //     end.setTime(end.getTime());
+    //   }
+    //   ipt1.value = moment(start).format("YYYY-MM-DD");
+    //   ipt2.value = moment(end).format("YYYY-MM-DD");
+    //   this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+    //   this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+    // },
+    // changeTimeValue() {
+    //   this.thisType = 0
+    //   this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
+    //   this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+    // },
     html2canvas_2 (imgtype) {
       // 获取截取区域的高度和宽度
       const h = this.$refs.wrapperContent.offsetHeight

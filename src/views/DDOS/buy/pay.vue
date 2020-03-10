@@ -40,10 +40,10 @@
                   <p><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
                   <p><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
                   <p><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
-                  <p><span>轉發規則數(个)：{{allData1.shareNum}}</span></p>
+                  <p><span>轉發規則數(個)：{{allData1.shareNum}}</span></p>
                 </td>
                 <td>
-                  <span>{{this.showPrice(allData1.payMoney,2)}}元/月</span>
+                  <span>{{this.showPrice(allData1.payMoney,2)}}圓/月</span>
                 </td>
                 <td>
                   <span>1</span>
@@ -58,7 +58,7 @@
                   <span>無</span>
                 </td>
                 <td>
-                  <span class="tableTdLast">{{this.showPrice(allData1.payMoney,2)}}元</span>
+                  <span class="tableTdLast">{{this.showPrice(allData1.payMoney,2)}}圓</span>
                 </td>
               </tr>
             </table>
@@ -66,7 +66,7 @@
         <div class="bottomPay">
           <div class="pay-submit">
             <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span>
-            <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
+            <span class="allTotal">總計費用：<span class="allMoneySpan"> NT$<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
             <el-button class="payBtnOne">代理支付</el-button>
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>
           </div>
@@ -76,25 +76,108 @@
   </div>
 </template>
 <script>
+import { GENERATE_DEALS, PAY_DEALS } from "@/constants";
 export default{
-  data(){
+  data() {
     return {
-      active: 0,
-      allData:[],
-      allData1:[],
-      checkBox:[]
+      active: 1,
+      allData: [],
+      allData1: [],
+      checkBox: [],
+      OrderIds: []
     }
   },
-  created() {
-    this.allData=sessionStorage.getItem("allData");
+  created () {
+    this.allData =sessionStorage.getItem("allData");
     this.allData1 = JSON.parse(this.allData)
-    console.log(this.allData1)
   },
-  methods:{
-    next() {
-      if (this.active++ > 2) this.active = 0;
+  methods: {
+    next () {
+      if (this.active === 1) {
+        this.GenerateDeals()
+      } else if (this.active === 2) {
+        // this.PayDeals() // 支付接口暫時屏蔽 待 業務邏輯梳理完整后放開
+      }
     },
-
+    // 支付订单
+    PayDeals () {
+      let params = {
+        Version: "2018-07-09",
+        Region: "ap-taipei",
+      }
+      this.OrderIds.forEach((element, index) => {
+        params['OrderIds.' + index] = element
+      })
+      this.axios.post(PAY_DEALS, params).then(res => {
+        if (res.Response !== undefined) {
+          if (res.Response.Error === undefined) {
+            // 支付成功
+            this.active++
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+      })
+    },
+    // 创建订单
+    GenerateDeals () {
+      let params = {
+        Version: "2018-07-09",
+        Region: "ap-taipei",
+      }
+      let GoodsDetail = {
+        bandwidth: this.allData1.savePeak, // 保底带宽
+        gfbandwidth: this.allData1.BusinessBroadband, // 业务带宽
+        rule_count: 60, // 转发规则数
+        pid: "14306",
+        timeSpan: this.allData1.payTimeNum, // 购买时长
+        timeUnit: "m"
+      };
+      let json = JSON.stringify(GoodsDetail);
+      let Goods = [
+        {
+          RegionId: 39,
+          ZoneId: 0,
+          GoodsCategoryId: 100615,
+          // Currency: "CNY",
+          GoodsNum: 1,
+          PayMode: 1,
+          ProjectId: 0,
+          Platform: 1,
+          GoodsDetail: json
+        }
+      ]
+      Goods.forEach((item, i) => {
+        let keys = Object.keys(item)
+        keys.forEach((e, p) => {
+          params['Goods.' + i + '.' + e] = item[e]
+        })
+      })
+      this.axios.post(GENERATE_DEALS, params).then(res => {
+        if (res.Response !== undefined) {
+          if (res.Response.Error === undefined) {
+            this.OrderIds = res.Response.OrderIds
+            this.active++
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+      })
+    },
     // 价格展示
     showPrice  (number, decimals = 0, decPoint = '.') {
       number = (number + '').replace(/[^0-9+-Ee.]/g, '')
@@ -159,24 +242,28 @@ export default{
       background-color: #fff;
       overflow-x: hidden;
       overflow-y: hidden;
+      padding:0 30px;
       .table-div{
         border-collapse:collapse;
         td:nth-child(1){
           padding-left:32px;
         }
         .t-head{
-          border-top:1px solid #ddd;
+          border-top:0px solid #ddd;
           border-bottom:1px solid #ddd;
           height:30px;
           font-weight:bold;
           font-size:14px;
+          td{
+             padding:20px 35px 20px 35px;
+          }
         }
         .t-body{
           border-bottom:1px solid #ddd;
           padding:30px 0;
           font-size:14px;
           td{
-            padding:30px 0;
+             padding:20px 32px 20px 32px;
             p{
               margin-bottom:5px;
             }

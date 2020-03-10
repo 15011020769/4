@@ -55,6 +55,7 @@
       <component
         class="comp"
         v-for="comp in showModules"
+        :key="comp"
         :is="comp"
         :times="[startTime, endTime]"
         :domain="selectValue"
