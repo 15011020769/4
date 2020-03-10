@@ -51,7 +51,7 @@
       </el-form>
     </div>
     <!-- 新建、搜索相关操作 -->
-    <div class="tke-grid mt10">
+    <div class="tke-grid mt10" style="margin-top: 10px;">
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
@@ -266,7 +266,7 @@
           <el-button @click="showStopModal = false">取 消</el-button>
         </span>
     </el-dialog>
-    <!--停用伸缩组-->
+    <!--启用伸缩组-->
     <el-dialog title="停用伸缩组" :visible.sync="showUseModal" width="35%">
       <p>确定要启用伸缩组{{groupId}}么？</p>
       <span slot="footer" class="dialog-footer">
@@ -274,7 +274,7 @@
         <el-button @click="showUseModal = false">取 消</el-button>
       </span>
     </el-dialog>
-    <!--停用伸缩组-->
+    <!--调整配置-->
     <el-dialog title="调整伸缩组配置" :visible.sync="showToConfigureModal" width="35%">
       <el-form label-width="80px">
         <el-form-item label="名称">
@@ -950,6 +950,33 @@ export default {
 
     //提交调整伸缩组
     async submitToConfigure() {
+      if(this.minSize === '') {
+        this.$message({
+          message: '请输入最小值',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        return 
+      }
+      if(this.maxSize === '') {
+        this.$message({
+          message: '请输入最大值',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        return 
+      }
+      if(Number(this.minSize) > Number(this.maxSize)) {
+        this.$message({
+          message: '最小值不能大于最大值',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        return 
+      }
       this.loadShow = true;
       let param = {
         Version: "2018-05-25",

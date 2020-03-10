@@ -32,7 +32,7 @@ export const UPDATE_OS = 'tke2/ModifyClusterImage'
 export const NODE_ID_LIST = 'tke2/DescribeClusterInstanceIds'
 
 //获取节点实例列表
-export const NODE_POD_LIST = 'ccs/DrainClusterNode'
+export const NODE_POD_LIST = 'tke2/DrainClusterNode'
 
 //修改伸缩组属性
 export const MODIFY_GROUP_STATUS = 'tke2/ModifyClusterAsGroupAttribute'

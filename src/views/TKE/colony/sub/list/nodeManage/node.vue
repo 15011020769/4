@@ -714,12 +714,23 @@ export default {
       let param = {
         ClusterId: this.clusterId,
         InstanceId: rowObj.InstanceId,
-        DryRun: 1
+        DryRun: true,
+        Version: "2018-05-25"
       };
       let res = await this.axios.post(NODE_POD_LIST, param);
-      if (res.code === 0 && res.data) {
-        this.podList = res.data.Pods;
+      if(res.Response.Error === undefined) {
+        this.podList = res.Response.Pods;
         this.loadShow = false;
+      } else {
+        this.loadShow = false;
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
 
@@ -729,13 +740,31 @@ export default {
       let param = {
         ClusterId: this.clusterId,
         InstanceId: this.instanceId,
-        DryRun: 0
+        DryRun: false,
+        Version: "2018-05-25"
       };
       let res = await this.axios.post(NODE_POD_LIST, param);
-      if (res.code === 0) {
+      if(res.Response.Error === undefined) {
+        this.getNodeList();
         this.showExpelModal = false;
         this.podList = [];
         this.loadShow = false;
+        this.$message({
+          message: "驱逐成功",
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+      } else {
+        this.loadShow = false;
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
 
