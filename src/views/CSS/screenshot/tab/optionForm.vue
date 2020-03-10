@@ -162,7 +162,9 @@ export default {
         if (data.Response.Error == undefined) {
           this.$message({
             message: "添加成功",
-            type: "success"
+            type: "success",
+            showClose: true,
+            duration: 0,
           });
           this.$parent.fetchRecordingList();
           this.$emit("update:formShow", false);
