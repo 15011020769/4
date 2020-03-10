@@ -269,7 +269,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 名称验证
       labelKeyValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -280,7 +280,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 标签验证 key
       labelValueValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -291,10 +291,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 标签验证 value
       executionStrategyValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob') {
+          if (this.wl.type !== 'CronJob') {
             callback()
             return
           }
@@ -306,7 +306,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 执行策略为空
       instanceContentNameValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -319,7 +319,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 实例内容器 名称验证
       instanceContentMirrorImgValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -330,10 +330,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 实例内容器 镜像验证
       jobSettingRepeatValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+          if (this.wl.type !== 'CronJob' && this.wl.type !== 'Job') {
             callback()
             return
           }
@@ -345,10 +345,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // Job 重复次数 验证
       jobSettingParallelValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+          if (this.wl.type !== 'CronJob' && this.wl.type !== 'Job') {
             callback()
             return
           }
@@ -360,10 +360,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // Job 并行度 验证
       portMappingConPortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
+          if (this.wl.type !== 'Deployment' && this.wl.type !== 'StatefulSet') {
             callback()
             return
           }
@@ -375,10 +375,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 服务 端口映射 端口容器验证
       portMappingServicePortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
+          if (this.wl.type !== 'Deployment' && this.wl.type !== 'StatefulSet') {
             callback()
             return
           }
@@ -390,7 +390,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }]
+      }] // 服务 端口映射 服务端口
     }
   },
   methods: {
