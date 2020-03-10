@@ -17,20 +17,29 @@
         v-loading="loading"
       >
         <el-table-column prop="StreamName" label="StreamName"></el-table-column>
-        <el-table-column prop="StartTime" label="开始转码时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束转码时间"></el-table-column>
-        <el-table-column prop="Duration" label="转码时长（分钟）"></el-table-column>
-        <el-table-column prop="ModuleCodec" label="编码方式"></el-table-column>
-        <el-table-column prop="Bitrate" label="码率（Kbps）"></el-table-column>
-        <el-table-column prop="Type" label="类型"></el-table-column>
+        <el-table-column prop="StartTime" :label="$t('CSS.appreciation.6')"></el-table-column>
+        <el-table-column prop="EndTime" :label="$t('CSS.appreciation.7')"></el-table-column>
+        <el-table-column prop="Duration" :label="$t('CSS.appreciation.8')"></el-table-column>
+        <el-table-column prop="ModuleCodec" :label="$t('CSS.appreciation.9')"></el-table-column>
+        <el-table-column prop="Bitrate" :label="$t('CSS.appreciation.10')"></el-table-column>
+        <el-table-column prop="Type" :label="$t('CSS.appreciation.11')"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <!-- <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
         <el-pagination
           :page-size="pageSize"
           :pager-count="7"
           layout="prev, pager, next"
           @current-change="handleCurrentChange"
+          :total="totalItems"
+        ></el-pagination> -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="current"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="totalItems"
         ></el-pagination>
       </div>
@@ -83,6 +92,10 @@ export default {
     //分页
     handleCurrentChange(val) {
       this.current = val;
+      this.init();
+    },
+     handleSizeChange(val) {
+      this.pageSize = val;
       this.init();
     },
     //获取表格数据

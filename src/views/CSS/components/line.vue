@@ -3,7 +3,7 @@
     <el-row style="margin-top: 8px">
       <el-switch
         v-model="toogle"
-        active-text="缩放"
+        :active-text="$t('CSS.operation.0')"
         @change="datazoom"
         class="topSwitch"
       >
@@ -209,6 +209,7 @@ export default {
 <style lang='scss' scoped>
 ::v-deep button {
   padding: 8px 22px;
+  border-radius: 0;
   &:hover {
     background-color: #f2f2f2;
     border-color: #ddd;

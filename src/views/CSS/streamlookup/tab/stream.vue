@@ -1,6 +1,6 @@
 <template>
   <div class="stream-wrap">
-    <el-button type="text" size="mini" class="excel_part" @click="exportEchart">导出数据</el-button>
+    <el-button type="text" size="mini" class="excel_part" @click="exportEchart">導出數據</el-button>
     <Echart
       :xAxis="xAxis1"
       :series="series1"
@@ -12,7 +12,7 @@
         formatter: `{b}<br/>{a}  {c}fps`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <Echart
       :xAxis="xAxis1"
       :series="series2"
@@ -24,7 +24,7 @@
         formatter: `{b}<br/>{a}  {c}bps`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <Echart
       :xAxis="xAxis1"
       :series="series3"
@@ -36,7 +36,7 @@
         formatter: `{b}<br/>{a}  {c}fps`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <Echart
       :xAxis="xAxis1"
       :series="series4"
@@ -48,7 +48,7 @@
         formatter: `{b}<br/>{a}  {c}bps`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <div class="stream-table">
       <!-- <p>详细信息</p> -->
       <!-- <XTimeD v-on:switchData="GetDat" :classsvalue="value"></XTimeD> -->
@@ -103,8 +103,8 @@ export default {
     exportEchart() {
       const ws = XLSX.utils.json_to_sheet(this.line_json);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "推流质量");
-      XLSX.writeFile(wb, "推流质量.csv");
+      XLSX.utils.book_append_sheet(wb, ws, "推流質量");
+      XLSX.writeFile(wb, "推流質量.csv");
     },
     init() {
       this.loading = true;
