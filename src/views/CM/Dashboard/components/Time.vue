@@ -4,8 +4,8 @@
     <div class="btn-style">
       <el-row>
         <el-button-group>
-          <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">近一小时</el-button>
-          <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">近24小时
+          <el-button size="small" @click="TimeChoice(1)" :type="classsvalue == 1 ? 'primary' : ''">近一小時</el-button>
+          <el-button size="small" @click="TimeChoice(1*24)" :type="classsvalue == 1*24 ? 'primary' : ''">近24小時
           </el-button>
           <el-button size="small" @click="TimeChoice(1*24*7)" :type="classsvalue == 1*24*7 ? 'primary' : ''">近7天
           </el-button>
