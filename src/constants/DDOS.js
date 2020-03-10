@@ -66,4 +66,7 @@ export const STATIC_LIST = 'dayu2/DescribeTransmitStatis' // 获取业务转发�
 export const DESCRIBE_CHANNEL_DEVICE_RESOURCE = 'dayu2/DescribeChannelDeviceResource' // 获取基础防护互联网通道资源
 
 export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源自动续费标记
-export const QUERY_PRICE = 'billing2/GetPrice' // 修改资源自动续费标记
+
+export const QUERY_PRICE = 'billing/GetPrice' // DDOS 高防IP购买询价
+export const GENERATE_DEALS = 'billing/GenerateDeals' // DDOS 高防IP购买创建订单
+export const PAY_DEALS = 'billing/PayDeals' // DDOS 高防IP购买支付订单

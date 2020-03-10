@@ -402,7 +402,8 @@ export default {
       searchBarFixed: false,
       city: "",
       GbpsIndex: 0,
-      GbpsChildIndex: 0
+      GbpsChildIndex: 0,
+      OrderIds:[]
     };
   },
   mounted: function() {
@@ -504,23 +505,7 @@ export default {
           type: "warning"
         });
       } else {
-        let params = {
-          address: this.checked1,
-          savePeak: this.checked2,
-          elasticPeak: this.checkedRoute3,
-          autoPay: this.checkOrNull,
-          BusinessBroadband: this.checkedRoute4,
-          httpQPS: this.checkChange1,
-          httpsQPS: this.checkChange2,
-          shareNum: 60,
-          payTime: this.checked5,
-          payMoney: this.allMoney
-        };
-        let objStr = JSON.stringify(params);
-        sessionStorage.setItem("allData", [objStr]);
-        this.$router.push({
-          name: "pay"
-        });
+        this.jumpPay()
       }
     },
     //滚动监听
@@ -562,27 +547,34 @@ export default {
         timeSpan: this.type5, // 购买时长
         timeUnit: "m"
       };
-
       let json = JSON.stringify(GoodsDetail);
-      console.log(json);
+      let ResInfo = [
+        {
+          RegionId: 39,
+          ZoneId: 0,
+          GoodsCategoryId: 100615,
+          Currency: "CNY",
+          GoodsNum: 1,
+          PayMode: 1,
+          GoodsDetail: json
+        }
+      ];
       let params = {
         Version: "2018-07-09",
         Region: "ap-taipei",
         PayMode: 1,
-        Platform: 1,
-        // ResInfo: {
-        RegionId: 39,
-        zoneId: 0,
-        GoodsCategoryId: 100615,
-        Currency: "CNY",
-        GoodsNum: 1,
-        GoodsDetail: json
-        // }
+        Platform: 1
       };
+      ResInfo.forEach((item, i) => {
+        let keys = Object.keys(item)
+        keys.forEach((e, p) => {
+          params['ResInfo.' + i + '.' + e] = item[e]
+        })
+      })
       this.axios.post(QUERY_PRICE, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
-            this.allMoney = res.Response.PriceInfos.Price;
+            this.allMoney = res.Response.PriceInfos[0].TotalCost;
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -591,14 +583,35 @@ export default {
               type: "error",
               showClose: true,
               duration: 0
-            })
+            });
           }
         }
       });
     },
+    jumpPay () {
+       let params = {
+          address: this.checked1,
+          savePeak: this.checked2,
+          elasticPeak: this.checkedRoute3,
+          autoPay: this.checkOrNull,
+          BusinessBroadband: this.checkedRoute4,
+          httpQPS: this.checkChange1,
+          httpsQPS: this.checkChange2,
+          shareNum: 60,
+          payTime: this.checked5,
+          payMoney: this.allMoney,
+          payTimeNum: this.type5
+        };
+        let objStr = JSON.stringify(params);
+        sessionStorage.setItem("allData", [objStr]);
+        this.$router.push({
+          name: "pay"
+        });
+    },
     // 展示价格
     showPrice(number, decimals = 0, decPoint = ".", thousandsSep = ",") {
       number = (number + "").replace(/[^0-9+-Ee.]/g, "");
+      console.log(number)
       let n = !isFinite(+number) ? 0 : +number;
       let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
       let sep = typeof thousandsSep === "undefined" ? "," : thousandsSep;

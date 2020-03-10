@@ -76,25 +76,108 @@
   </div>
 </template>
 <script>
+import { GENERATE_DEALS, PAY_DEALS } from "@/constants";
 export default{
-  data(){
+  data() {
     return {
-      active: 0,
-      allData:[],
-      allData1:[],
-      checkBox:[]
+      active: 1,
+      allData: [],
+      allData1: [],
+      checkBox: [],
+      OrderIds: []
     }
   },
-  created() {
-    this.allData=sessionStorage.getItem("allData");
+  created () {
+    this.allData =sessionStorage.getItem("allData");
     this.allData1 = JSON.parse(this.allData)
-    console.log(this.allData1)
   },
-  methods:{
-    next() {
-      if (this.active++ > 2) this.active = 0;
+  methods: {
+    next () {
+      if (this.active === 1) {
+        this.GenerateDeals()
+      } else if (this.active === 2) {
+        this.PayDeals()
+      }
     },
-
+    // 支付订单
+    PayDeals () {
+      let params = {
+        Version: "2018-07-09",
+        Region: "ap-taipei",
+      }
+      this.OrderIds.forEach((element, index) => {
+        params['OrderIds.' + index] = element
+      })
+      this.axios.post(PAY_DEALS, params).then(res => {
+        if (res.Response !== undefined) {
+          if (res.Response.Error === undefined) {
+            // 支付成功
+            this.active++
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+      })
+    },
+    // 创建订单
+    GenerateDeals () {
+      let params = {
+        Version: "2018-07-09",
+        Region: "ap-taipei",
+      }
+      let GoodsDetail = {
+        bandwidth: this.allData1.savePeak, // 保底带宽
+        gfbandwidth: this.allData1.BusinessBroadband, // 业务带宽
+        rule_count: 60, // 转发规则数
+        pid: "14306",
+        timeSpan: this.allData1.payTimeNum, // 购买时长
+        timeUnit: "m"
+      };
+      let json = JSON.stringify(GoodsDetail);
+      let Goods = [
+        {
+          RegionId: 39,
+          ZoneId: 0,
+          GoodsCategoryId: 100615,
+          // Currency: "CNY",
+          GoodsNum: 1,
+          PayMode: 1,
+          ProjectId: 0,
+          Platform: 1,
+          GoodsDetail: json
+        }
+      ]
+      Goods.forEach((item, i) => {
+        let keys = Object.keys(item)
+        keys.forEach((e, p) => {
+          params['Goods.' + i + '.' + e] = item[e]
+        })
+      })
+      this.axios.post(GENERATE_DEALS, params).then(res => {
+        if (res.Response !== undefined) {
+          if (res.Response.Error === undefined) {
+            this.OrderIds = res.Response.OrderIds
+            this.active++
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        }
+      })
+    },
     // 价格展示
     showPrice  (number, decimals = 0, decPoint = '.') {
       number = (number + '').replace(/[^0-9+-Ee.]/g, '')
@@ -159,24 +242,28 @@ export default{
       background-color: #fff;
       overflow-x: hidden;
       overflow-y: hidden;
+      padding:0 30px;
       .table-div{
         border-collapse:collapse;
         td:nth-child(1){
           padding-left:32px;
         }
         .t-head{
-          border-top:1px solid #ddd;
+          border-top:0px solid #ddd;
           border-bottom:1px solid #ddd;
           height:30px;
           font-weight:bold;
           font-size:14px;
+          td{
+             padding:20px 35px 20px 35px;
+          }
         }
         .t-body{
           border-bottom:1px solid #ddd;
           padding:30px 0;
           font-size:14px;
           td{
-            padding:30px 0;
+             padding:20px 32px 20px 32px;
             p{
               margin-bottom:5px;
             }
