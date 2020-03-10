@@ -80,6 +80,7 @@ export default {
       
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business:'net',
         Id: this.resourceId,
         'Rules.0.Protocol': rule[0+add],

@@ -316,6 +316,7 @@ export default {
     describeDDoSAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.resourceId, //资源ID
       };
@@ -342,6 +343,7 @@ export default {
     modifyDefendStatus() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Status: this.servicePack.DefendStatus?1:0,
         Hour: this.servicePack.cleanTime,
@@ -358,6 +360,7 @@ export default {
     cleanThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         Threshold: this.servicePack.DdosThreshold
@@ -392,6 +395,7 @@ export default {
     modifyDDoSLevel(level) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         Method: "set",
@@ -429,6 +433,7 @@ export default {
         // 解绑
         let params = {
           Version: "2018-07-09",
+          Region: localStorage.getItem("regionv2"),
           Business: "net",
           Id: this.resourceId, //资源ID
           PolicyId: this.spolicyId, //原绑定策略ID
@@ -446,6 +451,7 @@ export default {
           // 绑定
           let params2 = {
             Version: "2018-07-09",
+            Region: localStorage.getItem("regionv2"),
             Business: "net",
             Id: this.resourceId, //资源ID
             PolicyId: this.servicePack.SPolicyId, //策略ID
@@ -498,6 +504,7 @@ export default {
     modifyDDoSAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.resourceId,
         AlarmType: this.servicePack.AlarmType, //告警阈值类型，0-未设置，1-入流量，2-清洗流量

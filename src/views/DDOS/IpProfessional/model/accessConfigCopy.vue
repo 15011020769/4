@@ -141,6 +141,7 @@
         this.$emit("closeCopyModel", this.dialogVisible)
         let params = {
           Version: '2018-07-09',
+          Region: localStorage.getItem("regionv2"),
           Business: 'net',
           Id: this.getResourceId,
           'Rules.0.RuleName': this.EnidData.RuleName,

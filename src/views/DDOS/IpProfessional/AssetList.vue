@@ -439,6 +439,7 @@ export default {
       this.loading = true
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net'
       }
       // 1.1.0.条件搜索调用（即将过期）
@@ -472,6 +473,7 @@ export default {
               // 1.防护等级
               let params = {
                 Version: '2018-07-09',
+                Region: localStorage.getItem("regionv2"),
                 Business: 'net',
                 Id: item.Value,
                 Method: 'get'
@@ -486,6 +488,7 @@ export default {
               // 2.高级防护策略
               let params2 = {
                 Version: '2018-07-09',
+                Region: localStorage.getItem("regionv2"),
                 Business: 'net',
                 Id: item.Value
               }
@@ -517,6 +520,7 @@ export default {
               // 3.转发规则个数（接入配置）
               let params3 = {
                 Version: '2018-07-09',
+                Region: localStorage.getItem("regionv2"),
                 Business: 'net',
                 Id: item.Value
               }
@@ -575,6 +579,7 @@ export default {
     describeRuleSets () {
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net'
       }
       for (let i = 0; i < this.tableData.length; i++) {
@@ -612,7 +617,7 @@ export default {
                   }
                 })
               })
-              if (item.RuleNameList === undefined) {
+              if (item.RuleNameList === undefined || item.RuleNameList == "") {
                 item.RuleNameList = '-'
               }
             } else if (map.Key == 'AutoReturn') {
@@ -632,6 +637,7 @@ export default {
     describeSourceIpSegment (resourceId) {
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net',
         Id: resourceId
       }
@@ -655,6 +661,7 @@ export default {
     createInstanceName (resourceId, name) {
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net',
         Id: resourceId,
         Name: name
@@ -678,6 +685,7 @@ export default {
     describeDDoSPolicy () {
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net'
       }
       this.axios.post(GET_SPolicy, params).then(res => {
@@ -688,6 +696,7 @@ export default {
     modifyResourceRenewFlag (id, renewFlag) {
       let params = {
         Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
         Business: 'net',
         Id: id,
         RenewFlag: renewFlag // RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）

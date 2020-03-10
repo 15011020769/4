@@ -272,6 +272,7 @@ export default {
     describeResourceList() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(RESOURCE_LIST, params).then(res => {
@@ -328,6 +329,7 @@ export default {
     describleL4Rules() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId
       };
@@ -370,6 +372,7 @@ export default {
     for(let i=0;i<delAllId.length;i++){
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         "RuleIdList.0": delAllId[i],
@@ -470,6 +473,7 @@ export default {
     batchExport() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId
       };
@@ -550,6 +554,7 @@ export default {
       this.dialogDelete = false;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         "RuleIdList.0": this.tableDataBegin[this.deleteIndex].RuleId

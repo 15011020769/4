@@ -178,6 +178,7 @@ export default {
     describeResIpList() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
@@ -191,6 +192,7 @@ export default {
     describeResourceList() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         "IdList.0": this.ccResourceId
       };
@@ -210,6 +212,7 @@ export default {
     modifyCCThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         Threshold: this.switchState ? this.httpRequestNum : 0
@@ -222,6 +225,7 @@ export default {
     describeCCAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.ccResourceId,
       };
@@ -234,6 +238,7 @@ export default {
     modifyCCAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.ccResourceId,
         AlarmThreshold: this.alarmThreshold,
