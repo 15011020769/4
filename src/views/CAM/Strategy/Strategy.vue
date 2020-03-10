@@ -101,22 +101,24 @@
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
-    <el-dialog title :visible.sync="dialogVisible" width="72%" :before-close="beforeClose">
-      <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
-      <div class="dialog_div">
-          <!-- v-if="transferFlag" -->
-        <transfer
-          ref="userTransfer"
-          :PolicyId="policyId"
-        ></transfer>
-          <!-- :userArr="userArr"
-          :groupArr="groupArr" -->
-      </div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="dialogVisible=false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="attachPolicy">{{$t('CAM.userList.suerAdd')}}</el-button>
-      </span>
-    </el-dialog>
+    <div v-if="dialogVisible">
+      <el-dialog title :visible.sync="dialogVisible" width="72%" :before-close="beforeClose">
+        <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
+        <div class="dialog_div">
+            <!-- v-if="transferFlag" -->
+          <transfer
+            ref="userTransfer"
+            :PolicyId="policyId"
+          ></transfer>
+            <!-- :userArr="userArr"
+            :groupArr="groupArr" -->
+        </div>
+        <span slot="footer" class="dialog-footer">
+          <el-button size="mini" @click="dialogVisible=false">取 消</el-button>
+          <el-button size="mini" type="primary" @click="attachPolicy">{{$t('CAM.userList.suerAdd')}}</el-button>
+        </span>
+      </el-dialog>
+    </div>
   </div>
 </template>
 <script>
