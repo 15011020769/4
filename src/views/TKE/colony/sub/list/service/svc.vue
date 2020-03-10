@@ -156,7 +156,7 @@ export default {
           this.loadShow = false
           let searchOpt = JSON.parse(res.Response.ResponseBody).items// 得到空间列表
           this.searchOptions = searchOpt// 赋值
-          this.nameSpaceName = searchOpt[0].metadata.name// 默认选中第一项
+          // this.nameSpaceName = searchOpt[0].metadata.name// 默认选中第一项
         } else {
           this.loadShow = false
           let ErrTips = {

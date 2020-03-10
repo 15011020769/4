@@ -13,10 +13,10 @@
     <div class="my-title">
         <ul class="my-ul">
             <li @click="getInfo()" class="li-one" :style="{fontWeight:this.dataObject.flag==1?'700':''}">
-              镜像信息<div :class="[this.dataObject.flag == 1?'bottom-one':'']" :style="{width:this.dataObject.flag==1?'78px':'0'}"></div>
+              镜像版本<div :class="[this.dataObject.flag == 1?'bottom-one':'']" :style="{width:this.dataObject.flag==1?'78px':'0'}"></div>
             </li>
             <li @click="getDetail()" class="li-one" :style="{fontWeight:this.dataObject.flag==2?'700':''}">
-              镜像详情<div :class="[this.dataObject.flag == 2?'bottom-one':'']" :style="{width:this.dataObject.flag==2?'78px':'0'}" ></div>
+              镜像信息<div :class="[this.dataObject.flag == 2?'bottom-one':'']" :style="{width:this.dataObject.flag==2?'78px':'0'}" ></div>
             </li>
             <!-- <li @click="getBuild()" class="li-one" :style="{fontWeight:this.dataObject.flag==3?'700':''}">
               镜像构建<div :class="[this.dataObject.flag == 3?'bottom-one':'']" :style="{width:this.dataObject.flag==3?'78px':'0'}"></div>

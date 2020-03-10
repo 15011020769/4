@@ -90,17 +90,20 @@
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'">容器端口
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'">
+						容器端口
 						<el-tooltip content="端口范围1~65535" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'" v-if="svc.radio=='4'">主机端口
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'width:204px':'width:250px;'" v-if="svc.radio=='4'">
+						主机端口
 						<el-tooltip content="可通过云服务器IP+主机端口访问服务，端口范围30000~32767，不填自动分配" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
 					</div>
-					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'':'padding-left:30px'">服务端口
+					<div :class="{titles:svc.radio=='4'}" :style="svc.radio=='4'?'':'padding-left:30px'">
+						服务端口
 						<el-tooltip content="集群外通过负载均衡域名或IP+服务端口访问服务，集群内通过服务名+服务端口访问服务" placement="top" effect="light">
 						<i class="el-icon-warning"></i>
 						</el-tooltip>
@@ -109,6 +112,7 @@
 				<!-- 内容 -->
 				<div style="border-top:1px solid #ddd;padding: 10px;">
 					<div style="padding:5px 0;" v-for="(it,i) in svc.list" :key="it.key">
+						 <!-- :prop="`list.${i}.protocol`" :rules="ProtocolValidation" -->
 						<el-form-item style="display: inline-block">
 							<!-- <el-select class="w100" v-model="svc.protocol" placeholder="请选择"> -->
 							<el-select class="w100" v-model="it.protocol" placeholder="请选择">
@@ -120,19 +124,26 @@
 						    </el-option>
 						  </el-select>
 						</el-form-item>
+						<!-- 容器端口 -->
 						<el-form-item :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;"
-						:prop="`list.${i}.input1`" :rules="verifyPort">
+						:prop="`list.${i}.input1`" :rules="verifyPort1">
 						  <el-input class="w250" v-model="it.input1" placeholder="容器内应用程序监听的端口"></el-input>
 						</el-form-item>
+						<!-- 主机端口 -->
 						<el-form-item :class="{cons:svc.radio=='4'}" v-if="svc.radio=='4'"
 						style="display: inline-block;padding-left:30px;"  :prop="`list.${i}.input3`" :rules="verifyPort2">
 						  <el-input class="w250" v-model="it.input3" placeholder="范围: 30000~32767"></el-input>
 						</el-form-item>
+						<!-- 服务端口 -->
 						<el-form-item :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;"
-						:prop="`list.${i}.input2`" :rules="verifyPort">
+						:prop="`list.${i}.input2`" :rules="verifyPort3">
 						  <el-input class="w250" v-model="it.input2" placeholder="建议与容器端口一致"></el-input>
 						</el-form-item>
-						<el-tooltip class="item" effect="dark" content="删除" placement="right">
+						<!-- 对删除按钮的判断 -->
+						<el-tooltip class="item" effect="dark" content="不可删除，至少指定一个端口映射" placement="right" v-if="svc.list.length===1">
+							<i style="font-size:18px;" :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close"></i>
+						</el-tooltip>
+						<el-tooltip class="item" effect="dark" content="删除" placement="right" v-else>
 							<i style="font-size:18px;" :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close" @click="removeprot(it)"></i>
 						</el-tooltip>
 					</div>
@@ -177,8 +188,7 @@ export default {
       // AvailableIpAddressCount: '', // 剩余可用子网数
       protocolList: ['TCP', 'UDP'], // 协议列表
       addressCount: {}, // 子网点对象
-      // 会话时间的验证
-      timeRules: [{
+      timeRules: [{// 会话时间的验证
         validator: (rule, value, callback) => {
           if (value > 0 && value <= 68400) {
             callback()
@@ -196,7 +206,7 @@ export default {
         required: true
       }],
       // 端口映射的验证
-      verifyPort: [
+      verifyPort1: [// 容器端口的验证
         { validator: (rule, value, callback) => {
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
           if (!value) {
@@ -212,6 +222,16 @@ export default {
       ],
       verifyPort2: [{// 主机端口的验证
         validator: (rule, value, callback) => {
+          // let ls = this.svc.list
+          // let flog = false
+          // if (ls.length > 1) {
+          //   for (let i = 0; i < ls.length - 1; i++) {
+          //     ls[i].input3 === value ? flog = true : flog = false
+          //   }
+          // }
+          // if (flog) {
+          //   callback(new Error('端口不可重复映射'))
+          // }
           if (value > 30000 && value <= 32767) {
             callback()
           } else if (!value) {
@@ -226,7 +246,46 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }]
+      }],
+      verifyPort3: [// 服务端口的验证
+        { validator: (rule, value, callback) => {
+          // let ls = this.svc.list
+          // let flog = false
+          // if (ls.length > 1) {
+          //   for (let i = 0; i < ls.length - 1; i++) {
+          //     ls[i].input2 === value ? flog = true : flog = false
+          //   }
+          // }
+          let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
+          if (!value) {
+            callback(new Error('端口号不能为空'))
+          } else if (!portNumber.test(value)) {
+            callback(new Error('端口号格式不正确'))
+          // } else if (flog) {
+          //   callback(new Error('端口不可重复映射'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true }
+      ]
+      // ProtocolValidation: [// 协议的验证
+        // { validator: (rule, value, callback) => {
+        //   let ls = this.svc.list
+        //   let flog = false
+        //   if (ls.length > 1) {
+        //     for (let i = 0; i < ls.length - 1; i++) {
+        //       ls[i].protocol === value ? flog = true : flog = false
+        //     }
+        //   }
+        //   if (!flog) {
+        //     callback(new Error('协议必须一致'))
+        //   }
+        // },
+        // trigger: 'change',
+        // required: true }
+      // ]
     }
   },
   created: function () {

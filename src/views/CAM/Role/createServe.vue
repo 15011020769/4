@@ -39,7 +39,7 @@
             </el-checkbox-group>
           </div>
         </div>
-        <div class="tansfer" v-if="active == 2">
+        <div class="tansfer" v-show="active == 2">
           <transfer ref="tansferStep"></transfer>
         </div>
         <div class="shenyue" v-if="active == 3">
@@ -105,7 +105,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from "../UserListNew/components/Head";
-import transfer from "./component/transfer1";
+import transfer from "./component/transfer";
 import { CREATE_ROLE, ATTACH_ROLE, GET_PRINCIPAL_SERVICE } from "@/constants";
 export default {
   components: {
@@ -157,7 +157,7 @@ export default {
         if (this.active === 3) {
           return;
         }
-        this.policiesSelectedData = this.$refs.tansferStep.getData();
+        this.policiesSelectedData = this.$refs.tansferStep.selectedStrategies
         console.log(this.policiesSelectedData);
         this.active = this.active + 1;
       }

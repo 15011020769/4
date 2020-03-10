@@ -96,9 +96,9 @@ export default {
       findYamlData(){
         var params={
           Accept: "application/yaml",
-          ClusterName: "cls-h3phnkpy",
+          ClusterName: this.clusterId,
           Method: "GET",
-          Path: "/apis/autoscaling/v2beta1/namespaces/default/horizontalpodautoscalers/aaaaaa",
+          Path: "/apis/autoscaling/v2beta1/namespaces/"+this.np+"/horizontalpodautoscalers/"+this.name,
           Version: "2018-05-25",
         }
         this.axios.post(TKE_COLONY_QUERY, params).then(res=>{

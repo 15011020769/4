@@ -264,7 +264,9 @@ export default {
           const domains = [];
           if (Array.isArray(DomainList)) {
             DomainList.forEach(domain => {
-              domains.push(domain.Name);
+              if (domain.Type === 1) {
+                domains.push(domain.Name);
+              }
             });
           }
           this.domainCheckedList = domains;
@@ -324,7 +326,6 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
         Granularity: Number(this.granularity) / 60,
-        MainlandOrOversea: "Mainland"
       };
 
       if (this.domainCheckedListCopy.length !== this.domainData.length) {

@@ -67,7 +67,7 @@
             <el-table-column prop="EventCName" label="事件" width="100"></el-table-column>
             <el-table-column prop label="類型" width="100">
               <template slot-scope="scope">
-                <p>{{scope.row.Type === 'abnormal' ? '異常事件' : ''}}</p>
+                <p>{{scope.row.Type === 'abnormal' ? '異常事件' : '状态变更'}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
@@ -89,7 +89,11 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop="Status" label="狀態" width="70"></el-table-column>
+            <el-table-column prop label="狀態" width="70">
+              <template slot-scope="scope">
+                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "無狀態"}}</p>
+              </template>
+            </el-table-column>
             <el-table-column prop label="開始時間" width="90">
               <template slot-scope="scope">
                   <p>{{getConvDate(scope.row.StartTime)}}</p>
@@ -102,7 +106,7 @@
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置">
               <template slot-scope="scope">
-                  <p><span>未配置</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
+                  <p><span>{{scope.row.SupportAlarm == 1 ? '已配置' : '未配置'}}</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
               </template>
             </el-table-column>
           </el-table>
@@ -147,7 +151,16 @@ export default {
       dialogVisible: false, //弹框
 
       searchInput: "", //搜索框的值
-      searchOptions: [],
+      searchOptions: [
+        {
+            value: "InstanceId",
+            label: "實例ID"
+          },
+          {
+            value: "EventCName",
+            label: "事件名"
+          },
+      ],
       searchValue: "", //inp输入的值
 
       loadShow: true, // 加载是否显示
@@ -220,26 +233,44 @@ export default {
         Module: "monitor",
         Offset: this.currpage * this.pagesize - this.pagesize,
         StartTime: this.StartTime,
-        EndTime: this.EndTime
+        EndTime: this.EndTime,
       };
-      if (this.searchValue !== "" && this.searchInput !== "") {
-          param["Filters.0.Name"] = this.searchValue;
-          param["Filters.0.Values.0"] = this.searchInput;
-        }
+     
             //  monitor2/DescribeProductEventList   //接口
-      console.log(JSON.stringify(params));
+      // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         
 
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据
+          this.TotalCount = res.Response.Total;
+          this.loadShow = false; //取消加载
+          this.showNameSpaceModal = false;
+          
           this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
-          this.TotalCount = res.Response.Total;
-          this.loadShow = false; //取消加载
-          this.showNameSpaceModal = false;
+          // 筛选逻辑
+          if (this.searchInput !== "" && this.searchValue !== "") {
+           let tableListData = []
+            res.Response.Events.forEach((currentValue,index,arr) => {
+                if(arr[index].EventCName === this.searchInput && this.searchValue == "EventCName") {
+                   tableListData.push(arr[index])
+                   this.tableData = tableListData;
+                } else if (arr[index].InstanceId === this.searchInput && this.searchValue == "InstanceId") {
+                  tableListData.push(arr[index])
+                  this.tableData = tableListData;
+                }
+            });
+            if(this.tableData.length < 1 ){
+              this.$message.error("請輸入正確搜索信息");
+              this.tableData = res.Response.Events; //列表数据
+            }else {
+              this.TotalCount = this.tableData.length;
+            }
+          };
+          
         } else {
           this.loadShow = false;
           let ErrTips = {};

@@ -56,7 +56,7 @@
             </div>
           </el-form-item>
           <el-form-item label="命名空间">
-            <el-select v-model="ing.nameSpaceValue" placeholder="请选择">
+            <el-select v-model="ing.nameSpaceValue" placeholder="请选择" @change="ingNamespaceValueChange">
               <el-option
                 v-for="item in ing.nameSpaceOptions"
                 :key="item.value"
@@ -133,7 +133,7 @@
                     </el-option>
                   </el-select>
                   <span style="padding-left:23px">{{it.portNumber}}</span>
-                  <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP"></el-input>
+                  <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP" v-model="it.host"></el-input>
                   <el-form-item style="display: inline-block;width:120px;padding-left:30px;" :prop="`list.${i}.path`" :rules="pathValidator">
                     <el-input v-model="it.path"></el-input>
                   </el-form-item>
@@ -178,7 +178,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/javascript">
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
 import subscribeNew from '../../../../../CAM/UserListNew/components/subscribeNew'
@@ -222,10 +222,7 @@ export default {
         vpcsUrlValue: '', // vpc地址值
         describeLoadBalancersOption: [], // 负载均衡数组
         describeLoadBalancersValue: '暂无数据', // 负载均衡值
-        backendService: [], // 命名空间列表
-        backendServiceSelect: '请选择后端服务', // 后端服务
-        backendServicePortOption: [],
-        backendServicePortSelect: '', // 选中的端口号
+        backendService: [], // 后端服务列表
         nameSpaceOptions: [],
         nameSpaceValue: '',
         workerNetWorkOption: [],
@@ -327,7 +324,7 @@ export default {
     // 从路由获取类型
     let { clusterId, np } = this.$route.query
     this.clusterId = clusterId
-    this.namespace = np
+    this.ing.nameSpaceValue = this.namespace = np
     this.initNetworkRequery()
   },
   methods: {
@@ -339,8 +336,8 @@ export default {
       await this.getColonyList()
       await this.getVpcNetwork()
       await this.getWorkerNetwork()
-      this.getNameSpaceList()
-      this.getBackEndService()
+      await this.getNameSpaceList()
+      await this.getBackEndService()
       this.addport()
     },
     // 公共的查询 ing.list
@@ -355,6 +352,10 @@ export default {
     },
     describeLoadBalancersChange: function (val) {
       console.log(val)
+    },
+    // 命名空间改变时触发
+    ingNamespaceValueChange: function (val) {
+      this.getBackEndService()
     },
     protocolChange: function (event, key) {
       this.selectIngList(key, (result) => {
@@ -387,35 +388,49 @@ export default {
     createIngress: async function () {
       // 注释请求参数
       this.submitErrorMessage = ''
-      let { list, name, nameSpaceValue, description, checkedtwo, certValue } = this.ing
+      let { list, name, nameSpaceValue, description, checkedtwo, certValue, tabPosition } = this.ing
       let httpRules = []
       let httpsRules = []
       let specRules = []
       list.forEach(item => {
+        let { path, backendServiceSelect, backendServicePortSelect, host, protocolValue } = item
         let rules = {
-          path: item.path,
-          backend: { serviceName: item.backendServiceSelect, servicePort: item.backendServicePortSelect.toString() }
+          path: path,
+          backend: { serviceName: backendServiceSelect, servicePort: backendServicePortSelect.toString() }
         }
-        if (item.protocolValue === 'http') {
+        let oneSpecRules = {
+          http: {
+            paths: [{
+              'backend': {
+                'serviceName': backendServiceSelect,
+                'servicePort': backendServicePortSelect
+              },
+              'path': path
+            }]
+          }
+        }
+        if (host !== '') {
+          rules.host = host
+          oneSpecRules.host = host
+        }
+        if (protocolValue === 'http') {
           httpRules.push(rules)
         } else {
           httpsRules.push(rules)
         }
-        specRules.push({
-          http: {
-            paths: [{
-              'backend': {
-                'serviceName': item.backendServiceSelect,
-                'servicePort': item.backendServicePortSelect
-              },
-              'path': item.path
-            }]
-          }
-        })
+        specRules.push(oneSpecRules)
       })
       if (httpRules.length === 0) httpRules = null
       if (httpsRules.length === 0) httpsRules = null
-      let queryBody = {
+      let extensiveParameters = '{"AddressIPVersion":"IPV4"}'
+      if (tabPosition !== 'gw') {
+        // 获取选中 "所属网络" 对象
+        let oneWorkerNetWorkOption = this.ing.workerNetWorkOption.find(item => {
+          return item.SubnetName === this.ing.workerNetWorkValue
+        })
+        extensiveParameters = oneWorkerNetWorkOption.SubnetId
+      }
+      let ingressQueryBody = {
         'kind': 'Ingress',
         'apiVersion': 'extensions/v1beta1',
         'metadata': {
@@ -423,7 +438,7 @@ export default {
           'namespace': nameSpaceValue,
           'annotations': {
             'kubernetes.io/ingress.class': 'qcloud',
-            'kubernetes.io/ingress.extensiveParameters': '{"AddressIPVersion":"IPV4"}',
+            'kubernetes.io/ingress.extensiveParameters': extensiveParameters,
             'kubernetes.io/ingress.http-rules': JSON.stringify(httpRules),
             'kubernetes.io/ingress.https-rules': JSON.stringify(httpsRules),
             'kubernetes.io/ingress.rule-mix': `${checkedtwo}`
@@ -434,20 +449,43 @@ export default {
         }
       }
       // 如果描述有填写则添加到参数里面
-      if (description) queryBody.metadata.annotations.description = description
-      // 如果选中https 则需要证书
-      if (checkedtwo) queryBody.metadata.annotations.qcloud_cert_id = certValue
+      if (description) ingressQueryBody.metadata.annotations.description = description
+      // 如果选中https 则需要证书 同时添加Secret
+      let queryBodyJson = ''
+      if (checkedtwo) {
+        let secretQueryBody = {
+          'kind': 'Secret',
+          'apiVersion': 'v1',
+          'metadata': {
+            'name': name,
+            'namespace': nameSpaceValue,
+            'labels': {
+              'qcloud-app': name
+            }
+          },
+          'type': 'Opaque',
+          'data': {
+            'qcloud_cert_id': ''
+          }
+        }
+        ingressQueryBody.spec.tls = [{ 'secretName': name }]
+        ingressQueryBody.metadata.annotations.qcloud_cert_id = certValue
+        queryBodyJson = JSON.stringify(secretQueryBody) + JSON.stringify(ingressQueryBody)
+      } else {
+        queryBodyJson = JSON.stringify(ingressQueryBody)
+      }
       let param = {
         Method: 'POST',
         Path: `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`,
         Version: '2018-05-25',
-        RequestBody: JSON.stringify(queryBody),
+        RequestBody: queryBodyJson,
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
             message: '新建成功',
+            type: 'success',
             showClose: true,
             duration: 2000
           })
@@ -475,7 +513,8 @@ export default {
         key: Date.now(),
         protocolValue: 'http',
         portNumber: 80,
-        backendServiceSelect: '请选择后端服务', // 命名空间选中的值
+        host: '',
+        backendServiceSelect: '请选择后端服务', // 后端服务选中的值
         backendServicePortOption: [],
         backendServicePortSelect: '', // 选中的端口号
         path: '' // 路径
@@ -561,7 +600,7 @@ export default {
       this.ing.describeLoadBalancersOption = []
       this.ing.describeLoadBalancersValue = '暂无数据'
       let oneDes = []
-      if (this.ing.tabPosition === 'gw'){
+      if (this.ing.tabPosition === 'gw') {
         oneDes = this.describeLoadBalancers.filter(item => item.LoadBalancerType === 'OPEN')
       } else {
         oneDes = this.describeLoadBalancers.filter(item => item.LoadBalancerType === 'INTERNAL')
@@ -584,12 +623,12 @@ export default {
         let { Response: { SubnetSet } } = res
         this.ing.workerNetWorkOption = []
         SubnetSet.forEach((item, index) => {
-          let { SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
+          let { SubnetId, SubnetName, TotalIpAddressCount, AvailableIpAddressCount } = item
           if (index === 0) {
             this.ing.workerNetWorkValue = SubnetName
             this.ing.workerNetWorkOrder = { TotalIpAddressCount, AvailableIpAddressCount }
           }
-          this.ing.workerNetWorkOption.push({ SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
+          this.ing.workerNetWorkOption.push({ SubnetId, SubnetName, TotalIpAddressCount, AvailableIpAddressCount })
         })
       })
     },
@@ -629,7 +668,6 @@ export default {
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
-
       await this.axios.post(POINT_REQUEST, param).then(res => {
         let searchOpt = JSON.parse(res.Response.ResponseBody).items
         searchOpt.forEach(item => {
@@ -643,7 +681,7 @@ export default {
     async getBackEndService () {
       let param = {
         Method: 'GET',
-        Path: `/api/v1/namespaces/${this.namespace}/services`,
+        Path: `/api/v1/namespaces/${this.ing.nameSpaceValue}/services`,
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
@@ -653,6 +691,9 @@ export default {
           metadata: { name: '请选择后端服务' },
           spec: { ports: [] }
         }, ...JSON.parse(ResponseBody).items]
+        this.ing.list.forEach(item => {
+          item.backendServiceSelect = '请选择后端服务'
+        })
       })
     }
   }

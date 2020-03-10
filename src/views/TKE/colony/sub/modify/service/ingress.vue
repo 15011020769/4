@@ -54,7 +54,7 @@ export default {
         foldGutter: true,
         matchBrackets: true, // 括号匹配
         autoCloseBrackets: true,
-        readOnly: true// 只读
+        // readOnly: true// 只读
         // readOnly: 'nocursor'// 只读没有焦点
       }
     }

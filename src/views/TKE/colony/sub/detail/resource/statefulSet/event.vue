@@ -34,7 +34,7 @@
           label="级别"
           >
           <template slot-scope="scope">
-              <span class="text-red">{{scope.row.type}}</span>
+              <span :class="[scope.row.type !== 'Normal'?'text-red':'']">{{scope.row.type}}</span>
           </template>
         </el-table-column>
         <el-table-column

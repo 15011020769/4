@@ -42,6 +42,7 @@
                   v-model="Start_End.StartTIme"
                   type="date"
                   placeholder="選擇日期"
+                  :picker-options="startTimePickerOptions"
                 ></el-date-picker>
                 <el-time-picker
                   class="width-date"
@@ -56,6 +57,7 @@
                   v-model="Start_End.EndTIme"
                   type="date"
                   placeholder="選擇日期"
+                  :picker-options="endTimePickerOptions"
                 ></el-date-picker>
                 <el-time-picker
                   class="width-date"
@@ -118,8 +120,10 @@ import moment from "moment";
 
 export default {
   data() {
+
     let _minTime = null;
     let _maxTime = null;
+
     return {
       datetimeval: [], // 选择时间数据
       visible: false, // 时间选择器的变化
@@ -173,6 +177,18 @@ export default {
             const now = Date.now();
             return time.getTime() > now;
           }
+        }
+      },
+      startTimePickerOptions: {
+        disabledDate(time) {
+          const now = Date.now();
+          return time.getTime() > now;
+        }
+      },
+      endTimePickerOptions: {
+        disabledDate(time) {
+          const now = Date.now();
+          return time.getTime() > now;
         }
       }
     };
@@ -259,6 +275,15 @@ export default {
     },
     // 确定按钮
     Sure() {
+
+      const startDatetime = moment(this.Start_End.StartTIme, "YYYY-MM-DD HH:mm:ss");
+      const endDatetime = moment(this.Start_End.EndTIme, "YYYY-MM-DD HH:mm:ss");
+
+      if (endDatetime.diff(startDatetime, "days") >= 31) {
+        this.$message.error("只能查詢31天內的趨勢數據");
+        return;
+      }
+
       this.visible = false;
       this.getdate();
       this.TimeAfter();

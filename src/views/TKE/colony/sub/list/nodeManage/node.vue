@@ -10,7 +10,7 @@
         <el-button size="small" @click="goExpand" type="primary"
           >新建节点</el-button
         >
-        <el-button size="small" @click="toMonitor">监控</el-button>
+        <!-- <el-button size="small" @click="toMonitor">监控</el-button> -->
         <el-button size="small" @click="goAddExist">添加已有节点</el-button>
         <el-button
           size="small"
@@ -21,7 +21,7 @@
         <el-button
           size="small"
           :disabled="
-            this.multipleSelection.length > 0 && unBlockadeType ? false : true
+            this.multipleSelection.length > 0 && blockadeType ? false : true
           "
           @click="showBlockModal()"
           >封锁</el-button
@@ -29,7 +29,7 @@
         <el-button
           size="small"
           :disabled="
-            this.multipleSelection.length > 0 && blockadeType ? false : true
+            this.multipleSelection.length > 0 && unBlockadeType ? false : true
           "
           @click="showUnBlockModal()"
           >解除封锁</el-button
@@ -162,13 +162,13 @@
         </el-table-column>
         <el-table-column prop="address" label="已分配/总资源">
           <template slot-scope="scope">
-            <p>CPU: -/-</p>
-            <p>内存: -/-</p>
+            <p>CPU: -/{{scope.row.cpuTotal}}</p>
+            <p>内存: -/{{scope.row.memoyTotal}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="" label="所属伸缩组">
           <template slot-scope="scope">
-            <p>-</p>
+            <p>{{scope.row.group || '-'}}</p>
           </template>
         </el-table-column>
         <el-table-column width="200" prop="" label="计费模式">
@@ -471,8 +471,8 @@ export default {
       ChoiceValue: "", //搜索选择
       searchValue: "", //搜索值
       multipleSelection: [], //选中的列表
-      blockadeType: false, //是否显示批量封锁
-      unBlockadeType: false, //是否显示批量取消封锁
+      blockadeType: true, //是否显示批量封锁
+      unBlockadeType: true, //是否显示批量取消封锁
       podList: [],
       clusterIds: [],
       instanceId: "",
@@ -555,10 +555,7 @@ export default {
           ClusterName: this.clusterId
         };
         let paramJob = {
-          // Conditions: [JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),JSON.stringify(["node_role","=","Node"])],
           EndTime: new Date().getTime(),
-          // Fields: ["avg(k8s_node_cpu_core_request_total)", "avg(k8s_node_memory_request_bytes_total)"],
-          // GroupBys: ["timestamp(60s)", "unInstanceId"],
           Limit: 65535,
           Module: "/front/v1",
           NamespaceName: "k8s_node",
@@ -579,6 +576,8 @@ export default {
         paramJob["GroupBys.0"] = "timestamp(60s)";
         paramJob["GroupBys.1"] = "unInstanceId";
         if (ids.length > 0) {
+          this.list = [];
+          // debugger
           for (let i = 0; i < ids.length; i++) {
             param["InstanceIds." + i] = ids[i];
           }
@@ -631,7 +630,10 @@ export default {
                   ) {
                     node.kubeletVersion = k8s.status.nodeInfo.kubeletVersion;
                     node.allocatable = k8s.status.allocatable;
+                    node.cpuTotal =  (Number(k8s.status.allocatable.cpu.substring(0, k8s.status.allocatable.cpu.length -1))/1000).toFixed(2);
+                    node.memoyTotal = (Number(k8s.status.allocatable.memory.substring(0, k8s.status.allocatable.memory.length -2))/(1024*1024)).toFixed(2);
                     node.unschedulable = k8s.spec.unschedulable;
+                    node.group = k8s.metadata.labels['cloud.tencent.com/auto-scaling-group-id'];
                   }
                 });
                 return node;
@@ -640,6 +642,7 @@ export default {
               console.log(this.list);
             }
             this.total = nodeRes.Response.TotalCount;
+            this.clusterIds = [];
           } else {
             this.loadShow = false;
             let ErrTips = {};
@@ -651,6 +654,10 @@ export default {
               duration: 0
             });
           }
+        } else {
+          this.loadShow = false;
+          this.list = [];
+          this.clusterIds = [];
         }
       } else {
         this.loadShow = false;
@@ -900,9 +907,9 @@ export default {
     },
 
     //根据节点名称获取集id列表
-    async getClusterNodeIds(param) {
+    getClusterNodeIds(param) {
       this.loadShow = true;
-      await this.axios.post(NODE_ID_LIST, param).then(res => {
+      this.axios.post(NODE_ID_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           if (res.Response.InstanceIdSet.length > 0) {
@@ -1006,18 +1013,24 @@ export default {
 
     // 全选
     handleSelectionChange(val) {
+      // debugger
       this.multipleSelection = val;
       if (val.length > 0) {
         for (let i = 0; i < val.length; i++) {
           if (val[i].unschedulable) {
-            this.blockadeType = true;
-            break;
-          }
-          if (val[i].unschedulable === undefined) {
-            this.unBlockadeType = true;
+            this.blockadeType = false;
             break;
           }
         }
+        for (let j = 0; j < val.length; j++) {
+          if (val[j].unschedulable === undefined) {
+            this.unBlockadeType = false;
+            break;
+          }
+        }
+      } else {
+        this.blockadeType = true;
+        this.unBlockadeType = true;
       }
     },
 

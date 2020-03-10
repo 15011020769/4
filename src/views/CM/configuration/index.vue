@@ -57,13 +57,20 @@
         </div>
       </div>
     </div>
-      <Custom :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
+      <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save"/>
   </div>
 </template>
 
 <script>
+
+
 import Header from "@/components/public/Head";
-import Custom from "./custom/custom"
+import TimeDropDown from '@/components/public/TimeDropDown';
+import Dialog from "./custom/custom";
+import SEARCH from "@/components/public/SEARCH";
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { DESCRIBE_NAME_SPACE } from "@/constants";
 export default {
   name: "product",
   data() {
@@ -91,12 +98,43 @@ export default {
   },
   components: {
     Header,
-    Custom
+    Dialog
+  },
+  mounted () {
+    this.getDescribeNamespace()
   },
   methods: {
     //获取数据
     GetDat(data) {
       console.log(data);
+    },
+    // 命名空间
+    getDescribeNamespace () {
+      const params = {
+        Region: localStorage.getItem("regionv2"),
+        Version: "2018-07-24",
+        Action: "CreateNamespace",
+        Timestamp: new Date(),
+        Nonce: this.StartTime,
+        SecretId: this.EndTime,
+        Signature: ''
+      };
+
+      this.axios.post(DESCRIBE_NAME_SPACE,{Version: "2018-07-24"}).then(res => {
+        console.log(res)
+        // if (res.Response.Error === undefined) {
+        // } else {
+        //   this.loadShow = false;
+        //   let ErrTips = {};
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
     },
      //分页
     handleCurrentChange(val) {

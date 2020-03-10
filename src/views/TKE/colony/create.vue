@@ -4808,7 +4808,7 @@ export default {
         param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
       }
       param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
-      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      // param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
       param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
       param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
 
@@ -5165,8 +5165,7 @@ export default {
       } else if (val.length <= 8 || val.length > 16) {
         this.colonyThird.passwordTips = "密码必须为8到16位";
         this.colonyThird.passwordWran = true;
-      }
-      else if (
+      } else if (
         !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
           val
         )
@@ -5175,8 +5174,7 @@ export default {
         this.colonyThird.passwordTips =
           "密码必须包含数字、字母、特殊字符中至少两项";
         this.colonyThird.passwordWran = true;
-      }
-      else {
+      } else {
         this.colonyThird.passwordWran = false;
       }
     },
@@ -5363,7 +5361,7 @@ export default {
         param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
       }
       param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
-      param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
+      // param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
       param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
       param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
 

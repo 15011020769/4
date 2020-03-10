@@ -8,7 +8,11 @@
       label-width="120px"
       class="demo-ruleForm"
     >
-      <el-form-item label="轉碼類型" prop="AiTransCode" v-if="!Object.keys(selectItem).length">
+      <el-form-item
+        label="轉碼類型"
+        prop="AiTransCode"
+        v-if="!Object.keys(selectItem).length"
+      >
         <el-select placeholder="请选择" v-model="ruleForm.AiTransCode">
           <el-option label="普通轉碼" value="0" key="0" />
           <el-option label="極速高清" value="1" key="1" />
@@ -16,8 +20,16 @@
       </el-form-item>
       <el-form-item label="可用範本">
         <el-radio-group v-model="selectType" @change="radioChange">
-          <el-radio v-for="item in tableData" :key="item.key" :label="item.value" />
-          <el-radio v-show="ruleForm.AiTransCode !== '1'" key="voice" label="純音頻" />
+          <el-radio
+            v-for="item in tableData"
+            :key="item.key"
+            :label="item.value"
+          />
+          <el-radio
+            v-show="ruleForm.AiTransCode !== '1'"
+            key="voice"
+            label="純音頻"
+          />
         </el-radio-group>
       </el-form-item>
       <el-form-item label="範本名稱" prop="TemplateName" :show-message="false">
@@ -25,25 +37,61 @@
           v-model="ruleForm.TemplateName"
           style="width:330px;"
           :disabled="Object.keys(selectItem).length > 0"
-        /> <br />
+        />
+        <br />
         <span>僅支持字母、數字組合，請輸入3-10字符</span>
       </el-form-item>
       <el-form-item label="範本描述" prop="Description">
-        <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" /><br />
+        <el-input
+          type="textarea"
+          v-model="ruleForm.Description"
+          style="width:330px;"
+        /><br />
         <span>僅支持中文、英文、數字、_、-</span>
       </el-form-item>
       <template v-if="selectType !== '純音頻'">
-        <el-form-item label="影音碼率(kbps)" prop="VideoBitrate" :show-message="false">
-          <el-input type="textarea" v-model="ruleForm.VideoBitrate" style="width:330px;" /><br />
-          <span>必填，編碼範圍 100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫</span>
+        <el-form-item
+          label="影音碼率(kbps)"
+          prop="VideoBitrate"
+          :show-message="false"
+        >
+          <el-input
+            type="textarea"
+            v-model="ruleForm.VideoBitrate"
+            style="width:330px;"
+          /><br />
+          <span
+            >必填，編碼範圍
+            100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫</span
+          >
         </el-form-item>
         <el-form-item label="影音高度(px)" prop="Height" :show-message="false">
-          <el-input type="textarea" v-model="ruleForm.Height" style="width:330px;" /><br />
+          <el-input
+            type="textarea"
+            v-model="ruleForm.Height"
+            style="width:330px;"
+          /><br />
           <span>視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
+        </el-form-item>
+
+        <el-form-item
+          label="碼率壓縮比"
+          prop="AdaptBitratePercent"
+          :show-message="false"
+          v-show="ruleForm.AiTransCode == '1'"
+        >
+          <el-input
+            type="textarea"
+            v-model="ruleForm.AdaptBitratePercent"
+            style="width:330px;"
+          /><br />
+          <span>請輸入10-50之間的整數，表示相比視頻碼率節省的碼率</span>
         </el-form-item>
       </template>
       <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')"
+          >保存</el-button
+        >
         <el-button @click="$parent._cancel()">取消</el-button>
       </el-form-item>
     </el-form>
@@ -78,14 +126,16 @@ export default {
         Description: "",
         AiTransCode: "0",
         Height: "",
-        VideoBitrate: ""
+        VideoBitrate: "",
+        AdaptBitratePercent: ""
       },
 
       rules: {
         TemplateName: [{ required: true }],
         desc: [{ required: false }],
         Height: [{ required: true }],
-        VideoBitrate: [{ required: true }]
+        VideoBitrate: [{ required: true }],
+        AdaptBitratePercent: [{ required: true }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -104,12 +154,12 @@ export default {
       const TemplateNameRegex = /^[a-zA-Z0-9]{3,10}$/;
 
       if (!TemplateNameRegex.test(this.ruleForm.TemplateName)) {
-          this.$message({
-            message: "範本名稱不符合要求",
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
+        this.$message({
+          message: "範本名稱不符合要求",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
         return false;
       }
 
@@ -121,7 +171,7 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
       }
 
@@ -133,7 +183,7 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
       }
 
@@ -143,7 +193,7 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
       }
 
@@ -154,7 +204,7 @@ export default {
             type: "error",
             showClose: true,
             duration: 0
-          })
+          });
           return false;
         }
       } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
@@ -164,7 +214,7 @@ export default {
             type: "error",
             showClose: true,
             duration: 0
-          })
+          });
           return false;
         }
       }
@@ -177,7 +227,7 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
       }
 
@@ -187,7 +237,7 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
       }
 
@@ -197,18 +247,49 @@ export default {
           type: "error",
           showClose: true,
           duration: 0
-        })
+        });
         return false;
+      }
+
+      let AdaptBitratePercent = this.ruleForm.AdaptBitratePercent;
+      let AiTransCode = this.ruleForm.AiTransCode;
+
+      if (AiTransCode === "1") {
+        if (AdaptBitratePercent.length === 0) {
+          this.$message({
+            message: "請輸入碼率壓縮比",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (AdaptBitratePercent < 10 || AdaptBitratePercent > 50) {
+          this.$message({
+            message: "碼率壓縮比為10-50之間的整數",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (!/^\d+$/.test(AdaptBitratePercent)) {
+          this.$message({
+            message: "碼率壓縮比為10-50之間的整數",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
       }
 
       return true;
     },
 
     submitForm(formName) {
-      if (!this.validateForm()) {
-        return;
-      }
-
       const params = Object.assign(this.ruleForm, {
         Version: "2018-08-01"
       });
@@ -216,6 +297,17 @@ export default {
       if (this.selectType === "純音頻") {
         params.Height = 0;
         params.VideoBitrate = 100;
+      } else {
+        if (!this.validateForm()) {
+          return;
+        }
+      }
+
+      let AiTransCode = params.AiTransCode;
+      if (AiTransCode === "0") {
+        delete params.AdaptBitratePercent;
+      } else {
+        params.AdaptBitratePercent = params.AdaptBitratePercent * 0.01;
       }
 
       if (Object.keys(this.selectItem).length) {
@@ -282,11 +374,14 @@ export default {
     },
 
     initTableParams() {
+      console.log(this.selectItem);
+
       if (Object.keys(this.selectItem).length) {
         const currentParams = {};
         Object.keys(this.ruleForm).forEach(key => {
           this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
           this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString();
+          this.ruleForm.AdaptBitratePercent = this.ruleForm.AdaptBitratePercent * 100;
         });
       }
     }

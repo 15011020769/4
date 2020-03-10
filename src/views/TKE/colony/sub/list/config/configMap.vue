@@ -167,12 +167,24 @@ export default {
           this.searchInput,
         Version: "2018-05-25"
       };
+      this.loadShow=true
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
           console.log(data);
           this.list = data.items;
           this.total = data.items.length;
+          this.loadShow=false
+        }else{
+           this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       });
     },
@@ -185,13 +197,14 @@ export default {
     delSure() {
       this.dialogVisible = false;
       var params = {
-        ClusterName: "cls-a7rua9ae",
+        ClusterName: this.clusterId,
         Method: "DELETE",
         Path: "/api/v1/namespaces/" + this.np + "/configmaps/" + this.name,
         RequestBody: { propagationPolicy: "Background" },
         Version: "2018-05-25"
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        console.log(res)
         if (res.Response.Error == undefined) {
           this.tableListData();
         }

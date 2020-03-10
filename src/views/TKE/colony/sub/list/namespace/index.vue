@@ -61,9 +61,7 @@
           label="创建时间"
           >
           <template slot-scope="scope">
-            <el-tooltip effect="light" content="" placement="top">
               <span>{{scope.row.addTime}}</span>
-            </el-tooltip>
           </template>
         </el-table-column>
         <el-table-column

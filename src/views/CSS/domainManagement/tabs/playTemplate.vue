@@ -1,74 +1,87 @@
 <template>
   <el-card>
     <el-row type="flex" align="middle" justify="space-between">
-      <h3>转码配置</h3>
-      <el-button type="text" @click="edit">编辑</el-button>
+      <h3>{{ $t("CSS.detailPlay.TranscodingConfiguration") }}</h3>
+      <el-button type="text" @click="edit">
+        {{ $t("CSS.domainManagement.10") }}
+      </el-button>
     </el-row>
-    <el-table :data="temps" empty-text="未设置" style="width: 100%" v-loading="loading">
-      <el-table-column prop="TemplateName" label="模板名称">
+    <el-table
+      :data="temps"
+      :empty-text="$t('CSS.detailPlay.notSetUp')"
+      style="width: 100%"
+      v-loading="loading"
+    >
+      <el-table-column
+        prop="TemplateName"
+        :label="$t('CSS.domainManagement.10')"
+      >
       </el-table-column>
       <el-table-column prop="TemplateId" label="模板ID" width="180">
       </el-table-column>
-      <el-table-column label="编码方式" width="180">
+      <el-table-column :label="$t('CSS.detailPlay.encodingMode')" width="180">
         H.264
       </el-table-column>
-      <el-table-column prop="VideoBitrate" label="码率" width="180">
+      <el-table-column
+        prop="VideoBitrate"
+        :label="$t('CSS.detailPlay.bitRate')"
+        width="180"
+      >
       </el-table-column>
     </el-table>
     <el-dialog
-      title="转码配置"
+      :title="$t('CSS.detailPlay.TranscodingConfiguration')"
       :visible.sync="visible"
       destroy-on-close
     >
       <transcode-config
-       :selectedTemps="temps.map(temp => temp.TemplateId)"
-       :visible.sync="visible"
-       @success="init"
+        :selectedTemps="temps.map(temp => temp.TemplateId)"
+        :visible.sync="visible"
+        @success="init"
       />
-      
     </el-dialog>
   </el-card>
 </template>
 <script>
 import {
   DESCRIBE_LIVE_TRANSCODE_RULES,
-  DESCRIBE_LIVE_TRANSCODE_TEMPLATE,
+  DESCRIBE_LIVE_TRANSCODE_TEMPLATE
 } from '@/constants'
 import TranscodeConfig from '../model/transcodeConfig'
 export default {
-  data() {
+  data () {
     return {
       temps: [],
       visible: false,
-      loading: true,
+      loading: true
     }
   },
   components: {
-    TranscodeConfig,
+    TranscodeConfig
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    init() {
+    init () {
       this.loading = true
       this.visible = false
       this.axios.post(DESCRIBE_LIVE_TRANSCODE_RULES, {
-        Version: '2018-08-01',
+        Version: '2018-08-01'
       })
         .then(resp => {
           const tempIds = resp.Response.Rules
             .filter(rule => rule.DomainName === this.$route.query.Name)
-            .map(rule => 
+            .map(rule =>
               this.axios.post(DESCRIBE_LIVE_TRANSCODE_TEMPLATE, {
                 Version: '2018-08-01',
-                TemplateId: rule.TemplateId,
+                TemplateId: rule.TemplateId
               })
             )
           this.getRules(tempIds)
         })
     },
-    getRules(tempIds) {
+    getRules (tempIds) {
       Promise.all(tempIds)
         .then(ress => {
           const temps = []
@@ -79,12 +92,12 @@ export default {
           this.loading = false
         })
     },
-    edit() {
+    edit () {
       this.visible = true
     },
-    save() {
+    save () {
 
-    },
+    }
   }
 }
 </script>

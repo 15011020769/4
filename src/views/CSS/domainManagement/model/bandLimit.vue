@@ -1,15 +1,17 @@
 <template>
   <div class="container">
     <el-row type="flex" :gutter="20" class="limit">
-      <span style="display: inline-block; width: 100px;">带宽封顶</span>
+      <span style="display: inline-block; width: 100px;">
+        {{ $t("CSS.detailPlay.bandwidthCapping") }}
+      </span>
       <el-col>
         <el-switch v-model="enable" />
       </el-col>
     </el-row>
     <div class="content">
       <el-row type="flex">
-        <el-col :span="10">限制区域</el-col>
-        <el-col :span="12">带宽阈值</el-col>
+        <el-col :span="10">{{ $t("CSS.detailPlay.9") }}</el-col>
+        <el-col :span="12">{{ $t("CSS.detailPlay.10") }}</el-col>
         <el-col :span="2">操作</el-col>
       </el-row>
       <el-row type="flex" v-for="(limit, i) in info" :key="limit.key">
@@ -20,16 +22,16 @@
             v-model="limit.playType"
             :disabled="playType !== 2"
           >
-            <el-option label="中国大陆" :value="1"></el-option>
+            <el-option :label="$t('CSS.detailPlay.11')" :value="1"></el-option>
             <el-option label="全球加速" :value="2"></el-option>
-            <el-option label="中国港澳台地区及海外地区" :value="3"></el-option>
+            <el-option :label="$t('CSS.detailPlay.12')" :value="3"></el-option>
           </el-select>
         </el-col>
         <el-col :span="12">
           <el-input
             style="width: 140px"
             size="small"
-            placeholder="请输入整数"
+            :placeholder="$t('CSS.detailPlay.13')"
             :maxlength="13"
             v-model="limit.value"
             @input="v => (limit.value = v.replace(/[^\d]/g, ''))"

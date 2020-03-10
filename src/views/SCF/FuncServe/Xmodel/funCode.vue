@@ -379,6 +379,25 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, .2);
     padding: 20px;
 
+    ::v-deep .el-select {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
+    }
+
+    ::v-deep .el-input__inner {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
+    }
+
+    ::v-deep .el-input {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
+    }
+
+
     .CodeTool {
       font-size: 12px;
       color: #888;
@@ -406,17 +425,6 @@
 
           }
 
-          ::v-deep .el-select {
-            width: 200px !important;
-          }
-
-          ::v-deep .el-input__inner {
-            width: 200px !important;
-          }
-
-          ::v-deep .el-input {
-            width: 200px !important;
-          }
 
         }
       }
@@ -432,9 +440,7 @@
       padding: 20px;
       margin: 20px 0;
 
-      ::v-deep .el-input {
-        width: 200px;
-      }
+
 
       .ZipFile {
         display: flex;

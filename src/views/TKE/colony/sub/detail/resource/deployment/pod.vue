@@ -63,7 +63,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span class="text-green">{{scope.row.status && scope.row.status.phase}}</span>
+              <span :class="[scope.row.phase ==='Running'?'text-green':'']">{{scope.row.status && scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -112,7 +112,7 @@
           >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="redeployment(scope.row)">销毁重建</span>
-            <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span>
+            <!-- <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span> -->
           </template>
         </el-table-column>
       </el-table>

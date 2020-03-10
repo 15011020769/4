@@ -131,7 +131,7 @@ export default {
         if (res.Response.Error == undefined){
           var data = JSON.parse(res.Response.ResponseBody);
             if(data.items){
-            console.log(data.items)
+            // console.log(data.items)
               this.list=data.items
             }
         }

@@ -154,6 +154,12 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
+          this.$message({
+            message: '创建成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.goBack();
         } else {
           this.loadShow = false;

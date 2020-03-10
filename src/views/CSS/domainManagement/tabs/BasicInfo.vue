@@ -1,36 +1,39 @@
 <template>
   <div>
     <div class="basicinfo">
-      <h1>基本訊息</h1>
+      <h1>{{ $t("CSS.detailPlay.basicMessage") }}</h1>
       <div class="newClear">
         <div class="newClear newList">
           <p>CNAME</p>
-          <p>{{info.TargetDomain}}</p>
+          <p>{{ info.TargetDomain }}</p>
         </div>
         <div class="newClear newList">
-          <p>{{$t('CSS.domainManagement.9')}}</p>
-          <p>{{info.CreateTime}}</p>
+          <p>{{ $t("CSS.domainManagement.9") }}</p>
+          <p>{{ info.CreateTime }}</p>
         </div>
         <div class="newClear newList">
-          <p>{{$t('CSS.domainManagement.3')}}</p>
-          <p>{{info.Type|typeCh}}</p>
+          <p>{{ $t("CSS.domainManagement.3") }}</p>
+          <p>{{ info.Type | typeCh }}</p>
         </div>
         <div class="newClear newList" v-if="info.Type === 1">
-          <p>播放區域</p>
-          <p>{{info.PlayType|playType}}</p>
+          <p>{{ $t("CSS.detailPlay.playArea") }}</p>
+          <p>{{ info.PlayType | playType }}</p>
         </div>
         <div class="newClear newList">
           <p>API Key</p>
-          <p>{{apiKey}}</p>
+          <p>{{ apiKey }}</p>
         </div>
       </div>
-      <editTagsModel :isShow="modelEdit" @closeEditTagsModel="closeEditTagsModel" />
+      <editTagsModel
+        :isShow="modelEdit"
+        @closeEditTagsModel="closeEditTagsModel"
+      />
     </div>
   </div>
 </template>
 <script>
-import editTagsModel from "../model/editTagsModel";
-import { LIVE_DESCRIBELIVE_PUSHAUTHKEY } from "@/constants";
+import editTagsModel from '../model/editTagsModel'
+import { LIVE_DESCRIBELIVE_PUSHAUTHKEY } from '@/constants'
 export default {
   props: {
     info: {
@@ -42,14 +45,14 @@ export default {
     editTagsModel: editTagsModel
   },
   filters: {
-    typeCh(val) {
+    typeCh (val) {
       if (val === 0) {
-        return "推流域名";
+        return '推流域名'
       } else if (val === 1) {
-        return "播放域名";
+        return '播放域名'
       }
     },
-    playType(val) {
+    playType (val) {
       switch (val) {
         case 1:
           return '中國大陸'
@@ -60,33 +63,33 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.axios
       .post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         DomainName: this.$route.query.Name
       })
       .then(({ Response: { PushAuthKeyInfo } }) => {
-        this.apiKey = PushAuthKeyInfo.MasterAuthKey;
-      });
+        this.apiKey = PushAuthKeyInfo.MasterAuthKey
+      })
   },
-  data() {
+  data () {
     return {
-      modelEdit: false, //编辑弹框
-      apiKey: ""
-    };
+      modelEdit: false, // 编辑弹框
+      apiKey: ''
+    }
   },
   methods: {
-    //编辑标签
-    editTags() {
-      this.modelEdit = true;
+    // 编辑标签
+    editTags () {
+      this.modelEdit = true
     },
-    //关闭弹框
-    closeEditTagsModel(isShow) {
-      this.modelEdit = isShow;
+    // 关闭弹框
+    closeEditTagsModel (isShow) {
+      this.modelEdit = isShow
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

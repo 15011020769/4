@@ -733,7 +733,7 @@ export default {
         instanceCount: 1,//购买实例数量
         safeArr: [],//安全组
         charging: 1,
-        imageId: '',//镜像ID
+        imageId: 'img-6yudrskj',//镜像ID
         memory: 'all',//内存
         cpu: 'all',//cpu
         example: 'all',//实例族

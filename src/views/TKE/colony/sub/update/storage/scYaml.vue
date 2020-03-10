@@ -84,13 +84,13 @@ export default {
         Method: "PUT",
         Path: "/apis/storage.k8s.io/v1/storageclasses/"+this.$route.query.resourceIns,
         RequestBody: this.YAMLData,
-       Version: "2018-05-25"
+        Version: "2018-05-25"
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
         //   this.$message.success('更新成功')
           this.$router.push({
-            name: 'pvDetailEvent',
+            name: 'scDetailEvent',
             query: {
               clusterId: this.$route.query.clusterId,
               resourceIns:this.$route.query.resourceIns

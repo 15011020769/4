@@ -271,7 +271,8 @@ export default {
         regionId: 39
       }
       this.axios.post(TKE_GETCERTLIST, param).then(res => {
-        res.data.list.forEach((item, index) => {
+        let newArr = res.data.list.filter(item => item.status === 1)
+        newArr.forEach((item, index) => {
           let { alias, id } = item
           if (alias === '') {
             alias = '未命名'
@@ -307,6 +308,7 @@ export default {
           let httpText = mes.metadata.annotations['kubernetes.io/ingress.http-rules']
           let httpsText = mes.metadata.annotations['kubernetes.io/ingress.https-rules']
           this.ing.certValue = mes.metadata.annotations.qcloud_cert_id
+          this.ing.extensiveParameters = mes.metadata.annotations['kubernetes.io/ingress.extensiveParameters']
           this.ing.checkedtwo = mes.metadata.annotations['kubernetes.io/ingress.rule-mix'] === 'true'
           let tempFuncCount = 0
           let tempFunc = (item, protocol, listenPort) => {
@@ -400,7 +402,7 @@ export default {
         })
         console.log('1', specRules)
       })
-      let RequestBody = {
+      let ingressQueryBody = {
         'kind': 'Ingress',
         'apiVersion': 'extensions/v1beta1',
         'metadata': {
@@ -411,21 +413,42 @@ export default {
             'kubernetes.io/ingress.extensiveParameters': '{"AddressIPVersion":"IPV4"}',
             'kubernetes.io/ingress.http-rules': JSON.stringify(httpRules),
             'kubernetes.io/ingress.https-rules': JSON.stringify(httpsRules),
-            'kubernetes.io/ingress.qcloud-loadbalance-id': this.ing.describeLoadBalancersValue,
+            // 'kubernetes.io/ingress.qcloud-loadbalance-id': this.ing.describeLoadBalancersValue,
             'kubernetes.io/ingress.rule-mix': `${checkedtwo}`,
-            'qcloud_cert_id': certValue
           }
         },
         'spec': {
           'rules': specRules
         }
       }
-      if (checkedtwo) RequestBody.spec['tls'] = [{ 'secretName': this.resourceIns }]
+      let queryBodyJson = ''
+      if (checkedtwo) {
+        let secretQueryBody = {
+          'kind': 'Secret',
+          'apiVersion': 'v1',
+          'metadata': {
+            'name': this.resourceIns,
+            'namespace': this.namespace,
+            'labels': {
+              'qcloud-app': this.resourceIns
+            }
+          },
+          'type': 'Opaque',
+          'data': {
+            'qcloud_cert_id': ''
+          }
+        }
+        ingressQueryBody.spec['tls'] = [{ 'secretName': this.resourceIns }]
+        ingressQueryBody.metadata.annotations.qcloud_cert_id = certValue
+        queryBodyJson = JSON.stringify(secretQueryBody) + JSON.stringify(ingressQueryBody)
+      } else {
+        queryBodyJson = JSON.stringify(ingressQueryBody)
+      }
       let param = {
         Method: 'POST',
         Path: `/apis/platform.tke/v1/clusters/${this.clusterId}/apply`,
         Version: '2018-05-25',
-        RequestBody: JSON.stringify(RequestBody),
+        RequestBody: queryBodyJson,
         ClusterName: this.clusterId
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
@@ -433,6 +456,7 @@ export default {
           this.$message({
             message: '更改成功',
             showClose: true,
+            type: 'success',
             duration: 2000
           })
           this.$router.replace({

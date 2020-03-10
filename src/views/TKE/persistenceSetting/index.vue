@@ -4,7 +4,7 @@
       <router-link :to="'/persistence'">
         <i class="el-icon-back hd-icon-back"></i>
       </router-link>
-      <h3>设置事件持久化</h3>
+      <h3>{{$t('TKE.overview.szcjh')}}</h3>
     </div>
     <div class="tf-g app-tke-fe-content__inner">
       <div class="event-persistence font">
@@ -14,7 +14,7 @@
           <div>{{this.$route.query.ClusterName}}({{this.$route.query.ClusterId}})</div>
         </div>
         <div class="flex padding">
-          <div class="data-card-hd">事件持久化存储</div>
+          <div class="data-card-hd">{{$t('TKE.overview.cjhcc')}}</div>
           <div>
             <el-switch
               v-model="value"
@@ -23,16 +23,16 @@
               inactive-color="#cccccc"
             ></el-switch>
             <div style="padding-top:8px;">
-              开启事件持久化存储功能会额外占用您集群资源
-              <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）内存（100MB）</span>
-              。关闭本功能会释放占用的资源
+              {{$t('TKE.overview.kqcjh')}}
+              <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）{{$t('TKE.overview.nc')}}（100MB）</span>
+              {{$t('TKE.overview.gbsfzy')}}
             </div>
-            <div v-if="deteleFlag" style="color:#e54545;padding-top:12px;">当前集群尚未开启集群持久化，无法删除该资源</div>
+            <div v-if="deteleFlag" style="color:#e54545;padding-top:12px;">{{$t('TKE.overview.wfkqcjh')}}</div>
           </div>
         </div>
         <div v-show="value">
           <div class="flex padding" style="padding-bottom:0px;">
-            <div class="data-card-hd" style="line-height:28px;">存储端选择</div>
+            <div class="data-card-hd" style="line-height:28px;">{{$t('TKE.overview.ccdxz')}}</div>
             <div class="flex">
               <el-radio-group
                 v-model="tabPosition"
@@ -54,7 +54,7 @@
             <div>
               <el-tooltip
                 content="Bottom center"
-                placement="请输入正确的格式eg: http://190.0.0.1:9200"
+                :placement="$t('TKE.overview.qsrzqgs2')"
                 effect="light"
               >
                 <input
@@ -77,26 +77,26 @@
                 placeholder="eg: fluentd"
                 @change="indexes"
               />
-              <div style="padding-top:10px;">最长60个字符，只能包含小写字母，数字及分隔符("-","_","+"),且必须以小写字母开头</div>
+              <div style="padding-top:10px;">{{$t('TKE.overview.zc60zf')}}</div>
             </div>
           </div>
         </div>
 
         <!-- blog -->
         <div class="flex padding" style="padding-bottom:0px;" v-if="tabPosition=='log'">
-          <div class="data-card-hd" style="line-height:28px;">日志服务实例</div>
+          <div class="data-card-hd" style="line-height:28px;">{{$t('TKE.overview.rzfwsl')}}</div>
           <div>
             <div class="log-div" style="margin-right:20px;">
-              <input class="log-input log-input-red" type="text" placeholder="无" />
+              <input class="log-input log-input-red" type="text" :placeholder="$t('TKE.overview.wu')" />
               <i class="el-icon-caret-bottom log-icon"></i>
             </div>
             <div class="log-div">
-              <input class="log-input log-input-red" type="text" placeholder="无" />
+              <input class="log-input log-input-red" type="text" :placeholder="$t('TKE.overview.wu')" />
               <i class="el-icon-caret-bottom log-icon"></i>
             </div>
             <div style="padding-top:20px">
-              若现有的日志服务CLS不合适，您可以去控制台
-              <a href>新建日志集</a>
+              {{$t('TKE.overview.rzfwbhs')}}
+              <a href>{{$t('TKE.overview.xjrzj')}}</a>
               <i class="el-icon-edit-outline"></i>
             </div>
           </div>
@@ -108,13 +108,13 @@
           </el-form-item>
         </el-form>
 
-        <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
+        <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="showNameSpaceModal" width="35%">
           <p
             style="color:#444;font-weight:bolder;"
-          >您确定要删除当前集群 {{this.$route.query.ClusterId}} 的 PersistentEvent 资源吗？</p>
-          <p style="color:red;margin-top:5px;">该资源下所有Pods将一并销毁，请提前备份好数据。</p>
+          >{{$t('TKE.overview.qdscjq')}} {{this.$route.query.ClusterId}} 的 PersistentEvent {{$t('TKE.overview.zym')}}</p>
+          <p style="color:red;margin-top:5px;">{{$t('TKE.overview.qbfsj')}}</p>
           <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="submitDelete">确 定</el-button>
+            <el-button type="primary" @click="submitDelete">{{$t('TKE.overview.qd')}}</el-button>
             <el-button @click="showNameSpaceModal = false">取 消</el-button>
           </span>
         </el-dialog>
@@ -139,7 +139,7 @@ export default {
       okFlag: false,
       deteleFlag: false,
       showNameSpaceModal: false,
-      placement: "格式为eg: http://190.0.0.1:9200"
+      placement: "格式為eg: http://190.0.0.1:9200"
     };
   },
   methods: {
@@ -194,7 +194,7 @@ export default {
     },
     status() {
       if (this.value == false) {
-        this.ok = "删除";
+        this.ok = "刪除";
         this.deteleFlag = true;
         this.okFlag = true;
         // this.elasticVal = "";
@@ -211,13 +211,13 @@ export default {
     onSubmit() {
       // 保存数据持久化集群
       this.status();
-      if (this.ok == "删除") {
+      if (this.ok == "刪除") {
         this.showNameSpaceModal = true;
         return;
       } else {
         if (this.elasticVal == "" || this.indexesVal == "") {
           this.$message({
-            message: "请填写Elasticsearch和索引",
+            message: "請填寫Elasticsearch和索引",
             type: "error",
             showClose: true,
             duration: 2000

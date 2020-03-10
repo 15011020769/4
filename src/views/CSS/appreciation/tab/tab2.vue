@@ -2,10 +2,10 @@
   <div class="wrap">
     <p class="down">
       <el-row>
-        <h3 style="font-size: 14px;font-weight: 700;">转码时长{{StartTIme}} 到 {{EndTIme}}（单位：分钟）</h3>
+        <h3 style="font-size: 14px;font-weight: 700;">轉碼時長{{StartTIme}} 到 {{EndTIme}}（單位：分鐘）</h3>
       </el-row>
       <el-row class="iconBtn">
-        <i class="el-icon-download"></i>
+        <i class="el-icon-download"  @click="exportEchart"></i>
       </el-row>
     </p>
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading" />
@@ -17,20 +17,29 @@
         v-loading="loading"
       >
         <el-table-column prop="StreamName" label="StreamName"></el-table-column>
-        <el-table-column prop="StartTime" label="开始转码时间"></el-table-column>
-        <el-table-column prop="EndTime" label="结束转码时间"></el-table-column>
-        <el-table-column prop="Duration" label="转码时长（分钟）"></el-table-column>
-        <el-table-column prop="ModuleCodec" label="编码方式"></el-table-column>
-        <el-table-column prop="Bitrate" label="码率（Kbps）"></el-table-column>
-        <el-table-column prop="Type" label="类型"></el-table-column>
+        <el-table-column prop="StartTime" :label="$t('CSS.appreciation.6')"></el-table-column>
+        <el-table-column prop="EndTime" :label="$t('CSS.appreciation.7')"></el-table-column>
+        <el-table-column prop="Duration" :label="$t('CSS.appreciation.8')"></el-table-column>
+        <el-table-column prop="ModuleCodec" :label="$t('CSS.appreciation.9')"></el-table-column>
+        <el-table-column prop="Bitrate" :label="$t('CSS.appreciation.10')"></el-table-column>
+        <el-table-column prop="Type" :label="$t('CSS.appreciation.11')"></el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
+        <!-- <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
         <el-pagination
           :page-size="pageSize"
           :pager-count="7"
           layout="prev, pager, next"
           @current-change="handleCurrentChange"
+          :total="totalItems"
+        ></el-pagination> -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="current"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
           :total="totalItems"
         ></el-pagination>
       </div>
@@ -39,9 +48,10 @@
 </template>
 
 <script>
+import moment from "moment";
+import XLSX from 'xlsx'
 import Echart from "../../components/line";
 import { CSS_CODE, CSS_CODECHARTS } from "@/constants";
-import moment from "moment";
 export default {
   name: "tab2",
   data() {
@@ -53,7 +63,8 @@ export default {
       loading: true, //加载状态
       xAxis: [],
       series: [],
-      legendText: '转码时长'
+      legendText: '轉碼時長',
+      line_json: []
     };
   },
   components: {
@@ -72,9 +83,19 @@ export default {
     this.getCharts();
   },
   methods: {
+    exportEchart() {
+      const ws = XLSX.utils.json_to_sheet(this.line_json);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");
+      XLSX.writeFile(wb, "統計數據.csv");
+    },
     //分页
     handleCurrentChange(val) {
       this.current = val;
+      this.init();
+    },
+     handleSizeChange(val) {
+      this.pageSize = val;
       this.init();
     },
     //获取表格数据
@@ -100,13 +121,14 @@ export default {
     // 获取图表数据
     getCharts() {
       this.loading = true;
-      const axixArr = []
-      const seriesArr = []
+      let axixArr = []
+      let seriesArr = []
       const params = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
+      let numArr = []
       this.axios.post(CSS_CODECHARTS, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
@@ -114,9 +136,11 @@ export default {
           res.Response.DataInfoList.map(v => {
             axixArr.push(v.Time)
             seriesArr.push(v.Duration)
+            numArr.push({Time: v.Time, Name: "-", "TranscodeDuration": v.Duration})
           })
           this.xAxis = axixArr
           this.series = seriesArr
+          this.line_json = numArr
         }
         this.loading = false;
       })

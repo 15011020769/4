@@ -262,15 +262,24 @@
             <el-form-item label="用户名" v-if="setPassWord">
               <p style="color:#000;">ubuntu</p>
             </el-form-item>
-            <el-form-item label="密码" v-if="setPassWord" class="item-box">
+            <el-form-item label="密码" v-if="setPassWord" class="password">
               <el-input
-                type="password"
+                placeholder="请输入主机密码"
+                :class="{ 'cluster-wran': colonyThird.passwordWran }"
                 v-model="passwordVal"
-                @input="PasswordInput"
-              />
+                @blur="PasswordInput(passwordVal)"
+                show-password
+              ></el-input>
+              <el-tooltip
+                effect="light"
+                :content="colonyThird.passwordTips"
+                placement="right"
+                v-if="colonyThird.passwordWran"
+                ><i class="el-icon-warning-outline ml5"></i>
+              </el-tooltip>
               <p>
                 linux机器密码需8到16位，至少包括两项（[a-z,A-Z] ,
-                [0-9]和[()`~!@#$%^&*-+=|{}[]:;',.?/]的特殊符号）
+                [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
               </p>
             </el-form-item>
             <el-form-item>
@@ -484,7 +493,12 @@ export default {
       securityGroupSel: "",
       arr: "",
       // 开启封锁
-      openBlockadeCheck: false
+      openBlockadeCheck: false,
+      // 第三步
+      colonyThird: {
+        passwordWran: false,
+        passwordTips: "密码不能为空"
+      }
     };
   },
   components: {
@@ -756,11 +770,26 @@ export default {
         });
       });
     },
-    // 密码
-    PasswordInput() {
-      // linux机器密码需8到16位，至少包括两项（[a-z,A-Z] ,[0-9]和[()`~!@#$%^&*-+=|{}[]:;',.?/]的特殊符号）
-      // ^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$])[0-9a-zA-Z!@#$]{3,18}$ .test(phone)
-      console.log(this.passwordVal);
+    // 设置密码
+    PasswordInput(val) {
+      if (val == "") {
+        this.colonyThird.passwordTips = "密码不能为空";
+        this.colonyThird.passwordWran = true;
+      } else if (val.length <= 8 || val.length > 16) {
+        this.colonyThird.passwordTips = "密码必须为8到16位";
+        this.colonyThird.passwordWran = true;
+      } else if (
+        !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
+          val
+        )
+      ) {
+        // ()`~!@#$%^&}*-+=|{}[]:;',.?/
+        this.colonyThird.passwordTips =
+          "密码必须包含数字、字母、特殊字符中至少两项";
+        this.colonyThird.passwordWran = true;
+      } else {
+        this.colonyThird.passwordWran = false;
+      }
     },
     // 高级设置
     removeDomain2(index) {
@@ -768,104 +797,112 @@ export default {
     },
     // 完成
     AddComplete() {
-      let param = {
-        Version: "2018-05-25",
-        ClusterId: this.$route.query.clusterId
-      };
-      for (var i in this.rightList) {
-        param["InstanceIds." + i] = this.rightList[i].InstanceId;
-      }
-
-      // 安全组
-      let _securityGroupSel = "";
-      for (var i in this.securityGroupOpt) {
-        if (this.securityGroupSel === this.securityGroupOpt[i].label) {
-          _securityGroupSel = this.securityGroupOpt[i].value;
-        }
-      }
-      param["SecurityGroupIds.0"] = _securityGroupSel;
-      if (this.itemArr.lenght !== 0) {
-        for (var i in this.itemArr) {
-          var a = i - 0 + (1 - 0);
-          param["SecurityGroupIds." + a] = this.itemArr[i].securityGroupSel;
-        }
-      }
-
-      // InstanceAdvancedSettings
-      if (this.openBlockadeCheck === true) {
-        param["InstanceAdvancedSettings.Unschedulable"] = 1;
+      if (this.colonyThird.passwordWran === true) {
+        return false;
       } else {
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-      }
-
-      // 数据盘挂载
-      if (this.dataMountCheck === true) {
-        param["InstanceAdvancedSettings.MountTarget"] = this.dataDiskMount;
-      }
-
-      // 容器目录
-      if (this.containerListCheck === true) {
-        param["InstanceAdvancedSettings.DockerGraphPath"] = this.containerList;
-      }
-
-      for (var i in this.sshKey) {
-        if (this.sshKeySel === this.sshKey[i].KeyName) {
-          this.sshKeySelId = this.sshKey[i].KeyId;
+        let param = {
+          Version: "2018-05-25",
+          ClusterId: this.$route.query.clusterId
+        };
+        for (var i in this.rightList) {
+          param["InstanceIds." + i] = this.rightList[i].InstanceId;
         }
-      }
 
-      // SSH密钥
-      if (this.loginType == 1) {
-        param["LoginSettings.KeyIds.0"] = this.sshKeySelId;
-      }
-      if (this.loginType == 3) {
-        param["LoginSettings.Password"] = this.passwordVal;
-      }
-
-      // 安全加固
-      param["EnhancedService.SecurityService.Enabled"] = this.safetyCheck;
-
-      // 云监控
-      param["EnhancedService.MonitorService.Enabled"] = this.cloudMonitorCheck;
-
-      // 高级设置
-      if (this.domainstion.length !== 0) {
-        for (var i in this.domainstion) {
-          param[
-            "InstanceAdvancedSettings.Labels." + i + ".Name"
-          ] = this.domainstion[i].value;
-          param[
-            "InstanceAdvancedSettings.Labels." + i + ".Value"
-          ] = this.domainstion[i].valueKey;
+        // 安全组
+        let _securityGroupSel = "";
+        for (var i in this.securityGroupOpt) {
+          if (this.securityGroupSel === this.securityGroupOpt[i].label) {
+            _securityGroupSel = this.securityGroupOpt[i].value;
+          }
         }
-      }
+        param["SecurityGroupIds.0"] = _securityGroupSel;
+        if (this.itemArr.lenght !== 0) {
+          for (var i in this.itemArr) {
+            var a = i - 0 + (1 - 0);
+            param["SecurityGroupIds." + a] = this.itemArr[i].securityGroupSel;
+          }
+        }
 
-      this.axios.post(TKE_ADD_COMPLETE, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$router.push({
-            name: "colonyNodeManageNode",
-            query: {
-              clusterId: this.$route.query.clusterId
-            }
-          });
+        // InstanceAdvancedSettings
+        if (this.openBlockadeCheck === true) {
+          param["InstanceAdvancedSettings.Unschedulable"] = 1;
         } else {
-          let ErrTips = {
-            InternalError: "	内部错误",
-            "InternalError.Db": "	db错误。",
-            "InternalError.DbAffectivedRows": "	DB错误",
-            "InternalError.Param": "	Param。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "	超过配额限制"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-      });
+
+        // 数据盘挂载
+        if (this.dataMountCheck === true) {
+          param["InstanceAdvancedSettings.MountTarget"] = this.dataDiskMount;
+        }
+
+        // 容器目录
+        if (this.containerListCheck === true) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.containerList;
+        }
+
+        for (var i in this.sshKey) {
+          if (this.sshKeySel === this.sshKey[i].KeyName) {
+            this.sshKeySelId = this.sshKey[i].KeyId;
+          }
+        }
+
+        // SSH密钥
+        if (this.loginType == 1) {
+          param["LoginSettings.KeyIds.0"] = this.sshKeySelId;
+        }
+        if (this.loginType == 3) {
+          param["LoginSettings.Password"] = this.passwordVal;
+        }
+
+        // 安全加固
+        param["EnhancedService.SecurityService.Enabled"] = this.safetyCheck;
+
+        // 云监控
+        param[
+          "EnhancedService.MonitorService.Enabled"
+        ] = this.cloudMonitorCheck;
+
+        // 高级设置
+        if (this.domainstion.length !== 0) {
+          for (var i in this.domainstion) {
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Name"
+            ] = this.domainstion[i].value;
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Value"
+            ] = this.domainstion[i].valueKey;
+          }
+        }
+
+        this.axios.post(TKE_ADD_COMPLETE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$router.push({
+              name: "colonyNodeManageNode",
+              query: {
+                clusterId: this.$route.query.clusterId
+              }
+            });
+          } else {
+            let ErrTips = {
+              InternalError: "	内部错误",
+              "InternalError.Db": "	db错误。",
+              "InternalError.DbAffectivedRows": "	DB错误",
+              "InternalError.Param": "	Param。",
+              InvalidParameter: "参数错误",
+              LimitExceeded: "	超过配额限制"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
     },
     addDomain2() {
       this.domainstion.push({
@@ -895,6 +932,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.password {
+  ::v-deep .el-input {
+    top: 0;
+    width: 200px;
+  }
+  p {
+    padding-bottom: 14px;
+    margin-top: 4px;
+    color: #888;
+    font-size: 12px;
+    line-height: 14px;
+    vertical-align: middle;
+  }
+}
+.el-icon-warning-outline {
+  margin-left: 5px;
+  color: #e1504a;
+  font-size: 16px;
+  font-weight: 600;
+}
+.cluster-wran {
+  ::v-deep .el-input__inner {
+    border: 1px solid #e1504a;
+  }
+}
 .tke-tips {
   color: #e54545;
 }

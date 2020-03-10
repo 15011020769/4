@@ -24,29 +24,29 @@ let instanceContent = {
         inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
         inspectMethodValue: 'TCP端口检查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
-        inspectProtocolValue: '',
+        inspectProtocolValue: 'HTTP',
         executiveOrder: '', // 执行命令
         inspectPort: '', // 检查端口
-        requestPath: '', // 请求路径
-        startDelay: '', // 启动延时
-        responseTimeout: '', // 响应超时,
-        intervalTime: '', // 间隔时间
+        requestPath: '/', // 请求路径
+        startDelay: 0, // 启动延时
+        responseTimeout: 2, // 响应超时,
+        intervalTime: 3, // 间隔时间
         healthyThreshold: 1, // 健康阀值
-        unhealthyThreshold: '' // 不健康阀值
+        unhealthyThreshold: 1 // 不健康阀值
       },
       readyToCheckContent: {
         inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
         inspectMethodValue: 'TCP端口检查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
-        inspectProtocolValue: '',
+        inspectProtocolValue: 'HTTP',
         executiveOrder: '', // 执行命令
         inspectPort: '', // 检查端口
-        requestPath: '', // 请求路径
-        startDelay: '', // 启动延时
-        responseTimeout: '', // 响应超时,
-        intervalTime: '', // 间隔时间
-        healthyThreshold: '', // 健康阀值
-        unhealthyThreshold: '' // 不健康阀值
+        requestPath: '/', // 请求路径
+        startDelay: 0, // 启动延时
+        responseTimeout: 2, // 响应超时,
+        intervalTime: 3, // 间隔时间
+        healthyThreshold: 1, // 健康阀值
+        unhealthyThreshold: 1 // 不健康阀值
       },
       privilegeLevelContainer: false, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
@@ -223,15 +223,22 @@ let portMapping = {
 }
 
 let change = {
-  namespaceChange: function () {
+  namespaceChange: async function () {
     this.getPersistentvolumeclaims()
-    this.getSecrets()
-    this.getConfigmaps()
+    await this.getSecrets()
+    await this.getConfigmaps()
+    console.log(this.wl.instanceContent)
+    this.wl.instanceContent.forEach(item1 => {
+      item1.citeCs.forEach(item2 => {
+        this.citeCsValue1Change(item2.value1, item2)
+        item2.value3 = ''
+      })
+    })
   },
   citeCsValue1Change: function (event, val) {
     val.value2 = ''
     if (event === 'ConfigMap') {
-      this.configMap.items.map(item => {
+      val.option2 = this.configMap.items.map(item => {
         return { name: item.metadata.name, option: Object.keys(item.data) }
       })
     }
@@ -356,7 +363,7 @@ export default {
       }],
       portMappingConPortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
             callback()
             return
           }
@@ -371,7 +378,7 @@ export default {
       }],
       portMappingServicePortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'statefulSet') {
+          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
             callback()
             return
           }

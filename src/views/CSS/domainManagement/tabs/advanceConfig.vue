@@ -8,108 +8,158 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="HTTPS功能配置完成后约2小时生效，请耐心等待。"
+              :content="$t('CSS.detailPlay.3')"
               placement="right"
             >
               <i class="el-icon-info" />
             </el-tooltip>
           </h1>
-          <el-button @click="editCert" type="text">编辑</el-button>
+          <el-button @click="editCert" type="text">{{
+            $t("CSS.watermark.12")
+          }}</el-button>
         </el-row>
         <div class="bgGray">
           <div class="newClear newList1">
-            <p>HTTPS服务</p>
-            <p>{{ cert && cert.Status === 1 ? "开启" : "关闭" || "关闭" }}</p>
+            <p>HTTPS{{ $t("CSS.detailPlay.service") }}</p>
+            <p>
+              {{
+                cert && cert.Status === 1
+                  ? $t("CSS.domainManagement.20")
+                  : $t("CSS.domainManagement.32") ||
+                    $t("CSS.domainManagement.20")
+              }}
+            </p>
           </div>
           <div class="newClear newList1">
-            <p>证书到期时间</p>
+            <p>{{ $t("CSS.detailPlay.certificateExpirationTime") }}</p>
             <p>{{ (cert && cert.CertExpireTime) || "暂无" }}</p>
           </div>
         </div>
       </div>
       <!-- </el-card> -->
       <!-- <el-card> -->
-        <div class="basicinfo" v-loading="loading2">
-          <el-row type="flex" justify="space-between">
-            <h1 class="">带宽封顶配置
-              <el-tooltip class="item" effect="dark" content="您可设置域名加速区域的下行带宽封顶值，在一个统计周期内、若峰值带宽达到阈值，后续访问将被拒绝。若您的域名加速区域为全球，可设置全球带宽封顶值。" placement="right">
-                <i class="el-icon-info" />
-              </el-tooltip>
-            </h1>
-            <el-button @click="editBandLimit" type="text">编辑</el-button>
-          </el-row>
-          <div class="bgGray">
-            <div class="newClear newList1">
-              <p>带宽封顶</p>
-              <p>{{bandLimit.BandLimitEnable === 1 ? '开启' : '关闭'}}</p>
-            </div>
-            <div class="newClear newList1" v-if="bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3">
-                <p>港澳台及海外地区带宽阈值</p>
-                <p>{{bandLimit.AbroadBandLimitValue | unit}}</p>
-            </div>
-            <div class="newClear newList1" v-if="bandLimit.DomesticBandLimitEnable === 1 && domainInfo.PlayType === 1">
-                <p>中国大陆带宽阈值</p>
-                <p>{{bandLimit.DomesticBandLimitValue | unit}}</p>
-            </div>
-            <div class="newClear newList1" v-if="bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2">
-                <p>全球带宽阈值</p>
-                <p>{{bandLimit.GlobalBandLimitValue | unit}}</p>
-            </div>
+      <div class="basicinfo" v-loading="loading2">
+        <el-row type="flex" justify="space-between">
+          <h1 class="">
+            {{ $t("CSS.detailPlay.bandwidthCapping") }}配置
+            <el-tooltip
+              class="item"
+              effect="dark"
+              :content="$t('CSS.detailPlay.4')"
+              placement="right"
+            >
+              <i class="el-icon-info" />
+            </el-tooltip>
+          </h1>
+          <el-button @click="editBandLimit" type="text">{{
+            $t("CSS.watermark.12")
+          }}</el-button>
+        </el-row>
+        <div class="bgGray">
+          <div class="newClear newList1">
+            <p>{{ $t("CSS.detailPlay.bandwidthCapping") }}</p>
+            <p>
+              {{
+                bandLimit.BandLimitEnable === 1
+                  ? $t("CSS.domainManagement.20")
+                  : $t("CSS.domainManagement.32")
+              }}
+            </p>
+          </div>
+          <div
+            class="newClear newList1"
+            v-if="
+              bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3
+            "
+          >
+            <p>港澳台及海外地区带宽阈值</p>
+            <p>{{ bandLimit.AbroadBandLimitValue | unit }}</p>
+          </div>
+          <div
+            class="newClear newList1"
+            v-if="
+              bandLimit.DomesticBandLimitEnable === 1 &&
+                domainInfo.PlayType === 1
+            "
+          >
+            <p>中国大陆带宽阈值</p>
+            <p>{{ bandLimit.DomesticBandLimitValue | unit }}</p>
+          </div>
+          <div
+            class="newClear newList1"
+            v-if="
+              bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2
+            "
+          >
+            <p>全球带宽阈值</p>
+            <p>{{ bandLimit.GlobalBandLimitValue | unit }}</p>
           </div>
         </div>
       </div>
+      <!-- </div> -->
       <!-- </el-card> -->
     </el-col>
     <el-col :span="12">
       <!-- <el-card> -->
       <div class="basicinfo" v-loading="loading3">
         <el-row type="flex" justify="space-between">
-          <h1 class="">区域配置</h1>
-          <el-button @click="editRegion" type="text">编辑</el-button>
+          <h1 class="">{{ $t("CSS.detailPlay.rgional") }}配置</h1>
+          <el-button @click="editRegion" type="text">{{
+            $t("CSS.watermark.12")
+          }}</el-button>
         </el-row>
         <div class="bgGray">
           <div class="newClear newList1">
-            <p>加速区域</p>
+            <p>加速{{ $t("CSS.detailPlay.rgional") }}</p>
             <p>{{ domainInfo.PlayType | playType }}</p>
           </div>
         </div>
       </div>
-      <!-- </el-card>
-      <el-card> -->
+
       <div class="basicinfo" v-loading="loading4">
         <el-row type="flex" justify="space-between">
           <h1 class="">
-            源站设置
+            {{ $t("CSS.detailPlay.sourceStationSetup") }}
             <el-tooltip
               class="item"
               effect="dark"
-              content="源站设置功能配置完成后约1天生效，请耐心等待。"
+              :content="$t('CSS.detailPlay.5')"
               placement="bottom"
             >
               <i class="el-icon-info" />
             </el-tooltip>
           </h1>
-          <el-button @click="editResource" type="text">编辑</el-button>
+          <el-button @click="editResource" type="text">{{
+            $t("CSS.watermark.12")
+          }}</el-button>
         </el-row>
         <div class="bgGray">
           <div class="newClear newList1">
-            <p>源站设置</p>
+            <p>{{ $t("CSS.detailPlay.sourceStationSetup") }}</p>
+
             <p v-if="resource.Status === 0">部署中</p>
-            <p v-if="resource.Status === 1">开启</p>
-            <p v-if="resource.Status === 2">关闭中</p>
-            <p v-if="resource.Status === 3">关闭</p>
+            <p v-else-if="resource.Status === 1">
+              {{ $t("CSS.domainManagement.20") }}
+            </p>
+            <p v-else-if="resource.Status === 2">
+              {{ $t("CSS.domainManagement.32") }}中
+            </p>
+            <p v-else-if="resource.Status === 3">
+              {{ $t("CSS.domainManagement.32") }}
+            </p>
+            <p v-else>关闭</p>
           </div>
           <div class="newClear newList1">
-            <p>回源协议</p>
+            <p>{{ $t("CSS.detailPlay.6") }}</p>
             <p>{{ resource.SourceStreamFormat || "暂无" }}</p>
           </div>
           <div class="newClear newList1">
-            <p>播放协议</p>
+            <p>{{ $t("CSS.detailPlay.7") }}</p>
             <p>{{ resource.CdnStreamFormat || "暂无" }}</p>
           </div>
           <div class="newClear newList1">
             <p>源站地址ip/domain</p>
-            <p>{{ resource.SourceServerType === 0 ? "ip" : "domain" }}</p>
+            <p>{{ resource.SourceServerType === 0 ? "ip" : (resource.SourceServerType === 1 ? 'domain' : '暂无')}}</p>
           </div>
           <div class="newClear newList1">
             <p>主源地址</p>
@@ -130,10 +180,10 @@
         destroy-on-close
         width="550px"
       >
-        <cert :cert="cert" @success="getCert" :visible="visibleHttps" />
+        <cert :cert="cert" @success="getCert" :visible.sync="visibleHttps" />
       </el-dialog>
       <el-dialog
-        title="带宽封顶配置"
+        :title="$t('CSS.detailPlay.bandwidthCapping') + '配置'"
         :visible.sync="visibleBandLimit"
         destroy-on-close
         width="800px"
@@ -142,7 +192,7 @@
           :playType="domainInfo.PlayType"
           :bandLimit="bandLimit"
           @success="getBandLimit"
-          :visible="visibleBandLimit"
+          :visible.sync="visibleBandLimit"
         />
       </el-dialog>
       <el-dialog
@@ -152,15 +202,14 @@
         width="500px"
       >
         <regional-config-model
-          :playType="domainInfo.PlayType"
-          :bandLimit="bandLimit"
+          :bandLimit="domainInfo.PlayType"
           @success="getRegion"
           @handleClose="handleCloseRegion"
           :visible="visibleBandLimit"
         />
       </el-dialog>
       <el-dialog
-        title="源站设置"
+        :title="$t('CSS.detailPlay.sourceStationSetup')"
         :visible.sync="visibleSourceStationSetup"
         destroy-on-close
         width="500px"
@@ -195,6 +244,7 @@ export default {
       cert: {},
       domainInfo: {},
       bandLimit: {},
+      bandLimitRegional: '',
       resource: {},
       visibleHttps: false,
       visibleBandLimit: false,
@@ -203,7 +253,8 @@ export default {
       loading1: true,
       loading2: true,
       loading3: true,
-      loading4: true
+      loading4: true,
+      timer: undefined,
     }
   },
   components: {
@@ -264,15 +315,14 @@ export default {
       this.axios.post(DOMAIN_DELTILS, {
         Version: '2018-08-01',
         DomainName: this.$route.query.Name
+      }).then(({ Response }) => {
+        this.domainInfo = Response.DomainInfo
+      }).then(() => {
+        this.loading3 = false
       })
-        .then(({ Response }) => {
-          this.domainInfo = Response.DomainInfo
-        })
-        .then(() => {
-          this.loading3 = false
-        })
     },
     editRegion () {
+      this.getRegion()
       this.visibleRegional = true
     },
     getBandLimit () {
@@ -299,18 +349,25 @@ export default {
         DomainName: this.$route.query.Name
       })
         .then(({ Response }) => {
-          this.resource = Response
-          if (Response.CdnStreamFormat.length !== 0) {
-            this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
+          if (!Response.Error) {
+            this.resource = Response
+            if (Response.CdnStreamFormat.length !== 0) {
+              this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
+            }
           }
-          console.log(this.resource, 'this.resource0')
         })
         .then(() => {
           this.loading4 = false
         })
     },
+    // 这是一个定时器
+    refreshResource () {
+      this.timer = setTimeout(() => {
+        this.getResource()
+      }, 3000)
+    },
     editResource () {
-      this.getResource()
+      // this.getResource()
       if (this.resource.Status == 2) {
         this.$message({
           message: '请等待上一次的操作关闭完成',
@@ -340,6 +397,18 @@ export default {
     handleCloseSource () {
       this.visibleSourceStationSetup = false
     }
+  },
+  watch: {
+    resource () {
+      if ([0, 2].includes(this.resource.Status)) {
+        this.refreshResource()
+      } else {
+        clearTimeout(this.timer)
+      }
+    }
+  },
+  destroyed () {
+    this.timer && clearTimeout(this.timer)
   }
 }
 </script>

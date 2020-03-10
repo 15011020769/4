@@ -28,7 +28,7 @@
 
       <el-input
         clearable
-        :placeholder="$t('CAM.userList.searchUser')"
+        placeholder="搜索用戶名/ID/SecretId/手機/郵箱/備註"
         size="small"
         class="inputSearch"
         v-model="inpVal"
@@ -42,7 +42,7 @@
       <div class="wrapTwo">
         <el-table
           height="450"
-          :data="tableData1"
+          :data="tableData"
           @selection-change="selectDataChange"
           v-loading="loading"
           @expand-change="rowChange"
@@ -120,12 +120,12 @@
             <template slot-scope="scope">
               <span v-show="scope.row.PhoneNum == '' && scope.row.Email ==''">-</span>
               <i
-                class="el-icon-mobile mobile pointer"
+                :class="`el-icon-mobile mobile pointer ${scope.row.PhoneFlag === 1 ? 'validated' : ''}`"
                 @click="detailsUser(scope.row)"
                 v-show="scope.row.PhoneNum"
               ></i>
               <i
-                class="el-icon-message message pointer"
+                :class="`el-icon-message message pointer  ${scope.row.EmailFlag === 1 ? 'validated' : ''}`"
                 @click="detailsUser(scope.row)"
                 v-show="scope.row.Email"
               ></i>
@@ -326,7 +326,7 @@
 </template>
 <script>
 import {
-  USER_LIST,
+  LIST_SUBACCOUNTS,
   USER_GROUP,
   POLICY_LIST,
   POLICY_USER,
@@ -596,16 +596,8 @@ export default {
     },
     //搜索
     userSearch() {
-      this.loading = true;
-      var arr = [];
-      this.tableData.forEach(item => {
-        if (item.Name.includes(this.inpVal)) {
-          arr.push(item);
-        }
-      });
-      this.tableData1 = arr;
-      this.TotalCount = arr.length;
-      this.loading = false;
+      this.currpage = 1
+      this.init()
     },
     userInpSearch() {
       if (this.inpVal == "") {
@@ -616,41 +608,33 @@ export default {
     //分页
     handleSizeChange(val) {
       this.pagesize = val;
-      this.currpage = 1;
-      // this.init();
-      this.tableData1 = this.tableData.slice(
-        (this.currpage - 1) * this.pagesize,
-        this.currpage * this.pagesize
-      );
+      this.init()
     },
     handleCurrentChange(val) {
       this.currpage = val;
-      // this.init();
-      this.delRowShow = true;
-      this.deleteName = val.Name;
-      this.tableData1 = this.tableData.slice(
-        (this.currpage - 1) * this.pagesize,
-        this.currpage * this.pagesize
-      );
+      this.init()
     },
     //初始化用户列表数据
     init() {
       this.loading = true;
       let userList = {
-        Version: "2019-01-16",
-        
+        "Type": "SubAccount",
+        "Version": "2019-01-16",
+        "Offset": (this.currpage - 1) * this.pagesize,
+        "Limit": this.pagesize,
+        Keyword: this.inpVal,
       };
       this.axios
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
-          // console.log(data);
+          console.log(data);
 
           this.loading = false;
           // 如果返回的data是String类型的，说明接口返回信息有误
           if (typeof data !== "string") {
             if (data.Response.Error === undefined) {
               if (data != "") {
-                var arr = data.Response.Data;
+                var arr = data.Response.UserInfo;
                 //获取用户关联的用户组
                 arr.forEach((item, index) => {
                   item.group = [];
@@ -658,13 +642,13 @@ export default {
                   item.subscription = undefined;
                 });
                 this.tableData = arr;
-                this.tableData.reverse();
-                this.json = arr;
-                this.tableData1 = this.tableData.slice(
-                  (this.currpage - 1) * this.pagesize,
-                  this.currpage * this.pagesize
-                );
-                this.TotalCount = this.json.length;
+                // this.tableData.reverse();
+                // this.json = arr;
+                // this.tableData1 = this.tableData.slice(
+                //   (this.currpage - 1) * this.pagesize,
+                //   this.currpage * this.pagesize
+                // );
+                this.TotalCount = data.Response.TotalNum
               } else {
                 this.$message({
                   type: "info",
@@ -1316,5 +1300,19 @@ export default {
   color: #c07400;
   border-color: #ffd18b;
   background-color: #fff4e3;
+}
+.mobile, .message {
+  font-size: 16px;
+}
+.validated {
+  position: relative;
+  &::after {
+    position: absolute;
+    content: "\2714";
+    bottom: 1px;
+    right: 2px;
+    color: #57bb66;
+    font-size: 12px;
+  } 
 }
 </style>

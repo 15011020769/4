@@ -298,8 +298,38 @@ export default new Router({
         import( /* webpackChunkName: "Template" */ './Template/Template.vue'),
       meta: {
         keepAlive: true
-      }
+      }       
     },
+    {
+      path: '/Template/Detail/index/:id', // 触发条件模板详情
+      name: 'TemplateDetail',
+      component: () =>
+        import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/index.vue'),
+      redirect: '/Template/Detail/:id/Info', // 默认子路由
+      meta: {
+        keepAlive: true
+      },
+      children: [
+        {
+          path: '/Template/Detail/:id/Info', // 触发条件模板详情信息
+          name: 'TemplateInfo',
+          component: () =>
+            import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/Info.vue'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        {
+          path: '/Template/Detail/:id/Update', // 触发条件模板变更日志
+          name: 'TemplateUpdate',
+          component: () =>
+            import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/Update.vue'),
+          meta: {
+            keepAlive: true
+          }
+        }
+      ]
+    },  
     // -----------------------------------------------------
     {
       path: '/Toconfigure', //     告警配置

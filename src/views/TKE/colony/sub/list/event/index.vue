@@ -6,7 +6,7 @@
       <h4 class="tke-formpanel-title">条件筛选</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
         <el-form-item label="命名空间">
-          <el-select v-model="nsValue" placeholder="请选择" @change="getKind">
+          <el-select v-model="nsValue" placeholder="请选择" @change="nameSpaceList">
             <el-option
               v-for="item in nsOptions"
               :key="item.value"
@@ -205,14 +205,12 @@ export default {
       if (this.autoRefresh == true) {
         var timeId = setInterval(() => {
           this.nameSpaceList();
-          this.getKind();
+          // this.getKind();
         }, 20000);
-        window.clearInterval(timeId);
       } else {
-        window.clearInterval(timeId);
         this.nsOptions = [];
         this.nameSpaceList();
-        this.getKind();
+        // this.getKind();
       }
     },
     //    /api/v1/namespaces    get
@@ -231,6 +229,7 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           if (mes.items != []) {
+            this.list = [];
             this.list = mes.items;
             this.total = mes.items.length;
             mes.items.forEach(item => {
@@ -381,6 +380,9 @@ export default {
   components: {
     subTitle,
     Loading
+  },
+  destroyed() {
+    window.clearInterval(refresh);
   }
 };
 </script>

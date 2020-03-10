@@ -2,7 +2,6 @@
 <template>
   <div>
     <subTitle title='Ingress'/>
-
     <!-- 新建、搜索相关操作 -->
     <div class="tke-grid ">
       <!-- 左侧 -->
@@ -25,50 +24,32 @@
           @changeInput="changeSearchInput"
           @clickSearch="clickSearch"
           @refresh='refreshList'
-          @exportExcel="exportExcel"
-        >
+          @exportExcel="exportExcel">
         </tkeSearch>
       </div>
     </div>
 
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
-      <el-table
-        :data="list"
-        v-loading="loadShow"
-        id="exportTable"
-        style="width: 100%">
-        <el-table-column
-          label="名称"
-        >
+      <el-table :data="list" v-loading="loadShow" id="exportTable" style="width: 100%">
+        <el-table-column label="名称">
           <template slot-scope="scope">
             <span @click="goIngressDetail(scope.row.metadata.name)" class="tke-text-link">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="类型"
-        >
+        <el-table-column prop="" label="类型">
           <template slot-scope="scope">
             <span class="tke-text-link">{{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}</span>
             <p>负载均衡</p>
           </template>
         </el-table-column>
-        <el-table-column
-          prop=""
-          label="VIP"
-
-        >
+        <el-table-column prop="" label="VIP">
           <template slot-scope="scope">
             <p>{{scope.row.status.loadBalancer.ingress && scope.row.status.loadBalancer.ingress[0].ip}}</p>
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop=""
-          label="后端服务"
-          width="350"
-        >
+        <el-table-column prop="" label="后端服务" width="350">
           <template slot-scope="scope">
             <span class="tke-text-link">
               http://{{scope.row.status.loadBalancer.ingress?scope.row.status.loadBalancer.ingress[0].ip:'-'}}{{scope.row.spec.rules[0].http.paths[0].path}}
@@ -79,18 +60,12 @@
           </template>
         </el-table-column>
 
-        <el-table-column
-          prop=""
-          label="创建时间"
-        >
+        <el-table-column prop="" label="创建时间">
           <template slot-scope="scope">
             <p v-for="v in upTime(scope.row.metadata.creationTimestamp)" :key="v">{{v}}</p>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          width="200"
-        >
+        <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <span class="tke-text-link" @click="toUpdateConfigure(scope.row)">更新转发配置</span>
             <span class="tke-text-link ml10" @click="toYmal(scope.row)">编辑YAML</span>
@@ -159,10 +134,13 @@ export default {
   created () {
     // 从路由获取集群id
     this.clusterId = this.$route.query.clusterId
-    this.getNameSpaceList()
-    this.getIngressList()
+    this.initNetworkRequery()
   },
   methods: {
+    initNetworkRequery: async function () {
+      await this.getNameSpaceList()
+      await this.getIngressList()
+    },
     // 删除ingress
     deleteIngress: function () {
       let { namespace, name } = this.ingressItem
@@ -177,6 +155,7 @@ export default {
         this.$message({
           message: '删除成功',
           showClose: true,
+          type: 'success',
           duration: 2000
         })
         this.getIngressList()
@@ -214,6 +193,9 @@ export default {
           item.label = item.metadata.name
         })
         this.searchOptions = searchOpt
+        if (this.searchOptions.length > 0) {
+          this.searchType = this.searchOptions[0].value
+        }
       })
     },
     // 获取表格列表
@@ -349,5 +331,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped></style>

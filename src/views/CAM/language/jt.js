@@ -270,7 +270,7 @@ module.exports = {
       selectedStar: "已选策略",
       kztfw: "控制台访问",
       sytj: "使用条件",
-      zwkxsftgs: "暂无可选身份提供商",
+      zwkxsftgs: "请选择选身份提供商",
       yxjsfwkzt: "允许当前角色访问控制台",
       jian: "键",
       qxz: "请选择",

@@ -645,6 +645,7 @@ export default {
       this.axios.post(TKE_COLONY_DES, param).then(res => {
         this.editNameDialogVisible = false;
         this.loadShow = true;
+        this.searchInput = "";
         this.getColonyList();
       });
     },
