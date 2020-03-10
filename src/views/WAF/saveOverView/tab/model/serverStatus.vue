@@ -25,6 +25,7 @@
       :color="colorPie"
       :legendText="legendTextPieBrowser"
       v-loading="loading"
+      :left="'46%'"
       v-else
     />
     </el-col>
@@ -50,7 +51,7 @@ export default {
       legendTextPieServer: [], // 服务器响应状态
       seriesPieBrowser: [], // 浏览器类型
       legendTextPieBrowser: [], // 浏览器类型
-      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C"],
+      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C", "#8D62AE"],
       loading: true
     }
   },
@@ -104,8 +105,7 @@ export default {
         this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
           let usArrCount = []
           let usLegend = []
-          this.generalRespHandler(resp, ({Piechart}) => {
-            // console.log(Response.Piechart)
+          this.generalRespHandler(resp, ({Data: {Piechart}}) => {
             Piechart && Piechart.map(v => {
               usArrCount.push({value: JSON.parse(v).count, name: JSON.parse(v).us,})
               usLegend.push(JSON.parse(v).us)
@@ -120,8 +120,7 @@ export default {
         this.axios.post(DESCRIBE_PIECHART, params).then((resp) => {
           let uaArrCount = []
           let uaLegend = []
-          this.generalRespHandler(resp, ({Piechart}) => {
-            console.log(Response.Piechart)
+          this.generalRespHandler(resp, ({Data: {Piechart}}) => {
             Piechart && Piechart.map(v => {
               uaArrCount.push({value: JSON.parse(v).count, name: JSON.parse(v).ua,})
               uaLegend.push(JSON.parse(v).ua)

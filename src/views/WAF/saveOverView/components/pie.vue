@@ -16,6 +16,10 @@ export default {
     window.onresize = this.$echarts.init(this.$refs.pie_dv).resize;
   },
   props: {
+    left: {
+      type: String,
+      default: '50%',
+    },
     color: {
       type: Array,
       default: () => []
@@ -52,7 +56,7 @@ export default {
       myChart.setOption({
         color: this.color,
         grid: {
-          left: '3%',
+          left: '2%',
           right: '4%',
           bottom: '10%',
           containLabel: true
@@ -63,7 +67,7 @@ export default {
         legend: {
             data: this.legendText,
             orient: 'vertical',
-            left: '50%',
+            left: this.left,
             y: 'center',
             icon: "circle",
             textStyle:{
@@ -78,9 +82,15 @@ export default {
               })
               that.series.map(v => {
                 if (name == v.name) {
-                  arrdetail.push(
-                    v.name + ' '+v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
-                  )
+                  if(v.name.length > 31) {
+                    arrdetail.push(
+                      v.name.substring(0,22)+ '...' + ' ' + v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
+                    )
+                  } else {
+                     arrdetail.push(
+                      v.name + ' ' + v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
+                    )
+                  }
                 }
               })
              return arrdetail.join('\n')
