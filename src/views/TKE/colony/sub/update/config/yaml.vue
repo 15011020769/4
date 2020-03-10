@@ -110,6 +110,12 @@ export default {
                name:'configmapDetailInfo',
                query: {clusterId: this.clusterId,name:this.name,np:this.np}
              })
+              this.$message({
+                type: "success",
+                message: "更新成功",
+                duration: 0,
+                showClose: true
+            });
             }else{
                let ErrTips = {};
                let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
