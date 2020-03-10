@@ -11,13 +11,8 @@ const conf = {
   loading: true,
   withCredentials: true,
   headers: {
-<<<<<<< HEAD
     uuid: VueCookie.get('uuid'),
-  //  uuid: 100011921910,
-=======
-    // uuid: VueCookie.get('uuid'),
-    uuid: 100011921910,
->>>>>>> 云监控 警告配置
+    // uuid: 100011921910,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'
