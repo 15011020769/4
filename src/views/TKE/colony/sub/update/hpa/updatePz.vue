@@ -431,7 +431,7 @@
              this.$message("最小副本数不能大于等于最大副本数");
             return
          }
-         
+         console.log(arr)
          var params={
             ClusterName:this.clusterId,
             ContentType: "application/strategic-merge-patch+json",
@@ -455,6 +455,8 @@
                    this.$message({
                     message: "更新成功",
                     type: "success",
+                    showClose: true,
+                    duration: 0,
                      });
               }
          })

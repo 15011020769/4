@@ -190,8 +190,8 @@ module.exports = {
       certificateExpirationTime: '证书到期时间',
       bandwidthCapping: '带宽封顶',
       rgional: '区域',
-      sourceStationSetup: '源站设置'
-
+      sourceStationSetup: '源站设置',
+      ipordomain: '請填寫域名或IP',
     }
   },
   COM: require('@/components/language/jt')

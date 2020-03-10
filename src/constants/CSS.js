@@ -176,3 +176,5 @@ export const MODIFY_LIVE_BAND_LIMIT = 'live2/ModifyLiveBandLimit'
 export const MODIFY_LIVE_PLAY_DOMAIN = 'live2/ModifyLivePlayDomain'
 // 源站设置
 export const MODIFY_SOURCE_STREAM_INFO = 'live2/ModifySourceStreamInfo'
+// 关闭源站设置
+export const CLOSE_SOURCE_STREAM = 'live2/CloseSourceStream'

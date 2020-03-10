@@ -9,7 +9,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新调度策略s</h2>
+          <h2 class="header-title">更新调度策略</h2>
         </div>
         <!-- 右侧 -->
       </div>

@@ -7,7 +7,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button @click="goWorkloadCreate('cronJob')" size="small" type="primary">新建</el-button>
+        <el-button @click="goWorkloadCreate('CronJob')" size="small" type="primary">新建</el-button>
         <!-- <el-button size="small">监控</el-button> -->
       </div>
       <!-- 右侧 -->
@@ -174,7 +174,7 @@ export default {
    //更新pod配置
     goPodConfigUpdate(rowData) {
       this.$router.push({
-        name: "podConfigUpdate",
+        name: "podCronjobUpdate",
         query: {
           clusterId: this.clusterId,
           name: rowData.metadata.name,

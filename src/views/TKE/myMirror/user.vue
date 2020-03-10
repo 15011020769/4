@@ -12,7 +12,7 @@
         <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">重置密码</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" @change="changeSearch()"></el-input>
+          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
           <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
       </div>
     </div>
@@ -86,7 +86,7 @@
           <el-input  v-model="name" @change="getName()" style="width:200px"></el-input>
           <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
         </el-form-item>
-        <el-form-item label="类型" prop="region" size="mini">
+        <el-form-item label="类型"  size="mini">
           <el-select v-model="ruleForm.region" label="私有">
             <el-option label="私有" value="0"></el-option>
             <el-option label="公有" value="1"></el-option>
@@ -253,7 +253,7 @@ export default {
       },
       ruleForm: {
         name: '',
-        // region: '0',
+        region: '0',
         region2: '',
         desc: '',
       },

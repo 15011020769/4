@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" >监控</el-button>
+        <!-- <el-button size="small" >监控</el-button> -->
       </div>
       <!-- 右侧 -->
       <div class="tool">
@@ -168,7 +168,7 @@
           >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="reconstruction(scope.row)">销毁重建</span>
-            <span><el-button size="small" disabled type="text" class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</el-button></span>
+            <!-- <span><el-button size="small" disabled type="text" class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</el-button></span> -->
           </template>
         </el-table-column>
       </el-table>
@@ -424,7 +424,7 @@ export default {
           this.showReconstModal = false;
           this.getPodList();
           this.$message({
-            message: '删除成功',
+            message: '删除成功,请等待...',
             type: "success",
             showClose: true,
             duration: 0

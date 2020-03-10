@@ -19,13 +19,13 @@
             placeholder="请选择"
             size="mini"
             class="ml10"
-            @change="nameSpaceList()"
+            @change="nameSpaceList1"
           >
             <el-option
-              v-for="item in option1"
-              :key="item.metadata.name"
-              :label="item.metadata.name"
-              :value="item.metadata.name"
+              v-for="(item,index) in option1"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
             ></el-option>
           </el-select>
           <el-select
@@ -33,28 +33,21 @@
             placeholder="请选择工作负载类型"
             size="mini"
             class="ml10"
-            @change="getWorkload()"
+            @change="nameSpaceList"
           >
             <el-option
-              v-for="item in option2"
-              :key="item.value"
+              v-for="(item,index) in option2"
+              :key="index"
               :label="item.label"
               :value="item.value"
             ></el-option>
           </el-select>
-          <el-select
-            v-model="value3"
-            placeholder="请选择Workload"
-            size="mini"
-            class="ml10"
-            :disabled="value2==1?true:false"
-            @change="getPod"
-          >
+          <el-select v-model="value3" placeholder="请选择Workload" size="mini" class="ml10">
             <el-option
-              v-for="item in option3"
-              :key="item.metadata.name"
-              :label="item.metadata.name"
-              :value="item.metadata.name"
+              v-for="(item,index) in option3"
+              :key="index"
+              :label="item.label"
+              :value="item.value"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -62,10 +55,16 @@
           <el-tooltip class="item" effect="light" content="Pod实例、Container实例" placement="right">
             <i class="el-icon-info"></i>
           </el-tooltip>
-          <el-select v-model="value4" placeholder="请选择" size="mini" class="ml10">
+          <el-select
+            v-model="value4"
+            placeholder="请选择"
+            size="mini"
+            class="ml10"
+            @change="getPodData"
+          >
             <el-option
-              v-for="item in option4"
-              :key="item.value"
+              v-for="(item,index) in option4"
+              :key="index"
               :label="item.label"
               :value="item.value"
             ></el-option>
@@ -76,10 +75,11 @@
             :disabled="listNumFlag"
             size="mini"
             class="ml10"
+            @change="getLog"
           >
             <el-option
-              v-for="item in option5"
-              :key="item.value"
+              v-for="(item,index) in option5"
+              :key="index"
               :label="item.label"
               :value="item.value"
             ></el-option>
@@ -137,10 +137,6 @@ export default {
       option1: [],
       option2: [
         {
-          value: 1,
-          label: "请选择工作负载类型"
-        },
-        {
           value: "Deployment",
           label: "Deployment"
         },
@@ -180,10 +176,9 @@ export default {
       ],
       value1: "default",
       value2: "Deployment",
-      // value3: "Workload列表为空",
       value3: "",
-      value4: "Pod列表为空",
-      value5: "Container列表为空",
+      value4: "",
+      value5: "",
       value6: "显示100条数据",
       autoRefresh: true, //自动刷新
       loadShow: true // 加载是否显示
@@ -194,91 +189,52 @@ export default {
     SEARCH
   },
   created() {
+    // this.value2 = this.option2[0].value;
     this.nameSpaceList();
-  },
-  mounted() {
     this.refresh();
   },
+  mounted() {},
   methods: {
     refresh() {
       if (this.autoRefresh === true) {
         var timeId = setInterval(() => {
           this.nameSpaceList();
-          window.clearInterval(timeId);
         }, 20000);
       } else {
-        window.clearInterval(timeId);
+        this.nameSpaceList();
       }
-    },
-    getDefault() {
-      // this.getWorkload();
-    },
-    getPod() {
-      this.getPodData();
     },
     //返回上一层
     goBack() {
       this.$router.go(-1);
     },
-    nameSpaceList() {
+    nameSpaceList1() {
+      this.nameSpaceList();
+    },
+    async nameSpaceList() {
       //第一项命名空间
-      this.loadShow = true;
+      this.option3 = [];
+      this.option4 = [];
+      this.option5 = [];
       var params = {
         Method: "GET",
         Path: "/api/v1/namespaces",
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody).items;
-          this.option1 = mes;
-          this.loadShow = false;
-          this.getWorkload();
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-    getLog() {
-      var params = {
-        Method: "GET",
-        Path:
-          "/api/v1/namespaces/" +
-          this.value1 +
-          "/pods/" +
-          this.value4 +
-          "/log?container=" +
-          this.value5 +
-          "&timestamps=" +
-          this.autoRefresh +
-          "&tailLines=" +
-          this.value6.replace(/[^\d]/g, ""),
-        Version: "2018-05-25",
-        ClusterName: this.$route.query.clusterId
-      };
-      console.log(params);
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        if (res.Response.Error === undefined) {
-          var mes = res.Response.ResponseBody;
-          var newarrs = [];
-          var data = mes.substring(0, 4);
-          mes
-            .split(data)
-            .slice(1)
-            .forEach((x, y) => {
-              newarrs.push({ str: data + x });
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.option1 = [];
+          mes.items.forEach(item => {
+            this.option1.push({
+              value: item.metadata.name,
+              label: item.metadata.name
             });
-          this.htmls = newarrs;
-
-          this.loadShow = false;
+          });
+          // this.value1 = this.option1[0].value;
+          // this.value2 = this.option2[0].value;
+          this.getWorkload();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -309,7 +265,6 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
-
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
@@ -323,14 +278,15 @@ export default {
             });
             this.value4 = this.option4[0].value;
           } else {
+            this.option4 = [];
             this.value4 = "Pod列表为空";
             return;
           }
           if (mes.items != []) {
             this.option5 = [];
             mes.items.forEach(item => {
-              item.spec.containers.map(i => {
-                return this.option5.push({
+              item.spec.containers.forEach(i => {
+                this.option5.push({
                   value: i.name,
                   label: i.name
                 });
@@ -339,7 +295,9 @@ export default {
             this.value5 = this.option5[0].value;
             this.getLog();
           } else {
+            this.option5 = [];
             this.value5 = "Container列表为空";
+            return;
           }
           this.loadShow = false;
         } else {
@@ -356,14 +314,26 @@ export default {
     },
     getWorkload() {
       var v = this.value2;
-      v = v.replace(v, v.toLowerCase()) + "s";
-      if (v == "jobs") {
+      v = v.replace(v, this.value2.toLowerCase()) + "s";
+      if (
+        v === "jobs" ||
+        v === "statefulsets" ||
+        this.value1 === "kube-node-lease" ||
+        this.value1 === "kube-public"
+      ) {
+        this.option3 = [];
+        this.option4 = [];
+        this.option5 = [];
+        this.value3 = "Workload列表为空";
+        this.value4 = "Pod列表为空";
+        this.value5 = "Container列表为空";
         var params = {
           Method: "GET",
           Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
           Version: "2018-05-25",
           ClusterName: this.$route.query.clusterId
         };
+        return;
       } else {
         var params = {
           Method: "GET",
@@ -372,23 +342,71 @@ export default {
           ClusterName: this.$route.query.clusterId
         };
       }
-
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
-          var mes = JSON.parse(res.Response.ResponseBody).items;
-          this.option3 = mes;
+          var mes = JSON.parse(res.Response.ResponseBody);
           if (mes === []) {
             this.value3 = "Workload列表为空";
             this.value4 = "Pod列表为空";
             this.value5 = "Container列表为空";
+            this.option3 = [];
+            this.option4 = [];
+            this.option5 = [];
             this.listNumFlag = true;
             return;
           } else {
+            this.option3 = [];
+            mes.items.forEach(item => {
+              this.option3.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
+            });
+            this.value3 = this.option3[0].value;
             this.listNumFlag = false;
-            this.value3 = mes[0].metadata.name;
-            
             this.getPodData();
           }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    async getLog() {
+      var params = {
+        Method: "GET",
+        Path:
+          "/api/v1/namespaces/" +
+          this.value1 +
+          "/pods/" +
+          this.value4 +
+          "/log?container=" +
+          this.value5 +
+          "&timestamps=" +
+          this.autoRefresh +
+          "&tailLines=" +
+          this.value6.replace(/[^\d]/g, ""),
+        Version: "2018-05-25",
+        ClusterName: this.$route.query.clusterId
+      };
+      await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = res.Response.ResponseBody;
+          var newarrs = [];
+          var data = mes.substring(0, 4);
+          mes
+            .split(data)
+            .slice(1)
+            .forEach((x, y) => {
+              newarrs.push({ str: data + x });
+            });
+          this.htmls = newarrs;
           this.loadShow = false;
         } else {
           let ErrTips = {};
@@ -402,6 +420,9 @@ export default {
         }
       });
     }
+  },
+  destroyed() {
+    clearInterval(this.refresh);
   }
 };
 </script>

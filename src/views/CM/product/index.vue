@@ -151,7 +151,16 @@ export default {
       dialogVisible: false, //弹框
 
       searchInput: "", //搜索框的值
-      searchOptions: [],
+      searchOptions: [
+        {
+            value: "InstanceId",
+            label: "實例ID"
+          },
+          {
+            value: "EventCName",
+            label: "事件名"
+          },
+      ],
       searchValue: "", //inp输入的值
 
       loadShow: true, // 加载是否显示
@@ -226,25 +235,42 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
       };
-      if (this.searchInput !== "") {
-          params["EventName.N"] = this.searchInput;
-        }
+     
             //  monitor2/DescribeProductEventList   //接口
-      console.log(JSON.stringify(params));
+      // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         
 
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据
-
+          this.TotalCount = res.Response.Total;
+          this.loadShow = false; //取消加载
+          this.showNameSpaceModal = false;
+          
           this.statusChangeAmount = res.Response.OverView.StatusChangeAmount; // 状态变更
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
+          // 筛选逻辑
+          if (this.searchInput !== "" && this.searchValue !== "") {
+           let tableListData = []
+            res.Response.Events.forEach((currentValue,index,arr) => {
+                if(arr[index].EventCName === this.searchInput && this.searchValue == "EventCName") {
+                   tableListData.push(arr[index])
+                   this.tableData = tableListData;
+                } else if (arr[index].InstanceId === this.searchInput && this.searchValue == "InstanceId") {
+                  tableListData.push(arr[index])
+                  this.tableData = tableListData;
+                }
+            });
+            if(this.tableData.length < 1 ){
+              this.$message.error("請輸入正確搜索信息");
+              this.tableData = res.Response.Events; //列表数据
+            }else {
+              this.TotalCount = this.tableData.length;
+            }
+          };
           
-          this.TotalCount = res.Response.Total;
-          this.loadShow = false; //取消加载
-          this.showNameSpaceModal = false;
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -292,8 +318,7 @@ export default {
       clicksearch(val) {
         this.currpage = 1;
         this.searchInput = val;
-        if (this.searchInput !== "") {
-          console.log(333)
+        if (this.searchInput !== "" && this.searchValue !== "") {
           this.getProductList();
         } else {
           this.$message.error("請輸入正確搜索信息");

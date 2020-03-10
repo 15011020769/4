@@ -4,10 +4,10 @@
     <div class="tke-reminder">资源事件只保存最近1小时内发生的事件，请尽快查阅。</div>
     <div class="tke-grid ">
       <!-- 右侧 -->
-      <div class="grid-right">
+    <!--  <div class="grid-right">
         <span>自动刷新</span>
         <el-switch class="ml10" v-model="autoRefresh"></el-switch>
-      </div>
+      </div>-->
     </div>
 
     <!-- 数据列表展示 -->

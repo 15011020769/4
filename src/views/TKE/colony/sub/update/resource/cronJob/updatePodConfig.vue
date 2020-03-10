@@ -85,9 +85,9 @@
                       </el-tooltip>
                     </div>
                   </el-form-item>
-                 <el-form-item label="名称" style="margin-bottom: 10px">
-                   <span  v-if='lengths==wl.instanceContent.length'  v-text="v.name"></span>
-                    <el-input v-else class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
+                 <el-form-item label="名称" style="margin-bottom: 0px">
+                   <el-input class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
+                   <p>请输入容器名称最长63个字符，只能包含小写字母、数字及分隔符("-")，且不能以分隔符开头或结尾</p>
                  </el-form-item>
                  <el-form-item label="镜像">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
@@ -209,7 +209,7 @@
                      <p>
                        <el-checkbox v-model="v.surviveExamine">存活检查</el-checkbox> <span>检查容器是否正常，不正常则重启实例</span>
                      </p>
-                     <div v-show="v.surviveExamine"  class="from-1">
+                     <div v-show="v.surviveExamine" class="from-1">
                        <!--存活检查 -->
                        <div style="background: #f2f2f2;box-sizing:border-box;padding: 6px;">
                          <el-form-item label="检查方法">
@@ -529,8 +529,8 @@
 </template>
 
  <script>
-import SelectMirrorImg from '../../create/resource/components/selectMirrorImg';
-import workLoadMixin from './js/workloadMixins'
+import SelectMirrorImg from '../../../create/resource/components/selectMirrorImg';
+import workLoadMixin from '../js/workloadMixins'
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import {TKE_COLONY_QUERY, POINT_REQUEST} from '@/constants'
@@ -713,7 +713,6 @@ export default {
       setSecret: {
         checked: 'all'
       },
-      lengths:'',
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {} // 引用ConfigMap/Secret ConfigMap
 
@@ -738,11 +737,10 @@ export default {
   methods: {
 
     submit(){
-      let container = this.wl.instanceContent
-      console.log(container)
-      let containerObj = {}
-      let containerList = []
-      //  存活检查，就绪检查 共用赋值函数
+      let container = this.wl.instanceContent;
+      let containerObj = {};
+      let containerList = [];
+       //  存活检查，就绪检查 共用赋值函数
       let inspectFunc = (obj) => {
         let {
           inspectMethodValue,
@@ -781,9 +779,8 @@ export default {
         return newObj
       }
       if (container.length > 0) {
-        
         for (let i = 0; i < container.length; i++) {
-        let {
+           let {
           name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory,
           limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
           runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
@@ -791,19 +788,11 @@ export default {
         let oneContainer = {
          
         }
-
-        //  // 运行命令
-        // if (runCommand !== '') oneContainer.command = runCommand.split('\n')
-        // // 运行参数
-        // if (runParam !== '') oneContainer.args = runParam.split('\n')
-        // // 存活检查
+         // // 存活检查
         if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
         // // 就绪检查
         if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
-
-        console.log(oneContainer)
-          // 新增变量
-         var environmentVarArr=[];
+           var environmentVarArr=[];
         if (container[i].environmentVar.length > 0) {
            environmentVarArr = container[i].environmentVar.map(item => {
             return { name: item.name, value: item.value }
@@ -825,9 +814,7 @@ export default {
             }
           })
         }
-        console.log(environmentVarArr)
-        console.log( citeCsArr )
-        //运行指令
+         //运行指令
         if (container[i].runCommand.length > 0) {
          var command=container[i].runCommand.split('\n')
         }
@@ -835,7 +822,7 @@ export default {
         if (container[i].runParam.length > 0) {
          var args=container[i].runParam.split('\n')
         }
-       
+
           containerObj = {
             name: container[i].name,
             image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
@@ -846,7 +833,7 @@ export default {
                 {
                   cpu: container[i].limitCpu,
                   memory: container[i].limitMemory + 'Mi',
-                  'nvidia.com/gpu': Number(container[i].gpuNum)
+                  'nvidia.com/gpu':Number(container[i].gpuNum)
                 },
               requests:
                 {
@@ -856,7 +843,7 @@ export default {
             },
             terminationMessagePath:"/dev/termination-log",
             terminationMessagePolicy:"File",
-            livenessProbe:oneContainer.livenessProbe!=undefined?oneContainer.livenessProbe:null,
+             livenessProbe:oneContainer.livenessProbe!=undefined?oneContainer.livenessProbe:null,
             readinessProbe:oneContainer.readinessProbe!=undefined?oneContainer.readinessProbe:null,
             env: [...environmentVarArr,...citeCsArr],
             workingDir: container[i].workDirectory,
@@ -872,16 +859,26 @@ export default {
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
         Method: "PATCH",
-        Path: "/apis/apps/v1beta2/namespaces/"+this.np +"/"+this.workload+"/"+this.name,
+        Path: `/apis/batch/v1beta1/namespaces/${this.np}/${this.workload}/${this.name}`,
         RequestBody:{"spec":{
-          "template":{
-            "spec":{
-              "volumes":[],
-              "containers":containerList,
-              "imagePullSecrets":[{"name":"qcloudregistrykey"},{"name":"tencenthubkey"}]
-            }}
+         "jobTemplate": {
+				"spec": {
+					"template": {
+						"spec": {
+							"volumes": [],
+							"containers":containerList, 
+							"imagePullSecrets":[{
+								"name": "qcloudregistrykey"
+							}, {
+								"name": "tencenthubkey"
+							}]
+						}
+					}
+				}
+			}
         }},
         Version: "2018-05-25",
+        // containerList
       }
       this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
         console.log(res)
@@ -964,7 +961,6 @@ export default {
           }
           let arr2=[],arr3=[];
           console.log(arr)
-          this.lengths=arr.length;
           let surviveExamineContentObj={
              inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
             inspectMethodValue: 'TCP端口检查',
@@ -995,7 +991,6 @@ export default {
           }
           for(let v of arr){
             console.log(v)
-            console.log(v.env)
             if(v.env){
               if(v.env.length){
                  v.env.forEach(item=>{
@@ -1013,7 +1008,7 @@ export default {
                        obj.value3=item.valueFrom.secretKeyRef.key;
                        obj.input1=item.name
                      }
-                      arr3.push(obj)
+                       arr3.push(obj)
                    }
                  })
               }
@@ -1034,7 +1029,7 @@ export default {
             v.livenessProbe?true:false, // 存活检查
             v.readinessProbe?true:false, // 就绪检查
             v.securityContext.privileged,// 特权级容器开关
-            v.livenessProbe?v.livenessProbe:surviveExamineContentObj,//存活检查内容
+             v.livenessProbe?v.livenessProbe:surviveExamineContentObj,//存活检查内容
             v.readinessProbe?v.readinessProbe:readyToCheckContentObj,//就绪检查
             )
           }
@@ -1222,21 +1217,6 @@ watch: {
 
   .text-error {
     color: #e54545;
-  }
-   .from-1 {
-    width: 80%;
-    background: white;
-    box-sizing: border-box;
-    padding: 10px;
-
-    & > > > .el-form-item:nth-of-type(1) {
-      margin-top: 0px !important;
-    }
-
-    .from-set {
-      background: #f2f2f2;
-      padding: 6px;
-    }
   }
 
   .text-warning {

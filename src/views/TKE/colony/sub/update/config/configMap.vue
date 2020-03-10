@@ -15,9 +15,7 @@
       </div>
     </div>
     <div class="colony-main">
-      <div class="tke-card tke-formpanel-wrap mb60">
-       
-          
+      <div class="tke-card tke-formpanel-wrap mb60">   
             <div class="border">
               <!-- 头部 -->
               <div class="flex f12 header">

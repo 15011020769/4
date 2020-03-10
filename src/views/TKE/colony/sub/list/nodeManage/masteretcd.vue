@@ -88,8 +88,8 @@
             prop="address"
             label="已分配/总资源">
             <template slot-scope="scope">
-              <p>CPU: -/-</p>
-              <p>内存: -/-</p>
+              <p>CPU: -/{{scope.row.cpuTotal}}</p>
+              <p>内存: -/{{scope.row.memoyTotal}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -196,6 +196,24 @@ export default {
           for(let i = 0; i < ids.length; i++) {
             param['InstanceIds.'+i] = ids[i];
           }
+          let k8sNodeList = [];
+          // this.loadShow = true;
+          let k8sRes = await this.axios.post(POINT_REQUEST, param1);
+          if (k8sRes.Response.Error === undefined) {
+            let response = JSON.parse(k8sRes.Response.ResponseBody);
+            k8sNodeList = response.items;
+            // this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[k8sRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
           // this.loadShow = true;
           this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
@@ -207,6 +225,19 @@ export default {
                 nodeInfoList.map(info => {
                   if(node.InstanceId === info.InstanceId) {
                     node.status = info.InstanceState;
+                  }
+                });
+                k8sNodeList.map(k8s => {
+                  let providerId = k8s.spec.providerID;
+                  if (
+                    node.InstanceId ===
+                    providerId.substring(providerId.lastIndexOf("/") + 1)
+                  ) {
+                    node.kubeletVersion = k8s.status.nodeInfo.kubeletVersion;
+                    node.allocatable = k8s.status.allocatable;
+                    node.cpuTotal =  (Number(k8s.status.allocatable.cpu.substring(0, k8s.status.allocatable.cpu.length -1))/1000).toFixed(2);
+                    node.memoyTotal = (Number(k8s.status.allocatable.memory.substring(0, k8s.status.allocatable.memory.length -2))/(1024*1024)).toFixed(2);
+                    node.unschedulable = k8s.spec.unschedulable;
                   }
                 });
                 return node;

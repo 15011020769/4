@@ -7,7 +7,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button @click="goWorkloadCreate('daemonSet')" size="small" type="primary">新建</el-button>
+        <el-button @click="goWorkloadCreate('DaemonSet')" size="small" type="primary">新建</el-button>
         <el-button size="small" @click="toMonitor">监控</el-button>
       </div>
 

@@ -122,25 +122,30 @@ export default {
 		submit(){
       var params;
       if(this.updateWay==2){//快速更新
+      let obj={
+        "spec":{"minReadySeconds":0,"strategy":{"type":"Recreate","rollingUpdate":null}}
+        }
         params={
           ClusterName: this.clusterId,
           ContentType: "application/strategic-merge-patch+json",
           Method: "PATCH",
           Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-          RequestBody: {"spec":{"minReadySeconds":0,"strategy":{"type":"Recreate","rollingUpdate":null}}},
+          RequestBody: JSON.stringify(obj),
           Version: "2018-05-25",
         }
       }else if(this.updateWay==1){//滚动更新
         
 
         if(this.updateTactics==1){
-          
+          let obj={
+            "spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":Number(this.cl.podNum) ,"maxUnavailable":0}}}
+          }
           params={
             ClusterName:this.clusterId,
             ContentType: "application/strategic-merge-patch+json",
             Method: "PATCH",
             Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-            RequestBody:{"spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":Number(this.cl.podNum) ,"maxUnavailable":0}}}},
+            RequestBody:JSON.stringify(obj),
             Version: "2018-05-25",
           }
         }

@@ -4,7 +4,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary">编辑YAML</el-button>
+        <el-button size="small" type="primary" @click="goSecretDetail">编辑YAML</el-button>
       </div>
     </div>
 
@@ -95,10 +95,8 @@ export default {
         
         if (res.Response.Error === undefined) {
           var response = res.Response.ResponseBody;
-          console.log(res.Response.ResponseBody);
           this.yamlInfo = res.Response.ResponseBody;
           this.loadShow = false;
-          console.log(this.yamlInfo, "response");
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -111,7 +109,18 @@ export default {
           });
         }
       });
-    }
+    },
+     // 详情
+    goSecretDetail() {
+       this.$router.push({
+        name: "updateYamlSecret",
+        query: {
+          clusterId: this.clusterId,
+          name: this.name,
+          np: this.np
+        }
+      });
+    },
   },
 };
 </script>

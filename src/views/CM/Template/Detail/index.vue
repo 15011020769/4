@@ -13,10 +13,10 @@
 
     <!-- 详情子菜单导航 -->
     <div class="detial-nav">
-      <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'query: {}}">模板信息</router-link> -->
+      <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'}">模板信息</router-link> -->
       <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">变更日志</router-link> -->
-      <router-link class="nav-item" :to="{path:'/Template/Detail/Info'}">模板信息</router-link>
-      <router-link class="nav-item" :to="{path:'/Template/Detail/Update'}">变更日志</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groudId}/Info`}">模板信息</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groudId}/Update`}">变更日志</router-link>
     </div>
 
     <!-- 子页面 -->
@@ -33,11 +33,11 @@ export default {
   name: 'TemplateDetail',
   data () {
     return {
-
+      groudId: ''
     }
   },
   created () {
-    // console.log(this.$route.query)
+    this.groudId = this.$route.params.id
   },
   methods: {
     // 返回上一层

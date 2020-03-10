@@ -12,38 +12,38 @@
           <div class="event-persistence font">
             <el-form ref="form" :model="form" label-width="100px" label-position="left" class="tke-form">
               <el-form-item label="地域">
-                <div>中国台北</div>
+                <div>{{$t('TKE.overview.zgtb')}}</div>
               </el-form-item>
               <el-form-item label="集群">
                 <div>cls-gwblk71e(tfy_test)</div>
               </el-form-item>
-              <el-form-item label="告警策略名称">
-                <el-input size="mini" class="el-input" placeholder="请输入告警策略名称"></el-input>
-                <div>最长40个字符</div>
+              <el-form-item :label="$t('TKE.overview.gjclmc')">
+                <el-input size="mini" class="el-input" :placeholder="$t('TKE.overview.qsrgjclmc')"></el-input>
+                <div>{{$t('TKE.overview.zczf40')}}</div>
               </el-form-item>
-              <el-form-item label="备注">
-                <el-input type="textarea" class="el-textarea" placeholder="请输入策略备注" v-model="form.desc"></el-input>
-                <div>最长100个字符</div>
+              <el-form-item :label="$t('TKE.overview.bz')">
+                <el-input type="textarea" class="el-textarea" :placeholder="$t('TKE.overview.srclbz')" v-model="form.desc"></el-input>
+                <div>{{$t('TKE.overview.zczf100')}}</div>
               </el-form-item>
-              <el-form-item label="策略类型">
-                <el-select v-model="value" placeholder="请选择活动区域" size="mini">
+              <el-form-item :label="$t('TKE.overview.cllx')">
+                <el-select v-model="value" :placeholder="$t('TKE.overview.xzhdqy')" size="mini">
                   <el-option label="集群" value="jq">
                   </el-option>
-                  <el-option label="节点" value="jd"></el-option>
+                  <el-option :label="$t('TKE.overview.jd')" value="jd"></el-option>
                   <el-option label="pod" value="pod"></el-option>
                 </el-select>
               </el-form-item>
 
-              <el-form-item label="告警对象" v-if="value == 'jd'">
-                <el-radio v-model="form.radio1" label="1">全部选择</el-radio>
+              <el-form-item :label="$t('TKE.overview.gjdx')" v-if="value == 'jd'">
+                <el-radio v-model="form.radio1" label="1">{{$t('TKE.overview.qbxz')}}</el-radio>
               </el-form-item>
 
-              <el-form-item label="告警对象" v-if="value == 'pod'">
+              <el-form-item :label="$t('TKE.overview.gjdx')" v-if="value == 'pod'">
                 <el-radio-group v-model="form.radio2">
-                  <el-radio :label="1">按工作负载选择</el-radio>
+                  <el-radio :label="1">{{$t('TKE.overview.agzfzxz2')}}</el-radio>
                   <div v-if="form.radio2 == '1'">
                     <el-form-item label="Namespace" >
-                          <el-select placeholder="请选择" v-model='form.value1' size='mini'>
+                          <el-select :placeholder="$t('TKE.overview.qxz')" v-model='form.value1' size='mini'>
                               <el-option
                                 v-for="item in form.input1"
                                 :key="item.value"
@@ -53,7 +53,7 @@
                             </el-select>
                     </el-form-item>
                     <el-form-item label="WorkloadType" >
-                      <el-select placeholder="请选择" v-model='form.value2' size='mini'>
+                      <el-select :placeholder="$t('TKE.overview.qxz')" v-model='form.value2' size='mini'>
                               <el-option
                                 v-for="item in form.input2"
                                 :key="item.value"
@@ -63,12 +63,12 @@
                             </el-select>
                     </el-form-item>
                   </div>
-                  <el-radio :label="2">全部选择</el-radio>
+                  <el-radio :label="2">{{$t('TKE.overview.qbxz')}}</el-radio>
               </el-radio-group>
             </el-form-item>
               <!-- 集群显示内容 -->
               <div>
-                <el-form-item label="指标">
+                <el-form-item :label="$t('TKE.overview.zb')">
                   <div class="form-form" v-if="value == 'jq'">
                     <div class="flex p3">
                       <!-- 内容 -->
@@ -76,7 +76,7 @@
                         <el-checkbox  v-model="formOne[0].checked">CPU利用率</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formOne[0].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[0].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -84,7 +84,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formOne[0].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[0].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -94,7 +94,7 @@
                         </el-select>
                         <el-input v-model="formOne[0].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formOne[0].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[0].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -108,10 +108,10 @@
                     <div class="flex p3">
                       <!-- 内容 -->
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formOne[1].checked">内存利用率</el-checkbox>
+                        <el-checkbox  v-model="formOne[1].checked">{{$t('TKE.overview.nclyl')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formOne[1].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[1].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -119,7 +119,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formOne[1].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[1].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -129,7 +129,7 @@
                         </el-select>
                         <el-input v-model="formOne[1].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formOne[1].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[1].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -146,7 +146,7 @@
                         <el-checkbox  v-model="formOne[2].checked">CPU分配率</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formOne[2].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[2].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -154,7 +154,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formOne[2].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[2].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -164,7 +164,7 @@
                         </el-select>
                         <el-input v-model="formOne[2].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formOne[2].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[2].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -178,10 +178,10 @@
                     <div class="flex p3">
                       <!-- 内容 -->
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formOne[3].checked">内存分配率</el-checkbox>
+                        <el-checkbox  v-model="formOne[3].checked">{{$t('TKE.overview.ncfpl')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formOne[3].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[3].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -189,7 +189,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formOne[3].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[3].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -199,7 +199,7 @@
                         </el-select>
                         <el-input v-model="formOne[3].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formOne[3].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formOne[3].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -218,7 +218,7 @@
                         <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -226,7 +226,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -236,7 +236,7 @@
                         </el-select>
                         <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -249,10 +249,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                        <el-checkbox  v-model="formTwo[1].checked">{{$t('TKE.overview.nclyl')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -260,7 +260,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -270,7 +270,7 @@
                         </el-select>
                         <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -283,10 +283,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                        <el-checkbox  v-model="formTwo[2].checked">{{$t('TKE.overview.jdcqcs')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -294,7 +294,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -304,7 +304,7 @@
                         </el-select>
                         <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -320,7 +320,7 @@
                         <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -328,7 +328,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -336,7 +336,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value3' size='mini'>
                           <el-option
                             v-for="item in option5"
                             :key="item.value"
@@ -344,7 +344,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -364,7 +364,7 @@
                         <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -372,7 +372,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -382,7 +382,7 @@
                         </el-select>
                         <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -395,10 +395,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                        <el-checkbox  v-model="formTwo[1].checked">{{$t('TKE.overview.nclyl')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -406,7 +406,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -416,7 +416,7 @@
                         </el-select>
                         <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -429,10 +429,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                        <el-checkbox  v-model="formTwo[2].checked">{{$t('TKE.overview.jdcqcs')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -440,7 +440,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -450,7 +450,7 @@
                         </el-select>
                         <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -466,7 +466,7 @@
                         <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -474,7 +474,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -482,7 +482,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value3' size='mini'>
                           <el-option
                             v-for="item in option5"
                             :key="item.value"
@@ -490,7 +490,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -506,7 +506,7 @@
                         <el-checkbox  v-model="formTwo[0].checked">CPU利用率</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -514,7 +514,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[0].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -524,7 +524,7 @@
                         </el-select>
                         <el-input v-model="formTwo[0].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[0].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[0].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -537,10 +537,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[1].checked">内存利用率</el-checkbox>
+                        <el-checkbox  v-model="formTwo[1].checked">{{$t('TKE.overview.nclyl')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -548,7 +548,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[1].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -558,7 +558,7 @@
                         </el-select>
                         <el-input v-model="formTwo[1].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[1].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[1].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -571,10 +571,10 @@
 
                     <div class="flex p3">
                       <div class="flex" style="flex:1;padding-top:5px;">
-                        <el-checkbox  v-model="formTwo[2].checked">节点上Pod重启次数</el-checkbox>
+                        <el-checkbox  v-model="formTwo[2].checked">{{$t('TKE.overview.jdcqcs')}}</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -582,7 +582,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[2].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -592,7 +592,7 @@
                         </el-select>
                         <el-input v-model="formTwo[2].option.value3" size="mini" class="w100"></el-input>
                         <span class="numberEnd">%</span>
-                         <el-select placeholder="请选择" v-model='formTwo[2].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[2].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -608,7 +608,7 @@
                         <el-checkbox  v-model="formTwo[3].checked">Node Ready</el-checkbox>
                       </div>
                       <div>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value1' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value1' size='mini'>
                           <el-option
                             v-for="item in option1"
                             :key="item.value"
@@ -616,7 +616,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value2' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value2' size='mini'>
                           <el-option
                             v-for="item in option2"
                             :key="item.value"
@@ -624,7 +624,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-select placeholder="请选择" v-model='formTwo[3].option.value3' size='mini'>
+                        <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value3' size='mini'>
                           <el-option
                             v-for="item in option5"
                             :key="item.value"
@@ -632,7 +632,7 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                         <el-select placeholder="请选择" v-model='formTwo[3].option.value4' size='mini'>
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formTwo[3].option.value4' size='mini'>
                           <el-option
                             v-for="item in option3"
                             :key="item.value"
@@ -648,33 +648,33 @@
                 </el-form-item>
               </div>
     
-              <el-form-item label="接收组">
+              <el-form-item :label="$t('TKE.overview.jsz')">
                   <el-transfer
                     filterable
                     :filter-method="filterMethod"
-                    filter-placeholder="请输入用户组名称"
+                    :filter-placeholder="$t('TKE.overview.sryhzmc')"
                     v-model="genDataValue"
-                    :titles="['可用用户组', '已选择用户组']"
+                    :titles="['可用用戶組', '已選擇用戶組']"
                     :data="data">
                   </el-transfer>
-                  <div>若无合适的用户组，请<a href="">新建用户组</a><i class="el-icon-edit-outline"></i></div>
+                  <div>{{$t('TKE.overview.whsz')}}<a href="">{{$t('TKE.overview.xjyhz')}}</a><i class="el-icon-edit-outline"></i></div>
                 </el-form-item>
-                <el-form-item label="告警渠道" style="margin-top:0;">
+                <el-form-item :label="$t('TKE.overview.gjqd')" style="margin-top:0;">
                     <el-checkbox-group v-model="tellWarning.checkList">
-                        <el-checkbox label="短信"></el-checkbox>
+                        <el-checkbox :label="$t('TKE.overview.dx')"></el-checkbox>
                     </el-checkbox-group>
                     <el-checkbox-group v-model="tellWarning.checkList">
-                        <el-checkbox label="邮箱"></el-checkbox>
+                        <el-checkbox :label="$t('TKE.overview.yx')"></el-checkbox>
                     </el-checkbox-group>
                     <el-checkbox-group v-model="tellWarning.checkList">
                         <el-checkbox label="微信"></el-checkbox>
                     </el-checkbox-group>
                     <el-checkbox-group v-model="tellWarning.checkList">
-                        <el-checkbox label="电话"></el-checkbox>
+                        <el-checkbox :label="$t('TKE.overview.dh')"></el-checkbox>
                     </el-checkbox-group>
-                    <div class='form-form1' v-if="tellWarning.checkList == '电话'">
-                      <el-form-item label='轮询次数'>
-                         <el-select placeholder="请选择" v-model='formPhone.value1' size='mini'>
+                    <div class='form-form1' v-if="tellWarning.checkList == '電話'">
+                      <el-form-item :label="$t('TKE.overview.lxcs')">
+                         <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formPhone.value1' size='mini'>
                           <el-option
                             v-for="item in formPhone.option1"
                             :key="item.value"
@@ -682,27 +682,27 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <p>单次告警在无人接听时，将对告警接受人逐一轮拨打电话告警</p>
+                        <p>{{$t('TKE.overview.dcjg')}}</p>
                       </el-form-item>
-                      <el-form-item label='轮询顺序'>
+                      <el-form-item :label="$t('TKE.overview.lxsx')">
                         <el-table
                           :data="formPhone.tableData"
                           style="width: 100%">
                           <el-table-column
                             prop="date"
-                            label="接收人(0个)"
+                            :label="$t('TKE.overview.jsr')"
                             width="180">
                           </el-table-column>
                           <el-table-column
                             prop="name"
-                            label="所属用户组"
+                            :label="$t('TKE.overview.ssyhz')"
                             width="180">
                           </el-table-column>
                         </el-table>
                       </el-form-item>
-                      <el-form-item label='轮询间隔'>
-                        <el-form-item label='单次轮询内拨打间隔' label-width='150px'>
-                           <el-select placeholder="请选择" v-model='formPhone.value2' size='mini'>
+                      <el-form-item :label="$t('TKE.overview.lxjg')">
+                        <el-form-item :label="$t('TKE.overview.dclxjg')" label-width='150px'>
+                           <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formPhone.value2' size='mini'>
                             <el-option
                               v-for="item in formPhone.option2"
                               :key="item.value"
@@ -711,8 +711,8 @@
                             </el-option>
                           </el-select>
                         </el-form-item>
-                        <el-form-item label='两次轮询间隔' label-width='150px'>
-                           <el-select placeholder="请选择" v-model='formPhone.value3' size='mini'>
+                        <el-form-item :label="$t('TKE.overview.lclxjg')" label-width='150px'>
+                           <el-select :placeholder="$t('TKE.overview.qxz')" v-model='formPhone.value3' size='mini'>
                             <el-option
                               v-for="item in formPhone.option3"
                               :key="item.value"
@@ -722,7 +722,7 @@
                           </el-select>
                         </el-form-item>
                       </el-form-item>
-                      <el-form-item label='触达通知'>
+                      <el-form-item :label="$t('TKE.overview.cdtz')">
                         <el-switch
                           v-model="formPhone.value4"
                           >
@@ -734,7 +734,7 @@
               
          
               <el-form-item>
-                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button type="primary" @click="onSubmit">{{$t('TKE.overview.ljcj')}}</el-button>
                 <el-button>取消</el-button>
               </el-form-item>
             </el-form>
@@ -750,7 +750,7 @@ export default {
   data(){
     const generateData = _ => {
       const data = [];
-      const cities = ['测试误删', '误删', 'ac', '可以删除', 'dfa', 'aaaaaaaaaaaaa', 'ddddddddd'];
+      const cities = ['測試誤刪', '誤刪', 'ac', '可以刪除', 'dfa', 'aaaaaaaaaaaaa', 'ddddddddd'];
       const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
       cities.forEach((city, index) => {
         data.push({
@@ -810,23 +810,23 @@ export default {
       option1:[
           {
             value:1,
-            label:'统计周期1分钟'
+            label:'統計周期1分鐘'
           },
           {
             value:2,
-            label:'统计周期2分钟'
+            label:'統計周期2分鐘'
           },
           {
             value:3,
-            label:'统计周期3分钟'
+            label:'統計周期3分鐘'
           },
           {
             value:4,
-            label:'统计周期4分钟'
+            label:'統計周期4分鐘'
           },
           {
             value:5,
-            label:'统计周期5分钟'
+            label:'統計周期5分鐘'
           }
         ],
         option2:[
@@ -842,23 +842,23 @@ export default {
         option3:[
            {
             value:1,
-            label:'持续1个周期'
+            label:'持續1個周期'
           },
           {
             value:2,
-            label:'持续2个周期'
+            label:'持續2個周期'
           },
           {
             value:3,
-            label:'持续3个周期'
+            label:'持續3個周期'
           },
           {
             value:4,
-            label:'持续4个周期'
+            label:'持續4個周期'
           },
           {
             value:5,
-            label:'持续5个周期'
+            label:'持續5個周期'
           }
         ],
         option4:[

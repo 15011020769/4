@@ -95,7 +95,7 @@
     <p>{{$t('TKE.overview.wjdyl')}} <span style="color:#ff9d00">0.3核 250M</span> {{$t('TKE.overview.yskyzy')}}</p>
   </div>
   <span slot="footer" class="dialog-footer">
-    <el-button type="primary" @click="newCread2">$t('TKE.overview.qd')</el-button>
+    <el-button type="primary" @click="newCread2">{{$t('TKE.overview.qd')}}</el-button>
     <el-button @click="dialogVisible = false">取 消</el-button>
   </span>
 </el-dialog>
@@ -222,22 +222,22 @@
               arr.push(item.ClusterId);
               return item;
             })
-            if (sessionStorage.getItem('clusterId')){
-              if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
-                sessionStorage.setItem('clusterId','')
-              }
-            }
+            // if (sessionStorage.getItem('clusterId')){
+            //   if(arr.indexOf(sessionStorage.getItem('clusterId').split('(')[0])==-1){
+            //     sessionStorage.setItem('clusterId','')
+            //   }
+            // }
 
             // 放到页面上
             for (let i = 0; i < ids.length; i++) {
               let option = {}
               option.value = ids[i]
               this.options.push(option)
-              if (sessionStorage.getItem('clusterId')) {
-                this.value = sessionStorage.getItem('clusterId');
-              } else {
+              // if (sessionStorage.getItem('clusterId')) {
+              //   this.value = sessionStorage.getItem('clusterId');
+              // } else {
                 this.value = this.options[0].value
-              }
+              // }
             }
             this.value2 = this.value.split('(')[0]
           }
@@ -288,7 +288,7 @@
             clusterId: this.value
           }
         })
-        sessionStorage.setItem('clusterId', this.value)
+        // sessionStorage.setItem('clusterId', this.value)
       },
       //新建2
       newCread2() {
@@ -313,12 +313,21 @@
                    clusterId: this.value2
                  }
                  })
-             sessionStorage.setItem('clusterId', this.value2)
+            //  sessionStorage.setItem('clusterId', this.value2)
+            }else{
+               let ErrTips = { };
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
          })
       },
        handleClose(done) {
-        this.$confirm('确认关闭？')
+        this.$confirm('確認關閉？')
           .then(_ => {
             done();
           })
@@ -409,7 +418,7 @@
           if (res.Response.Error === undefined) {
             this.xjF=false;
             this.$message({
-              message: '删除成功',
+              message: '刪除成功',
               type: "success",
                duration: 0,
               showClose: true
@@ -464,14 +473,11 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(this.xjF)
-            console.log(res)
             if (res.Response.Error == undefined) {
               this.xjF=false;
               this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
               this.tableData = data.items;
-              console.log(this.tableData)
             }else if(res.Response.Error.Code=='ResourceNotFound'){
               console.log(res.Response.Error)
               this.xjF=true;

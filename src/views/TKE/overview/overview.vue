@@ -400,7 +400,6 @@ export default {
          Version: "2018-07-24",
         }
         this.axios.post(TKE_GETCPUUSE, params).then(res=>{
-
           if (res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
             console.log(response)
@@ -419,6 +418,15 @@ export default {
                   }
               })
             })
+           }else{
+              //  let ErrTips = {};
+              // let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              // this.$message({
+              //   message: ErrOr[res.Response.Error.Code],
+              //   type: "error",
+              //   showClose: true,
+              //   duration: 0
+              // });
            }
         })
 

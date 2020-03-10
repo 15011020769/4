@@ -7,19 +7,19 @@
       <div class="newClear">
         <div class="newClear newList">
           <p>播放地址（RTMP）</p>
-          <p>rtmp://{{ $route.query.Name }}/live/StreamName</p>
+          <p>rtmp://{{$route.query.Name}}/live/StreamName{{playAuthKeyInfo.Enable === 1 ? `?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)` : ''}}</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（FLV）</p>
-          <p>http://{{ $route.query.Name }}/live/StreamName.flv</p>
+          <p> http://{{$route.query.Name}}/live/StreamName.flv{{playAuthKeyInfo.Enable === 1 ? `?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)` : ''}}</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（HLS）</p>
-          <p>http://{{ $route.query.Name }}/live/StreamName.m3u8</p>
+          <p> http://{{$route.query.Name}}/live/StreamName.m3u8{{playAuthKeyInfo.Enable === 1 ? `?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)` : ''}}</p>
         </div>
         <div class="newClear newList">
           <p>播放地址（UDP）</p>
-          <p>webrtc://{{ $route.query.Name }}/live/StreamName.m3u8</p>
+          <p> webrtc://{{$route.query.Name}}/live/StreamName.m3u8{{playAuthKeyInfo.Enable === 1 ? `?txSecret=Md5(key+StreamName+hex(time))&txTime=hex(time)` : ''}}</p>
         </div>
       </div>
     </div>
@@ -99,7 +99,10 @@ import {
 import moment from 'moment'
 import md5 from 'js-md5'
 export default {
-  data () {
+  props: {
+    active: String,
+  },
+  data() {
     return {
       playAuthKeyInfo: {},
       streamName: '',
@@ -109,8 +112,12 @@ export default {
       validTime: ''
     }
   },
-  mounted () {
-    this.getAuthConf()
+  watch: {
+    active(n) {
+      if (n === 'second') {
+        this.getAuthConf();
+      }
+    }
   },
   methods: {
     getAuthConf () {
@@ -120,8 +127,11 @@ export default {
           DomainName: this.$route.query.Name
         })
         .then(({ Response: { PlayAuthKeyInfo } }) => {
-          this.playAuthKeyInfo = PlayAuthKeyInfo
-        })
+          this.playAuthKeyInfo = PlayAuthKeyInfo;
+          if (this.playUrls.length) {
+            this.handlePlayCreateUrl()
+          }
+        });
     },
     handlePlayCreateUrl: function () {
       var b = this

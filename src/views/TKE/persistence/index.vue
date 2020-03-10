@@ -1,9 +1,9 @@
 <template>
   <div class="persistence-wrap" v-loading="funllscreenLoading">
     <div class="back-hd flex">
-      <h2>事件持久化</h2>
+      <h2>{{$t('TKE.overview.sjcjh')}}</h2>
       <div style="width:20px"></div>
-      <el-button type="primary" class="init hd-button">中国台北</el-button>
+      <el-button type="primary" class="init hd-button">{{$t('TKE.overview.zgtb')}}</el-button>
     </div>
     <div class="app-tke-fe-content__inner">
       <div class="tf-g">
@@ -14,7 +14,7 @@
         >
           <tkeSearch
             :exportData="false"
-            inputPlaceholder="请输入集群名称"
+            :inputPlaceholder="$t('TKE.overview.qsrjqmc')"
             :typeSelect="false"
             :typeOptions="searchOptions"
             :searchInput="searchInput"
@@ -26,7 +26,7 @@
         </div>
         <!-- 内容 -->
         <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
-          <el-table-column label="ID/名称" width="220">
+          <el-table-column :label="$t('TKE.overview.idmc')" width="220">
             <template slot-scope="scope">
               <span
                 :class="[
@@ -43,7 +43,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="状态" width="220">
+          <el-table-column :label="$t('TKE.overview.zt')" width="220">
             <template slot-scope="scope">
               <el-tooltip
                 v-if="scope.row.targetStatus == 'failed'"
@@ -53,24 +53,24 @@
                 placement="left"
               >
                 <span class="text-red">
-                  失败
+                  {{$t('TKE.overview.sb')}}
                   <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
                 </span>
               </el-tooltip>
               <span v-else-if="scope.row.targetStatus == 'running'" class="text-green">
-                已开启
+                {{$t('TKE.overview.ykq')}}
                 <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
               </span>
-              <span v-else>未开启</span>
+              <span v-else>{{$t('TKE.overview.wkq')}}</span>
             </template>
           </el-table-column>
-          <el-table-column label="存储端" width="220">
+          <el-table-column :label="$t('TKE.overview.ccd')" width="220">
             <template slot-scope="scope">
               <span v-if="scope.row.storageObject">Elasticsearch</span>
               <span v-else-if="!scope.row.storageObject">-</span>
             </template>
           </el-table-column>
-          <el-table-column label="存储对象" width="320">
+          <el-table-column :label="$t('TKE.overview.ccdx')" width="320">
             <template slot-scope="scope">
               <span>{{scope.row.storageObject ? scope.row.storageObject: '-'}}</span>
               <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
@@ -79,10 +79,10 @@
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <span v-if="!scope.row.storageObject">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">设置</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.sz')}}</el-button>
               </span>
               <span v-else-if="scope.row.storageObject">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">更新设置</el-button>
+                <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.gxsz')}}</el-button>
               </span>
             </template>
           </el-table-column>
@@ -122,11 +122,11 @@ export default {
       searchOptions: [
         {
           value: "name",
-          label: "名称"
+          label: "名稱"
         },
         {
           value: "tag",
-          label: "标签"
+          label: "標籤"
         }
       ],
       tableData1: [],
@@ -165,7 +165,7 @@ export default {
         this.search();
       } else {
         this.$message({
-          message: "请重新输入",
+          message: "請重新輸入",
           type: "error",
           showClose: true,
           duration: 0
@@ -250,18 +250,18 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          InternalError: "内部错误",
-          "InternalError.CamNoAuth": "没有权限。",
-          "InternalError.Db": "db错误。",
-          "InternalError.DbAffectivedRows": "DB错误",
+          InternalError: "內部錯誤",
+          "InternalError.CamNoAuth": "沒有權限。",
+          "InternalError.Db": "db錯誤。",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param。",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-          InvalidParameter: "参数错误",
-          "InvalidParameter.Param": "参数错误。",
-          LimitExceeded: "超过配额限制",
-          ResourceNotFound: "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+          InvalidParameter: "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤。",
+          LimitExceeded: "超過配額限制",
+          ResourceNotFound: "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({

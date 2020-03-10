@@ -187,8 +187,8 @@ module.exports = {
       13: '請輸入整數',
       14: '證書內容',
       15: '私鑰內容',
-      16: '您正申請開通全球加速，海外直播價格與國內直播價格不同，請知悉。價格請',
-      17: '您正申請開通中國港澳台地區及海外地區直播加速，中國大陸的請求將無法解析，請知悉。海外直播價格請',
+      16: '您正申請開通全球加速，海外直播價格與國內直播價格不同，請知悉。',
+      17: '您正申請開通中國港澳台地區及海外地區直播加速，中國大陸的請求將無法解析，請知悉。',
       18: '切換加速區域後設置的帶寬限制將失效。',
       basicMessage: '基本訊息',
       playbackConfiguration: '播放配置',
@@ -208,8 +208,8 @@ module.exports = {
       certificateExpirationTime: '證書到期時間',
       bandwidthCapping: '帶寬封頂',
       rgional: '區域',
-      sourceStationSetup: '源站設置'
-
+      sourceStationSetup: '源站設置',
+      ipordomain: '請填寫域名或IP',
     }
   },
   COM: require('@/components/language/ft')

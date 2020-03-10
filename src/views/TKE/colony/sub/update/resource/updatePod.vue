@@ -58,7 +58,11 @@
 
                    </el-option>
                  </el-select>
-                 <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }" 
+                 <!-- <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }"  -->
+                 <el-input class="w100" 
+                 :class="{ 'pod-warn':index===matchIndex}"
+                 @focus="matchOneFocus(val.valueKey,index)"
+                 @blur="matchOneBlur(val.valueKey,index)"
                 v-model="val.valueKey" style="margin-right:6px"></el-input>
                  <!-- <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }"  @blur="podMathBlur(val.valueKey)"
                 @focus="podMathFocus(val.valueKey)" v-model="val.valueKey" style="margin-right:6px"></el-input> -->
@@ -75,13 +79,20 @@
                    <i class="el-icon-close" @click.prevent="removeOptions(optionsData,index)"></i>
                  </el-tooltip>
                  </div>
-                 <a href="#" @click="newAddTarget">新增指标</a>
+                 <p  v-if="colorFlag"    style="color:red">不能使用两个相同的指标</p>
+                 <a  @click="newAddTarget">新增指标</a>
                </el-form-item>
                <el-form-item label="实例范围">
-                 <el-input     v-model.number="vLeft" class="w100" ></el-input>~
+
+                  <el-tooltip class="item"  :disabled="vLeft!=''" effect="light" content="最小副本数不能为空" placement="right">
+                   <el-input :class="{'pod-warn':leftFlag}"  @focus="matchTwoFocus(vLeft)"  @blur="matchTwoBlur(vLeft)" v-model.number="vLeft" class="w100" ></el-input>
+                 </el-tooltip>
+                    ~
                  <!-- <el-input  :class="{ 'pod-wran': mathWarn }"  @blur="podMathBlur"
                 @focus="podMathFocus"    v-model.number="vLeft" class="w100" ></el-input>~ -->
-                <el-input v-model.number="vRight" class="w100"></el-input>
+                 <el-tooltip class="item" :disabled="vRight!=''" effect="light" content="最大副本数不能为空" placement="right">
+                   <el-input :class="{'pod-warn':rightFlag}"     @focus="matchThreeFocus(vRight)"  @blur="matchThreeBlur(vRight)" v-model.number="vRight" class="w100"></el-input>
+                 </el-tooltip>
                </el-form-item>
              </div>
            </el-form-item>
@@ -115,6 +126,7 @@
          workload: this.$route.query.workload,
          name2:'',//处理过的name
          caseNum:'',
+         matchIndex:'',
          // 更新pod数量
          upn: {
            type: '1',
@@ -122,6 +134,8 @@
          },
         vLeft:'',
         vRight:'',
+        leftFlag:false,
+        rightFlag:false,
         mathWarn:false,
         reg:/^\d+$/,
          optionsDataCopy:[],
@@ -218,6 +232,7 @@
              valueKey: ''
            }],
            adjustType:'',//手动变自动
+           colorFlag:false,//
        };
      },
      components: {},
@@ -901,28 +916,56 @@
              this.optionsData[index].value2=17 
         }
        },
-      //  podMathFocus(val){
-      //    console.log('focus')
-      //     let reg=/^\d+$/
-      //    console.log(val)
-      //   if(val==''||!reg.test(val)){
-      //      this.mathWarn=true
-      //    }else{
-      //      this.mathWarn=false;
-      //    }
-        
-      //  },
-      //  podMathBlur(val){
-      //    let reg=/^\d+$/
-      //    if(val==''||!reg.test(val)){
-      //      this.mathWarn=true
-      //    }else{
-      //      this.mathWarn=false;
-      //    }
-      //  },
+     
        //返回上一层
        goBack() {
          this.$router.go(-1);
+       },
+       matchOneFocus(v,i){
+         if(v==''||!this.reg.test(v)){
+           this.matchIndex=i
+           console.log(this.matchIndex)
+         }else{
+           this.matchIndex=''
+         }
+       },
+       matchOneBlur(v,i){
+         if(v==''||!this.reg.test(v)){
+           this.matchIndex=i
+         }else{
+           this.matchIndex=''
+         }
+       },
+       matchTwoFocus(v){
+         if(v==''||!this.reg.test(v)){
+           this.leftFlag=true
+         }else{
+           this.leftFlag=false;
+         }
+       },
+       matchTwoBlur(v){
+          if(v==''||!this.reg.test(v)){
+           this.leftFlag=true
+         }else{
+           this.leftFlag=false;
+         }
+       },
+       matchThreeFocus(v){
+         console.log(v)
+          if(v==''||!this.reg.test(v)){
+           this.rightFlag=true
+         }else{
+           this.rightFlag=false;
+         }
+       },
+       matchThreeBlur(v){
+         console.log('shijiao',v)
+
+          if(v==''||!this.reg.test(v)){
+           this.rightFlag=true
+         }else{
+           this.rightFlag=false;
+         }
        },
       
      },
@@ -933,12 +976,15 @@
            let dat=arr.map((item)=>{return item.value2})
            console.log(dat)
            if(dat.length!=Array.from(new Set(dat)).length){
-              this.$message({
-            message:"不能使用两个相同的指标",
-            type:'warning',
-            showClose: true,
-            duration: 0
-            });
+             this.colorFlag=true;
+            //   this.$message({
+            // message:"不能使用两个相同的指标",
+            // type:'warning',
+            // showClose: true,
+            // duration: 0
+            // });
+           }else{
+             this.colorFlag=false;
            }
          },
          deep:true
@@ -978,7 +1024,7 @@
     i{
    cursor:pointer;
    }
-   .pod-wran {
+   .pod-warn {
     ::v-deep .el-input__inner {
       border: 1px solid #e1504a;
     }
