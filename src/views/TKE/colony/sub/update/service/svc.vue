@@ -309,11 +309,13 @@ export default {
       // 端口映射的验证
       verifyPort1: [// 容器端口的验证
         { validator: (rule, value, callback) => {
+          let ind = Number(rule.field.split('.')[1])
+          console.log(ind)
           let ls = this.svc.list
           let flog = false
-          if (ls.length > 1) {
-            for (let i = 0; i < ls.length - 1; i++) {
-              ls[i].port === Number(value) ? flog = true : flog = false
+          for (let i = 0; i < ls.length; i++) {
+            if (i !== ind && ls[i].port === Number(value)) {
+              flog = true
             }
           }
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
@@ -332,11 +334,12 @@ export default {
       ],
       verifyPort2: [// 服务端口的验证
         { validator: (rule, value, callback) => {
+          let ind = Number(rule.field.split('.')[1])
           let ls = this.svc.list
           let flog = false
-          if (ls.length > 1) {
-            for (let i = 0; i < ls.length - 1; i++) {
-              ls[i].targetPort === Number(value) ? flog = true : flog = false
+          for (let i = 0; i < ls.length; i++) {
+            if (i !== ind && ls[i].targetPort === Number(value)) {
+              flog = true
             }
           }
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
@@ -355,11 +358,12 @@ export default {
       ],
       verifyPort3: [{// 主机端口的验证
         validator: (rule, value, callback) => {
+          let ind = Number(rule.field.split('.')[1])
           let ls = this.svc.list
           let flog = false
-          if (ls.length > 1) {
-            for (let i = 0; i < ls.length - 1; i++) {
-              ls[i].nodePort === Number(value) ? flog = true : flog = false
+          for (let i = 0; i < ls.length; i++) {
+            if (i !== ind && ls[i].nodePort === Number(value)) {
+              flog = true
             }
           }
           if (flog) {
@@ -382,15 +386,20 @@ export default {
       }],
       ProtocolValidation: [// 协议的验证
         { validator: (rule, value, callback) => {
+          // let ind = Number(rule.field.split('.')[1])
           let ls = this.svc.list
-          let flog = false
+          let flog = true
           if (ls.length > 1) {
             for (let i = 0; i < ls.length - 1; i++) {
-              ls[i].protocol === value ? flog = true : flog = false
+              if (ls[i].protocol !== value) {
+                flog = false
+              }
             }
           }
           if (!flog) {
             callback(new Error('协议必须一致'))
+          } else {
+            callback()
           }
         },
         trigger: 'change',
