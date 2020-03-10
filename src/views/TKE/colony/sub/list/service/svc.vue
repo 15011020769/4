@@ -159,9 +159,7 @@ export default {
           // this.nameSpaceName = searchOpt[0].metadata.name// 默认选中第一项
         } else {
           this.loadShow = false
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[Response.Error.Code],
@@ -213,9 +211,7 @@ export default {
           this.total = data.length// 总条数
         } else {
           this.loadShow = false
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[Response.Error.Code],

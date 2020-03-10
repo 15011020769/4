@@ -94,6 +94,7 @@ export default {
     modifyCCUrlAllow() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         Method: this.method, //add表示添加，delete表示删除

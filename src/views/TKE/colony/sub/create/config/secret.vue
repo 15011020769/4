@@ -38,11 +38,13 @@
           </el-form-item>
           <el-form-item label="生效范围">
             <div>
+              <el-radio-group v-model="se.radio" style="margin-bottom: 30px;">
+                <el-radio label="1">存量所有命名空间（不包括kube-system、kube-public和后续增量命名空间）</el-radio>
+                <br />
+                <br />
+                <el-radio label="2">指定命名空间</el-radio>
+              </el-radio-group>
               <div class="bg">
-                <el-radio v-model="se.radio" label="1">存量所有命名空间（不包括kube-system、kube-public和后续增量命名空间）</el-radio>
-              </div>
-              <div class="bg">
-                <el-radio v-model="se.radio" label="2">指定命名空间</el-radio>
                 <p>
                   <b>当前集群有以下可用命名空间</b>
                 </p>
@@ -245,13 +247,13 @@ export default {
         obj[v.value] = btoa(v.valueKey);
       });
 
-      // if (this.se.tabPosition == "jt" && arr[0].value == "") {
-      //   this.$message({
-      //     message: "变量名不能為空，至少设置一项",
-      //     type: "error"
-      //   });
-      //   return false;
-      // }
+      // RequestBody: "{"kind":"Secret","apiVersion":"v1","metadata":{"name":"ssssss","namespace":"default",
+      // "labels":{"qcloud-app":"ssssss"}},"type":"kubernetes.io/dockercfg",
+
+      // "data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2Rhc2QiLCJhdXRoIjoiZFhObGNqcGhjMlJoYzJRPSJ9fQ=="}}
+
+      // {"kind":"Secret","apiVersion":"v1","metadata":{"name":"ssssss","namespace":"kube-node-lease","labels":{"qcloud-app":"ssssss"}},
+      // "type":"kubernetes.io/dockercfg",
 
       var params = {
         ClusterName: this.clusterId,
@@ -290,15 +292,50 @@ export default {
             namespace: this.se.radio, //
             labels: { "qcloud-app": this.se.name }
           },
-          type: "kubernetes.io/dockercfg"
-          // data: {
-          //   ".dockercfg":
-          //     "eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJhc2Rhc2QiLCJwYXNzd29yZCI6ImFzZGFzZCIsImF1dGgiOiJZWE5rWVhOa09tRnpaR0Z6WkE9PSJ9fQ=="
-          // } //用户密码转码成一堆 转义：btoa();
+          type: "kubernetes.io/dockercfg",
+          data: {
+            ".dockercfg": btoa(
+              "{" +
+                this.se.ips +
+                ":{username:" +
+                this.se.names +
+                ',"password":' +
+                this.se.pwds +
+                ',"auth":' +
+                btoa(this.se.names + ":" + this.se.pwds) +
+                "}}"
+            )
+          } //用户密码转码成一堆 转义：btoa();
         };
-        params.RequestBody.data[".dockercfg"] =
-          "eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJhc2Rhc2QiLCJwYXNzd29yZCI6ImFzZGFzZCIsImF1dGgiOiJZWE5rWVhOa09tRnpaR0Z6WkE9PSJ9fQ==";
+
+        // "data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2Rhc2QiLCJhdXRoIjoiZFhObGNqcGhjMlJoYzJRPSJ9fQ=="}}"
+
+        // {"http://123.1.1.1:9090":{"username":"user","password":"asdasd","auth":"dXNlcjphc2Rhc2Q="}}  baot("dXNlcjphc2Rhc2Q=") //解码   user:asdasd
+
+        // btoa(v.valueKey);
+        //         ips: "",
+        //         pwds: "",
+        //         names: "1"
+        var data = btoa(
+          "{" +
+            this.se.ips +
+            ":{username:" +
+            this.se.names +
+            ',"password":' +
+            this.se.pwds +
+            ',"auth":' +
+            btoa(this.se.names + ":" + this.se.pwds) +
+            "}}"
+        );
+         params.RequestBody.data[".dockercfg"] = data;
       }
+
+
+
+
+
+
+//指定命名空间
       if (this.se.radio == "1") {
         params.RequestBody =
           '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +

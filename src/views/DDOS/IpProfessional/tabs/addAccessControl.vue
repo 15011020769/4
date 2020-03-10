@@ -176,6 +176,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net", //大禹子产品代号（bgp高防包；bgp-multip共享包）
         Id: this.ccResourceId
       };
@@ -203,6 +204,7 @@ export default {
     modifyCCPolicySwitch(ccPolicy) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         SetId: ccPolicy.SetId,
@@ -227,6 +229,7 @@ export default {
         .then(() => {
           let params = {
             Version: "2018-07-09",
+            Region: localStorage.getItem("regionv2"),
             Business: "net",
             Id: this.ccResourceId,
             SetId: ccPolicy.SetId

@@ -946,6 +946,7 @@ export default {
       } else {
         let params = {
           Version: "2018-07-09",
+          Region: localStorage.getItem("regionv2"),
           Business: "net",
           // DropOptions.N 协议禁用，必须填写且数组长度必须为1
           "DropOptions.0.DropTcp":

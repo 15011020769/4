@@ -143,6 +143,7 @@ export default {
     createCCSelfDefinePolicy() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         "Policy.Name": this.policyForm.Name,
@@ -180,6 +181,7 @@ export default {
     modifyCCSelfDefinePolicy() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.ccResourceId,
         SetId: this.editCCPolicy.SetId,

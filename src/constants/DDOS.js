@@ -70,3 +70,6 @@ export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源�
 export const QUERY_PRICE = 'billing/GetPrice' // DDOS 高防IP购买询价
 export const GENERATE_DEALS = 'billing/GenerateDeals' // DDOS 高防IP购买创建订单
 export const PAY_DEALS = 'billing/PayDeals' // DDOS 高防IP购买支付订单
+
+// 统计报表相关接口
+export const DESCRIBE_BARADDATA = 'dayu2/DescribeBaradData' //获取转发报表数据

@@ -20,8 +20,12 @@
             <div class="first_left">
               <p style="margin-bottom:40px">
                 {{ $t("CAM.Role.cloudCardType") }}
+                <span style="color:#F56C6C">*</span>
               </p>
-              <p>{{ $t("CAM.Role.cardId") }}</p>
+              <p>
+                {{ $t("CAM.Role.cardId") }}
+                <span style="color:#F56C6C">*</span>
+              </p>
             </div>
             <div class="first_right">
               <p style="margin-bottom:30px">
@@ -57,7 +61,10 @@
         <div class="shenyue" v-show="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">{{ $t("CAM.Role.roleName") }}*</p>
+              <p class="juese">
+                {{ $t("CAM.Role.roleName") }}
+                <span style="color:#F56C6C">*</span>
+              </p>
               <p class="juese" style="margin-top:55px">
                 {{ $t("CAM.Role.roleDesc") }}
               </p>

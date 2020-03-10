@@ -55,7 +55,13 @@
             <p class="newClear">
               <span class="modelSpan1">
                 {{$t('DDOS.protectCon.CleaningShold')}}
-                <i class="el-icon-info"></i>
+                <el-tooltip class="item" effect="light" placement="top-start">
+                  <div slot="content" class="tooltip_text">
+                    {{$t('DDOS.protectCon.CleaningSholdToolTip01')}}<br/>
+                    {{$t('DDOS.protectCon.CleaningSholdToolTip02')}}
+                  </div>
+                  <i class="el-icon-info"></i>
+                </el-tooltip>
               </span>
               <span>
                 <el-select
@@ -77,7 +83,32 @@
             <p class="newClear">
               <span class="modelSpan1">
                 {{$t('DDOS.protectCon.ProtectionGrade')}}
-                <i class="el-icon-info"></i>
+                <el-tooltip class="item" effect="light" placement="bottom-start">
+                  <div slot="content" class="tooltip_text">
+                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0101')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip010101')}}<br/>
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0102')}}<br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0103')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0104')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0105')}}</span><br/><br/>
+                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0201')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip020101')}}<br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0202')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0203')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0204')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0205')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0206')}}</span><br/><br/>
+                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0301')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip030101')}}<br/>
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0302')}}<br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0303')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0304')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0305')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0306')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0307')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0308')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0309')}}</span><br/>
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0310')}}</span>
+                  </div>
+                  <i class="el-icon-info"></i>
+                </el-tooltip>
               </span>
               <span class="modelSpan2">
                 <a
@@ -316,6 +347,7 @@ export default {
     describeDDoSAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.resourceId, //资源ID
       };
@@ -342,6 +374,7 @@ export default {
     modifyDefendStatus() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Status: this.servicePack.DefendStatus?1:0,
         Hour: this.servicePack.cleanTime,
@@ -358,6 +391,7 @@ export default {
     cleanThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         Threshold: this.servicePack.DdosThreshold
@@ -392,6 +426,7 @@ export default {
     modifyDDoSLevel(level) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.resourceId,
         Method: "set",
@@ -429,6 +464,7 @@ export default {
         // 解绑
         let params = {
           Version: "2018-07-09",
+          Region: localStorage.getItem("regionv2"),
           Business: "net",
           Id: this.resourceId, //资源ID
           PolicyId: this.spolicyId, //原绑定策略ID
@@ -446,6 +482,7 @@ export default {
           // 绑定
           let params2 = {
             Version: "2018-07-09",
+            Region: localStorage.getItem("regionv2"),
             Business: "net",
             Id: this.resourceId, //资源ID
             PolicyId: this.servicePack.SPolicyId, //策略ID
@@ -498,6 +535,7 @@ export default {
     modifyDDoSAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         RsId: this.resourceId,
         AlarmType: this.servicePack.AlarmType, //告警阈值类型，0-未设置，1-入流量，2-清洗流量
@@ -618,5 +656,14 @@ export default {
   margin-left: auto;
   margin-right: auto;
   margin-bottom: 20px;
+}
+.tooltip_text {
+  font-size: 14px;
+  .tooltip_text_bold {
+    font-weight: bold;
+  }
+  .indent {
+    padding-left: 20px;
+  }
 }
 </style>

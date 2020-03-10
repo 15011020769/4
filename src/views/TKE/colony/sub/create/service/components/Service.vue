@@ -112,8 +112,8 @@
 				<!-- 内容 -->
 				<div style="border-top:1px solid #ddd;padding: 10px;">
 					<div style="padding:5px 0;" v-for="(it,i) in svc.list" :key="it.key">
-						 <!-- :prop="`list.${i}.protocol`" :rules="ProtocolValidation" -->
-						<el-form-item style="display: inline-block">
+						 <!-- -->
+						<el-form-item style="display: inline-block" :prop="`list.${i}.protocol`" :rules="ProtocolValidation">
 							<!-- <el-select class="w100" v-model="svc.protocol" placeholder="请选择"> -->
 							<el-select class="w100" v-model="it.protocol" placeholder="请选择">
 						    <el-option
@@ -208,11 +208,21 @@ export default {
       // 端口映射的验证
       verifyPort1: [// 容器端口的验证
         { validator: (rule, value, callback) => {
+          let ind = Number(rule.field.split('.')[1])
+          let ls = this.svc.list
+          let flog = false
+          for (var i = 0; i < ls.length; i++) {
+            if (i !== ind && ls[i].input1 === value) {
+              flog = true
+            }
+          }
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
           if (!value) {
             callback(new Error('端口号不能为空'))
           } else if (!portNumber.test(value)) {
             callback(new Error('端口号格式不正确'))
+          } else if (flog) {
+            callback(new Error('端口不可重复映射'))
           } else {
             callback()
           }
@@ -222,16 +232,18 @@ export default {
       ],
       verifyPort2: [{// 主机端口的验证
         validator: (rule, value, callback) => {
-          // let ls = this.svc.list
-          // let flog = false
-          // if (ls.length > 1) {
-          //   for (let i = 0; i < ls.length - 1; i++) {
-          //     ls[i].input3 === value ? flog = true : flog = false
-          //   }
-          // }
-          // if (flog) {
-          //   callback(new Error('端口不可重复映射'))
-          // }
+          // console.log(rule.field.split('.')[1])
+          let ind = Number(rule.field.split('.')[1])
+          let ls = this.svc.list
+          let flog = false
+          for (var i = 0; i < ls.length; i++) {
+            if (i !== ind && ls[i].input3 === value) {
+              flog = true
+            }
+          }
+          if (flog) {
+            callback(new Error('端口不可重复映射'))
+          }
           if (value > 30000 && value <= 32767) {
             callback()
           } else if (!value) {
@@ -249,20 +261,43 @@ export default {
       }],
       verifyPort3: [// 服务端口的验证
         { validator: (rule, value, callback) => {
-          // let ls = this.svc.list
-          // let flog = false
-          // if (ls.length > 1) {
-          //   for (let i = 0; i < ls.length - 1; i++) {
-          //     ls[i].input2 === value ? flog = true : flog = false
-          //   }
-          // }
+          let idx = Number(rule.field.split('.')[1])
+          let ls = this.svc.list
+          let flog = false
+          for (var i = 0; i < ls.length; i++) {
+            if (i !== idx && ls[i].input2 === value) {
+              flog = true
+            }
+          }
           let portNumber = /^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]{1}|6553[0-5])$/
           if (!value) {
             callback(new Error('端口号不能为空'))
           } else if (!portNumber.test(value)) {
             callback(new Error('端口号格式不正确'))
-          // } else if (flog) {
-          //   callback(new Error('端口不可重复映射'))
+          } else if (flog) {
+            callback(new Error('端口不可重复映射'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true }
+      ],
+      ProtocolValidation: [// 协议的验证
+        { validator: (rule, value, callback) => {
+          let idx = Number(rule.field.split('.')[1])
+          let ls = this.svc.list
+          let flog = true
+          // if (ls.length > 1) {
+          for (var i = 0; i < ls.length; i++) {
+            if (i !== idx && ls[i].protocol !== value) {
+              flog = false
+            }
+            console.log(typeof ls[i].protocol, typeof value)
+          }
+          // }
+          if (!flog) {
+            callback(new Error('协议必须一致'))
           } else {
             callback()
           }
@@ -270,22 +305,6 @@ export default {
         trigger: 'blur',
         required: true }
       ]
-      // ProtocolValidation: [// 协议的验证
-        // { validator: (rule, value, callback) => {
-        //   let ls = this.svc.list
-        //   let flog = false
-        //   if (ls.length > 1) {
-        //     for (let i = 0; i < ls.length - 1; i++) {
-        //       ls[i].protocol === value ? flog = true : flog = false
-        //     }
-        //   }
-        //   if (!flog) {
-        //     callback(new Error('协议必须一致'))
-        //   }
-        // },
-        // trigger: 'change',
-        // required: true }
-      // ]
     }
   },
   created: function () {
@@ -338,24 +357,24 @@ export default {
     // 新增端口
     addport () {
       // console.log(this.svc.list)
-      if (this.svc.radio == '4') {
-        this.svc.list.push({
-          value: '',
-          input1: '',
-          input3: '',
-          input2: '',
-          protocol: 'TCP',
-          key: Date.now()
-        })
-      } else {
-        this.svc.list.push({
-          value: '',
-          input1: '',
-          input2: '',
-          protocol: 'TCP',
-          key: Date.now()
-        })
-      }
+      // if (this.svc.radio == '4') {
+      this.svc.list.push({
+        value: '',
+        input1: '',
+        input3: '',
+        input2: '',
+        protocol: 'TCP',
+        key: Date.now()
+      })
+      // } else {
+      //   this.svc.list.push({
+      //     value: '',
+      //     input1: '',
+      //     input2: '',
+      //     protocol: 'TCP',
+      //     key: Date.now()
+      //   })
+      // }
     }
   }
 }

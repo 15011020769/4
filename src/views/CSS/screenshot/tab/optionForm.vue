@@ -48,7 +48,7 @@
 <script>
 import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from "@/constants";
 
-const regex = /^[\w_-]{1,30}$/;
+const regex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
 
 export default {
   name: "optionForm",
@@ -89,6 +89,13 @@ export default {
       callback();
     };
 
+    let checkCosAppId = (rule, value, callback) => {
+      if (!/^[1-9]\d*$/.test(value)) {
+        callback(new Error("CosAppId必须是整数"));
+      }
+      callback();
+    }
+
     return {
       ruleForm: {
         TemplateName: "",
@@ -107,11 +114,12 @@ export default {
         ],
         desc: [{ required: false }, { validator: checkDesc, trigger: "blur" }],
         SnapshotInterval: [
-          { required: true },
+          { required: true, message: "請輸入截圖間隔", trigger: "blur" },
           { validator: checkSnapshotInterval, trigger: "blur" }
         ],
         CosAppId: [
-          { required: true, message: "請輸入CosAppId", trigger: "blur" }
+          { required: true, message: "請輸入CosAppId", trigger: "blur" },
+          { validator: checkCosAppId, trigger: "blur" }
         ],
         CosBucket: [
           { required: true, message: "請輸入CosBucket", trigger: "blur" }

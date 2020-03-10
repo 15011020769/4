@@ -172,7 +172,12 @@
                   </el-table-column>
                   <el-table-column label="操作" width="180">
                     <template slot-scope="scope">
-                      <el-tooltip v-if="roleCarrier.length === 1" effect="dark" :content="$t('CAM.Role.wfscwydzt')" placement="top-start">
+                      <el-tooltip
+                        v-if="roleCarrier.length === 1"
+                        effect="dark"
+                        :content="$t('CAM.Role.wfscwydzt')"
+                        placement="top-start"
+                      >
                       <el-button
                         type="text"
                         size="small"
@@ -592,7 +597,7 @@ export default {
     // 解除角色策略
     relieveRolePolicy(scope, flag = false) {
       if (flag) {
-        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+        this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
           confirmButtonText: "確定",
           cancelButtonText: "取消",
           type: "warning"
@@ -667,7 +672,7 @@ export default {
           showClose: true
         });
       } else {
-        this.$confirm("此操作將永久解除策略, 是否繼續?", "提示", {
+        this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
@@ -713,7 +718,7 @@ export default {
         .catch(error => {});
     },
     delRolePolicy(index, rows) {
-      this.$confirm("此操作將永久刪除, 是否繼續?", "提示", {
+      this.$confirm(this.$t('CAM.Role.jcjsztts'), this.$t('CAM.Role.jcjszt'), {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"

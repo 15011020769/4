@@ -524,7 +524,7 @@ export default {
         console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
+        'Conditions.1': JSON.stringify(["node_role","=","Node"]),
         'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
         EndTime: this.EndTime,
         Limit: 65535,
@@ -580,6 +580,7 @@ export default {
               if(data.length > 0) {
                 for(let i = 0; i < data.length; i++) {
                   let item = data[i];
+                  console.log(item)
                   let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
                   let podId = item[1];//节点ID
                   let pod = item[2];//实例数量
