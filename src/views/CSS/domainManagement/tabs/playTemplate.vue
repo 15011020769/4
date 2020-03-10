@@ -14,7 +14,7 @@
     >
       <el-table-column
         prop="TemplateName"
-        :label="$t('CSS.domainManagement.10')"
+        :label="$t('CSS.domainManagement.14')"
       >
       </el-table-column>
       <el-table-column prop="TemplateId" label="模板ID" width="180">

@@ -63,7 +63,8 @@ module.exports = {
       43: '確定',
       44: '確認啟用',
       45: '斷流',
-      46: '確認禁用'
+      46: '確認禁用',
+      47: '僅支持大寫字母，小寫字母和數字，最大長度32位'
     },
     cutout: {
       0: ' 斷流診斷',
@@ -190,6 +191,7 @@ module.exports = {
       16: '您正申請開通全球加速，海外直播價格與國內直播價格不同，請知悉。',
       17: '您正申請開通中國港澳台地區及海外地區直播加速，中國大陸的請求將無法解析，請知悉。',
       18: '切換加速區域後設置的帶寬限制將失效。',
+      19: '範本配置',
       basicMessage: '基本訊息',
       playbackConfiguration: '播放配置',
       templateConfiguration: '模板配置',
@@ -209,7 +211,7 @@ module.exports = {
       bandwidthCapping: '帶寬封頂',
       rgional: '區域',
       sourceStationSetup: '源站設置',
-      ipordomain: '請填寫域名或IP',
+      ipordomain: '請填寫域名或IP'
     }
   },
   COM: require('@/components/language/ft')

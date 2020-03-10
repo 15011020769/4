@@ -19,15 +19,27 @@
             ></el-option>
           </el-select>
           <el-button-group class="buttonDateCheck">
-            <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">今天</el-button>
-            <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">昨天</el-button>
-            <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">近7天</el-button>
+            <el-button
+              @click="checkTime(1)"
+              :class="selBtn == '1' ? 'addStyleBtn' : ''"
+              >今天</el-button
+            >
+            <el-button
+              @click="checkTime(2)"
+              :class="selBtn == '2' ? 'addStyleBtn' : ''"
+              >昨天</el-button
+            >
+            <el-button
+              @click="checkTime(3)"
+              :class="selBtn == '3' ? 'addStyleBtn' : ''"
+              >近7天</el-button
+            >
           </el-button-group>
           <el-date-picker
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
-            :clearable= false
+            :clearable="false"
             @change="changeTimeValue"
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"
@@ -36,7 +48,7 @@
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-download" @click="dialogDownloadVisible = true"></i>
-          <i class="el-icon-refresh" @click="id+=1"></i>
+          <i class="el-icon-refresh" @click="id += 1"></i>
           <i class="el-icon-setting" @click="openSetDialog"></i>
         </el-row>
       </p>
@@ -51,22 +63,41 @@
       />
     </div>
     <DownLoadImg
-      :dialogDownloadVisible = dialogDownloadVisible
-      @imgSaveMethod = "saveImg"
-      @onCancel = "onCancel"
+      :dialogDownloadVisible="dialogDownloadVisible"
+      @imgSaveMethod="saveImg"
+      @onCancel="onCancel"
     />
     <el-dialog
-      :title="t('自定义展示模板','WAF.zdyzsmb')"
+      :title="t('自定义展示模板', 'WAF.zdyzsmb')"
       :visible.sync="dialogSetVisible"
       width="40%"
     >
       <div>
         <el-checkbox-group v-model="showModulesCopy" class="module">
-          <el-checkbox border v-for="(m, index) in allModule" :key="m.name" :label="m.name">
-            {{m.value}}
-            <div :class="`move ${index === 0 || index === (allModule.length - 1) ? 'alone' : ''}`">
-              <i class="el-icon-caret-top" @click.prevent="up(index)" v-if="index !== 0"></i>
-              <i class="el-icon-caret-bottom" @click.prevent="down(index)" v-if="index !== (allModule.length - 1)"></i>
+          <el-checkbox
+            border
+            v-for="(m, index) in allModule"
+            :key="m.name"
+            :label="m.name"
+          >
+            {{ m.value }}
+            <div
+              :class="
+                `move ${
+                  index === 0 || index === allModule.length - 1 ? 'alone' : ''
+                }`
+              "
+            >
+              <i
+                class="el-icon-caret-top"
+                @click.prevent="up(index)"
+                v-if="index !== 0"
+              ></i>
+              <i
+                class="el-icon-caret-bottom"
+                @click.prevent="down(index)"
+                v-if="index !== allModule.length - 1"
+              ></i>
             </div>
           </el-checkbox>
         </el-checkbox-group>
@@ -79,8 +110,8 @@
   </div>
 </template>
 <script>
-import moment from "moment";
-import html2canvas from "html2canvas"
+import moment from 'moment'
+import html2canvas from 'html2canvas'
 import DownLoadImg from '../components/downLoadImg'
 import AttackDistribution from './safeoverview/attackDistribution'
 import AttackSource from './safeoverview/attackSource'
@@ -91,29 +122,29 @@ import { SAFE_OVERVIEW_SHOWMODULE_KEY } from '../../constants'
 import { DESCRIBE_HOSTS } from '@/constants'
 import { flatObj } from '@/utils'
 export default {
-  data() {
+  data () {
     return {
-      options: [], //默认下拉选项
-      dateTimeValue: [moment().startOf("day"), moment().endOf("day")], //日期绑定
-      selectValue: "", //域名下拉菜单
+      options: [], // 默认下拉选项
+      dateTimeValue: [moment().startOf('day'), moment().endOf('day')], // 日期绑定
+      selectValue: '', // 域名下拉菜单
       selBtn: 1, // 默认选中今天按钮
-      endTime: moment().endOf("days").format("YYYY-MM-DD HH:mm:ss"),
-      startTime: moment().startOf("days").format("YYYY-MM-DD HH:mm:ss"),
-      host: "",
+      endTime: moment().endOf('days').format('YYYY-MM-DD HH:mm:ss'),
+      startTime: moment().startOf('days').format('YYYY-MM-DD HH:mm:ss'),
+      host: '',
       dialogDownloadVisible: false,
       dialogSetVisible: false,
       allModuleCopy: [
-        { name: 'overview', value: this.t('WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数', 'WAF.webgjlj')},
-        { name: 'business', value: this.t('业务请求趋势', 'WAF.ywqqqs')},
-        { name: 'attackSource', value: this.t('攻击来源地域TOP5 & 攻击来源IP TOP5', 'WAF.gjlydyip')},
-        { name: 'attackTypePrecent', value: this.t('访问类型占比 & 攻击类型占比', 'WAF.fwlxzbgj')},
-        { name: 'attackDistribution', value: this.t('攻击来源区域分布', 'WAF.gjlyqyfb')},
+        { name: 'overview', value: this.t('WEB攻击拦截、CC拦截、BOT请求、DNS劫持区域数', 'WAF.webgjlj') },
+        { name: 'business', value: this.t('业务请求趋势', 'WAF.ywqqqs') },
+        { name: 'attackSource', value: this.t('攻击来源地域TOP5 & 攻击来源IP TOP5', 'WAF.gjlydyip') },
+        { name: 'attackTypePrecent', value: this.t('访问类型占比 & 攻击类型占比', 'WAF.fwlxzbgj') },
+        { name: 'attackDistribution', value: this.t('攻击来源区域分布', 'WAF.gjlyqyfb') }
       ],
       allModule: [],
       showModules: [],
       showModulesCopy: [],
-      id: 0, // 用于父组件点击查询
-    };
+      id: 0 // 用于父组件点击查询
+    }
   },
   components: {
     DownLoadImg,
@@ -121,7 +152,7 @@ export default {
     Business,
     AttackTypePrecent,
     AttackSource,
-    AttackDistribution,
+    AttackDistribution
   },
   mounted () {
     const allModuleCopy = JSON.parse(JSON.stringify(this.allModuleCopy))
@@ -145,10 +176,10 @@ export default {
     allModuleCopy.sort((a, b) => a.index - b.index)
 
     this.allModule = allModuleCopy
-    this.getDominList();
-　},
+    this.getDominList()
+  },
   watch: {
-     showModulesCopy(val, oldVal) {
+    showModulesCopy (val, oldVal) {
       if (val.length === 1) {
         this.$message({
           message: this.t('至少选择2个', 'WAF.zsxz2g'),
@@ -158,7 +189,7 @@ export default {
         })
         this.showModulesCopy = [...oldVal]
       }
-    },
+    }
     // showModules(val, oldVal) {
     //   console.log(val)
     //   if (val.length === 1) {
@@ -173,35 +204,35 @@ export default {
     // },
   },
   methods: {
-    openSetDialog() {
+    openSetDialog () {
       this.dialogSetVisible = true
       this.showModulesCopy = [...this.showModules]
     },
-    up(i) {
-      this.allModule[i] = this.allModule.splice(i-1, 1, this.allModule[i])[0]
+    up (i) {
+      this.allModule[i] = this.allModule.splice(i - 1, 1, this.allModule[i])[0]
     },
-    down(i) {
-      this.allModule[i] = this.allModule.splice(i+1, 1, this.allModule[i])[0]
+    down (i) {
+      this.allModule[i] = this.allModule.splice(i + 1, 1, this.allModule[i])[0]
     },
-    cancelModuleDisplaySet() {
+    cancelModuleDisplaySet () {
       this.dialogSetVisible = false
       this.showModulesCopy = [...this.showModules]
     },
-    saveModuleDisplaySet() {
+    saveModuleDisplaySet () {
       this.dialogSetVisible = false
       const moduleNames = this.allModule.map(m => m.name) // 获取所有模块名称
       this.showModules = [...this.showModulesCopy]
       this.showModules = moduleNames.filter(name => this.showModules.includes(name))
       localStorage.setItem(SAFE_OVERVIEW_SHOWMODULE_KEY, JSON.stringify(this.showModules))
       this.$message({
-        message: "保存成功",
-        type: "success",
+        message: '保存成功',
+        type: 'success',
         showClose: true,
         duration: 0
-      });
+      })
     },
-    //获取域名列表
-    getDominList() {
+    // 获取域名列表
+    getDominList () {
       this.axios.post(DESCRIBE_HOSTS, {
         Version: '2018-01-25'
       }).then(({ Response }) => {
@@ -209,7 +240,7 @@ export default {
           let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
           this.$message({
             message: ErrOr[Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
           })
@@ -218,86 +249,85 @@ export default {
         }
       })
     },
-    handleDomin(val) {
+    handleDomin (val) {
       this.host = val
     },
-    saveImg(type) {
+    saveImg (type) {
       this.html2canvas_2(type)
     },
-    onCancel() {
+    onCancel () {
       this.dialogDownloadVisible = false
     },
-    //时间点击事件
-    checkTime(val) {
-      let times = [moment().startOf("day"), moment()] // 默认今天
+    // 时间点击事件
+    checkTime (val) {
+      let times = [moment().startOf('day'), moment()] // 默认今天
       this.selBtn = val
       switch (val) {
         case 2:
-          times = [moment().subtract(24, "hours").startOf("day"), moment().subtract(24, "hours")]
-          break;
+          times = [moment().subtract(24, 'hours').startOf('day'), moment().subtract(24, 'hours')]
+          break
         case 3:
-          times = [moment().subtract(7, "days").startOf("day"), moment()]
-          break;
+          times = [moment().subtract(7, 'days').startOf('day'), moment()]
+          break
         default:
-          break;
+          break
       }
       times[1] = times[1].endOf('day')
       this.dateTimeValue = times
-      this.startTime = moment(this.dateTimeValue[0]).format("YYYY-MM-DD HH:mm:ss")
-      this.endTime = moment(this.dateTimeValue[1]).format("YYYY-MM-DD HH:mm:ss")
+      this.startTime = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
+      this.endTime = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')
     },
-    changeTimeValue() {
+    changeTimeValue () {
       this.selBtn = 0
-      this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
-      this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
+      this.startTime = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
+      this.endTime = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
     },
-    html2canvas_2(imgtype) {
-      //获取截取区域的高度和宽度
+    html2canvas_2 (imgtype) {
+      // 获取截取区域的高度和宽度
       const h = this.$refs.wrapperContent.offsetHeight
       const w = this.$refs.wrapperContent.offsetWidth
-      const canvas = document.createElement("canvas");
-      canvas.width = w * 2;
-      canvas.height = h * 2;
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px";
-      canvas.style.color = "chartreuse"
-      const context = canvas.getContext("2d")
-      context.scale(2,2)				
-      html2canvas(this.$refs.wrapperContent, { 
-        allowTaint: true,
+      const canvas = document.createElement('canvas')
+      canvas.width = w * 2
+      canvas.height = h * 2
+      canvas.style.width = w + 'px'
+      canvas.style.height = h + 'px'
+      canvas.style.color = 'chartreuse'
+      const context = canvas.getContext('2d')
+      context.scale(2, 2)
+      html2canvas(this.$refs.wrapperContent, {
+        allowTaint: true
         // taintTest: false,
         // canvas: canvas,
-      }).then(	function(canvas) {
+      }).then(function (canvas) {
         const type = imgtype
-        let imgData = canvas.toDataURL(type);
-        const _fixType = function(type) {
-          type = type.toLowerCase().replace(/jpg/i, 'jpeg');
-          const r = type.match(/png|jpeg|bmp|gif/)[0];
-          return 'image/' + r;
-        };
-        imgData = imgData.replace(_fixType(type), 'image/octet-stream');
+        let imgData = canvas.toDataURL(type)
+        const _fixType = function (type) {
+          type = type.toLowerCase().replace(/jpg/i, 'jpeg')
+          const r = type.match(/png|jpeg|bmp|gif/)[0]
+          return 'image/' + r
+        }
+        imgData = imgData.replace(_fixType(type), 'image/octet-stream')
         /**
          * 在本地进行文件保存
          * @param  {String} data     要保存到本地的图片数据
          * @param  {String} filename 文件名
          */
-        const saveFile = function(data, filename) {
-        const save_link =document.createElementNS('http://www.w3.org/1999/xhtml', 'a'); 
-          save_link.href = data;
-          save_link.download = filename;
-          const event = document.createEvent('MouseEvents');
-          event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-          save_link.dispatchEvent(event);
-        };
-        const filename = 'dashboard' + (new Date()).getTime() + '.' + type;
-        saveFile(imgData, filename);
+        const saveFile = function (data, filename) {
+          const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+          save_link.href = data
+          save_link.download = filename
+          const event = document.createEvent('MouseEvents')
+          event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+          save_link.dispatchEvent(event)
+        }
+        const filename = 'dashboard' + (new Date()).getTime() + '.' + type
+        saveFile(imgData, filename)
       })
-    },
+    }
   }
 }
 </script>
 <style lang="scss" scoped>
-
 ::v-deep .el-col-12:nth-child(1) {
   height: 100%;
   border-right: 1px solid #e5e5e5;
@@ -308,7 +338,7 @@ export default {
   border-radius: 0px;
   margin-left: 0px;
 }
-::v-deep .el-checkbox.is-bordered+.el-checkbox.is-bordered {
+::v-deep .el-checkbox.is-bordered + .el-checkbox.is-bordered {
   margin-left: 0px;
 }
 .empty {
@@ -316,7 +346,7 @@ export default {
   width: 100%;
   line-height: 200px;
   text-align: center;
-  font-weight: bold
+  font-weight: bold;
 }
 .wrapperContent {
   padding: 0 20px 20px;

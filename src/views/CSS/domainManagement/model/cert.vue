@@ -12,7 +12,9 @@
     <el-form-item prop="HttpsKey" :label="$t('CSS.detailPlay.15')">
       <el-input type="textarea" v-model.trim="form.HttpsKey" />
     </el-form-item>
-    <el-form-item style="margin-bottom: 0;">
+    <el-form-item
+      style="margin-bottom: 0;text-align: center;margin-left: -120px;"
+    >
       <el-button size="small" type="primary" @click="save">保存</el-button>
       <el-button size="small" @click="$emit('update:visible', false)"
         >取消</el-button

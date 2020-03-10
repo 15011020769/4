@@ -159,7 +159,15 @@
           </div>
           <div class="newClear newList1">
             <p>源站地址ip/domain</p>
-            <p>{{ resource.SourceServerType === 0 ? "ip" : (resource.SourceServerType === 1 ? 'domain' : '暂无')}}</p>
+            <p>
+              {{
+                resource.SourceServerType === 0
+                  ? "ip"
+                  : resource.SourceServerType === 1
+                  ? "domain"
+                  : "暂无"
+              }}
+            </p>
           </div>
           <div class="newClear newList1">
             <p>主源地址</p>
@@ -254,7 +262,7 @@ export default {
       loading2: true,
       loading3: true,
       loading4: true,
-      timer: undefined,
+      timer: undefined
     }
   },
   components: {
@@ -265,12 +273,16 @@ export default {
   },
   filters: {
     unit (value) {
-      if (value >= 1000) {
+      console.log(value, 'val')
+      if (value < 1000) {
+        return `${value} Mbps`
+      } else if (value >= 1000 && value < 1000000) {
+        console.log(value, 'val3')
         return `${value / 1000} Gbps`
-      } else if (value >= 10000) {
-        return `${value / 10000} Tbps`
+      } else if (value >= 1000000) {
+        console.log(value, 'val4')
+        return `${value / 1000000} Tbps`
       }
-      return `${value} Mbps`
     },
     playType (val) {
       switch (val) {
@@ -354,6 +366,7 @@ export default {
             if (Response.CdnStreamFormat.length !== 0) {
               this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
             }
+            // console.log(this.resource, 'resource')
           }
         })
         .then(() => {
@@ -384,11 +397,6 @@ export default {
         })
       } else {
         this.visibleSourceStationSetup = true
-        if (this.resource.Status === 1) {
-          this.resource.Status = true
-        } else if (this.resource.Status === 3) {
-          this.resource.Status = false
-        }
       }
     },
     handleCloseRegion () {

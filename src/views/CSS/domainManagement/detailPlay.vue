@@ -21,7 +21,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane
-          :label="$t('CSS.detailPlay.accessControl')"
+          :label="$t('CSS.detailPlay.templateConfiguration')"
           name="third"
           lazy
         >
@@ -30,7 +30,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane
-          :label="$t('CSS.detailPlay.templateConfiguration')"
+          :label="$t('CSS.detailPlay.accessControl')"
           name="fourth"
           lazy
         >
@@ -58,7 +58,7 @@ import PlayTemplate from './tabs/playTemplate'
 import AccessControl from './tabs/accessControl'
 import AdvanceConfig from './tabs/advanceConfig'
 import { DOMAIN_DELTILS } from '@/constants'
-import { ErrorTips } from "@/components/ErrorTips";
+import { ErrorTips } from '@/components/ErrorTips'
 
 let ErrTips = {
   'InternalError.SystemError': '內部錯誤',

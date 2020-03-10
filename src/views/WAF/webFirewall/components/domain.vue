@@ -4,22 +4,34 @@
       <el-col :span="3">
         <label class="label">
           域名
-          <el-tooltip class="item" effect="dark" :content="t('旗舰版支持泛域名', 'WAF.qjbzcfym')" placement="right">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            :content="t('旗舰版支持泛域名', 'WAF.qjbzcfym')"
+            placement="right"
+          >
             <i class="el-icon-info"></i>
           </el-tooltip>
         </label>
       </el-col>
       <el-col>
-        <el-input class="domin-input" :disabled="domain.DomainId !== undefined" v-model="domain.Domain">
-          <i v-if="notExists === 1"
+        <el-input
+          class="domin-input"
+          :disabled="domain.DomainId !== undefined"
+          v-model="domain.Domain"
+        >
+          <i
+            v-if="notExists === 1"
             class="el-icon-circle-check el-input__icon"
             slot="suffix"
           />
-          <i v-if="notExists === 2"
+          <i
+            v-if="notExists === 2"
             class="el-icon-loading el-input__icon"
             slot="suffix"
           />
-      </el-input> <span class="error">{{error}}</span>
+        </el-input>
+        <span class="error">{{ error }}</span>
       </el-col>
     </el-row>
     <el-row type="flex" class="col">
@@ -27,25 +39,26 @@
         <label class="label">代理情况</label>
       </el-col>
       <el-col>
-         <el-radio-group v-model="domain.IsCdn">
+        <el-radio-group v-model="domain.IsCdn">
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
-        <p class="tip">{{t('是否已使用了高防、CDN、云加速等代理', 'WAF.iscdn')}}？</p>
+        <p class="tip">
+          {{ t("是否已使用了高防、CDN、云加速等代理", "WAF.iscdn") }}？
+        </p>
       </el-col>
     </el-row>
     <el-row type="flex" class="col">
-      <el-col :span="3">
-      </el-col>
+      <el-col :span="3"> </el-col>
       <el-col>
-         <el-button type="primary" size="small" @click="next">下一步</el-button>
+        <el-button type="primary" size="small" @click="next">下一步</el-button>
       </el-col>
     </el-row>
   </div>
 </template>
 <script>
 import { DESCRIBE_HOST_LIMIT } from '@/constants'
-import { ErrorTips } from "@/components/ErrorTips"
+import { ErrorTips } from '@/components/ErrorTips'
 import { COMMON_ERROR } from '../../constants'
 
 export default {
@@ -53,26 +66,26 @@ export default {
     level: Number, // 套餐类型
     domain: {
       type: Object,
-      default() {
+      default () {
         return {}
       }
-    },
+    }
   },
-  data(){
+  data () {
     return {
       error: '',
-      notExists: 0, // 1不存在 2加载中 0 默认不显示
+      notExists: 0 // 1不存在 2加载中 0 默认不显示
     }
   },
   watch: {
-    'domain.Domain'() {
+    'domain.Domain' () {
       this.error = ''
       this.notExists = 0
     }
   },
-  methods:{
-    //保存按钮
-    next(){
+  methods: {
+    // 保存按钮
+    next () {
       if (this.notExists === 1 || this.domain.DomainId) {
         this.$emit('next')
         return
@@ -104,15 +117,15 @@ export default {
           let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
           this.$message({
             message: ErrOr[Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
-          });
+          })
         } else {
           this.notExists = 1
         }
       })
-    },
+    }
   }
 }
 </script>
@@ -123,7 +136,7 @@ export default {
 .col {
   margin-top: 20px;
 }
-.domin-input{
+.domin-input {
   width: 200px;
 }
 .label {

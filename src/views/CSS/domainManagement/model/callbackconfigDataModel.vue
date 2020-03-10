@@ -5,11 +5,10 @@
         title="回調配置"
         :visible.sync="isShow"
         :before-close="handleClose"
-      >
+        >
         <div class="newClear">
           <p class="tip">
-            範本选择（如需添加新範本，請前往 【<router-link
-              to="/callback"
+            範本选择（如需添加新範本，請前往 【<router-link to="/callback"
               >功能範本</router-link
             >】 <i class="el-icon-share"></i>中進行設置）
           </p>
