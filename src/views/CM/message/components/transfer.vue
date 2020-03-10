@@ -5,7 +5,12 @@
         <h3 class="title">选择告警接收组</h3>
         <div class="left-main border">
           <div class="seek">
-            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="margin:0;width:100%;"></el-input>
+            <el-input
+              v-model="input"
+              placeholder="请输入内容"
+              @change="_inpVal"
+              style="margin:0;width:100%;"
+            ></el-input>
             <p>
               <i class="el-icon-search" @click="_serach"></i>
             </p>
@@ -18,10 +23,18 @@
           >
             <!-- v-loadmore="debounce" -->
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="PolicyName" label="策略名" width="180"></el-table-column>
+            <el-table-column
+              prop="PolicyName"
+              label="策略名"
+              width="180"
+            ></el-table-column>
             <el-table-column align="center">
               <template slot="header" slot-scope="scope">
-                <el-dropdown trigger="click" @command="handleCommand" size="mini">
+                <el-dropdown
+                  trigger="click"
+                  @command="handleCommand"
+                  size="mini"
+                >
                   <span style="color:#909399">
                     {{ tableTitle }}
                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -31,12 +44,13 @@
                       v-for="item in optionPolicies"
                       :key="item.value"
                       :command="item"
-                    >{{item.label}}</el-dropdown-item>
+                      >{{ item.label }}</el-dropdown-item
+                    >
                   </el-dropdown-menu>
                 </el-dropdown>
               </template>
               <template slot-scope="scope">
-                <p>{{type[scope.row.Type]}}</p>
+                <p>{{ type[scope.row.Type] }}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -48,14 +62,14 @@
       <div class="right">
         <p class="title">
           <b style="font-size:13px;">已选择</b>
-          &nbsp;({{multipleSelection.length}}条)
+          &nbsp;({{ multipleSelection.length }}条)
         </p>
         <div class="right-main border">
           <el-table :data="multipleSelection" style="width: 100%" height="450">
             <el-table-column prop="PolicyName" label="策略名"></el-table-column>
             <el-table-column prop="Type" label="策略类型">
               <template slot-scope="scope">
-                <p>{{type[scope.row.Type]}}</p>
+                <p>{{ type[scope.row.Type] }}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -175,7 +189,7 @@ export default {
 };
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .wrap >>> .el-dropdown {
   font-size: 12px;
 }
@@ -200,7 +214,10 @@ export default {
     }
     .left {
       flex: 1;
-
+      ::v-deep .el-table {
+        border: 1px solid #ebeef5;
+        border-bottom: 0px;
+      }
       .seek {
         position: relative;
 
@@ -222,6 +239,10 @@ export default {
     }
     .right {
       flex: 1;
+      // ::v-deep .el-table {
+      //   border: 1px solid #ebeef5;
+      //   border-bottom: 0px;
+      // }
     }
     .mid {
       width: 50px;

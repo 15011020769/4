@@ -298,23 +298,22 @@ export default new Router({
         import( /* webpackChunkName: "Template" */ './Template/Template.vue'),
       meta: {
         keepAlive: true
-      }       
+      }
     },
     {
       path: '/Template/Detail/index/:id', // 触发条件模板详情
       name: 'TemplateDetail',
       component: () =>
-        import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/index.vue'),
+        import( /* webpackChunkName:"TemplateDetail" */ './Template/Detail/index.vue'),
       redirect: '/Template/Detail/:id/Info', // 默认子路由
       meta: {
         keepAlive: true
       },
-      children: [
-        {
+      children: [{
           path: '/Template/Detail/:id/Info', // 触发条件模板详情信息
           name: 'TemplateInfo',
           component: () =>
-            import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/Info.vue'),
+            import( /* webpackChunkName:"TemplateDetail" */ './Template/Detail/Info.vue'),
           meta: {
             keepAlive: true
           }
@@ -323,13 +322,13 @@ export default new Router({
           path: '/Template/Detail/:id/Update', // 触发条件模板变更日志
           name: 'TemplateUpdate',
           component: () =>
-            import(/* webpackChunkName:"TemplateDetail" */'./Template/Detail/Update.vue'),
+            import( /* webpackChunkName:"TemplateDetail" */ './Template/Detail/Update.vue'),
           meta: {
             keepAlive: true
           }
         }
       ]
-    },  
+    },
     // -----------------------------------------------------
     {
       path: '/Toconfigure', //     告警配置
@@ -465,6 +464,15 @@ export default new Router({
       name: 'messageCreate',
       component: () =>
         import( /* webpackChunkName: "message" */ './message/components/create.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
+      path: '/message/edit', //     新建自定义消息
+      name: 'messageEdit',
+      component: () =>
+        import( /* webpackChunkName: "message" */ './message/components/edit.vue'),
       meta: {
         keepAlive: true
       }

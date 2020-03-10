@@ -11,8 +11,13 @@ const conf = {
   loading: true,
   withCredentials: true,
   headers: {
+<<<<<<< HEAD
     uuid: VueCookie.get('uuid'),
   //  uuid: 100011921910,
+=======
+    // uuid: VueCookie.get('uuid'),
+    uuid: 100011921910,
+>>>>>>> 云监控 警告配置
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'
@@ -47,12 +52,12 @@ Plugin.install = function (vue) {
   window.axios = instance
   Object.defineProperties(vue.prototype, {
     axios: {
-      get () {
+      get() {
         return instance
       }
     },
     $axios: {
-      get () {
+      get() {
         return instance
       }
     }

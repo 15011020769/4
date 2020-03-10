@@ -11,13 +11,19 @@
       </div>
     </div>
     <div class="table">
-      <div class="addBtn"> 
+      <div class="addBtn">
         <el-row>
-         <el-button type="primary" @click="addMessage">新增消息策略</el-button>
+          <el-button type="primary" @click="addMessage">新增消息策略</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索"></el-input>
-          <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+          <el-input
+            v-model="triggerInput"
+            placeholder="请输入策略ID、策略名称搜索"
+          ></el-input>
+          <el-button
+            icon="el-icon-search"
+            style="margin-left:-1px;"
+          ></el-button>
           <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
@@ -30,23 +36,30 @@
         :data="tableData"
         style="width: 100%"
         height="450"
-        :default-sort="{prop: 'changeData', order: 'descending'}"
+        :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
         <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
-        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
+        <el-table-column
+          prop="chufa"
+          label="近24小时触发告警"
+        ></el-table-column>
         <el-table-column prop="type" label="消息接收组"></el-table-column>
         <el-table-column prop="address" label="告警渠道"></el-table-column>
         <el-table-column label="操作">
           <!-- <template slot-scope="scope"> -->
-          <template :slot-scope="$scope.row">
-            <el-button type="text" class="cloneBtn">复制</el-button>
+          <template slot-scope="scope">
+            <el-button type="text" class="cloneBtn" @click="Edit"
+              >编辑</el-button
+            >
             <el-button type="text" class="deleteBtn">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="Right-style pagstyle" style="background: #fff;">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <span class="pagtotal"
+          >共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CVM.strip") }}</span
+        >
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -187,7 +200,7 @@ export default {
     //新增消息策略
     addMessage() {
       // alert("/message/create")
-        this.$router.push({path:"/message/create"});
+      this.$router.push({ path: "/message/create" });
     },
     //分页
     handleCurrentChange(val) {
@@ -205,6 +218,12 @@ export default {
     //确定设置弹框
     save() {
       this.dialogVisible = false;
+    },
+    // 编辑
+    Edit() {
+      this.$router.push({
+        name: "messageEdit"
+      });
     }
   }
 };
