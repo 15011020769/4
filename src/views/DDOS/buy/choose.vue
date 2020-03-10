@@ -157,79 +157,79 @@
                     <span
                       class="spanList"
                       :class="type5 == 1 ? 'seceltList' : ''"
-                      @click="checkListFive(1, '1个月')"
-                      >1个月</span
+                      @click="checkListFive(1, '1個月')"
+                      >1個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 2 ? 'seceltList' : ''"
-                      @click="checkListFive(2, '2个月')"
-                      >2个月</span
+                      @click="checkListFive(2, '2個月')"
+                      >2個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 3 ? 'seceltList' : ''"
-                      @click="checkListFive(3, '3个月')"
-                      >3个月</span
+                      @click="checkListFive(3, '3個月')"
+                      >3個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 4 ? 'seceltList' : ''"
-                      @click="checkListFive(4, '4个月')"
-                      >4个月</span
+                      @click="checkListFive(4, '4個月')"
+                      >4個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 5 ? 'seceltList' : ''"
-                      @click="checkListFive(5, '5个月')"
-                      >5个月</span
+                      @click="checkListFive(5, '5個月')"
+                      >5個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 6 ? 'seceltList' : ''"
-                      @click="checkListFive(6, '6个月')"
+                      @click="checkListFive(6, '6個月')"
                     >
-                      6个月</span
+                      6個月</span
                     >
                     <span
                       class="spanList"
                       :class="type5 == 7 ? 'seceltList' : ''"
-                      @click="checkListFive(7, '7个月')"
+                      @click="checkListFive(7, '7個月')"
                     >
-                      7个月
+                      7個月
                     </span>
                     <span
                       class="spanList"
                       :class="type5 == 8 ? 'seceltList' : ''"
-                      @click="checkListFive(8, '8个月')"
+                      @click="checkListFive(8, '8個月')"
                     >
-                      8个月
+                      8個月
                     </span>
                     <span
                       class="spanList"
                       :class="type5 == 9 ? 'seceltList' : ''"
-                      @click="checkListFive(9, '9个月')"
+                      @click="checkListFive(9, '9個月')"
                     >
-                      9个月</span
+                      9個月</span
                     >
                     <span
                       class="spanList"
-                      :class="type5 == 10 ? 'seceltList' : ''"
-                      @click="checkListFive(10, '1年')"
+                      :class="type5 == 12 ? 'seceltList' : ''"
+                      @click="checkListFive(12, '1年')"
                     >
                       1年
                     </span>
                     <span
                       class="spanList"
-                      :class="type5 == 11 ? 'seceltList' : ''"
-                      @click="checkListFive(11, '2年')"
+                      :class="type5 == 24 ? 'seceltList' : ''"
+                      @click="checkListFive(24, '2年')"
                     >
                       2年</span
                     >
                     <span
                       class="spanList"
-                      :class="type5 == 12 ? 'seceltList' : ''"
-                      @click="checkListFive(12, '3年')"
+                      :class="type5 == 36 ? 'seceltList' : ''"
+                      @click="checkListFive(36, '3年')"
                     >
                       3年
                     </span>
@@ -313,9 +313,11 @@
           </div>
           <div class="allMoney">
             <span>{{ $t("DDOS.choose.sumMoney") }}</span>
-            <p>{{ this.showPrice(allMoney, 2) }}元</p>
-            <button class="payBtn" @click="payPage">立即支付</button>
+            <p v-if="isQury">{{ this.showPrice(allMoney, 2) }}圓</p>
+            <p class="query" v-else>費用查詢中...</p>
+            <button class="payBtn" @click="payPage"  :disabled="!isQury">立即支付</button>
           </div>
+          <!-- <div> <p>人民幣價格：{{ this.showPrice(testPrice, 2) }}圓</p></div> -->
         </div>
       </div>
     </div>
@@ -393,9 +395,9 @@ export default {
       checked4: "50Mbps", //业务规格
       checkedRoute4: 50,
       type5: 1,
-      checked5: "1个月", //购买时长
+      checked5: "1個月", //购买时长
       checkOrNull: "否",
-      allMoney: 34500,
+      allMoney: 0,
       checkChange1: "1500", //HTTP
       checkChange2: "1500", //HTTPS
       saveShow: true,
@@ -403,7 +405,9 @@ export default {
       city: "",
       GbpsIndex: 0,
       GbpsChildIndex: 0,
-      OrderIds:[]
+      OrderIds:[],
+      testPrice:0, //測試數據
+      isQury: false
     };
   },
   mounted: function() {
@@ -434,9 +438,12 @@ export default {
       } else {
         this.ccText = "40,000QPS";
       }
-      this.queryPrice();
+      // 按照騰訊云邏輯處理
+      this._GbpsChild(0, this.GbpsChildIndex[0])
+      this.checkListFive(1, '1個月')
+      // this.queryPrice();
     },
-    region() {
+    region () {
       this.axios.get(ALL_CITY).then(data => {
         if (data === undefined || data.data === undefined) {
           this.city = "台灣台北";
@@ -539,6 +546,7 @@ export default {
     },
     // 查询价格
     queryPrice() {
+      this.isQury = false
       let GoodsDetail = {
         bandwidth: this.checked2, // 保底带宽
         gfbandwidth: this.checkedRoute4, // 业务带宽
@@ -574,7 +582,9 @@ export default {
       this.axios.post(QUERY_PRICE, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
-            this.allMoney = res.Response.PriceInfos[0].TotalCost;
+            this.allMoney =  res.Response.PriceInfos[0].TotalCost
+            this.testPrice = res.Response.PriceInfos[0].totalCost_rmb
+             this.isQury = true
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -611,7 +621,6 @@ export default {
     // 展示价格
     showPrice(number, decimals = 0, decPoint = ".", thousandsSep = ",") {
       number = (number + "").replace(/[^0-9+-Ee.]/g, "");
-      console.log(number)
       let n = !isFinite(+number) ? 0 : +number;
       let prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
       let sep = typeof thousandsSep === "undefined" ? "," : thousandsSep;
@@ -788,6 +797,12 @@ export default {
           font-size: 25px;
           font-weight: 500;
           color: #ed711f;
+        }
+        .query {
+           margin: 16px 0 22px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #666;
         }
         .payBtn {
           width: 100px;

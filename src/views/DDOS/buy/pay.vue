@@ -40,10 +40,10 @@
                   <p><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
                   <p><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
                   <p><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
-                  <p><span>轉發規則數(个)：{{allData1.shareNum}}</span></p>
+                  <p><span>轉發規則數(個)：{{allData1.shareNum}}</span></p>
                 </td>
                 <td>
-                  <span>{{this.showPrice(allData1.payMoney,2)}}元/月</span>
+                  <span>{{this.showPrice(allData1.payMoney,2)}}圓/月</span>
                 </td>
                 <td>
                   <span>1</span>
@@ -58,7 +58,7 @@
                   <span>無</span>
                 </td>
                 <td>
-                  <span class="tableTdLast">{{this.showPrice(allData1.payMoney,2)}}元</span>
+                  <span class="tableTdLast">{{this.showPrice(allData1.payMoney,2)}}圓</span>
                 </td>
               </tr>
             </table>
@@ -66,7 +66,7 @@
         <div class="bottomPay">
           <div class="pay-submit">
             <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span>
-            <span class="allTotal">总计费用：<span class="allMoneySpan"> ¥<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
+            <span class="allTotal">總計費用：<span class="allMoneySpan"> NT$<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
             <el-button class="payBtnOne">代理支付</el-button>
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>
           </div>
@@ -96,7 +96,7 @@ export default{
       if (this.active === 1) {
         this.GenerateDeals()
       } else if (this.active === 2) {
-        this.PayDeals()
+        // this.PayDeals() // 支付接口暫時屏蔽 待 業務邏輯梳理完整后放開
       }
     },
     // 支付订单
