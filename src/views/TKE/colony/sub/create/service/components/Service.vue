@@ -222,12 +222,16 @@ export default {
       ],
       verifyPort2: [{// 主机端口的验证
         validator: (rule, value, callback) => {
-          // let ls = this.svc.list
+          let ls = this.svc.list
           // let flog = false
           // if (ls.length > 1) {
-          //   for (let i = 0; i < ls.length - 1; i++) {
+          // for (var i = 0; i < ls.length; i++) {
           //     ls[i].input3 === value ? flog = true : flog = false
-          //   }
+					      //  if (ls[i].input3 === value) {
+          //  console.log(123)
+          //  callback(new Error('端口不可重复映射'))
+          //  }
+          // }
           // }
           // if (flog) {
           //   callback(new Error('端口不可重复映射'))
@@ -338,7 +342,7 @@ export default {
     // 新增端口
     addport () {
       // console.log(this.svc.list)
-      if (this.svc.radio == '4') {
+      // if (this.svc.radio == '4') {
         this.svc.list.push({
           value: '',
           input1: '',
@@ -347,15 +351,15 @@ export default {
           protocol: 'TCP',
           key: Date.now()
         })
-      } else {
-        this.svc.list.push({
-          value: '',
-          input1: '',
-          input2: '',
-          protocol: 'TCP',
-          key: Date.now()
-        })
-      }
+      // } else {
+      //   this.svc.list.push({
+      //     value: '',
+      //     input1: '',
+      //     input2: '',
+      //     protocol: 'TCP',
+      //     key: Date.now()
+      //   })
+      // }
     }
   }
 }
