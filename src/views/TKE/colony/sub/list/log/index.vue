@@ -135,7 +135,7 @@ export default {
       htmls: "",
       listNumFlag: true, //条数禁用
       option1: [],
-      timeId:null,
+      timeId: null,
       option2: [
         {
           value: "Deployment",
@@ -249,8 +249,12 @@ export default {
       });
     },
     getPodData() {
-      var v = this.value3;
-      v = v.replace(v[0], v[0].toLowerCase());
+      if (v != "") {
+        var v = this.value3.replace(
+          this.value3[0],
+          this.value3[0].toLowerCase()
+        );
+      }
       var v1 = this.value2;
       v1 = v1.replace(v1, v1.toLowerCase()) + "s";
       var params = {
@@ -267,9 +271,10 @@ export default {
         ClusterName: this.$route.query.clusterId
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        this.option5 = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          if (mes.items != []) {
+          if (mes.items.length > 0) {
             this.option4 = [];
             mes.items.forEach(item => {
               this.option4.push({
@@ -283,7 +288,7 @@ export default {
             this.value4 = "Pod列表为空";
             return;
           }
-          if (mes.items != []) {
+          if (mes.items.length > 0) {
             this.option5 = [];
             mes.items.forEach(item => {
               item.spec.containers.forEach(i => {
@@ -303,6 +308,7 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {};
+          this.option5 = [];
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -356,14 +362,16 @@ export default {
             this.listNumFlag = true;
             return;
           } else {
-            this.option3 = [];
             mes.items.forEach(item => {
               this.option3.push({
                 value: item.metadata.name,
                 label: item.metadata.name
               });
             });
-            this.value3 = this.option3[0].value;
+            console.log(this.option3[0].value)
+            if (this.option3[0].value!="") {
+              this.value3 = this.option3[0].value;
+            }
             this.listNumFlag = false;
             this.getPodData();
           }

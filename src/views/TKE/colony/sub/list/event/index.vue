@@ -316,22 +316,24 @@ export default {
         // /apis/batch/v1/namespaces/default/jobs
         params.Path =
           "/apis/batch/v1/namespaces/" + this.nsValue + "/" + typeValues;
-      } else if (
-        this.typeValue == "node" ||
-        this.typeValue == "persistentvolume"
-      ) {
+      } else if (this.typeValue == "node") {
         // /api/v1/nodes
         params.Path = "/api/v1/" + typeValues;
-      } else if (
-        this.typeValue == "pod" ||
-        this.typeValue == "persistentcolumeclaim" ||
-        this.typeValue == "service"
-      ) {
+      } else if (this.typeValue == "pv") {
+        // /api/v1/nodes
+        params.Path = "/api/v1/persistentvolumes";
+      } else if (this.typeValue == "pods") {
         // /api/v1/namespaces/default/pods
-        params.Path = "/api/v1/namespaces" + this.nsValue + "/" + typeValues;
-      } else if (this.typeValue == "storageclass") {
+        params.Path =
+          "/api/v1/namespaces/" + this.nsValue + "/" + this.typeValue;
+      } else if (this.typeValue == "pvc") {
+        params.Path =
+          "/api/v1/namespaces/" + this.nsValue + "/persistentvolumeclaims";
+      } else if (this.typeValue == "svc") {
+        params.Path = "/api/v1/namespaces/" + this.nsValue + "/services";
+      } else if (this.typeValue == "sc") {
         // /apis/storage.k8s.io/v1/storageclasses
-        params.Path = "/apis/storage.k8s.io/v1/" + typeValues;
+        params.Path = "/apis/storage.k8s.io/v1/storageclasses";
       }
       params.Method = "GET";
       params.ClusterName = this.$route.query.clusterId;
