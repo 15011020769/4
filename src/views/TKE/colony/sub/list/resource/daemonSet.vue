@@ -388,7 +388,7 @@ export default {
     //设置更新策略
     goSetUpdateTactics(rowData){
       this.$router.push({
-        name:'setStrategy',
+        name:'daemonSetStrategy',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
