@@ -50,7 +50,7 @@
                   :disabled="disabledAccount"
                   style="width:150px"
                 ></el-input>
-                <p v-if="notExists" style="color: #e54545;">您輸入的賬號不存在</p>
+                <p v-if="notExists" style="color: #e54545;">您輸入的帳號不存在</p>
               </p>
             </div>
           </div>
@@ -92,7 +92,7 @@
                   size="mini"
                 ></el-input>
               </p>
-              <p class="jscontent text">賬號-{{ input_num }}</p>
+              <p class="jscontent text">帳號-{{ input_num }}</p>
             </div>
           </div>
           <div class="content_table">

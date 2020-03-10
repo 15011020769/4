@@ -204,7 +204,7 @@ export default {
           code: 1,
           title: "可訪問資源並接收消息",
           txt:
-            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子賬號的全部功能"
+            "該用戶可以登錄控制台或通過 API 密鑰訪問您授予其許可權的台富雲資源，同時擁有接收消息等子帳號的全部功能"
         },
         {
           code: 0,
@@ -366,7 +366,7 @@ export default {
           "InvalidParameter.ParamError": "非法入參",
           "InvalidParameter.PasswordViolatedRules":
             "密碼不符合用戶安全設置",
-          "InvalidParameter.SubUserFull": "子賬號數量達到上限",
+          "InvalidParameter.SubUserFull": "子帳號數量達到上限",
           "InvalidParameter.SubUserNameInUse": "子用戶名稱重複"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);

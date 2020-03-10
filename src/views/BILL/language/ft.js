@@ -41,8 +41,8 @@ module.exports = {
       threeMonth: '最近三個月'
     },
     Detail: {
-      title: '賬單明細',
-      note: '按扣費周期（按扣費時間統計生產月度賬單）',
+      title: '帳單明細',
+      note: '按扣費周期（按扣費時間統計生產月度帳單）',
       allProduct: '全部產品',
       allProject: '全部專案',
       allArea: '全部區域',
@@ -86,15 +86,15 @@ module.exports = {
       incentivePaybak: '贈送帳戶支付金額',
       usdExpendbak: '美金結算金額',
       ntExpendbak: '台幣結算金額',
-      month: '賬單月份',
+      month: '帳單月份',
       label1: '請選擇子產品',
       label2: '請先選擇產品',
       label3: '請選擇組件類型',
       label4: '請先選擇子產品'
     },
     Overview: {
-      title: '賬單概覽',
-      note: '按扣費周期（按扣費時間統計生產月度賬單）',
+      title: '帳單概覽',
+      note: '按扣費周期（按扣費時間統計生產月度帳單）',
       costTrend: '費用趨勢',
       unit: '（單位：新台幣）',
       half: '近半年',
@@ -105,7 +105,7 @@ module.exports = {
       cashAmount: '現金支付',
       incentiveAmount: '贈送金支付',
       voucherAmount: '代金券支付',
-      billSum: '賬單匯總',
+      billSum: '帳單匯總',
       productSum: '按產品匯總',
       businessCodeName: '產品名稱',
       projectSum: '按專案（組）匯總',
