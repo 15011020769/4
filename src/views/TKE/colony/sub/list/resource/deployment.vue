@@ -599,6 +599,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowDeleteModal = false;
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.getDeploymentList();
         } else {
           this.loadShow = false;

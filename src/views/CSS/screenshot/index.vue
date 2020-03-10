@@ -113,7 +113,9 @@ export default {
             this.modalVisible = false;
             this.$message({
               message: "删除成功",
-              type: "success"
+              type: "success",
+              showClose: true,
+              duration: 0,
             });
             this.fetchRecordingList();
             return;

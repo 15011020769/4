@@ -81,8 +81,8 @@ export default {
     _export() {
       const ws = XLSX.utils.json_to_sheet(this.json);/* 新建空workbook，然后加入worksheet */
       const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, "统计数据");/* 生成xlsx文件(book,sheet数据,sheet命名) */
-      XLSX.writeFile(wb, "统计数据.csv");/*写文件(book,xlsx文件名称)*/
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "統計數據.csv");/*写文件(book,xlsx文件名称)*/
     },
     //分页
     handleCurrentChange(val) {

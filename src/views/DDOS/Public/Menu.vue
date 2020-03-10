@@ -18,7 +18,7 @@
       :router="true"
     >
       <el-menu-item index="ProtectOverview">
-        <span slot="title">防護概览</span>
+        <span slot="title">防護概覽</span>
       </el-menu-item>
       <el-menu-item index="basicProtection">
         <span slot="title">基础防護</span>

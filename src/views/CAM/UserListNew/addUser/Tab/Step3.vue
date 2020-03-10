@@ -7,9 +7,9 @@
           <div class="app-cam-alert__info">
             <h4>授權提示</h4>
             <ul class="app-cam-list app-cam-list--bullet">
-              <li>如果您希望授予子賬號當前賬號下全部資源的全部訪問許可權，請單選 AdministratorAccess 即可</li>
-              <li>如果您希望授予子賬號當前賬號下除去訪問管理（CAM）、費用中心以外的全部資源訪問許可權，請單選 QCloudResourceFullAccess 即可</li>
-              <li>如果您希望授予子賬號當前賬號下全部資源的只讀訪問許可權，請單選 ReadOnlyAccess 即可</li>
+              <li>如果您希望授予子帳號當前帳號下全部資源的全部訪問許可權，請單選 AdministratorAccess 即可</li>
+              <li>如果您希望授予子帳號當前帳號下除去訪問管理（CAM）、費用中心以外的全部資源訪問許可權，請單選 QCloudResourceFullAccess 即可</li>
+              <li>如果您希望授予子帳號當前帳號下全部資源的只讀訪問許可權，請單選 ReadOnlyAccess 即可</li>
             </ul>
           </div>
         </div>

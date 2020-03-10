@@ -394,6 +394,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       // 条件搜索参数
@@ -418,6 +419,7 @@ export default {
                 // 1.防护等级
                 let params = {
                   Version: "2018-07-09",
+                  Region: localStorage.getItem("regionv2"),
                   Business: "net",
                   Id: item.Value,
                   Method: "get"
@@ -443,6 +445,7 @@ export default {
                 // 2.高级防护策略
                 let params2 = {
                   Version: "2018-07-09",
+                  Region: localStorage.getItem("regionv2"),
                   Business: "net",
                   Id: item.Value
                 };
@@ -528,6 +531,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(GET_SPolicy, params).then(res => { 
@@ -550,6 +554,7 @@ export default {
     modifyResBindDDoSPolicy(resId, method) {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: resId, //资源ID
         PolicyId: this.bindingCon.PolicyId, //策略ID
@@ -638,6 +643,7 @@ export default {
     deleteDDoSPolicy() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         PolicyId: this.deleteBegin.PolicyId
       };

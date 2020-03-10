@@ -134,7 +134,7 @@
     },
     created() {
       //系统默认加载用户list
-      this.getUserList();
+      // this.getUserList();
       this.getAttachPolicys(this.PolicyId)
     },
     watch: {
@@ -175,8 +175,10 @@
                   groupArr.push(item);
                 }
               })
-              this.userArr = this.userArr.concat(userArr);
-              this.groupArr = this.groupArr.concat(groupArr);
+              // this.userArr = this.userArr.concat(userArr);
+              // this.groupArr = this.groupArr.concat(groupArr);
+              this.userArr = userArr;
+              this.groupArr = groupArr;
               this.loading1 = false
             }
           }
@@ -192,7 +194,9 @@
             duration: 0
           });
         }
-      });
+      }).then(() => {
+        this.getUserList();
+      })
     },
       checkboxT(row, index) {
         if (row.status == 1) {

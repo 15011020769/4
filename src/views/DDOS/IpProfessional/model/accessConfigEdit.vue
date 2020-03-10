@@ -153,6 +153,7 @@ export default {
       this.$emit("closeEditModel", this.dialogVisible);
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.getResourceId,
         "Rule.RuleId": this.EnidData.RuleId,

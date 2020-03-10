@@ -554,8 +554,8 @@
                   LimitExceeded: "超過配額限制",
                   ResourceNotFound: "資源不存在",
                   "UnsupportedOperation.CcnAttached": "實例已關聯CCN",
-                  "UnsupportedOperation.IsNotFinanceAccount": "關聯當前雲聯網的實例的賬號存在不是金融雲賬號",
-                  "UnsupportedOperation.UinNotFound": "賬號ID不存在",
+                  "UnsupportedOperation.IsNotFinanceAccount": "關聯當前雲聯網的實例的帳號存在不是金融雲帳號",
+                  "UnsupportedOperation.UinNotFound": "帳號ID不存在",
                   "UnsupportedOperation.UnableCrossBorder": "不支持跨境",
                   "UnsupportedOperation.UnableCrossFinance": "當前雲聯網無法關聯金融雲實例"
                 };

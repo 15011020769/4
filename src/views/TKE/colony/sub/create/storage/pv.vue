@@ -43,7 +43,7 @@
             <el-form-item label="Provisioner" class="m0">
               <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
                 <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
-                <el-tooltip class="item" effect="light" placement="top">
+                <!-- <el-tooltip class="item" effect="light" placement="top">
                   <div slot="content">
                     扩展组件功能处于白名单体验阶段，如需使用，请
                     <a>工单咨询</a>
@@ -56,7 +56,7 @@
                     <a>工单咨询</a>
                   </div>
                   <el-radio-button label="CFS" disabled>对象存储COS</el-radio-button>
-                </el-tooltip>
+                </el-tooltip> -->
               </el-radio-group>
             </el-form-item>
             <el-form-item label="读写权利" class="m0">

@@ -451,6 +451,12 @@ export default {
       };
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.loadShow = false;
           this.isShowDeleteModal = false;
           this.getStatefulSetList();

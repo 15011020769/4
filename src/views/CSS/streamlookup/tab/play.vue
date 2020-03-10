@@ -1,6 +1,6 @@
 <template>
   <div class="stream-wrap">
-    <el-button type="text" size="mini" class="excel_part" @click="exportEchart">导出数据</el-button>
+    <el-button type="text" size="mini" class="excel_part" @click="exportEchart">導出數據</el-button>
     <Echart
       :xAxis="xAxis1"
       :series="series1"
@@ -12,7 +12,7 @@
         formatter: `{b}<br/>{a}  {c}Mbps`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <Echart
       :xAxis="xAxis1"
       :series="series2"
@@ -25,7 +25,7 @@
         formatter: `{b}<br/>{a}  {c}MB`
       }"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
     <Echart
       :xAxis="xAxis1"
       :series="series3"
@@ -34,7 +34,7 @@
       v-if="showEchart"
       color="#fa970c"
     />
-    <div class="empty" v-else>暫無數據</div>
+    <div class="empty" v-else>暫無數據，請核實流ID和查詢時段</div>
   </div>
 </template>
 
@@ -81,8 +81,8 @@ export default {
     exportEchart() {
       const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
       const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, "播放数据");/* 生成xlsx文件(book,sheet数据,sheet命名) */
-      XLSX.writeFile(wb, "播放数据.csv");/*写文件(book,xlsx文件名称)*/
+      XLSX.utils.book_append_sheet(wb, ws, "播放數據");/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, "播放數據.csv");/*写文件(book,xlsx文件名称)*/
     },
     init() {
       this.loading = true;

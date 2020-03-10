@@ -126,7 +126,7 @@ export default {
     return {
       colorIndex: "",
       modelSelectData: [
-        { title: "賬號場景", content: "登入、註冊、找回密碼等" },
+        { title: "帳號場景", content: "登入、註冊、找回密碼等" },
         { title: "簡訊場景", content: "發送簡訊、郵箱驗證碼等" },
         { title: "活動場景", content: "秒殺、領券、搶紅包等" },
         { title: "其他場景", content: "評論、投票、發帖等" }

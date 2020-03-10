@@ -388,7 +388,7 @@ export default {
     //设置更新策略
     goSetUpdateTactics(rowData){
       this.$router.push({
-        name:'setStrategy',
+        name:'daemonSetStrategy',
         query:{
           clusterId: this.clusterId,
           name: rowData.metadata.name,
@@ -445,6 +445,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.loadShow = false;
           this.isShowDeleteModal = false;
+           this.$message({
+                type: "success",
+                message: "删除成功",
+                duration: 0,
+                showClose: true
+            });
           this.getDaemonSetList();
         } else {
           this.loadShow = false;

@@ -154,6 +154,7 @@ export default {
     GetID() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
       this.axios.post(GET_ID, params).then(res => {
@@ -207,6 +208,7 @@ export default {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC,
@@ -328,9 +330,10 @@ export default {
     describeCCTrend() {
       let params = {
         Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdCC,
-        Ip: "175.97.142.150", //资源的IP
+        Ip: this.IpList[0], //资源的IP
         MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
         Period: this.periodCC, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeCC,

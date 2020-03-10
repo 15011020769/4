@@ -72,23 +72,7 @@
 <script>
 import { ADD_CALLBACK_TEMPLATE, UPDATE_CALLBACK_TEMPLATES } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-let ErrTips = {
-  InternalError: "內部錯誤",
-  "InternalError.ArgsNotMatch": "針對添加轉碼範本的接口",
-  InvalidParameter: "參數錯誤",
-  MissingParameter: "缺少參數錯誤",
-  "InvalidParameterValue.InstanceNotExist": "實例不存在",
-  "InvalidParameterValue.RepetitionValue": "已存在相同參數",
-  "InvalidParameterValue.SubnetIdInvalid": "無效的子網id",
-  "InvalidParameterValue.SubnetNotBelongToZone": "子網不屬於zone",
-  "InvalidParameterValue.VpcIdInvalid": "無效的 Vpc Id",
-  "InvalidParameterValue.WrongAction": "Action參數取值錯誤",
-  "InvalidParameterValue.ZoneNotSupport": "zone不支持",
-  ResourceUnavailable: "資源不可用",
-  UnauthorizedOperation: "未授權操作",
-  "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
-  "UnsupportedOperation.OssReject": "Oss拒絕該操作"
-};
+import { CSSErrorTips } from "../../components/CSSErrorTips";
 export default {
   name: "optionForm",
 
@@ -102,7 +86,7 @@ export default {
     let checkCallbackKey = (rule, value, callback) => {
       if (value && value.length > 0) {
         let result = /^[a-zA-Z0-9]{1,32}$/.test(value);
-
+        console.log(result)
         if (!result) {
           return callback(
             new Error("回調金鑰由大小寫字母及數字組成，最長32個字符")
@@ -250,7 +234,7 @@ export default {
           this.$emit("update:formShow", false);
           return;
         }
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
         this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },
@@ -266,7 +250,7 @@ export default {
           this.$emit("update:formShow", false);
           return;
         }
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
         this.$message.error(ErrOr[data.Response.Error.Code]);
       });
     },

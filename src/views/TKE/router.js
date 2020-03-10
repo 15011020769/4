@@ -380,6 +380,14 @@ export default new Router({
       }
     },
     {
+      path: '/colony/sub/update/resource/daemonSet/setStrategy', //设置更新策略
+      name: 'daemonSetStrategy',
+      component: () => import('./colony/sub/update/resource/daemonSet/setStrategy.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/colony/sub/update/resource/updateStrategy',//更新调度策略
       name: 'updateStrategy',
       component: () => import('./colony/sub/update/resource/updateStrategy.vue'),
