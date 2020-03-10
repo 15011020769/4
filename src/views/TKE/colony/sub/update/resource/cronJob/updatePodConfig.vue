@@ -379,15 +379,15 @@
            <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">显示高级设置</a>
            <div v-show="highLevelSetShow2">
             <el-form-item label="imagePullSecrets">
-              <el-select   v-model='upn.type' style="margin-top:10px" >
+              <el-select   v-model='upn.type1' disabled style="margin-top:10px" >
                 <el-option value='1'>
                 </el-option>
               </el-select><br>
-              <el-select  v-model='upn.type' style="margin-top:10px">
+              <el-select  v-model='upn.type2' disabled style="margin-top:10px">
                 <el-option value='1'>
                 </el-option>
               </el-select>
-              <p>添加</p>
+              <p style="cursor:pointer">添加</p>
             </el-form-item>
             <a @click="highLevelSetShow2=!highLevelSetShow2">隐藏高级设置</a>
          </div>
@@ -549,8 +549,8 @@ export default {
       isAddContainer: false, // 是否可以点击 添加容器
       // 更新pod数量
       upn: {
-        type: '1',
-        num: 0,
+        type1: 'qcloudregistrykey',
+        type2: 'tencenthubkey',
       },
       touchTactics: [{
         touch1: 'CPU',

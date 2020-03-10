@@ -370,12 +370,13 @@ export default {
                 let obj=response.items[0];
               console.log(obj)
                 if(obj.spec.jobTemplate!=undefined){
-                  if(obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
+
+                   if(obj.spec.jobTemplate.spec.template.spec['affinity']==undefined){
+                      this.se.radio='1';
+                  }else if(obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].key=='kubernetes.io/hostname'){
                        this.se.radio='2';
                       let nd=obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity['requiredDuringSchedulingIgnoredDuringExecution'].nodeSelectorTerms[0].matchExpressions[0].values;
                        this.appointNode=nd;
-                  }else if(obj.spec.jobTemplate.spec.template.spec['affinity']==undefined){
-                      this.se.radio='1';
                   }else{
                        this.se.radio='3';
                        let nd2=obj.spec.jobTemplate.spec.template.spec['affinity'].nodeAffinity;
