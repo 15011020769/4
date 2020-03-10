@@ -92,7 +92,7 @@
                  <el-form-item label="镜像">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
                    <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">选择镜像</el-button>
-                   <SelectMirrorImg :dialogVisible='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
+                   <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
                  </el-form-item>
                  <el-form-item label="镜像版本（Tag）">
                    <el-input class="w192" v-model="v.versions"></el-input>
