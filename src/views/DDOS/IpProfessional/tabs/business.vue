@@ -1,4 +1,5 @@
 <template>
+<!-- 统计报表-业务 -->
   <div class="child">
     <div class="mainConList" v-loading="loading">
       <div class="mainConListAll mainConListOne">
@@ -141,6 +142,7 @@ export default {
             return
           }
           this.IpList = res.Response.Resource[0].IpList;
+          this.IpList.splice(0, 0, '總覽');
           this.inputIdService = res.Response.Resource[0].Id;
 				} else {
 					let ErrTips = {};
@@ -173,7 +175,7 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdService,
-        Ip: this.IpList[0], //资源的IP
+        Ip: this.IpList[0]=='總覽'?'':this.IpList[0], //资源的IP
         MetricName: this.metricNameService2,
         Period: this.periodService, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeService,
