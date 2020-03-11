@@ -12,6 +12,17 @@
           <span class="text" @click="showDelDialog=true">查看变更后详情</span>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
+      </div>
     </el-card>
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
       <p style="color:#444;font-weight:800;margin-bottom:30px">变更后详情</p>
@@ -58,7 +69,10 @@ export default {
       transLogData: [],
       IndexAlarm: [], // 指标告警
       EventAlarm: [], // 事件告警
-      groudId: ''
+      groudId: '',
+      TotalCount: 0, // 总条数
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     }
   },
   components: {
@@ -69,9 +83,11 @@ export default {
     this.getTransLog()
   },
   methods: {
+    // 获取日志数据(未完成,接口有误)
     async getTransLog () {
       this.loadShow = true
       let params = {
+        // Version: '2018-07-24',
         dId: this.groudId,
         lang: 'zh',
         limit: 20,
@@ -81,6 +97,7 @@ export default {
       await this.axios.post(GET_TRANS_LOG, params).then(res => {
         if (res.codeDesc === 'Success') {
           let msg = res.data.list
+          this.TotalCount = res.data.total
           // console.log(res)
           if (msg[0]) {
             this.transLogData = msg
@@ -100,6 +117,10 @@ export default {
           })
         }
       })
+    },
+    // 分页
+    handleCurrentChange (val) {
+      this.currpage = val
     },
     // 格式化时间
     upTime (value) {
@@ -153,6 +174,24 @@ export default {
     color: #444;
     margin-bottom: 10px;
     line-height: 15px;
+  }
+}
+.Right-style {
+      display: flex;
+      justify-content: flex-end;
+
+      .esach-inputL {
+        width: 300px;
+        margin-right: 20px;
+      }
+    }
+.pagstyle {
+  padding: 20px;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
 }
 </style>

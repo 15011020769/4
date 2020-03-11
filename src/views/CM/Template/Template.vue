@@ -27,6 +27,7 @@
             <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.groupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{scope.row.groupName}}</span>
             </el-popover>
+            <i class="el-icon-edit ml5" @click="showEditNameDlg(scope.row)"></i>
           </template>
         </el-table-column>
         <el-table-column prop="chufa" label="触发条件">
@@ -80,7 +81,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId)">复制</el-button>
+            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId,scope.row,groupName)">复制</el-button>
             <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.groupId)">删除</el-button>
           </template>
         </el-table-column>
@@ -97,6 +98,19 @@
         ></el-pagination>
       </div>
     </div>
+    <!-- 编辑模板名称弹框 -->
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="35%">
+      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
+      <el-form :model="templateObj" :rules="rules" ref="form">
+        <el-form-item prop="groupName">
+          <el-input maxlength="20" v-model="templateObj.groupName"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitEditName()">保 存</el-button>
+        <el-button @click="isShowDelDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
         <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板</p>
@@ -108,14 +122,14 @@
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
         <p style="color:#444;font-weight:bolder;">复制所选触发条件模板</p>
-        <p style="font-size:12px;margin-top:20px">是否复制 model测试改名</p>
+        <p style="font-size:12px;margin-top:20px">{{`是否复制${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="coptData()">确 定</el-button>
           <el-button @click="showCopyDialog = false">取 消</el-button>
         </span>
       </el-dialog>
     <!-- 新建对话框 -->
-    <Dialog :dialogVisible="panelFlag" @cancel="cancel" @save="save" style="margin:0;" />
+    <Dialog @open="openDialogEvent" :dialogVisible.sync="panelFlag" @save="save" style="margin:0;" />
   </div>
 </template>
 
@@ -125,7 +139,14 @@ import Dialog from './components/dialog'
 import Loading from '@/components/public/Loading'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips'
-import { COPY_TEMPLATE, DELETE_TEMPLATE, GET_POLICY_GROUP_TYPE, GET_TEMPLATE_LIST } from '@/constants/CM-yhs.js'
+import {
+  COPY_TEMPLATE,
+  DELETE_TEMPLATE,
+  GET_POLICY_GROUP_TYPE,
+  GET_DESCRIBECONDITIONSTEMPLATELIST,
+  GET_TENCENTCLOUDAPI,
+  GET_TEMPLATE_LIST,
+  UPDATE_INFO } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -134,9 +155,12 @@ export default {
       panelFlag: false, // dialog新建弹框
       // metricShowName:'',//指标显示名称
       // dialogFormVisible: false,
+      ShowEditDialog: false, // 是否显示修改名称弹框
       showDelDialog: false, // 是否显示删除弹框
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
+      groupName: '', // 模板名称
+      templateObj: {}, // 当前模板数据对象
       formInline: {
         product_kind: [
           {
@@ -296,7 +320,24 @@ export default {
       currpage: 1, // 当前页码
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
-      triggerInput: '' // 触发条件模板名
+      triggerInput: '', // 触发条件模板名
+      rules: {// 验证名字
+        groupName: [
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('名称不能为空'))
+              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
+                callback(new Error('条件模板名称不能超过20个字符'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change',
+            required: true
+          }
+        ]
+      }
     }
   },
   components: {
@@ -310,17 +351,17 @@ export default {
     // console.log(this.upTime(1583490304))
   },
   methods: {
-
-    getReportUserLastVisit () {
+    // 打开弹窗时的回调
+    openDialogEvent () {
+      this.getTemplateList()
+    },
+    // 获取触发条件列表
+    async getTemplateList () {
       let params = {
-        loginOwnerUin: 100011921910,
-        loginUin: '100011921910',
-        productName: '/monitor',
-        skey: 'j5bbEd42OsF3A*lCvM*5ahGqKjM3hsXUilZJLhYsXPM_'
+        Version: '2018-07-24'
       }
-      this.axios.post('ReportUserLastVisit', params).then(res => {
+      await this.axios.post('monitor2/DescribeConditionsTemplateList', params).then(res => {
         console.log(res)
-        // this.Dialog
       })
     },
     // 获取列表数据
@@ -380,21 +421,39 @@ export default {
       this.triggerInput = val
       this.getListData()
     },
-    // 删除按钮
-    delBtn (id) {
-      this.showDelDialog = true
-      this.groupId = id
-      // console.log(id)
+    // 编辑模板名称按钮
+    showEditNameDlg (obj) {
+      this.isShowDelDialog = true
+      this.templateObj = obj
+    },
+    // 确定编辑模板名称完成(未完成,接口参数有误)
+    async submitEditName () {
+      this.isShowDelDialog = false
+      let params = {
+        Version: '2018-07-24',
+        groupId: this.groupId,
+        groupType: 3,
+        key: 'groupName',
+        lang: 'zh',
+        value: this.groupName
+      }
+      await this.axios.post(UPDATE_INFO, params).then(res => {
+        console.log(res)
+        // this.getListData()
+      })
     },
     // 复制按钮
-    copyBtn (id) {
+    copyBtn (id, name) {
       this.showCopyDialog = true
       this.groupId = id
+      this.groupName = name.groupName
+      console.log(id)
     },
     // 复制数据
     async coptData () {
       this.loadShow = true
       let params = {
+        // Version: '2018-07-24',
         groupId: this.groupId,
         lang: 'zh'
       }
@@ -411,9 +470,16 @@ export default {
         }
       })
     },
+    // 删除按钮
+    delBtn (id) {
+      this.showDelDialog = true
+      this.groupId = id
+      // console.log(id)
+    },
     // 删除对应的数据
     async submitDelete () {
       let params = {
+        // Version: '2018-07-24',
         groupId: this.groupId,
         isDelRelatedPolicy: 2,
         lang: 'zh'
@@ -466,9 +532,9 @@ export default {
       this.panelFlag = true
     },
     // 取消设置弹框
-    cancel () {
-      this.panelFlag = false
-    },
+    // cancel () {
+    //   this.panelFlag = false
+    // },
     // 确定设置弹框
     save () {
       this.panelFlag = false

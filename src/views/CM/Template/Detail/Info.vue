@@ -57,6 +57,7 @@
           <span v-else>{{'-'}}</span>
         </el-table-column>
       </el-table>
+      <div class="number">共 {{total}} 项</div>
     </el-card>
     <!-- 修改名称弹框 -->
     <el-dialog class="dil" :visible.sync="showDelDialog1" width="35%">
@@ -221,7 +222,14 @@
 </template>
 
 <script>
-import { GET_TEMPLATE_LIST, GET_GROUP_LIST, GET_POLICY_GROUP_TYPE, UPDATE_INFO, DESCRIBE_METRICS } from '@/constants/CM-yhs.js'
+import {
+  GET_TENCENTCLOUDAPI,
+  GET_TEMPLATE_LIST,
+  GET_GROUP_LIST,
+  GET_POLICY_GROUP_TYPE,
+  UPDATE_INFO,
+  DESCRIBE_METRICS
+} from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
 import moment from 'moment'
@@ -238,6 +246,7 @@ export default {
       isDisGJ: false, // 事件告警是否禁用
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
+      total: 0, // 告警策略列表总数
       id: '', // 模板id
       Conditions: [],
       formInline: {
@@ -406,10 +415,29 @@ export default {
   },
   methods: {
     async getInfo () {
+      // await this.getTemplateList()
       await this.getPolicyType()
       await this.getDetailInfo()
       await this.getPolicyGroupList()
+      // await this.getConditionsTemplateList()
     },
+    // 获取告警策略模板列表
+    // async getConditionsTemplateList () {
+    //   let { groupName, groupId, viewName } = this.conditionsData
+    //   let params = {
+    //     Module: 'monitor',
+    //     ViewName: viewName,
+    //     GroupName: groupName,
+    //     GroupID: groupId,
+    //     UpdateTimeOrder: 'desc',
+    //     Limit: 1,
+    //     Offset: 0,
+    //     Version: '2018-07-24'
+    //   }
+    //   this.axios.post(GET_DESCRIBECONDITIONSTEMPLATELIST, params).then(res => {
+    //     console.log(res)
+    //   })
+    // },
     // 获取策略类型
     async getPolicyType  () {
       this.loadShow = true
@@ -471,7 +499,7 @@ export default {
         }
       })
     },
-    // 获取策略组列表
+    // 获取策略组列表(未完成  参数有误)
     async getPolicyGroupList () {
       this.loadShow = true
       let params = {
@@ -479,11 +507,13 @@ export default {
         lang: 'zh',
         like: '',
         limit: 20,
-        offset: 0
+        offset: 0,
+        Version: '2018-07-24'
       }
       await this.axios.post(GET_GROUP_LIST, params).then(res => {
         if (res.codeDesc === 'Success') {
           let msg = res.data.groupList
+          this.total = res.data.total
           msg.forEach(ele => {
             ele.receiverGroup = ele.receiverInfos && ele.receiverInfos[0].receiverGroupList.length
             if (ele.receiverInfos.length > 0) {
@@ -591,7 +621,7 @@ export default {
         console.log(res)
       })
     },
-    addZhibiao () {// 添加触发条件的指标告警
+    addZhibiao () { // 添加触发条件的指标告警
       this.indexAry.push(
         {
           jieshou: '接收组',
@@ -633,13 +663,13 @@ export default {
         }
       )
     },
-    delZhibiao (it) {// 删除触发条件的指标告警
+    delZhibiao (it) { // 删除触发条件的指标告警
       var index = this.indexAry.indexOf(it)
       if (index !== -1) {
         this.indexAry.splice(index, 1)
       }
     },
-    addShijian () {// 添加触发条件的事件告警
+    addShijian () { // 添加触发条件的事件告警
       this.eventAry.push(
         {
           jieshou: '接收组',
@@ -681,7 +711,7 @@ export default {
         }
       )
     },
-    delShijian (item) {// 删除触发条件的事件告警
+    delShijian (item) { // 删除触发条件的事件告警
       var index = this.eventAry.indexOf(item)
       if (index !== -1) {
         this.eventAry.splice(index, 1)
@@ -765,6 +795,14 @@ export default {
     font-size: 12px;
     color: #444;
     margin-bottom: 10px;
+  }
+}
+.card3{
+  .number {
+    padding: 10px 10px 14px 10px;
+    line-height: 27px;
+    color: #888;
+    margin: 0 10px;
   }
 }
 .item-text{
