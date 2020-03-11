@@ -37,7 +37,7 @@
         <el-table-column prop="FunctionName" :label="$t('SCF.total.hsm')">
           <template slot-scope="$scope">
             <!-- 点击函数名跳转页面 -->
-            <a href="#" @click="toDoDetail($scope.row,'first')">{{$scope.row.FunctionName}}</a>
+            <a href="#" @click="toDoDetail($scope.row,'first',SpaceValue)">{{$scope.row.FunctionName}}</a>
           </template>
         </el-table-column>
         <el-table-column :label="$t('SCF.total.hszt')">
@@ -47,7 +47,7 @@
         </el-table-column>
         <el-table-column prop="monitor" :label="$t('SCF.total.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="toDoDetail(scope.row,'fifth')"></div>
+            <div class="a" @click="toDoDetail(scope.row,'fifth',SpaceValue)"></div>
           </template>
 
 
@@ -546,12 +546,13 @@
         });
       },
       //跳转详情页点击事件
-      toDoDetail(data, num) {
+      toDoDetail(data, num, SpaceValue) {
         this.$router.push({
           path: "/funSeverDetail",
           query: {
             functionName: data.FunctionName,
-            num: num
+            num: num,
+            SpaceValue: SpaceValue
           }
         });
       },

@@ -297,7 +297,8 @@
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           FunctionName: this.functionName,
-          Qualifier: this.FunctionVersion
+          Qualifier: this.FunctionVersion,
+          Namespace: this.$route.query.SpaceValue
         };
         this.axios.post(SCF_DETAILS, param).then(res => {
           if (res.Response.Error === undefined) {

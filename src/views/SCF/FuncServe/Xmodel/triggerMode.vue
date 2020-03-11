@@ -347,7 +347,8 @@
           Version: "2018-04-16",
           Region: localStorage.getItem("regionv2"),
           Action: "GetFunction",
-          Qualifier: this.FunctionVersion
+          Qualifier: this.FunctionVersion,
+          Namespace: this.$route.query.SpaceValue
         };
         let functionName = this.$route.query.functionName;
         if (functionName != "" && functionName != null) {
