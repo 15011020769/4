@@ -31,13 +31,13 @@
         </div>
       </div>
       <div class="box-bottom">
-        <div class="box-bottom-left">
+        <!-- <div class="box-bottom-left">
           <el-checkbox
             :indeterminate="isIndeterminate"
             v-model="checkAll"
             @change="handleCheckAllChange"
           >全选(共{{this.instances.length}}个)</el-checkbox>
-          <!-- <div style="margin: 15px 0;"></div> -->
+          <div style="margin: 15px 0;"></div>
           <el-checkbox-group
             v-model="checkedInstances"
             @change="handleCheckedCitiesChange"
@@ -45,10 +45,10 @@
           >
             <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
           </el-checkbox-group>
-        </div>
+        </div> -->
         <div class="box-bottom-right">
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='podNumbers' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :series='podNumbers' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
             <EcharTKE :time='times' :series='podStarts' style="width:400px;height:200px;" />
@@ -525,8 +525,8 @@ export default {
       }
     }
     .box-bottom-right {
-      width: 85%;
-      margin-right: 5%;
+      width: 100%;
+      /* margin-right: 5%; */
       height: auto;
       overflow-y:scroll;
     }

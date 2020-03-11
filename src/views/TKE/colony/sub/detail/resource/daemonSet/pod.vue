@@ -287,6 +287,12 @@ export default {
           this.loadShow = false;
           this.isShowRedeployment = false;
           this.getDaemonsetsPodList();
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
           let ErrTips = {
