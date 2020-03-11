@@ -25,16 +25,34 @@
           </el-button>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>
-              <label class="domain-label"><el-checkbox :value="domainCheckedList.length === domainsData.length" @change="checkDomainAll" /> 全部域名</label>
+              <label class="domain-label">
+                <el-checkbox
+                  :value="domainCheckedList.length === domainsData.length"
+                  @change="checkDomainAll"
+                />
+                全部域名
+              </label>
             </el-dropdown-item>
             <el-dropdown-item
               v-for="item in domainsData"
               :key="item"
             >
-              <label class="domain-label"><el-checkbox @change="checked => doaminChange(checked, item)" :value="domainCheckedList.includes(item)" /> {{item}}</label>
+              <label class="domain-label">
+                <el-checkbox
+                  @change="checked => doaminChange(checked, item)"
+                  :value="domainCheckedList.indexOf(item) == -1 ? false : true"
+                />
+                {{item}}
+              </label>
             </el-dropdown-item>
             <el-row class="doamin-btn-container">
-              <el-button size="small" type="primary" @click="comfirmDomain">{{$t('CSS.overview.12')}}</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="comfirmDomain"
+              >
+                {{$t('CSS.overview.12')}}
+              </el-button>
               <el-button size="small" @click="cancelDomain">取消</el-button>
             </el-row>
           </el-dropdown-menu>
@@ -235,14 +253,18 @@ export default {
       const params = {
         Version: "2018-08-01"
       };
-      this.axios.post(DOMAIN_LIST, params).then(res => {
-        var arr = [];
-        res.Response.DomainList.forEach((domain, index) => {
-          arr.push(domain.Name);
-        });
-        this.domainsData = arr;
-        this.domainCheckedList = arr
-        this.domainCheckedListCopy = arr
+      this.axios.post(DOMAIN_LIST, params).then(({ Response: { DomainList } }) => {
+        const domainArr = [];
+        if (Array.isArray(DomainList)) {
+          DomainList.forEach(domain => {
+            if (domain.Type === 1) {
+              domainArr.push(domain.Name);
+            }
+          });
+        }
+        this.domainsData = domainArr;
+        this.domainCheckedList = domainArr
+        this.domainCheckedListCopy = domainArr
       });
     },
     //查询
@@ -479,6 +501,6 @@ export default {
   margin-left: 20px;
 }
 .el-icon-info {
-  color: #ccc;
+  color: #888;
 }
 </style>
