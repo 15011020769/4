@@ -1,9 +1,10 @@
 <template>
+<!-- 接入配置-编辑转发规则 -->
   <div>
     <div>
       <el-dialog
         class="dialogModel"
-        :title="$t('DDOS.AccesstoCon.addAcc')"
+        :title="$t('DDOS.AccesstoCon.editAcc')"
         :visible.sync="getIsShow"
         width="30%"
         :before-close="handleClose"
@@ -19,9 +20,16 @@
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.accessCopy.ForwardingPro')}}</span>
             <span class="ruleListIpt">
-              <el-select v-model="EnidData.Protocol" class="forwardHttp">
-                <el-option label="TCP" value="TCP"></el-option>
-                <el-option label="UDP" value="UDP"></el-option>
+              <el-select
+                class="forwardHttp"
+                v-model="EnidData.Protocol"
+              >
+                <el-option
+                  v-for="(item, index) in protocolList"
+                  :label="item.pro"
+                  :value="item.pro"
+                  :key="index"
+                ></el-option>
               </el-select>
             </span>
           </div>
@@ -43,14 +51,13 @@
               <el-button-group>
                 <el-button
                   class="BackResouse"
-                  @click="BackResouse(2)"
+                  @click="BackResouse()"
                   :style="EnidData.SourceType==2?'color:#006eff;border:1px solid #006eff':''"
                 >IP回源</el-button>
                 <el-button
                   class="BackResouse"
-                  @click="BackResouse(1)"
+                  @click="BackResouse()"
                   :style="EnidData.SourceType==1?'color:#006eff;border:1px solid #006eff':''"
-                  :disabled="true"
                 >域名回源</el-button>
               </el-button-group>
             </span>
@@ -64,18 +71,11 @@
               >{{$t('DDOS.accessCopy.WeightedPoll')}}</el-button>
             </span>
           </div>
-          <div class="ruleList newClear" v-if="dominShow">
-            <span class="ruleListLabel">{{$t('DDOS.accessCopy.SourceIp')}}</span>
+          <div class="ruleList newClear">
+            <span class="ruleListLabel">{{EnidData.SourceType==1?'源站域名':$t('DDOS.accessCopy.SourceIp')}}</span>
             <span class="ruleListIpt">
-              <el-input type="textarea" class="resoureStation" v-model="IPData" />
-              <p>{{$t('DDOS.accessCopy.SoutceTitle')}}</p>
-            </span>
-          </div>
-          <div class="ruleList newClear" v-if="!dominShow">
-            <span class="ruleListLabel">源站域名</span>
-            <span class="ruleListIpt">
-              <el-input type="textarea" class="resoureStation" v-model="HttpData" />
-              <p>{{$t('DDOS.accessCopy.domainTitle')}}</p>
+              <el-input type="textarea" class="resoureStation" v-model="textData" @input="textDataChange" />
+              <p>{{EnidData.SourceType==1?$t('DDOS.accessCopy.domainTitle'):$t('DDOS.accessCopy.SoutceTitle')}}</p>
             </span>
           </div>
         </div>
@@ -89,6 +89,7 @@
 </template>
 <script>
 import { ENID_CREATE } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   props: {
     isShow3: Boolean,
@@ -97,20 +98,10 @@ export default {
   data() {
     return {
       dialogVisible: "", //弹框状态
-      RuleName: "", //业务域名
-      Protocol: "TCP", //转发协议，取值[TCP, UDP]
-      VirtualPort: "", //转发端口
-      SourcePort: "", //源站端口
-      SourceType: 2, //回源方式，取值[1(域名回源)，2(IP回源)]
-      KeepTime: 0, //会话保持时间，单位秒
-      LbType: 1, //负载均衡方式，取值[1(加权轮询)，2(源IP hash)]
-      KeepEnable: 0, //会话保持开关，取值[0(会话保持关闭)，1(会话保持开启)]
-      dominShow: true, //源站IP + 权重/源站域名
-      IpResource: "", //源站IP + 权重 绑定数据
-      HttpResource: "", //源站域名
+      protocolList: [{pro: 'TCP'}, {pro: 'UDP'}],
       EnidData: "", //获取某一条数据
-      IPData: "", //源站IP + 权重获取数据
-      HttpData: "" //源站域名获取数据
+      textData: '',
+      checkflg: true, //textData是否通过校验
     };
   },
   computed: {
@@ -128,29 +119,22 @@ export default {
       this.$emit("closeEditModel", this.dialogVisible);
     },
     init(scopeRow) {
-      this.EnidData = JSON.parse(JSON.stringify(scopeRow));
-      if (this.EnidData.SourceType == 1) {
-        //域名 this.HttpData='';
-        this.dominShow = false;
-        for (let i = 0; i <  this.EnidData.SourceList.length; i++) {
-          this.HttpData = "";
-          this.HttpResource =  this.EnidData.SourceList[i].Source + " " +  this.EnidData.SourceList[i].Weight + "\n";
-          this.HttpData = this.HttpData.concat(this.HttpResource);
+      this.textData = '';
+      if (scopeRow.SourceType == 1) { //域名
+        this.protocolList = [{pro: 'TCP'}];
+        for (let i = 0; i < scopeRow.SourceList.length; i++) {
+          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\n')
         }
-      } else if (this.EnidData.SourceType == 2) {
-        //IP
-        this.IPData = "";
-        this.dominShow = true;
-        for (let i = 0; i <  this.EnidData.SourceList.length; i++) {
-          this.IpResource =  this.EnidData.SourceList[i].Source + " " +  this.EnidData.SourceList[i].Weight + "\n";
-          this.IPData = this.IPData.concat(this.IpResource);
+      } else if (scopeRow.SourceType == 2) { //IP
+        this.protocolList = [{pro: 'TCP'}, {pro: 'UDP'}];
+        for (let i = 0; i < scopeRow.SourceList.length; i++) {
+          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\ ' + scopeRow.SourceList[i].Weight + '\n')
         }
       }
+      this.EnidData = JSON.parse(JSON.stringify(scopeRow));
     },
     //编辑确定按钮
     editSure() {
-      this.dialogVisible = false;
-      this.$emit("closeEditModel", this.dialogVisible);
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -166,47 +150,65 @@ export default {
         "Rule.KeepTime": this.EnidData.KeepTime
       };
 
-      if (this.EnidData.SourceType == 1) {
-        //域名
-        let arr = this.EnidData.SourceList;
+      let arr = this.textData.split(/[\s\n]/);
+      if (this.EnidData.SourceType == 1) {//域名
         for (let i = 0; i < arr.length; i++) {
-          params["Rule.SourceList." + i + ".Source"] = arr[i].Source;
-          params["Rule.SourceList." + i + ".Weight"] = arr[i].Weight;
+          params["Rule.SourceList." + i + ".Source"] = arr[i];
+          params["Rule.SourceList." + i + ".Weight"] = 0;
         }
-      } else if (this.EnidData.SourceType == 2) {
-        //IP
-        let arr = this.EnidData.SourceList;
-        for (let i = 0; i < arr.length; i++) {
-          params["Rule.SourceList." + i + ".Source"] = arr[i].Source;
-          params["Rule.SourceList." + i + ".Weight"] = arr[i].Weight;
+      } else if (this.EnidData.SourceType == 2) {//IP
+        for (let i = 0; i < arr.length/2; i++) {
+          params["Rule.SourceList." + i + ".Source"] = arr[i*2];
+          params["Rule.SourceList." + i + ".Weight"] = arr[i*2 + 1];
         }
       }
       this.axios.post(ENID_CREATE, params).then(res => {
         // console.log(res)
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
-            message: res.Response.Error.Message,
-            type: "error"
+            message: '編輯成功',
+            type: 'success'
           });
+          this.dialogVisible = false;
+          this.$emit("closeEditModel", this.dialogVisible);
         } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
             showClose: true,
-            message: "修改成功",
-            type: "success"
+            duration: 0
           });
         }
       });
     },
     //回源方式点击按钮
-    BackResouse(thisType) {
-      this.EnidData.SourceType = thisType;
-      if (thisType == "2") {
-        this.dominShow = true;
-        //这块需要提示会员方式不可以修改
-      } else if (thisType == "1") {
-        this.dominShow = false;
-        //这块需要提示会员方式不可以修改
+    BackResouse() {
+      this.$message({
+        showClose: true,
+        message: "回源方式不允許修改",
+        type: "warning"
+      });
+    },
+    //值改变调用校验方法
+    textDataChange() {
+      let arr = this.textData.split(/[\s\n]/);
+      var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var regNUM = /(^[1-9]\d*$)/;
+
+      // console.log(arr)
+      if(this.EnidData.SourceType=="2"){//IP回源
+        for(let i=0; i<arr.length/2; i++) {
+          if(!regIP.test(arr[i*2]) || !regNUM.test(arr[i*2 + 1])) {
+            this.checkflg = false;
+          }
+        }
+      }else if(this.EnidData.SourceType=="1"){//域名回源
+        // for(let i=0; i<arr.length; i++) {
+        //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
+        // }
       }
     }
   }

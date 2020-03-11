@@ -294,6 +294,9 @@ export default {
     &:last-of-type {
       border-bottom: none;
     }
+    &:first-of-type {
+      border-bottom: 1px solid #dcdfe6 !important;
+    }
     p {
       height: 28px;
       line-height: 28px;

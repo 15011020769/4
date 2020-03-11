@@ -166,8 +166,15 @@ export default {
     HeaderCom
   },
   created(){
-     this.currpage=parseInt(this.$route.query.page?this.$route.query.page:1) 
+    if(this.$route.query.page){
+     this.currpage=parseInt(this.$route.query.page) 
      this.focus=sessionStorage.getItem('portal-inmail-type')?sessionStorage.getItem('portal-inmail-type'):""
+    }else{
+      this.currpage=1
+      this.focus = ''
+      sessionStorage.setItem("portal-inmail-type","")
+    }
+     
   },
   mounted() {
      this.init();

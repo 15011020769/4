@@ -3,11 +3,17 @@
     <HeadCom title="身份提供商" />
     <div class="explain">
       <p style="font-weight:bold">身份提供商( IdP )使用背景</p>
-      <p>如果您的企業或組織已有內網帳號體系，您不必在台富雲帳戶中為企業用戶再創建子用戶或協作者，同時 IdP 為企業用戶提供SSO單點登錄能力，通過 IdP 身份驗證的外部用戶可直接訪問您的台富雲資源。</p>
+      <p>
+        如果您的企業或組織已有內網帳號體系，您不必在台富雲帳戶中為企業用戶再創建子用戶或協作者，同時
+        IdP 為企業用戶提供SSO單點登錄能力，通過 IdP
+        身份驗證的外部用戶可直接訪問您的台富雲資源。
+      </p>
     </div>
     <div class="cam_button" style="margin-top:20px;">
       <el-row class="cam-lt">
-        <el-button type="primary" size="small" @click="NewUser">新建提供商</el-button>
+        <el-button type="primary" size="small" @click="NewUser"
+          >新建提供商</el-button
+        >
       </el-row>
     </div>
     <!-- 表格 -->
@@ -21,14 +27,22 @@
         style="width: 100%;"
         :empty-text="$t('CAM.strategy.zwsj')"
       >
-        <el-table-column prop="Name" :label="$t('CAM.strategy.peopleName')" show-overflow-tooltip>
+        <el-table-column
+          prop="Name"
+          :label="$t('CAM.strategy.peopleName')"
+          show-overflow-tooltip
+        >
           <template slot-scope="scope">
-            <el-button type="text" @click="$router.push(`/IdentityProviderDetail/${scope.row.Name}`)">{{scope.row.Name}}</el-button>
+            <el-button
+              type="text"
+              @click="$router.push(`/IdentityProviderDetail/${scope.row.Name}`)"
+              >{{ scope.row.Name }}</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('CAM.strategy.peopleType')"
-        >SMAL</el-table-column>
+        <el-table-column :label="$t('CAM.strategy.peopleType')"
+          >SMAL</el-table-column
+        >
         <el-table-column
           prop="CreateTime"
           :label="$t('CAM.userList.createTime')"
@@ -41,12 +55,16 @@
         ></el-table-column>
         <el-table-column label="操作" show-overflow-tooltip>
           &lt;!&ndash;<template slot-scope="scope">
-          <el-button size="mini" @click="del(scope.row)" type="text" >{{$t('CAM.userGroup.setDelete')}}</el-button>
-          </template>&ndash;&gt;
+            <el-button size="mini" @click="del(scope.row)" type="text">{{
+              $t("CAM.userGroup.setDelete")
+            }}</el-button> </template
+          >&ndash;&gt;
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle" style="height:70px;">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+        <span class="pagtotal"
+          >共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CAM.strip") }}</span
+        >
         <!-- <el-pagination
           @size-change="handleSizeChange"
           :page-size="pagesize"
@@ -61,11 +79,11 @@
   </div>
 </template>
 <script>
-import HeadCom from "../UserListNew/components/Head";
-import { LIST_PROVIDERS, DELETE_SAML_PROVIDER } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import HeadCom from '../UserListNew/components/Head'
+import { LIST_PROVIDERS, DELETE_SAML_PROVIDER } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
-  data() {
+  data () {
     return {
       tableData: [],
       total: 0,
@@ -73,23 +91,23 @@ export default {
       TotalCount: 0,
       pagesize: 10, // 分页条数
       currpage: 1 // 当前页码
-    };
+    }
   },
-  mounted() {
-    this.init();
+  mounted () {
+    this.init()
   },
   components: {
     HeadCom
   },
   methods: {
-    del(row) {
+    del (row) {
       this.$confirm(
-        this.$t("CAM.provider.delTip"),
+        this.$t('CAM.provider.delTip'),
         '提示',
         {
-          confirmButtonText: this.$t("CAM.userGroup.delConfirmBtn"),
-          cancelButtonText: this.$t("CAM.userGroup.delCancelBtn"),
-          type: "warning"
+          confirmButtonText: this.$t('CAM.userGroup.delConfirmBtn'),
+          cancelButtonText: this.$t('CAM.userGroup.delCancelBtn'),
+          type: 'warning'
         }
       ).then(() => {
         this.axios.post(DELETE_SAML_PROVIDER, {
@@ -97,68 +115,68 @@ export default {
           Name: row.Name
         }).then(data => {
           if (data.Response.Error === undefined) {
-              this.$message({
-                type: "success",
-                message: "刪除成功",
-                duration: 0,
-                showClose: true
-              });
-              this.init();
-            } else {
-              let ErrTips = {};
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[data.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
+            this.$message({
+              type: 'success',
+              message: '刪除成功',
+              duration: 0,
+              showClose: true
+            })
+            this.init()
+          } else {
+            let ErrTips = {}
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
+            this.$message({
+              message: ErrOr[data.Response.Error.Code],
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
+          }
         })
       })
     },
-    //分页
-    handleCurrentChange(val) {
-      this.currpage = val;
-      this.init();
+    // 分页
+    handleCurrentChange (val) {
+      this.currpage = val
+      this.init()
     },
-    handleSizeChange() {
-      this.pagesize = val;
-      this.currpage = 1;
+    handleSizeChange () {
+      this.pagesize = val
+      this.currpage = 1
     },
     // 初始化方法。
-    init() {
-      this.loading = true;
+    init () {
+      this.loading = true
       let params = {
-        Version: "2019-01-16"
-      };
+        Version: '2019-01-16'
+      }
       this.axios
         .post(LIST_PROVIDERS, params)
         .then(data => {
           if (data.Response.Error === undefined) {
-            this.tableData = data.Response.SAMLProviderSet;
-            this.TotalCount = data.Response.TotalCount;
+            this.tableData = data.Response.SAMLProviderSet
+            this.TotalCount = data.Response.TotalCount
           } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            let ErrTips = {}
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
               message: ErrOr[data.Response.Error.Code],
-              type: "error",
+              type: 'error',
               showClose: true,
               duration: 0
-            });
+            })
           }
-          this.loading = false;
+          this.loading = false
         })
         .catch(error => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     },
-    NewUser() {
-      this.$router.push({ name: "NewIdentityProvider" });
+    NewUser () {
+      this.$router.push({ name: 'NewIdentityProvider' })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .wrap >>> .el-button,
@@ -310,22 +328,22 @@ export default {
   }
 }
 .explain {
-    width: 96%;
-    margin: 0 auto;
-    margin-top: 20px;
-    font-size: 12px;
-    padding: 10px 30px 10px 20px;
-    vertical-align: middle;
-    color: #003b80;
-    border: 1px solid #97c7ff;
-    border-radius: 2px;
-    background: #e5f0ff;
-    position: relative;
-    box-sizing: border-box;
-    margin-bottom: 20px;
+  width: 96%;
+  margin: 0 auto;
+  margin-top: 20px;
+  font-size: 12px;
+  padding: 10px 30px 10px 20px;
+  vertical-align: middle;
+  color: #003b80;
+  border: 1px solid #97c7ff;
+  border-radius: 2px;
+  background: #e5f0ff;
+  position: relative;
+  box-sizing: border-box;
+  margin-bottom: 20px;
 
-    p {
-      line-height: 20px;
-    }
+  p {
+    line-height: 20px;
   }
+}
 </style>

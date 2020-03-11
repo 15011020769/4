@@ -1,4 +1,5 @@
 <template>
+<!-- 接入配置 -->
   <div class="wrap">
     <h3 class="ReportTitH3">
       {{ $t("DDOS.AccesstoCon.AccessConfig") }}
@@ -85,7 +86,7 @@
                   <span
                     v-for="(item, index) in scope.row.SourceList"
                     :key="index"
-                  >{{scope.row.SourceList[index].Source}}({{scope.row.SourceList[index].Weight}});</span>
+                  >{{scope.row.SourceList[index].Source}}{{scope.row.SourceType == 1?'':'('+scope.row.SourceList[index].Weight+')'}};</span>
                 </template>
               </el-table-column>
               <el-table-column prop="LbType" :label="$t('DDOS.AccesstoCon.LoadBalancing')">
@@ -278,7 +279,7 @@ export default {
       this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res)
         if (res.Response.Error === undefined) {
-					this.resList = [];
+          this.resList = [];
           const resourceList = res.Response.ServicePacks;
           if (resourceList.length === 0) {
             this.$message({
@@ -313,16 +314,16 @@ export default {
           } else {
             this.describleL4Rules();
           }
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 1.2.获取L4转发规则
@@ -355,9 +356,11 @@ export default {
     },
     //单选
     checkBoxClick(selection, row){
-      if(selection.length!='0'){
-        this.partD2.push(row.RuleId)
+      this.partD2 = [];
+      for(let i=0; i<selection.length; i++) {
+        this.partD2.push(selection[i].RuleId);
       }
+      console.log(this.partD2)
     },
     //全选
     checkBoxAll(val){
@@ -369,32 +372,32 @@ export default {
    deleteSurePart() {
     this.dialogDelete_2 = false;
     let delAllId=[...new Set(this.partD2)];
+    let params = {
+      Version: "2018-07-09",
+      Region: localStorage.getItem("regionv2"),
+      Business: "net",
+      Id: this.resourceId,
+    };
     for(let i=0;i<delAllId.length;i++){
-      let params = {
-        Version: "2018-07-09",
-        Region: localStorage.getItem("regionv2"),
-        Business: "net",
-        Id: this.resourceId,
-        "RuleIdList.0": delAllId[i],
-      };
-      this.axios.post(L4DEL_CREATE, params).then(res => {
-        if (res.Response.Error !== undefined) {
-          this.$message({
-            showClose: true,
-            message: res.Response.Error.Message,
-            type: "error"
-          });
-        } else {
-          this.$message({
-            showClose: true,
-            message: "刪除成功",
-            type: "success"
-          });
-          this.describleL4Rules();
-        }
-      });
+      params['RuleIdList.'+i] = delAllId[i];
     }
-    },
+    this.axios.post(L4DEL_CREATE, params).then(res => {
+      if (res.Response.Error !== undefined) {
+        this.$message({
+          showClose: true,
+          message: res.Response.Error.Message,
+          type: "error"
+        });
+      } else {
+        this.$message({
+          showClose: true,
+          message: "刪除成功",
+          type: "success"
+        });
+        this.describleL4Rules();
+      }
+    });
+  },
     // 跳转新购页面
     newBuy() {
       let routeUrl = this.$router.resolve({
@@ -463,6 +466,7 @@ export default {
     },
     // 批量导入确定按钮
     batchImportSure(isShowFalse) {
+      setTimeout(this.describleL4Rules(), 2000);
       this.dialogVisible1 = isShowFalse;
     },
     //批量导入弹框关闭按钮
@@ -533,7 +537,7 @@ export default {
     copyAccess(scopeRow) {
       this.dialogVisible4 = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate1.init(scopeRow);
+        this.$refs.addOrUpdate1.init(JSON.parse(JSON.stringify(scopeRow)));
       });
     },
     //关闭复制弹框

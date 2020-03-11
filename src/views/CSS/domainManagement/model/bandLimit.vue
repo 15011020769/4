@@ -60,6 +60,8 @@
 </template>
 <script>
 import { MODIFY_LIVE_BAND_LIMIT } from '@/constants'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
+
 let key = 1
 export default {
   props: {
@@ -74,10 +76,27 @@ export default {
   },
   watch: {
     enable (n) {
+      let unitNum = 0
+      if (this.bandLimit.DomesticBandLimitValue < 1000) {
+        unitNum = 1
+      } else if (this.bandLimit.DomesticBandLimitValue >= 1000 && this.bandLimit.DomesticBandLimitValue < 1000000) {
+        unitNum = 2
+      } else if (this.bandLimit.DomesticBandLimitValue >= 1000000) {
+        unitNum = 3
+      }
       if (!n) {
+        this.info = JSON.parse(JSON.stringify([]))
+      }
+      if (n && this.bandLimit.BandLimitEnable === 1) {
         this.info = []
+        this.info.push({
+          playType: this.playType,
+          value: this.bandLimit.AbroadBandLimitValue,
+          unit: unitNum
+        })
       }
     }
+
   },
   computed: {
     playTypes () {
@@ -88,6 +107,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.bandLimit.BandLimitEnable, 'this.bandLimit')
     if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
       this.enable = true
       const info = {
@@ -153,20 +173,29 @@ export default {
       this.axios.post(MODIFY_LIVE_BAND_LIMIT, req)
         .then(res => {
           if (res.Response.Error) {
+            let ErrTips = {}
+            let ErrOr = Object.assign(CSSErrorTips, ErrTips)
+
+            this.$message({
+              type: 'error',
+              message: ErrOr[res.Response.Error.Code],
+              showClose: true,
+              duration: 0
+            })
             this.$emit('update:visible', false)
-            this.msg('保存失败', 'error')
           } else {
             this.msg('保存成功', 'success')
             this.$emit('success')
           }
         })
     },
+
     toMbps (info) {
       if (info.unit === 2) { // Gbps
         return info.value * 1000
       }
       if (info.unit === 3) { // Tbps
-        return info.value * 10000
+        return info.value * 1000000
       }
       return info.value
     },

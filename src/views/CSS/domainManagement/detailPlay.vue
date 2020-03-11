@@ -14,7 +14,6 @@
         <el-tab-pane
           :label="$t('CSS.detailPlay.playbackConfiguration')"
           name="second"
-          lazy
         >
           <div class="wrapper">
             <play-config :active="activeName" />
@@ -58,7 +57,7 @@ import PlayTemplate from './tabs/playTemplate'
 import AccessControl from './tabs/accessControl'
 import AdvanceConfig from './tabs/advanceConfig'
 import { DOMAIN_DELTILS } from '@/constants'
-import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../components/CSSErrorTips'
 
 let ErrTips = {
   'InternalError.SystemError': '內部錯誤',
@@ -93,7 +92,7 @@ export default {
     this.axios.post(DOMAIN_DELTILS, params).then(res => {
       this.loading = false
       if (res.Response.Error !== undefined) {
-        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        let ErrOr = Object.assign(CSSErrorTips, ErrTips)
         this.$message({
           message: ErrOr[res.Response.Error.Code],
           type: 'error',

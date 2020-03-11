@@ -10,7 +10,6 @@
             size="small"
             style="width: 210px"
             v-model="limit"
-            :disabled="this.$route.query.Status == 0"
             @change="changeSlect"
           >
             <el-option :label="$t('CSS.detailPlay.11')" :value="1"></el-option>
@@ -50,6 +49,7 @@
 <script>
 import { MODIFY_LIVE_PLAY_DOMAIN } from '@/constants'
 
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 export default {
   props: {
     bandLimit: Number
@@ -89,7 +89,15 @@ export default {
       this.axios.post(MODIFY_LIVE_PLAY_DOMAIN, req)
         .then(res => {
           if (res.Response.Error) {
-            this.msg('保存失败', 'error')
+            let ErrTips = {}
+            let ErrOr = Object.assign(CSSErrorTips, ErrTips)
+
+            this.$message({
+              type: 'error',
+              message: ErrOr[res.Response.Error.Code],
+              showClose: true,
+              duration: 0
+            })
             this.$emit('handleClose', false)
           } else {
             this.msg('保存成功', 'success')

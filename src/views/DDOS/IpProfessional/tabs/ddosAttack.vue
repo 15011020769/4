@@ -37,7 +37,7 @@
               :key="index"
             ></el-option>
           </el-select>
-          <el-select class="ddosAttackSelect1" v-model="selectIp" placeholder="總覽">
+          <el-select class="ddosAttackSelect1" v-model="selectIp">
             <el-option
               v-for="(item, index) in IpList"
               :label="item"
@@ -123,6 +123,7 @@
 <script>
 import {
   GET_ID,
+  DDOS_EV_LIST,
   DDOS_EVENT,
   DDOS_ATTACK,
   DDOS_DATA,
@@ -137,7 +138,7 @@ export default {
       ResIpList: [], //下拉框数据
       IpList: [], //下拉框IP数据
       selectId: "", //下拉框ID
-      selectIp: "", //下拉框IP
+      selectIp: "總覽", //下拉框IP
       activeName: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
       currentPage: 1, //当前页
@@ -205,6 +206,9 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
+      // if (this.selectId != '') {
+      //   params['IdList.0'] = this.selectId;
+      // }
       this.axios.post(GET_ID, params).then(res => {
         if (res.Response.Error === undefined) {
           if (res.Response.Resource.length === 0) {
@@ -241,6 +245,7 @@ export default {
           }
         }
       }
+      this.IpList.splice(0, 0, '總覽');
       this.choiceTime(1);
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表

@@ -1,4 +1,5 @@
 <template>
+<!-- 接入配置-添加转发规则 -->
   <div>
     <div>
       <el-dialog class="dialogModel"
@@ -16,9 +17,16 @@
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.accessCopy.ForwardingPro')}}</span>
             <span class="ruleListIpt">
-              <el-select v-model="Protocol" class="forwardHttp">
-                <el-option label="TCP" value="TCP"></el-option>
-                <el-option label="UDP" value="UDP"></el-option>
+              <el-select
+                class="forwardHttp"
+                v-model="Protocol"
+              >
+                <el-option
+                  v-for="(item, index) in protocolList"
+                  :label="item.pro"
+                  :value="item.pro"
+                  :key="index"
+                ></el-option>
               </el-select>
             </span>
           </div>
@@ -53,8 +61,7 @@
             <span class="ruleListLabel">{{$t('DDOS.accessCopy.SourceIp')}}</span>
             <span class="ruleListIpt">
               <el-input type="textarea" class="resoureStation" v-model="IpResource"/>
-              <p>	
-{{$t('DDOS.accessCopy.SoutceTitle')}}</p>
+              <p>{{$t('DDOS.accessCopy.SoutceTitle')}}</p>
             </span>
           </div>
           <div class="ruleList newClear" v-if="!dominShow">
@@ -67,14 +74,15 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="handleClose">取 消</el-button>
-          <el-button type="primary" @click="addRulesSure">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
+          <el-button type="primary" @click="createL4Rules">{{$t('DDOS.accessCopy.domainSure')}}</el-button>
         </span>
       </el-dialog>
     </div>
   </div>
 </template>
 <script>
-import { L4RULES_CREATE } from '@/constants'
+import { L4RULES_CREATE } from '@/constants';
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
     //子页面调用L4转发规则的方法
   inject:['describleL4Rules'],
@@ -94,6 +102,10 @@ export default {
       // 添加L4规则参数
       RuleName: '',//业务域名
       Protocol: 'TCP',//转发协议，取值[TCP, UDP]
+      protocolList: [
+        {pro: 'TCP'},
+        {pro: 'UDP'}
+      ],
       VirtualPort: '',//转发端口
       SourcePort: '',//源站端口
       SourceType: 2,//回源方式，取值[1(域名回源)，2(IP回源)]
@@ -107,14 +119,6 @@ export default {
     }
   },
   methods:{
-    //弹框确定按钮
-    addRulesSure(){
-      // console.log('create')
-      this.createL4Rules()
-      this.dialogVisible=false;
-      this.clearData();
-      this.$emit("addRulesSure",this.dialogVisible)
-    },
     //弹框关闭按钮
     handleClose(){
       this.dialogVisible=false;
@@ -125,6 +129,7 @@ export default {
     clearData() {
       this.RuleName = '',//业务域名
       this.Protocol = 'TCP',//转发协议，取值[TCP, UDP]
+      this.protocolList = [{pro: 'TCP'}, {pro: 'UDP'}],
       this.VirtualPort = '',//转发端口
       this.SourcePort = '',//源站端口
       this.SourceType = 2,//回源方式，取值[1(域名回源)，2(IP回源)]
@@ -139,12 +144,15 @@ export default {
     BackResouse(thisType){
       this.SourceType = thisType;
       if(thisType=="2"){
+        this.protocolList = [{pro: 'TCP'}, {pro: 'UDP'}];
         this.dominShow=true;
       }else if(thisType=="1"){
+        this.Protocol = 'TCP';
+        this.protocolList = [{pro: 'TCP'}];
         this.dominShow=false;
       }
     },
-    // 1.1.添加L4转发规则
+    // 1.1.添加L4转发规则(弹框确定按钮)
     createL4Rules() {
       let params = {
         Version: '2018-07-09',
@@ -175,19 +183,20 @@ export default {
       }
       // console.log(params)
       this.axios.post(L4RULES_CREATE, params).then(res => {
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
+          this.describleL4Rules();
+          this.dialogVisible=false;
+          this.clearData();
+          this.$emit("addRulesSure",this.dialogVisible)
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
             showClose: true,
-            message: '新建失敗，請確保輸入內容正確再操作！',
-            type: 'error'
+            duration: 0
           });
-        }else{
-          this.$message({
-            showClose: true,
-            message: '新建成功',
-            type: 'success'
-          });
-          this.describleL4Rules()
         }
       })
     },

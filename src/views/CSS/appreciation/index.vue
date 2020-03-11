@@ -31,7 +31,7 @@
 import moment from "moment";
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM } from "@/constants";
+import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM, CSS_CODECHARTS } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
 import Tab3 from "./tab/tab3";
@@ -72,6 +72,7 @@ export default {
     this.getCity();
     this.getScreens();
     this.getPeaks();
+    this.getDurations();
   },
   methods: {
     //查询
@@ -146,6 +147,24 @@ export default {
           this.tab[2].value = Math.max(...res.Response.DataInfoList.map(item => item.Num))
         }
       });
+    },
+    getDurations() {
+      const params = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+      };
+      let total = 0
+      this.axios.post(CSS_CODECHARTS, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          res.Response.DataInfoList.map(v => {
+            total += v.Duration
+          })
+          this.tab[1].value = total
+        }
+      })
     }
   }
 };

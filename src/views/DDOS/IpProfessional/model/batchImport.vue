@@ -27,7 +27,8 @@
   </div>
 </template>
 <script>
-import { L4RULES_CREATE } from '@/constants'
+import { L4RULES_CREATE } from '@/constants';
+import { ErrorTips } from "@/components/ErrorTips";
 export default {
   props:{
     isShow1:Boolean,
@@ -45,26 +46,29 @@ export default {
       importRules:'',//批量导入规则
       rules: [],//批量导入的数据
       flag: false,//业务域名是否省略
+      flag2: false,//IP回源还是域名回源
     }
   },
   methods:{
     //弹框确定按钮
     batchImportSure(){
-      console.log(this.importRules)
       //1.解析转换字符串
       // 1.1.按行分割
       let arr = this.importRules.split(/[\r\n]/)
-      // 1.2.遍历数组，按空格分割后添加到rules数组，并确定业务域名是否省略
+      // 1.2.遍历数组，按空格分割后添加到rules数组
       for(let i in arr) {
-        this.rules.push(arr[i].split(/[\s]/))
+        this.rules.push(arr[i].split(/[\s+|,]/))
       }
-      if(this.rules[0][0] == 'TCP' | this.rules[0][0] == 'UDP'){
+      // 1.3.判断业务域名是否省略
+      if(this.rules[0][0] == 'TCP' || this.rules[0][0] == 'UDP'){
         this.flag = true
       }
-      // 1.3.遍历rules数组，调用createL4Rules方法，完成批量添加
-      for(let j in this.rules) {
-        this.createL4Rules(this.rules[j])
-      }
+      // 1.4.判断IP回源还是域名回源（不支持IP回源规则与域名回源规则同时导入）
+      let regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      this.flag2 = regIP.test(this.rules[0][3]);//true:IP回源；false:域名回源
+      // 1.5.调用createL4Rules方法，完成批量添加
+      this.createL4Rules();
+
       this.dialogVisible1=false;
       this.$emit("batchImportSure",this.dialogVisible1)
     },
@@ -74,53 +78,66 @@ export default {
       this.$emit("closeModelIpt",this.dialogVisible1)
     },
     // 1.1.添加L4转发规则
-    createL4Rules(rule) {//业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名）
-      let add = 0
-      add = this.flag?0:1
+    createL4Rules() {//业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名）
+      let add = this.flag?0:1;
       
       let params = {
         Version: '2018-07-09',
         Region: localStorage.getItem("regionv2"),
         Business:'net',
-        Id: this.resourceId,
-        'Rules.0.Protocol': rule[0+add],
-        'Rules.0.VirtualPort': rule[1+add],
-        'Rules.0.SourcePort': rule[2+add],
-        'Rules.0.LbType': 1,
-        'Rules.0.KeepTime': 0,
-        'Rules.0.KeepEnable': 0,
+        Id: this.resourceId
       }
-      
-      // 判断回源IP和权重（或回源域名）
-      if(this.flag) { //业务域名省略
-        if(rule.length == 4) { //回源域名
-          params['Rules.0.SourceType'] = 1,
-          params['Rules.0.SourceList.0.Source'] = rule[3]
-          params['Rules.0.SourceList.0.Weight'] = 0
-        } else if(rule.length == 5) { //回源IP和权重
-          params['Rules.0.SourceType'] = 2,
-          params['Rules.0.SourceList.0.Source'] = rule[3]
-          params['Rules.0.SourceList.0.Weight'] = rule[4]
-        }
-      } else { //业务域名未省略
-        // 判断添加业务域名
-        params['Rules.0.RuleName'] = rule[0]
-        if(rule.length == 5) { //回源域名
-          params['Rules.0.SourceType'] = 1,
-          params['Rules.0.SourceList.0.Source'] = rule[4]
-          params['Rules.0.SourceList.0.Weight'] = 0
-        } else if(rule.length == 6) { //回源IP和权重
-          params['Rules.0.SourceType'] = 2,
-          params['Rules.0.SourceList.0.Source'] = rule[4]
-          params['Rules.0.SourceList.0.Weight'] = rule[5]
+      for (let i=0; i<this.rules.length; i++) {
+        params['Rules.'+i+'.Protocol'] = this.rules[i][0+add];
+        params['Rules.'+i+'.VirtualPort'] = this.rules[i][1+add];
+        params['Rules.'+i+'.SourcePort'] = this.rules[i][2+add];
+        params['Rules.'+i+'.LbType'] = 1;
+        params['Rules.'+i+'.KeepTime'] = 0;
+        params['Rules.'+i+'.KeepEnable'] = 0;
+        
+        if(this.flag) { //业务域名省略
+          if(!this.flag2) { //回源域名
+            params['Rules.'+i+'.SourceType'] = 1
+            for (let j=3; j<this.rules[i].length; j++) {
+              params['Rules.'+i+'.SourceList.'+(j-3)+'.Source'] = this.rules[i][j]
+              params['Rules.'+i+'.SourceList.'+(j-3)+'.Weight'] = 0
+            }
+          } else { //回源IP和权重
+            params['Rules.'+i+'.SourceType'] = 2
+            for (let j=3; j<this.rules[i].length; j++) {
+              params['Rules.'+i+'.SourceList.'+parseInt((j-3)/2)+'.Source'] = this.rules[i][j]
+              params['Rules.'+i+'.SourceList.'+parseInt((j-3)/2)+'.Weight'] = this.rules[i][++j]
+            }
+          }
+        } else { //业务域名未省略
+          params['Rules.'+i+'.RuleName'] = this.rules[i][0] // 判断添加业务域名
+          if(!this.flag2) { //回源域名
+            params['Rules.'+i+'.SourceType'] = 1
+            for (let j=4; j<this.rules[i].length; j++) {
+              params['Rules.'+i+'.SourceList.'+(j-4)+'.Source'] = this.rules[i][j]
+              params['Rules.'+i+'.SourceList.'+(j-4)+'.Weight'] = 0
+            }
+          } else { //回源IP和权重
+            params['Rules.'+i+'.SourceType'] = 2
+            for (let j=4; j<this.rules[i].length; j++) {
+              params['Rules.'+i+'.SourceList.'+parseInt((j-4)/2)+'.Source'] = this.rules[i][j]
+              params['Rules.'+i+'.SourceList.'+parseInt((j-4)/2)+'.Weight'] = this.rules[i][++j]
+            }
+          }
         }
       }
-      console.log(params)
       this.axios.post(L4RULES_CREATE, params).then(res => {
-        if('Success' in res.Response) {
-          alert(res.Response.Success.Message)
-        } else if('Error' in res.Response) {
-          console.log(res.Response.Error)
+        if (res.Response.Error === undefined) {
+          //添加成功
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
       })
     },

@@ -330,16 +330,21 @@ export default {
     },
     loadUser($state) {
       if (this.userInp && this.userInp.trim()) {
-        this.sliceUsers = this.allUsers.filter(user => user.Name.includes(this.userInp.trim()))
+        this.sliceUsers = this.allUsers.filter(user => user.Remark.includes(this.userInp.trim()) || user.Name.includes(this.userInp.trim()))
       } else {
         this.sliceUsers = [...this.allUsers]
       }
       this.userTotalNum = this.sliceUsers.length
       const users = this.sliceUsers.slice(this.usesOffset, this.usesOffset + 10)
       this.usesOffset += 10
+      if (users.length === 0) {
+        $state && $state.complete()
+        return
+      }
       Promise.resolve().then(() => {
         this.queryStrategiesForUsersAndUserGroups(users.map(user => user.Uin), 1, () => {
           this.users = this.users.concat(users)
+          console.log(3131)
           if (this.usesOffset >= this.sliceUsers.length) {
             $state && $state.complete()
           } else {

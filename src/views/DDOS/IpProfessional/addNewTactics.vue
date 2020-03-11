@@ -1,5 +1,5 @@
 <template>
-  <!-- 添加高级防护策略 -->
+  <!-- 添加/修改 高级防护策略 -->
   <div class="wrapBox">
     <!-- 策略名称 -->
     <div>
@@ -167,8 +167,8 @@
               <el-select class="selectChange1" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
-                <el-option label="ICMP" value="icmp"></el-option>
-                <el-option label="ALL" value="all"></el-option>
+                <!-- <el-option label="ICMP" value="icmp"></el-option>
+                <el-option label="ALL" value="all"></el-option> -->
               </el-select>
             </td>
             <td>
@@ -333,7 +333,12 @@
         <h2>連接耗盡防護</h2>
         <span class="spanStyleLabel">
           {{ $t("DDOS.Proteccon_figura.Air_protection") }}
-          <i class="el-icon-info"></i>
+          <el-tooltip class="item" effect="light" placement="bottom-start">
+            <div slot="content" class="tooltip_text">
+              {{$t('DDOS.Proteccon_figura.Air_protection_tooltip')}}
+            </div>
+            <i class="el-icon-info"></i>
+          </el-tooltip>
         </span>
         <el-radio-group v-model="radios2">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
@@ -393,7 +398,12 @@
       <div class="childContTit">
         <h2>
           {{ $t("DDOS.Proteccon_figura.Abnormal_detection") }}
-          <i class="el-icon-info"></i>
+          <el-tooltip class="item" effect="light" placement="bottom-start">
+            <div slot="content" class="tooltip_text">
+              {{$t('DDOS.Proteccon_figura.Abnormal_detection_tooltip')}}
+            </div>
+            <i class="el-icon-info"></i>
+          </el-tooltip>
         </h2>
         <span class="spanStyleLabel">{{
           $t("DDOS.Proteccon_figura.Abnormal_detection")
@@ -941,8 +951,9 @@ export default {
     },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
-      if (this.tacticsName == "") {
-        this.$message("請填寫策略名稱");
+      this.tacticsName = this.tacticsName.replace(/^\s*|\s*$/g,"");
+      if (this.tacticsName.length<=0 || this.tacticsName.length>32) {
+        this.$message("策略名稱不符合規範（兩端無空格,長度1-32字符）");
       } else {
         let params = {
           Version: "2018-07-09",
@@ -1203,7 +1214,7 @@ export default {
     },
     copyObj: function() {
       var des = {
-        Protocol: "",
+        Protocol: "tcp",
         tortType: "",
         beginPort: "",
         endPort: ""
@@ -1221,6 +1232,10 @@ export default {
         }
         this.tags.push(des);
       } else if (type == 2) {
+        if (this.tags1.length == 5) {
+          this.$message("報文過濾特徵不能超過5條");
+          return;
+        }
         des.Depth = "100";
         this.tags1.push(des);
       } else if (type == 3) {
@@ -1600,5 +1615,8 @@ a {
 }
 .company {
   margin-left: 20px;
+}
+.tooltip_text {
+  font-size: 14px;
 }
 </style>

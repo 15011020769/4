@@ -331,7 +331,7 @@ export default {
     },
     loadUser($state) {
       if (this.userInp && this.userInp.trim()) {
-        this.sliceUsers = this.allUsers.filter(user => user.Name.includes(this.userInp.trim()))
+        this.sliceUsers = this.allUsers.filter(user => user.Remark.includes(this.userInp.trim()) || user.Name.includes(this.userInp.trim()))
       } else {
         this.sliceUsers = [...this.allUsers]
       }
