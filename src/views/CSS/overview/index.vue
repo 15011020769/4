@@ -148,7 +148,8 @@ import {
   CSS_MBPS,
   LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST,
   DOMAIN_LIST,
-  LIVE_DESCRIBE_LIVEPACKAGEINFO
+  LIVE_DESCRIBE_LIVEPACKAGEINFO,
+  DESCRIBE_PLAY_STAT_INFOLIST
 } from "@/constants";
 
 let defaultParams = {
@@ -297,9 +298,14 @@ export default {
       });
       // 查询实时总帶寬 实时总连接数
       this.axios
-        .post(LIVE_DESCRIBE_LIVEDOMAINPLAYINFOLIST, defaultParams)
+        .post(DESCRIBE_PLAY_STAT_INFOLIST, params)
         .then(({ Response }) => {
-          this.online = Response.TotalOnline;
+          if (Response.Error === undefined) {
+            const last = Response.DataInfoList.pop()
+            if (last !== undefined) {
+              this.online = last.Online;
+            }
+          }
         });
       // 查询流量包
       this.axios
