@@ -1,4 +1,11 @@
 import { ErrorTips } from '@/components/ErrorTips.js'
+
+
+
+
+
+
+
 // 实例内容器
 let instanceContent = {
   //数据回显添加
@@ -340,10 +347,12 @@ let dataReel={//数据卷
     var obj = {
       name1: "useMenu",
       name2: "",
-      name3: ""
+      name3: "",//保存弹窗框中定义的名称
+      name4:'',//保存弹出框中的类型
     };
     this.wl.dataJuan.push(obj);
   },
+ 
 
 
 }

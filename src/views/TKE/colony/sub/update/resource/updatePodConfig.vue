@@ -19,6 +19,7 @@
          <!-- config -->
          <el-form class="tke-form"  label-position="left" label-width="120px" size="mini">
            <el-form-item label="数据卷（选填）">
+             {{wl.dataJuan}}
              <div class="search-one" v-for="(item, index) in  wl.dataJuan" :key="index">
                <el-select v-model="item.name1" placeholder="请选择">
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
@@ -26,35 +27,43 @@
                </el-select>
                <el-input class="search-input" v-model="item.name2" placeholder="名称  如val"  ></el-input>
                <div class="search-hidden">
-                 <p v-if="item.name1 == 'usePath'">
-                    <el-tooltip content="主机类型 检查类型" placement="top"  effect="light">
+                 <div v-if="item.name1 == 'usePath'">
+                   <p v-if="item.name3!=''&&item.name4!=''">
+                      <el-tooltip  placement="top"  effect="light">
+                        <div slot="content">
+                          <p>主机路径:{{item.name3}}</p>
+                          <p>检查类型:{{item.name4}}</p>
+                        </div>
                         <span>主机路径设置 <i class="el-icon-info"></i></span>
-                    </el-tooltip>
-                   <span class="add-check" >重新设置</span>
-                   <span>暂未设置主机路径设置主机路径</span>
-                   <span class="add-check" @click="dialogVisiblePath = true">设置主机路径</span>
-                 </p>
-                 <p v-if="item.name1 == 'useNFS'">
+                      </el-tooltip>
+                      <span class="add-check" @click="resetHostPath(index)" >重新设置</span>
+                   </p>
+                   <p v-else>
+                    <span>暂未设置主机路径设置主机路径</span>
+                    <span class="add-check" @click="setHostPath(index)">设置主机路径</span>
+                   </p>
+                 </div>
+                 <div v-if="item.name1 == 'useNFS'">
                    <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
-                 </p>
-                 <p v-if="item.name1 == 'usePVC'">
+                 </div>
+                 <div v-if="item.name1 == 'usePVC'">
                    <el-select v-model="item.name3">
                    </el-select>
-                 </p>
-                 <p v-if="item.name1 == 'useYun'">
+                 </div>
+                 <div v-if="item.name1 == 'useYun'">
                    <span class="add-check" @click="selectYun">选择云硬盘</span>&nbsp;&nbsp;
                    <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
                      <i style="cursor:pointer" class="el-icon-warning"></i>
                    </el-tooltip>
-                 </p>
-                 <p v-if="item.name1 == 'useConfig'">
+                 </div>
+                 <div v-if="item.name1 == 'useConfig'">
                      暂未选择ConfigMap
                    <span class="add-check" @click="selectConfig">选择配置项</span>
-                 </p>
-                 <p v-if="item.name1 == 'useSecret'">
+                 </div>
+                 <div v-if="item.name1 == 'useSecret'">
                    暂未选择Secret
                    <span class="add-check" @click="selectSecret">选择Secret</span>
-                 </p>
+                 </div>
                </div>
                <i class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
              </div>
@@ -426,7 +435,7 @@
              </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="dialogVisiblePath = false">确 定</el-button>
+             <el-button type="primary" @click="selectHostPath">确 定</el-button>
              <el-button @click="dialogVisiblePath = false">取 消</el-button>
            </span>
          </el-dialog>
@@ -580,6 +589,7 @@ export default {
         }
 
       },
+      dialogIndex:'',//数据卷下标存储
       portPathOptions:['NoChecks','DirectoryOrCreate','Directory','FileOrCreate','File','Socket','CharDevice','BlockDevice'],
       yunRadio:'',
       // 更新pod数量
@@ -1095,7 +1105,19 @@ export default {
     console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
-  
+  setHostPath(index){//设置主机路径弹出框
+    this.dialogVisiblePath = true
+    this.dialogIndex=index;
+  },
+  selectHostPath(){//设置主机路径
+    this.dialogVisiblePath = false
+    this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.portPath.name;
+    this.wl.dataJuan[this.dialogIndex].name4=this.dataReelDialog.portPath.type;
+    console.log(this.wl.dataJuan)
+  },
+  resetHostPath(index){//重置主机路径
+    this.dialogVisiblePath = true
+  },
   selectYun() {
     this.dialogVisibleYun = true;
   },
