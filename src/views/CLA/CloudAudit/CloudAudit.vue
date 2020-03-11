@@ -171,6 +171,7 @@
         .then(data => {
           if (data.Response.Error === undefined) {
             this.options = data.Response.AttributeKeyDetails;
+            this.options.splice(1, 1)
             this.value = 'ReadOnly'
             this._select('ReadOnly')
           } else {
@@ -216,7 +217,6 @@
         }
       },
       _select(val) {
-        console.log(val)
         if (val == "ReadOnly") {
           this.placeholder = "支持搜索關鍵字為true或false";
         } else if (val === 'AccessKeyId') {
@@ -254,7 +254,6 @@
         this.axios.post(YJS_LIST, params).then(res => {
           if (res.Response.Error === undefined) {
             this.tableData = res.Response.Events;
-            console.log(this.tableData)
             this.loading = false;
             this.vloading = false;
           } else {
