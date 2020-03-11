@@ -331,7 +331,7 @@ export default {
       this.deleteModel = true
       this.deleteDominArr.push(row.Name)
       this.deleteDominArr.push(row.Type)
-      console.log(this.deleteDominArr)
+      // console.log(this.deleteDominArr)
     },
     // 关闭删除弹框
     closedeleteDominModel (isShow) {

@@ -71,6 +71,7 @@
 </template>
 <script>
 import { MODIFY_SOURCE_STREAM_INFO, CLOSE_SOURCE_STREAM } from '@/constants'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 
 export default {
   props: {
@@ -172,7 +173,15 @@ export default {
         this.axios.post(url, req)
           .then(res => {
             if (res.Response.Error) {
-              this.msg('保存失败', 'error')
+              let ErrTips = {}
+              let ErrOr = Object.assign(CSSErrorTips, ErrTips)
+
+              this.$message({
+                type: 'error',
+                message: ErrOr[res.Response.Error.Code],
+                showClose: true,
+                duration: 0
+              })
 
               this.$emit('handleClose', false)
             } else {
