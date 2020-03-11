@@ -265,6 +265,7 @@
                           style="text-align: left; display: inline-block"
                           v-model="valueThrou"
                           filterable
+                          filter-placeholder="請輸入搜索內容"
                           :left-default-checked="[]"
                           :right-default-checked="[]"
                           :render-content="renderFunc"
@@ -353,7 +354,7 @@ export default {
           <div>
             <span> {option.key} </span>
             <br />
-            <span>{option.label.substring(0, option.label.indexOf(option.key))}</span>
+            <span> {option.label.substring(0, option.label.indexOf(option.key))} </span>
           </div>
         );
       }, //穿梭框

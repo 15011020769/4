@@ -506,7 +506,7 @@ export default {
     // 5.0修改DDOS攻击告警阈值（类型）
     modifyAlarmType() {
       // console.log(this.servicePack.AlarmType, this.servicePack.AlarmThreshold);
-      if(this.servicePack.AlarmType == 0 && !(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))) {
+      if(this.servicePack.AlarmType == 0 || !(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))) {
         this.servicePack.AlarmThreshold = 1000;
       }
       this.modifyDDoSAlarmThreshold();
@@ -549,17 +549,20 @@ export default {
         }
       }
       this.axios.post(SET_SHOLD, params).then(res => {
-        if (res.Response.Error !== undefined) {
+        if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
-            message: res.Response.Error.Message,
-            type: "error"
+            message: '修改成功',
+            type: 'success'
           });
         } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
             showClose: true,
-            message: "修改成功",
-            type: "success"
+            duration: 0
           });
         }
       });

@@ -36,7 +36,7 @@
             </div>
             <div class="newClear" v-if="policyForm.Smode=='matching'?false:true">
               <p>策略</p>
-              <p>{{$t('DDOS.accessCopy.ipAsk')}}<el-input class="xiansuNub" v-model="policyForm.Frequency"></el-input>{{$t('DDOS.accessCopy.askTime')}}</p>
+              <p>{{$t('DDOS.accessCopy.ipAsk')}}<el-input class="xiansuNub" type="number" v-model="policyForm.Frequency"></el-input>{{$t('DDOS.accessCopy.askTime')}}</p>
             </div>
             <div class="newClear" v-if="policyForm.Smode=='matching'?true:false">
               <p>策略</p>
@@ -160,19 +160,38 @@ export default {
         }
       } else if(this.policyForm.Smode == 'speedlimit') {
         params["Policy.Frequency"] = this.policyForm.Frequency
+        if(this.policyForm.Frequency > 10000) {
+          this.$message({
+            message: '限制速率不能超過 10000 次/分鐘',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          });
+          return
+        } else if(this.policyForm.Frequency <= 0) {
+          thi.$message({
+            message: '限制速率請輸入正整數',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
       }
       this.axios.post(CCSELFDEFINEPOLICY_CREATE, params).then(res => {
         if(res.Response.Success){
           this.$message({
-          message: '添加成功',
-          type: 'success'
-        });
-        }
-        else{
+            message: '添加成功',
+            type: 'success'
+          });
+          this.dialogVisible=false;
+          this.$emit("addAccessContSure",this.dialogVisible)
+        } else {
           if(res.Response.Error.Code == 'LimitExceeded'){
             this.$message.error('CC自定義策略不能超過5個');
           }
           this.$message.error('添加失敗');
+          return
         }
         this.$emit('init')
       });
@@ -203,6 +222,23 @@ export default {
         }
       } else if(this.policyForm.Smode == 'speedlimit') {
         params["Policy.Frequency"] = this.policyForm.Frequency
+        if(this.policyForm.Frequency > 10000) {
+          this.$message({
+            message: '限制速率不能超過 10000 次/分鐘',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          });
+          return
+        } else if(this.policyForm.Frequency <= 0) {
+          thi.$message({
+            message: '限制速率請輸入正整數',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
       }
       this.axios.post(CCSELFDEFINEPOLICY_MODIFY, params).then(res => {
         // console.log(params, res);
@@ -224,6 +260,8 @@ export default {
             message: "編輯成功",
             type: "success"
           });
+          this.dialogVisible=false;
+          this.$emit("addAccessContSure",this.dialogVisible);
         }
       });
     },
@@ -240,8 +278,6 @@ export default {
       } else {//添加
         this.createCCSelfDefinePolicy();
       }
-      this.dialogVisible=false;
-      this.$emit("addAccessContSure",this.dialogVisible)
     },
     //新增一行
     addRow: function () {
