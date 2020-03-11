@@ -165,6 +165,9 @@ import {
   LIST_ENPOLICY,
   GET_SERVICE_API_LIST
 } from "@/constants";
+
+let serviceList = [];
+
 export default {
   components: {
     transfer
@@ -277,7 +280,11 @@ export default {
           this.tableData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
 
-          this.getServiceList();
+          if (serviceList.length > 0) {
+            this.matchServiceType();
+          } else {
+            this.getServiceList();
+          }
         } else {
           let ErrTips = {
             "InternalError.SystemError": "內部錯誤",
@@ -306,16 +313,20 @@ export default {
       };
       this.axios.post(GET_SERVICE_API_LIST, params).then(res => {
         if (res.code === 0) {
-          this.tableData.forEach(element => {
-            let item = res.data.serviceList.find(item => {
-              return item.serviceType === element.ServiceType;
-            });
-            if (item === undefined) {
-              element.serviceName = "-";
-            } else {
-              element.serviceName = item.name;
-            }
-          });
+          serviceList = res.data.serviceList;
+          this.matchServiceType();
+        }
+      });
+    },
+    matchServiceType() {
+      this.tableData.forEach(element => {
+        let item = serviceList.find(item => {
+          return item.serviceType === element.ServiceType;
+        });
+        if (item === undefined) {
+          element.serviceName = "-";
+        } else {
+          element.serviceName = item.name;
         }
       });
     },
