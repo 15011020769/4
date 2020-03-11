@@ -422,8 +422,8 @@ module.exports = {
       qdplsczfgz: '確定批量刪除轉發規則'
     },
     Automatic_unsealing: {
-      user: '自助解封',
-      auto: '自動解封',
+      user: '自助解封中',
+      auto: '自動解封中',
       update: '升級解封',
       bind: '綁定高防包解封',
       Blocked: '被封堵',

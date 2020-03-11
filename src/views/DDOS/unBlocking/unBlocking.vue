@@ -65,7 +65,7 @@
               :label="$t('DDOS.UnlockOperation.Unlockstate')"
             >
               <template slot-scope="scope">{{
-                $t("DDOS.Automatic_unsealing." + scope.row.Status)
+                $t("DDOS.Automatic_unsealing." + scope.row.ActionType)
               }}</template>
             </el-table-column>
             <el-table-column
@@ -78,7 +78,7 @@
                   @click.native.prevent="RenewModel(scope.row)"
                   type="text"
                   size="small"
-                  :disabled="scope.row.Status === 'UnBlocking'"
+                  :disabled="scope.row.ActionType === 'user'"
                 >
                   解封
                 </el-button>
