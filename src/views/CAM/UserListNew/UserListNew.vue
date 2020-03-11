@@ -216,6 +216,7 @@
               class="inputSearchCl"
               clearable
               @keyup.enter.native="searchGroup"
+              @change="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
             </el-input>
@@ -804,7 +805,7 @@ export default {
               })
             })
           }
-          if (this.userGroup.length === res.data.totalNum) {
+          if (this.userGroup.length === Number(res.data.totalNum)) {
             $state && $state.complete()
           } else {
             $state && $state.loaded()
@@ -870,7 +871,10 @@ export default {
     },
     //搜索用户组数据
     searchGroup() {
-      this.userGroups();
+      // this.userGroups();
+      this.userGroup = []
+      this.groupPage = 1
+      this.userGroupInfiniteId += 1;
     },
     //添加用户路由跳转
     addUser() {
