@@ -208,9 +208,13 @@ export default {
      toMonitor(){
       //跳转监控页面
       this.$router.push({
-        name:"colonyOpenMonitor",
+        name:"statefulSetMonitor",
         query:{
-          title:this.tit + "(statefulSet)"
+          title:this.tit + "(StatefulSet)",
+          type: 'StatefulSet',
+          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          clusterId: this.clusterId,
+          spaceName: this.searchType
         }
       })
     },

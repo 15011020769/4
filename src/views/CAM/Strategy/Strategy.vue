@@ -2,7 +2,7 @@
   <div class="Cam wrap">
     <div class="top">
       <div class="top-left">
-        <span class="top-text">{{$t('CAM.Role.strategy')}}</span>
+        <span class="top-text">{{ $t("CAM.Role.strategy") }}</span>
         <el-select
           size="mini"
           v-model="policyScope"
@@ -21,7 +21,7 @@
     </div>
     <div class="strage-wrap">
       <div class="contant">
-        <p class="contant_top">{{$t('CAM.Role.rolTitle')}}</p>
+        <p class="contant_top">{{ $t("CAM.Role.rolTitle") }}</p>
         <div class="table_opare">
           <div>
             <!-- <el-button plain size="small" @click="handleDelete()">{{$t('CAM.userList.userDel')}}</el-button> -->
@@ -35,7 +35,11 @@
             @change="toQuery"
             clearable
           >
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
+            <i
+              slot="suffix"
+              class="el-input__icon el-icon-search"
+              @click="toQuery"
+            ></i>
           </el-input>
         </div>
         <div class="table">
@@ -43,21 +47,32 @@
             :data="tableData"
             height="450"
             style="width: 100%"
-            :row-style="{height:0}"
-            :cell-style="{padding:'5px 10px'}"
+            :row-style="{ height: 0 }"
+            :cell-style="{ padding: '5px 10px' }"
             v-loading="loading"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
             <el-table-column width="65">
               <template slot="header" slot-scope="scope">
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll"
-                  @change="handleCheckAllChange"></el-checkbox>
+                <el-checkbox
+                  :indeterminate="isIndeterminate"
+                  v-model="checkAll"
+                  @change="handleCheckAllChange"
+                ></el-checkbox>
               </template>
               <template slot-scope="scope">
-                <el-tooltip v-if="scope.row.Type === 2" content="预选策略无法选中删除" placement="top-start">
+                <el-tooltip
+                  v-if="scope.row.Type === 2"
+                  content="预选策略无法选中删除"
+                  placement="top-start"
+                >
                   <el-checkbox disabled />
                 </el-tooltip>
-                <el-checkbox v-model="scope.row.checked" @change="handleCheckOneChange" v-else />
+                <el-checkbox
+                  v-model="scope.row.checked"
+                  @change="handleCheckOneChange"
+                  v-else
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -70,23 +85,34 @@
                   @click="handleClick(scope.row)"
                   type="text"
                   size="small"
-                >{{scope.row.PolicyName}}</el-button>
+                  >{{ scope.row.PolicyName }}</el-button
+                >
               </template>
             </el-table-column>
             <el-table-column prop="Description" label="描述"></el-table-column>
-            <el-table-column prop="ServiceType" :label="$t('CAM.strategy.fwlx')" width="150"></el-table-column>
+            <el-table-column
+              prop="serviceName"
+              :label="$t('CAM.strategy.fwlx')"
+              width="150"
+            ></el-table-column>
             <el-table-column prop="operate" label="操作" width="150">
               <template slot-scope="scope">
                 <el-button
                   @click="handleClick_user(scope.row)"
                   type="text"
                   size="small"
-                >{{$t('CAM.strategy.straGroup')}}</el-button>
+                  >{{ $t("CAM.strategy.straGroup") }}</el-button
+                >
               </template>
             </el-table-column>
           </el-table>
-          <div class="Right-style pagstyle" style="height:70px;display:flex;align-items:center;">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CAM.strip")}}</span>
+          <div
+            class="Right-style pagstyle"
+            style="height:70px;display:flex;align-items:center;"
+          >
+            <span class="pagtotal"
+              >共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CAM.strip") }}</span
+            >
             <el-pagination
               :page-size="pagesize"
               :pager-count="7"
@@ -95,27 +121,36 @@
               @current-change="handleCurrentChange"
               @size-change="handleSizeChange"
               :total="TotalCount"
-            >1</el-pagination>
+              >1</el-pagination
+            >
           </div>
         </div>
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
     <div v-if="dialogVisible">
-      <el-dialog title :visible.sync="dialogVisible" width="72%" :before-close="beforeClose">
-        <h3 style="color:#000;margin-bottom:20px;">{{$t('CAM.strategy.straGroup')}}</h3>
+      <el-dialog
+        title
+        :visible.sync="dialogVisible"
+        width="72%"
+        :before-close="beforeClose"
+      >
+        <h3 style="color:#000;margin-bottom:20px;">
+          {{ $t("CAM.strategy.straGroup") }}
+        </h3>
         <div class="dialog_div">
-            <!-- v-if="transferFlag" -->
-          <transfer
-            ref="userTransfer"
-            :PolicyId="policyId"
-          ></transfer>
-            <!-- :userArr="userArr"
+          <!-- v-if="transferFlag" -->
+          <transfer ref="userTransfer" :PolicyId="policyId"></transfer>
+          <!-- :userArr="userArr"
             :groupArr="groupArr" -->
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button size="mini" @click="dialogVisible=false">取 消</el-button>
-          <el-button size="mini" type="primary" @click="attachPolicy">{{$t('CAM.userList.suerAdd')}}</el-button>
+          <el-button size="mini" @click="dialogVisible = false"
+            >取 消</el-button
+          >
+          <el-button size="mini" type="primary" @click="attachPolicy">{{
+            $t("CAM.userList.suerAdd")
+          }}</el-button>
         </span>
       </el-dialog>
     </div>
@@ -124,7 +159,12 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import transfer from "./component/transfer";
-import { POLICY_LIST, DELETE_POLICY, LIST_ENPOLICY } from "@/constants";
+import {
+  POLICY_LIST,
+  DELETE_POLICY,
+  LIST_ENPOLICY,
+  GET_SERVICE_API_LIST
+} from "@/constants";
 export default {
   components: {
     transfer
@@ -177,7 +217,7 @@ export default {
       TotalCount: 0,
       pagesize: 10,
       currpage: 1,
-      loading: true,
+      loading: true
       // userArr: [],
       // groupArr: [],
       // entitiesForPolicyPage: 1,
@@ -189,34 +229,35 @@ export default {
     this.getData();
   },
   methods: {
-    handleCheckAllChange (val) {
-      console.log(val)
-      this.isIndeterminate = false
+    handleCheckAllChange(val) {
+      console.log(val);
+      this.isIndeterminate = false;
       this.tableData.forEach(item => {
-          item.checked = val
-      })
+        item.checked = val;
+      });
     },
-    handleCheckOneChange (val) {
-      console.info('check one change is ', val)
-      let totalCount = this.tableData.length
-      let someStatusCount = 0
+    handleCheckOneChange(val) {
+      console.info("check one change is ", val);
+      let totalCount = this.tableData.length;
+      let someStatusCount = 0;
       this.tableData.forEach(item => {
-          if (item.checked === val) {
-              someStatusCount++
-          }
-      })
-      this.checkAll = totalCount === someStatusCount ? val : !val
-      this.isIndeterminate = someStatusCount > 0 && someStatusCount < totalCount
+        if (item.checked === val) {
+          someStatusCount++;
+        }
+      });
+      this.checkAll = totalCount === someStatusCount ? val : !val;
+      this.isIndeterminate =
+        someStatusCount > 0 && someStatusCount < totalCount;
     },
     selectable(row) {
-      if (row.Type === 2) return false
-      return true
+      if (row.Type === 2) return false;
+      return true;
     },
     // 初始化策略列表数据（默认全部策略）
     getData() {
-      this.isIndeterminate = false,
-      this.checkAll = false,
-      this.loading = true;
+      (this.isIndeterminate = false),
+        (this.checkAll = false),
+        (this.loading = true);
       var params = {
         Version: "2019-01-16",
         Rp: this.pageSize,
@@ -229,9 +270,14 @@ export default {
       }
       this.axios.post(POLICY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          res.Response.List.forEach(item => item.checked = false)
+          res.Response.List.forEach(item => {
+            item.checked = false;
+            item.serviceName = "-";
+          });
           this.tableData = res.Response.List;
           this.TotalCount = res.Response.TotalNum;
+
+          this.getServiceList();
         } else {
           let ErrTips = {
             "InternalError.SystemError": "內部錯誤",
@@ -253,6 +299,26 @@ export default {
         this.loading = false;
       });
     },
+    getServiceList() {
+      const params = {
+        Version: "2019-01-16",
+        isReturnApi: 0
+      };
+      this.axios.post(GET_SERVICE_API_LIST, params).then(res => {
+        if (res.code === 0) {
+          this.tableData.forEach(element => {
+            let item = res.data.serviceList.find(item => {
+              return item.serviceType === element.ServiceType;
+            });
+            if (item === undefined) {
+              element.serviceName = "-";
+            } else {
+              element.serviceName = item.name;
+            }
+          });
+        }
+      });
+    },
     changePolicyScope() {
       this.getData();
     },
@@ -267,10 +333,10 @@ export default {
     },
     // 关联用户/用户组（展现模态框）
     handleClick_user(policy) {
-      console.log(policy)
+      console.log(policy);
       this.transferFlag = false;
       this.$nextTick(() => {
-      this.policyId = policy.PolicyId;
+        this.policyId = policy.PolicyId;
         this.transferFlag = true;
       });
       // this.getAttachPolicys(policy.PolicyId);
@@ -279,7 +345,7 @@ export default {
     beforeClose(done) {
       // this.userArr = [];
       // this.groupArr = [];
-      done()
+      done();
     },
     // // 获取策略关联的实体列表
     // getAttachPolicys(val) {
@@ -388,7 +454,7 @@ export default {
       this.getData();
     },
     handleSizeChange(val) {
-      this.pageSize = val
+      this.pageSize = val;
       this.getData();
     }
   }

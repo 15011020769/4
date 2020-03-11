@@ -103,53 +103,63 @@
               </el-form-item>
             </div>
           </div>
-          <el-form-item label="数据卷（选填）">
-            <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataJuan" :key="index">
-              <el-select v-model="item.name1" placeholder="请选择">
-                <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-              <el-input class="search-input" v-model="item.name2" placeholder="请输入内容"></el-input>
-              <div class="search-hidden">
-                <p v-if="item.name1 == 'usePath'">
-                  暂未设置主机路径设置主机路径
-                  <span class="add-check" @click="dialogVisiblePath = true">主机路径设置</span>
-                </p>
-                <p v-if="item.name1 == 'useNFS'">
-                  <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
-                </p>
-                <p v-if="item.name1 == 'usePVC'">
-                  <el-select v-model="item.name3" :disabled="usePvcOptions.length == 0" :placeholder="
-                      usePvcOptions.length == 0 ? '暂无数据' : '请选择'
-                    ">
-                    <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
+          <!-- 数据卷（选填） -->
+          <div style="margin-bottom: 18px">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">数据卷（选填）</label>
+            <div style="margin-left: 120px">
+              <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataVolumes" :key="index">
+                <el-form-item style="display: inline-block; margin-bottom: 0px" label-width="0px">
+                  <el-select v-model="item.name1" placeholder="请选择">
+                    <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                   </el-select>
-                </p>
-                <p v-if="item.name1 == 'useYun'">
-                  <span class="add-check" @click="selectYun">选择云硬盘</span>&nbsp;&nbsp;
-                  <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
-                    <i style="cursor:pointer" class="el-icon-warning"></i>
-                  </el-tooltip>
-                </p>
-                <p v-if="item.name1 == 'useConfig'">
-                  暂未选择ConfigMap
-                  <span class="add-check" @click="selectConfig">选择配置项</span>
-                </p>
-                <p v-if="item.name1 == 'useSecret'">
-                  暂未选择Secret
-                  <span class="add-check" @click="selectSecret">选择Secret</span>
-                </p>
+                </el-form-item>
+                <el-form-item style="display: inline-block; margin-bottom: 0px" label-width="0px">
+                  <el-input class="search-input" v-model="item.name2" placeholder="名称，如：vol"></el-input>
+                </el-form-item>
+                <div class="search-hidden">
+                  <p v-if="item.name1 == 'usePath'">
+                    暂未设置主机路径
+                    <el-button type="text" size="mini" @click="dialogVisiblePath = true">主机路径设置</el-button>
+                  </p>
+                  <p v-if="item.name1 == 'useNFS'">
+                    <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                      <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
+                    </el-form-item>
+                     </p>
+                  <p v-if="item.name1 == 'usePVC'">
+                    <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                      <el-select v-model="item.name3" :disabled="usePvcOptions.length == 0" :placeholder="usePvcOptions.length == 0 ? '暂无数据' : '请选择'">
+                        <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </p>
+                  <p v-if="item.name1 == 'useYun'">
+                    <el-button type="text" size="mini" @click="selectYun">选择云硬盘</el-button>&nbsp;&nbsp;
+                    <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
+                      <i style="cursor:pointer" class="el-icon-warning"></i>
+                    </el-tooltip>
+                  </p>
+                  <p v-if="item.name1 == 'useConfig'">
+                    暂未选择ConfigMap
+                    <el-button type="text" size="mini" @click="selectConfig">选择配置项</el-button>
+                  </p>
+                  <p v-if="item.name1 == 'useSecret'">
+                    暂未选择Secret
+                    <el-button type="text" size="mini" @click="selectSecret">选择Secret</el-button>
+                  </p>
+                </div>
+                <i class="el-icon-close" @click="delDataVolume(index)"></i>
               </div>
-              <i class="el-icon-close" @click="delDataJuan(index)"></i>
+              <div>
+                <el-button type="text" size="mini" :disabled="yesOrnoAddDataJuan" @click="addDataVolume">添加数据卷</el-button>
+              </div>
+              <p style="line-height: 28px">为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
+                <span style="color:#409eff;cursor:pointer">使用指引</span>
+              </p>
             </div>
-            <p>
-              <el-button type="text" :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
-            </p>
-            <p>为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
-              <span style="color:#409eff;cursor:pointer">使用指引</span>
-            </p>
-          </el-form-item>
+          </div>
           <!-- 实例内容器 -->
           <div style="margin-bottom: 18px">
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例内容器</label>
@@ -158,11 +168,11 @@
                 <div v-show="v.editStatus" class="case-content" style="margin-bottom: 18px">
                   <el-form-item style="margin-bottom: 0px">
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="isAddContainer">
                         <i class="el-icon-check"
                            style="font-size:20px;margin-left:20px;"
-                           :style="{cursor: v.completed?'pointer':'no-drop'}"
-                           @click="v.completed?editInstanceContent(i):''">
+                           :style="{cursor: isAddContainer?'pointer':'no-drop'}"
+                           @click="isAddContainer?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
                       <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
@@ -197,15 +207,33 @@
                       <p v-show="v.mirrorPullTactics === 'Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                     </template>
                   </el-form-item>
-                  <el-form-item label="挂载点" v-show="wl.dataJuan.length > 0">
-                    <div v-show="showMountPoint" v-for="(point,i) in wl.pointList" :key="i">
-                      <el-select v-model="wl.pointName"></el-select>
-                      <el-input v-model="wl.mountPath"></el-input>
-                      <el-input v-model="wl.subPath"></el-input>
-                      <el-select></el-select>
+                  <div style="margin-bottom: 18px" v-show="v.showMountPoint">
+                    <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">挂载点</label>
+                    <div style="margin-left: 120px; position: relative">
+                      <div class="bottom10" v-for="(mItem, mIndex) in v.mountPoints" :key="mItem.targetPath">
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;">
+                          <el-select v-model="mItem.dataVolumeValue" placeholder="请选择数据卷">
+                            <el-option v-for="(dItem, dIndex) in wl.dataVolumes" :key="dIndex" :label="dItem" :value="dItem">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-input placeholder="目标路径，如:/mnt" v-model="mItem.targetPath"></el-input>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-input placeholder="挂载子路径" v-model="mItem.mountSubPath"></el-input>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-select v-model="mItem.permission">
+                            <el-option label="读写" value="dx" selected></el-option>
+                            <el-option label="只读" value="zd"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="delMountPoint(i, mIndex)"></i>
+                      </div>
+                      <el-button type="text" size="mini" @click='addMountPoint(i)'>添加挂载点</el-button>
                     </div>
-                    <el-button type="text" @click="changIsShowmount()">添加挂载点</el-button>
-                  </el-form-item>
+                  </div>
                   <el-form-item label="CPU/内存限制">
                     <div class="cpu-limit">
                       <div>
@@ -469,10 +497,11 @@
                   <el-form-item style="margin-bottom: 0px" label-width="0px">
                     <div style="float: left">{{v.name}} ({{v.mirrorImg}}) </div>
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="isAddContainer">
                         <i class="el-icon-edit-outline"
-                           style="font-size:20px;margin-left:20px;cursor:pointer"
-                           @click="v.completed?editInstanceContent(i):''">
+                           style="font-size:20px;margin-left:20px;"
+                           :style="{cursor: isAddContainer?'pointer':'no-drop'}"
+                           @click="isAddContainer?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
                       <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
@@ -491,7 +520,7 @@
             </div>
           </div>
           <!-- 实例数量 -->
-          <div style="margin-bottom: 18px">
+          <div style="margin-bottom: 18px" v-show="wl.type === 'Deployment' || wl.type === 'StatefulSet'">
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例数量</label>
             <div style="margin-left: 120px">
               <el-form-item label-width="0px">
@@ -594,23 +623,29 @@
                 <!-- 策略配置 -->
                 <div style="margin-bottom: 18px">
                   <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">策略配置</label>
-                  <div v-show="wl.type!=='CronJob' && wl.type!=='Job'">
-                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics !== 3">
-                      <el-form-item label="Pods">
-                        <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）" v-model="wl.configTacticsPods"></el-input>
-                        <p>Pod将批量启动或停止</p>
-                      </el-form-item>
-                    </div>
-                    <div style="margin-left: 120px;width: 350px;" class="form-controls" v-show="wl.updateTactics === 3">
-                      <el-form-item label="MaxSurge">
-                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxSurge"></el-input>
-                        <p>允许超出所需规模的最大Pod数量</p>
-                      </el-form-item>
-                      <el-form-item label="MaxUnavailable">
-                        <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）" v-model="wl.configTacticsMaxUnavailable"></el-input>
-                        <p>允许最大不可用的Pod数量</p>
-                      </el-form-item>
-                    </div>
+                  <div style="margin-left: 120px;width: 350px;" class="form-controls">
+                    <el-form-item label="Pods" v-show="wl.type === 'Deployment' && wl.updateTactics !== 3">
+                      <el-input class="w192" placeholder="正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsPods"></el-input>
+                      <p>Pod将批量启动或停止</p>
+                    </el-form-item>
+                    <el-form-item label="MaxSurge" v-show="wl.type === 'Deployment' && wl.updateTactics === 3">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsMaxSurge"></el-input>
+                      <p>允许超出所需规模的最大Pod数量</p>
+                    </el-form-item>
+                    <el-form-item label="MaxUnavailable"
+                                  v-show="(wl.type === 'Deployment' && wl.updateTactics === 3) || wl.type === 'DaemonSet'">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsMaxUnavailable"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </el-form-item>
+                    <el-form-item label="Partition"
+                                  v-show="wl.type === 'StatefulSet'">
+                      <el-input class="w192" placeholder="0、正整数或者正百分数（default: 25%）"
+                                v-model="wl.configTacticsPartition"></el-input>
+                      <p>允许最大不可用的Pod数量</p>
+                    </el-form-item>
                   </div>
                 </div>
               </div>
@@ -1046,6 +1081,7 @@
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitAdd()">创建Workload</el-button>
           <el-button size="small" @click="()=>$router.back()">取消</el-button>
+          <div class="tke-fe-alert tke-fe-alert--error" v-if="submitErrorMessage">{{submitErrorMessage}}</div>
         </div>
       </div>
     </div>
@@ -1082,7 +1118,6 @@ export default {
       namespaceOptions: [], // 命名空间列表
       vpcId: '',
       loadShow: false, // 是否显示加载
-      showMountPoint: false, // 是否显示添加挂载点
       addLabelFlag: false, // 是否可以新建标签
       failedRestartPolicyOption: ['OnFailure', 'Never'],
       specifyNodeDispatchOption: [], // 指定节点调度
@@ -1107,7 +1142,7 @@ export default {
           failedRestartPolicy: 'OnFailure'
         },
         instanceContent: [], // 实例内容器
-        dataJuan: [],
+        dataVolumes: [],
         caseNum: 'handAdjust',
         replicas: 1, // 实例数量-》手动调节-》实例数量
         touchTactics: [], // 实例数量-》自动调节-》触发策略
@@ -1122,9 +1157,10 @@ export default {
         updateWay: '滚动更新（推荐）',
         updateTactics: 1, // 更新策略 单选
         updateInterval: 0, // 更新间隔
-        configTacticsPods: 1, // 配置策略-》pods
-        configTacticsMaxSurge: '', // 配置策略-》MaxSurge
-        configTacticsMaxUnavailable: '', // 配置策略-》MaxUnavailable
+        configTacticsPods: 1, // 配置策略-》pods (出现条件：type === 'Deployment' && updateTactics !== 3)
+        configTacticsMaxSurge: '25%', // 配置策略-》MaxSurge (出现条件：type === 'Deployment' && updateTactics === 3)
+        configTacticsMaxUnavailable: '25%', // 配置策略-》MaxUnavailable (出现条件：(type === 'Deployment' && updateTactics === 3) || type === 'DaemonSet')
+        configTacticsPartition: '0', // 配置策略-》Partition (出现条件：type === 'StatefulSet')
         mustCondition: [], // 强制满足条件
         needCondition: [], // 尽量满足条件
         nodeTactics: 1, // 节点调度 单选
@@ -1336,29 +1372,12 @@ export default {
       SelectMirrorImgFlag: false,
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {}, // 引用ConfigMap/Secret ConfigMap
-      describeClustersInstances: []
+      describeClustersInstances: [],
+      submitErrorMessage: ''
     }
   },
   components: { Service, SelectMirrorImg },
   watch: {
-    wl: {
-      handler (val) {
-        // 监听数据卷
-        val.dataJuan.forEach(item => {
-          if (item.name1 === 'useMenu' && item.name2) {
-            this.yesOrnoAddDataJuan = false
-          } else if (item.name1 && item.name2 && item.name3) {
-            this.yesOrnoAddDataJuan = false
-          } else {
-            this.yesOrnoAddDataJuan = true
-          }
-        })
-        if (val.dataJuan.length === 0) {
-          this.yesOrnoAddDataJuan = false
-        }
-      },
-      deep: true
-    },
     // 监听标签
     'wl.name': {
       handler: function (val) {
@@ -1387,7 +1406,8 @@ export default {
         let isAddContainer = true
         val.forEach(item => {
           let completed = true
-          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent } = item
+          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting,
+            surviveExamine, readyToCheck, surviveExamineContent } = item
           if (name === '' || mirrorImg === '') {
             completed = false
           }
@@ -1437,7 +1457,6 @@ export default {
           }
           item.completed = completed
         })
-        console.log(this.isAddContainer)
         this.isAddContainer = isAddContainer
       },
       deep: true
@@ -1464,6 +1483,12 @@ export default {
       handler: function (val) {
         this.changeServiceAccess()
       }
+    },
+    'wl.mustCondition': {
+      handler: function (val) {
+        console.log(val)
+      },
+      deep: true
     }
   },
   created () {
@@ -1776,18 +1801,6 @@ export default {
         })
       })
     },
-    addDataJuan () { // 新增数据卷
-      this.dataFlag = true
-      var obj = {
-        name1: '',
-        name2: '',
-        name3: ''
-      }
-      this.wl.dataJuan.push(obj)
-    },
-    delDataJuan (index) { // 删除数据卷
-      this.wl.dataJuan.splice(index, 1)
-    },
     // 选择云硬盘
     selectYun () {
       this.dialogVisibleYun = true
@@ -1804,9 +1817,6 @@ export default {
     // 改变页数
     handleCurrentChange (val) {
       this.currpage = val
-    },
-    changIsShowmount () {
-      this.showMountPoint = true
     },
     // 点击确定绑定镜像
     confirmMirrorImg: function (val, index) {
@@ -1826,13 +1836,15 @@ export default {
       })
     },
     submit: async function () {
+      // 注释请求参数
+      this.submitErrorMessage = ''
       let {
         name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
         updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
         caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
         serviceEnbel, nodeTactics, specifyNodeDispatchValue, mustCondition, needCondition,
         serviceAccess, ETP, SA, time, describeLoadBalancersValue, loadBalance, handlessChecked, subnetTwoValue,
-        jobSettings, executionStrategy
+        jobSettings, executionStrategy, configTacticsPartition
       } = this.wl
       let labelsObj = {}
       labels.forEach(item => {
@@ -1943,39 +1955,20 @@ export default {
         return oneContainer
       })
       // 基本 requestBody
+      let params = {
+        Method: 'POST',
+        Version: '2018-05-25',
+        ClusterName: this.clusterId
+      }
       let requestBody = {
         kind: type,
-        apiVersion: 'apps/v1beta2',
         metadata: {
           name: name,
           namespace: namespace,
           labels: labelsObj
         },
         spec: {
-          minReadySeconds: updateInterval,
-          replicas: replicas,
-          template: {
-            metadata: {
-              labels: labelsObj
-            },
-            spec: {
-              volumes: [],
-              containers: containerList,
-              restartPolicy: 'Always',
-              imagePullSecrets: [
-                {
-                  'name': 'qcloudregistrykey'
-                },
-                {
-                  'name': 'tencenthubkey'
-                }
-              ]
-            }
-          },
-          selector: {
-            matchLabels: labelsObj
-          },
-          strategy: {}
+          minReadySeconds: updateInterval
         }
       }
       let template = {
@@ -1997,77 +1990,8 @@ export default {
         }
       }
       let queryBodyJson = ''
-      // 实例数量为自动调节时
-      if (caseNum === 'autoAdjust') {
-        let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
-        let metrics = touchTactics.map(item => {
-          let { touch2, touch2Option, size } = item
-          let oneOption = touch2Option.find(item2 => item2.value === touch2)
-          return {
-            type: 'Pods',
-            pods: {
-              metricName: oneOption.type,
-              targetAverageValue: size
-            }
-          }
-        })
-        let hpaRequestBody = {
-          kind: 'HorizontalPodAutoscaler',
-          apiVersion: 'autoscaling/v2beta1',
-          metadata: {
-            name: hpaName,
-            namespace: namespace,
-            labels: {
-              'qcloud-app': hpaName
-            }
-          },
-          spec: {
-            minReplicas: parseInt(caseScope1),
-            maxReplicas: parseInt(caseScope2),
-            metrics: metrics,
-            scaleTargetRef: {
-              apiVersion: 'apps/v1beta2',
-              kind: type,
-              name: name
-            }
-          }
-        }
-        console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
-        queryBodyJson += JSON.stringify(hpaRequestBody)
-      }
       // 判断 描述
-      if (description !== '') requestBody.metadata = { description: description }
-      // 判断 更新方式
-      if (updateWay === '滚动更新（推荐）') {
-        let strategy = {
-          type: 'RollingUpdate',
-          rollingUpdate: {
-            maxSurge: 0,
-            maxUnavailable: 0
-          }
-        }
-        // 更新策略
-        switch (updateTactics) {
-          case 1:
-            strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
-            break
-          case 2:
-            strategy.rollingUpdate.maxUnavailable = parseInt(configTacticsPods)
-            break
-          case 3:
-            strategy.rollingUpdate = {
-              maxSurge: configTacticsMaxSurge,
-              maxUnavailable: configTacticsMaxUnavailable
-            }
-            break
-        }
-        requestBody.spec.strategy = strategy
-      } else { // 快速更新
-        requestBody.spec.strategy = {
-          type: 'Recreate',
-          rollingUpdate: null
-        }
-      }
+      if (description !== '') requestBody.metadata.description = description
       // 节点调度策略
       if (nodeTactics === 2) {
         let matchExpressionsValue = specifyNodeDispatchValue.map(item => {
@@ -2174,13 +2098,51 @@ export default {
           serviceRequestBody.spec.externalTrafficPolicy = ETP
           serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
           let oneSubOption = this.subnetTwoOption.find(item => item.SubnetName === subnetTwoValue)
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption
+          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption.SubnetId
         } else if (serviceAccess === '4') {
           serviceRequestBody.spec.externalTrafficPolicy = ETP
           serviceRequestBody.spec.type = 'NodePort'
         }
         if ((serviceAccess === '1' || serviceAccess === '3') && loadBalance === '2') {
           serviceRequestBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = describeLoadBalancersValue
+        }
+        // 实例数量为自动调节时
+        if (caseNum === 'autoAdjust') {
+          let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
+          let metrics = touchTactics.map(item => {
+            let { touch2, touch2Option, size } = item
+            let oneOption = touch2Option.find(item2 => item2.value === touch2)
+            return {
+              type: 'Pods',
+              pods: {
+                metricName: oneOption.type,
+                targetAverageValue: size
+              }
+            }
+          })
+          let hpaRequestBody = {
+            kind: 'HorizontalPodAutoscaler',
+            apiVersion: 'autoscaling/v2beta1',
+            metadata: {
+              name: hpaName,
+              namespace: namespace,
+              labels: {
+                'qcloud-app': hpaName
+              }
+            },
+            spec: {
+              minReplicas: parseInt(caseScope1),
+              maxReplicas: parseInt(caseScope2),
+              metrics: metrics,
+              scaleTargetRef: {
+                apiVersion: 'apps/v1beta2',
+                kind: type,
+                name: name
+              }
+            }
+          }
+          console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
+          queryBodyJson += JSON.stringify(hpaRequestBody)
         }
         if (SA === 'ClientIP') {
           serviceRequestBody.spec.sessionAffinityConfig = {
@@ -2196,24 +2158,82 @@ export default {
         template.spec.restartPolicy = jobSettings.failedRestartPolicy
         requestBody.spec.completions = jobSettings.repeatNumber
         requestBody.spec.parallelism = jobSettings.parallelNumber
+        requestBody.spec.updateStrategy = {
+          type: 'RollingUpdate',
+          rollingUpdate: {}
+        }
+      } else {
+        // 判断 更新方式
+        if (type === 'Deployment') {
+          if (updateWay === '滚动更新（推荐）') {
+            let strategy = {
+              type: 'RollingUpdate',
+              rollingUpdate: {
+                maxSurge: 0,
+                maxUnavailable: 0
+              }
+            }
+            // 更新策略
+            switch (updateTactics) {
+              case 1:
+                strategy.rollingUpdate.maxSurge = parseInt(configTacticsPods)
+                break
+              case 2:
+                strategy.rollingUpdate.maxUnavailable = parseInt(configTacticsPods)
+                break
+              case 3:
+                strategy.rollingUpdate = {
+                  maxSurge: configTacticsMaxSurge,
+                  maxUnavailable: configTacticsMaxUnavailable
+                }
+                break
+            }
+            requestBody.spec.strategy = strategy
+          } else { // 快速更新
+            requestBody.spec.strategy = {
+              type: 'Recreate',
+              rollingUpdate: null
+            }
+          }
+        } else if (type === 'DaemonSet') {
+          requestBody.spec.updateStrategy = {
+            type: 'RollingUpdate',
+            rollingUpdate: {
+              maxUnavailable: configTacticsMaxUnavailable
+            }
+          }
+        } else if (type === 'StatefulSet') {
+          requestBody.spec.updateStrategy = {
+            type: 'RollingUpdate',
+            rollingUpdate: {
+              partition: parseInt(configTacticsPartition)
+            }
+          }
+        }
       }
       if (type === 'CronJob') {
         requestBody.spec.schedule = executionStrategy
         requestBody.spec.jobTemplate = {}
         requestBody.spec.jobTemplate.spec = {}
         requestBody.spec.jobTemplate.spec.template = template
+        requestBody.apiVersion = 'batch/v1beta1'
+        params.Path = `/apis/batch/v1beta1/namespaces/${namespace}/cronjobs`
+      } else if (type === 'Job') {
+        requestBody.spec.template = template
+        requestBody.apiVersion = 'batch/v1'
+        params.Path = `/apis/batch/v1/namespaces/${namespace}/jobs`
       } else {
         requestBody.spec.template = template
+        requestBody.spec.replicas = replicas
+        requestBody.spec.selector = {
+          matchLabels: labelsObj
+        }
+        requestBody.apiVersion = 'apps/v1beta2'
+        params.Path = `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`
       }
       console.log('requestBody', JSON.stringify(requestBody))
       queryBodyJson += JSON.stringify(requestBody)
-      let params = {
-        Method: 'POST',
-        Path: `/apis/platform.tke/v1/clusters/${this.clusterId}/apply?notUpdate=true`,
-        Version: '2018-05-25',
-        RequestBody: queryBodyJson,
-        ClusterName: this.clusterId
-      }
+      params.RequestBody = queryBodyJson
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.loadShow = false
@@ -2256,14 +2276,7 @@ export default {
           })
         } else {
           this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
+          this.submitErrorMessage = JSON.parse(res.Response.Error.Message).message
         }
       })
     }
@@ -2318,7 +2331,7 @@ export default {
     height: 50px;
     box-sizing: border-box;
     padding: 0px 20px;
-
+    margin-bottom: 1px;
     .search-input {
       width: 210px;
       margin-left: 10px;
@@ -2332,12 +2345,6 @@ export default {
     .el-icon-close {
       font-size: 18px;
       cursor: pointer;
-    }
-
-    .add-check {
-      color: #409eff;
-      cursor: pointer;
-      margin-left: 10px;
     }
 
     .cancle-addjuan {
@@ -2538,4 +2545,26 @@ export default {
     }
   }
 
+  .tke-fe-alert{
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    border-radius: 2px;
+    background: #e5f0ff;
+    position: relative;
+    box-sizing: border-box;
+    margin-right: auto;
+    display: inline-block;
+    margin-left: 20px;
+    margin-bottom: 0px;
+    max-width: 750px;
+    max-height: 120px;
+    overflow: auto;
+  }
+  .tke-fe-alert--error{
+    color: #b43537;
+    border-color: #f6b5b5;
+    background-color: #fcecec;
+  }
 </style>

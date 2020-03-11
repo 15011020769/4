@@ -195,88 +195,11 @@
               <el-dialog
                 title="添加用戶"
                 :visible.sync="dialogUser"
-                width="75%"
+                width="950px"
                 :before-close="handleCloseUser"
                 custom-class="dialogStyle"
               >
-                <div class="container">
-                  <div class="container-left">
-                    <p>{{$t('CAM.userGroup.selection')}}({{totalNumUser}}{{$t("CAM.strip")}}）</p>
-                    <el-input
-                      clearable
-                      size="small"
-                      v-model="searchUser"
-                      style="width:100%"
-                      @keyup.enter.native="toQueryUser"
-                      @change="search"
-                    >
-                      <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
-                    </el-input>
-                    <el-table
-                      class="table-left"
-                      ref="multipleOptionUser"
-                      :data="userData"
-                      size="small"
-                      :height="tableHeight"
-                      tooltip-effect="dark"
-                      style="width: 100%"
-                      @row-click="selectedRow"
-                      @selection-change="handleSelectionChangeUser"
-                      :empty-text="$t('CAM.strategy.zwsj')"
-                    >
-                      <el-table-column type="selection" prop="Uin" width="28"></el-table-column>
-                      <el-table-column
-                        prop="Name"
-                        :label="$t('CAM.userGroup.user')"
-                        show-overflow-tooltip
-                      ></el-table-column>
-                      <el-table-column :label="$t('CAM.userList.userChose')" width="100">
-                        <template slot-scope="scope">
-                          <p>{{$t('CAM.userGroup.childUser')}}</p>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                  <div class="direction">
-                    <div class="direction-icon">
-                      <i class="iconfont">&#xe603;</i>
-                    </div>
-                  </div>
-                  <div class="container-right">
-                    <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
-                    <el-table
-                      class="table-left"
-                      ref="multipleSelected"
-                      :data="userSelData"
-                      tooltip-effect="dark"
-                      size="small"
-                      :height="tableHeight"
-                      style="width: 100%"
-                      :empty-text="$t('CAM.strategy.zwsj')"
-                    >
-                      <el-table-column
-                        prop="Name"
-                        :label="$t('CAM.userGroup.user')"
-                        show-overflow-tooltip
-                      ></el-table-column>
-                      <el-table-column :label="$t('CAM.userList.userChose')" width="100">
-                        <template slot-scope="scope">
-                          <p>{{$t('CAM.userList.userChose')}}</p>
-                        </template>
-                      </el-table-column>
-                      <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
-                        &lt;!&ndash;
-                        <template slot-scope="scope">
-                          <el-button
-                            @click.native.prevent="deleteRows(scope.$index, userSelData)"
-                            type="text"
-                            size="small"
-                          >x</el-button>
-                        </template>&ndash;&gt;
-                      </el-table-column>
-                    </el-table>
-                  </div>
-                </div>
+                <transfer1 :groupIds="[groupId]" ref="transfer" :visible.sync="dialogUser" />
                 <div slot="footer" class="dialog-footer">
                   <el-button @click="dialogUser = false">取 消</el-button>
                   <el-button type="primary" @click="addUserToGroup">{{$t('CAM.userList.suerAdd')}}</el-button>
@@ -306,6 +229,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import transfer from "../Role/component/transfer2";
+import transfer1 from "./transfer";
 import Headcom from "@/components/public/Head"; //头部组件引入
 import {
   GET_GROUP,
@@ -368,6 +292,7 @@ export default {
   },
   components: {
     transfer,
+    transfer1,
     Headcom
   },
   mounted() {
@@ -595,96 +520,39 @@ export default {
     // 打开用户组列表穿梭框
     openUser() {
       this.dialogUser = true;
-      this.userData = [];
-      let groupId = parseInt(this.$route.query.GroupId);
-      let _this = this;
-      let params = {
-        Version: "2019-01-16"
-      };
-      this.axios
-        .post(USER_LIST, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.userData = [];
-            let userAllData = res.Response.Data;
-            // 获取用户组管理用户
-            let selUserData = [];
-            let paramsGroup = {
-              GroupId: groupId,
-              Version: "2019-01-16"
-            };
-            this.axios
-              .post(GROUP_USERS, paramsGroup)
-              .then(resGroup => {
-                if (resGroup.Response.Error === undefined) {
-                  // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
-                  selUserData = resGroup.Response.UserInfo;
-                  // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
-                  if (selUserData != "") {
-                    for (var i = 0; i < selUserData.length; i++) {
-                      let ownerObj = selUserData[i];
-                      for (var j = 0; j < userAllData.length; j++) {
-                        let allObj = userAllData[j];
-                        if (allObj.Uin === ownerObj.Uin) {
-                          userAllData.splice(j, 1);
-                        }
-                      }
-                    }
-                    _this.userData = userAllData;
-                  } else {
-                    _this.userData = userAllData;
-                  }
-                  _this.userAllData = userAllData
-                  _this.totalNumUser = this.userData.length;
-                } else {
-                  let ErrTips = {
-                    "ResourceNotFound.GroupNotExist": "用戶組不存在"
-                  };
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[resGroup.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
-              })
-              .catch(error => {
-                console.log(error);
-              });
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
     },
     // 添加用户到用户组
     addUserToGroup() {
-      this.dialogUser = false;
+      const user = this.$refs.transfer.selectedUsersWithoutGroup
+      if (user.length === 0) {
+        return void this.$message({
+                message: '請選擇用戶',
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+      }
       let groupId = parseInt(this.$route.query.GroupId);
-      let value = this.userSelData;
-      if (value != "") {
+
         let params = {
           Version: "2019-01-16"
         };
-        for (var i = 0; i < value.length; i++) {
-          params["Info." + i + ".Uid"] = value[i].Uid;
-          params["Info." + i + ".GroupId"] = groupId;
-        }
+        user.forEach((user, i) => {
+          params[`Info.${i}.Uid`] = user.Uid
+          params[`Info.${i}.GroupId`] = groupId
+        })
         this.axios
           .post(ADD_GROUPTOLIST, params)
           .then(data => {
             if (data.Response.Error === undefined) {
-              this.init(); // 重新加载页面
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
+              });
+              this.dialogUser = false
+              this.init()
             } else {
               let ErrTips = {
                 "InvalidParameter.GroupNotExist": "用戶組不存在",
@@ -706,7 +574,6 @@ export default {
           .catch(error => {
             console.log(error);
           });
-      }
     },
     toQueryUser() {
       console.log(this.userAllData)

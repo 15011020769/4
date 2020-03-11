@@ -6,7 +6,7 @@
       <h4 class="tke-formpanel-title">条件筛选</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
         <el-form-item label="命名空间">
-          <el-select v-model="nsValue" placeholder="请选择" @change="nameSpaceList">
+          <el-select v-model="nsValue" placeholder="请选择命名空间" @change="getKind">
             <el-option
               v-for="item in nsOptions"
               :key="item.value"
@@ -16,7 +16,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="类型">
-          <el-select v-model="typeValue" filterable placeholder="请选择" @change="getEventList">
+          <el-select v-model="typeValue" filterable placeholder="请选择类型" @change="getEventList">
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -26,7 +26,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="名称">
-          <el-select v-model="nameValue" placeholder="请选择" :disabled="nameFlag">
+          <el-select
+            v-model="nameValue"
+            placeholder="请选择名称"
+            :disabled="nameFlag"
+            @change="getNameList"
+          >
             <el-option
               v-for="item in nameOptions"
               :key="item.value"
@@ -66,6 +71,7 @@
         <el-table-column prop label="资源类型">
           <template slot-scope="scope">
             <span v-if="scope.row.involvedObject.kind">{{scope.row.involvedObject.kind}}</span>
+            <span v-else>-</span>
           </template>
         </el-table-column>
         <el-table-column prop label="资源名称">
@@ -125,6 +131,7 @@ export default {
       nsOptions: [],
       nsValue: "default",
       nameFlag: true,
+      timeId: null,
       typeOptions: [
         {
           value: "全部類型",
@@ -180,18 +187,9 @@ export default {
         }
       ],
       typeValue: "全部類型",
-      nameOptions: [
-        // {
-        //   value: "aaa",
-        //   label: "aaa"
-        // },
-        // {
-        //   value: "bbb",
-        //   label: "bbb"
-        // }
-      ],
+      nameOptions: [],
       nameValue: "",
-      autoRefresh: true
+      autoRefresh: false
     };
   },
 
@@ -203,20 +201,15 @@ export default {
     refresh() {
       this.nsOptions = [];
       if (this.autoRefresh == true) {
-        var timeId = setInterval(() => {
-          this.nameSpaceList();
-          // this.getKind();
-        }, 20000);
+        this.timeId = setInterval(() => {
+          this.getKind();
+        }, 30000);
       } else {
         this.nsOptions = [];
-        this.nameSpaceList();
-        // this.getKind();
+        this.getKind();
       }
     },
-    //    /api/v1/namespaces    get
-    //    /api/v1/namespaces/{namespace}/events?&limit=20 get
-    //    /api/v1/namespaces//events?limit=20
-    //命名空间选项
+    // 初始化命名空间获取的列表事件
     nameSpaceList() {
       this.loadShow = true;
       var params = {
@@ -227,10 +220,10 @@ export default {
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
+          this.nsOptions = [];
           var mes = JSON.parse(res.Response.ResponseBody);
-          if (mes.items != []) {
-            this.list = [];
-            this.list = mes.items;
+          if (mes.items.length > 0) {
             this.total = mes.items.length;
             mes.items.forEach(item => {
               this.nsOptions.push({
@@ -242,7 +235,9 @@ export default {
           this.getKind();
           this.loadShow = false;
         } else {
+          this.list = [];
           let ErrTips = {};
+          this.loadShow = false;
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -254,7 +249,7 @@ export default {
       });
     },
     getKind() {
-      //获取类型的数据
+      //改变命名空间获取的数据
       this.loadShow = true;
       var params = {
         Method: "GET",
@@ -263,6 +258,7 @@ export default {
         ClusterName: this.$route.query.clusterId
       };
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        this.list = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
@@ -271,6 +267,8 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {};
+          this.list = [];
+          this.loadShow = false;
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -292,78 +290,156 @@ export default {
         typeValues =
           typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
       }
-      var params = {
-        Method: "GET",
-        // /apis/apps/v1beta2/namespaces/default/daemonsets
-        Path:
-          "/apis/batch/v1beta1/namespaces/" + this.nsValue + "/" + typeValues,
-        ClusterName: this.$route.query.clusterId,
-        Version: "2018-05-25"
-      };
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        var mes = JSON.parse(res.Response.ResponseBody);
-        this.list = mes.items;
-        this.total = mes.items.length;
-        if (mes.items != []) {
-          this.nameFlag = false;
-        }
-        this.loadShow = false;
-        // if (res.Response.Error === undefined) {
-        // } else {
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
-      });
-      //       Method: "GET"
-      // Path: "/api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=CronJob&limit=20"
-      // Version: "2018-05-25"
-      // ClusterName: "cls-h3phnkpy"
 
-      // var params = {
-      //   Method: "GET",
-      //   Path:
-      //     "/apis/apps/v1beta2/namespaces/" +
-      //     this.nsValue +
-      //     "/events？fieldSelector=involvedObject.kind=" +
-      //     this.typeValue +
-      //     "b&limit=20",
-      //   ClusterName: this.$route.query.clusterId,
-      //   Version: "2018-05-25"
-      // };
-      // /api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=CronJob&limit=20
-      var params = {
-        Method: "GET",
+      console.log(this.typeValue);
+      var params = {};
+      if (
+        this.typeValue == "daemonset" ||
+        this.typeValue == "deployment" ||
+        this.typeValue == "statefulset"
+      ) {
+        // /apis/apps/v1beta2/namespaces/default/daemonsets
+        params.Path =
+          "/apis/apps/v1beta2/namespaces/" + this.nsValue + "/" + typeValues;
+      } else if (this.typeValue == "cronjob") {
+        // Path: "/apis/batch/v1beta1/namespaces/default/cronjobs"
+        params.Path =
+          "/apis/batch/v1beta1/namespaces/" + this.nsValue + "/" + typeValues;
+      } else if (this.typeValue == "ingress") {
+        //  /apis/extensions/v1beta1/namespaces/default/ingresses
+        params.Path =
+          "/apis/extensions/v1beta1/namespaces/" +
+          this.nsValue +
+          "/" +
+          typeValues;
+      } else if (this.typeValue == "job") {
+        // /apis/batch/v1/namespaces/default/jobs
+        params.Path =
+          "/apis/batch/v1/namespaces/" + this.nsValue + "/" + typeValues;
+      } else if (this.typeValue == "node") {
+        // /api/v1/nodes
+        params.Path = "/api/v1/" + typeValues;
+      } else if (this.typeValue == "pv") {
+        // /api/v1/nodes
+        params.Path = "/api/v1/persistentvolumes";
+      } else if (this.typeValue == "pods") {
+        // /api/v1/namespaces/default/pods
+        params.Path =
+          "/api/v1/namespaces/" + this.nsValue + "/" + this.typeValue;
+      } else if (this.typeValue == "pvc") {
+        params.Path =
+          "/api/v1/namespaces/" + this.nsValue + "/persistentvolumeclaims";
+      } else if (this.typeValue == "svc") {
+        params.Path = "/api/v1/namespaces/" + this.nsValue + "/services";
+      } else if (this.typeValue == "sc") {
+        // /apis/storage.k8s.io/v1/storageclasses
+        params.Path = "/apis/storage.k8s.io/v1/storageclasses";
+      }
+      params.Method = "GET";
+      params.ClusterName = this.$route.query.clusterId;
+      params.Version = "2018-05-25";
+
+      var params1 = {
         Path:
           "/api/v1/namespaces/" +
           this.nsValue +
-          "/events？fieldSelector=involvedObject.kind=" +
-          this.typeValue +
-          "b&limit=20",
-        ClusterName: this.$route.query.clusterId,
-        Version: "2018-05-25"
+          "/events?fieldSelector=involvedObject.kind=" +
+          this.typeValue.charAt(0).toUpperCase() +
+          this.typeValue.slice(1) +
+          "&limit=20"
       };
+      params1.Method = "GET";
+      params1.ClusterName = this.$route.query.clusterId;
+      params1.Version = "2018-05-25";
+
+      console.log(this.typeValue, params);
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-        var mes = JSON.parse(res.Response.ResponseBody);
-        this.list = mes.items;
-        this.total = mes.items.length;
-        this.loadShow = false;
-        // if (res.Response.Error === undefined) {
-        // } else {
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+        this.nameOptions = [];
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          console.log(mes);
+          // this.list = mes.items;
+          // this.total = mes.items.length;
+          if (mes.items.length > 0) {
+            mes.items.forEach(item => {
+              this.nameOptions.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
+            });
+            this.nameFlag = false;
+          } else {
+            this.nameFlag = true;
+          }
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          this.nameOptions = [];
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+
+      this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    getNameList() {
+      // /api/v1/namespaces/default/events?fieldSelector=involvedObject.kind=DaemonSet,involvedObject.name=workload57&limit=20
+      var params1 = {
+        Path:
+          "/api/v1/namespaces/" +
+          this.nsValue +
+          "/events?fieldSelector=involvedObject.kind=" +
+          this.typeValue.charAt(0).toUpperCase() +
+          this.typeValue.slice(1) +
+          ",involvedObject.name=" +
+          this.nameValue +
+          "&limit=20"
+      };
+      params1.Method = "GET";
+      params1.ClusterName = this.$route.query.clusterId;
+      params1.Version = "2018-05-25";
+
+      console.log(params1);
+      this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          this.list = mes.items;
+          this.total = mes.items.length;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 分页
@@ -382,7 +458,7 @@ export default {
     Loading
   },
   destroyed() {
-    window.clearInterval(refresh);
+    window.clearInterval(this.timeId);
   }
 };
 </script>

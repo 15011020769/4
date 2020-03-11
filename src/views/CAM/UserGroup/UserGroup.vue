@@ -9,7 +9,7 @@
         <el-button
           size="small"
           type="primary"
-          :disabled="btnVisible"
+          :disabled="selectData.length === 0"
           @click="addUsersToGroup"
         >{{$t('CAM.userGroup.createBtn')}}</el-button>
       </el-row>
@@ -137,74 +137,12 @@
     <el-dialog
       :title="$t('CAM.userGroup.createBtn')"
       :visible.sync="dialogVisible"
-      width="75%"
+      width="950px"
       :before-close="handleClose"
       custom-class="dialogStyle"
+      destroy-on-close
     >
-      <div class="container">
-        <div class="container-left">
-          <p>{{$t('CAM.userGroup.selection')}}（共{{userData.length}}{{$t('CAM.strip')}}）</p>
-          <el-input size="small" clearable v-model="inpVal" style="width:100%" @change="toQueryUser" class="aaa">
-            <i slot="suffix" class="el-input__icon el-icon-search" @click="toQueryUser"></i>
-          </el-input>
-          <el-table
-            class="table-left"
-            ref="multipleOption"
-            :data="userData"
-            size="small"
-            :height="tableHeight"
-            tooltip-effect="dark"
-            style="width: 100%"
-            @row-click="selectedRow"
-            @selection-change="handleSelectionChangeUser"
-            v-loading="loading1"
-            :empty-text="$t('CAM.strategy.zwsj')"
-          >
-            <el-table-column type="selection" prop="Uin" width="28" :selectable="checkboxT"></el-table-column>
-            <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userChose')" width="100">
-              <template slot-scope="scope">
-                <p>{{$t('CAM.userGroup.childUser')}}</p>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <div class="direction">
-          <div class="direction-icon">
-            <i class="iconfont">&#xe603;</i>
-          </div>
-        </div>
-        <div class="container-right">
-          <span>{{$t('CAM.userGroup.Star')}}（{{selNum}}）</span>
-          <el-table
-            class="table-left"
-            ref="multipleSelected"
-            :data="userSelData"
-            tooltip-effect="dark"
-            size="small"
-            :height="tableHeight"
-            style="width: 100%"
-            :empty-text="$t('CAM.strategy.zwsj')"
-          >
-            <el-table-column prop="Name" :label="$t('CAM.userGroup.user')" show-overflow-tooltip></el-table-column>
-            <el-table-column :label="$t('CAM.userList.userChose')" width="100">
-              <template slot-scope="scope">
-                <p>子用戶</p>
-              </template>
-            </el-table-column>
-            <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
-              &lt;!&ndash;
-              <template slot-scope="scope">
-                <el-button
-                  @click.native.prevent="deleteRow(scope.$index, userSelData)"
-                  type="text"
-                  size="small"
-                >x</el-button>
-              </template>&ndash;&gt;
-            </el-table-column>
-          </el-table>
-        </div>
-      </div>
+      <transfer :groupIds="selectedGroupId" ref="transfer" :visible.sync="dialogVisible" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" @click="addUser">{{$t('CAM.userList.suerAdd')}}</el-button>
@@ -218,10 +156,14 @@ import {
   USER_LIST,
   GROUP_USERS,
   DELE_GROUP,
-  ADD_GROUPTOLIST
+  ADD_USERTOGROUP
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
+import transfer from './transfer'
 export default {
+  components: {
+    transfer
+  },
   data() {
     return {
       inpVal: "",
@@ -325,190 +267,14 @@ export default {
           console.log(error);
         });
     },
-    async addUsersToGroup() {
-      this.isAddUsersToGroup = true
-      this.loading1 = true
+    addUsersToGroup() {
+      this.selectedGroupId = this.selectData.map(g => g.GroupId)
       this.dialogVisible = true
-      const params = {
-        Version: "2019-01-16"
-      }
-      let userData = []
-      let res = []
-      // 获取用户组管理用户
-      let owneruserData = []
-      res = await this.axios.post(USER_LIST, params)
-      if (res.Response.Error !== undefined) {
-        let ErrTips = {};
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
-        this.$message({
-          message: ErrOr[res.Response.Error.Code],
-          type: "error",
-          showClose: true,
-          duration: 0
-        })
-        return
-      }
-      userData = res.Response.Data
-      this.userAllData = userData
-      this.userAllData1 = userData
-      res = await Promise.all(this.selectData.map(item => {
-        const params = {
-          Version: "2019-01-16",
-          GroupId: item.GroupId,
-        };
-        return this.axios.post(GROUP_USERS, params)
-      }))
-      res.forEach(resp => {
-        if (resp.Response.Error !== undefined) {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          owneruserData = [...owneruserData, ...resp.Response.UserInfo]
-          userData.forEach(item => {
-            resp.Response.UserInfo.forEach(user => {
-              if (item.Uid === user.Uid) {
-                item.status = 1
-              } else if (item.status !== 1) {
-                item.status = 0
-              }
-            })
-          })
-        }
-      })
-      if (owneruserData) {
-        for (var i = 0; i < owneruserData.length; i++) {
-          let ownerObj = owneruserData[i];
-          for (var j = 0; j < this.userAllData.length; j++) {
-            let allObj = this.userAllData[j];
-            if (allObj.Uin === ownerObj.Uin) {
-              this.userAllData.splice(j, 1);
-            }
-          }
-        }
-        this.userData = this.userAllData;
-        this.json = this.userData;
-      } else {
-        this.userData = this.userAllData;
-        this.json = this.userData;
-      }
-      this.loading1 = false
     },
     // 打开添加用户页面
     addUserGroup(rowId) {
-      this.loading1 = true;
-      if (rowId != undefined && rowId != "") {
-        this.selectedGroupId = rowId;
-      }
-      let params = {
-        Version: "2019-01-16"
-      };
-      this.axios
-        .post(USER_LIST, params)
-        .then(res => {
-          if (res.Response.Error === undefined) {
-            this.userData = [];
-            this.userAllData1 = res.Response.Data;
-            const param = {
-              Version: "2019-01-16",
-              GroupId: rowId
-            };
-            this.axios.post(GROUP_USERS, param).then(res => {
-              if (res.Response.Error === undefined) {
-                this.userAllData1.forEach(item => {
-                  item.status = 0;
-                  res.Response.UserInfo.forEach(val => {
-                    if (val.Uid == item.Uid) {
-                      item.status = 1;
-                    }
-                  });
-                });
-                this.userAllData = this.userAllData1;
-                this.totalNum = this.userData.length;
-                // this.userData = this.userAllData1;
-                this.getUsers();
-                // 获取数据成功，打开dialog。
-                this.dialogVisible = true;
-                this.loading1 = false;
-              } else {
-                let ErrTips = {};
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            });
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
-    // 用户组所属子用户查询
-    getUsers() {
-      let _this = this;
-      // 获取用户组管理用户
-      let owneruserData = [];
-      let paramsGroup = {
-        GroupId: this.selectedGroupId,
-        Version: "2019-01-16"
-      };
-      this.axios
-        .post(GROUP_USERS, paramsGroup)
-        .then(resGroup => {
-          if (resGroup.Response.Error === undefined) {
-            // 不直接将子用户信息赋予用户组选择框中,是避免页面出现 过滤后的子用户信息刷新覆盖初始信息
-            owneruserData = resGroup.Response.UserInfo;
-            // 用户组拥有子用户，系统将拥有子用户从用户组添加框中去掉，避免重复选择
-            if (owneruserData != "") {
-              for (var i = 0; i < owneruserData.length; i++) {
-                let ownerObj = owneruserData[i];
-                for (var j = 0; j < _this.userAllData.length; j++) {
-                  let allObj = _this.userAllData[j];
-                  if (allObj.Uin === ownerObj.Uin) {
-                    _this.userAllData.splice(j, 1);
-                  }
-                }
-              }
-              _this.userData = _this.userAllData;
-              _this.json = _this.userData;
-            } else {
-              _this.userData = _this.userAllData;
-              _this.json = _this.userData;
-            }
-          } else {
-            let ErrTips = {
-              "ResourceNotFound.GroupNotExist": "用戶組不存在"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[resGroup.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      this.selectedGroupId = [rowId];
+      this.dialogVisible = true
     },
     // 删除用户组
     delUserGroup(groupId) {
@@ -553,44 +319,35 @@ export default {
     },
     // 用户组添加用户
     addUser() {
-      let GroupId = this.selectedGroupId;
-      let value = this.userSelData;
-      if (value != "") {
-        let promises = []
-        if (this.isAddUsersToGroup) {
-          promises = this.selectData.map(item => {
-            const params = {
-              Version: "2019-01-16",
-            }
-            for (var i = 0; i < value.length; i++) {
-              params["Info." + i + ".Uid"] = value[i].Uid;
-              params["Info." + i + ".GroupId"] = item.GroupId;
-            }
-            return this.axios.post(ADD_GROUPTOLIST, params)
-          })
-        } else {
-          let params = {
-            Version: "2019-01-16"
-          };
-          for (var i = 0; i < value.length; i++) {
-            params["Info." + i + ".Uid"] = value[i].Uid;
-            params["Info." + i + ".GroupId"] = GroupId;
-          }
-          promises = [this.axios.post(ADD_GROUPTOLIST, params)]
-        }
-        
-        let msg
-        Promise.all(promises).then(res => {
-          res.forEach(data => {
-            if (data.Response.Error === undefined) {
-              if (msg) msg.close()
-              msg = this.$message({
-                message: this.$t("CAM.userGroup.successInfo"),
-                type: "success",
-                duration: 0,
-                showClose: true
+      const user = this.$refs.transfer.selectedUsersWithoutGroup
+      if (user.length === 0) {
+        return void this.$message({
+                message: '請選擇用戶',
+                type: "error",
+                showClose: true,
+                duration: 0
               });
-              this.init();
+      }
+      const params = {
+        Version: '2019-01-16'
+      }
+      user.forEach((user, i) => {
+        this.selectedGroupId.forEach(group => {
+          params[`Info.${i}.Uid`] = user.Uid
+          params[`Info.${i}.GroupId`] = group
+        })
+      })
+      this.axios.post(ADD_USERTOGROUP, params)
+        .then(res => {
+            if (res.Response.Error === undefined) {
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
+              });
+              this.dialogVisible = false
+              this.init()
             } else {
               let ErrTips = {
                 "InvalidParameter.GroupNotExist": "用戶組不存在",
@@ -602,16 +359,14 @@ export default {
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
-                message: ErrOr[data.Response.Error.Code],
+                message: ErrOr[res.Response.Error.Code],
                 type: "error",
                 showClose: true,
                 duration: 0
               });
             }
           })
-        })
-      this.handleClose()
-      }
+        
     },
     NewUser() {
       this.$router.push({
@@ -629,13 +384,6 @@ export default {
     // 首页表格选择状态处理
     handleSelectionChange(val) {
       this.selectData = val
-      if (val != "") {
-        this.btnVisible = false;
-        this.selectedGroupId = val[0].GroupId;
-        this.selTotal = val.length;
-      } else {
-        this.btnVisible = true;
-      }
     },
     // 关闭弹出框
     handleClose() {

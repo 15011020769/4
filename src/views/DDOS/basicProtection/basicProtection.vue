@@ -163,8 +163,9 @@
                 </div>
               </template>
             </el-table-column>
+            <!-- 升級防護 -->
             <el-table-column label="操作">
-              <a href="#/choose">升級防護</a>
+             <el-button type="text" @click="jumpChoose()">升級防護</el-button>
             </el-table-column>
           </el-table>
         </div>
@@ -499,6 +500,12 @@ export default {
           }
         });
       }
+    },
+    // 升级防护
+    jumpChoose () {
+      this.$router.push({
+        path: '/choose'
+      })
     }
   }
 };

@@ -324,11 +324,6 @@ export default {
 //          params.RequestBody.data[".dockercfg"] = data;
 //       }
 
-
-
-
-
-
 // //指定命名空间
 //       if (this.se.radio == "1") {
 //         params.RequestBody =

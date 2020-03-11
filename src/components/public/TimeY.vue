@@ -42,11 +42,13 @@
                   v-model="Start_End.StartTIme"
                   type="date"
                   placeholder="選擇日期"
+                  value-format="yyyy-MM-dd"
                   :picker-options="startTimePickerOptions"
                 ></el-date-picker>
                 <el-time-picker
                   class="width-date"
                   v-model="Start_End.StartTIme"
+                  value-format="HH:mm:ss"
                   placeholder="任意時間點"
                 ></el-time-picker>
               </p>
@@ -57,12 +59,14 @@
                   v-model="Start_End.EndTIme"
                   type="date"
                   placeholder="選擇日期"
+                  value-format="yyyy-MM-dd"
                   :picker-options="endTimePickerOptions"
                 ></el-date-picker>
                 <el-time-picker
                   class="width-date"
                   v-model="Start_End.EndTIme"
                   placeholder="任意時間點"
+                  value-format="HH:mm:ss"
                 ></el-time-picker>
               </p>
               <el-row class="margin-row">
@@ -231,11 +235,11 @@ export default {
         this.Start_End.EndTIme = ETime;
       } else if (time === -1) {
         const KTime = moment()
-          .subtract("d", 1)
+          .subtract(1, "d")
           .startOf("d")
           .format("YYYY-MM-DD HH:mm:ss");
         const ETime = moment()
-          .subtract("d", 1)
+          .subtract(1, "d")
           .endOf("d")
           .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.StartTIme = KTime;
@@ -249,7 +253,7 @@ export default {
           }
         ];
         this.Start_End.StartTIme = moment()
-          .subtract("d", 6)
+          .subtract(6, "d")
           .startOf("d")
           .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -262,7 +266,7 @@ export default {
           }
         ];
         this.Start_End.StartTIme = moment()
-          .subtract("d", 29)
+          .subtract(29, "d")
           .startOf("d")
           .format("YYYY-MM-DD HH:mm:ss");
         this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -292,10 +296,9 @@ export default {
     getdate() {
       this.datetim = false;
       this.datetime = true;
-
       this.datetimeval = [
-        new Date(this.Start_End.StartTIme),
-        new Date(this.Start_End.EndTIme)
+        moment(this.Start_End.StartTIme),
+        moment(this.Start_End.EndTIme)
       ];
     },
     // 选择时间

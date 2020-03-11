@@ -114,7 +114,7 @@
         <div class="shenyue" v-show="active == 3">
           <div class="content_flex">
             <div class="content_left">
-              <p class="juese">角色名称*</p>
+              <p class="juese">角色名称<span style="color:#F56C6C">*</span></p>
               <p class="juese" style="margin-top:55px">角色描述</p>
               <p class="juese">角色载体</p>
               <p class="juese">身份提供商</p>

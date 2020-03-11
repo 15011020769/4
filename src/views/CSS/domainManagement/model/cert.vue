@@ -23,7 +23,7 @@
   </el-form>
 </template>
 <script>
-import { CREATE_LIVE_CERT, MODIFY_LIVE_DOMAIN_CERT, MODIFY_LIVE_CERT } from '@/constants'
+import { CREATE_LIVE_CERT, MODIFY_LIVE_DOMAIN_CERT, MODIFY_LIVE_CERT, BIND_LIVE_DOMAIN_CERT } from '@/constants'
 const error = {
   'InternalError': '內部錯誤',
   'InternalError.CrtDateNotLegal': '證書不合法。',
@@ -32,13 +32,16 @@ const error = {
   'InternalError.DBError': 'DB執行錯誤。',
   'InternalError.InvalidInput': '參數檢校不通過。',
   'InternalError.SystemError': '系統內部錯誤。',
+  'InternalError.CrtDateInUsing': '證書使用中',
   'InvalidParameter': '參數錯誤',
   'InvalidParameter.CloudCrtIdError': '騰訊雲證書託管ID錯誤。',
   'InvalidParameter.CrtDateNotLegal': '證書內容不合法。',
   'InvalidParameter.CrtOrKeyNotExist': '證書內容或者私鑰未提供。',
+  'InvalidParameter.CrtDateOverdue': '證書過期',
+  'InvalidParameter.CrtKeyNotMatch': '證書Key不匹配。',
+  'InvalidParameter.CrtDateInUsing': '證書使用中',
   'InvalidParameterValue': '參數取值錯誤',
   'MissingParameter': '缺少參數錯誤',
-  'InternalError.CrtDateInUsing': '證書使用中。'
 }
 export default {
   props: {
@@ -86,13 +89,24 @@ export default {
           this.msg(error[resp.Response.Error.Code])
         } else {
           if (enable) {
-            this.modifyCertStatus(resp.Response.CertId)
+            this.bindCert(resp.Response.CertId)
           } else {
             this.msg('保存成功', 'success')
             this.$emit('success')
           }
         }
       })
+    },
+    bindCert(certId) {
+      this.axios.post(BIND_LIVE_DOMAIN_CERT, {
+        Version: '2018-08-01',
+        DomainName: this.$route.query.Name,
+        CertId: certId,
+        Status: Number(this.form.enable)
+      }).then(() => {
+          this.msg('保存成功', 'success')
+          this.$emit('success')
+        })
     },
     modifyCert () {
       const { CertName, HttpsCrt, HttpsKey, CertId, enable, Status } = this.form

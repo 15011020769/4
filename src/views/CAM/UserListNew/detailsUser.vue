@@ -923,7 +923,8 @@ export default {
       this.$router.push({
         path: "/addGroup",
         query: {
-          Uid: this.userData.Uid
+          Uid: this.userData.Uid,
+          Uin: this.userData.Uin,
         }
       });
     },

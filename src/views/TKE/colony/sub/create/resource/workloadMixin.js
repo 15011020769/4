@@ -2,6 +2,10 @@ import { ErrorTips } from '@/components/ErrorTips.js'
 // 实例内容器
 let instanceContent = {
   addInstanceContent: function () {
+    this.wl.instanceContent.map(item => {
+      item.editStatus = false
+      return item
+    })
     this.wl.instanceContent.push({
       name: '', // 名称
       mirrorImg: '', // 镜像
@@ -50,11 +54,20 @@ let instanceContent = {
       },
       privilegeLevelContainer: false, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
-      editStatus: true // 编辑状态
+      editStatus: true, // 编辑状态
+      mountPoints: [], // 挂载点数组
+      showMountPoint: false // 是否显示添加挂载点
     })
   },
   editInstanceContent: function (index) {
-    this.wl.instanceContent[index].editStatus = !this.wl.instanceContent[index].editStatus
+    let { instanceContent } = this.wl
+    for (let i = 0; i < instanceContent.length; i++) {
+      if (i === index && instanceContent[i].editStatus === false) {
+        this.wl.instanceContent[i].editStatus = true
+      } else {
+        this.wl.instanceContent[i].editStatus = false
+      }
+    }
   },
   delInstanceContent: function (index) {
     this.wl.instanceContent.splice(index, 1)
@@ -222,6 +235,35 @@ let portMapping = {
   }
 }
 
+// 数据卷
+let dataVolume = {
+  addDataVolume: function () {
+    this.dataFlag = true
+    this.wl.dataVolumes.push({
+      name1: '',
+      name2: '',
+      name3: ''
+    })
+  },
+  delDataVolume: function (index) {
+    this.wl.dataVolumes.splice(index, 1)
+  }
+}
+
+let mountPoint = {
+  addMountPoint: function (index) {
+    this.wl.instanceContent[index].mountPoints.push({
+      dataVolumeValue: '', // 数据卷值
+      targetPath: '', // 目标路径
+      mountSubPath: '', // 挂载子路径
+      permission: 'dx' // 权限值
+    })
+  },
+  delMountPoint: function (cIndex, mIndex) {
+    this.wl.instanceContent[cIndex].mountPoints.splice(mIndex, 1)
+  }
+}
+
 let change = {
   namespaceChange: async function () {
     this.getPersistentvolumeclaims()
@@ -269,7 +311,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 名称验证
       labelKeyValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -280,7 +322,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 标签验证 key
       labelValueValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -291,10 +333,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 标签验证 value
       executionStrategyValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob') {
+          if (this.wl.type !== 'CronJob') {
             callback()
             return
           }
@@ -306,7 +348,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 执行策略为空
       instanceContentNameValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -319,7 +361,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 实例内容器 名称验证
       instanceContentMirrorImgValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
@@ -330,10 +372,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 实例内容器 镜像验证
       jobSettingRepeatValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+          if (this.wl.type !== 'CronJob' && this.wl.type !== 'Job') {
             callback()
             return
           }
@@ -345,10 +387,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // Job 重复次数 验证
       jobSettingParallelValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type !== 'cronJob' && this.wl.type !== 'job') {
+          if (this.wl.type !== 'CronJob' && this.wl.type !== 'Job') {
             callback()
             return
           }
@@ -360,10 +402,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // Job 并行度 验证
       portMappingConPortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
+          if (this.wl.type !== 'Deployment' && this.wl.type !== 'StatefulSet') {
             callback()
             return
           }
@@ -375,10 +417,10 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }],
+      }], // 服务 端口映射 端口容器验证
       portMappingServicePortValidator: [{
         validator: (rule, value, callback) => {
-          if (this.wl.type === 'Deployment' || this.wl.type === 'StatefulSet') {
+          if (this.wl.type !== 'Deployment' && this.wl.type !== 'StatefulSet') {
             callback()
             return
           }
@@ -390,7 +432,7 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }]
+      }] // 服务 端口映射 服务端口
     }
   },
   methods: {
@@ -404,6 +446,8 @@ export default {
     ...mustRule,
     ...needRule,
     ...portMapping,
+    ...mountPoint,
+    ...dataVolume,
     ...change,
     axiosUtils: function (res, func) {
       // func()

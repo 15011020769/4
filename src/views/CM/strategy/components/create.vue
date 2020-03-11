@@ -115,7 +115,7 @@
                     >
                   </p>
                   <p>
-                    <i>满足</i>
+                    <span>满足</span>
                     <el-select
                       v-model="formInline.projectName"
                       style="width:90px;margin:0 5px;"
@@ -128,7 +128,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <i>条件时，触发告警</i>
+                    <span>条件时，触发告警</span>
                   </p>
                   <!-- 在这里进行便利，添加 -->
                   <ul>
@@ -292,7 +292,7 @@
                     <el-checkbox v-model="checkedZhibiao">指标告警</el-checkbox>
                   </p>
                   <p>
-                    <i>满足</i>
+                    <span>满足</span>
                     <el-select
                       v-model="formInline.projectName"
                       style="width:90px;margin:0 5px;"
@@ -305,7 +305,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <i>条件时，触发告警</i>
+                    <span>条件时，触发告警</span>
                   </p>
                   <!-- 在这里进行便利，添加 -->
                   <ul>

@@ -205,9 +205,13 @@ export default {
     toMonitor() {
       //跳转监控页面
       this.$router.push({
-        name: "colonyOpenMonitor",
+        name: "daemonSetMonitor",
         query: {
-          title: this.tit + "(daemonSet)"
+          title: this.tit + "(DaemonSet)",
+          type: 'Deployment',
+          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          clusterId: this.clusterId,
+          spaceName: this.searchType
         }
       });
     },

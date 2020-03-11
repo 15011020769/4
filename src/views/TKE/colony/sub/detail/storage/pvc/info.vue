@@ -22,7 +22,7 @@
           <div class="tke-form-item_text">{{list.spec.accessModes[0]}}</div>
         </el-form-item>
         <el-form-item label="Storage">
-          <div class="tke-form-item_text">{{list.spec.resources.requests.storage}}</div>
+          <div class="tke-form-item_text">{{list.status.capacity.storage}}</div>
         </el-form-item>
         <el-form-item label="创建时间">
           <div class="tke-form-item_text">{{list.metadata.creationTimestamp|creationTimestamps}}</div>

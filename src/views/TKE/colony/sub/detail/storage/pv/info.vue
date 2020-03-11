@@ -19,7 +19,7 @@
           <div class="tke-form-item_text">{{list.spec.accessModes[0]}}</div>
         </el-form-item>
         <el-form-item label="PVC">
-          <div class="tke-form-item_text">{{list.metadata.name}}</div>
+          <div class="tke-form-item_text">{{list.spec.claimRef.name}}</div>
         </el-form-item>
         <el-form-item label="StorageClass">
           <div class="tke-form-item_text">{{list.spec.storageClassName}}</div>

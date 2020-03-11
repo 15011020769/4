@@ -1,4 +1,5 @@
 <template>
+<!-- 接入配置 -->
   <div class="wrap">
     <h3 class="ReportTitH3">
       {{ $t("DDOS.AccesstoCon.AccessConfig") }}
@@ -85,7 +86,7 @@
                   <span
                     v-for="(item, index) in scope.row.SourceList"
                     :key="index"
-                  >{{scope.row.SourceList[index].Source}}({{scope.row.SourceList[index].Weight}});</span>
+                  >{{scope.row.SourceList[index].Source}}{{scope.row.SourceType == 1?'':'('+scope.row.SourceList[index].Weight+')'}};</span>
                 </template>
               </el-table-column>
               <el-table-column prop="LbType" :label="$t('DDOS.AccesstoCon.LoadBalancing')">
@@ -278,7 +279,7 @@ export default {
       this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(res)
         if (res.Response.Error === undefined) {
-					this.resList = [];
+          this.resList = [];
           const resourceList = res.Response.ServicePacks;
           if (resourceList.length === 0) {
             this.$message({
@@ -313,16 +314,16 @@ export default {
           } else {
             this.describleL4Rules();
           }
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 1.2.获取L4转发规则
@@ -533,7 +534,7 @@ export default {
     copyAccess(scopeRow) {
       this.dialogVisible4 = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate1.init(scopeRow);
+        this.$refs.addOrUpdate1.init(JSON.parse(JSON.stringify(scopeRow)));
       });
     },
     //关闭复制弹框

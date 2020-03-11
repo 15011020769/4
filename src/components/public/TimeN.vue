@@ -131,13 +131,13 @@
         this.Initialization();
         if (time === 1) {
           //今天
-          const KTime = moment(new Date()).format("YYYY/MM/DD 00:00:00"); //获取当前时间
+          const KTime = moment(new Date()).format("YYYY-MM-DD 00:00:00"); //获取当前时间
           const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           this.Start_End.StartTIme = KTime;
           this.Start_End.EndTIme = ETime;
         } else if (time === 1 * 24) {
           //昨天
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          const KTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           const startTime = new Date(KTime).getTime();
           // 
           const noeago = moment(startTime - 86400000).format(
@@ -149,7 +149,7 @@
           this.Start_End.StartTIme = noeago;
           this.Start_End.EndTIme = noenow;
         } else if (time === 1 * 24 * 7) {
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          const KTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           const startTime = new Date(KTime).getTime();
           const zhouago = moment(startTime - 518400000).format(
             "YYYY-MM-DD 00:00:00"
@@ -160,7 +160,7 @@
           this.Start_End.StartTIme = zhouago;
           this.Start_End.EndTIme = zhounow;
         } else if (time === 1 * 24 * 30) {
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          const KTime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
           const startTime = new Date(KTime).getTime();
           const yueago = moment(startTime - 2505600000).format(
             "YYYY-MM-DD 00:00:00"
@@ -220,8 +220,8 @@
       },
       // 确定之后
       TimeAfter() {
-        const qdate = moment(this.datetimeval[0]).format("YYYY/MM/DD-HH:mm:ss");
-        const hdate = moment(this.datetimeval[1]).format("YYYY/MM/DD-HH:mm:ss");
+        const qdate = moment(this.datetimeval[0]).format("YYYY-MM-DD HH:mm:ss");
+        const hdate = moment(this.datetimeval[1]).format("YYYY-MM-DD HH:mm:ss");
         const startTime = new Date(qdate).getTime() / 1000;
         const endTime = new Date(hdate).getTime() / 1000;
         if (endTime - startTime <= 3600) {

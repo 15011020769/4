@@ -42,7 +42,7 @@
           size="medium"
           @click="complete()"
           v-if="active==3"
-        >完成</el-button>
+        >完222成</el-button>
       </div>
     </div>
   </div>
@@ -52,7 +52,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import FirstStep from "./AddGroup/AddUserGroup.vue";
 import SecondStep from "./AddGroup/PoliciesList";
 import ThirdlyStep from "./AddGroup/ConfirmationGroup";
-import { CREATE_USER, ATTACH_GROUP } from "@/constants";
+import { CREATE_USER, ATTACH_GROUP_POLICIES } from "@/constants";
 import Headcom from "@/components/public/Head"; //头部组件引入
 import {
   Loading
@@ -145,63 +145,52 @@ export default {
               let AttachGroupId = res.Response.GroupId;
               let selArr = _this.policiesSelectedData;
               // 绑定策略到用户组
-              if (AttachGroupId != "" && selArr != "") {
-                //目前系统接口只支持单个策略绑定到用户组，不支持多个，所以循环执行绑定方法 并发10
-                let msg
-                let requestnum = 0
-                selArr.forEach((item, index) => {
-                  setTimeout(() => {
-                    const params = {
-                      AttachGroupId: AttachGroupId,
-                      PolicyId: item.PolicyId,
-                      Version: "2019-01-16"
-                    }
-                    this.axios.post(ATTACH_GROUP, params)
-                    .then(data => {
-                      requestnum += 1
-                      if (data.Response.Error !== undefined) {
-                        let ErrTips = {
-                          "FailedOperation.PolicyFull": "用戶策略數超過上限",
-                          "InternalError.SystemError": "內部錯誤",
-                          "InvalidParameter.AttachmentFull":
-                            "principal欄位的授權對象關聯策略數已達到上限",
-                          "InvalidParameter.ParamError": "非法入參",
-                          "InvalidParameter.PolicyIdError":
-                            "輸入參數PolicyId不合法",
-                          "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
-                          "nvalidParameter.UserNotExist":
-                            "principal欄位的授權對象不存在",
-                          "ResourceNotFound.GroupNotExist": "用戶組不存在",
-                          "ResourceNotFound.PolicyIdNotFound":
-                            "PolicyId指定的資源不存在",
-                          "ResourceNotFound.UserNotExist": "用戶不存在"
-                        };
-                        let ErrOr = Object.assign(ErrorTips, ErrTips);
-                        if (msg) msg.close()
-                        msg = this.$message({
-                          message: ErrOr[data.Response.Error.Code],
-                          type: "error",
-                          showClose: true,
-                          duration: 0
-                        });
-                      }
-                    }).then(() => {
-                      if (requestnum === selArr.length) {
-                        loading.close()
-                        this.$message({
-                          message: '添加成功',
-                          type: "success",
-                          showClose: true,
-                          duration: 0
-                        });
-                        this.$router.push({
-                          name: "UserGroup"
-                        })
-                      }
-                    })
-                  }, 100 * index)
-                }) 
+              const params = {
+                GroupId: AttachGroupId,
+                Version: "2019-01-16"
               }
+              selArr.forEach((p, i) => {
+                params[`PolicyId.${i}`] = p.PolicyId
+              })
+              this.axios.post(ATTACH_GROUP_POLICIES, params)
+                .then(res => {
+                  loading.close()
+                  if (!res.Response.Error) {
+                    this.$message({
+                      message: '添加成功',
+                      type: "success",
+                      showClose: true,
+                      duration: 0
+                    });
+                    this.$router.push({
+                      name: "UserGroup"
+                    })
+                  } else {
+                    let ErrTips = {
+                      "FailedOperation.PolicyFull": "用戶策略數超過上限",
+                      "InternalError.SystemError": "內部錯誤",
+                      "InvalidParameter.AttachmentFull":
+                        "principal欄位的授權對象關聯策略數已達到上限",
+                      "InvalidParameter.ParamError": "非法入參",
+                      "InvalidParameter.PolicyIdError":
+                        "輸入參數PolicyId不合法",
+                      "InvalidParameter.PolicyIdNotExist": "策略ID不存在",
+                      "nvalidParameter.UserNotExist":
+                        "principal欄位的授權對象不存在",
+                      "ResourceNotFound.GroupNotExist": "用戶組不存在",
+                      "ResourceNotFound.PolicyIdNotFound":
+                        "PolicyId指定的資源不存在",
+                      "ResourceNotFound.UserNotExist": "用戶不存在"
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: `添加成功，關聯策略失敗。${ErrOr[res.Response.Error.Code]}`,
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+                })
             } else {
               loading.close()
               let ErrTips = {
@@ -217,9 +206,6 @@ export default {
               });
             }
           })
-          .catch(error => {
-            console.log(error);
-          });
       }
     }
   }

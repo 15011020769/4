@@ -17,10 +17,10 @@
      <div class="colony-main">
        <div class="tke-card tke-formpanel-wrap mb60">
          <!-- config -->
-         <el-form class="tke-form" :model="upc" label-position="left" label-width="120px" size="mini">
+         <el-form class="tke-form"  label-position="left" label-width="120px" size="mini">
            <el-form-item label="数据卷（选填）">
              <!-- <div @click="a">sssssss</div> -->
-             <div class="search-one" v-for="(item, index) in  upc.dataJuan" :key="index">
+             <div class="search-one" v-for="(item, index) in  wl.dataJuan" :key="index">
                <el-select v-model="item.name1" placeholder="请选择">
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                  </el-option>
@@ -55,7 +55,7 @@
                    <span class="add-check" @click="selectSecret">选择Secret</span>
                  </p>
                </div>
-               <i class="el-icon-close" @click="upc.dataJuan.splice(index, 1)"></i>
+               <i class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
              </div>
              <p style="margin-top:8px">
                <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
@@ -379,15 +379,15 @@
            <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">显示高级设置</a>
            <div v-show="highLevelSetShow2">
             <el-form-item label="imagePullSecrets">
-              <el-select   v-model='upn.type' style="margin-top:10px" >
+              <el-select   v-model='upn.type1' disabled style="margin-top:10px" >
                 <el-option value='1'>
                 </el-option>
               </el-select><br>
-              <el-select  v-model='upn.type' style="margin-top:10px">
+              <el-select  v-model='upn.type2' disabled style="margin-top:10px">
                 <el-option value='1'>
                 </el-option>
               </el-select>
-              <p>添加</p>
+              <p style="cursor:pointer">添加</p>
             </el-form-item>
             <a @click="highLevelSetShow2=!highLevelSetShow2">隐藏高级设置</a>
          </div>
@@ -395,14 +395,14 @@
 
          <!-- 设置主机路径 -->
          <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
-           <el-form :model="upc" label-position="left" label-width="120px" size="mini">
+           <el-form  label-position="left" label-width="120px" size="mini">
              <el-form-item label="主机路径" style="margin-top:10px">
-               <el-input class="w192" v-model="upc.name" placeholder="如：/data/dev"></el-input>
+               <el-input class="w192" v-model="dataReelDialog.portPath.name" placeholder="如：/data/dev"></el-input>
              </el-form-item>
              <el-form-item label="检查类型">
-               <el-select v-model="upc.name">
-                 <el-option value='1'></el-option>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
+               <el-select v-model="dataReelDialog.portPath.type"  class="w192" >
+                
+                 <el-option v-for="item in portPathOptions" :key="item" :label="item" :value="item">
                  </el-option>
                </el-select>
              </el-form-item>
@@ -413,31 +413,32 @@
            </span>
          </el-dialog>
          <!-- 选择云硬盘 -->
-         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="40%">
+         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="45%">
            <div class="select-yun">
-             <el-select>
-               <el-option value='1'></el-option>
-               <!-- <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option> -->
-             </el-select>
-             <el-input class="w192 ml10" placeholder="请输入数据盘ID" clearable>
-               <i slot="suffix" class="el-input__icon el-icon-search"></i>
-             </el-input>
+             <el-button   plain>台北一区</el-button>
+             <p style="margin-left:30px">
+              <el-input   v-model="dataReelDialog.yunDisks.name"  placeholder="请输入数据盘ID" clearable>
+                <i slot="suffix" @click="getDescribeDisks"   class="el-input__icon el-icon-search"></i>
+              </el-input>
+             </p>
            </div>
-           <div class="select-yun-body">
+           <div class="select-yun-body" >
              <el-table ref="multipleTable" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+              height="300"
                tooltip-effect="dark" style="width: 100%">
                <el-table-column width="55">
                  <template slot-scope="scope">
-                   <el-radio v-model="id" :label="scope.row.id">&nbsp;</el-radio>
+                   <el-radio v-model="yunRadio" :label="scope.row.id">&nbsp;</el-radio>
                  </template>
                </el-table-column>
                <el-table-column label="ID" width="120">
-                 <template slot-scope="scope">{{ scope.row.ID }}</template>
+                 <template slot-scope="scope">{{ scope.row.DiskId }}</template>
                </el-table-column>
-               <el-table-column prop="name" label="名称" width="120">
+               <el-table-column prop="name" label="名称" show-overflow-tooltip    >
+                   <template slot-scope="scope">{{ scope.row.DiskName }}</template>
                </el-table-column>
-               <el-table-column prop="address" label="大小" show-overflow-tooltip>
+               <el-table-column prop="address" width="120"  label="大小" show-overflow-tooltip>
+                  <template slot-scope="scope">{{ scope.row.DiskSize }}GB</template>
                </el-table-column>
              </el-table>
              <!-- 分页 -->
@@ -533,7 +534,7 @@ import SelectMirrorImg from '../../create/resource/components/selectMirrorImg';
 import workLoadMixin from './js/workloadMixins'
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import {TKE_COLONY_QUERY, POINT_REQUEST} from '@/constants'
+import {TKE_COLONY_QUERY, POINT_REQUEST,TKE_YUN_HARDDISK_LIST} from '@/constants'
 export default {
   name: "svcCreate",
   mixins:[workLoadMixin],
@@ -545,53 +546,26 @@ export default {
       np:'',
       name: '',//路由传过来的工作负载数据
       workload:'',
-      selectRadio:'Always',
       isAddContainer: false, // 是否可以点击 添加容器
+
+      dataReelDialog:{
+        portPath:{
+          name:'',
+          type:'DirectoryOrCreate',
+        },
+        yunDisks:{
+          name:'',
+        }
+
+      },
+      portPathOptions:['NoChecks','DirectoryOrCreate','Directory','FileOrCreate','File','Socket','CharDevice','BlockDevice'],
+      yunRadio:'',
       // 更新pod数量
       upn: {
-        type: '1',
-        num: 0,
+        type1: 'qcloudregistrykey',
+        type2: 'tencenthubkey',
       },
-      touchTactics: [{
-        touch1: 'CPU',
-        touch2: 'CPU使用量',
-        size: ''
-      }], // 实例数量自动调节下拉框内容
-      touchOptions1: [{
-          value: 'CPU',
-          label: 'CPU'
-        }, {
-          value: '内存',
-          label: '内存'
-        }, //触发策略
-        {
-          value: '硬盘',
-          label: '硬盘'
-        }, {
-          value: '网络',
-          label: '网络'
-        },
-      ],
-      touchOptions2: [{
-          value: 'CPU使用量',
-          label: 'CPU使用量'
-        }, {
-          value: 'CPU利用率（占节点）',
-          label: 'CPU利用率（占节点）'
-        },
-        {
-          value: 'CPU利用率（占Request）',
-          label: 'CPU利用率（占Request）'
-        }, {
-          value: 'CPU利用率（占Limit）',
-          label: 'CPU利用率（占Limit）'
-        },
-      ],
-
       // 更新pod配置
-      upc: {
-        dataJuan: [],
-      },
       wl:{
         name: '', // 名称
         description: '', // 描述
@@ -644,35 +618,16 @@ export default {
         subPath: '',
         pointName: ''
       },
-      containerCheck: {
-      type: 'TCP端口检查',
-      http: {
-        type: 'HTTP'
-      }
-    },
-    containerTypeOptions: [{
-        value: 'TCP端口检查',
-        label: 'TCP端口检查'
-      },
-      {
-        value: 'HTTP请求检查',
-        label: 'HTTP请求检查'
-      },
-      {
-        value: '执行命令检查',
-        label: '执行命令检查'
-      },
-    ],
       dialogVisiblePath: false,
-      dialogVisibleYun: false,
+      dialogVisibleYun: true,
       dialogVisibleConfig: false,
       dialogVisibleSecret: false,
       yesOrnoAddDataJuan: false,
       highLevelSetShow:false,
-    highLevelSetShow2:false,
-    surviveExamine: false, //存活检查
-    readyToCheck: false, //就绪检查
-    SelectMirrorImgFlag:false,
+      highLevelSetShow2:false,
+      surviveExamine: false, //存活检查
+      readyToCheck: false, //就绪检查
+      SelectMirrorImgFlag:false,
       searchOptions: [{
           value: "useMenu",
           label: "使用临时目录"
@@ -713,13 +668,12 @@ export default {
       setSecret: {
         checked: 'all'
       },
-      lengths:'',
+      lengths:'',//判断名称是否是输入框
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {} // 引用ConfigMap/Secret ConfigMap
 
     };
   },
-
   components: {
     SelectMirrorImg
   },
@@ -730,13 +684,18 @@ export default {
     this.np=spaceName;
     this.workload=workload;
     this.wl.namespace = spaceName
-    this.baseData()
-    this.getConfigmaps();
-    this.getSecrets()
-    console.log(this.wl.instanceContent)
+    // this.baseData()
+    // this.getConfigmaps();
+    // this.getSecrets()
+    this.initData()
   },
   methods: {
-
+    async  initData(){
+      await this.baseData();
+      this.getConfigmaps();
+      this.getSecrets()
+      this.getDescribeDisks()
+    },
     submit(){
       let container = this.wl.instanceContent
       console.log(container)
@@ -788,10 +747,7 @@ export default {
           limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
           runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
         } = container[i]
-        let oneContainer = {
-         
-        }
-
+        let oneContainer = {}
         //  // 运行命令
         // if (runCommand !== '') oneContainer.command = runCommand.split('\n')
         // // 运行参数
@@ -800,8 +756,6 @@ export default {
         if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
         // // 就绪检查
         if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
-
-        console.log(oneContainer)
           // 新增变量
          var environmentVarArr=[];
         if (container[i].environmentVar.length > 0) {
@@ -825,8 +779,6 @@ export default {
             }
           })
         }
-        console.log(environmentVarArr)
-        console.log( citeCsArr )
         //运行指令
         if (container[i].runCommand.length > 0) {
          var command=container[i].runCommand.split('\n')
@@ -835,7 +787,6 @@ export default {
         if (container[i].runParam.length > 0) {
          var args=container[i].runParam.split('\n')
         }
-       
           containerObj = {
             name: container[i].name,
             image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
@@ -867,7 +818,6 @@ export default {
           containerList.push(containerObj)
         }
       }
-      console.log(containerList)
       var params={
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
@@ -935,7 +885,42 @@ export default {
         })
       })
     },
-
+    getDescribeDisks:async function(){
+      let param={
+        'Filters.0.Name': 'disk-usage',
+        'Filters.0.Values.0': 'DATA_DISK',
+        'Filters.1.Name': 'portable',
+        'Filters.1.Values.0': 'TRUE',
+        'Filters.2.Name': 'disk-state',
+        'Filters.2.Values.0': 'UNATTACHED',
+        'Filters.3.Name': 'zone',
+        'Filters.3.Values.0': 'ap-taipei-1',
+         'Offset': 0,
+        'Limit': 20,
+         Version: "2017-03-12",
+      }
+      if(this.dataReelDialog.yunDisks.name!='')param['Filters.4.Name']='disk-id',param['Filters.4.Values.0']=this.dataReelDialog.yunDisks.name
+      await this.axios.post(TKE_YUN_HARDDISK_LIST, param).then(res => {
+        if(res.Response.Error === undefined){
+          this.tableData = res.Response.DiskSet,
+          this.TotalCount=res.Response.DiskSet.length;
+        }else{
+        let ErrTips = {}
+        let ErrOr = Object.assign(this.$ErrorTips, ErrTips)
+        if(ErrOr[res.Response.Error.Code]=='参数错误'){
+              this.tableData=[];
+              this.TotalCount=0
+        }else{
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: 'error',
+              showClose: true,
+              duration: 2000
+            })
+         }
+        }
+      })
+    } ,   
     baseData(){
       var params=null;
       if(this.workload=='cronjobs'){
@@ -1070,14 +1055,7 @@ export default {
     console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
-  newAddTarget() { //新增指标
-    var obj = {
-      touch1: 'CPU',
-      touch2: 'CPU使用量',
-      size: ''
-    }
-    this.touchTactics.push(obj)
-  },
+  
   selectYun() {
     this.dialogVisibleYun = true;
   },
@@ -1097,7 +1075,7 @@ export default {
   },
 },
 watch: {
-    upc: {
+    wl: {
       handler(val) {
         //监听数据卷
         val.dataJuan.forEach(item => {
@@ -1389,6 +1367,21 @@ i{
   left: -52px;
   top: 8px;
 }
+.select-yun{
+  display: flex;
+  ::v-deep .el-button{
+   border:solid 1px #409eff;
+   color: #409eff;
+   padding: 0px 15px;
+   border-radius: 0px;
+   height: 34px;
+   line-height: 34px;
+  }
+  ::v-deep  .el-input__inner{
+    height: 34px;
+    width: 200px;
 
+  }
+}
 
  </style>

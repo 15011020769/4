@@ -22,7 +22,11 @@
         <el-table-column prop="Duration" :label="$t('CSS.appreciation.8')"></el-table-column>
         <el-table-column prop="ModuleCodec" :label="$t('CSS.appreciation.9')"></el-table-column>
         <el-table-column prop="Bitrate" :label="$t('CSS.appreciation.10')"></el-table-column>
-        <el-table-column prop="Type" :label="$t('CSS.appreciation.11')"></el-table-column>
+        <el-table-column prop="Type" :label="$t('CSS.appreciation.11')">
+          <template slot-scope="scope">
+            {{scope.row.Type | formatType}}
+          </template>
+        </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
         <!-- <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;条</span>
@@ -64,11 +68,38 @@ export default {
       xAxis: [],
       series: [],
       legendText: '轉碼時長',
-      line_json: []
+      line_json: [],
+      type: [
+        {
+          name: '轉碼',
+          value: 'Transcode',
+        },
+        {
+          name: '混流',
+          value: 'MixStream',
+        },
+        {
+          name: '水印',
+          value: 'WaterMark',
+        },
+      ]
     };
   },
   components: {
     Echart
+  },
+  filters: {
+    formatType(type) {
+      switch (type) {
+        case 'Transcode':
+          return '轉碼'
+          break;
+        case 'MixStream':
+          return '混流'
+        default: return '水印'
+          break;
+      }
+    }
   },
   props: {
     StartTIme: {
@@ -129,6 +160,7 @@ export default {
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
       };
       let numArr = []
+      let total = 0
       this.axios.post(CSS_CODECHARTS, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
@@ -137,7 +169,9 @@ export default {
             axixArr.push(v.Time)
             seriesArr.push(v.Duration)
             numArr.push({Time: v.Time, Name: "-", "TranscodeDuration": v.Duration})
+            total += v.Duration
           })
+          console.log(total)
           this.xAxis = axixArr
           this.series = seriesArr
           this.line_json = numArr
