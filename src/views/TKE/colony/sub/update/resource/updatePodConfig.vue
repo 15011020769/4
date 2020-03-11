@@ -17,10 +17,9 @@
      <div class="colony-main">
        <div class="tke-card tke-formpanel-wrap mb60">
          <!-- config -->
-         <el-form class="tke-form" :model="upc" label-position="left" label-width="120px" size="mini">
+         <el-form class="tke-form"  label-position="left" label-width="120px" size="mini">
            <el-form-item label="数据卷（选填）">
-             <!-- <div @click="a">sssssss</div> -->
-             <div class="search-one" v-for="(item, index) in  upc.dataJuan" :key="index">
+             <div class="search-one" v-for="(item, index) in  wl.dataJuan" :key="index">
                <el-select v-model="item.name1" placeholder="请选择">
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                  </el-option>
@@ -28,7 +27,11 @@
                <el-input class="search-input" v-model="item.name2" placeholder="名称  如val"  ></el-input>
                <div class="search-hidden">
                  <p v-if="item.name1 == 'usePath'">
-                   暂未设置主机路径设置主机路径
+                    <el-tooltip content="主机类型 检查类型" placement="top"  effect="light">
+                        <span>主机路径设置 <i class="el-icon-info"></i></span>
+                    </el-tooltip>
+                   <span class="add-check" >重新设置</span>
+                   <span>暂未设置主机路径设置主机路径</span>
                    <span class="add-check" @click="dialogVisiblePath = true">设置主机路径</span>
                  </p>
                  <p v-if="item.name1 == 'useNFS'">
@@ -36,8 +39,6 @@
                  </p>
                  <p v-if="item.name1 == 'usePVC'">
                    <el-select v-model="item.name3">
-                     <!-- <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option> -->
                    </el-select>
                  </p>
                  <p v-if="item.name1 == 'useYun'">
@@ -47,7 +48,7 @@
                    </el-tooltip>
                  </p>
                  <p v-if="item.name1 == 'useConfig'">
-                   暂未选择ConfigMap
+                     暂未选择ConfigMap
                    <span class="add-check" @click="selectConfig">选择配置项</span>
                  </p>
                  <p v-if="item.name1 == 'useSecret'">
@@ -55,7 +56,7 @@
                    <span class="add-check" @click="selectSecret">选择Secret</span>
                  </p>
                </div>
-               <i class="el-icon-close" @click="upc.dataJuan.splice(index, 1)"></i>
+               <i class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
              </div>
              <p style="margin-top:8px">
                <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
@@ -110,6 +111,23 @@
                      <p v-show="v.imagePullPolicy=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                    </template>
                  </el-form-item>
+                 <!-- v-show="wl.dataJuan.length > 0" -->
+                 <el-form-item label="挂载点" >
+                   <!-- v-show="showMountPoint" -->
+                    <div  v-for="(point,i2) in v.mountPoint" :key="i2" class="mount-point">
+                      <el-select v-model="point.name" class="w100">
+                        <option value="1"></option>
+                      </el-select>
+                      <el-input v-model="point.mountPath" class="w192 ml8"></el-input>
+                      <el-input v-model="point.subPath" class="w192 ml8"></el-input>
+                      <el-select  v-model="point.readOnly" class="w100 ml8">
+                        <el-option value="false" label="读写"></el-option>
+                        <el-option value="true" label="只读"></el-option>
+                      </el-select>
+                       <i class="el-icon-close" @click="wl.instanceContent[i].mountPoint.splice(i2,1)" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                    </div>
+                    <el-button type="text" @click="addMountPoint(i)">添加挂载点</el-button>
+                  </el-form-item>
                  <el-form-item label="CPU/内存限制">
                    <div class="cpu-limit">
                      <div>
@@ -395,14 +413,14 @@
 
          <!-- 设置主机路径 -->
          <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
-           <el-form :model="upc" label-position="left" label-width="120px" size="mini">
+           <el-form  label-position="left" label-width="120px" size="mini">
              <el-form-item label="主机路径" style="margin-top:10px">
-               <el-input class="w192" v-model="upc.name" placeholder="如：/data/dev"></el-input>
+               <el-input class="w192" v-model="dataReelDialog.portPath.name" placeholder="如：/data/dev"></el-input>
              </el-form-item>
              <el-form-item label="检查类型">
-               <el-select v-model="upc.name">
-                 <el-option value='1'></el-option>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
+               <el-select v-model="dataReelDialog.portPath.type"  class="w192" >
+                
+                 <el-option v-for="item in portPathOptions" :key="item" :label="item" :value="item">
                  </el-option>
                </el-select>
              </el-form-item>
@@ -413,31 +431,32 @@
            </span>
          </el-dialog>
          <!-- 选择云硬盘 -->
-         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="40%">
+         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="45%">
            <div class="select-yun">
-             <el-select>
-               <el-option value='1'></el-option>
-               <!-- <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
-              </el-option> -->
-             </el-select>
-             <el-input class="w192 ml10" placeholder="请输入数据盘ID" clearable>
-               <i slot="suffix" class="el-input__icon el-icon-search"></i>
-             </el-input>
+             <el-button   plain>台北一区</el-button>
+             <p style="margin-left:30px">
+              <el-input   v-model="dataReelDialog.yunDisks.name"  placeholder="请输入数据盘ID" clearable>
+                <i slot="suffix" @click="getDescribeDisks"   class="el-input__icon el-icon-search"></i>
+              </el-input>
+             </p>
            </div>
-           <div class="select-yun-body">
+           <div class="select-yun-body" >
              <el-table ref="multipleTable" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
+              height="300"
                tooltip-effect="dark" style="width: 100%">
                <el-table-column width="55">
                  <template slot-scope="scope">
-                   <el-radio v-model="id" :label="scope.row.id">&nbsp;</el-radio>
+                   <el-radio v-model="yunRadio" :label="scope.row.id">&nbsp;</el-radio>
                  </template>
                </el-table-column>
                <el-table-column label="ID" width="120">
-                 <template slot-scope="scope">{{ scope.row.ID }}</template>
+                 <template slot-scope="scope">{{ scope.row.DiskId }}</template>
                </el-table-column>
-               <el-table-column prop="name" label="名称" width="120">
+               <el-table-column prop="name" label="名称" show-overflow-tooltip    >
+                   <template slot-scope="scope">{{ scope.row.DiskName }}</template>
                </el-table-column>
-               <el-table-column prop="address" label="大小" show-overflow-tooltip>
+               <el-table-column prop="address" width="120"  label="大小" show-overflow-tooltip>
+                  <template slot-scope="scope">{{ scope.row.DiskSize }}GB</template>
                </el-table-column>
              </el-table>
              <!-- 分页 -->
@@ -457,13 +476,12 @@
          </el-dialog>
 
          <!-- 设置Configmap -->
-         <el-dialog title="设置ConfigMap" :visible.sync="dialogVisibleConfig" width="30%">
+         <el-dialog title="设置ConfigMap" :visible.sync="dialogVisibleConfig" width="35%">
            <el-form label-position="left" label-width="120px" size="mini">
              <el-form-item label="选择ConfigMap">
-               <el-select>
-                 <el-option value='1'></el-option>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
-                 <!-- </el-option> -->
+               <el-select v-model="dataReelDialog.configMap.name" placeholder="请选择ConfigMap">
+                  <el-option v-for="item in configMap.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
+                  </el-option>
                </el-select>
              </el-form-item>
              <el-form-item label="选项">
@@ -486,14 +504,13 @@
            </span>
          </el-dialog>
 
-         <!-- 设置Configmap -->
-         <el-dialog title="设置Secret" :visible.sync="dialogVisibleSecret" width="30%">
+         <!-- 设置Secret -->
+         <el-dialog title="设置Secret" :visible.sync="dialogVisibleSecret" width="35%">
            <el-form label-position="left" label-width="120px" size="mini">
              <el-form-item label="选择Secret">
-               <el-select>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
-                 <!-- </el-option> -->
-                 <el-option value='1'></el-option>
+               <el-select v-model="dataReelDialog.Secret.name" placeholder="请选择Secret" >
+                <el-option v-for="item in secrets.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
+                  </el-option>
                </el-select>
              </el-form-item>
              <el-form-item label="选项">
@@ -533,7 +550,7 @@ import SelectMirrorImg from '../../create/resource/components/selectMirrorImg';
 import workLoadMixin from './js/workloadMixins'
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
-import {TKE_COLONY_QUERY, POINT_REQUEST} from '@/constants'
+import {TKE_COLONY_QUERY, POINT_REQUEST,TKE_YUN_HARDDISK_LIST} from '@/constants'
 export default {
   name: "svcCreate",
   mixins:[workLoadMixin],
@@ -545,53 +562,32 @@ export default {
       np:'',
       name: '',//路由传过来的工作负载数据
       workload:'',
-      selectRadio:'Always',
       isAddContainer: false, // 是否可以点击 添加容器
+
+      dataReelDialog:{
+        portPath:{
+          name:'',
+          type:'DirectoryOrCreate',
+        },
+        yunDisks:{
+          name:''
+        },
+        configMap:{
+          name:''
+        },
+        Secret:{
+          name:''
+        }
+
+      },
+      portPathOptions:['NoChecks','DirectoryOrCreate','Directory','FileOrCreate','File','Socket','CharDevice','BlockDevice'],
+      yunRadio:'',
       // 更新pod数量
       upn: {
         type1: 'qcloudregistrykey',
         type2: 'tencenthubkey',
       },
-      touchTactics: [{
-        touch1: 'CPU',
-        touch2: 'CPU使用量',
-        size: ''
-      }], // 实例数量自动调节下拉框内容
-      touchOptions1: [{
-          value: 'CPU',
-          label: 'CPU'
-        }, {
-          value: '内存',
-          label: '内存'
-        }, //触发策略
-        {
-          value: '硬盘',
-          label: '硬盘'
-        }, {
-          value: '网络',
-          label: '网络'
-        },
-      ],
-      touchOptions2: [{
-          value: 'CPU使用量',
-          label: 'CPU使用量'
-        }, {
-          value: 'CPU利用率（占节点）',
-          label: 'CPU利用率（占节点）'
-        },
-        {
-          value: 'CPU利用率（占Request）',
-          label: 'CPU利用率（占Request）'
-        }, {
-          value: 'CPU利用率（占Limit）',
-          label: 'CPU利用率（占Limit）'
-        },
-      ],
-
       // 更新pod配置
-      upc: {
-        dataJuan: [],
-      },
       wl:{
         name: '', // 名称
         description: '', // 描述
@@ -606,6 +602,7 @@ export default {
         },
         instanceContent: [], // 实例内容器
         dataJuan: [],
+
         caseNum: 'handAdjust',
         replicas: 0, // 实例数量-》手动调节-》实例数量
         touchTactics: [], // 实例数量-》自动调节-》触发策略
@@ -644,35 +641,16 @@ export default {
         subPath: '',
         pointName: ''
       },
-      containerCheck: {
-      type: 'TCP端口检查',
-      http: {
-        type: 'HTTP'
-      }
-    },
-    containerTypeOptions: [{
-        value: 'TCP端口检查',
-        label: 'TCP端口检查'
-      },
-      {
-        value: 'HTTP请求检查',
-        label: 'HTTP请求检查'
-      },
-      {
-        value: '执行命令检查',
-        label: '执行命令检查'
-      },
-    ],
       dialogVisiblePath: false,
       dialogVisibleYun: false,
       dialogVisibleConfig: false,
       dialogVisibleSecret: false,
       yesOrnoAddDataJuan: false,
       highLevelSetShow:false,
-    highLevelSetShow2:false,
-    surviveExamine: false, //存活检查
-    readyToCheck: false, //就绪检查
-    SelectMirrorImgFlag:false,
+      highLevelSetShow2:false,
+      surviveExamine: false, //存活检查
+      readyToCheck: false, //就绪检查
+      SelectMirrorImgFlag:false,
       searchOptions: [{
           value: "useMenu",
           label: "使用临时目录"
@@ -713,13 +691,12 @@ export default {
       setSecret: {
         checked: 'all'
       },
-      lengths:'',
+      lengths:'',//判断名称是否是输入框
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {} // 引用ConfigMap/Secret ConfigMap
 
     };
   },
-
   components: {
     SelectMirrorImg
   },
@@ -730,13 +707,22 @@ export default {
     this.np=spaceName;
     this.workload=workload;
     this.wl.namespace = spaceName
-    this.baseData()
-    this.getConfigmaps();
-    this.getSecrets()
-    console.log(this.wl.instanceContent)
+    // this.baseData()
+    // this.getConfigmaps();
+    // this.getSecrets()
+      // this.addMountPoint(0)
+
+    this.initData()
+    console.log(this.wl)
   },
   methods: {
+    async  initData(){
+      await this.baseData();
+      this.getConfigmaps();
+      this.getSecrets()
+      this.getDescribeDisks()
 
+    },
     submit(){
       let container = this.wl.instanceContent
       console.log(container)
@@ -788,20 +774,15 @@ export default {
           limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
           runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
         } = container[i]
-        let oneContainer = {
-         
-        }
-
-        //  // 运行命令
-        // if (runCommand !== '') oneContainer.command = runCommand.split('\n')
-        // // 运行参数
-        // if (runParam !== '') oneContainer.args = runParam.split('\n')
+        let oneContainer = {}
+         //运行指令
+        if (container[i].runCommand.length > 0) var command=container[i].runCommand.split('\n')
+        //运行参数
+        if (container[i].runParam.length > 0) var args=container[i].runParam.split('\n')
         // // 存活检查
         if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
         // // 就绪检查
         if (readyToCheck) oneContainer.readinessProbe = inspectFunc(readyToCheckContent)
-
-        console.log(oneContainer)
           // 新增变量
          var environmentVarArr=[];
         if (container[i].environmentVar.length > 0) {
@@ -824,16 +805,6 @@ export default {
               }
             }
           })
-        }
-        console.log(environmentVarArr)
-        console.log( citeCsArr )
-        //运行指令
-        if (container[i].runCommand.length > 0) {
-         var command=container[i].runCommand.split('\n')
-        }
-        //运行参数
-        if (container[i].runParam.length > 0) {
-         var args=container[i].runParam.split('\n')
         }
        
           containerObj = {
@@ -867,7 +838,6 @@ export default {
           containerList.push(containerObj)
         }
       }
-      console.log(containerList)
       var params={
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
@@ -918,6 +888,7 @@ export default {
         this.axiosUtils(res, () => {
           let ResponseBody = res.Response.ResponseBody
           this.configMap = JSON.parse(ResponseBody)
+          console.log(this.configMap)
         })
       })
     },
@@ -935,7 +906,42 @@ export default {
         })
       })
     },
-
+    getDescribeDisks:async function(){
+      let param={
+        'Filters.0.Name': 'disk-usage',
+        'Filters.0.Values.0': 'DATA_DISK',
+        'Filters.1.Name': 'portable',
+        'Filters.1.Values.0': 'TRUE',
+        'Filters.2.Name': 'disk-state',
+        'Filters.2.Values.0': 'UNATTACHED',
+        'Filters.3.Name': 'zone',
+        'Filters.3.Values.0': 'ap-taipei-1',
+         'Offset': 0,
+        'Limit': 20,
+         Version: "2017-03-12",
+      }
+      if(this.dataReelDialog.yunDisks.name!='')param['Filters.4.Name']='disk-id',param['Filters.4.Values.0']=this.dataReelDialog.yunDisks.name
+      await this.axios.post(TKE_YUN_HARDDISK_LIST, param).then(res => {
+        if(res.Response.Error === undefined){
+          this.tableData = res.Response.DiskSet,
+          this.TotalCount=res.Response.DiskSet.length;
+        }else{
+        let ErrTips = {}
+        let ErrOr = Object.assign(this.$ErrorTips, ErrTips)
+        if(ErrOr[res.Response.Error.Code]=='参数错误'){
+              this.tableData=[];
+              this.TotalCount=0
+        }else{
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: 'error',
+              showClose: true,
+              duration: 2000
+            })
+         }
+        }
+      })
+    } ,   
     baseData(){
       var params=null;
       if(this.workload=='cronjobs'){
@@ -956,17 +962,16 @@ export default {
        this.axios.post(TKE_COLONY_QUERY,params).then(res=>{
          if(res.Response.Error === undefined){
            let response = JSON.parse(res.Response.ResponseBody);
-           console.log(response)
+           console.log('basedataresponse',response)
           if(this.workload=='cronjobs'){
             var {items:[{spec:{jobTemplate:{spec:{template:{spec:{containers:arr}}}}}}]}=response;
           }else{
             var {items:[{spec:{template:{spec:{containers:arr}}}}]}=response;
           }
           let arr2=[],arr3=[];
-          console.log(arr)
           this.lengths=arr.length;
           let surviveExamineContentObj={
-             inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+            inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
             inspectMethodValue: 'TCP端口检查',
             inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
             inspectProtocolValue: '',
@@ -979,24 +984,23 @@ export default {
             healthyThreshold: 1, // 健康阀值
             unhealthyThreshold: '1' // 不健康阀值
           }
-          let readyToCheckContentObj={
-              inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-              inspectMethodValue: 'TCP端口检查',
-              inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
-              inspectProtocolValue: '',
-              executiveOrder: '', // 执行命令
-              inspectPort: '0', // 检查端口
-              requestPath: '', // 请求路径
-              startDelay: '', // 启动延时
-              responseTimeout: '2', // 响应超时,
-              intervalTime: '3', // 间隔时间
-              healthyThreshold: '1', // 健康阀值
-              unhealthyThreshold: '1' // 不健康阀值
+      let readyToCheckContentObj={
+            inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
+            inspectMethodValue: 'TCP端口检查',
+            inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
+            inspectProtocolValue: '',
+            executiveOrder: '', // 执行命令
+            inspectPort: '0', // 检查端口
+            requestPath: '', // 请求路径
+            startDelay: '', // 启动延时
+            responseTimeout: '2', // 响应超时,
+            intervalTime: '3', // 间隔时间
+            healthyThreshold: '1', // 健康阀值
+            unhealthyThreshold: '1' // 不健康阀值
           }
-          for(let v of arr){
-            console.log(v)
-            console.log(v.env)
-            if(v.env){
+          for(let v of arr){//实例内容器的数据
+
+            if(v.env){//'ConfigMap', 'Secret'数据处理
               if(v.env.length){
                  v.env.forEach(item=>{
                    if(item['value']!=undefined){
@@ -1018,13 +1022,33 @@ export default {
                  })
               }
             }
+            console.log(v)
+            if(v.volumeMounts.length!=0){//挂载点数据处理
+              var  volumeArr=[];
+              v.volumeMounts.forEach(v=>{
+                let volumeObj=new Object();
+                 volumeObj.mountPath=v.mountPath;
+                 volumeObj.name=v.name;
+                if(v.subPath){
+                   volumeObj.subPath=v.subPath;
+                  }else{
+                     volumeObj.subPath='';
+                }
+                if(v.readOnly){//只读
+                  volumeObj.readOnly='true'
+                  }else{//读写
+                  volumeObj.readOnly='false'
+                }
+                 volumeArr.push(volumeObj)
+              })
+            } 
             this.addInstanceContent(
             v.name,v.image.split(':')[0],v.image.split(':')[1],v.imagePullPolicy,
-            parseInt(v.resources.requests.cpu),
-            parseInt(v.resources.limits.cpu),
-            this.formatData(v.resources.requests.memory),
-            this.formatData(v.resources.limits.memory),
-            Number(v.resources.limits['nvidia.com/gpu']),
+            JSON.stringify(v.resources) == "{}"?'':parseInt(v.resources.requests.cpu),
+            JSON.stringify(v.resources) == "{}"?'':parseInt(v.resources.limits.cpu),
+            JSON.stringify(v.resources) == "{}"?'':this.formatData(v.resources.requests.memory),
+            JSON.stringify(v.resources) == "{}"?'':this.formatData(v.resources.limits.memory),
+            JSON.stringify(v.resources) == "{}"? 0:Number(v.resources.limits['nvidia.com/gpu']),
             arr2,//环境变量
             arr3,//引用ConfigMap/Secret
             false,// 显示高级设置false
@@ -1033,9 +1057,10 @@ export default {
             v.args? v.args.join('\n'):'',//运行参数
             v.livenessProbe?true:false, // 存活检查
             v.readinessProbe?true:false, // 就绪检查
-            v.securityContext.privileged,// 特权级容器开关
+            v.securityContext?v.securityContext.privileged:false,// 特权级容器开关
             v.livenessProbe?v.livenessProbe:surviveExamineContentObj,//存活检查内容
             v.readinessProbe?v.readinessProbe:readyToCheckContentObj,//就绪检查
+            volumeArr?volumeArr:[],//数据卷挂载点
             )
           }
         }else{
@@ -1070,14 +1095,7 @@ export default {
     console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
-  newAddTarget() { //新增指标
-    var obj = {
-      touch1: 'CPU',
-      touch2: 'CPU使用量',
-      size: ''
-    }
-    this.touchTactics.push(obj)
-  },
+  
   selectYun() {
     this.dialogVisibleYun = true;
   },
@@ -1097,7 +1115,7 @@ export default {
   },
 },
 watch: {
-    upc: {
+    wl: {
       handler(val) {
         //监听数据卷
         val.dataJuan.forEach(item => {
@@ -1207,6 +1225,9 @@ watch: {
 
   .ml100 {
     margin-left: 100px;
+  }
+  .ml8 {
+    margin-left: 8px;
   }
 
   .flex {
@@ -1389,6 +1410,25 @@ i{
   left: -52px;
   top: 8px;
 }
+.select-yun{
+  display: flex;
+  ::v-deep .el-button{
+   border:solid 1px #409eff;
+   color: #409eff;
+   padding: 0px 15px;
+   border-radius: 0px;
+   height: 34px;
+   line-height: 34px;
+  }
+  ::v-deep  .el-input__inner{
+    height: 34px;
+    width: 200px;
 
+  }
+}
+.mount-point{
+   display: flex;
+   align-items: center;
+}
 
  </style>

@@ -243,7 +243,7 @@
         :before-close="handleCloseCarrierBody"
       >
         <span>{{$t('CAM.Role.account')}}</span>
-        <!-- <el-checkbox-group 
+        <!-- <el-checkbox-group
           v-model="checkedRoleServeCarrier">
           <el-checkbox v-for="item in roleServeCarrier" :label="item.value" :key="item.key">{{item.key}}</el-checkbox>
         </el-checkbox-group>-->
@@ -303,7 +303,7 @@
       <!-- 撤销所有会话弹窗 -->
       <el-dialog
         title="撤銷所有會話"
-        :visible.sync="dialogVisibleCancelAllSession"        
+        :visible.sync="dialogVisibleCancelAllSession"
         >
           <p>您是否確定要撤銷角色的當前所有會話？撤銷會話後，該角色當前所有訪問將立即被拒絕。</p>
           <el-checkbox v-model="cancelAllSessionChecked">我已知曉上述信息並確認要撤銷該角色所有會話</el-checkbox>
@@ -476,6 +476,10 @@ export default {
               ).length
 
             resInfo.PolicyDocument = `qcs::cam::uin/${this.$cookie.get('uin')}:roleName/${resInfo.RoleName}`
+
+            if (_this.roleCarrier.length > 0) {
+              _this.roleCarrier.length = 0;
+            }
             if (PolicyDocument.statement[0].principal.service) {
               this.roleCarrierType = 'service'
               // if (typeof PolicyDocument.statement[0].principal.service === 'string') {
@@ -536,8 +540,8 @@ export default {
             });
           this.infoLoad = false;
           }
-          
-        }) 
+
+        })
         .catch(error => {});
     },
     // 获取角色策略
@@ -553,7 +557,7 @@ export default {
       if (this.rolePolicyType != "") {
         paramsList["PolicyType"] = this.rolePolicyType;
       }
-      
+
       this.axios
         .post(LIST_ATTACHE, paramsList)
         .then(res => {
@@ -613,7 +617,7 @@ export default {
         });
         return
       }
-      
+
       let paramsDel = {
         Version: "2019-01-16",
         PolicyId: scope.PolicyId,
@@ -731,21 +735,35 @@ export default {
     // 修改角色信任策略
     updateRolePolicy(index, rows) {
       this.roleCarrier.splice(index, 1); // 从数组中删除要移除的数据
-      let policyDocument = JSON.parse(
-        '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[]}}]}'
-      );
-      policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
-        this.roleCarrier
-      );
+
+      let policyDocument = {
+        version: "2.0",
+        statement: [
+          {
+            action: "name/sts:AssumeRole",
+            effect: "allow",
+            principal: {
+              service: this.roleCarrier
+            }
+          }
+        ]
+      }
+
       let paramsPolicy = {
         Version: "2019-01-16",
-        PolicyDocument: policyDocument,
+        PolicyDocument: JSON.stringify(policyDocument),
         RoleId: this.roleId
       };
       this.axios
         .post(UPDATE_ASSUME, paramsPolicy)
         .then(res => {
           if (res.Response.Error === undefined) {
+            this.$message({
+              message: "解除成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            })
             this.getRoleDetail(); //重新加载
           } else {
             let ErrTips = {
@@ -949,7 +967,7 @@ export default {
             showClose: true,
             duration: 0
           });
-        } 
+        }
       } else {
         loading.close()
         let ErrTips = {
@@ -967,7 +985,7 @@ export default {
           showClose: true,
           duration: 0
         });
-      } 
+      }
     },
     handleClick() {},
     isRelieve() {},

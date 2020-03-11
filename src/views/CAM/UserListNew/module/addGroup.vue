@@ -18,8 +18,82 @@
       </div>
       <div v-show="active==1" class="table">
         <div class="container">
+       <div class="container-right">
+          <span>用戶組清單({{userGroupTotalNum}})</span>
+          <div>
+            <el-input
+              v-model="searchGroupValue"
+              :placeholder="$t('CAM.userList.search')"
+              size="small"
+              class="inputSearchCl"
+              clearable
+              @keyup.enter.native="searchGroup"
+            >
+              <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
+            </el-input>
+          </div>
+
+            <!-- @row-click="selectedRow"
+            @selection-change="handleSelection" -->
+          <el-table
+            ref="multipleOption"
+            tooltip-effect="dark"
+            height="400"
+            style="width: 80%; border:1px solid #ddd;"
+            :data="userGroup"
+            @select="toggleGroup"
+            @select-all="toggleAllGroup"
+            class="user-group-table"
+            :empty-text="$t('CAM.strategy.zwsj')"
+          >
+            <el-input size="mini" style="width:20%" />
+            <el-button size="mini" class="suo" icon="el-icon-search" show-overflow-tooltip></el-button>
+            <el-table-column type="selection" :selectable="checkboxT"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="groupName">
+              <template slot-scope="scope">
+                <el-tooltip effect="dark" :content="scope.row.isSelected === 1 ? '當前用戶已被關聯，如需解除關聯請前往詳情頁操作' : scope.row.groupName" placement="top">
+                  <span>{{scope.row.groupName}}</span>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+            <infinite-loading
+              slot="append"
+              :identifier="userGroupInfiniteId"
+              @infinite="userGroups"
+              force-use-infinite-wrapper=".user-group-table .el-table__body-wrapper">
+              <div slot="no-more"></div>
+              <div slot="no-results"></div>
+            </infinite-loading>
+          </el-table>
+        </div>
+
+        <div class="container-left">
+          <span>{{$t('CAM.userList.choose')}}({{selectedStrategiesWithoutGroup.length}})</span>
+          <el-table
+            ref="multipleSelected"
+            tooltip-effect="dark"
+            height="400"
+            style="width: 80%;border:1px solid #ddd"
+            :data="selectedStrategiesWithoutGroup"
+            :empty-text="$t('CAM.strategy.zwsj')"
+          >
+            <el-table-column :label="$t('CAM.userList.userGroup')" prop="groupName"></el-table-column>
+            <el-table-column :label="$t('CAM.userList.userCz')" show-overflow-tooltip>
+              &lt;!&ndash;
+              <template slot-scope="scope">
+                <el-button
+                  @click.native.prevent="deleteRow(scope)"
+                  type="text"
+                  size="small"
+                >{{$t('CAM.userList.userRemove')}}</el-button>
+              </template>&ndash;&gt;
+            </el-table-column>
+          </el-table>
+        </div>
+        </div>
+        <!-- <div class="container">
           <div class="container-right">
-            <span>{{$t('CAM.userList.listTitle')}}</span>
+            <span>用戶組清單</span>
             <div style="margin-top:10px;">
               <el-input
                 clearable
@@ -61,7 +135,7 @@
           </div>
 
           <div class="container-left">
-            <span>{{$t('CAM.userList.choose')}}</span>
+            <span>用戶組清單</span>
             <el-table
               ref="multipleSelected"
               tooltip-effect="dark"
@@ -83,15 +157,15 @@
               </el-table-column>
             </el-table>
           </div>
-        </div>
+        </div> -->
       </div>
       <div v-show="active==2">
-        <el-table style="width: 96%; margin: 0 auto;" :data="userNewGroup[0]" :empty-text="$t('CAM.strategy.zwsj')">
-          <el-table-column :label="$t('CAM.userList.userGroup')" prop="GroupName"></el-table-column>
+        <el-table style="width: 96%; margin: 0 auto;" :data="selectedStrategiesWithoutGroup" :empty-text="$t('CAM.strategy.zwsj')">
+          <el-table-column :label="$t('CAM.userList.userGroup')" prop="groupName"></el-table-column>
           <el-table-column fixed="right" :label="$t('CAM.userList.userCz')">
             <template slot-scope="scope">
               <el-button
-                @click.native.prevent="deleteRow(scope.$index, userNewGroup[0])"
+                @click.native.prevent="deleteRow(scope)"
                 type="text"
                 size="small"
               >{{$t('CAM.userList.userRemove')}}</el-button>
@@ -131,11 +205,13 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
 import Headcom from "../components/Head";
-import { USER_GROUP, ADD_USERTOGROUP, RELATE_USER } from "@/constants";
+import { USER_GROUP, ADD_USERTOGROUP, RELATE_USER, LIST_GROUPS_V2 } from "@/constants";
 import { createPopper } from '@popperjs/core/lib/popper-lite.js'
+import InfiniteLoading from 'vue-infinite-loading'
 export default {
   components: {
-    Headcom //头部组件
+    Headcom, //头部组件
+    InfiniteLoading,
   },
   data() {
     return {
@@ -146,58 +222,131 @@ export default {
       userNewGroup: [],
       groupArr: [],
       loading: true,
-      userGroup1: []
+      userGroup1: [],
+      uin: '',
+      groupIds: [],
+      groupRp: 10,
+      groupPage: 1,
+      userGroupTotalNum: 0,
+      isInfiniteLoading: false,
+      userGroupInfiniteId: 1,
     };
   },
+  computed: {
+    selectedStrategiesWithoutGroup() {
+      return this.userGroupSelect.filter(s => s.isSelected !== 1)
+    }
+  },
   methods: {
-    userGroupEnter(row, column, cell) {
-      if (row.status === 1) {
-        this.ins = createPopper(cell, this.$refs.userGroupTip, {
-          placement: 'top',
-        })
+    toggleGroup(a, b) {
+      this.userGroupSelect = a
+      if (this.groupIds.includes(b.groupId)) {
+        this.groupIds = this.groupIds.filter(selected => selected !== b.groupId)
+      } else {
+        this.groupIds.push(b.groupId)
       }
     },
-    mouseleave(row) {
-      if (this.ins) {
-        this.ins.destroy()
+    toggleAllGroup(all) {
+      console.log(all)
+      this.userGroupSelect = all
+      if (this.groupIds.length === this.userGroup.length) {
+        this.groupIds = []
+      } else {
+        this.groupIds = all.map(g => g.groupId)
       }
+    },
+    userGroups($state) {
+      // this.userGroup = [];
+      this.isInfiniteLoading = true;
+      let params = {
+        isFilter: 3,
+        keyword: this.searchGroupValue,
+        rp: this.groupRp,
+        page: this.groupPage,
+        'filterUids.0': this.$route.query.Uid
+      };
+      this.axios
+        .post(LIST_GROUPS_V2, params)
+        .then(res => {
+          this.groupPage += 1
+          this.userGroupTotalNum = res.data.totalNum
+          this.userGroup = this.userGroup.concat(res.data.groupInfo)
+          res.data.groupInfo.forEach(group => {
+            if (group.isSelected === 1) {
+              this.groupIds.push(group.groupId)
+              this.userGroupSelect.push(group)
+            }
+          })
+          if (this.groupIds.length) {
+            this.$nextTick(() => {
+              this.userGroup.forEach(group => {
+                if (this.groupIds.includes(group.groupId)) {
+                  this.$refs.multipleOption.toggleRowSelection(group, true)
+                }
+              })
+            })
+          }
+          if (this.userGroup.length === res.data.totalNum) {
+            $state && $state.complete()
+          } else {
+            $state && $state.loaded()
+          }
+        })
     },
     checkboxT(row, index) {
-      if (row.status == 1) {
+      if (row.isSelected == 1) {
         return false;
       } else {
         return true;
       }
     },
-    userGroups() {
-      this.loading = true;
-      let params = {
-        Version: "2019-01-16"
-      };
-      if (this.searchGroupValue != null && this.searchGroupValue != "") {
-        params["Keyword"] = this.searchGroupValue;
-      }
-      this.axios.post(USER_GROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.userGroup1 = res.Response.GroupInfo;
-          const param = {
-            Version: "2019-01-16",
-            Uid: this.$route.query.Uid
-          };
-          this.axios.post(RELATE_USER, param).then(res => {
+    deleteRow({ $index, row }) {
+      this.userGroupSelect = this.userGroupSelect.filter(g => g.groupId !== row.groupId)
+      this.groupIds = this.groupIds.filter(groupId => groupId !== row.groupId)
+      
+      this.$refs.multipleOption.toggleRowSelection(this.userGroup.find(s => s.groupId === row.groupId), false)
+    },
+    searchGroup() {
+      this.groupPage = 1
+      this.userGroup = []
+      this.userGroups()
+    },
+    complete() {
+      const groups = this.selectedStrategiesWithoutGroup
+        if (!groups.length) {
+          return void this.$message({
+            message: "請選擇用戶組",
+            type: 'error',
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          const params = {
+            Version: "2019-01-16"
+          }
+          const uid = this.$route.query.Uid
+          groups.forEach((g, i) => {
+            params[`Info.${i}.Uid`] = uid;
+            params[`Info.${i}.GroupId`] = g.groupId;
+          })
+          this.axios.post(ADD_USERTOGROUP, params).then(res => {
             if (res.Response.Error === undefined) {
-              this.groupArr = res.Response.GroupInfo;
-              this.userGroup1.forEach(item => {
-                item.status = 0;
-                this.groupArr.forEach(val => {
-                  if (val.GroupId == item.GroupId) {
-                    item.status = 1;
-                  }
-                });
+              this.$message({
+                showClose: true,
+                message: "添加成功",
+                duration: 0,
+                type: "success"
               });
-              this.userGroup = this.userGroup1;
+              this.$router.go(-1);
             } else {
-              let ErrTips = {};
+              let ErrTips = {
+                "InvalidParameter.GroupNotExist": "用戶組不存在",
+                "InvalidParameter.GroupUserFull":
+                  "用戶組中的子用戶數量達到上限",
+                "InvalidParameter.UserGroupFull":
+                  "子用戶加入的用戶組數量達到上限",
+                "ResourceNotFound.UserNotExist": "用戶不存在"
+              };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
                 message: ErrOr[res.Response.Error.Code],
@@ -206,60 +355,8 @@ export default {
                 duration: 0
               });
             }
-            this.loading = false;
-          });
-        } else {
-          let ErrTips = {
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          })
         }
-      });
-    },
-    searchGroup() {
-      this.userGroups();
-    },
-    complete() {
-      var addGroup = [];
-      this.userNewGroup[0].forEach(item => {
-        addGroup.push(item);
-      });
-      addGroup.forEach(item => {
-        this.addUserGroup(item.GroupId);
-      });
-      this.$router.go(-1);
-    },
-    addUserGroup(val) {
-      let params = {
-        Version: "2019-01-16",
-        "Info.0.Uid": this.$route.query.Uid,
-        "Info.0.GroupId": val
-      };
-      this.axios.post(ADD_USERTOGROUP, params).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res);
-        } else {
-          let ErrTips = {
-            "InvalidParameter.GroupNotExist": "用戶組不存在",
-            "InvalidParameter.GroupUserFull": "用戶組中的子用戶數量達到上限",
-            "InvalidParameter.UserGroupFull": "子用戶加入的用戶組數量達到上限",
-            "ResourceNotFound.UserNotExist": "用戶不存在"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
     },
     prev() {
       --this.active;
@@ -268,30 +365,12 @@ export default {
     next() {
       if (this.active++ > 3) this.active = 0;
     },
-    selectedRow(row, column, event) {
-      // 设置选中或者取消状态
-      this.$refs.multipleOption.toggleRowSelection(row);
-    },
-    deleteRow(index, rows) {
-      // 获取右边框中取消的行数据，将此行数据在右边框中的选中状态取消
-      this.$refs.multipleOption.toggleRowSelection(rows[index], false);
-    },
-    handleSelection(val) {
-      // 给右边table框赋值，只需在此处赋值即可，selectedRow方法中不写，因为单独点击复选框，只有此方法有效。
-      this.userGroupSelect = val;
-      let newGroupData = [];
-      newGroupData.push(val);
-      this.userNewGroup = newGroupData;
-    },
-    deleteRow(index, rows) {
-      rows.splice(index, 1);
-    },
     back() {
       this.$router.go(-1);
     }
   },
   created() {
-    this.userGroups();
+    // this.userGroups();
   }
 };
 </script>

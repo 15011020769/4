@@ -80,7 +80,7 @@
 </template>
 <script>
 import { ADD_DOMAIN } from '@/constants'
-import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 export default {
   props: {
     isShow: Boolean
@@ -170,7 +170,7 @@ export default {
       this.axios.post(ADD_DOMAIN, params).then(({ Response }) => {
         if (Response.Error) {
           let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          let ErrOr = Object.assign(CSSErrorTips, ErrTips)
           this.$message({
             type: 'error',
             message: ErrOr[Response.Error.Code],

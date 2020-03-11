@@ -103,53 +103,63 @@
               </el-form-item>
             </div>
           </div>
-          <el-form-item label="数据卷（选填）">
-            <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataJuan" :key="index">
-              <el-select v-model="item.name1" placeholder="请选择">
-                <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-              </el-select>
-              <el-input class="search-input" v-model="item.name2" placeholder="请输入内容"></el-input>
-              <div class="search-hidden">
-                <p v-if="item.name1 == 'usePath'">
-                  暂未设置主机路径设置主机路径
-                  <span class="add-check" @click="dialogVisiblePath = true">主机路径设置</span>
-                </p>
-                <p v-if="item.name1 == 'useNFS'">
-                  <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
-                </p>
-                <p v-if="item.name1 == 'usePVC'">
-                  <el-select v-model="item.name3" :disabled="usePvcOptions.length == 0" :placeholder="
-                      usePvcOptions.length == 0 ? '暂无数据' : '请选择'
-                    ">
-                    <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
+          <!-- 数据卷（选填） -->
+          <div style="margin-bottom: 18px">
+            <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">数据卷（选填）</label>
+            <div style="margin-left: 120px">
+              <div class="search-one" v-show="dataFlag" v-for="(item, index) in wl.dataVolumes" :key="index">
+                <el-form-item style="display: inline-block; margin-bottom: 0px" label-width="0px">
+                  <el-select v-model="item.name1" placeholder="请选择">
+                    <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                   </el-select>
-                </p>
-                <p v-if="item.name1 == 'useYun'">
-                  <span class="add-check" @click="selectYun">选择云硬盘</span>&nbsp;&nbsp;
-                  <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
-                    <i style="cursor:pointer" class="el-icon-warning"></i>
-                  </el-tooltip>
-                </p>
-                <p v-if="item.name1 == 'useConfig'">
-                  暂未选择ConfigMap
-                  <span class="add-check" @click="selectConfig">选择配置项</span>
-                </p>
-                <p v-if="item.name1 == 'useSecret'">
-                  暂未选择Secret
-                  <span class="add-check" @click="selectSecret">选择Secret</span>
-                </p>
+                </el-form-item>
+                <el-form-item style="display: inline-block; margin-bottom: 0px" label-width="0px">
+                  <el-input class="search-input" v-model="item.name2" placeholder="名称，如：vol"></el-input>
+                </el-form-item>
+                <div class="search-hidden">
+                  <p v-if="item.name1 == 'usePath'">
+                    暂未设置主机路径
+                    <el-button type="text" size="mini" @click="dialogVisiblePath = true">主机路径设置</el-button>
+                  </p>
+                  <p v-if="item.name1 == 'useNFS'">
+                    <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                      <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
+                    </el-form-item>
+                     </p>
+                  <p v-if="item.name1 == 'usePVC'">
+                    <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                      <el-select v-model="item.name3" :disabled="usePvcOptions.length == 0" :placeholder="usePvcOptions.length == 0 ? '暂无数据' : '请选择'">
+                        <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                      </el-select>
+                    </el-form-item>
+                  </p>
+                  <p v-if="item.name1 == 'useYun'">
+                    <el-button type="text" size="mini" @click="selectYun">选择云硬盘</el-button>&nbsp;&nbsp;
+                    <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
+                      <i style="cursor:pointer" class="el-icon-warning"></i>
+                    </el-tooltip>
+                  </p>
+                  <p v-if="item.name1 == 'useConfig'">
+                    暂未选择ConfigMap
+                    <el-button type="text" size="mini" @click="selectConfig">选择配置项</el-button>
+                  </p>
+                  <p v-if="item.name1 == 'useSecret'">
+                    暂未选择Secret
+                    <el-button type="text" size="mini" @click="selectSecret">选择Secret</el-button>
+                  </p>
+                </div>
+                <i class="el-icon-close" @click="delDataVolume(index)"></i>
               </div>
-              <i class="el-icon-close" @click="delDataJuan(index)"></i>
+              <div>
+                <el-button type="text" size="mini" :disabled="yesOrnoAddDataJuan" @click="addDataVolume">添加数据卷</el-button>
+              </div>
+              <p style="line-height: 28px">为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
+                <span style="color:#409eff;cursor:pointer">使用指引</span>
+              </p>
             </div>
-            <p>
-              <el-button type="text" :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
-            </p>
-            <p>为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
-              <span style="color:#409eff;cursor:pointer">使用指引</span>
-            </p>
-          </el-form-item>
+          </div>
           <!-- 实例内容器 -->
           <div style="margin-bottom: 18px">
             <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">实例内容器</label>
@@ -158,11 +168,11 @@
                 <div v-show="v.editStatus" class="case-content" style="margin-bottom: 18px">
                   <el-form-item style="margin-bottom: 0px">
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="isAddContainer">
                         <i class="el-icon-check"
                            style="font-size:20px;margin-left:20px;"
-                           :style="{cursor: v.completed?'pointer':'no-drop'}"
-                           @click="v.completed?editInstanceContent(i):''">
+                           :style="{cursor: isAddContainer?'pointer':'no-drop'}"
+                           @click="isAddContainer?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
                       <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
@@ -197,15 +207,33 @@
                       <p v-show="v.mirrorPullTactics === 'Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                     </template>
                   </el-form-item>
-                  <el-form-item label="挂载点" v-show="wl.dataJuan.length > 0">
-                    <div v-show="showMountPoint" v-for="(point,i) in wl.pointList" :key="i">
-                      <el-select v-model="wl.pointName"></el-select>
-                      <el-input v-model="wl.mountPath"></el-input>
-                      <el-input v-model="wl.subPath"></el-input>
-                      <el-select></el-select>
+                  <div style="margin-bottom: 18px" v-show="v.showMountPoint">
+                    <label style="width: 120px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">挂载点</label>
+                    <div style="margin-left: 120px; position: relative">
+                      <div class="bottom10" v-for="(mItem, mIndex) in v.mountPoints" :key="mItem.targetPath">
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;">
+                          <el-select v-model="mItem.dataVolumeValue" placeholder="请选择数据卷">
+                            <el-option v-for="(dItem, dIndex) in wl.dataVolumes" :key="dIndex" :label="dItem" :value="dItem">
+                            </el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-input placeholder="目标路径，如:/mnt" v-model="mItem.targetPath"></el-input>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-input placeholder="挂载子路径" v-model="mItem.mountSubPath"></el-input>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block;margin-bottom: 0px;margin-left: 10px">
+                          <el-select v-model="mItem.permission">
+                            <el-option label="读写" value="dx" selected></el-option>
+                            <el-option label="只读" value="zd"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="delMountPoint(i, mIndex)"></i>
+                      </div>
+                      <el-button type="text" size="mini" @click='addMountPoint(i)'>添加挂载点</el-button>
                     </div>
-                    <el-button type="text" @click="changIsShowmount()">添加挂载点</el-button>
-                  </el-form-item>
+                  </div>
                   <el-form-item label="CPU/内存限制">
                     <div class="cpu-limit">
                       <div>
@@ -469,10 +497,11 @@
                   <el-form-item style="margin-bottom: 0px" label-width="0px">
                     <div style="float: left">{{v.name}} ({{v.mirrorImg}}) </div>
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="isAddContainer">
                         <i class="el-icon-edit-outline"
-                           style="font-size:20px;margin-left:20px;cursor:pointer"
-                           @click="v.completed?editInstanceContent(i):''">
+                           style="font-size:20px;margin-left:20px;"
+                           :style="{cursor: isAddContainer?'pointer':'no-drop'}"
+                           @click="isAddContainer?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
                       <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
@@ -1089,7 +1118,6 @@ export default {
       namespaceOptions: [], // 命名空间列表
       vpcId: '',
       loadShow: false, // 是否显示加载
-      showMountPoint: false, // 是否显示添加挂载点
       addLabelFlag: false, // 是否可以新建标签
       failedRestartPolicyOption: ['OnFailure', 'Never'],
       specifyNodeDispatchOption: [], // 指定节点调度
@@ -1114,7 +1142,7 @@ export default {
           failedRestartPolicy: 'OnFailure'
         },
         instanceContent: [], // 实例内容器
-        dataJuan: [],
+        dataVolumes: [],
         caseNum: 'handAdjust',
         replicas: 1, // 实例数量-》手动调节-》实例数量
         touchTactics: [], // 实例数量-》自动调节-》触发策略
@@ -1350,24 +1378,6 @@ export default {
   },
   components: { Service, SelectMirrorImg },
   watch: {
-    wl: {
-      handler (val) {
-        // 监听数据卷
-        val.dataJuan.forEach(item => {
-          if (item.name1 === 'useMenu' && item.name2) {
-            this.yesOrnoAddDataJuan = false
-          } else if (item.name1 && item.name2 && item.name3) {
-            this.yesOrnoAddDataJuan = false
-          } else {
-            this.yesOrnoAddDataJuan = true
-          }
-        })
-        if (val.dataJuan.length === 0) {
-          this.yesOrnoAddDataJuan = false
-        }
-      },
-      deep: true
-    },
     // 监听标签
     'wl.name': {
       handler: function (val) {
@@ -1396,7 +1406,8 @@ export default {
         let isAddContainer = true
         val.forEach(item => {
           let completed = true
-          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent } = item
+          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting,
+            surviveExamine, readyToCheck, surviveExamineContent } = item
           if (name === '' || mirrorImg === '') {
             completed = false
           }
@@ -1446,7 +1457,6 @@ export default {
           }
           item.completed = completed
         })
-        console.log(this.isAddContainer)
         this.isAddContainer = isAddContainer
       },
       deep: true
@@ -1473,6 +1483,12 @@ export default {
       handler: function (val) {
         this.changeServiceAccess()
       }
+    },
+    'wl.mustCondition': {
+      handler: function (val) {
+        console.log(val)
+      },
+      deep: true
     }
   },
   created () {
@@ -1785,18 +1801,6 @@ export default {
         })
       })
     },
-    addDataJuan () { // 新增数据卷
-      this.dataFlag = true
-      var obj = {
-        name1: '',
-        name2: '',
-        name3: ''
-      }
-      this.wl.dataJuan.push(obj)
-    },
-    delDataJuan (index) { // 删除数据卷
-      this.wl.dataJuan.splice(index, 1)
-    },
     // 选择云硬盘
     selectYun () {
       this.dialogVisibleYun = true
@@ -1813,9 +1817,6 @@ export default {
     // 改变页数
     handleCurrentChange (val) {
       this.currpage = val
-    },
-    changIsShowmount () {
-      this.showMountPoint = true
     },
     // 点击确定绑定镜像
     confirmMirrorImg: function (val, index) {
@@ -2330,7 +2331,7 @@ export default {
     height: 50px;
     box-sizing: border-box;
     padding: 0px 20px;
-
+    margin-bottom: 1px;
     .search-input {
       width: 210px;
       margin-left: 10px;
@@ -2344,12 +2345,6 @@ export default {
     .el-icon-close {
       font-size: 18px;
       cursor: pointer;
-    }
-
-    .add-check {
-      color: #409eff;
-      cursor: pointer;
-      margin-left: 10px;
     }
 
     .cancle-addjuan {

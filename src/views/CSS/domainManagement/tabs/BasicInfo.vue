@@ -19,10 +19,10 @@
           <p>{{ $t("CSS.detailPlay.playArea") }}</p>
           <p>{{ info.PlayType | playType }}</p>
         </div>
-        <div class="newClear newList">
+        <!-- <div class="newClear newList">
           <p>API Key</p>
           <p>{{ apiKey }}</p>
-        </div>
+        </div> -->
       </div>
       <editTagsModel
         :isShow="modelEdit"

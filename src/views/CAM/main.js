@@ -17,14 +17,19 @@ const echarts = require('echarts/lib/echarts')
 require('echarts/lib/chart/line')
     // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
+
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
     Vue.filter(key, filters[key])
 }
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
 Vue.use(VueCookie)
+// console.log(lang.el)
+// Vue.locale('zh-TW', lang.el)
 
 //滚动到底部
 Vue.directive('loadmore', {

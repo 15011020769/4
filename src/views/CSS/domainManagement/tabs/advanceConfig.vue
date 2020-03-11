@@ -72,7 +72,7 @@
               bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3
             "
           >
-            <p>港澳台及海外地区带宽阈值</p>
+            <p>带宽阈值</p>
             <p>{{ bandLimit.AbroadBandLimitValue | unit }}</p>
           </div>
           <div
@@ -82,7 +82,7 @@
                 domainInfo.PlayType === 1
             "
           >
-            <p>中国大陆带宽阈值</p>
+            <p>带宽阈值</p>
             <p>{{ bandLimit.DomesticBandLimitValue | unit }}</p>
           </div>
           <div
@@ -91,7 +91,7 @@
               bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2
             "
           >
-            <p>全球带宽阈值</p>
+            <p>带宽阈值</p>
             <p>{{ bandLimit.GlobalBandLimitValue | unit }}</p>
           </div>
         </div>
@@ -273,14 +273,11 @@ export default {
   },
   filters: {
     unit (value) {
-      console.log(value, 'val')
       if (value < 1000) {
         return `${value} Mbps`
       } else if (value >= 1000 && value < 1000000) {
-        console.log(value, 'val3')
         return `${value / 1000} Gbps`
       } else if (value >= 1000000) {
-        console.log(value, 'val4')
         return `${value / 1000000} Tbps`
       }
     },

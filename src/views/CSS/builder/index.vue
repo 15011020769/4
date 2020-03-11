@@ -60,7 +60,7 @@
           <span class="Adomain aExplain" @click="_aExplain">{{$t('CSS.builder.6')}}</span>
         </el-form-item>
       </el-form>
-      <div class="result" v-show="txSecret && txTime">
+      <div class="result" v-if="generated">
         <h3>生成结果</h3>
         <span>({{$t('CSS.builder.9')}})</span>
         <div class="item">
@@ -74,8 +74,9 @@
           </div>
           <template v-if="ruleForm.domainType === '0'">
             <div>
-              <span>推流地址</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+              <span>推流dsd地址</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}{{suffix}}
+                </span>
             </div>
             <div>
               <span>OBS推流地址</span>
@@ -83,22 +84,17 @@
             </div>
             <div>
               <span>{{$t('CSS.builder.12')}}</span>
-              <span>{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+              <span>{{ruleForm.StreamName}}{{suffix}}
+                </span>
             </div>
           </template>
           <template v-else>
-            <div>
-              <span>播放地址(RTMP)</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}?txSecret={{txSecret}}&txTime={{txTime}}</span>
+            <div v-for="(url, index) in playUrls" :key="url.name">
+              <span>{{ url.name }}</span>
+              <span>{{ url.value }}</span>
+              <p class="tip">{{ url.tip }}</p>
             </div>
-            <div>
-              <span>播放地址(FLV)</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}.flv?txSecret={{txSecret}}&txTime={{txTime}}</span>
-            </div>
-            <div>
-              <span>播放地址(HLS)</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}.m38u?txSecret={{txSecret}}&txTime={{txTime}}</span>
-            </div>
+            <!-- <div> -->
           </template>
         </div>
       </div>
@@ -121,18 +117,21 @@ import md5 from "js-md5";
 import moment from "moment";
 import { ErrorTips } from "@/components/ErrorTips";
 import { CSSErrorTips } from "../components/CSSErrorTips";
+import { generatePlayAddress } from '../utils'
 export default {
   name: "builder",
   data() {
     return {
-      txSecret: "",
-      txTime: "",
+      playUrls: [],
+      keyInfo: {},
+      generated: false,
+      suffix: '',
       ruleForm: {
         domainType: "0",
         domain: "",
         AppName: "live",
         StreamName: "",
-        date: new Date()
+        date: new Date(moment().endOf('d'))
       },
       loading: false,
       dialogVisible: false, //模态框
@@ -189,6 +188,10 @@ export default {
   created() {
     this.Getdomain();
   },
+  beforeRouteLeave(to, from, next) {
+    this.generated = false
+    next()
+  },
   methods: {
     Getdomain() {
       this.txSecret = "";
@@ -239,34 +242,31 @@ export default {
                 return;
               }
 
-              let Response = res.Response;
-
+              let Response = res.Response[key]
+              this.keyInfo = Response
+              this.generated = true
               this.loading = false;
+              this.suffix = ''
               if (this.ruleForm.domainType === "0") {
-                timeHex = moment(this.ruleForm.date)
-                  .unix()
-                  .toString(16)
-                  .toUpperCase();
+                if (Response.Enable === 1) {
+                  const timeHex = moment(this.ruleForm.date)
+                    .unix()
+                    .toString(16)
+                    .toUpperCase()
+                  const txSecret = md5(
+                    `${Response[key1]}${this.ruleForm.StreamName}${timeHex}`
+                  )
+                  this.suffix = `?txSecret=${txSecret}&txTime=${timeHex}`
+                }
               } else {
-                timeHex = (
-                  (+new Date(moment(this.ruleForm.date)) -
-                    1e3 * Response[key].AuthDelta) /
-                  1e3
-                )
-                  .toString(16)
-                  .toUpperCase();
+                const urls = generatePlayAddress(this.ruleForm.domain, this.ruleForm.AppName, this.ruleForm.StreamName, new Date(moment(this.ruleForm.date).format('YYYY/MM/DD HH:mm:ss')), Response)
+                this.playUrls = urls
               }
-              this.txSecret = md5(
-                `${Response[key][key1]}${this.ruleForm.StreamName}${timeHex}`
-              );
-              this.txTime = timeHex;
             });
-        } else {
-          console.log("error submit!!");
-          return false;
         }
       });
     },
+    
     _aExplain() {
       this.dialogVisible = true;
     },
@@ -323,5 +323,8 @@ export default {
       color: #888;
     }
   }
+}
+.tip {
+  color: #888;
 }
 </style>

@@ -1,12 +1,7 @@
 <template>
   <div class="addUser-wrap">
     <HeadCom :title="$t('CAM.userList.listAdduser')" :backShow="true" @_back="_back" />
-    <div class="explain">
-      <p>
-        {{$t('CAM.userList.mesgPeople')}}
-        <span @click="$router.push('/adduserlist') " style="color:#006eff;cursor: pointer;"> {{$t('CAM.userList.selfCreate')}}</span>{{$t('CAM.userList.selfCreates')}}
-      </p>
-    </div>
+
     <div class="adduser-main">
       <div class="user">
         <i class="el-icon-user"></i>
@@ -78,7 +73,7 @@ export default {
   }
   .adduser-main {
     background: white;
-    margin: 0 20px;
+    margin: 20px;
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     padding: 20px;
     box-sizing: border-box;

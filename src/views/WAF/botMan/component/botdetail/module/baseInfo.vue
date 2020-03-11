@@ -260,7 +260,11 @@
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA{{t('种类', 'WAF.zl')}}</span></el-col>
-          <el-col :span="14"><span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_kind}}</span></el-col>
+          <el-col :span="14">
+            <span class="rightFont">
+              {{recordDetail[0].stat.ua_analyze_res.ua_kind}}
+            </span>
+          </el-col>
         </el-row>
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">UA{{t('类型', 'WAF.lx')}}</span></el-col>
@@ -277,7 +281,15 @@
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">{{t('出现', 'WAF.cx')}}最多的UA</span></el-col>
           <el-col :span="14">
-            <span class="rightFont">{{recordDetail[0].stat.ua_analyze_res.ua_max}}</span>
+            <span class="rightFont" ref="uaMax">
+              {{recordDetail[0].stat.ua_analyze_res.ua_max}}
+              <el-tooltip effect="dark" :content="t('复制', 'WAF.copy')" placement="top">
+                <i class="el-icon-document"
+                style="fontSize: 18px; cursor: pointer; color: #888"
+                v-if="recordDetail[0].stat.ua_analyze_res.ua_max.length > 24"
+                @click="uaMaxCopy(recordDetail[0].stat.ua_analyze_res.ua_max)"></i>
+              </el-tooltip>
+            </span>
           </el-col>
         </el-row>
         <el-row type="flex">
@@ -386,7 +398,9 @@
         <el-row type="flex">
           <el-col :span="10"><span class="leftFont">Referer存在性</span></el-col>
           <el-col :span="14">
-            <span class="rightFont">{{recordDetail[0].stat.refer_analyze_res.refer_exist | fromatValue}}</span>
+            <span class="rightFont">
+              {{recordDetail[0].stat.refer_analyze_res.refer_exist | fromatValue}}
+            </span>
           </el-col>
         </el-row>
         <el-row type="flex">
@@ -547,6 +561,21 @@ export default {
     },
   },
   methods: {
+    uaMaxCopy(data) {
+      let text = data;
+      let oInput = document.createElement('input');
+      oInput.value = text;
+      document.body.appendChild(oInput);
+      oInput.select(); // 选择对象;
+      document.execCommand("Copy"); // 执行浏览器复制命令
+      this.$message({
+        message: this.t('复制', 'WAF.copy') + '成功',
+        type: 'success',
+        showClose: true,
+        duration: 0,
+      });
+      oInput.remove()
+    },
     fromatBOTInfos(name) {
       if (this.recordDetail[0].bot_type === "UCB") {
         this.botLabel = this.t('策略名称', 'WAF.clmc')

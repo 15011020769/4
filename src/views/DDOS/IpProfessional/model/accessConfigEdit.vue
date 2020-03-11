@@ -101,6 +101,7 @@ export default {
       protocolList: [{pro: 'TCP'}, {pro: 'UDP'}],
       EnidData: "", //获取某一条数据
       textData: '',
+      checkflg: true, //textData是否通过校验
     };
   },
   computed: {
@@ -190,6 +191,25 @@ export default {
         message: "回源方式不允許修改",
         type: "warning"
       });
+    },
+    //值改变调用校验方法
+    textDataChange() {
+      let arr = this.textData.split(/[\s\n]/);
+      var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var regNUM = /(^[1-9]\d*$)/;
+
+      // console.log(arr)
+      if(this.EnidData.SourceType=="2"){//IP回源
+        for(let i=0; i<arr.length/2; i++) {
+          if(!regIP.test(arr[i*2]) || !regNUM.test(arr[i*2 + 1])) {
+            this.checkflg = false;
+          }
+        }
+      }else if(this.EnidData.SourceType=="1"){//域名回源
+        // for(let i=0; i<arr.length; i++) {
+        //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
+        // }
+      }
     }
   }
 };

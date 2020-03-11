@@ -39,6 +39,7 @@ export const DELETE_POLICY = 'cam2/DeletePolicy'
 export const GET_POLICY = 'cam2/GetPolicy'
 export const UPDATE_POLICY = 'cam2/UpdatePolicy'
 export const UPDATE_POLICY_V2 = 'cam/UpdatePolicy'
+export const GET_SERVICE_API_LIST = "cam/getServiceApiList"
 
 //角色
 export const GET_ROLE = 'cam2/GetRole'

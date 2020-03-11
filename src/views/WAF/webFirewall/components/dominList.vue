@@ -24,12 +24,14 @@
         <el-table :data="domains" @selection-change="handleSelectionChange" v-loading="loading" :empty-text="t('暂无数据', 'WAF.zwsj')">
           <el-table-column
             type="selection"
-            width="55">
+            width="55"
+            :selectable="checkAble"
+          >
           </el-table-column>
           <el-table-column prop="domin" label="域名/ID">
             <template slot-scope="scope">
               <el-link type="primary">{{scope.row.Domain}}</el-link>
-              <p>{{scope.row.DomainId}}</p>
+              <p>{{scope.row.DomainId}} <i v-if="abnormal.includes(scope.row.State)" class="el-icon-loading" /><i v-if="scope.row.State === 0" class="el-icon-success" /></p>
             </template>
           </el-table-column>
           <el-table-column prop="proStatus" width="120">
@@ -44,9 +46,9 @@
               {{scope.row.Mode === 1 ? t('镜像模式', 'WAF.jxms') : '清洗模式'}}
             </template>
           </el-table-column>
-          <el-table-column prop="vipAddress" :label="t('区域', 'WAF.qy')" width="60">
+          <el-table-column prop="vipAddress" :label="t('区域', 'WAF.qy')" width="70">
             <template slot-scope="scope">
-              台北
+              中國台北
             </template>
           </el-table-column>
           <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
@@ -106,6 +108,7 @@
             </el-dropdown>
             <template slot-scope="scope">
               <el-switch
+                :disabled="abnormal.includes(scope.row.State)"
                 v-model="scope.row.ClsStatusBool"
                 @change="status => updateClsStatus(scope.row, status)"
                 active-color="#006eff"
@@ -126,6 +129,7 @@
             </el-dropdown>
             <template slot-scope="scope">
               <el-switch
+                :disabled="abnormal.includes(scope.row.State)"
                 v-model="scope.row.StatusBool"
                 @change="status => updateWafStatus(scope.row, status)"
                 active-color="#006eff"
@@ -148,9 +152,9 @@
                   <el-button size="mini" type="text" @click="delWafs([scope.row])">{{t('确定', 'WAF.qd')}}</el-button>
                   <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
                 </div>
-                <el-button slot="reference"style="color:#3E8EF7;background: transparent;font-size:12px;">删除</el-button>
+                <el-button :disabled="abnormal.includes(scope.row.State)" slot="reference"style="color:#3E8EF7;background: transparent;font-size:12px;">删除</el-button>
               </el-popover>
-              <el-button type="text" size="small" @click="handelEdit(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
+              <el-button :disabled="abnormal.includes(scope.row.State)" type="text" size="small" @click="handelEdit(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>
               <el-button @click.native.prevent="toProtectConfig(scope.row)" type="text" size="small">{{t('防护配置', 'WAF.fhpz')}}</el-button>
             </template>
           </el-table-column>
@@ -187,6 +191,7 @@ export default {
   },
   data(){
     return {
+      abnormal: [4, 5, 6, 9],
       loading: true,
       allDomains: [],//表格数据
       keyword: '',//搜索框绑定
@@ -199,6 +204,8 @@ export default {
       total: 0,
       currentPage: 1,
       pageSize: 20,
+      refresh: false,
+      timer: undefined,
     }
   },
   computed: {
@@ -216,11 +223,28 @@ export default {
     Status() {
       this.getData()
     },
+    refresh(n) {
+      if (n === true) {
+        this.timer = setTimeout(() => {
+          this.getData()
+        }, 2000);
+      }
+    },
+  },
+  beforeRouteLeave (to, from, next) {
+    this.timer && clearTimeout(this.timer)
+    next()
   },
   mounted(){
     this.getData()
   },
   methods:{
+    checkAble(row) {
+      if (this.abnormal.includes(row.State)) {
+        return false
+      }
+      return true
+    },
     onChangeWafStatus(status) {
       if (status === -1) {
         this.Status = ''
@@ -317,7 +341,6 @@ export default {
     },
     //获取数据
     getData() {
-      this.loading = true
       const param = {
         Version: '2018-01-25',
         Search: this.keyword,
@@ -336,13 +359,18 @@ export default {
       .then(resp => {
         this.generalRespHandler(resp, ({ HostList, TotalCount }) => {
           const domains = HostList
+          let refresh = false
           domains.forEach(domain => {
             domain.StatusBool = !!domain.Status
             domain.ClsStatusBool = !!domain.ClsStatus
             domain.delDialog = false
+            if (!refresh && this.abnormal.includes(domain.State)) {
+              refresh = true
+            }
           })
           this.total = TotalCount
           this.allDomains = domains
+          this.refresh = true
         })
       }).then(() => {
         this.loading = false
@@ -453,5 +481,11 @@ export default {
     padding: 0;
     margin-left: 15px;
   }
+}
+.el-icon-success {
+  color: rgb(93, 186, 107);
+}
+::v-deep .is-disabled.el-popover__reference {
+  color: #c0c4cc !important;
 }
 </style>

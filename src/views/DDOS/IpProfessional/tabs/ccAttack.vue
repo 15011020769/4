@@ -1,4 +1,5 @@
 <template>
+<!-- CC攻击防护 -->
   <div class="child">
     <div class="mainConList" v-loading="loading">
       <div class="mainConListAll mainConListOne">
@@ -89,7 +90,7 @@ export default {
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
-      ccTimeBtnSelect2: "總覽", //cc时间按钮下面第二个下拉
+      ccTimeBtnSelect2: "", //cc时间按钮下面第二个下拉
       dateChoice2: [], //日期选择
       // 日期区间：默认获取当前时间和前一天时间
       endTime: this.getDateString(new Date()),
@@ -170,6 +171,7 @@ export default {
             return
           }
           this.IpList = res.Response.Resource[0].IpList;
+          this.ccTimeBtnSelect2 = this.IpList[0];
           this.inputIdCC = res.Response.Resource[0].Id;
 				} else {
 					let ErrTips = {};

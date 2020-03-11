@@ -184,8 +184,8 @@ export default {
    //初始化数据
     init(){
        this.loading = true
-       let uin = "100011921910"
-      //  let uin = VueCookie.get('uin')
+      //  let uin = "100011921910"
+       let uin = VueCookie.get('uin')
        this.dataType = sessionStorage.getItem('portal-inmail-type')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
