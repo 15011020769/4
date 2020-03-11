@@ -30,6 +30,7 @@
         :isShow="editSetModel"
         :pushAuthKeyInfo="pushAuthKeyInfo"
         @closeModel="closeModel"
+        @changed="pushAuthKeyInfoChanged"
       />
     </div>
     <div class="basicinfo">
@@ -166,113 +167,144 @@
   </div>
 </template>
 <script>
-import editSet from '../model/editSet'
+import editSet from "../model/editSet";
 import {
   LIVE_DESCRIBELIVE_PUSHAUTHKEY,
   RULELIST_DELTILS,
   SINGLECALLBACK_DELTILS
-} from '@/constants'
-import { toUTF8Array } from '@/utils'
-import moment from 'moment'
-import md5 from 'js-md5'
+} from "@/constants";
+import { toUTF8Array } from "@/utils";
+import moment from "moment";
+import md5 from "js-md5";
 export default {
   props: {
     info: Object
   },
-  data () {
+  data() {
     return {
       editSetModel: false, // 编辑弹框
       dataDateTime: new Date(), // 过期时间月份
-      dateValue: new Date(moment().endOf('d')), // 时间
-      streamName: '', // streamName
-      activeName: 'first', // tab
+      dateValue: new Date(moment().endOf("d")), // 时间
+      streamName: "", // streamName
+      activeName: "first", // tab
       pushAuthKeyInfo: {},
       callBackTemplate: {},
-      pushUrl: ''
-    }
+      pushUrl: ""
+    };
   },
   watch: {
-    streamName (newVal, oldVal) {
-      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g, '')
+    streamName(newVal, oldVal) {
+      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g, "");
     }
   },
   components: {
     editSet: editSet
   },
-  mounted () {
-    this.getAuthConf()
-    const domain = this.$route.query.Name
+  mounted() {
+    // this.getLiveConfig();
+    this.getAuthConf();
+    const domain = this.$route.query.Name;
     const param = {
-      Version: '2018-08-01'
-    }
+      Version: "2018-08-01"
+    };
     this.axios.post(RULELIST_DELTILS, param).then(data => {
       if (data.Response.Error == undefined) {
-        let callbackrule = data.Response.Rules
+        let callbackrule = data.Response.Rules;
         callbackrule.forEach(item => {
           if (item.DomainName === domain) {
             let parms = {
-              Version: '2018-08-01',
+              Version: "2018-08-01",
               TemplateId: item.TemplateId
-            }
+            };
             this.axios.post(SINGLECALLBACK_DELTILS, parms).then(data => {
               if (data.Response.Error == undefined) {
-                this.callBackTemplate = data.Response.Template
+                this.callBackTemplate = data.Response.Template;
               } else {
-                this.$message.error(data.Response.Error.Message)
+                this.$message.error(data.Response.Error.Message);
               }
-            })
+            });
           }
-        })
+        });
       } else {
-        this.$message.error(data.Response.Error.Message)
+        this.$message.error(data.Response.Error.Message);
       }
-    })
+    });
   },
   methods: {
-    getAuthConf () {
-      const domain = this.$route.query.Name
+    // getLiveConfig() {
+    //   const param = {
+    //     g_tk: "2033061200",
+    //     _format: "jsonp",
+    //     callback: "_jqjsp",
+    //     Version: "2018-08-01",
+    //     _1583895416231: ""
+    //   };
+    //   this.axios.get("live2/Live_Config_QueryLVBCodeMode", { params: param }).then(res => {
+    //     console.log(res);
+    //   });
+    // },
+    pushAuthKeyInfoChanged() {
+      this.getAuthConf();
+    },
+    getAuthConf() {
+      const domain = this.$route.query.Name;
       this.axios
         .post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
-          Version: '2018-08-01',
+          Version: "2018-08-01",
           DomainName: domain
         })
         .then(({ Response: { PushAuthKeyInfo } }) => {
-          this.pushAuthKeyInfo = PushAuthKeyInfo
-        })
+          this.pushAuthKeyInfo = PushAuthKeyInfo;
+        });
     },
-    generatePushUrl () {
+    generatePushUrl() {
       if (!this.streamName || !this.streamName.trim()) {
         this.$message({
-          type: 'warning',
-          message: '請輸入 StreamName'
-        })
-        return
+          type: "warning",
+          message: "請輸入 StreamName"
+        });
+        return;
       }
       const timeHex = moment(
-        `${moment(this.dataDateTime).format('YYYY-MM-DD')} ${moment(
+        `${moment(this.dataDateTime).format("YYYY-MM-DD")} ${moment(
           this.dateValue
-        ).format('HH:mm:ss')}`
+        ).format("HH:mm:ss")}`
       )
         .unix()
         .toString(16)
-        .toUpperCase()
-      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`
-      const txSecret = md5.hex(str)
-      this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`
+        .toUpperCase();
+
+      // console.log(this.pushAuthKeyInfo);
+
+      // const Enable = this.pushAuthKeyInfo.Enable;
+      let str = null;
+      // 开启鉴权用主key，否则用备用key
+      // if (Enable === 0) {
+      //   str = `${this.pushAuthKeyInfo.BackupAuthKey}${this.streamName}${timeHex}`;
+      // } else {
+        str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`;
+      // }
+      // rtmp://68922.livepush.myqcloud.com/live/test?txSecret=edc5c066211981d3978afaff535aef3c&txTime=5E690AFF
+      // rtmp://68922.livepush.myqcloud.com/live/test?txSecret=9d4125882f78603520c69b03a3ddca36&txTime=5E690AFF
+
+      // rtmp://68922.livepush.myqcloud.com/live/test?txSecret=9d4125882f78603520c69b03a3ddca36&txTime=5E690AFF
+      // rtmp://68922.livepush.myqcloud.com/live/test?txSecret=6a7f9adf0df2390b9ca6f8bbf32c9300&txTime=5E690AFF
+      const txSecret = md5.hex(str);
+      this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`;
     },
     // 编辑
-    editSet () {
-      this.editSetModel = true
+    editSet() {
+      this.editSetModel = true;
     },
     // 关闭
-    closeModel (isShow) {
-      this.getAuthConf()
-      this.editSetModel = isShow
+    closeModel(isShow) {
+      this.getAuthConf();
+      this.editSetModel = isShow;
     },
     // tab
-    handleClick () {}
+    handleClick() {}
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .newClear:after {
