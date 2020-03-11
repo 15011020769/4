@@ -100,7 +100,7 @@
               <label class="domain-label">
                 <el-checkbox
                   @change="checked => doaminChange(checked, item)"
-                  :value="domainCheckedList.includes(item)"
+                  :value="domainCheckedList.indexOf(item)== -1 ? false : true "
                 />
                 {{ item }}
               </label>
