@@ -159,6 +159,7 @@ module.exports = {
       AccSum: '配置規則總數為',
       AccSureSel: '確定刪除該條轉發規則？',
       addAcc: '添加轉發規則',
+      editAcc: '編輯轉發規則',
       ImSure: '確定'
     },
     accessCopy: {
