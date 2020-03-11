@@ -819,7 +819,7 @@ export default {
     },
     //添加用户路由跳转
     addUser() {
-      this.$router.push("/adduserNew");
+      this.$router.push("/adduserlist");
     },
     //点击跳转到详情页
     detailsUser(val) {

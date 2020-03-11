@@ -15,7 +15,7 @@
         </div>
         <h3>
           {{$t('CAM.userList.strategyTitle')}}
-          <span>（共{{strategiesTotalNum - policyIds.length}}条）</span>
+          <span>（共{{strategiesTotalNum}}条）</span>
           <el-input
             placeholder="請輸入策略名稱/描述"
             v-model="policyInp"
@@ -338,6 +338,10 @@ export default {
       this.userTotalNum = this.sliceUsers.length
       const users = this.sliceUsers.slice(this.usesOffset, this.usesOffset + 10)
       this.usesOffset += 10
+      if (users.length === 0) {
+        $state && $state.complete()
+        return
+      }
       Promise.resolve().then(() => {
         this.queryStrategiesForUsersAndUserGroups(users.map(user => user.Uin), 1, () => {
           this.users = this.users.concat(users)
@@ -385,7 +389,10 @@ export default {
       }).then(res => {
         this.usesGroupsPage += 1
         this.userGroupsTotalNum = res.Response.TotalNum
-        
+        if (res.Response.GroupInfo.length === 0) {
+          $state && $state.complete()
+          return
+        }
         this.queryStrategiesForUsersAndUserGroups(res.Response.GroupInfo.map(group => group.GroupId), 2, () => {
           this.userGroups = this.userGroups.concat(res.Response.GroupInfo)
           if (this.selectedUserGroupId.length) {

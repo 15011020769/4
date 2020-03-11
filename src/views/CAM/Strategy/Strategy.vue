@@ -187,7 +187,7 @@ export default {
           label: "預設策略"
         }
       ],
-      policyScope: "All",
+      policyScope: "QCS",
       searchValue: "",
       tableData: [], //策略列表数据
       selectedData: [], //选择要删除的
