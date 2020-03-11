@@ -749,13 +749,6 @@ export default {
         ]
       }
 
-      // let policyDocument = JSON.parse(
-      //   '{"version":"2.0","statement":[{"action":"name/sts:AssumeRole","effect":"allow","principal":{"service":[""]}}]}'
-      // );
-      // policyDocument.statement[0].principal.service = policyDocument.statement[0].principal.service.concat(
-      //   this.roleCarrier
-      // );
-
       let paramsPolicy = {
         Version: "2019-01-16",
         PolicyDocument: JSON.stringify(policyDocument),
