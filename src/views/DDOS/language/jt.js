@@ -159,6 +159,7 @@ module.exports = {
       AccSum: '配置规则总数为',
       AccSureSel: '确定删除该条转发规则？',
       addAcc: '添加转发规则',
+      editAcc: '编辑转发规则',
       ImSure: '确定'
     },
     accessCopy: {

@@ -74,7 +74,6 @@ export default {
         key: "dataZoomSelect",
         dataZoomSelectActive: this.toogle
       })
-      console.log(1111)
     },
     reset() {
       var myChart = this.$echarts.init(this.$refs.line_dv);

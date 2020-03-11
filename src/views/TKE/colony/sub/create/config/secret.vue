@@ -55,6 +55,7 @@
                     filter-placeholder="请输入"
                     v-model="se.value"
                     :data="data"
+                    @change="getSpaceNameData()"
                   ></el-transfer>
                 </div>
               </div>
@@ -162,6 +163,7 @@ export default {
       }
     };
     return {
+      loadShow: false,
       data: [],
       total: "",
       clusterId: "",
@@ -234,26 +236,254 @@ export default {
         this.$refs.form.validateField("name");
         this.$message({
           message: "名称不能为空",
-          type: "error",
+          type: "warning",
           showClose: true,
           duration: 0
         });
         return false;
       }
 
+//       var arr = this.dynamicValidateForm.domains;
+//       var obj = {};
+//       arr.forEach(v => {
+//         obj[v.value] = btoa(v.valueKey);
+//       });
+
+//       var params = {
+//         ClusterName: this.clusterId,
+//         Method: "POST",
+//         Path:
+//           "/apis/platform.tke/v1/clusters/" +
+//           this.clusterId +
+//           "/apply?notUpdate=true",
+//         Version: "2018-05-25"
+//       };
+//       if (this.se.tabPosition == "jt") {
+//         if (arr[0].value == "") {
+//           this.$message({
+//             message: "变量名不能為空，至少设置一项",
+//             type: "error"
+//           });
+//           return false;
+//         }
+//         params.RequestBody = {
+//           kind: "Secret",
+//           apiVersion: "v1",
+//           metadata: {
+//             name: this.se.name,
+//             namespace: this.se.radio,
+//             labels: { "qcloud-app": this.se.name }
+//           },
+//           type: "Opaque",
+//           data: JSON.stringify(obj)
+//         };
+//       } else {
+//         params.RequestBody = {
+//           kind: "Secret",
+//           apiVersion: "v1",
+//           metadata: {
+//             name: this.se.name,
+//             namespace: this.se.radio, //
+//             labels: { "qcloud-app": this.se.name }
+//           },
+//           type: "kubernetes.io/dockercfg",
+//           data: {
+//             ".dockercfg": btoa(
+//               "{" +
+//                 this.se.ips +
+//                 ":{username:" +
+//                 this.se.names +
+//                 ',"password":' +
+//                 this.se.pwds +
+//                 ',"auth":' +
+//                 btoa(this.se.names + ":" + this.se.pwds) +
+//                 "}}"
+//             )
+//           } //用户密码转码成一堆 转义：btoa();
+//         };
+
+//         // "data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2Rhc2QiLCJhdXRoIjoiZFhObGNqcGhjMlJoYzJRPSJ9fQ=="}}"
+
+//         // {"http://123.1.1.1:9090":{"username":"user","password":"asdasd","auth":"dXNlcjphc2Rhc2Q="}}  baot("dXNlcjphc2Rhc2Q=") //解码   user:asdasd
+
+//         // btoa(v.valueKey);
+//         //         ips: "",
+//         //         pwds: "",
+//         //         names: "1"
+//         var data = btoa(
+//           "{" +
+//             this.se.ips +
+//             ":{username:" +
+//             this.se.names +
+//             ',"password":' +
+//             this.se.pwds +
+//             ',"auth":' +
+//             btoa(this.se.names + ":" + this.se.pwds) +
+//             "}}"
+//         );
+//          params.RequestBody.data[".dockercfg"] = data;
+//       }
+
+// //指定命名空间
+//       if (this.se.radio == "1") {
+//         params.RequestBody =
+//           '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
+//           this.se.name +
+//           '","namespace":"default","labels":{"qcloud-app":"' +
+//           this.se.name +
+//           '"}},"type":"Opaque","data":' +
+//           JSON.stringify(obj) +
+//           '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
+//           this.se.name +
+//           '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
+//           this.se.name +
+//           '"}},"type":"Opaque","data":' +
+//           JSON.stringify(obj) +
+//           "}";
+//       } else {
+//         if (this.se.value.length > 1) {
+//           params.RequestBody =
+//             '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
+//             this.se.name +
+//             '","namespace":"default","labels":{"qcloud-app":"' +
+//             this.se.name +
+//             '"}},"type":"Opaque","data":' +
+//             JSON.stringify(obj) +
+//             '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
+//             this.se.name +
+//             '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
+//             this.se.name +
+//             '"}},"type":"Opaque","data":' +
+//             JSON.stringify(obj) +
+//             "}";
+//         } else if (this.se.value.length == 1) {
+//           params.RequestBody =
+//             '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
+//             this.se.name +
+//             '","namespace":"' +
+//             this.se.value[0] +
+//             '","labels":{"qcloud-app":"' +
+//             this.se.name +
+//             '"}},"type":"Opaque","data":' +
+//             JSON.stringify(obj) +
+//             "}}";
+//         } else {
+//           this.$message({
+//             message: "至少值定一项命名空间",
+//             type: "error",
+//             showClose: true,
+//             duration: 0
+//           });
+//         }
+//       }
+      //dockercfg 时域名 用户名等
+      // var data = btoa(
+      //   "{" +
+      //     this.se.ips +
+      //     ":{username:" +
+      //     this.se.names +
+      //     ",password:" +
+      //     this.se.pwds +
+      //     ",auth:" +
+      //     btoa(this.se.names + ":" + this.se.pwds) +
+      //   "}}"
+      // );
+
+      //选择opqua label
       var arr = this.dynamicValidateForm.domains;
       var obj = {};
       arr.forEach(v => {
         obj[v.value] = btoa(v.valueKey);
       });
+      let ips = this.se.ips;//http://192/168.1.1:9090
+      let name = this.se.name;//name
+      let pwd = this.se.pwds;//pwd
+      let secretData = {};
+      secretData[ips] = {username: name, password: pwd, auth: btoa(JSON.stringify({name: pwd}))}
+      let user = {".dockercfg" : btoa(JSON.stringify(secretData))}
+      let spaceList = this.data;
+      let selectList = this.se.value;
+      if(this.se.radio == "2" && selectList.length === 0) {
+        this.$message({
+          message: '清先至少选择一条命名空间',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        return
+      }
+      if(this.se.radio == "1" && arr.length === 0) {
+        this.$message({
+          message: '清先填写选择一条内容',
+          type: "warning",
+          showClose: true,
+          duration: 0
+        });
+        return
+      }
+      let request = '';
+      if(this.se.radio == "1") {
+        spaceList.forEach(space => {
+          if(space.label === 'kube-system' || space.label === 'kube-public') {
 
-      // RequestBody: "{"kind":"Secret","apiVersion":"v1","metadata":{"name":"ssssss","namespace":"default",
-      // "labels":{"qcloud-app":"ssssss"}},"type":"kubernetes.io/dockercfg",
-
-      // "data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2Rhc2QiLCJhdXRoIjoiZFhObGNqcGhjMlJoYzJRPSJ9fQ=="}}
-
-      // {"kind":"Secret","apiVersion":"v1","metadata":{"name":"ssssss","namespace":"kube-node-lease","labels":{"qcloud-app":"ssssss"}},
-      // "type":"kubernetes.io/dockercfg",
+          } else {
+            if(this.se.tabPosition === 'jt') {
+              request += JSON.stringify({
+                kind: 'Secret',
+                apiVersion: 'v1',
+                metadata:{
+                  name: this.se.name,
+                  namespace: space.label,
+                  labels: {'qcloud-app': this.se.name}
+                },
+                type: 'Opaque',
+                data: obj
+              })
+            } else if(this.se.tabPosition === 'dt') {
+              request += JSON.stringify({
+                kind: "Secret",
+                apiVersion: "v1",
+                metadata:{
+                  name: this.se.name,
+                  namespace: space.label,
+                  labels: {"qcloud-app": this.se.name}
+                },
+                type: 'kubernetes.io/dockercfg',
+                data: user
+              })
+            }
+          }
+        });
+      } else {
+        selectList.forEach(select => {
+          let ss = spaceList[select].label;
+          if(this.se.tabPosition === 'jt') {
+              request += JSON.stringify({
+                kind: 'Secret',
+                apiVersion: 'v1',
+                metadata:{
+                  name: this.se.name,
+                  namespace: spaceList[select].label,
+                  labels: {'qcloud-app': this.se.name}
+                },
+                type: 'Opaque',
+                data: obj
+              })
+            } else if(this.se.tabPosition === 'dt') {
+              request += JSON.stringify({
+                kind: "Secret",
+                apiVersion: "v1",
+                metadata:{
+                  name: this.se.name,
+                  namespace: spaceList[select].label,
+                  labels: {"qcloud-app": this.se.name}
+                },
+                type: 'kubernetes.io/dockercfg',
+                data: user
+              })
+            }
+        });
+      }
 
       var params = {
         ClusterName: this.clusterId,
@@ -262,143 +492,40 @@ export default {
           "/apis/platform.tke/v1/clusters/" +
           this.clusterId +
           "/apply?notUpdate=true",
-        Version: "2018-05-25"
+        Version: "2018-05-25",
+        RequestBody: request
       };
-      if (this.se.tabPosition == "jt") {
-        if (arr[0].value == "") {
-          this.$message({
-            message: "变量名不能為空，至少设置一项",
-            type: "error"
-          });
-          return false;
-        }
-        params.RequestBody = {
-          kind: "Secret",
-          apiVersion: "v1",
-          metadata: {
-            name: this.se.name,
-            namespace: this.se.radio,
-            labels: { "qcloud-app": this.se.name }
-          },
-          type: "Opaque",
-          data: JSON.stringify(obj)
-        };
-      } else {
-        params.RequestBody = {
-          kind: "Secret",
-          apiVersion: "v1",
-          metadata: {
-            name: this.se.name,
-            namespace: this.se.radio, //
-            labels: { "qcloud-app": this.se.name }
-          },
-          type: "kubernetes.io/dockercfg",
-          data: {
-            ".dockercfg": btoa(
-              "{" +
-                this.se.ips +
-                ":{username:" +
-                this.se.names +
-                ',"password":' +
-                this.se.pwds +
-                ',"auth":' +
-                btoa(this.se.names + ":" + this.se.pwds) +
-                "}}"
-            )
-          } //用户密码转码成一堆 转义：btoa();
-        };
-
-        // "data":{".dockercfg":"eyJodHRwOi8vMTIzLjEuMS4xOjkwOTAiOnsidXNlcm5hbWUiOiJ1c2VyIiwicGFzc3dvcmQiOiJhc2Rhc2QiLCJhdXRoIjoiZFhObGNqcGhjMlJoYzJRPSJ9fQ=="}}"
-
-        // {"http://123.1.1.1:9090":{"username":"user","password":"asdasd","auth":"dXNlcjphc2Rhc2Q="}}  baot("dXNlcjphc2Rhc2Q=") //解码   user:asdasd
-
-        // btoa(v.valueKey);
-        //         ips: "",
-        //         pwds: "",
-        //         names: "1"
-        var data = btoa(
-          "{" +
-            this.se.ips +
-            ":{username:" +
-            this.se.names +
-            ',"password":' +
-            this.se.pwds +
-            ',"auth":' +
-            btoa(this.se.names + ":" + this.se.pwds) +
-            "}}"
-        );
-         params.RequestBody.data[".dockercfg"] = data;
-      }
-
-
-
-
-
-
-//指定命名空间
-      if (this.se.radio == "1") {
-        params.RequestBody =
-          '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
-          this.se.name +
-          '","namespace":"default","labels":{"qcloud-app":"' +
-          this.se.name +
-          '"}},"type":"Opaque","data":' +
-          JSON.stringify(obj) +
-          '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
-          this.se.name +
-          '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
-          this.se.name +
-          '"}},"type":"Opaque","data":' +
-          JSON.stringify(obj) +
-          "}";
-      } else {
-        if (this.se.value.length > 1) {
-          params.RequestBody =
-            '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
-            this.se.name +
-            '","namespace":"default","labels":{"qcloud-app":"' +
-            this.se.name +
-            '"}},"type":"Opaque","data":' +
-            JSON.stringify(obj) +
-            '}{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
-            this.se.name +
-            '","namespace":"kube-node-lease","labels":{"qcloud-app":"' +
-            this.se.name +
-            '"}},"type":"Opaque","data":' +
-            JSON.stringify(obj) +
-            "}";
-        } else if (this.se.value.length == 1) {
-          params.RequestBody =
-            '{"kind":"Secret","apiVersion":"v1","metadata":{"name":"' +
-            this.se.name +
-            '","namespace":"' +
-            this.se.value[0] +
-            '","labels":{"qcloud-app":"' +
-            this.se.name +
-            '"}},"type":"Opaque","data":' +
-            JSON.stringify(obj) +
-            "}}";
-        } else {
-          this.$message({
-            message: "至少值定一项命名空间",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      }
-      console.log(params);
+      this.loadShow = true;
       if (!this.errorShow) {
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           console.log(res.Response);
           if (res.Response.Error == undefined) {
-            this.$router.push({
-              name: "colonyConfigSecret"
-              // query: this.$route.query.clusterId
+            this.goBack();
+            this.$message({
+              message: '新增成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+            this.loadShow = false;
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
             });
           }
         });
       }
+    },
+
+    getSpaceNameData() {
+      let ss = this.se.value
+      let aa = this.data
     },
     //命名空间选项
     nameSpaceList() {

@@ -580,7 +580,6 @@ export default {
               if(data.length > 0) {
                 for(let i = 0; i < data.length; i++) {
                   let item = data[i];
-                  console.log(item)
                   let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
                   let podId = item[1];//节点ID
                   let pod = item[2];//实例数量
@@ -771,6 +770,7 @@ export default {
       height: 100%;
       border: 1px solid #e5e5e5;
       padding: 20px;
+      overflow-y: scroll;
       .check-flex {
         display: flex;
         flex-direction: column;

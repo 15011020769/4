@@ -151,7 +151,7 @@
 import { ErrorTips } from '@/components/ErrorTips'
 import transfer from './component/transfer'
 import HeadCom from '../UserListNew/components/Head'
-import { CREATE_ROLE, ATTACH_ROLE } from '@/constants'
+import { CREATE_ROLE, ATTACH_ROLE, ATTACH_ROLE_POLICIES } from '@/constants'
 export default {
   components: {
     transfer,

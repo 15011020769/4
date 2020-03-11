@@ -322,8 +322,9 @@ export default {
       let params = {
         Version: "2019-01-16",
         RoleName: this.inputName,
-        Description: this.inputName,
+        Description: this.input,
         PolicyDocument: JSON.stringify(policyDocument),
+        ConsoleLogin: Number(this.form.consoleLogin)
       };
       this.axios.post(CREATE_ROLE, params).then(data => {
         let roleId = data.Response.RoleId; // 获取创建的角色id

@@ -5,9 +5,10 @@
         <p class="rowCont">
           <span>策略名称</span>
           <el-form-item style="display:inline-block" prop="strategy_name">
+            <!-- v-model="formInline.strategy_name" -->
             <el-input
               style="width:330px;margin:0"
-              v-model="formInline.strategy_name"
+              v-model="strategy_name"
               placeholder="1-20个中英文字符或下划线"
             ></el-input>
           </el-form-item>
@@ -15,12 +16,13 @@
         <p class="rowCont">
           <span style="vertical-align:top">备注</span>
           <el-form-item style="display:inline-block" prop="textareas">
+            <!-- v-model="formInline.textareas" -->
             <el-input
               style="width:330px;"
               :autosize="{ minRows: 5, maxRows: 2}"
               type="textarea"
               placeholder="1-100个中英文字符或下划线"
-              v-model="formInline.textareas"
+              v-model="remark"
               maxlength="100"
               show-word-limit
             ></el-input>
@@ -51,12 +53,12 @@
         <div>
           <div>
             <p>
-              <el-checkbox v-model="checkedZhibiao">指标告警</el-checkbox>
+              <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指标告警</el-checkbox>
             </p>
             <div class="color">
               <p>
-                <i>满足</i>
-                <el-select v-model="formInline.projectName" style="width:90px;margin:0 5px;">
+                <span style="display:inline">满足</span>
+                <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;">
                   <el-option
                     v-for="(item,index) in formInline.project"
                     :key="index"
@@ -65,14 +67,16 @@
                     label-width="40px"
                   ></el-option>
                 </el-select>
-                <i>条件时，触发告警</i>
+                <span style="display:inline">条件时，触发告警</span>
               </p>
               <!-- 在这里进行便利，添加 -->
               <ul>
-                <li style="display:flex;align-items: center;cursor: pointer;">
+                  <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
+                <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p>
                     if&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:150px;">
+                    <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -81,7 +85,8 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:130px;">
+                    <!-- <el-select v-model="formInline.projectName" style="width:130px;"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:130px;">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -90,28 +95,24 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:60px;">
+                    <!-- <el-select v-model="formInline.projectName" style="width:60px;"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:60px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in SymbolList"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <input
-                      placeholder="指标"
-                      style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
-                      value="0"
-                      min="0"
-                      max="100"
-                      type="number"
-                    />
+                    <input :disabled="isDisabled" placeholder="指标" value="0" min="0" max="100" type="number"
+                      style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >%</b>
                     &nbsp;
-                    <el-select v-model="formInline.projectName" style="width:110px;">
+                    <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:110px;">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -121,7 +122,8 @@
                       ></el-option>
                     </el-select>&nbsp;
                     then&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:150px;">
+                    <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -132,24 +134,27 @@
                     </el-select>
                     <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                   </p>
-                  <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delZhibiao"></i>
+                  <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                  @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
-                <a @click="addZhibiao">添加</a>
+                <a @click="addZhibiao" style="cursor:pointer">添加</a>
               </ul>
             </div>
           </div>
           <div>
             <p>
-              <el-checkbox v-model="checkedGaojing">
+              <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
                 事件告警
                 <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
               </el-checkbox>
             </p>
             <!-- 在这里进行便利，添加 -->
             <ul class="color">
-              <li style="display:flex;align-items: center;cursor: pointer;">
+              <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
+              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                 <p>
-                  <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;">
+                  <!-- <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;"> -->
+                  <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
                     <el-option
                       v-for="(item,index) in formInline.project"
                       :key="index"
@@ -159,9 +164,10 @@
                     ></el-option>
                   </el-select>
                 </p>
-                <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delShijian"></i>
+                <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                  @click="delShijian(item)" v-if="eventAry.length>1"></i>
               </li>
-              <a @click="addShijian">添加</a>
+              <a @click="addShijian" style="cursor:pointer">添加</a>
             </ul>
           </div>
         </div>
@@ -175,11 +181,16 @@
 </template>
 <script>
 import GroupingType from '@/components/GroupingType'
+import { GET_TENCENTCLOUDAPI, UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
 export default {
   data () {
     return {
+      isChected: true, // 多选框是否选中
+      isDisabled: false, // 指标告警是否禁用
+      isDisGJ: false, // 事件告警是否禁用
       backShow: 'true',
-
+      strategy_name: '', // 策略名称
+      remark: '', // 备注信息
       value1: new Date(2020, 1, 10, 18, 40),
       value2: new Date(2020, 1, 10, 18, 40),
 
@@ -191,8 +202,9 @@ export default {
 
       errorTip1: false, // 触发条件模板错误提示
       errorTip2: true, // 配置触发条件错误提示
-      checkedZhibiao: false, // 指示告警
+      checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
         jieshou: '接收组',
         jieshouArr: [
@@ -231,6 +243,86 @@ export default {
           }
         ]
       },
+      indexAry: [ // 指标告警数组
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      ],
+      eventAry: [// 事件告警数组
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      ],
       form: {
         name: '',
         region: '',
@@ -284,7 +376,21 @@ export default {
       type: Boolean
     }
   },
+  created () {
+    this.getTemplateList()
+  },
   methods: {
+    // 获取触发条件列表
+    async getTemplateList () {
+      let params = {
+        Action: 'DescribeConditionsTemplateList',
+        Version: '2018-07-24',
+        Module: 'monitor'
+      }
+      await this.axios.post(GET_TENCENTCLOUDAPI, params).then(res => {
+        console.log(res)
+      })
+    },
     cancel () {
       this.$emit('cancel')
     },
@@ -299,25 +405,138 @@ export default {
         }
       })
     },
+    // 新建完成保存
+    newBuild () {
+      // let zbAry = []
+      // let sjAry = []
+      let params = {
+        conditions: this.indexAry, // 指标告警
+        eventConditions: this.eventAry, // 事件告警
+        groupName: this.strategy_name,
+        isUnionRule: 0,
+        lang: 'zh',
+        remark: this.remark,
+        viewName: 'cvm_device'
+      }
+      this.axios.post(UPDATE_TEMPLATE, params).then(res => {
+        console.log(res)
+      })
+    },
     // 类型
     msgBtn (index) {
       this.liIndex = index
     },
-    addZhibiao () {
-      // 添加触发条件的指标告警
-      alert('你要添加此项触发条件的指标告警')
+    addZhibiao () { // 添加触发条件的指标告警
+      this.indexAry.push(
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      )
     },
-    delZhibiao () {
-      // 删除触发条件的指标告警
-      alert('你要删除此项触发条件的指标告警')
+    delZhibiao (it) { // 删除触发条件的指标告警
+      var index = this.indexAry.indexOf(it)
+      if (index !== -1) {
+        this.indexAry.splice(index, 1)
+      }
     },
-    addShijian () {
-      // 添加触发条件的事件告警
-      alert('你要添加此项触发条件的事件告警')
+    addShijian () { // 添加触发条件的事件告警
+      this.eventAry.push(
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      )
     },
-    delShijian () {
-      // 删除触发条件的事件告警
-      alert('你要删除此项触发条件的事件告警')
+    delShijian (item) { // 删除触发条件的事件告警
+      var index = this.eventAry.indexOf(item)
+      if (index !== -1) {
+        this.eventAry.splice(index, 1)
+      }
+    },
+    // 指标告警是否禁用
+    isDisabledZB () {
+      if (this.checkedZhibiao) {
+        this.isDisabled = false
+      } else {
+        this.isDisabled = true
+      }
+    },
+    // 事件告警是否禁用
+    isDisabledGJ () {
+      if (this.checkedGaojing) {
+        this.isDisGJ = false
+      } else {
+        this.isDisGJ = true
+      }
     },
     // 新建
     showMsgfromChild (val) {
@@ -378,7 +597,7 @@ export default {
   > div {
     span {
       display: inline-block;
-      width: 80px;
+      width: 70px;
     }
   }
 

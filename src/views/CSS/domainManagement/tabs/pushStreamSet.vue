@@ -1,44 +1,55 @@
 <template>
   <div>
     <div class="basicinfo">
-      <h1 class="newClear">
-        {{$t('CSS.domainManagement.22')}}
-        <a @click="editSet">{{$t('CSS.domainManagement.10')}}</a>
+      <h1 class="newClear" style="cursor: pointer">
+        {{ $t("CSS.domainManagement.22") }}
+        <a @click="editSet">{{ $t("CSS.domainManagement.10") }}</a>
       </h1>
       <div class="newClear">
         <div class="newClear newList">
-          <p>{{$t('CSS.domainManagement.23')}}</p>
-          <p>{{pushAuthKeyInfo.Enable === 0 ? $t('CSS.domainManagement.32') : $t('CSS.domainManagement.7')}}</p>
+          <p>{{ $t("CSS.domainManagement.23") }}</p>
+          <p>
+            {{
+              pushAuthKeyInfo.Enable === 0
+                ? $t("CSS.domainManagement.32")
+                : $t("CSS.domainManagement.7")
+            }}
+          </p>
         </div>
         <div class="newClear newList">
           <p>主KEY</p>
-          <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
+          <p>{{ pushAuthKeyInfo.MasterAuthKey }}</p>
         </div>
         <div class="newClear newList">
-          <p>{{$t('CSS.domainManagement.24')}}</p>
-          <p>{{pushAuthKeyInfo.BackupAuthKey}}</p>
+          <p>{{ $t("CSS.domainManagement.24") }}</p>
+          <p>{{ pushAuthKeyInfo.BackupAuthKey }}</p>
         </div>
       </div>
-      <editSet :isShow="editSetModel" :pushAuthKeyInfo="pushAuthKeyInfo" @closeModel="closeModel" />
+
+      <editSet
+        :isShow="editSetModel"
+        :pushAuthKeyInfo="pushAuthKeyInfo"
+        @closeModel="closeModel"
+      />
     </div>
     <div class="basicinfo">
       <h1 class="newClear">推流地址生成器</h1>
       <div class="bgGray">
         <div class="newClear newList1">
-          <p>{{$t('CSS.domainManagement.25')}}Key</p>
-          <p>{{pushAuthKeyInfo.MasterAuthKey}}</p>
+          <p>{{ $t("CSS.domainManagement.25") }}Key</p>
+          <p>{{ pushAuthKeyInfo.MasterAuthKey }}</p>
         </div>
         <div class="newClear newList1">
-          <p>{{$t('CSS.domainManagement.26')}}</p>
-          <p>{{callBackTemplate.StreamBeginNotifyUrl}}</p>
+          <p>{{ $t("CSS.domainManagement.26") }}</p>
+          <p>{{ callBackTemplate.StreamBeginNotifyUrl }}</p>
         </div>
         <div class="newClear newList1">
           <p>推流域名</p>
-          <p>{{$route.query.Name}}</p>
+          <p>{{ $route.query.Name }}</p>
         </div>
       </div>
       <div class="dateOut">
-        <span class="spanBlod">{{$t('CSS.domainManagement.27')}}</span>
+        <span class="spanBlod">{{ $t("CSS.domainManagement.27") }}</span>
         <el-date-picker
           class="dataDateTime"
           :clearable="false"
@@ -46,8 +57,12 @@
           type="date"
           :placeholder="$t('CSS.domainManagement.31')"
         ></el-date-picker>
-        <el-time-picker :clearable="false" v-model="dateValue" class="dateValue"></el-time-picker>
-        <span class="spanBlod">StreamName</span>
+        <el-time-picker
+          :clearable="false"
+          v-model="dateValue"
+          class="dateValue"
+        ></el-time-picker>
+        <span class="spanBlod">StreamName &nbsp;&nbsp;</span>
         <el-input
           :placeholder="$t('CSS.domainManagement.28')"
           v-model="streamName"
@@ -57,12 +72,12 @@
       </div>
       <div class="newClear">
         <span class="leftCon">推流地址</span>
-        <span v-if="pushUrl">{{pushUrl}}</span>
-        <span class="rightCon" v-else>{{$t('CSS.domainManagement.29')}}</span>
+        <span v-if="pushUrl">{{ pushUrl }}</span>
+        <span class="rightCon" v-else>{{ $t("CSS.domainManagement.29") }}</span>
       </div>
     </div>
     <div class="basicinfo">
-      <h1 class="newClear">{{$t('CSS.domainManagement.30')}}</h1>
+      <h1 class="newClear">{{ $t("CSS.domainManagement.30") }}</h1>
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="php" name="first">
           <div class="greyContent">
@@ -151,113 +166,113 @@
   </div>
 </template>
 <script>
-import editSet from "../model/editSet";
+import editSet from '../model/editSet'
 import {
   LIVE_DESCRIBELIVE_PUSHAUTHKEY,
   RULELIST_DELTILS,
   SINGLECALLBACK_DELTILS
-} from "@/constants";
-import { toUTF8Array } from "@/utils";
-import moment from "moment";
-import md5 from "js-md5";
+} from '@/constants'
+import { toUTF8Array } from '@/utils'
+import moment from 'moment'
+import md5 from 'js-md5'
 export default {
   props: {
-    info: Object,
+    info: Object
   },
-  data() {
+  data () {
     return {
-      editSetModel: false, //编辑弹框
-      dataDateTime: new Date(), //过期时间月份
-      dateValue: new Date(moment().endOf("d")), //时间
-      streamName: "", //streamName
-      activeName: "first", //tab
+      editSetModel: false, // 编辑弹框
+      dataDateTime: new Date(), // 过期时间月份
+      dateValue: new Date(moment().endOf('d')), // 时间
+      streamName: '', // streamName
+      activeName: 'first', // tab
       pushAuthKeyInfo: {},
       callBackTemplate: {},
-      pushUrl: ""
-    };
+      pushUrl: ''
+    }
   },
   watch: {
-    streamName(newVal, oldVal) {
-      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g, "");
+    streamName (newVal, oldVal) {
+      this.streamName = newVal.replace(/[^\u0000-\u00FF]/g, '')
     }
   },
   components: {
     editSet: editSet
   },
-  mounted() {
-    this.getAuthConf();
-    const domain = this.$route.query.Name;
+  mounted () {
+    this.getAuthConf()
+    const domain = this.$route.query.Name
     const param = {
-      Version: "2018-08-01"
-    };
+      Version: '2018-08-01'
+    }
     this.axios.post(RULELIST_DELTILS, param).then(data => {
       if (data.Response.Error == undefined) {
-        let callbackrule = data.Response.Rules;
+        let callbackrule = data.Response.Rules
         callbackrule.forEach(item => {
           if (item.DomainName === domain) {
             let parms = {
-              Version: "2018-08-01",
+              Version: '2018-08-01',
               TemplateId: item.TemplateId
-            };
+            }
             this.axios.post(SINGLECALLBACK_DELTILS, parms).then(data => {
               if (data.Response.Error == undefined) {
-                this.callBackTemplate = data.Response.Template;
+                this.callBackTemplate = data.Response.Template
               } else {
-                this.$message.error(data.Response.Error.Message);
+                this.$message.error(data.Response.Error.Message)
               }
-            });
+            })
           }
-        });
+        })
       } else {
-        this.$message.error(data.Response.Error.Message);
+        this.$message.error(data.Response.Error.Message)
       }
-    });
+    })
   },
   methods: {
-    getAuthConf() {
-      const domain = this.$route.query.Name;
+    getAuthConf () {
+      const domain = this.$route.query.Name
       this.axios
         .post(LIVE_DESCRIBELIVE_PUSHAUTHKEY, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           DomainName: domain
         })
         .then(({ Response: { PushAuthKeyInfo } }) => {
-          this.pushAuthKeyInfo = PushAuthKeyInfo;
-        });
+          this.pushAuthKeyInfo = PushAuthKeyInfo
+        })
     },
-    generatePushUrl() {
+    generatePushUrl () {
       if (!this.streamName || !this.streamName.trim()) {
         this.$message({
-          type: "warning",
-          message: "請輸入 StreamName"
-        });
-        return;
+          type: 'warning',
+          message: '請輸入 StreamName'
+        })
+        return
       }
       const timeHex = moment(
-        `${moment(this.dataDateTime).format("YYYY-MM-DD")} ${moment(
+        `${moment(this.dataDateTime).format('YYYY-MM-DD')} ${moment(
           this.dateValue
-        ).format("HH:mm:ss")}`
+        ).format('HH:mm:ss')}`
       )
         .unix()
         .toString(16)
-        .toUpperCase();
-      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`;
-      const txSecret = md5.hex(str);
-      this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`;
+        .toUpperCase()
+      const str = `${this.pushAuthKeyInfo.MasterAuthKey}${this.streamName}${timeHex}`
+      const txSecret = md5.hex(str)
+      this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}?txSecret=${txSecret}&txTime=${timeHex}`
     },
-    //编辑
-    editSet() {
-      this.editSetModel = true;
+    // 编辑
+    editSet () {
+      this.editSetModel = true
     },
-    //关闭
-    closeModel(isShow) {
-      this.getAuthConf();
-      this.editSetModel = isShow;
+    // 关闭
+    closeModel (isShow) {
+      this.getAuthConf()
+      this.editSetModel = isShow
     },
-    //tab
-    handleClick() {}
+    // tab
+    handleClick () {}
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {
@@ -274,10 +289,10 @@ export default {
   height: 30px;
   padding: 0 20px;
   line-height: 30px;
-  color: #fff;
-  background-color: #006eff;
-  border-radius: 0;
-  border: 1px solid #006eff;
+  // color: #fff;
+  // background-color: #006eff;
+  // border-radius: 0;
+  // border: 1px solid #006eff;
 }
 .bgGray {
   background-color: #f2f2f2;

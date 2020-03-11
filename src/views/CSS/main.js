@@ -22,7 +22,7 @@ require('echarts/lib/component/legend')
 const player = document.createElement('script')
 player.src = 'https://imgcache.qq.com/open/qcloud/video/vcplayer/TcPlayer-2.3.2.js'
 
-document.body.append(player)
+document.body.appendChild(player)
 Vue.prototype.$echarts = echarts
 for (let key in filters) {
     Vue.filter(key, filters[key])

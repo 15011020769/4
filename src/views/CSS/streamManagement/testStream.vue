@@ -7,6 +7,7 @@ import { DOMAIN_LIST } from '@/constants'
 export default {
   props: {
     stream: Object,
+    visible: Boolean,
   },
   data() {
     return {
@@ -14,23 +15,47 @@ export default {
       player: undefined,
     }
   },
+  watch: {
+    visible(n) {
+      if (this.visible) {
+      this.axios.post(DOMAIN_LIST, {
+        Version: "2018-08-01",
+        PageSize: 100, //分页大小，范围：10~100。默认10
+        PageNum: 1
+      })
+        .then(({ Response }) => {
+          const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
+          let domainName = '68922.liveplay.myqcloud.com'
+          if (domain) {
+            domainName = domain.Name
+          }
+          this.play(domainName)
+        })
+        .then(() => {
+          this.loading = false
+        })
+    }
+    }
+  },
   mounted() {
-    this.axios.post(DOMAIN_LIST, {
-      Version: "2018-08-01",
-      PageSize: 100, //分页大小，范围：10~100。默认10
-      PageNum: 1
-    })
-      .then(({ Response }) => {
-        const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
-        let domainName = '68922.liveplay.myqcloud.com '
-        if (domain) {
-          domainName = domain.Name
-        }
-        this.play(domainName)
+    if (this.visible) {
+      this.axios.post(DOMAIN_LIST, {
+        Version: "2018-08-01",
+        PageSize: 100, //分页大小，范围：10~100。默认10
+        PageNum: 1
       })
-      .then(() => {
-        this.loading = false
-      })
+        .then(({ Response }) => {
+          const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
+          let domainName = '68922.liveplay.myqcloud.com'
+          if (domain) {
+            domainName = domain.Name
+          }
+          this.play(domainName)
+        })
+        .then(() => {
+          this.loading = false
+        })
+    }
   },
   destroyed() {
     this.player && this.player.destroy()
@@ -40,7 +65,7 @@ export default {
       this.$emit('update:url', `http://${domainName}/live/${this.stream.StreamName}.flv`)
       var options = {
         flv: `//${domainName}/live/${this.stream.StreamName}.flv`,
-        autoplay: false,
+        autoplay: true,
         live: true,
         width: 800,
         height: 600,

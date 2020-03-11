@@ -1,13 +1,13 @@
 <template>
   <div class="wrap">
-    <el-dialog title="购买短信" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
+    <el-dialog :title="$t('CVM.overview.gmdx')" :visible.sync="dialogVisible" width="40%" :close-on-click-modal="false">
       <div class="dialog">
         <div class="explain">
-          <p>所购短信配额没有使用限时，用完为止</p>
+          <p>{{$t('CVM.overview.myqx')}}</p>
         </div>
         <div class="dialog-main">
           <dl>
-            <dt>所属类型</dt>
+            <dt>{{$t('CVM.overview.sslx')}}</dt>
             <dd>
               <el-button
                 v-for="(item,index) in btnArr"
@@ -18,13 +18,13 @@
             </dd>
           </dl>
           <dl>
-            <dt>短信</dt>
+            <dt>{{$t('CVM.overview.dxin')}}</dt>
             <dd>
-              <el-input-number v-model="num" :min="1" label="描述文字" style="margin-right:10px;"></el-input-number>条
+              <el-input-number v-model="num" :min="1" :label="$t('CVM.overview.mswz')" style="margin-right:10px;"></el-input-number>{{$t('CVM.strip')}}
             </dd>
           </dl>
           <dl class="dl-price">
-            <dt>总计费用</dt>
+            <dt>{{$t('CVM.overview.zjfy')}}</dt>
             <dd>
               <span>{{msgPrice}}</span>元
             </dd>
@@ -33,7 +33,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancel">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button type="primary" @click="save">{{$t('CVM.Dashboard.qd')}}</el-button>
       </span>
     </el-dialog>
   </div>
@@ -48,7 +48,7 @@ export default {
       num: 100,
       //购买短信 类型
       liIndex: 0,
-      btnArr: ["基础告警", "云拨测告警", "自定义监控告警", "自定义消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
     };
   },
   props: {

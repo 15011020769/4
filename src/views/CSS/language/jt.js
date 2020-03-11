@@ -63,7 +63,8 @@ module.exports = {
       43: '确定',
       44: '确认启用',
       45: '断流',
-      46: '确认禁用'
+      46: '确认禁用',
+      47: '仅支持大写字母，小写字母和数字，最大长度32位'
     },
     cutout: {
       0: ' 断流诊断',
@@ -95,7 +96,8 @@ module.exports = {
       15: '请选择域名',
       16: '请输入',
       17: '仅支持英文字母、数字和符号',
-      18: '请选择过期时间'
+      18: '请选择过期时间',
+      19: '范本配置'
     },
     watermark: {
       0: '水印设置',
@@ -202,7 +204,7 @@ module.exports = {
       bandwidthCapping: '带宽封顶',
       rgional: '区域',
       sourceStationSetup: '源站设置',
-      ipordomain: '請填寫域名或IP',
+      ipordomain: '請填寫域名或IP'
     }
   },
   COM: require('@/components/language/jt')

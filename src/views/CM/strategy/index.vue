@@ -152,7 +152,7 @@
               @click="defaultClick(scope.row.grounpId)"
               >{{ scope.row.groupName }}</a
             >
-            <i v-show="defaultIconFlag" class="el-icon-edit"></i>
+            <i @click="modifyNameDialogVisible = true" class="el-icon-edit"></i>
           </template>
         </el-table-column>
         <el-table-column label="触发条件">
@@ -239,6 +239,28 @@
     </div>
     <!-- 点击设置 -->
     <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
+    <!-- 修改名称 -->
+    <el-dialog
+      title="修改告警策略名称"
+      :visible.sync="modifyNameDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+      class="dialog-box"
+    >
+      <div class="edit-dialog">
+        <el-input
+          size="small"
+          placeholder="请输告警策略名称，20字以内"
+          v-model="editSearchVal"
+          @input="EditTips"
+        ></el-input>
+        <p v-if="tipsShow">告警策略名称不能为空</p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确定</el-button>
+        <el-button @click="modifyNameDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
     <!-- 删除 -->
     <el-dialog
       title="策略删除确认"
@@ -608,7 +630,10 @@ export default {
           address: "上海市普陀区金沙江路 1516 弄"
         }
       ],
-      ModifyDialogVisible: false
+      ModifyDialogVisible: false,
+      modifyNameDialogVisible: false,
+      editSearchVal: "",
+      tipsShow: false
     };
   },
   components: {
@@ -713,6 +738,14 @@ export default {
     Delete(row) {
       this.deleteDialogVisible = true;
       this.instanceGroupId = row.instanceGroupId;
+    },
+    // 修改名称
+    EditTips() {
+      if (this.editSearchVal == "") {
+        this.tipsShow = true;
+      } else {
+        this.tipsShow = false;
+      }
     }
   }
 };
@@ -970,6 +1003,26 @@ a:hover {
           }
         }
       }
+    }
+  }
+  .edit-dialog {
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    p {
+      color: #b43537;
+      border: 1px solid #f6b5b5;
+      background-color: #fcecec;
+      width: 258px;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    ::v-deep .el-dialog__footer {
+      text-align: center;
     }
   }
 }

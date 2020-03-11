@@ -67,7 +67,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit(infoData.groupName)">保 存</el-button>
+        <el-button type="primary" @click="submitName(infoData.groupName)">保 存</el-button>
         <el-button @click="showDelDialog = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -80,7 +80,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit(infoData.remark)">保 存</el-button>
+        <el-button type="primary" @click="submitRemark(infoData.remark)">保 存</el-button>
         <el-button @click="showDelDialog = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -92,12 +92,14 @@
           <span style="display: inline-block;width: 80px;">触发条件</span>
           <div>
             <div>
-              <p style="line-height:30px;"><el-checkbox v-model="checkedZhibiao">指标告警</el-checkbox></p>
+              <p style="line-height:30px;">
+                <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指标告警</el-checkbox>
+              </p>
             </div>
             <div class="color">
               <p>
                 <span>满足</span>
-                <el-select v-model="formInline.projectName" style="width:90px;margin:0 5px;" size="small">
+                <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;" size="small">
                   <el-option
                     v-for="(item,index) in conditions"
                     :key="index"
@@ -109,10 +111,12 @@
                 <span>条件时，触发告警</span>
               </p>
               <ul>
-                <li style="display:flex;align-items: center;cursor: pointer;">
+                <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
+                <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p>
                     if&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:150px;" size="small">
+                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in conditionsData.conditions"
                         :key="index"
@@ -121,7 +125,8 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:130px;" size="small">
+                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:130px;" size="small"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:130px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -130,7 +135,8 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:60px;" size="small">
+                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:60px;" size="small"> -->
+                      <el-select :disabled="isDisabled" v-model="it.projectName" style="width:60px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -139,7 +145,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <input
+                    <input :disabled="isDisabled"
                       placeholder="指标"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
                       value="0"
@@ -151,7 +157,8 @@
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >%</b>
                     &nbsp;
-                    <el-select v-model="formInline.projectName" style="width:110px;" size="small">
+                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:110px;" size="small"> -->
+                      <el-select :disabled="isDisabled" v-model="it.projectName" style="width:110px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -161,7 +168,8 @@
                       ></el-option>
                     </el-select>&nbsp;
                     then&nbsp;
-                    <el-select v-model="formInline.projectName" style="width:150px;" size="small">
+                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
+                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -172,22 +180,24 @@
                     </el-select>
                     <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                   </p>
-                  <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delZhibiao"></i>
+                  <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
-                <a @click="addZhibiao">添加</a>
+                <a @click="addZhibiao" style="cursor:pointer">添加</a>
               </ul>
             </div>
             <div>
               <p style="line-height:30px;">
-                <el-checkbox v-model="checkedGaojing">
+                <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
                   事件告警
                   <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                 </el-checkbox>
               </p>
               <ul class="color">
-              <li style="display:flex;align-items: center;cursor: pointer;">
+              <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
+              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                 <p>
-                  <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small">
+                  <!-- <el-select :disabled="isDisGJ" v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small"> -->
+                    <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;" size="small">
                     <el-option
                       v-for="(item,index) in formInline.project"
                       :key="index"
@@ -197,9 +207,9 @@
                     ></el-option>
                   </el-select>
                 </p>
-                <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delShijian"></i>
+                <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delShijian(item)" v-if="eventAry.length>1"></i>
               </li>
-              <a @click="addShijian">添加</a>
+              <a @click="addShijian" style="cursor:pointer">添加</a>
               <i class="rubbish-icon"></i>
             </ul>
             </div>
@@ -222,12 +232,14 @@ export default {
       showDelDialog1: false, // 是否显示修改名称弹框
       showDelDialog2: false, // 是否显示修改备注弹框
       showDelDialog3: false, // 是否显示条件编辑弹框
+      checkedZhibiao: true, // 指示告警多选框是否选中
+      checkedGaojing: true, // 事件告警多选框是否选中
+      isDisabled: false, // 指标告警是否禁用
+      isDisGJ: false, // 事件告警是否禁用
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
       id: '', // 模板id
       Conditions: [],
-      checkedZhibiao: false, // 指示告警
-      checkedGaojing: '', // 告警
       formInline: {
         jieshou: '接收组',
         jieshouArr: [
@@ -266,6 +278,86 @@ export default {
           }
         ]
       },
+      indexAry: [ // 指标告警数组
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      ],
+      eventAry: [// 事件告警数组
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      ],
       conditionsData: [], // 触发条件数据
       conditions: ['任意', '所有'], // 满足条件
       groupList: [], // 策略组列表
@@ -422,8 +514,8 @@ export default {
         }
       })
     },
-    // 修改名称和备注(未完成)
-    async submit (val) {
+    // 修改名称(未完成 修改不成,报错缺少Version)
+    async submitName (val) {
       let params = {
         groupType: 3,
         key: 'groupName',
@@ -433,9 +525,50 @@ export default {
         // Version: '2018-07-24'
       }
       await this.axios.post(UPDATE_INFO, params).then(res => {
-        this.infoData.groupName = name
-        this.showDelDialog = false
+        this.showDelDialog1 = false
+        this.$message({
+          message: '修改成功',
+          type: 'success',
+          duration: 0,
+          showClose: true
+        })
       })
+    },
+    // 修改备注(未完成 修改不成,报错缺少Version)
+    async submitRemark (val) {
+      let params = {
+        groupType: 3,
+        key: 'remark',
+        lang: 'zh',
+        value: val,
+        groupId: Number(this.id)
+        // Version: '2018-07-24'
+      }
+      await this.axios.post(UPDATE_INFO, params).then(res => {
+        this.showDelDialog2 = false
+        this.$message({
+          message: '修改成功',
+          type: 'success',
+          duration: 0,
+          showClose: true
+        })
+      })
+    },
+    // 是否禁用指标告警
+    isDisabledZB () {
+      if (this.checkedZhibiao) {
+        this.isDisabled = false
+      } else {
+        this.isDisabled = true
+      }
+    },
+    // 是否禁用事件告警
+    isDisabledGJ () {
+      if (this.checkedGaojing) {
+        this.isDisGJ = false
+      } else {
+        this.isDisGJ = true
+      }
     },
     // 格式化时间
     upTime (value) {
@@ -458,21 +591,101 @@ export default {
         console.log(res)
       })
     },
-    addZhibiao () {
-      // 添加触发条件的指标告警
-      alert('你要添加此项触发条件的指标告警')
+    addZhibiao () {// 添加触发条件的指标告警
+      this.indexAry.push(
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      )
     },
-    delZhibiao () {
-      // 删除触发条件的指标告警
-      alert('你要删除此项触发条件的指标告警')
+    delZhibiao (it) {// 删除触发条件的指标告警
+      var index = this.indexAry.indexOf(it)
+      if (index !== -1) {
+        this.indexAry.splice(index, 1)
+      }
     },
-    addShijian () {
-      // 添加触发条件的事件告警
-      alert('你要添加此项触发条件的事件告警')
+    addShijian () {// 添加触发条件的事件告警
+      this.eventAry.push(
+        {
+          jieshou: '接收组',
+          jieshouArr: [
+            { value: '0', name: '接收组' },
+            {
+              value: '1',
+              name: '接收人'
+            }
+          ],
+          apiStr: 'http', // 接口回调
+          apiArr: [
+            {
+              value: 0,
+              name: 'http'
+            },
+            {
+              value: 1,
+              name: 'https'
+            }
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '云服务器-基础监控',
+          strategy_kind: [
+            {
+              value: 0,
+              name: '云服务器-基础监控'
+            }
+          ], // 策略类型
+          alarm: '', // 策略类型
+          projectName: '默认项目',
+          project: [
+            {
+              value: 0,
+              name: '默认项目'
+            }
+          ]
+        }
+      )
     },
-    delShijian () {
-      // 删除触发条件的事件告警
-      alert('你要删除此项触发条件的事件告警')
+    delShijian (item) {// 删除触发条件的事件告警
+      var index = this.eventAry.indexOf(item)
+      if (index !== -1) {
+        this.eventAry.splice(index, 1)
+      }
     }
   },
   filters: {
