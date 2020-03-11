@@ -65,9 +65,9 @@
         </div>
         <div class="bottomPay">
           <div class="pay-submit">
-            <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span>
+            <!-- <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span> -->
             <span class="allTotal">總計費用：<span class="allMoneySpan"> NT$<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
-            <el-button class="payBtnOne">代理支付</el-button>
+            <!-- <el-button class="payBtnOne">代理支付</el-button> -->
             <el-button class="payBtnTwo" @click="next">自行支付</el-button>
           </div>
         </div>
@@ -77,6 +77,7 @@
 </template>
 <script>
 import { GENERATE_DEALS, PAY_DEALS } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips";
 export default{
   data() {
     return {
@@ -84,20 +85,20 @@ export default{
       allData: [],
       allData1: [],
       checkBox: [],
-      OrderIds: []
+      OrderIds: [],
+      loading: false
     }
   },
   created () {
-    this.allData =sessionStorage.getItem("allData");
+    this.allData = sessionStorage.getItem("allData");
     this.allData1 = JSON.parse(this.allData)
   },
   methods: {
     next () {
       if (this.active === 1) {
         this.GenerateDeals()
-      } else if (this.active === 2) {
-        // this.PayDeals() // 支付接口暫時屏蔽 待 業務邏輯梳理完整后放開
       }
+      if (this.active > 2) this.active = 1
     },
     // 支付订单
     PayDeals () {
@@ -108,11 +109,19 @@ export default{
       this.OrderIds.forEach((element, index) => {
         params['OrderIds.' + index] = element
       })
+      this.loading = true
+      this.active++
       this.axios.post(PAY_DEALS, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
             // 支付成功
-            this.active++
+            this.$message({
+              message: '購買成功',
+              type: 'success',
+              showClose: true,
+              duration: 0
+            })
+            this.$router.replace('/ProtectOverview')
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -124,7 +133,7 @@ export default{
             });
           }
         }
-      })
+      }).then(() => { this.loading = false })
     },
     // 创建订单
     GenerateDeals () {
@@ -160,11 +169,13 @@ export default{
           params['Goods.' + i + '.' + e] = item[e]
         })
       })
+      this.loading = true
+       this.active++
       this.axios.post(GENERATE_DEALS, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
             this.OrderIds = res.Response.OrderIds
-            this.active++
+            this.PayDeals()
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -176,7 +187,7 @@ export default{
             });
           }
         }
-      })
+      }).then(() => { this.loading = false })
     },
     // 价格展示
     showPrice  (number, decimals = 0, decPoint = '.') {
@@ -249,7 +260,6 @@ export default{
           padding-left:32px;
         }
         .t-head{
-          border-top:0px solid #ddd;
           border-bottom:1px solid #ddd;
           height:30px;
           font-weight:bold;
@@ -263,7 +273,7 @@ export default{
           padding:30px 0;
           font-size:14px;
           td{
-             padding:20px 32px 20px 32px;
+             padding:20px 30px 20px 32px;
             p{
               margin-bottom:5px;
             }
