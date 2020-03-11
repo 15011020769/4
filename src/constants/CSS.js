@@ -166,6 +166,8 @@ export const DESCRIBE_SOURCE_STREAM_INFO = 'live2/DescribeSourceStreamInfo'
 export const DESCRIBE_LIVE_DOMAIN_CERT = 'live2/DescribeLiveDomainCert'
 // 添加证书
 export const CREATE_LIVE_CERT = 'live2/CreateLiveCert'
+// 新建时绑定域名证书
+export const BIND_LIVE_DOMAIN_CERT = 'live2/BindLiveDomainCert'
 // 修改域名和证书绑定信息
 export const MODIFY_LIVE_DOMAIN_CERT = 'live2/ModifyLiveDomainCert'
 // 添加证书
