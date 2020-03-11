@@ -169,7 +169,7 @@ export default {
        
       
       cos.putObject({
-        Bucket: 'watermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
+        Bucket: 'livewatermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
         Region: "ap-taipei",
         StorageClass: "STANDARD",
         Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,

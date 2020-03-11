@@ -61,7 +61,7 @@
           </el-form-item>
         </el-form>
       </div>
-      <div class="edit-box" v-if="userInfo.type.includes('1')">
+      <div class="edit-box">
         <h3>{{$t('CAM.userList.policyMesg')}}</h3>
         <el-table
           :data="strategies"

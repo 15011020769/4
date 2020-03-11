@@ -2,7 +2,7 @@
   <div class="adduserlist-wrap">
     <HeadCom :title="$t('CAM.userList.createUser')" :backShow="true" @_back="_back" />
     <div class="adduserlist-main" v-loading="loading">
-      <el-steps :active="active" simple>
+      <el-steps :active="active" simple>{{active}}
         <!-- <el-step :title="$t('CAM.userList.chooserType')"></el-step> -->
         <el-step :title="$t('CAM.userList.userMesgs')"></el-step>
         <el-step :title="$t('CAM.userList.setStrage')"></el-step>
@@ -381,16 +381,7 @@ export default {
         SubAccountname: res.Response.Name
       };
       this.axios.post(`${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/register`, params)
-      if (!this.ruleForm.type.includes('1')) {
-        this.$message({
-          message: '創建成功',
-          type: "success",
-          showClose: true,
-          duration: 0
-        })
-        this.$router.push('/UserListNew')
-        return
-      }
+
       const step3Ref = this.$refs.step3
       //从策略列表中选取策略关联
       if (step3Ref.activeName === "first") {
@@ -609,12 +600,7 @@ export default {
                 duration: 0
               });
             } else {
-              console.log(this.ruleForm.type)
-              if (this.ruleForm.type.includes('1')) {
-                this.active += 1
-              } else {
-                this.active = 3
-              }
+              this.active += 1
             }
           }).then(() => {
             this.loading = false
@@ -627,11 +613,7 @@ export default {
     },
     //上一步
     _lastStep() {
-      if (this.active === 3 && !this.ruleForm.type.includes('1')) {
-        this.active = 1
-      } else {
-        this.active -= 1
-      }
+      this.active -= 1
     }
   }
 };

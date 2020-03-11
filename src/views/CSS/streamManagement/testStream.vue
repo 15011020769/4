@@ -62,6 +62,7 @@ export default {
   },
   methods: {
     play(domainName) {
+      // TODO计算签名
       this.$emit('update:url', `http://${domainName}/live/${this.stream.StreamName}.flv`)
       var options = {
         flv: `http://${domainName}/live/${this.stream.StreamName}.flv`,
