@@ -352,9 +352,8 @@ export default {
       renderFunc(h, option) {
         return (
           <div>
-            <span> {option.key} </span>
-            <br />
-            <span> {option.label.substring(0, option.label.indexOf(option.key))} </span>
+            <p> {option.key} </p>
+            <p> {option.label.substring(0, option.label.indexOf(option.key))} </p>
           </div>
         );
       }, //穿梭框
@@ -791,6 +790,12 @@ export default {
 <style lang="scss" scoped>
 a {
   cursor: pointer;
+}
+.wrap >>> .el-transfer-panel__item{
+  height: 60px;
+}
+.wrap >>> .el-transfer-panel__empty{
+  display: none;
 }
 .wrap >>> .el-tabs__nav-wrap {
   background: white;

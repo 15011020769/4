@@ -941,8 +941,9 @@ export default {
     },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
-      if (this.tacticsName == "") {
-        this.$message("請填寫策略名稱");
+      this.tacticsName = this.tacticsName.replace(/^\s*|\s*$/g,"");
+      if (this.tacticsName.length<=0 || this.tacticsName.length>32) {
+        this.$message("策略名稱不符合規範（兩端無空格,長度1-32字符）");
       } else {
         let params = {
           Version: "2018-07-09",
