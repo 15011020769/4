@@ -2,6 +2,10 @@ import { ErrorTips } from '@/components/ErrorTips.js'
 // 实例内容器
 let instanceContent = {
   addInstanceContent: function () {
+    this.wl.instanceContent.map(item => {
+      item.editStatus = false
+      return item
+    })
     this.wl.instanceContent.push({
       name: '', // 名称
       mirrorImg: '', // 镜像
@@ -50,11 +54,20 @@ let instanceContent = {
       },
       privilegeLevelContainer: false, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
-      editStatus: true // 编辑状态
+      editStatus: true, // 编辑状态
+      mountPoints: [], // 挂载点数组
+      showMountPoint: false // 是否显示添加挂载点
     })
   },
   editInstanceContent: function (index) {
-    this.wl.instanceContent[index].editStatus = !this.wl.instanceContent[index].editStatus
+    let { instanceContent } = this.wl
+    for (let i = 0; i < instanceContent.length; i++) {
+      if (i === index && instanceContent[i].editStatus === false) {
+        this.wl.instanceContent[i].editStatus = true
+      } else {
+        this.wl.instanceContent[i].editStatus = false
+      }
+    }
   },
   delInstanceContent: function (index) {
     this.wl.instanceContent.splice(index, 1)
@@ -219,6 +232,35 @@ let portMapping = {
     if (index !== -1) {
       this.wl.portMapping.splice(index, 1)
     }
+  }
+}
+
+// 数据卷
+let dataVolume = {
+  addDataVolume: function () {
+    this.dataFlag = true
+    this.wl.dataVolumes.push({
+      name1: '',
+      name2: '',
+      name3: ''
+    })
+  },
+  delDataVolume: function (index) {
+    this.wl.dataVolumes.splice(index, 1)
+  }
+}
+
+let mountPoint = {
+  addMountPoint: function (index) {
+    this.wl.instanceContent[index].mountPoints.push({
+      dataVolumeValue: '', // 数据卷值
+      targetPath: '', // 目标路径
+      mountSubPath: '', // 挂载子路径
+      permission: 'dx' // 权限值
+    })
+  },
+  delMountPoint: function (cIndex, mIndex) {
+    this.wl.instanceContent[cIndex].mountPoints.splice(mIndex, 1)
   }
 }
 
@@ -404,6 +446,8 @@ export default {
     ...mustRule,
     ...needRule,
     ...portMapping,
+    ...mountPoint,
+    ...dataVolume,
     ...change,
     axiosUtils: function (res, func) {
       // func()
