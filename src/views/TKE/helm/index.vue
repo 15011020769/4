@@ -363,10 +363,7 @@ export default {
       handler: function(data) {
         var arr = Object.keys(data);
         if (arr.length) {
-          // console.log(JSON.parse(data))
-          // for(let key in JSON.parse(data)){
-          //      console.log(key)
-          // }
+          this.newData=[]
           for (let key in data) {
             if (data[key] == 0) {
               // 插入newData数据
@@ -395,14 +392,10 @@ export default {
                   this.$store.commit("getFlag", this.getflags);
                   clearInterval(this.timeIds);
                   this.getHelmList()
+                  return
                 }
               }, 2000);
             } else if (data[key] == 1) {
-              //  if(!this.newData.length){
-              //   this.getflags = false;
-              //   this.$store.commit("getFlag", this.getflags);
-              //   clearInterval(this.timeIds);
-              // }
               this.number = 1;
               // let news = JSON.parse(JSON.stringify(this.newData))
               console.log(arr);
