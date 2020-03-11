@@ -21,6 +21,7 @@
             class="ml10"
             @change="nameSpaceList1"
           >
+          <!-- 命名空间 -->
             <el-option
               v-for="(item,index) in option1"
               :key="index"
@@ -35,6 +36,7 @@
             class="ml10"
             @change="nameSpaceList"
           >
+          <!-- 工作负载类型 -->
             <el-option
               v-for="(item,index) in option2"
               :key="index"
@@ -43,6 +45,7 @@
             ></el-option>
           </el-select>
           <el-select v-model="value3" placeholder="请选择Workload" size="mini" class="ml10">
+            <!-- 工作负载实例 -->
             <el-option
               v-for="(item,index) in option3"
               :key="index"
@@ -62,6 +65,7 @@
             class="ml10"
             @change="getPodData"
           >
+          <!-- pod第一项 -->
             <el-option
               v-for="(item,index) in option4"
               :key="index"
@@ -77,8 +81,9 @@
             class="ml10"
             @change="getLog"
           >
+          <!-- pod第二项 -->
             <el-option
-              v-for="(item,index) in option5"
+              v-for="(item,index) in  Array.from(new Set(option5))"
               :key="index"
               :label="item.label"
               :value="item.value"
@@ -87,7 +92,8 @@
         </el-form-item>
         <el-form-item label="其他选项">
           <span>自动刷新</span>
-          <el-switch v-model="autoRefresh" class="ml10"></el-switch>
+          <!-- 自动刷新 -->
+          <el-switch v-model="autoRefresh"  class="ml10"></el-switch>
           <el-select
             v-model="value6"
             placeholder="请选择"
@@ -95,6 +101,7 @@
             class="ml10"
             :disabled="listNumFlag"
           >
+          <!-- 选择多少条数据 -->
             <el-option
               v-for="item in option6"
               :key="item.value"
@@ -133,6 +140,7 @@ export default {
   data() {
     return {
       htmls: "",
+      autoRefreshFlag:false,//自动刷新禁用
       listNumFlag: true, //条数禁用
       option1: [],
       timeId: null,
@@ -189,6 +197,19 @@ export default {
     HeadCom,
     SEARCH
   },
+  watch:{
+    autoRefresh(val){
+      if (this.autoRefresh === true) {
+        console.log('kq')
+        var timeId = setInterval(() => {
+          this.nameSpaceList();
+        }, 20000);
+      } else {
+        console.log('gb')
+        this.nameSpaceList();
+      }
+    }
+  },
   created() {
     // this.value2 = this.option2[0].value;
     this.nameSpaceList();
@@ -212,9 +233,9 @@ export default {
     nameSpaceList1() {
       this.nameSpaceList();
     },
-    async nameSpaceList() {
+    async nameSpaceList() {//改变命名空间
       //第一项命名空间
-      this.option3 = [];
+      this.option3 = [];//工作负载实例
       this.option4 = [];
       this.option5 = [];
       var params = {
@@ -226,7 +247,7 @@ export default {
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.option1 = [];
+          this.option1 = [];//命名空间选项
           mes.items.forEach(item => {
             this.option1.push({
               value: item.metadata.name,
@@ -299,6 +320,7 @@ export default {
               });
             });
             this.value5 = this.option5[0].value;
+            this.autoRefresh=true;
             this.getLog();
           } else {
             this.option5 = [];
@@ -328,12 +350,14 @@ export default {
         this.value1 === "kube-node-lease" ||
         this.value1 === "kube-public"
       ) {
-        this.option3 = [];
+        this.option3 = [];//工作负载实例
         this.option4 = [];
         this.option5 = [];
         this.value3 = "Workload列表为空";
         this.value4 = "Pod列表为空";
         this.value5 = "Container列表为空";
+        this.htmls='';
+        this.autoRefresh=false;
         var params = {
           Method: "GET",
           Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
@@ -356,12 +380,16 @@ export default {
             this.value3 = "Workload列表为空";
             this.value4 = "Pod列表为空";
             this.value5 = "Container列表为空";
-            this.option3 = [];
+            this.option3 = [];////工作负载实例
             this.option4 = [];
             this.option5 = [];
+             this.htmls='';
+              
+             this.autoRefresh=false;
             this.listNumFlag = true;
             return;
           } else {
+            this.option3 = [];////工作负载实例
             mes.items.forEach(item => {
               this.option3.push({
                 value: item.metadata.name,
@@ -446,7 +474,8 @@ export default {
   margin: 4px;
 }
 .box-black {
-  height: 100%;
+  // height: 100%;
+  min-height: 400px;
   margin: 10px;
   padding: 10px 20px;
   color: #fff;
