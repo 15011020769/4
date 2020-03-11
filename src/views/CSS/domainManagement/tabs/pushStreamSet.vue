@@ -265,6 +265,9 @@ export default {
         });
         return;
       }
+      if (this.pushAuthKeyInfo.Enable !== 1) {
+        return void (this.pushUrl = `rtmp://${this.$route.query.Name}/live/${this.streamName}`)
+      }
       const timeHex = moment(
         `${moment(this.dataDateTime).format("YYYY-MM-DD")} ${moment(
           this.dateValue

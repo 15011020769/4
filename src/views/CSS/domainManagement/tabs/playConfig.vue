@@ -27,7 +27,7 @@
       <h1 class="newClear">播放地址生成器</h1>
       <div class="bgGray">
         <div class="newClear newList1">
-          <p>{{ $t("CSS.detailPlay.basicMessage") }}</p>
+          <p>{{ $t("CSS.detailPlay.playTheImmobilizerKey") }}</p>
           <p>{{ playAuthKeyInfo.AuthKey }}</p>
         </div>
         <div class="newClear newList1">
@@ -75,7 +75,7 @@
           {{ $t("CSS.builder.10")
           }}<span class="sub-text">({{ $t("CSS.detailPlay.1") }})</span>
         </h3>
-        <div class="newClear" v-for="(url, index) in playUrls" :key="index">
+        <div class="newClear" v-for="(url, index) in playUrls" :key="url.name">
           <div class="newList">
             <p>{{ url.name }}</p>
             <p>{{ url.value }}</p>

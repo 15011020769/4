@@ -14,7 +14,6 @@
         <el-tab-pane
           :label="$t('CSS.detailPlay.playbackConfiguration')"
           name="second"
-          lazy
         >
           <div class="wrapper">
             <play-config :active="activeName" />

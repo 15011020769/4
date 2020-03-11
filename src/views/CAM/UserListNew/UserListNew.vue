@@ -257,7 +257,7 @@
         </div>
 
         <div class="container-left">
-          <span>{{$t('CAM.userList.choose')}}</span>
+          <span>{{$t('CAM.userList.choose')}}({{selectedStrategiesWithoutGroup.length}})</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
@@ -450,7 +450,8 @@ export default {
           this.userGroup = []
           this.groupIds = []
           this.userGroupSelect = []
-          this.userGroupInfiniteId += 1; //调用初始化用户组数据
+          this.userGroups()
+          // this.userGroupInfiniteId += 1; //调用初始化用户组数据
         }
       } else {
         this.$message({
@@ -677,8 +678,7 @@ export default {
       this.axios
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
-          console.log(data);
-
+          console.log(data)
           this.loading = false;
           // 如果返回的data是String类型的，说明接口返回信息有误
           if (typeof data !== "string") {
@@ -795,7 +795,6 @@ export default {
               this.userGroupSelect.push(group)
             }
           })
-          console.log(this.groupIds)
           if (this.groupIds.length) {
             this.$nextTick(() => {
               this.userGroup.forEach(group => {
@@ -811,70 +810,12 @@ export default {
             $state && $state.loaded()
           }
         })
-        // .then(res => {
-        //   if (res.Response.Error === undefined) {
-        //     this.loading = false;
-        //     this.userArr = res.Response.GroupInfo;
-        //   } else {
-        //     this.loading = false;
-        //     let ErrTips = {};
-        //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //     this.$message({
-        //       message: ErrOr[res.Response.Error.Code],
-        //       type: "error",
-        //       showClose: true,
-        //       duration: 0
-        //     });
-        //   }
-        // })
-        // .then(() => {
-        //   this.$nextTick(() => {
-        //     Promise.all(
-        //       this.uids.map(Uid => {
-        //         const params = {
-        //           Version: "2019-01-16",
-        //           Uid
-        //         };
-        //         return this.axios.post(RELATE_USER, params);
-        //       })
-        //     ).then(ress => {
-        //       const groupInfo = this.userArr;
-        //       ress.forEach(res => {
-        //         if (res.Response.Error === undefined) {
-        //           groupInfo.forEach(item => {
-        //             res.Response.GroupInfo.forEach(val => {
-        //               if (val.GroupId === item.GroupId) {
-        //                 item.status = 1;
-        //               } else if (item.status !== 1) {
-        //                 item.status = 0;
-        //               }
-        //             });
-        //           });
-        //         } else {
-        //           let ErrTips = {
-        //             "ResourceNotFound.UserNotExist": "用戶不存在"
-        //           };
-        //           let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //           this.$message({
-        //             message: ErrOr[res.Response.Error.Code],
-        //             type: "error",
-        //             showClose: true,
-        //             duration: 0
-        //           });
-        //         }
-        //       });
-        //       this.userGroup = groupInfo;
-        //       this.groupLoading = false;
-        //     });
-        //   });
-        // });
     },
     //搜索用户组数据
     searchGroup() {
-      // this.userGroups();
-      this.userGroup = []
       this.groupPage = 1
-      this.userGroupInfiniteId += 1;
+      this.userGroup = []
+      this.userGroups()
     },
     //添加用户路由跳转
     addUser() {
@@ -910,7 +851,9 @@ export default {
         this.userGroup = []
         this.groupIds = []
         this.userGroupSelect = []
-        this.userGroupInfiniteId += 1
+        // this.userGroupInfiniteId += 1
+        // this.userGroups
+        this.userGroups()
       }
     },
     //点击授权
