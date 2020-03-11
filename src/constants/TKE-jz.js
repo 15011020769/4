@@ -23,3 +23,5 @@ export const TKE_KAFKA_LIST='ckafka/ListInstanceDetail'
 
 //topic二级数据查询
 export const TKE_TOPIC_LIST='ckafka/ListTopic'
+
+export const TKE_YUN_HARDDISK_LIST='cbs2/DescribeDisks'

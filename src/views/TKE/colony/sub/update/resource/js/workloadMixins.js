@@ -333,7 +333,7 @@ let dataReel={//数据卷
       name2: "",
       name3: ""
     };
-    this.upc.dataJuan.push(obj);
+    this.wl.dataJuan.push(obj);
   },
 
 
@@ -353,8 +353,8 @@ export default {
     ...change,
     ...dataReel,
     axiosUtils: function (res, func) {
-      func()
-      /* if (res.info !== undefined) {
+      // func()
+      if (res.info !== undefined) {
         this.$message({
           message: res.info,
           type: 'error',
@@ -366,7 +366,6 @@ export default {
       if (res.Response.Error === undefined) {
         func()
       } else {
-        console.log('error', res)
         let ErrTips = {}
         let ErrOr = Object.assign(ErrorTips, ErrTips)
         this.$message({
@@ -375,7 +374,7 @@ export default {
           showClose: true,
           duration: 2000
         })
-      } */
+      }
     }
   }
 }
