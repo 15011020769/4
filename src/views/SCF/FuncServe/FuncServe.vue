@@ -381,6 +381,7 @@
         };
         this.axios.post(NAME_SPACE_LIST, param).then(res => {
           if (res.Response.Error == undefined) {
+            this.SpaceValue = 'default'
             let Spacelist = res.Response.Namespaces
             const Originalnum = Spacelist.length
             const nownum = this.SpaceListK.length
@@ -493,6 +494,7 @@
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           FunctionName: this.FunctionName,
+          Namespace: this.SpaceValue
         };
         this.axios.post(SCF_DEL, param).then(res => {
           if (res.Response.Error == undefined) {
