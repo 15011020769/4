@@ -106,7 +106,7 @@ export default {
       policyForm: {
         Protocol: 'http',//cc防护类型，取值[http，https]
         Smode: 'matching',//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
-        ExeMode: 'alg',//执行策略模式，拦截或者验证码，取值[alg（验证码）, drop（拦截）]
+        ExeMode: 'drop',//执行策略模式，拦截或者验证码，取值[alg（验证码）, drop（拦截）]
       },//form表单对象
       ruleList: [
         {
@@ -136,8 +136,8 @@ export default {
   },
   methods:{
     initData() {
-      this.policyForm = { Protocol: 'http', Smode: 'matching', ExeMode: 'alg' };
-      this.ruleList = [{ key: 'host', Operator: 'include', Value: '' }];
+      this.policyForm = { Protocol: 'http', Smode: 'matching', ExeMode: 'drop' };
+      this.ruleList = [{ Skey: 'host', Operator: 'include', Value: '' }];
     },
     // 1.1.创建CC自定义策略
     createCCSelfDefinePolicy() {
@@ -282,9 +282,16 @@ export default {
     //新增一行
     addRow: function () {
       let des = {
-        Skey: 'host',
+        Skey: '',
         Operator: 'include',
         Value: '',
+      }
+      if(this.ruleList.length==1){
+        des.Skey = 'cgi'
+      } else if(this.ruleList.length==2){
+        des.Skey = 'ua'
+      } else if(this.ruleList.length==3){
+        des.Skey = 'referer'
       }
       this.ruleList.push(des)
     },

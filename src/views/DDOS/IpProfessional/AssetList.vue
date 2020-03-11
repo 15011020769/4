@@ -271,8 +271,7 @@
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key == 'IPText'">
-                      <span>{{ item.Value[item.Value.length - 1] }}</span>
-                      <!-- 此处值在获取的方法中转化时，使用push操作所以顺序为倒序，去最后一个值即为原数据的第一个值 -->
+                      <span>{{ item.Value[0] }}</span>
                     </div>
                     <!-- IP地址-->
                   </div>
@@ -546,18 +545,20 @@ export default {
             } else if (item.Key == 'GroupIpList') {
               // IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
               let IPText = []
-              let ipArr = item.Value.split(';')
-              for (const key in ipArr) {
-                if (ipArr.hasOwnProperty(key)) {
-                  const element = ipArr[key]
-                  let ipDetailArr = element.split('-')
+              let ipArr = item.Value.split(';');
+              for (let key=ipArr.length-1; key>=0; key--) {
+                const element = ipArr[key];
+                let ipDetailArr = element.split('-');
+                if(ipDetailArr[3] == '100') {
+                  IPText.splice(0, 0, ipDetailArr[0] + '(' + (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) + (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) + ')');
+                } else {
                   IPText.push(
                     ipDetailArr[0] +
-                      '(' +
-                      (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) +
-                      (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) +
-                      ')'
-                  )
+                    '(' +
+                    (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) +
+                    (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) +
+                    ')'
+                  );
                 }
               }
               const obj = {
