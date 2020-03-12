@@ -44,6 +44,7 @@
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"
             :end-placeholder="t('结束日期', 'WAF.jsrq')"
+            :picker-options="pickerOptions"
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
@@ -144,7 +145,12 @@ export default {
       allModule: [],
       showModules: [],
       showModulesCopy: [],
-      id: 0 // 用于父组件点击查询
+      id: 0, // 用于父组件点击查询
+      pickerOptions: {
+        disabledDate(time) {
+          return time > moment() || moment(new Date()).diff(time, 'days') > 30;
+        },
+      }
     }
   },
   components: {
