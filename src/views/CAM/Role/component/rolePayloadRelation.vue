@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="查看条件"
+    title="查看條件"
     :visible.sync="visible"
     width="1040px"
     @open="handleOpen"
@@ -96,7 +96,7 @@
         </el-table>
       </el-form-item>
       <el-form-item>
-        <p style="margin-top: -15px;">共{{ form.condition.length }}项</p>
+        <p style="margin-top: -15px;">共{{ form.condition.length }}項</p>
         <p style="margin-top:20px">
           <el-button size="small" @click="add_use">{{
             $t("CAM.Role.xzsytj")
@@ -171,7 +171,6 @@ export default {
   },
   methods: {
     handleOpen() {
-      console.log("======");
       this.form.condition = this.relationList.map(item => {
         return Object.assign({}, item);
       });
