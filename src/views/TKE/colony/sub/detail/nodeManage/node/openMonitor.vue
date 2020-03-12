@@ -39,13 +39,13 @@
           <div class="room-bottom">
             <div class="box-bottom">
               <!-- 节点监控数据 -->
-              <div class="box-bottom-right"  v-show="isCollapse=='k8s_node'">
+              <div class="box-bottom-right"  >
                 <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
                 <div class="box-top-left" style="margin-bottom:20px;">
-                  <EcharTKE :time='times' :series='series' style="width:400px;height:200px;" />
+                  <EcharTKE :time='times' :name="'haha'" :opData='series' style="width:400px;height:200px;" />
                 </div>
                 <div class="box-top-left" style="margin-bottom:20px;">
-                  <EcharTKE :time='times' :series='seriesError' style="width:400px;height:200px;" />
+                  <EcharTKE :time='times' :name="'haha'" :opData='seriesError' style="width:400px;height:200px;" />
                 </div>
                 <div class="box-top-left" style="margin-bottom:20px;">
                   <EcharTKE :time='times' :series='seriesCpus' style="width:400px;height:200px;" />
@@ -104,7 +104,8 @@
               </div>
             </div>
           </div>
-          <div class="box-bottom">
+          <div class="room-bottom">
+            <div class="box-bottom">
              <div class="box-bottom-right">
               <div class="box-top-left" style="margin-bottom:20px;">
                   <EcharTKE :time='podTimes' :series='podStatuErrs' style="width:400px;height:200px;" />
@@ -180,6 +181,7 @@
               </div>
             </div>
           </div>
+          </div>
         </el-tab-pane>
     </el-tabs>
 
@@ -192,6 +194,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
 import EcharTKE from '@/components/public/EcharTKE'
+import EcharTKELine from '@/components/public/EcharTKELine'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -201,7 +204,7 @@ export default {
       default: false
     },
   },
-  components:{TimeDropDown,EcharTKE},
+  components:{TimeDropDown,EcharTKE,EcharTKELine},
   data() {
     return {
       activeName: "k8s_node",
@@ -311,15 +314,7 @@ export default {
     this.clusterId = clusterId
     this.title = title
   },
-  // watch:{
-  //   activeName(val){
-  //     if(val == 'k8s_pod'){
-  //         this.GetDat()
-  //     } else {
-  //         this.GetDat()
-  //     }
-  //   }
-  // },
+
   methods: {
     GetDat(val){
       // console.log(val)
@@ -468,7 +463,7 @@ export default {
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -507,22 +502,19 @@ export default {
         if(res.Response.Error === undefined) {
             // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
     getNodeJob(){
-        console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["node_role","=","Node"]),
-        'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
+        'Conditions.2': JSON.stringify(["unInstanceId","in",this.Nodelist]),
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -548,9 +540,7 @@ export default {
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
@@ -566,7 +556,7 @@ export default {
         if(res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
-          if(this.isCollapse == "k8s_node"){
+          if(this.activeName == "k8s_node"){
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
             cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
             memUsageBytes = []
@@ -602,8 +592,8 @@ export default {
                 }
               }
               this.times = times;
-              this.series = [{name: '节点数量',type: 'line', data: pods}];
-              this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
+              this.series = pods
+              this.seriesError = statuErrs
               this.seriesCpus = [{name: '节点数量',type: 'line', data: cpus}];
               this.seriesCpuUseds = [{name: '节点数量',type: 'line', data: cpuUseds}];
               this.seriesCpuRequests = [{name: '节点数量',type: 'line', data: cpuRequests}];
@@ -718,7 +708,14 @@ export default {
                 this.podOutPacketFlows = [{name: '节点数量',type: 'line', data: podOutPacketFlows}];
                 this.podGPUUses = [{name: '节点数量',type: 'line', data: podGPUUses}];
                 this.podGPUSeeUses = [{name: '节点数量',type: 'line', data: podGPUSeeUses}];
-                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes}];
+                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes,itemStyle: {
+              normal: {
+                color: "#2072d9",
+                lineStyle: {
+                  color: "#2072d9"
+                }
+              }
+            }}];
                 this.podGPUSeeUseNodes = [{name: '节点数量',type: 'line', data: podGPUSeeUseNodes}];
                 this.podGPUUseRequests = [{name: '节点数量',type: 'line', data: podGPUUseRequests}];
                 this.podGPUSeeUseRequests = [{name: '节点数量',type: 'line', data: podGPUSeeUseRequests}];

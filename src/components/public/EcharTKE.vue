@@ -15,6 +15,7 @@
       scale: Number,
       period: String,
       series: [Array, String, Number],
+      name:String
     },
     mounted() {
       this.init();
@@ -149,7 +150,25 @@
             splitNumber: this.scale
           }],
 
-          series: this.series
+          series: [{
+            labelLine: {
+              normal: {
+                show: false
+              }
+            },
+            name:this.name,
+            type: "line", // 设置图表主题
+            data: this.opData,
+            symbol: "none",
+            itemStyle: {
+              normal: {
+                color: "#2072d9",
+                lineStyle: {
+                  color: "#2072d9"
+                }
+              }
+            }
+          }]
         });
         window.addEventListener("resize", () => {
           myChart.resize();
