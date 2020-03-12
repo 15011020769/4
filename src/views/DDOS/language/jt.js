@@ -349,6 +349,8 @@ module.exports = {
       Advanced_policy: '高级安全策略',
       Disable_protocol: '禁用协议',
       Other_agreements: '其他协议',
+      port_number: '端口号',
+      port_action: '动作',
       Start_portnumber: '开始端口号',
       End_portnumbe: '结束端口号',
       Message_features: '报文过滤特征',

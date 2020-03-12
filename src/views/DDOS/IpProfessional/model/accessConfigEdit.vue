@@ -206,7 +206,6 @@ export default {
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
       var regNUM = /(^[1-9]\d*$)/;
       this.checkflg = true;
-      console.log(arr)
       if(this.EnidData.SourceType=="2"){//IP回源
         for(let i=0; i<arr.length/2; i++) {
           if(!regIP.test(arr[i*2]) || !regNUM.test(arr[i*2 + 1])) {
@@ -219,7 +218,6 @@ export default {
         //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
         // }
       }
-      console.log(this.checkflg)
     }
   }
 };
