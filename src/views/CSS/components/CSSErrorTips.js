@@ -1,7 +1,7 @@
 let CSSErrorTips = {
   'InternalError': '內部錯誤',
   'InternalError.ArgsNotMatch': '針對添加轉碼範本的接口',
-  'InternalError.ConfInUsed': '範本使用中',
+  'InternalError.ConfInUsed': '範本正在使用中，請先刪除綁定關係再刪除',
   'InternalError.ConfNotFound': '範本不存在',
   'InternalError.ConfOutLimit': '範本數量超過顯示',
   'InternalError.InvalidInput': '參數檢驗未通過',

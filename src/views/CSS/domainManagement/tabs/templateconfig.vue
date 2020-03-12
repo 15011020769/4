@@ -142,7 +142,7 @@
         @closeWaterModel="closeWaterModel"
         @preview="previewWatermark"
       />
-      <el-dialog :visible.sync="previewDialog" title="预览">
+      <el-dialog width="800px" :visible.sync="previewDialog" title="预览">
         <div style="position: relative;">
           <img
             src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png"
@@ -229,6 +229,7 @@ export default {
         position: 'absolute',
         'max-width': '200px',
         'max-height': '112px',
+        width: `${0.01 * obj.Width * 760}px`,
         top: `${0.01 * obj.YPosition * 430}px`,
         left: `${0.01 * obj.XPosition * 760}px`
       }

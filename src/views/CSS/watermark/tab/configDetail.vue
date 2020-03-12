@@ -10,12 +10,14 @@
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
       <h3>水印配置</h3>
-      <el-button type="text" @click="onEdit">{{$t('CSS.watermark.12')}}</el-button>
+      <el-button type="text" @click="onEdit">{{
+        $t("CSS.watermark.12")
+      }}</el-button>
     </el-row>
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <label>{{$t('CSS.watermark.7')}}</label>
+          <label>{{ $t("CSS.watermark.7") }}</label>
           <div class="watermark-wrap">
             <img :src="selectItem.PictureUrl" />
           </div>
@@ -23,25 +25,25 @@
       </li>
       <li>
         <el-row type="flex">
-          <label>{{$t('CSS.watermark.8')}}</label>
+          <label>{{ $t("CSS.watermark.8") }}</label>
           <div class="text-black">{{ selectItem.WatermarkName }}</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>{{$t('CSS.watermark.9')}}</label>
+          <label>{{ $t("CSS.watermark.9") }}</label>
           <div class="text-black">{{ selectItem | position }}</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>X{{$t('CSS.watermark.10')}}</label>
+          <label>X{{ $t("CSS.watermark.10") }}</label>
           <div class="text-black">{{ selectItem.XPosition }}%</div>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <label>Y{{$t('CSS.watermark.10')}}</label>
+          <label>Y{{ $t("CSS.watermark.10") }}</label>
           <div class="text-black">{{ selectItem.YPosition }}%</div>
         </el-row>
       </li>
@@ -54,7 +56,9 @@
       <li>
         <el-row type="flex">
           <div>
-            <el-button type="text" @click="previewDialog=true">預覽</el-button>
+            <el-button type="text" @click="previewDialog = true"
+              >預覽</el-button
+            >
           </div>
           <!-- <div class="text-black">{{ selectItem.CosBucket }}</div> -->
         </el-row>
@@ -72,7 +76,15 @@
         />
         <img
           :src="selectItem.PictureUrl"
-          :style="'position: absolute;width:' + .01 * selectItem.Width * 760 + 'px;left:' + .01 * selectItem.XPosition * 760 + 'px;top:' + .01 * selectItem.YPosition * 430 + 'px'"
+          :style="
+            'position: absolute;width:' +
+              0.01 * selectItem.Width * 760 +
+              'px;left:' +
+              0.01 * selectItem.XPosition * 760 +
+              'px;top:' +
+              0.01 * selectItem.YPosition * 430 +
+              'px'
+          "
         />
       </div>
     </el-dialog>
