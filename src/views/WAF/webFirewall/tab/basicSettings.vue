@@ -10,7 +10,7 @@
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">{{t('WAF状态', 'WAF.wafstatus')}}</el-col>
               <el-col>
-                <el-switch v-model="domain.statusBool" />
+                <el-switch v-model="domain.statusBool" @change="onChangeStatus" />
               </el-col>
             </el-row>
             <el-row type="flex" style="margin-top: 10px">
@@ -75,11 +75,24 @@
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
-              <el-col class="subText" :span="4">流量模式</el-col>
+              <el-col class="subText" :span="4">绑定状态</el-col>
+              <el-col>
+                {{DOMAIN_STATE[domain.State]}} <i v-if="abnormal.includes(domain.State)" class="el-icon-loading" /><i v-if="domain.State === 0" class="el-icon-success" />
+              </el-col>
+            </el-row>
+            <el-row type="flex" :gutter="20" align="middle" justify="center">
+              <el-col class="subText" :span="4">
+                流量模式
+                <el-tooltip class="item" effect="dark" :content="t('当WAF关闭或者绑定状态为正在绑定LB、绑定LB成功、正在解绑LB、解绑LB成功时，不能切换流量模式', 'WAF.dwafgbhz')" placement="right">
+                  <i class="el-icon-info" />
+                </el-tooltip>
+              </el-col>
               <el-col>
                 <el-radio-group size="small" v-model="domain.FlowMode">
                   <el-radio-button :label="0">{{t('镜像模式', 'WAF.jxms')}}</el-radio-button>
-                  <el-radio-button :label="1" disabled title="陆续开放">清洗模式</el-radio-button>
+                  <el-tooltip class="item" effect="dark" :content="t('域名负载均衡所在区域不支持清洗模式', 'WAF.ymlbdybzc')" placement="top-end">
+                    <el-radio-button :label="1" disabled>清洗模式</el-radio-button>
+                  </el-tooltip>
                 </el-radio-group>
               </el-col>
             </el-row>
@@ -163,11 +176,12 @@ import {
   MODIFY_HOST_MODE,
   DESCRIBE_AREABAN_AREAS,
   DESCRIBE_AREABAN_SUPPORT_AREAS,
-  MODIFY_AREA_BAN_STATUS
+  MODIFY_AREA_BAN_STATUS,
+  MODIFY_HOST_STATUS
 } from '@/constants'
 import { flatObj } from '@/utils'
 import { ErrorTips } from "@/components/ErrorTips"
-import { COMMON_ERROR, POLICY_RULE_ACTION_ARR } from '../../constants'
+import { COMMON_ERROR, POLICY_RULE_ACTION_ARR, DOMAIN_STATE  } from '../../constants'
 let loading
 
 export default {
@@ -181,6 +195,8 @@ export default {
   },
   data() {
     return {
+      abnormal: [4, 5, 6, 9],
+      DOMAIN_STATE,
       addressModel: false,
       advanceSetting: false,
       webShellStatus: false,
@@ -211,7 +227,7 @@ export default {
   watch: {
     domain(n) {
       if (n) {
-      loading = this.$loading()
+        loading = this.$loading()
         this.getWebShellStatus(n)
         this.getAreaBan(n)
         this.getAreaBanSupport()
@@ -222,6 +238,35 @@ export default {
     addressBan,
   },
   methods:{
+    onChangeStatus(status) {
+       this.domain.statusBool = !status
+      if (status) {
+        this.modifyHostStatus(this.domain, status)
+        return
+      }
+      this.$confirm(this.t('关闭后，WAF将不再对经过负载均衡监听器的流量进行防护，WAF所有功能也将失效。确认关闭？', 'WAF.gbhjbz'), this.t('确认', 'WAF.qr'), {
+        confirmButtonText: this.t('确认', 'WAF.qr'),
+        cancelButtonText: '取消',
+        type: ''
+      }).then(() => {
+        this.modifyHostStatus(this.domain, status)
+      })
+    },
+    modifyHostStatus(waf, status) {
+      this.loading = true
+      this.axios.post(MODIFY_HOST_STATUS, flatObj({
+        Version: '2018-01-25',
+        HostsStatus: [{
+          Domain: waf.Domain,
+          DomainId: waf.DomainId,
+          Status: Number(status)
+        }]})
+      ).then(resp => {
+        this.generalRespHandler(resp, () => {
+          this.domain.statusBool = status
+        }, COMMON_ERROR, '切换成功')
+      })
+    },
     showAreaBanDialog() {
       this.addressModel = true
     },
@@ -258,14 +303,14 @@ export default {
       }).then(resp => {
         this.generalRespHandler(resp, () => {
           this.domain.Mode = status
-        }, COMMON_ERROR, '切换模式成功')
+        }, COMMON_ERROR, this.t('切换模式成功', 'WAF.qhmscg'))
       })
     },
     onChangeWebShellStatus(status) {
       if (status === 0) {
         this.webShellStatus = 1
-        this.$confirm('恶意文件检测功能关闭后，WAF将无法拦截恶意Webshell上传行为。', '关闭恶意文件检测', {
-          confirmButtonText: '确定',
+        this.$confirm(this.t('恶意文件检测功能关闭后，WAF将无法拦截恶意Webshell上传行为。', 'WAF.eywjjcgn'), this.t('关闭恶意文件检测', 'WAF.gbeywjjc'), {
+          confirmButtonText: this.t('确定', 'WAF.qd'),
           cancelButtonText: '取消',
           type: 'warning',
           center: true,
@@ -298,7 +343,7 @@ export default {
       })).then(resp => {
         this.generalRespHandler(resp, () => {
           this.getWebShellStatus(this.domain.Domain)
-        }, COMMON_ERROR, '切换“恶意文件上传”状态成功')
+        }, COMMON_ERROR, this.t('切换“恶意文件上传”状态成功', 'WAF.qheywjjc'))
       })
     },
   }
@@ -346,5 +391,8 @@ export default {
   dd {
     display: inline-block;
   }
+}
+.el-icon-success {
+  color: rgb(93, 186, 107);
 }
 </style>

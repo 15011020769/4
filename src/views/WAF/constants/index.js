@@ -2,6 +2,17 @@ import { obj2Arr, addVal2Key, isValidIPAddressNew, isValidIPv6, arr2Obj } from '
 export const SAFE_OVERVIEW_SHOWMODULE_KEY = 'waf:safeOverView:showModules'
 export const BUSINESS_SHOWMODULE_KEY = 'waf:business:showModules'
 export const ORDER_INFO = 'waf:order_info'
+export const DOMAIN_STATE = {
+  0: '正常',
+  3: '過期',
+  4: '正在綁定LB',
+  5: '綁定LB成功',
+  6: '正在解綁LB',
+  7: '解綁LB失敗',
+  8: '綁定LB失敗',
+  9: '解綁LB成功',
+  10: '內部錯誤',
+}
 /** 套餐包信息 */
 export const CLB_PACKAGE_CFG_TYPES = {
 
