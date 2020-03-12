@@ -2,13 +2,14 @@
   <div class="container">
     <div class="editTitle">
       <p class="title">
-        <i class="el-icon-back" @click="$router.go(-1)"></i> 日志详情
+        <i class="el-icon-back" @click="$router.go(-1)"></i>
+        {{t('日志详情', 'WAF.rzxq')}}
       </p>
       <div class="main">
         <el-card class="basic">
           <el-row style="margin-bottom: 10px;">
-            <el-col :span="16"><h3>基础信息</h3></el-col>
-            <el-col :span="8"><h3>攻击IP详情</h3></el-col>
+            <el-col :span="16"><h3>{{t('基础信息', 'WAF.jcxx')}}</h3></el-col>
+            <el-col :span="8"><h3>{{t('攻击IP详情', 'WAF.gjipxq')}}</h3></el-col>
           </el-row>
           <el-row>
             <el-col :span="16">
@@ -21,7 +22,7 @@
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">攻击类型</div>
+                    <div class="w120">{{t('攻击类型', 'WAF.gjlx')}}</div>
                     <div>{{log.AttackType}}</div>
                   </el-row>
                 </el-col>
@@ -31,7 +32,7 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w80">地区</div>
+                    <div class="w80">{{t('地区', 'WAF.dq')}}</div>
                     <div>{{log.IpinfoState}}</div>
                   </el-row>
                 </el-col>
@@ -50,13 +51,13 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">聚合攻击次数</div>
+                    <div class="w120">{{t('聚合攻击次数', 'WAF.jhgjcs')}}</div>
                     <div>{{log.Count}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">攻击源IP</div>
+                    <div class="w120">{{t('攻击源IP', 'WAF.gjyip')}}</div>
                     <div>{{log.AttackIp}}</div>
                   </el-row>
                 </el-col>
@@ -66,7 +67,7 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w80">国家</div>
+                    <div class="w80">{{t('国家', 'WAF.country')}}</div>
                     <div>{{log.IpinfoNation}}</div>
                   </el-row>
                 </el-col>
@@ -85,13 +86,13 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">命中规则ID</div>
+                    <div class="w120">{{t('命中规则ID', 'WAF.mzgzid')}}</div>
                     <div>{{log.RuleId}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">命中规则名称</div>
+                    <div class="w120">{{t('命中规则名称', 'WAF.mzgzmc')}}</div>
                     <div>{{log.RuleName}}</div>
                   </el-row>
                 </el-col>
@@ -107,7 +108,7 @@
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w80">经度</div>
+                    <div class="w80">{{t('经度', 'WAF.jingdu')}}</div>
                     <div>{{log.IpinfoDimensionality}}</div>
                   </el-row>
                 </el-col>
@@ -120,13 +121,13 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">请求方法</div>
+                    <div class="w120">{{t('请求方法', 'WAF.qqff')}}</div>
                     <div>{{log.Method}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">风险等级</div>
+                    <div class="w120">{{t('风险等级', 'WAF.fxdj')}}</div>
                     <div class="h" v-if="log.RiskLevel === '1'">高危</div>
                     <div class="c" v-if="log.RiskLevel === '2'">中危</div>
                     <div v-if="log.RiskLevel === '3'">低危</div>
@@ -138,13 +139,13 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w80">运营商</div>
+                    <div class="w80">{{t('运营商', 'WAF.yys')}}</div>
                     <div>{{log.IpinfoDetail}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w80">纬度</div>
+                    <div class="w80">{{t('纬度', 'WAF.wd')}}</div>
                     <div>{{log.IpinfoLongtitude}}</div>
                   </el-row>
                 </el-col>
@@ -157,13 +158,13 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">攻击时间</div>
+                    <div class="w120">{{t('攻击时间', 'WAF.gjsj')}}</div>
                     <div>{{log.AttackTime}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">匹配来源</div>
+                    <div class="w120">{{t('匹配来源', 'WAF.pply')}}</div>
                     <div>{{ARGS_MAP[log.ArgsName || "none"] || "其他"}}</div>
                   </el-row>                  
                 </el-col>
@@ -176,14 +177,16 @@
               <el-row type="flex">
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">请求UUID</div>
+                    <div class="w120">{{t('请求UUID', 'WAF.qquuid')}}</div>
                     <div>{{log.Uuid}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
-                    <div class="w120">执行动作</div>
-                    <div :class="log.Status === '1' ? 'h' : ''">{{log.Status === '1' ? '拦截' : '观察'}}</div>
+                    <div class="w120">{{t('执行动作', 'WAF.zxdz')}}</div>
+                    <div :class="log.Status === '1' ? 'h' : ''">
+                      {{log.Status === '1' ? this.t('拦截', 'WAF.lj') : this.t('观察', 'WAF.gc')}}
+                    </div>
                   </el-row>                  
                 </el-col>
               </el-row>
@@ -194,7 +197,7 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-row type="flex">
-                  <div class="w120">请求URI</div>
+                  <div class="w120">{{t('请求URI', 'WAF.qquri')}}</div>
                   <div>{{log.Uri}}</div>
                 </el-row>
               </el-row>
@@ -204,7 +207,7 @@
             <el-col :span="16">
               <el-row type="flex">
                 <el-row type="flex">
-                  <div class="w120">攻击内容</div>
+                  <div class="w120">{{t('攻击内容', 'WAF.gjlr')}}</div>
                   <div>{{log.AttackContent}}</div>
                 </el-row>                
               </el-row>
@@ -214,11 +217,11 @@
         </el-card>
 
         <el-card>
-          <h3>详情信息</h3>
+          <h3>{{t('详情', 'WAF.xq')}}信息</h3>
           <el-row>
             <el-col v-if="log.HttpLog && log.HttpLog.PROCOTOL">
               <el-row type="flex">
-                <div class="w120">协议版本</div>
+                <div class="w120">{{t('协议版本', 'WAF.xybb')}}</div>
                 <div>{{log.HttpLog.PROCOTOL}}</div>
               </el-row>              
             </el-col>

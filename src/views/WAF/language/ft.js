@@ -659,7 +659,17 @@ module.exports = {
       gbeywjjc: '關閉惡意文件檢測',
       qheywjjc: '切換「惡意文件上傳」狀態成功',
       xytime: '響應時間',
-      fwcs: '訪問次數'
+      fwcs: '訪問次數',
+      rzxq: '日誌詳情',
+      gjipxq: '攻擊IP詳情',
+      jhgjcs: '聚合攻擊次數',
+      country: '國家',
+      mzgzid: '命中規則ID',
+      mzgzmc: '命中規則名稱',
+      pply: '匹配來源',
+      qquuid: '請求UUID',
+      qquri: '請求URI',
+      xybb: '協議版本',
     },
     COM: require('@/components/language/ft'),
 }
