@@ -374,6 +374,7 @@
         this._GetMonitorData()
       },
       GetDat(data) {
+        this.tabload = true
         this.Period = data[0]
         this.Time = data[1]
         this._GetMonitorData()
