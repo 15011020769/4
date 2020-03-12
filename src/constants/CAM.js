@@ -43,7 +43,8 @@ export const GET_SERVICE_API_LIST = "cam/getServiceApiList"
 
 //角色
 export const GET_ROLE = 'cam2/GetRole'
-export const LIST_ATTACHE = 'cam2/ListAttachedRolePolicies'
+
+export const LIST_ATTACHE = 'cam/ListAttachedRolePolicies'
 export const DEACH_ROLE = 'cam2/DetachRolePolicy'
 export const UPDATE_ROLE = 'cam2/UpdateRoleDescription'
 export const UPDATE_ASSUME = 'cam2/UpdateAssumeRolePolicy'

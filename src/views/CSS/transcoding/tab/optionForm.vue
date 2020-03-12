@@ -179,6 +179,7 @@ export default {
       }
 
       const descRegex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
+      console.log(this.ruleForm.Description);
 
       if (!descRegex.test(this.ruleForm.Description)) {
         this.$message({
@@ -383,8 +384,11 @@ export default {
 
     radioChange(rows) {
       const currentItem = TEMPLATE_TYPE.find(item => item.value === rows);
-      this.ruleForm.Height = currentItem.Height;
-      this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
+      if (this.selectType !== "純音頻") {
+        this.ruleForm.Height = currentItem.Height;
+        this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
+      }
+
       this.selectType = rows;
     },
 

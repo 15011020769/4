@@ -110,6 +110,7 @@ export default {
     },
     modifyCert () {
       const { CertName, HttpsCrt, HttpsKey, CertId, enable, Status } = this.form
+
       this.axios.post(MODIFY_LIVE_CERT, {
         Version: '2018-08-01',
         CertId,

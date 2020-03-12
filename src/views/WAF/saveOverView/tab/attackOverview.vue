@@ -44,6 +44,7 @@
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"
             :end-placeholder="t('结束日期', 'WAF.jsrq')"
+            :picker-options="pickerOptions"
           ></el-date-picker>
         </el-row>
         <el-row class="iconBtn">
@@ -63,11 +64,19 @@
         :id="id"
       />
     </div>
-    <DownLoadImg
-      :dialogDownloadVisible="dialogDownloadVisible"
-      @imgSaveMethod="saveImg"
-      @onCancel="onCancel"
-    />
+    <el-dialog
+      :title="t('生成报表', 'WAF.scbb')"
+      width="40%"
+      :visible.sync="dialogDownloadVisible"
+      :before-close='onCancel'
+      destroy-on-close
+    >
+      <DownLoadImg
+        :dialogDownloadVisible="dialogDownloadVisible"
+        @imgSaveMethod="saveImg"
+        @onCancel="onCancel"
+      />
+    </el-dialog>
     <el-dialog
       :title="t('自定义展示模板', 'WAF.zdyzsmb')"
       :visible.sync="dialogSetVisible"
@@ -144,7 +153,12 @@ export default {
       allModule: [],
       showModules: [],
       showModulesCopy: [],
-      id: 0 // 用于父组件点击查询
+      id: 0, // 用于父组件点击查询
+      pickerOptions: {
+        disabledDate(time) {
+          return time > moment() || moment(new Date()).diff(time, 'days') > 30;
+        },
+      }
     }
   },
   components: {

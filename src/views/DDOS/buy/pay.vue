@@ -68,7 +68,7 @@
             <!-- <span>購買/開通/續費 均可開票，購買成功後可前往 控制台 > 費用中心<a href="#">開發票</a></span> -->
             <span class="allTotal">總計費用：<span class="allMoneySpan"> NT$<span>{{this.showPrice(allData1.payMoney,2)}}</span></span></span>
             <!-- <el-button class="payBtnOne">代理支付</el-button> -->
-            <el-button class="payBtnTwo" @click="next">自行支付</el-button>
+            <el-button class="payBtnTwo" @click="next">立即支付</el-button>
           </div>
         </div>
       </div>

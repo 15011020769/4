@@ -360,7 +360,6 @@ export default {
       for(let i=0; i<selection.length; i++) {
         this.partD2.push(selection[i].RuleId);
       }
-      console.log(this.partD2)
     },
     //全选
     checkBoxAll(val){
@@ -466,7 +465,6 @@ export default {
     },
     // 批量导入确定按钮
     batchImportSure(isShowFalse) {
-      setTimeout(this.describleL4Rules(), 2000);
       this.dialogVisible1 = isShowFalse;
     },
     //批量导入弹框关闭按钮

@@ -13,15 +13,20 @@
       <el-tab-pane name="ip" :label="t('ip情报特征', 'WAF.qbtz')" />
       <el-tab-pane name="diy" :label="t('自定义会话特征', 'WAF.zdyhhtz')" />
     </el-tabs>
-    <PublicTable :ipSearch="ipSearch" v-if="tabsFlag !== 'diy'" :tabsFlag="tabsFlag" />
+    <PublicTable
+      :ipSearch="ipSearch"
+      v-if="tabsFlag !== 'diy'"
+      :tabsFlag="tabsFlag"
+    />
     <DiyTable :ipSearch="ipSearch" v-if="tabsFlag === 'diy'" />
   </div>
 </template>
 <script>
 import PublicTable from './module/ipOrxyTable'
 import DiyTable from './module/diyTable'
+import { type } from 'os'
 export default {
-  data() {
+  data () {
     return {
       tabsFlag: 'diy',
       active: 'diy'
@@ -29,7 +34,10 @@ export default {
   },
 
   props: {
-    ipSearch: ''
+    ipSearch: {
+      type: String,
+      default: ''
+    }
   },
 
   components: {
@@ -37,7 +45,7 @@ export default {
     DiyTable
   },
   methods: {
-    tabChange(tabs) {
+    tabChange (tabs) {
       this.tabsFlag = tabs.name
     }
   }
@@ -45,5 +53,4 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 </style>

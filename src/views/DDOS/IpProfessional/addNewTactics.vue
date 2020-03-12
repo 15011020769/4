@@ -89,13 +89,13 @@
       </div>
       <!-- 禁用端口 -->
       <div class="childContTit">
-        <h2>禁用端口</h2>
+        <h2>端口號</h2>
         <table class="table-div">
           <tr class="t-head">
             <td>{{ $t("DDOS.Proteccon_figura.Agreement") }}</td>
             <td>{{ $t("DDOS.Proteccon_figura.dklx") }}</td>
-            <td>{{ $t("DDOS.Proteccon_figura.Start_portnumber") }}</td>
-            <td>{{ $t("DDOS.Proteccon_figura.End_portnumbe") }}</td>
+            <td>{{ $t("DDOS.Proteccon_figura.port_number") }}</td>
+            <td>{{ $t("DDOS.Proteccon_figura.port_action") }}</td>
             <td>操作</td>
           </tr>
           <tr class="t-body" v-for="(item, index) in tags" :key="index">
@@ -103,8 +103,6 @@
               <el-select class="selectChange" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
-                <el-option label="ICMP" value="icmp"></el-option>
-                <el-option label="ALL" value="all"></el-option>
               </el-select>
             </td>
             <td>
@@ -117,19 +115,25 @@
                 ></el-option>
               </el-select>
             </td>
-            <td>
+            <td><!-- 端口号 -->
               <el-input
                 class="inputChange"
-                v-model="item.DPortStart"
+                v-model="item.portNum"
                 autocomplete="off"
               ></el-input>
             </td>
-            <td>
-              <el-input
-                class="inputChange"
-                v-model="item.DPortEnd"
-                autocomplete="off"
-              ></el-input>
+            <td><!-- 动作 -->
+              <el-select
+                v-model="item.Action"
+                :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
+              >
+                <el-option
+                  v-for="(item, index) in actionList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
+              </el-select>
             </td>
             <td>
               <a v-on:click="removeRow(index, 1)" v-show="index >= 0">{{
@@ -214,9 +218,13 @@
               ></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchBegin" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
-                <el-option :label="$t('DDOS.updateddos.jc')" value="begin_l5"></el-option>
-                <el-option :label="$t('DDOS.updateddos.bjc')" value="no_match"></el-option>
+              <el-select class="selectChange1" v-model="item.MatchBegin">
+                <el-option
+                  v-for="(item, index) in matchBeginList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
               </el-select>
             </td>
             <td>
@@ -473,11 +481,23 @@
               scope.row.RemoveSwitch == 0 ? "不自動剝離" : "自動剝離"
             }}</template>
           </el-table-column>
-          <el-table-column
-            :label="$t('DDOS.Proteccon_figura.Policy_switch')"
-            prop="OpenStatus"
-            >{{$t('DDOS.AccesstoCon.AccOpen')}}</el-table-column
-          >
+          <!-- 策略开关 -->
+          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-if="nameFlag">
+            {{$t('DDOS.AccesstoCon.AccOpen')}}
+          </el-table-column>
+          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-else-if="!nameFlag">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.OpenStatus" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" >
+                <el-option
+                  v-for="(item, index) in openStatusList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
               <el-button
@@ -618,6 +638,9 @@
       :before-close="handleCloseAddBw"
     >
       <div class="contantList newClear">
+        <p class="tc-15-msg" v-if="checkflg == false">
+          {{this.errorMsg}}
+        </p>
         <div class="newClear">
           <p>地址</p>
           <p>
@@ -693,8 +716,8 @@ export default {
       tags4: [],
       tags5: [],
       tableDataName1: "",
+      //禁用端口数据
       portArr: [
-        //禁用端口数据
         {
           value: 0,
           label: "目的端口"
@@ -708,7 +731,11 @@ export default {
           label: "目的端口和源端口"
         }
       ],
+      actionList: [{value: 'drop', label: '丟棄'}, {value: 'transmit', label: '轉發'}],
+      openStatusList: [{value: 1, label: '開啟'}, {value: 0, label: '關閉'}],
       IpBlackWhiteLists: [], //黑白名单数据
+      checkflg: true,
+      errorMsg: '',
       tableDataBegin2: [], //水印防护
       tableDataEnd: [],
       currentPage: 1,
@@ -719,6 +746,7 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       filterConrent: "",
+      matchBeginList: [{label: '不檢測', value: 'no_match'},{label: 'IP頭開始檢查', value: 'begin_l3'},{label: 'TCP/UDP頭開始檢查', value: 'begin_l4'},{label: '載荷開始檢查', value: 'begin_l5'}],//报文过滤特征检测
       DdisableProtocol: [], //禁用协议
       radios1: "關閉", //拒绝海外流量
       radios2: "關閉",
@@ -764,14 +792,14 @@ export default {
     };
   },
   mounted() {
-    console.log(this.policyTemp);
+    // console.log(this.policyTemp);
   },
   created() {
     //根据有无对象传入，判断是添加还是配置
     if (this.policy.PolicyId == undefined) {
     } else {
       //配置
-      console.log(this.policyTemp);
+      // console.log(this.policyTemp);
       this.policyTemp = JSON.parse(JSON.stringify(this.policy));
       this.tacticsName = this.policyTemp.PolicyName;
       this.nameFlag = false;
@@ -789,7 +817,9 @@ export default {
         this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
-      console.log(this.tags)
+      for(let i in this.tags) {
+        this.tags[i].portNum = this.tags[i].DPortStart + '-' + this.tags[i].DPortEnd;
+      };
       this.tags1 = this.policyTemp.PacketFilters; //报文
       // var speedLimit="";
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
@@ -1039,8 +1069,9 @@ export default {
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         for (let i in this.tags) { 
           params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
-          params["PortLimits." + i + ".DPortStart"] = this.tags[i].DPortStart; //开始目的端口，取值范围[0,65535]
-          params["PortLimits." + i + ".DPortEnd"] = this.tags[i].DPortEnd; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+          let portArr = this.tags[i].portNum.split('-');
+          params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
+          params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
           this.useKind = this.tags[i].Kind;
           if (this.tags[i].Kind == 0) {
             params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
@@ -1225,6 +1256,10 @@ export default {
     addRow: function(type) {
       var des = this.copyObj();
       if (type == 1) {
+        if (this.tags.length >= 16) {
+          this.$message("禁用端口數量不能超過16條");
+          return;
+        }
         des.Action = "drop";
         if (this.useKind == 1) {
           des.SPortEnd = "";
@@ -1232,26 +1267,27 @@ export default {
         }
         this.tags.push(des);
       } else if (type == 2) {
-        if (this.tags1.length == 5) {
+        if (this.tags1.length >= 5) {
           this.$message("報文過濾特徵不能超過5條");
           return;
         }
         des.Depth = "100";
+        des.MatchBegin = "no_match";
         this.tags1.push(des);
       } else if (type == 3) {
-        if (this.tags3.length == 4) {
+        if (this.tags3.length >= 4) {
           this.$message("最多添加有四條協議限速");
           return;
         }
         this.tags3.push(des);
       } else if (type == 4) {
-        if (this.tags4.length == 5) {
+        if (this.tags4.length >= 5) {
           this.$message("端口段不能超過五條");
           return;
         }
         this.tags4.push(des);
       } else if (type == 5) {
-        if (this.tags5.length == 5) {
+        if (this.tags5.length >= 5) {
           this.$message("端口段不能超過五條");
           return;
         }
@@ -1330,13 +1366,29 @@ export default {
     },
     //添加黑白确定按钮
     addBWSure() {
-      this.dialogModelAddBw = false;
+      this.checkflg = true;
       let arr = this.blackWhiteText.split(/[\n]/);
+      //IP数量不能超过100
+      if(arr.length>100 || (this.IpBlackWhiteLists.length+arr.length)>100){
+        this.checkflg = false;
+        this.errorMsg = 'IP支持数量不能超过100个';
+        return
+      }
+      //校验IP
+      var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      for(let i=0; i<arr.length; i++) {
+        if(!regIP.test(arr[i])) {
+          this.checkflg = false;
+          this.errorMsg = 'IP ' + arr[i] + ' 非法';
+          return
+        }
+      }
       for (let i in arr) {
         let temp = { Type: this.blackWhite, Ip: arr[i] };
         this.IpBlackWhiteLists.push(temp);
       }
       this.totalItems = this.IpBlackWhiteLists.length;
+      this.dialogModelAddBw = false;
     },
     //删除黑白名单
     deleteRowBW(index, row) {
@@ -1618,5 +1670,18 @@ a {
 }
 .tooltip_text {
   font-size: 14px;
+}
+.tc-15-msg {
+  color: #b43537;
+  border: 1px solid #f6b5b5;
+  background-color: #fcecec;
+  background: #fcecec;
+  border-radius: 0;
+  font-size: 12px;
+  line-height: inherit;
+  padding: 10px 30px 10px 20px;
+  position: relative;
+  max-width: 1360px;
+  margin-block-end: 1em;
 }
 </style>

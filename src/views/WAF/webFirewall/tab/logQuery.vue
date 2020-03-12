@@ -32,7 +32,7 @@
             :end-placeholder="t('结束日期', 'WAF.jsrq')">
           </el-date-picker>
         </div>
-        <div class="newClear"> 
+        <div class="newClear">
           <el-select class="shortSelect" v-model="riskLevelVlaue">
             <el-option
               v-for="item in riskLevelOption"
@@ -145,79 +145,79 @@
   </div>
 </template>
 <script>
-import moment from "moment";
+import moment from 'moment'
 import createDownTaskModel from '../model/createDownTaskModel'
 import { ATTACK_TYPE, COMMON_ERROR } from '../../constants'
 import { DESCRIBE_HOSTS, DESCRIBE_ATTACK_DETAIL, DESCRIBE_ATTACK_LOG_COUNT, CREATE_ATTACK_DOWNLOAD_TASK } from '@/constants'
 export default {
-  data(){
-    return{
+  data () {
+    return {
       visible: false,
       columnsCopy: [],
       columns: ['index', 'action', 'Domain', 'AttackIp', 'AttackType', 'RuleId', 'RuleName', 'AttackContent', 'AttackTime', 'Status', 'RiskLevel'],
-      dominList: 'ALL',//域名下拉
-      dominOptions:[],
-      thisType: '1h',//默认时间选择
-      timeValue: [moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'), moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")],//时间选择
-      riskLevelVlaue: '-1',//风险等级
-      riskLevelOption:[
+      dominList: 'ALL', // 域名下拉
+      dominOptions: [],
+      thisType: '1h', // 默认时间选择
+      timeValue: [moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'), moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')], // 时间选择
+      riskLevelVlaue: '-1', // 风险等级
+      riskLevelOption: [
         {
           label: this.t('全部风险等级', 'WAF.qbfxdj'),
           value: '-1'
         },
         {
-          label:'高危',
-          value:'1'
+          label: '高危',
+          value: '1'
         },
         {
-          label:'中危',
-          value:'2'
+          label: '中危',
+          value: '2'
         },
         {
-          label:'低危',
-          value:'3'
+          label: '低危',
+          value: '3'
         }
       ],
-      actionVlaue:'-1',//执行动作
-      actionOption:[
+      actionVlaue: '-1', // 执行动作
+      actionOption: [
         {
           label: this.t('全部执行动作', 'WAF.qbzxdz'),
-          value: '-1',
+          value: '-1'
         },
         {
-          label:'观察',
-          value:'0'
+          label: '观察',
+          value: '0'
         },
         {
-          label:'拦截',
-          value:'1'
+          label: '拦截',
+          value: '1'
         }
       ],
-      attackVlaue: '-1',//注入攻击类型
+      attackVlaue: '-1', // 注入攻击类型
       attackOption: [
         {
           label: this.t('全部攻击类型', 'WAF.qbgjlx'),
-          id: '-1',
+          id: '-1'
         },
         ...ATTACK_TYPE
       ],
-      ruleId:'',//策略ID
-      attackIP:'',//攻击源IP
-      tableDataBegin:[],
-      createDownTaskModel:false,//创建下载任务弹框
+      ruleId: '', // 策略ID
+      attackIP: '', // 攻击源IP
+      tableDataBegin: [],
+      createDownTaskModel: false, // 创建下载任务弹框
       Context: '',
       total: 0,
       loading: false,
       loadmoreloading: false,
       startTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
-      endTime: moment().endOf('d').format("YYYY-MM-DD HH:mm:ss"),
+      endTime: moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
     }
   },
-  components:{
-    createDownTaskModel,
+  components: {
+    createDownTaskModel
   },
   watch: {
-    columns(val, oldVal) {
+    columns (val, oldVal) {
       if (val.length === 3) {
         this.$message({
           message: this.t('至少选择4个', 'WAF.zsxz4g'),
@@ -227,49 +227,49 @@ export default {
         })
         this.columns = [...oldVal]
       }
-    },
+    }
   },
-  mounted() {
+  mounted () {
     this.columnsCopy = [...this.columns]
     this.init()
     this.axios.post(DESCRIBE_HOSTS, {
-      Version: '2018-01-25',
+      Version: '2018-01-25'
     }).then(resp => {
       this.generalRespHandler(resp, ({ HostList }) => {
         this.dominOptions = [{
-          Domain: 'ALL',
+          Domain: 'ALL'
         }, ...HostList]
       })
     })
   },
-  methods:{
-    openDialog() {
+  methods: {
+    openDialog () {
       this.columnsCopy = [...this.columns]
       this.visible = true
     },
-    cancelDialog() {
+    cancelDialog () {
       this.visible = false
       this.columns = [...this.columnsCopy]
     },
-    setColumns() {
+    setColumns () {
       this.columnsCopy = [...this.columns]
       this.visible = false
     },
-    loadmore() {
+    loadmore () {
       this.loadmoreloading = true
       this.queryLogs()
     },
-    search() { // 检索
+    search () { // 检索
       this.tableDataBegin = []
       this.Context = ''
       this.init()
     },
-    init() {
+    init () {
       this.loading = true
       this.queryLogs()
       this.queryLogCount()
     },
-    queryLogCount() {
+    queryLogCount () {
       const { Context, startTime, endTime, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
@@ -279,7 +279,7 @@ export default {
         Version: '2018-01-25',
         Domain: domain,
         FromTime: startTime,
-        ToTime: endTime,
+        ToTime: endTime
       }
       // 风险等级
       if (this.riskLevelVlaue !== '-1') {
@@ -298,14 +298,14 @@ export default {
       }
       this.axios.post(DESCRIBE_ATTACK_LOG_COUNT, {
         ...params,
-        AttackIp: this.attackIP, // 攻击者IP
+        AttackIp: this.attackIP // 攻击者IP
       }).then(resp => {
         this.generalRespHandler(resp, ({ Count }) => {
           this.total = Count
         })
       })
     },
-    queryLogs() {
+    queryLogs () {
       const { Context, startTime, endTime, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
@@ -315,7 +315,7 @@ export default {
         Version: '2018-01-25',
         Domain: domain,
         FromTime: startTime,
-        ToTime: endTime,
+        ToTime: endTime
       }
       // 风险等级
       if (this.riskLevelVlaue !== '-1') {
@@ -336,7 +336,7 @@ export default {
         ...params,
         Context,
         Count: 20,
-        AttackIp: this.attackIP, // 攻击者IP
+        AttackIp: this.attackIP // 攻击者IP
       }).then(resp => {
         this.generalRespHandler(resp, ({ Context, Data, Count }) => {
           this.tableDataBegin = this.tableDataBegin.concat(Data)
@@ -347,25 +347,25 @@ export default {
         this.loadmoreloading = false
       })
     },
-    //时间选择按钮
-    choseDate(num, unit){
-      this.thisType= `${num}${unit}`;
-      var ipt1 = document.querySelector(".dataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".dataTime input:nth-child(4)");
+    // 时间选择按钮
+    choseDate (num, unit) {
+      this.thisType = `${num}${unit}`
+      var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
+      var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
       let startTime = moment().subtract(num, unit)
       if (unit === 'd') {
         startTime = moment().subtract(num, unit).startOf('d')
       }
-      ipt1.value = startTime.format("YYYY-MM-DD HH:mm:ss")
-      ipt2.value = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")
-      this.startTime = startTime.format("YYYY-MM-DD HH:mm:ss")
-      this.endTime = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")
+      ipt1.value = startTime.format('YYYY-MM-DD HH:mm:ss')
+      ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
+      this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
     },
-    //创建下载任务
-    createDownTask(){
-      this.createDownTaskModel=true;
+    // 创建下载任务
+    createDownTask () {
+      this.createDownTaskModel = true
     },
-    createDownloadTask(name) {
+    createDownloadTask (name) {
       const { Context, startTime, endTime, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
@@ -377,7 +377,7 @@ export default {
         FromTime: startTime,
         ToTime: endTime,
         Name: name,
-        AttackIp: this.attackIP,
+        AttackIp: this.attackIP
       }
       // 风险等级
       if (this.riskLevelVlaue !== '-1') {
@@ -400,9 +400,9 @@ export default {
         }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面查看任务状态', 'WAF.cjcgnkyqw'))
       })
     },
-    //关闭下载任务弹框
-    closeCreateTaskModel(isShow){
-      this.createDownTaskModel=false;
+    // 关闭下载任务弹框
+    closeCreateTaskModel (isShow) {
+      this.createDownTaskModel = false
     }
   }
 }

@@ -305,4 +305,11 @@ export default {
     }
   }
 }
+::v-deep .el-input-number{
+  line-height: 28px
+}
+::v-deep .el-input__inner {
+  height: 30px;
+  line-height: 30px;
+}
 </style>

@@ -191,18 +191,19 @@
                 :label="$t('DDOS.Protective.durationTime')"
               >
                 <template slot-scope="scope">
-                  {{ scope.row.EndTime - scope.row.StartTime }}
+                  {{durationDate(scope.row.EndTime,scope.row.StartTime)}}
+                  <!-- {{ scope.row.EndTime - scope.row.StartTime }} -->
                 </template>
               </el-table-column>
               <el-table-column prop :label="$t('DDOS.Protective.productName')">
-                <template slot-scope="scope">-</template>
+                <template slot-scope="scope">{{ $t("DDOS.Protective.professionalEdition") }}</template>
               </el-table-column>
               <el-table-column
                 prop="ResourceName"
                 :label="$t('DDOS.Protective.AssetName')"
               >
                 <template slot-scope="scope">
-                  {{ scope.row.ResourceName }}
+                 <el-button type="text" @click="jump()"> {{ scope.row.ResourceName }}</el-button>
                 </template>
               </el-table-column>
               <el-table-column
@@ -234,7 +235,7 @@
                 prop="Pps"
                 :label="$t('DDOS.Protective.AgainstMaximum')"
               >
-                <template slot-scope="scope">{{ scope.row.Pps }}</template>
+                <template slot-scope="scope">{{ scope.row.Pps }}pps</template>
               </el-table-column>
               <el-table-column
                 prop
@@ -242,9 +243,11 @@
                 width="180"
               >
                 <template slot-scope="scope">
-                  <el-button type="text" size="small">
+                  <!-- <el-button type="text" size="small">
                     {{ $t("DDOS.Protective.TriggerBanned") }}
-                  </el-button>
+                  </el-button> -->
+                  <span v-if="scope.row.BlockFlag == 0">否</span>
+                  <span v-else-if="scope.row.BlockFlag == 1">是</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -285,8 +288,8 @@ export default {
       ],
       // 获取产品总览
       // packParams: ["bgp", "net"],
-      packParams: ["net"],
-      business: "net", // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
+      packParams: ['net'],
+      business: 'net', // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [
         // 高防IP专业版 net
         { Key: "TotalPackCount", Value: 50 },
@@ -321,7 +324,7 @@ export default {
       // type: "bgp",
       type: "net",
       // 下载名称
-      downloadName: "獨享包攻擊記錄",
+      downloadName: "高防IP專業版攻擊記錄",
       // 查询输入字段（资源实例id）
       searchInputID: "",
 
@@ -339,10 +342,11 @@ export default {
       this.describeSecIndex();
       for (let i in this.packParams) {
         this.business = this.packParams[i];
+        console.log(this.business)
         switch (
           this.business // [bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         ) {
-          case "net":
+          case 'net':
             this.describePackIndex(this.packDataIP);
             break;
           // case "bgp":
@@ -459,8 +463,8 @@ export default {
       // if (param == "bgp-multip") {
       //   this.downloadName = "共享包攻擊記錄";
       // } else
-      if (param == "net") {
-        this.downloadName = "高防IP專業版攻擊記錄";
+      if (param === 'net') {
+        this.downloadName = '高防IP專業版攻擊記錄'
       }
       this.describeDDoSEvList();
     },
@@ -513,6 +517,42 @@ export default {
         if (typeof console !== "undefined") console.log(e, wbout);
       }
       return wbout;
+    },
+     // 获取持续时间
+    durationDate (endTime, StartTime) {
+      let durationTime = ''
+      let stime = new Date(StartTime).getTime()
+      let etime = new Date(endTime).getTime()
+      let dateDiff = etime - stime
+      let dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)) // 计算出相差天数
+      if (dayDiff > 0) {
+        durationTime += dayDiff + '天'
+      }
+      let leave1 = dateDiff % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+      let hours = Math.floor(leave1 / (3600 * 1000)) // 计算出小时数
+      if (hours > 0) {
+        durationTime += hours + '小時'
+      }
+      // 计算相差分钟数
+      let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+      let minutes = Math.floor(leave2 / (60 * 1000)) // 计算相差分钟数
+      if (minutes > 0) {
+        durationTime += minutes + '分鐘'
+      }
+      // 计算相差秒数
+      let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      let seconds = Math.round(leave3 / 1000)
+      let leave4 = leave3 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      let minseconds = Math.round(leave4 / 1000)
+      if (minseconds > 0) {
+        durationTime += minseconds + '秒'
+      }
+      return durationTime
+    },
+    jump () {
+       this.$router.push({
+        path: '/IpProfessional'
+      })
     }
   }
 };

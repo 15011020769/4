@@ -1,12 +1,3 @@
-<!--
- * @Author: your name
- * @Date: 2020-01-10 11:17:19
- * @LastEditTime : 2020-01-10 11:18:03
- * @LastEditors  : Please set LastEditors
- * @Description: 日期选择器 昨天 近7天 近30天
- * @FilePath: /new_product/src/components/public/TimeT.vue
- -->
-
 <template>
   <div class="box-dis">
     <!-- 时间粒度搜素 -->

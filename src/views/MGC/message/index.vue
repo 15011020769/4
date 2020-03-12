@@ -48,7 +48,7 @@
       <div class="meaasge-table"  v-loading="loading">
         <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="title" label="訊息内容">
+          <el-table-column prop="title" label="訊息内容" width="650">
              <template slot-scope="scope">
                 <el-link @click="detailsMesg(scope.row)" :class="scope.row.status === '1' ? 'classGray' : 'classblue'" type="primary">{{scope.row.title}}</el-link>
               </template>
@@ -307,7 +307,8 @@ export default {
         query: {
           detailsData: val.id,
           time:val.sendTime,
-          page:this.currpage
+          page:this.currpage,
+          title:val.title
         }
       });
     },

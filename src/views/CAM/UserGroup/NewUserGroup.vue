@@ -42,7 +42,7 @@
           size="medium"
           @click="complete()"
           v-if="active==3"
-        >完222成</el-button>
+        >完成</el-button>
       </div>
     </div>
   </div>

@@ -21,7 +21,7 @@
             <span>
               {{t('预测标签', 'WAF.ycbq')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu class="project-dropdown" slot="dropdown">
               <el-dropdown-item command="">全部</el-dropdown-item>
               <el-dropdown-item v-for="item in scene_flag_list"
                 :key="item.value" :command="item.value">
@@ -339,5 +339,10 @@ export default {
 }
 ::v-deep .hide {
   visibility: hidden;
+}
+.project-dropdown{
+  //设置高度才能显示出滚动条 !important
+  height:200px;
+  overflow: auto;
 }
 </style>

@@ -1,8 +1,12 @@
 <template>
   <div>
     <div class="topHeader">
-      <i @click="$router.push('/botSetting')" class="el-icon-back" style="cursor: pointer" />
-      <span style="margin-left: 20px">BOT 策略{{t('设置', 'WAF.sz')}}</span>
+      <i
+        @click="$router.push('/botSetting')"
+        class="el-icon-back"
+        style="cursor: pointer"
+      />
+      <span style="margin-left: 20px">BOT 策略{{ t("设置", "WAF.sz") }}</span>
       <el-select
         v-model="ipSearch"
         filterable
@@ -13,20 +17,37 @@
           v-for="item in ipSearchOptions"
           :key="item.Domain"
           :label="item.Domain"
-          :value="item.Domain">
+          :value="item.Domain"
+        >
         </el-option>
       </el-select>
       <el-tabs :value="routerTips">
-        <el-tab-pane name="public"><p @click="goRouter('public')" slot="label">公共{{t('类型', 'WAF.lx')}}</p></el-tab-pane>
-        <el-tab-pane name="diy"><p @click="goRouter('diy')" slot="label">{{t('自定义会话策略', 'WAF.zdyhhcl')}}</p></el-tab-pane>
+        <el-tab-pane name="public"
+          ><p @click="goRouter('public')" slot="label">
+            公共{{ t("类型", "WAF.lx") }}
+          </p></el-tab-pane
+        >
+        <el-tab-pane name="diy"
+          ><p @click="goRouter('diy')" slot="label">
+            {{ t("自定义会话策略", "WAF.zdyhhcl") }}
+          </p></el-tab-pane
+        >
       </el-tabs>
     </div>
     <div class="wrapper">
       <div class="topTip" v-if="tipShow">
-        <p style="width: 99%">BOT {{t('行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。', 'WAF.xwglngdyh')}}</p>
+        <p style="width: 99%">
+          BOT
+          {{
+            t(
+              "行为管理能够对友好及恶意机器人程序进行甄别分类，并采取针对性的流量管理策略，如放通搜索引擎类机器人流量，而对恶意数据爬取商品信息流量采取不响应或减缓响应或差异化响应策略，能够应对恶意机器人程序爬取带来的资源消耗，信息泄露及无效营销问题，同时也保障友好机器人程序（如搜索引擎，广告程序）的正常运行。",
+              "WAF.xwglngdyh"
+            )
+          }}
+        </p>
         <span class="el-icon-close" @click="closeTip"></span>
       </div>
-      <DiyType :ipSearch="ipSearch" v-if="routerTips === 'diy'"/>
+      <DiyType :ipSearch="ipSearch" v-if="routerTips === 'diy'" />
       <PublicType :ipSearch="ipSearch" v-if="routerTips === 'public'" />
     </div>
   </div>
@@ -38,49 +59,49 @@ import DiyType from './diyType'
 import PublicType from './publicType'
 
 export default {
-  data() {
+  data () {
     return {
-      tipShow: true, //提示文字
+      tipShow: true, // 提示文字
       flag: true,
-      ipSearch:'',//ip查询下拉
-      ipSearchOptions:[],
+      ipSearch: '', // ip查询下拉
+      ipSearchOptions: [],
       routerTips: 'diy', // 保存tabs选项数据 diy为自定义策略
       tableDataBegin: [{
         host: 'tfc.dhycloud.com',
         bot: 1,
         waf: 2
-      }],//表格数据
+      }], // 表格数据
       tableDataEnd: [],
-      currentPage: 1,//当前页
-      pageSize: 10,//每页长度
-      totalItems: 0,//总长度
+      currentPage: 1, // 当前页
+      pageSize: 10, // 每页长度
+      totalItems: 0, // 总长度
       filterTableDataEnd: [],
-      flag: false,//定义一个开关
-      loadShow:false,//加载
-      visible: false,//删除弹框
-      hostFlag: true, // 域名状态 true为向上箭头 false反之
-    };
+      flag: false, // 定义一个开关
+      loadShow: false, // 加载
+      visible: false, // 删除弹框
+      hostFlag: true // 域名状态 true为向上箭头 false反之
+    }
   },
-  components:{
+  components: {
     DiyType,
     PublicType
   },
   methods: {
-    //关闭提示文字
-    closeTip() {
-      this.tipShow = false;
+    // 关闭提示文字
+    closeTip () {
+      this.tipShow = false
     },
     // 获取防护域名列表
-    getDescribeHost() {
+    getDescribeHost () {
       let params = {
-        Version: '2018-01-25',
+        Version: '2018-01-25'
       }
       this.axios.post(DESCRIBE_HOSTS, params).then(data => {
         if (data.Response.Error) {
           let ErrOr = Object.assign(ErrorTips, COMMON_ERROR)
           this.$message({
             message: ErrOr[Response.Error.Code],
-            type: "error",
+            type: 'error',
             showClose: true,
             duration: 0
           })
@@ -90,23 +111,23 @@ export default {
       })
     },
     // 绑定tabs选项菜单
-    getTabs() {
+    getTabs () {
       this.routerTips = this.$route.meta.tips
     },
     // 路由跳转
-    goRouter(router) {
+    goRouter (router) {
       const host = this.$route.path.split('/').reverse()[0]
       this.routerTips = router
       this.$router.push(`/botSetting/${router}/${host}`)
     }
   },
-  mounted() {
+  mounted () {
     this.getDescribeHost(),
     this.getTabs()
     const host = this.$route.path.split('/').reverse()[0]
     this.ipSearch = host
-  },
-};
+  }
+}
 </script>
 <style lang='scss' scoped>
 .newClear:after {
@@ -225,12 +246,12 @@ export default {
       background-color: #fff;
     }
   }
-  .tabListPage{
-    height:50px;
-    border-top:1px solid #ddd;
-    padding-top:8px;
-    text-align:right;
-    background-color:#fff;
+  .tabListPage {
+    height: 50px;
+    border-top: 1px solid #ddd;
+    padding-top: 8px;
+    text-align: right;
+    background-color: #fff;
   }
   .bot-wrapper {
     background-color: red !important;
@@ -238,7 +259,7 @@ export default {
       height: 23px;
     }
   }
-  ::v-deep .el-table_1_column_4{
+  ::v-deep .el-table_1_column_4 {
     .cell {
       height: 23px;
     }

@@ -51,7 +51,7 @@
             <el-input
               v-model="selectResourceInput"
               class="searchs"
-              :placeholder="$t('DDOS.AssetList.searchAssetList')"
+              :placeholder="this.listSelect == 'resourceList'?$t('DDOS.AssetList.searchAssetList'):$t('DDOS.AssetList.searchAssetListS')"
             ></el-input>
             <el-button class="el-icon-search" @click="doFilter"></el-button>
           </span>
@@ -455,7 +455,7 @@ export default {
       // 1.1.2.条件搜索调用（输入框参数）
       if (this.selectResourceInput != '') {
         if (this.listSelect == 'resourceList') {
-          params['Name'] = this.selectResourceInput
+          params['Name'] = this.selectResourceInput;
         } else if (this.listSelect == 'businessList') {
           params['Domain'] = this.selectResourceInput
         }
