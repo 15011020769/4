@@ -168,6 +168,7 @@ module.exports = {
       ForwardingExcit: '轉發端口',
       SourceIp: '源站IP + 權重',
       SoutceTitle: '請輸入源站IP + 權重，中間由空格分隔，例如：1.1.1.1 50。用回車分隔多個源站IP + 權重，最多支持20個',
+      editWarning: '請用回車分隔多個IP + 權重，最多可輸入本IP轉發目標區域內20個公網IP + 權重(0~100的整數)，例如：1.1.1.1 50',
       domainName: '源站域名',
       domainTitle: '請輸入源站域名，用回車分隔多個源站域名，最多支持20個',
       domainSure: '確 定',
