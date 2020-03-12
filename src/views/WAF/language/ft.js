@@ -658,6 +658,8 @@ module.exports = {
       eywjjcgn: '惡意文件檢測功能關閉後，WAF將無法攔截惡意Webshell上傳行為',
       gbeywjjc: '關閉惡意文件檢測',
       qheywjjc: '切換「惡意文件上傳」狀態成功',
+      xytime: '響應時間',
+      fwcs: '訪問次數'
     },
     COM: require('@/components/language/ft'),
 }
