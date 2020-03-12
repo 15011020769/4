@@ -64,11 +64,19 @@
         :id="id"
       />
     </div>
-    <DownLoadImg
-      :dialogDownloadVisible="dialogDownloadVisible"
-      @imgSaveMethod="saveImg"
-      @onCancel="onCancel"
-    />
+    <el-dialog
+      :title="t('生成报表', 'WAF.scbb')"
+      width="40%"
+      :visible.sync="dialogDownloadVisible"
+      :before-close='onCancel'
+      destroy-on-close
+    >
+      <DownLoadImg
+        :dialogDownloadVisible="dialogDownloadVisible"
+        @imgSaveMethod="saveImg"
+        @onCancel="onCancel"
+      />
+    </el-dialog>
     <el-dialog
       :title="t('自定义展示模板', 'WAF.zdyzsmb')"
       :visible.sync="dialogSetVisible"

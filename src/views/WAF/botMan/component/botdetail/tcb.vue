@@ -22,7 +22,7 @@
             <span>
               {{t('BOT 分类', 'WAF.botfl')}}<i class="el-icon-arrow-down el-icon--right"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
+            <el-dropdown-menu class="project-dropdown" slot="dropdown">
               <el-dropdown-item command="">全部</el-dropdown-item>
               <el-dropdown-item v-for="item in tcb_types"
                 :key="item" :command="item">
@@ -325,4 +325,21 @@ export default {
 ::v-deep .hide {
   visibility: hidden;
 }
+.project-dropdown{
+  //设置高度才能显示出滚动条 !important
+  height:200px;
+  overflow: auto;
+}
+// .project-dropdown::-webkit-scrollbar
+// {
+//     width: 5px;
+//     height: 5px;
+//     background-color: #F5F5F5;
+// }
+// .project-dropdown::-webkit-scrollbar-track
+// {
+//     //-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+//     border-radius: 10px;
+//     background-color: #F5F5F5;
+// }
 </style>

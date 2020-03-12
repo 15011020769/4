@@ -63,7 +63,8 @@ module.exports = {
       gjzt: '攻擊狀態',
       gjjs: '攻擊結束',
       gongjiz: '攻擊中',
-      ddosgjjl: 'DDoS攻擊記錄'
+      ddosgjjl: 'DDoS攻擊記錄',
+      zs: '阻塞'
     },
     UnlockOperation: {
       Unlock: '解封操作',
@@ -168,6 +169,7 @@ module.exports = {
       ForwardingExcit: '轉發端口',
       SourceIp: '源站IP + 權重',
       SoutceTitle: '請輸入源站IP + 權重，中間由空格分隔，例如：1.1.1.1 50。用回車分隔多個源站IP + 權重，最多支持20個',
+      editWarning: '請用回車分隔多個IP + 權重，最多可輸入本IP轉發目標區域內20個公網IP + 權重(0~100的整數)，例如：1.1.1.1 50',
       domainName: '源站域名',
       domainTitle: '請輸入源站域名，用回車分隔多個源站域名，最多支持20個',
       domainSure: '確 定',
@@ -422,8 +424,8 @@ module.exports = {
       qdplsczfgz: '確定批量刪除轉發規則'
     },
     Automatic_unsealing: {
-      user: '自助解封中',
-      auto: '自動解封中',
+      user: '自助解封',
+      auto: '自動解封',
       update: '升級解封',
       bind: '綁定高防包解封',
       Blocked: '被封堵',
