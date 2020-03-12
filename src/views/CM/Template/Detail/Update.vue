@@ -45,7 +45,8 @@
       <h4 class="title-text">告警触发条件 <span @click="openEdit()">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
-        {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}
+        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
+        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
       <p class="text-color2" v-for="(it) in EventAlarm" :key="it.eventShowName">
@@ -69,6 +70,7 @@ export default {
       transLogData: [],
       IndexAlarm: [], // 指标告警
       EventAlarm: [], // 事件告警
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       groudId: '',
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
@@ -98,7 +100,24 @@ export default {
         if (res.codeDesc === 'Success') {
           let msg = res.data.list
           this.TotalCount = res.data.total
-          // console.log(res)
+          msg.forEach(ele => {
+            ele.logData.conditionsConfig.forEach((item, i) => {
+              item.calcType = this.SymbolList[item.calcType - 1]
+              let time1 = item.alarmNotifyPeriod / 60
+              let time2 = item.alarmNotifyPeriod / (60 * 60)
+              if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.alarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+          })
           if (msg[0]) {
             this.transLogData = msg
             this.IndexAlarm = msg[0].logData.conditionsConfig

@@ -78,10 +78,10 @@
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in zhibiaoType"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -156,10 +156,10 @@
                   <!-- <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;"> -->
                   <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
                     <el-option
-                      v-for="(item,index) in formInline.project"
+                      v-for="(item,index) in eventType"
                       :key="index"
-                      :label="item.name"
-                      :value="item.value"
+                      :label="item"
+                      :value="item"
                       label-width="40px"
                     ></el-option>
                   </el-select>
@@ -339,6 +339,39 @@ export default {
         '每12小时警告一次',
         '每1天警告一次',
         '周期指数递增'
+      ],
+      zhibiaoType: [// 指标告警类型
+        'CPU利用率',
+        '内存利用率',
+        '内存使用量',
+        '磁盘利用率',
+        '磁盘读流量',
+        '磁盘写流量',
+        '磁盘IO等待',
+        '内网入包量',
+        '内网出包量',
+        '外网入带宽',
+        '外网出带宽',
+        '外网入包量',
+        '外网出包量',
+        '外网带宽使用率',
+        'TCP连接数',
+        'CPU一分钟平均负载',
+        'CPU五分钟平均负载',
+        'CPU十五分钟平均负载',
+        '基础CPU利用率',
+        '内网入带宽',
+        '内网出带宽'
+      ],
+      eventType:[//事件告警类型
+        '磁盘只读',
+        '内核故障',
+        '内存oom',
+        'ping不可达',
+        '机器重启',
+        '外网出带宽超限导致丢包',
+        'agent上报超时',
+        '子机nvme设备error'
       ],
       form: {
         name: '',

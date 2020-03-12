@@ -6,7 +6,7 @@
         <el-form-item label="模板名称" class="form-item">
           <div class="item-text">
             {{infoData.groupName}}
-            <i class="el-icon-edit" @click="openName(infoData.groupName)"></i>
+            <i class="el-icon-edit" @click="openName(infoData.groupName)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
@@ -21,16 +21,17 @@
         <el-form-item label="备注">
           <div class="item-text">
             <span>{{infoData.remark}}</span>
-            <i class="el-icon-edit" @click="openRemark()"></i>
+            <i class="el-icon-edit" @click="openRemark()" style="cursor:pointer"></i>
           </div>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="card2">
-      <h4 class="title-text">告警触发条件 <span @click="openEdit()">编辑</span></h4>
+      <h4 class="title-text">告警触发条件 <span @click="openEdit()" style="cursor:pointer">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.conditions" :key="it.metricShowName">
-        {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}
+        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
+        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.eventConditions" :key="it.eventShowName">
@@ -69,7 +70,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitName(infoData.groupName)">保 存</el-button>
-        <el-button @click="showDelDialog = false">取 消</el-button>
+        <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 修改备注弹框 -->
@@ -82,7 +83,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitRemark(infoData.remark)">保 存</el-button>
-        <el-button @click="showDelDialog = false">取 消</el-button>
+        <el-button @click="showDelDialog2 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 告警触发条件编辑弹框 -->
@@ -249,6 +250,7 @@ export default {
       total: 0, // 告警策略列表总数
       id: '', // 模板id
       Conditions: [],
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
         jieshou: '接收组',
         jieshouArr: [
@@ -484,6 +486,24 @@ export default {
               }
             }
           }
+          msg.forEach(ele => {
+            ele.conditions.forEach((item, i) => {
+              item.calcType = this.SymbolList[item.calcType - 1]
+              let time1 = item.alarmNotifyPeriod / 60
+              let time2 = item.alarmNotifyPeriod / (60 * 60)
+              if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.alarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+          })
           this.infoData = msg[0]
           this.loadShow = false
         } else {
@@ -830,9 +850,4 @@ export default {
     margin: 5px 0;
   }
 }
-// .rubbish-icon{
-//   position: absolute;
-//   right: 0;
-
-// }
 </style>

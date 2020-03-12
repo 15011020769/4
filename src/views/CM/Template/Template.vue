@@ -30,13 +30,13 @@
             <i class="el-icon-edit ml5" @click="showEditNameDlg(scope.row)"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="chufa" label="触发条件">
+        <el-table-column prop label="触发条件">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right">
               <div>
                 <p style="color:#999;font-size:12px">指标告警(任意):</p>
                 <p v-for="(it,i) in scope.row.conditions" :key="i" style="font-size:12px">
-                  {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}</p>
+                  {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}</p>
               </div>
               <div>
                 <p style="color:#999;font-size:12px">事件告警:</p>
@@ -45,7 +45,12 @@
               </div>
               <div slot="reference" class="name-wrapper">
                 <p class="textEps">
-                  {{ `${scope.row.conditions[0].metricShowName}>${scope.row.conditions[0].calcValue}${scope.row.conditions[0].unit},持续${scope.row.conditions[0].continueTime}秒,按${scope.row.conditions[0].calcType}天重复告警` }}
+                  {{ `${scope.row.conditions[0].metricShowName}
+                      ${scope.row.conditions[0].calcType}
+                      ${scope.row.conditions[0].calcValue}
+                      ${scope.row.conditions[0].unit},持续
+                      ${scope.row.conditions[0].continueTime/60}分钟,按
+                      ${scope.row.conditions[0].calcType}天重复告警` }}
                 </p>
                 <p class="textEps">
                   {{ `${scope.row.eventConditions[0].eventShowName},不重复告警` }}
@@ -91,6 +96,7 @@
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
           :page-size="pagesize"
+          :current-page="currpage"
           :pager-count="7"
           layout="prev, pager, next"
           @current-change="handleCurrentChange"
@@ -108,12 +114,12 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
-        <el-button @click="isShowDelDialog = false">取 消</el-button>
+        <el-button @click="ShowEditDialog = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板</p>
+        <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板吗?</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitDelete()">确 定</el-button>
           <el-button @click="showDelDialog = false">取 消</el-button>
@@ -314,6 +320,7 @@ export default {
         //   zanting: true
         // }
       ], // 表格数据
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       // 分页
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
@@ -361,7 +368,7 @@ export default {
         Version: '2018-07-24'
       }
       await this.axios.post('monitor2/DescribeConditionsTemplateList', params).then(res => {
-        console.log(res)
+        // console.log(res)
       })
     },
     // 获取列表数据
@@ -395,6 +402,25 @@ export default {
                 }
               }
             }
+            msg.forEach(ele => {
+              ele.conditions.forEach((item, i) => {
+                item.calcType = this.SymbolList[item.calcType - 1]// 符号
+                let time1 = item.alarmNotifyPeriod / 60
+                let time2 = item.alarmNotifyPeriod / (60 * 60)
+                // 告警模式
+                if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+                  item.alarm = '不重复告警'
+                } else if (item.alarmNotifyType == 1) {
+                  item.alarm = '按周期指数递增重复告警'
+                } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+                  item.alarm = `按${time1}分钟重复告警`
+                } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                  item.alarm = `按${time2}小时重复告警`
+                } else {
+                  item.alarm = '按1天重复告警'
+                }
+              })
+            })
             this.tableData = msg
             this.loadShow = false
           } else {
@@ -557,6 +583,7 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.getListData()
     }
   },
   filters: {
