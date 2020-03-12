@@ -100,32 +100,32 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.contentNum {
-  width: 100%;
-  height: 110px;
-  padding: 15px 0;
-  box-sizing: border-box;
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  margin-bottom: 20px;
-  .rowContain {
-    text-align: center;
-    p:nth-child(1) {
-      margin-bottom: 16px;
-      font-size: 14px;
-      span:nth-child(1) {
-        font-size: 36px;
-      }
-      span.red {
-        color: #e1504a;
-      }
-      span.oarnge {
-        color: #ff9d00;
-      }
-      span.blue {
-        color: #006eff;
+  .contentNum {
+    width: 100%;
+    height: 110px;
+    padding: 15px 0;
+    box-sizing: border-box;
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    .rowContain {
+      text-align: center;
+      p:nth-child(1) {
+        margin-bottom: 16px;
+        font-size: 14px;
+        span:nth-child(1) {
+          font-size: 36px;
+        }
+        span.green {
+          color: #29cc85;
+        }
+        span.oarnge {
+          color: #ff9d00;
+        }
+        span.blue {
+          color: #006eff;
+        }
       }
     }
   }
-}
 </style>
