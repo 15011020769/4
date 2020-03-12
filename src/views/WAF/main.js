@@ -14,6 +14,10 @@ import i18n from './language/i18n.js' // 引入i18n包
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR } from './constants'
 
+Vue.use(ElementUI, {
+  i18n: (key, value) => i18n.t(key, value)
+})
+
 // 引入基本模板
 // const echarts = require('echarts/lib/echarts')
 // require("echarts/lib/component/legend")

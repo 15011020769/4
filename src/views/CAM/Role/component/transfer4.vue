@@ -58,10 +58,10 @@
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">
           <b style="font-size:13px;">{{$t('CAM.userList.choose')}}</b>
-          &nbsp;({{selectedStrategiesWithoutGroup.length}}{{$t('CAM.strip')}})
+          &nbsp;({{selectedStrategiesWithoutRole.length}}{{$t('CAM.strip')}})
         </p>
         <div class="right-main border">
-          <el-table :data="selectedStrategiesWithoutGroup" style="width: 100%;height: 562px; overflow-y: scroll;" :empty-text="$t('CAM.strategy.zwsj')">
+          <el-table :data="selectedStrategiesWithoutRole" style="width: 100%;height: 562px; overflow-y: scroll;" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column prop="PolicyName" label="策略名">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
@@ -99,7 +99,7 @@ import InfiniteLoading from 'vue-infinite-loading'
 export default {
   name: "transfer",
   props: {
-    groupId: String,
+    roleId: String,
   },
   data() {
     return {
@@ -121,7 +121,7 @@ export default {
     InfiniteLoading,
   },
   computed: {
-    selectedStrategiesWithoutGroup() {
+    selectedStrategiesWithoutRole() {
       return this.selectedStrategies.filter(s => s.IsAttached !== 1)
     }
   },
@@ -162,8 +162,8 @@ export default {
         Keyword: this.policyInp,
         Scope: 'QCS', // 自取预设策略
       }
-      if (this.groupId) {
-        param.FlagGroupId = this.groupId
+      if (this.roleId) {
+        param.FlagRoleId = this.roleId
       }
       this.axios.post(POLICY_LIST, param).then(res => {
         this.strategiesPage += 1

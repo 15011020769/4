@@ -28,6 +28,7 @@
               class="inputSearchCl"
               clearable
               @keyup.enter.native="searchGroup"
+              @change="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
             </el-input>
@@ -286,7 +287,7 @@ export default {
               })
             })
           }
-          if (this.userGroup.length === res.data.totalNum) {
+          if (this.userGroup.length === Number(res.data.totalNum)) {
             $state && $state.complete()
           } else {
             $state && $state.loaded()
@@ -411,6 +412,10 @@ export default {
   line-height: 30px;
   padding-top: 0;
   font-size: 12px;
+}
+::v-deep .el-input__clear {
+  position: absolute;
+  right: calc(100% + 2px);
 }
 .policyToUser {
   width: 85%;
