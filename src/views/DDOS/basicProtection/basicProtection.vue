@@ -107,7 +107,7 @@
             >
               <template slot-scope="scope">
                 <div v-if="selectedSubarea == 'cvm'">
-                  <span v-if="scope.row.InstanceState == 'PENDING'">{{
+                  <!-- <span v-if="scope.row.InstanceState == 'PENDING'">{{
                     $t("DDOS.basicProtection.cjz")
                   }}</span>
                   <span
@@ -134,7 +134,18 @@
                   }}</span>
                   <span v-else-if="scope.row.InstanceState == 'TERMINATING'">{{
                     $t("DDOS.basicProtection.xhz")
+                  }}</span> -->
+                  <!-- 阻塞 -->
+                   <span v-if="scope.row.InstanceState == '1'">{{
+                    $t("DDOS.basicProtection.zs")
                   }}</span>
+                  <!-- 正常 -->
+                  <span v-else-if="scope.row.InstanceState == '2'">{{
+                    $t("DDOS.basicProtection.zcyx")
+                    }}</span>
+                  <!-- 攻擊 -->
+                  <span v-else-if="scope.row.InstanceState == '3'">{{
+                    $t("DDOS.AssetList.gongjiz")}}</span>
                 </div>
                 <div v-else-if="selectedSubarea == 'clb'">
                   <span v-if="scope.row.Status == '0'">{{
@@ -193,6 +204,7 @@ import {
   CLB_LIST,
   NAT_LIST,
   ALL_CITY,
+  CVM_LIST_STATUS,
   DESCRIBE_CHANNEL_DEVICE_RESOURCE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -287,6 +299,28 @@ export default {
           this.allData = res.Response.InstanceSet;
           this.tableDataBegin = res.Response.InstanceSet;
           this.totalItems = res.Response.TotalCount;
+          // 查詢安全狀態
+          let IpList = this.tableDataBegin.filter(machine => machine.PublicIpAddresses).map(machine => machine.PublicIpAddresses)
+          let params = {
+            Version: '2018-07-09',
+            Region: this.selectedRegion
+          }
+          IpList.forEach((e, i) => {
+            params['IpList.' + i] = (e + '').replace('[]', '')
+          })
+          console.log('IpList = ' + params.IpList)
+          let statusValue = {}
+          this.axios.post(CVM_LIST_STATUS, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let result = res.Response.Data
+              result.forEach(record => {
+                statusValue[record['Key']] = record['Value']
+              })
+            }
+            this.tableDataBegin.map(record => {
+              record.InstanceState = statusValue[record.PublicIpAddresses]
+            })
+          })
         } else {
           let ErrTips = {
             InternalServerError: "操作內部錯誤",
@@ -309,6 +343,7 @@ export default {
         }
         this.loading = false;
       });
+     
     },
     // 1.2.查询负载均衡实例列表
     describeLoadBalancers() {
@@ -508,7 +543,7 @@ export default {
       })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .wrap >>> .el-button {

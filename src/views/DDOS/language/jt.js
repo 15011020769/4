@@ -63,7 +63,8 @@ module.exports = {
       gjzt: '攻击状态',
       gjjs: '攻击结束',
       gongjiz: '攻击中',
-      ddosgjjl: 'DDoS攻击记录'
+      ddosgjjl: 'DDoS攻击记录',
+      zs: '阻塞'
     },
     UnlockOperation: {
       Unlock: '解封操作',
