@@ -192,29 +192,30 @@ export default {
   created() {},
   mounted() {
     this.ListInit();
+    this.DeleteList();
   },
   methods: {
     // 列表
     async ListInit() {
       this.loadShow = true;
-      let param = {
+      let params = {
         Version: "2018-07-24",
         Module: "monitor",
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
-      await this.axios.post(CM_GROUPING_LIST, param).then(res => {
+      await this.axios.post(CM_GROUPING_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           console.log(res);
           var _tableData = res.Response.InstanceGroupList;
           this.total = res.Response.Total;
           // this.total = res.data.total;
-          let params = {
+          let param = {
             Version: "2018-07-24",
             // Region:"",
             Module: "monitor"
           };
-          this.axios.post(CM_GROUPING_LIST_TYPE, params).then(res => {
+          this.axios.post(CM_GROUPING_LIST_TYPE, param).then(res => {
             if (res.Response.Error === undefined) {
               console.log(res.Response.Conditions);
               let Conditions = res.Response.Conditions;
@@ -396,23 +397,34 @@ export default {
     },
     CopyList() {
       let param = {
-        instanceGroupId: this.InstanceGroupId,
-        lang: "zh"
+        Version: "2018-07-24",
+        Module: "monitor",
+        InstanceGroupId: this.instanceGroupId
       };
-      this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        this.copyDialogVisible = false;
-        // } else {
-        //   this.deleteLoadShow = false;
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+      this.axios.post(CM_GROUPING_LIST_COPY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.copyDialogVisible = false;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 删除
@@ -422,25 +434,64 @@ export default {
     },
     DeleteList() {
       let param = {
-        instanceGroupId: this.InstanceGroupId,
-        isDelRelatedPolicy: 2,
-        lang: "zh"
+        Version: "2018-07-24",
+        Module: "monitor",
+        InstanceGroupId: 4851,
+        IsDelRelatedPolicy: 2
       };
       this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        this.deleteDialogVisible = false;
-        this.ListInit();
-        // } else {
-        //   this.deleteLoadShow = false;
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+        if (res.Response.Error === undefined) {
+          this.deleteDialogVisible = false;
+        } else {
+          let ErrTips = {
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "	操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 分页

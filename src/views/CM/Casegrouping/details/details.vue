@@ -12,7 +12,6 @@
           <el-tab-pane label="实例管理" name="first">
             <div class="tab-box">
               <instance-management :Rules="rules"></instance-management>
-              <!-- <security-rules :Rules="rules"></security-rules> -->
             </div>
           </el-tab-pane>
           <el-tab-pane label="告警策略" name="second">
@@ -22,7 +21,7 @@
           </el-tab-pane>
           <el-tab-pane label="变更日志" name="third">
             <div class="tab-box">
-              <change-log></change-log>
+              <change-log :Rules="rules"></change-log>
             </div>
           </el-tab-pane>
         </el-tabs>
