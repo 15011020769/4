@@ -123,6 +123,8 @@
         }, 1000);
       };
       var CosBucketName = (rule, value, callback) => {
+        let shou = value.slice(0, 1)
+        let wei = value.charAt(value.length - 1)
         var reg = /^[a-z0-9-]{1,40}$/;
         var _this = this;
         setTimeout(() => {
@@ -133,6 +135,12 @@
               )
             );
             _this.btnLoad = false;
+          } else if (shou === '-' || wei === '-') {
+            callback(
+              new Error(
+                '僅支持小寫字母、數字以及中劃線" - "的組合，不能超過40字元。開頭結尾只能為字母數組'
+              )
+            );
           } else {
             callback();
           }
