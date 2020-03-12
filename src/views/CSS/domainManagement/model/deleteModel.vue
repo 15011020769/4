@@ -20,6 +20,7 @@
 </template>
 <script>
 import { DEL_DOMAIN } from '@/constants'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 export default {
   props: {
     isShow: Boolean,
@@ -62,7 +63,14 @@ export default {
           this.$emit('DelhandleCancel', false)
           this.$parent.describeLiveDomains()
         } else {
-          this.$message.error(data.Response.Error.Message)
+          let ErrTips = {}
+          let ErrOr = Object.assign(CSSErrorTips, ErrTips)
+          this.$message({
+            type: 'error',
+            message: ErrOr[data.Response.Error.Code],
+            showClose: true,
+            duration: 0
+          })
         }
       })
       this.dialogmodel1 = false

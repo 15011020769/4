@@ -13,163 +13,178 @@
       </div>
     </div>
     <!-- 主体 -->
-    <div class="room-bottom">
-      <div class="box-top">
-        <div class="box-top-left">
-          <!-- <span class="span-1">实时</span> -->
-          <div class="block">
+       <div class="block">
             <!-- 时间组件 -->
-            <TimeDropDown :TimeArr='TimeArr' :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDat" :Difference="'D'"></TimeDropDown>
-          </div>
-          <!-- 对比维度 -->
-          <div v-show="isFlag">
-            <span class="span-2">对比维度</span>
-            <el-radio-group v-model="isCollapse" size="mini" >
-              <el-radio-button label="k8s_node">节点</el-radio-button>
-              <el-radio-button label="k8s_pod">pod</el-radio-button>
-            </el-radio-group>
-            <span class="span-2" v-show="isCollapse=='k8s_pod'">所属节点</span>
-            <el-select v-model="value" placeholder="请选择" size="mini" v-show="isCollapse=='k8s_pod'" @change="getChange($event)">
-              <el-option
-                v-for="item in podData"
-                :key="item.InstanceId"
-                :label="item.InstanceId+'('+item.InstanceName+')'"
-                :value="item.PrivateIpAddresses+'|'+item.InstanceId"
-              ></el-option>
-            </el-select>
-          </div>
-        </div>
+        <TimeDropDown :TimeArr='TimeArr' :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDat" :Difference="'D'"></TimeDropDown>
       </div>
-      <div class="box-bottom">
-        <div class="box-bottom-left">
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选(共{{this.instances.length}}个)</el-checkbox>
-          <!-- <div style="margin: 15px 0;"></div> -->
-          <el-checkbox-group
-            v-model="checkedInstances"
-            @change="handleCheckedCitiesChange"
-            class="check-flex point-white"
-          >
-            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
-        <!-- 节点监控数据 -->
-        <div class="box-bottom-right"  v-show="isCollapse=='k8s_node'">
-          <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='series' style="width:400px;height:200px;" />
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="tab-background">
+        <el-tab-pane label="节点" name="k8s_node" class="tab-one">
+          <div>
+          <div class="box-top">
+            <div class="box-top-left">
+              <!-- <span class="span-1">实时</span> -->
+               <div class="block-left">
+                 <span>节点：</span>
+                  <el-select v-model="value" placeholder="请选择" size="mini"  @change="getChange($event)">
+                    <el-option
+                      v-for="item in podData"
+                      :key="item.InstanceId"
+                      :label="item.InstanceId+'('+item.InstanceName+')'"
+                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                    ></el-option>
+                  </el-select>
+               </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesError' style="width:400px;height:200px;" />
+          <div class="room-bottom">
+            <div class="box-bottom">
+              <!-- 节点监控数据 -->
+              <div class="box-bottom-right"  >
+                <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :name="'haha'" :opData='series' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :name="'haha'" :opData='seriesError' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesCpus' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesCpuUsedmaxs' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesMemory' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesemusages' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesMemrequests' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesMenNocaches' style="width:400px;height:200px;" />
+                </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='times' :series='seriesMemUsageBytes' style="width:400px;height:200px;" />
+                </div>
+              </div>
+            </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpus' style="width:400px;height:200px;" />
+        </el-tab-pane>
+        <el-tab-pane label="pod" name="k8s_pod">
+           <div class="box-top">
+            <div class="box-top-left">
+               <div class="block-left">
+                 <span>节点：</span>
+                  <el-select v-model="value" placeholder="请选择" size="mini"  @change="getChange($event)">
+                    <el-option
+                      v-for="item in podData"
+                      :key="item.InstanceId"
+                      :label="item.InstanceId+'('+item.InstanceName+')'"
+                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                    ></el-option>
+                  </el-select>
+                  <span>Pod:</span>
+                  <el-select v-model="podValue" placeholder="请选择" size="mini">
+                    <el-option
+                      v-for="item in Podlist"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                    ></el-option>
+                  </el-select>
+              </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+          <div class="room-bottom">
+            <div class="box-bottom">
+             <div class="box-bottom-right">
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podStatuErrs' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podCpuUseds' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podCpuUsedCenters' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podCpuUsedRequests' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podCpuUsedLimits' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemorys' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryNocaches' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryCenters' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryCenterNocaches' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryRequestNocaches' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryLimits' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podMemoryLimitNocaches' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podInNetworks' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podOutNetworks' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podInFlows' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podOutFlows' style="width:400px;height:200px;" />
+              </div>
+                <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podInPacketFlows' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podOutPacketFlows' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUUses' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUSeeUses' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUUseNodes' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUSeeUseNodes' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUUseRequests' style="width:400px;height:200px;" />
+              </div>
+              <div class="box-top-left" style="margin-bottom:20px;">
+                  <EcharTKE :time='podTimes' :series='podGPUSeeUseRequests' style="width:400px;height:200px;" />
+              </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUsedmaxs' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemory' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesemusages' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemrequests' style="width:400px;height:200px;" />
-          </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMenNocaches' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemUsageBytes' style="width:400px;height:200px;" />
-          </div>
-        </div>
-        <!-- pod监控数据 -->
-        <div class="box-bottom-right"  v-show="isCollapse=='k8s_pod'">
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podStatuErrs' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUseds' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedCenters' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedRequests' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedLimits' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemorys' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryCenters' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryCenterNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryRequestNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryLimits' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryLimitNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInNetworks' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutNetworks' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInFlows' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutFlows' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInPacketFlows' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutPacketFlows' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUses' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUses' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUseNodes' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUseNodes' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUseRequests' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUseRequests' style="width:400px;height:200px;" />
-           </div>
-        </div>
-      </div>
-    </div>
+        </el-tab-pane>
+    </el-tabs>
+
   </div>
 </template>
 <script>
@@ -179,6 +194,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
 import EcharTKE from '@/components/public/EcharTKE'
+// import EcharTKELine from '@/components/public/EcharTKELine'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -191,19 +207,19 @@ export default {
   components:{TimeDropDown,EcharTKE},
   data() {
     return {
-      activeName: "first",
+      activeName: "k8s_node",
       value: "",
+      podValue:"",
       checkAll: true,
       options: [],
       isCollapse: "k8s_node",
-      checkedInstances: [],// 全选
       isIndeterminate: false,
-      instances: [], // 单选
       title:"",
       clusterId:"",
       InstancesAll:[],
       isFlag:true,
-      list:[],
+      Nodelist:[],
+      Podlist:[],
       podData:[],
       valueLast:"",
       JobId:"",// 后台返回id
@@ -293,30 +309,12 @@ export default {
       ],
     }
   },
-  watch:{
-    isCollapse(val){
-      if(val == "k8s_pod"){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.getPodList()
-      } else if (val == "k8s_node") {
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.list=[]
-        this.getNodeList()
-      }
-    },
-  },
   created() {
     let{ title, clusterId } = this.$route.query
     this.clusterId = clusterId
     this.title = title
   },
-  // mounted(){
-  //   this.inits();
-  // },
+
   methods: {
     GetDat(val){
       // console.log(val)
@@ -324,16 +322,10 @@ export default {
       this.StartTime = new Date(val[1].StartTIme).getTime();
       this.EndTIme = new Date(val[1].EndTIme).getTime();
       console.log(this.StartTime,this.EndTIme)
-      if(this.isCollapse == "k8s_pod"){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
+      if(this.activeName == "k8s_pod"){
+        // console.log(2233)
         this.getPodList()
       } else {
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.list=[]
         this.getNodeList()
       }
     },
@@ -344,27 +336,23 @@ export default {
     changeFlag() {
       this.$emit("changeFlag", false);
     },
-    handleCheckAllChange(val) {
-      console.log(val)
-      this.checkedInstances = val ? this.InstancesAll : [];
-      console.log(this.checkedInstances)
-      this.isIndeterminate = false;
-    },
-    handleCheckedCitiesChange(value) {
-      console.log(value)
-      let checkedInstances = value.length;
-      this.checkAll = checkedInstances === this.instances.length;
-      this.isIndeterminate =
-        checkedInstances > 0 && checkedInstances < this.instances.length;
-    },
+    // tab切换事件
     handleClick(tab, event) {
+      console.log(this.activeName)
       console.log(tab, event);
+      if(this.activeName == "k8s_pod"){
+        // console.log(2233)
+        this.getPodList()
+      } else {
+        this.getNodeList()
+      }
+      // this.GetDat()
     },
     setTime() {
       this.$emit("setTime", this.value2);
     },
     getChange(val){
-      console.log(val)
+      // console.log(val)
       this.valueLast = val.split("|")
       console.log(this.valueLast)
       this.getPodList()
@@ -387,13 +375,9 @@ export default {
           ids.push(obj.InstanceId);
         });
       }
-      console.log(res.Response.InstanceSet)
-      // check选择部分
-      this.checkedInstances = ids
-      this.instances =  ids
-      this.InstancesAll = ids
-      this.list = ids
-      // this.value = ids[0]
+      console.log(ids)
+      // 节点下拉数据
+      this.Nodelist = ids
       let param = {
         Version: "2017-03-12",
         Limit: 20
@@ -402,26 +386,30 @@ export default {
         for(let i = 0; i < ids.length; i++) {
           param['InstanceIds.'+i] = ids[i];
         }
-        // this.loadShow = true;
         let nodeRes = await this.axios.post(NODE_LIST, param);
-        // console.log(nodeRes)
         if(nodeRes.Response.Error === undefined) {
-          // this.loadShow = false;
           this.podData = []
           // 数据合并
           if(nodeRes.Response.InstanceSet.length > 0) {
-            console.log(nodeRes.Response.InstanceSet)
-            for(let i in ids){
-              for(let  j in nodeRes.Response.InstanceSet){
-                if(nodeRes.Response.InstanceSet[j].InstanceId == ids[i]){
-                  this.podData.push({
-                    InstanceId:ids[i],
-                    InstanceName:nodeRes.Response.InstanceSet[j].InstanceName,
-                    PrivateIpAddresses:nodeRes.Response.InstanceSet[j].PrivateIpAddresses[0]
-                  })
-                }  
-              }
-            }
+            ids.forEach((x,y)=>{
+                  if(!this.podData[y]){
+                     this.podData[y]={
+                            InstanceId:x
+                        }
+                  }
+                  nodeRes.Response.InstanceSet.forEach((val,index)=>{
+                      if(val['InstanceId']==this.podData[y]['InstanceId']){
+                          this.podData[y]['InstanceName']=val.InstanceName
+                          this.podData[y]['PrivateIpAddresses'] = val.PrivateIpAddresses[0]
+                          
+                      }
+                      if(!this.podData[y]['InstanceName']){
+                          this.podData[y]['InstanceName']=''
+                          this.podData[y]['PrivateIpAddresses'] = val.PrivateIpAddresses[0]
+                      }
+                  })
+              })
+            console.log( this.podData)
             this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
             this.valueLast = this.value.split("|")
             // this.getPodJob()
@@ -446,6 +434,7 @@ export default {
     },
     getPodList() {
     //   this.list = [];
+    console.log(this.valueLast)
       const param = {
         Method: 'GET',
         Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast[0]+'&limit=50',
@@ -460,9 +449,8 @@ export default {
           dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
             return item.metadata.name
           })
-          this.checkedInstances = dataPod
-          this.instances =  dataPod
-          this.InstancesAll = dataPod
+          this.Podlist =dataPod
+          this.podValue = this.Podlist[0]
           this.getPodJob()
         }
       })
@@ -475,7 +463,7 @@ export default {
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -514,22 +502,19 @@ export default {
         if(res.Response.Error === undefined) {
             // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
     getNodeJob(){
-        console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
         'Conditions.1': JSON.stringify(["node_role","=","Node"]),
-        'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
+        'Conditions.2': JSON.stringify(["unInstanceId","in",this.Nodelist]),
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -555,9 +540,7 @@ export default {
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
@@ -573,7 +556,7 @@ export default {
         if(res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
-          if(this.isCollapse == "k8s_node"){
+          if(this.activeName == "k8s_node"){
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
             cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
             memUsageBytes = []
@@ -609,8 +592,8 @@ export default {
                 }
               }
               this.times = times;
-              this.series = [{name: '节点数量',type: 'line', data: pods}];
-              this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
+              this.series = pods
+              this.seriesError = statuErrs
               this.seriesCpus = [{name: '节点数量',type: 'line', data: cpus}];
               this.seriesCpuUseds = [{name: '节点数量',type: 'line', data: cpuUseds}];
               this.seriesCpuRequests = [{name: '节点数量',type: 'line', data: cpuRequests}];
@@ -725,7 +708,14 @@ export default {
                 this.podOutPacketFlows = [{name: '节点数量',type: 'line', data: podOutPacketFlows}];
                 this.podGPUUses = [{name: '节点数量',type: 'line', data: podGPUUses}];
                 this.podGPUSeeUses = [{name: '节点数量',type: 'line', data: podGPUSeeUses}];
-                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes}];
+                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes,itemStyle: {
+              normal: {
+                color: "#2072d9",
+                lineStyle: {
+                  color: "#2072d9"
+                }
+              }
+            }}];
                 this.podGPUSeeUseNodes = [{name: '节点数量',type: 'line', data: podGPUSeeUseNodes}];
                 this.podGPUUseRequests = [{name: '节点数量',type: 'line', data: podGPUUseRequests}];
                 this.podGPUSeeUseRequests = [{name: '节点数量',type: 'line', data: podGPUSeeUseRequests}];
@@ -737,6 +727,21 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+.tab-background{
+  background: white;
+  padding-left: 20px;
+  ::v-deep .el-tabs__nav-wrap::after{
+    background-color: white;
+  }
+}
+// .block-left{
+//   float: left;
+// }
+.block{
+  width: 100%;
+  background: white;
+  padding:20px 0 20px 20px;
+}
 .room-bottom {
   width: 94%;
   margin: 20px auto;
@@ -794,5 +799,6 @@ export default {
 }
 .monitor >>> .el-date-picker {
   border-radius: 0;
+  // background: white;
 }
 </style>

@@ -44,7 +44,7 @@
               <template slot-scope="scope">
                 <div class="case-name">
                   <a href="javascript:;" @click="DetailsTo(scope.row)">{{
-                    scope.row.groupName
+                    scope.row.GroupName
                   }}</a>
                   <i
                     class="el-icon-edit ml5"
@@ -60,18 +60,18 @@
             </el-table-column>
             <el-table-column label="实例数">
               <template slot-scope="scope">
-                {{ scope.row.instanceSum }}个
+                {{ scope.row.InstanceSum }}个
               </template>
             </el-table-column>
             <el-table-column label="绑定告警策略数">
               <template slot-scope="scope">
-                <a href="javascript:;">{{ scope.row.policyGroups.length }}个</a>
+                <a href="javascript:;">{{ scope.row.PolicyGroups.length }}个</a>
               </template>
             </el-table-column>
             <el-table-column label="最后修改">
               <template slot-scope="scope">
-                <p>{{ scope.row.lastEditUin }}</p>
-                <p>{{ scope.row.updateTime | formatDate }}</p>
+                <p>{{ scope.row.LastEditUin }}</p>
+                <p>{{ scope.row.UpdateTime | formatDate }}</p>
               </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -198,112 +198,157 @@ export default {
     async ListInit() {
       this.loadShow = true;
       let param = {
-        lang: "zh",
-        limit: this.pageSize,
-        offset: this.pageIndex
+        Version: "2018-07-24",
+        Module: "monitor",
+        Limit: this.pageSize,
+        Offset: this.pageIndex
       };
       await this.axios.post(CM_GROUPING_LIST, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        // console.log(res);
-        var _tableData = res.data.instanceGroupList;
-        // this.total = res.Response.TotalCount;
-        this.total = res.data.total;
-        let params = {
-          Version: "2018-07-24",
-          // Region:"",
-          Module: "monitor"
-        };
-        this.axios.post(CM_GROUPING_LIST_TYPE, params).then(res => {
-          if (res.Response.Error === undefined) {
-            console.log(res.Response.Conditions);
-            let Conditions = res.Response.Conditions;
-            // for (let k in Conditions) {
-            //   console.log(
-            //     Conditions[k].Name,
-            //     "-------",
-            //     Conditions[k].PolicyViewName
-            //   );
-            // }
-            for (let i in _tableData) {
-              for (let j in Conditions) {
-                if (_tableData[i].viewName === Conditions[j].PolicyViewName) {
-                  _tableData[i]["Name"] = Conditions[j].Name;
+        if (res.Response.Error === undefined) {
+          console.log(res);
+          var _tableData = res.Response.InstanceGroupList;
+          this.total = res.Response.Total;
+          // this.total = res.data.total;
+          let params = {
+            Version: "2018-07-24",
+            // Region:"",
+            Module: "monitor"
+          };
+          this.axios.post(CM_GROUPING_LIST_TYPE, params).then(res => {
+            if (res.Response.Error === undefined) {
+              console.log(res.Response.Conditions);
+              let Conditions = res.Response.Conditions;
+              // for (let k in Conditions) {
+              //   console.log(
+              //     Conditions[k].Name,
+              //     "-------",
+              //     Conditions[k].PolicyViewName
+              //   );
+              // }
+              for (let i in _tableData) {
+                for (let j in Conditions) {
+                  if (_tableData[i].ViewName === Conditions[j].PolicyViewName) {
+                    _tableData[i]["Name"] = Conditions[j].Name;
+                  }
                 }
               }
+              this.tableData = _tableData;
+              console.log("tableData", this.tableData);
+              this.loadShow = false;
+            } else {
+              this.loadShow = false;
+              this.deleteLoadShow = false;
+              let ErrTips = {
+                "AuthFailure.UnauthorizedOperation":
+                  "请求未授权。请参考 CAM 文档对鉴权的说明。",
+                DryRunOperation:
+                  "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+                FailedOperation: "操作失败。",
+                "FailedOperation.AlertFilterRuleDeleteFailed":
+                  "删除过滤条件失败。",
+                "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+                "FailedOperation.AlertPolicyDescribeFailed":
+                  "告警策略查询失败。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+                "FailedOperation.AlertTriggerRuleDeleteFailed":
+                  "删除触发条件失败。",
+                "FailedOperation.DbQueryFailed": "数据库查询失败。",
+                "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+                "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+                "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+                "FailedOperation.DbTransactionBeginFailed":
+                  "数据库事务开始失败。",
+                "FailedOperation.DbTransactionCommitFailed":
+                  "数据库事务提交失败。",
+                "FailedOperation.DimQueryRequestFailed":
+                  "请求维度查询服务失败。",
+                "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+                "FailedOperation.DuplicateName": "名字重复。",
+                "FailedOperation.ServiceNotEnabled":
+                  "服务未启用，开通服务后方可使用。",
+                InternalError: "内部错误。",
+                "InternalError.ExeTimeout": "	执行超时。",
+                InvalidParameter: "	参数错误。",
+                "InvalidParameter.InvalidParameter": "参数错误。",
+                "InvalidParameter.InvalidParameterParam": "参数错误。",
+                InvalidParameterValue: "无效的参数值。",
+                LimitExceeded: "超过配额限制。",
+                "LimitExceeded.MetricQuotaExceeded":
+                  "指标数量达到配额限制，禁止含有未注册指标的请求。",
+                MissingParameter: "缺少参数错误。",
+                ResourceInUse: "资源被占用。",
+                ResourceInsufficient: "资源不足。",
+                ResourceNotFound: "资源不存在。",
+                ResourceUnavailable: "资源不可用。",
+                ResourcesSoldOut: "资源售罄。",
+                UnauthorizedOperation: "未授权操作。",
+                UnknownParameter: "未知参数错误。",
+                UnsupportedOperation: "操作不支持。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
-            this.tableData = _tableData;
-            console.log("tableData", this.tableData);
-            this.loadShow = false;
-          } else {
-            this.loadShow = false;
-            this.deleteLoadShow = false;
-            let ErrTips = {
-              "AuthFailure.UnauthorizedOperation":
-                "请求未授权。请参考 CAM 文档对鉴权的说明。",
-              DryRunOperation:
-                "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-              FailedOperation: "操作失败。",
-              "FailedOperation.AlertFilterRuleDeleteFailed":
-                "删除过滤条件失败。",
-              "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-              "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-              "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-              "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
-              "FailedOperation.AlertTriggerRuleDeleteFailed":
-                "删除触发条件失败。",
-              "FailedOperation.DbQueryFailed": "数据库查询失败。",
-              "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-              "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-              "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-              "FailedOperation.DbTransactionBeginFailed":
-                "数据库事务开始失败。",
-              "FailedOperation.DbTransactionCommitFailed":
-                "数据库事务提交失败。",
-              "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-              "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-              "FailedOperation.DuplicateName": "名字重复。",
-              "FailedOperation.ServiceNotEnabled":
-                "服务未启用，开通服务后方可使用。",
-              InternalError: "内部错误。",
-              "InternalError.ExeTimeout": "	执行超时。",
-              InvalidParameter: "	参数错误。",
-              "InvalidParameter.InvalidParameter": "参数错误。",
-              "InvalidParameter.InvalidParameterParam": "参数错误。",
-              InvalidParameterValue: "无效的参数值。",
-              LimitExceeded: "超过配额限制。",
-              "LimitExceeded.MetricQuotaExceeded":
-                "指标数量达到配额限制，禁止含有未注册指标的请求。",
-              MissingParameter: "缺少参数错误。",
-              ResourceInUse: "资源被占用。",
-              ResourceInsufficient: "资源不足。",
-              ResourceNotFound: "资源不存在。",
-              ResourceUnavailable: "资源不可用。",
-              ResourcesSoldOut: "资源售罄。",
-              UnauthorizedOperation: "未授权操作。",
-              UnknownParameter: "未知参数错误。",
-              UnsupportedOperation: "操作不支持。"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
-        // } else {
-        //   this.loadShow = false;
-        //   this.deleteLoadShow = false;
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+          });
+        } else {
+          this.loadShow = false;
+          this.deleteLoadShow = false;
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 详情跳转
@@ -311,16 +356,16 @@ export default {
       this.$router.push({
         name: "CasegroupingDetails",
         query: {
-          instanceGroupId: row.instanceGroupId
+          instanceGroupId: row.InstanceGroupId
         }
       });
     },
     // 编辑名称
     showEditNameDlg(row) {
       console.log(row);
-      this.editSearchVal = row.groupName;
+      this.editSearchVal = row.GroupName;
       this.editNameDialogVisible = true;
-      this.editGroupId = row.instanceGroupId;
+      this.editGroupId = row.InstanceGroupId;
     },
     EditTips() {
       if (this.editSearchVal == "") {
@@ -346,12 +391,12 @@ export default {
     // 复制
     Copy(row) {
       this.copyDialogVisible = true;
-      this.groupName = row.groupName;
-      this.instanceGroupId = row.instanceGroupId;
+      this.groupName = row.GroupName;
+      this.instanceGroupId = row.InstanceGroupId;
     },
     CopyList() {
       let param = {
-        instanceGroupId: this.instanceGroupId,
+        instanceGroupId: this.InstanceGroupId,
         lang: "zh"
       };
       this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
@@ -373,11 +418,11 @@ export default {
     // 删除
     Delete(row) {
       this.deleteDialogVisible = true;
-      this.instanceGroupId = row.instanceGroupId;
+      this.instanceGroupId = row.InstanceGroupId;
     },
     DeleteList() {
       let param = {
-        instanceGroupId: this.instanceGroupId,
+        instanceGroupId: this.InstanceGroupId,
         isDelRelatedPolicy: 2,
         lang: "zh"
       };

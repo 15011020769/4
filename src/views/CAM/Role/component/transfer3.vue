@@ -61,7 +61,7 @@
           &nbsp;({{selectedStrategiesWithoutGroup.length}}{{$t('CAM.strip')}})
         </p>
         <div class="right-main border">
-          <el-table :data="selectedStrategiesWithoutGroup" style="width: 100%;height: 562px" :empty-text="$t('CAM.strategy.zwsj')">
+          <el-table :data="selectedStrategiesWithoutGroup" style="width: 100%;height: 562px; overflow-y: scroll;" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column prop="PolicyName" label="策略名">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">

@@ -226,7 +226,7 @@ export default {
         query: {
           title: this.tit + "(Deployment)",
           type: 'Deployment',
-          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
           clusterId: this.clusterId,
           spaceName: this.nameSpaceName
         }

@@ -198,6 +198,7 @@ export default {
       this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
     },
     changeTimeValue(val) {
+      if (val == null) val = []
       this.selBtn = 0
       this.startTime = moment(val[0]).utc().valueOf()
       this.endTime = moment(val[1]).utc().valueOf()

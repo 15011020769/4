@@ -286,11 +286,15 @@ export default {
           this.loadShow = false;
           this.isShowRedeployment = false;
           this.getDeploymentsPodList();
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
         } else {
           this.loadShow = false;
-          let ErrTips = {
-            
-          };
+          let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],

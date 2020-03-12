@@ -162,7 +162,8 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           "Filter.RetCode": this.ChoiceValue,
-          Qualifier: this.FunctionVersion
+          Qualifier: this.FunctionVersion,
+          Namespace: this.$route.query.SpaceValue
         };
         if (this.requestId != "") {
           param["FunctionRequestId"] = this.requestId;

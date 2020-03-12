@@ -1,11 +1,15 @@
 import { ErrorTips } from '@/components/ErrorTips.js'
+
+
+
+
+
+
+
 // 实例内容器
-
-
-
 let instanceContent = {
-  addInstanceContent: function (n1='',n2='',n3='',n4='',n5='',n6='',n7='',n8='',n9='',a1=[],a2=[],t1=false,n10='',n11='',n12='',t2=false,t3=false,t4=false,v,v2) {
-
+  //数据回显添加
+  addInstanceContent: function (n1='',n2='',n3='',n4='',n5='',n6='',n7='',n8='',n9='',a1=[],a2=[],t1=false,n10='',n11='',n12='',t2=false,t3=false,t4=false,v,v2,mountPoint) {
     let typeSelect=(val)=>{
         if(val.tcpSocket){
             return "TCP端口检查"
@@ -29,7 +33,6 @@ let instanceContent = {
         return   val.successThreshold
       }
     }
-    console.log(v)
     this.wl.instanceContent.push({
       name: n1, // 名称
       mirrorImg: n2, // 镜像
@@ -78,17 +81,19 @@ let instanceContent = {
       },
       privilegeLevelContainer: t4, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
-      editStatus: true // 编辑状态
+      editStatus: true, // 编辑状态
+      mountPoint:mountPoint,//挂载点数据
     })
   },
+  //默认添加
   addInstanceContent0: function () {
     this.wl.instanceContent.push({
       name: '', // 名称
       mirrorImg: '', // 镜像
       versions: '', // 镜像版本
       mirrorPullTactics: '', // 镜像拉取策略
-      requestCpu: '0.25', // cpu 限制
-      limitCpu: '0.5',
+      requestCpu: '250', // cpu 限制
+      limitCpu: '500',
       requestMemory: '256', // 内存限制
       limitMemory: '1024',
       gpuNum: 0, // gpu 限制
@@ -130,7 +135,8 @@ let instanceContent = {
       },
       privilegeLevelContainer: false, // 特权级容器
       completed: false, // 判断是否该验证的都验证完成
-      editStatus: true // 编辑状态
+      editStatus: true ,// 编辑状态
+      mountPoint:[],//挂载点数据
     })
   },
   
@@ -218,7 +224,17 @@ let touchTactics = {
     }
   }
 }
-
+// 实例内容器-》挂载点
+let caseMountPoint={
+    addMountPoint(index){
+      this.wl.instanceContent[index].mountPoint.push({
+        name:'',
+        mountPath:'',
+        subPath:'',
+        readOnly:'false'
+      })
+    }
+}
 // 强制满足条件
 let mustCondition = {
   addMustCondition () { // 添加强制满足条件
@@ -331,10 +347,12 @@ let dataReel={//数据卷
     var obj = {
       name1: "useMenu",
       name2: "",
-      name3: ""
+      name3: "",//保存弹窗框中定义的名称
+      name4:'',//保存弹出框中的类型
     };
     this.wl.dataJuan.push(obj);
   },
+ 
 
 
 }
@@ -345,6 +363,7 @@ export default {
     ...environmentVariable,
     ...citeCs,
     ...touchTactics,
+    ...caseMountPoint,
     ...mustCondition,
     ...needCondition,
     ...mustRule,
