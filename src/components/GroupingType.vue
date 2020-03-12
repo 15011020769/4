@@ -14,7 +14,7 @@
 export default {
   data() {
     return {
-      value: [],
+      value: ["云服务器", "cvm_device"],
       options: [
         {
           value: "云服务器",

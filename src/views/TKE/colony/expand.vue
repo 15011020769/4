@@ -324,14 +324,6 @@
                   </span>
                 </div>
               </div>
-              <!-- <div class="btn">
-                <el-button @click="DataDiskSure()" style="color: #006eff;"
-                  >确定</el-button
-                >
-                <el-button @click="closeDataDisk"
-                  >取消</el-button
-                >
-              </div> -->
               <div
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
@@ -459,48 +451,44 @@
                 effect="light"
                 ><i class="el-icon-info ml5"></i
               ></el-tooltip></p>
-              <div class="input-box">
-              <!-- <div v-if="nodeForm.safeArr.length > 0"> -->
-                <!-- <div v-for="(item, index) in nodeForm.safeArr" :key="index"> -->
-                  <div>
-                    <el-select
-                      placeholder="请选择安全组"
-                      v-model="nodeForm.securityId"
-                    >
-                      <el-option
-                        v-for="x in nodeForm.securityGroups"
-                        :key="x.SecurityGroupId"
-                        :label="x.SecurityGroupName"
-                        :value="x.SecurityGroupId"
-                      >
-                      </el-option>
-                    </el-select>
-                    <!-- <i class="el-icon-refresh ml5"></i>
-                    <i
-                      class="el-icon-error ml5"
-                      @click="deleteExceptPrice(index)"
-                    ></i> -->
-                  </div>
-                <!-- </div> -->
-              <!-- </div> -->
-              <!-- <p>
-                <a href="javascript:;" @click="AddSafe">添加安全组</a>
-              </p> -->
-            </div>
-            <!-- <div>
-              <el-select v-model="nodeForm.securityId" placeholder="请选择">
+
+            <div class="input-box">
+              <el-select
+                placeholder="请选择安全组"
+                v-model="nodeForm.securityId"
+              >
                 <el-option
-                  v-for="item in nodeForm.securityGroups"
-                  :key="item.SecurityGroupId"
-                  :label="item.SecurityGroupName"
-                  :value="item.SecurityGroupId"
+                  v-for="x in nodeForm.securityGroups"
+                  :key="x.SecurityGroupId"
+                  :label="x.SecurityGroupName"
+                  :value="x.SecurityGroupId"
                 >
                 </el-option>
               </el-select>
-              <p>
-                <a href="#">添加安全组</a>
-              </p>
-            </div> -->
+              <i class="el-icon-refresh ml5" @click="refeshSecurity"></i>
+              <div v-for="(item, index) in nodeForm.safeArr" :key="index">
+                <div>
+                  <el-select
+                    placeholder="请选择安全组"
+                    v-model="item.securityId"
+                  >
+                    <el-option
+                      v-for="x in nodeForm.securityGroups"
+                      :key="x.SecurityGroupId"
+                      :label="x.SecurityGroupName"
+                      :value="x.SecurityGroupId"
+                    >
+                    </el-option>
+                  </el-select>
+                  <i class="el-icon-refresh ml5" @click="refeshSecurity"></i>
+                  <i
+                    class="el-icon-error ml5"
+                    @click="deleteExceptPrice(index)"
+                  ></i>
+                </div>
+              </div>
+              <p @click="AddSafe" style="color:blue;">添加安全组</p>
+            </div>
           </div>
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
@@ -1153,6 +1141,10 @@ export default {
         }
       });
     },
+    //刷新安全组列表
+    refeshSecurity() {
+      this.getSecurityGroups();
+    },
     //获取k8s版本
     async getClusterVersion () {
       this.loadShow = true;
@@ -1342,8 +1334,6 @@ export default {
           duration: 0
         });
         this.nodeForm.isShowathirdNext = true;
-        // this.colonyThird.passwordTips = "密码不能为空";
-        // this.colonyThird.passwordWran = true;
       } else if (val.length < 8 || val.length > 16) {
         this.$message({
           message: "密码必须为8到16位",
@@ -1465,7 +1455,7 @@ export default {
       SecurityGroupIds.push(this.nodeForm.securityId);
       let safeArr = this.nodeForm.safeArr;
       for(let i = 0; i < safeArr.length; i++) {
-        SecurityGroupIds.push(safeArr[i]);
+        SecurityGroupIds.push(safeArr[i].securityId);
       }
       let RunInstancePara = {
         InstanceChargeType: this.nodeForm.instanceChargeType,
@@ -1753,9 +1743,14 @@ export default {
       let res = '';
       if(val.length > 0) {
         for(let i = 0; i< val.length; i++) {
-          res += '';
+          if(val[i].dataDiskType === 'CLOUD_PREMIUM') {
+            res += '[' + (i+1) + ']高性能云硬盘' + val[i].dataSize + 'GB;';
+          } else {
+            res += '[' + (i+1) + ']SSD硬盘' + val[i].dataSize + 'GB;';
+          }
         }
       }
+      return res = res.substring(0, res.length - 1);
     },
     ClusterVersion(val) {
       if(val) {

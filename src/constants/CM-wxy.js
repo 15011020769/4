@@ -1,5 +1,5 @@
 // 实例分组
-export const CM_GROUPING_LIST = 'monitor/GetInstanceGroupList' // 列表
+export const CM_GROUPING_LIST = 'monitor2/DescribeInstanceGroupList' // 列表
 
 // 实例分组 列表 分组类型
 export const CM_GROUPING_LIST_TYPE = 'monitor2/DescribePolicyConditionList'

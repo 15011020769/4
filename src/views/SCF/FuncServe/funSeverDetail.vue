@@ -144,6 +144,7 @@
           Region: localStorage.getItem('regionv2'),
           Version: "2018-04-16",
           FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue
         };
         this.axios.post(LIST_VERSION, param).then(res => {
           if (res.Response.Error === undefined) {
