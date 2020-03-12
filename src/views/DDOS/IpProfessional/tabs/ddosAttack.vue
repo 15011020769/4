@@ -237,11 +237,12 @@ export default {
     },
     // DDOS资源Id变化时，重新获取数据
     changeId() {
+      this.IpList = []
       for (const i in this.ResIpList) {
         if (this.ResIpList.hasOwnProperty(i)) {
           const element = this.ResIpList[i];
           if(this.selectId == element.Id){
-            this.IpList = element.IpList;
+            Object.assign(this.IpList, element.IpList)
           }
         }
       }
