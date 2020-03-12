@@ -20,43 +20,44 @@
                   v-on:switchData="GetDat" />
         </div>
       </div>
-      <div class="box-top">
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='series' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesPod' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesCpu' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesCpuRate' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesCpuUsed' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesMemoy' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesMemoyRate' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesMemoyUsed' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='times' :series='seriesInternet' style="width:1000px;height: 200px;" />
-        </div>
-
-        <div class="box-top-left">
-          <EcharTKE :time='gpuTimes' :series='seriesGpu' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='gpuTimes' :series='seriesGpuUesd' style="width:1000px;height: 200px;" />
-        </div>
-        <div class="box-top-left">
-          <EcharTKE :time='gpuTimes' :series='seriesInternet' style="width:1000px;height: 200px;" />
+      <div class="box-bottom">
+        <div class="box-bottom-right">
+          <div class="box-top-left">
+            <Echarts :time='times' :series='series' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesPod' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesCpu' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesCpuRate' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesCpuUsed' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesMemoy' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesMemoyRate' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesMemoyUsed' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='times' :series='seriesInternet' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='gpuTimes' :series='seriesGpu' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='gpuTimes' :series='seriesGpuUesd' style="width:90%;height: 200px;" />
+          </div>
+          <div class="box-top-left">
+            <Echarts :time='gpuTimes' :series='seriesInternet' style="width:90%;height: 200px;" />
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +66,7 @@
 <script>
 import {TKE_GETTKEDATAJOB,TKE_GETTKEDATARESULT,NODE_LIST,POINT_REQUEST,NODE_INFO} from '@/constants'
 import TimeDropDown from '@/components/public/TimeDropDown'
-import EcharTKE from '@/components/public/EcharTKE'
+import Echarts from '@/components/public/Echarts'
 import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
@@ -148,7 +149,7 @@ export default {
   },
   components: {
     TimeDropDown,
-    EcharTKE
+    Echarts
   },
   created() {
     let{ name, clusterId } = this.$route.query
@@ -387,28 +388,118 @@ export default {
             }
           }
           this.times = times;
-          this.series = [{name: '节点数量',type: 'line', data: clusters}];
-          this.seriesPod = [{name: 'Allocatable Pod数量',type: 'line', data: allocatablePods},{name: 'Pod数量',type: 'line', data: pods}];
-          this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: cpus}];
+          this.series = [{name: '节点数量',type: 'line', data: clusters,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}];
+          this.seriesPod = [{name: 'Allocatable Pod数量',type: 'line', data: allocatablePods,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},{name: 'Pod数量',type: 'line', data: pods,itemStyle: {
+            normal: {
+              color: "#5CBB44",//折线点的颜色
+              lineStyle: {
+              color: "#5CBB44"//折线的颜色
+              }
+            }  }}];
+          this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: cpus,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}];
 
           this.seriesCpuRate = [
-            {name: 'CPU分配率(Request)',type: 'line', data: cpuRequests},
-            {name: 'CPU利用率',type: 'line', data: cpuUseds}
+            {name: 'CPU分配率(Request)',type: 'line', data: cpuRequests,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},
+            {name: 'CPU利用率',type: 'line', data: cpuUseds,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}
           ];
-          this.seriesCpuUsed = [{name: 'CPU使用量',type: 'line', data: cpuUsedmaxs}];
-          this.seriesMemoy = [{name: '内存总配置',type: 'line', data: memorys}];
+          this.seriesCpuUsed = [{name: 'CPU使用量',type: 'line', data: cpuUsedmaxs,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}];
+          this.seriesMemoy = [{name: '内存总配置',type: 'line', data: memorys,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}];
           this.seriesMemoyRate = [
-            {name: '内存分配率(Request)',type: 'line', data: memrequests},
-            {name: '内存利用率',type: 'line', data: memusages},
-            {name: '内存利用率(不含cache)',type: 'line', data: menNocaches}
+            {name: '内存分配率(Request)',type: 'line', data: memrequests,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},
+            {name: '内存利用率',type: 'line', data: memusages,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},
+            {name: '内存利用率(不含cache)',type: 'line', data: menNocaches,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}
           ];
           this.seriesMemoyUsed = [
-            {name: '内存使用率',type: 'line', data: memUsageBytes},
-            {name: '内存使用率(不含cache)',type: 'line', data: memNoYsages}
+            {name: '内存使用率',type: 'line', data: memUsageBytes,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},
+            {name: '内存使用率(不含cache)',type: 'line', data: memNoYsages,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}
           ];
           this.seriesInternet = [
-            {name: '网络入带宽',type: 'line', data: receives},
-            {name: '网络出带宽',type: 'line', data: transmits}
+            {name: '网络入带宽',type: 'line', data: receives,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }},
+            {name: '网络出带宽',type: 'line', data: transmits,itemStyle: {
+            normal: {
+              color: "#2072d9",//折线点的颜色
+              lineStyle: {
+              color: "#2072d9"//折线的颜色
+              }
+            }  }}
           ];
           this.loadShow = false;
         } else {
@@ -469,8 +560,8 @@ export default {
       }
     }
     .box-bottom-right {
-      width: 65%;
-      margin-right: 5%;
+      width: 100%;
+      /* margin-right: 5%; */
       .el-tab-pane {
         height: auto;
         overflow-y: scroll;

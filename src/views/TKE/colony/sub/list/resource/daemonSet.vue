@@ -208,8 +208,8 @@ export default {
         name: "daemonSetMonitor",
         query: {
           title: this.tit + "(DaemonSet)",
-          type: 'Deployment',
-          // list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
+          type: 'DaemonSet',
+          list: this.multipleSelection.length > 0 ? this.multipleSelection : this.list,
           clusterId: this.clusterId,
           spaceName: this.searchType
         }
