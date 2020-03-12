@@ -30,6 +30,7 @@
 import { L4RULES_CREATE } from '@/constants';
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
+  inject: ['describleL4Rules'],
   props:{
     isShow1:Boolean,
     resourceId: String,
@@ -52,6 +53,7 @@ export default {
   methods:{
     //弹框确定按钮
     batchImportSure(){
+      this.rules = [];
       //1.解析转换字符串
       // 1.1.按行分割
       let arr = this.importRules.split(/[\r\n]/)
@@ -80,7 +82,6 @@ export default {
     // 1.1.添加L4转发规则
     createL4Rules() {//业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名）
       let add = this.flag?0:1;
-      
       let params = {
         Version: '2018-07-09',
         Region: localStorage.getItem("regionv2"),
@@ -129,6 +130,12 @@ export default {
       this.axios.post(L4RULES_CREATE, params).then(res => {
         if (res.Response.Error === undefined) {
           //添加成功
+          this.$message({
+            showClose: true,
+            message: "導入成功",
+            type: "success"
+          });
+          this.describleL4Rules();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);

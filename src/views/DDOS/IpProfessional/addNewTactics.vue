@@ -214,9 +214,13 @@
               ></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchBegin" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
-                <el-option :label="$t('DDOS.updateddos.jc')" value="begin_l5"></el-option>
-                <el-option :label="$t('DDOS.updateddos.bjc')" value="no_match"></el-option>
+              <el-select class="selectChange1" v-model="item.MatchBegin">
+                <el-option
+                  v-for="(item, index) in matchBeginList"
+                  :label="item.label"
+                  :value="item.value"
+                  :key="index"
+                ></el-option>
               </el-select>
             </td>
             <td>
@@ -719,6 +723,7 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       filterConrent: "",
+      matchBeginList: [{label: '不檢測', value: 'no_match'},{label: 'IP頭開始檢查', value: 'begin_l3'},{label: 'TCP/UDP頭開始檢查', value: 'begin_l4'},{label: '載荷開始檢查', value: 'begin_l5'}],//报文过滤特征检测
       DdisableProtocol: [], //禁用协议
       radios1: "關閉", //拒绝海外流量
       radios2: "關閉",
@@ -764,7 +769,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.policyTemp);
+    // console.log(this.policyTemp);
   },
   created() {
     //根据有无对象传入，判断是添加还是配置
@@ -1237,6 +1242,7 @@ export default {
           return;
         }
         des.Depth = "100";
+        des.MatchBegin = "no_match";
         this.tags1.push(des);
       } else if (type == 3) {
         if (this.tags3.length == 4) {

@@ -1,10 +1,5 @@
 <template>
-  <el-dialog
-    :title="t('生成报表', 'WAF.scbb')"
-    width="40%"
-    :visible.sync="dialogDownloadVisible"
-    :before-close='cancel'
-  >
+  <div>
     <p v-show="isImgMessage" class="message_img">{{imgMessage}}</p>
       <span class="label_img">{{t('图片格式', 'WAF.tpgs')}}</span>
       <el-select v-model="imgFormat" :placeholder="t('请选择', 'WAF.qxz')" @change="changeFormat">
@@ -16,7 +11,7 @@
       <el-button type="primary" @click="saveImg" :disabled="isDisabled">保存</el-button>
       <el-button @click="cancel">取消</el-button>
     </div>
-  </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -77,5 +72,6 @@ export default {
   .label_img {
     display: inline-block;
     padding-right: 20px;
+    margin-bottom: 50px;
   }
 </style>

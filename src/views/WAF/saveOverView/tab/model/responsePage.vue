@@ -8,7 +8,7 @@
     <EBar
       :xAxis="xAxisBarArt"
       :series="seriesBarArt"
-      :legendText="legendTextBarIp"
+      :legendText="legendTextBarArt"
       v-loading="loading"
       v-if="xAxisBarArt.length == 0 ? false : true"
     />
@@ -22,7 +22,7 @@
     <EBar
       :xAxis="xAxisBarUrl"
       :series="seriesBarUrl"
-      :legendText="legendTextBarIp"
+      :legendText="legendTextBarUrl"
       v-loading="loading"
       v-if="xAxisBarArt.length == 0 ? false : true"
     />
@@ -46,7 +46,8 @@ export default {
       seriesBarArt: [], // 响应时间最慢
       xAxisBarUrl: [], // 页面访问次数
       seriesBarUrl: [], // 页面访问次数
-      legendTextBarIp: "次数",
+      legendTextBarArt: this.t('响应时间', 'WAF.xytime'),
+      legendTextBarUrl: this.t('访问次数', 'WAF.fwcs'),
       loading: true,
     }
   },

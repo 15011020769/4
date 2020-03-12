@@ -10,6 +10,9 @@
         :before-close="handleClose"
       >
         <div class="createRulesForm">
+          <p class="tc-15-msg error" v-if="checkflg == false">
+            {{$t('DDOS.accessCopy.editWarning')}}
+          </p>
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.AccesstoCon.businessDoma')}}</span>
             <span class="ruleListIpt">
@@ -91,6 +94,7 @@
 import { ENID_CREATE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
+  inject: ['describleL4Rules'],
   props: {
     isShow3: Boolean,
     resourceId: String
@@ -123,18 +127,21 @@ export default {
       if (scopeRow.SourceType == 1) { //域名
         this.protocolList = [{pro: 'TCP'}];
         for (let i = 0; i < scopeRow.SourceList.length; i++) {
-          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\n')
+          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + ((i+1)==scopeRow.SourceList.length?'':'\n'))
         }
       } else if (scopeRow.SourceType == 2) { //IP
         this.protocolList = [{pro: 'TCP'}, {pro: 'UDP'}];
         for (let i = 0; i < scopeRow.SourceList.length; i++) {
-          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\ ' + scopeRow.SourceList[i].Weight + '\n')
+          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\ ' + scopeRow.SourceList[i].Weight + ((i+1)==scopeRow.SourceList.length?'':'\n'))
         }
       }
       this.EnidData = JSON.parse(JSON.stringify(scopeRow));
     },
     //编辑确定按钮
     editSure() {
+      if(!this.checkflg){
+        return
+      }
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -170,6 +177,7 @@ export default {
             message: '編輯成功',
             type: 'success'
           });
+          this.describleL4Rules();
           this.dialogVisible = false;
           this.$emit("closeEditModel", this.dialogVisible);
         } else {
@@ -197,12 +205,13 @@ export default {
       let arr = this.textData.split(/[\s\n]/);
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
       var regNUM = /(^[1-9]\d*$)/;
-
-      // console.log(arr)
+      this.checkflg = true;
+      console.log(arr)
       if(this.EnidData.SourceType=="2"){//IP回源
         for(let i=0; i<arr.length/2; i++) {
           if(!regIP.test(arr[i*2]) || !regNUM.test(arr[i*2 + 1])) {
             this.checkflg = false;
+            // return
           }
         }
       }else if(this.EnidData.SourceType=="1"){//域名回源
@@ -210,7 +219,23 @@ export default {
         //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
         // }
       }
+      console.log(this.checkflg)
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.tc-15-msg {
+  color: #b43537;
+  border: 1px solid #f6b5b5;
+  background-color: #fcecec;
+  background: #fcecec;
+  border-radius: 0;
+  font-size: 12px;
+  line-height: inherit;
+  padding: 10px 30px 10px 20px;
+  position: relative;
+  max-width: 1360px;
+  margin-block-end: 1em;
+}
+</style>

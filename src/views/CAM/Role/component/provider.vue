@@ -106,7 +106,7 @@
       </el-table>
     </el-form-item>
     <el-form-item>
-      <p style="margin-top: -15px;">共{{ form.condition.length }}项</p>
+      <p style="margin-top: -15px;">共{{ form.condition.length }}項</p>
       <p style="margin-top:20px">
         <el-button size="small" @click="add_use">{{
           $t("CAM.Role.xzsytj")

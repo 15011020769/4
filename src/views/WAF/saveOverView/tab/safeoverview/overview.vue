@@ -109,7 +109,11 @@ export default {
       }
       this.axios.post(DESCRIBE_BOT_COUNT, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
-          this.botRequest = Response.Count
+          if(Response.Count) {
+            this.botRequest = Response.Count
+          } else {
+            this.botRequest = 0
+          }
         })
       })
     },
