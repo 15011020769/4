@@ -194,7 +194,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
 import EcharTKE from '@/components/public/EcharTKE'
-import EcharTKELine from '@/components/public/EcharTKELine'
+// import EcharTKELine from '@/components/public/EcharTKELine'
 // const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
@@ -204,7 +204,7 @@ export default {
       default: false
     },
   },
-  components:{TimeDropDown,EcharTKE,EcharTKELine},
+  components:{TimeDropDown,EcharTKE},
   data() {
     return {
       activeName: "k8s_node",
