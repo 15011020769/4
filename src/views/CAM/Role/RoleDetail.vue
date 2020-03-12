@@ -90,16 +90,16 @@
                       @click="first_handleClick(scope.row)"
                       type="text"
                       size="small"
-                    >{{scope.row.PolicyName}}</el-button>
+                    >{{scope.row.policyName}}</el-button>
                   </template>
                 </el-table-column>
                 <el-table-column align="center" label="策略類型">
                   <template slot-scope="scope">
-                    <div v-if="scope.row.PolicyType == 'User'">{{$t('CAM.userList.strategySelf')}}</div>
-                    <div v-else-if="scope.row.PolicyType == 'QCS'">{{$t('CAM.userList.ysStrategy')}}</div>
+                    <div v-if="scope.row.policyType == 'User'">{{$t('CAM.userList.strategySelf')}}</div>
+                    <div v-else-if="scope.row.policyType == 'QCS'">{{$t('CAM.userList.ysStrategy')}}</div>
                   </template>
                 </el-table-column>
-                <el-table-column prop="AddTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
+                <el-table-column prop="addTime" :label="$t('CAM.userList.AssociationTime')"></el-table-column>
                 <el-table-column >
                   <div slot="header" style="padding: 0;">
                     {{$t('CAM.Role.failure')}}
@@ -283,12 +283,11 @@
         :visible.sync="dialogVisiblePolicies"
         width="70%"
         :before-close="handleClosePolicy"
+        destroy-on-close
       >
         <p class="dialog" slot="title">{{$t('CAM.userGroup.createRelevance')}}</p>
         <transfer
-          @_multipleSelection="_multipleSelection"
-          :multipleSelection="multipleSelection"
-          :rolePolicies="rolePolicies"
+          :roleId="roleId"
           ref="transfer"
         ></transfer>
         <p style="text-align:center;margin-top:30px">
@@ -317,7 +316,7 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import transfer from "./component/transfer";
+import transfer from "./component/transfer4";
 import HeadCom from "../UserListNew/components/Head";
 import moment from 'moment'
 import {
@@ -336,6 +335,8 @@ import {
   LOGOUT_ROLE_SESSIONS,
   CREATE_POLICY,
   UPDATE_ROLE_CONSOLE_LOGIN,
+  ATTACH_ROLE_POLICIES,
+  DETACH_ROLE_POLICIES,
 } from "@/constants";
 export default {
   components: {
@@ -549,36 +550,36 @@ export default {
       this.loading = true;
       this.selTotalNum = 0;
       let paramsList = {
-        Version: "2019-01-16",
-        Page: this.currpage,
-        Rp: this.pagesize,
-        RoleId: this.roleId
+        // Version: "2019-01-16",
+        page: this.currpage,
+        rp: this.pagesize,
+        roleId: this.roleId
       };
       if (this.rolePolicyType != "") {
-        paramsList["PolicyType"] = this.rolePolicyType;
-      }
+        }
+        paramsList["policyType"] = 'QCS'
 
       this.axios
         .post(LIST_ATTACHE, paramsList)
         .then(res => {
-          if (res.Response.Error === undefined) {
+          if (res.data.Error === undefined) {
             // this.rolePolicies = res.Response.List;
-            const index = res.Response.List.findIndex(item => item.PolicyName.includes('RevokeOlderSessionFor'))
+            const index = res.data.list.findIndex(item => item.policyName.includes('RevokeOlderSessionFor'))
             if (index !== -1) {
               this.axios.post(GET_POLICY, {
                 Version: '2019-01-16',
                 PolicyId: res.Response.List[index].PolicyId
               }).then(({ Response }) => {
-                res.Response.List[index].validTime = moment(JSON.parse(Response.PolicyDocument).statement[0].condition.date_less_than['qcs:token_create_time']).format('YYYY-MM-DD HH:mm:ss')
+                res.Response.list[index].validTime = moment(JSON.parse(Response.PolicyDocument).statement[0].condition.date_less_than['qcs:token_create_time']).format('YYYY-MM-DD HH:mm:ss')
               }).then(() => {
-                this.rolePolicies = res.Response.List;
+                this.rolePolicies = res.data.list;
               })
 
             } else {
-              this.rolePolicies = res.Response.List;
+              this.rolePolicies = res.data.list;
             }
-            this.TotalNum = res.Response.TotalNum;
-            this.TotalCount = res.Response.TotalNum;
+            this.TotalNum = res.data.totalNum;
+            this.TotalCount = res.data.totalNum;
           } else {
             if (!res.Response.Error.code == "InvalidParameter.RoleNotExist") {
               let ErrTips = {
@@ -608,27 +609,22 @@ export default {
           cancelButtonText: "取消",
           type: "warning"
         }).then(() => {
-          let paramsDel = {
-            Version: "2019-01-16",
-            PolicyId: scope.PolicyId,
-            DetachRoleId: this.roleId
-          };
-          this.relievePolicy(paramsDel);
+          this.relievePolicy([scope.policyId]);
         });
         return
       }
-
-      let paramsDel = {
-        Version: "2019-01-16",
-        PolicyId: scope.PolicyId,
-        DetachRoleId: this.roleId
-      };
-      this.relievePolicy(paramsDel);
     },
-    // 解除角色绑定的策略
-    relievePolicy(paramsRelieve) {
+    // 批量解除角色绑定的策略
+    relievePolicy(policyIds) {
+      const params = {
+        Version: '2019-01-16',
+        RoleId: this.roleId,
+      }
+      policyIds.forEach((policyId, i) => {
+        params[`PolicyId.${i}`] = policyId
+      })
       this.axios
-        .post(DEACH_ROLE, paramsRelieve)
+        .post(DETACH_ROLE_POLICIES, params)
         .then(res => {
           if (res.Response.Error === undefined) {
             if (res.Response.RequestId) {
@@ -639,6 +635,7 @@ export default {
                 showClose: true
               });
             }
+            this.currpage = 1
             this.getRolePolicy(); // 重新加载
           } else {
             let ErrTips = {
@@ -670,27 +667,14 @@ export default {
     },
     // 批量解除绑定到策略的实体
     relieveRolePolicies() {
-      if (this.roleSelPolicies.length > 3) {
-        this.$message({
-          type: "success",
-          message: "每次最多可以選中3條",
-          duration: 0,
-          showClose: true
-        });
-      } else {
-        this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
+      this.$confirm(this.$t('CAM.Role.jcclts'), "解除策略", {
         confirmButtonText: "確定",
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        let arrs = this.roleSelPolicies;
-        for (let i = 0; i < arrs.length; i++) {
-          let obj = arrs[i];
-          this.relieveRolePolicy(obj);
-        }
+        this.relievePolicy(this.roleSelPolicies.map(s => s.policyId));
         this.displayPolicies = false;
       });
-      }
     },
     // 修改角色描述信息
     updateRoleDescription() {
@@ -837,34 +821,46 @@ export default {
     },
     // 关联角色策略
     attachRolePolicies() {
-      if (this.multipleSelection.length > 3) {
-        this.$message({
-          message: "每次最多可以選中三條",
+      const strategies = this.$refs.transfer.selectedStrategiesWithoutRole
+       if (strategies.length == 0) {
+        return void this.$message({
+          message: "請選中要關聯的策略",
           type: "error",
           showClose: true,
           duration: 0
         });
-      } else if (this.multipleSelection.length == 0) {
-        this.$message({
-          message: "請選中要關聯的數據",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-      } else {
-        var _this = this;
-        new Promise(function() {
-          _this.multipleSelection.forEach(item => {
-            _this.attachPolicy(item.PolicyId);
-          });
-          _this.dialogVisiblePolicies = false;
-          _this.loading = true;
-          // _this.multipleSelection = [];
-          setTimeout(() => {
-            _this.getRolePolicy();
-          }, 3000);
-        }).then(_this.$refs.transfer.clear());
       }
+      const params = {
+        'Version': '2019-01-16',
+        RoleId: this.roleId
+      }
+      strategies.forEach((policy, i) => {
+        params[`PolicyId.${i}`] = policy.PolicyId
+      })
+      this.axios.post(ATTACH_ROLE_POLICIES, params).then(res => {
+        if (res.Response.Error) {
+          let ErrTips = {
+            'FailedOperation.PolicyFull': '用户策略数超过上限。',
+            'InvalidParameter.PolicyIdNotExist': '策略ID不存在。',
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
+        this.$message({
+          message: "關聯成功",
+          type: "success",
+          duration: 0,
+          showClose: true
+        });
+        this.dialogVisiblePolicies = false
+        this.getRolePolicy()
+      })
     },
     // 关闭关联策略dialog
     handleClosePolicy() {
@@ -1173,5 +1169,8 @@ export default {
     p {
       line-height: 20px;
     }
+  }
+  ::v-deep .el-dialog__body {
+    padding-top: 0;
   }
 </style>

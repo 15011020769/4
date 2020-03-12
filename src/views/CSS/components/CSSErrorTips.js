@@ -26,6 +26,7 @@ let CSSErrorTips = {
   'InternalError.ChineseCharacterDetected': '暂不支持添加中文域名， 请核对域名格式。',
   'InternalError.ConnectDbError': ' DB连接错误。',
   'InternalError.DBError': 'DB执行错误',
+  'InvalidParameter.DomainAlreadyExist': ' 该域名已在其他处接入， 请检查域名是否输入正确。 如域名正确， 您可通过验证后重新添加域名。',
   'InternalError.DomainAlreadyExist': ' 该域名已在其他处接入， 请检查域名是否输入正确。 如域名正确， 您可通过验证后重新添加域名。',
   'InternalError.DomainFormatError': ' 域名格式错误， 请输入合法格式域名。',
   'InternalError.DomainGslbFail': ' 添加GSLB规则失败。',
