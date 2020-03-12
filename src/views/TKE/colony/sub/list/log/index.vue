@@ -203,7 +203,7 @@ export default {
         console.log('kq')
         var timeId = setInterval(() => {
           this.nameSpaceList();
-        }, 20000);
+        }, 40000);
       } else {
         console.log('gb')
         this.nameSpaceList();
@@ -221,7 +221,7 @@ export default {
       if (this.autoRefresh === true) {
         this.timeId = setInterval(() => {
           this.nameSpaceList();
-        }, 30000);
+        }, 40000);
       } else {
         this.nameSpaceList();
       }
@@ -254,8 +254,6 @@ export default {
               label: item.metadata.name
             });
           });
-          // this.value1 = this.option1[0].value;
-          // this.value2 = this.option2[0].value;
           this.getWorkload();
         } else {
           let ErrTips = {};
