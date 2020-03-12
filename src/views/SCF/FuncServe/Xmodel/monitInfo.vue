@@ -16,7 +16,7 @@
     </div>
     <div class="box-table">
       <!-- 表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad' id="exportTable">
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad'>
         <el-table-column prop width="200">
           <template slot-scope="scope">
             <p>
@@ -70,6 +70,98 @@
               <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
             </template>
             <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p @click="kkk"></p>
+          </template>
+        </el-table-column>
+      </el-table>
+
+    </div>
+
+
+    <div class="box-table" v-show="false">
+      <!-- 表格 -->
+      <el-table :data="tableData" style="width: 100%" v-loading='TableLoad' id="exportTable">
+        <el-table-column prop width="200">
+
+          <template slot-scope="scope">
+            <p>
+              <span class='span_1'>{{disName[scope.row.MetricName]}}</span>
+              <span class='span_2'>{{Company[scope.row.MetricName]}}</span>
+              <el-popover placement="bottom-start" title width="200" trigger="hover">
+                <p>{{Tips[scope.row.MetricName]}}</p>
+                <i class="el-icon-warning" slot="reference"></i>
+              </el-popover>
+            </p>
+          </template>
+
+        </el-table-column>
+        <el-table-column label="日期" width="550">
+          <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                :MetricName='disName[scope.row.MetricName]'></echart-line>
+            </div>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
+              <p v-for="(item,index) in scope.row.DataPoints[0].Timestamps" :key="index">
+                {{item|UpTime}}
+              </p>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="數據" width="550">
+          <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
+              <p v-for="(item,index) in scope.row.DataPoints[0].Values" :key="index">
+                {{item}}
+              </p>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}}</span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p @click="kkk"></p>
           </template>
         </el-table-column>
       </el-table>
@@ -251,7 +343,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "NAT閘道" + ".xlsx"
+            "SCF" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);
@@ -321,6 +413,9 @@
           }
         });
       },
+      kkk() {
+
+      }
 
     },
     filters: {
