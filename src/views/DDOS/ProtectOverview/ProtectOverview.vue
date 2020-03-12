@@ -288,8 +288,8 @@ export default {
       ],
       // 获取产品总览
       // packParams: ["bgp", "net"],
-      packParams: ["net"],
-      business: "net", // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
+      packParams: ['net'],
+      business: 'net', // 产品代号: bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版
       packDataIP: [
         // 高防IP专业版 net
         { Key: "TotalPackCount", Value: 50 },
@@ -324,7 +324,7 @@ export default {
       // type: "bgp",
       type: "net",
       // 下载名称
-      downloadName: "獨享包攻擊記錄",
+      downloadName: "高防IP專業版攻擊記錄",
       // 查询输入字段（资源实例id）
       searchInputID: "",
 
@@ -342,10 +342,11 @@ export default {
       this.describeSecIndex();
       for (let i in this.packParams) {
         this.business = this.packParams[i];
+        console.log(this.business)
         switch (
           this.business // [bgpip表示高防IP；bgp表示独享包；bgp-multip表示共享包；net表示高防IP专业版]
         ) {
-          case "net":
+          case 'net':
             this.describePackIndex(this.packDataIP);
             break;
           // case "bgp":
@@ -462,8 +463,8 @@ export default {
       // if (param == "bgp-multip") {
       //   this.downloadName = "共享包攻擊記錄";
       // } else
-      if (param == "net") {
-        this.downloadName = "高防IP專業版攻擊記錄";
+      if (param === 'net') {
+        this.downloadName = '高防IP專業版攻擊記錄'
       }
       this.describeDDoSEvList();
     },
