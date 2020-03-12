@@ -10,7 +10,7 @@
           </el-form-item>
           <el-form-item label="仓库地址">
             <div class="tke-form-item_text"><span>{{server}}/{{name}}</span>
-            <!-- <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i> -->
+            <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i>
             </div>
           </el-form-item>
           <el-form-item label="描述">

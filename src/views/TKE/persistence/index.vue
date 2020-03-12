@@ -25,7 +25,7 @@
           ></tkeSearch>
         </div>
         <!-- 内容 -->
-        <el-table :data="tableData" style="width: 100%" v-loading="loadShow">
+        <el-table :data="tableData" style="width: 100%" v-loading="loadShow"  @cell-mouse-enter="hoverShow" @cell-mouse-leave="hoverHide">
           <el-table-column :label="$t('TKE.overview.idmc')" width="220">
             <template slot-scope="scope">
               <span
@@ -38,6 +38,7 @@
                     : ''
                 "
               >{{ scope.row.ClusterId }}</span>
+              <i class="el-icon-document u-btn" style="cursor: pointer;" v-show="showFlag" @click="getContext($event)"></i>
               <br />
               <span>{{ scope.row.ClusterName }}</span>
             </template>
@@ -54,12 +55,18 @@
               >
                 <span class="text-red">
                   {{$t('TKE.overview.sb')}}
-                  <i style="color:#e54545;font-size:16px" class="el-icon-warning"></i>
+                  <i
+                    style="color:#e54545;font-size:16px"
+                    class="el-icon-warning"
+                  ></i>
                 </span>
               </el-tooltip>
               <span v-else-if="scope.row.targetStatus == 'running'" class="text-green">
                 {{$t('TKE.overview.ykq')}}
-                <i style="color:#0abf5b;font-weight:900" class="el-icon-circle-check"></i>
+                <i
+                  style="color:#0abf5b;font-weight:900"
+                  class="el-icon-circle-check"
+                ></i>
               </span>
               <span v-else>{{$t('TKE.overview.wkq')}}</span>
             </template>
@@ -79,10 +86,18 @@
           <el-table-column label="操作" width="220">
             <template slot-scope="scope">
               <span v-if="!scope.row.storageObject">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.sz')}}</el-button>
+                <el-button
+                  @click="handleClick(scope.row)"
+                  type="text"
+                  size="small"
+                >{{$t('TKE.overview.sz')}}</el-button>
               </span>
               <span v-else-if="scope.row.storageObject">
-                <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.gxsz')}}</el-button>
+                <el-button
+                  @click="handleClick(scope.row)"
+                  type="text"
+                  size="small"
+                >{{$t('TKE.overview.gxsz')}}</el-button>
               </span>
             </template>
           </el-table-column>
@@ -117,6 +132,7 @@ export default {
       pageIndex: 0,
       searchSelect: "",
       searchInput: "",
+      showFlag:false,
       listStatus: [], // 集群列表节点数状态
       listStatusArr: [], // 集群列表节点数状态
       searchOptions: [
@@ -134,9 +150,17 @@ export default {
     };
   },
   created() {
+    // var index = dataList.indexOf(row)
     this.getColonyList();
   },
   methods: {
+    hoverHide(){
+      this.showFlag=false;
+    },
+    hoverShow(){
+      console.log('11');
+      this.showFlag=true;
+    },
     // 查看详情跳转
     goColonySub(id) {
       this.$router.push({
@@ -181,6 +205,26 @@ export default {
         this.funllscreenLoading = false;
         this.loadShow = false;
       });
+    },
+    getContext(e) {
+      let getText = e.currentTarget.previousElementSibling.innerHTML;
+      this.copy(getText);
+    },
+    copy(data) {
+      // 复制功能
+      let url = data;
+      let oInput = document.createElement("input");
+      oInput.value = url;
+      document.body.appendChild(oInput);
+      oInput.select(); // 选择对象;
+      console.log(oInput.value);
+      document.execCommand("Copy"); // 执行浏览器复制命令
+      this.$message({
+        message: "复制成功",
+        type: "success",
+        showClose: true
+      });
+      oInput.remove();
     },
     async getColonyList() {
       this.loadShow = true;
@@ -303,6 +347,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.u-btn{
+    display: none;
+  }
+  .el-table__body tr:hover{
+    .u-btn{
+      display: inline;
+    }
+  }
 .hd-button {
   width: 80px;
   height: 22px;
