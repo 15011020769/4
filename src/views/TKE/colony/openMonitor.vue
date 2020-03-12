@@ -397,15 +397,15 @@ export default {
             }  }}];
           this.seriesPod = [{name: 'Allocatable Pod数量',type: 'line', data: allocatablePods,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#44FF8F",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#44FF8F"//折线的颜色
               }
             }  }},{name: 'Pod数量',type: 'line', data: pods,itemStyle: {
             normal: {
-              color: "#5CBB44",//折线点的颜色
+              color: "#2072d9",//折线点的颜色
               lineStyle: {
-              color: "#5CBB44"//折线的颜色
+              color: "#2072d9"//折线的颜色
               }
             }  }}];
           this.seriesCpu = [{name: 'CPU总配置',type: 'line', data: cpus,itemStyle: {
@@ -419,9 +419,9 @@ export default {
           this.seriesCpuRate = [
             {name: 'CPU分配率(Request)',type: 'line', data: cpuRequests,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#44FF8F",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#44FF8F"//折线的颜色
               }
             }  }},
             {name: 'CPU利用率',type: 'line', data: cpuUseds,itemStyle: {
@@ -456,16 +456,16 @@ export default {
             }  }},
             {name: '内存利用率',type: 'line', data: memusages,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#44FF8F",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#44FF8F"//折线的颜色
               }
             }  }},
             {name: '内存利用率(不含cache)',type: 'line', data: menNocaches,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#ED9257",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#ED9257"//折线的颜色
               }
             }  }}
           ];
@@ -479,9 +479,9 @@ export default {
             }  }},
             {name: '内存使用率(不含cache)',type: 'line', data: memNoYsages,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#44FF8F",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#44FF8F"//折线的颜色
               }
             }  }}
           ];
@@ -495,9 +495,9 @@ export default {
             }  }},
             {name: '网络出带宽',type: 'line', data: transmits,itemStyle: {
             normal: {
-              color: "#2072d9",//折线点的颜色
+              color: "#44FF8F",//折线点的颜色
               lineStyle: {
-              color: "#2072d9"//折线的颜色
+              color: "#44FF8F"//折线的颜色
               }
             }  }}
           ];
