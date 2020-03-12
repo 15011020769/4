@@ -159,6 +159,7 @@
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
+                  :current-page="currpage"
                   layout="prev, sizes, pager, next"
                   :page-sizes="[10, 20, 30, 40, 50]"
                   @current-change="handleCurrentChange"
@@ -235,6 +236,8 @@ import {
   GET_POLICY,
   ATTACH_GROUP,
   UPDATE_POLICY_V2,
+  DETACH_GROUPS_POLICY,
+  DETACH_USERS_POLICY,
 } from "@/constants";
 import transfer from "./component/transfer";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -423,7 +426,6 @@ export default {
               userArr.push(item);
             }
           });
-          console.log(list)
           this.policysData = list;
           this.userArr = userArr;
           this.groupArr = groupArr;
@@ -543,12 +545,47 @@ export default {
     },
     // 批量解除绑定到策略的实体
     removePolicysEntity() {
-      let arrs = this.selectData;
-      for (let i = 0; i < arrs.length; i++) {
-        let obj = arrs[i];
-        this.removePolicyEntity(obj);
+      const users = []
+      const groups = []
+      const p = []
+      this.selectData.forEach(d => {
+        if (d.RelatedType === 1) {
+          users.push(d.Uin)
+        } else {
+          groups.push(d.Id)
+        }
+      })
+      if (users.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        users.forEach((id, i) => {
+          params[`TargetUin.${i}`] = id
+        })
+        p.push(this.axios.post(DETACH_USERS_POLICY, params))
       }
-      this.Relieve_dialogVisible = false;
+      if (groups.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        groups.forEach((id, i) => {
+          params[`GroupId.${i}`] = id
+        })
+        p.push(this.axios.post(DETACH_GROUPS_POLICY, params))
+      }
+      Promise.all(p).then(() => {
+        this.$message({
+          message: '解除成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+        this.currpage = 1
+        this.getAttachPolicys()
+        this.Relieve_dialogVisible = false;
+      })
     },
     handleSelectionChange(val) {
       this.policysSelData = val;

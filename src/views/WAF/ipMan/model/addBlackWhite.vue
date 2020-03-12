@@ -114,7 +114,7 @@ export default {
           param[`Items.${i}`] = JSON.stringify({
             ip,
             action: this.blackWhiteCh,
-            source: this.blackWhiteCh,
+            source: 'custom',
             note: this.des,
             valid_ts: Number(moment(`${moment(this.datatime).format('YYYY-MM-DD')} ${moment(this.timeValue).format('HH:mm:ss')}`).format('X'))
           })

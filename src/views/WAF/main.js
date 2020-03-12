@@ -2,6 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import '@/element-ui-theme'
 import '@/assets/scss/index.scss'
 import '@/assets/style/reset.scss'
@@ -12,6 +13,7 @@ import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { ErrorTips } from "@/components/ErrorTips"
+import VueClipboard from 'vue-clipboard2'
 import { COMMON_ERROR } from './constants'
 
 Vue.use(ElementUI, {
@@ -81,6 +83,7 @@ Vue.prototype.t = function(jt, ...t) {
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
+Vue.use(VueClipboard)
 
 new Vue({
     router,

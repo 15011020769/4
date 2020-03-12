@@ -10,21 +10,21 @@
       prop="AuthKey"
       label="主KEY"
     >
-      <el-input v-model.trim="form.AuthKey" />
+      <el-input v-model.trim="form.AuthKey" @input="v => form.AuthKey=v.replace(/[^a-zA-Z\d]/g, '')" />
       <span class="sub-text">仅支持大写字母，小写字母和数字，最大长度256位。</span>
     </el-form-item>
     <el-form-item
       prop="AuthBackKey"
       label="备KEY"
     >
-      <el-input v-model.trim="form.AuthBackKey" />
+      <el-input v-model.trim="form.AuthBackKey" @input="v => form.AuthBackKey=v.replace(/[^a-zA-Z\d]/g, '')" />
       <span class="sub-text">仅支持大写字母，小写字母和数字，最大长度256位。</span>
     </el-form-item>
     <el-form-item
       prop="AuthDelta"
       label="有效时间(秒)"
     >
-      <el-input v-model.trim="form.AuthDelta" />
+      <el-input v-model.trim="form.AuthDelta" @input="v => form.AuthDelta=v.replace(/[^\d]/g, '')" />
       <span class="sub-text">仅支持整数</span>
     </el-form-item>
     <el-form-item>
@@ -42,10 +42,20 @@ export default {
   data() {
     return {
       form: {
-        ...this.authKeyInfo,
-        enable: !!this.authKeyInfo.Enable
+        
       },
       loading: false,
+    }
+  },
+  watch: {
+    authKeyInfo: {
+      handler(){
+        this.form = {
+          ...this.authKeyInfo,
+          enable: !!this.authKeyInfo.Enable
+        }
+      },
+      immediate: true
     }
   },
   methods: {

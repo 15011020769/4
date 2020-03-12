@@ -45,9 +45,14 @@
             <el-tooltip
               class="item"
               effect="dark"
-              :content="$t('CSS.detailPlay.4')"
               placement="right"
             >
+              <div slot="content">
+                {{$t('CSS.detailPlay.4')}}<br/>
+                {{$t('CSS.detailPlay.44')}}<br/>
+                {{$t('CSS.detailPlay.444')}}<br/>
+                {{$t('CSS.detailPlay.4444')}}
+              </div>
               <i class="el-icon-info" />
             </el-tooltip>
           </h1>

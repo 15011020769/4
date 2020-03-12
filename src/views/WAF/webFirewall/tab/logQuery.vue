@@ -92,12 +92,12 @@
             <el-table-column prop="AttackTime" v-if="columnsCopy.includes('AttackTime')" :label="t('攻击时间', 'WAF.gjsj')" width="150"></el-table-column>
             <el-table-column prop="Status" v-if="columnsCopy.includes('Status')" :label="t('执行动作', 'WAF.zxdz')">
               <template scope="scope">
-                {{scope.row.Status === '1' ? '拦截' : '观察'}}
+                <span :class="'status-'+scope.row.Status">{{scope.row.Status === '1' ? '拦截' : '观察'}}</span>
               </template>
             </el-table-column>
             <el-table-column prop="RiskLevel" v-if="columnsCopy.includes('RiskLevel')" :label="t('风险等级', 'WAF.fxdj')">
               <template scope="scope">
-                <span v-if="scope.row.RiskLevel === '1'">高危</span>
+                <span :class="'riskLevel-'+scope.row.RiskLevel" v-if="scope.row.RiskLevel === '1'">高危</span>
                 <span v-if="scope.row.RiskLevel === '2'">中危</span>
                 <span v-if="scope.row.RiskLevel === '3'">低危</span>
               </template>
@@ -287,19 +287,19 @@ export default {
       }
       // 拦截状态
       if (this.actionVlaue !== '-1') {
-        params.Status = this.actionVlaue
+        params.Status = Number(this.actionVlaue)
       }
       // 攻击类型
       if (this.attackVlaue !== '-1') {
         params.AttackType = this.attackVlaue
       }
+      if (this.attackIP) {
+        params.AttackIp = this.attackIP
+      }
       if (this.ruleId) {
         params.RuleId = this.ruleId
       }
-      this.axios.post(DESCRIBE_ATTACK_LOG_COUNT, {
-        ...params,
-        AttackIp: this.attackIP // 攻击者IP
-      }).then(resp => {
+      this.axios.post(DESCRIBE_ATTACK_LOG_COUNT, params).then(resp => {
         this.generalRespHandler(resp, ({ Count }) => {
           this.total = Count
         })
@@ -323,7 +323,7 @@ export default {
       }
       // 拦截状态
       if (this.actionVlaue !== '-1') {
-        params.Status = this.actionVlaue
+        params.Status = Number(this.actionVlaue)
       }
       // 攻击类型
       if (this.attackVlaue !== '-1') {
@@ -332,11 +332,13 @@ export default {
       if (this.ruleId) {
         params.RuleId = this.ruleId
       }
+      if (this.attackIP) {
+        params.AttackIp = this.attackIP
+      }
       this.axios.post(DESCRIBE_ATTACK_DETAIL, {
         ...params,
         Context,
         Count: 20,
-        AttackIp: this.attackIP // 攻击者IP
       }).then(resp => {
         this.generalRespHandler(resp, ({ Context, Data, Count }) => {
           this.tableDataBegin = this.tableDataBegin.concat(Data)
@@ -520,5 +522,8 @@ export default {
   ::v-deep .el-checkbox__label {
     font-size: 12px;
   }
+}
+.status-1, .riskLevel-1 {
+  color: #e1504a;
 }
 </style>

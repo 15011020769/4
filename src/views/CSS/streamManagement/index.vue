@@ -272,7 +272,7 @@ export default {
       });
     },
     doFilter() {
-      this.currentPage = 1;
+      this.pageNum = 1;
       this.$nextTick(() => this.onTypeChange(this.type));
     },
     handleSizeChange(val) {

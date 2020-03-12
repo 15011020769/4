@@ -82,6 +82,8 @@ export const ADD_AREA_BAN_AREAS = 'waf2/AddAreaBanAreas'
 export const ADD_CUSTOM_RULE = 'waf2/AddCustomRule'
 /** 增加自定义规则 */
 export const MODIFY_CUSTOM_RULE = 'waf2/ModifyCustomRule'
+/** 删除自定义规则 */
+export const DELETE_CUSTOM_RULE = 'waf2/DeleteCustomRule'
 /** 获取自定义策略列表 */
 export const DESCRIBE_CUSTOM_RULES = 'waf2/DescribeCustomRules'
 /** Waf CC V2 Upsert接口 */
