@@ -148,6 +148,8 @@ export default {
       path: "/newsdetils",
         query: {
           detailsDatas: val.id,
+          title:val.title,
+          publishTime:val.publishTime
         }
       });
     },

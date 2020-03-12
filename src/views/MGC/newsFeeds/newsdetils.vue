@@ -1,6 +1,10 @@
 <template>
   <div class="news-wrap">
     <HeaderCom :title="$t('MGC.tzggxq')" @_back="back"  :backShow="true"></HeaderCom>
+    <div class="head">
+    <p class="time">{{$route.query.publishTime}}</p>
+     <p class="title">{{$route.query.title}}</p>
+    </div>
     <div id="detilswrap">
         <mavon-editor :value="content" 
     :toolbarsFlag="false" 
@@ -56,4 +60,19 @@ export default {
   min-height:700px;
   padding:30px 0;
    }
+    .head{
+    font-size:15px;
+    display:flex !important;
+    position:relative;
+    height: 50px;
+    background: white;
+    align-items: center;
+  .title{
+    font-weight:800;
+    margin-left:20px;
+  }
+  .time{
+    margin-left:20px;
+  }
+ }
 </style>
