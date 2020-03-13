@@ -60,7 +60,9 @@
               <div class="tke-form-item_text"><span>公共镜像 - {{changeOsCustomizeType(clusterInfo.OsCustomizeType)}}</span></div>
             </el-form-item>
             <el-form-item label="网络节点">
-              <div class="tke-form-item_text"><span><a href="#">{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}</a></span></div>
+              <div class="tke-form-item_text"><span>
+                <a :href="'../priNetwork/priNetworkDetial/' + clusterInfo.ClusterNetworkSettings.VpcId">{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}<i class="el-icon-edit-outline"></i></a></span>
+              </div>
             </el-form-item>
             <el-form-item label="容器网络">
               <div class="tke-form-item_text">
