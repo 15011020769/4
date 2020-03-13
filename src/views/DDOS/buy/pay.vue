@@ -158,13 +158,11 @@ export default{
           RegionId: 39,
           ZoneId: 0,
           GoodsCategoryId: this.allData1.goodsId,
-          // Currency: "CNY",
           GoodsNum: 1,
           PayMode: 1,
           ProjectId: 0,
           Platform: 1,
           GoodsDetail: this.allData1.goodsInfo
-          // GoodsDetail: json
         }
       ]
       Goods.forEach((item, i) => {
@@ -179,7 +177,7 @@ export default{
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
             this.OrderIds = res.Response.OrderIds
-            // this.PayDeals()
+            this.PayDeals()
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);

@@ -154,29 +154,31 @@ export default {
         }
       });
     },
-     jumpPay () {
-       let GoodsDetail = {
+    jumpPay () {
+      let GoodsDetail = {
         bandwidth: this.resObj.bandwidth, // 保底带宽
         gfbandwidth: this.resObj.gfbandwidth, // 业务带宽
         rule_count:  this.resObj.rule_limt, // 转发规则数
         pid: "14306",
         timeSpan: this.timeNum, // 购买时长
-        timeUnit: "m"
-      };
+        timeUnit: "m",
+        resourceId: this.resObj.Id,
+        curDeadline: this.resObj.Expire
+      }
       let json = JSON.stringify(GoodsDetail);
-       let params = {
-          savePeak: this.resObj.bandwidth,
-          BusinessBroadband: this.resObj.gfbandwidth,
-          shareNum: this.resObj.rule_limt,
-          payMoney: this.money,
-          payTimeNum: this.timeNum,
-          address: '',
-          elasticPeak: '',
-          httpQPS: '',
-          httpsQPS: '',
-          autoPay:'',
-          goodsId: 100616,
-          goodsInfo:json
+      let params = {
+        savePeak: this.resObj.bandwidth,
+        BusinessBroadband: this.resObj.gfbandwidth,
+        shareNum: this.resObj.rule_limt,
+        payMoney: this.money,
+        payTimeNum: this.timeNum,
+        address: '',
+        elasticPeak: '',
+        httpQPS: '',
+        httpsQPS: '',
+        autoPay:'',
+        goodsId: 100616,
+        goodsInfo:json
         };
         let objStr = JSON.stringify(params);
         sessionStorage.setItem("allData", [objStr]);
