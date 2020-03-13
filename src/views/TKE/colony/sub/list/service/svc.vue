@@ -48,7 +48,8 @@
         </el-table-column>
         <el-table-column prop label="类型">
           <template slot-scope="scope">
-            <span :class="scope.row.idDb?'tke-text-link':''">{{scope.row.spec.type}}</span>
+            <!-- :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'" -->
+            <a v-if="scope.row.metadata.annotations" :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'" :class="scope.row.idDb?'tke-text-link':''">{{scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id']}}</a>
             <p v-if="scope.row.idDb?true:false">负载均衡</p>
           </template>
         </el-table-column>
@@ -207,7 +208,7 @@ export default {
             })
           }
           this.list = data// 得到列表数据并赋值
-          // console.log(this.list)
+          console.log(this.list)
           this.total = data.length// 总条数
         } else {
           this.loadShow = false
