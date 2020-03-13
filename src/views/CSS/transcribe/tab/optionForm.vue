@@ -48,6 +48,11 @@
                     ? undefined
                     : tableParams[scope.row.paramName].RecordInterval
                 "
+                @input="
+                  tableParams[scope.row.paramName].RecordInterval = tableParams[
+                    scope.row.paramName
+                  ].RecordInterval.replace(/[^\d]/g, '')
+                "
                 :disabled="scope.row.TemplateName === 'HLS'"
               />
             </template>
@@ -56,6 +61,11 @@
             <template slot-scope="scope">
               <el-input
                 v-model="tableParams[scope.row.paramName].StorageTime"
+                @input="
+                  tableParams[scope.row.paramName].StorageTime = tableParams[
+                    scope.row.paramName
+                  ].StorageTime.replace(/[^\d]/g, '')
+                "
                 placeholder="0~1080天，0为永久保存"
               />
             </template>
@@ -66,6 +76,12 @@
                 v-if="scope.row.TemplateName === 'HLS'"
                 placeholder="1-300s，0為不續錄"
                 v-model="tableParams.HlsSpecialParam.FlowContinueDuration"
+                @input="
+                  tableParams.HlsSpecialParam.FlowContinueDuration = tableParams.HlsSpecialParam.FlowContinueDuration.replace(
+                    /[^\d]/g,
+                    ''
+                  )
+                "
               />
               <el-input v-else disabled placeholder="不支持續錄" />
             </template>
@@ -213,16 +229,16 @@ export default {
         return false;
       }
 
+      if (!this.isPositiveNumber(parameters["Mp4Param.StorageTime"])) {
+        this.$message.error("MP4錄製文件時長應為正整數");
+        return false;
+      }
+
       const maxStorageSeconds = 1080; // 秒
       const maxHLSFlowContinueDuration = 300; // 秒
 
       // 如果启用了HLS
       if (parameters["HlsParam.Enable"] === 1) {
-        if (!this.isPositiveNumber(parameters["HlsParam.StorageTime"])) {
-          this.$message.error("HLS文件保存時長應為正整數");
-          return false;
-        }
-
         if (parameters["HlsParam.StorageTime"] > maxStorageSeconds) {
           this.$message.error("HLS文件保存時長範圍0~1080天");
           return false;
@@ -236,7 +252,6 @@ export default {
           this.$message.error("HLS續錄超時時長應為正整數");
           return false;
         }
-
         if (
           parameters["HlsSpecialParam.FlowContinueDuration"] >
             maxHLSFlowContinueDuration ||
@@ -264,9 +279,8 @@ export default {
           this.$message.error("MP4錄製文件時長範圍5~120分鐘");
           return false;
         }
-
-        if (!this.isPositiveNumber(parameters["Mp4Param.StorageTime"])) {
-          this.$message.error("MP4錄製文件時長應為正整數");
+        if (!this.isPositiveNumber(parameters["HlsParam.StorageTime"])) {
+          this.$message.error("HLS文件保存時長應為正整數");
           return false;
         }
 
