@@ -325,6 +325,7 @@ export default {
       this.visibleHttps = true
     },
     getRegion () {
+      this.getBandLimit()
       this.visibleRegional = false
       this.axios.post(DOMAIN_DELTILS, {
         Version: '2018-08-01',

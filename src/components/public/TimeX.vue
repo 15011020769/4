@@ -9,18 +9,26 @@
               size="small"
               @click="TimeChoice(1)"
               :type="classsvalue == 1 ? 'primary' : ''"
-            >實時</el-button>
+              >實時</el-button
+            >
             <el-button
               size="small"
-              @click="TimeChoice(1*24)"
-              :type="classsvalue == 1*24 ? 'primary' : ''"
-            >近24小時</el-button>
+              @click="TimeChoice(1 * 24)"
+              :type="classsvalue == 1 * 24 ? 'primary' : ''"
+              >近24小時</el-button
+            >
             <el-button
               size="small"
-              @click="TimeChoice(1*24*7)"
-              :type="classsvalue == 1*24*7 ? 'primary' : ''"
-            >近7天</el-button>
-            <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
+              @click="TimeChoice(1 * 24 * 7)"
+              :type="classsvalue == 1 * 24 * 7 ? 'primary' : ''"
+              >近7天</el-button
+            >
+            <el-popover
+              placement="bottom"
+              width="400"
+              trigger="manual"
+              v-model="visible"
+            >
               <p class="p-dis">
                 <span>從</span>
                 <el-date-picker
@@ -29,7 +37,11 @@
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker
+                  class="width-date"
+                  v-model="timevalueStart"
+                  placeholder="任意時間點"
+                ></el-time-picker>
               </p>
               <p class="p-dis">
                 <span>至</span>
@@ -39,10 +51,16 @@
                   type="date"
                   placeholder="選擇日期"
                 ></el-date-picker>
-                <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點"></el-time-picker>
+                <el-time-picker
+                  class="width-date"
+                  v-model="timevalueEnd"
+                  placeholder="任意時間點"
+                ></el-time-picker>
               </p>
               <el-row class="margin-row">
-                <el-button size="mini" type="primary" @click="Sure">確定</el-button>
+                <el-button size="mini" type="primary" @click="Sure"
+                  >確定</el-button
+                >
                 <el-button size="mini" @click="visible = false">取消</el-button>
               </el-row>
               <el-button
@@ -51,7 +69,8 @@
                 icon="el-icon-search"
                 @click="SelectionTime"
                 slot="reference"
-              >選擇日期</el-button>
+                >選擇日期</el-button
+              >
             </el-popover>
             <el-date-picker
               v-if="datetime"
@@ -68,7 +87,12 @@
         </el-row>
         <div class="drop">
           <span style="margin-right:15px">時間粒度:</span>
-          <el-select v-model="value" placeholder="請選擇" @change="switchData()" size="small">
+          <el-select
+            v-model="value"
+            placeholder="請選擇"
+            @change="switchData()"
+            size="small"
+          >
             <el-option
               v-for="item in options"
               :key="item.value"
@@ -86,10 +110,10 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 
 export default {
-  data() {
+  data () {
     return {
       datevalueStart: new Date(), // 日期（从）
       timevalueStart: new Date(), // 时间（从）
@@ -102,235 +126,235 @@ export default {
       options: [
         // 默认下拉数据
         {
-          value: "10",
-          label: "10秒"
+          value: '10',
+          label: '10秒'
         },
         {
-          value: "60",
-          label: "1分鐘"
+          value: '60',
+          label: '1分鐘'
         },
         {
-          value: "300",
-          label: "5分鐘"
+          value: '300',
+          label: '5分鐘'
         }
       ],
-      value: "10", // 粒度选择值
+      value: '10', // 粒度选择值
       Start_End: {
-        StartTIme: "",
-        EndTIme: ""
+        StartTIme: '',
+        EndTIme: ''
       },
       classvalue: 1
-    };
+    }
   },
   props: {
     classsvalue: {
       required: true
     }
   },
-  created() {
-    this.TimeChoice(1);
+  created () {
+    this.TimeChoice(1)
   },
   methods: {
-    //点击时间按钮
-    TimeChoice(time) {
-      this.classvalue = time;
-      this.Initialization();
+    // 点击时间按钮
+    TimeChoice (time) {
+      this.classvalue = time
+      this.Initialization()
       if (time === 1) {
-        this.value = "10";
+        this.value = '10'
         this.options = [
           {
-            value: "10",
-            label: "10秒"
+            value: '10',
+            label: '10秒'
           },
           {
-            value: "60",
-            label: "1分鐘"
+            value: '60',
+            label: '1分鐘'
           },
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           }
-        ];
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
+        ]
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
         // 1小时前
         const noehoursago = moment(startTime - 3600000).format(
-          "YYYY-MM-DD HH:mm:ss"
-        ); //获取1小时前的时间
-        this.Start_End.StartTIme = noehoursago;
-        this.Start_End.EndTIme = ETime;
+          'YYYY-MM-DD HH:mm:ss'
+        ) // 获取1小时前的时间
+        this.Start_End.StartTIme = noehoursago
+        this.Start_End.EndTIme = ETime
       } else if (time === 1 * 24) {
-        this.value = "60";
+        this.value = '60'
         this.options = [
           {
-            value: "60",
-            label: "1分鐘"
+            value: '60',
+            label: '1分鐘'
           },
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           },
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           },
           {
-            value: "86400",
-            label: "1天"
+            value: '86400',
+            label: '1天'
           }
-        ];
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
+        ]
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
         // 1小时前
         const noehoursago = moment(startTime - 86400000).format(
-          "YYYY-MM-DD HH:mm:ss"
-        ); //获取1天前的时间
-        this.Start_End.StartTIme = noehoursago;
-        this.Start_End.EndTIme = ETime;
+          'YYYY-MM-DD HH:mm:ss'
+        ) // 获取1天前的时间
+        this.Start_End.StartTIme = noehoursago
+        this.Start_End.EndTIme = ETime
       } else if (time === 1 * 24 * 7) {
-        this.value = "3600";
+        this.value = '3600'
         this.options = [
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           },
           {
-            value: "86400",
-            label: "1天"
+            value: '86400',
+            label: '1天'
           }
-        ];
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
+        ]
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
         // 1小时前
         const noehoursago = moment(startTime - 604800000).format(
-          "YYYY-MM-DD HH:mm:ss"
-        ); //获取1周前的时间
-        this.Start_End.StartTIme = noehoursago;
-        this.Start_End.EndTIme = ETime;
+          'YYYY-MM-DD HH:mm:ss'
+        ) // 获取1周前的时间
+        this.Start_End.StartTIme = noehoursago
+        this.Start_End.EndTIme = ETime
       }
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     },
-    switchData() {
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+    switchData () {
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     },
     // 确定按钮
-    Sure() {
-      this.visible = false;
-      this.getdate();
-      this.TimeAfter();
+    Sure () {
+      this.visible = false
+      this.getdate()
+      this.TimeAfter()
     },
     // 截取时间
-    getdate() {
-      this.datetim = false;
-      this.datetime = true;
-      const y = moment(this.datevalueStart).format("YYYY");
-      const m = moment(this.datevalueStart).format("MM") - 1;
-      const d = moment(this.datevalueStart).format("DD");
-      const h = moment(this.timevalueStart).format("HH");
-      const f = moment(this.timevalueStart).format("mm");
-      const s = moment(this.timevalueStart).format("ss");
+    getdate () {
+      this.datetim = false
+      this.datetime = true
+      const y = moment(this.datevalueStart).format('YYYY')
+      const m = moment(this.datevalueStart).format('MM') - 1
+      const d = moment(this.datevalueStart).format('DD')
+      const h = moment(this.timevalueStart).format('HH')
+      const f = moment(this.timevalueStart).format('mm')
+      const s = moment(this.timevalueStart).format('ss')
 
-      const yy = moment(this.datevalueEnd).format("YYYY");
-      const mm = moment(this.datevalueEnd).format("MM") - 1;
-      const dd = moment(this.datevalueEnd).format("DD");
-      const hh = moment(this.timevalueEnd).format("HH") - 1;
-      const ff = moment(this.timevalueEnd).format("mm");
-      const ss = moment(this.timevalueEnd).format("ss");
+      const yy = moment(this.datevalueEnd).format('YYYY')
+      const mm = moment(this.datevalueEnd).format('MM') - 1
+      const dd = moment(this.datevalueEnd).format('DD')
+      const hh = moment(this.timevalueEnd).format('HH') - 1
+      const ff = moment(this.timevalueEnd).format('mm')
+      const ss = moment(this.timevalueEnd).format('ss')
 
       this.datetimeval = [
         new Date(y, m, d, h, f, s),
         new Date(yy, mm, dd, hh, ff, ss)
-      ];
+      ]
     },
     // 选择时间
-    SelectionTime() {
-      this.visible = true;
+    SelectionTime () {
+      this.visible = true
     },
     // 时间重新选择---确定
-    ReSelection() {
-      this.value = "";
-      this.TimeAfter();
+    ReSelection () {
+      this.value = ''
+      this.TimeAfter()
     },
     // 按钮控制时间粒度初始化
-    Initialization() {
-      this.value = "";
-      this.datetim = true;
-      this.datetime = false;
+    Initialization () {
+      this.value = ''
+      this.datetim = true
+      this.datetime = false
     },
     // 确定之后
-    TimeAfter() {
-      const qdate = moment(this.datetimeval[0]).format("YYYY/MM/DD-HH:mm:ss");
-      const hdate = moment(this.datetimeval[1]).format("YYYY/MM/DD-HH:mm:ss");
-      const startTime = new Date(qdate).getTime() / 1000;
-      const endTime = new Date(hdate).getTime() / 1000;
+    TimeAfter () {
+      const qdate = moment(this.datetimeval[0]).format('YYYY/MM/DD-HH:mm:ss')
+      const hdate = moment(this.datetimeval[1]).format('YYYY/MM/DD-HH:mm:ss')
+      const startTime = new Date(qdate).getTime() / 1000
+      const endTime = new Date(hdate).getTime() / 1000
       if (endTime - startTime <= 3600) {
-        this.TimeSlot = "1hours";
-        this.classvalue = "";
-        this.value = "10";
+        this.TimeSlot = '1hours'
+        this.classvalue = ''
+        this.value = '10'
         this.options = [
           {
-            value: "10",
-            label: "10秒"
+            value: '10',
+            label: '10秒'
           },
           {
-            value: "60",
-            label: "1分鐘"
+            value: '60',
+            label: '1分鐘'
           },
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           }
-        ];
+        ]
       } else if (endTime - startTime <= 86400) {
-        this.TimeSlot = "1days";
-        this.classvalue = "";
-        this.value = "60";
+        this.TimeSlot = '1days'
+        this.classvalue = ''
+        this.value = '60'
         this.options = [
           {
-            value: "60",
-            label: "1分鐘"
+            value: '60',
+            label: '1分鐘'
           },
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           },
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           },
           {
-            value: "86400",
-            label: "1天"
+            value: '86400',
+            label: '1天'
           }
-        ];
+        ]
       } else {
-        this.TimeSlot = "1weeks";
-        this.classvalue = "";
-        this.value = "3600";
+        this.TimeSlot = '1weeks'
+        this.classvalue = ''
+        this.value = '3600'
         this.options = [
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           },
           {
-            value: "86400",
-            label: "一天"
+            value: '86400',
+            label: '一天'
           }
-        ];
+        ]
       }
       this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
+        'YYYY-MM-DD HH:mm:ss'
+      )
       this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">
