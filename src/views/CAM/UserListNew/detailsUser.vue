@@ -139,6 +139,7 @@
             <span class="pagtotal">共&nbsp;{{TotalCounts}}&nbsp;{{$t("CAM.strip")}}</span>
             <el-pagination
               :page-size="pagesizes"
+              :current-page="currpages"
               :pager-count="7"
               layout="prev, sizes, pager, next"
               :page-sizes="[10, 20, 30, 40, 50]"
@@ -805,6 +806,7 @@ export default {
         this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
         .then(data => {
           if (data.Response.Error === undefined) {
+            this.currpages = 1
             this.ploicyData();
             this.StrategyLoading = false
             this.$message({
@@ -871,6 +873,7 @@ export default {
               showClose: true
             });
             this.StrategyLoading = false
+            this.currpages = 1
             this.groupListData();
             this.ploicyData();
           } else {

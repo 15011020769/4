@@ -225,7 +225,13 @@ module.exports = {
       bandwidthCapping: '帶寬封頂',
       rgional: '區域',
       sourceStationSetup: '源站設置',
-      ipordomain: '請填寫域名或IP'
+      ipordomain: '請填寫域名或IP',
+      mbxz: '模板選擇（如需添加新模板，請前往',
+      wsz: '未設置',
+      zjxsz: '中進行設置',
+      mbmc: '模板名稱',
+      bmfs: '編碼方式',
+      ml: '碼率',
     }
   },
   COM: require('@/components/language/ft')
