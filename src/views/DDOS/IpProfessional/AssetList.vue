@@ -3,18 +3,10 @@
   <div id="ipConfigFourth" class="wrap">
     <div class="allContent">
       <div class="ReportTit newClear">
-        <h3 class="ReportTitH3">
-          {{ $t("DDOS.Protective.professionalEdition") }}
-        </h3>
+        <h3 class="ReportTitH3">{{ $t("DDOS.Protective.professionalEdition") }}</h3>
         <el-select v-model="listSelect" class="selectListResou">
-          <el-option
-            :label="$t('DDOS.AssetList.resourceList')"
-            value="resourceList"
-          ></el-option>
-          <el-option
-            :label="$t('DDOS.AssetList.businessList')"
-            value="businessList"
-          ></el-option>
+          <el-option :label="$t('DDOS.AssetList.resourceList')" value="resourceList"></el-option>
+          <el-option :label="$t('DDOS.AssetList.businessList')" value="businessList"></el-option>
         </el-select>
         <!-- 新购 -->
         <el-button class="ReportTitBtn" type="primary" @click="newBuy">{{$t('DDOS.total.new_buy')}}</el-button>
@@ -27,7 +19,7 @@
               <el-checkbox :label="$t('DDOS.AssetList.willExpire')"></el-checkbox>
             </el-checkbox-group>
             <!-- 运行状态 -->
-            <span class="runningStatusText" >{{ $t("DDOS.AssetList.RunningState") }}:</span >
+            <span class="runningStatusText">{{ $t("DDOS.AssetList.RunningState") }}:</span>
             <el-checkbox-group v-model="runningStatus" class="checkTwo" @change="statusChange">
               <el-checkbox :label="0">{{ $t("DDOS.AssetList.Running") }}</el-checkbox>
               <el-checkbox :label="1">{{ $t("DDOS.Protective.Protectivewash") }}</el-checkbox>
@@ -51,26 +43,28 @@
               :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               v-if="listSelect == 'resourceList'"
               v-loading="loading"
-              empty-text='暫無數據'
+              empty-text="暫無數據"
             >
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')" >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)" >{{ item.Value }}</a>
+                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)">{{ item.Value }}</a>
                   </div>
                   <div v-for="(item, index) in scope.row.Record" :key="index + 'i'">
                     <span v-if="item.Key == 'Name'">{{ item.Value == "" ? "未命名" : item.Value }}</span>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')" >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'L4RulesTotal'">
                       {{ item.Value }}
-                      <a @click="toAccest(scope.row.Record)">{{
+                      <a @click="toAccest(scope.row.Record)">
+                        {{
                         $t("DDOS.AssetList.AssetListSet")
-                      }}</a>
+                        }}
+                      </a>
                     </span>
                   </div>
                 </template>
@@ -95,47 +89,42 @@
               <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <span v-if="item.Key == 'OriginRegion'">{{ item.Value == "tpe" ? $t("DDOS.total.address") : item.Value }}</span>
+                    <span
+                      v-if="item.Key == 'OriginRegion'"
+                    >{{ item.Value == "tpe" ? $t("DDOS.total.address") : item.Value }}</span>
                   </div>
                 </template>
               </el-table-column>
               <!-- 状态 -->
-              <el-table-column
-                prop="status"
-                :label="$t('DDOS.UnlockOperation.Unlockstate')"
-              >
+              <el-table-column prop="status" :label="$t('DDOS.UnlockOperation.Unlockstate')">
                 <template slot-scope="scope">
                   <span v-for="(item, index) in scope.row.Record" :key="index">
                     <!-- (idle:运行中, attacking:攻击中, blocking:封堵中, isolate:隔离中) -->
-                    <span v-if="item.Key == 'Status' && item.Value == 'idle'">{{
+                    <span v-if="item.Key == 'Status' && item.Value == 'idle'">
+                      {{
                       $t("DDOS.AssetList.Running")
-                    }}</span>
+                      }}
+                    </span>
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'attacking'
                       "
                       style="color: red;"
-                      >{{ $t("DDOS.AssetList.Attacking") }}</span
-                    >
+                    >{{ $t("DDOS.AssetList.Attacking") }}</span>
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'blocking'
                       "
-                      >{{ $t("DDOS.AssetList.Blocking") }}</span
-                    >
+                    >{{ $t("DDOS.AssetList.Blocking") }}</span>
                     <span
                       v-else-if="
                         item.Key == 'Status' && item.Value == 'isolate'
                       "
-                      >{{ $t("DDOS.AssetList.Isolate") }}</span
-                    >
+                    >{{ $t("DDOS.AssetList.Isolate") }}</span>
                   </span>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="dataTime"
-                :label="$t('DDOS.AssetList.DueTime')"
-              >
+              <el-table-column prop="dataTime" :label="$t('DDOS.AssetList.DueTime')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'Expire'">{{ item.Value }}</span>
@@ -143,10 +132,7 @@
                 </template>
               </el-table-column>
               <!-- 自动续费 -->
-              <el-table-column
-                prop="renewFlag"
-                :label="$t('DDOS.choose.renewalMoney')"
-              >
+              <el-table-column prop="renewFlag" :label="$t('DDOS.choose.renewalMoney')">
                 <template slot-scope="scope">
                   <el-switch
                     v-model="scope.row.RenewFlag"
@@ -158,25 +144,27 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" @click="upgradeButton(scope.row)">{{
+                  <a class="marginRightA" href="#" @click="upgradeButton(scope.row)">
+                    {{
                     $t("DDOS.AssetList.upgrade")
-                  }}</a>
-                  <a class="marginRightA" href="#" @click="renewModelButton(scope.row)">{{
+                    }}
+                  </a>
+                  <a class="marginRightA" href="#" @click="renewModelButton(scope.row)">
+                    {{
                     $t("DDOS.AssetList.renewal")
-                  }}</a>
+                    }}
+                  </a>
                   <!-- 防护配置 -->
                   <a
                     class="marginRightA"
                     href="#"
                     @click="configModel(scope.row)"
-                    >{{ $t("DDOS.AssetList.ProtectionConfig") }}</a
-                  >
+                  >{{ $t("DDOS.AssetList.ProtectionConfig") }}</a>
                   <a
                     class="marginRightA"
                     href="#"
                     @click="lookReportList(scope.row)"
-                    >{{ $t("DDOS.AssetList.CheckReport") }}</a
-                  >
+                  >{{ $t("DDOS.AssetList.CheckReport") }}</a>
                 </template>
               </el-table-column>
             </el-table>
@@ -191,40 +179,29 @@
               v-if="listSelect == 'businessList'"
               v-loading="loading"
               height="450"
-              empty-text='暫無數據'
+              empty-text="暫無數據"
             >
               <el-table-column prop="Record" label="CNAME/ID">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'CName'">{{ item.Value }}</span>
                   </div>
-                  <div
-                    v-for="(item, index) in scope.row.Record"
-                    :key="index + 'i'"
-                  >
-                    <a
-                      v-if="item.Key == 'Id'"
-                      @click="toDetailResourse(scope.row)"
-                      >{{ item.Value }}</a
-                    >
+                  <div v-for="(item, index) in scope.row.Record" :key="index + 'i'">
+                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)">{{ item.Value }}</a>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="RuleNameList"
-                :label="$t('DDOS.AssetList.domainName')"
-              >
+              <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
                 <template slot-scope="scope">
                   {{ scope.row.RuleNameList }}
-                  <a @click="toAccest(scope.row.Record)">{{
+                  <a @click="toAccest(scope.row.Record)">
+                    {{
                     $t("DDOS.AssetList.AssetListSet")
-                  }}</a>
+                    }}
+                  </a>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="nowIp"
-                :label="$t('DDOS.AssetList.currentIp')"
-              >
+              <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key == 'IPText'">
@@ -234,10 +211,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="backSelf"
-                :label="$t('DDOS.AssetList.AutomaticBack')"
-              >
+              <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
                   <!-- {{scope.row.AutoReturn}} -->
                   <el-switch
@@ -248,8 +222,14 @@
                   ></el-switch>
                   <el-tooltip class="tooltip" effect="light" placement="bottom">
                     <div slot="content" class="tooltip_text">
-                      <p style="height: 20px;">{{$t('DDOS.AssetList.autoHourText1')}}{{scope.row.ReturnHour}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
-                      <a href="#" @click="changeAutoReturnTime(scope.row)" style="text-decoration: underline;">{{$t('DDOS.AssetList.changeTime')}}</a>
+                      <p
+                        style="height: 20px;"
+                      >{{$t('DDOS.AssetList.autoHourText1')}}{{scope.row.ReturnHour}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
+                      <a
+                        href="#"
+                        @click="changeAutoReturnTime(scope.row)"
+                        style="text-decoration: underline;"
+                      >{{$t('DDOS.AssetList.changeTime')}}</a>
                     </div>
                     <i class="el-icon-info"></i>
                   </el-tooltip>
@@ -261,14 +241,12 @@
                     class="marginRightA"
                     href="#"
                     style="pointer-events:none; color:#999;"
-                    >{{ $t("DDOS.AssetList.keyBack") }}</a
-                  >
+                  >{{ $t("DDOS.AssetList.keyBack") }}</a>
                   <a
                     class="marginRightA"
                     href="#"
                     @click="lookReportList(scope.row)"
-                    >{{ $t("DDOS.AssetList.CheckReport") }}</a
-                  >
+                  >{{ $t("DDOS.AssetList.CheckReport") }}</a>
                 </template>
               </el-table-column>
             </el-table>
@@ -281,7 +259,11 @@
             >
               <div>
                 {{$t('DDOS.AssetList.changeAutoHourText1')}}
-                <el-select v-model="autoHour" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" style="width: 120px;">
+                <el-select
+                  v-model="autoHour"
+                  :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
+                  style="width: 120px;"
+                >
                   <el-option
                     v-for="(item, index) in autoReturnTimeList"
                     :label="item"
@@ -292,7 +274,10 @@
                 {{$t('DDOS.AssetList.changeAutoHourText2')}}
               </div>
               <div slot="footer" style="text-align: center">
-                <el-button type="primary" @click="changeAutoReturnHour">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+                <el-button
+                  type="primary"
+                  @click="changeAutoReturnHour"
+                >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                 <el-button @click="autoReturnTimeDialogVisible = false">取 消</el-button>
               </div>
             </el-dialog>
@@ -324,11 +309,11 @@
             />
           </div>
           <div class="Right-style pagstyle">
-            <span class="pagtotal"
-              >共&nbsp;{{ totalItems }}&nbsp;{{
-                $t("DDOS.UnsealCode.tiao")
-              }}</span
-            >
+            <span class="pagtotal">
+              共&nbsp;{{ totalItems }}&nbsp;{{
+              $t("DDOS.UnsealCode.tiao")
+              }}
+            </span>
             <el-pagination
               :page-size="pageSize"
               :pager-count="7"
@@ -351,41 +336,41 @@ import {
   SOURCEIPSEGMENT_DESCRIBE,
   INSTANCENAME_CONT,
   L4_RULES,
-  MODIFY_RENEWFLAG,
-} from '@/constants'
-import resouseListModel from './model/resouseListModel'
-import upgradeModel from './model/upgradeModel'
-import RenewModel from './model/RenewModel'
-import ProtectConfigModel from './model/ProtectConfigModel'
-import { ErrorTips } from "@/components/ErrorTips"
+  MODIFY_RENEWFLAG
+} from "@/constants";
+import resouseListModel from "./model/resouseListModel";
+import upgradeModel from "./model/upgradeModel";
+import RenewModel from "./model/RenewModel";
+import ProtectConfigModel from "./model/ProtectConfigModel";
+import { ErrorTips } from "@/components/ErrorTips";
 
 export default {
-  data () {
+  data() {
     return {
       loading: true,
-      listSelect: 'resourceList', // 列表选择（业务列表Or资源列表）
+      listSelect: "resourceList", // 列表选择（业务列表Or资源列表）
       tableData: [], // 共用table数据
       expireFilter: false, // 搜索勾选框：即将到期搜索；可选，取值为[0（不搜索），1（搜索即将到期的资源）]
       runningStatus: [], // 搜索勾选框：运行状态
-      selectResourceInput: '', // 搜索输入框
-      
+      selectResourceInput: "", // 搜索输入框
+
       ruleSets: [], // 资源的规则数据
-      ipSegment: '', // 回源IP
+      ipSegment: "", // 回源IP
       tableDataEnd: [],
       tableDataPolicy: [], // DDoS高级防护策略列表
       RuleSetsa: [], // 获取资源的规则数接口
       filterTableDataEnd: [],
       flag: false,
       multipleSelection: [],
-      filterConrent: '',
+      filterConrent: "",
       dialogResouseList: false, // 资产列表详情弹框
       diaologUpgradeModel: false, // 升级弹框
       doalogRenewModel: false, // 续费弹框
       dialogConfigModel: false, // 防护配置弹框
-      resouseOrYw: '', // 判断是哪个列表
-      status: '',
+      resouseOrYw: "", // 判断是哪个列表
+      status: "",
       modifyDDosRes: {}, // 防护配置使用对象
-      inputName: '', // 修改名称
+      inputName: "", // 修改名称
       // 资源列表
 
       // 业务列表
@@ -395,8 +380,8 @@ export default {
       // 分页
       currentPage: 1,
       pageSize: 10,
-      totalItems: 0,
-    }
+      totalItems: 0
+    };
   },
   components: {
     resouseListModel: resouseListModel,
@@ -405,324 +390,341 @@ export default {
     ProtectConfigModel
   },
   watch: {
-    listSelect: function () {
+    listSelect: function() {
       // 资源列表、业务列表 调用同一接口
-      this.describeResourceList()
+      this.describeResourceList();
     },
     // 搜索框监控
-    selectResourceInput: function () {
-      this.describeResourceList()
+    selectResourceInput: function() {
+      this.describeResourceList();
     }
   },
-  created () {
-    this.describeResourceList() // 获取资源列表接口
+  created() {
+    this.describeResourceList(); // 获取资源列表接口
     // this.describeDDoSPolicy() // 获取高级策略列表
   },
   methods: {
     // 搜索勾选框-即将过期
-    expireChange () {
-      this.describeResourceList()
+    expireChange() {
+      this.describeResourceList();
     },
     // 搜索勾选框-运行状态
-    statusChange () {
-      this.describeResourceList()
+    statusChange() {
+      this.describeResourceList();
     },
     // 1.1.获取资源列表接口
-    describeResourceList () {
-      this.loading = true
+    describeResourceList() {
+      this.loading = true;
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net'
-      }
+        Business: "net"
+      };
       // 1.1.0.条件搜索参数（即将过期）
       if (this.expireFilter) {
-        params['Expire'] = 1
+        params["Expire"] = 1;
       }
       // 1.1.1.条件搜索参数（运行状态）
       if (this.runningStatus.length > 0) {
         for (let a in this.runningStatus) {
-          params['Status.' + a] = this.runningStatus[a]
+          params["Status." + a] = this.runningStatus[a];
         }
       }
       // 1.1.2.条件搜索参数（输入框参数）
-      if (this.selectResourceInput != '') {
-        if (this.listSelect == 'resourceList') {
-          params['Name'] = this.selectResourceInput;
-        } else if (this.listSelect == 'businessList') {
-          params['Domain'] = this.selectResourceInput
+      if (this.selectResourceInput != "") {
+        if (this.listSelect == "resourceList") {
+          params["Name"] = this.selectResourceInput;
+        } else if (this.listSelect == "businessList") {
+          params["Domain"] = this.selectResourceInput;
         }
       }
       // -----调用接口-----
       this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(params, res);
-        this.tableData = res.Response.ServicePacks
-        this.totalItems = res.Response.Total
+        this.tableData = res.Response.ServicePacks;
+        this.totalItems = res.Response.Total;
         this.tableData.forEach(val => {
           val.Record.forEach(item => {
-            if (item.Key == 'Id') {
+            if (item.Key == "Id") {
               // 1.防护等级（资源列表-防护配置 需要）
               let params = {
-                Version: '2018-07-09',
+                Version: "2018-07-09",
                 Region: localStorage.getItem("regionv2"),
-                Business: 'net',
+                Business: "net",
                 Id: item.Value,
-                Method: 'get'
-              }
+                Method: "get"
+              };
               this.axios.post(Modify_Level, params).then(res => {
                 const obj = {
-                  Key: 'DDoSLevel',
+                  Key: "DDoSLevel",
                   Value: res.Response.DDoSLevel
-                }
-                val.Record.push(obj)
-              })
+                };
+                val.Record.push(obj);
+              });
               // 2.高级防护策略（资源列表-防护配置 需要）
               let params2 = {
-                Version: '2018-07-09',
+                Version: "2018-07-09",
                 Region: localStorage.getItem("regionv2"),
-                Business: 'net',
+                Business: "net",
                 Id: item.Value
-              }
+              };
               this.axios.post(GET_SPolicy, params2).then(res => {
                 if (res.Response.DDosPolicyList.length == 0) {
                   const obj2 = {
-                    Key: 'SPolicyName',
-                    Value: '-'
-                  }
+                    Key: "SPolicyName",
+                    Value: "-"
+                  };
                   const obj2Id = {
-                    Key: 'SPolicyId',
-                    Value: '0000'
-                  }
-                  val.Record.push(obj2)
-                  val.Record.push(obj2Id)
+                    Key: "SPolicyId",
+                    Value: "0000"
+                  };
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
                 } else {
                   const obj2 = {
-                    Key: 'SPolicyName',
+                    Key: "SPolicyName",
                     Value: res.Response.DDosPolicyList[0].PolicyName
-                  }
+                  };
                   const obj2Id = {
-                    Key: 'SPolicyId',
+                    Key: "SPolicyId",
                     Value: res.Response.DDosPolicyList[0].PolicyId
-                  }
-                  val.Record.push(obj2)
-                  val.Record.push(obj2Id)
+                  };
+                  val.Record.push(obj2);
+                  val.Record.push(obj2Id);
                 }
-              })
+              });
               // 3.转发规则个数（资源列表 需要）
               let params3 = {
-                Version: '2018-07-09',
+                Version: "2018-07-09",
                 Region: localStorage.getItem("regionv2"),
-                Business: 'net',
+                Business: "net",
                 Id: item.Value
-              }
+              };
               this.axios.post(L4_RULES, params3).then(res => {
                 if (res.Response.Error === undefined) {
                   const obj3 = {
-                    Key: 'L4RulesTotal',
+                    Key: "L4RulesTotal",
                     Value: res.Response.Total
-                  }
-                  val.Record.push(obj3)
+                  };
+                  val.Record.push(obj3);
                 } else {
-                  let ErrTips = {}
-                  let ErrOr = Object.assign(ErrorTips, ErrTips)
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
                     message: ErrOr[res.Response.Error.Code],
-                    type: 'error',
+                    type: "error",
                     showClose: true,
                     duration: 0
-                  })
+                  });
                 }
-              })
-            } else if (item.Key == 'GroupIpList') { // IP列表文本格式化处理（资源列表 需要）
-              let IPText = []
-              let ipArr = item.Value.split(';');
-              for (let key=ipArr.length-1; key>=0; key--) {
+              });
+            } else if (item.Key == "GroupIpList") {
+              // IP列表文本格式化处理（资源列表 需要）
+              let IPText = [];
+              let ipArr = item.Value.split(";");
+              for (let key = ipArr.length - 1; key >= 0; key--) {
                 const element = ipArr[key];
-                let ipDetailArr = element.split('-');
-                if(ipDetailArr[3] == '100') {//IP显示顺序处理
-                  IPText.splice(0, 0, ipDetailArr[0] + '(' + (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) + (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) + ')');
+                let ipDetailArr = element.split("-");
+                if (ipDetailArr[3] == "100") {
+                  //IP显示顺序处理
+                  IPText.splice(
+                    0,
+                    0,
+                    ipDetailArr[0] +
+                      "(" +
+                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
+                      (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
+                      ")"
+                  );
                 } else {
-                  IPText.push(ipDetailArr[0] + '(' + (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) + (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) + ')');
+                  IPText.push(
+                    ipDetailArr[0] +
+                      "(" +
+                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
+                      (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
+                      ")"
+                  );
                 }
               }
               const obj = {
-                Key: 'IPText',
+                Key: "IPText",
                 Value: IPText
-              }
-              val.Record.push(obj)
-            } else if (item.Key == 'AutoRenewFlag') { // 自动续费（资源列表 需要）
-              val.RenewFlag = item.Value == '1'
+              };
+              val.Record.push(obj);
+            } else if (item.Key == "AutoRenewFlag") {
+              // 自动续费（资源列表 需要）
+              val.RenewFlag = item.Value == "1";
             }
-          })
-        })
+          });
+        });
         // 此接口调用完，调用1.2接口
-        this.describeRuleSets()
-      })
+        this.describeRuleSets();
+      });
     },
     // 1.2.获取资源的规则数接口
-    describeRuleSets () {
+    describeRuleSets() {
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net'
-      }
+        Business: "net"
+      };
       for (let i = 0; i < this.tableData.length; i++) {
         for (let j = 0; j < this.tableData[i].Record.length; j++) {
-          if (this.tableData[i].Record[j].Key == 'Id') {
-            params['IdList.' + i] = this.tableData[i].Record[j].Value
+          if (this.tableData[i].Record[j].Key == "Id") {
+            params["IdList." + i] = this.tableData[i].Record[j].Value;
           }
         }
       }
       this.axios.post(RULESETS_CONT, params).then(res => {
         // console.log(params, res)
-        this.ruleSets = res.Response
+        this.ruleSets = res.Response;
         // 循环tableData
         this.tableData.forEach(item => {
           // 循环Record
           item.Record.forEach(map => {
             // 判断获取Key=Id的值
-            if (map.Key == 'Id') {
+            if (map.Key == "Id") {
               // 循环ruleSets
               this.ruleSets.L4RuleSets.forEach(ruleSet => {
                 // 循环Record2
                 ruleSet.Record.forEach(map2 => {
                   // 判断获取Key=Id的值
-                  if (map2.Key == 'Id') {
+                  if (map2.Key == "Id") {
                     // 判断resourceId和ruleSetId是否相等
                     if (map.Value == map2.Value) {
                       // 再次循环Record2，获取RuleNameList的值
                       ruleSet.Record.forEach(map3 => {
-                        if (map3.Key == 'RuleNameList') {
+                        if (map3.Key == "RuleNameList") {
                           // 将RuleNameList的值添加进tableData
-                          item.RuleNameList = map3.Value
+                          item.RuleNameList = map3.Value;
                         }
-                      })
+                      });
                     }
                   }
-                })
-              })
+                });
+              });
               if (item.RuleNameList === undefined || item.RuleNameList == "") {
-                item.RuleNameList = '-'
+                item.RuleNameList = "-";
               }
-            } else if (map.Key == 'AutoReturn') {
-              if (map.Value == '1') {
-                item.AutoReturn = true
-              } else if (map.Value == '0') {
-                item.AutoReturn = false
+            } else if (map.Key == "AutoReturn") {
+              if (map.Value == "1") {
+                item.AutoReturn = true;
+              } else if (map.Value == "0") {
+                item.AutoReturn = false;
               }
-            } else if (map.Key == 'ReturnHour') {
+            } else if (map.Key == "ReturnHour") {
               item.ReturnHour = map.Value;
             }
-          })
-        })
-        this.loading = false
+          });
+        });
+        this.loading = false;
         // console.log(this.tableData);
-      })
+      });
     },
     // 1.3.获取回源IP段
-    describeSourceIpSegment (resourceId) {
+    describeSourceIpSegment(resourceId) {
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net',
+        Business: "net",
         Id: resourceId
-      }
+      };
       this.axios.post(SOURCEIPSEGMENT_DESCRIBE, params).then(res => {
         // console.log(res);
         if (res.Response.Error === undefined) {
-          this.ipSegment = res.Response.Data
+          this.ipSegment = res.Response.Data;
         } else {
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: 'error',
+            type: "error",
             showClose: true,
             duration: 0
-          })
+          });
         }
-      })
+      });
     },
     // 1.4.资源实例重命名接口
-    createInstanceName (resourceId, name) {
+    createInstanceName(resourceId, name) {
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net',
+        Business: "net",
         Id: resourceId,
         Name: name
-      }
+      };
       this.axios.post(INSTANCENAME_CONT, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.describeResourceList()
+          this.describeResourceList();
         } else {
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: 'error',
+            type: "error",
             showClose: true,
             duration: 0
-          })
+          });
         }
-      })
+      });
     },
     // 1.5.获取DDoS高级策略
-    describeDDoSPolicy () {
+    describeDDoSPolicy() {
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net'
-      }
+        Business: "net"
+      };
       this.axios.post(GET_SPolicy, params).then(res => {
-        this.tableDataPolicy = res.Response.DDosPolicyList
-      })
+        this.tableDataPolicy = res.Response.DDosPolicyList;
+      });
     },
     // 1.6.资源列表-自动续费
-    modifyResourceRenewFlag (id, renewFlag) {
+    modifyResourceRenewFlag(id, renewFlag) {
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net',
+        Business: "net",
         Id: id,
         RenewFlag: renewFlag // RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）
-      }
+      };
       this.axios.post(MODIFY_RENEWFLAG, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.describeResourceList()
+          this.describeResourceList();
         } else {
           let ErrTips = {
-            DryRunOperation: '多傳了DryRun參數的操作',
-            FailedOperation: '操作失敗',
-            InternalError: '內部錯誤',
-            InvalidParameter: '無效參數',
-            InvalidParameterValue: '無效參數值',
-            LimitExceeded: '超過配額限制',
-            MissingParameter: '缺少參數錯誤',
-            ResourceInUse: '資源被占用',
-            ResourceNotFound: '資源不存在',
-            ResourceUnavailable: '資源不可用'
-          }
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
+            DryRunOperation: "多傳了DryRun參數的操作",
+            FailedOperation: "操作失敗",
+            InternalError: "內部錯誤",
+            InvalidParameter: "無效參數",
+            InvalidParameterValue: "無效參數值",
+            LimitExceeded: "超過配額限制",
+            MissingParameter: "缺少參數錯誤",
+            ResourceInUse: "資源被占用",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不可用"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
-            type: 'error',
+            type: "error",
             showClose: true,
             duration: 0
-          })
+          });
         }
-      })
+      });
     },
 
     // 自动回切
-    changeSwitch (val) {
+    changeSwitch(val) {
       console.log(val);
       let params = {
-        Version: '2018-07-09',
+        Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
-        Business: 'net',
-        Id: 'net-000000ax',
-      }
+        Business: "net",
+        Id: "net-000000ax"
+      };
       // this.axios.post(CREATNETRETURN, params).then(res => {
       //   if (res.Response.Error === undefined) {
       //     console.log(res.Response)
@@ -739,52 +741,52 @@ export default {
       // })
     },
     // 修改自动回切时间
-    changeAutoReturnTime (row) {
+    changeAutoReturnTime(row) {
       console.log(row);
       this.autoHour = row.ReturnHour;
       this.autoReturnTimeDialogVisible = true;
     },
-    changeAutoReturnHour () {
-      console.log(this.autoHour)
+    changeAutoReturnHour() {
+      console.log(this.autoHour);
     },
     // 自动续费
-    renewFlagSwitch (row) {
+    renewFlagSwitch(row) {
       for (let i = 0; i < row.Record.length; i++) {
-        if (row.Record[i].Key == 'Id') {
+        if (row.Record[i].Key == "Id") {
           this.modifyResourceRenewFlag(
             row.Record[i].Value,
             row.RenewFlag == true ? 1 : 0
-          )
-          return
+          );
+          return;
         }
       }
     },
     // 跳转详情页面
-    toDetailResourse (scopeRow) {
+    toDetailResourse(scopeRow) {
       // 获取回源IP段
       scopeRow.Record.forEach(item => {
-        if (item.Key == 'Id') {
-          this.describeSourceIpSegment(item.Value)
+        if (item.Key == "Id") {
+          this.describeSourceIpSegment(item.Value);
         }
-      })
-      this.dialogResouseList = true
+      });
+      this.dialogResouseList = true;
       this.$nextTick(() => {
-        this.$refs.addOrUpdate.init(scopeRow)
-      })
+        this.$refs.addOrUpdate.init(scopeRow);
+      });
     },
     // 关闭资源详情页面
-    closeListDetail (arr) {
-      if (arr[2] != '') {
+    closeListDetail(arr) {
+      if (arr[2] != "") {
         // 编辑确定
-        this.createInstanceName(arr[1], arr[2])
+        this.createInstanceName(arr[1], arr[2]);
       }
-      this.dialogResouseList = arr[0]
+      this.dialogResouseList = arr[0];
     },
 
     // 条件搜索
-    doFilter () {
+    doFilter() {
       // 调用查询接口
-      this.describeResourceList()
+      this.describeResourceList();
     },
 
     //跳转新购页面
@@ -792,91 +794,91 @@ export default {
       let routeUrl = this.$router.resolve({
         path: "/choose"
       });
-      window.open(routeUrl.href, '_blank');
+      window.open(routeUrl.href, "_blank");
     },
     // 转发规则个数设置按钮
-    toAccest (record) {
-      let resId = ''
+    toAccest(record) {
+      let resId = "";
       for (const i in record) {
         if (record.hasOwnProperty(i)) {
-          const element = record[i]
-          if (element.Key == 'Id') {
-            resId = element.Value
+          const element = record[i];
+          if (element.Key == "Id") {
+            resId = element.Value;
           }
         }
       }
       this.$router.push({
-        path: '/AccessConfig',
+        path: "/AccessConfig",
         query: {
           resourceId: resId
         }
-      })
+      });
     },
     // 升级按钮
-    upgradeButton (row) {
+    upgradeButton(row) {
       this.$nextTick(() => {
         this.$refs.UpGradeModel.init(row);
       });
-      this.diaologUpgradeModel = true
+      this.diaologUpgradeModel = true;
     },
     // 升级弹框关闭按钮
-    closeUpgradeModel (isShow) {
-      this.diaologUpgradeModel = isShow
+    closeUpgradeModel(isShow) {
+      this.diaologUpgradeModel = isShow;
     },
     // 续费弹框
-    renewModelButton (row) {
+    renewModelButton(row) {
       this.$nextTick(() => {
         this.$refs.ReNewModel.init(row);
       });
-      this.doalogRenewModel = true
+      this.doalogRenewModel = true;
     },
     // 续费弹框关闭按钮
-    closeRenewModel (isShow) {
-      this.doalogRenewModel = isShow
+    closeRenewModel(isShow) {
+      this.doalogRenewModel = isShow;
     },
     // 防护配置点击按钮
-    configModel (ddosRes) {
-      this.modifyDDosRes = ddosRes
-      this.dialogConfigModel = true
+    configModel(ddosRes) {
+      this.modifyDDosRes = ddosRes;
+      this.dialogConfigModel = true;
     },
     // 防护配置弹框关闭按钮
-    closeConfigModel (isShow) {
-      this.dialogConfigModel = isShow
-      this.describeResourceList()
+    closeConfigModel(isShow) {
+      this.dialogConfigModel = isShow;
+      this.describeResourceList();
     },
     // 查看报表跳转页面
-    lookReportList () {
+    lookReportList() {
       this.$router.push({
-        path: '/IpProfessional'
-      })
+        path: "/IpProfessional"
+      });
     },
 
     // 分页开始
-    handleSizeChange (val) {
-      this.pageSize = val
-      this.handleCurrentChange(this.currentPage)
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.handleCurrentChange(this.currentPage);
     },
-    handleCurrentChange (val) {
-      this.currentPage = val
+    handleCurrentChange(val) {
+      this.currentPage = val;
       // 需要判断是否检索
       if (!this.flag) {
-        this.currentChangePage(this.tableDataEnd)
+        this.currentChangePage(this.tableDataEnd);
       } else {
-        this.currentChangePage(this.filterTableDataEnd)
+        this.currentChangePage(this.filterTableDataEnd);
       }
     }, // 组件自带监控当前页码
-    currentChangePage (list) {
-      let from = (this.currentPage - 1) * this.pageSize
-      let to = this.currentPage * this.pageSize
-      this.tableDataEnd = []
+    currentChangePage(list) {
+      let from = (this.currentPage - 1) * this.pageSize;
+      let to = this.currentPage * this.pageSize;
+      this.tableDataEnd = [];
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from])
+          this.tableDataEnd.push(list[from]);
         }
       }
     }
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 a {
