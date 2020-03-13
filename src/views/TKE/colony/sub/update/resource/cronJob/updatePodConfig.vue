@@ -19,43 +19,85 @@
          <!-- config -->
          <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
            <el-form-item label="数据卷（选填）">
-             <!-- <div @click="a">sssssss</div> -->
              <div class="search-one" v-for="(item, index) in  wl.dataJuan" :key="index">
-               <el-select v-model="item.name1" placeholder="请选择">
+               <el-select v-model="item.name1"  @change="initReelData(item.name1,index)" placeholder="请选择">
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                  </el-option>
                </el-select>
                <el-input class="search-input" v-model="item.name2" placeholder="名称  如val"  ></el-input>
                <div class="search-hidden">
-                 <p v-if="item.name1 == 'usePath'">
-                   暂未设置主机路径设置主机路径
-                   <span class="add-check" @click="dialogVisiblePath = true">设置主机路径</span>
-                 </p>
-                 <p v-if="item.name1 == 'useNFS'">
+                 <div v-if="item.name1 == 'usePath'">
+                   <p v-if="item.name3!=''&&item.name4!=''">
+                      <el-tooltip  placement="top"  effect="light">
+                        <div slot="content">
+                          <p>主机路径:{{item.name3}}</p>
+                          <p>检查类型:{{item.name4}}</p>
+                        </div>
+                        <span>主机路径设置 <i class="el-icon-info"></i></span>
+                      </el-tooltip>
+                      <span class="add-check" @click="resetHostPath(item.name3,item.name4,index)" >重新设置</span>
+                   </p>
+                   <p v-else>
+                    <span>暂未设置主机路径</span>
+                    <span class="add-check" @click="setHostPath(index)">设置主机路径</span>
+                   </p>
+                 </div>
+                 <div v-if="item.name1 == 'useNFS'">
                    <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
-                 </p>
-                 <p v-if="item.name1 == 'usePVC'">
-                   <el-select v-model="item.name3">
-                     <!-- <el-option v-for="item in usePvcOptions" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option> -->
+                 </div>
+                 <div v-if="item.name1 == 'usePVC'">
+                    <el-select v-model="item.name3" placeholder="请选择pvc">
+                     <el-option v-for="(val,i3) in pvcOption" :key="i3" :value="val.metadata.name" :label="val.metadata.name"></el-option>
                    </el-select>
-                 </p>
-                 <p v-if="item.name1 == 'useYun'">
-                   <span class="add-check" @click="selectYun">选择云硬盘</span>&nbsp;&nbsp;
-                   <el-tooltip class="item" effect="light" content="数据卷类型为腾讯云硬盘，实例数量最大为1" placement="top">
-                     <i style="cursor:pointer" class="el-icon-warning"></i>
-                   </el-tooltip>
-                 </p>
-                 <p v-if="item.name1 == 'useConfig'">
-                   暂未选择ConfigMap
-                   <span class="add-check" @click="selectConfig">选择配置项</span>
-                 </p>
-                 <p v-if="item.name1 == 'useSecret'">
-                   暂未选择Secret
-                   <span class="add-check" @click="selectSecret">选择Secret</span>
-                 </p>
+                 </div>
+                 <div v-if="item.name1 == 'useYun'">
+                   <p v-if="item.name3==''">
+                    <span class="add-check" @click="selectYun(index)">选择云硬盘</span>&nbsp;&nbsp;
+                    <el-tooltip class="item" effect="light" content="数据卷类型为云硬盘，实例数量最大为1" placement="top">
+                      <i style="cursor:pointer" class="el-icon-warning"></i>
+                    </el-tooltip>
+                   </p>
+                   <p v-if="item.name3!=''">
+                     <span>{{item.name3}}</span>
+                     <span class="add-check" @click="selectYun(index)" >重新选择</span>
+                     <el-tooltip class="item" effect="light" content="数据卷类型为云硬盘，实例数量最大为1" placement="top">
+                      <i style="cursor:pointer" class="el-icon-warning"></i>
+                     </el-tooltip>
+                   </p>
+                 </div>
+                 <div v-if="item.name1 == 'useConfig'" style="display:flex;align-items:center">
+                   <span v-if="item.name3==''"> 暂未选择ConfigMap</span>
+                    <span v-if="item.name3!=''">
+                      <span> {{item.name3}}</span><br/>
+                      <span v-if="item.name4=='all'">全部Key</span>
+                      <el-tooltip v-else class="item" effect="light"  placement="top">
+                         <div slot="content">
+                           <p v-for="(v,i) in item.name4" :key="i">{{v.key}}、{{v.path}}、{{v.mode}}</p>
+                        </div>
+                       <span >指定部分Key</span>
+                      </el-tooltip>
+                    </span>
+                    <span class="add-check" @click="selectConfig(index)">选择配置项</span>
+                 </div>
+                 <div v-if="item.name1 == 'useSecret'" style="display:flex;align-items:center">
+                  <span v-if="item.name3==''">暂未选择Secret</span>
+                    <span v-if="item.name3!=''">
+                      <span> {{item.name3}}</span><br/>
+                      <span v-if="item.name4=='all'">全部Key</span>
+                      <el-tooltip v-else class="item" effect="light"  placement="top">
+                         <div slot="content">
+                           <p v-for="(v,i) in item.name4" :key="i">{{v.key}}、{{v.path}}、{{v.mode}}</p>
+                        </div>
+                       <span >指定部分Key</span>
+                      </el-tooltip>
+                    </span>
+                   <span class="add-check" @click="selectSecret(index)">选择Secret</span>
+                 </div>
                </div>
-               <i class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
+                <el-tooltip v-if="firstPointInfoData.indexOf(item.name2)!=-1&&item.name2!=''" class="item" effect="light" content="该数据卷已被挂载，不可删除" placement="top">
+                 <i style="cursor:pointer" class="el-icon-close"></i>
+               </el-tooltip>
+               <i v-if="firstPointInfoData.indexOf(item.name2)==-1"    class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
              </div>
              <p style="margin-top:8px">
                <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
@@ -110,6 +152,21 @@
                      <p v-show="v.imagePullPolicy=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
                    </template>
                  </el-form-item>
+                  <el-form-item label="挂载点" v-show="isExistvolumesData">
+                    <div  v-for="(point,i2) in v.mountPoint" :key="i2" class="mount-point">
+                      <el-select v-model="point.name" class="w100">
+                        <el-option v-for="(item,i3) in autoChangeOption" :key="i3" :value="item" :label="item"></el-option>
+                      </el-select>
+                      <el-input v-model="point.mountPath" class="w192 ml8"></el-input>
+                      <el-input v-model="point.subPath" class="w192 ml8"></el-input>
+                      <el-select  v-model="point.readOnly" class="w100 ml8">
+                        <el-option value="false" label="读写"></el-option>
+                        <el-option value="true" label="只读"></el-option>
+                      </el-select>
+                       <i class="el-icon-close" @click="deleteMountPoint(i,i2,point.name)" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                    </div>
+                    <el-button type="text" @click="addMountPoint(i)">添加挂载点</el-button>
+                  </el-form-item>
                  <el-form-item label="CPU/内存限制">
                    <div class="cpu-limit">
                      <div>
@@ -407,12 +464,12 @@
              </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="dialogVisiblePath = false">确 定</el-button>
+             <el-button type="primary" @click="selectHostPath">确 定</el-button>
              <el-button @click="dialogVisiblePath = false">取 消</el-button>
            </span>
          </el-dialog>
          <!-- 选择云硬盘 -->
-         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="40%">
+         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="45%">
            <div class="select-yun">
              <el-button   plain>台北一区</el-button>
              <p style="margin-left:30px">
@@ -427,7 +484,7 @@
                tooltip-effect="dark" style="width: 100%">
                <el-table-column width="55">
                  <template slot-scope="scope">
-                   <el-radio v-model="yunRadio" :label="scope.row.id">&nbsp;</el-radio>
+                   <el-radio  @change="yunHardDiskId(scope.row.DiskId)" v-model="yunRadio" :label="scope.row.DiskId">&nbsp;</el-radio>
                  </template>
                </el-table-column>
                <el-table-column label="ID" width="120">
@@ -451,7 +508,7 @@
              </div>
            </div>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="dialogVisibleYun = false">确 定</el-button>
+             <el-button type="primary" @click="selectYunHardDisk">确 定</el-button>
              <el-button @click="dialogVisibleYun = false">取 消</el-button>
            </span>
          </el-dialog>
@@ -460,58 +517,78 @@
          <el-dialog title="设置ConfigMap" :visible.sync="dialogVisibleConfig" width="30%">
            <el-form label-position="left" label-width="120px" size="mini">
              <el-form-item label="选择ConfigMap">
-               <el-select>
-                 <el-option value='1'></el-option>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
-                 <!-- </el-option> -->
-               </el-select>
+                <el-select v-model="dataReelDialog.configMap.name"  @change="dialogConfigMapName" placeholder="请选择ConfigMap">
+                      <el-option v-for="item in configMap.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
+                      </el-option>
+                </el-select>
              </el-form-item>
              <el-form-item label="选项">
-               <el-radio-group v-model="setConfigMap.checked ">
-                 <el-radio label="all">全部</el-radio>
-                 <el-radio label="part">指定部分Key</el-radio>
-               </el-radio-group>
+               <el-radio-group v-model="dataReelDialog.configMap.checked ">
+                    <el-radio label="all">全部</el-radio>
+                    <el-radio label="part">指定部分Key</el-radio>
+                </el-radio-group>
              </el-form-item>
-             <el-form-item label="Items" v-show="setConfigMap.checked == 'part'">
-               <span>添加Item
-                 <el-tooltip class="item" effect="light" content="ConfigMap无更多可用Key" placement="top">
-                   <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
-                 </el-tooltip>
-               </span>
-             </el-form-item>
+              <el-form-item label="Items" v-show="dataReelDialog.configMap.checked == 'part'">
+                   <p style="display:flex;align-items:center;" v-for="(v,it) in dataReelDialog.configMap.items"  :key="it"  >
+                     <el-select v-model='v.key'   >
+                      <el-option v-for="(v1,i1) in dataReelDialog.configMap.partKeyOption" :key="i1" :value="v1" :label="v1">
+                      </el-option>
+                     </el-select>
+                    <el-input class="w192 ml10" v-model="v.path" placeholder="请输入子路径,eg:dev"></el-input>
+                    <el-input class="w192 ml10" v-model="v.mode" placeholder="文件权限,如0644"></el-input>
+                    <el-tooltip class="item"  v-if="dataReelDialog.configMap.items.length=='1'"   effect="light" content="不可删除，至少指定一个Key" placement="top">
+                      <i class="el-icon-close" style="cursor:pointer"></i>
+                    </el-tooltip>
+                    <i class="el-icon-close"  v-else @click="delConfigItem(it)"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                  </p>
+                  <el-button type="text" :disabled="dataReelDialog.configMap.partKeyOption.length==dataReelDialog.configMap.items.length" @click="addConfigItem" >添加Item</el-button>
+                  <el-tooltip class="item" effect="light" content="ConfigMap无更多可用Key" placement="top">
+                    <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
+                  </el-tooltip>
+                </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="dialogVisibleConfig = false">确 定</el-button>
+             <el-button type="primary" @click="selectConfigSure">确 定</el-button>
              <el-button @click="dialogVisibleConfig = false">取 消</el-button>
            </span>
          </el-dialog>
 
-         <!-- 设置Configmap -->
+         <!-- 设置secret -->
          <el-dialog title="设置Secret" :visible.sync="dialogVisibleSecret" width="30%">
            <el-form label-position="left" label-width="120px" size="mini">
              <el-form-item label="选择Secret">
-               <el-select>
-                 <!-- <el-option v-for="item in checkTypeOptions" :key="item.value" :label="item.label" :value="item.value"> -->
-                 <!-- </el-option> -->
-                 <el-option value='1'></el-option>
+               <el-select v-model="dataReelDialog.Secret.name"  @change="dialogSecretName" placeholder="请选择Secret" >
+                <el-option v-for="item in secrets.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
+                  </el-option>
                </el-select>
              </el-form-item>
              <el-form-item label="选项">
-               <el-radio-group v-model="setSecret.checked">
+               <el-radio-group v-model="dataReelDialog.Secret.checked">
                  <el-radio label="all">全部</el-radio>
                  <el-radio label="part">指定部分Key</el-radio>
                </el-radio-group>
              </el-form-item>
-             <el-form-item label="Items" v-show="setSecret.checked == 'part'">
-               <span>添加Item
-                 <el-tooltip class="item" effect="light" content="Secret无更多可用Key" placement="top">
-                   <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
-                 </el-tooltip>
-               </span>
-             </el-form-item>
+              <el-form-item label="Items" v-show="dataReelDialog.Secret.checked == 'part'">
+                <p style="display:flex;align-items:center;" v-for="(v,it) in dataReelDialog.Secret.items"  :key="it"  >
+                  <el-select v-model='v.key'   >
+                    <el-option v-for="(v1,i1) in dataReelDialog.Secret.partKeyOption" :key="i1" :value="v1" :label="v1">
+                    </el-option>
+                  </el-select>
+                  <el-input class="w192 ml10" v-model="v.path" placeholder="请输入子路径,eg:dev"></el-input>
+                  <el-input class="w192 ml10" v-model="v.mode" placeholder="文件权限,如0644"></el-input>
+                  <el-tooltip class="item"  v-if="dataReelDialog.Secret.items.length=='1'"   effect="light" content="不可删除，至少指定一个Key" placement="top">
+                    <i class="el-icon-close" style="cursor:pointer"></i>
+                  </el-tooltip>
+                  <i class="el-icon-close"  v-else @click="delSecretItem(it)"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
+                </p>
+                <el-button type="text" :disabled="dataReelDialog.Secret.partKeyOption.length==dataReelDialog.Secret.items.length" @click="addSecretItem" >添加Item</el-button>
+                <el-tooltip class="item" effect="light" content="ConfigMap无更多可用Key" placement="top">
+                  <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
+                </el-tooltip>
+              </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="dialogVisibleSecret = false">确 定</el-button>
+             <el-button type="primary" @click="selectSecretSure">确 定</el-button>
              <el-button @click="dialogVisibleSecret = false">取 消</el-button>
            </span>
          </el-dialog>
@@ -547,17 +624,40 @@ export default {
       workload:'',
       isAddContainer: false, // 是否可以点击 添加容器
        dataReelDialog:{
-        portPath:{
-          name:'',
-          type:'DirectoryOrCreate',
-        },
-        yunDisks:{
-          name:'',
-        }
-
+          portPath:{
+              name:'',
+              type:'DirectoryOrCreate',
+            },
+            yunDisks:{
+              name:'',
+              diskId:'',//选中的 id
+            },
+            configMap:{
+              name:'',
+              checked:'all',
+              partKeyOption:[],
+              items:[],
+              path:'',
+              port:''
+            },
+            Secret:{
+              name:'',
+              checked:'all',
+              partKeyOption:[],
+              items:[],
+              path:'',
+              port:''
+            }
       },
+        firstPointInfoData:[],
+       isExistvolumesData:'',//判断是否存在数据卷，从而确定挂载点是否显示
+      dialogIndex:'',//数据卷下标存储
+       //主机路径检查类型
       portPathOptions:['NoChecks','DirectoryOrCreate','Directory','FileOrCreate','File','Socket','CharDevice','BlockDevice'],
       yunRadio:'',
+      //PVc
+      pvcOption:[],
+      autoChangeOption:[],//挂载点第一列选项
       // 更新pod数量
       upn: {
         type1: 'qcloudregistrykey',
@@ -615,35 +715,16 @@ export default {
         subPath: '',
         pointName: ''
       },
-      containerCheck: {
-      type: 'TCP端口检查',
-      http: {
-        type: 'HTTP'
-      }
-    },
-    containerTypeOptions: [{
-        value: 'TCP端口检查',
-        label: 'TCP端口检查'
-      },
-      {
-        value: 'HTTP请求检查',
-        label: 'HTTP请求检查'
-      },
-      {
-        value: '执行命令检查',
-        label: '执行命令检查'
-      },
-    ],
       dialogVisiblePath: false,
       dialogVisibleYun: false,
       dialogVisibleConfig: false,
       dialogVisibleSecret: false,
       yesOrnoAddDataJuan: false,
       highLevelSetShow:false,
-    highLevelSetShow2:false,
-    surviveExamine: false, //存活检查
-    readyToCheck: false, //就绪检查
-    SelectMirrorImgFlag:false,
+      highLevelSetShow2:false,
+      surviveExamine: false, //存活检查
+      readyToCheck: false, //就绪检查
+      SelectMirrorImgFlag:false,
       searchOptions: [{
           value: "useMenu",
           label: "使用临时目录"
@@ -662,7 +743,7 @@ export default {
         },
         {
           value: "useYun",
-          label: "使用腾讯云硬盘"
+          label: "使用云硬盘"
         },
         {
           value: "useConfig",
@@ -678,12 +759,7 @@ export default {
       TotalCount: 0,
       pagesize: 10,
       currpage: 1,
-      setConfigMap: {
-        checked: 'all'
-      },
-      setSecret: {
-        checked: 'all'
-      },
+      lengths:'',//判断名称是否是输入框
       secrets: {}, // 引用ConfigMap/Secret secrets
       configMap: {} // 引用ConfigMap/Secret ConfigMap
 
@@ -701,7 +777,7 @@ export default {
     this.workload=workload;
     this.wl.namespace = spaceName
     this.initData()
-    console.log(this.wl.instanceContent)
+    
   },
   methods: {
      async  initData(){
@@ -709,6 +785,7 @@ export default {
       this.getConfigmaps();
       this.getSecrets()
       this.getDescribeDisks()
+      this.getPvc()
     },
     
     submit(){
@@ -763,6 +840,10 @@ export default {
         let oneContainer = {
          
         }
+          //运行指令
+        if (container[i].runCommand.length > 0) var command=container[i].runCommand.split('\n')
+        //运行参数
+        if (container[i].runParam.length > 0) var args=container[i].runParam.split('\n')
          // // 存活检查
         if (surviveExamine) oneContainer.livenessProbe = inspectFunc(surviveExamineContent)
         // // 就绪检查
@@ -789,20 +870,43 @@ export default {
             }
           })
         }
-         //运行指令
-        if (container[i].runCommand.length > 0) {
-         var command=container[i].runCommand.split('\n')
+         //新增挂载点
+        let mountPointArr=[];
+        if(container[i].mountPoint.length>0){
+          mountPointArr=container[i].mountPoint.map(item => {
+            if(item.subPath==''&&item.readOnly=='false'){
+              return {
+                name:item.name,
+                mountPath:item.mountPath
+              }
+            }else if(item.subPath==''&&item.readOnly=='true'){
+               return {
+                name:item.name,
+                mountPath:item.mountPath,
+                readOnly:true,
+              }
+            }else if(item.subPath!=''&&item.readOnly=='false'){
+               return {
+                name:item.name,
+                mountPath:item.mountPath,
+                subPath:item.subPath
+              }
+            }else if(item.subPath!=''&&item.readOnly=='true'){
+               return {
+                name:item.name,
+                mountPath:item.mountPath,
+                subPath:item.subPath,
+                readOnly:true,
+              }
+            }
+          })
         }
-        //运行参数
-        if (container[i].runParam.length > 0) {
-         var args=container[i].runParam.split('\n')
-        }
-
+        
           containerObj = {
             name: container[i].name,
             image: container[i].mirrorImg + ':' + container[i].versions, // 'tpeccr.ccs.tencentyun.com/22333/sdf:tagv1',
             imagePullPolicy: container[i].imagePullPolicy,
-            volumeMounts: [],
+            volumeMounts: mountPointArr,
             resources: {
               limits:
                 {
@@ -829,7 +933,76 @@ export default {
           containerList.push(containerObj)
         }
       }
-      console.log(containerList)
+      // 数据卷信息
+      let {dataJuan}=this.wl;
+      let volumesArr=[];
+      dataJuan.forEach(item=>{
+        console.log(item)
+        let sendObj=new Object();
+        sendObj.name=item.name2;
+        console.log(item.name1)
+        if(item.name1=='useMenu'){
+          sendObj.emptyDir={}
+        }else if(item.name1=='usePath'){
+          sendObj.hostPath={
+            path:item.name3,
+            type:item.name4,
+          }
+        }else if(item.name1=='useNFS'){
+           sendObj.nfs={
+             path:item.name3.split(':')[0],
+             server:item.name3.split(':')[1],
+           }
+        }else if(item.name1=='usePVC'){
+            sendObj.persistentVolumeClaim={
+              claimName:item.name3
+            }
+        }else if(item.name1=='useYun'){
+            sendObj.qcloudCbs={
+              cbsDiskId:item.name3,
+              fsType:'ext4'
+            }
+        }else if(item.name1=='useConfig'){
+            sendObj.configMap={
+              name:item.name3
+            }
+          if(item.name4=='all'){
+            sendObj.configMap.items=[]
+          }else{
+            let arr=[];
+             item.name4.forEach(v=>{
+               let obj={}
+               for(let i in v){
+                 if(v[i]!=''){
+                   obj[i]=v[i]
+                 }
+               }
+               arr.push(obj)
+             })
+            sendObj.configMap.items=arr
+          }
+        }else if(item.name1=='useSecret'){
+            sendObj.secret={
+              secretName:item.name3,
+            }
+          if(item.name4=='all'){
+            sendObj.secret.items=[]
+          }else{
+             let arr=[];
+             item.name4.forEach(v=>{
+               let obj={}
+               for(let i in v){
+                 if(v[i]!=''){
+                   obj[i]=v[i]
+                 }
+               }
+               arr.push(obj)
+             })
+            sendObj.secret.items=arr
+          } 
+        }
+        volumesArr.push(sendObj)
+      })
       var params={
         ClusterName: this.clusterId,
         ContentType: "application/merge-patch+json",
@@ -840,7 +1013,7 @@ export default {
 				"spec": {
 					"template": {
 						"spec": {
-							"volumes": [],
+							"volumes": volumesArr,
 							"containers":containerList, 
 							"imagePullSecrets":[{
 								"name": "qcloudregistrykey"
@@ -943,7 +1116,22 @@ export default {
         }
       })
     } ,
+    getPvc(){
+      let param={
+        ClusterName: this.clusterId,
+        Method: "GET",
+        Path: `/api/v1/namespaces/${this.wl.namespace}/persistentvolumeclaims`,
+        Version: "2018-05-25",
+      }
+      this.axios.post(POINT_REQUEST, param).then(res => {
+        this.axiosUtils(res, () => {
+          let ResponseBody =JSON.parse(res.Response.ResponseBody); 
+           console.log('pvcdata',ResponseBody)
+            this.pvcOption=ResponseBody.items;
+        })
+      })
 
+    },  
     baseData(){
       var params=null;
       if(this.workload=='cronjobs'){
@@ -965,13 +1153,29 @@ export default {
          if(res.Response.Error === undefined){
            let response = JSON.parse(res.Response.ResponseBody);
            console.log(response)
-          if(this.workload=='cronjobs'){
-            var {items:[{spec:{jobTemplate:{spec:{template:{spec:{containers:arr}}}}}}]}=response;
-          }else{
-            var {items:[{spec:{template:{spec:{containers:arr}}}}]}=response;
-          }
+          var {items:[{spec:{jobTemplate:{spec:{template:{spec:{containers:arr,volumes:volumesData}}}}}}]}=response;
+
+          if(volumesData){//数据卷存在
+            volumesData.forEach(item=>{
+              console.log(item)
+              if(item.configMap){
+                this.wl.dataJuan.push({name1:'useConfig',name2:item.name,name3:item.configMap.name,name4:item.configMap.items})
+              }else if(item.hostPath){
+                this.wl.dataJuan.push({name1:'usePath',name2:item.name,name3:item.hostPath.path,name4:item.hostPath.type})
+              }else if(item.nfs){
+                  this.wl.dataJuan.push({name1:'useNFS',name2:item.name,name3:item.nfs.server+":"+item.nfs.path,name4:''})
+              }else if(item.persistentVolumeClaim){
+                  this.wl.dataJuan.push({name1:'usePVC',name2:item.name,name3:item.persistentVolumeClaim.claimName,name4:''})
+              }else if(item.qcloudCbs){
+                  this.wl.dataJuan.push({name1:'useYun',name2:item.name,name3:item.qcloudCbs.cbsDiskId,name4:''})
+              }else if(item.secret){
+                  this.wl.dataJuan.push({name1:'useSecret',name2:item.name,name3:item.secret.secretName,name4:item.secret.defaultMode})
+              }else if(item.emptyDir){
+                  this.wl.dataJuan.push({name1:'useMenu',name2:item.name,name3:'',name4:''})
+              }
+            })
+          }  
           let arr2=[],arr3=[];
-          console.log(arr)
           let surviveExamineContentObj={
              inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
             inspectMethodValue: 'TCP端口检查',
@@ -1024,6 +1228,25 @@ export default {
                  })
               }
             }
+            if(v.volumeMounts&&v.volumeMounts.length!=0){//挂载点数据处理
+              var  volumeArr=[];
+              v.volumeMounts.forEach(v=>{
+                let volumeObj=new Object();
+                 volumeObj.mountPath=v.mountPath;
+                 volumeObj.name=v.name;
+                if(v.subPath){
+                   volumeObj.subPath=v.subPath;
+                  }else{
+                     volumeObj.subPath='';
+                }
+                if(v.readOnly){//只读
+                  volumeObj.readOnly='true'
+                  }else{//读写
+                  volumeObj.readOnly='false'
+                }
+                 volumeArr.push(volumeObj)
+              })
+            } 
             this.addInstanceContent(
             v.name,v.image.split(':')[0],v.image.split(':')[1],v.imagePullPolicy,
             parseInt(v.resources.requests.cpu),
@@ -1042,6 +1265,7 @@ export default {
             v.securityContext.privileged,// 特权级容器开关
              v.livenessProbe?v.livenessProbe:surviveExamineContentObj,//存活检查内容
             v.readinessProbe?v.readinessProbe:readyToCheckContentObj,//就绪检查
+             volumeArr?volumeArr:[],//数据卷挂载点
             )
           }
         }else{
@@ -1073,14 +1297,95 @@ export default {
     console.log(val, index)
     this.wl.instanceContent[index].mirrorImg = val
   },
-  selectYun() {
+  initReelData(val,index){
+    console.log(val,index)
+    this.wl.dataJuan[index].name3=''
+    this.wl.dataJuan[index].name4=''
+
+  },
+  setHostPath(index){//设置主机路径弹出框
+    this.dialogVisiblePath = true
+    this.dialogIndex=index;
+  },
+  selectHostPath(){//设置主机路径
+    this.dialogVisiblePath = false
+    this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.portPath.name;
+    this.wl.dataJuan[this.dialogIndex].name4=this.dataReelDialog.portPath.type;
+  },
+  resetHostPath(name,type,index){//重置主机路径
+    this.dialogVisiblePath = true;
+    this.dialogIndex=index;
+    this.dataReelDialog.portPath.name=name;
+    this.dataReelDialog.portPath.type=type;
+  },
+  selectYun(index) {//弹出云硬盘框
     this.dialogVisibleYun = true;
+    this.dialogIndex=index;
   },
-  selectConfig() {
+  yunHardDiskId(val){//radio选中
+    console.log(val)
+    this.dataReelDialog.yunDisks.diskId=val;
+  },
+  selectYunHardDisk(){//关闭框，赋值
+    this.dialogVisibleYun = false;
+     this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.yunDisks.diskId;
+     console.log(this.wl.dataJuan[this.dialogIndex])
+  },
+  selectConfig(index) {//弹出框
     this.dialogVisibleConfig = true;
+    this.dialogIndex=index;
   },
-  selectSecret() {
+  selectConfigSure(){//关闭框，赋值
+     this.dialogVisibleConfig = false;
+     this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.configMap.name;
+     console.log(this.dataReelDialog.configMap.items)
+
+     if(this.dataReelDialog.configMap.items.length==0){
+       this.wl.dataJuan[this.dialogIndex].name4='all';
+     }else{
+       this.wl.dataJuan[this.dialogIndex].name4=this.dataReelDialog.configMap.items
+     }
+    
+  },
+  dialogConfigMapName(val){//configmap第一项选中后，设置items选项内容
+    let  readyDatefilter=this.configMap.items,readyArr=[];
+    readyDatefilter=readyDatefilter.filter(item=>{
+      return item.metadata.name==val
+    })
+    readyDatefilter.forEach(item=>{
+      readyArr=Object.keys(item.data)
+    })
+   this.dataReelDialog.configMap.partKeyOption=readyArr
+   this.dataReelDialog.configMap.items.forEach(item=>{
+      item.name=readyArr[0]
+   })
+  },
+  dialogSecretName(val){
+     let  readyDatefilter=this.secrets.items,readyArr=[];
+    readyDatefilter=readyDatefilter.filter(item=>{
+      return item.metadata.name==val
+    })
+    readyDatefilter.forEach(item=>{
+      readyArr=Object.keys(item.data)
+    })
+    console.log(readyArr)
+   this.dataReelDialog.Secret.partKeyOption=readyArr
+   this.dataReelDialog.Secret.items.forEach(item=>{
+      item.name=readyArr[0]
+   })
+  },
+  selectSecret(index) {//弹出框
     this.dialogVisibleSecret = true;
+    this.dialogIndex=index;
+  },
+  selectSecretSure() {//关闭框，赋值
+    this.dialogVisibleSecret = false
+    this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.Secret.name;
+     if(this.dataReelDialog.Secret.items.length==0){
+       this.wl.dataJuan[this.dialogIndex].name4='all';
+     }else{
+       this.wl.dataJuan[this.dialogIndex].name4=this.dataReelDialog.Secret.items
+     }
   },
   //改变每页显示数量
   handleSizeChange(val) {
@@ -1107,6 +1412,20 @@ watch: {
         if (val.dataJuan.length == 0) {
           this.yesOrnoAddDataJuan = false;
         }
+        this.autoChangeOption=[];
+        val.dataJuan.forEach(item=>{
+          if(item.name2!=''){
+            this.autoChangeOption.push(item.name2)
+          }
+        })
+        let isExistvolumesDataJudge=val.dataJuan.filter(v=>{
+          return  v.name2!=''
+        })
+        if(isExistvolumesDataJudge.length!=0){
+           this.isExistvolumesData=true
+        }else{
+           this.isExistvolumesData=false;
+        }
       },
       deep: true,
     },
@@ -1115,7 +1434,14 @@ watch: {
         let isAddContainer = true
         val.forEach(item => {
           let completed = true
-          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent } = item
+          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent ,mountPoint} = item
+           this.firstPointInfoData=[];
+          mountPoint.forEach(v=>{
+            console.log(v)
+            if(v.name!=''){
+             this.firstPointInfoData.push(v.name) 
+            }
+          })
           if (name === '' || mirrorImg === '') {
             completed = false
           }
@@ -1203,7 +1529,9 @@ watch: {
   .ml100 {
     margin-left: 100px;
   }
-
+  .ml8 {
+    margin-left: 8px;
+  }
   .flex {
     display: flex;
   }
@@ -1384,6 +1712,16 @@ i{
     width: 200px;
 
   }
+}
+.mount-point{
+   display: flex;
+   align-items: center;
+}
+.set-configmap{
+  // border: solid 1px #ff9d00;
+  box-sizing: border-box;
+  padding: 20px 10px;
+  box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, .2);
 }
 
 
