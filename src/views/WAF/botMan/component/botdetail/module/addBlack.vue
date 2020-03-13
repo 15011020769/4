@@ -18,7 +18,7 @@
       <div class="newClear newList">
         <p>IP<i class="required">*</i></p>
         <p>
-          <el-input :disabled="ipInfo.type === 'ipStatus' || ipInfo.type === 'ipList'" disabled v-model="ipAddress" />
+          <el-input disabled v-model="ipAddress" />
           <div class="err-tips" v-show="ipTest">{{t('IP格式输入有误', 'WAF.ipgsyw')}}</div>
         </p>
       </div>
