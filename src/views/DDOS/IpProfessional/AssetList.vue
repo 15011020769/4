@@ -22,29 +22,16 @@
       <div class="mainContentCenter">
         <div class="textAlignTop newClear">
           <div class="addBgColor" style="display:flex;">
-            <el-checkbox-group v-model="expire" class="checkOne">
-              <el-checkbox
-                :label="$t('DDOS.AssetList.willExpire')"
-                name="expire"
-              ></el-checkbox>
+            <!-- 即将过期 -->
+            <el-checkbox-group v-model="expireFilter" class="checkOne" @change="expireChange">
+              <el-checkbox :label="$t('DDOS.AssetList.willExpire')"></el-checkbox>
             </el-checkbox-group>
-            <span class="runningStatusText"
-              >{{ $t("DDOS.AssetList.RunningState") }}:</span
-            >
-            <el-checkbox-group
-              v-model="runningStatus"
-              class="checkTwo"
-              @change="statusChange"
-            >
-              <el-checkbox :label="0">{{
-                $t("DDOS.AssetList.Running")
-              }}</el-checkbox>
-              <el-checkbox :label="1">{{
-                $t("DDOS.Protective.Protectivewash")
-              }}</el-checkbox>
-              <el-checkbox :label="2">{{
-                $t("DDOS.Protective.blockIng")
-              }}</el-checkbox>
+            <!-- 运行状态 -->
+            <span class="runningStatusText" >{{ $t("DDOS.AssetList.RunningState") }}:</span >
+            <el-checkbox-group v-model="runningStatus" class="checkTwo" @change="statusChange">
+              <el-checkbox :label="0">{{ $t("DDOS.AssetList.Running") }}</el-checkbox>
+              <el-checkbox :label="1">{{ $t("DDOS.Protective.Protectivewash") }}</el-checkbox>
+              <el-checkbox :label="2">{{ $t("DDOS.Protective.blockIng") }}</el-checkbox>
             </el-checkbox-group>
           </div>
           <span style="float:right;">
@@ -61,40 +48,22 @@
           <div class="mainTable">
             <!-- 资源列表 -->
             <el-table
-              :data="
-                tableData.slice(
-                  (currentPage - 1) * pageSize,
-                  currentPage * pageSize
-                )
-              "
+              :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               v-if="listSelect == 'resourceList'"
               v-loading="loading"
               empty-text='暫無數據'
             >
-              <el-table-column
-                prop="Record"
-                :label="$t('DDOS.AssetList.AssetListName')"
-              >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')" >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <a
-                      v-if="item.Key == 'Id'"
-                      @click="toDetailResourse(scope.row)"
-                      >{{ item.Value }}</a
-                    >
+                    <a v-if="item.Key == 'Id'" @click="toDetailResourse(scope.row)" >{{ item.Value }}</a>
                   </div>
-                  <div
-                    v-for="(item, index) in scope.row.Record"
-                    :key="index + 'i'"
-                  >
+                  <div v-for="(item, index) in scope.row.Record" :key="index + 'i'">
                     <span v-if="item.Key == 'Name'">{{ item.Value == "" ? "未命名" : item.Value }}</span>
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="Record"
-                :label="$t('DDOS.AssetList.Forwarding')"
-              >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')" >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <span v-if="item.Key == 'L4RulesTotal'">
@@ -106,10 +75,7 @@
                   </div>
                 </template>
               </el-table-column>
-              <el-table-column
-                prop="Record"
-                :label="$t('DDOS.AssetList.protectionNum')"
-              >
+              <el-table-column prop="Record" :label="$t('DDOS.AssetList.protectionNum')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
                     <div v-if="item.Key == 'IPText'">
@@ -126,17 +92,10 @@
                 </template>
               </el-table-column>
               <!-- 初始区域（接口未对字段说明，部分值无法解析直接输出） -->
-              <el-table-column
-                prop="origin"
-                :label="$t('DDOS.AssetList.initialRegio')"
-              >
+              <el-table-column prop="origin" :label="$t('DDOS.AssetList.initialRegio')">
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <span v-if="item.Key == 'OriginRegion'">{{
-                      item.Value == "tpe"
-                        ? $t("DDOS.total.address")
-                        : item.Value
-                    }}</span>
+                    <span v-if="item.Key == 'OriginRegion'">{{ item.Value == "tpe" ? $t("DDOS.total.address") : item.Value }}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -285,9 +244,15 @@
                     v-model="scope.row.AutoReturn"
                     active-color="#006eff"
                     inactive-color="#999"
-                    disabled
                     @change="changeSwitch"
                   ></el-switch>
+                  <el-tooltip class="tooltip" effect="light" placement="bottom">
+                    <div slot="content" class="tooltip_text">
+                      <p style="height: 20px;">{{$t('DDOS.AssetList.autoHourText1')}}{{scope.row.ReturnHour}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
+                      <a href="#" @click="changeAutoReturnTime(scope.row)" style="text-decoration: underline;">{{$t('DDOS.AssetList.changeTime')}}</a>
+                    </div>
+                    <i class="el-icon-info"></i>
+                  </el-tooltip>
                 </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
@@ -295,7 +260,7 @@
                   <a
                     class="marginRightA"
                     href="#"
-                    style="pointer-events:none;color:#999;"
+                    style="pointer-events:none; color:#999;"
                     >{{ $t("DDOS.AssetList.keyBack") }}</a
                   >
                   <a
@@ -308,6 +273,29 @@
               </el-table-column>
             </el-table>
 
+            <!-- 修改自动回切时间 -->
+            <el-dialog
+              :title="$t('DDOS.AssetList.AutomaticBack')"
+              :visible.sync="autoReturnTimeDialogVisible"
+              width="43%"
+            >
+              <div>
+                {{$t('DDOS.AssetList.changeAutoHourText1')}}
+                <el-select v-model="autoHour" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" style="width: 120px;">
+                  <el-option
+                    v-for="(item, index) in autoReturnTimeList"
+                    :label="item"
+                    :value="item"
+                    :key="index"
+                  ></el-option>
+                </el-select>
+                {{$t('DDOS.AssetList.changeAutoHourText2')}}
+              </div>
+              <div slot="footer" style="text-align: center">
+                <el-button type="primary" @click="changeAutoReturnHour">{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
+                <el-button @click="autoReturnTimeDialogVisible = false">取 消</el-button>
+              </div>
+            </el-dialog>
             <!-- 资源列表详情弹框 -->
             <resouseListModel
               :ipSegment="ipSegment"
@@ -363,7 +351,7 @@ import {
   SOURCEIPSEGMENT_DESCRIBE,
   INSTANCENAME_CONT,
   L4_RULES,
-  MODIFY_RENEWFLAG
+  MODIFY_RENEWFLAG,
 } from '@/constants'
 import resouseListModel from './model/resouseListModel'
 import upgradeModel from './model/upgradeModel'
@@ -375,20 +363,14 @@ export default {
   data () {
     return {
       loading: true,
-      ruleSets: [], // 资源的规则数据
+      listSelect: 'resourceList', // 列表选择（业务列表Or资源列表）
       tableData: [], // 共用table数据
+      expireFilter: false, // 搜索勾选框：即将到期搜索；可选，取值为[0（不搜索），1（搜索即将到期的资源）]
+      runningStatus: [], // 搜索勾选框：运行状态
+      selectResourceInput: '', // 搜索输入框
+      
+      ruleSets: [], // 资源的规则数据
       ipSegment: '', // 回源IP
-      inputName: '', // 修改名称
-
-      expire: false, // 即将到期搜索；可选，取值为[0（不搜索），1（搜索即将到期的资源）]
-      runningStatus: [], // 运行状态绑定
-
-      selectResourceInput: '', // 资源列表搜索框
-
-      currentPage: 1,
-      pageSize: 10,
-      totalItems: 0,
-
       tableDataEnd: [],
       tableDataPolicy: [], // DDoS高级防护策略列表
       RuleSetsa: [], // 获取资源的规则数接口
@@ -396,14 +378,24 @@ export default {
       flag: false,
       multipleSelection: [],
       filterConrent: '',
-      listSelect: 'resourceList', // 列表选择（业务列表Or资源列表）
       dialogResouseList: false, // 资产列表详情弹框
       diaologUpgradeModel: false, // 升级弹框
       doalogRenewModel: false, // 续费弹框
       dialogConfigModel: false, // 防护配置弹框
       resouseOrYw: '', // 判断是哪个列表
       status: '',
-      modifyDDosRes: {} // 防护配置使用对象
+      modifyDDosRes: {}, // 防护配置使用对象
+      inputName: '', // 修改名称
+      // 资源列表
+
+      // 业务列表
+      autoReturnTimeDialogVisible: false, //自动回切-修改时间弹框
+      autoHour: 2,
+      autoReturnTimeList: [1, 2, 3, 4, 5, 6], //自动回切-时间数组
+      // 分页
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 0,
     }
   },
   components: {
@@ -417,19 +409,21 @@ export default {
       // 资源列表、业务列表 调用同一接口
       this.describeResourceList()
     },
-    expire: function () {
-      this.describeResourceList()
-    },
+    // 搜索框监控
     selectResourceInput: function () {
       this.describeResourceList()
     }
   },
   created () {
     this.describeResourceList() // 获取资源列表接口
-    this.describeDDoSPolicy() // 获取高级策略列表
+    // this.describeDDoSPolicy() // 获取高级策略列表
   },
   methods: {
-    // 选择运行状态
+    // 搜索勾选框-即将过期
+    expireChange () {
+      this.describeResourceList()
+    },
+    // 搜索勾选框-运行状态
     statusChange () {
       this.describeResourceList()
     },
@@ -441,18 +435,17 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Business: 'net'
       }
-      // 1.1.0.条件搜索调用（即将过期）
-      if (this.expire) {
+      // 1.1.0.条件搜索参数（即将过期）
+      if (this.expireFilter) {
         params['Expire'] = 1
       }
-      // 1.1.1.条件搜索调用（运行状态）
+      // 1.1.1.条件搜索参数（运行状态）
       if (this.runningStatus.length > 0) {
-        // 勾选框参数
         for (let a in this.runningStatus) {
           params['Status.' + a] = this.runningStatus[a]
         }
       }
-      // 1.1.2.条件搜索调用（输入框参数）
+      // 1.1.2.条件搜索参数（输入框参数）
       if (this.selectResourceInput != '') {
         if (this.listSelect == 'resourceList') {
           params['Name'] = this.selectResourceInput;
@@ -460,8 +453,7 @@ export default {
           params['Domain'] = this.selectResourceInput
         }
       }
-      // console.log(params);
-      // 执行调用接口--------------
+      // -----调用接口-----
       this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(params, res);
         this.tableData = res.Response.ServicePacks
@@ -469,7 +461,7 @@ export default {
         this.tableData.forEach(val => {
           val.Record.forEach(item => {
             if (item.Key == 'Id') {
-              // 1.防护等级
+              // 1.防护等级（资源列表-防护配置 需要）
               let params = {
                 Version: '2018-07-09',
                 Region: localStorage.getItem("regionv2"),
@@ -484,7 +476,7 @@ export default {
                 }
                 val.Record.push(obj)
               })
-              // 2.高级防护策略
+              // 2.高级防护策略（资源列表-防护配置 需要）
               let params2 = {
                 Version: '2018-07-09',
                 Region: localStorage.getItem("regionv2"),
@@ -516,7 +508,7 @@ export default {
                   val.Record.push(obj2Id)
                 }
               })
-              // 3.转发规则个数（接入配置）
+              // 3.转发规则个数（资源列表 需要）
               let params3 = {
                 Version: '2018-07-09',
                 Region: localStorage.getItem("regionv2"),
@@ -530,7 +522,6 @@ export default {
                     Value: res.Response.Total
                   }
                   val.Record.push(obj3)
-                  // this.tableDataBegin = res.Response.Rules;
                 } else {
                   let ErrTips = {}
                   let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -542,23 +533,16 @@ export default {
                   })
                 }
               })
-            } else if (item.Key == 'GroupIpList') {
-              // IP格式化175.97.143.121-tpe-bgp-300-1;175.97.142.153-tpe-bgp-100-1 >>> 175.97.142.153(中国台湾BGP)
+            } else if (item.Key == 'GroupIpList') { // IP列表文本格式化处理（资源列表 需要）
               let IPText = []
               let ipArr = item.Value.split(';');
               for (let key=ipArr.length-1; key>=0; key--) {
                 const element = ipArr[key];
                 let ipDetailArr = element.split('-');
-                if(ipDetailArr[3] == '100') {
+                if(ipDetailArr[3] == '100') {//IP显示顺序处理
                   IPText.splice(0, 0, ipDetailArr[0] + '(' + (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) + (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) + ')');
                 } else {
-                  IPText.push(
-                    ipDetailArr[0] +
-                    '(' +
-                    (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) +
-                    (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) +
-                    ')'
-                  );
+                  IPText.push(ipDetailArr[0] + '(' + (ipDetailArr[1] == 'tpe' ? '中國台灣' : ipDetailArr[1]) + (ipDetailArr[2] == 'bgp' ? 'BGP' : ipDetailArr[2]) + ')');
                 }
               }
               const obj = {
@@ -566,8 +550,7 @@ export default {
                 Value: IPText
               }
               val.Record.push(obj)
-            } else if (item.Key == 'AutoRenewFlag') {
-              // 自动续费
+            } else if (item.Key == 'AutoRenewFlag') { // 自动续费（资源列表 需要）
               val.RenewFlag = item.Value == '1'
             }
           })
@@ -627,6 +610,8 @@ export default {
               } else if (map.Value == '0') {
                 item.AutoReturn = false
               }
+            } else if (map.Key == 'ReturnHour') {
+              item.ReturnHour = map.Value;
             }
           })
         })
@@ -731,7 +716,36 @@ export default {
 
     // 自动回切
     changeSwitch (val) {
-      // this.$message('暂无接口调用');
+      console.log(val);
+      let params = {
+        Version: '2018-07-09',
+        Region: localStorage.getItem("regionv2"),
+        Business: 'net',
+        Id: 'net-000000ax',
+      }
+      // this.axios.post(CREATNETRETURN, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     console.log(res.Response)
+      //   } else {
+      //     let ErrTips = {}
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: 'error',
+      //       showClose: true,
+      //       duration: 0
+      //     })
+      //   }
+      // })
+    },
+    // 修改自动回切时间
+    changeAutoReturnTime (row) {
+      console.log(row);
+      this.autoHour = row.ReturnHour;
+      this.autoReturnTimeDialogVisible = true;
+    },
+    changeAutoReturnHour () {
+      console.log(this.autoHour)
     },
     // 自动续费
     renewFlagSwitch (row) {
@@ -1050,5 +1064,17 @@ a {
 }
 .tabListPage {
   text-align: right;
+}
+.tooltip_text {
+  font-size: 13px;
+}
+.el-icon-info {
+  margin-left: 5px;
+  margin-top: 5px;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  vertical-align: middle;
+  cursor: pointer;
 }
 </style>
