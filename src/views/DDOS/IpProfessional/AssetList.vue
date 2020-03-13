@@ -87,9 +87,7 @@
                     v-for="(item, index) in scope.row.Record"
                     :key="index + 'i'"
                   >
-                    <span v-if="item.Key == 'Name'">{{
-                      item.Value == "" ? "未命名" : item.Value
-                    }}</span>
+                    <span v-if="item.Key == 'Name'">{{ item.Value == "" ? "未命名" : item.Value }}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -201,10 +199,10 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
                 <template slot-scope="scope">
-                  <a class="marginRightA" href="#" @click="upgradeModel">{{
+                  <a class="marginRightA" href="#" @click="upgradeButton(scope.row)">{{
                     $t("DDOS.AssetList.upgrade")
                   }}</a>
-                  <a class="marginRightA" href="#" @click="RenewModel">{{
+                  <a class="marginRightA" href="#" @click="renewModelButton(scope.row)">{{
                     $t("DDOS.AssetList.renewal")
                   }}</a>
                   <!-- 防护配置 -->
@@ -321,11 +319,13 @@
             <upgradeModel
               :Upgrade="diaologUpgradeModel"
               @closeUpgradeModel="closeUpgradeModel"
+              ref="UpGradeModel"
             />
             <!-- 续费弹框 -->
             <RenewModel
               :RenewShow="doalogRenewModel"
               @closeRenewModel="closeRenewModel"
+              ref="ReNewModel"
             />
             <!-- 防护配置弹框 -->
             <ProtectConfigModel
@@ -799,7 +799,10 @@ export default {
       })
     },
     // 升级按钮
-    upgradeModel () {
+    upgradeButton (row) {
+      this.$nextTick(() => {
+        this.$refs.UpGradeModel.init(row);
+      });
       this.diaologUpgradeModel = true
     },
     // 升级弹框关闭按钮
@@ -807,7 +810,10 @@ export default {
       this.diaologUpgradeModel = isShow
     },
     // 续费弹框
-    RenewModel () {
+    renewModelButton (row) {
+      this.$nextTick(() => {
+        this.$refs.ReNewModel.init(row);
+      });
       this.doalogRenewModel = true
     },
     // 续费弹框关闭按钮

@@ -10,15 +10,15 @@
         <div class="newClear upgradeList" >
           <div class="newClear">
             <p>{{$t('DDOS.AssetList.AssetListName')}}</p>
-            <p>net-0000006y/789</p>
+            <p>{{resObj.Id}}/{{resObj.Name}}</p>
           </div>
           <div class="newClear">
             <p>{{$t('DDOS.protectCon.CurrentMpeck')}}</p>
-            <p>20Gbps</p>
+            <p>{{resObj.DdosMax/1000}}Gbps</p>
           </div>
           <div class="newClear">
             <p>{{$t('DDOS.protectCon.ExpirationTime')}}</p>
-            <p>2019-11-29 12：53：35</p>
+            <p>{{resObj.Expire}}</p>
           </div>
           <div class="newClear">
             <p>{{$t('DDOS.protectCon.upgradeMpeck')}}</p>
@@ -80,8 +80,7 @@ import { QUERY_PRICE } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 export default {
   props:{
-    Upgrade:Boolean,
-    // values: Object
+    Upgrade: Boolean,
   },
   data(){
     return{
@@ -93,7 +92,7 @@ export default {
       errorShow:false,//升级费用服务器错误时的提示
       thisChnageNum:'40,000Qps',
       isQury: false,
-      // resObj: {}
+      resObj: {}, //从主页面传的资源对象
     }
   },
   computed:{
@@ -102,19 +101,21 @@ export default {
     }
   },
   methods: {
-    // init (scopeRow) {
-    //   this.resObj = JSON.parse(JSON.stringify(scopeRow))
-    //    this.resObj.Record.forEach(item => {
-    //     if (item.Key == "ServiceBandwidth") {
-    //       this.values.bandwidth = item.Value;
-    //       console.log('bandwidth = ' + item.Value)
-    //     }
-    //      if (item.Key == "RuleLimit") {
-    //       this.values.rule = item.Value;
-    //       console.log('rule = ' + item.Value)
-    //     }
-    //   })
-    // },
+    // 数据初始化（主页面打开本模态框时调用方法）
+    init (scopeRow) {
+      let objTemp = JSON.parse(JSON.stringify(scopeRow));
+      objTemp.Record.forEach(item => {
+        if (item.Key == 'Id') {
+          this.resObj.Id = item.Value;
+        } else if (item.Key == 'Name') {
+          this.resObj.Name = (item.Value == "" ? "未命名" : item.Value);
+        } else if (item.Key == "DdosMax") {//当前保底防护峰值
+          this.resObj.DdosMax = item.Value;
+        } else if (item.Key == "Expire") {//过期时间
+          this.resObj.Expire = item.Value;
+        }
+      })
+    },
     //关闭取消按钮
     handleClose(){
       this.UpgradeShow=false;

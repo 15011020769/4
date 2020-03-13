@@ -9,7 +9,7 @@
         <div class="newClear renewList">
           <div class="newClear">
             <p>{{$t('DDOS.AssetList.AssetListName')}}</p>
-            <p>net-0000006y/789</p>
+            <p>{{resObj.Id}}/{{resObj.Name}}</p>
           </div>
           <div class="newClear">
             <p>{{$t('DDOS.protectCon.renewalTime')}}</p>
@@ -43,6 +43,7 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
   props:{
     RenewShow:Boolean
@@ -52,6 +53,7 @@ export default {
       renew:1,//续费时长
       renewIsShow:'',//模态框
       money:'35,500.00',//总计费用
+      resObj: {}, //从主页面传的资源对象
     }
   },
   computed:{
@@ -60,6 +62,17 @@ export default {
     }
   },
   methods:{
+    // 数据初始化（主页面打开本模态框时调用方法）
+    init (scopeRow) {
+      let objTemp = JSON.parse(JSON.stringify(scopeRow));
+      objTemp.Record.forEach(item => {
+        if (item.Key == 'Id') {
+          this.resObj.Id = item.Value;
+        } else if (item.Key == 'Name') {
+          this.resObj.Name = (item.Value == "" ? "未命名" : item.Value);
+        }
+      })
+    },
     //选择续费时长
     checkListrenew(thisType,num){
       this.renew=thisType
