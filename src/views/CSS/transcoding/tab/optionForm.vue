@@ -318,6 +318,11 @@ export default {
       if (this.selectType === "純音頻") {
         params.Height = 0;
         params.VideoBitrate = 100;
+        params.NeedVideo = 0;
+        params.NeedAudio = 1;
+      } else {
+        params.NeedVideo = 1;
+        params.NeedAudio = 1;
       }
 
       if (!this.validateForm()) {
