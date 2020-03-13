@@ -7,11 +7,7 @@
       >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="choiceTime(1)">{{$t('DDOS.Statistical_forms.Today')}}</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(2)">{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(3)">近15天</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(4)">近30天</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(5)">近半年</el-button>
+            <el-button v-for="(item, index) in btnData" :key="index" :type="item.selected ? 'primary' : ''" class="buttonGroup" @click="choiceTime(index + 1)">{{$t('DDOS.Statistical_forms.' + item.title)}}</el-button>
           </el-button-group>
           <el-date-picker
             v-model="dateChoice"
@@ -20,6 +16,7 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
+            @blur="datePickerChange()"
           ></el-date-picker>
         </div>
         <div style="margin-top:12px;">
@@ -134,6 +131,28 @@ export default {
   data() {
     return {
       loading: true,
+      btnData: [
+        {
+          selected: true,
+          title: 'Today'
+        },
+        {
+          selected: false,
+          title: 'Nearly_sedays'
+        },
+        {
+          selected: false,
+          title: 'Fifteendays'
+        },
+        {
+          selected: false,
+          title: 'Halfamonth'
+        },
+        {
+          selected: false,
+          title: 'Halfayear'
+        },
+      ],
       dateChoice: [], //选择日期
       ResIpList: [], //下拉框数据
       IpList: [], //下拉框IP数据
@@ -188,6 +207,9 @@ export default {
       for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
+      }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
       }
     },
     selectId: function() {
@@ -376,6 +398,10 @@ export default {
     choiceTime(thisTime) {
       if(this.selectId == "") {
         return
+      }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
+        this.btnData[thisTime - 1]['selected'] = true
       }
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
