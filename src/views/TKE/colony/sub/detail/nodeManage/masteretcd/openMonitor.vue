@@ -13,190 +13,254 @@
       </div>
     </div>
     <!-- 主体 -->
-    <div class="room-bottom">
-      <div class="box-top">
-        <div class="box-top-left">
-          <!-- <span class="span-1">实时</span> -->
-          <div class="block">
+       <div class="block">
             <!-- 时间组件 -->
-            <TimeDropDown :TimeArr='TimeArr' :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDat" :Difference="'D'"></TimeDropDown>
-          </div>
-          <!-- 对比维度 -->
-          <div v-show="isFlag">
-            <span class="span-2">对比维度</span>
-            <el-radio-group v-model="isCollapse" size="mini" >
-              <el-radio-button label="k8s_node">节点</el-radio-button>
-              <el-radio-button label="k8s_pod">pod</el-radio-button>
-            </el-radio-group>
-            <span class="span-2" v-show="isCollapse=='k8s_pod'">所属节点</span>
-            <el-select v-model="value" placeholder="请选择" size="mini" v-show="isCollapse=='k8s_pod'" @change="getChange($event)">
-              <el-option
-                v-for="item in podData"
-                :key="item.InstanceId"
-                :label="item.InstanceId+'('+item.InstanceName+')'"
-                :value="item.PrivateIpAddresses+'|'+item.InstanceId"
-              ></el-option>
-            </el-select>
-          </div>
-        </div>
+        <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="true" v-on:switchData="GetDat" :Difference="'D'" ></TimeDropDown>
       </div>
-      <div class="box-bottom">
-        <div class="box-bottom-left">
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选(共{{this.instances.length}}个)</el-checkbox>
-          <!-- <div style="margin: 15px 0;"></div> -->
-          <el-checkbox-group
-            v-model="checkedInstances"
-            @change="handleCheckedCitiesChange"
-            class="check-flex point-white"
-          >
-            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
-        <!-- 节点监控数据 -->
-        <div class="box-bottom-right"  v-show="isCollapse=='k8s_node'">
-          <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='series' style="width:400px;height:200px;" />
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="tab-background">
+        <el-tab-pane label="节点" name="k8s_node" class="tab-one">
+          <div>
+          <div class="box-top">
+            <div class="box-top-left">
+              <!-- <span class="span-1">实时</span> -->
+               <div class="block-left">
+                 <span>节点：</span>
+                  <el-select v-model="value" placeholder="请选择" size="mini"  @change="getChange($event)">
+                    <el-option
+                      v-for="item in podData"
+                      :key="item.InstanceId"
+                      :label="item.InstanceId+'('+item.InstanceName+')'"
+                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                    ></el-option>
+                  </el-select>
+               </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesError' style="width:400px;height:200px;" />
+          <div class="room-bottom">
+            <div class="box-bottom">
+              <!-- 节点监控数据 -->
+              <div class="box-bottom-right"  v-if="NodesDataId.length">
+                <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
+                <p>Pod重启次数(次)</p>
+                <div class="dataNone" v-if="series[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="series[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='series' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>异常状态</p>
+                <div class="dataNone" v-if="seriesError[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;"  v-if="seriesError[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesError' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>CPU利用率(%)</p>
+                <div class="dataNone" v-if="seriesCpus[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpus[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpus' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>内存利用率(%)</p>
+                <div class="dataNone" v-if="seriesCpuUseds[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpuUseds[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUseds' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>内网入带宽(Bps)</p>
+                <div class="dataNone" v-if="seriesCpuRequests[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpuRequests[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuRequests' style="width:600px;height:200px;" :scale='4'/>
+                </div>
+                <p>内网出带宽(Bps)</p>
+                <div class="dataNone" v-if="seriesCpuUsedmaxs[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;"  v-if="seriesCpuUsedmaxs[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUsedmaxs'  style="width:600px;height:200px;" :scale='4'/>
+                </div>
+                <p>外网入带宽(Bps)</p>
+                <div class="dataNone" v-if="seriesMemory[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemory[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemory' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>外网出带宽(Bps)</p>
+                <div class="dataNone" v-if="seriesemusages[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesemusages[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesemusages' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>TCP连接数(个)</p>
+                <div class="dataNone" v-if="seriesMemrequests[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemrequests[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemrequests' style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>GPU利用率(%)</p>
+                <div class="dataNone" v-if="seriesMenNocaches[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMenNocaches[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMenNocaches'  style="width:600px;height:200px;" :scale='2'/>
+                </div>
+                <p>GPU显存利用率(%)</p>
+                <div class="dataNone" v-if="seriesMemUsageBytes[0] == null">暂无数据</div>
+                <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemUsageBytes[0] != null">
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemUsageBytes'  style="width:600px;height:200px;" :scale='2'/>
+                </div>
+              </div>
+            </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpus' style="width:400px;height:200px;" />
+        </el-tab-pane>
+        <el-tab-pane label="pod" name="k8s_pod">
+           <div class="box-top">
+            <div class="box-top-left">
+               <div class="block-left">
+                 <span>节点：</span>
+                  <el-select v-model="value2" placeholder="请选择" size="mini"  @change="getChange2($event)">
+                    <el-option
+                      v-for="item in podData"
+                      :key="item.InstanceId"
+                      :label="item.InstanceId+'('+item.InstanceName+')'"
+                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                    ></el-option>
+                  </el-select>
+                  <span style="margin-left:20px">Pod:</span>
+                  <el-select v-model="podValue" placeholder="请选择" size="mini" @change="getPodChange">
+                    <el-option
+                      v-for="item in Podlist"
+                      :key="item"
+                      :label="item"
+                      :value="item"
+                    ></el-option>
+                  </el-select>
+              </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
+          <div class="room-bottom">
+            <div class="box-bottom">
+             <div class="box-bottom-right" v-if="PodDataId.length || podData.length">
+              <p>异常状态</p>
+              <!-- <div></div> -->
+              <div class="dataNone" v-if="podStatuErrs[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podStatuErrs[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podStatuErrs' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>CPU使用量(核)</p>
+              <div class="dataNone" v-if="podCpuUseds[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUseds[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUseds'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>CPU利用率(占主机)(%)</p>
+              <div class="dataNone" v-if="podCpuUsedCenters[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedCenters[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedCenters' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>CPU利用率(占Request)(%)</p>
+              <div class="dataNone" v-if="podCpuUsedRequests[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedRequests[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedRequests'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>CPU利用率(占Limit)(%)</p>
+              <div class="dataNone" v-if="podCpuUsedLimits[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedLimits[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedLimits'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存使用量(B)</p>
+              <div class="dataNone" v-if="podMemorys[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemorys[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemorys' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存使用量(不含cache)(B)</p>
+              <div class="dataNone" v-if="podMemoryNocaches[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryNocaches[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryNocaches'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占主机)(%)</p>
+              <div class="dataNone" v-if="podMemoryCenters[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryCenters[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenters' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占主机,不含cache)(%)</p>
+              <div class="dataNone" v-if="podMemoryCenterNocaches[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryCenterNocaches[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenterNocaches'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占Request)(%)</p>
+              <div class="dataNone" v-if="podMemoryRequests[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryRequests[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequests'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占Request,不含cache)(%)</p>
+              <div class="dataNone" v-if="podMemoryRequestNocaches[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryRequestNocaches[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequestNocaches'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占Limit)(%)</p>
+              <div class="dataNone" v-if="podMemoryLimits[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryLimits[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimits' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>内存利用率(占Limit,不含cache)(%)</p>
+              <div class="dataNone" v-if="podMemoryLimitNocaches[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryLimitNocaches[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimitNocaches'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络入带宽(Bps)</p>
+              <div class="dataNone" v-if="podInNetworks[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podInNetworks[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInNetworks' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络出带宽(Bps)</p>
+              <div class="dataNone" v-if="podOutNetworks[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podOutNetworks[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podOutNetworks' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络入流量(B)</p>
+              <div class="dataNone" v-if="podInFlows[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podInFlows[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInFlows' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络出流量(B)</p>
+              <div class="dataNone" v-if="podOutFlows[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podOutFlows[0] != null">
+                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podOutFlows' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络入包量(个/s)</p>
+              <div class="dataNone" v-if="podInPacketFlows[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podInPacketFlows[0] != null">
+                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podInPacketFlows'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>网络出包量(个/s)</p>
+              <div class="dataNone" v-if="podOutPacketFlows[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podOutPacketFlows[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podOutPacketFlows'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>GPU使用量(卡)</p>
+              <div class="dataNone" v-if="podGPUUses[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUses[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUses' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>GPU显存使用量(B)</p>
+              <div class="dataNone" v-if="podGPUSeeUses[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUses[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUses' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+               <p>GPU利用率（占节点）(%)</p>
+               <div class="dataNone" v-if="podGPUUseNodes[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUseNodes[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseNodes'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+             <p>GPU显存利用率（占节点）(%)</p>
+             <div class="dataNone" v-if="podGPUSeeUseNodes[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUseNodes[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseNodes'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>GPU利用率（占Request）(%)</p>
+              <div class="dataNone" v-if="podGPUUseRequests[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUseRequests[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseRequests' style="width:600px;height:200px;" :scale='4'/>
+              </div>
+              <p>GPU显存利用率（占Request）(%)</p>
+              <div class="dataNone" v-if="podGPUSeeUseRequests[0] == null">暂无数据</div>
+              <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUseRequests[0] != null">
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseRequests'  style="width:600px;height:200px;" :scale='4'/>
+              </div>
+            </div>
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUseds' style="width:400px;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesCpuUsedmaxs' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemory' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesemusages' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemrequests' style="width:400px;height:200px;" />
-          </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMenNocaches' style="width:400px;height:200px;" />
-          </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='seriesMemUsageBytes' style="width:400px;height:200px;" />
-          </div>
-        </div>
-        <!-- pod监控数据 -->
-        <div class="box-bottom-right"  v-show="isCollapse=='k8s_pod'">
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podStatuErrs' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUseds' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedCenters' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedRequests' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podCpuUsedLimits' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemorys' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryCenters' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryCenterNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryRequestNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryLimits' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podMemoryLimitNocaches' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInNetworks' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutNetworks' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInFlows' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutFlows' style="width:400px;height:200px;" />
-           </div>
-            <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podInPacketFlows' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podOutPacketFlows' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUses' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUses' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUseNodes' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUseNodes' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUUseRequests' style="width:400px;height:200px;" />
-           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
-              <EcharTKE :time='podTimes' :series='podGPUSeeUseRequests' style="width:400px;height:200px;" />
-           </div>
-        </div>
-        <!-- podTimes:[],                
-      podsIds:[],                 
-      podStatuErrs:[],            
-      podCpuUseds:[],             
-      podCpuUsedCenters:[],       
-      podCpuUsedRequests:[],      
-      podCpuUsedLimits:[],        
-      podMemorys:[],              
-      podMemoryNocaches:[],       
-      podMemoryCenters:[],        
-      podMemoryCenterNocaches:[], 
-      podMemoryRequests:[],       
-      podMemoryRequestNocaches:[],
-      podMemoryLimits:[],         
-      podMemoryLimitNocaches:[],  
-      podInNetworks:[],           
-      podOutNetworks:[],          
-      podInFlows:[],              
-      podOutFlows:[],            
-      podInPacketFlows:[],        
-      podOutPacketFlows:[],       
-      podGPUUses:[],              
-      podGPUSeeUses:[],           
-      podGPUUseNodes:[],          
-      podGPUSeeUseNodes:[],       
-      podGPUUseRequests:[],       
-      podGPUSeeUseRequests:[], -->
-      </div>
-    </div>
+        </el-tab-pane>
+    </el-tabs>
+
   </div>
 </template>
 <script>
@@ -206,7 +270,6 @@ import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
 import EcharTKE from '@/components/public/EcharTKE'
-// const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
   props: {
@@ -218,37 +281,45 @@ export default {
   components:{TimeDropDown,EcharTKE},
   data() {
     return {
-      activeName: "first",
-      value: "",
+      activeName: "k8s_node",
+      value: "", // node节点值
+      value2:"", // pod节点值
+      podValue:"",
       checkAll: true,
       options: [],
       isCollapse: "k8s_node",
-      checkedInstances: [],// 全选
       isIndeterminate: false,
-      instances: [], // 单选
       title:"",
       clusterId:"",
       InstancesAll:[],
       isFlag:true,
-      list:[],
+      Nodelist:[],
+      Podlist:[],
       podData:[],
       valueLast:"",
+      valueLast2:"",
       JobId:"",// 后台返回id
       StartTime:"",// 开始时间
       EndTIme:"", // 结束时间
       grain:"" ,//粒数
+      NodeTitle:"",
+      NodeTitle2:"",
+      NodesDataId:[],
+      PodDataId:[],
+      // 节点
       times:[],
       series:[],
       seriesError:[],
       seriesCpus:[],
       seriesCpuUseds:[],
+      seriesCpuRequests:[],
       seriesCpuUsedmaxs:[],
       seriesMemory:[],
       seriesemusages:[],
       seriesMemrequests:[],
       seriesMenNocaches:[],
       seriesMemUsageBytes:[],
-
+      // pod
       podTimes:[],                
       podsIds:[],                 
       podStatuErrs:[],            
@@ -320,47 +391,22 @@ export default {
       ],
     }
   },
-  watch:{
-    isCollapse(val){
-      if(val == "k8s_pod"){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.getPodList()
-      } else if (val == "k8s_node") {
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.list=[]
-        this.getNodeList()
-      }
-    },
-  },
   created() {
     let{ title, clusterId } = this.$route.query
     this.clusterId = clusterId
     this.title = title
   },
-  // mounted(){
-  //   this.inits();
-  // },
+
   methods: {
     GetDat(val){
-      // console.log(val)
       this.grain = val[0]
       this.StartTime = new Date(val[1].StartTIme).getTime();
       this.EndTIme = new Date(val[1].EndTIme).getTime();
+      console.log(val)
       console.log(this.StartTime,this.EndTIme)
-      if(this.isCollapse == "k8s_pod"){
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
+      if(this.activeName == "k8s_pod"){
         this.getPodList()
       } else {
-        this.checkedInstances = []
-        this.instances =  []
-        this.InstancesAll = []
-        this.list=[]
         this.getNodeList()
       }
     },
@@ -371,29 +417,41 @@ export default {
     changeFlag() {
       this.$emit("changeFlag", false);
     },
-    handleCheckAllChange(val) {
-      console.log(val)
-      this.checkedInstances = val ? this.InstancesAll : [];
-      console.log(this.checkedInstances)
-      this.isIndeterminate = false;
-    },
-    handleCheckedCitiesChange(value) {
-      console.log(value)
-      let checkedInstances = value.length;
-      this.checkAll = checkedInstances === this.instances.length;
-      this.isIndeterminate =
-        checkedInstances > 0 && checkedInstances < this.instances.length;
-    },
+    // tab切换事件
     handleClick(tab, event) {
+      console.log(this.activeName)
       console.log(tab, event);
+      if(this.activeName == "k8s_pod"){
+        // console.log(2233)
+        this.getPodList()
+      } else {
+        this.getNodeList()
+      }
+      // this.GetDat()
     },
     setTime() {
       this.$emit("setTime", this.value2);
     },
+    // 当tab切换节点时，节点下拉框的方法
     getChange(val){
-      console.log(val)
+      this.value = val
       this.valueLast = val.split("|")
       console.log(this.valueLast)
+      this.NodeTitle = this.valueLast[1]
+      this.getNodeList()
+    },
+    // 当tab切换pod时，节点下拉框的方法
+    getChange2(val){
+      this.value2 = val
+      this.valueLast2 = val.split("|")
+      console.log(this.valueLast)
+      this.NodeTitle2 = this.valueLast[1]
+      this.podValue =""
+      this.getPodList()
+    },
+    getPodChange(val){
+      this.podValue = val
+      // console.log(val)
       this.getPodList()
     },
         //获取节点列表
@@ -414,13 +472,9 @@ export default {
           ids.push(obj.InstanceId);
         });
       }
-      console.log(res.Response.InstanceSet)
-      // check选择部分
-      this.checkedInstances = ids
-      this.instances =  ids
-      this.InstancesAll = ids
-      this.list = ids
-      // this.value = ids[0]
+      console.log(ids)
+      // 节点下拉数据
+      this.Nodelist = ids
       let param = {
         Version: "2017-03-12",
         Limit: 20
@@ -429,30 +483,39 @@ export default {
         for(let i = 0; i < ids.length; i++) {
           param['InstanceIds.'+i] = ids[i];
         }
-        // this.loadShow = true;
         let nodeRes = await this.axios.post(NODE_LIST, param);
-        // console.log(nodeRes)
         if(nodeRes.Response.Error === undefined) {
-          // this.loadShow = false;
           this.podData = []
           // 数据合并
           if(nodeRes.Response.InstanceSet.length > 0) {
-            console.log(nodeRes.Response.InstanceSet)
-            for(let i in ids){
-              for(let  j in nodeRes.Response.InstanceSet){
-                if(nodeRes.Response.InstanceSet[j].InstanceId == ids[i]){
-                  this.podData.push({
-                    InstanceId:ids[i],
-                    InstanceName:nodeRes.Response.InstanceSet[j].InstanceName,
-                    PrivateIpAddresses:nodeRes.Response.InstanceSet[j].PrivateIpAddresses[0]
-                  })
-                }  
-              }
+            ids.forEach((x,y)=>{
+                  if(!this.podData[y]){
+                     this.podData[y]={
+                            InstanceId:x
+                        }
+                  }
+                  nodeRes.Response.InstanceSet.forEach((val,index)=>{
+                      if(val['InstanceId']==this.podData[y]['InstanceId']){
+                          this.podData[y]['InstanceName']=val.InstanceName
+                          this.podData[y]['PrivateIpAddresses'] = val.PrivateIpAddresses[0]
+                          
+                      }
+                      if(!this.podData[y]['InstanceName']){
+                          this.podData[y]['InstanceName']=''
+                          this.podData[y]['PrivateIpAddresses'] = val.PrivateIpAddresses[0]
+                      }
+                  })
+              })
+            console.log( this.podData)
+            if(!this.value){
+              this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
+              this.value2 = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
             }
-            this.value = this.podData[0].PrivateIpAddresses+"|"+this.podData[0].InstanceId
             this.valueLast = this.value.split("|")
+            this.valueLast2 = this.value.split("|")
+            this.NodeTitle = this.valueLast[1]
+            this.NodeTitle2 = this.valueLast2[1]
             // this.getPodJob()
-            
             console.log(this.podData)
             this.getNodeJob()
           }
@@ -473,9 +536,10 @@ export default {
     },
     getPodList() {
     //   this.list = [];
+    console.log(this.valueLast2)
       const param = {
         Method: 'GET',
-        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast[0]+'&limit=50',
+        Path: '/api/v1/pods?fieldSelector=spec.nodeName='+this.valueLast2[0]+'&limit=50',
         Version: '2018-05-25',
         ClusterName: this.clusterId
       }
@@ -487,9 +551,14 @@ export default {
           dataPod = JSON.parse(res.Response.ResponseBody).items.map((item,index)=>{
             return item.metadata.name
           })
-          this.checkedInstances = dataPod
-          this.instances =  dataPod
-          this.InstancesAll = dataPod
+          // pod下拉列表
+          this.Podlist =dataPod
+          if(!this.podValue){
+            this.podValue = this.Podlist[0]
+          }
+          if(!this.Podlist.length){
+            this.podValue = ''
+          }
           this.getPodJob()
         }
       })
@@ -498,11 +567,11 @@ export default {
     getPodJob(){
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast[1]]),
+        'Conditions.1': JSON.stringify(["unInstanceId","=",this.valueLast2[1]]),
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -541,22 +610,19 @@ export default {
         if(res.Response.Error === undefined) {
             // console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
     getNodeJob(){
-        console.log(this.list)
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
-        'Conditions.2': JSON.stringify(["unInstanceId","in",this.list]),
+        'Conditions.1': JSON.stringify(["node_role","=","Node"]),
+        'Conditions.2': JSON.stringify(["unInstanceId","in",this.Nodelist]),
         EndTime: this.EndTime,
         Limit: 65535,
         Module: "/front/v1",
-        NamespaceName: this.isCollapse,
+        NamespaceName: this.activeName,
         Offset: 0,
         Order: "asc",
         OrderBy: "timestamp",
@@ -577,14 +643,12 @@ export default {
       param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          console.log()
+          // console.log()
           console.log(res)
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
-                setTimeout(()=>{
-                    this.getResult()
-                },4000)
+            this.getResult()
         }
       })
     },
@@ -596,58 +660,67 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
+        console.log(this.NodeTitle)
         //   console.log(res)
         if(res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
-          if(this.isCollapse == "k8s_node"){
+          if(this.activeName == "k8s_node"){
+             this.NodesDataId=[]
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
             cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
             memUsageBytes = []
               if(data.length > 0) {
                 for(let i = 0; i < data.length; i++) {
                   let item = data[i];
-                  let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
-                  let podId = item[1];//节点ID
-                  let pod = item[2];//实例数量
-                  let statuErr = item[3];//异常
-                  let cpu = item[4];//cpu总配置
-                  let cpuUsed = item[5];//内存利用率
-                  let cpuRequest = item[6];//内网入带宽
-                  let cpuUsedmax = item[7];//内网出带宽
-                  let memory = item[8];//外网入带宽
-                  let memusage = item[9];// 外网出带宽
-                  let memrequest = item[10];//TCP连接数
-                  let menNocache = item[11];// GPU利用率
-                  let memUsageByte = item[12];//GPU显存利用率
-                  times.push(time);
-                  podIds.push(podId);
-                  pods.push(pod);
-                  statuErrs.push(statuErr);
-                  cpus.push(cpu);
-                  cpuUseds.push(cpuUsed);
-                  cpuRequests.push(cpuRequest);
-                  cpuUsedmaxs.push(cpuUsedmax);
-                  memorys.push(memory);
-                  memusages.push(memusage);
-                  memrequests.push(memrequest);
-                  menNocaches.push(menNocache);
-                  memUsageBytes.push(memUsageByte);
+                  let NodesId = item[1];
+                  if(this.NodeTitle == NodesId){
+                      let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+                      //节点ID
+                      let pod = item[2];//实例数量
+                      let statuErr = item[3];//异常
+                      let cpu = item[4];//cpu总配置
+                      let cpuUsed = item[5];//内存利用率
+                      let cpuRequest = item[6];//内网入带宽
+                      let cpuUsedmax = item[7];//内网出带宽
+                      let memory = item[8];//外网入带宽
+                      let memusage = item[9];// 外网出带宽
+                      let memrequest = item[10];//TCP连接数
+                      let menNocache = item[11];// GPU利用率
+                      let memUsageByte = item[12];//GPU显存利用率
+                      times.push(time);
+                      podIds.push(NodesId);
+                      pods.push(pod);
+                      statuErrs.push(statuErr);
+                      cpus.push(cpu);
+                      cpuUseds.push(cpuUsed);
+                      cpuRequests.push(cpuRequest);
+                      cpuUsedmaxs.push(cpuUsedmax);
+                      memorys.push(memory);
+                      memusages.push(memusage);
+                      memrequests.push(memrequest);
+                      menNocaches.push(menNocache);
+                      memUsageBytes.push(memUsageByte);
+                      this.NodesDataId.push(NodesId)
+                  } else {
+                    this.NodesDataId.push(NodesId)
+                  }
                 }
               }
-              this.times = times;
-              this.series = [{name: '节点数量',type: 'line', data: pods}];
-              this.seriesError = [{name: '节点数量',type: 'line', data: statuErrs}];
-              this.seriesCpus = [{name: '节点数量',type: 'line', data: cpus}];
-              this.seriesCpuUseds = [{name: '节点数量',type: 'line', data: cpuUseds}];
-              this.seriesCpuRequests = [{name: '节点数量',type: 'line', data: cpuRequests}];
-              this.seriesCpuUsedmaxs = [{name: '节点数量',type: 'line', data: cpuUsedmaxs}];
-              this.seriesMemory = [{name: '节点数量',type: 'line', data: memorys}];
-              this.seriesemusages = [{name: '节点数量',type: 'line', data: memusages}];
-              this.seriesMemrequests = [{name: '节点数量',type: 'line', data: memrequests}];
-              this.seriesMenNocaches = [{name: '节点数量',type: 'line', data: menNocaches}];
-              this.seriesMemUsageBytes = [{name: '节点数量',type: 'line', data: memUsageBytes}];
+              this.times = times
+              this.series = pods
+              this.seriesError = statuErrs
+              this.seriesCpus =  cpus
+              this.seriesCpuUseds =  cpuUseds
+              this.seriesCpuRequests =  cpuRequests
+              this.seriesCpuUsedmaxs = cpuUsedmaxs
+              this.seriesMemory =  memorys
+              this.seriesemusages =  memusages
+              this.seriesMemrequests =  memrequests
+              this.seriesMenNocaches =  menNocaches
+              this.seriesMemUsageBytes = memUsageBytes
             } else {
+            this.PodDataId = []
             let podTimes=[],                
                 podsIds=[],                 
                 podStatuErrs=[],            
@@ -674,88 +747,97 @@ export default {
                 podGPUUseNodes=[],          
                 podGPUSeeUseNodes=[],       
                 podGPUUseRequests=[],       
-                podGPUSeeUseRequests=[]   
+                podGPUSeeUseRequests=[]
               for(let i = 0; i < data.length; i++) {
                   let items = data[i];
-                  let podTime = moment(items[0]).format("YYYY-MM-DD HH:mm:ss");//时间
                   let podsId  = items[1];//节点ID
-                  let podStatuErr = items[2];//异常
-                  let podCpuUsed = items[3];//CPU使用量
-                  let podCpuUsedCenter = items[4];//CPU利用率(占主机)
-                  let podCpuUsedRequest = items[5];//CPU利用率(占Request)
-                  let podCpuUsedL = items[6];//CPU利用率(占Limit)
-                  let podMemory  = items[7];//内存使用量
-                  let podMemoryNocache  = items[8];//内存使用量(不含cache)
-                  let podMemoryCenter  = items[9];// 内存利用率(占主机)
-                  let podMemoryCenterNocache = items[10];//内存利用率(占主机,不含cache)
-                  let podMemoryRequest  = items[11];// 内存利用率(占Request)
-                  let podMemoryRequestNoc = items[12];//内存利用率(占Request,不含cache)
-                  let podMemoryLimit  = items[13];//内存利用率(占Limit)
-                  let podMemoryLimitNocache = items[14];//内存利用率(占Limit,不含cache)
-                  let podInNetwork = items[15];//网络入带宽
-                  let podOutNetwork = items[16];//网络出带宽
-                  let podInFlow = items[17];//网络入流量
-                  let podOutFlow = items[18];//网络出流量
-                  let podInPacketFlow = items[19];//网络入包量
-                  let podOutPacketFlow= items[20];//网络出包量
-                  let podGPUUse = items[21];//GPU使用量
-                  let podGPUSeeUse = items[22];//GPU显存使用量
-                  let podGPUUseNode = items[23];//GPU利用率（占节点）
-                  let podGPUSeeUseNode = items[24];//GPU显存利用率（占节点）
-                  let podGPUUseRequest = items[25];//GPU利用率（占Request）
-                  let podGPUSeeUseRequest = items[26];//GPU显存利用率（占Request）
-                  podTimes.push(podTime)                
-                  // podsIds.push(podsId)                 
-                  podStatuErrs.push(podStatuErr)            
-                  podCpuUseds.push(podCpuUsed)             
-                  podCpuUsedCenters.push(podCpuUsedCenter)       
-                  podCpuUsedRequests.push(podCpuUsedRequest)      
-                  podCpuUsedLimits.push(podCpuUsedL)        
-                  podMemorys.push(podMemory)              
-                  podMemoryNocaches.push(podMemoryNocache)      
-                  podMemoryCenters.push(podMemoryCenter) 
-                  podMemoryCenterNocaches.push(podMemoryCenterNocache) 
-                  podMemoryRequests.push(podMemoryRequest)       
-                  podMemoryRequestNocaches.push(podMemoryRequestNoc)
-                  podMemoryLimits.push(podMemoryLimit)         
-                  podMemoryLimitNocaches.push(podMemoryLimitNocache)  
-                  podInNetworks.push(podInNetwork)          
-                  podOutNetworks.push(podOutNetwork)          
-                  podInFlows.push(podInFlow)              
-                  podOutFlows.push(podOutFlow)            
-                  podInPacketFlows.push(podInPacketFlow)        
-                  podOutPacketFlows.push(podOutPacketFlow)       
-                  podGPUUses.push(podGPUUse)              
-                  podGPUSeeUses.push(podGPUSeeUse)           
-                  podGPUUseNodes.push(podGPUUseNode)          
-                  podGPUSeeUseNodes.push(podGPUSeeUseNode)       
-                  podGPUUseRequests.push(podGPUUseRequest)       
-                  podGPUSeeUseRequests.push(podGPUSeeUseRequest)  
+                  // console.log()
+                  if(this.podValue == podsId){
+                    // console.log(this.podValue)
+                    let podTime = moment(items[0]).format("YYYY-MM-DD HH:mm:ss");//时间
+                    let podStatuErr = items[2];//异常
+                    let podCpuUsed = items[3];//CPU使用量
+                    let podCpuUsedCenter = items[4];//CPU利用率(占主机)
+                    let podCpuUsedRequest = items[5];//CPU利用率(占Request)
+                    let podCpuUsedL = items[6];//CPU利用率(占Limit)
+                    let podMemory  = items[7];//内存使用量
+                    let podMemoryNocache  = items[8];//内存使用量(不含cache)
+                    let podMemoryCenter  = items[9];// 内存利用率(占主机)
+                    let podMemoryCenterNocache = items[10];//内存利用率(占主机,不含cache)
+                    let podMemoryRequest  = items[11];// 内存利用率(占Request)
+                    let podMemoryRequestNoc = items[12];//内存利用率(占Request,不含cache)
+                    let podMemoryLimit  = items[13];//内存利用率(占Limit)
+                    let podMemoryLimitNocache = items[14];//内存利用率(占Limit,不含cache)
+                    let podInNetwork = items[15];//网络入带宽
+                    let podOutNetwork = items[16];//网络出带宽
+                    let podInFlow = items[17];//网络入流量
+                    let podOutFlow = items[18];//网络出流量
+                    let podInPacketFlow = items[19];//网络入包量
+                    let podOutPacketFlow= items[20];//网络出包量
+                    let podGPUUse = items[21];//GPU使用量
+                    let podGPUSeeUse = items[22];//GPU显存使用量
+                    let podGPUUseNode = items[23];//GPU利用率（占节点）
+                    let podGPUSeeUseNode = items[24];//GPU显存利用率（占节点）
+                    let podGPUUseRequest = items[25];//GPU利用率（占Request）
+                    let podGPUSeeUseRequest = items[26];//GPU显存利用率（占Request）
+                    podTimes.push(podTime)                
+                    // podsIds.push(podsId)                 
+                    podStatuErrs.push(podStatuErr)            
+                    podCpuUseds.push(podCpuUsed)             
+                    podCpuUsedCenters.push(podCpuUsedCenter)       
+                    podCpuUsedRequests.push(podCpuUsedRequest)      
+                    podCpuUsedLimits.push(podCpuUsedL)        
+                    podMemorys.push(podMemory)              
+                    podMemoryNocaches.push(podMemoryNocache)      
+                    podMemoryCenters.push(podMemoryCenter) 
+                    podMemoryCenterNocaches.push(podMemoryCenterNocache) 
+                    podMemoryRequests.push(podMemoryRequest)       
+                    podMemoryRequestNocaches.push(podMemoryRequestNoc)
+                    podMemoryLimits.push(podMemoryLimit)         
+                    podMemoryLimitNocaches.push(podMemoryLimitNocache)  
+                    podInNetworks.push(podInNetwork)          
+                    podOutNetworks.push(podOutNetwork)          
+                    podInFlows.push(podInFlow)              
+                    podOutFlows.push(podOutFlow)            
+                    podInPacketFlows.push(podInPacketFlow)        
+                    podOutPacketFlows.push(podOutPacketFlow)       
+                    podGPUUses.push(podGPUUse)              
+                    podGPUSeeUses.push(podGPUSeeUse)           
+                    podGPUUseNodes.push(podGPUUseNode)          
+                    podGPUSeeUseNodes.push(podGPUSeeUseNode)       
+                    podGPUUseRequests.push(podGPUUseRequest)       
+                    podGPUSeeUseRequests.push(podGPUSeeUseRequest)
+                    this.PodDataId.push(podsId)  
+                   } else {
+                     this.PodDataId.push(podsId)
+                   }
                 }
                 this.podTimes = podTimes;
-                this.podStatuErrs = [{name: '节点数量',type: 'line', data: podStatuErrs}];
-                this.podCpuUseds = [{name: '节点数量',type: 'line', data: podCpuUseds}];
-                this.podCpuUsedCenters = [{name: '节点数量',type: 'line', data: podCpuUsedCenters}];
-                this.podCpuUsedRequests = [{name: '节点数量',type: 'line', data: podCpuUsedRequests}];
-                this.podCpuUsedLimits = [{name: '节点数量',type: 'line', data: podCpuUsedLimits}];
-                this.podMemoryNocaches = [{name: '节点数量',type: 'line', data: podMemoryNocaches}];
-                this.podMemoryCenters = [{name: '节点数量',type: 'line', data: podMemoryCenters}];
-                this.podMemoryRequests = [{name: '节点数量',type: 'line', data: podMemoryCenterNocaches}];
-                this.podMemoryRequestNocaches = [{name: '节点数量',type: 'line', data: podMemoryRequestNocaches}];
-                this.podMemoryLimits = [{name: '节点数量',type: 'line', data: podMemoryLimits}];
-                this.podMemoryLimitNocaches = [{name: '节点数量',type: 'line', data: podMemoryLimitNocaches}];
-                this.podInNetworks = [{name: '节点数量',type: 'line', data: podInNetworks}];
-                this.podOutNetworks = [{name: '节点数量',type: 'line', data: podOutNetworks}];
-                this.podInFlows = [{name: '节点数量',type: 'line', data: podInFlows}];
-                this.podOutFlows = [{name: '节点数量',type: 'line', data: podOutFlows}];
-                this.podInPacketFlows = [{name: '节点数量',type: 'line', data: podInPacketFlows}];
-                this.podOutPacketFlows = [{name: '节点数量',type: 'line', data: podOutPacketFlows}];
-                this.podGPUUses = [{name: '节点数量',type: 'line', data: podGPUUses}];
-                this.podGPUSeeUses = [{name: '节点数量',type: 'line', data: podGPUSeeUses}];
-                this.podGPUUseNodes = [{name: '节点数量',type: 'line', data: podGPUUseNodes}];
-                this.podGPUSeeUseNodes = [{name: '节点数量',type: 'line', data: podGPUSeeUseNodes}];
-                this.podGPUUseRequests = [{name: '节点数量',type: 'line', data: podGPUUseRequests}];
-                this.podGPUSeeUseRequests = [{name: '节点数量',type: 'line', data: podGPUSeeUseRequests}];
+                this.podStatuErrs =  podStatuErrs
+                this.podCpuUseds =  podCpuUseds
+                this.podCpuUsedCenters = podCpuUsedCenters
+                this.podCpuUsedRequests = podCpuUsedRequests
+                this.podCpuUsedLimits = podCpuUsedLimits
+                this.podMemorys = podMemorys
+                this.podMemoryNocaches = podMemoryNocaches
+                this.podMemoryCenters = podMemoryCenters
+                this.podMemoryCenterNocaches = podMemoryCenterNocaches
+                this.podMemoryRequests = podMemoryRequests
+                this.podMemoryRequestNocaches = podMemoryRequestNocaches
+                this.podMemoryLimits = podMemoryLimits
+                this.podMemoryLimitNocaches = podMemoryLimitNocaches
+                this.podInNetworks = podInNetworks
+                this.podOutNetworks = podOutNetworks
+                this.podInFlows = podInFlows
+                this.podOutFlows = podOutFlows
+                this.podInPacketFlows = podInPacketFlows
+                this.podOutPacketFlows = podOutPacketFlows
+                this.podGPUUses = podGPUUses
+                this.podGPUSeeUses = podGPUSeeUses
+                this.podGPUUseNodes =  podGPUUseNodes
+                this.podGPUSeeUseNodes = podGPUSeeUseNodes
+                this.podGPUUseRequests = podGPUUseRequests
+                this.podGPUSeeUseRequests = podGPUSeeUseRequests
               }
             }
         })
@@ -764,6 +846,21 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+.tab-background{
+  background: white;
+  padding-left: 20px;
+  ::v-deep .el-tabs__nav-wrap::after{
+    background-color: white;
+  }
+}
+// .block-left{
+//   float: left;
+// }
+.block{
+  width: 100%;
+  background: white;
+  padding:20px 0 20px 20px;
+}
 .room-bottom {
   width: 94%;
   margin: 20px auto;
@@ -797,6 +894,7 @@ export default {
       height: 100%;
       border: 1px solid #e5e5e5;
       padding: 20px;
+      overflow-y: scroll;
       .check-flex {
         display: flex;
         flex-direction: column;
@@ -812,7 +910,12 @@ export default {
     }
   }
 }
-
+.dataNone{
+  width: 600px;
+  height: 200px;
+  line-height:200px;
+  text-align:center;
+}
 .el-checkbox + .el-checkbox {
   margin-left: 0;
   margin-top: 15px;
@@ -820,5 +923,6 @@ export default {
 }
 .monitor >>> .el-date-picker {
   border-radius: 0;
+  // background: white;
 }
 </style>

@@ -357,18 +357,54 @@ export default {
               let cluster = item[1];//节点数量
               let pod = item[2];//实例数量
               let allocatablePod = item[3];//allocatable实例数量
-              let cpu = item[4];//cpu总配置
-              let cpuUsed = item[5];//cpu使用率
-              let cpuRequest = item[6];//cpu分配率
-              let cpuUsedmax = item[7];//cpu使用量
-              let memory = item[8];//内存总量
-              let memusage = item[9];
-              let memrequest = item[10];
-              let menNocache = item[11];
-              let memUsageByte = item[12];
-              let memNoYsage = item[13];
-              let receive = item[14];
-              let transmit = item[15];
+              let cpu = null;//cpu总配置
+              if(item[4]) {
+                cpu = item[4].toFixed(2);
+              }
+              let cpuUsed = null;//cpu使用率
+              if(item[5]) {
+                cpuUsed = item[5].toFixed(2)
+              }
+              let cpuRequest = null;//cpu分配率
+              if(item[6]) {
+                cpuRequest = item[6].toFixed(3);
+              }
+              let cpuUsedmax = null;//cpu使用量
+              if(item[7]) {
+                cpuUsedmax = item[7].toFixed(4);
+              }
+              let memory = null;//内存总量
+              if(item[8]) {
+                memory = (item[8]/(1024*1024)).toFixed(3);
+              }
+              let memusage = null;
+              if(item[9]) {
+                memusage = item[9].toFixed(3);
+              }
+              let memrequest = null;
+              if(item[10]) {
+                memrequest = item[10].toFixed(3);
+              }
+              let menNocache = null;
+              if(item[11]) {
+                menNocache = item[11].toFixed(3);
+              }
+              let memUsageByte = null;
+              if(item[12]) {
+                memUsageByte = (item[12]/(1024*1024*1024)).toFixed(3);
+              }
+              let memNoYsage = null;
+              if(item[13]) {
+                memNoYsage = (item[13]/(1024*1024*1024)).toFixed(3);
+              }
+              let receive = null;
+              if(item[14]) {
+                receive = (item[14]/(1024)).toFixed(3);
+              }
+              let transmit = null;
+              if(item[15]) {
+                transmit = (item[15]/(1024)).toFixed(3);
+              }
               times.push(time);
               clusters.push(cluster);
               pods.push(pod);

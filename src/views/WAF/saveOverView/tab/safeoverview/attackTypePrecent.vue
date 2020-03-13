@@ -5,7 +5,9 @@
         {{t('访问类型占比', 'WAF.fwlxzb')}}
         <span style="color:#bbb;">(%)</span>
       </h3>
-      <el-row class="empty" v-if="seriesPie.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+      <el-row class="empty" v-if="seriesPie.length == 0 ? true : false">
+        {{t('暂无数据', 'WAF.zwsj')}}
+      </el-row>
       <EPie
         :series="seriesPie"
         :color="colorPie"
@@ -19,7 +21,9 @@
         {{t('攻击类型占比', 'WAF.gjlxzb')}}
         <span style="color:#bbb;">(次)</span>
       </h3>
-      <el-row class="empty" v-if="seriesPieAttack.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+      <el-row class="empty" v-if="seriesPieAttack.length == 0 ? true : false">
+        {{t('暂无数据', 'WAF.zwsj')}}
+      </el-row>
       <EPie
         :series="seriesPieAttack"
         :color="colorPie"
@@ -93,7 +97,7 @@ export default {
     init() {
       this.getPeakValue()
       this.getNormalRequest()
-      this.getWebAttack()
+      // this.getWebAttack()
       this.getAttackType()
     },
     // 获取正常访问次数
@@ -116,28 +120,28 @@ export default {
       })
     },
      // 获取web攻击次数
-    getWebAttack() {
-      this.loading = true
-      const params = {
-        Version: '2018-01-25',
-        FromTime: this.times[0],
-        ToTime: this.times[1],
-        QueryField: "web",
-        Mode: 0,
-        Host: "all",
-        Edition: "clb-waf"
-      }
-      if (this.domain) {
-        params["Host"] = this.domain
-      }
-      this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
-        this.generalRespHandler(resp, (Response) => {
-          this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: this.t('WEB攻击次数', 'WAF.webgjcs')},)
-        })
-      }).then(() => {
-        this.loading = false
-      })
-    },
+    // getWebAttack() {
+    //   this.loading = true
+    //   const params = {
+    //     Version: '2018-01-25',
+    //     FromTime: this.times[0],
+    //     ToTime: this.times[1],
+    //     QueryField: "web",
+    //     Mode: 0,
+    //     Host: "all",
+    //     Edition: "clb-waf"
+    //   }
+    //   if (this.domain) {
+    //     params["Host"] = this.domain
+    //   }
+    //   this.axios.post(DESCRIBE_ATTACK_COUNT, params).then((resp) => {
+    //     this.generalRespHandler(resp, (Response) => {
+    //       this.$set(this.seriesPie, 1, {value: `${Response.Count}`, name: this.t('WEB攻击次数', 'WAF.webgjcs')},)
+    //     })
+    //   }).then(() => {
+    //     this.loading = false
+    //   })
+    // },
      // 获取业务攻击峰值
     getPeakValue() {
       this.loading = true
@@ -154,6 +158,7 @@ export default {
       }
       this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, (Response) => {
+          this.$set(this.seriesPie, 1, {value: `${Response.Attack}`, name: this.t('WEB攻击次数', 'WAF.webgjcs')},)
           this.$set(this.seriesPie, 2, {value: `${Response.Cc}`, name: this.t('CC攻击次数', 'WAF.ccgjcs')},)
         })
       }).then(() => {

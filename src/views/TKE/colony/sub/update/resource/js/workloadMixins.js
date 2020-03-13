@@ -356,9 +356,6 @@ let dataReel={//数据卷
     };
     this.wl.dataJuan.push(obj);
   },
- 
-
-
 }
 let dialogMethods={
   addConfigItem(){
@@ -394,7 +391,26 @@ let dialogMethods={
     this.dataReelDialog.Secret.items.splice(index,1)
   },
 }
+let validateAll={
+    data(){
+      return{
+        portPathRules:[{
+          validator:(rule, value, callback)=>{
+            if (value === '') {
+              callback(new Error('请再次输入密码'));
+            }else {
+              callback()
+            }
+          },
+          trigger: 'blur',
+          required: true,
+        }]
+      }
+    }
+}
+// let 
 export default {
+  ...validateAll,
   methods: {
     ...label,
     ...instanceContent,

@@ -451,9 +451,9 @@
          </el-form>
 
          <!-- 设置主机路径 -->
-         <el-dialog title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
-           <el-form  label-position="left" label-width="120px" size="mini">
-             <el-form-item label="主机路径" style="margin-top:10px">
+         <el-dialog :model='dataReelDialog.portPath'   title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
+           <el-form  label-position="left" ref="pathForm" label-width="120px" size="mini">
+             <el-form-item label="主机路径"  :rules="portPathRules" style="margin-top:10px">
                <el-input class="w192" v-model="dataReelDialog.portPath.name" placeholder="如：/data/dev"></el-input>
              </el-form-item>
              <el-form-item label="检查类型">
@@ -464,7 +464,7 @@
              </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="selectHostPath">确 定</el-button>
+             <el-button type="primary" @click="selectHostPath('pathForm')">确 定</el-button>
              <el-button @click="dialogVisiblePath = false">取 消</el-button>
            </span>
          </el-dialog>
@@ -780,6 +780,7 @@ export default {
     this.workload=workload;
     this.wl.namespace = spaceName
     this.initData()
+    console.log(this.jizhe)
   },
   methods: {
     async  initData(){
@@ -1297,7 +1298,16 @@ export default {
     this.dialogVisiblePath = true
     this.dialogIndex=index;
   },
-  selectHostPath(){//设置主机路径
+  selectHostPath(formName){//设置主机路径
+
+    //  this.$refs[formName].validate((valid) => {
+    //       if (valid) {
+    //         alert('submit!');
+    //       } else {
+    //         console.log('error submit!!');
+    //         return false;
+    //       }
+    //  });
     this.dialogVisiblePath = false
     this.wl.dataJuan[this.dialogIndex].name3=this.dataReelDialog.portPath.name;
     this.wl.dataJuan[this.dialogIndex].name4=this.dataReelDialog.portPath.type;

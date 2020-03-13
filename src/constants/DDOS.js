@@ -18,6 +18,7 @@ export const IPUNBlOCKLIST_LIST = 'dayu2/DescribeIpUnBlockList' // 获取IP解�
 export const RESOURCE_LIST = 'dayu2/DescribeResourceList' // 获取资源列表
 export const RULESETS_CONT = 'dayu2/DescribeRuleSets' // 获取资源的规则数
 export const SOURCEIPSEGMENT_DESCRIBE = 'dayu2/DescribeSourceIpSegment' // 获取回源IP段
+export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源自动续费标记
 
 // 高防IP专业版-接入配置
 export const L4_RULES = 'dayu2/DescribleL4Rules' // 获取L4转发规则
@@ -64,8 +65,6 @@ export const CC_LIST = 'dayu2/DescribeCCEvList' // 获取 CC 攻击事件列表
 export const CC_DATA = 'dayu2/DescribeCCTrend' // 获取CC攻击指标数据
 export const STATIC_LIST = 'dayu2/DescribeTransmitStatis' // 获取业务转发统计数据
 export const DESCRIBE_CHANNEL_DEVICE_RESOURCE = 'dayu2/DescribeChannelDeviceResource' // 获取基础防护互联网通道资源
-
-export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源自动续费标记
 
 export const QUERY_PRICE = 'billing/GetPrice' // DDOS 高防IP购买询价
 export const GENERATE_DEALS = 'billing/GenerateDeals' // DDOS 高防IP购买创建订单
