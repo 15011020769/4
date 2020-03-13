@@ -96,7 +96,10 @@ export default {
       this.selectItem = this.configList[this.selectIndex];
     },
     handleDelete() {
-      if (this.configList.length === 0) {
+      if (
+        this.configList.length === 0 ||
+        Object.keys(this.selectItem).length === 0
+      ) {
         return;
       }
 
