@@ -158,6 +158,7 @@ export default {
           keyArr.forEach(key => {
             Object.keys(this.tableParams[key]).forEach(_key => {
               sortParams[`${key}.${_key}`] = this.getDefaultValueForEmptyInput(
+                _key,
                 this.tableParams[key][_key]
               );
             });
@@ -168,7 +169,6 @@ export default {
           }
 
           Object.keys(sortParams).forEach(element => {
-
             let eleString = element.toString();
 
             if (eleString.endsWith("RecordInterval")) {
@@ -176,9 +176,9 @@ export default {
             }
 
             if (eleString.endsWith("StorageTime")) {
-              sortParams[eleString] = parseInt(sortParams[eleString]) * 3600 * 24;
+              sortParams[eleString] =
+                parseInt(sortParams[eleString]) * 3600 * 24;
             }
-
           });
 
           const params = Object.assign(sortParams, {
@@ -278,7 +278,6 @@ export default {
 
       // 如果启用了FLV
       if (parameters["FlvParam.Enable"] === 1) {
-
         if (!this.isPositiveNumber(parameters["FlvParam.RecordInterval"])) {
           this.$message.error("FLV錄製文件時長應為正整數");
           return false;
@@ -305,7 +304,6 @@ export default {
 
       // 如果启用了AAC
       if (parameters["AacParam.Enable"] === 1) {
-
         if (!this.isPositiveNumber(parameters["AacParam.RecordInterval"])) {
           this.$message.error("ACC錄製文件時長應為正整數");
           return false;
@@ -368,9 +366,33 @@ export default {
     handleSelectionChange(e) {
       this.tableData.forEach(item => {
         this.tableParams[item.paramName].Enable = 0;
+        this.tableParams[item.paramName].RecordInterval = "";
+        this.tableParams[item.paramName].StorageTime = "";
+        if (item.paramName === "HlsSpecialParam") {
+          this.tableParams[item.paramName]["FlowContinueDuration"] = 0;
+        } else {
+          this.tableParams[item.paramName]["RecordInterval"] = "";
+          this.tableParams[item.paramName]["StorageTime"] = "";
+        }
       });
+
       e.forEach(item => {
         this.tableParams[item.paramName].Enable = 1;
+
+        // 默认值
+        if (item.paramName === "FlvParam") {
+          this.tableParams["FlvParam"]["RecordInterval"] = 30;
+          this.tableParams["FlvParam"]["StorageTime"] = 0;
+        } else if (item.paramName === "Mp4Param") {
+          this.tableParams["Mp4Param"]["RecordInterval"] = 30;
+          this.tableParams["Mp4Param"]["StorageTime"] = 0;
+        } else if (item.paramName === "AacParam") {
+          this.tableParams["AacParam"]["RecordInterval"] = 30;
+          this.tableParams["AacParam"]["StorageTime"] = 0;
+        } else if (item.paramName === "HlsParam") {
+          this.tableParams["HlsParam"]["RecordInterval"] = 30;
+          this.tableParams["HlsParam"]["StorageTime"] = 0;
+        }
       });
     },
 
@@ -425,9 +447,13 @@ export default {
     isPositiveNumber(val) {
       return /^[+]{0,1}(\d+)$/.test(val);
     },
-    getDefaultValueForEmptyInput(text) {
-      if (text.length === 0) {
-        return 0;
+    getDefaultValueForEmptyInput(_key, text) {
+      if (typeof text === "string" && text.length === 0) {
+        if (_key == "StorageTime") {
+          return 0;
+        } else {
+          return 30;
+        }
       } else {
         return text;
       }
