@@ -29,7 +29,7 @@
       <el-button type="primary" size="small" @click="_import" :loading="loading" :disabled="tip !== 'success'">
         {{t('确认导入', 'WAF.qedt')}}
       </el-button>
-      <el-button class="reset" size="small" :disabled="loading" @click="reset">{{t('重置', 'WAF.nrbxbh')}}</el-button>
+      <el-button class="reset" size="small" :disabled="loading" @click="reset">{{t('重置', 'WAF.cz')}}</el-button>
     </el-row>
   </div>
 </template>
@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     reset() {
-      this.onSuccess()
       this.tip = 'default'
     },
     fileChange(file) {
