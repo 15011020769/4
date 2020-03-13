@@ -16,7 +16,6 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
-            @blur="datePickerChange()"
           ></el-date-picker>
         </div>
         <div style="margin-top:12px;">
