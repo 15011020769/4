@@ -41,154 +41,154 @@
 </template>
 
 <script>
-  import moment from "moment";
+import moment from 'moment'
 
-  export default {
-    data() {
-      return {
-        datevalueStart: new Date(), // 日期（从）
-        timevalueStart: new Date(), // 时间（从）
-        datevalueEnd: new Date(), // 日期（至）
-        timevalueEnd: new Date(), // 时间（至）
-        datetimeval: [], // 选择时间数据
-        visible: false, // 时间选择器的变化
-        datetim: true, // 时间选择器的变化
-        datetime: false, // 时间选择器的变化
-        Start_End: {
-          StartTIme: "",
-          EndTIme: ""
-        },
-        classvalue: 1
-      };
-    },
-    props: {
-      classsvalue: {
-        required: true
-      }
-    },
-    created() {
-      this.TimeChoice(1);
-    },
-    methods: {
-      //点击时间按钮
-      TimeChoice(time) {
-        this.classvalue = time;
-        this.Initialization();
-        if (time === 1) {
-          //今天
-          const KTime = moment(new Date()).format("YYYY/MM/DD 00:00:00"); //获取当前时间
-          const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-          this.Start_End.StartTIme = KTime;
-          this.Start_End.EndTIme = ETime;
-        } else if (time === 1 * 24) {
-          //昨天
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          const startTime = new Date(KTime).getTime();
-          // 
-          const noeago = moment(startTime - 86400000).format(
-            "YYYY-MM-DD 00:00:00"
-          ); //获取1天前的时间
-          const noenow = moment(startTime - 86400000).format(
-            "YYYY-MM-DD 23:59:59"
-          ); //获取1天前的时间
-          this.Start_End.StartTIme = noeago;
-          this.Start_End.EndTIme = noenow;
-        } else if (time === 1 * 24 * 7) {
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          const startTime = new Date(KTime).getTime();
-          const zhouago = moment(startTime - 518400000).format(
-            "YYYY-MM-DD 00:00:00"
-          ); //获取1周前的时间
-          const zhounow = moment(startTime).format(
-            "YYYY-MM-DD 23:59:59"
-          );
-          this.Start_End.StartTIme = zhouago;
-          this.Start_End.EndTIme = zhounow;
-        } else if (time === 1 * 24 * 30) {
-          const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-          const startTime = new Date(KTime).getTime();
-          const yueago = moment(startTime - 2505600000).format(
-            "YYYY-MM-DD 00:00:00"
-          ); //获取1周前的时间
-          const yuenow = moment(startTime).format(
-            "YYYY-MM-DD 23:59:59"
-          );
-          this.Start_End.StartTIme = yueago;
-          this.Start_End.EndTIme = yuenow;
-        }
-        this.$emit("switchData", [this.Start_End, this.classvalue]);
+export default {
+  data () {
+    return {
+      datevalueStart: new Date(), // 日期（从）
+      timevalueStart: new Date(), // 时间（从）
+      datevalueEnd: new Date(), // 日期（至）
+      timevalueEnd: new Date(), // 时间（至）
+      datetimeval: [], // 选择时间数据
+      visible: false, // 时间选择器的变化
+      datetim: true, // 时间选择器的变化
+      datetime: false, // 时间选择器的变化
+      Start_End: {
+        StartTIme: '',
+        EndTIme: ''
       },
-      switchData() {
-        this.$emit("switchData", [this.Start_End, this.classvalue]);
-      },
-      // 确定按钮
-      Sure() {
-        this.visible = false;
-        this.getdate();
-        this.TimeAfter();
-      },
-      // 截取时间
-      getdate() {
-        this.datetim = false;
-        this.datetime = true;
-        const y = moment(this.datevalueStart).format("YYYY");
-        const m = moment(this.datevalueStart).format("MM") - 1;
-        const d = moment(this.datevalueStart).format("DD");
-        const h = moment(this.timevalueStart).format("HH");
-        const f = moment(this.timevalueStart).format("mm");
-        const s = moment(this.timevalueStart).format("ss");
-
-        const yy = moment(this.datevalueEnd).format("YYYY");
-        const mm = moment(this.datevalueEnd).format("MM") - 1;
-        const dd = moment(this.datevalueEnd).format("DD");
-        const hh = moment(this.timevalueEnd).format("HH") - 1;
-        const ff = moment(this.timevalueEnd).format("mm");
-        const ss = moment(this.timevalueEnd).format("ss");
-
-        this.datetimeval = [
-          new Date(y, m, d, h, f, s),
-          new Date(yy, mm, dd, hh, ff, ss)
-        ];
-      },
-      // 选择时间
-      SelectionTime() {
-        this.visible = true;
-      },
-      // 时间重新选择---确定
-      ReSelection() {
-        this.TimeAfter();
-      },
-      // 按钮控制时间粒度初始化
-      Initialization() {
-        this.datetim = true;
-        this.datetime = false;
-      },
-      // 确定之后
-      TimeAfter() {
-        const qdate = moment(this.datetimeval[0]).format("YYYY/MM/DD-HH:mm:ss");
-        const hdate = moment(this.datetimeval[1]).format("YYYY/MM/DD-HH:mm:ss");
-        const startTime = new Date(qdate).getTime() / 1000;
-        const endTime = new Date(hdate).getTime() / 1000;
-        if (endTime - startTime <= 3600) {
-          this.TimeSlot = "1hours";
-          this.classvalue = "";
-        } else if (endTime - startTime <= 86400) {
-          this.TimeSlot = "1days";
-          this.classvalue = "";
-        } else {
-          this.TimeSlot = "1weeks";
-          this.classvalue = "";
-        }
-        this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.$emit("switchData", [this.Start_End, this.classvalue]);
-      }
+      classvalue: 1
     }
-  };
+  },
+  props: {
+    classsvalue: {
+      required: true
+    }
+  },
+  created () {
+    this.TimeChoice(1)
+  },
+  methods: {
+    // 点击时间按钮
+    TimeChoice (time) {
+      this.classvalue = time
+      this.Initialization()
+      if (time === 1) {
+        // 今天
+        const KTime = moment(new Date()).format('YYYY/MM/DD 00:00:00') // 获取当前时间
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        this.Start_End.StartTIme = KTime
+        this.Start_End.EndTIme = ETime
+      } else if (time === 1 * 24) {
+        // 昨天
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
+        //
+        const noeago = moment(startTime - 86400000).format(
+          'YYYY-MM-DD 00:00:00'
+        ) // 获取1天前的时间
+        const noenow = moment(startTime - 86400000).format(
+          'YYYY-MM-DD 23:59:59'
+        ) // 获取1天前的时间
+        this.Start_End.StartTIme = noeago
+        this.Start_End.EndTIme = noenow
+      } else if (time === 1 * 24 * 7) {
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
+        const zhouago = moment(startTime - 518400000).format(
+          'YYYY-MM-DD 00:00:00'
+        ) // 获取1周前的时间
+        const zhounow = moment(startTime).format(
+          'YYYY-MM-DD 23:59:59'
+        )
+        this.Start_End.StartTIme = zhouago
+        this.Start_End.EndTIme = zhounow
+      } else if (time === 1 * 24 * 30) {
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
+        const startTime = new Date(KTime).getTime()
+        const yueago = moment(startTime - 2505600000).format(
+          'YYYY-MM-DD 00:00:00'
+        ) // 获取1周前的时间
+        const yuenow = moment(startTime).format(
+          'YYYY-MM-DD 23:59:59'
+        )
+        this.Start_End.StartTIme = yueago
+        this.Start_End.EndTIme = yuenow
+      }
+      this.$emit('switchData', [this.Start_End, this.classvalue])
+    },
+    switchData () {
+      this.$emit('switchData', [this.Start_End, this.classvalue])
+    },
+    // 确定按钮
+    Sure () {
+      this.visible = false
+      this.getdate()
+      this.TimeAfter()
+    },
+    // 截取时间
+    getdate () {
+      this.datetim = false
+      this.datetime = true
+      const y = moment(this.datevalueStart).format('YYYY')
+      const m = moment(this.datevalueStart).format('MM') - 1
+      const d = moment(this.datevalueStart).format('DD')
+      const h = moment(this.timevalueStart).format('HH')
+      const f = moment(this.timevalueStart).format('mm')
+      const s = moment(this.timevalueStart).format('ss')
+
+      const yy = moment(this.datevalueEnd).format('YYYY')
+      const mm = moment(this.datevalueEnd).format('MM') - 1
+      const dd = moment(this.datevalueEnd).format('DD')
+      const hh = moment(this.timevalueEnd).format('HH') - 1
+      const ff = moment(this.timevalueEnd).format('mm')
+      const ss = moment(this.timevalueEnd).format('ss')
+
+      this.datetimeval = [
+        new Date(y, m, d, h, f, s),
+        new Date(yy, mm, dd, hh, ff, ss)
+      ]
+    },
+    // 选择时间
+    SelectionTime () {
+      this.visible = true
+    },
+    // 时间重新选择---确定
+    ReSelection () {
+      this.TimeAfter()
+    },
+    // 按钮控制时间粒度初始化
+    Initialization () {
+      this.datetim = true
+      this.datetime = false
+    },
+    // 确定之后
+    TimeAfter () {
+      const qdate = moment(this.datetimeval[0]).format('YYYY/MM/DD-HH:mm:ss')
+      const hdate = moment(this.datetimeval[1]).format('YYYY/MM/DD-HH:mm:ss')
+      const startTime = new Date(qdate).getTime() / 1000
+      const endTime = new Date(hdate).getTime() / 1000
+      if (endTime - startTime <= 3600) {
+        this.TimeSlot = '1hours'
+        this.classvalue = ''
+      } else if (endTime - startTime <= 86400) {
+        this.TimeSlot = '1days'
+        this.classvalue = ''
+      } else {
+        this.TimeSlot = '1weeks'
+        this.classvalue = ''
+      }
+      this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.$emit('switchData', [this.Start_End, this.classvalue])
+    }
+  }
+}
 
 </script>
 

@@ -12,7 +12,7 @@
         <div class="room-top">
           <div class="context-center">
             <div>
-              <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
+              <el-input placeholder="请输入名称" v-model="input" class="input-with-select">
                 <el-button slot="append" icon="el-icon-search" class="btn-search" @click="getSearch()"></el-button>
               </el-input>
             </div>

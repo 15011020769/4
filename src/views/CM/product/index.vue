@@ -235,7 +235,11 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
       };
-     
+     if (this.searchInput !== "" && this.searchValue !== "") {
+        params[this.searchValue] = [
+          this.searchInput
+        ]
+     }
             //  monitor2/DescribeProductEventList   //接口
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
@@ -253,22 +257,25 @@ export default {
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
           // 筛选逻辑
           if (this.searchInput !== "" && this.searchValue !== "") {
-           let tableListData = []
-            res.Response.Events.forEach((currentValue,index,arr) => {
-                if(arr[index].EventCName === this.searchInput && this.searchValue == "EventCName") {
-                   tableListData.push(arr[index])
-                   this.tableData = tableListData;
-                } else if (arr[index].InstanceId === this.searchInput && this.searchValue == "InstanceId") {
-                  tableListData.push(arr[index])
-                  this.tableData = tableListData;
-                }
-            });
-            if(this.tableData.length < 1 ){
-              this.$message.error("請輸入正確搜索信息");
-              this.tableData = res.Response.Events; //列表数据
-            }else {
-              this.TotalCount = this.tableData.length;
-            }
+            console.log(321321)
+            params['AffectResource.Name'] = this.searchValue
+            params['AffectResource.Values'] = this.searchInput
+          //  let tableListData = []
+          //   res.Response.Events.forEach((currentValue,index,arr) => {
+          //       if(arr[index].EventCName === this.searchInput && this.searchValue == "EventCName") {
+          //          tableListData.push(arr[index])
+          //          this.tableData = tableListData;
+          //       } else if (arr[index].InstanceId === this.searchInput && this.searchValue == "InstanceId") {
+          //         tableListData.push(arr[index])
+          //         this.tableData = tableListData;
+          //       }
+          //   });
+          //   if(this.tableData.length < 1 ){
+          //     this.$message.error("請輸入正確搜索信息");
+          //     this.tableData = res.Response.Events; //列表数据
+          //   }else {
+          //     this.TotalCount = this.tableData.length;
+          //   }
           };
           
         } else {

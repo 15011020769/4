@@ -164,7 +164,7 @@ export default {
         res.Response.UserInfo.forEach(s => {
           if (s.IsSelected) {
             this.selecteduserId.push(s.Uid)
-            this.selecteduserId.push(s)
+            this.selectedUsers.push(s)
           }
         })
         this.users = this.users.concat(res.Response.UserInfo)
