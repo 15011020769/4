@@ -580,7 +580,7 @@ export default {
         this.isDisGJ = true
       }
     },
-    // 新建
+    // 新建策略类型
     showMsgfromChild (val) {
       console.log('val', val)
     }

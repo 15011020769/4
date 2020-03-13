@@ -49,20 +49,36 @@
         <el-table-column prop label="类型">
           <template slot-scope="scope">
             <!-- :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'" -->
-            <a v-if="scope.row.metadata.annotations" :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'" :class="scope.row.idDb?'tke-text-link':''">{{scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id']}}</a>
-            <p v-if="scope.row.idDb?true:false">负载均衡</p>
+            <div v-if="scope.row.spec.type !== 'ClusterIP' && scope.row.spec.type !== 'NodePort'">
+              <a v-if="scope.row.metadata.annotations"
+              :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'"
+              :class="scope.row.idDb?'tke-text-link':''">{{scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id']}}</a>
+              <p v-if="scope.row.idDb?true:false">负载均衡</p>
+            </div>
+            <span v-else>{{scope.row.spec.type}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="Selector">
           <template slot-scope="scope">
-            <span><span>{{scope.row.k8sApp?'k8s-app:'+scope.row.k8sApp+'、qcloud-app:'+scope.row.qcloudApp:'无'}}</span></span>
+            <!-- <span><span>{{scope.row.k8sApp?'k8s-app:'+scope.row.k8sApp+'、qcloud-app:'+scope.row.qcloudApp:'无'}}</span></span> -->
+            <span v-if="scope.row.spec.selector">
+              <span v-for="(val,key,i) in scope.row.spec.selector" :key="i">{{key+':'+val+' '}}</span>
+            </span>
+            <span v-else>{{'无'}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop label="IP地址">
           <template slot-scope="scope">
             <!-- <p>175.97.144.196 <br>172.16.252.49</p> -->
-            <p><br>{{scope.row.spec.clusterIP+'(服务IP)'}}</p>
+            <p>
+              <span v-if="scope.row.status.loadBalancer.ingress">
+                <span v-for="(item,i) in scope.row.status.loadBalancer.ingress" :key="i">{{item.ip+'(IPV4)'}}</span>
+              </span>
+              <span v-else>{{'-'}}</span>
+              <br>
+              <span>{{scope.row.spec.clusterIP+'(服务IP)'}}</span>
+            </p>
           </template>
         </el-table-column>
 
@@ -74,9 +90,12 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span>
-            <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span>
-            <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span>
+            <!-- <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span> -->
+            <!-- <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span> -->
+            <!-- <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span> -->
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</el-button size="small" type="text">
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</el-button size="small" type="text">
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</el-button size="small" type="text">
           </template>
         </el-table-column>
       </el-table>
@@ -190,12 +209,12 @@ export default {
           let data = JSON.parse(res.Response.ResponseBody).items
           if (data.length > 0) { // 处理selector字段中的数据
             data.map(item => {
-              item.k8sApp = item.spec.selector && item.spec.selector['k8s-app']
-              item.qcloudApp = item.spec.selector && item.spec.selector['qcloud-app']
+              // item.k8sApp = item.spec.selector && item.spec.selector['k8s-app']
+              // item.qcloudApp = item.spec.selector && item.spec.selector['qcloud-app']
               let { metadata, spec } = item
               // 权限的验证
               // if (item.metadata.name === 'default' || item.metadata.name.indexOf('kube-') === 0) {
-              if (metadata.namespace !== 'default' || metadata.name.indexOf('kube') === 0) {
+              if (metadata.namespace === 'kube-system' || metadata.name === 'kubernetes') {
                 item.isDisabled = true
               } else {
                 item.isDisabled = false
