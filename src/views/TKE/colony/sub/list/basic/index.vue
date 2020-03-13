@@ -91,14 +91,23 @@
       <h4 class="tke-formpanel-title">集群APIServer信息</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
         <el-form-item label="访问地址">
-          <div class="tke-form-item_text"><span>{{security.Domain}}</span></div>
+          <div class="tke-form-item_text"><span>https://{{security.Domain}}</span></div>
         </el-form-item>
         <el-form-item label="外网访问">
-          <div class="tke-form-item_text"><span>未开启</span></div>
+          <div class="tke-form-item_text">
+            <el-switch class="ml10" v-model="extranet" @change="changeSwitch()" ></el-switch>
+            <span>{{extranet?'已开启':'未开启'}}</span>
+          </div>
+          <p v-if="extranet">已放通IP地址：{{extranetIp}}<i class="el-icon-edit tke-icon" @click="showOsModal()"></i></p>
         </el-form-item>
-
         <el-form-item label="内网访问">
-          <div class="tke-form-item_text"><span>未开启</span></div>
+          <div class="tke-form-item_text">
+            <el-switch class="ml10" v-model="intranet" @change="changeIntranet()" ></el-switch>
+            <span>{{intranet?'已开启':'未开启'}}</span>
+          </div>
+          <p v-if="intranet">开通内网访问入口， 您还需要在访问机上配置域名。请在访问机上执行以下命令：
+            <span>sudo sed -i '$a {{security.PgwEndpoint}} {{security.Domain}}'/etc/hosts</span>
+          </p>
         </el-form-item>
         <el-form-item label="Kubeconfig">
           <div class="tke-form-item_text tke-rich-textarea" >
@@ -196,6 +205,32 @@
         <el-button @click="closeDialog('4')">取 消</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="内网访问设置" :visible.sync="isShowintranetDialog" width="750px">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+        style="width:700px"
+      >
+        <el-form-item label="子网" prop="pass">
+          <el-select type="text" v-model="subNet" autocomplete="off" style="width:300px" @change="changeOs">
+            <el-option
+              v-for="item in subnetList"
+              :key="item.SubnetId"
+              :label="item.SubnetName"
+              :value="item"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="openIntranet">提 交</el-button>
+        <el-button @click="isShowintranetDialog = false">取 消</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="编辑集群描述" :visible.sync="showUpdateDescribe" width="750px">
       <el-form
         :model="ruleForm"
@@ -242,7 +277,8 @@ import moment from 'moment';
 import { ErrorTips } from "@/components/ErrorTips";
 import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, 
   UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES, 
-  TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN, TKE_COLONY_DES } from '@/constants'
+  TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN, TKE_COLONY_DES,TKE_WORKER_METWORK,OPEN_INTRANET,
+  ClOSE_INTRANET } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
@@ -264,6 +300,12 @@ export default {
       routeSets:[],//云网络列表
       autoRefresh: false, //是否关联网络
       showCloseCidr: false,//是否显示关闭注册网络弹窗
+      intranet: false,//内网是否开启
+      extranet: false,//外网是否开启
+      extranetIp: '',//外网ip地址
+      subNet: {},//子网id
+      subnetList: [],//子网列表
+      isShowintranetDialog: false,//是否开启子网选择modal
       ruleForm: {
         name: '',
         projectId: '',
@@ -413,6 +455,108 @@ export default {
       }
     },
 
+    //获取子网列表
+    getSubnetList() {
+      let param = {
+        Version: "2017-03-12",
+        "Filters.0.Name": "vpc-id",
+        "Filters.0.Values.0": this.clusterInfo.ClusterNetworkSettings.VpcId,
+        Offset: 0,
+        Limit: 100
+      }
+      this.axios.post(TKE_WORKER_METWORK, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.subnetList = res.Response.SubnetSet;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    //开启内网
+    async openIntranet() {
+      this.loadShow = true;
+      let param = {
+        Version: "2018-05-25",
+        BExtranet: false,
+        ClusterId: this.clusterId,
+        SubnetId: this.subNet.SubnetId
+      }
+      await this.axios.post(OPEN_INTRANET, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.isShowintranetDialog = false;
+          this.loadShow = false;
+          this.getSecurity();
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    //关闭内网
+    async closeIntranet() {
+      this.loadShow = true;
+      let param = {
+        ClusterId: this.clusterId,
+        Version: "2018-05-25",
+        BExtranet: false,
+      }
+      await this.axios.post(ClOSE_INTRANET, param).then(res => {
+        if(res.Response.Error === undefined) {
+          this.getSecurity();
+          this.$message({
+            message: '操作成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.loadShow = false;
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    //开启、关闭内网
+    changeIntranet() {
+      if(this.intranet) {
+        this.getSubnetList();
+        this.isShowintranetDialog = true;
+      } else {
+        this.closeIntranet();
+      }
+    },
+
     async getClusterVersion () {
       this.loadShow = true;
       let params = {
@@ -470,11 +614,25 @@ export default {
         Version: '2018-05-25'
       }
       const res = await this.axios.post(CLUSTERS_SECURITY, params)
-      if (res.Error) {
+      if (res.Error === undefined) {
+        this.security = res.Response;
+        if(res.Response.PgwEndpoint) {
+          this.intranet = true;
+        }
+        if(res.Response.ClusterExternalEndpoint) {
+          this.extranet = true;
+        }
         this.loadShow = false
       } else {
-        this.security = res.Response
-        this.loadShow = false
+        this.loadShow = false;
+        let ErrTips = {};
+        let ErrOr = Object.assign(ErrorTips, ErrTips);
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
 

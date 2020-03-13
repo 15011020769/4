@@ -57,6 +57,7 @@
 import { DESCRIBE_HOSTS } from '@/constants'
 import DiyType from './diyType'
 import PublicType from './publicType'
+import { ErrorTips } from "@/components/ErrorTips"
 
 export default {
   data () {
@@ -66,16 +67,9 @@ export default {
       ipSearch: '', // ip查询下拉
       ipSearchOptions: [],
       routerTips: 'diy', // 保存tabs选项数据 diy为自定义策略
-      tableDataBegin: [{
-        host: 'tfc.dhycloud.com',
-        bot: 1,
-        waf: 2
-      }], // 表格数据
-      tableDataEnd: [],
       currentPage: 1, // 当前页
       pageSize: 10, // 每页长度
       totalItems: 0, // 总长度
-      filterTableDataEnd: [],
       flag: false, // 定义一个开关
       loadShow: false, // 加载
       visible: false, // 删除弹框

@@ -105,7 +105,7 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               ipArrCount.push(JSON.parse(v).count)
-              ipArr.push(JSON.parse(v).ip)
+              ipArr.push(JSON.parse(v).ip ? JSON.parse(v).ip : '未知')
             })
             this.xAxisBarIp = ipArr
             this.seriesBarIp = ipArrCount
@@ -114,7 +114,7 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               localArrCount.push(JSON.parse(v).count)
-              localArr.push(JSON.parse(v).local)
+              localArr.push(JSON.parse(v).local ? JSON.parse(v).local : '未知')
             })
             this.xAxisBarLocal = localArr
             this.seriesBarLocal = localArrCount

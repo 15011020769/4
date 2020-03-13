@@ -27,26 +27,26 @@ export const TEMPLATE_TYPE = [{
 export const TEMPLATE_TYPE_PARAMS = {
   HlsParam: {
     // 录制间隔。单位秒
-    RecordInterval: undefined,
+    RecordInterval: '',
     // 录制存储时长。 0表示永久存储。
-    StorageTime: undefined,
+    StorageTime: '',
     // 是否开启当前格式录制，0 否 1是。默认值0。
     Enable: 0,
   },
   // HLS专属录制参数。 续录超时时长(秒)
   Mp4Param: {
-    RecordInterval: undefined,
-    StorageTime: undefined,
+    RecordInterval: '',
+    StorageTime: '',
     Enable: 0,
   },
   FlvParam: {
-    RecordInterval: undefined,
-    StorageTime: undefined,
+    RecordInterval: '',
+    StorageTime: '',
     Enable: 0,
   },
   AacParam: {
-    RecordInterval: undefined,
-    StorageTime: undefined,
+    RecordInterval: '',
+    StorageTime: '',
     Enable: 0,
   },
   HlsSpecialParam: {

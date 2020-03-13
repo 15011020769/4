@@ -3,7 +3,9 @@
     <h3 class="topfont">
       {{t('业务峰值趋势', 'WAF.ywfzqs')}}
     </h3>
-    <el-row class="empty" v-if="series1.length == 0 ? true : false">{{t('暂无数据', 'WAF.zwsj')}}</el-row>
+    <el-row class="empty" v-if="series1.length == 0 ? true : false">
+      {{t('暂无数据', 'WAF.zwsj')}}
+    </el-row>
     <ELine
       :xAxis="xAxis1"
       :series1="series1"

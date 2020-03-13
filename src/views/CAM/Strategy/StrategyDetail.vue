@@ -159,6 +159,7 @@
                 <el-pagination
                   :page-size="pagesize"
                   :pager-count="7"
+                  :current-page="currpage"
                   layout="prev, sizes, pager, next"
                   :page-sizes="[10, 20, 30, 40, 50]"
                   @current-change="handleCurrentChange"
@@ -172,15 +173,13 @@
         </el-tabs>
       </div>
       <!-- dialog关联用户组弹框页面 start -->
-      <el-dialog :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
-        <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p>
+      <el-dialog title="關聯用戶/用戶組" :visible.sync="dialogVisible" width="72%" :before-close="handleClosePolicy">
+        <!-- <p class="dialog">{{$t('CAM.strategy.straGroup')}}</p> -->
         <div>
           <transfer
             ref="userTransfer"
-            :PolicyId="policyID"
-            :userArr="userArr"
-            :groupArr="groupArr"
-            @attach="attach"
+            :policyId="policyID"
+            :visible.sync="dialogVisible" 
           ></transfer>
         </div>
         <p style="text-align:center;margin-top:20px">
@@ -235,8 +234,12 @@ import {
   GET_POLICY,
   ATTACH_GROUP,
   UPDATE_POLICY_V2,
+  DETACH_GROUPS_POLICY,
+  DETACH_USERS_POLICY,
+  ATTACH_GROUPS_POLICY,
+  ATTACH_USERS_POLICY,
 } from "@/constants";
-import transfer from "./component/transfer";
+import transfer from "./transfer";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
   components: {
@@ -340,14 +343,10 @@ export default {
     // 打开 关联用户/用户组 页面
     Relation_user() {
       this.dialogVisible = true;
-      if (this.handleFlag) {
-        this.$refs.userTransfer.getUserList(); //dialog关闭再打开，created()mounted()方法不执行，所以需要再此处执行初始化方法
-      }
     },
     // 关闭 关联用户/用户组 页面
     handleClosePolicy() {
       this.dialogVisible = false;
-      this.handleFlag = this.$refs.userTransfer.getHandleFlag();
     },
     // 关联用户/用户组 跳转用户、用户组页面连接方法
     handleClickPolicies(obj) {
@@ -370,24 +369,78 @@ export default {
     },
     // 策略添加用户/用户组
     attachPolicy() {
-      this.$refs.userTransfer.attachPolicy();
-      this.dialogVisible = false;
-      // 重新加载策略关联实体列表
-
-      this.handleFlag = this.$refs.userTransfer.getHandleFlag();
-      this.loading = true;
-      new Promise(function(resolve, reject) {
-        resolve("成功"); // 数据处理完成
-      })
-        .then(res => {
-          setTimeout(() => {
-            this.getAttachPolicys();
-          }, 3000);
-        })
-        .then(() => {
-          this.attachVal == "";
-          // this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
+      const selectedData = this.$refs.userTransfer.selectedData
+      if (selectedData.length === 0) {
+        return void this.$message({
+          message: '請選擇用戶/用戶組',
+          type: "error",
+          showClose: true,
+          duration: 0
         });
+      }
+
+      const users = []
+      const groups = []
+      const p = []
+      selectedData.forEach(d => {
+        if (d.type === 'user') {
+          users.push(d.uin)
+        } else {
+          groups.push(d.groupId)
+        }
+      })
+      if (users.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        users.forEach((id, i) => {
+          params[`TargetUin.${i}`] = id
+        })
+        p.push(this.axios.post(ATTACH_USERS_POLICY, params))
+      }
+      if (groups.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        groups.forEach((id, i) => {
+          params[`GroupId.${i}`] = id
+        })
+        p.push(this.axios.post(ATTACH_GROUPS_POLICY, params))
+      }
+      Promise.all(p).then(() => {
+        this.$message({
+          message: '關聯成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+        this.currpage = 1
+        this.getAttachPolicys()
+        this.dialogVisible = false;
+      })
+      // if (user.length === 0) {
+      //   
+      // }
+      // this.$refs.userTransfer.attachPolicy();
+      // this.dialogVisible = false;
+      // // 重新加载策略关联实体列表
+
+      // this.handleFlag = this.$refs.userTransfer.getHandleFlag();
+      // this.loading = true;
+      // new Promise(function(resolve, reject) {
+      //   resolve("成功"); // 数据处理完成
+      // })
+      //   .then(res => {
+      //     setTimeout(() => {
+      //       this.getAttachPolicys();
+      //     }, 3000);
+      //   })
+      //   .then(() => {
+      //     this.attachVal == "";
+      //     // this.$refs.userTransfer.clearData(); // 添加完毕时清空数组。
+      //   });
     },
     // 获取策略关联的实体列表
     getAttachPolicys() {
@@ -423,7 +476,6 @@ export default {
               userArr.push(item);
             }
           });
-          console.log(list)
           this.policysData = list;
           this.userArr = userArr;
           this.groupArr = groupArr;
@@ -543,12 +595,47 @@ export default {
     },
     // 批量解除绑定到策略的实体
     removePolicysEntity() {
-      let arrs = this.selectData;
-      for (let i = 0; i < arrs.length; i++) {
-        let obj = arrs[i];
-        this.removePolicyEntity(obj);
+      const users = []
+      const groups = []
+      const p = []
+      this.selectData.forEach(d => {
+        if (d.RelatedType === 1) {
+          users.push(d.Uin)
+        } else {
+          groups.push(d.Id)
+        }
+      })
+      if (users.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        users.forEach((id, i) => {
+          params[`TargetUin.${i}`] = id
+        })
+        p.push(this.axios.post(DETACH_USERS_POLICY, params))
       }
-      this.Relieve_dialogVisible = false;
+      if (groups.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyID
+        }
+        groups.forEach((id, i) => {
+          params[`GroupId.${i}`] = id
+        })
+        p.push(this.axios.post(DETACH_GROUPS_POLICY, params))
+      }
+      Promise.all(p).then(() => {
+        this.$message({
+          message: '解除成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+        this.currpage = 1
+        this.getAttachPolicys()
+        this.Relieve_dialogVisible = false;
+      })
     },
     handleSelectionChange(val) {
       this.policysSelData = val;

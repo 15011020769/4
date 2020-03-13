@@ -12,7 +12,7 @@
       v-loading="loading"
       v-if="xAxisBarLocal.length == 0 ? false : true"
     />
-    <el-row class="empty" v-else>暂无数据</el-row>
+    <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     </el-col>
     <el-col :span="12">
     <h3 class="topfont">
@@ -26,7 +26,7 @@
       v-loading="loading"
       v-if="xAxisBarIp.length == 0 ? false : true"
     />
-    <el-row class="empty" v-else>暂无数据</el-row>
+    <el-row class="empty" v-else>{{t('暂无数据', 'WAF.zwsj')}}</el-row>
     </el-col>
   </el-row>
 </template>
@@ -105,7 +105,7 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               ipArrCount.push(JSON.parse(v).count)
-              ipArr.push(JSON.parse(v).ip)
+              ipArr.push(JSON.parse(v).ip ? JSON.parse(v).ip : '未知')
             })
             this.xAxisBarIp = ipArr
             this.seriesBarIp = ipArrCount
@@ -114,7 +114,7 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               localArrCount.push(JSON.parse(v).count)
-              localArr.push(JSON.parse(v).local)
+              localArr.push(JSON.parse(v).local ? JSON.parse(v).local : '未知')
             })
             this.xAxisBarLocal = localArr
             this.seriesBarLocal = localArrCount

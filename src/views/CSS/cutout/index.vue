@@ -75,7 +75,7 @@
 
 <script>
 import Header from '@/components/public/Head'
-import XTimeX from '@/components/public/TimeY'
+import XTimeX from '@/components/public/TimeZ'
 import moment from 'moment'
 import { CUTOUT_LIST } from '@/constants'
 export default {

@@ -76,8 +76,8 @@ export default {
       this.$emit('update:visible', false)
     },
     test() {
-      
-      const { content, session: { KeyOrStartMat, StartOffset, EndOffset, EndMat } } = this
+      const { content, session } = this
+      const { KeyOrStartMat, StartOffset, EndOffset, EndMat } = session
       if (session.Category === 'match') { // 字符串匹配
         const matched = content.match(RegExp(`${KeyOrStartMat}(.*?)${EndMat}`))
         if (matched) {

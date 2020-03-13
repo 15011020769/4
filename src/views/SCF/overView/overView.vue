@@ -10,7 +10,7 @@
             <div class="modelList">
               <p>{{ $t('SCF.total.hssl') }}</p>
               <p v-loading="loading">
-                <span >{{topList.number}}</span>
+                <span>{{topList.number}}</span>
                 <span>个</span>
               </p>
             </div>
@@ -19,7 +19,7 @@
             <div class="modelList">
               <p>{{ $t('SCF.total.bydys') }}</p>
               <p>
-                <span  >{{topList.invokecount}}</span>
+                <span>{{topList.invokecount}}</span>
                 <span>次</span>
               </p>
               <p>{{ $t('SCF.total.zrdys') }}{{topList.yinvokecount}}次</p>
@@ -48,80 +48,164 @@
         </el-row>
       </div>
       <div class="modelchart">
-        <h3>{{ $t('SCF.total.sytj') }}</h3>
-        <div>
-          <el-button class="addressName" readonly="readonly" v-model="addressIpt" style="margin-top:20px">{{ $t('SCF.total.zgtb') }}</el-button>
-          <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+        <div class="title">
+          <h3>{{ $t('SCF.total.sytj') }}</h3>
+          <el-button type="primary" size="small">{{addressIpt}}</el-button>
         </div>
-        <div class="chartShowCon">
-          <div class="chartShowTit">
-            <el-button-group>
-              <el-button @click="btnClick('MemDuration')" :class="{'addColor':type=='MemDuration'}"  >
-                {{ $t('SCF.total.zysyl') }}
-                <span>(MBms)</span>
-              </el-button>
-              <el-button @click="btnClick('Invocation')" :class="{'addColor':type=='Invocation'}">
-                {{ $t('SCF.total.dycs') }}
-                <span>(次)</span>
-              </el-button>
-              <el-button @click="btnClick('OutFlow')" :class="{'addColor':type=='OutFlow'}">
-                {{ $t('SCF.total.wwcll') }}
-                <span>(MB)</span>
-              </el-button>
-              <el-button @click="btnClick('Error')" :class="{'addColor':type=='Error'}">
-                {{ $t('SCF.total.cwcs') }}
-                <span>(次)</span>
-              </el-button>
-              <!-- <el-button @click="btnClick('ConcurrentExecutions')" :class="{'addColor':type=='ConcurrentExecutions'}">
-                并发执行个数
-                <span>(个)</span>
-              </el-button> -->
-              <el-button @click="btnClick('Throttle')" :class="{'addColor':type=='Throttle'}">
-                {{ $t('SCF.total.sxcs') }}
-                <span>(次)</span>
-              </el-button>
-            </el-button-group>
-          </div>
+        <div class="content">
+          <el-tabs v-model="MetricName" @tab-click="handleClick">
+            <el-tab-pane name="MemDuration">
+              <template slot="label">
+                <p>
+                  <span class="menu1">资源使用量</span>
+                  <span class="menu2">(MBms)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='MemDuration'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">资源使用量</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
 
-          <div style="margin-top:5px">
-            <el-table :data="tableData" style="width: 100%;" :show-header="showHeader" :empty-text="$t('SCF.total.zwsj')">
-              <el-table-column prop width="150">
-                <template slot-scope="scope">
-                  <span style="font-size:12px;font-weight:bolder; color:#333;font-weight:600;">
-                    {{scope.row.MetricName | UpName(value)}}
-                    <span class="symbol">{{scope.row.symbol}}</span>
-                  </span>
-                </template>
-              </el-table-column>
-              <el-table-column prop="DataPoints">
-                <template slot-scope="scope">
-                  <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('SCF.total.zwsj') }}</p>
-                  <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-                    <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                      :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false">
-                    </echart-line>
-                  </div>
-                </template>
-              </el-table-column>
-            </el-table>
-          </div>
-          <!-- <div class="chartTable">
-            <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
-              class="funDataTable">
-              <el-table-column prop="DataPoints" width="550">
-                <template slot-scope="scope">
-                  <p v-if="scope.row.DataPoints[0].Values.length==0">{{ $t('CVM.clBload.zwsj') }}</p>
-                  <div class="echart" v-if="scope.row.DataPoints[0].Values.length!=0">
-                    <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                      :opData="scope.row.DataPoints[0].Values" :scale="3" :period="period" :xdata="false"></echart-line>
-                  </div>
-                </template>
-              </el-table-column>
-              <el-table-column prop="FunctionName" label="函数名"></el-table-column>
-              <el-table-column prop="Namespace" label="命名空间"></el-table-column>
-              <el-table-column prop="dataNum" label="数据指标"></el-table-column>
-            </el-table>
-          </div> -->
+            </el-tab-pane>
+            <el-tab-pane name="Invocation">
+              <template slot="label">
+                <p>
+                  <span class="menu1">调用次数</span>
+                  <span class="menu2">(次)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='Invocation'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">资源使用量</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="OutFlow">
+              <template slot="label">
+                <p>
+                  <span class="menu1">外网出流量</span>
+                  <span class="menu2">(KB)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='OutFlow'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">外网出流量</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="Error">
+              <template slot="label">
+                <p>
+                  <span class="menu1">错误次数</span>
+                  <span class="menu2">(次)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='Error'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">错误次数</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="ConcurrentExecutions">
+              <template slot="label">
+                <p>
+                  <span class="menu1">并发执行个数</span>
+                  <span class="menu2">(个)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='ConcurrentExecutions'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">并发执行个数</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+            <el-tab-pane name="Throttle">
+              <template slot="label">
+                <p>
+                  <span class="menu1">受限次数</span>
+                  <span class="menu2">(次)</span>
+                </p>
+              </template>
+              <div v-if="MetricName==='Throttle'">
+                <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
+                  v-on:switchData="GetDat" />
+                <p class="title">受限次数</p>
+                <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
+                      <div v-if="scope.row.DataPoints[0].Values.length!=0">
+                        <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                          :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                          :MetricName='disName[scope.row.MetricName]'></echart-line>
+                      </div>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       </div>
     </div>
@@ -130,8 +214,11 @@
 
 <script>
   import moment from "moment";
-  import XTimeX from "@/components/public/TimeXK";
-  import echartLine from "@/components/public/echars-line";
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
+  import echartLine from "@/components/public/echars-line"; //引入图标组件
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
   import {
     SCF_DETAILS,
     All_MONITOR,
@@ -145,10 +232,10 @@
   export default {
     data() {
       return {
-        showHeader:false,
+        showHeader: false,
         FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
-        loading:true,
+        loading: true,
         topList: {
           number: "",
           gbs: "",
@@ -158,16 +245,86 @@
           yinvokecount: "",
           youtflow: ""
         },
-        type: "MemDuration",
-        value: "",
+        TimeArr: [{
+            name: '實時',
+            Time: 'realTime',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              }
+            ]
+          },
+          {
+            name: '近24小時',
+            Time: 'Nearly_24_hours',
+            TimeGranularity: [{
+                value: "60",
+                label: "1分鐘"
+              },
+              {
+                value: "300",
+                label: "5分鐘"
+              },
+              {
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          },
+          {
+            name: '近7天',
+            Time: 'Nearly_7_days',
+            TimeGranularity: [{
+                value: "3600",
+                label: "1小時"
+              },
+              {
+                value: "86400",
+                label: "1天"
+              }
+            ]
+          }
+        ],
+        tabload: true,
+        Time: {}, //监控传递时间
+        Period: '', //粒度
         MetricName: 'MemDuration',
         //统计图下的列表
         tableData: [],
+        disName: {
+          'Duration': '運行時間',
+          'Invocation': '調用次數',
+          'Error': '調用錯誤次數',
+          'ConcurrentExecutions': '並發執行次數',
+          'ConfigMem': '配置記憶體',
+          'FunctionErrorPercentage': '函數錯誤率',
+          'Http2xx': '正確調用次數',
+          'Http432': '資源超過限制',
+          'Http433': '函數執行超時',
+          'Http434': '記憶體超過限制',
+          'Http4xx': '函數錯誤次數',
+          'Invocation': '函數調用次數',
+          'Mem': '運行記憶體',
+          'MemDuration': '時間記憶體',
+          'OutFlow': '外網出流量',
+          'ServerErrorPercentage': '平台錯誤率',
+          'Syserr': '系統內部錯誤次數',
+          'Throttle': '函數運行受限次數'
+
+        },
       };
     },
     components: {
       echartLine,
-      XTimeX
+      TimeDropDown
     },
     created() {
       this.GetOverView();
@@ -182,9 +339,9 @@
           Region: localStorage.getItem('regionv2')
         };
         this.axios.post(OVER_VIEW, params).then(res => {
-          if(res.Response.FunctionTotalNum){
+          if (res.Response.FunctionTotalNum) {
             this.topList.number = res.Response.FunctionTotalNum;
-            this.loading=false;
+            this.loading = false;
           }
         });
       },
@@ -212,36 +369,44 @@
           this.topList.youtflow = res.Response.Outflow;
         });
       },
-      btnClick(clickNode) {
-        this.tableData = []
-        this.type = clickNode;
-        this.Obtain(clickNode)
+      handleClick(key, keyPath) {
+        this.tabload = true
+        this._GetMonitorData()
       },
       GetDat(data) {
-        this.period = data[0];
-        this.Start_End = data[1];
-        this.value = data[2];
-        if (this.period) {
-          this.Obtain(this.MetricName)
-        }
+        this.tabload = true
+        this.Period = data[0]
+        this.Time = data[1]
+        this._GetMonitorData()
       },
-      //监控数据
-      Obtain(metricN) {
-        const param = {
-          Version: "2018-07-24",
+      //获取监控数据
+      _GetMonitorData() {
+        let parms = {
+          Version: '2018-07-24',
           Region: localStorage.getItem('regionv2'),
-          Namespace: "QCE/SCF_V2",
-          MetricName: metricN,
-          Period: this.period,
-          StartTime: this.Start_End.StartTIme,
-          EndTime: this.Start_End.EndTIme
-        };
-        param[`Instances.0.Dimensions.0.Name`] = 'functionName'
-        param[`Instances.0.Dimensions.0.Value`] = 'iai_tiia_deletePod'
-        param[`Instances.0.Dimensions.1.Name`] = 'version'
-        param[`Instances.0.Dimensions.1.Value`] = '$ATEST'
-        this.axios.post(All_MONITOR, param).then(data => {
-          this.tableData=[data.Response];
+          Namespace: 'QCE/SCF_V2',
+          Period: this.Period,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          MetricName: this.MetricName,
+          'Instances.0.Dimensions.0.Name': 'functionName',
+          'Instances.0.Dimensions.0.Value': 'iai_tiia_deletePod',
+          'Instances.0.Dimensions.1.Name': 'version',
+          'Instances.0.Dimensions.1.Value': '$ATEST'
+        }
+        this.axios.post(All_MONITOR, parms).then(data => {
+          this.tableData = []
+          if (data.Response.Error == undefined) {
+            this.tableData.push(data.Response)
+            this.tabload = false
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         });
       },
     },
@@ -303,13 +468,13 @@
           return (value = "函數運行受限次數");
         }
       },
+
       UpTime(value) {
         let timeArr = [];
         for (let i = 0; i < value.length; i++) {
           let uptime = moment(value[i] * 1000).format("YYYY-MM-DD HH:mm:ss");
           timeArr.push(uptime);
         }
-
         return timeArr;
       }
     },
@@ -318,9 +483,26 @@
 </script>
 
 <style scoped lang="scss">
-    .wrap{
-      height: 100%;
+  .wrap {
+    height: 100%;
+
+    .content {
+
+      .menu1 {
+        font-weight: bold;
+      }
+
+      .menu2 {
+        color: #ccc;
+      }
+
+      .title {
+        margin: 20px 0;
+        font-weight: bold;
+      }
     }
+  }
+
   .wrap>>>.btn-style {
     margin-left: 0;
   }
@@ -341,11 +523,6 @@
     background: transparent;
   }
 
-  .newClear:after {
-    display: block;
-    content: "";
-    clear: both;
-  }
 
   .topOverView {
     width: 100%;
@@ -430,13 +607,14 @@
     box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
     margin-top: 20px;
     padding: 20px;
-    &>>>.addressName{
-     border: solid 1px #3e8ee7;
-     color: #3e8ee7;
-     background: rgba(0, 0, 0, 0.04);
-    }
-    h3 {
-      line-height: 28px;
+
+    .title {
+      h3 {
+        line-height: 30px;
+        margin-right: 20px;
+      }
+
+      display: flex;
     }
   }
 

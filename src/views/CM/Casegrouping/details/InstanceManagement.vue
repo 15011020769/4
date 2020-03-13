@@ -213,57 +213,60 @@ export default {
     async ListInit() {
       this.loadShow = true;
       let param = {
-        instanceGroupId: this.Rules.instanceGroupId,
-        lang: "zh",
-        limit: this.pageSize,
-        offset: this.pageIndex
+        Version: "2018-07-24",
+        Module: "monitor",
+        InstanceGroupId: this.Rules.instanceGroupId,
+        Limit: this.pageSize,
+        Offset: this.pageIndex
       };
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        var _enterList = res.data.instanceList;
-        console.log(_enterList);
-        this.total = res.data.total;
-        let params = {
-          Version: "2017-03-12",
-          Limit: this.pageSize
-        };
-        for (let i in _enterList) {
-          params["InstanceIds." + i] = _enterList[i].dimensions.unInstanceId;
-        }
-        this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
-          if (res.Response.Error === undefined) {
-            this.enterList = res.Response.InstanceSet;
-            console.log(this.enterList);
-            this.loadShow = false;
-          } else {
-            let ErrTips = {
-              FailedOperation: "操作失败",
-              InternalError: "内部错误",
-              "InternalError.Param": "Param。",
-              "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-              InvalidParameter: "参数错误",
-              ResourceNotFound: "资源不存在",
-              ResourceUnavailable: "资源不可用"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
+        if (res.Response.Error === undefined) {
+          var _enterList = res.Response.InstanceList;
+          console.log(_enterList);
+          this.total = res.Response.Total;
+          let params = {
+            Version: "2017-03-12",
+            Limit: this.pageSize,
+            Offset: this.pageIndex
+          };
+          for (let i in _enterList) {
+            params["InstanceIds." + i] = _enterList[i].Dimensions.unInstanceId;
           }
-        });
-        // } else {
-        //   let ErrTips = {};
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+          this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.enterList = res.Response.InstanceSet;
+              console.log(this.enterList);
+              this.loadShow = false;
+            } else {
+              let ErrTips = {
+                FailedOperation: "操作失败",
+                InternalError: "内部错误",
+                "InternalError.Param": "Param。",
+                "InternalError.PublicClusterOpNotSupport":
+                  "集群不支持当前操作。",
+                InvalidParameter: "参数错误",
+                ResourceNotFound: "资源不存在",
+                ResourceUnavailable: "资源不可用"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 状态

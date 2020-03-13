@@ -63,6 +63,10 @@ export const SEND_AUTH_CODE = 'account2/SendAuthCode'
 export const DETACH_ROLE_POLICIES = 'cam2/DetachRolePolicies'
 export const ATTACH_GROUP_POLICIES = 'cam2/AttachGroupPolicies'
 export const ATTACH_ROLE_POLICIES = 'cam2/AttachRolePolicies'
+export const DETACH_GROUPS_POLICY = 'cam2/DetachGroupsPolicy'
+export const DETACH_USERS_POLICY = 'cam2/DetachUsersPolicy'
+export const ATTACH_GROUPS_POLICY = 'cam2/AttachGroupsPolicy'
+export const ATTACH_USERS_POLICY = 'cam2/AttachUsersPolicy'
 
 // V2接口
 export const LOGOUT_ROLE_SESSIONS = 'cam/LogoutRoleSessions'

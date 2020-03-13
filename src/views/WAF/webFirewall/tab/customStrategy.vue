@@ -71,8 +71,22 @@
       </el-table-column>
       <el-table-column prop="Name" label="操作" width="120" class-name="actions" align="center">
         <template slot-scope="scope">
-          <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button> 
-          <el-button type="text">删除</el-button>
+          <el-button type="text" @click="updateRule(scope.row)">{{t('编辑', 'WAF.bj')}}</el-button>&nbsp;&nbsp;
+          <el-popover
+              placement="bottom"
+              width="280"
+              v-model="scope.row.delDialog"
+            >
+              <div class="prpoDialog">
+                <h1>{{t('确认删除', 'WAF.qrsc')}}？</h1>
+                <p>{{t('删除后将无法恢复，重新添加才能生效。', 'WAF.schwfhf')}}</p>
+              </div>
+              <div style="text-align: center; margin: 0">
+                <el-button size="mini" type="text" @click="delRule(scope.row)">删除</el-button>
+                <el-button size="mini" type="text" @click="scope.row.delDialog=false">取消</el-button>
+              </div>
+              <el-button type="text" slot="reference"style="color:#3E8EF7;background: transparent;">删除</el-button>
+            </el-popover>
         </template>
       </el-table-column>
     </el-table>
@@ -98,7 +112,7 @@
   </div>
 </template>
 <script>
-import { DESCRIBE_CUSTOM_RULES, MODIFY_CUSTOM_RULE_STATUS } from '@/constants'
+import { DESCRIBE_CUSTOM_RULES, MODIFY_CUSTOM_RULE_STATUS, DELETE_CUSTOM_RULE } from '@/constants'
 import { POLICY_RULE_ACTION_ARR, POLICY_RULE_ACTION, MATCH_KEY, LOGIC_SYMBOL, COMMON_ERROR } from '../../constants'
 import Rule from '../model/rule'
 import { flatObj } from '@/utils'
@@ -140,6 +154,18 @@ export default {
     }
   },
   methods: {
+    delRule(rule) {
+      rule.delDialog = false
+      this.axios.post(DELETE_CUSTOM_RULE, {
+        Version: '2018-01-25',
+        Domain: this.domain.Domain,
+        RuleId: rule.RuleId,
+      }).then(resp => {
+        this.generalRespHandler(resp, () => {
+          this.getCustomRules()
+        }, COMMON_ERROR, '删除成功')
+      })
+    },
     switchStatus(rule) {
       rule.StatusBool = !rule.StatusBool
       this.axios.post(MODIFY_CUSTOM_RULE_STATUS, {
@@ -194,6 +220,7 @@ export default {
           const ruleNames = []
           RuleList.forEach(rule => {
             rule.StatusBool = !!Number(rule.Status)
+            rule.delDialog = false
             ruleNames.push(rule.Name)
           })
           this.ruleNames = ruleNames
@@ -257,6 +284,18 @@ export default {
 .actions {
   button {
     padding: 0;
+  }
+}
+.prpoDialog{
+  text-align:center;
+  h1{
+    font-size:14px;
+    font-weight: 600;
+    color:#000;
+    margin-top:16px;
+  }
+  p{
+    margin:16px 0;
   }
 }
 </style>

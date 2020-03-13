@@ -11,11 +11,12 @@
           <div v-else style="width: 100px; height: 100px; margin-right: 20px; border: 1px solid #ddd;"></div>
           <el-upload
             class="upload-demo"
-            action=""
+            action="/"
             accept=".png"
             :before-upload="beforeUpload"
             list-type="picture"
             :show-file-list="false"
+            :auto-upload="false"
           >
             <el-button size="small" type="primary">{{$t('CSS.watermark.16')}}</el-button>
             <div slot="tip" class="el-upload__tip">{{$t('CSS.watermark.14')}}</div>
@@ -176,7 +177,6 @@ export default {
         Body: file, // 上传文件对象
       },
       (err, data) => {
-        console.log(err, data)
         this.ruleForm.PictureUrl = `https://${data.Location}`
       },
     )

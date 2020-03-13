@@ -113,7 +113,7 @@
     <el-dialog
       :title="playUrl"
       :visible.sync="visible"
-      destroy-on-close
+      @close="playUrl=''"
       width="840px"
     >
       <test-stream :stream="stream" :visible="visible" :url.sync="playUrl" />
@@ -272,7 +272,7 @@ export default {
       });
     },
     doFilter() {
-      this.currentPage = 1;
+      this.pageNum = 1;
       this.$nextTick(() => this.onTypeChange(this.type));
     },
     handleSizeChange(val) {
@@ -349,5 +349,11 @@ export default {
     width: 100% !important;
     height: 30px !important;
   }
+}
+::v-deep .el-dialog__title {
+  line-height: 16px;
+  font-size: 14px;
+  color: #000;
+  font-weight: 700;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="container">
       <div class="refesher">
-        <i class="el-icon-refresh"></i>
+        <i class="el-icon-refresh" @click="refresh"></i>
       </div>
       <el-row class="main">
         <el-row type="flex">
@@ -59,13 +59,13 @@
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">域名</el-col>
               <el-col>
-                {{domain.Domain}}
+                {{domain.Domain}} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="domain.Domain" />
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
               <el-col class="subText" :span="4">ID</el-col>
               <el-col>
-                {{domain.DomainId}}
+                {{domain.DomainId}}1212 <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="domain.DomainId" />
               </el-col>
             </el-row>
             <el-row type="flex" :gutter="20" align="middle" justify="center">
@@ -227,10 +227,7 @@ export default {
   watch: {
     domain(n) {
       if (n) {
-        loading = this.$loading()
-        this.getWebShellStatus(n)
-        this.getAreaBan(n)
-        this.getAreaBanSupport()
+        this.init(n)
       }
     },
   },
@@ -238,6 +235,23 @@ export default {
     addressBan,
   },
   methods:{
+    onCopy() {
+      this.$message({
+        message: '複製成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    },
+    refresh() {
+      this.init(this.domain)
+    },
+    init(domain) {
+      loading = this.$loading()
+      this.getWebShellStatus(domain)
+      this.getAreaBan(domain)
+      this.getAreaBanSupport()
+    },
     onChangeStatus(status) {
        this.domain.statusBool = !status
       if (status) {
@@ -394,5 +408,11 @@ export default {
 }
 .el-icon-success {
   color: rgb(93, 186, 107);
+}
+.el-icon-refresh {
+  cursor: pointer;
+}
+.el-icon-copy-document {
+  cursor: pointer;
 }
 </style>

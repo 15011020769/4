@@ -18,10 +18,11 @@
         >
           <div class="step2" v-show="active == 1">
             <el-form-item label="用戶名稱" required>
-              <el-input v-model="ruleForm.Name" style="width: 330px" :placeholder="$t('CAM.userList.userNamePlaceholder')"></el-input>
+              <el-input v-model="ruleForm.Name" style="width: 330px" placeholder="請輸入用戶名"></el-input>
+              <p style="color: #888;">支持數字字母漢字下劃線和+=,.@-   長度1-64</p>
               <!-- <table width="100%" boder="1" cellspacing="0" cellpadding="1">
                 <thead>
-                  <tr>
+                  <tr>/^[\u4e00-\u9fa5\da-zA-Z_\+=,\.!@-]{1,64}$/
                     <td width="280">
                       {{$t('CAM.userList.userName')}}
                       <span style="color:#e54545;">*</span>
@@ -543,10 +544,10 @@ export default {
             type: "error",
             duration: 0
           });
-        } else if (!this.ruleForm.Name) {
+        } else if (!this.ruleForm.Name || !/^[\u4e00-\u9fa5\da-zA-Z_\+=,\.@-]{1,64}$/.test(this.ruleForm.Name)) {
           this.$message({
             showClose: true,
-            message: "用戶名不能為空",
+            message: "用戶名格式錯誤",
             type: "error",
             duration: 0
           });

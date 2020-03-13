@@ -58,7 +58,7 @@ export default {
         color: ["#006eff"],
         grid: {
           left: '3%',
-          right: '4%',
+          right: '8%',
           bottom: '6%',
           top: '14%',
           containLabel: true

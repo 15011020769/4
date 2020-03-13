@@ -72,6 +72,7 @@
 <script>
 import { MODIFY_SOURCE_STREAM_INFO, CLOSE_SOURCE_STREAM } from '@/constants'
 import { CSSErrorTips } from '../../components/CSSErrorTips'
+import { isValidIPAddressNew } from '@/utils'
 
 export default {
   props: {
@@ -124,53 +125,43 @@ export default {
 
   methods: {
     save () {
+      const regYuMing = /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
+      const { resource } = this
+      const { SourceServerType, SourceServerAddress, CdnStreamFormat, Status, SourceStreamFormat } = resource
+
+      if (!CdnStreamFormat.length) {
+        return void this.msg('請選擇CDN播放格式')
+      }
+
+      if (SourceServerType === 0) { // ip
+        if (!isValidIPAddressNew(SourceServerAddress)) {
+          return void this.msg('請輸入正確的IP')
+        }
+      } else { // 域名
+        if (!regYuMing.test(SourceServerAddress)) {
+          return void this.msg('請輸入正確的域名')
+        }
+      }
+
       let req = {
         DomainName: this.$route.query.Name,
         Version: '2018-08-01'
       }
       let url = CLOSE_SOURCE_STREAM // 关闭源站设置
-      if (this.resource.Status) { // 如果打开直接修改
+      if (Status) { // 如果打开直接修改
         url = MODIFY_SOURCE_STREAM_INFO
         req = {
           ...req,
-          'SourceServerAddress.0': this.resource.SourceServerAddress,
-          SourceServerType: this.resource.SourceServerType,
-          SourceStreamFormat: this.resource.SourceStreamFormat
+          'SourceServerAddress.0': SourceServerAddress,
+          SourceServerType,
+          SourceStreamFormat,
         }
-        this.resource.CdnStreamFormat.forEach((cdn, i) => {
+        CdnStreamFormat.forEach((cdn, i) => {
           req[`CdnStreamFormat.${i}`] = cdn
         })
       }
 
-      let regIP = /^((([1-9][0-9])|([0-9])|((1[0-9][0-9])|(2[0-4][0-9])|(25[0-5])))\.){3}(([1-9][0-9])|([0-9])|((1[0-9][0-9])|(2[0-4][0-9])|(25[0-5])))$/
-      let regYuMing = /^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$/
-
-      if (this.resource.SourceServerType == 0 && !regIP.test(this.resource.SourceServerAddress)) {
-        this.msg('请输入ip', 'error')
-        this.isSureIP = false
-      } else {
-        this.isSureIP = true
-        if (this.resource.SourceServerType == 1 && !regYuMing.test(this.resource.SourceServerAddress)) {
-          this.msg('请输入域名', 'error')
-          this.isSureYM = false
-        } else {
-          this.isSureYM = true
-          if (this.resource.CdnStreamFormat.length === 0) {
-            this.msg('请选择CDN播放格式', 'error')
-            this.isSureCDN = false
-          } else {
-            this.isSureCDN = true
-            if (this.resource.SourceServerAddress === '') {
-              this.msg('源站地址为空', 'error')
-              this.isSureNULL = false
-            } else {
-              this.isSureNULL = true
-            }
-          }
-        }
-      }
-      if (this.isSureIP && this.isSureYM && this.isSureCDN && this.isSureNULL) {
-        this.axios.post(url, req)
+      this.axios.post(url, req)
           .then(res => {
             if (res.Response.Error) {
               let ErrTips = {}
@@ -189,7 +180,6 @@ export default {
               this.$emit('success')
             }
           })
-      }
     },
 
     handleClose () {

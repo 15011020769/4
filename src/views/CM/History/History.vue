@@ -62,7 +62,7 @@
                       </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="告警内容" width="180">
+                  <el-table-column prop label="告警内容" width="150">
                     <template slot-scope="scope">
                       <el-tooltip
                         class="item"
@@ -76,17 +76,17 @@
                       </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="持续时长" width="180">
+                  <el-table-column prop label="持续时长" width="120">
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
-                  <el-table-column prop label="告警渠道">
-                    <!-- <template slot-scope="scope">{{scope.row}}</template> -->
+                  <el-table-column prop label="告警渠道" width="130">
+                    <template slot-scope="scope">邮件、短信</template>
                   </el-table-column>
-                  <el-table-column prop label="告警状态" width="180">
+                  <el-table-column prop label="告警状态" width="100">
                     <template slot-scope="scope">
-                      <span v-if="scope.row.Statue==0" style="color:red">未恢复</span>
-                      <span v-if="scope.row.Statue==1" style="color:green">已恢复</span>
-                      <span v-if="scope.row.Statue==2" style="color:#ccc">不知道参数</span>
+                      <span v-if="scope.row.Status==0" style="color:#e54545">未恢复</span>
+                      <span v-else-if="scope.row.Status==1" style="color:#0abf5b">已恢复</span>
+                      <span v-else style="color:#ccc">数据不足</span>
                     </template>
                   </el-table-column>
                   <el-table-column prop label="结束时间" width="180">
@@ -105,12 +105,23 @@
                   </el-table-column>
                   <el-table-column prop label="告警类型">
                     <template slot-scope="scope" v-if="scope.row.AlarmType==0">指标</template>
+                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==2">产品事件</template>
+                    <template slot-scope="scope" v-else-if="scope.row.AlarmType==3">平台事件</template>
                   </el-table-column>
-                  <el-table-column prop label="策略类型">
-                    <!-- <template slot-scope="scope">{{scope.row.}}</template> -->
+                  <el-table-column prop label="策略类型" width="180">
+                    <template slot-scope="scope">
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        content="策略类型: 云服务器-基础监控策略"
+                        placement="bottom-start"
+                      >
+                        <span v-if="scope.row.ViewName=='cvm_device'">云服务器-基础监控策略</span>
+                      </el-tooltip>
+                    </template>
                   </el-table-column>
 
-                  <el-table-column prop label="策略名称" width="140">
+                  <el-table-column prop label="策略名称" width="100">
                     <template slot-scope="scope">
                       <a @click="setStrategy(scope.row)">{{scope.row.GroupName}}</a>
                     </template>
@@ -120,7 +131,7 @@
                       <div v-if="scope.row.Vpc=='1'">VPC网络</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="所属项目" width="180">
+                  <el-table-column prop label="所属项目" width="120">
                     <template slot-scope="scope">{{scope.row.ProjectName}}</template>
                   </el-table-column>
                   <el-table-column prop label="所属实例组" width="180">
@@ -169,7 +180,7 @@ import buymsg from "../components/buymsg";
 import XTimeX from "./components/TimeN";
 import Dialog from "./components/custom"; //配置表格显示参数
 
-import moment from 'moment'//日期格式js
+import moment from "moment"; //日期格式js
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import { BASICS_ALARM_LIST } from "@/constants/CM-lxx.js";
@@ -280,8 +291,8 @@ export default {
     },
     //获取数据
     getBasicsList(val) {
-      if(!val){
-         return;
+      if (!val) {
+        return;
       }
       // console.log(val);
       this.value = val[1];
@@ -292,13 +303,13 @@ export default {
         Module: "monitor"
       };
       params.ObjLike = this.input;
-      params.StartTime = Date.parse(val[0].StartTIme)/1000;   //开始时间戳
-      params.EndTime = Date.parse(val[0].EndTIme)/1000;   //结束时间戳
+      params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
+      params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
-        // console.log(res.Response.Alarms, "数据");
+        console.log(res.Response.Alarms, "数据");
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
-          this.TotalCount=res.Response.Alarms.length;
+          this.TotalCount = res.Response.Alarms.length;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
         } else {

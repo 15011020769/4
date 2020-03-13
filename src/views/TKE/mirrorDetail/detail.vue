@@ -10,7 +10,7 @@
           </el-form-item>
           <el-form-item label="仓库地址">
             <div class="tke-form-item_text"><span>{{server}}/{{name}}</span>
-            <!-- <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i> -->
+            <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i>
             </div>
           </el-form-item>
           <el-form-item label="描述">
@@ -40,7 +40,8 @@
           <el-form :model="forminput" ref="forminput" :rules="rules">
             <el-form-item label="描述" :label-width="formLabelWidth"  prop="textarea"
             :rules="[
-              { max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' }
+              { max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' },
+              { required: true, message: '描述不能为空', trigger: 'blur' }
             ]" class="tke-form">
                 <el-input
                   type="textarea"
@@ -53,7 +54,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+            <el-button @click="resetForm">取 消</el-button>
             <el-button type="primary" @click="submitForm('forminput')">确 定</el-button>
           </div>
         </el-dialog>
@@ -84,7 +85,8 @@ export default {
       formLabelWidth: '100px',
       rules:{
          textarea: [
-          { max: 1000, message: '镜像名称不能超过1000个字符', trigger: 'blur' },
+          { max: 1000, message: '描述不能超过1000个字符', trigger: 'blur' },
+          { required: true, message: '描述不能为空', trigger: 'blur' },
         ]
       }
     }
@@ -108,7 +110,7 @@ export default {
     submitForm (formName) {
       console.log(formName)
       this.$refs[formName].validate((valid) => {
-        if (valid) {
+        if (valid && this.forminput.textarea) {
           this.dialogFormVisible2 = !valid
           // this.description = this.forminput.textarea
           // console.log(this.description)
@@ -118,6 +120,10 @@ export default {
           return false
         }
       })
+    },
+    resetForm(){
+      this.dialogFormVisible2 = false
+      this.$refs[forminput].resetFields();
     },
     getEditTwo () {
       this.dialogFormVisible2 = true

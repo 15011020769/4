@@ -70,10 +70,10 @@ export default {
     // NewLinkages
   },
   props: {
-    Rules: {
-      type: Object,
-      default: () => []
-    }
+    // Rules: {
+    //   type: Object,
+    //   default: () => []
+    // }
   },
   created() {},
   methods: {

@@ -43,11 +43,7 @@
             <div class="left">
               <div class="left-main border">
                 <div class="seek" style="">
-                  <el-select
-                    v-model="searchSelectProject"
-                    slot="prepend"
-                    placeholder="请选择"
-                  >
+                  <el-select v-model="searchSelectProject" placeholder="请选择">
                     <el-option
                       v-for="item in projectOptions"
                       :key="item.projectId"
@@ -56,11 +52,7 @@
                     >
                     </el-option>
                   </el-select>
-                  <el-select
-                    v-model="searchSelect"
-                    slot="prepend"
-                    placeholder="请选择"
-                  >
+                  <el-select v-model="searchSelect" placeholder="请选择">
                     <el-option
                       v-for="item in selectOptions"
                       :key="item.value"
@@ -74,7 +66,11 @@
                     v-model="searchInput"
                     class="input-with-select"
                   >
-                    <el-button slot="append" icon="el-icon-search"></el-button>
+                    <el-button
+                      slot="append"
+                      icon="el-icon-search"
+                      @click="ListInit"
+                    ></el-button>
                   </el-input>
                 </div>
                 <el-table
@@ -142,12 +138,16 @@
                             {{ scope.row.PublicIpAddresses[0] }}(外网)
                           </p>
                         </div>
-                        <div>
-                          <i
-                            class="el-icon-error ml5"
-                            @click="DeleteList(scope.row)"
-                          ></i>
-                        </div>
+                      </div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column>
+                    <template slot-scope="scope">
+                      <div class="resses">
+                        <i
+                          class="el-icon-error ml5"
+                          @click="DeleteList(scope.row)"
+                        ></i>
                       </div>
                     </template>
                   </el-table-column>
@@ -168,7 +168,11 @@
 <script>
 import GroupingType from "@/components/GroupingType";
 import { ErrorTips } from "@/components/ErrorTips";
-import { TKE_EXIST_NODES, ALL_PROJECT } from "@/constants";
+import {
+  TKE_EXIST_NODES,
+  ALL_PROJECT,
+  CM_GROUPING_NEWLY_BUILD
+} from "@/constants";
 export default {
   name: "msg",
   data() {
@@ -267,11 +271,47 @@ export default {
       };
       param["Filters.0.Name"] = "project-id";
       param["Filters.0.Values.0"] = this.searchSelectProject;
+      if (this.searchSelect == 1 && this.searchInput != "") {
+        param["Filters.1.Name"] = "instance-id";
+        param["Filters.1.Values.0"] = this.searchInput;
+      } else if (this.searchSelect == 2 && this.searchInput != "") {
+        param["Filters.1.Name"] = "private-ip-address";
+        param["Filters.1.Values.0"] = this.searchInput;
+      } else if (this.searchSelect == 3 && this.searchInput != "") {
+        param["Filters.1.Name"] = "instance-name";
+        param["Filters.1.Values.0"] = this.searchInput;
+      }
+      if (this.searchSelect == "") {
+        if (this.searchInput != "") {
+          if (this.searchInput.slice(0, 4) === "ins-") {
+            this.searchSelect = "1";
+            param["Filters.1.Name"] = "instance-id";
+            param["Filters.1.Values.0"] = this.searchInput;
+          } else {
+            this.searchSelect = "3";
+            param["Filters.1.Name"] = "instance-name";
+            param["Filters.1.Values.0"] = this.searchInput;
+          }
+        }
+      }
       await this.axios.post(TKE_EXIST_NODES, param).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.InstanceSet;
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            InternalServerError: "操作内部错误。",
+            InvalidFilter: "无效的过滤器。",
+            "InvalidFilterValue.LimitExceeded": "Filter参数值数量超过限制。",
+            "InvalidHostId.Malformed":
+              "无效CDH ID。指定的CDH ID格式错误。例如ID长度错误host-1122。",
+            "InvalidInstanceId.Malformed":
+              "无效实例ID。指定的实例ID格式错误。例如实例ID长度错误ins-1122。",
+            InvalidParameter: "无效参数。参数不合要求或者参数不被支持等。",
+            InvalidParameterValue:
+              "无效参数值。参数值格式错误或者参数值不被支持等。",
+            "InvalidParameterValue.LimitExceeded": "参数值数量超过限制。",
+            "InvalidZone.MismatchRegion": "指定的zone不存在。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -282,7 +322,58 @@ export default {
         }
       });
     },
-    save() {},
+    // 保存
+    save() {
+      console.log(this.groupingType);
+      var _ViewName = "";
+      console.log(this.groupingType.length);
+      if (this.groupingType.length > 0) {
+        _ViewName = this.groupingType[this.groupingType.length - 1];
+      }
+      console.log(_ViewName);
+      let param = {
+        GroupName: this.groupingName,
+        Version: "2018-07-24",
+        Module: "monitor",
+        ViewName: _ViewName
+      };
+      console.log(this.multipleSelection);
+      for (let i in this.multipleSelection) {
+        param["InstanceList." + i + ".Region"] = "ap-taipei";
+        param["InstanceList." + i + ".Dimensions"] = {
+          unInstanceId: this.multipleSelection[i].InstanceId
+        };
+        param["InstanceList." + i + ".EventDimensions"] = {
+          uuid: this.multipleSelection[i].Uuid
+        };
+      }
+      this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },

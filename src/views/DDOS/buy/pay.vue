@@ -30,20 +30,23 @@
               </tr>
               <tr class="t-body" colspan="0" aria-rowspan="0">
                 <td>
-                  <span>高防IP專業版新購</span>
+                  <span v-if="allData1.goodsId === 100615">高防IP專業版新購</span>
+                  <span v-if="allData1.goodsId === 100616">高防IP專業版續費</span>
+                  <span v-if="allData1.goodsId === 100617">高防IP專業版升級</span>
                 </td>
                 <td>
-                  <p><span>地域{{allData1.address}}</span></p>
-                  <p><span>防護帶寬峰值：{{allData1.savePeak}}Gbps</span></p>
-                  <p><span>彈性防護峰值：{{allData1.elasticPeak}}Gbps</span></p>
-                  <p><span>自動續約：{{allData1.autoPay}}</span></p>
-                  <p><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
-                  <p><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
-                  <p><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
-                  <p><span>轉發規則數(個)：{{allData1.shareNum}}</span></p>
+                  <p v-if="allData1.address!==''"><span>地域{{allData1.address}}</span></p>
+                  <p v-if="allData1.savePeak!==''"><span>防護帶寬峰值：{{allData1.savePeak}}Gbps</span></p>
+                  <p v-if="allData1.elasticPeak!==''"><span>彈性防護峰值：{{allData1.elasticPeak}}Gbps</span></p>
+                  <p v-if="allData1.autoPay!==''"><span>自動續約：{{allData1.autoPay}}</span></p>
+                  <p v-if="allData1.BusinessBroadband!==''"><span>業務寬頻(Mbps)：{{allData1.BusinessBroadband}}</span></p>
+                  <p v-if="allData1.httpQPS!==''"><span>HTTP(QPS)：{{allData1.httpQPS}}</span></p>
+                  <p v-if="allData1.httpsQPS!==''"><span>HTTPS(QPS)：{{allData1.httpsQPS}}</span></p>
+                  <p v-if="allData1.shareNum!==''"><span>轉發規則數(個)：{{allData1.shareNum}}</span></p>
                 </td>
                 <td>
-                  <span>{{this.showPrice(allData1.payMoney,2)}}圓/月</span>
+                  <span v-if="allData1.goodsId === 100617">-</span>
+                  <span v-else>{{this.showPrice(allData1.payMoney/allData1.payTimeNum,2)}}圓/月</span>
                 </td>
                 <td>
                   <span>1</span>
@@ -52,7 +55,7 @@
                   <span>預付費</span>
                 </td>
                 <td>
-                  <span>{{allData1.payTime}}</span>
+                  <span>{{allData1.payTimeNum}}個月</span>
                 </td>
                 <td>
                   <span>無</span>
@@ -141,26 +144,27 @@ export default{
         Version: "2018-07-09",
         Region: "ap-taipei",
       }
-      let GoodsDetail = {
-        bandwidth: this.allData1.savePeak, // 保底带宽
-        gfbandwidth: this.allData1.BusinessBroadband, // 业务带宽
-        rule_count: 60, // 转发规则数
-        pid: "14306",
-        timeSpan: this.allData1.payTimeNum, // 购买时长
-        timeUnit: "m"
-      };
-      let json = JSON.stringify(GoodsDetail);
+      // let GoodsDetail = {
+      //   bandwidth: this.allData1.savePeak, // 保底带宽
+      //   gfbandwidth: this.allData1.BusinessBroadband, // 业务带宽
+      //   rule_count: this.allData1.shareNum, // 转发规则数
+      //   pid: "14306",
+      //   timeSpan: this.allData1.payTimeNum, // 购买时长
+      //   timeUnit: "m"
+      // };
+      // let json = JSON.stringify(GoodsDetail);
       let Goods = [
         {
           RegionId: 39,
           ZoneId: 0,
-          GoodsCategoryId: 100615,
+          GoodsCategoryId: this.allData1.goodsId,
           // Currency: "CNY",
           GoodsNum: 1,
           PayMode: 1,
           ProjectId: 0,
           Platform: 1,
-          GoodsDetail: json
+          GoodsDetail: this.allData1.goodsInfo
+          // GoodsDetail: json
         }
       ]
       Goods.forEach((item, i) => {
@@ -170,12 +174,12 @@ export default{
         })
       })
       this.loading = true
-       this.active++
+      this.active++
       this.axios.post(GENERATE_DEALS, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
             this.OrderIds = res.Response.OrderIds
-            this.PayDeals()
+            // this.PayDeals()
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);

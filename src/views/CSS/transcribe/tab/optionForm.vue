@@ -48,6 +48,11 @@
                     ? undefined
                     : tableParams[scope.row.paramName].RecordInterval
                 "
+                @input="
+                  tableParams[scope.row.paramName].RecordInterval = tableParams[
+                    scope.row.paramName
+                  ].RecordInterval.replace(/[^\d]/g, '')
+                "
                 :disabled="scope.row.TemplateName === 'HLS'"
               />
             </template>
@@ -57,6 +62,11 @@
               <el-input
                 v-model="tableParams[scope.row.paramName].StorageTime"
                 placeholder="0~1080天，0为永久保存"
+                @input="
+                  tableParams[scope.row.paramName].StorageTime = tableParams[
+                    scope.row.paramName
+                  ].StorageTime.replace(/[^\d]/g, '')
+                "
               />
             </template>
           </el-table-column>
@@ -66,6 +76,12 @@
                 v-if="scope.row.TemplateName === 'HLS'"
                 placeholder="1-300s，0為不續錄"
                 v-model="tableParams.HlsSpecialParam.FlowContinueDuration"
+                @input="
+                  tableParams.HlsSpecialParam.FlowContinueDuration = tableParams.HlsSpecialParam.FlowContinueDuration.replace(
+                    /[^\d]/g,
+                    ''
+                  )
+                "
               />
               <el-input v-else disabled placeholder="不支持續錄" />
             </template>
@@ -101,6 +117,10 @@ let ErrTips = {
   "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
   "UnsupportedOperation.OssReject": "Oss拒絕該操作"
 };
+
+const defaultStorageTime = 0;
+const defaultRecordInterval = 30;
+const defaultFlowContinueDuration = 0;
 
 export default {
   name: "optionForm",
@@ -158,6 +178,7 @@ export default {
           keyArr.forEach(key => {
             Object.keys(this.tableParams[key]).forEach(_key => {
               sortParams[`${key}.${_key}`] = this.getDefaultValueForEmptyInput(
+                _key,
                 this.tableParams[key][_key]
               );
             });
@@ -168,7 +189,6 @@ export default {
           }
 
           Object.keys(sortParams).forEach(element => {
-
             let eleString = element.toString();
 
             if (eleString.endsWith("RecordInterval")) {
@@ -176,9 +196,9 @@ export default {
             }
 
             if (eleString.endsWith("StorageTime")) {
-              sortParams[eleString] = parseInt(sortParams[eleString]) * 3600 * 24;
+              sortParams[eleString] =
+                parseInt(sortParams[eleString]) * 3600 * 24;
             }
-
           });
 
           const params = Object.assign(sortParams, {
@@ -213,16 +233,16 @@ export default {
         return false;
       }
 
+      if (!this.isPositiveNumber(parameters["Mp4Param.StorageTime"])) {
+        this.$message.error("MP4錄製文件時長應為正整數");
+        return false;
+      }
+
       const maxStorageSeconds = 1080; // 秒
       const maxHLSFlowContinueDuration = 300; // 秒
 
       // 如果启用了HLS
       if (parameters["HlsParam.Enable"] === 1) {
-        if (!this.isPositiveNumber(parameters["HlsParam.StorageTime"])) {
-          this.$message.error("HLS文件保存時長應為正整數");
-          return false;
-        }
-
         if (parameters["HlsParam.StorageTime"] > maxStorageSeconds) {
           this.$message.error("HLS文件保存時長範圍0~1080天");
           return false;
@@ -236,7 +256,6 @@ export default {
           this.$message.error("HLS續錄超時時長應為正整數");
           return false;
         }
-
         if (
           parameters["HlsSpecialParam.FlowContinueDuration"] >
             maxHLSFlowContinueDuration ||
@@ -264,9 +283,8 @@ export default {
           this.$message.error("MP4錄製文件時長範圍5~120分鐘");
           return false;
         }
-
-        if (!this.isPositiveNumber(parameters["Mp4Param.StorageTime"])) {
-          this.$message.error("MP4錄製文件時長應為正整數");
+        if (!this.isPositiveNumber(parameters["HlsParam.StorageTime"])) {
+          this.$message.error("HLS文件保存時長應為正整數");
           return false;
         }
 
@@ -278,7 +296,6 @@ export default {
 
       // 如果启用了FLV
       if (parameters["FlvParam.Enable"] === 1) {
-
         if (!this.isPositiveNumber(parameters["FlvParam.RecordInterval"])) {
           this.$message.error("FLV錄製文件時長應為正整數");
           return false;
@@ -305,7 +322,6 @@ export default {
 
       // 如果启用了AAC
       if (parameters["AacParam.Enable"] === 1) {
-
         if (!this.isPositiveNumber(parameters["AacParam.RecordInterval"])) {
           this.$message.error("ACC錄製文件時長應為正整數");
           return false;
@@ -366,11 +382,32 @@ export default {
     },
 
     handleSelectionChange(e) {
+      // 先清空所有的选中
       this.tableData.forEach(item => {
         this.tableParams[item.paramName].Enable = 0;
       });
+
+      // 选中指定项
       e.forEach(item => {
         this.tableParams[item.paramName].Enable = 1;
+      });
+
+      // 根据选中项，配置默认值，如果已填写则不用设置默认值
+      this.tableData.forEach(item => {
+        let Enable = this.tableParams[item.paramName].Enable;
+
+        // 设置已选中的默认值
+        if (Enable === 1) {
+          let RecordInterval = this.tableParams[item.paramName].RecordInterval;
+          let StorageTime = this.tableParams[item.paramName].StorageTime;
+
+          this.tableParams[item.paramName].RecordInterval = !RecordInterval
+            ? defaultRecordInterval
+            : RecordInterval;
+          this.tableParams[item.paramName].StorageTime = !StorageTime
+            ? defaultStorageTime
+            : StorageTime;
+        }
       });
     },
 
@@ -425,12 +462,19 @@ export default {
     isPositiveNumber(val) {
       return /^[+]{0,1}(\d+)$/.test(val);
     },
-    getDefaultValueForEmptyInput(text) {
-      if (text.length === 0) {
-        return 0;
+    getDefaultValueForEmptyInput(_key, text) {
+      if (typeof text === "string" && text.length === 0) {
+        if (_key == "StorageTime") {
+          return defaultStorageTime;
+        } else {
+          return defaultRecordInterval;
+        }
       } else {
         return text;
       }
+    },
+    handleInput(e) {
+      console.log(e);
     }
   }
 };

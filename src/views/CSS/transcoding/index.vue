@@ -11,7 +11,8 @@
       <div class="explain">
         <p>
           範本設置完成，需關聯推流域名方可生效，請點擊
-          <router-link to="/domainManagement">域名管理</router-link>進行關聯設置。
+          <router-link to="/domainManagement">域名管理</router-link
+          >進行關聯設置。
           <!-- <a href="#">参考文档</a> -->
           範本配置完後續大約5分鐘生效
         </p>
@@ -25,15 +26,30 @@
               v-for="item in configList"
               @click="onSelectRecording(item)"
               :key="item.TemplateId"
-              :class="selectItem.TemplateId === item.TemplateId && 'is-selected'"
-            >{{item.TemplateName}}</li>
+              :class="
+                selectItem.TemplateId === item.TemplateId && 'is-selected'
+              "
+            >
+              {{ item.TemplateName }}
+            </li>
           </ul>
         </div>
         <div class="right" v-show="showRight">
-          <OptionForm :formShow.sync="formShow" :selectItem="selectItem" v-if="formShow" />
-          <ConfigDetail v-if="!formShow" :selectItem="selectItem" :formShow.sync="formShow" />
+          <OptionForm
+            :formShow.sync="formShow"
+            :selectItem="selectItem"
+            v-if="formShow"
+          />
+          <ConfigDetail
+            v-if="!formShow"
+            :selectItem="selectItem"
+            :formShow.sync="formShow"
+          />
         </div>
-        <DeleteModal :modalVisible.sync="modalVisible" :domainName="selectItem.TemplateName" />
+        <DeleteModal
+          :modalVisible.sync="modalVisible"
+          :domainName="selectItem.TemplateName"
+        />
       </div>
     </div>
   </div>
@@ -100,7 +116,10 @@ export default {
     },
 
     handleDelete() {
-      if (this.configList.length === 0) {
+      if (
+        this.configList.length === 0 ||
+        Object.keys(this.selectItem).length === 0
+      ) {
         return;
       }
 

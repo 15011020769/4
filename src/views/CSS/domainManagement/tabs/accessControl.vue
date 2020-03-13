@@ -36,6 +36,7 @@
       :visible.sync="visible"
       :title="$t('CSS.domainManagement.22')"
       width="550px"
+      destroy-on-close
     >
       <auth-config
         :authKeyInfo="playAuthKeyInfo"
@@ -109,6 +110,9 @@ export default {
       color: #000;
       float: left;
       width: calc(100% - 120px);
+      word-break: break-word;
+
+      line-height: 20px;
     }
   }
 }

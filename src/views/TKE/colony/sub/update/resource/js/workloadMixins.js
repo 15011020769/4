@@ -1,11 +1,5 @@
 import { ErrorTips } from '@/components/ErrorTips.js'
 
-
-
-
-
-
-
 // 实例内容器
 let instanceContent = {
   //数据回显添加
@@ -233,6 +227,16 @@ let caseMountPoint={
         subPath:'',
         readOnly:'false'
       })
+    },
+    deleteMountPoint(i,i2,name){
+      this.wl.instanceContent[i].mountPoint.splice(i2,1);
+      if(name!=''){
+        console.log(this.firstPointInfoData)
+        let index=this.firstPointInfoData.findIndex(item=>{
+          return item==name
+        })
+        this.firstPointInfoData.splice(index,1)
+      }
     }
 }
 // 强制满足条件
@@ -352,11 +356,61 @@ let dataReel={//数据卷
     };
     this.wl.dataJuan.push(obj);
   },
- 
-
-
 }
+let dialogMethods={
+  addConfigItem(){
+    let name='';
+    if(this.dataReelDialog.configMap.partKeyOption[0]){
+       name=this.dataReelDialog.configMap.partKeyOption[0]
+    }else{
+      name=''
+    }
+    this.dataReelDialog.configMap.items.push({
+      key:name,
+      path:'',
+      mode:'0644'
+    })
+  },
+  delConfigItem(index){
+    this.dataReelDialog.configMap.items.splice(index,1)
+  },
+  addSecretItem(){
+    let name='';
+    if(this.dataReelDialog.Secret.partKeyOption[0]){
+       name=this.dataReelDialog.Secret.partKeyOption[0]
+    }else{
+      name=''
+    }
+    this.dataReelDialog.Secret.items.push({
+      key:name,
+      path:'',
+      mode:'0644'
+    })
+  },
+  delSecretItem(index){
+    this.dataReelDialog.Secret.items.splice(index,1)
+  },
+}
+let validateAll={
+    data(){
+      return{
+        portPathRules:[{
+          validator:(rule, value, callback)=>{
+            if (value === '') {
+              callback(new Error('请再次输入密码'));
+            }else {
+              callback()
+            }
+          },
+          trigger: 'blur',
+          required: true,
+        }]
+      }
+    }
+}
+// let 
 export default {
+  ...validateAll,
   methods: {
     ...label,
     ...instanceContent,
@@ -371,6 +425,7 @@ export default {
     ...portMapping,
     ...change,
     ...dataReel,
+    ...dialogMethods,
     axiosUtils: function (res, func) {
       // func()
       if (res.info !== undefined) {

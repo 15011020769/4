@@ -125,21 +125,27 @@
         <el-tab-pane :label="$t('CSS.overview.10')" name="帶寬"></el-tab-pane>
         <el-tab-pane :label="$t('CSS.overview.11')" name="流量"></el-tab-pane>
       </el-tabs>
-      <e-line
-        :xAxis="timeData"
-        :series="series"
-        :legendText="activeName"
-        :tooltip="{
-          trigger: 'axis',
-          formatter: `{b}<br/>{a} {c}${activeName === '帶寬' ? 'Mpbs' : 'MB'}`
-        }"
-      />
+      <el-card>
+        <el-row class="iconBtn">
+          <i class="el-icon-download" @click="exportEchart"></i>
+        </el-row>
+        <e-line
+          :xAxis="timeData"
+          :series="series"
+          :legendText="activeName"
+          :tooltip="{
+            trigger: 'axis',
+            formatter: `{b}<br/>{a} {c}${activeName === '帶寬' ? 'Mpbs' : 'MB'}`
+          }"
+        />
+      </el-card>
     </div>
   </div>
 </template>
 
 <script>
 import moment from "moment";
+import XLSX from 'xlsx';
 import HeaderCom from "@/components/public/Head";
 import TimeX from "@/components/public/TimeY";
 import ELine from "../components/line";
@@ -178,7 +184,9 @@ export default {
       bandwidthData: [],
       series: [],
       fluxData: [],
-      btnload: true
+      btnload: true,
+      flux_json: [],
+      bandwidth_json: [],
     };
   },
   components: {
@@ -200,6 +208,18 @@ export default {
     }
   },
   methods: {
+    exportEchart() {
+      let json
+      if (this.activeName === "帶寬") {
+        json = this.bandwidth_json;
+      } else {
+        json = this.flux_json;
+      }
+      const ws = XLSX.utils.json_to_sheet(json);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");
+      XLSX.writeFile(wb, "統計數據.csv");
+    },
     doaminChange(checked, domain) {
       if (checked) {
         this.domainCheckedList.push(domain);
@@ -334,6 +354,7 @@ export default {
         StartTime: this.StartTime,
         EndTime: this.EndTime,
         Granularity: Number(this.granularity) / 60,
+        MainlandOrOversea: "Oversea",
       };
 
       if (this.domainCheckedListCopy.length !== this.domainData.length) {
@@ -347,14 +368,20 @@ export default {
           const times = [];
           const bandwidthData = [];
           const fluxData = [];
+          const bandwidthArr = [];
+          const fluxArr = [];
           DataInfoList.forEach(item => {
             times.push(item.Time);
             bandwidthData.push(item.Bandwidth);
             fluxData.push(item.Flux);
+            bandwidthArr.push({Time: item.Time, 'Bandwidth (Mbps)': item.Bandwidth})
+            fluxArr.push({Time: item.Time, 'Flux (MB)': item.Flux})
           });
           this.timeData = times;
           this.bandwidthData = bandwidthData;
           this.fluxData = fluxData;
+          this.bandwidth_json = bandwidthArr
+          this.flux_json = fluxArr
           if (this.activeName === "帶寬") {
             this.series = bandwidthData;
           } else {
@@ -466,5 +493,20 @@ export default {
 }
 .doamin-btn-container {
   margin-left: 20px;
+}
+.iconBtn {
+  font-size: 16px;
+  color: #888;
+  display: flex;
+  > i {
+    margin: 0 10px;
+    font-weight: 600;
+    position: absolute;
+    right: 0;
+    z-index: 11;
+  }
+  i:hover {
+    cursor: pointer;
+  }
 }
 </style>

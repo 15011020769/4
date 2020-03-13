@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-import { MODIFY_LIVE_PLAY_DOMAIN } from '@/constants'
+import { MODIFY_LIVE_PLAY_DOMAIN, MODIFY_LIVE_BAND_LIMIT } from '@/constants'
 
 import { CSSErrorTips } from '../../components/CSSErrorTips'
 export default {
@@ -65,13 +65,7 @@ export default {
       limitChangeGAT: false
     }
   },
-  watch: {
-    enable (n) {
-      if (!n) {
-        this.info = []
-      }
-    }
-  },
+
   created () {
     // console.log(this.$route.query.Status, '9999')
   },
@@ -100,8 +94,40 @@ export default {
             })
             this.$emit('handleClose', false)
           } else {
-            this.msg('保存成功', 'success')
-            this.$emit('success')
+            if (this.limitChange) {
+              const reqParam = {
+                Version: '2018-08-01',
+                DomainName: this.$route.query.Name,
+                BandLimitEnable: Number(this.enable),
+                AbroadBandLimitEnable: 0, // 港澳台启用禁用
+                AbroadBandLimitValue: 100, // 港澳台带宽
+                DomesticBandLimitEnable: 0, // 国内
+                DomesticBandLimitValue: 100,
+                GlobalBandLimitEnable: 0, // 全球
+                GlobalBandLimitValue: 100
+              }
+              this.axios.post(MODIFY_LIVE_BAND_LIMIT, reqParam)
+                .then(res => {
+                  if (res.Response.Error) {
+                    let ErrTips = {}
+                    let ErrOr = Object.assign(CSSErrorTips, ErrTips)
+
+                    this.$message({
+                      type: 'error',
+                      message: ErrOr[res.Response.Error.Code],
+                      showClose: true,
+                      duration: 0
+                    })
+                    this.$emit('handleClose', false)
+                  } else {
+                    this.msg('保存成功', 'success')
+                    this.$emit('success')
+                  }
+                })
+            } else {
+              this.msg('保存成功', 'success')
+              this.$emit('success')
+            }
           }
         })
     },

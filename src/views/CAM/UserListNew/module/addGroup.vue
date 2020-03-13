@@ -28,7 +28,6 @@
               class="inputSearchCl"
               clearable
               @keyup.enter.native="searchGroup"
-              @change="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
             </el-input>

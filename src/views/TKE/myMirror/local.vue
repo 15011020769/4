@@ -16,7 +16,11 @@
             <el-table-column prop="creationTime" label="创建时间"></el-table-column>
             <el-table-column prop="repoCount" label="操作" >
               <template slot-scope="scope">
-                <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false">删除</el-button>
+                 <!-- <el-tooltip class="item" effect="light" placement="bottom">
+                  <div slot="content" v-if="scope.row.repoCount ? true:false">镜像仓库数量不为零，不能进行删除操作</div> -->
+                  <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false">
+                    删除</el-button>
+                <!-- </el-tooltip> -->
               </template>
             </el-table-column>
         </el-table>
@@ -57,7 +61,7 @@ export default {
   data () {
     var validatePass = (rule, value, callback) => {
       // 获取命名空间是否存在的接口
-      var regex = /^[a-z0-9\.\-_]+$/g
+      var regex = /^[0-9a-z]([0-9a-z]|.|_|-){0,198}[0-9a-z]$/
       const param = {
         namespace: this.ruleForm.name
       }
@@ -90,7 +94,8 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入命名空间名称', trigger: 'blur' },
-          { min: 4, message: '命名空间不能少于4个字符', trigger: 'blur' },
+          { min: 4, message: '命名空间少于4个字符', trigger: 'blur' },
+          { max: 30, message: '命名空间不能超过30个字符', trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
         ]
       }

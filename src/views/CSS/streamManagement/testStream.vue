@@ -3,7 +3,9 @@
   </div>
 </template>
 <script>
-import { DOMAIN_LIST } from '@/constants'
+import md5 from "js-md5";
+import { DOMAIN_LIST, LIVE_DESCRIBE_LIVEPLAYAUTHKEY } from '@/constants'
+import { generatePlayAddress } from '../utils'
 export default {
   props: {
     stream: Object,
@@ -17,55 +19,57 @@ export default {
   },
   watch: {
     visible(n) {
-      if (this.visible) {
-      this.axios.post(DOMAIN_LIST, {
-        Version: "2018-08-01",
-        PageSize: 100, //分页大小，范围：10~100。默认10
-        PageNum: 1
-      })
-        .then(({ Response }) => {
-          const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
-          let domainName = '68922.liveplay.myqcloud.com'
-          if (domain) {
-            domainName = domain.Name
-          }
-          this.play(domainName)
-        })
-        .then(() => {
-          this.loading = false
-        })
-    }
+      console.log(n)
+      if (n) {
+        this.loading = true
+        this.init()
+      } else {
+        this.player && this.player.destroy()
+      }
     }
   },
   mounted() {
-    if (this.visible) {
+    this.init()
+  },
+  methods: {
+    init() {
       this.axios.post(DOMAIN_LIST, {
         Version: "2018-08-01",
         PageSize: 100, //分页大小，范围：10~100。默认10
         PageNum: 1
       })
-        .then(({ Response }) => {
-          const domain = Response.DomainList.find((domain, i) => i !==0 && domain.Status !== 0 && domain.BCName === 1)
-          let domainName = '68922.liveplay.myqcloud.com'
-          if (domain) {
-            domainName = domain.Name
-          }
-          this.play(domainName)
-        })
-        .then(() => {
-          this.loading = false
-        })
-    }
-  },
-  destroyed() {
-    this.player && this.player.destroy()
-  },
-  methods: {
-    play(domainName) {
-      // TODO计算签名
-      this.$emit('update:url', `http://${domainName}/live/${this.stream.StreamName}.flv`)
+      .then(({ Response }) => {
+        const domain = Response.DomainList.find(domain => !domain.Name.endsWith('livepush.myqcloud.com') && domain.Status !== 0 && domain.BCName === 1)
+        let domainName = ''
+        if (!domain) {
+          const defaultDomain = Response.DomainList.find(domain => domain.Name.endsWith('livepush.myqcloud.com'))
+          domainName = defaultDomain.Name.replace('livepush', 'liveplay')
+        } else {
+          domainName = domain.Name
+        }
+        let url = `http://${domainName}/live/${this.stream.StreamName}.flv`
+        this.axios
+          .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
+            Version: "2018-08-01",
+            DomainName: domainName
+          })
+          .then(res => {
+            const playKey = res.Response.PlayAuthKeyInfo
+            if (playKey.Enable === 1) {
+              var r = (new Date).getTime() / 1e3
+              var a = parseInt(r.toString()).toString(16).toUpperCase()
+              var t = md5(playKey.AuthKey + this.stream.StreamName + a)
+              url += `?txSecret=${t}&txTime=${a}`
+            } 
+            this.play(url)
+            this.loading = false
+          })
+      })
+    },
+    play(url) {
+      this.$emit('update:url', url)
       var options = {
-        flv: `http://${domainName}/live/${this.stream.StreamName}.flv`,
+        flv: url,
         autoplay: true,
         live: true,
         width: 800,

@@ -82,10 +82,10 @@ export default {
       if (this.tabIndex == 0) {
         this.getScreens()
         this.$nextTick(() => {
-          // this.$refs.tab1.init();
           this.$refs.tab1.getCharts()
         })
       } else if (this.tabIndex == 1) {
+        this.getDurations();
         this.$nextTick(() => {
           this.$refs.tab2.getCharts();
         })

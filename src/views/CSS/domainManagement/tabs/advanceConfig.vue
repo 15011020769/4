@@ -42,12 +42,13 @@
         <el-row type="flex" justify="space-between">
           <h1 class="">
             {{ $t("CSS.detailPlay.bandwidthCapping") }}配置
-            <el-tooltip
-              class="item"
-              effect="dark"
-              :content="$t('CSS.detailPlay.4')"
-              placement="right"
-            >
+            <el-tooltip class="item" effect="dark" placement="right">
+              <div slot="content">
+                {{ $t("CSS.detailPlay.4") }}<br />
+                {{ $t("CSS.detailPlay.44") }}<br />
+                {{ $t("CSS.detailPlay.444") }}<br />
+                {{ $t("CSS.detailPlay.4444") }}
+              </div>
               <i class="el-icon-info" />
             </el-tooltip>
           </h1>
@@ -240,19 +241,20 @@ import {
   DESCRIBE_LIVE_DOMAIN_CERT,
   DESCRIBE_SOURCE_STREAM_INFO,
   DOMAIN_DELTILS,
-  MODIFY_LIVE_BAND_LIMIT } from '@/constants'
-import Cert from '../model/cert'
-import BandLimit from '../model/bandLimit'
-import regionalConfigModel from '../model/regionalConfigModel'
-import sourceStationSetup from '../model/sourceStationSetup'
+  MODIFY_LIVE_BAND_LIMIT
+} from "@/constants";
+import Cert from "../model/cert";
+import BandLimit from "../model/bandLimit";
+import regionalConfigModel from "../model/regionalConfigModel";
+import sourceStationSetup from "../model/sourceStationSetup";
 
 export default {
-  data () {
+  data() {
     return {
       cert: {},
       domainInfo: {},
       bandLimit: {},
-      bandLimitRegional: '',
+      bandLimitRegional: "",
       resource: {},
       visibleHttps: false,
       visibleBandLimit: false,
@@ -263,7 +265,7 @@ export default {
       loading3: true,
       loading4: true,
       timer: undefined
-    }
+    };
   },
   components: {
     Cert,
@@ -272,150 +274,160 @@ export default {
     sourceStationSetup
   },
   filters: {
-    unit (value) {
+    unit(value) {
       if (value < 1000) {
-        return `${value} Mbps`
+        return `${value} Mbps`;
       } else if (value >= 1000 && value < 1000000) {
-        return `${value / 1000} Gbps`
+        return `${value / 1000} Gbps`;
       } else if (value >= 1000000) {
-        return `${value / 1000000} Tbps`
+        return `${value / 1000000} Tbps`;
       }
     },
-    playType (val) {
+    playType(val) {
       switch (val) {
         case 1:
-          return '中國大陸'
+          return "中國大陸";
         case 2:
-          return '全球加速'
+          return "全球加速";
         case 3:
-          return '中國港澳台地區及海外地區'
+          return "中國港澳台地區及海外地區";
       }
     }
   },
-  mounted () {
-    this.init()
+  mounted() {
+    this.init();
   },
   methods: {
-    init () {
-      this.getCert()
-      this.getRegion()
-      this.getBandLimit()
-      this.getResource()
+    init() {
+      this.getCert();
+      this.getRegion();
+      this.getBandLimit();
+      this.getResource();
     },
-    getCert () {
-      this.loading1 = true
-      this.visibleHttps = false
-      this.axios.post(DESCRIBE_LIVE_DOMAIN_CERT, {
-        Version: '2018-08-01',
-        DomainName: this.$route.query.Name
-      })
+    getCert() {
+      this.loading1 = true;
+      this.visibleHttps = false;
+      this.axios
+        .post(DESCRIBE_LIVE_DOMAIN_CERT, {
+          Version: "2018-08-01",
+          DomainName: this.$route.query.Name
+        })
         .then(({ Response }) => {
-          this.cert = Response.DomainCertInfo
+          if (Response !== undefined) {
+            this.cert = Response.DomainCertInfo;
+          }
         })
         .then(() => {
-          this.loading1 = false
+          this.loading1 = false;
+        });
+    },
+    editCert() {
+      this.visibleHttps = true;
+    },
+    getRegion() {
+      this.visibleRegional = false;
+      this.axios
+        .post(DOMAIN_DELTILS, {
+          Version: "2018-08-01",
+          DomainName: this.$route.query.Name
         })
-    },
-    editCert () {
-      this.visibleHttps = true
-    },
-    getRegion () {
-      this.visibleRegional = false
-      this.axios.post(DOMAIN_DELTILS, {
-        Version: '2018-08-01',
-        DomainName: this.$route.query.Name
-      }).then(({ Response }) => {
-        this.domainInfo = Response.DomainInfo
-      }).then(() => {
-        this.loading3 = false
-      })
-    },
-    editRegion () {
-      this.getRegion()
-      this.visibleRegional = true
-    },
-    getBandLimit () {
-      this.loading2 = true
-      this.visibleBandLimit = false
-      this.axios.post(DESCRIBE_LIVE_BAND_LIMIT, {
-        Version: '2018-08-01',
-        DomainName: this.$route.query.Name
-      })
         .then(({ Response }) => {
-          this.bandLimit = Response
+          this.domainInfo = Response.DomainInfo;
         })
         .then(() => {
-          this.loading2 = false
+          this.loading3 = false;
+        });
+    },
+    editRegion() {
+      this.getRegion();
+      this.visibleRegional = true;
+    },
+    getBandLimit() {
+      this.loading2 = true;
+      this.visibleBandLimit = false;
+      this.axios
+        .post(DESCRIBE_LIVE_BAND_LIMIT, {
+          Version: "2018-08-01",
+          DomainName: this.$route.query.Name
         })
+        .then(({ Response }) => {
+          this.bandLimit = Response;
+        })
+        .then(() => {
+          this.loading2 = false;
+        });
     },
-    editBandLimit () {
-      this.visibleBandLimit = true
+    editBandLimit() {
+      this.visibleBandLimit = true;
     },
-    getResource () {
-      this.visibleSourceStationSetup = false
-      this.axios.post(DESCRIBE_SOURCE_STREAM_INFO, {
-        Version: '2018-08-01',
-        DomainName: this.$route.query.Name
-      })
+    getResource() {
+      this.visibleSourceStationSetup = false;
+      this.axios
+        .post(DESCRIBE_SOURCE_STREAM_INFO, {
+          Version: "2018-08-01",
+          DomainName: this.$route.query.Name
+        })
         .then(({ Response }) => {
           if (!Response.Error) {
-            this.resource = Response
+            this.resource = Response;
             if (Response.CdnStreamFormat.length !== 0) {
-              this.resource.CdnStreamFormat = Response.CdnStreamFormat.join('|')
+              this.resource.CdnStreamFormat = Response.CdnStreamFormat.join(
+                "|"
+              );
             }
             // console.log(this.resource, 'resource')
           }
         })
         .then(() => {
-          this.loading4 = false
-        })
+          this.loading4 = false;
+        });
     },
     // 这是一个定时器
-    refreshResource () {
+    refreshResource() {
       this.timer = setTimeout(() => {
-        this.getResource()
-      }, 3000)
+        this.getResource();
+      }, 3000);
     },
-    editResource () {
+    editResource() {
       // this.getResource()
       if (this.resource.Status == 2) {
         this.$message({
-          message: '请等待上一次的操作关闭完成',
-          type: 'error',
+          message: "请等待上一次的操作关闭完成",
+          type: "error",
           showClose: true,
           duration: 0
-        })
+        });
       } else if (this.resource.Status == 0) {
         this.$message({
-          message: '请等待上一次的操作部署完成',
-          type: 'error',
+          message: "请等待上一次的操作部署完成",
+          type: "error",
           showClose: true,
           duration: 0
-        })
+        });
       } else {
-        this.visibleSourceStationSetup = true
+        this.visibleSourceStationSetup = true;
       }
     },
-    handleCloseRegion () {
-      this.visibleRegional = false
+    handleCloseRegion() {
+      this.visibleRegional = false;
     },
-    handleCloseSource () {
-      this.visibleSourceStationSetup = false
+    handleCloseSource() {
+      this.visibleSourceStationSetup = false;
     }
   },
   watch: {
-    resource () {
+    resource() {
       if ([0, 2].includes(this.resource.Status)) {
-        this.refreshResource()
+        this.refreshResource();
       } else {
-        clearTimeout(this.timer)
+        clearTimeout(this.timer);
       }
     }
   },
-  destroyed () {
-    this.timer && clearTimeout(this.timer)
+  destroyed() {
+    this.timer && clearTimeout(this.timer);
   }
-}
+};
 </script>
 <style lang="scss" scoped>
 .newClear:after {

@@ -21,7 +21,7 @@
           </el-table-column>
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
-              <el-button type="text" :disabled="scope.row.Status === 0 || scope.row.Count === 0" size="small" @click="downLoad(scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
+              <el-button type="text" :disabled="scope.row.Status !== '1'" size="small" @click="downLoad(scope.row)">{{t('下载', 'WAF.xz')}}</el-button>
               <el-popover
                 ref="popovers"
                 placement="bottom"
@@ -191,5 +191,11 @@ export default {
 .deleteBtn{
   border:none;
   font-size:12px;
+}
+.completed {
+  color: #0ABF5B;
+}
+.create {
+  color: #FF9D00;
 }
 </style>

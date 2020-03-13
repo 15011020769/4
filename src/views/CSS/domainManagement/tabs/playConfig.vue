@@ -142,8 +142,9 @@ export default {
           message: '请输入 StreamName'
         })
       }
+      // console.log(b.dateValue)
       var d = b.dataDateTime.format('YYYY-MM-DD')
-      var e = b.dateValue.format('HH:mm:ss')
+      var e = moment(b.dateValue).format('HH:mm:ss')
       d = d.replace(/-/g, '/')
       var h = new Date(d + ' ' + e)
       b.validTime = `${b.dataDateTime.format('YYYY-MM-DD')} ${e}`
@@ -163,6 +164,7 @@ export default {
       var g = ''
       if (d) {
         var h = (e.getTime() - 1e3 * d.AuthDelta) / 1e3
+        console.log(h)
         var i = parseInt(h).toString(16).toUpperCase()
         var j = {
           txSecret: md5(d.AuthKey + c + i),

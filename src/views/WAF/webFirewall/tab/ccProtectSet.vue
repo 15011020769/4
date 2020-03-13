@@ -22,7 +22,7 @@
         <el-col>
           <el-row type="flex" :gutter="20">
             <el-col :span="2" class="label">匹配模式</el-col>
-            <el-col>{{session && session.Category === 'match' ? '字符串模式匹配' : '位置匹配' || '未配置'}}</el-col>
+            <el-col>{{session && session.Category === 'match' ? `${t('字符串', 'WAF.zfc')}模式匹配` : '位置匹配' || '未配置'}}</el-col>
           </el-row>
         </el-col>
         <el-col>
@@ -277,6 +277,7 @@ export default {
       })
     },
     delCCRule(rule) {
+      rule.delDialog = false
       this.axios.post(DELETE_CCRULE, {
         Version: '2018-01-25',
         Domain: this.domain.Domain,
@@ -366,7 +367,7 @@ export default {
       this.dialogSessionTest = true
     },
     beforeSessionSetClose(done) {
-      this.session = undefined
+      // this.session = undefined
       done()
     },
     updateRule(rule, index) {

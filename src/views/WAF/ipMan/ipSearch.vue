@@ -29,10 +29,10 @@
       </div>
       <div class="searchResoult">
         <h1>{{t('查询', 'WAF.js')}}{{t('结果', 'WAF.jg')}}</h1>
-        <div class="newClear" v-if="ipInfo.length">
+        <div class="newClear" v-for="ip in ipInfo" :key="ip.Ip">
           <div class="newClear newList">
             <p>IP</p>
-            <p>{{ipInfo[0].Ip}}<span style="margin-left: 10px; color: #007e3b">{{currentTipsFilter(ipInfo[0].Name)}}</span></p>
+            <p>{{ip.Ip}}<span :class="'status-'+ip.Action">{{currentTipsFilter(ip.Action)}}</span></p>
           </div>
           <div class="newClear newList">
             <p>域名</p>
@@ -40,22 +40,22 @@
           </div>
           <div class="newClear newList">
             <p>{{t('拦截开始时间', 'WAF.ljkssj')}}</p>
-            <p>{{ipInfo[0].TsVersion | currentTimeFilter}}</p>
+            <p>{{ip.TsVersion | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
             <p>{{t('拦截结束时间', 'WAF.ljjssj')}}</p>
-            <p>{{ipInfo[0].ValidTs | currentTimeFilter}}</p>
+            <p>{{ip.ValidTs | currentTimeFilter}}</p>
           </div>
           <div class="newClear newList">
             <p>{{t('类别', 'WAF.lb')}}</p>
-            <p>{{currentNameFilter(ipInfo[0].Category)}}</p>
+            <p>{{currentNameFilter(ip.Category)}}</p>
           </div>
           <div class="newClear newList">
             <p>{{t('触发策略名称', 'WAF.csclmc')}}</p>
-            <p>{{ipInfo[0].Name}}</p>
+            <p>{{ip.Name}}</p>
           </div>
+          <el-button type="text" v-if="ipInfo.length" @click="addBlack(ip)">{{t('加入黑白名单', 'WAF.jrhbmd')}}</el-button>
         </div>
-        <el-button type="text" v-if="ipInfo.length" @click="addBlack">{{t('加入黑白名单', 'WAF.jrhbmd')}}</el-button>
         <span v-if="!ipInfo.length">{{textTips}}</span>
       </div>
     </div>
@@ -73,6 +73,7 @@
 <script>
 import addBlackWhite from './model/addBlackWhite'
 import { DESCRIBE_HOSTS, DESCRIBE_ACTIONED } from '@/constants'
+import { isValidIPAddressNew } from '@/utils'
 import moment from 'moment'
 export default {
   data () {
@@ -96,8 +97,7 @@ export default {
   },
   watch: {
     searchIp(n) {
-      let pattern = /((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}/g
-      this.ipTest = !pattern.test(n)
+      this.ipTest = !isValidIPAddressNew(n)
     }
   },
   methods: {
@@ -108,12 +108,12 @@ export default {
     //查询
     searchBtn(){},
     //加入黑名单
-    addBlack(){
+    addBlack(ip){
       this.editIpInfo = {
         Domain: this.ipSearch,
-        ipAddress: this.ipInfo[0].Ip,
-        blackWhiteCh: 40,
-        des: this.ipInfo[0].Name,
+        ipAddress: ip.Ip,
+        blackWhiteCh: ip.Action,
+        des: ip.Name,
         datatime: moment().add(7, 'd'),
         timeValue: moment().add(7, 'd').format('YYYY-MM-DD 23:59:59')
       }
@@ -156,8 +156,8 @@ export default {
       }
       return this.t('黑名单', 'WAF.hmd')
     },
-    currentTipsFilter(text) {
-      if (text === 'custom') {
+    currentTipsFilter(action) {
+      if (action === 40) {
         return '放通'
       }
       return this.t('拦截', 'WAF.lj')
@@ -275,5 +275,13 @@ export default {
       }
     }
   }
+}
+.status-40 {
+  color: #007e3b;
+  margin-left: 15px;
+}
+.status-42 {
+  color: #e1504a;
+  margin-left: 15px;
 }
 </style>

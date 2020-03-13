@@ -120,13 +120,12 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 
 export default {
-  data() {
-
-    let _minTime = null;
-    let _maxTime = null;
+  data () {
+    let _minTime = null
+    let _maxTime = null
 
     return {
       datetimeval: [], // 选择时间数据
@@ -136,66 +135,66 @@ export default {
       options: [
         // 默认下拉数据
         {
-          value: "300",
-          label: "5分鐘"
+          value: '300',
+          label: '5分鐘'
         },
         {
-          value: "3600",
-          label: "1小時"
+          value: '3600',
+          label: '1小時'
         }
       ],
-      value: "300", // 粒度选择值
+      value: '300', // 粒度选择值
       Start_End: {
-        StartTIme: "",
-        EndTIme: ""
+        StartTIme: '',
+        EndTIme: ''
       },
       classvalue: 1,
       pickerOptions: {
-        onPick(time) {
+        onPick (time) {
           // 如果选择了只选择了一个时间
           if (!time.maxDate) {
-            let timeRange = 30 * 24 * 60 * 60 * 1000; // 腾讯接口要求不能超过31天
-            _minTime = time.minDate.getTime() - timeRange; // 最小时间
+            let timeRange = 30 * 24 * 60 * 60 * 1000 // 腾讯接口要求不能超过31天
+            _minTime = time.minDate.getTime() - timeRange // 最小时间
 
-            const tempMaxTime = time.minDate.getTime() + timeRange; // 最大时间
-            const now = Date.now();
+            const tempMaxTime = time.minDate.getTime() + timeRange // 最大时间
+            const now = Date.now()
 
             // 不超过今天
             if (tempMaxTime > now) {
-              _maxTime = now;
+              _maxTime = now
             } else {
-              _maxTime = tempMaxTime;
+              _maxTime = tempMaxTime
             }
             // 如果选了两个时间，那就清空本次范围判断数据，以备重选
           } else {
-            _minTime = _maxTime = null;
+            _minTime = _maxTime = null
           }
         },
-        disabledDate(time) {
+        disabledDate (time) {
           // onPick后触发
           // 该方法会轮询当3个月内的每一个日期，返回false表示该日期禁选
           if (_minTime && _maxTime) {
-            return time.getTime() < _minTime || time.getTime() > _maxTime;
+            return time.getTime() < _minTime || time.getTime() > _maxTime
           } else if (_minTime == null && _maxTime == null) {
             // 如果都没有选择要限制不能笔今天更晚的日期
-            const now = Date.now();
-            return time.getTime() > now;
+            const now = Date.now()
+            return time.getTime() > now
           }
         }
       },
       startTimePickerOptions: {
-        disabledDate(time) {
-          const now = Date.now();
-          return time.getTime() > now;
+        disabledDate (time) {
+          const now = Date.now()
+          return time.getTime() > now
         }
       },
       endTimePickerOptions: {
-        disabledDate(time) {
-          const now = Date.now();
-          return time.getTime() > now;
+        disabledDate (time) {
+          const now = Date.now()
+          return time.getTime() > now
         }
       }
-    };
+    }
   },
   props: {
     classsvalue: {
@@ -207,166 +206,165 @@ export default {
       default: true
     }
   },
-  created() {
-    this.TimeChoice(1);
+  created () {
+    this.TimeChoice(1)
   },
   methods: {
-    //点击时间按钮
-    TimeChoice(time) {
-      this.classvalue = time;
-      this.Initialization();
-      this.value = "300";
+    // 点击时间按钮
+    TimeChoice (time) {
+      this.classvalue = time
+      this.Initialization()
+      this.value = '300'
       let options = [
         {
-          value: "300",
-          label: "5分鐘"
+          value: '300',
+          label: '5分鐘'
         },
         {
-          value: "3600",
-          label: "1小時"
+          value: '3600',
+          label: '1小時'
         }
-      ];
+      ]
       if (time === 1) {
         const KTime = moment()
-          .startOf("d")
-          .format("YYYY-MM-DD HH:mm:ss");
-        const ETime = moment().format("YYYY-MM-DD HH:mm:ss");
-        this.Start_End.StartTIme = KTime;
-        this.Start_End.EndTIme = ETime;
+          .startOf('d')
+          .format('YYYY-MM-DD HH:mm:ss')
+        const ETime = moment().format('YYYY-MM-DD HH:mm:ss')
+        this.Start_End.StartTIme = KTime
+        this.Start_End.EndTIme = ETime
       } else if (time === -1) {
         const KTime = moment()
-          .subtract(1, "d")
-          .startOf("d")
-          .format("YYYY-MM-DD HH:mm:ss");
+          .subtract(1, 'd')
+          .startOf('d')
+          .format('YYYY-MM-DD HH:mm:ss')
         const ETime = moment()
-          .subtract(1, "d")
-          .endOf("d")
-          .format("YYYY-MM-DD HH:mm:ss");
-        this.Start_End.StartTIme = KTime;
-        this.Start_End.EndTIme = ETime;
+          .subtract(1, 'd')
+          .endOf('d')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.Start_End.StartTIme = KTime
+        this.Start_End.EndTIme = ETime
       } else if (time === 1 * 24 * 7) {
         options = [
           ...options,
           {
-            value: "86400",
-            label: "一天"
+            value: '86400',
+            label: '一天'
           }
-        ];
+        ]
         this.Start_End.StartTIme = moment()
-          .subtract(6, "d")
-          .startOf("d")
-          .format("YYYY-MM-DD HH:mm:ss");
-        this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
+          .subtract(6, 'd')
+          .startOf('d')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.Start_End.EndTIme = moment().format('YYYY-MM-DD HH:mm:ss')
       } else if (time === 1 * 24 * 30) {
         options = [
           ...options,
           {
-            value: "86400",
-            label: "一天"
+            value: '86400',
+            label: '一天'
           }
-        ];
+        ]
         this.Start_End.StartTIme = moment()
-          .subtract(29, "d")
-          .startOf("d")
-          .format("YYYY-MM-DD HH:mm:ss");
-        this.Start_End.EndTIme = moment().format("YYYY-MM-DD HH:mm:ss");
+          .subtract(29, 'd')
+          .startOf('d')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.Start_End.EndTIme = moment().format('YYYY-MM-DD HH:mm:ss')
       }
-      this.options = options;
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+      this.options = options
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     },
-    switchData() {
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+    switchData () {
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     },
     // 确定按钮
-    Sure() {
+    Sure () {
+      const startDatetime = moment(this.Start_End.StartTIme, 'YYYY-MM-DD HH:mm:ss')
+      const endDatetime = moment(this.Start_End.EndTIme, 'YYYY-MM-DD HH:mm:ss')
 
-      const startDatetime = moment(this.Start_End.StartTIme, "YYYY-MM-DD HH:mm:ss");
-      const endDatetime = moment(this.Start_End.EndTIme, "YYYY-MM-DD HH:mm:ss");
-
-      if (endDatetime.diff(startDatetime, "days") >= 31) {
-        this.$message.error("只能查詢31天內的趨勢數據");
-        return;
+      if (endDatetime.diff(startDatetime, 'days') >= 31) {
+        this.$message.error('只能查詢31天內的趨勢數據')
+        return
       }
 
-      this.visible = false;
-      this.getdate();
-      this.TimeAfter();
+      this.visible = false
+      this.getdate()
+      this.TimeAfter()
     },
     // 截取时间
-    getdate() {
-      this.datetim = false;
-      this.datetime = true;
+    getdate () {
+      this.datetim = false
+      this.datetime = true
       this.datetimeval = [
         moment(this.Start_End.StartTIme),
         moment(this.Start_End.EndTIme)
-      ];
+      ]
     },
     // 选择时间
-    SelectionTime() {
-      this.visible = true;
+    SelectionTime () {
+      this.visible = true
     },
     // 时间重新选择---确定
-    ReSelection() {
+    ReSelection () {
       if (
         this.datetimeval === null ||
         this.datetimeval === undefined ||
         this.datetimeval.length === 0
       ) {
-        return;
+        return
       }
 
-      this.value = "";
-      this.TimeAfter();
+      this.value = ''
+      this.TimeAfter()
     },
     // 按钮控制时间粒度初始化
-    Initialization() {
-      this.value = "";
-      this.datetim = true;
-      this.datetime = false;
+    Initialization () {
+      this.value = ''
+      this.datetim = true
+      this.datetime = false
     },
     // 确定之后
-    TimeAfter() {
-      const qdate = moment(this.datetimeval[0]);
-      const hdate = moment(this.datetimeval[1]);
-      this.value = "300";
-      this.classvalue = "";
-      if (hdate.diff(qdate, "d") < 6) {
+    TimeAfter () {
+      const qdate = moment(this.datetimeval[0])
+      const hdate = moment(this.datetimeval[1])
+      this.value = '300'
+      this.classvalue = ''
+      if (hdate.diff(qdate, 'd') < 6) {
         this.options = [
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           },
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           }
-        ];
+        ]
       } else {
         this.options = [
           {
-            value: "300",
-            label: "5分鐘"
+            value: '300',
+            label: '5分鐘'
           },
           {
-            value: "3600",
-            label: "1小時"
+            value: '3600',
+            label: '1小時'
           },
           {
-            value: "86400",
-            label: "一天"
+            value: '86400',
+            label: '一天'
           }
-        ];
+        ]
       }
       this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
+        'YYYY-MM-DD HH:mm:ss'
+      )
       this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.$emit("switchData", [this.value, this.Start_End, this.classvalue]);
+        'YYYY-MM-DD HH:mm:ss'
+      )
+      this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     }
   }
-};
+}
 </script>
 
 <style scoped lang="scss">

@@ -10,8 +10,16 @@
             style="width: 100%"
             @selection-change="handleSelectionChange"
           >
-            <el-table-column label="变更时间"></el-table-column>
-            <el-table-column label="修改人"></el-table-column>
+            <el-table-column label="变更时间">
+              <template slot-scope="scope">
+                <p>{{ scope.row.CreateTime | formatDate }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="修改人">
+              <template slot-scope="scope">
+                {{ scope.row.LastEditUin }}
+              </template>
+            </el-table-column>
             <el-table-column label="最后修改">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="LookDeatils(scope.row)"
@@ -39,36 +47,44 @@
     </div>
     <!-- 查看变更后详情 -->
     <div class="look-details">
-      <el-dialog
-        title="变更后详情"
-        :visible.sync="visible"
-        :before-close="handleClose"
-      >
+      <el-dialog title="变更后详情" :visible.sync="visible">
         <ul>
           <li>
             <span>实例组名</span>
-            <span></span>
+            <span>{{ details.groupName }}</span>
           </li>
           <li>
             <span>实例数</span>
-            <span></span>
+            <span>{{ details.instanceSum }}个</span>
           </li>
           <li>
             <span>修改人</span>
-            <span></span>
+            <span>{{ details.lastEditUin }}</span>
           </li>
           <li>
             <span>修改时间</span>
-            <span></span>
+            <span>{{ details.createTime | formatDate }}</span>
           </li>
           <li class="include-examples">
             <span>包含实例</span>
             <el-table :data="tableData" style="width: 100%">
-              <el-table-column prop="date" label="ID/主机名" width="180">
+              <el-table-column label="ID/主机名" width="180">
+                <template slot-scope="scope">
+                  <p>
+                    <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                  </p>
+                  <p>{{ scope.row.InstanceName }}</p>
+                </template>
               </el-table-column>
               <el-table-column prop="name" label="网络类型" width="180">
+                VPC 网络
               </el-table-column>
-              <el-table-column prop="address" label="IP地址"></el-table-column>
+              <el-table-column prop="address" label="IP地址">
+                <template slot-scope="scope">
+                  <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+                  <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+                </template>
+              </el-table-column>
               <el-table-column prop="address" label="地域"
                 >中国台北</el-table-column
               >
@@ -80,37 +96,22 @@
   </div>
 </template>
 <script>
+import { ErrorTips } from "@/components/ErrorTips";
+import {
+  CM_GROUPING_CHANGELOG_LIST,
+  CM_GROUPING_MANAGELIST
+} from "@/constants";
 export default {
   data() {
     return {
       visible: false,
-      enterList: [{ a: "" }], // 入站规则
+      enterList: [], // 入站规则
       //分页
       total: 0, //总条数
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+      tableData: [],
+      details: ""
     };
   },
   props: {
@@ -121,27 +122,79 @@ export default {
   },
   components: {},
   created() {
-    this.rulesList();
+    console.log(658);
+    this.ListInit();
   },
   methods: {
-    rulesList() {
-      let parms = {
-        Version: "2017-03-12",
-        Region: this.$cookie.get("regionv2"),
-        SecurityGroupId: this.Rules.SecurityGroupId
+    ListInit() {
+      console.log("ListInit");
+      let params = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        ModuleId: 2,
+        DId: this.Rules.instanceGroupId,
+        Limit: this.pageSize,
+        Offset: this.pageIndex
       };
       this.axios
-        .post("vpc2/DescribeSecurityGroupPolicies", parms)
-        .then(data => {
-          this.enterList = data.Response.SecurityGroupPolicySet.Ingress; // 入站规则
-          this.leaveList = data.Response.SecurityGroupPolicySet.Egress; // 出站规则
+        .post(CM_GROUPING_CHANGELOG_LIST, params)
+        .then(res => {
+          if (res.Response.Error === undefined) {
+            this.enterList = res.Response.List;
+            console.log(this.tableData);
+            this.total = res.Response.Total;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
         })
         .catch(error => {
           console.log(error);
         });
     },
     LookDeatils(row) {
+      console.log(JSON.parse(row.LogData));
       this.visible = true;
+      this.details = JSON.parse(row.LogData).instanceGroupInfo;
+      // console.log(this.details);
+      var list = JSON.parse(row.LogData).list;
+      console.log(list);
+      let param = {
+        Version: "2017-03-12",
+        Limit: 100
+      };
+      for (let i in list) {
+        param["InstanceIds." + i] = list[i].dimensions.unInstanceId;
+      }
+      this.axios.post(CM_GROUPING_MANAGELIST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response.InstanceSet);
+          this.tableData = res.Response.InstanceSet;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败",
+            InternalError: "内部错误",
+            "InternalError.Param": "Param。",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+            InvalidParameter: "参数错误",
+            ResourceNotFound: "资源不存在",
+            ResourceUnavailable: "资源不可用"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // 分页
     handleCurrentChange(val) {
@@ -156,6 +209,23 @@ export default {
     },
     handleSelectionChange(val) {},
     handleClose() {}
+  },
+  filters: {
+    formatDate(value) {
+      let date = new Date(value * 1000);
+      let y = date.getFullYear();
+      let MM = date.getMonth() + 1;
+      MM = MM < 10 ? "0" + MM : MM;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      let h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      let m = date.getMinutes();
+      m = m < 10 ? "0" + m : m;
+      let s = date.getSeconds();
+      s = s < 10 ? "0" + s : s;
+      return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
+    }
   }
 };
 </script>
@@ -241,6 +311,7 @@ export default {
       font-size: 12px;
       span {
         &:nth-of-type(1) {
+          display: inline-block;
           width: 68px;
           color: #888;
         }

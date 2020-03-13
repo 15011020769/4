@@ -17,7 +17,7 @@
       <div class="box-top">
         <div class="box-top-left">
           <!-- <span class="span-1">实时</span> -->
-          <div class="block">
+          <div class="block" style="display: flex;">
             <!-- 时间组件 -->
             <TimeDropDown
               :TimeArr="TimeArr"
@@ -26,74 +26,73 @@
               v-on:switchData="GetDat"
               :Difference="'D'"
             ></TimeDropDown>
+            <el-select
+              size="mini"
+              v-model="resourceName"
+              placeholder="请选择"
+              @change="changeResource"
+              style="margin-left:10px;height:30px;"
+            >
+              <el-option
+                v-for="item in list"
+                :key="item.metadata.name"
+                :value="item.metadata.name"
+                style="margin-left:10px;height:30px;"
+              ></el-option>
+            </el-select>
           </div>
           <!-- 对比维度 -->
         </div>
       </div>
       <div class="box-bottom">
-        <div class="box-bottom-left">
-          <el-checkbox
-            :indeterminate="isIndeterminate"
-            v-model="checkAll"
-            @change="handleCheckAllChange"
-          >全选(共{{this.instances.length}}个)</el-checkbox>
-          <!-- <div style="margin: 15px 0;"></div> -->
-          <el-checkbox-group
-            v-model="checkedInstances"
-            @change="handleCheckedCitiesChange"
-            class="check-flex point-white"
-          >
-            <el-checkbox v-for="item in instances" :label="item" :key="item">{{item}}</el-checkbox>
-          </el-checkbox-group>
-        </div>
         <div class="box-bottom-right">
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='podNumbers' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='podNumbers' :name='podName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='podStarts' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='podStarts' :name='restartName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='cpuUseds' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='cpuUseds' :name='cpuName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='cpuUsedColonys' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='cpuUsedColonys' :name='cpuRateName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='cpuRequests' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='cpuRequests' :name='memoryName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='cpuUsedmaxs' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='cpuUsedmaxs' :name='memRateName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='memorys' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='memorys' :name='internetName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='memusages' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='memusages' :name='internetOutName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='memrequests' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='memrequests' :name='netName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='menNocaches' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='menNocaches' :name='netOutName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='memUsageBytes' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='memUsageBytes' :name='inflagName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='memNoYsages' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='memNoYsages' :name='outflagName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='GpuUseds' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='GpuUseds' :name='gpuName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='GpuUsedSees' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='GpuUsedSees' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
            <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='GpuUsedColoys' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='GpuUsedColoys' :name='gpeuesdName' style="width:90%;height:200px;" />
           </div>
           <div class="box-top-left" style="margin-bottom:20px;">
-            <EcharTKE :time='times' :series='GpuUsedSeeColoys' style="width:400px;height:200px;" />
+            <EcharTKE :time='times' :opData='GpuUsedSeeColoys' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
         </div>
       </div>
@@ -207,7 +206,24 @@ export default {
       JobId: "", // 后台返回id
       StartTime: 0, //开始时间
       EndTime: 0, //结束时间
-      timestamp: "" //粒度长度
+      timestamp: "", //粒度长度
+      resourceName: '',//资源名称
+      podName: 'Pod数量',
+      restartName: 'Pod重启次数',
+      cpuName: 'CPU使用量',
+      cpuRateName: 'CPU利用率(占集群)',
+      memoryName: '内存使用量',
+      memRateName: '内存利用率(占集群)',
+      internetName: '网络入带宽',
+      internetOutName: '网络出带宽',
+      netName: '网络入流量',
+      netOutName: '网络出流量',
+      inflagName: '网络入包量',
+      outflagName: '网络出包量',
+      gpuName: 'GPU使用量',
+      gpumemName: 'GPU显存使用量',
+      gpeuesdName: 'GPU利用率',
+      gpumemName: 'GPU显存利用率(占集群)'
     };
   },
   watch: {},
@@ -216,13 +232,17 @@ export default {
     this.type = this.$route.query.type;
     this.clusterId = this.$route.query.clusterId;
     this.spaceName = this.$route.query.spaceName;
+    this.list = this.$route.query.list;
+    if(this.$route.query.list.length > 0) {
+      this.resourceName = this.$route.query.list[0].metadata.name;
+    }
   },
   methods: {
     GetDat(val) {
       this.StartTime = new Date(val[1].StartTIme).getTime();
       this.EndTime = new Date(val[1].EndTIme).getTime();
       this.timestamp = val[0];
-      this.getDeploymentList();
+      this.getDataJob();
     },
     //返回上一层
     goBack() {
@@ -256,56 +276,61 @@ export default {
       this.getPodList();
     },
     // 获取列表
-    async getDeploymentList() {
-      this.loadShow = true;
-      let params = {};
-      params = {
-        Method: "GET",
-        Path:
-          "/apis/apps/v1beta2/namespaces/" +
-                this.spaceName  +
-                "/statefulsets?limit=100", 
-        Version: "2018-05-25",
-        ClusterName: this.clusterId
-      };
-      await this.axios.post(POINT_REQUEST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.loadShow = false;
-          let response = JSON.parse(res.Response.ResponseBody);
-          console.log(response);
-          if (response.items.length > 0) {
-            response.items.map(deployment => {
-              (deployment.k8sApp =
-                deployment.metadata.labels && deployment.metadata.labels.k8s),
-                (deployment.qcloudApp =
-                  deployment.metadata.labels &&
-                  deployment.metadata.labels.qcloud);
-            });
-          }
-          let ids = [];
-          if (response.items.length > 0) {
-            response.items.map(obj => {
-              ids.push(obj.metadata.name);
-            });
-          }
-          console.log(ids);
-          this.checkedInstances = ids;
-          this.instances = ids;
-          this.InstancesAll = ids;
-          this.list = ids;
-          this.getDataJob();
-        } else {
-          this.loadShow = false;
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
+    // async getDeploymentList() {
+    //   this.loadShow = true;
+    //   let params = {};
+    //   params = {
+    //     Method: "GET",
+    //     Path:
+    //       "/apis/apps/v1beta2/namespaces/" +
+    //             this.spaceName  +
+    //             "/statefulsets?limit=100", 
+    //     Version: "2018-05-25",
+    //     ClusterName: this.clusterId
+    //   };
+    //   await this.axios.post(POINT_REQUEST, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       this.loadShow = false;
+    //       let response = JSON.parse(res.Response.ResponseBody);
+    //       console.log(response);
+    //       if (response.items.length > 0) {
+    //         response.items.map(deployment => {
+    //           (deployment.k8sApp =
+    //             deployment.metadata.labels && deployment.metadata.labels.k8s),
+    //             (deployment.qcloudApp =
+    //               deployment.metadata.labels &&
+    //               deployment.metadata.labels.qcloud);
+    //         });
+    //       }
+    //       let ids = [];
+    //       if (response.items.length > 0) {
+    //         response.items.map(obj => {
+    //           ids.push(obj.metadata.name);
+    //         });
+    //       }
+    //       console.log(ids);
+    //       this.checkedInstances = ids;
+    //       this.instances = ids;
+    //       this.InstancesAll = ids;
+    //       this.list = ids;
+    //       this.getDataJob();
+    //     } else {
+    //       this.loadShow = false;
+    //       let ErrTips = {};
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
+
+    //选择资源
+    changeResource(val) {
+      this.getDataJob();
     },
 
     getDataJob() {
@@ -331,10 +356,12 @@ export default {
         "=",
         this.spaceName
       ]);
+      let arr = [];
+      arr.push(this.resourceName);
       param["Conditions.3"] = JSON.stringify([
         "workload_name",
         "in",
-        this.list
+        arr
       ]);
       param["Fields.0"] = "max(k8s_workload_pod_total)";
       param["Fields.1"] = "sum(k8s_workload_pod_restart_total)";
@@ -372,6 +399,7 @@ export default {
       });
     },
     getResult() {
+      this.loadShow = true;
       const param = {
         JobId: this.JobId,
         Module: "/front/v1",
@@ -403,29 +431,50 @@ export default {
           if (data.length > 0) {
             for (let i = 0; i < data.length; i++) {
               let item = data[i];
-            //   let key = item[0];
-            //   let value = monitor[key];
-            //   if (value) {
-            //     value.push(data[i]);
-            //   } else {
-            //     value = [];
-            //     value.push(data[i]);
-            //   }
-            //   monitor[key] = value;
               let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss"); //时间
               let podId = item[1]; //节点ID
               let podNumber = item[2]; //Pod数量
               let podStart = item[3]; //Pod重启次数
-              let cpuUsed = item[4]; //CPU使用量
-              let cpuUsedColony = item[5]; //CPU利用率(占集群)
-              let cpuRequest = item[6]; //内存使用量
-              let cpuUsedmax = item[7]; //内存利用率(占集群)
-              let memory = item[8]; //网络入带宽
-              let memusage = item[9];//网络出带宽
-              let memrequest = item[10];//网络入流量
-              let menNocache = item[11];//网络出流量
-              let memUsageByte = item[12];//网络入包量
-              let memNoYsage = item[13];//网络出包量
+              let cpuUsed = null; //CPU使用量
+              if(item[4]) {
+                cpuUsed = item[4].toFixed(5);
+              }
+              let cpuUsedColony = null; //CPU利用率(占集群)
+              if(item[5]) {
+                cpuUsedColony = item[5].toFixed(4);
+              }
+              let cpuRequest = null; //内存使用量
+              if(item[6]) {
+                cpuRequest = (item[6]/(1000*1000)).toFixed(3);
+              }
+              let cpuUsedmax = null; //内存利用率(占集群)
+              if(item[7]) {
+                cpuUsedmax = item[7].toFixed(3);
+              }
+              let memory = null; //网络入带宽
+              if(item[8]) {
+                memory = item[8].toFixed(3);
+              }
+              let memusage = null;//网络出带宽
+              if(item[9]) {
+                memusage = item[9].toFixed(3);
+              }
+              let memrequest = null;//网络入流量
+              if(item[10]) {
+                memrequest = (item[10]/1000).toFixed(3);
+              }
+              let menNocache = null;//网络出流量
+              if(item[11]) {
+                menNocache = (item[11]/1000).toFixed(3);
+              }
+              let memUsageByte = null;//网络入包量
+              if(item[12]) {
+                memUsageByte = item[12].toFixed(3);
+              }
+              let memNoYsage = null;//网络出包量
+              if(item[13]) {
+                memNoYsage = item[13].toFixed(3);
+              }
               let GpuUsed = item[14];//GPU使用量
               let GpuUsedSee = item[15];//GPU显存使用量
               let GpuUsedColoy = item[16];//GPU利用率（占集群）
@@ -451,22 +500,23 @@ export default {
             }
           }
             this.times = times;
-            this.podNumbers = [{name: '节点数量',type: 'line', data: podNumbers}];
-            this.podStarts = [{name: '节点数量',type: 'line', data: podStarts}];
-            this.cpuUseds = [{name: '节点数量',type: 'line', data: cpuUseds}];
-            this.cpuUsedColonys = [{name: '节点数量',type: 'line', data: cpuUsedColonys}];
-            this.cpuRequests = [{name: '节点数量',type: 'line', data: cpuRequests}];
-            this.cpuUsedmaxs = [{name: '节点数量',type: 'line', data: cpuUsedmaxs}];
-            this.memorys = [{name: '节点数量',type: 'line', data: memorys}];
-            this.memusages = [{name: '节点数量',type: 'line', data: memusages}];
-            this.memrequests = [{name: '节点数量',type: 'line', data: memrequests}];
-            this.menNocaches = [{name: '节点数量',type: 'line', data: menNocaches}];
-            this.memUsageBytes = [{name: '节点数量',type: 'line', data: memUsageBytes}];
-            this.memNoYsages = [{name: '节点数量',type: 'line', data: memNoYsages}];
-            this.GpuUseds = [{name: '节点数量',type: 'line', data: GpuUseds}];
-            this.GpuUsedSees = [{name: '节点数量',type: 'line', data: GpuUsedSees}];
-            this.GpuUsedColoys = [{name: '节点数量',type: 'line', data: GpuUsedColoys}];
-            this.GpuUsedSeeColoys = [{name: '节点数量',type: 'line', data: GpuUsedSeeColoys}];
+            this.podNumbers = podNumbers;//[{name: 'Pod数量',type: 'line', data: podNumbers}];
+            this.podStarts = podStarts;//[{name: 'Pod重启次数',type: 'line', data: podStarts}];
+            this.cpuUseds = cpuUseds;//[{name: 'CPU使用量',type: 'line', data: cpuUseds}];
+            this.cpuUsedColonys = cpuUsedColonys;//[{name: 'CPU利用率(占集群)',type: 'line', data: cpuUsedColonys}];
+            this.cpuRequests = cpuRequests;//[{name: '内存使用量',type: 'line', data: cpuRequests}];
+            this.cpuUsedmaxs = cpuUsedmaxs;//[{name: '内存利用率(占集群)',type: 'line', data: cpuUsedmaxs}];
+            this.memorys = memorys;//[{name: '网络入带宽',type: 'line', data: memorys}];
+            this.memusages = memusages;//[{name: '网络出带宽',type: 'line', data: memusages}];
+            this.memrequests = memrequests;//[{name: '网络入流量',type: 'line', data: memrequests}];
+            this.menNocaches = menNocaches;//[{name: '网络出流量',type: 'line', data: menNocaches}];
+            this.memUsageBytes = memUsageBytes;//[{name: '网络入包量',type: 'line', data: memUsageBytes}];
+            this.memNoYsages = memNoYsages;//[{name: '网络出包量',type: 'line', data: memNoYsages}];
+            this.GpuUseds = GpuUseds;//[{name: 'GPU使用量',type: 'line', data: GpuUseds}];
+            this.GpuUsedSees = GpuUsedSees;//[{name: 'GPU显存使用量',type: 'line', data: GpuUsedSees}];
+            this.GpuUsedColoys = GpuUsedColoys;//[{name: 'GPU利用率(占集群)',type: 'line', data: GpuUsedColoys}];
+            this.GpuUsedSeeColoys = GpuUsedSeeColoys;//[{name: 'GPU显存利用率(占集群)',type: 'line', data: GpuUsedSeeColoys}];
+            this.loadShow = false;
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -525,8 +575,8 @@ export default {
       }
     }
     .box-bottom-right {
-      width: 85%;
-      margin-right: 5%;
+      width: 100%;
+      /* margin-right: 5%; */
       height: auto;
       overflow-y:scroll;
     }

@@ -152,11 +152,13 @@
               {{
                 scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0]
               }}
+              <!-- <i class="el-icon-document-copy" @click="copyData"/> -->
             </p>
             <p>
               {{
                 scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0]
               }}
+              <!-- <i class="el-icon-document-copy"/> -->
             </p>
           </template>
         </el-table-column>
@@ -705,6 +707,11 @@ export default {
       }
       this.showUnBlockademodal = true;
       this.unschedulable = 0;
+    },
+
+    //复制数据
+    copyData() {
+      
     },
 
     //打开驱逐弹窗

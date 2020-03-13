@@ -101,7 +101,10 @@ export default {
 
     _delete() {
 
-      if (this.configList.length === 0) {
+      if (
+        this.configList.length === 0 ||
+        Object.keys(this.selectItem).length === 0
+      ) {
         return;
       }
 
