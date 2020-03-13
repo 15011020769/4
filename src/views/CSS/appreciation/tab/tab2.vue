@@ -165,13 +165,13 @@ export default {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
+          res.Response.DataInfoList.sort((a, b) => moment(a.Time) - moment(b.Time))
           res.Response.DataInfoList.map(v => {
             axixArr.push(v.Time)
             seriesArr.push(v.Duration)
             numArr.push({Time: v.Time, Name: "-", "TranscodeDuration": v.Duration})
             total += v.Duration
           })
-          console.log(total)
           this.xAxis = axixArr
           this.series = seriesArr
           this.line_json = numArr
