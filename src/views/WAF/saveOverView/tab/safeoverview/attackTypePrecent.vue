@@ -175,7 +175,6 @@ export default {
           this.botRequest = Response.Count
           this.$set(this.seriesPie, 3, {value: `${Response.Count}`, name: this.t('BOT请求次数', 'WAF.botqqcs')})
           this.$set(this.legendTextPie, 3, this.t('BOT请求次数', 'WAF.botqqcs'))
-          console.log(this.seriesPie)
         })
       }).then(() => {
         this.loading = false
