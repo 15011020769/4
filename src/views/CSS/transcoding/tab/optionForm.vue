@@ -191,6 +191,11 @@ export default {
         return false;
       }
 
+      // 音频就到这里了
+      if (this.selectType === "純音頻") {
+        return true;
+      }
+
       const VideoBitrate = this.ruleForm.VideoBitrate;
 
       if (VideoBitrate.length === 0) {
@@ -313,10 +318,10 @@ export default {
       if (this.selectType === "純音頻") {
         params.Height = 0;
         params.VideoBitrate = 100;
-      } else {
-        if (!this.validateForm()) {
-          return;
-        }
+      }
+
+      if (!this.validateForm()) {
+        return;
       }
 
       let AiTransCode = params.AiTransCode;
