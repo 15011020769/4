@@ -97,7 +97,10 @@
               >
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key=='DdosThreshold'">{{item.Value}}Mps</div>
+                    <div v-if="item.Key=='DdosThreshold'">
+                      <span v-if="item.Value !== '0'">{{item.Value}}Mps</span>
+                      <span v-else>默認</span>
+                    </div>
                   </div>
                 </template>
               </el-table-column>
@@ -499,7 +502,7 @@ export default {
                 }
                 const obj3 = {
                   Key: "IPText",
-                  Value: IPText
+                  Value: IPText.reverse()
                 };
                 val.Record.push(obj3);
               }
