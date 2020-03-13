@@ -61,12 +61,12 @@
             <template slot-scope="scope">
               <el-input
                 v-model="tableParams[scope.row.paramName].StorageTime"
+                placeholder="0~1080天，0为永久保存"
                 @input="
                   tableParams[scope.row.paramName].StorageTime = tableParams[
                     scope.row.paramName
                   ].StorageTime.replace(/[^\d]/g, '')
                 "
-                placeholder="0~1080天，0为永久保存"
               />
             </template>
           </el-table-column>
@@ -117,6 +117,10 @@ let ErrTips = {
   "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
   "UnsupportedOperation.OssReject": "Oss拒絕該操作"
 };
+
+const defaultStorageTime = 0;
+const defaultRecordInterval = 30;
+const defaultFlowContinueDuration = 0;
 
 export default {
   name: "optionForm",
@@ -378,34 +382,31 @@ export default {
     },
 
     handleSelectionChange(e) {
+      // 先清空所有的选中
       this.tableData.forEach(item => {
         this.tableParams[item.paramName].Enable = 0;
-        this.tableParams[item.paramName].RecordInterval = "";
-        this.tableParams[item.paramName].StorageTime = "";
-        if (item.paramName === "HlsSpecialParam") {
-          this.tableParams[item.paramName]["FlowContinueDuration"] = 0;
-        } else {
-          this.tableParams[item.paramName]["RecordInterval"] = "";
-          this.tableParams[item.paramName]["StorageTime"] = "";
-        }
       });
 
+      // 选中指定项
       e.forEach(item => {
         this.tableParams[item.paramName].Enable = 1;
+      });
 
-        // 默认值
-        if (item.paramName === "FlvParam") {
-          this.tableParams["FlvParam"]["RecordInterval"] = 30;
-          this.tableParams["FlvParam"]["StorageTime"] = 0;
-        } else if (item.paramName === "Mp4Param") {
-          this.tableParams["Mp4Param"]["RecordInterval"] = 30;
-          this.tableParams["Mp4Param"]["StorageTime"] = 0;
-        } else if (item.paramName === "AacParam") {
-          this.tableParams["AacParam"]["RecordInterval"] = 30;
-          this.tableParams["AacParam"]["StorageTime"] = 0;
-        } else if (item.paramName === "HlsParam") {
-          this.tableParams["HlsParam"]["RecordInterval"] = 30;
-          this.tableParams["HlsParam"]["StorageTime"] = 0;
+      // 根据选中项，配置默认值，如果已填写则不用设置默认值
+      this.tableData.forEach(item => {
+        let Enable = this.tableParams[item.paramName].Enable;
+
+        // 设置已选中的默认值
+        if (Enable === 1) {
+          let RecordInterval = this.tableParams[item.paramName].RecordInterval;
+          let StorageTime = this.tableParams[item.paramName].StorageTime;
+
+          this.tableParams[item.paramName].RecordInterval = !RecordInterval
+            ? defaultRecordInterval
+            : RecordInterval;
+          this.tableParams[item.paramName].StorageTime = !StorageTime
+            ? defaultStorageTime
+            : StorageTime;
         }
       });
     },
@@ -464,13 +465,16 @@ export default {
     getDefaultValueForEmptyInput(_key, text) {
       if (typeof text === "string" && text.length === 0) {
         if (_key == "StorageTime") {
-          return 0;
+          return defaultStorageTime;
         } else {
-          return 30;
+          return defaultRecordInterval;
         }
       } else {
         return text;
       }
+    },
+    handleInput(e) {
+      console.log(e);
     }
   }
 };
