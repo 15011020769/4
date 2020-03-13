@@ -79,14 +79,6 @@ let label = {
   addLabel: function () {
     // 填写名称后将名称默认复制给标签第一条
     this.wl.labels.push({ key: '', value: '' })
-    /* if (labels.length > 0) {
-      for (let i = 0; i < labels.length; i++) {
-        if (labels[i].key === 'k8s-app') {
-          labels[i].value = this.wl.name
-          return
-        }
-      }
-    } */
   },
   delLabel: function (index) {
     this.wl.labels.splice(index, 1)
@@ -240,9 +232,39 @@ let dataVolume = {
   addDataVolume: function () {
     this.dataFlag = true
     this.wl.dataVolumes.push({
-      name1: '',
+      name: 'useMenu',
       name2: '',
-      name3: ''
+      name3: '',
+      emptyDir: {}, // 使用临时目录
+      hostPath: {
+        path: '', // 主机路径
+        tempPath: '', // 临时主机路径
+        type: 'DirectoryOrCreate' // 检查类型
+      }, // 使用主机路径
+      nfs: {
+        server: '', // 服务
+        path: '', // 路径
+        serverAndPath: '' // 服务加路径
+      }, // 使用nfs盘
+      persistentVolumeClaim: {
+        claimName: '' // pvc值
+      }, // 使用已有PVC
+      qcloudCbs: {
+        tempCbsDiskId: '', // 临时选中云硬盘值
+        cbsDiskId: '', // 选中云硬盘
+        fsType: 'ext4' // 硬盘类型
+      }, // 使用云硬盘
+      configMap: {
+        name: '',
+        checked: 'all',
+        items: []
+      }, // 使用configMap
+      secret: {
+        name: '',
+        secretName: '',
+        checked: 'all',
+        items: []
+      } // 使用sercet
     })
   },
   delDataVolume: function (index) {
@@ -250,13 +272,15 @@ let dataVolume = {
   }
 }
 
+// 挂载点值
 let mountPoint = {
   addMountPoint: function (index) {
     this.wl.instanceContent[index].mountPoints.push({
-      dataVolumeValue: '', // 数据卷值
+      dataVolumeValue: {}, // 数据卷值 type:数据卷类型 name：数据卷名
       targetPath: '', // 目标路径
       mountSubPath: '', // 挂载子路径
-      permission: 'dx' // 权限值
+      permission: 'dx', // 权限值
+      key: Date.now()
     })
   },
   delMountPoint: function (cIndex, mIndex) {
@@ -432,7 +456,18 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }] // 服务 端口映射 服务端口
+      }], // 服务 端口映射 服务端口
+      dataVolumesNfsServerAndPathValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('NFS路径不能为空'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }]
     }
   },
   methods: {
