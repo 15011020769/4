@@ -207,7 +207,7 @@ export default {
       }
     }
     var validatePass3 = (rule, value, callback) => {
-      const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
+      const version = /^[0-9a-z]([0-9a-z]|.|_|-){0,198}[0-9a-z]$/
       // 判断新建是否存在镜像名称接口
       const param = {
         reponame: this.isReponame
