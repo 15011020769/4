@@ -39,62 +39,62 @@
           <div class="room-bottom">
             <div class="box-bottom">
               <!-- 节点监控数据 -->
-              <div class="box-bottom-right"  v-if="seriesMemUsageBytes.length">
+              <div class="box-bottom-right"  v-if="NodesDataId.length">
                 <!-- <div ref="main" style="width:100%;height:400px;" v-if="timeAll"></div> -->
                 <p>Pod重启次数(次)</p>
                 <div class="dataNone" v-if="series[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="series[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='series' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='series' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>异常状态</p>
                 <div class="dataNone" v-if="seriesError[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;"  v-if="seriesError[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesError' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesError' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>CPU利用率(%)</p>
                 <div class="dataNone" v-if="seriesCpus[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpus[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpus' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpus' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>内存利用率(%)</p>
                 <div class="dataNone" v-if="seriesCpuUseds[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpuUseds[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUseds' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUseds' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>内网入带宽(Bps)</p>
                 <div class="dataNone" v-if="seriesCpuRequests[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesCpuRequests[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuRequests' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuRequests' style="width:600px;height:200px;" :scale='4'/>
                 </div>
                 <p>内网出带宽(Bps)</p>
                 <div class="dataNone" v-if="seriesCpuUsedmaxs[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;"  v-if="seriesCpuUsedmaxs[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUsedmaxs'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesCpuUsedmaxs'  style="width:600px;height:200px;" :scale='4'/>
                 </div>
                 <p>外网入带宽(Bps)</p>
                 <div class="dataNone" v-if="seriesMemory[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemory[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemory' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemory' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>外网出带宽(Bps)</p>
                 <div class="dataNone" v-if="seriesemusages[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesemusages[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesemusages' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesemusages' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>TCP连接数(个)</p>
                 <div class="dataNone" v-if="seriesMemrequests[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemrequests[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemrequests' style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemrequests' style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>GPU利用率(%)</p>
                 <div class="dataNone" v-if="seriesMenNocaches[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMenNocaches[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMenNocaches'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMenNocaches'  style="width:600px;height:200px;" :scale='2'/>
                 </div>
                 <p>GPU显存利用率(%)</p>
                 <div class="dataNone" v-if="seriesMemUsageBytes[0] == null">暂无数据</div>
                 <div class="box-top-left" style="margin-bottom:20px;" v-if="seriesMemUsageBytes[0] != null">
-                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemUsageBytes'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='times' :name="NodeTitle" :opData='seriesMemUsageBytes'  style="width:600px;height:200px;" :scale='2'/>
                 </div>
               </div>
             </div>
@@ -128,97 +128,97 @@
           </div>
           <div class="room-bottom">
             <div class="box-bottom">
-             <div class="box-bottom-right" v-if="podGPUSeeUseRequests.length">
+             <div class="box-bottom-right" v-if="PodDataId.length || podData.length">
               <p>异常状态</p>
               <!-- <div></div> -->
               <div class="dataNone" v-if="podStatuErrs[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podStatuErrs[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podStatuErrs' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podStatuErrs' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>CPU使用量(核)</p>
               <div class="dataNone" v-if="podCpuUseds[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUseds[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUseds'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUseds'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>CPU利用率(占主机)(%)</p>
               <div class="dataNone" v-if="podCpuUsedCenters[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedCenters[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedCenters' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedCenters' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>CPU利用率(占Request)(%)</p>
               <div class="dataNone" v-if="podCpuUsedRequests[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedRequests[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedRequests'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedRequests'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>CPU利用率(占Limit)(%)</p>
               <div class="dataNone" v-if="podCpuUsedLimits[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podCpuUsedLimits[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedLimits'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podCpuUsedLimits'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存使用量(B)</p>
               <div class="dataNone" v-if="podMemorys[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemorys[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemorys' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemorys' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存使用量(不含cache)(B)</p>
               <div class="dataNone" v-if="podMemoryNocaches[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryNocaches[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryNocaches'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryNocaches'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占主机)(%)</p>
               <div class="dataNone" v-if="podMemoryCenters[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryCenters[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenters' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenters' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占主机,不含cache)(%)</p>
               <div class="dataNone" v-if="podMemoryCenterNocaches[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryCenterNocaches[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenterNocaches'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryCenterNocaches'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占Request)(%)</p>
               <div class="dataNone" v-if="podMemoryRequests[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryRequests[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequests'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequests'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占Request,不含cache)(%)</p>
               <div class="dataNone" v-if="podMemoryRequestNocaches[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryRequestNocaches[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequestNocaches'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryRequestNocaches'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占Limit)(%)</p>
               <div class="dataNone" v-if="podMemoryLimits[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryLimits[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimits' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimits' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>内存利用率(占Limit,不含cache)(%)</p>
               <div class="dataNone" v-if="podMemoryLimitNocaches[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podMemoryLimitNocaches[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimitNocaches'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podMemoryLimitNocaches'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络入带宽(Bps)</p>
               <div class="dataNone" v-if="podInNetworks[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podInNetworks[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInNetworks' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInNetworks' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络出带宽(Bps)</p>
               <div class="dataNone" v-if="podOutNetworks[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podOutNetworks[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podOutNetworks' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podOutNetworks' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络入流量(B)</p>
               <div class="dataNone" v-if="podInFlows[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podInFlows[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInFlows' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podInFlows' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络出流量(B)</p>
               <div class="dataNone" v-if="podOutFlows[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podOutFlows[0] != null">
-                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podOutFlows' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podOutFlows' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络入包量(个/s)</p>
               <div class="dataNone" v-if="podInPacketFlows[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podInPacketFlows[0] != null">
-                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podInPacketFlows'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes'  :name="podValue" :opData='podInPacketFlows'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>网络出包量(个/s)</p>
               <div class="dataNone" v-if="podOutPacketFlows[0] == null">暂无数据</div>
@@ -228,32 +228,32 @@
               <p>GPU使用量(卡)</p>
               <div class="dataNone" v-if="podGPUUses[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUses[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUses' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUses' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>GPU显存使用量(B)</p>
               <div class="dataNone" v-if="podGPUSeeUses[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUses[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUses' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUses' style="width:600px;height:200px;" :scale='4'/>
               </div>
                <p>GPU利用率（占节点）(%)</p>
                <div class="dataNone" v-if="podGPUUseNodes[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUseNodes[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseNodes'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseNodes'  style="width:600px;height:200px;" :scale='4'/>
               </div>
              <p>GPU显存利用率（占节点）(%)</p>
              <div class="dataNone" v-if="podGPUSeeUseNodes[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUseNodes[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseNodes'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseNodes'  style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>GPU利用率（占Request）(%)</p>
               <div class="dataNone" v-if="podGPUUseRequests[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUUseRequests[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseRequests' style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUUseRequests' style="width:600px;height:200px;" :scale='4'/>
               </div>
               <p>GPU显存利用率（占Request）(%)</p>
               <div class="dataNone" v-if="podGPUSeeUseRequests[0] == null">暂无数据</div>
               <div class="box-top-left" style="margin-bottom:20px;" v-if="podGPUSeeUseRequests[0] != null">
-                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseRequests'  style="width:600px;height:200px;" />
+                  <EcharTKE :time='podTimes' :name="podValue" :opData='podGPUSeeUseRequests'  style="width:600px;height:200px;" :scale='4'/>
               </div>
             </div>
           </div>
@@ -270,8 +270,6 @@ import { ErrorTips } from "@/components/ErrorTips";
 import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import moment from 'moment';
 import EcharTKE from '@/components/public/EcharTKE'
-// import EcharTKELine from '@/components/public/EcharTKELine'
-// const cityOptions = ["asdasd", "3dsda", "asdaqwe"];
 export default {
   name: "openMonitor",
   props: {
@@ -306,6 +304,9 @@ export default {
       grain:"" ,//粒数
       NodeTitle:"",
       NodeTitle2:"",
+      NodesDataId:[],
+      PodDataId:[],
+      // 节点
       times:[],
       series:[],
       seriesError:[],
@@ -318,7 +319,7 @@ export default {
       seriesMemrequests:[],
       seriesMenNocaches:[],
       seriesMemUsageBytes:[],
-
+      // pod
       podTimes:[],                
       podsIds:[],                 
       podStatuErrs:[],            
@@ -665,14 +666,15 @@ export default {
           let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
           if(this.activeName == "k8s_node"){
+             this.NodesDataId=[]
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],
             cpuRequests = [], cpuUsedmaxs = [], memorys= [], memusages = [], memrequests = [], menNocaches = [],
             memUsageBytes = []
               if(data.length > 0) {
                 for(let i = 0; i < data.length; i++) {
                   let item = data[i];
-                  let podId = item[1];
-                  if(this.NodeTitle == podId){
+                  let NodesId = item[1];
+                  if(this.NodeTitle == NodesId){
                       let time = moment(item[0]).format("YYYY-MM-DD HH:mm:ss");//时间
                       //节点ID
                       let pod = item[2];//实例数量
@@ -687,7 +689,7 @@ export default {
                       let menNocache = item[11];// GPU利用率
                       let memUsageByte = item[12];//GPU显存利用率
                       times.push(time);
-                      podIds.push(podId);
+                      podIds.push(NodesId);
                       pods.push(pod);
                       statuErrs.push(statuErr);
                       cpus.push(cpu);
@@ -699,6 +701,9 @@ export default {
                       memrequests.push(memrequest);
                       menNocaches.push(menNocache);
                       memUsageBytes.push(memUsageByte);
+                      this.NodesDataId.push(NodesId)
+                  } else {
+                    this.NodesDataId.push(NodesId)
                   }
                 }
               }
@@ -715,6 +720,7 @@ export default {
               this.seriesMenNocaches =  menNocaches
               this.seriesMemUsageBytes = memUsageBytes
             } else {
+            this.PodDataId = []
             let podTimes=[],                
                 podsIds=[],                 
                 podStatuErrs=[],            
@@ -741,10 +747,11 @@ export default {
                 podGPUUseNodes=[],          
                 podGPUSeeUseNodes=[],       
                 podGPUUseRequests=[],       
-                podGPUSeeUseRequests=[]   
+                podGPUSeeUseRequests=[]
               for(let i = 0; i < data.length; i++) {
                   let items = data[i];
                   let podsId  = items[1];//节点ID
+                  // console.log()
                   if(this.podValue == podsId){
                     // console.log(this.podValue)
                     let podTime = moment(items[0]).format("YYYY-MM-DD HH:mm:ss");//时间
@@ -799,7 +806,10 @@ export default {
                     podGPUUseNodes.push(podGPUUseNode)          
                     podGPUSeeUseNodes.push(podGPUSeeUseNode)       
                     podGPUUseRequests.push(podGPUUseRequest)       
-                    podGPUSeeUseRequests.push(podGPUSeeUseRequest)  
+                    podGPUSeeUseRequests.push(podGPUSeeUseRequest)
+                    this.PodDataId.push(podsId)  
+                   } else {
+                     this.PodDataId.push(podsId)
                    }
                 }
                 this.podTimes = podTimes;
