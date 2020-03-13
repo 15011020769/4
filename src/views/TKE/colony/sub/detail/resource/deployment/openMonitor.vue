@@ -433,16 +433,46 @@ export default {
               let podId = item[1]; //节点ID
               let podNumber = item[2]; //Pod数量
               let podStart = item[3]; //Pod重启次数
-              let cpuUsed = item[4];//CPU使用量
-              let cpuUsedColony = item[5]; //CPU利用率(占集群)
-              let cpuRequest = item[6]; //内存使用量
-              let cpuUsedmax = item[7]; //内存利用率(占集群)
-              let memory = item[8]; //网络入带宽
-              let memusage = item[9];//网络出带宽
-              let memrequest = item[10];//网络入流量
-              let menNocache = item[11];//网络出流量
-              let memUsageByte = item[12];//网络入包量
-              let memNoYsage = item[13];//网络出包量
+              let cpuUsed = null; //CPU使用量
+              if(item[4]) {
+                cpuUsed = item[4].toFixed(5);
+              }
+              let cpuUsedColony = null; //CPU利用率(占集群)
+              if(item[5]) {
+                cpuUsedColony = item[5].toFixed(4);
+              }
+              let cpuRequest = null; //内存使用量
+              if(item[6]) {
+                cpuRequest = (item[6]/(1000*1000)).toFixed(3);
+              }
+              let cpuUsedmax = null; //内存利用率(占集群)
+              if(item[7]) {
+                cpuUsedmax = item[7].toFixed(3);
+              }
+              let memory = null; //网络入带宽
+              if(item[8]) {
+                memory = item[8].toFixed(3);
+              }
+              let memusage = null;//网络出带宽
+              if(item[9]) {
+                memusage = item[9].toFixed(3);
+              }
+              let memrequest = null;//网络入流量
+              if(item[10]) {
+                memrequest = (item[10]/1000).toFixed(3);
+              }
+              let menNocache = null;//网络出流量
+              if(item[11]) {
+                menNocache = (item[11]/1000).toFixed(3);
+              }
+              let memUsageByte = null;//网络入包量
+              if(item[12]) {
+                memUsageByte = item[12].toFixed(3);
+              }
+              let memNoYsage = null;//网络出包量
+              if(item[13]) {
+                memNoYsage = item[13].toFixed(3);
+              }
               let GpuUsed = item[14];//GPU使用量
               let GpuUsedSee = item[15];//GPU显存使用量
               let GpuUsedColoy = item[16];//GPU利用率（占集群）

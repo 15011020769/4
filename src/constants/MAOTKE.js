@@ -65,3 +65,9 @@ export const CLOSE_CIDE_TO_CCN = 'tke2/DeleteClusterCIDRFromCcn'
 
 //新增节点
 export const TKE_ADD_NODE = 'tke2/CreateClusterInstances'
+
+//开启内网
+export const OPEN_INTRANET = 'tke2/CreateClusterEndpoint'
+
+//关闭内网
+export const ClOSE_INTRANET = 'tke2/DeleteClusterEndpoint'
