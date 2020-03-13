@@ -62,13 +62,13 @@
         <div class="upGradeMoney newClear">
           <p>{{$t('DDOS.protectCon.upgradeMoney')}}</p>
           <p v-if="isQury">
-            <span>63300000</span>
+            <span class="showpice">{{ this.showPrice(allMoney, 2) }}圓</span>
             <span class="errorTip" v-if="errorShow">{{$t('DDOS.protectCon.EorrorLog')}}</span>
           </p>
           <p class="query" v-else>費用查詢中...</p>
         </div>
         <span class="bottomBtnU">
-          <el-button :disabled="!isQury">{{$t('DDOS.protectCon.justUpgrade')}}</el-button>
+          <el-button class="queryBtn" :disabled="isClickBtn" @click="jumpPay">{{$t('DDOS.protectCon.justUpgrade')}}</el-button>
           <el-button @click="handleClose">取消</el-button>
         </span>
       </el-dialog>
@@ -78,6 +78,7 @@
 <script>
 import { QUERY_PRICE } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
+import moment, { now, min, months } from 'moment'
 export default {
   props:{
     Upgrade: Boolean,
@@ -93,6 +94,9 @@ export default {
       thisChnageNum:'40,000Qps',
       isQury: false,
       resObj: {}, //从主页面传的资源对象
+      allMoney:0,
+      isClickBtn: false,
+      buyTime:0
     }
   },
   computed:{
@@ -105,16 +109,64 @@ export default {
     init (scopeRow) {
       let objTemp = JSON.parse(JSON.stringify(scopeRow));
       objTemp.Record.forEach(item => {
-        if (item.Key == 'Id') {
+        console.log('item key=' + item.Key + '***item value=' + item.Value)
+        if (item.Key === 'Id') {
           this.resObj.Id = item.Value;
-        } else if (item.Key == 'Name') {
+        } else if (item.Key === 'Name') {
           this.resObj.Name = (item.Value == "" ? "未命名" : item.Value);
-        } else if (item.Key == "DdosMax") {//当前保底防护峰值
+        } else if (item.Key === "DdosMax") {//当前保底防护峰值
           this.resObj.DdosMax = item.Value;
-        } else if (item.Key == "Expire") {//过期时间
+          this.resObj.bandwidth = item.Value/1000
+          if(this.resObj.bandwidth == 20){
+            this.type1 =1
+          }else if(this.resObj.bandwidth == 30){
+            this.type1 =2
+          }else if(this.resObj.bandwidth == 50){
+            this.type1 =3
+          }
+        } else if (item.Key === "Expire") {//过期时间
           this.resObj.Expire = item.Value;
+        } else if (item.Key === "RuleLimit") { 
+          this.resObj.rule_limt = item.Value
+          this.resObj.rule = item.Value
+           if(item.Value == 60){
+            this.type3 =1
+          }else if(item.Value == 70){
+           this.type3 =2
+          }else if(item.Value == 80){
+             this.type3 =3
+          }else if(item.Value == 90){
+           this.type3 =4
+          }else if(item.Value == 100){
+             this.type3 =5
+          }else if(item.Value == 150){
+             this.type3 =6
+          }else if(item.Value == 200){
+           this.type3 =7
+          }else if(item.Value == 250){
+             this.type3 =8
+          }else if(item.Value == 300){
+             this.type3 =9
+          }
+        } else if (item.Key === "ServiceBandwidth") {
+          this.resObj.gfbandwidth = item.Value
+          this.resObj.ServiceBandwidth = item.Value
+          if(item.Value == 50){
+            this.type2 =1
+          }else if(item.Value == 100){
+           this.type2 =2
+          }else if(item.Value == 150){
+             this.type2 =3
+          }else if(item.Value == 200){
+           this.type2 =4
+          }else if(item.Value == 500){
+             this.type2 =5
+          }else if(item.Value == 1000){
+             this.type2 =6
+          }
         }
       })
+      this.queryPrice()
     },
     //关闭取消按钮
     handleClose(){
@@ -131,20 +183,21 @@ export default {
       }else if(this.type1==3){
         this.thisChnageNum='150,000QPS'
       }
-      // console.log(num1)
-      // this.values.bandwidth = num
+      this.resObj.bandwidth = num1
+      this.queryPrice()
     },
     //升级业务宽带
     checkListBusiness(thistype2,num2){
       this.type2=thistype2;
-      // console.log(num2)
-      // this.values.gfbandwidth = num2
+      this.resObj.gfbandwidth = num2
+      console.log('checkListBusiness ='+num2)
+      this.queryPrice()
     },
     //升级转发规则数
     checkListNum (thistype3, num3) {
       this.type3 = thistype3
-      // console.log(num3)
-      // this.values.rule = num3
+      this.resObj.rule = num3
+      this.queryPrice()
     },
     //温馨提示关闭按钮
     thisTipShow(){
@@ -154,25 +207,32 @@ export default {
     queryPrice() {
       this.isQury = false
       let GoodsDetail = {
-        // bandwidth: this.values.bandwidth, // 保底带宽
-        // gfbandwidth: this.values.gfbandwidth, // 业务带宽
-        // rule_count: this.values.rule, // 转发规则数
-        pid: "14306",
-        timeSpan: 1, // 购买时长
-        timeUnit: "m"
-      };
-      let json = JSON.stringify(GoodsDetail);
+          curDeadline: this.resObj.Expire ,//到期時間
+          newConfig: {
+            bandwidth: this.resObj.bandwidth,
+            gfbandwidth: this.resObj.gfbandwidth,
+            rule_count: this.resObj.rule,
+            pid: '14306'
+          },
+          oldConfig: {
+            bandwidth: this.resObj.DdosMax/1000,
+            gfbandwidth: this.resObj.ServiceBandwidth,
+            rule_count: this.resObj.rule_limt,
+            pid: '14306'
+          }
+      }
+      let goodsJSon = JSON.stringify(GoodsDetail)
       let ResInfo = [
         {
           RegionId: 39,
           ZoneId: 0,
           GoodsCategoryId: 100617,
-          Currency: "CNY",
+          Currency: 'CNY',
           GoodsNum: 1,
           PayMode: 1,
-          GoodsDetail: json
+          GoodsDetail: goodsJSon
         }
-      ];
+      ]
       let params = {
         Version: "2018-07-09",
         Region: "ap-taipei",
@@ -188,9 +248,10 @@ export default {
       this.axios.post(QUERY_PRICE, params).then(res => {
         if (res.Response !== undefined) {
           if (res.Response.Error === undefined) {
-            this.allMoney =  res.Response.PriceInfos[0].TotalCost
+            this.allMoney = res.Response.PriceInfos[0].TotalCost
             this.testPrice = res.Response.PriceInfos[0].totalCost_rmb
             this.isQury = true
+            this.isClickBtn = !(this.isQury && this.allMoney !== 0)
           } else {
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -205,18 +266,36 @@ export default {
       });
     },
      jumpPay () {
+       this.currMothTime()
+       let GoodsDetail = {
+          curDeadline: this.resObj.Expire ,//到期時間
+          newConfig: {
+            bandwidth: this.resObj.bandwidth,
+            gfbandwidth: this.resObj.gfbandwidth,
+            rule_count: this.resObj.rule,
+            pid: '14306'
+          },
+          oldConfig: {
+            bandwidth: this.resObj.DdosMax/1000,
+            gfbandwidth: this.resObj.ServiceBandwidth,
+            rule_count: this.resObj.rule_limt,
+            pid: '14306'
+          }
+      }
+      let goodsJSon = JSON.stringify(GoodsDetail)
        let params = {
-          address: this.checked1,
-          savePeak: this.checked2,
-          elasticPeak: this.checkedRoute3,
-          autoPay: this.checkOrNull,
-          BusinessBroadband: this.checkedRoute4,
-          httpQPS: this.checkChange1,
-          httpsQPS: this.checkChange2,
-          shareNum: 60,
-          payTime: this.checked5,
+          savePeak: this.resObj.bandwidth,
+          BusinessBroadband: this.resObj.gfbandwidth,
+          shareNum: this.resObj.rule,
           payMoney: this.allMoney,
-          payTimeNum: this.type5
+          payTimeNum: this.buyTime,
+          address: '',
+          elasticPeak: '',
+          httpQPS: '',
+          httpsQPS: '',
+          autoPay:'',
+          goodsId: 100617,
+          goodsInfo:goodsJSon
         };
         let objStr = JSON.stringify(params);
         sessionStorage.setItem("allData", [objStr]);
@@ -246,6 +325,14 @@ export default {
         s[1] += new Array(prec - s[1].length + 1).join("0");
       }
       return s.join(dec);
+    },
+    currMothTime () {
+      let maxDate = moment(this.resObj.Expire).toDate().getTime()
+      let nowDate = moment(Date.now()).toDate().getTime()
+      let curTime = maxDate - nowDate
+      let moth = curTime / 86400000
+      let time3 = Number(moth/30).toFixed(3)
+      this.buyTime = time3.substring(0, time3.toString().length - 1)
     }
   }
 }
@@ -330,6 +417,10 @@ export default {
         .errorTip{
           color:#e54545 !important;
         }
+        .showpice{
+          font-size: 14px;
+          color: #ed711f;
+        }
       }
     }
     .bottomBtnU{
@@ -345,6 +436,10 @@ export default {
         border-radius: 0;
         font-size:12px;
       }
+       .queryBtn{
+          background-color: #006eff;
+          color: #fff;
+        }
     }
      .query {
           font-size: 14px;

@@ -599,6 +599,15 @@ export default {
       });
     },
     jumpPay () {
+       let GoodsDetail = {
+        bandwidth: this.checked2, // 保底带宽
+        gfbandwidth: this.checkedRoute4, // 业务带宽
+        rule_count: 60, // 转发规则数
+        pid: "14306",
+        timeSpan: this.type5, // 购买时长
+        timeUnit: "m"
+      };
+      let json = JSON.stringify(GoodsDetail);
        let params = {
           address: this.checked1,
           savePeak: this.checked2,
@@ -610,7 +619,9 @@ export default {
           shareNum: 60,
           payTime: this.checked5,
           payMoney: this.allMoney,
-          payTimeNum: this.type5
+          payTimeNum: this.type5,
+          goodsId: 100615,
+          goodsInfo:json
         };
         let objStr = JSON.stringify(params);
         sessionStorage.setItem("allData", [objStr]);
