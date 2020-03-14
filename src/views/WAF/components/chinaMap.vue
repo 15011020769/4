@@ -1,19 +1,22 @@
 <template>
-  <div ref="worldmap_dv" style="width: 100%;height: 600px;"></div>
+  <div>
+    <p class="title">
+      {{topTitle.name}}
+      <span v-if="topTitle.name">BOT 数目</span>
+      {{topTitle.value}}
+    </p>
+    <div ref="worldmap_dv" style="width: 100%;height: 580px;"></div>
+  </div>
 </template>
 
 <script>
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/tooltip'
 import 'echarts/map/js/china.js' // 引入中国地图数据
-// import nameComparison from './nameComparison '
+import nameComparison from './nameComparison '
 export default {
   name: "myChart",
   props: {
-    // className: {
-    //   type: String,
-    //   default: "yourClassName"
-    // },
     // id: {
     //   type: String,
     //   default: "yourID"
@@ -35,13 +38,12 @@ export default {
       title: "图表",
       placeholder: "用户名/电话",
       find: "2", //1显示新增按钮，2显示导入按钮，若不显示这两个按钮可以写0或者不写值
-      chart: null
+      chart: null,
+      topTitle: {}
     };
   },
   mounted() {
     this.initChart();
-    // this.chinaConfigure();
-    // console.log(this.series)
   },
   watch: {
     series(val) {
@@ -53,6 +55,7 @@ export default {
     initChart() {
       this.chart = this.$echarts.init(this.$refs.worldmap_dv);
       window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
+      let that = this
       // 把配置和数据放这里
       this.chart.setOption({
         // 提示框组件
@@ -63,8 +66,10 @@ export default {
           formatter: function (val) {
             if (!val.data) {
               // return val.name + ': ' + 0
+              that.topTitle = {name: val.name, value: 0}
               return 0
             }
+            that.topTitle = {name: val.name, value: val.value}
             // return val.data.name + ': ' + val.data.value
             return val.data.value
           }
@@ -141,7 +146,7 @@ export default {
               },
             },
             // 自定义地区的名称映射
-            // nameMap: nameComparison,
+            nameMap: nameComparison,
             // 地图系列中的数据内容数组 数组项可以为单个数值
             data: this.series,
           }
@@ -152,3 +157,8 @@ export default {
 };
 
 </script>
+<style lang='scss' scoped>
+  .title {
+    padding: 10px 0 0 20px;
+  }
+</style>
