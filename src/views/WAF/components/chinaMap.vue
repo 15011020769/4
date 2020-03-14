@@ -2,10 +2,10 @@
   <div>
     <p class="title">
       {{topTitle.name}}
-      <span v-if="topTitle.name">BOT 数目</span>
+      <span v-if="topTitle.name">BOT {{t('数目', 'WAF.number')}}</span>
       {{topTitle.value}}
     </p>
-    <div ref="worldmap_dv" style="width: 100%;height: 580px;"></div>
+    <div ref="chinamap_dv" style="width: 100%;height: 580px;"></div>
   </div>
 </template>
 
@@ -17,27 +17,12 @@ import nameComparison from './nameComparison '
 export default {
   name: "myChart",
   props: {
-    // id: {
-    //   type: String,
-    //   default: "yourID"
-    // },
-    // width: {
-    //   type: String,
-    //   default: "100%"
-    // },
-    // height: {
-    //   type: String,
-    //   default: "400px"
-    // }
     series: {
       type: Array,
     }
   },
   data() {
     return {
-      title: "图表",
-      placeholder: "用户名/电话",
-      find: "2", //1显示新增按钮，2显示导入按钮，若不显示这两个按钮可以写0或者不写值
       chart: null,
       topTitle: {}
     };
@@ -53,8 +38,8 @@ export default {
   },
   methods: {
     initChart() {
-      this.chart = this.$echarts.init(this.$refs.worldmap_dv);
-      window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
+      this.chart = this.$echarts.init(this.$refs.chinamap_dv);
+      window.onresize = this.$echarts.init(this.$refs.chinamap_dv).resize;
       let that = this
       // 把配置和数据放这里
       this.chart.setOption({
@@ -148,7 +133,7 @@ export default {
             // 自定义地区的名称映射
             nameMap: nameComparison,
             // 地图系列中的数据内容数组 数组项可以为单个数值
-            data: this.series,
+            data: that.series,
           }
         ]
       });

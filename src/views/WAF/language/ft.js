@@ -670,6 +670,7 @@ module.exports = {
       qquuid: '請求UUID',
       qquri: '請求URI',
       xybb: '協議版本',
+      number: '數目',
     },
     COM: require('@/components/language/ft'),
 }
