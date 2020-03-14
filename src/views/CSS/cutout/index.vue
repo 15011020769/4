@@ -4,11 +4,21 @@
       <Header :backShow="false" :title="$t('CSS.cutout.0')" />
     </div>
     <div class="toolbar">
-      <XTimeX
-        v-on:switchData="GetDat"
-        :classsvalue="value"
-        :granularity="false"
-      ></XTimeX>
+      <el-button-group style="margin-left: 15px;">
+        <el-button size="small" :type="createTimeType === '0d' ? 'primary' : ''" @click="onTimeClick(0, 'd')">今天</el-button>
+        <el-button size="small" :type="createTimeType === '1d' ? 'primary' : ''" @click="onTimeClick(1, 'd')">昨天</el-button>
+        <el-button size="small" :type="createTimeType === '6d' ? 'primary' : ''" @click="onTimeClick(6, 'd')">近7天</el-button>
+        <el-button size="small" :type="createTimeType === '1month' ? 'primary' : ''" @click="onTimeClick(1, 'month')">近30天</el-button>
+      </el-button-group>
+      <el-date-picker
+        size="small"
+        :clearable="false"
+        style="border-left: none;"
+        v-model="timeValue"
+        type="datetimerange"
+        :picker-options="pickerOptions"
+        range-separator="至"
+      ></el-date-picker>
       <div class="search">
         <el-input
           v-model="searchInput"
@@ -82,6 +92,8 @@ export default {
   name: 'cutout',
   data () {
     return {
+      createTimeType: '0d',
+      timeValue: [moment().startOf('d'), moment()],
       StartTime: '',
       EndTime: '',
       value: 1,
@@ -90,14 +102,50 @@ export default {
       pageNum: 1,
       pageSize: 10,
       total: 0,
-      loading: true
+      loading: true,
+      selectDate: '',
+      pickerOptions: {
+        onPick: ({maxDate, minDate}) => {
+          this.selectDate= minDate.getTime();
+          if (maxDate) {
+            this.selectDate= ''
+          }
+        }, disabledDate: (date) => {
+          if (this.selectDate!== '') {
+            const minTime = moment(this.selectDate).subtract(1, 'month')
+            const maxTime = moment(this.selectDate).add(1, 'month')
+            return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || moment(date) < moment().subtract(2, 'month') || date.getTime() > Date.now()
+          }
+          return date.getTime() > Date.now() || moment(date) < moment().subtract(2, 'month')
+        }
+      }
     }
   },
   components: {
     Header,
     XTimeX
   },
+  watch: {
+    timeValue: {
+      handler() {
+        this.getDATA()
+      },
+      immediate: true
+    },
+  },
   methods: {
+    onTimeClick(t, u) {
+      this.createTimeType = `${t}${u}`
+      let start = moment().subtract(t, u).startOf('d')
+      let end = moment().endOf('d')
+      if (t === 0) {
+        end = moment()
+      }
+      if (t == 1) {
+        end = end.subtract(1, 'd')
+      }
+      this.timeValue = [start, end]
+    },
     duration (row) {
       let t = moment(row.StreamEndTime).diff(moment(row.StreamStartTime), 's')
       // 抄的腾讯的
@@ -122,20 +170,13 @@ export default {
     format (utcDate) {
       return moment(utcDate).format('YYYY-MM-DD HH:mm:ss')
     },
-    // 获取数据
-    GetDat (params) {
-      this.StartTime = params[1].StartTIme
-      this.EndTime = params[1].EndTIme
-      this.value = params[2]
-      this.$nextTick(this.getDATA)
-    },
     getDATA () {
       const param = {
         Version: '2018-08-01',
-        StartTime: moment(this.StartTime)
+        StartTime: moment(this.timeValue[0])
           .utc()
           .format(),
-        EndTime: moment(this.EndTime)
+        EndTime: moment(this.timeValue[1])
           .utc()
           .format(),
         IsFilter: 0,
