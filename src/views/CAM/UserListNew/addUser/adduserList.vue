@@ -523,6 +523,15 @@ export default {
         return
       }
       if (this.active === 3) {
+        if (this.ruleForm.Remark && !/^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g.test(this.ruleForm.Remark)) {
+           this.$message({
+            showClose: true,
+            message: "備註格式錯誤",
+            type: "error",
+            duration: 0
+          })
+          return
+        }
         const step4Ref = this.$refs.step4
         if (!step4Ref.phoneReg && !step4Ref.emailReg) {
           this.addUser()
@@ -548,6 +557,13 @@ export default {
           this.$message({
             showClose: true,
             message: "用戶名格式錯誤",
+            type: "error",
+            duration: 0
+          });
+        } else if (this.ruleForm.Remark && !/^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g.test(this.ruleForm.Remark)) {
+           this.$message({
+            showClose: true,
+            message: "備註格式錯誤",
             type: "error",
             duration: 0
           });
