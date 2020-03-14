@@ -141,7 +141,7 @@
                       </div>
                     </template>
                   </el-table-column>
-                  <el-table-column>
+                  <el-table-column width="50">
                     <template slot-scope="scope">
                       <div class="resses">
                         <i
@@ -324,13 +324,10 @@ export default {
     },
     // 保存
     save() {
-      console.log(this.groupingType);
       var _ViewName = "";
-      console.log(this.groupingType.length);
       if (this.groupingType.length > 0) {
         _ViewName = this.groupingType[this.groupingType.length - 1];
       }
-      console.log(_ViewName);
       let param = {
         GroupName: this.groupingName,
         Version: "2018-07-24",
@@ -340,6 +337,12 @@ export default {
       console.log(this.multipleSelection);
       for (let i in this.multipleSelection) {
         param["InstanceList." + i + ".Region"] = "ap-taipei";
+        // param["InstanceList." + i + ".Dimensions"] = JSON.stringify({
+        //   unInstanceId: this.multipleSelection[i].InstanceId
+        // });
+        // param["InstanceList." + i + ".EventDimensions"] = JSON.stringify({
+        //   uuid: this.multipleSelection[i].Uuid
+        // });
         param["InstanceList." + i + ".Dimensions"] = {
           unInstanceId: this.multipleSelection[i].InstanceId
         };

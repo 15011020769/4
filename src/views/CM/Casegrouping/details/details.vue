@@ -4,22 +4,22 @@
       <div class="details-title">
         <div>
           <i class="el-icon-back" @click="back()"></i>
-          <h2>修改</h2>
+          <h2>{{ $route.query.groupName }}</h2>
         </div>
       </div>
       <div class="details-headerTab">
         <el-tabs v-model="activeName" @tab-click="handleClick">
-          <el-tab-pane label="实例管理" name="first">
+          <el-tab-pane label="实例管理" name="1">
             <div class="tab-box">
               <instance-management :Rules="rules"></instance-management>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="告警策略" name="second">
+          <el-tab-pane label="告警策略" name="2">
             <div class="tab-box">
-              <alarm-strategy></alarm-strategy>
+              <alarm-strategy :Rules="rules"></alarm-strategy>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="变更日志" name="third">
+          <el-tab-pane label="变更日志" name="3">
             <div class="tab-box">
               <change-log :Rules="rules"></change-log>
             </div>
@@ -36,11 +36,13 @@ import ChangeLog from "./ChangeLog"; // 关联实例
 export default {
   data() {
     return {
-      activeName: "first",
+      activeName: this.$route.query.type,
       id: "",
       name: "",
       rules: {
-        instanceGroupId: this.$route.query.instanceGroupId
+        instanceGroupId: this.$route.query.instanceGroupId,
+        groupName: this.$route.query.groupName,
+        viewName: this.$route.query.viewName
       }
     };
   },
