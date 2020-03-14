@@ -47,10 +47,10 @@
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName" type="card" @tab-click="handleClick1">
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
-            <div id="myChart"></div>
+            <div id="chart-bps"></div>
           </el-tab-pane>
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Attack_rate')" name="pps">
-            <div id="myChart2"></div>
+            <div id="chart-pps"></div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -171,7 +171,7 @@ export default {
       ),
       timey: [],
       tableDataEnd: [],
-      period: 3600 //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
+      period: 3600, //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
     };
   },
   watch: {
@@ -218,6 +218,7 @@ export default {
   //初始化生命周期
   created() {
     this.GetID();
+    this.choiceTime(1);
   },
   methods: {
     //获取资源的IP列表
@@ -419,7 +420,11 @@ export default {
 
         this.startTime = moment(end).format("YYYY-MM-DD 00:00:00");
         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 3600;
+        let misTime = new Date(this.endTime).getTime() - new Date(this.startTime).getTime()
+        if(misTime / 3600*1000 < 1) 
+        this.period = 300;
+        else this.period = 3600;
+        
         this.timey = arr;
       } else if (thisTime == "2") {
         //ddos攻击-攻击流量带宽
@@ -503,15 +508,16 @@ export default {
       }
       arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
-      // console.log(arr)
-      let myChart = this.$echarts.init(document.getElementById("myChart"));
+      let myChart = this.$echarts.init(document.getElementById("chart-bps"));
       // 绘制图表
       myChart.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis'
+        },
         xAxis: {
-          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          data: arr
           // type : 'time',
           // minInterval: 1
         },
@@ -571,7 +577,7 @@ export default {
       }
       arr.splice(arr.length - 1, 1);
       // console.log(arr)
-      let myChart2 = this.$echarts.init(document.getElementById("myChart2"));
+      let myChart2 = this.$echarts.init(document.getElementById("chart-pps"));
       // 绘制图表
       myChart2.setOption({
         color: ["rgb(124, 181, 236)"],
@@ -750,5 +756,15 @@ export default {
   text-align: right;
   border-top: 1px solid #ddd;
   padding-top: 8px;
+}
+#chart-bps {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
+}
+#chart-pps {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
 }
 </style>
