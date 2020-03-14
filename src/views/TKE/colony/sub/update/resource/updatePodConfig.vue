@@ -103,8 +103,8 @@
                <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
              </p>
              <p>
-               为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。<span
-                 style="color:#409eff;cursor:pointer" >使用指引</span>
+               为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
+               <!-- <span style="color:#409eff;cursor:pointer" >使用指引</span> -->
              </p>
            </el-form-item>
            <el-form-item label="实例内容器">
@@ -249,15 +249,21 @@
                  <div v-show="v.disAdvancedSetting">
                    <el-form-item label="工作目录">
                      <el-input class="w192" v-model="v.workDirectory"></el-input>
-                     <p> 指定容器运行后的工作目录，<a href="#">查看详情</a> </p>
+                     <p> 指定容器运行后的工作目录，
+                       <!-- <a href="#">查看详情</a>  -->
+                     </p>
                    </el-form-item>
                    <el-form-item label="运行命令">
                      <el-input type="textarea"  v-model="v.runCommand" class="w400"  rows="3" resize="none"></el-input>
-                     <p> 控制容器运行的输入命令，<a href="#">查看详情</a> </p>
+                     <p> 控制容器运行的输入命令，
+                       <!-- <a href="#">查看详情</a>  -->
+                      </p>
                    </el-form-item>
                    <el-form-item label="运行参数">
                      <el-input type="textarea"  v-model="v.runParam"   class="w400"  rows="3" resize="none"></el-input>
-                     <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a> </p>
+                     <p>传递给容器运行命令的输入参数，注意每个参数单独一行，
+                       <!-- <a href="#">查看详情</a>  -->
+                      </p>
                    </el-form-item>
                    <el-form-item label="容器健康检查">
                      <el-tooltip class="item" effect="light" content="健康检查可以帮助你探测容器是否正常，以保证服务的正常运作" placement="top">
@@ -398,7 +404,9 @@
                        </div>
                      </div>
 
-                     <p>查看健康检查和就绪检查<a href="#">使用指引</a> </p>
+                     <p>查看健康检查和就绪检查
+                       <!-- <a href="#">使用指引</a> -->
+                      </p>
                    </el-form-item>
                    <el-form-item label="特权级容器">
                      <el-switch  v-model="v.privilegeLevelContainer" active-color="#006eff" inactive-color="#888">

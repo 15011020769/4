@@ -198,7 +198,7 @@
                   <div class="font-small" style="color:black">使用指引</div>
                   <div class="font-small">
                     {{$t('TKE.overview.kscj')}}
-                    <a href="">{{$t('TKE.overview.kssy')}}</a>
+                    <!-- <a href="">{{$t('TKE.overview.kssy')}}</a> -->
                   </div>
                 </div>
               </div>

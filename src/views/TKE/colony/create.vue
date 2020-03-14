@@ -50,10 +50,8 @@
       <!-- 第一步 -->
       <div v-if="firstBox">
         <div class="tke-reminder">
-          当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考<a
-            href="#"
-            >集群概述</a
-          >
+          当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考
+          <!-- <a href="#">集群概述</a> -->
         </div>
         <div class="tke-card tke-formpanel-wrap mb60">
           <el-form
@@ -96,10 +94,8 @@
                 </el-option>
               </el-select>
               <p>
-                集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。<a
-                  href="#"
-                  >使用指引</a
-                >
+                集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。
+                <!-- <a href="../../index.html#/documentcenter/doc/11185">使用指引</a> -->
               </p>
             </el-form-item>
             <el-form-item label="Kubernetes版本">
@@ -156,9 +152,7 @@
                     <li><span></span>如需使用TKE日志采集功能</li>
                   </ul>
                   <p class="hover-target">
-                    <a href="javascript:;" class="ml5" slot="reference"
-                      >查看详情</a
-                    >
+                    <!-- <a href="../../index.html#/documentcenter/doc/35747" class="ml5" slot="reference">查看详情</a> -->
                   </p>
                 </div>
                 <a href="javascript:;" class="ml5" slot="reference">如何选择</a>
@@ -195,7 +189,7 @@
               <i class="el-icon-refresh ml5" @click="NetworkRefresh()"></i>
               <span class="ml5 text-gray">CIDR: {{ colony.CidrBlock }}</span>
               <p>
-                如现有的网络不合适，您可以去控制台<a href="#">新建私有网络</a>
+                如现有的网络不合适，您可以去控制台<a href="../priNetwork">新建私有网络</a>
               </p>
             </el-form-item>
             <el-form-item>
@@ -282,7 +276,7 @@
                       >
                       </el-option>
                     </el-select>
-                    <a href="#" class="ml5">使用指引</a>
+                    <!-- <a href="#" class="ml5">使用指引</a> -->
                     <div
                       class="cid-tips tke-second-box"
                       v-if="colony.CIDRTips.IsConflict"
@@ -353,7 +347,26 @@
                 >
                 </el-option>
               </el-select>
-              <a href="#" class="ml5">如何选择</a>
+              <el-popover placement="right" width="550" trigger="click">
+                <div class="how-choose">
+                  <h2>TKE-Optimized 的优势</h2>
+                  <h3>内核定制</h3>
+                  <li>基于内核社区长期支持的4.14.105版本定制</li>
+                  <li>增加适用于云场景的新特性、改进内核性能并修复重大缺陷</li>
+                  <h3>容器支持</h3>
+                  <li>针对容器场景进行优化，提供了隔离增强和性能优化特性</li>
+                  <li>支持 meminfo、vmstat、cpuinfo、stat、loadavg 等隔离</li>
+                  <li>支持 sysctl 隔离，如 tcp_no_delay_ack、tcp_max_orphans</li>
+                  <li>修复了大量文件系统和网络的 bug</li>
+                  <h3>性能优化</h3>
+                  <li>优化 xfs 内存分配，解决 xfs kmem_alloc 分配失败告警</li>
+                  <li>优化网络收包大内存分配问题，解决 UDP 包量大时，占据过多内存问题</li>
+                  <li>限制系统 page cache 占用内存比例，从而避免内存不足影响业务的性能或者 OOM</li>
+                </div>
+                <!-- <a href="javascript:;" class="ml5">如何选择</a> -->
+                <a href="javascript:;" class="ml5" slot="reference">如何选择</a>
+              </el-popover>
+              <!-- <a href="#" class="ml5">如何选择</a> -->
             </el-form-item>
             <el-form-item label="集群描述">
               <el-input
@@ -441,7 +454,7 @@
               </el-radio-group>
               <p>
                 默认集群的Master、Etcd等组件由腾讯云提供维护和服务；为了方便管理，您也可以购买CVM部署Master，详情请参考
-                <a href="#">《集群托管模式说明》</a>
+                <!-- <a href="#">《集群托管模式说明》</a> -->
                 <i class=""></i>
               </p>
             </div>
@@ -491,7 +504,7 @@
                   <el-radio-button label="1">按量计费</el-radio-button>
                   <!-- <el-radio-button label="2">包年包月</el-radio-button> -->
                 </el-radio-group>
-                <a href="#">详细对比</a>
+                <!-- <a href="#">详细对比</a> -->
               </div>
             </div>
             <el-form-item
@@ -651,9 +664,8 @@
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <p>
-                          如现有的网络不合适，您可以去控制台<a href="#"
-                            >新建私有网络</a
-                          >或<a href="#">新建子网</a>
+                          如现有的网络不合适，您可以去控制台<a href="../priNetwork">新建私有网络</a>或
+                          <a href="../subnet">新建子网</a>
                         </p>
                       </div>
                     </li>
@@ -1054,9 +1066,11 @@
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >分配免费公网IP，<a href="#"
+                                    >分配免费公网IP，
+                                    <!-- <a href="#"
                                       >查看详情</a
-                                    ></el-checkbox
+                                    > -->
+                                  </el-checkbox
                                   >
                                 </div>
                                 <div class="btn">
@@ -1090,7 +1104,8 @@
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
                           CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                          您可以通过<a href="#">提交工单</a>申请提升配额。
+                          您可以通过提交工单申请提升配额。
+                          <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
                           CVM配额:当前账号最大可购买100台
@@ -1863,9 +1878,11 @@
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >分配免费公网IP，<a href="#"
+                                    >分配免费公网IP，
+                                    <!-- <a href="#"
                                       >查看详情</a
-                                    ></el-checkbox
+                                    > -->
+                                  </el-checkbox
                                   >
                                 </div>
                                 <div class="btn">
@@ -1892,7 +1909,8 @@
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
                           CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                          您可以通过<a href="#">提交工单</a>申请提升配额。
+                          您可以通过提交工单申请提升配额。
+                          <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
                           CVM配额:当前账号最大可购买100台
@@ -2201,10 +2219,8 @@
                 </div>
               </div>
               <p v-if="colonyThird.safeArr.length === 0">
-                集群节点间的正常通信需要放通部分端口，集群创建完成后可查看安全组及修改规则。<a
-                  href="#"
-                  >预览默认安全组规则</a
-                >
+                集群节点间的正常通信需要放通部分端口，集群创建完成后可查看安全组及修改规则。
+                <!-- <a href="#">预览默认安全组规则</a> -->
               </p>
 
               <p>
@@ -2253,7 +2269,7 @@
                 </el-option>
               </el-select>
               <i class="el-icon-refresh ml5"></i>
-              <p>如您现有的密钥不合适，可以<a href="#">现在创建</a></p>
+              <p>如您现有的密钥不合适，可以<a href="../sshkey">现在创建</a></p>
             </div>
           </el-form-item>
           <el-form-item label="密码" v-if="colonyThird.three" class="password">
@@ -2293,9 +2309,8 @@
                 >免费开通</el-checkbox
               >
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护<a href="#"
-                  >详细介绍</a
-                >
+                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>
@@ -2308,10 +2323,8 @@
                 取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标<a
-                  href="#"
-                  >详细介绍</a
-                >
+                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>

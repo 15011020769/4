@@ -39,8 +39,10 @@
               <el-radio-button label="yy">使用已有</el-radio-button>
             </el-radio-group>
             <div v-if="ing.fz=='yy'">
-              <div>使用已有应用CLB型创建ingress，不覆盖已有监听规则，请勿手动修改由TKE创建CLB监听器，<a href="">查看更多说明</a><i
-                class="el-icon-edit-outline"></i></div>
+              <div>使用已有应用CLB型创建ingress，不覆盖已有监听规则，请勿手动修改由TKE创建CLB监听器，
+                <!-- <a href="">查看更多说明</a><i
+                class="el-icon-edit-outline"></i> -->
+              </div>
               <el-select v-model="ing.describeLoadBalancersValue" placeholder="请选择" class="borderRed" @change="describeLoadBalancersChange">
                 <el-option
                   v-for="item in ing.describeLoadBalancersOption"

@@ -87,7 +87,7 @@
                 <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
                 <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
               </el-radio-group>
-              <a href="#">详细对比</a>
+              <!-- <a href="#">详细对比</a> -->
             </div>
           </div>
           <el-form-item label="所在地域">
@@ -360,13 +360,12 @@
                     您设置的带宽为0，容器服务将无法直接提供外网服务
                   </p>
                   <el-checkbox v-model="nodeForm.publicIpAssigned" :disabled = "nodeForm.disabled"
-                    >免费分配公网IP<a href="javascript:;"
-                      >使用指引</a
-                    ></el-checkbox
-                  >
+                    >免费分配公网IP
+                    <!-- <a href="javascript:;">使用指引</a> -->
+                  </el-checkbox>
                   <p v-show="nodeForm.internetMaxBandwidthOut === 0 || nodeForm.publicIpAssigned === false">
                     如果您对业务安全有要求不希望业务直接暴露到公网，同时又希望访问公网，您可以使用腾讯云NAT网关,点击查看
-                    <a href="javascript:;">NAT网关详细介绍</a>
+                    <!-- <a href="javascript:;">NAT网关详细介绍</a> -->
                   </p>
                 </div>
               </div>
@@ -496,9 +495,8 @@
                 >免费开通</el-checkbox
               >
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护<a href="#"
-                  >详细介绍</a
-                >
+                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>
@@ -511,10 +509,8 @@
                 取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标<a
-                  href="#"
-                  >详细介绍</a
-                >
+                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>

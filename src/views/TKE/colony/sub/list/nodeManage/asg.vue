@@ -190,7 +190,9 @@
         <el-form :model="global" :rules="rules" ref="ruleForm" label-position='left' label-width="250px" >
             <el-form-item label="自动缩容" :label-width="formLabelWidth" class='bottom' >
               <el-checkbox v-model="global.IsScaleDownEnabled" >开启自动缩容</el-checkbox>
-              <p>集群中节点空闲资源较多时将触发缩容。详情请查看<a>集群自动扩缩容说明</a></p>
+              <p>集群中节点空闲资源较多时将触发缩容。详情请查看
+                <!-- <a>集群自动扩缩容说明</a> -->
+              </p>
             </el-form-item>
             <el-form-item label="缩容配置" :label-width="formLabelWidth" class='bottom' v-show='global.IsScaleDownEnabled'>
               <el-form-item label="最大并发缩容数" prop="MaxEmptyBulkDelete">

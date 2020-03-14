@@ -246,7 +246,7 @@
                 </el-button>
               </div>
               <p style="line-height: 28px">为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
-                <span style="color:#409eff;cursor:pointer">使用指引</span>
+                <!-- <span style="color:#409eff;cursor:pointer">使用指引</span> -->
               </p>
             </div>
           </div>
@@ -419,15 +419,21 @@
                   <div v-show="v.disAdvancedSetting">
                     <el-form-item label="工作目录">
                       <el-input class="w192" v-model="v.workDirectory"></el-input>
-                      <p> 指定容器运行后的工作目录，<a href="#">查看详情</a></p>
+                      <p> 指定容器运行后的工作目录，
+                        <!-- <a href="#">查看详情</a> -->
+                      </p>
                     </el-form-item>
                     <el-form-item label="运行命令">
                       <el-input type="textarea" class="w400" v-model="v.runCommand" rows="3" resize="none"></el-input>
-                      <p> 控制容器运行的输入命令，<a href="#">查看详情</a></p>
+                      <p> 控制容器运行的输入命令，
+                        <!-- <a href="#">查看详情</a> -->
+                      </p>
                     </el-form-item>
                     <el-form-item label="运行参数">
                       <el-input type="textarea" class="w400" v-model="v.runParam" rows="3" resize="none"></el-input>
-                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，<a href="#">查看详情</a></p>
+                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，
+                        <!-- <a href="#">查看详情</a> -->
+                      </p>
                     </el-form-item>
                     <el-form-item label="容器健康检查">
                       <el-tooltip class="item" effect="light" content="健康检查可以帮助你探测容器是否正常，以保证服务的正常运作" placement="top">
@@ -571,7 +577,9 @@
                           </el-form-item>
                         </div>
                       </div>
-                      <p>查看健康检查和就绪检查<a href="#">使用指引</a></p>
+                      <p>查看健康检查和就绪检查
+                        <!-- <a href="#">使用指引</a> -->
+                      </p>
                     </el-form-item>
                     <el-form-item label="特权级容器">
                       <el-switch active-color="#006eff" inactive-color="#888" v-model="v.privilegeLevelContainer"></el-switch>
@@ -631,7 +639,9 @@
               </div>
               <!-- 自动调节 -->
               <div v-show="wl.caseNum==='autoAdjust'">
-                <p style="line-height: 28px">满足任一设定条件，则自动调节实例（pod）数目<a href="#">查看更多</a></p>
+                <p style="line-height: 28px">满足任一设定条件，则自动调节实例（pod）数目
+                  <!-- <a href="#">查看更多</a> -->
+                </p>
                 <div class="case-content" style="background-color: #f2f2f2;margin-top:6px;padding:20px;">
                   <el-form-item label="触发策略">
                     <div class="flex bottom10" v-for="(item,index) in wl.touchTactics" :key="index">
@@ -883,7 +893,7 @@
                 <el-radio v-model="wl.serviceAccess" label="2">仅在集群内访问</el-radio>
                 <el-radio v-model="wl.serviceAccess" label="3">VPC内网访问</el-radio>
                 <el-radio v-model="wl.serviceAccess" label="4">主机端口访问</el-radio>
-                <a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i>
+                <!-- <a href="" style="padding-left:10px;">如何选择</a><i class="el-icon-edit-outline"></i> -->
               </el-form-item>
               <!-- 服务访问方式介绍 -->
               <div style="margin-bottom: 18px">
@@ -893,8 +903,9 @@
                       自动创建公网CLB（<span class="text-warning">0.02元/小时</span>）以提供Internet访问入口，支持TCP/UDP协议，如web前台类服务可以选择公网访问。
                     </div>
                     <div>
-                      如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，<a href="">查看详情</a><i
-                      class="el-icon-edit-outline"></i>
+                      如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，
+                      <!-- <a href="">查看详情</a><i
+                      class="el-icon-edit-outline"></i> -->
                     </div>
                   </el-form-item>
                   <el-form-item v-if="wl.serviceAccess=='2'" label-width="0px">
@@ -910,11 +921,15 @@
                   </el-form-item>
                   <el-form-item v-if="wl.serviceAccess=='3'" label-width="0px">
                     <div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
-                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                    <div>支持Ingress
+                      <!-- <a href="">查看详情</a><i class="el-icon-edit-outline"></i> -->
+                    </div>
                   </el-form-item>
                   <el-form-item v-if="wl.serviceAccess=='4'" label-width="0px">
                     <div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
-                    <div>支持Ingress<a href="">查看详情</a><i class="el-icon-edit-outline"></i></div>
+                    <div>支持Ingress
+                      <!-- <a href="">查看详情</a><i class="el-icon-edit-outline"></i> -->
+                    </div>
                   </el-form-item>
                 </div>
               </div>
@@ -952,10 +967,12 @@
                   </el-radio-group>
                 </div>
                 <p v-show="wl.loadBalance=='1'">自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，
-                  <a href="javascript:;">查看更多说明</a>
+                  <!-- <a href="javascript:;">查看更多说明</a> -->
                 </p>
                 <div v-show="wl.loadBalance=='2'">
-                  <div>使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB<el-button type="text" size="mini">查看更多说明</el-button></div>
+                  <div>使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB
+                    <!-- <el-button type="text" size="mini">查看更多说明</el-button> -->
+                  </div>
                   <el-select v-show="wl.loadBalance=='2'" v-model="wl.describeLoadBalancersValue" placeholder="请选择" class="borderRed">
                     <el-option
                       v-for="item in describeLoadBalancersOption"

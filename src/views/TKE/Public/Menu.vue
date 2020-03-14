@@ -42,9 +42,9 @@
       <el-menu-item index="/logCollection" @click="_class" :class="{'active':classValue=='/logCollection'}">
         <span slot="title">日志采集</span>
       </el-menu-item>
-      <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
+      <!-- <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
         <span slot="title">告警设置</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="/persistence" @click="_class" :class="{'active':classValue=='/persistence'}">
         <span slot="title">事件持久化</span>
       </el-menu-item>
