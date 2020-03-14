@@ -98,11 +98,12 @@ module.exports = {
       domainName: '域名',
       currentIp: '当前IP',
       AutomaticBack: '自动回切',
+      OpenAutoReturn: '开启自动回切',
       changeTime: '修改时间',
       autoHourText1: '攻击结束后',
       autoHourText2: '小时切回初始区域',
       changeAutoHourText1: '业务将在攻击结束后',
-      changeAutoHourText2: '小时自动切回初始区域中国台湾',
+      changeAutoHourText2: '小时自动切回初始区域台湾台北',
       keyBack: '一键回切',
       CheckReport: '查看报表',
       AssetListName: 'ID/名称',
@@ -418,7 +419,7 @@ module.exports = {
       qsrbmd: '请输入IP白名单, 以换行符分隔',
       pldrurlbmd: '批量导入URL白名单',
       qsrurlbmd: '请输入URL白名单, 以换行符分隔',
-      zgtw: '中国台湾'
+      zgtw: '台湾台北'
     },
     updateddos: {
       jc: '检测',

@@ -214,31 +214,38 @@
               </el-table-column>
               <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index" style="float: left;">
-                    <el-switch
-                      v-if="item.Key == 'AutoReturn'"
-                      v-model="item.Value"
-                      active-color="#006eff"
-                      inactive-color="#999"
-                      active-value="1"
-                      inactive-value="0"
-                      @change="changeSwitch(scope.row)"
-                    ></el-switch>
-                  </div>
-                  <div v-for="(item, index) in scope.row.Record" :key="index+'i'">
-                    <el-tooltip v-if="item.Key == 'ReturnHour'" class="tooltip" effect="light" placement="bottom">
+                  <div v-for="(item, index) in scope.row.Record" :key="index">
+                    <el-tooltip v-if="item.Key == 'AutoReturn'" class="tooltip" effect="light" placement="bottom-start">
                       <div slot="content" class="tooltip_text">
-                        <p
-                          style="height: 20px;"
-                        >{{$t('DDOS.AssetList.autoHourText1')}}{{item.Value}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
-                        <a
-                          href="#"
-                          @click="changeAutoReturnTime(scope.row)"
-                          style="text-decoration: underline;"
-                        >{{$t('DDOS.AssetList.changeTime')}}</a>
+                        {{ $t('DDOS.AssetList.OpenAutoReturn') }}
                       </div>
-                      <i class="el-icon-info"></i>
+                      <el-switch
+                        v-model="item.Value"
+                        active-color="#006eff"
+                        inactive-color="#999"
+                        active-value="1"
+                        inactive-value="0"
+                        @change="changeSwitch(scope.row)"
+                        style="float: left;"
+                      ></el-switch>
                     </el-tooltip>
+                    <div v-if="item.Key == 'AutoReturn' && item.Value == 1">
+                      <div v-for="(item2, index2) in scope.row.Record" :key="index2+'i'">
+                        <el-tooltip v-if="item2.Key == 'ReturnHour'" class="tooltip" effect="light" placement="bottom">
+                          <div slot="content" class="tooltip_text">
+                            <p
+                              style="height: 20px;"
+                            >{{$t('DDOS.AssetList.autoHourText1')}}{{item2.Value}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
+                            <a
+                              href="#"
+                              @click="changeAutoReturnTime(scope.row)"
+                              style="text-decoration: underline;"
+                            >{{$t('DDOS.AssetList.changeTime')}}</a>
+                          </div>
+                          <i class="el-icon-info"></i>
+                        </el-tooltip>
+                      </div>
+                    </div>
                   </div>
                 </template>
               </el-table-column>
@@ -474,7 +481,7 @@ export default {
                   IPText.splice(0, 0,
                     ipDetailArr[0] +
                       "(" +
-                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
+                      (ipDetailArr[1] == "tpe" ? "台灣台北" : ipDetailArr[1]) +
                       (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
                       ")"
                   );
@@ -482,7 +489,7 @@ export default {
                   IPText.push(
                     ipDetailArr[0] +
                       "(" +
-                      (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
+                      (ipDetailArr[1] == "tpe" ? "台灣台北" : ipDetailArr[1]) +
                       (ipDetailArr[2] == "bgp" ? "BGP" : ipDetailArr[2]) +
                       ")"
                   );
@@ -1067,10 +1074,8 @@ a {
 }
 .el-icon-info {
   margin-left: 5px;
-  margin-top: 5px;
   display: inline-block;
-  width: 14px;
-  height: 14px;
+  height: 15px;
   vertical-align: middle;
   cursor: pointer;
 }
