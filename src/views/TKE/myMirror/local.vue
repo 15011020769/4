@@ -16,11 +16,9 @@
             <el-table-column prop="creationTime" label="创建时间"></el-table-column>
             <el-table-column prop="repoCount" label="操作" >
               <template slot-scope="scope">
-                 <!-- <el-tooltip class="item" effect="light" placement="bottom">
-                  <div slot="content" v-if="scope.row.repoCount ? true:false">镜像仓库数量不为零，不能进行删除操作</div> -->
-                  <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false">
-                    删除</el-button>
-                <!-- </el-tooltip> -->
+                  <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false" >
+                    删除
+                    </el-button>
               </template>
             </el-table-column>
         </el-table>
@@ -61,7 +59,7 @@ export default {
   data () {
     var validatePass = (rule, value, callback) => {
       // 获取命名空间是否存在的接口
-      var regex = /^[0-9a-z]([0-9a-z]|.|_|-){0,198}[0-9a-z]$/
+      var regex = /^[^-\._]([0-9a-z_\.-](?!(\-\-)|(\.\.)|(\-\.)|(\.\-)|(\_\_)|(\-\_)|(\.\_))[0-9a-z_\.-])(?!-\._$){4,30}$/g
       const param = {
         namespace: this.ruleForm.name
       }
