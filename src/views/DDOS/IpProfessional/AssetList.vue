@@ -439,9 +439,20 @@ export default {
       // 1.1.2.条件搜索参数（输入框参数）
       if (this.selectResourceInput != "") {
         if (this.listSelect == "resourceList") {
-          params["Name"] = this.selectResourceInput;
+          var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+          if (regIP.test(this.selectResourceInput)) {
+            params["IpList.0"] = this.selectResourceInput;
+          } else if (this.selectResourceInput.length == 12 && this.selectResourceInput.substring(0,4) == "net-") {
+            params["IdList.0"] = this.selectResourceInput;
+          } else {
+            params["Name"] = this.selectResourceInput;
+          }
         } else if (this.listSelect == "businessList") {
-          params["Domain"] = this.selectResourceInput;
+          if (this.selectResourceInput.indexOf("dayugslb") != -1) {
+            params["CName"] = this.selectResourceInput;
+          } else {
+            params["Domain"] = this.selectResourceInput;
+          }
         }
       }
       // -----调用接口-----
@@ -486,7 +497,10 @@ export default {
           });
         });
         // 此接口调用完，调用1.2接口
-        this.describeRuleSets();
+        if (this.totalItems != 0) {
+          this.describeRuleSets();
+        }
+        this.loading = false;
       });
     },
     // 1.2.获取资源的规则数接口
@@ -533,8 +547,6 @@ export default {
             }
           });
         });
-        this.loading = false;
-        // console.log(this.tableData);
       });
     },
     // 1.3.获取回源IP段
