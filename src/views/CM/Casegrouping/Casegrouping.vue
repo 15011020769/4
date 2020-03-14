@@ -553,12 +553,12 @@ export default {
   line-height: 30px;
   font-size: 12px;
 }
-.group-wrap >>> .el-dialog {
-  width: 1000px;
-  height: 700px;
-  margin-top: -350px;
-  top: 50%;
-}
+// .group-wrap >>> .el-dialog {
+//   width: 1000px;
+//   height: 700px;
+//   margin-top: -350px;
+//   top: 50%;
+// }
 .group-wrap {
   .Right-style {
     display: flex;
