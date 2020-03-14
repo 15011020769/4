@@ -93,9 +93,9 @@
             <!-- <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span> -->
             <!-- <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span> -->
             <!-- <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span> -->
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="goSvcUpdteType(scope.row)">更新访问方式</el-button>
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="goEdit(scope.row)">编辑YAML</el-button>
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="deleteInfo(scope.row.metadata.name)">删除</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
