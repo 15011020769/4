@@ -15,6 +15,7 @@
       scale: Number,
       period: String,
       series: [Array, String, Number],
+      title: String
     },
     mounted() {
       this.init();
@@ -92,6 +93,9 @@
                 backgroundColor: "#6a7985"
               }
             }
+          },
+          title: {
+            text: this.title
           },
           toolbox: {
             feature: {

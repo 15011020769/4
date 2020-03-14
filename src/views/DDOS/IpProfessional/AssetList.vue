@@ -57,15 +57,11 @@
               </el-table-column>
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.Forwarding')">
                 <template slot-scope="scope">
-                  <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <span v-if="item.Key == 'L4RulesTotal'">
-                      {{ item.Value }}
-                      <a @click="toAccest(scope.row.Record)">
-                        {{
-                        $t("DDOS.AssetList.AssetListSet")
-                        }}
-                      </a>
-                    </span>
+                  <div>
+                    {{ (scope.row.RuleNum === undefined || scope.row.RuleNum == "") ? 0 : scope.row.RuleNum}}
+                    <a @click="toAccest(scope.row.Record)">
+                      {{ $t("DDOS.AssetList.AssetListSet") }}
+                    </a>
                   </div>
                 </template>
               </el-table-column>
@@ -134,12 +130,17 @@
               <!-- 自动续费 -->
               <el-table-column prop="renewFlag" :label="$t('DDOS.choose.renewalMoney')">
                 <template slot-scope="scope">
-                  <el-switch
-                    v-model="scope.row.RenewFlag"
-                    active-color="#006eff"
-                    inactive-color="#999"
-                    @change="renewFlagSwitch(scope.row)"
-                  ></el-switch>
+                  <div v-for="(item, index) in scope.row.Record" :key="index">
+                    <el-switch
+                      v-if="item.Key == 'AutoRenewFlag'"
+                      v-model="item.Value"
+                      active-color="#006eff"
+                      inactive-color="#999"
+                      active-value="1"
+                      inactive-value="0"
+                      @change="modifyResourceRenewFlag(scope.row)"
+                    ></el-switch>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="230">
@@ -193,7 +194,7 @@
               </el-table-column>
               <el-table-column prop="RuleNameList" :label="$t('DDOS.AssetList.domainName')">
                 <template slot-scope="scope">
-                  {{ scope.row.RuleNameList }}
+                  {{ (scope.row.RuleNameList === undefined || scope.row.RuleNameList == "") ? "-" :  scope.row.RuleNameList}}
                   <a @click="toAccest(scope.row.Record)">
                     {{
                     $t("DDOS.AssetList.AssetListSet")
@@ -213,26 +214,32 @@
               </el-table-column>
               <el-table-column prop="backSelf" :label="$t('DDOS.AssetList.AutomaticBack')">
                 <template slot-scope="scope">
-                  <!-- {{scope.row.AutoReturn}} -->
-                  <el-switch
-                    v-model="scope.row.AutoReturn"
-                    active-color="#006eff"
-                    inactive-color="#999"
-                    @change="changeSwitch"
-                  ></el-switch>
-                  <el-tooltip class="tooltip" effect="light" placement="bottom">
-                    <div slot="content" class="tooltip_text">
-                      <p
-                        style="height: 20px;"
-                      >{{$t('DDOS.AssetList.autoHourText1')}}{{scope.row.ReturnHour}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
-                      <a
-                        href="#"
-                        @click="changeAutoReturnTime(scope.row)"
-                        style="text-decoration: underline;"
-                      >{{$t('DDOS.AssetList.changeTime')}}</a>
-                    </div>
-                    <i class="el-icon-info"></i>
-                  </el-tooltip>
+                  <div v-for="(item, index) in scope.row.Record" :key="index" style="float: left;">
+                    <el-switch
+                      v-if="item.Key == 'AutoReturn'"
+                      v-model="item.Value"
+                      active-color="#006eff"
+                      inactive-color="#999"
+                      active-value="1"
+                      inactive-value="0"
+                      @change="changeSwitch(scope.row)"
+                    ></el-switch>
+                  </div>
+                  <div v-for="(item, index) in scope.row.Record" :key="index+'i'">
+                    <el-tooltip v-if="item.Key == 'ReturnHour'" class="tooltip" effect="light" placement="bottom">
+                      <div slot="content" class="tooltip_text">
+                        <p
+                          style="height: 20px;"
+                        >{{$t('DDOS.AssetList.autoHourText1')}}{{item.Value}}{{$t('DDOS.AssetList.autoHourText2')}}</p>
+                        <a
+                          href="#"
+                          @click="changeAutoReturnTime(scope.row)"
+                          style="text-decoration: underline;"
+                        >{{$t('DDOS.AssetList.changeTime')}}</a>
+                      </div>
+                      <i class="el-icon-info"></i>
+                    </el-tooltip>
+                  </div>
                 </template>
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
@@ -251,27 +258,29 @@
               </el-table-column>
             </el-table>
 
-            <!-- 修改自动回切时间 -->
+            <!-- 设置自动回切时间 -->
             <el-dialog
               :title="$t('DDOS.AssetList.AutomaticBack')"
               :visible.sync="autoReturnTimeDialogVisible"
               width="43%"
             >
-              <div>
-                {{$t('DDOS.AssetList.changeAutoHourText1')}}
-                <el-select
-                  v-model="autoHour"
-                  :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
-                  style="width: 120px;"
-                >
-                  <el-option
-                    v-for="(item, index) in autoReturnTimeList"
-                    :label="item"
-                    :value="item"
-                    :key="index"
-                  ></el-option>
-                </el-select>
-                {{$t('DDOS.AssetList.changeAutoHourText2')}}
+              <div v-for="(item, index) in resourceObj.Record" :key="index">
+                <div v-if="item.Key == 'ReturnHour'">
+                  {{$t('DDOS.AssetList.changeAutoHourText1')}}
+                  <el-select
+                    v-model="item.Value"
+                    :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
+                    style="width: 120px;"
+                  >
+                    <el-option
+                      v-for="(item, index) in autoReturnTimeList"
+                      :label="item"
+                      :value="item"
+                      :key="index"
+                    ></el-option>
+                  </el-select>
+                  {{$t('DDOS.AssetList.changeAutoHourText2')}}
+                </div>
               </div>
               <div slot="footer" style="text-align: center">
                 <el-button
@@ -304,8 +313,7 @@
             <ProtectConfigModel
               :configShow="dialogConfigModel"
               @closeConfigModel="closeConfigModel"
-              :modifyDDosRes="modifyDDosRes"
-              :policysData="tableDataPolicy"
+              ref="protectConfigModel"
             />
           </div>
           <div class="Right-style pagstyle">
@@ -336,7 +344,8 @@ import {
   SOURCEIPSEGMENT_DESCRIBE,
   INSTANCENAME_CONT,
   L4_RULES,
-  MODIFY_RENEWFLAG
+  MODIFY_RENEWFLAG,
+  Modify_NetReturnSwitch
 } from "@/constants";
 import resouseListModel from "./model/resouseListModel";
 import upgradeModel from "./model/upgradeModel";
@@ -353,11 +362,11 @@ export default {
       expireFilter: false, // 搜索勾选框：即将到期搜索；可选，取值为[0（不搜索），1（搜索即将到期的资源）]
       runningStatus: [], // 搜索勾选框：运行状态
       selectResourceInput: "", // 搜索输入框
+      resourceObj: {}, // 各弹框所使用对象（防护配置）
 
       ruleSets: [], // 资源的规则数据
       ipSegment: "", // 回源IP
       tableDataEnd: [],
-      tableDataPolicy: [], // DDoS高级防护策略列表
       RuleSetsa: [], // 获取资源的规则数接口
       filterTableDataEnd: [],
       flag: false,
@@ -369,13 +378,11 @@ export default {
       dialogConfigModel: false, // 防护配置弹框
       resouseOrYw: "", // 判断是哪个列表
       status: "",
-      modifyDDosRes: {}, // 防护配置使用对象
       inputName: "", // 修改名称
       // 资源列表
 
       // 业务列表
       autoReturnTimeDialogVisible: false, //自动回切-修改时间弹框
-      autoHour: 2,
       autoReturnTimeList: [1, 2, 3, 4, 5, 6], //自动回切-时间数组
       // 分页
       currentPage: 1,
@@ -401,7 +408,6 @@ export default {
   },
   created() {
     this.describeResourceList(); // 获取资源列表接口
-    // this.describeDDoSPolicy() // 获取高级策略列表
   },
   methods: {
     // 搜索勾选框-即将过期
@@ -433,9 +439,20 @@ export default {
       // 1.1.2.条件搜索参数（输入框参数）
       if (this.selectResourceInput != "") {
         if (this.listSelect == "resourceList") {
-          params["Name"] = this.selectResourceInput;
+          var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+          if (regIP.test(this.selectResourceInput)) {
+            params["IpList.0"] = this.selectResourceInput;
+          } else if (this.selectResourceInput.length == 12 && this.selectResourceInput.substring(0,4) == "net-") {
+            params["IdList.0"] = this.selectResourceInput;
+          } else {
+            params["Name"] = this.selectResourceInput;
+          }
         } else if (this.listSelect == "businessList") {
-          params["Domain"] = this.selectResourceInput;
+          if (this.selectResourceInput.indexOf("dayugslb") != -1) {
+            params["CName"] = this.selectResourceInput;
+          } else {
+            params["Domain"] = this.selectResourceInput;
+          }
         }
       }
       // -----调用接口-----
@@ -445,80 +462,7 @@ export default {
         this.totalItems = res.Response.Total;
         this.tableData.forEach(val => {
           val.Record.forEach(item => {
-            if (item.Key == "Id") {
-              // 1.防护等级（资源列表-防护配置 需要）
-              let params = {
-                Version: "2018-07-09",
-                Region: localStorage.getItem("regionv2"),
-                Business: "net",
-                Id: item.Value,
-                Method: "get"
-              };
-              this.axios.post(Modify_Level, params).then(res => {
-                const obj = {
-                  Key: "DDoSLevel",
-                  Value: res.Response.DDoSLevel
-                };
-                val.Record.push(obj);
-              });
-              // 2.高级防护策略（资源列表-防护配置 需要）
-              let params2 = {
-                Version: "2018-07-09",
-                Region: localStorage.getItem("regionv2"),
-                Business: "net",
-                Id: item.Value
-              };
-              this.axios.post(GET_SPolicy, params2).then(res => {
-                if (res.Response.DDosPolicyList.length == 0) {
-                  const obj2 = {
-                    Key: "SPolicyName",
-                    Value: "-"
-                  };
-                  const obj2Id = {
-                    Key: "SPolicyId",
-                    Value: "0000"
-                  };
-                  val.Record.push(obj2);
-                  val.Record.push(obj2Id);
-                } else {
-                  const obj2 = {
-                    Key: "SPolicyName",
-                    Value: res.Response.DDosPolicyList[0].PolicyName
-                  };
-                  const obj2Id = {
-                    Key: "SPolicyId",
-                    Value: res.Response.DDosPolicyList[0].PolicyId
-                  };
-                  val.Record.push(obj2);
-                  val.Record.push(obj2Id);
-                }
-              });
-              // 3.转发规则个数（资源列表 需要）
-              let params3 = {
-                Version: "2018-07-09",
-                Region: localStorage.getItem("regionv2"),
-                Business: "net",
-                Id: item.Value
-              };
-              this.axios.post(L4_RULES, params3).then(res => {
-                if (res.Response.Error === undefined) {
-                  const obj3 = {
-                    Key: "L4RulesTotal",
-                    Value: res.Response.Total
-                  };
-                  val.Record.push(obj3);
-                } else {
-                  let ErrTips = {};
-                  let ErrOr = Object.assign(ErrorTips, ErrTips);
-                  this.$message({
-                    message: ErrOr[res.Response.Error.Code],
-                    type: "error",
-                    showClose: true,
-                    duration: 0
-                  });
-                }
-              });
-            } else if (item.Key == "GroupIpList") {
+            if (item.Key == "GroupIpList") {
               // IP列表文本格式化处理（资源列表 需要）
               let IPText = [];
               let ipArr = item.Value.split(";");
@@ -527,9 +471,7 @@ export default {
                 let ipDetailArr = element.split("-");
                 if (ipDetailArr[3] == "100") {
                   //IP显示顺序处理
-                  IPText.splice(
-                    0,
-                    0,
+                  IPText.splice(0, 0,
                     ipDetailArr[0] +
                       "(" +
                       (ipDetailArr[1] == "tpe" ? "中國台灣" : ipDetailArr[1]) +
@@ -551,14 +493,14 @@ export default {
                 Value: IPText
               };
               val.Record.push(obj);
-            } else if (item.Key == "AutoRenewFlag") {
-              // 自动续费（资源列表 需要）
-              val.RenewFlag = item.Value == "1";
             }
           });
         });
         // 此接口调用完，调用1.2接口
-        this.describeRuleSets();
+        if (this.totalItems != 0) {
+          this.describeRuleSets();
+        }
+        this.loading = false;
       });
     },
     // 1.2.获取资源的规则数接口
@@ -588,37 +530,23 @@ export default {
               this.ruleSets.L4RuleSets.forEach(ruleSet => {
                 // 循环Record2
                 ruleSet.Record.forEach(map2 => {
-                  // 判断获取Key=Id的值
-                  if (map2.Key == "Id") {
-                    // 判断resourceId和ruleSetId是否相等
-                    if (map.Value == map2.Value) {
-                      // 再次循环Record2，获取RuleNameList的值
-                      ruleSet.Record.forEach(map3 => {
-                        if (map3.Key == "RuleNameList") {
-                          // 将RuleNameList的值添加进tableData
-                          item.RuleNameList = map3.Value;
-                        }
-                      });
-                    }
+                  // 判断获取Key=Id的值(判断resourceId和ruleSetId是否相等)
+                  if (map2.Key == "Id" && map.Value == map2.Value) {
+                    // 再次循环Record2，获取RuleNameList的值
+                    ruleSet.Record.forEach(map3 => {
+                      if (map3.Key == "RuleNameList") {
+                        // 将RuleNameList的值添加进tableData
+                        item.RuleNameList = map3.Value;
+                      } else if (map3.Key == "RuleNum") {
+                        item.RuleNum = map3.Value;
+                      }
+                    });
                   }
                 });
               });
-              if (item.RuleNameList === undefined || item.RuleNameList == "") {
-                item.RuleNameList = "-";
-              }
-            } else if (map.Key == "AutoReturn") {
-              if (map.Value == "1") {
-                item.AutoReturn = true;
-              } else if (map.Value == "0") {
-                item.AutoReturn = false;
-              }
-            } else if (map.Key == "ReturnHour") {
-              item.ReturnHour = map.Value;
             }
           });
         });
-        this.loading = false;
-        // console.log(this.tableData);
       });
     },
     // 1.3.获取回源IP段
@@ -669,26 +597,20 @@ export default {
         }
       });
     },
-    // 1.5.获取DDoS高级策略
-    describeDDoSPolicy() {
+    // 1.5.资源列表-自动续费
+    modifyResourceRenewFlag(row) {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net"
       };
-      this.axios.post(GET_SPolicy, params).then(res => {
-        this.tableDataPolicy = res.Response.DDosPolicyList;
-      });
-    },
-    // 1.6.资源列表-自动续费
-    modifyResourceRenewFlag(id, renewFlag) {
-      let params = {
-        Version: "2018-07-09",
-        Region: localStorage.getItem("regionv2"),
-        Business: "net",
-        Id: id,
-        RenewFlag: renewFlag // RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）
-      };
+      for (let i = 0; i < row.Record.length; i++) {
+        if (row.Record[i].Key == "Id") {
+          params.Id = row.Record[i].Value;
+        } else if (row.Record[i].Key == "AutoRenewFlag") {
+          params.RenewFlag = row.Record[i].Value; // RenewFlag是Integer	自动续费标记（0手动续费；1自动续费；2到期不续费）
+        } 
+      }
       this.axios.post(MODIFY_RENEWFLAG, params).then(res => {
         if (res.Response.Error === undefined) {
           this.describeResourceList();
@@ -715,51 +637,67 @@ export default {
         }
       });
     },
-
-    // 自动回切
-    changeSwitch(val) {
-      console.log(val);
+    // 1.6. 设置自动回切
+    modifyNetReturnSwitch(id, status, hour) {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        Id: "net-000000ax"
+        Id: id,
+        Status: status,
+        Hour: hour
       };
-      // this.axios.post(CREATNETRETURN, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     console.log(res.Response)
-      //   } else {
-      //     let ErrTips = {}
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: 'error',
-      //       showClose: true,
-      //       duration: 0
-      //     })
-      //   }
-      // })
+      this.axios.post(Modify_NetReturnSwitch, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.describeResourceList();
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          });
+          return
+        }
+      });
     },
-    // 修改自动回切时间
-    changeAutoReturnTime(row) {
-      console.log(row);
-      this.autoHour = row.ReturnHour;
-      this.autoReturnTimeDialogVisible = true;
-    },
-    changeAutoReturnHour() {
-      console.log(this.autoHour);
-    },
-    // 自动续费
-    renewFlagSwitch(row) {
+
+    // 自动回切 按钮
+    changeSwitch(row) {
+      let id = "";
+      let status = 1;
       for (let i = 0; i < row.Record.length; i++) {
         if (row.Record[i].Key == "Id") {
-          this.modifyResourceRenewFlag(
-            row.Record[i].Value,
-            row.RenewFlag == true ? 1 : 0
-          );
-          return;
+          id = row.Record[i].Value;
+        } else if (row.Record[i].Key == "AutoReturn") {
+          status = row.Record[i].Value;
+        } 
+      }
+      this.modifyNetReturnSwitch(id, status, 2);
+    },
+    // 设置自动回切时间弹框显示 按钮
+    changeAutoReturnTime(row) {
+      this.resourceObj = JSON.parse(JSON.stringify(row));
+      this.autoReturnTimeDialogVisible = true;
+    },
+    // 设置自动回切时间确认 按钮
+    changeAutoReturnHour() {
+      let id = "";
+      let status = 1;
+      let hour = 2;
+      for (let i = 0; i < this.resourceObj.Record.length; i++) {
+        if (this.resourceObj.Record[i].Key == "Id") {
+          id = this.resourceObj.Record[i].Value;
+        } else if (this.resourceObj.Record[i].Key == "AutoReturn") {
+          status = this.resourceObj.Record[i].Value;
+        } else if (this.resourceObj.Record[i].Key == "ReturnHour") {
+          hour = this.resourceObj.Record[i].Value;
         }
       }
+      this.modifyNetReturnSwitch(id, status, hour);
+      this.autoReturnTimeDialogVisible = false;
     },
     // 跳转详情页面
     toDetailResourse(scopeRow) {
@@ -837,9 +775,66 @@ export default {
       this.doalogRenewModel = isShow;
     },
     // 防护配置点击按钮
-    configModel(ddosRes) {
-      this.modifyDDosRes = ddosRes;
-      this.dialogConfigModel = true;
+    configModel(row) {
+      this.resourceObj = JSON.parse(JSON.stringify(row));
+      row.Record.forEach(item => {
+        if (item.Key == "Id") {
+          // 1.防护等级（资源列表-防护配置 需要）
+          let params = {
+            Version: "2018-07-09",
+            Region: localStorage.getItem("regionv2"),
+            Business: "net",
+            Id: item.Value,
+            Method: "get"
+          };
+          this.axios.post(Modify_Level, params).then(res => {
+            const obj = {
+              Key: "DDoSLevel",
+              Value: res.Response.DDoSLevel
+            };
+            this.resourceObj.Record.push(obj);
+          });
+          // 2.高级防护策略（资源列表-防护配置 需要）
+          let params2 = {
+            Version: "2018-07-09",
+            Region: localStorage.getItem("regionv2"),
+            Business: "net",
+            Id: item.Value
+          };
+          this.axios.post(GET_SPolicy, params2).then(res => {
+            if (res.Response.DDosPolicyList.length == 0) {
+              const obj2 = {
+                Key: "SPolicyName",
+                Value: ""
+              };
+              const obj2Id = {
+                Key: "SPolicyId",
+                Value: ""
+              };
+              this.resourceObj.Record.push(obj2);
+              this.resourceObj.Record.push(obj2Id);
+            } else {
+              const obj2 = {
+                Key: "SPolicyName",
+                Value: res.Response.DDosPolicyList[0].PolicyName
+              };
+              const obj2Id = {
+                Key: "SPolicyId",
+                Value: res.Response.DDosPolicyList[0].PolicyId
+              };
+              this.resourceObj.Record.push(obj2);
+              this.resourceObj.Record.push(obj2Id);
+            }
+          });
+        }
+      });
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.$refs.protectConfigModel.init(this.resourceObj);
+        });
+        this.dialogConfigModel = true;
+      }, 1000);
+      
     },
     // 防护配置弹框关闭按钮
     closeConfigModel(isShow) {

@@ -11,41 +11,41 @@
       active-text-color="#fff"
       :router="true"
     >
-      <el-menu-item index="/overview">
+      <el-menu-item index="/overview" @click="_class" :class="{'active':classValue=='/overview'}">
         <span slot="title">概览</span>
       </el-menu-item>
-      <el-menu-item index="/colony">
+      <el-menu-item index="/colony" @click="_class" :class="{'active':classValue=='/colony'}">
         <span slot="title">集群</span>
       </el-menu-item>
       <el-menu-item index="/helm">
-        <span slot="title">Helm应用</span>
+        <span slot="title" @click="_class" :class="{'active':classValue=='/helm'}">Helm应用</span>
       </el-menu-item>
       <el-submenu index="1">
-        <template slot="title">
+        <template slot="title" @click="_class" :class="{'active':classValue=='/title'}">
           <span>镜像仓库</span>
         </template>
-        <el-menu-item-group>
-          <el-menu-item index="/myMirror">
+        <el-menu-item-group style="margin-left: 30px;">
+          <el-menu-item index="/myMirror" @click="_class" :class="{'active':classValue=='/myMirror'}">
             <span slot="title">我的镜像</span>
           </el-menu-item>
-          <el-menu-item index="/myFavorite">
+          <el-menu-item index="/myFavorite" @click="_class" :class="{'active':classValue=='/myFavorite'}">
             <span slot="title">我的收藏</span>
           </el-menu-item>
-          <el-menu-item index="/DockerHub">
+          <el-menu-item index="/DockerHub" @click="_class" :class="{'active':classValue=='/DockerHub'}">
             <span slot="title">DockerHub镜像</span>
           </el-menu-item>
-          <el-menu-item index="/totalMirror">
+          <el-menu-item index="/totalMirror" @click="_class" :class="{'active':classValue=='/totalMirror'}">
             <span slot="title">公有镜像</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
-      <el-menu-item index="/logCollection">
+      <el-menu-item index="/logCollection" @click="_class" :class="{'active':classValue=='/logCollection'}">
         <span slot="title">日志采集</span>
       </el-menu-item>
-      <el-menu-item index="/warnings">
+      <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
         <span slot="title">告警设置</span>
       </el-menu-item>
-      <el-menu-item index="/persistence">
+      <el-menu-item index="/persistence" @click="_class" :class="{'active':classValue=='/persistence'}">
         <span slot="title">事件持久化</span>
       </el-menu-item>
     </el-menu>
@@ -60,8 +60,12 @@ export default {
       activeName1: "",
       activeName2: "",
       activeIndex: "1",
-      activeIndex2: "1"
+      activeIndex2: "1",
+      classValue: '',
     };
+  },
+  created() {
+    this.classValue = this.$route.name
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -69,6 +73,9 @@ export default {
     },
     handleClose(key, keyPath) {
       // console.log(key, keyPath)
+    },
+    _class(key) {
+      this.classValue = key.index;
     }
   }
 };
@@ -118,6 +125,11 @@ export default {
     display: flex;
     align-items: center;
     font-size: 14px;
+  }
+
+  .active {
+    background-color: #20222c !important;
+    color: white;
   }
 }
 </style>

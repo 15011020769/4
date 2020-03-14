@@ -43,52 +43,84 @@
       </div>
       <div class="box-bottom">
         <div class="box-bottom-right">
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>Pod数量(个)</p>
+          <div class="dataNone" v-if="podNumbers.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='podNumbers' :name='podName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>Pod重启次数(次)</p>
+          <div class="dataNone" v-if="podStarts.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='podStarts' :name='restartName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>CPU使用量(核)</p>
+          <div class="dataNone" v-if="cpuUseds.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUseds' :name='cpuName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>CPU利用率(占集群)(%)</p>
+          <div class="dataNone" v-if="cpuUsedColonys.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUsedColonys' :name='cpuRateName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>内存使用量(B)</p>
+          <div class="dataNone" v-if="cpuRequests.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuRequests' :name='memoryName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>内存利用率(占集群)(%)</p>
+          <div class="dataNone" v-if="cpuUsedmaxs.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUsedmaxs' :name='memRateName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络入带宽(Bps)</p>
+          <div class="dataNone" v-if="memorys.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memorys' :name='internetName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络出带宽(Bps)</p>
+          <div class="dataNone" v-if="memusages.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memusages' :name='internetOutName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络入流量(B)</p>
+          <div class="dataNone" v-if="memrequests.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memrequests' :name='netName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络出流量(B)</p>
+          <div class="dataNone" v-if="menNocaches.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='menNocaches' :name='netOutName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络入包量(个/s)</p>
+          <div class="dataNone" v-if="memUsageBytes.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memUsageBytes' :name='inflagName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>网络出包量(个/s)</p>
+          <div class="dataNone" v-if="memNoYsages.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memNoYsages' :name='outflagName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>GPU使用量(卡)</p>
+          <div class="dataNone" v-if="GpuUseds.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUseds' :name='gpuName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>GPU显存使用量(B)</p>
+          <div class="dataNone" v-if="GpuUsedSees.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedSees' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
-           <div class="box-top-left" style="margin-bottom:20px;">
+          <p>GPU利用率（占集群）(%)</p>
+          <div class="dataNone" v-if="GpuUsedColoys.length === 0">暂无数据</div>
+           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedColoys' :name='gpeuesdName' style="width:90%;height:200px;" />
           </div>
-          <div class="box-top-left" style="margin-bottom:20px;">
+          <p>GPU显存利用率（占集群）(%)</p>
+          <div class="dataNone" v-if="GpuUsedSeeColoys.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedSeeColoys' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
         </div>
@@ -273,59 +305,7 @@ export default {
       console.log(this.valueLast);
       this.getPodList();
     },
-    // 获取列表
-    // async getDeploymentList() {
-    //   this.loadShow = true;
-    //   let params = {};
-    //   params = {
-    //     Method: "GET",
-    //     Path:
-    //       "/apis/apps/v1beta2/namespaces/" +
-    //       this.spaceName +
-    //       "/deployments?limit=100",
-    //     Version: "2018-05-25",
-    //     ClusterName: this.clusterId
-    //   };
-    //   await this.axios.post(POINT_REQUEST, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       this.loadShow = false;
-    //       let response = JSON.parse(res.Response.ResponseBody);
-    //       console.log(response);
-    //       if (response.items.length > 0) {
-    //         response.items.map(deployment => {
-    //           (deployment.k8sApp =
-    //             deployment.metadata.labels && deployment.metadata.labels.k8s),
-    //             (deployment.qcloudApp =
-    //               deployment.metadata.labels &&
-    //               deployment.metadata.labels.qcloud);
-    //         });
-    //       }
-    //       let ids = [];
-    //       if (response.items.length > 0) {
-    //         response.items.map(obj => {
-    //           ids.push(obj.metadata.name);
-    //         });
-    //       }
-    //       console.log(ids);
-    //       this.checkedInstances = ids;
-    //       this.instances = ids;
-    //       this.InstancesAll = ids;
-    //       this.list = ids;
-    //       this.getDataJob();
-    //     } else {
-    //       this.loadShow = false;
-    //       let ErrTips = {};
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 0
-    //       });
-    //     }
-    //   });
-    // },
-
+    
     //选择资源
     changeResource(val) {
       this.getDataJob();
@@ -532,6 +512,12 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+.dataNone{
+  width: 100%;
+  height: 200px;
+  line-height:200px;
+  text-align:center;
+}
 .room-bottom {
   width: 94%;
   margin: 20px auto;

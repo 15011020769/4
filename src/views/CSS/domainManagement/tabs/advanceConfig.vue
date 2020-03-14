@@ -212,7 +212,7 @@
       >
         <regional-config-model
           :bandLimit="domainInfo.PlayType"
-          @success="getRegion"
+          @success="onChangeRegion"
           @handleClose="handleCloseRegion"
           :visible="visibleBandLimit"
         />
@@ -303,6 +303,10 @@ export default {
       this.getRegion();
       this.getBandLimit();
       this.getResource();
+    },
+    onChangeRegion() {
+      this.getRegion();
+      this.getBandLimit();
     },
     getCert() {
       this.loading1 = true;

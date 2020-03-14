@@ -482,12 +482,9 @@
             }}</template>
           </el-table-column>
           <!-- 策略开关 -->
-          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-if="nameFlag">
-            {{$t('DDOS.AccesstoCon.AccOpen')}}
-          </el-table-column>
-          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-else-if="!nameFlag">
+          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.OpenStatus" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" >
+              <el-select v-model="scope.row.OpenStatus" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" :disabled="nameFlag">
                 <el-option
                   v-for="(item, index) in openStatusList"
                   :label="item.label"
