@@ -215,153 +215,124 @@
           'StorageUsNodeMin',
         ], //可用指标
         disName: {
-          'Bigkey': '大key数量',
-          'BigValue': '执行次数',
+
           'BigValueMin': '执行次数',
           'BigValueNodeMin': '大value',
-          'CacheHitRatio': 'Key命中',
           'CacheHitRatioMin': ' Key命中',
           'CacheHitRatioNodeMin': 'cache命中率',
-          'CmdstatDelMin': 'DEL命令执行次数',
           'CmdstatDelNodeMin': 'DEL命令执行次数',
-          'CmdstatFlushallMin': ' Flushall执行次数',
           'CmdstatFlushallNodeMin': 'Flushall执行次数',
-          'CmdstatFlushdbMin': 'Flushdb执行次数',
           'CmdstatFlushdbNodeMin': 'Flushdb执行次数',
-          'CmdstatGet': 'Get执行次数',
-          'CmdstatGetbit': 'Getbit执行次数',
-          'CmdstatGetbitMin': 'Getbit执行次数',
           'CmdstatGetbitNodeMin': 'Getbit执行次数',
-          'CmdstatGetrange': 'Getrange执行次数',
-          'CmdstatGetrangeMin': 'Getrange执行次数',
           'CmdstatGetrangeNodeMin': 'Getrange执行次数',
-          'CmdstatGetMin': 'Get执行次数',
           'CmdstatGetNodeMin': 'Get执行次数',
-          'CmdstatHget': 'Hget执行次数',
-          'CmdstatHgetall': 'Hgetall执行次数',
-          'CmdstatHgetallMin': 'Hgetall执行次数',
           'CmdstatHgetallNodeMin': 'Hgetall执行次数',
-          'CmdstatHgetMin': 'Hget执行次数',
           'CmdstatHgetNodeMin': 'Hget执行次数',
           'CmdstatHmget': 'hmget数量',
-          'CmdstatHmgetMin': 'Hmget执行次数',
           'CmdstatHmgetNodeMin': 'Hmget执行次数',
-          'CmdstatHmset': 'Hmset执行次数',
-          'CmdstatHmsetMin': 'Hmset执行次数',
           'CmdstatHmsetNodeMin': 'Hmset执行次数',
-          'CmdstatHset': 'Hset执行次数',
-          'CmdstatHsetnx': 'Hsetnx执行次数',
-          'CmdstatHsetnxMin': 'Hsetnx执行次数',
           'CmdstatHsetnxNodeMin': 'Hsetnx执行次数',
-          'CmdstatHsetMin': 'Hset执行次数',
           'CmdstatHsetNodeMin': 'Hset执行次数',
-          'CmdstatLset': 'Lset执行次数',
-          'CmdstatLsetMin': 'Lset执行次数',
           'CmdstatLsetNodeMin': 'Lset执行次数',
-          'CmdstatMget': 'Mget执行次数',
-          'CmdstatMgetMin': 'Mget执行次数',
           'CmdstatMgetNodeMin': 'Mget执行次数',
-          'CmdstatMset': 'Mset执行次数',
-          'CmdstatMsetnx': 'Msetnx执行次数',
-          'CmdstatMsetnxMin': 'Msetnx执行次数',
+
+
+
           'CmdstatMsetnxNodeMin': 'Msetnx执行次数',
-          'CmdstatMsetMin': 'Mset执行次数',
+
           'CmdstatMsetNodeMin': 'Mset执行次数',
-          'CmdstatSet': 'Set执行次数',
-          'CmdstatSetbit': 'Setbit执行次数',
-          'CmdstatSetbitMin': 'Setbit执行次数',
+
+
+
           'CmdstatSetbitNodeMin': 'Setbit执行次数',
-          'CmdstatSetex': 'Setex执行次数',
-          'CmdstatSetexMin': 'Setex执行次数',
+
+
           'CmdstatSetexNodeMin': 'Setex执行次数',
-          'CmdstatSetnx': 'Setnx执行次数',
-          'CmdstatSetnxMin': 'Setnx执行次数',
+
+
           'CmdstatSetnxNodeMin': 'Setnx执行次数',
-          'CmdstatSetrange': 'Setrange执行次数',
-          'CmdstatSetrangeMin': 'Setrange执行次数',
+
+
           'CmdstatSetrangeNodeMin': 'Setrange执行次数',
-          'CmdstatSetMin': 'Set执行次数',
+
           'CmdstatSetNodeMin': 'Set执行次数',
-          'CmdErr': '命令执行错误的次数',
+
           'CmdErrMin': '命令执行错误的次数',
           'CmdErrNodeMin': '错误命令数量',
-          'Connections': 'TCP连接数量',
+
           'ConnectionsMin': 'TCP连接数量',
-          'ConnectionsNodeMin': '指标',
-          'ConnectionsUs': '连接数使用率',
+
+
           'ConnectionsUsMin': '连接数使用率',
           'CpuMaxUsMin': '单分片最大cpu使用率',
-          'CpuUs': '平均CPU使用率',
-          'CpuUsMin': '平均CPU使用率',
+
+
           'CpuUsNodeMin': 'CPU使用率',
-          'EvictedKeys': '驱逐的Key',
+
           'EvictedKeysMin': '驱逐的Key',
           'EvictedKeysNodeMin': 'keys驱逐数量',
-          'ExpiredKeys': '淘汰的Key',
           'ExpiredKeysMin': '淘汰的Key',
           'ExpiredKeysNodeMin': 'keys过期数量',
-          'GossipInFlowMin': 'gossip入流',
           'GossipInFlowNodeMin': 'gossip入流',
-          'GossipOutFlowMin': 'gossip出流',
+
           'GossipOutFlowNodeMin': 'gossip出流',
-          'InFlow': '内网入流量',
+
           'InFlowMin': '内网入流量',
-          'InFlowNodeMin': '指标',
-          'InFlowUs': '人流使用率',
+
+
           'InFlowUsMin': '入流使用率',
-          'Keys': '总Key',
+
           'KeysMin': '总Key',
           'KeysNodeMin': 'Key数量',
-          'Latency': '执行时延平均值',
-          'LatencyGet': '读命令平均执行时延',
+
+
           'LatencyGetMin': '读命令平均执行时延',
           'LatencyGetNodeMin': '读请求平均延迟',
           'LatencyMin': '执行时延平均值',
           'LatencyNodeMin': '请求平均延迟',
-          'LatencyOther': '命令平均执行时延',
+
           'LatencyOtherMin': '命令平均执行时延',
           'LatencyOtherNodeMin': '平均延迟',
-          'LatencySet': '写命令平均执行时延',
-          'LatencySetMin': '写命令平均执行时延',
+
+
           'LatencySetNodeMin': '写命令平均执行时延',
-          'MemsizeDatasetMin': '数据内存',
+
           'MemsizeDatasetNodeMin': '数据内存',
-          'MemsizeOverheadMin': '其他内存',
+
           'MemsizeOverheadNodeMin': '其他内存',
-          'OutFlow': '内网出流量',
+
           'OutFlowMin': '内网出流量',
           'OutFlowNodeMin': '指标',
-          'OutFlowUs': '出流使用率',
+
           'OutFlowUsMin': '出流使用率',
-          'Qps': 'QPS命令执行次数',
-          'QpsMin': 'QPS命令执行次数',
+
+
           'QpsNodeMin': 'QPS命令执行次数',
           'SlowQuery': '命令次数',
-          'SlowQueryMin': '配置命令次数',
+
           'SlowQueryNodeMin': '配置命令次数',
-          'StatGet': '读命令执行次数',
-          'StatGetMin': '读命令执行次数',
+
+
           'StatGetNodeMin': '读命令执行次数',
-          'StatMissed': '读请求Key不存在的个数',
-          'StatMissedMin': '读请求Key不存在的个数',
+
           'StatMissedNodeMin': '读请求Key不存在的个数',
-          'StatOther': ' 读写命令之外的命令执行次数',
-          'StatOtherMin': ' 读写命令之外的命令执行次数',
+
+
           'StatOtherNodeMin': '读写命令之外的命令执行次数',
-          'StatSet': '写命令执行次数',
-          'StatSetMin': '写命令执行次数',
+
+
           'StatSetNodeMin': '写命令执行次数',
-          'StatSuccess': '读请求Key存在的个数',
-          'StatSuccessMin': '读请求Key存在的个数',
+
+
           'StatSuccessNodeMin': '读请求Key存在的个数',
           'Storage': '内存容量',
           'StorageMaxUsMin': '单分片最大使用率',
-          'StorageMin': '使用内存容量',
+
           'StorageNodeMin': '使用内存容量',
-          'StorageSlopeMin': '分片内存使用率',
+
           'StorageSlopeNodeMin': '分片内存使用率',
-          'StorageUs': '实际使用内存和申请总内存之比',
-          'StorageUsMin': '实际使用内存和申请总内存之比',
+
+
           'StorageUsNodeMin': '实际使用内存和申请总内存之比',
         },
         Company: {
