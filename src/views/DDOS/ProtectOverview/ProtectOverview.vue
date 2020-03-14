@@ -203,7 +203,7 @@
                 :label="$t('DDOS.Protective.AssetName')"
               >
                 <template slot-scope="scope">
-                 <el-button type="text" @click="jump()"> {{ scope.row.ResourceName }}</el-button>
+                 <el-button type="text" @click="jump(scope.row)"> {{ scope.row.ResourceName }}</el-button>
                 </template>
               </el-table-column>
               <el-table-column
@@ -550,13 +550,15 @@ export default {
       }
       return durationTime
     },
-    jump () {
-       this.$router.push({
+    jump (scopeRow) {
+      console.log(scopeRow)
+      sessionStorage.setItem("IpPro", JSON.stringify(scopeRow))
+      this.$router.push({
         path: '/IpProfessional'
       })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .Right-style {
