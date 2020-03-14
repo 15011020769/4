@@ -6,11 +6,11 @@
     <div class="edit-main">
       <div class="edit-box">
          <h3>{{$t('CAM.userList.userMessage')}}</h3>
-        <el-form label-width="120px">
+        <el-form label-width="120px" :model="userInfo" :rules="rules">
           <el-form-item :label="$t('CAM.userList.userName')">
             {{userInfo.Name}}
           </el-form-item>
-          <el-form-item label="備註">
+          <el-form-item label="備註" prop="Remark">
             <el-input v-model="userInfo.Remark" style="width: 330px"></el-input>
           </el-form-item>
         </el-form>
@@ -114,6 +114,15 @@ export default {
       policyData: [], //策略列表
       userData: {}, //用户信息
       userInp: false, //用户信息input
+      rules: {
+        Remark:[
+          { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
+          {
+            pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
+            message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
+          }
+        ]
+      }
     };
   },
   methods: {

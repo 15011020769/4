@@ -144,7 +144,7 @@
           prop="address"
           label="启动配置ID/名称">
           <template slot-scope="scope">
-            <p><a>{{scope.row.LaunchConfigurationId}}</a></p>
+            <p><a :href="'../startCon/secDetails/' + scope.row.LaunchConfigurationId">{{scope.row.LaunchConfigurationId}}</a></p>
             <p>{{scope.row.LaunchConfigurationName}}</p>
           </template>
         </el-table-column>

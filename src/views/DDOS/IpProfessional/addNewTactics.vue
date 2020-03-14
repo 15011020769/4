@@ -3,9 +3,9 @@
   <div class="wrapBox">
     <!-- 策略名称 -->
     <div>
-      <span class="fontWeightBold">{{
-        $t("DDOS.Proteccon_figura.Policy_name")
-      }}</span>
+      <span class="fontWeightBold">
+        {{ $t("DDOS.Proteccon_figura.Policy_name") }}
+      </span>
       <el-input
         class="tacticsName"
         v-model="tacticsName"
@@ -15,15 +15,19 @@
     </div>
     <!-- 黑白名单表格 -->
     <div>
-      <span class="fontWeightBold">{{
-        $t("DDOS.Proteccon_figura.Blackwhite_list")
-      }}</span>
+      <span class="fontWeightBold">
+        {{ $t("DDOS.Proteccon_figura.Blackwhite_list") }}
+      </span>
       <div class="tableConOne">
         <div class="tableConOneTop newClear">
-          <el-button type="primary" @click="dialogModelAddBw = true"
-            >添加</el-button
-          >
+          <el-button type="primary" @click="dialogModelAddBw = true">添加</el-button>
         </div>
+        <el-button class="el-icon-search" @click="doFilterBlackWhiteList"></el-button>
+        <el-input
+          v-model="blackWhiteListInput"
+          class="searchs"
+          :placeholder="$t('DDOS.Proteccon_figura.filterIP')"
+        ></el-input>
         <div>
           <el-table
             :data="
@@ -36,12 +40,12 @@
           >
             <el-table-column prop="Type" label="策略">
               <template slot-scope="scope">
-                <span v-if="scope.row.Type == 'black'">{{
-                  $t("DDOS.Proteccon_figura.Blacklist")
-                }}</span>
-                <span v-else-if="scope.row.Type == 'white'">{{
-                  $t("DDOS.Proteccon_figura.Whitelist")
-                }}</span>
+                <span v-if="scope.row.Type == 'black'">
+                  {{ $t("DDOS.Proteccon_figura.Blacklist") }}
+                </span>
+                <span v-else-if="scope.row.Type == 'white'">
+                  {{ $t("DDOS.Proteccon_figura.Whitelist") }}
+                </span>
               </template>
             </el-table-column>
             <el-table-column prop="Ip" label="地址">
@@ -50,17 +54,23 @@
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
+                  @click.native.prevent="editBW(scope.$index, scope.row)"
+                  type="text"
+                  size="small"
+                >{{ $t("DDOS.Proteccon_figura.Edit") }}</el-button>
+                <el-button
                   @click.native.prevent="deleteRowBW(scope.$index, scope.row)"
                   type="text"
                   size="small"
-                  >{{ $t("DDOS.AccesstoCon.AccDel") }}</el-button
-                >
+                >{{ $t("DDOS.Proteccon_figura.Delete") }}</el-button>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{IpBlackWhiteLists.length}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+          <span
+            class="pagtotal"
+          >共&nbsp;{{IpBlackWhiteLists.length}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             @current-change="handleCurrentChange"
             :current-page="currentPage"
@@ -74,9 +84,9 @@
     </div>
     <!-- DDos高级安全策略 -->
     <div>
-      <span class="fontWeightBold">{{
-        $t("DDOS.Proteccon_figura.Advanced_policy")
-      }}</span>
+      <span class="fontWeightBold">
+        {{ $t("DDOS.Proteccon_figura.Advanced_policy") }}
+      </span>
       <!-- 禁用协议 -->
       <div class="childContTit">
         <h2>{{ $t("DDOS.Proteccon_figura.Disable_protocol") }}</h2>
@@ -100,33 +110,31 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags" :key="index">
             <td>
-              <el-select class="selectChange" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange"
+                v-model="item.Protocol"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
               </el-select>
             </td>
             <td>
-              <el-select class="selectChange" v-model="item.Kind" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
-                <el-option
-                  v-for="t in portArr"
-                  :key="t.value"
-                  :label="t.label"
-                  :value="t.value"
-                ></el-option>
+              <el-select
+                class="selectChange"
+                v-model="item.Kind"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
+                <el-option v-for="t in portArr" :key="t.value" :label="t.label" :value="t.value"></el-option>
               </el-select>
             </td>
-            <td><!-- 端口号 -->
-              <el-input
-                class="inputChange"
-                v-model="item.portNum"
-                autocomplete="off"
-              ></el-input>
+            <td>
+              <!-- 端口号 -->
+              <el-input class="inputChange" v-model="item.portNum" autocomplete="off"></el-input>
             </td>
-            <td><!-- 动作 -->
-              <el-select
-                v-model="item.Action"
-                :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
-              >
+            <td>
+              <!-- 动作 -->
+              <el-select v-model="item.Action" :placeholder="$t('DDOS.AccesstoCon.searchAccess')">
                 <el-option
                   v-for="(item, index) in actionList"
                   :label="item.label"
@@ -136,9 +144,9 @@
               </el-select>
             </td>
             <td>
-              <a v-on:click="removeRow(index, 1)" v-show="index >= 0">{{
-                $t("DDOS.Proteccon_figura.Delete")
-              }}</a>
+              <a v-on:click="removeRow(index, 1)" v-show="index >= 0">
+                {{ $t("DDOS.Proteccon_figura.Delete") }}
+              </a>
             </td>
           </tr>
         </table>
@@ -168,54 +176,34 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags1" :key="index">
             <td>
-              <el-select class="selectChange1" v-model="item.Protocol"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange1"
+                v-model="item.Protocol"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
                 <!-- <el-option label="ICMP" value="icmp"></el-option>
-                <el-option label="ALL" value="all"></el-option> -->
+                <el-option label="ALL" value="all"></el-option>-->
               </el-select>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.SportStart"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.SportStart" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.SportEnd"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.SportEnd" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.DportStart"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.DportStart" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.DportEnd"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.DportEnd" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.PktlenMin"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.PktlenMin" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.PktlenMax"
-                autocomplete="off"
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.PktlenMax" autocomplete="off"></el-input>
             </td>
             <td>
               <el-select class="selectChange1" v-model="item.MatchBegin">
@@ -228,65 +216,56 @@
               </el-select>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchType" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange1"
+                v-model="item.MatchType"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <el-option :label="$t('DDOS.updateddos.gjzi')" value="sunday"></el-option>
                 <el-option :label="$t('DDOS.Proteccon_figura.regular_expression')" value="pcre"></el-option>
               </el-select>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.Offset"
-                autocomplete="off"
-                disabled
-                >0</el-input
-              >
+              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled>0</el-input>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.Depth"
-                autocomplete="off"
-                disabled
-                >1</el-input
-              >
+              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled>1</el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.IsNot" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange1"
+                v-model="item.IsNot"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <el-option label="包含" value="1"></el-option>
                 <el-option label="不包含" value="0"></el-option>
               </el-select>
             </td>
             <td>
-              <el-input
-                class="inputChange1"
-                v-model="item.Str"
-                autocomplete="off"
-                disabled
-              ></el-input>
+              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.Action"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange1"
+                v-model="item.Action"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <!-- 策略动作，取值范围[drop，drop_black，drop_rst，drop_black_rst，transmit] -->
                 <el-option :label="$t('DDOS.updateddos.dqbw')" value="drop"></el-option>
-                <el-option
-                  :label="$t('DDOS.updateddos.dqqlh')"
-                  value="drop_black"
-                ></el-option>
+                <el-option :label="$t('DDOS.updateddos.dqqlh')" value="drop_black"></el-option>
                 <el-option :label="$t('DDOS.updateddos.dqqdk')" value="drop_rst"></el-option>
-                <el-option
-                  :label="$t('DDOS.updateddos.dqdkqlh')"
-                  value="drop_black_rst"
-                ></el-option>
+                <el-option :label="$t('DDOS.updateddos.dqdkqlh')" value="drop_black_rst"></el-option>
                 <el-option :label="$t('DDOS.updateddos.zjzf')" value="transmit"></el-option>
               </el-select>
             </td>
             <td>
-              <a v-on:click="removeRow(index, 2)" v-show="index >= 0">{{$t('DDOS.AccesstoCon.AccDel')}}</a>
+              <a
+                v-on:click="removeRow(index, 2)"
+                v-show="index >= 0"
+              >{{$t('DDOS.AccesstoCon.AccDel')}}</a>
             </td>
           </tr>
         </table>
-
         <a v-on:click="addRow(2)" class="addNewRow">添加</a>
       </div>
       <!-- 限速 -->
@@ -300,7 +279,12 @@
           </tr>
           <tr class="t-body" v-for="(item, index) in tags3" :key="index">
             <td>
-              <el-select class="selectChange" v-model="item.protocol" @change="ProV(item.protocol)"  :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+              <el-select
+                class="selectChange"
+                v-model="item.protocol"
+                @change="ProV(item.protocol)"
+                :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+              >
                 <el-option label="ICMP" value="ICMP"></el-option>
                 <el-option label="OTHER" value="OTHER"></el-option>
                 <el-option label="TCP" value="TCP"></el-option>
@@ -313,23 +297,24 @@
                 v-model="item.speedLimit"
                 @change="speedV(item.speedLimit)"
                 autocomplete="off"
-              ></el-input
-              >Mbps
+              ></el-input>Mbps
             </td>
             <td>
-              <a v-on:click="removeRow(index, 3)" v-show="index >= 0">{{$t('DDOS.AccesstoCon.AccDel')}}</a>
+              <a
+                v-on:click="removeRow(index, 3)"
+                v-show="index >= 0"
+              >{{$t('DDOS.AccesstoCon.AccDel')}}</a>
             </td>
           </tr>
         </table>
-
         <a v-on:click="addRow(3)" class="addNewRow">添加</a>
       </div>
       <!-- 拒绝海外流量 -->
       <div class="childContTit">
         <h2>{{ $t("DDOS.Proteccon_figura.overseas_traffic") }}</h2>
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.overseas_traffic")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.overseas_traffic") }}
+        </span>
         <el-radio-group v-model="radios1">
           <el-radio label="關閉"></el-radio>
           <el-radio label="開啟"></el-radio>
@@ -342,9 +327,10 @@
         <span class="spanStyleLabel">
           {{ $t("DDOS.Proteccon_figura.Air_protection") }}
           <el-tooltip class="item" effect="light" placement="bottom-start">
-            <div slot="content" class="tooltip_text">
-              {{$t('DDOS.Proteccon_figura.Air_protection_tooltip')}}
-            </div>
+            <div
+              slot="content"
+              class="tooltip_text"
+            >{{$t('DDOS.Proteccon_figura.Air_protection_tooltip')}}</div>
             <i class="el-icon-info"></i>
           </el-tooltip>
         </span>
@@ -353,9 +339,9 @@
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
         </el-radio-group>
         <br />
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.Source_limit")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.Source_limit") }}
+        </span>
         <el-radio-group v-model="radios3" @change="thisNextShowRow(3)">
           <!-- 源 -->
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
@@ -366,9 +352,9 @@
           <span class="company">{{$t('DDOS.updateddos.g')}}/秒</span>
         </span>
         <br />
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.Sourceconnection")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.Sourceconnection") }}
+        </span>
         <el-radio-group v-model="radios4" @change="thisNextShowRow(4)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
@@ -378,9 +364,9 @@
           <span class="company">{{$t('DDOS.updateddos.g')}}</span>
         </span>
         <br />
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.Purpose_newconnection")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.Purpose_newconnection") }}
+        </span>
         <el-radio-group v-model="radios5" @change="thisNextShowRow(5)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
@@ -390,9 +376,9 @@
           <span class="company">{{$t('DDOS.updateddos.g')}}/秒</span>
         </span>
         <br />
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.Destination_concurren")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.Destination_concurren") }}
+        </span>
         <el-radio-group v-model="radios6" @change="thisNextShowRow(6)">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
@@ -407,15 +393,16 @@
         <h2>
           {{ $t("DDOS.Proteccon_figura.Abnormal_detection") }}
           <el-tooltip class="item" effect="light" placement="bottom-start">
-            <div slot="content" class="tooltip_text">
-              {{$t('DDOS.Proteccon_figura.Abnormal_detection_tooltip')}}
-            </div>
+            <div
+              slot="content"
+              class="tooltip_text"
+            >{{$t('DDOS.Proteccon_figura.Abnormal_detection_tooltip')}}</div>
             <i class="el-icon-info"></i>
           </el-tooltip>
         </h2>
-        <span class="spanStyleLabel">{{
-          $t("DDOS.Proteccon_figura.Abnormal_detection")
-        }}</span>
+        <span class="spanStyleLabel">
+          {{ $t("DDOS.Proteccon_figura.Abnormal_detection") }}
+        </span>
         <el-radio-group v-model="radios7" @change="thisNextShow">
           <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
           <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
@@ -473,21 +460,19 @@
           <el-table-column :label="$t('DDOS.Proteccon_figura.UDP_protectionport')" prop="udpPort">
             <template slot-scope="scope">{{scope.row.udpPort.join()}}</template>
           </el-table-column>
-          <el-table-column
-            :label="$t('DDOS.Proteccon_figura.UDP_split')"
-            prop="RemoveSwitch"
-          >
-            <template slot-scope="scope">{{
-              scope.row.RemoveSwitch == 0 ? "不自動剝離" : "自動剝離"
-            }}</template>
+          <el-table-column :label="$t('DDOS.Proteccon_figura.UDP_split')" prop="RemoveSwitch">
+            <template slot-scope="scope">
+              {{ scope.row.RemoveSwitch == 0 ? "不自動剝離" : "自動剝離" }}
+            </template>
           </el-table-column>
           <!-- 策略开关 -->
-          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-if="nameFlag">
-            {{$t('DDOS.AccesstoCon.AccOpen')}}
-          </el-table-column>
-          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus" v-else-if="!nameFlag">
+          <el-table-column :label="$t('DDOS.Proteccon_figura.Policy_switch')" prop="OpenStatus">
             <template slot-scope="scope">
-              <el-select v-model="scope.row.OpenStatus" :placeholder="$t('DDOS.AccesstoCon.searchAccess')" >
+              <el-select
+                v-model="scope.row.OpenStatus"
+                :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
+                :disabled="nameFlag"
+              >
                 <el-option
                   v-for="(item, index) in openStatusList"
                   :label="item.label"
@@ -497,21 +482,15 @@
               </el-select>
             </template>
           </el-table-column>
-
           <el-table-column prop="action" label="操作" width="180">
             <template slot-scope="scope">
-              <el-button
-                @click="modifyRow(scope.$index, scope.row)"
-                type="text"
-                size="small"
-                >修改配置</el-button
-              >
+              <el-button @click="modifyRow(scope.$index, scope.row)" type="text" size="small">修改配置</el-button>
             </template>
           </el-table-column>
         </el-table>
-        <a href="#" class="addNewRow" @click.once="dialogVisible = true">{{
-          $t("DDOS.Proteccon_figura.Click_open")
-        }}</a>
+        <a href="#" class="addNewRow" @click.once="dialogVisible = true">
+          {{ $t("DDOS.Proteccon_figura.Click_open") }}
+        </a>
         <el-dialog
           title="水印創建"
           :visible.sync="dialogVisible"
@@ -528,27 +507,18 @@
               </tr>
               <tr class="t-body" v-for="(item, index) in tags4" :key="index">
                 <td>
-                  <el-input
-                    class="inputChange"
-                    v-model="item.beginPort"
-                    autocomplete="off"
-                  ></el-input>
+                  <el-input class="inputChange" v-model="item.beginPort" autocomplete="off"></el-input>
                 </td>
                 <td>
-                  <el-input
-                    class="inputChange"
-                    v-model="item.endPort"
-                    autocomplete="off"
-                  ></el-input>
+                  <el-input class="inputChange" v-model="item.endPort" autocomplete="off"></el-input>
                 </td>
                 <td>
-                  <a v-on:click="removeRow(index, 4)" v-show="index >= 0">{{
-                    $t("DDOS.Proteccon_figura.Delete")
-                  }}</a>
+                  <a v-on:click="removeRow(index, 4)" v-show="index >= 0">
+                    {{ $t("DDOS.Proteccon_figura.Delete") }}
+                  </a>
                 </td>
               </tr>
             </table>
-
             <a v-on:click="addRow(4)" class="addNewRow">添加</a>
             <p>{{ $t("DDOS.Proteccon_figura.port_segments") }}</p>
           </div>
@@ -562,42 +532,30 @@
               </tr>
               <tr class="t-body" v-for="(item, index) in tags5" :key="index">
                 <td>
-                  <el-input
-                    class="inputChange"
-                    v-model="item.beginPort"
-                    autocomplete="off"
-                  ></el-input>
+                  <el-input class="inputChange" v-model="item.beginPort" autocomplete="off"></el-input>
                 </td>
                 <td>
-                  <el-input
-                    class="inputChange"
-                    v-model="item.endPort"
-                    autocomplete="off"
-                  ></el-input>
+                  <el-input class="inputChange" v-model="item.endPort" autocomplete="off"></el-input>
                 </td>
                 <td>
-                  <a v-on:click="removeRow(index, 5)" v-show="index >= 0"
-                    >{{$t('DDOS.AccesstoCon.AccDel')}}</a
-                  >
+                  <a
+                    v-on:click="removeRow(index, 5)"
+                    v-show="index >= 0"
+                  >{{$t('DDOS.AccesstoCon.AccDel')}}</a>
                 </td>
               </tr>
             </table>
-
             <a v-on:click="addRow(5)" class="addNewRow">添加</a>
             <p>{{ $t("DDOS.Proteccon_figura.Start_portnumber") }}</p>
           </div>
           <div class="childContTit childContTitModel">
             <h2>
-              <span class="hSpanTit">{{
-                $t("DDOS.Proteccon_figura.Automatic_stripping")
-              }}</span>
+              <span class="hSpanTit">
+                {{ $t("DDOS.Proteccon_figura.Automatic_stripping") }}
+              </span>
               <el-radio-group v-model="radios12">
-                <el-radio
-                  :label="$t('DDOS.Proteccon_figura.Shut_down')"
-                ></el-radio>
-                <el-radio
-                  :label="$t('DDOS.Proteccon_figura.Opening')"
-                ></el-radio>
+                <el-radio :label="$t('DDOS.Proteccon_figura.Shut_down')"></el-radio>
+                <el-radio :label="$t('DDOS.Proteccon_figura.Opening')"></el-radio>
               </el-radio-group>
             </h2>
             <p>{{ $t("DDOS.Proteccon_figura.After_passing") }}</p>
@@ -611,9 +569,9 @@
           </div>
           <span slot="footer" class="dialog-footer">
             <el-button @click="dialogVisible = false">取 消</el-button>
-            <el-button type="primary" @click="createSY">{{
-              $t("DDOS.Proteccon_figura.Determination")
-            }}</el-button>
+            <el-button type="primary" @click="createSY">
+              {{ $t("DDOS.Proteccon_figura.Determination") }}
+            </el-button>
           </span>
         </el-dialog>
       </div>
@@ -622,14 +580,16 @@
           type="primary"
           @click="createDDoSPolicy(true)"
           v-if="nameFlag"
-          >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button
-        >
-        <el-button type="primary" @click="createDDoSPolicy(false)" v-else
-          >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button
-        >
+        >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
+        <el-button
+          type="primary"
+          @click="createDDoSPolicy(false)"
+          v-else
+        >{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
         <el-button @click="closeAddPage">取消</el-button>
       </div>
     </div>
+    <!-- 添加 黑白名单弹框 -->
     <el-dialog
       class="dialogModelAddBw"
       :title="$t('DDOS.updateddos.tjhbmd')"
@@ -638,9 +598,7 @@
       :before-close="handleCloseAddBw"
     >
       <div class="contantList newClear">
-        <p class="tc-15-msg" v-if="checkflg == false">
-          {{this.errorMsg}}
-        </p>
+        <p class="tc-15-msg" v-if="checkflg == false">{{this.errorMsg}}</p>
         <div class="newClear">
           <p>地址</p>
           <p>
@@ -653,9 +611,9 @@
           </p>
         </div>
         <div class="newClear">
-          <p>地址</p>
+          <p>{{ $t("DDOS.Proteccon_figura.CeLue") }}</p>
           <p>
-            <el-radio-group v-model="blackWhite" class="blackWhiteBtn">
+            <el-radio-group v-model="blackOrWhite" class="blackWhiteBtn">
               <el-radio-button label="black">黑名單</el-radio-button>
               <el-radio-button label="white">白名單</el-radio-button>
             </el-radio-group>
@@ -667,6 +625,7 @@
         <el-button @click="dialogModelAddBw = false">取消</el-button>
       </span>
     </el-dialog>
+    <!-- 编辑 黑白名单弹框 -->
     <el-dialog
       class="dialogModelAddBw"
       :title="$t('DDOS.updateddos.bjhnmd')"
@@ -678,13 +637,18 @@
         <div class="newClear">
           <p>地址</p>
           <p>
-            <el-input placeholder></el-input>
+            <el-input
+              class="inputText"
+              v-model="blackWhiteText"
+              type="textarea"
+              :placeholder="$t('DDOS.updateddos.qsrdz')"
+            ></el-input>
           </p>
         </div>
         <div class="newClear">
-          <p>地址</p>
+          <p>{{ $t("DDOS.Proteccon_figura.CeLue") }}</p>
           <p>
-            <el-radio-group v-model="blackWhiteEdit" class="blackWhiteBtn">
+            <el-radio-group v-model="blackOrWhite" class="blackWhiteBtn">
               <el-radio-button label="black">黑名單</el-radio-button>
               <el-radio-button label="white">白名單</el-radio-button>
             </el-radio-group>
@@ -716,26 +680,29 @@ export default {
       tags4: [],
       tags5: [],
       tableDataName1: "",
-      //禁用端口数据
-      portArr: [
-        {
-          value: 0,
-          label: "目的端口"
-        },
-        {
-          value: 1,
-          label: "源端口"
-        },
-        {
-          value: 2,
-          label: "目的端口和源端口"
-        }
-      ],
-      actionList: [{value: 'drop', label: '丟棄'}, {value: 'transmit', label: '轉發'}],
-      openStatusList: [{value: 1, label: '開啟'}, {value: 0, label: '關閉'}],
+      // 黑白名单
+      blackWhiteListInput: "",
       IpBlackWhiteLists: [], //黑白名单数据
+      dialogModelAddBw: false, //添加黑白名单
+      blackWhiteText: "",
+      blackOrWhite: "black", // 黑名单/白名单
+      dialogEdit: false, //编辑框
+      // 禁用端口数据
+      portArr: [
+        { value: 0, label: "目的端口" },
+        { value: 1, label: "源端口" },
+        { value: 2, label: "目的端口和源端口" }
+      ],
+      actionList: [
+        { value: "drop", label: "丟棄" },
+        { value: "transmit", label: "轉發" }
+      ],
+      openStatusList: [
+        { value: 1, label: "開啟" },
+        { value: 0, label: "關閉" }
+      ],
       checkflg: true,
-      errorMsg: '',
+      errorMsg: "",
       tableDataBegin2: [], //水印防护
       tableDataEnd: [],
       currentPage: 1,
@@ -746,7 +713,12 @@ export default {
       multipleSelection: [],
       dialogVisible: false,
       filterConrent: "",
-      matchBeginList: [{label: '不檢測', value: 'no_match'},{label: 'IP頭開始檢查', value: 'begin_l3'},{label: 'TCP/UDP頭開始檢查', value: 'begin_l4'},{label: '載荷開始檢查', value: 'begin_l5'}],//报文过滤特征检测
+      matchBeginList: [
+        { label: "不檢測", value: "no_match" },
+        { label: "IP頭開始檢查", value: "begin_l3" },
+        { label: "TCP/UDP頭開始檢查", value: "begin_l4" },
+        { label: "載荷開始檢查", value: "begin_l5" }
+      ], //报文过滤特征检测
       DdisableProtocol: [], //禁用协议
       radios1: "關閉", //拒绝海外流量
       radios2: "關閉",
@@ -777,12 +749,6 @@ export default {
       input9: "",
       thisRadio10: false,
       input10: "",
-      dialogModelAddBw: false, //添加黑白名单
-      blackWhiteText: "",
-      blackWhite: "black", //添加黑白名单
-      dialogEdit: false, //编辑框
-      blackWhiteEdit: "", //编辑黑白名单
-      blackWhiteTextEdit: "",
       policyTemp: {}, //编辑用的暂存对象
       useKind: 0, //全局存Kind值
       depthChangeVale: 0, //depth[0-1500]
@@ -791,8 +757,10 @@ export default {
       deleteBegin: {}
     };
   },
-  mounted() {
-    // console.log(this.policyTemp);
+  watch: {
+    blackWhiteListInput: function() {
+      console.log(this.blackWhiteListInput);
+    }
   },
   created() {
     //根据有无对象传入，判断是添加还是配置
@@ -817,9 +785,10 @@ export default {
         this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
       this.tags = this.policyTemp.PortLimits; //禁用协议
-      for(let i in this.tags) {
-        this.tags[i].portNum = this.tags[i].DPortStart + '-' + this.tags[i].DPortEnd;
-      };
+      for (let i in this.tags) {
+        this.tags[i].portNum =
+          this.tags[i].DPortStart + "-" + this.tags[i].DPortEnd;
+      }
       this.tags1 = this.policyTemp.PacketFilters; //报文
       // var speedLimit="";
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
@@ -888,7 +857,6 @@ export default {
         this.thisRadio6 = true;
         this.input6 = this.policyTemp.DropOptions.DstConnLimit;
       }
-
       if (this.policyTemp.DropOptions.BadConnThreshold == 0) {
         //基于连接抑制触发阈值
         this.radios7 = "關閉";
@@ -935,7 +903,6 @@ export default {
         }
         var des = this.policyTemp.WaterPrint[0].TcpPortList;
         this.tags4 = this.turn(des);
-
         var des1 = this.policyTemp.WaterPrint[0].UdpPortList;
         this.tags5 = this.turn(des1);
         this.tableDataBegin2.push({
@@ -981,8 +948,8 @@ export default {
     },
     // 添加DDoS高级策略
     createDDoSPolicy(bl) {
-      this.tacticsName = this.tacticsName.replace(/^\s*|\s*$/g,"");
-      if (this.tacticsName.length<=0 || this.tacticsName.length>32) {
+      this.tacticsName = this.tacticsName.replace(/^\s*|\s*$/g, "");
+      if (this.tacticsName.length <= 0 || this.tacticsName.length > 32) {
         this.$message("策略名稱不符合規範（兩端無空格,長度1-32字符）");
       } else {
         let params = {
@@ -1067,9 +1034,9 @@ export default {
           params["DropOptions.0.ConnTimeout"] = this.input10; //连接超时
         }
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
-        for (let i in this.tags) { 
+        for (let i in this.tags) {
           params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
-          let portArr = this.tags[i].portNum.split('-');
+          let portArr = this.tags[i].portNum.split("-");
           params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
           params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
           this.useKind = this.tags[i].Kind;
@@ -1117,9 +1084,8 @@ export default {
           }
           // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
           params["WaterPrint.0.Offset"] = this.tableDataBegin2[0].Offset; //	水印偏移量，取值范围[0, 100)
-          params[
-            "WaterPrint.0.RemoveSwitch"
-          ] = this.tableDataBegin2[0].RemoveSwitch=='關閉'?0:1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
+          params["WaterPrint.0.RemoveSwitch"] =
+            this.tableDataBegin2[0].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
           params["WaterPrint.0.OpenStatus"] = 1;
 
           let arr = this.tableDataBegin2[0].tcpPort.map(t => {
@@ -1202,6 +1168,10 @@ export default {
     delItem(item, list) {
       //去除指定值
       list.splice(list.indexOf(item), 1);
+    },
+    // 搜索 黑白名单列表
+    doFilterBlackWhiteList() {
+      console.log(this.blackWhiteListInput)
     },
     // 搜索
     doFilter() {
@@ -1369,22 +1339,25 @@ export default {
       this.checkflg = true;
       let arr = this.blackWhiteText.split(/[\n]/);
       //IP数量不能超过100
-      if(arr.length>100 || (this.IpBlackWhiteLists.length+arr.length)>100){
+      if (
+        arr.length > 100 ||
+        this.IpBlackWhiteLists.length + arr.length > 100
+      ) {
         this.checkflg = false;
-        this.errorMsg = 'IP支持数量不能超过100个';
-        return
+        this.errorMsg = "IP支持数量不能超过100个";
+        return;
       }
       //校验IP
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-      for(let i=0; i<arr.length; i++) {
-        if(!regIP.test(arr[i])) {
+      for (let i = 0; i < arr.length; i++) {
+        if (!regIP.test(arr[i])) {
           this.checkflg = false;
-          this.errorMsg = 'IP ' + arr[i] + ' 非法';
-          return
+          this.errorMsg = "IP " + arr[i] + " 非法";
+          return;
         }
       }
       for (let i in arr) {
-        let temp = { Type: this.blackWhite, Ip: arr[i] };
+        let temp = { Type: this.blackOrWhite, Ip: arr[i] };
         this.IpBlackWhiteLists.push(temp);
       }
       this.totalItems = this.IpBlackWhiteLists.length;
@@ -1397,8 +1370,11 @@ export default {
     addbwSURE() {
       this.dialogModelAddBw = false;
     },
-    //编辑
-    editRow() {
+    // 编辑 黑白名单
+    editBW(index, row) {
+      console.log(index, row)
+      this.blackWhiteText = row.Ip;
+      this.blackOrWhite = row.Type;
       this.dialogEdit = true;
     },
     //编辑关闭按钮
@@ -1466,8 +1442,27 @@ a {
 }
 .tableConOne {
   margin-top: 20px;
-  .rightSearch {
+  .tableConOneTop {
+    float: left;
+    padding: 8px 10px;
+  }
+  .searchs {
     float: right;
+    height: 40px;
+    width: 178px;
+    input {
+      height: 30px;
+      border-radius: 0;
+    }
+  }
+  .el-icon-search {
+    float: right;
+    height: 30px;
+    margin-top: 10px;
+    width: 40px;
+    text-align: center;
+    padding: 0;
+    border-radius: 0;
   }
 }
 .childContTit {

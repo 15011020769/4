@@ -4,37 +4,54 @@
       <el-table :data="transLogData">
         <el-table-column prop label="变更时间">
           <template slot-scope="scope">
-            <span>{{upTime(scope.row.logData.updateTime)}}</span>
+            <span>{{upTime(scope.row.updateTime)}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="lastEditUin" label="修改人"></el-table-column>
+        <el-table-column prop label="修改人">
+          <template slot-scope="scope">
+            <span>{{scope.row.LastEditUin}}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="最后修改">
           <span class="text" @click="showDelDialog=true">查看变更后详情</span>
         </el-table-column>
       </el-table>
+      <!-- 分页 -->
+      <div class="Right-style pagstyle">
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
+        <el-pagination
+          :page-size="pagesize"
+          :current-page="currpage"
+          :pager-count="7"
+          layout="prev, pager, next"
+          @current-change="handleCurrentChange"
+          :total="TotalCount"
+        ></el-pagination>
+      </div>
     </el-card>
+    <!-- 查看变更后详情弹窗 -->
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
       <p style="color:#444;font-weight:800;margin-bottom:30px">变更后详情</p>
       <h4 class="title-text">基本信息</h4>
       <el-form>
         <el-form-item label="模板名称">
-          <span class="text">{{transLogData[0] && transLogData[0].logData.groupName}}</span>
+          <span class="text">{{information.groupName}}</span>
         </el-form-item>
         <el-form-item label="策略类型">
-          <span class="text">{{transLogData[0] && transLogData[0].logData.showName}}</span>
+          <span class="text">{{information.showName}}</span>
         </el-form-item>
         <el-form-item label="最后修改人">
-          <span class="text">{{transLogData[0] && transLogData[0].lastEditUin}}</span>
+          <span class="text">{{information.lastEditUin}}</span>
         </el-form-item>
         <el-form-item label="最后修改时间">
-          <span class="text">{{upTime(transLogData[0] && transLogData[0].logData.updateTime)}}</span>
+          <span class="text">{{upTime(information.updateTime)}}</span>
         </el-form-item>
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>
       <h4 class="title-text">告警触发条件 <span @click="openEdit()">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
-        {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}
+        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
       <p class="text-color2" v-for="(it) in EventAlarm" :key="it.eventShowName">
@@ -45,7 +62,7 @@
 </template>
 
 <script>
-import { GET_TRANS_LOG } from '@/constants/CM-yhs.js'
+import { GET_DESCRIBETRANSLOG } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
 import moment from 'moment'
@@ -55,10 +72,15 @@ export default {
     return {
       loadShow: false, // 加载显示
       showDelDialog: false, // 是否显示弹框
-      transLogData: [],
+      transLogData: [], // 全部数据
+      information: {}, // 基本信息
       IndexAlarm: [], // 指标告警
       EventAlarm: [], // 事件告警
-      groudId: ''
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
+      groudId: '',
+      TotalCount: 0, // 总条数
+      pagesize: 10, // 分页条数
+      currpage: 1 // 当前页码
     }
   },
   components: {
@@ -69,28 +91,69 @@ export default {
     this.getTransLog()
   },
   methods: {
+    // 获取日志数据
     async getTransLog () {
       this.loadShow = true
       let params = {
-        dId: this.groudId,
-        lang: 'zh',
-        limit: 20,
-        moduleId: 1,
-        offset: 0
+        Version: '2018-07-24',
+        Module: 'monitor',
+        ModuleId: 1,
+        DId: this.groudId
+        // dId: this.groudId,
+        // lang: 'zh',
+        // limit: 20,
+        // moduleId: 1,
+        // offset: 0
       }
-      await this.axios.post(GET_TRANS_LOG, params).then(res => {
-        if (res.codeDesc === 'Success') {
-          let msg = res.data.list
-          // console.log(res)
-          if (msg[0]) {
+      await this.axios.post(GET_DESCRIBETRANSLOG, params).then(res => {
+        if (res.Response.Error === undefined) {
+          let msg = res.Response.List
+          this.TotalCount = res.Response.Total
+          msg.forEach(ele => {
+            if (!ele.LogData) return
+            let it = JSON.parse(ele.LogData)
+            it.conditionsConfig.forEach((item, i) => { // 遍历指标告警数组处理需要显示的数据
+              let ct = Number(item.calcType)
+              let anp = Number(item.alarmNotifyPeriod)
+              item.calcType = this.SymbolList[ct - 1]
+              let time1 = anp / 60
+              let time2 = anp / (60 * 60)
+              if (anp == 0 && item.alarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.alarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (anp > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (anp > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+            this.information.groupName = it.groupName// 基本信息数据
+            this.information.lastEditUin = it.lastEditUin
+            this.information.showName = it.showName
+            this.information.updateTime = it.updateTime
+            this.IndexAlarm = it.conditionsConfig// 指标告警数据
+            this.EventAlarm = it.eventConfig// 事件告警数据
+          })
+          if (msg) {
             this.transLogData = msg
-            this.IndexAlarm = msg[0].logData.conditionsConfig
-            this.EventAlarm = msg[0].logData.eventConfig
           }
           this.loadShow = false
         } else {
           this.loadShow = false
-          let ErrTips = {}
+          let ErrTips = {
+            'FailedOperation': '操作失败。',
+            'InternalError': '内部错误。',
+            'InvalidParameter': '参数错误。',
+            'InvalidParameter.InvalidParameter': '参数错误。',
+            'InvalidParameter.InvalidParameterParam': '参数错误。',
+            'InvalidParameterValue': '无效的参数值。',
+            'LimitExceeded': '超过配额限制。',
+            'MissingParameter': '缺少参数错误。',
+            'UnsupportedOperation': '操作不支持。'
+          }
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -100,6 +163,11 @@ export default {
           })
         }
       })
+    },
+    // 分页
+    handleCurrentChange (val) {
+      this.currpage = val
+      this.getTransLog()
     },
     // 格式化时间
     upTime (value) {
@@ -153,6 +221,24 @@ export default {
     color: #444;
     margin-bottom: 10px;
     line-height: 15px;
+  }
+}
+.Right-style {
+      display: flex;
+      justify-content: flex-end;
+
+      .esach-inputL {
+        width: 300px;
+        margin-right: 20px;
+      }
+    }
+.pagstyle {
+  padding: 20px;
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 32px;
   }
 }
 </style>

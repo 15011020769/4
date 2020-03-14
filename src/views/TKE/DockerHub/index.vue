@@ -30,7 +30,7 @@
             </el-table-column>
             <el-table-column prop="logo" label="名称" width="100">
               <template slot-scope="scope">
-                <img :src='scope.row.logo' style="max-width: 32px; max-height: 32px; vertical-align: middle;"></img>
+                <img :src='scope.row.logo' style="max-width: 32px; max-height: 32px; vertical-align: middle;"/>
               </template>
             </el-table-column>
             <el-table-column prop='reponame' label="" >

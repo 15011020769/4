@@ -27,15 +27,16 @@
             <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.groupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{scope.row.groupName}}</span>
             </el-popover>
+            <i class="el-icon-edit ml5" @click="showEditNameDlg(scope.row)" style="cursor:pointer"></i>
           </template>
         </el-table-column>
-        <el-table-column prop="chufa" label="触发条件">
+        <el-table-column prop label="触发条件">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right">
               <div>
                 <p style="color:#999;font-size:12px">指标告警(任意):</p>
                 <p v-for="(it,i) in scope.row.conditions" :key="i" style="font-size:12px">
-                  {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}</p>
+                  {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}</p>
               </div>
               <div>
                 <p style="color:#999;font-size:12px">事件告警:</p>
@@ -44,7 +45,12 @@
               </div>
               <div slot="reference" class="name-wrapper">
                 <p class="textEps">
-                  {{ `${scope.row.conditions[0].metricShowName}>${scope.row.conditions[0].calcValue}${scope.row.conditions[0].unit},持续${scope.row.conditions[0].continueTime}秒,按${scope.row.conditions[0].calcType}天重复告警` }}
+                  {{ `${scope.row.conditions[0].metricShowName}
+                      ${scope.row.conditions[0].calcType}
+                      ${scope.row.conditions[0].calcValue}
+                      ${scope.row.conditions[0].unit},持续
+                      ${scope.row.conditions[0].continueTime/60}分钟,按
+                      ${scope.row.conditions[0].calcType}天重复告警` }}
                 </p>
                 <p class="textEps">
                   {{ `${scope.row.eventConditions[0].eventShowName},不重复告警` }}
@@ -80,7 +86,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId)">复制</el-button>
+            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId,scope.row,groupName)">复制</el-button>
             <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.groupId)">删除</el-button>
           </template>
         </el-table-column>
@@ -90,6 +96,7 @@
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
           :page-size="pagesize"
+          :current-page="currpage"
           :pager-count="7"
           layout="prev, pager, next"
           @current-change="handleCurrentChange"
@@ -97,9 +104,22 @@
         ></el-pagination>
       </div>
     </div>
+    <!-- 编辑模板名称弹框 -->
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="35%">
+      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
+      <el-form :model="templateObj" :rules="rules" ref="form">
+        <el-form-item prop="groupName">
+          <el-input maxlength="20" v-model="templateObj.groupName"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitEditName()">保 存</el-button>
+        <el-button @click="ShowEditDialog = false">取 消</el-button>
+      </span>
+    </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板</p>
+        <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板吗?</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitDelete()">确 定</el-button>
           <el-button @click="showDelDialog = false">取 消</el-button>
@@ -108,14 +128,14 @@
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
         <p style="color:#444;font-weight:bolder;">复制所选触发条件模板</p>
-        <p style="font-size:12px;margin-top:20px">是否复制 model测试改名</p>
+        <p style="font-size:12px;margin-top:20px">{{`是否复制${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="coptData()">确 定</el-button>
           <el-button @click="showCopyDialog = false">取 消</el-button>
         </span>
       </el-dialog>
     <!-- 新建对话框 -->
-    <Dialog :dialogVisible="panelFlag" @cancel="cancel" @save="save" style="margin:0;" />
+    <Dialog @open="openDialogEvent" :dialogVisible.sync="panelFlag" @save="save" style="margin:0;" />
   </div>
 </template>
 
@@ -125,7 +145,15 @@ import Dialog from './components/dialog'
 import Loading from '@/components/public/Loading'
 import moment from 'moment'
 import { ErrorTips } from '@/components/ErrorTips'
-import { COPY_TEMPLATE, DELETE_TEMPLATE, GET_POLICY_GROUP_TYPE, GET_TEMPLATE_LIST } from '@/constants/CM-yhs.js'
+import {
+  COPY_TEMPLATE,
+  DELETE_TEMPLATE,
+  GET_POLICY_GROUP_TYPE,
+  GET_CONDITIONSTEMPLATELIST,
+  MODIFYPOLICYGROUPINFO,
+  GET_TENCENTCLOUDAPI,
+  GET_TEMPLATE_LIST,
+  UPDATE_INFO } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -134,9 +162,12 @@ export default {
       panelFlag: false, // dialog新建弹框
       // metricShowName:'',//指标显示名称
       // dialogFormVisible: false,
+      ShowEditDialog: false, // 是否显示修改名称弹框
       showDelDialog: false, // 是否显示删除弹框
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
+      groupName: '', // 模板名称
+      templateObj: {}, // 当前模板数据对象
       formInline: {
         product_kind: [
           {
@@ -290,13 +321,31 @@ export default {
         //   zanting: true
         // }
       ], // 表格数据
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       // 分页
       TotalCount: 0, // 总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
-      triggerInput: '' // 触发条件模板名
+      triggerInput: '', // 触发条件模板名
+      rules: {// 验证名字
+        groupName: [
+          {
+            validator: (rule, value, callback) => {
+              if (value === '') {
+                callback(new Error('名称不能为空'))
+              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
+                callback(new Error('条件模板名称不能超过20个字符'))
+              } else {
+                callback()
+              }
+            },
+            trigger: 'change',
+            required: true
+          }
+        ]
+      }
     }
   },
   components: {
@@ -310,17 +359,18 @@ export default {
     // console.log(this.upTime(1583490304))
   },
   methods: {
-
-    getReportUserLastVisit () {
+    // 打开弹窗时的回调
+    openDialogEvent () {
+      this.getTemplateList()
+    },
+    // 获取触发条件列表
+    async getTemplateList () {
       let params = {
-        loginOwnerUin: 100011921910,
-        loginUin: '100011921910',
-        productName: '/monitor',
-        skey: 'j5bbEd42OsF3A*lCvM*5ahGqKjM3hsXUilZJLhYsXPM_'
+        Version: '2018-07-24',
+        Module: 'monitor'
       }
-      this.axios.post('ReportUserLastVisit', params).then(res => {
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
         console.log(res)
-        // this.Dialog
       })
     },
     // 获取列表数据
@@ -354,6 +404,25 @@ export default {
                 }
               }
             }
+            msg.forEach(ele => {
+              ele.conditions.forEach((item, i) => {
+                item.calcType = this.SymbolList[item.calcType - 1]// 符号
+                let time1 = item.alarmNotifyPeriod / 60
+                let time2 = item.alarmNotifyPeriod / (60 * 60)
+                // 告警模式
+                if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+                  item.alarm = '不重复告警'
+                } else if (item.alarmNotifyType == 1) {
+                  item.alarm = '按周期指数递增重复告警'
+                } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+                  item.alarm = `按${time1}分钟重复告警`
+                } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                  item.alarm = `按${time2}小时重复告警`
+                } else {
+                  item.alarm = '按1天重复告警'
+                }
+              })
+            })
             this.tableData = msg
             this.loadShow = false
           } else {
@@ -380,26 +449,56 @@ export default {
       this.triggerInput = val
       this.getListData()
     },
-    // 删除按钮
-    delBtn (id) {
-      this.showDelDialog = true
-      this.groupId = id
-      // console.log(id)
+    // 编辑模板名称按钮
+    showEditNameDlg (obj) {
+      this.ShowEditDialog = true
+      this.templateObj = obj
+    },
+    // 确定编辑模板名称完成
+    async submitEditName () {
+      // console.log(this.templateObj.groupId)
+      let { groupId, groupName } = this.templateObj
+      this.ShowEditDialog = false
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupId: groupId,
+        GroupType: 3,
+        Key: 'groupName',
+        Value: groupName
+        // groupId: this.groupId,
+        // groupType: 3,
+        // key: 'groupName',
+        // lang: 'zh',
+        // value: this.groupName
+      }
+      await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.getListData()
+        } else {
+          this.errorPrompt(res)
+        }
+      })
     },
     // 复制按钮
-    copyBtn (id) {
+    copyBtn (id, name) {
       this.showCopyDialog = true
       this.groupId = id
+      this.groupName = name.groupName
+      console.log(id)
     },
-    // 复制数据
+    // 复制数据完成
     async coptData () {
       this.loadShow = true
       let params = {
-        groupId: this.groupId,
-        lang: 'zh'
+        Version: '2018-07-24',
+        // groupId: this.groupId,
+        GroupID: this.groupId,
+        Module: 'monitor'
+        // lang: 'zh'
       }
       await this.axios.post(COPY_TEMPLATE, params).then(res => {
-        if (res.codeDesc == 'Success') {
+        if (res.Response.Error === undefined) {
           this.showCopyDialog = false
           this.getListData()
           // console.log(res)
@@ -411,15 +510,25 @@ export default {
         }
       })
     },
-    // 删除对应的数据
+    // 删除按钮
+    delBtn (id) {
+      this.showDelDialog = true
+      this.groupId = id
+      // console.log(id)
+    },
+    // 删除对应的数据完成
     async submitDelete () {
       let params = {
-        groupId: this.groupId,
-        isDelRelatedPolicy: 2,
-        lang: 'zh'
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupID: this.groupId,
+        IsDeleteRelatedPolicy: 2
+        // groupId: this.groupId,
+        // isDelRelatedPolicy: 2,
+        // lang: 'zh'
       }
       await this.axios.post(DELETE_TEMPLATE, params).then(res => {
-        if (res.codeDesc == 'Success') {
+        if (res.Response.Error === undefined) {
           this.getListData()
           this.showDelDialog = false
           this.$message.success('删除成功')
@@ -432,15 +541,41 @@ export default {
     // 错误提示
     errorPrompt (res) {
       let ErrTips = {
-        'FailedOperation': '操作失敗',
-        'InternalError': '必須包含開始時間和結束時間，且必須為整形時間戳（精確到秒）',
-        'InvalidParameterValue.MaxResult': '內部錯誤',
-        'InvalidParameter': '參數錯誤',
-        'InvalidParameter.FormatError': '參數格式錯誤',
-        'InvalidParameterValue': '參數取值錯誤',
-        'InvalidParameterValue.InvalidFilter': 'Filter參數輸入錯誤',
-        'InvalidParameterValue.Length': '參數長度錯誤',
-        'UnauthorizedOperation': '未授權操作'
+        'AuthFailure.UnauthorizedOperation': '请求未授权。请参考 CAM 文档对鉴权的说明。',
+        'DryRunOperation': 'DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。',
+        'FailedOperation.AlertFilterRuleDeleteFailed': '删除过滤条件失败。',
+        'FailedOperation.AlertPolicyCreateFailed': '创建告警策略失败。',
+        'FailedOperation.AlertPolicyDeleteFailed': '告警策略删除失败。',
+        'FailedOperation.AlertPolicyDescribeFailed': '告警策略查询失败。',
+        'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失败。',
+        'FailedOperation.AlertTriggerRuleDeleteFailed': '删除触发条件失败。',
+        'FailedOperation.DbQueryFailed': '数据库查询失败。',
+        'FailedOperation.DbRecordCreateFailed': '创建数据库记录失败。',
+        'FailedOperation.DbRecordDeleteFailed': '数据库记录删除失败。',
+        'FailedOperation.DbRecordUpdateFailed': '数据库记录更新失败。',
+        'FailedOperation.DbTransactionBeginFailed': '数据库事务开始失败。',
+        'FailedOperation.DbTransactionCommitFailed': '数据库事务提交失败。',
+        'FailedOperation.DimQueryRequestFailed': '请求维度查询服务失败。',
+        'FailedOperation.DruidQueryFailed': '查询分析数据失败。',
+        'FailedOperation.DuplicateName': '名字重复。',
+        'FailedOperation.ServiceNotEnabled': '服务未启用，开通服务后方可使用。',
+        'InternalError': '内部错误。',
+        'InternalError.ExeTimeout': '执行超时。',
+        'InvalidParameter': '参数错误。',
+        'InvalidParameter.InvalidParameter': '参数错误。',
+        'InvalidParameter.InvalidParameterParam': '参数错误。',
+        'InvalidParameterValue': '无效的参数值。',
+        'LimitExceeded': '超过配额限制。',
+        'LimitExceeded.MetricQuotaExceeded': '指标数量达到配额限制，禁止含有未注册指标的请求。',
+        'MissingParameter': '缺少参数错误。',
+        'ResourceInUse': '资源被占用。',
+        'ResourceInsufficient': '资源不足。',
+        'ResourceNotFound': '资源不存在。',
+        'ResourceUnavailable': '资源不可用。',
+        'ResourcesSoldOut': '资源售罄。',
+        'UnauthorizedOperation': '未授权操作。',
+        'UnknownParameter': '未知参数错误。',
+        'UnsupportedOperation': '操作不支持。'
       }
       let ErrOr = Object.assign(ErrorTips, ErrTips)
       this.$message({
@@ -466,9 +601,9 @@ export default {
       this.panelFlag = true
     },
     // 取消设置弹框
-    cancel () {
-      this.panelFlag = false
-    },
+    // cancel () {
+    //   this.panelFlag = false
+    // },
     // 确定设置弹框
     save () {
       this.panelFlag = false
@@ -491,6 +626,7 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.getListData()
     }
   },
   filters: {

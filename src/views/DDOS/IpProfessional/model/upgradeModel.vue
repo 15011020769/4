@@ -96,7 +96,7 @@ export default {
       resObj: {}, //从主页面传的资源对象
       allMoney:0,
       isClickBtn: false,
-      buyTime:0
+      buyTime:0,
     }
   },
   computed:{
@@ -268,19 +268,20 @@ export default {
      jumpPay () {
        this.currMothTime()
        let GoodsDetail = {
-          curDeadline: this.resObj.Expire ,//到期時間
-          newConfig: {
-            bandwidth: this.resObj.bandwidth,
-            gfbandwidth: this.resObj.gfbandwidth,
-            rule_count: this.resObj.rule,
-            pid: '14306'
+        curDeadline: this.resObj.Expire ,//到期時間
+        newConfig: {
+          bandwidth: this.resObj.bandwidth,
+          gfbandwidth: this.resObj.gfbandwidth,
+          rule_count: this.resObj.rule,
+          pid: '14306'
+        },
+        oldConfig: {
+          bandwidth: this.resObj.DdosMax/1000,
+          gfbandwidth: this.resObj.ServiceBandwidth,
+          rule_count: this.resObj.rule_limt,
+          pid: '14306'
           },
-          oldConfig: {
-            bandwidth: this.resObj.DdosMax/1000,
-            gfbandwidth: this.resObj.ServiceBandwidth,
-            rule_count: this.resObj.rule_limt,
-            pid: '14306'
-          }
+          resourceId: this.resObj.Id
       }
       let goodsJSon = JSON.stringify(GoodsDetail)
        let params = {
@@ -295,7 +296,7 @@ export default {
           httpsQPS: '',
           autoPay:'',
           goodsId: 100617,
-          goodsInfo:goodsJSon
+          goodsInfo:goodsJSon,
         };
         let objStr = JSON.stringify(params);
         sessionStorage.setItem("allData", [objStr]);

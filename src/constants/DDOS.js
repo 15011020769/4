@@ -19,6 +19,8 @@ export const RESOURCE_LIST = 'dayu2/DescribeResourceList' // 获取资源列表
 export const RULESETS_CONT = 'dayu2/DescribeRuleSets' // 获取资源的规则数
 export const SOURCEIPSEGMENT_DESCRIBE = 'dayu2/DescribeSourceIpSegment' // 获取回源IP段
 export const MODIFY_RENEWFLAG = 'dayu2/ModifyResourceRenewFlag' // 修改资源自动续费标记
+export const Modify_NetReturnSwitch = 'dayu2/ModifyNetReturnSwitch' // 设置自动回切
+export const CREATE_NETRETURN = 'dayu2/CreateNetReturn' // 一键切回
 
 // 高防IP专业版-接入配置
 export const L4_RULES = 'dayu2/DescribleL4Rules' // 获取L4转发规则

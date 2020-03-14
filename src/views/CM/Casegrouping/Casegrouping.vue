@@ -24,12 +24,14 @@
           </div>
           <div class="seek">
             <el-input
-              v-model="input"
+              v-model="searchInput"
               placeholder="请输入实例组名搜索"
+              @input="SearchInput"
             ></el-input>
             <el-button
               icon="el-icon-search"
               style="margin-left:-1px;"
+              @click="ListInit()"
             ></el-button>
           </div>
         </div>
@@ -65,7 +67,9 @@
             </el-table-column>
             <el-table-column label="绑定告警策略数">
               <template slot-scope="scope">
-                <a href="javascript:;">{{ scope.row.PolicyGroups.length }}个</a>
+                <a href="javascript:;" @click="DetailsToTwo(scope.row)"
+                  >{{ scope.row.PolicyGroups.length }}个</a
+                >
               </template>
             </el-table-column>
             <el-table-column label="最后修改">
@@ -114,10 +118,10 @@
         ></el-input>
         <p v-if="tipsShow">实例组名称不能为空</p>
       </div>
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="setColonyName">保存</el-button>
         <el-button @click="editNameDialogVisible = false">取消</el-button>
-      </span>
+      </div>
     </el-dialog>
     <!-- 复制 -->
     <el-dialog
@@ -127,10 +131,10 @@
       custom-class="tke-dialog"
     >
       <div>是否复制 {{ groupName }}</div>
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="CopyList()">确定复制</el-button>
         <el-button @click="copyDialogVisible = false">取消</el-button>
-      </span>
+      </div>
     </el-dialog>
     <!-- 删除 -->
     <el-dialog
@@ -139,10 +143,10 @@
       width="500px"
       custom-class="tke-dialog"
     >
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="DeleteList()">确定删除</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
-      </span>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -156,7 +160,8 @@ import {
   CM_GROUPING_LIST,
   CM_GROUPING_LIST_TYPE,
   CM_GROUPING_LIST_DELETE,
-  CM_GROUPING_LIST_EDIT
+  CM_GROUPING_LIST_EDIT,
+  CM_GROUPING_LIST_COPY
 } from "@/constants";
 export default {
   name: "group",
@@ -164,7 +169,7 @@ export default {
     return {
       loadShow: true, // 加载是否显示
       dialogVisible: false, //dialog
-      input: "", //搜索框的值
+      searchInput: "", //搜索框的值
       tableData: [],
       //分页
       total: 0, //总条数
@@ -192,7 +197,6 @@ export default {
   created() {},
   mounted() {
     this.ListInit();
-    this.DeleteList();
   },
   methods: {
     // 列表
@@ -204,28 +208,21 @@ export default {
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
+      if (this.searchInput != "") {
+        params["GroupName"] = this.searchInput;
+      }
       await this.axios.post(CM_GROUPING_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           console.log(res);
           var _tableData = res.Response.InstanceGroupList;
           this.total = res.Response.Total;
-          // this.total = res.data.total;
           let param = {
             Version: "2018-07-24",
-            // Region:"",
             Module: "monitor"
           };
           this.axios.post(CM_GROUPING_LIST_TYPE, param).then(res => {
             if (res.Response.Error === undefined) {
-              console.log(res.Response.Conditions);
               let Conditions = res.Response.Conditions;
-              // for (let k in Conditions) {
-              //   console.log(
-              //     Conditions[k].Name,
-              //     "-------",
-              //     Conditions[k].PolicyViewName
-              //   );
-              // }
               for (let i in _tableData) {
                 for (let j in Conditions) {
                   if (_tableData[i].ViewName === Conditions[j].PolicyViewName) {
@@ -238,7 +235,6 @@ export default {
               this.loadShow = false;
             } else {
               this.loadShow = false;
-              this.deleteLoadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
                   "请求未授权。请参考 CAM 文档对鉴权的说明。",
@@ -352,12 +348,33 @@ export default {
         }
       });
     },
+    SearchInput() {
+      if (this.searchInput == "") {
+        this.ListInit();
+      }
+    },
     // 详情跳转
     DetailsTo(row) {
       this.$router.push({
         name: "CasegroupingDetails",
         query: {
-          instanceGroupId: row.InstanceGroupId
+          groupName: row.GroupName,
+          instanceGroupId: row.InstanceGroupId,
+          type: "1",
+          viewName: row.ViewName
+        }
+      });
+    },
+    // 详情跳转
+    DetailsToTwo(row) {
+      console.log(row);
+      this.$router.push({
+        name: "CasegroupingDetails",
+        query: {
+          groupName: row.GroupName,
+          instanceGroupId: row.InstanceGroupId,
+          type: "2",
+          viewName: row.ViewName
         }
       });
     },
@@ -378,11 +395,12 @@ export default {
     // 修改集群名称
     setColonyName() {
       const param = {
-        groupId: this.editGroupId,
-        groupType: 2,
-        key: "groupName",
-        lang: "zh",
-        value: this.editSearchVal
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.editGroupId,
+        GroupType: 2,
+        Key: "groupName",
+        Value: this.editSearchVal
       };
       this.axios.post(CM_GROUPING_LIST_EDIT, param).then(res => {
         this.editNameDialogVisible = false;
@@ -436,8 +454,8 @@ export default {
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
-        InstanceGroupId: 4851,
-        IsDelRelatedPolicy: 2
+        InstanceGroupId: this.instanceGroupId,
+        IsDelRelatedPolicy: 1
       };
       this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -574,6 +592,11 @@ export default {
 
     .table {
       background: white;
+      a {
+        &:hover {
+          text-decoration: underline;
+        }
+      }
       .case-name {
         i {
           margin-left: 4px;
@@ -585,6 +608,15 @@ export default {
     .table-top {
       display: flex;
       margin-bottom: 20px;
+      ::v-deep .el-button {
+        border-radius: 0px;
+        height: 30px;
+        padding: 0 20px;
+      }
+      ::v-deep .el-input__inner {
+        border-radius: 0px;
+        height: 30px;
+      }
       .seek {
         width: 240px;
         display: flex;

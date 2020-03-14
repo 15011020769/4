@@ -8,7 +8,12 @@
         </p>-->
         <div class="left-main border">
           <div class="seek" style="width:100%;">
-            <el-input v-model="input" placeholder="请输入内容" @change="_inpVal" style="width:100%;"></el-input>
+            <el-input
+              v-model="input"
+              placeholder="请输入内容"
+              @change="_inpVal"
+              style="width:100%;"
+            ></el-input>
             <p>
               <i class="el-icon-search" @click="_serach"></i>
             </p>
@@ -18,11 +23,18 @@
             style="width: 100%"
             height="420"
             @selection-change="handleSelectionChange"
-            v-loadmore="debounce"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="PolicyName" label="ID/主机名" width="80"></el-table-column>
-            <el-table-column prop="Type" label="网络类型" width="180"></el-table-column>
+            <el-table-column
+              prop="PolicyName"
+              label="ID/主机名"
+              width="80"
+            ></el-table-column>
+            <el-table-column
+              prop="Type"
+              label="网络类型"
+              width="180"
+            ></el-table-column>
 
             <!-- <el-table-column align="center">
               <template slot="header" slot-scope="scope">
@@ -45,7 +57,11 @@
               </template>
             </el-table-column>-->
 
-            <el-table-column prop="PolicyName" label="IP地址" width="180"></el-table-column>
+            <el-table-column
+              prop="PolicyName"
+              label="IP地址"
+              width="180"
+            ></el-table-column>
           </el-table>
         </div>
       </div>
@@ -53,16 +69,23 @@
         <i class="el-icon-connection"></i>
       </div>
       <div class="right">
-       
         <div class="right-main border">
           <el-table :data="multipleSelection" style="width: 100%" height="450">
-            <el-table-column prop="PolicyName" label="策略名"  width="80"></el-table-column>
-            <el-table-column prop="Type" label="策略类型"  width="180">
+            <el-table-column
+              prop="PolicyName"
+              label="策略名"
+              width="80"
+            ></el-table-column>
+            <el-table-column prop="Type" label="策略类型" width="180">
               <template slot-scope="scope">
-                <p>{{type[scope.row.Type]}}</p>
+                <p>{{ type[scope.row.Type] }}</p>
               </template>
             </el-table-column>
-             <el-table-column prop="PolicyName" label="IP地址" width="180"></el-table-column>
+            <el-table-column
+              prop="PolicyName"
+              label="IP地址"
+              width="180"
+            ></el-table-column>
           </el-table>
         </div>
       </div>
@@ -180,7 +203,7 @@ export default {
 };
 </script>
 
-<style scoped lang='scss'>
+<style scoped lang="scss">
 .wrap >>> .el-dropdown {
   font-size: 12px;
 }

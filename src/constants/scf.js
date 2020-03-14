@@ -52,3 +52,5 @@ export const TEMPLATE_DETAIL = 'scf2/GetDemoDetail' //函数模板列表
 export const CLONE_SCF = 'scf2/GetFunctionAddress' //下载
 export const SUBNET_LIST = 'vpc2/DescribeSubnets' //子网列表
 export const TEST_MODEL = 'scf2/CreateFunctionTestModel' //新建测试模板
+
+export const TOP_LIST = 'monitor2/DescribeSortObjectList' //top

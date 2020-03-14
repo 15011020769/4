@@ -11,7 +11,7 @@ export const CM_GROUPING_LIST_DELETE = 'monitor2/DeleteInstanceGroup'
 export const CM_GROUPING_LIST_COPY = 'monitor2/CopyInstanceGroup'
 
 // 实例分组 列表 编辑名称
-export const CM_GROUPING_LIST_EDIT = 'monitor/instanceGroup'
+export const CM_GROUPING_LIST_EDIT = 'monitor2/ModifyPolicyGroupInfo'
 
 // 实例分组 列表 新建
 export const CM_GROUPING_NEWLY_BUILD = 'monitor2/ModifyInstanceGroup'
@@ -23,7 +23,16 @@ export const CM_GROUPING_MANAGE = 'monitor2/DescribeInstanceGroup'
 export const CM_GROUPING_MANAGELIST = 'cvm2/DescribeInstances'
 
 // 实例分组 详情 实例管理 移出
-export const CM_GROUPING_MOVE = 'monitor/DeleteInstancesInInstanceGroup'
+export const CM_GROUPING_MOVE = 'monitor2/DeleteInstancesInInstanceGroup'
+
+// 实例分组 详情 告警策略 列表
+export const CM_GROUPING_ALARM_STRATEGY = 'monitor2/DescribePolicyGroupList'
+
+// 实例分组 详情 告警策略 列表 告警启停
+export const CM_GROUPING_ALARM_START = 'monitor2/ShieldPolicyAlarm'
+
+// 实例分组 详情 告警策略 列表 解除绑定
+export const CM_GROUPING_UNBINDING = 'monitor2/UnBindingInstanceGroup'
 
 // 实例分组 详情 变更日志 列表
 export const CM_GROUPING_CHANGELOG_LIST = 'monitor2/DescribeTransLog'

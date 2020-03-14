@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <el-dialog title="新建" :visible.sync="dialogVisible">
+    <el-dialog title="新建" :visible.sync="show" @open="$emit('open')">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名称</span>
@@ -60,10 +60,10 @@
                 <span style="display:inline">满足</span>
                 <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;">
                   <el-option
-                    v-for="(item,index) in formInline.project"
+                    v-for="(item,index) in conditionList"
                     :key="index"
-                    :label="item.name"
-                    :value="item.value"
+                    :label="item"
+                    :value="item"
                     label-width="40px"
                   ></el-option>
                 </el-select>
@@ -78,20 +78,20 @@
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in zhibiaoType"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:130px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.projectName" style="width:130px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in tongjiZQ"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -114,10 +114,10 @@
                     <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.projectName" style="width:110px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in chixuZQ"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -125,10 +125,10 @@
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in jinggaoZQ"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>
@@ -156,10 +156,10 @@
                   <!-- <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;"> -->
                   <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
                     <el-option
-                      v-for="(item,index) in formInline.project"
+                      v-for="(item,index) in eventType"
                       :key="index"
-                      :label="item.name"
-                      :value="item.value"
+                      :label="item"
+                      :value="item"
                       label-width="40px"
                     ></el-option>
                   </el-select>
@@ -174,7 +174,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="save('form')">保 存</el-button>
-        <el-button @click="cancel">取 消</el-button>
+        <el-button @click="show=false">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -323,6 +323,56 @@ export default {
           ]
         }
       ],
+      conditionList: ['任意', '所有'],
+      tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
+      chixuZQ: ['持续1个周期', '持续2个周期', '持续3个周期', '持续4个周期', '持续5个周期'],
+      jinggaoZQ: [// 警告周期
+        '不重复',
+        '每5分钟警告一次',
+        '每10分钟警告一次',
+        '每15分钟警告一次',
+        '每30分钟警告一次',
+        '每1小时警告一次',
+        '每2小时警告一次',
+        '每3小时警告一次',
+        '每6小时警告一次',
+        '每12小时警告一次',
+        '每1天警告一次',
+        '周期指数递增'
+      ],
+      zhibiaoType: [// 指标告警类型
+        'CPU利用率',
+        '内存利用率',
+        '内存使用量',
+        '磁盘利用率',
+        '磁盘读流量',
+        '磁盘写流量',
+        '磁盘IO等待',
+        '内网入包量',
+        '内网出包量',
+        '外网入带宽',
+        '外网出带宽',
+        '外网入包量',
+        '外网出包量',
+        '外网带宽使用率',
+        'TCP连接数',
+        'CPU一分钟平均负载',
+        'CPU五分钟平均负载',
+        'CPU十五分钟平均负载',
+        '基础CPU利用率',
+        '内网入带宽',
+        '内网出带宽'
+      ],
+      eventType:[//事件告警类型
+        '磁盘只读',
+        '内核故障',
+        '内存oom',
+        'ping不可达',
+        '机器重启',
+        '外网出带宽超限导致丢包',
+        'agent上报超时',
+        '子机nvme设备error'
+      ],
       form: {
         name: '',
         region: '',
@@ -364,7 +414,16 @@ export default {
             required: true
           }
         ]
-      }// 名称和备注的验证
+      }, // 名称和备注的验证
+      show: this.dialogVisible
+    }
+  },
+  watch: {
+    dialogVisible: function (val) {
+      this.show = val
+    },
+    show: function (val) {
+      this.$emit('update:dialogVisible', val)
     }
   },
   components: {
@@ -376,24 +435,7 @@ export default {
       type: Boolean
     }
   },
-  created () {
-    this.getTemplateList()
-  },
   methods: {
-    // 获取触发条件列表
-    async getTemplateList () {
-      let params = {
-        Action: 'DescribeConditionsTemplateList',
-        Version: '2018-07-24',
-        Module: 'monitor'
-      }
-      await this.axios.post(GET_TENCENTCLOUDAPI, params).then(res => {
-        console.log(res)
-      })
-    },
-    cancel () {
-      this.$emit('cancel')
-    },
     save (form) {
       // this.$emit('save')
       this.$refs[form].validate((valid) => {
@@ -406,22 +448,22 @@ export default {
       })
     },
     // 新建完成保存
-    newBuild () {
-      // let zbAry = []
-      // let sjAry = []
-      let params = {
-        conditions: this.indexAry, // 指标告警
-        eventConditions: this.eventAry, // 事件告警
-        groupName: this.strategy_name,
-        isUnionRule: 0,
-        lang: 'zh',
-        remark: this.remark,
-        viewName: 'cvm_device'
-      }
-      this.axios.post(UPDATE_TEMPLATE, params).then(res => {
-        console.log(res)
-      })
-    },
+    // newBuild () {
+    //   // let zbAry = []
+    //   // let sjAry = []
+    //   let params = {
+    //     conditions: this.indexAry, // 指标告警
+    //     eventConditions: this.eventAry, // 事件告警
+    //     groupName: this.strategy_name,
+    //     isUnionRule: 0,
+    //     lang: 'zh',
+    //     remark: this.remark,
+    //     viewName: 'cvm_device'
+    //   }
+    //   this.axios.post(UPDATE_TEMPLATE, params).then(res => {
+    //     console.log(res)
+    //   })
+    // },
     // 类型
     msgBtn (index) {
       this.liIndex = index
@@ -538,7 +580,7 @@ export default {
         this.isDisGJ = true
       }
     },
-    // 新建
+    // 新建策略类型
     showMsgfromChild (val) {
       console.log('val', val)
     }

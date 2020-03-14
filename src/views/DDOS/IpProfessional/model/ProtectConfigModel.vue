@@ -1,5 +1,5 @@
 <template>
-<!-- 高防IP专业版-防护配置-DDoS攻击防护-修改 -->
+  <!-- 高防IP专业版-防护配置-DDoS攻击防护-修改 -->
   <div id="configModel">
     <div class="wrap">
       <el-dialog
@@ -57,7 +57,8 @@
                 {{$t('DDOS.protectCon.CleaningShold')}}
                 <el-tooltip class="item" effect="light" placement="top-start">
                   <div slot="content" class="tooltip_text">
-                    {{$t('DDOS.protectCon.CleaningSholdToolTip01')}}<br/>
+                    {{$t('DDOS.protectCon.CleaningSholdToolTip01')}}
+                    <br />
                     {{$t('DDOS.protectCon.CleaningSholdToolTip02')}}
                   </div>
                   <i class="el-icon-info"></i>
@@ -85,26 +86,57 @@
                 {{$t('DDOS.protectCon.ProtectionGrade')}}
                 <el-tooltip class="item" effect="light" placement="bottom-start">
                   <div slot="content" class="tooltip_text">
-                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0101')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip010101')}}<br/>
-                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0102')}}<br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0103')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0104')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0105')}}</span><br/><br/>
-                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0201')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip020101')}}<br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0202')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0203')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0204')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0205')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0206')}}</span><br/><br/>
-                    <span class="tooltip_text_bold">{{$t('DDOS.protectCon.ProtectionGradeToolTip0301')}}</span>{{$t('DDOS.protectCon.ProtectionGradeToolTip030101')}}<br/>
-                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0302')}}<br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0303')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0304')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0305')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0306')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0307')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0308')}}</span><br/>
-                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0309')}}</span><br/>
+                    <span
+                      class="tooltip_text_bold"
+                    >{{$t('DDOS.protectCon.ProtectionGradeToolTip0101')}}</span>
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip010101')}}
+                    <br />
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0102')}}
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0103')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0104')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0105')}}</span>
+                    <br />
+                    <br />
+                    <span
+                      class="tooltip_text_bold"
+                    >{{$t('DDOS.protectCon.ProtectionGradeToolTip0201')}}</span>
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip020101')}}
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0202')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0203')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0204')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0205')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0206')}}</span>
+                    <br />
+                    <br />
+                    <span
+                      class="tooltip_text_bold"
+                    >{{$t('DDOS.protectCon.ProtectionGradeToolTip0301')}}</span>
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip030101')}}
+                    <br />
+                    {{$t('DDOS.protectCon.ProtectionGradeToolTip0302')}}
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0303')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0304')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0305')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0306')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0307')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0308')}}</span>
+                    <br />
+                    <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0309')}}</span>
+                    <br />
                     <span class="indent">{{$t('DDOS.protectCon.ProtectionGradeToolTip0310')}}</span>
                   </div>
                   <i class="el-icon-info"></i>
@@ -215,7 +247,12 @@
                 </el-select>
               </span>
               <span class="modelSpan3" v-if="servicePack.AlarmType!=0">
-                <el-input type="number" v-model="servicePack.AlarmThreshold" class="intMbps" @change="modifyAlarmThreshold"></el-input>
+                <el-input
+                  type="number"
+                  v-model="servicePack.AlarmThreshold"
+                  class="intMbps"
+                  @change="modifyAlarmThreshold"
+                ></el-input>
               </span>
               <span class="modelSpan3" v-if="servicePack.AlarmType!=0">Mbps</span>
             </p>
@@ -230,21 +267,20 @@
 import {
   CLAEN_SHOLD,
   Modify_Level,
+  GET_SPolicy,
   DDOS_POLICY_MODIFY,
   RESBIND_MODIFY,
   SET_SHOLD,
   GET_SHOLD,
   Modify_Status
 } from "@/constants";
-import { monthsShort } from 'moment';
+import { monthsShort } from "moment";
 export default {
   props: {
     configShow: {
       type: Boolean,
       default: true
-    },
-    modifyDDosRes: Object,
-    policysData: Array
+    }
   },
   data() {
     return {
@@ -263,9 +299,9 @@ export default {
       policys: [], //高级策略数组
       spolicyId: "", //绑定高级策略id
       alarmTypeOptions: [
-        { label: "未設置", value: 0},
-        { label: "入流量寬頻", value: 1},
-        { label: "清洗流量", value: 2}
+        { label: "未設置", value: 0 },
+        { label: "入流量寬頻", value: 1 },
+        { label: "清洗流量", value: 2 }
       ],
       cleanNumOption: [
         { label: "默認", value: "0" },
@@ -292,7 +328,7 @@ export default {
       defendStatusModel: false, //关闭防护状态模态框
       changeModelTip1: false, //修改防护等级提示弹框1
       changeModelTip2: false, //修改防护等级提示弹框2
-      changeModelTip3: false, //修改防护等级提示弹框3
+      changeModelTip3: false //修改防护等级提示弹框3
     };
   },
   computed: {
@@ -300,25 +336,29 @@ export default {
       return this.configShow;
     }
   },
-  watch: {
-    modifyDDosRes() {
-      this.modifyDDosRes.Record.forEach(item => {
-        if(item.Key == "Id"){
+  methods: {
+    init(row) {
+      this.freshData(row);
+      this.describeDDoSPolicy();
+      this.describeDDoSAlarmThreshold(); //获取DDoS告警通知阈值
+    },
+    freshData(res) {
+      res.Record.forEach(item => {
+        if (item.Key == "Id") {
           this.resourceId = item.Value;
-          this.describeDDoSAlarmThreshold(); //获取DDoS告警通知阈值
-        } else if(item.Key == "DefendStatus"){
-          this.servicePack.DefendStatus = item.Value==1?true:false;
-        } else if(item.Key == "DdosThreshold"){
+        } else if (item.Key == "DefendStatus") {
+          this.servicePack.DefendStatus = item.Value == 1 ? true : false;
+        } else if (item.Key == "DdosThreshold") {
           this.servicePack.DdosThreshold = item.Value;
-        } else if(item.Key == "DDoSLevel"){
+        } else if (item.Key == "DDoSLevel") {
           this.servicePack.DDoSLevel = item.Value;
-        } else if(item.Key == "SPolicyId"){
+        } else if (item.Key == "SPolicyId") {
           this.servicePack.SPolicyId = item.Value;
           this.spolicyId = item.Value;
-        } else if(item.Key == "ShowFlag"){
+        } else if (item.Key == "ShowFlag") {
           this.ShowFlag = item.Value;
-        } else if(item.Key == "GroupIpList"){
-          this.ipList = []
+        } else if (item.Key == "GroupIpList") {
+          this.ipList = [];
           let ipArr = item.Value.split(";");
           for (const key in ipArr) {
             if (ipArr.hasOwnProperty(key)) {
@@ -330,29 +370,29 @@ export default {
         }
       });
     },
-    policysData() {
-      this.policys = JSON.parse(JSON.stringify(this.policysData));
-      if(this.policys.length > 0 && this.policys[0].PolicyId != "0000"){
-        this.policys.splice(0, 0, {PolicyName:"無", PolicyId:"0000"}); 
-      } else if(this.policys.length == 0){
-        this.policys.splice(0, 0, {PolicyName:"無", PolicyId:"0000"}); 
-      }
-    }
-  },
-  created() {
-    
-  },
-  methods: {
+    // 获取DDoS高级策略列表
+    describeDDoSPolicy() {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net"
+      };
+      this.axios.post(GET_SPolicy, params).then(res => {
+        this.policys = JSON.parse(JSON.stringify(res.Response.DDosPolicyList));
+        this.policys.splice(0, 0, { PolicyName: "無", PolicyId: "" });
+      });
+    },
     // 获取DDoS告警通知阈值
     describeDDoSAlarmThreshold() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        RsId: this.resourceId, //资源ID
+        RsId: this.resourceId //资源ID
       };
       this.axios.post(GET_SHOLD, params).then(res => {
-        this.servicePack.AlarmThreshold = res.Response.DDoSAlarmThreshold.AlarmThreshold;
+        this.servicePack.AlarmThreshold =
+          res.Response.DDoSAlarmThreshold.AlarmThreshold;
         this.servicePack.AlarmType = res.Response.DDoSAlarmThreshold.AlarmType;
         // console.log(params, res.Response)
       });
@@ -363,9 +403,11 @@ export default {
     },
     // 1.0防护状态按钮
     defendStatusSwitch() {
-      if (this.servicePack.DefendStatus == false) { //关闭防护状态
+      if (this.servicePack.DefendStatus == false) {
+        //关闭防护状态
         this.defendStatusModel = true;
-      } else { //开启防护状态
+      } else {
+        //开启防护状态
         this.servicePack.DefendStatus = true;
         this.modifyDefendStatus();
       }
@@ -376,13 +418,13 @@ export default {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        Status: this.servicePack.DefendStatus?1:0,
+        Status: this.servicePack.DefendStatus ? 1 : 0,
         Hour: this.servicePack.cleanTime,
         Id: this.resourceId
       };
       this.axios.post(Modify_Status, params).then(res => {
-        if(res.Response.Success!=undefined){
-          this.ShowFlag = this.servicePack.DefendStatus?0:1;
+        if (res.Response.Success != undefined) {
+          this.ShowFlag = this.servicePack.DefendStatus ? 0 : 1;
         }
       });
       this.defendStatusModel = false;
@@ -458,9 +500,9 @@ export default {
     },
     // 4.0修改高级策略
     modifyPolicy() {
-      console.log(this.servicePack.SPolicyId, DDOS_POLICY_MODIFY);
+      // console.log(this.servicePack.SPolicyId, DDOS_POLICY_MODIFY);
       let bindFlag = true;
-      if(this.spolicyId != "0000"){
+      if (this.spolicyId != "") {
         // 解绑
         let params = {
           Version: "2018-07-09",
@@ -472,13 +514,13 @@ export default {
         };
         this.axios.post(RESBIND_MODIFY, params).then(res => {
           // console.log(res.Response)
-          if(res.Response.Success == undefined){
+          if (res.Response.Success == undefined) {
             bindFlag = false;
           }
         });
       }
       setTimeout(() => {
-        if(bindFlag){
+        if (bindFlag && this.servicePack.SPolicyId != "") {
           // 绑定
           let params2 = {
             Version: "2018-07-09",
@@ -490,7 +532,7 @@ export default {
           };
           this.axios.post(RESBIND_MODIFY, params2).then(res => {
             // console.log(res.Response)
-            if(res.Response.Success !== undefined){
+            if (res.Response.Success !== undefined) {
               this.$message({
                 showClose: true,
                 message: "修改成功",
@@ -501,33 +543,35 @@ export default {
           });
         }
       }, 2000);
-      
     },
     // 5.0修改DDOS攻击告警阈值（类型）
     modifyAlarmType() {
       // console.log(this.servicePack.AlarmType, this.servicePack.AlarmThreshold);
-      if(this.servicePack.AlarmType == 0 || !(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))) {
+      if (
+        this.servicePack.AlarmType == 0 ||
+        !/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold)
+      ) {
         this.servicePack.AlarmThreshold = 1000;
       }
       this.modifyDDoSAlarmThreshold();
     },
-    modifyAlarmThreshold(){
+    modifyAlarmThreshold() {
       // console.log(this.servicePack.AlarmType, this.servicePack.AlarmThreshold);
-      if(this.servicePack.AlarmThreshold == ''){
+      if (this.servicePack.AlarmThreshold == "") {
         this.$message({
           showClose: true,
           message: "DDoS攻告警阈值不為空",
           type: "warning"
         });
-        return
+        return;
       }
-      if(!(/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold))){
+      if (!/(^[1-9]\d*$)/.test(this.servicePack.AlarmThreshold)) {
         this.$message({
           showClose: true,
           message: "DDoS攻告警阈值為正整數",
           type: "warning"
         });
-        return
+        return;
       }
       this.modifyDDoSAlarmThreshold();
     },
@@ -545,15 +589,15 @@ export default {
       for (const i in this.ipList) {
         if (this.ipList.hasOwnProperty(i)) {
           const ip = this.ipList[i];
-          params["IpList."+i] = ip;
+          params["IpList." + i] = ip;
         }
       }
       this.axios.post(SET_SHOLD, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
-            message: '修改成功',
-            type: 'success'
+            message: "修改成功",
+            type: "success"
           });
         } else {
           let ErrTips = {};
@@ -567,7 +611,7 @@ export default {
         }
       });
     },
-    
+
     changeCloseTip1() {
       this.changeModelTip1 = false;
     },
@@ -604,7 +648,6 @@ export default {
   }
 }
 
- 
 .modelSpan3 >>> .el-input__inner {
   width: 100px;
   margin-left: 10px;

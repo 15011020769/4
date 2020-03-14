@@ -5,17 +5,13 @@
         <div class="btn">
           <div>
             <el-row>
-              <el-button
-                type="primary"
-                @click="newBuildByVal.newBuildState = true"
-                >新增</el-button
-              >
-              <el-button disabled v-if="multipleSelection.length === 0"
+              <el-button type="primary" @click="AddBtn">新增</el-button>
+              <el-button disabled v-if="multipleSelection1.length === 0"
                 >移出</el-button
               >
               <el-button
-                v-if="multipleSelection.length !== 0"
-                @click="Deleles(multipleSelection)"
+                v-if="multipleSelection1.length !== 0"
+                @click="allDelete = true"
                 >移出</el-button
               >
             </el-row>
@@ -23,7 +19,6 @@
         </div>
         <div class="table">
           <el-table
-            ref="multipleTable"
             :data="enterList"
             tooltip-effect="dark"
             style="width: 100%"
@@ -57,7 +52,7 @@
             </el-table-column>
             <el-table-column prop="address" label="操作">
               <template slot-scope="scope">
-                <a href="javascript:;" @click="Editor(scope.row)">移出</a>
+                <a href="javascript:;" @click="MoveOut(scope.row)">移出</a>
               </template>
             </el-table-column>
           </el-table>
@@ -85,6 +80,7 @@
         width="1024px"
         :show-close="false"
         class="dialog-box"
+        v-loading="loadShowAdd"
       >
         <div class="title">
           <h3>新建</h3>
@@ -98,39 +94,70 @@
               <div class="left">
                 <div class="left-main border">
                   <div class="seek" style="">
+                    <el-select
+                      v-model="searchSelectProject"
+                      placeholder="请选择"
+                    >
+                      <el-option
+                        v-for="item in projectOptions"
+                        :key="item.projectId"
+                        :label="item.projectName"
+                        :value="item.projectId"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-select v-model="searchSelect" placeholder="请选择">
+                      <el-option
+                        v-for="item in selectOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
+                      </el-option>
+                    </el-select>
                     <el-input
-                      v-model="input"
                       placeholder="请输入内容"
-                      style=""
-                    ></el-input>
-                    <p>
-                      <i class="el-icon-search"></i>
-                    </p>
+                      v-model="searchInput"
+                      class="input-with-select"
+                    >
+                      <el-button
+                        slot="append"
+                        icon="el-icon-search"
+                        @click="AddDataList"
+                      ></el-button>
+                    </el-input>
                   </div>
                   <el-table
                     :data="tableData"
                     height="420"
+                    ref="multipleTable"
                     @selection-change="AddHandleSelectionChange"
+                    class="table-left"
                   >
                     <el-table-column
                       type="selection"
                       width="55"
+                      :selectable="selectInit"
                     ></el-table-column>
-                    <el-table-column
-                      prop="PolicyName"
-                      label="ID/主机名"
-                      width="80"
-                    ></el-table-column>
-                    <el-table-column
-                      prop="Type"
-                      label="网络类型"
-                      width="120"
-                    ></el-table-column>
-                    <el-table-column
-                      prop="PolicyName"
-                      label="IP地址"
-                      width="120"
-                    ></el-table-column>
+                    <el-table-column label="ID/主机名" width="120">
+                      <template slot-scope="scope">
+                        <p>
+                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                        </p>
+                        <p>{{ scope.row.InstanceName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="网络类型" width="120"
+                      >VPC 网络</el-table-column
+                    >
+                    <el-table-column label="IP地址" width="120">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+                        <p class="out">
+                          {{ scope.row.PublicIpAddresses[0] }}(外网)
+                        </p>
+                      </template>
+                    </el-table-column>
                   </el-table>
                 </div>
               </div>
@@ -139,22 +166,45 @@
               </div>
               <div class="right">
                 <div class="right-main border">
-                  <el-table :data="multipleSelection" height="460">
-                    <el-table-column
-                      prop="PolicyName"
-                      label="策略名"
-                      width="80"
-                    ></el-table-column>
-                    <el-table-column prop="Type" label="策略类型" width="150">
+                  <el-table
+                    :data="multipleSelection"
+                    style=""
+                    height="450"
+                    class="table-left"
+                  >
+                    <el-table-column label="ID/主机名" width="120">
                       <template slot-scope="scope">
-                        <p>{{ type[scope.row.Type] }}</p>
+                        <p>
+                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                        </p>
+                        <p>{{ scope.row.InstanceName }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column
-                      prop="PolicyName"
-                      label="IP地址"
-                      width="150"
-                    ></el-table-column>
+                    <el-table-column label="网络类型" width="100"
+                      >VPC 网络</el-table-column
+                    >
+                    <el-table-column label="IP地址" width="170">
+                      <template slot-scope="scope">
+                        <div class="resses">
+                          <div>
+                            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+                            <p class="out">
+                              {{ scope.row.PublicIpAddresses[0] }}(外网)
+                            </p>
+                          </div>
+                        </div>
+                      </template>
+                    </el-table-column>
+                    <el-table-column width="50">
+                      <template slot-scope="scope">
+                        <div class="resses">
+                          <i
+                            class="el-icon-error ml5"
+                            @click="DeleteListAdd(scope.row)"
+                          ></i>
+                        </div>
+                      </template>
+                    </el-table-column>
                   </el-table>
                 </div>
               </div>
@@ -163,39 +213,108 @@
         </div>
         <p slot="footer" class="dialog-footer" style="text-align:center">
           <el-button type="primary" @click="save">保 存</el-button>
-          <el-button @click="newBuildByVal.newBuildState">取 消</el-button>
+          <el-button @click="newBuildByVal.newBuildState = false"
+            >取 消</el-button
+          >
         </p>
+      </el-dialog>
+      <!-- 移出 -->
+      <el-dialog
+        title="确定移出所选实例？"
+        :visible.sync="rulesEditorByVal.rulesEditorState"
+        width="500px"
+        custom-class="tke-dialog"
+      >
+        <div>
+          移出后，该组之前绑定的告警策略将与该实例解绑，该组后续所涉及的操作将不会对该实例生效。
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="DeleteList()">确定移出</el-button>
+          <el-button @click="rulesEditorByVal.rulesEditorState = false"
+            >取消</el-button
+          >
+        </div>
+      </el-dialog>
+      <!-- 批量移出 -->
+      <el-dialog
+        :title="
+          '已选择' + multipleSelection1.length + '个实例，确定要解除关联？'
+        "
+        :visible.sync="allDelete"
+        width="500px"
+        custom-class="tke-dialog"
+      >
+        <div>
+          移出后，该组之前绑定的告警策略将与该实例解绑，该组后续所涉及的操作将不会对该实例生效。
+        </div>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="DeleteList()"
+            >确定移出所选实例</el-button
+          >
+          <el-button @click="allDelete = false">取消</el-button>
+        </div>
       </el-dialog>
     </div>
   </div>
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import { CM_GROUPING_MANAGE, CM_GROUPING_MANAGELIST } from "@/constants";
+import {
+  CM_GROUPING_MANAGE,
+  CM_GROUPING_MANAGELIST,
+  CM_GROUPING_MOVE,
+  CM_GROUPING_MANAGELIST_ADD,
+  ALL_PROJECT,
+  TKE_EXIST_NODES,
+  CM_GROUPING_NEWLY_BUILD
+} from "@/constants";
 export default {
   data() {
     return {
       activeName: "first",
       enterList: [],
       loadShow: true,
+      loadShowAdd: true,
       multipleSelection: [],
       multipleSelection1: [],
       newBuildByVal: {
         // 新建
         newBuildState: false
       },
-      rulesNewByVal: {
-        rulesNewState: false,
-        SecurityGroupId: this.Rules.SecurityGroupId,
-        RulesType: ""
+      rulesEditorByVal: {
+        rulesEditorState: false
       },
+      allDelete: false,
       //分页
       total: 0, //总条数
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
       tableData: [],
-      multipleSelection: [],
-      input: ""
+      input: "",
+      delete: "",
+      searchInput: "",
+      searchSelectProject: 0,
+      projectOptions: [
+        {
+          projectId: 0,
+          projectName: "默认项目"
+        }
+      ],
+      searchSelect: "",
+      selectOptions: [
+        {
+          value: "1",
+          label: "主机ID"
+        },
+        {
+          value: "2",
+          label: "IP"
+        },
+        {
+          value: "3",
+          label: "主机名"
+        }
+      ]
     };
   },
   props: {
@@ -206,10 +325,33 @@ export default {
   },
   components: {},
   created() {
+    this.NewProject();
     this.ListInit();
-    console.log(this.Rules.instanceGroupId);
   },
   methods: {
+    // 项目
+    NewProject() {
+      this.axios.get(ALL_PROJECT).then(res => {
+        if (res.codeDesc === "Success") {
+          var arr = res.data;
+          for (var i in arr) {
+            this.projectOptions.push(arr[i]);
+          }
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     async ListInit() {
       this.loadShow = true;
       let param = {
@@ -222,7 +364,6 @@ export default {
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           var _enterList = res.Response.InstanceList;
-          console.log(_enterList);
           this.total = res.Response.Total;
           let params = {
             Version: "2017-03-12",
@@ -230,11 +371,23 @@ export default {
             Offset: this.pageIndex
           };
           for (let i in _enterList) {
-            params["InstanceIds." + i] = _enterList[i].Dimensions.unInstanceId;
+            params["InstanceIds." + i] = JSON.parse(
+              _enterList[i].Dimensions
+            ).unInstanceId;
           }
           this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
             if (res.Response.Error === undefined) {
               this.enterList = res.Response.InstanceSet;
+              for (let i in _enterList) {
+                for (let j in this.enterList) {
+                  if (
+                    JSON.parse(_enterList[i].Dimensions).unInstanceId ===
+                    this.enterList[j].InstanceId
+                  ) {
+                    this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                  }
+                }
+              }
               console.log(this.enterList);
               this.loadShow = false;
             } else {
@@ -289,22 +442,185 @@ export default {
         return "销毁中";
       }
     },
-    save() {},
-    // 编辑
-    Editor(row) {
-      this.rulesEditorByVal.rulesEditorState = true;
-      if (this.activeName === "first") {
-        this.rulesEditorByVal.RulesType = 0;
-      } else if (this.activeName === "second") {
-        this.rulesEditorByVal.RulesType = 1;
+    // 新增
+    AddBtn() {
+      this.newBuildByVal.newBuildState = true;
+      this.loadShowAdd = true;
+      this.AddDataList();
+    },
+    DeleteListAdd(row) {
+      this.$refs.multipleTable.toggleRowSelection(row);
+      for (var i in this.multipleSelection) {
+        if (row.InstanceId === this.multipleSelection[i].InstanceId) {
+          this.multipleSelection.splice(this.multipleSelection[i], 1);
+        }
       }
-      this.rulesEditorByVal.EditorList = row;
+    },
+    save() {
+      let param = {
+        GroupName: this.Rules.groupName,
+        Version: "2018-07-24",
+        Module: "monitor",
+        ViewName: this.Rules.viewName
+      };
+      console.log(this.multipleSelection);
+      for (let i in this.multipleSelection) {
+        param["InstanceList." + i + ".Region"] = "ap-taipei";
+        // param["InstanceList." + i + ".Dimensions"] = JSON.stringify({
+        //   unInstanceId: this.multipleSelection[i].InstanceId
+        // });
+        // param["InstanceList." + i + ".EventDimensions"] = JSON.stringify({
+        //   uuid: this.multipleSelection[i].Uuid
+        // });
+        param["InstanceList." + i + ".Dimensions"] = {
+          unInstanceId: this.multipleSelection[i].InstanceId
+        };
+        param["InstanceList." + i + ".EventDimensions"] = {
+          uuid: this.multipleSelection[i].Uuid
+        };
+      }
+      this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 移出
+    MoveOut(row) {
+      console.log(row);
+      this.rulesEditorByVal.rulesEditorState = true;
+      this.multipleSelection1 = row;
+    },
+    // 确定移出
+    DeleteList() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        InstanceGroupId: this.Rules.instanceGroupId
+      };
+      if (!Array.isArray(this.multipleSelection1)) {
+        param["UniqueIds.0"] = this.multipleSelection1.UniqueId;
+      } else {
+        for (let i in this.multipleSelection1) {
+          param["UniqueIds." + i] = this.multipleSelection1[i].UniqueId;
+        }
+      }
+      this.axios.post(CM_GROUPING_MOVE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.rulesEditorByVal.rulesEditorState = false;
+          this.allDelete = false;
+          this.ListInit();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    async AddDataList() {
+      let param = {
+        Version: "2017-03-12",
+        Region: "ap-taipei",
+        Limit: 100
+      };
+      param["Filters.0.Name"] = "project-id";
+      param["Filters.0.Values.0"] = this.searchSelectProject;
+      if (this.searchSelect == 1 && this.searchInput != "") {
+        param["Filters.1.Name"] = "instance-id";
+        param["Filters.1.Values.0"] = this.searchInput;
+      } else if (this.searchSelect == 2 && this.searchInput != "") {
+        param["Filters.1.Name"] = "private-ip-address";
+        param["Filters.1.Values.0"] = this.searchInput;
+      } else if (this.searchSelect == 3 && this.searchInput != "") {
+        param["Filters.1.Name"] = "instance-name";
+        param["Filters.1.Values.0"] = this.searchInput;
+      }
+      if (this.searchSelect == "") {
+        if (this.searchInput != "") {
+          if (this.searchInput.slice(0, 4) === "ins-") {
+            this.searchSelect = "1";
+            param["Filters.1.Name"] = "instance-id";
+            param["Filters.1.Values.0"] = this.searchInput;
+          } else {
+            this.searchSelect = "3";
+            param["Filters.1.Name"] = "instance-name";
+            param["Filters.1.Values.0"] = this.searchInput;
+          }
+        }
+      }
+      await this.axios.post(TKE_EXIST_NODES, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.InstanceSet;
+          this.loadShowAdd = false;
+        } else {
+          this.loadShowAdd = false;
+          let ErrTips = {
+            InternalServerError: "操作内部错误。",
+            InvalidFilter: "无效的过滤器。",
+            "InvalidFilterValue.LimitExceeded": "Filter参数值数量超过限制。",
+            "InvalidHostId.Malformed":
+              "无效CDH ID。指定的CDH ID格式错误。例如ID长度错误host-1122。",
+            "InvalidInstanceId.Malformed":
+              "无效实例ID。指定的实例ID格式错误。例如实例ID长度错误ins-1122。",
+            InvalidParameter: "无效参数。参数不合要求或者参数不被支持等。",
+            InvalidParameterValue:
+              "无效参数值。参数值格式错误或者参数值不被支持等。",
+            "InvalidParameterValue.LimitExceeded": "参数值数量超过限制。",
+            "InvalidZone.MismatchRegion": "指定的zone不存在。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.multipleSelection1 = val;
     },
     AddHandleSelectionChange(val) {
-      this.multipleSelection1 = val;
+      this.multipleSelection = val;
+    },
+    // 复选框操作
+    selectInit(row, index) {
+      if (
+        this.enterList.some(el => {
+          return el.InstanceId === row.InstanceId;
+        })
+      ) {
+        return false;
+      } else {
+        return true;
+      }
     },
     // 分页
     handleCurrentChange(val) {
@@ -515,21 +831,22 @@ export default {
       // flex: 1;
 
       .seek {
-        position: relative;
-
-        p {
-          position: absolute;
-          z-index: 100px;
-          top: 0;
-          right: 0;
-          display: flex;
-          align-items: center;
-          height: 100%;
-          cursor: pointer;
-
-          i {
-            margin-right: 10px;
-          }
+        display: flex;
+        ::v-deep .el-select {
+          width: 100px;
+          font-size: 12px;
+        }
+        ::v-deep .el-input-group {
+          width: 60%;
+        }
+        ::v-deep .el-input__inner {
+          border-radius: 0;
+          height: 30px;
+          font-size: 12px;
+          padding: 0px 10px;
+        }
+        ::v-deep .el-input-group__append {
+          border-radius: 0;
         }
       }
     }
@@ -546,6 +863,11 @@ export default {
         font-size: 20px;
       }
     }
+  }
+}
+.tke-dialog {
+  ::v-deep .el-dialog__footer {
+    text-align: center;
   }
 }
 </style>

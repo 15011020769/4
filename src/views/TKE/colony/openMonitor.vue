@@ -22,40 +22,64 @@
       </div>
       <div class="box-bottom">
         <div class="box-bottom-right">
-          <div class="box-top-left">
+          <p>节点数量(台)</p>
+          <div class="dataNone" v-if="clusters.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='series' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>Pod数量(个)</p>
+          <div class="dataNone" v-if="pods.length === 0 && allocatablePods.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesPod' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>CPU总配置(核)</p>
+          <div class="dataNone" v-if="cpus.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesCpu' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>CPU利用率(%)</p>
+          <div class="dataNone" v-if="cpuUseds.length === 0 && cpuRequests.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesCpuRate' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>CPU使用量(核)</p>
+          <div class="dataNone" v-if="cpuUsedmaxs.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesCpuUsed' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>内存总配置(B)</p>
+          <div class="dataNone" v-if="memorys.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesMemoy' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>内存利用率(%)</p>
+          <div class="dataNone" v-if="memusages.length === 0 && memrequests.length === 0 && menNocaches.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesMemoyRate' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>内存使用量(B)</p>
+          <div class="dataNone" v-if="memUsageBytes.length === 0 && memNoYsages.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesMemoyUsed' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>网络带宽(Bps)</p>
+          <div class="dataNone" v-if="receives.length === 0 && transmits.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='times' :series='seriesInternet' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>GPU 总配置(卡)</p>
+          <div class="dataNone" v-if="gpus.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='gpuTimes' :series='seriesGpu' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>GPU利用率(%)</p>
+          <div class="dataNone" v-if="gpuUseds.length === 0 && gpuRequests.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='gpuTimes' :series='seriesGpuUesd' style="width:90%;height: 200px;" />
           </div>
-          <div class="box-top-left">
+          <p>显存利用率(%)</p>
+          <div class="dataNone" v-if="gpuMems.length === 0 && gpuMemRequests.length === 0">暂无数据</div>
+          <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <Echarts :time='gpuTimes' :series='seriesInternet' style="width:90%;height: 200px;" />
           </div>
         </div>
@@ -80,6 +104,26 @@ export default {
   },
   data() {
     return {
+      clusters: [],
+      pods: [],
+      allocatablePods: [],
+      cpus: [],
+      cpuUseds: [],
+      cpuRequests: [],
+      cpuUsedmaxs: [],
+      memorys: [],
+      memusages: [],
+      memrequests: [],
+      menNocaches: [],
+      memUsageBytes: [],
+      memNoYsages: [],
+      receives: [],
+      transmits: [],
+      gpus: [],
+      gpuUseds: [],
+      gpuRequests: [],
+      gpuMems: [],
+      gpuMemRequests: [],
       TimeArr: [{
           name: '实时',
           Time: 'realTime',
@@ -142,6 +186,7 @@ export default {
       seriesGpu: [],//gpu
       seriesGpuUesd: [],//gpu使用率
       seriesInternet: [],//gpu分配率
+      podName: '节点数量',
     }
   },
   watch:{
@@ -310,6 +355,11 @@ export default {
               gpuMems.push(gpuMem);
               gpuMemRequests.push(gpuMemRequest);
             }
+            this.gpus = gpus;
+            this.gpuUseds = gpuUseds;
+            this.gpuRequests = gpuRequests;
+            this.gpuMems = gpuMems;
+            this.gpuMemRequests = gpuMemRequests;
           }
           this.gpuTimes = gpuTimes;
           this.seriesGpu = [
@@ -422,6 +472,21 @@ export default {
               receives.push(receive);
               transmits.push(transmit);
             }
+            this.clusters = clusters;
+            this.pods = pods;
+            this.allocatablePods = allocatablePods;
+            this.cpus = cpus;
+            this.cpuUseds = cpuUseds;
+            this.cpuRequests = cpuRequests;
+            this.cpuUsedmaxs = cpuUsedmaxs;
+            this.memorys = memorys;
+            this.memusages = memusages;
+            this.memrequests = memrequests;
+            this.menNocaches = menNocaches;
+            this.memUsageBytes = memUsageBytes;
+            this.memNoYsages = memNoYsages;
+            this.receives = receives;
+            this.transmits = transmits;
           }
           this.times = times;
           this.series = [{name: '节点数量',type: 'line', data: clusters,itemStyle: {
@@ -556,6 +621,12 @@ export default {
 };
 </script>
 <style lang='scss' scoped>
+.dataNone{
+  width: 100%;
+  height: 200px;
+  line-height:200px;
+  text-align:center;
+}
 .room-bottom {
   width: 94%;
   margin: 20px auto;

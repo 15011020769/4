@@ -284,17 +284,11 @@ export default {
       activeName: "k8s_node",
       value: "", // node节点值
       value2:"", // pod节点值
-      podValue:"",
-      checkAll: true,
-      options: [],
-      isCollapse: "k8s_node",
-      isIndeterminate: false,
-      title:"",
-      clusterId:"",
-      InstancesAll:[],
-      isFlag:true,
-      Nodelist:[],
-      Podlist:[],
+      podValue:"",// pod节点ID
+      title:"",// 路由监控名称
+      clusterId:"",// 集群ID
+      Nodelist:[],// 节点下拉数据
+      Podlist:[],// pod下拉数据
       podData:[],
       valueLast:"",
       valueLast2:"",
@@ -304,9 +298,9 @@ export default {
       grain:"" ,//粒数
       NodeTitle:"",
       NodeTitle2:"",
-      NodesDataId:[],
-      PodDataId:[],
-      // 节点
+      NodesDataId:[],// 节点ID数组
+      PodDataId:[], // podID数组
+      // 节点监控图像数据
       times:[],
       series:[],
       seriesError:[],
@@ -319,7 +313,7 @@ export default {
       seriesMemrequests:[],
       seriesMenNocaches:[],
       seriesMemUsageBytes:[],
-      // pod
+      // pod监控图像数据
       podTimes:[],                
       podsIds:[],                 
       podStatuErrs:[],            

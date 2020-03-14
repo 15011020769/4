@@ -68,11 +68,35 @@
           icon="el-icon-loading"
           type="primary"
         ></el-button>
-        <TimeX
-          @switchData="GetDat"
-          :classsvalue="value"
-          style="margin-left:10px;"
-        ></TimeX>
+        <el-button-group style="margin-left: 15px;">
+            <el-button size="small" :type="createTimeType === '0d' ? 'primary' : ''" @click="onTimeClick(0, 'd')">今天</el-button>
+            <el-button size="small" :type="createTimeType === '1d' ? 'primary' : ''" @click="onTimeClick(1, 'd')">昨天</el-button>
+            <el-button size="small" :type="createTimeType === '6d' ? 'primary' : ''" @click="onTimeClick(6, 'd')">近7天</el-button>
+            <el-button size="small" :type="createTimeType === '1month' ? 'primary' : ''" @click="onTimeClick(1, 'month')">近30天</el-button>
+          </el-button-group>
+          <el-date-picker
+            size="small"
+            :clearable="false"
+            style="border-left: none;"
+            v-model="timeValue"
+            type="datetimerange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+          ></el-date-picker>
+          <span style="margin: 0 5px 0 15px">時間粒度:</span>
+          <el-select
+            style="width: 90px;"
+            v-model="granularity"
+            placeholder="請選擇"
+            size="small"
+          >
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -165,6 +189,19 @@ export default {
   name: "overview",
   data() {
     return {
+      createTimeType: '0d',
+      options: [
+        // 默认下拉数据
+        {
+          value: 300,
+          label: '5分鐘'
+        },
+        {
+          value: 3600,
+          label: '1小時'
+        }
+      ],
+      timeValue: [moment().startOf('d'), moment()],
       domainData: [],
       domainCheckedList: [],
       domainCheckedListCopy: [],
@@ -175,7 +212,7 @@ export default {
       totalFlux: 0,
       fluxPackageCount: 0,
       value: 1,
-      granularity: 0,
+      granularity: 300,
       activeName: "帶寬",
       region: "",
       StartTime: "",
@@ -187,7 +224,23 @@ export default {
       btnload: true,
       flux_json: [],
       bandwidth_json: [],
-    };
+      selectDate: '',
+      pickerOptions: {
+        onPick: ({maxDate, minDate}) => {
+          this.selectDate= minDate.getTime();
+          if (maxDate) {
+            this.selectDate= ''
+          }
+        }, disabledDate: (date) => {
+          if (this.selectDate!== '') {
+            const minTime = moment(this.selectDate).subtract(1, 'month')
+            const maxTime = moment(this.selectDate).add(1, 'month')
+            return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || date.getTime() > Date.now()
+          }
+          return date.getTime() > Date.now();
+        }
+      }
+    }
   },
   components: {
     HeaderCom,
@@ -205,9 +258,33 @@ export default {
       } else {
         this.series = [...this.fluxData];
       }
+    },
+    timeValue: {
+      handler() {
+        this.getTrend()
+      },
+      immediate: true
+    },
+    granularity() {
+      this.getTrend()
     }
   },
   methods: {
+    onTimeClick(t, u) {
+      this.createTimeType = `${t}${u}`
+      let start = moment().subtract(t, u).startOf('d')
+      let end = moment().endOf('d')
+      if (t === 0) {
+        end = moment()
+      }
+      if (t == 1) {
+        end = end.subtract(1, 'd')
+      }
+      if (u === 'month') {
+        start = start.add(1, 'd')
+      }
+      this.timeValue = [start, end]
+    },
     exportEchart() {
       let json
       if (this.activeName === "帶寬") {
@@ -250,22 +327,6 @@ export default {
     cancelDomain() {
       this.domainCheckedList = [...this.domainCheckedListCopy];
       this.$refs.doaminRef.visible = false;
-    },
-    GetDat(params) {
-      this.granularity = params[0];
-      this.StartTime = params[1].StartTIme;
-      this.EndTime = params[1].EndTIme;
-      this.value = params[2];
-
-      const startDatetime = moment(this.StartTime, "YYYY-MM-DD HH:mm:ss");
-      const endDatetime = moment(this.EndTime, "YYYY-MM-DD HH:mm:ss");
-
-      if (endDatetime.diff(startDatetime, "days") >= 31) {
-        this.$message.error("只能查詢31天內的趨勢數據");
-        return;
-      }
-
-      this.$nextTick(this.getTrend);
     },
     //获取地域
     _region() {
@@ -351,8 +412,8 @@ export default {
     getTrend() {
       let params = {
         ...defaultParams,
-        StartTime: this.StartTime,
-        EndTime: this.EndTime,
+        StartTime: moment(this.timeValue[0]).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(this.timeValue[1]).format('YYYY-MM-DD HH:mm:ss'),
         Granularity: Number(this.granularity) / 60,
         MainlandOrOversea: "Oversea",
       };
@@ -370,6 +431,7 @@ export default {
           const fluxData = [];
           const bandwidthArr = [];
           const fluxArr = [];
+          console.log(DataInfoList)
           DataInfoList.forEach(item => {
             times.push(item.Time);
             bandwidthData.push(item.Bandwidth);

@@ -6,7 +6,7 @@
         <el-form-item label="模板名称" class="form-item">
           <div class="item-text">
             {{infoData.groupName}}
-            <i class="el-icon-edit" @click="openName(infoData.groupName)"></i>
+            <i class="el-icon-edit" @click="openName(infoData.groupName)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
@@ -21,16 +21,17 @@
         <el-form-item label="备注">
           <div class="item-text">
             <span>{{infoData.remark}}</span>
-            <i class="el-icon-edit" @click="openRemark()"></i>
+            <i class="el-icon-edit" @click="openRemark()" style="cursor:pointer"></i>
           </div>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="card2">
-      <h4 class="title-text">告警触发条件 <span @click="openEdit()">编辑</span></h4>
+      <h4 class="title-text">告警触发条件 <span @click="openEdit()" style="cursor:pointer">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.conditions" :key="it.metricShowName">
-        {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }}
+        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
+        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.eventConditions" :key="it.eventShowName">
@@ -57,6 +58,7 @@
           <span v-else>{{'-'}}</span>
         </el-table-column>
       </el-table>
+      <div class="number">共 {{total}} 项</div>
     </el-card>
     <!-- 修改名称弹框 -->
     <el-dialog class="dil" :visible.sync="showDelDialog1" width="35%">
@@ -68,7 +70,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitName(infoData.groupName)">保 存</el-button>
-        <el-button @click="showDelDialog = false">取 消</el-button>
+        <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 修改备注弹框 -->
@@ -81,7 +83,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitRemark(infoData.remark)">保 存</el-button>
-        <el-button @click="showDelDialog = false">取 消</el-button>
+        <el-button @click="showDelDialog2 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 告警触发条件编辑弹框 -->
@@ -221,7 +223,14 @@
 </template>
 
 <script>
-import { GET_TEMPLATE_LIST, GET_GROUP_LIST, GET_POLICY_GROUP_TYPE, UPDATE_INFO, DESCRIBE_METRICS } from '@/constants/CM-yhs.js'
+import {
+  GET_TENCENTCLOUDAPI,
+  GET_TEMPLATE_LIST,
+  GET_GROUP_LIST,
+  GET_POLICY_GROUP_TYPE,
+  UPDATE_INFO,
+  DESCRIBE_METRICS
+} from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
 import moment from 'moment'
@@ -238,8 +247,10 @@ export default {
       isDisGJ: false, // 事件告警是否禁用
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
+      total: 0, // 告警策略列表总数
       id: '', // 模板id
       Conditions: [],
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
         jieshou: '接收组',
         jieshouArr: [
@@ -406,10 +417,29 @@ export default {
   },
   methods: {
     async getInfo () {
+      // await this.getTemplateList()
       await this.getPolicyType()
       await this.getDetailInfo()
       await this.getPolicyGroupList()
+      // await this.getConditionsTemplateList()
     },
+    // 获取告警策略模板列表
+    // async getConditionsTemplateList () {
+    //   let { groupName, groupId, viewName } = this.conditionsData
+    //   let params = {
+    //     Module: 'monitor',
+    //     ViewName: viewName,
+    //     GroupName: groupName,
+    //     GroupID: groupId,
+    //     UpdateTimeOrder: 'desc',
+    //     Limit: 1,
+    //     Offset: 0,
+    //     Version: '2018-07-24'
+    //   }
+    //   this.axios.post(GET_DESCRIBECONDITIONSTEMPLATELIST, params).then(res => {
+    //     console.log(res)
+    //   })
+    // },
     // 获取策略类型
     async getPolicyType  () {
       this.loadShow = true
@@ -456,6 +486,24 @@ export default {
               }
             }
           }
+          msg.forEach(ele => {
+            ele.conditions.forEach((item, i) => {
+              item.calcType = this.SymbolList[item.calcType - 1]
+              let time1 = item.alarmNotifyPeriod / 60
+              let time2 = item.alarmNotifyPeriod / (60 * 60)
+              if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.alarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+          })
           this.infoData = msg[0]
           this.loadShow = false
         } else {
@@ -471,7 +519,7 @@ export default {
         }
       })
     },
-    // 获取策略组列表
+    // 获取策略组列表(未完成  参数有误)
     async getPolicyGroupList () {
       this.loadShow = true
       let params = {
@@ -479,11 +527,13 @@ export default {
         lang: 'zh',
         like: '',
         limit: 20,
-        offset: 0
+        offset: 0,
+        Version: '2018-07-24'
       }
       await this.axios.post(GET_GROUP_LIST, params).then(res => {
         if (res.codeDesc === 'Success') {
           let msg = res.data.groupList
+          this.total = res.data.total
           msg.forEach(ele => {
             ele.receiverGroup = ele.receiverInfos && ele.receiverInfos[0].receiverGroupList.length
             if (ele.receiverInfos.length > 0) {
@@ -591,7 +641,7 @@ export default {
         console.log(res)
       })
     },
-    addZhibiao () {// 添加触发条件的指标告警
+    addZhibiao () { // 添加触发条件的指标告警
       this.indexAry.push(
         {
           jieshou: '接收组',
@@ -633,13 +683,13 @@ export default {
         }
       )
     },
-    delZhibiao (it) {// 删除触发条件的指标告警
+    delZhibiao (it) { // 删除触发条件的指标告警
       var index = this.indexAry.indexOf(it)
       if (index !== -1) {
         this.indexAry.splice(index, 1)
       }
     },
-    addShijian () {// 添加触发条件的事件告警
+    addShijian () { // 添加触发条件的事件告警
       this.eventAry.push(
         {
           jieshou: '接收组',
@@ -681,7 +731,7 @@ export default {
         }
       )
     },
-    delShijian (item) {// 删除触发条件的事件告警
+    delShijian (item) { // 删除触发条件的事件告警
       var index = this.eventAry.indexOf(item)
       if (index !== -1) {
         this.eventAry.splice(index, 1)
@@ -767,6 +817,14 @@ export default {
     margin-bottom: 10px;
   }
 }
+.card3{
+  .number {
+    padding: 10px 10px 14px 10px;
+    line-height: 27px;
+    color: #888;
+    margin: 0 10px;
+  }
+}
 .item-text{
   font-size: 12px;
   color: #444;
@@ -792,9 +850,4 @@ export default {
     margin: 5px 0;
   }
 }
-// .rubbish-icon{
-//   position: absolute;
-//   right: 0;
-
-// }
 </style>

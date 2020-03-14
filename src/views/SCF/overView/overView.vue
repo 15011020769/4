@@ -228,6 +228,7 @@
     SCF_LIST,
     ALL_Basics,
     LIST_VERSION,
+    TOP_LIST
   } from "@/constants";
   export default {
     data() {
@@ -320,6 +321,7 @@
           'Throttle': '函數運行受限次數'
 
         },
+
       };
     },
     components: {
@@ -330,6 +332,7 @@
       this.GetOverView();
       this.GetUserMonthUsage();
       this.GetUserYesterdayUsage();
+      this._GetTop()
     },
     methods: {
       //函数数量
@@ -409,6 +412,30 @@
           }
         });
       },
+      //获取top10列表
+      _GetTop() {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/SCF_V2',
+          MetricName: 'MemDuration',
+          Time: '2020-03-13 00:00:00',
+          period: 86400
+        }
+        this.axios.post(TOP_LIST, parms).then(data => {
+          console.log(data)
+          if (data.Response.Error == undefined) {
+
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
     },
     filters: {
       UpName(value) {

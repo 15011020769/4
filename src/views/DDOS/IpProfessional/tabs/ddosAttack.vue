@@ -7,11 +7,7 @@
       >
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="choiceTime(1)">{{$t('DDOS.Statistical_forms.Today')}}</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(2)">{{$t('DDOS.Statistical_forms.Nearly_sedays')}}</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(3)">近15天</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(4)">近30天</el-button>
-            <el-button class="buttonGroup" @click="choiceTime(5)">近半年</el-button>
+            <el-button v-for="(item, index) in btnData" :key="index" :type="item.selected ? 'primary' : ''" class="buttonGroup" @click="choiceTime(index + 1)">{{$t('DDOS.Statistical_forms.' + item.title)}}</el-button>
           </el-button-group>
           <el-date-picker
             v-model="dateChoice"
@@ -51,10 +47,10 @@
       <div class="mainConListAll mainConListTwo">
         <el-tabs class="tabsCard" v-model="activeName" type="card" @tab-click="handleClick1">
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Overview_broadband')" name="bps">
-            <div id="myChart"></div>
+            <div id="chart-bps"></div>
           </el-tab-pane>
           <el-tab-pane :label="$t('DDOS.Statistical_forms.Attack_rate')" name="pps">
-            <div id="myChart2"></div>
+            <div id="chart-pps"></div>
           </el-tab-pane>
         </el-tabs>
       </div>
@@ -134,6 +130,28 @@ export default {
   data() {
     return {
       loading: true,
+      btnData: [
+        {
+          selected: true,
+          title: 'Today'
+        },
+        {
+          selected: false,
+          title: 'Nearly_sedays'
+        },
+        {
+          selected: false,
+          title: 'Fifteendays'
+        },
+        {
+          selected: false,
+          title: 'Halfamonth'
+        },
+        {
+          selected: false,
+          title: 'Halfayear'
+        },
+      ],
       dateChoice: [], //选择日期
       ResIpList: [], //下拉框数据
       IpList: [], //下拉框IP数据
@@ -153,11 +171,13 @@ export default {
       ),
       timey: [],
       tableDataEnd: [],
-      period: 3600 //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
+      period: 3600, //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
+      ipPro:{} //防护概览过来数据
     };
   },
   watch: {
     dateChoice: function(value) {
+      console.log('watch||dateChoice =' + value)
       if(this.selectId == "") {
         return
       }
@@ -189,14 +209,23 @@ export default {
         this.metricName2 = this.metricNames[index];
         this.describeDDoSNetCount();
       }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
+      }
     },
     selectId: function() {
+      console.log('watch||selectId =' + this.selectId)
       this.changeId();
+    },
+    selectIp () {
+      console.log('watch||changeIp =' + this.changeIp)
+      this.changeIp()
     }
   },
   //初始化生命周期
   created() {
     this.GetID();
+    // this.choiceTime(1);
   },
   methods: {
     //获取资源的IP列表
@@ -222,17 +251,36 @@ export default {
             return
           }
           this.ResIpList = res.Response.Resource;
-          this.selectId = this.ResIpList[0].Id;
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          let jsonStr = sessionStorage.getItem('IpPro')
+          console.log('created||json =' + jsonStr)
+          if (jsonStr !== '' && jsonStr.length > 0) {
+            this.ipPro = JSON.parse(jsonStr)
+            this.selectId = this.ipPro.Id
+            this.selectIp = this.ipPro.Vip
+            this.startTime = moment(this.ipPro.StartTime,'YYYY-MM-DD 00:00:00').toDate()
+            this.endTime = moment(this.ipPro.EndTime,'YYYY-MM-DD 00:00:00').toDate()
+            console.log('created||selectId =' + this.selectId)
+            console.log('created||startTime =' + this.startTime)
+            console.log('created||endTime =' + this.endTime)
+            this.dateChoice = [this.startTime, this.endTime]
+            sessionStorage.setItem('IpPro', '')
+            for (let i =0; i < this.btnData.length; i++) {
+              this.btnData[i]['selected'] = false;
+            }
+          } else {
+            this.selectId = this.ResIpList[0].Id
+            this.choiceTime(1)
+          }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // DDOS资源Id变化时，重新获取数据
@@ -247,7 +295,26 @@ export default {
         }
       }
       this.IpList.splice(0, 0, '總覽');
-      this.choiceTime(1);
+      // 资源ID改变时，IP默认为总览
+      this.selectIp = this.IpList[0]
+      // this.choiceTime('1')
+      this.describeDDoSNetTrend(this.timey);
+      for (let index in this.metricNames) {
+        this.metricName2 = this.metricNames[index];
+        this.describeDDoSNetCount();
+      }
+      this.describeDDoSNetEvList();
+    },
+    // DDOS资源Ip变化时，重新获取数据
+    changeIp() {
+      // 资源ID改变时，IP默认为总览
+      // this.choiceTime('1')
+      this.describeDDoSNetTrend(this.timey);
+      for (let index in this.metricNames) {
+        this.metricName2 = this.metricNames[index];
+        this.describeDDoSNetCount();
+      }
+      this.describeDDoSNetEvList();
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
     describeDDoSNetEvList() {
@@ -264,17 +331,17 @@ export default {
       };
       this.axios.post(DDOS_EVENT, params).then(res => {
         if (res.Response.Error === undefined) {
-					this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+          this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
         this.loading = false;
       });
     },
@@ -292,23 +359,23 @@ export default {
       };
       this.axios.post(DDOS_ATTACK, params).then(res => {
         if (res.Response.Error === undefined) {
-					if (this.metricName2 == "traffic") {
+          if (this.metricName2 == "traffic") {
             this.traffictable = res.data;
           } else if (this.metricName2 == "pkg") {
             this.pkgtable = res.data;
           } else if (this.metricName2 == "num") {
             this.numtable = res.data;
           }
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
@@ -325,21 +392,21 @@ export default {
       };
       this.axios.post(DDOS_DATA, params).then(res => {
         if (res.Response.Error === undefined) {
-					if (this.metricName == "bps") {
+          if (this.metricName == "bps") {
             this.drawLine(res.Response.Data, date);
           } else {
             this.drawLine2(res.Response.Data, date);
           }
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // DDOS攻击防护-二级tab切换
@@ -377,6 +444,10 @@ export default {
       if(this.selectId == "") {
         return
       }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
+        this.btnData[thisTime - 1]['selected'] = true
+      }
       var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
       var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
       const end = new Date();
@@ -394,7 +465,11 @@ export default {
 
         this.startTime = moment(end).format("YYYY-MM-DD 00:00:00");
         this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 3600;
+        let misTime = new Date(this.endTime).getTime() - new Date(this.startTime).getTime()
+        if(misTime / 3600*1000 < 1) 
+          this.period = 300;
+        else this.period = 3600;
+        
         this.timey = arr;
       } else if (thisTime == "2") {
         //ddos攻击-攻击流量带宽
@@ -478,15 +553,16 @@ export default {
       }
       arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
-      // console.log(arr)
-      let myChart = this.$echarts.init(document.getElementById("myChart"));
+      let myChart = this.$echarts.init(document.getElementById("chart-bps"));
       // 绘制图表
       myChart.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis'
+        },
         xAxis: {
-          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          data: arr
           // type : 'time',
           // minInterval: 1
         },
@@ -546,7 +622,7 @@ export default {
       }
       arr.splice(arr.length - 1, 1);
       // console.log(arr)
-      let myChart2 = this.$echarts.init(document.getElementById("myChart2"));
+      let myChart2 = this.$echarts.init(document.getElementById("chart-pps"));
       // 绘制图表
       myChart2.setOption({
         color: ["rgb(124, 181, 236)"],
@@ -725,5 +801,15 @@ export default {
   text-align: right;
   border-top: 1px solid #ddd;
   padding-top: 8px;
+}
+#chart-bps {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
+}
+#chart-pps {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
 }
 </style>

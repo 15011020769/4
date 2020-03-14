@@ -203,7 +203,7 @@
                 :label="$t('DDOS.Protective.AssetName')"
               >
                 <template slot-scope="scope">
-                 <el-button type="text" @click="jump()"> {{ scope.row.ResourceName }}</el-button>
+                 <el-button type="text" @click="jump(scope.row)"> {{ scope.row.ResourceName }}</el-button>
                 </template>
               </el-table-column>
               <el-table-column
@@ -229,7 +229,7 @@
                 prop="Mbps"
                 :label="$t('DDOS.Protective.AgainstBandwidth')"
               >
-                <template slot-scope="scope">{{ scope.row.Mbps }}</template>
+                <template slot-scope="scope">{{ scope.row.Mbps }}bps</template>
               </el-table-column>
               <el-table-column
                 prop="Pps"
@@ -501,7 +501,8 @@ export default {
     },
     exportExcel() {
       /* generate workbook object from table */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      var xlsxParam = { raw: true }
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"),xlsxParam);
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
         bookType: "xlsx",
@@ -518,7 +519,7 @@ export default {
       }
       return wbout;
     },
-     // 获取持续时间
+    // 获取持续时间
     durationDate (endTime, StartTime) {
       let durationTime = ''
       let stime = new Date(StartTime).getTime()
@@ -549,13 +550,15 @@ export default {
       }
       return durationTime
     },
-    jump () {
-       this.$router.push({
+    jump (scopeRow) {
+      console.log(scopeRow)
+      sessionStorage.setItem("IpPro", JSON.stringify(scopeRow))
+      this.$router.push({
         path: '/IpProfessional'
       })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .Right-style {

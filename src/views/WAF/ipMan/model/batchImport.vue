@@ -21,7 +21,7 @@
     <div class="tip">
       <p>{{t('说明', 'WAF.sm')}}</p>
       <p>1.格式，{{t('仅支持', 'WAF.jzc')}}.xlsx，.xls。</p>
-      <p>2.{{t('数量，目前只支持单个文件上传。', 'WAF.dr')}}</p>
+      <p>2.{{t('数量，目前只支持单个文件上传。', 'WAF.slmqjzc')}}</p>
       <p>3.{{t('内容，必须包含类别，IP地址，截止时间三列；具体可参考导出数据excel格式。', 'WAF.nrbxbh')}}</p>
       <p>4.{{t('截止时间，必须', 'WAF.jzsjbx')}}在2033/12/30 23:59:59之前，格式YYYY/MM/DD HH:MM:SS。</p>
     </div>
@@ -29,7 +29,7 @@
       <el-button type="primary" size="small" @click="_import" :loading="loading" :disabled="tip !== 'success'">
         {{t('确认导入', 'WAF.qedt')}}
       </el-button>
-      <el-button class="reset" size="small" :disabled="loading" @click="reset">{{t('重置', 'WAF.nrbxbh')}}</el-button>
+      <el-button class="reset" size="small" :disabled="loading" @click="reset">{{t('重置', 'WAF.cz')}}</el-button>
     </el-row>
   </div>
 </template>
@@ -53,7 +53,6 @@ export default {
   },
   methods: {
     reset() {
-      this.onSuccess()
       this.tip = 'default'
     },
     fileChange(file) {
