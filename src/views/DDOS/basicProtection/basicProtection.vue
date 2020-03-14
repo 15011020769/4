@@ -106,7 +106,8 @@
               :label="$t('DDOS.basicProtection.aqzt')"
             >
               <template slot-scope="scope">
-                <div v-if="selectedSubarea == 'cvm'">
+                <div >
+                <!-- <div v-if="selectedSubarea == 'cvm'"> -->
                   <!-- <span v-if="scope.row.InstanceState == 'PENDING'">{{
                     $t("DDOS.basicProtection.cjz")
                   }}</span>
@@ -135,19 +136,7 @@
                   <span v-else-if="scope.row.InstanceState == 'TERMINATING'">{{
                     $t("DDOS.basicProtection.xhz")
                   }}</span> -->
-                  <!-- 阻塞 -->
-                   <span v-if="scope.row.InstanceState == '1'">{{
-                    $t("DDOS.basicProtection.zs")
-                  }}</span>
-                  <!-- 正常 -->
-                  <span v-else-if="scope.row.InstanceState == '2'">{{
-                    $t("DDOS.basicProtection.zcyx")
-                    }}</span>
-                  <!-- 攻擊 -->
-                  <span v-else-if="scope.row.InstanceState == '3'">{{
-                    $t("DDOS.AssetList.gongjiz")}}</span>
-                </div>
-                <div v-else-if="selectedSubarea == 'clb'">
+                <!-- <div v-else-if="selectedSubarea == 'clb'">
                   <span v-if="scope.row.Status == '0'">{{
                     $t("DDOS.basicProtection.cjz")
                   }}</span>
@@ -171,7 +160,47 @@
                   <span v-else-if="scope.row.State == 'FAILED'">{{
                     $t("DDOS.basicProtection.sb")
                   }}</span>
+                </div> -->
+                 <div v-if="selectedSubarea == 'cvm'">
+                  <!-- 阻塞 -->
+                   <span v-if="scope.row.InstanceState == '1'">{{
+                    $t("DDOS.basicProtection.zs")
+                  }}</span>
+                  <!-- 正常 -->
+                  <span v-else-if="scope.row.InstanceState == '2'">{{
+                    $t("DDOS.basicProtection.zcyx")
+                    }}</span>
+                  <!-- 攻擊 -->
+                  <span v-else-if="scope.row.InstanceState == '3'">{{
+                    $t("DDOS.basicProtection.gongjiz")}}</span>
                 </div>
+                <div v-if="selectedSubarea == 'clb'">
+                  <!-- 阻塞 -->
+                   <span v-if="scope.row.Status == '1'">{{
+                    $t("DDOS.basicProtection.zs")
+                  }}</span>
+                  <!-- 正常 -->
+                  <span v-else-if="scope.row.Status == '2'">{{
+                    $t("DDOS.basicProtection.zcyx")
+                    }}</span>
+                  <!-- 攻擊 -->
+                  <span v-else-if="scope.row.Status == '3'">{{
+                    $t("DDOS.basicProtection.gongjiz")}}</span>
+                </div>
+                 <div v-if="selectedSubarea == 'nat'">
+                  <!-- 阻塞 -->
+                   <span v-if="scope.row.State == '1'">{{
+                    $t("DDOS.basicProtection.zs")
+                  }}</span>
+                  <!-- 正常 -->
+                  <span v-else-if="scope.row.State == '2'">{{
+                    $t("DDOS.basicProtection.zcyx")
+                    }}</span>
+                  <!-- 攻擊 -->
+                  <span v-else-if="scope.row.State == '3'">{{
+                    $t("DDOS.basicProtection.gongjiz")}}</span>
+                </div>
+                 </div>
               </template>
             </el-table-column>
             <!-- 升級防護 -->
@@ -357,6 +386,28 @@ export default {
           this.allData = res.Response.LoadBalancerSet;
           this.tableDataBegin = res.Response.LoadBalancerSet;
           this.totalItems = res.Response.TotalCount;
+          // 查詢安全狀態
+          let IpList = this.tableDataBegin.filter(machine => machine.LoadBalancerVips).map(machine => machine.LoadBalancerVips)
+          let params = {
+            Version: '2018-07-09',
+            Region: this.selectedRegion
+          }
+          IpList.forEach((e, i) => {
+            params['IpList.' + i] = (e + '').replace('[]', '')
+          })
+          console.log('IpList = ' + params.IpList)
+          let statusValue = {}
+          this.axios.post(CVM_LIST_STATUS, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let result = res.Response.Data
+              result.forEach(record => {
+                statusValue[record['Key']] = record['Value']
+              })
+            }
+            this.tableDataBegin.map(record => {
+              record.Status = statusValue[record.LoadBalancerVips]
+            })
+          })
         } else {
           let ErrTips = {
             FailedOperation: "操作失敗",
@@ -393,6 +444,27 @@ export default {
           this.allData = res.Response.NatGatewaySet;
           this.tableDataBegin = res.Response.NatGatewaySet;
           this.totalItems = res.Response.TotalCount;
+          // 查詢安全狀態
+          let IpList = this.tableDataBegin.filter(machine => (machine.PublicIpAddressSet)[0].PublicIpAddress).map(machine =>(machine.PublicIpAddressSet)[0].PublicIpAddress)
+          let params = {
+            Version: '2018-07-09',
+            Region: this.selectedRegion
+          }
+          IpList.forEach((e, i) => {
+            params['IpList.' + i] = e
+          })
+          let statusValue = {}
+          this.axios.post(CVM_LIST_STATUS, params).then(res => {
+            if (res.Response.Error === undefined) {
+              let result = res.Response.Data
+              result.forEach(record => {
+                statusValue[record['Key']] = record['Value']
+              })
+            }
+            this.tableDataBegin.map(record => {
+              record.State = statusValue[(record.PublicIpAddressSet)[0].PublicIpAddress]
+            })
+          })
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
