@@ -125,9 +125,21 @@ export default {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
+    // 查询
     getSearch () {
-      this.loadShow = true
-      this.GetRepositoryList()
+      let version =  /^[a-z0-9_]+$/
+      if(version.test(this.input) || this.input == ""){
+        this.currpage = 1
+        this.loadShow = true
+        this.GetRepositoryList()
+      } else {
+        this.$message({
+              message: "当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符('.'、'_'、'-')",
+              type: "warning",
+              showClose: true,
+              duration: 0
+          })
+      }
     },
     GetCity () {
       this.axios.get(ALL_CITY).then(data => {

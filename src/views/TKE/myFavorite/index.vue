@@ -113,6 +113,7 @@ export default {
     getSearch () {
       let version =  /^[a-z0-9_]+$/
       if(version.test(this.input) || this.input == ""){
+        this.currpage = 1
         this.loadShow = true
         this.GetFavor()
       } else {
