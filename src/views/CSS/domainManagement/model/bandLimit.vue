@@ -66,7 +66,8 @@ let key = 1
 export default {
   props: {
     bandLimit: Object,
-    playType: Number
+    playType: Number,
+    visible: Boolean,
   },
   data () {
     return {
@@ -75,6 +76,14 @@ export default {
     }
   },
   watch: {
+    visible: {
+      handler() {
+        if (this.visible) {
+          this.init()
+        }
+      },
+      immediate: true
+    },
     enable (n) {
       let unitNum = 0
       if (this.bandLimit.DomesticBandLimitValue < 1000) {
@@ -95,8 +104,7 @@ export default {
           unit: unitNum
         })
       }
-    }
-
+    },
   },
   computed: {
     playTypes () {
@@ -106,36 +114,34 @@ export default {
       return this.enable && (this.playType === 2 && !this.playTypes.includes(2) || this.info.length === 0)
     }
   },
-  mounted () {
-    console.log(this.bandLimit.BandLimitEnable, 'this.bandLimit')
-    if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
-      this.enable = true
-      const info = {
-        unit: 1
-      }
-      if (this.playType === 1) {
-        info.value = this.bandLimit.DomesticBandLimitValue
-      } else if (this.playType === 2) {
-        info.value = this.bandLimit.GlobalBandLimitValue
-      } else {
-        info.value = this.bandLimit.AbroadBandLimitValue
-      }
-      if (info.value >= 1000 && info.value < 1000000) {
-        info.value /= 1000
-        info.unit = 2
-      } else if (info.value >= 1000000) {
-        info.value /= 1000000
-        info.unit = 3
-      }
-      this.info.push({
-        key,
-        ...info,
-        playType: this.playType
-      })
-    }
-  },
   methods: {
-
+    init() {
+      if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
+        this.enable = true
+        const info = {
+          unit: 1
+        }
+        if (this.playType === 1) {
+          info.value = this.bandLimit.DomesticBandLimitValue
+        } else if (this.playType === 2) {
+          info.value = this.bandLimit.GlobalBandLimitValue
+        } else {
+          info.value = this.bandLimit.AbroadBandLimitValue
+        }
+        if (info.value >= 1000 && info.value < 1000000) {
+          info.value /= 1000
+          info.unit = 2
+        } else if (info.value >= 1000000) {
+          info.value /= 1000000
+          info.unit = 3
+        }
+        this.info.push({
+          key,
+          ...info,
+          playType: this.playType
+        })
+      }
+    },
     save () {
       const req = {
         Version: '2018-08-01',

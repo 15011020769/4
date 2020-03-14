@@ -65,9 +65,10 @@ export default {
       limitChangeGAT: false
     }
   },
-
-  created () {
-    // console.log(this.$route.query.Status, '9999')
+  watch: {
+    bandLimit() {
+      this.limit = this.bandLimit
+    }
   },
   methods: {
 
