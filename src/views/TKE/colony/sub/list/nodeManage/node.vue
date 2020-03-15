@@ -93,7 +93,10 @@
         </el-table-column>
         <el-table-column label="ID/节点名">
           <template slot-scope="scope">
-            <span @click="goNodeDetail(scope.row)" class="tke-text-link">{{
+            <!-- <span @click="goNodeDetail(scope.row)" class="tke-text-link">{{
+              scope.row.InstanceId
+            }}</span> -->
+            <span>{{
               scope.row.InstanceId
             }}</span>
             <p class="" slot="{{scope.row.InstanceName}}">

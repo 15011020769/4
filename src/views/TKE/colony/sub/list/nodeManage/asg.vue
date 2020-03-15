@@ -87,7 +87,8 @@
           label="伸缩组ID/名称"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link" >{{scope.row.AutoScalingGroupId}}</span>
+            <span>{{scope.row.AutoScalingGroupId}}</span>
+            <!-- <span class="tke-text-link" >{{scope.row.AutoScalingGroupId}}</span> -->
             <p>{{scope.row.AutoScalingGroupName}}<i class="el-icon-edit tke-icon" @click="modifyNameModal(scope.row)"></i></p>
           </template>
         </el-table-column>
