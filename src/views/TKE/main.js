@@ -19,6 +19,7 @@ import store from '@/stores/store.js'
 import {
   ErrorTips
 } from "@/components/ErrorTips";
+import locale from 'element-ui/lib/locale/lang/zh-TW'
 // 引入基本模板
 const echarts = require('echarts/lib/echarts')
 // 引入折线图组件
@@ -51,7 +52,7 @@ router.beforeEach((to, from, next) => {
 });
 
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.use(ElementUI, {locale})
 Vue.use(VueCookie)
 Vue.use(codemirror)
 new Vue({
