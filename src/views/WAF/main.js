@@ -80,6 +80,19 @@ Vue.prototype.t = function(jt, ...t) {
   if (r === t[0]) return jt // 回退到简体
   return r
 }
+
+// chinaMap兼容ie11
+if (!Float32Array.prototype.slice) {
+  Float32Array.prototype.slice = function (begin, end) {
+      var target = new Float32Array(end - begin);
+
+      for (var i = 0; i < begin + end; ++i) {
+          target[i] = this[begin + i];
+      }
+      return target;
+  };
+}
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
