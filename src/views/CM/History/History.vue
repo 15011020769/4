@@ -21,7 +21,7 @@
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
-                  <i class="el-icon-setting" @click="setValue"></i>
+                  <!-- <i class="el-icon-setting" @click="setValue"></i> -->
                   <i class="el-icon-download" @click="exportExcel"></i>
                 </div>
               </div>
