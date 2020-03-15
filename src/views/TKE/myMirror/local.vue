@@ -26,8 +26,10 @@
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
             <el-pagination
               :page-size="pagesize"
-              layout="prev, pager, next"
+              layout="sizes,prev, pager, next"
+              @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
+              :page-sizes="[10, 20, 50, 100]"
               :total="TotalCount"
             ></el-pagination>
         </div>
@@ -120,6 +122,13 @@ export default {
       this.currpage = val
       this.GetSpaceName()
       this.loadShow = true
+    },
+    // 整体分页
+    handleSizeChange(val){
+      this.pagesize = val
+      this.loadShow = true
+      this.GetSpaceName()
+      // console.log(val)
     },
     getClose () {
       this.dialogVisible = false

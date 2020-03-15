@@ -51,10 +51,12 @@
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
             <el-pagination
               :page-size="pagesize"
-              layout="prev, pager, next"
+              layout="sizes,prev, pager, next"
               @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
               :total="TotalCount"
               :current-page.sync="currpage"
+              :page-sizes="[10, 20, 50, 100]"
             ></el-pagination>
           </div>
         </div>
@@ -105,6 +107,13 @@ export default {
       this.currpage = val
       this.loadShow = true
       this.GetFavor()
+    },
+    // 整体分页
+    handleSizeChange(val){
+      this.pagesize = val
+      this.loadShow = true
+      this.GetFavor()
+      // console.log(val)
     },
     handleSelectionChange (val) {
       this.multipleSelection = val

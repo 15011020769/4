@@ -31,9 +31,9 @@
           <el-menu-item index="/myFavorite" @click="_class" :class="{'active':classValue=='/myFavorite'}">
             <span slot="title">我的收藏</span>
           </el-menu-item>
-          <el-menu-item index="/DockerHub" @click="_class" :class="{'active':classValue=='/DockerHub'}">
+          <!-- <el-menu-item index="/DockerHub" @click="_class" :class="{'active':classValue=='/DockerHub'}">
             <span slot="title">DockerHub镜像</span>
-          </el-menu-item>
+          </el-menu-item> -->
           <el-menu-item index="/totalMirror" @click="_class" :class="{'active':classValue=='/totalMirror'}">
             <span slot="title">公有镜像</span>
           </el-menu-item>

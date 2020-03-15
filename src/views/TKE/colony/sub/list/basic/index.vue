@@ -89,7 +89,7 @@
       </el-col>
     </el-row>
 
-    <div class="tke-card tke-formpanel-wrap mt10">
+    <!-- <div class="tke-card tke-formpanel-wrap mt10">
       <h4 class="tke-formpanel-title">集群APIServer信息</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
         <el-form-item label="访问地址">
@@ -126,7 +126,7 @@
         <p>2.配置Kubeconfig：复制上方Kubeconfig访问凭证内容，替换 $HOME/.kube/config 内已有内容；或下载该kubeconfig至指定位置，并配置环境变量： KUBECONFIG=$HOME/.kube/config:cls-gwblk71e-config。</p>
         <p>3.完成以上配置即可使用kubectl访问Kubernetes集群。如果无法连接请查看是否已经开启公网访问或内网访问入口，并确保访问客户端在指定的网络环境内。</p>
       </div>
-    </div>
+    </div> -->
 
     <el-dialog title="编辑集群名称" :visible.sync="showUpdateName" width="550px">
       <el-form

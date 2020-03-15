@@ -28,7 +28,7 @@
             ></el-option>
           </el-select>
         </div>
-        <tkeSearch
+        <!-- <tkeSearch
           refreshData
           exportData
           :typeValue="searchType"
@@ -38,6 +38,14 @@
           @clickSearch="clickSearch"
           @refresh="refreshList"
           @exportExcel="exportExcel"
+        ></tkeSearch> -->
+        <tkeSearch
+          :typeValue="searchType"
+          inputPlaceholder="请输入关键词搜索"
+          :searchInput="searchInput"
+          @changeInput="changeSearchInput"
+          @clickSearch="clickSearch"
+          @refresh="refreshList"
         ></tkeSearch>
       </div>
     </div>
@@ -54,10 +62,11 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span
+            <!-- <span
               @click="goStatefulSetDetail(scope.row)"
               class="tke-text-link"
-            >{{scope.row.metadata && scope.row.metadata.name}}</span>
+            >{{scope.row.metadata && scope.row.metadata.name}}</span> -->
+            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="Labels">

@@ -302,33 +302,6 @@ export default {
       this.startTime = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
       this.endTime = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
     },
-    // // 时间点击事件
-    //  checkTime(type) {
-    //   this.thisType = type;
-    //   var ipt1 = document.querySelector(".dateTimeValue input:nth-child(2)");
-    //   var ipt2 = document.querySelector(".dateTimeValue input:nth-child(4)");
-    //   const end = new Date();
-    //   const start = new Date();
-    //   if (type == "1") {
-    //     start.setTime(start.getTime());
-    //     end.setTime(end.getTime());
-    //   } else if (type == "2") {
-    //     start.setTime(start.getTime() - 3600 * 1000 * 24);
-    //     end.setTime(end.getTime() - 3600 * 1000 * 24);
-    //   } else if (type == "3") {
-    //     start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-    //     end.setTime(end.getTime());
-    //   }
-    //   ipt1.value = moment(start).format("YYYY-MM-DD");
-    //   ipt2.value = moment(end).format("YYYY-MM-DD");
-    //   this.startTime = moment(start).startOf("days").format("YYYY-MM-DD HH:mm:ss");
-    //   this.endTime = moment(end).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-    // },
-    // changeTimeValue() {
-    //   this.thisType = 0
-    //   this.startTime = moment(this.dateTimeValue[0]).startOf("days").format("YYYY-MM-DD HH:mm:ss");
-    //   this.endTime = moment(this.dateTimeValue[1]).endOf("days").format("YYYY-MM-DD HH:mm:ss");
-    // },
     html2canvas_2 (imgtype) {
       // 获取截取区域的高度和宽度
       const h = this.$refs.wrapperContent.offsetHeight
@@ -342,35 +315,48 @@ export default {
       const context = canvas.getContext('2d')
       context.scale(2, 2)
       html2canvas(this.$refs.wrapperContent, {
-        allowTaint: true
+        allowTaint: true,
+        useCORS:true,
         // taintTest: false,
         // canvas: canvas,
       }).then(function (canvas) {
-        // const type = 'png';
-        // const type = 'jpeg';
         const type = imgtype
         let imgData = canvas.toDataURL(type)
+        var userAgent = navigator.userAgent;
         const _fixType = function (type) {
           type = type.toLowerCase().replace(/jpg/i, 'jpeg')
           const r = type.match(/png|jpeg|bmp|gif/)[0]
           return 'image/' + r
         }
-        imgData = imgData.replace(_fixType(type), 'image/octet-stream')
-        /**
+        if(-1 !== userAgent.indexOf("Trident")){
+            let image = canvas.toDataURL(type).replace(_fixType(type), "image/octet-stream");
+            const arr = image.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            let u8arr = new Uint8Array(n);
+            while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+            }
+            window.navigator.msSaveBlob(new Blob([u8arr], {type:mime}), 'dashboard_' + (moment(new Date()).format('YYYY_MM_DD_HH_mm_ss')) + '.' + type);
+        } else {
+          imgData = imgData.replace(_fixType(type), 'image/octet-stream')
+          /**
            * 在本地进行文件保存
            * @param  {String} data     要保存到本地的图片数据
            * @param  {String} filename 文件名
            */
-        const saveFile = function (data, filename) {
-          const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
-          save_link.href = data
-          save_link.download = filename
-          const event = document.createEvent('MouseEvents')
-          event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
-          save_link.dispatchEvent(event)
+          const saveFile = function (data, filename) {
+            const save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a')
+            save_link.href = data
+            save_link.download = filename
+            const event = document.createEvent('MouseEvents')
+            event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+            save_link.dispatchEvent(event)
+          }
+          const filename = 'dashboard_' + (moment(new Date()).format('YYYY_MM_DD_HH_mm_ss')) + '.' + type
+          saveFile(imgData, filename)
         }
-        const filename = 'dashboard' + (new Date()).getTime() + '.' + type
-        saveFile(imgData, filename)
       })
     }
     // 图表
