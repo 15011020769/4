@@ -57,11 +57,22 @@
             <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
             <el-pagination
               :page-size="pagesize"
-              layout="prev, pager, next"
+              layout="sizes,prev, pager, next"
               :current-page.sync="currpage"
+              @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
               :total="TotalCount"
+              :page-sizes="[10, 20, 50, 100]"
             ></el-pagination>
+            <!-- <el-pagination
+              :page-size="pagesize"
+              layout="sizes,prev, pager, next"
+              @current-change="handleCurrentChange"
+              @size-change="handleSizeChange"
+              :total="TotalCount"
+              :current-page.sync="currpage"
+              :page-sizes="[10, 20, 50, 100]"
+            ></el-pagination> -->
           </div>
         </div>
       </div>
@@ -119,7 +130,12 @@ export default {
       this.currpage = val
       this.loadShow = true
       this.GetRepositoryList()
-      console.log(val)
+    },
+    // 整体分页
+    handleSizeChange(val){
+      this.pagesize = val
+      this.loadShow = true
+      this.GetRepositoryList()
     },
     handleSelectionChange (val) {
       this.multipleSelection = val

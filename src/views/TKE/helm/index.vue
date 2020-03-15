@@ -921,15 +921,16 @@ export default {
         }
       });
     },
-    jumpDetail(row) {
-      this.$router.push({
-        name: "helmDetailDetail",
-        query: {
-          clusterId: this.value,
-          helmName: row.name
-        }
-      });
-    }
+    // 跳转详情
+    // jumpDetail(row) {
+    //   this.$router.push({
+    //     name: "helmDetailDetail",
+    //     query: {
+    //       clusterId: this.value,
+    //       helmName: row.name
+    //     }
+    //   });
+    // }
   },
   filters: {
     codes: function(value) {

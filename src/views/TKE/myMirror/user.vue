@@ -63,9 +63,11 @@
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
         <el-pagination
           :page-size="pagesize"
-          layout="prev, pager, next"
+          layout="sizes, prev, pager, next"
           :current-page.sync="currpage"
+          @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
+          :page-sizes="[10, 20, 50, 100]"
           :total="TotalCount"
         ></el-pagination>
       </div>
@@ -313,6 +315,13 @@ export default {
       this.currpage = val
       this.GetMyMirror()
       this.loadShow = true
+    },
+    // 整选分页
+    handleSizeChange(val){
+       this.pagesize = val
+       this.loadShow = true
+       this.GetMyMirror()
+        console.log(val)
     },
     submitForm (formName) {
       // console.log(formName)
