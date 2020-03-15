@@ -389,6 +389,12 @@ export default {
         .post(DEL_USERTOGROUP, params)
         .then(data => {
           if (data.Response.Error === undefined) {
+            this.$message({
+              message: '移出成功',
+              type: 'success',
+              showClose: true,
+              duration: 0
+            });
             this.GroupLoading = false
             this.selectGroup(); // 重新加载页面
           } else {

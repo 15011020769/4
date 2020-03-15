@@ -44,3 +44,9 @@ export const CM_ALARM_LIST = 'monitor2/DescribePolicyGroupList'
 
 // 告警策略 列表
 export const CM_ALARM_L = 'monitor2/DescribeProductEventList'
+
+// 告警策略 列表 删除
+export const CM_ALARM_DELETE = 'monitor2/DeletePolicyGroup'
+
+// 告警策略 列表 策略类型 设置默认
+export const CM_ALARM_SET_DEFAULT = 'monitor/SetDefaultPolicyGroup'

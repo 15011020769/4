@@ -28,9 +28,18 @@
             ></el-option>
           </el-select>
         </div>
-        <tkeSearch
+        <!-- <tkeSearch
           refreshData
           exportData
+          :typeValue="searchType"
+          inputPlaceholder="请输入关键词搜索"
+          :searchInput="searchInput"
+          @changeInput="changeSearchInput"
+          @clickSearch="clickSearch"
+          @refresh="refreshList"
+          @exportExcel="exportExcel"
+        ></tkeSearch> -->
+        <tkeSearch
           :typeValue="searchType"
           inputPlaceholder="请输入关键词搜索"
           :searchInput="searchInput"
@@ -47,10 +56,11 @@
       <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id="exportTable" style="width: 100%">
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span
+            <!-- <span
               class="tke-text-link"
               @click="goJobDetail(scope.row)"
-            >{{scope.row.metadata && scope.row.metadata.name}}</span>
+            >{{scope.row.metadata && scope.row.metadata.name}}</span> -->
+            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="Labels">
@@ -108,6 +118,7 @@
         <div class="block">
           <el-pagination
             @size-change="handleSizeChange"
+            :pager-count="7"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
             :page-sizes="[10, 20, 50, 100]"

@@ -20,9 +20,6 @@ export default {
   },
   data() {
     return {
-      title: "图表",
-      placeholder: "用户名/电话",
-      find: "2", //1显示新增按钮，2显示导入按钮，若不显示这两个按钮可以写0或者不写值
       chart: null
     };
   },

@@ -29,7 +29,12 @@
           :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
           style="margin-right:10px;"
         >
-          <el-option :label="inputIdCC" :value="inputIdCC"></el-option>
+          <el-option
+              v-for="(item, index) in ResIpList"
+              :label="item.Id"
+              :value="item.Id"
+              :key="index"
+            ></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ccTimeBtnSelect2">
           <el-option v-for="(item,index) in IpList" :value="item" :key="index"></el-option>
@@ -45,18 +50,39 @@
             :data="tableDataOfDescribeDDoSNetEvListcc.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             height="450" empty-text='暫無數據'
           >
-            <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
+            <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')">
+               <template slot-scope="scope">{{scope.row.StartTime}} - {{scope.row.EndTime}}</template>
+            </el-table-column>
             <el-table-column
               prop="attackDomin"
               :label="$t('DDOS.Statistical_forms.Domainunder_attack')"
-            ></el-table-column>
-            <el-table-column prop="attackUrl" :label="$t('DDOS.Statistical_forms.Attacked_URI')"></el-table-column>
+            >
+             <template slot-scope="scope">
+               <div v-if="scope.row.DomainList === ''" >未知</div>
+               <div v-else > {{scope.row.DomainList}}</div>
+             </template>
+            </el-table-column>
+            <el-table-column prop="attackUrl" :label="$t('DDOS.Statistical_forms.Attacked_URI')">
+              <template slot-scope="scope">
+               <div v-if="scope.row.UriList === ''" >未知</div>
+               <div v-else > {{scope.row.UriList}}</div>
+             </template>
+            </el-table-column>
             <el-table-column
               prop="allRequestTop"
               :label="$t('DDOS.Statistical_forms.request_peak')"
-            ></el-table-column>
-            <el-table-column prop="attackReqTop" :label="$t('DDOS.Statistical_forms.Attack_peak')"></el-table-column>
-            <el-table-column prop="attackResou" :label="$t('DDOS.Statistical_forms.Attack_source')"></el-table-column>
+            >
+            <template slot-scope="scope">{{ scope.row.ReqQps}}</template>
+            </el-table-column>
+            <el-table-column prop="ReqQps" :label="$t('DDOS.Statistical_forms.Attack_peak')">
+              <template slot-scope="scope">{{ scope.row.DropQps}}</template>
+            </el-table-column>
+            <el-table-column prop="attackResou" :label="$t('DDOS.Statistical_forms.Attack_source')">
+              <template slot-scope="scope">
+               <div v-if="scope.row.AttackipList === ''" >未知</div>
+               <div v-else > {{scope.row.AttackipList}}</div>
+             </template>
+            </el-table-column>
           </el-table>
         </div>
         <div class="Right-style pagstyle">
@@ -81,7 +107,7 @@ export default {
     return {
       loading: true,
       inputIdCC: "",
-      IpList: "",
+      IpList: [],
       metricName: "bps", //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
       metricNameCC: "inqps", //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
       metricNameCCs: ["inqps", "dropqps"],
@@ -106,7 +132,8 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
       tableDataEnd: [],
-      periodCC: 3600 //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
+      periodCC: 3600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
+      ResIpList: []
     };
   },
   watch: {
@@ -143,6 +170,12 @@ export default {
       
       this.every();
       this.describeCCEvList();
+    },
+    inputIdCC(){
+      this.changeIdCC()
+    },
+    ccTimeBtnSelect2() {
+       this.changeIp()
     }
   },
   created() {
@@ -170,9 +203,17 @@ export default {
             this.loading = false
             return
           }
-          this.IpList = res.Response.Resource[0].IpList;
-          this.ccTimeBtnSelect2 = this.IpList[0];
+          this.ResIpList = res.Response.Resource;
           this.inputIdCC = res.Response.Resource[0].Id;
+          for (const i in this.ResIpList) {
+        if (this.ResIpList.hasOwnProperty(i)) {
+          const element = this.ResIpList[i];
+          if(this.inputIdCC == element.Id){
+            Object.assign(this.IpList, element.IpList)
+          }
+        }
+      }
+          this.thisTime('1')
 				} else {
 					let ErrTips = {};
 					let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -187,12 +228,25 @@ export default {
     },
     // CC资源Id变化时，重新获取数据
     changeIdCC() {
-      this.resourceId = this.inputIdCC;
-      this.describeResourceList();
+      this.IpList = []
+      for (const i in this.ResIpList) {
+        if (this.ResIpList.hasOwnProperty(i)) {
+          const element = this.ResIpList[i];
+          if(this.inputIdCC == element.Id){
+            Object.assign(this.IpList, element.IpList)
+          }
+        }
+      }
+      // 资源ID改变时，IP默认为总览
+      this.ccTimeBtnSelect2 = this.IpList[0]
       this.getDataCC();
     },
+     // DDOS资源Ip变化时，重新获取数据
+    changeIp() {
+      this.getDataCC()
+    },
     getDataCC() {
-      this.thisTime(1);
+      this.thisTime('1');
       this.describeCCEvList();
     },
     every() {
@@ -215,9 +269,13 @@ export default {
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC,
         Id: this.inputIdCC
-      };
+      }
+      // this.IpList.forEach((ip, index) => {
+      //   params['IpList.' + index] = ip
+      // })
+      params['IpList.0'] = this.ccTimeBtnSelect2
       this.axios.post(CC_LIST, params).then(res => {
-        this.tableDataOfDescribeDDoSNetEvListcc = res.Response.Data;
+        this.tableDataOfDescribeDDoSNetEvListcc = res.Response.Data
         this.totalItems = res.Response.Data.length;
         this.loading = false;
       });
@@ -335,19 +393,22 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.inputIdCC,
-        Ip: this.IpList[0], //资源的IP
+        Ip: this.ccTimeBtnSelect2, //资源的IP
         MetricName: this.metricNameCC, //指标，取值[inqps(总请求峰值，dropqps(攻击请求峰值))]
         Period: this.periodCC, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC
       };
       this.axios.post(CC_DATA, params).then(res => {
-        if (res.Response.MetricName == "inqps") {
-          this.inqpsdata = res.Response.Data;
-        } else {
-          this.dropqps = res.Response.Data;
+        if (res.Response.Error === undefined) {
+          if (res.Response.MetricName === "inqps") {
+            this.inqpsdata = res.Response.Data;
+          } else {
+            this.dropqps = res.Response.Data;
+          }
+          this.drawLine3(this.timey, this.inqpsdata, this.dropqps)  
         }
-      });
+      })
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {
@@ -551,5 +612,10 @@ export default {
   padding-top: 8px;
   border-top: 1px solid #ddd;
   text-align: right;
+}
+#myChart3 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
 }
 </style>

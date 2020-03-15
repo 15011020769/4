@@ -24,12 +24,16 @@
         <el-select
           class="ddosAttackSelect1"
           v-model="inputIdService"
-          @change="changeIdService"
           filterable
           :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
           style="margin-right:10px;"
         >
-          <el-option :label="inputIdService" :value="inputIdService"></el-option>
+          <el-option
+              v-for="(item, index) in ResIpList"
+              :label="item.Id"
+              :value="item.Id"
+              :key="index"
+            ></el-option>
         </el-select>
         <el-select class="ddosAttackSelect1" v-model="ywTimeBtnSelect2">
           <el-option v-for="(item,index) in IpList" :value="item" :key="index"></el-option>
@@ -57,6 +61,7 @@ export default {
       loading: true,
       activeName2: "traffic", //业务-二级tab标识
       IpList: [],
+      ResIpList:[],
       inputIdService: "",
       metricNameService: "traffic", //指标名，取值：traffic表示流量带宽，pkg表示包速率
       metricNameServices: ["traffic", "pkg"],
@@ -107,7 +112,15 @@ export default {
       this.startTimeService = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       
       this.describeTransmitStatis();
+    },
+    inputIdService() {
+      this.changeIdService()
+    },
+    ywTimeBtnSelect2() {
+      this.describeResourceList();
+      this.getDataService();
     }
+
   },
   created() {
     this.GetID();
@@ -141,8 +154,7 @@ export default {
             this.loading = false
             return
           }
-          this.IpList = res.Response.Resource[0].IpList;
-          this.IpList.splice(0, 0, '總覽');
+          this.ResIpList = res.Response.Resource
           this.inputIdService = res.Response.Resource[0].Id;
 				} else {
 					let ErrTips = {};
@@ -188,7 +200,21 @@ export default {
     },
     // 业务资源id变化时，重新获取数据
     changeIdService() {
+      this.IpList = []
+      console.log('inputIdService =' + this.inputIdService)
+      for (const i in this.ResIpList) {
+        if (this.ResIpList.hasOwnProperty(i)) {
+          const element = this.ResIpList[i];
+          if(this.inputIdService == element.Id){
+            Object.assign(this.IpList, element.IpList)
+          }
+        }
+      }
+      this.IpList.splice(0, 0, '總覽')
+      // 资源ID改变时，IP默认为总览
+      this.ywTimeBtnSelect2 = this.IpList[0]
       this.resourceId = this.inputIdService;
+      this.thisTime('1')
       this.describeResourceList();
       this.getDataService();
     },
@@ -236,12 +262,12 @@ export default {
         this.loading = false;
       });
     },
-    // 业务资源id变化时，重新获取数据
-    changeIdService() {
-      this.resourceId = this.inputIdService;
-      this.describeResourceList();
-      this.getDataService();
-    },
+    // // 业务资源id变化时，重新获取数据
+    // changeIdService() {
+    //   this.resourceId = this.inputIdService;
+    //   this.describeResourceList();
+    //   this.getDataService();
+    // },
     // 获取资源列表
     describeResourceList(data) {
       let params = {
@@ -581,5 +607,15 @@ export default {
   ::v-deep div.el-input {
     height: 30px;
   }
+}
+#myChart4 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
+}
+#myChart5 {
+  width: 100%;
+  height: 380px;
+  margin: 20px 0;
 }
 </style>

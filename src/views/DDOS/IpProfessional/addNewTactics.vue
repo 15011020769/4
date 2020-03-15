@@ -20,7 +20,7 @@
       </span>
       <div class="tableConOne">
         <div class="tableConOneTop newClear">
-          <el-button type="primary" @click="dialogModelAddBw = true">添加</el-button>
+          <el-button type="primary" @click="toAddBW">添加</el-button>
         </div>
         <el-button class="el-icon-search" @click="doFilterBlackWhiteList"></el-button>
         <el-input
@@ -31,7 +31,7 @@
         <div>
           <el-table
             :data="
-              IpBlackWhiteLists.slice(
+              BWListTemp.slice(
                 (currentPage - 1) * pageSize,
                 currentPage * pageSize
               )
@@ -54,7 +54,7 @@
             <el-table-column prop="action" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
-                  @click.native.prevent="editBW(scope.$index, scope.row)"
+                  @click.native.prevent="toEditBW(scope.$index, scope.row)"
                   type="text"
                   size="small"
                 >{{ $t("DDOS.Proteccon_figura.Edit") }}</el-button>
@@ -70,14 +70,14 @@
         <div class="Right-style pagstyle">
           <span
             class="pagtotal"
-          >共&nbsp;{{IpBlackWhiteLists.length}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
+          >共&nbsp;{{BWListTemp.length}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
             @current-change="handleCurrentChange"
             :current-page="currentPage"
             :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
             layout="prev, pager, next"
-            :total="IpBlackWhiteLists.length"
+            :total="BWListTemp.length"
           ></el-pagination>
         </div>
       </div>
@@ -631,9 +631,9 @@
       :title="$t('DDOS.updateddos.bjhnmd')"
       :visible.sync="dialogEdit"
       width="40%"
-      :before-close="handleCloseedit"
     >
       <div class="contantList newClear">
+        <p class="tc-15-msg" v-if="checkflg == false">{{this.errorMsg}}</p>
         <div class="newClear">
           <p>地址</p>
           <p>
@@ -656,8 +656,8 @@
         </div>
       </div>
       <span class="footerBw">
-        <el-button @click="addbwSURE">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
-        <el-button @click="dialogModelAddBw = false">取消</el-button>
+        <el-button @click="editBWSure">{{$t('DDOS.AccesstoCon.ImSure')}}</el-button>
+        <el-button @click="dialogEdit = false">取消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -683,10 +683,12 @@ export default {
       // 黑白名单
       blackWhiteListInput: "",
       IpBlackWhiteLists: [], //黑白名单数据
-      dialogModelAddBw: false, //添加黑白名单
+      BWListTemp: [], //黑白名单临时数据（条件搜索时显示使用）
+      dialogModelAddBw: false, //添加黑白名单弹框
       blackWhiteText: "",
       blackOrWhite: "black", // 黑名单/白名单
-      dialogEdit: false, //编辑框
+      dialogEdit: false, //编辑黑白名单弹框
+      BWIndex: 0, //编辑黑白名单时跳转弹框需要记忆临时数据BWListTemp的索引
       // 禁用端口数据
       portArr: [
         { value: 0, label: "目的端口" },
@@ -758,8 +760,9 @@ export default {
     };
   },
   watch: {
+    // 搜索 黑白名单
     blackWhiteListInput: function() {
-      console.log(this.blackWhiteListInput);
+      this.doFilterBlackWhiteList();
     }
   },
   created() {
@@ -772,6 +775,7 @@ export default {
       this.tacticsName = this.policyTemp.PolicyName;
       this.nameFlag = false;
       this.IpBlackWhiteLists = this.policyTemp.IpBlackWhiteLists;
+      this.BWListTemp = JSON.parse(JSON.stringify(this.IpBlackWhiteLists)); // 黑白名单临时数据（条件搜索使用)
       this.DdisableProtocol.push(
         this.policyTemp.DropOptions.DropTcp == 0 ? "" : "TCP"
       );
@@ -1169,10 +1173,6 @@ export default {
       //去除指定值
       list.splice(list.indexOf(item), 1);
     },
-    // 搜索 黑白名单列表
-    doFilterBlackWhiteList() {
-      console.log(this.blackWhiteListInput)
-    },
     // 搜索
     doFilter() {
       //页面数据改变重新统计数据数量和当前页
@@ -1330,21 +1330,52 @@ export default {
         }
       }
     },
-    //添加关闭按钮
+    // 搜索 黑白名单列表
+    doFilterBlackWhiteList() {
+      if (this.blackWhiteListInput == "") {
+        this.BWListTemp = JSON.parse(JSON.stringify(this.IpBlackWhiteLists));
+      } else {
+        this.BWListTemp = [];
+        for (let i = 0; i < this.IpBlackWhiteLists.length; i++) {
+          if (this.IpBlackWhiteLists[i].Ip.indexOf(this.blackWhiteListInput) > -1) {
+            this.BWListTemp.push(this.IpBlackWhiteLists[i]);
+          }
+        }
+      }
+      
+    },
+    // 跳转添加黑白名单弹框
+    toAddBW() {
+      this.blackWhiteText = "";
+      this.blackOrWhite = "black";
+      this.dialogModelAddBw = true;
+    },
+    // 添加黑白名单关闭按钮
     handleCloseAddBw() {
       this.dialogModelAddBw = false;
     },
-    //添加黑白确定按钮
+    // 添加黑白名单确定按钮
     addBWSure() {
       this.checkflg = true;
-      let arr = this.blackWhiteText.split(/[\n]/);
+      if (this.blackWhiteText.length == 0) {
+        this.dialogModelAddBw = false;
+        return;
+      }
+      let arrTemp = this.blackWhiteText.split(/[\n]/);
+      // 自身去重
+      let arr = [];
+      for (let i in arrTemp) {
+        if (arr.indexOf(arrTemp[i]) == -1) {
+          arr.push(arrTemp[i]);
+        }
+      }
       //IP数量不能超过100
       if (
         arr.length > 100 ||
-        this.IpBlackWhiteLists.length + arr.length > 100
+        this.BWListTemp.length + arr.length > 100
       ) {
         this.checkflg = false;
-        this.errorMsg = "IP支持数量不能超过100个";
+        this.errorMsg = "IP支持數量不能超過100個";
         return;
       }
       //校验IP
@@ -1356,30 +1387,96 @@ export default {
           return;
         }
       }
+      // 与已有黑白名单数据查重
+      for (let i = 0; i < this.IpBlackWhiteLists.length; i++) {
+        if (arr.indexOf(this.IpBlackWhiteLists[i].Ip) > -1) {
+          this.checkflg = false;
+          this.errorMsg = "IP " + this.IpBlackWhiteLists[i].Ip + " 已存在";
+          return;
+        }
+      }
       for (let i in arr) {
         let temp = { Type: this.blackOrWhite, Ip: arr[i] };
+        this.BWListTemp.push(temp);
         this.IpBlackWhiteLists.push(temp);
       }
-      this.totalItems = this.IpBlackWhiteLists.length;
+      this.totalItems = this.BWListTemp.length;
       this.dialogModelAddBw = false;
     },
-    //删除黑白名单
+    // 删除黑白名单
     deleteRowBW(index, row) {
-      this.IpBlackWhiteLists.splice(index, 1);
+      this.BWListTemp.splice(index, 1);
+      for (let i = 0; i <this.IpBlackWhiteLists.length; i++) {
+        if (this.IpBlackWhiteLists[i].Ip == row.Ip) {
+          this.IpBlackWhiteLists.splice(i, 1);
+          return
+        }
+      }
     },
-    addbwSURE() {
-      this.dialogModelAddBw = false;
+    // 编辑黑白名单确认按钮
+    editBWSure() {
+      this.checkflg = true;
+      // 只能输入一条IP
+      let arr = [];
+      arr = this.blackWhiteText.split(/[\n]/);
+      if (arr.length != 1 ) {
+        this.checkflg = false;
+        this.errorMsg = "必須且只能輸入1個IP";
+        return;
+      }
+      //校验IP
+      var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      if (!regIP.test(this.blackWhiteText)) {
+        this.checkflg = false;
+        this.errorMsg = "IP " + this.blackWhiteText + " 非法";
+        return;
+      }
+      // 判断IP是否改动
+      if (this.blackWhiteText == this.BWListTemp[this.BWIndex].Ip) {
+        // IP无改动，判断Type是否改动
+        if (this.blackOrWhite == this.BWListTemp[this.BWIndex].Type) {
+          // Type无改动，都无改动直接关闭弹框
+          this.dialogEdit = false;
+        } else {
+          // Type有改动（需要遍历数据列表，通过临时数据找到修改的这条数据，重新赋值Type）
+          for (let i = 0; i < this.IpBlackWhiteLists.length; i++) {
+            if (this.BWListTemp[this.BWIndex].Ip == this.IpBlackWhiteLists[i].Ip) {
+              this.IpBlackWhiteLists[i].Type = this.blackOrWhite;
+              this.BWListTemp[this.BWIndex].Type = this.blackOrWhite;
+              this.dialogEdit = false;
+              return;
+            }
+          }
+        }
+      } else {
+        // IP有改动，判断与已有黑白名单数据查重
+        for (let i = 0; i < this.IpBlackWhiteLists.length; i++) {
+          if (this.blackWhiteText == this.IpBlackWhiteLists[i].Ip) {
+            this.checkflg = false;
+            this.errorMsg = "IP " + this.blackWhiteText + " 已存在";
+            return;
+          }
+        }
+        // IP有改动，且无重复（需要遍历数据列表，通过临时数据找到修改的这条数据，重新赋值）
+        for (let i = 0; i < this.IpBlackWhiteLists.length; i++) {
+          if (this.BWListTemp[this.BWIndex].Ip == this.IpBlackWhiteLists[i].Ip) {
+            this.IpBlackWhiteLists[i].Ip = this.blackWhiteText;
+            this.IpBlackWhiteLists[i].Type = this.blackOrWhite;
+            this.BWListTemp[this.BWIndex].Ip = this.blackWhiteText;
+            this.BWListTemp[this.BWIndex].Type = this.blackOrWhite;
+            this.dialogEdit = false;
+            return;
+          }
+        }
+      }
     },
-    // 编辑 黑白名单
-    editBW(index, row) {
+    // 跳转编辑黑白名单弹框
+    toEditBW(index, row) {
       console.log(index, row)
+      this.BWIndex = index;
       this.blackWhiteText = row.Ip;
       this.blackOrWhite = row.Type;
       this.dialogEdit = true;
-    },
-    //编辑关闭按钮
-    handleCloseedit() {
-      this.dialogEdit = false;
     },
     // 水印防护
     createSY() {

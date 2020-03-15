@@ -169,10 +169,10 @@
             <el-checkbox v-model="asg.securityService">免费开通</el-checkbox>
             <el-form-item>
               安装组件免费开通DDoS防护、WAF和云镜主机防护
-              <a
+              <!-- <a
                 href="https://cloud.tencent.com/product/cwp?_ga=1.173966502.440655928.1500464439"
                 target="_blank"
-              >详细介绍</a>
+              >详细介绍</a> -->
             </el-form-item>
           </el-form-item>
 
@@ -182,10 +182,10 @@
               <p style="color:#ff9d00;" v-show="!asg.monitor">取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择</p>
               <p>
                 免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
-                <a
+                <!-- <a
                   href="https://cloud.tencent.com/product/cm"
                   target="_blank"
-                >详细介绍</a>
+                >详细介绍</a> -->
               </p>
             </el-form-item>
           </el-form-item>
@@ -222,10 +222,10 @@
             <el-form-item>
               <p>
                 封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点，或在自定义数据中执行
-                <a
+                <!-- <a
                   href="https://cloud.tencent.com/document/product/457/18824"
                   target="_blank"
-                >取消封锁命令</a>
+                >取消封锁命令</a> -->
               </p>
             </el-form-item>
           </el-form-item>
@@ -283,10 +283,10 @@
             <p>在设定的节点范围内自动调节，不会超出该设定范围</p>
             <p>
               扩缩容条件 集群内容器缺少可用资源调度时将触发扩容，集群内空闲资源较多时将触发缩容，详情见
-              <a
+              <!-- <a
                 href="https://cloud.tencent.com/document/product/457/32190#.E9.80.9A.E8.BF.87.E5.BC.B9.E6.80.A7.E4.BC.B8.E7.BC.A9.E8.87.AA.E5.8A.A8.E6.B7.BB.E5.8A.A0.2F.E7.A7.BB.E9.99.A4.E8.8A.82.E7.82.B9"
                 target="_blank"
-              >集群自动扩缩容说明</a>
+              >集群自动扩缩容说明</a> -->
             </p>
           </el-form-item>
 
@@ -500,7 +500,7 @@
               <div class="tke-second-worker-popover-data-bg distribution">
                 <el-checkbox v-model="asg.pubBroadbandShow" class="format-and-mount">
                   分配免费公网IP，
-                  <a href="#">查看详情</a>
+                  <!-- <a href="#">查看详情</a> -->
                 </el-checkbox>
               </div>
             </div>

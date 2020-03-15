@@ -34,7 +34,7 @@
       </div>
       <div class="tab-list">
         <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
-          :empty-text="$t('CLA.total.zwsj')" id="exportTable">
+          :empty-text="$t('CLA.total.zwsj')">
           <el-table-column type="expand" width="27">
             <template slot-scope="props">
               <el-form label-position="left" inline class="demo-table-expand">
@@ -71,8 +71,14 @@
               </el-form>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CLA.total.sjsj')" prop="EventTime"></el-table-column>
-          <el-table-column :label="$t('CLA.total.yhm')" prop="Username">
+          <el-table-column :label="$t('CLA.total.sjsj')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.EventTime}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.yhm')">
             <template slot-scope="scope">
               <p>
                 {{scope.row.Username}}
@@ -103,6 +109,83 @@
               {{ $t('CLA.total.jzz') }}
             </p>
           </div>
+        </el-table>
+      </div>
+
+
+
+
+      <div class="tab-list" v-show="false">
+        <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
+          :empty-text="$t('CLA.total.zwsj')" id="exportTable">
+
+          <el-table-column :label="$t('CLA.total.sjy')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.EventSource}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.qq')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.RequestID}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.ydz')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.SourceIPAddress}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.yhm')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.Username}}
+              </p>
+            </template>
+          </el-table-column>
+
+
+          <el-table-column :label="$t('CLA.total.cwm')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.ErrorCode}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.sj')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.EventId}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.sjsj')">
+            <template slot-scope="scope">
+              <p>
+                {{scope.row.EventTime}}
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.sjmc')" width="350">
+            <template slot-scope="scope">
+              <div>
+                {{scope.row.EventName}}
+                <span v-if="!scope.row.EventNameCn == ''">({{scope.row.EventNameCn}})</span>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('CLA.total.zylx')">
+            <template slot-scope="scope">
+              <div>
+                {{scope.row.Resources.ResourceType}}
+                <span v-if="!scope.row.ResourceTypeCn == ''">{{scope.row.ResourceTypeCn}}</span>
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
@@ -245,8 +328,8 @@
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
-          // Region: localStorage.getItem("regionv2"),
-          Region: 'ap-guangzhou',
+          Region: localStorage.getItem("regionv2"),
+          // Region: 'ap-guangzhou',
           EndTime: this.nowtime,
           StartTime: this.oldTime,
           MaxResults: this.MaxResults

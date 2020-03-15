@@ -12,10 +12,23 @@
       </div>
       <!-- 右侧 -->
       <div class="grid-right">
-        <tkeSearch
+        <!-- <tkeSearch
           typeSelect
           refreshData
           exportData
+          typeLabel="命名空间"
+          :typeOptions="searchOptions"
+          :typeValue="searchType"
+          inputPlaceholder="请输入关键词搜索"
+          :searchInput="searchInput"
+          @changeType="changeSearchType"
+          @changeInput="changeSearchInput"
+          @clickSearch="clickSearch"
+          @refresh="refreshList"
+          @exportExcel="exportExcel"
+        ></tkeSearch> -->
+        <tkeSearch
+          typeSelect
           typeLabel="命名空间"
           :typeOptions="searchOptions"
           :typeValue="searchType"
@@ -40,7 +53,8 @@
       >
         <el-table-column label="名称">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="goCronJobDetail(scope.row)">{{scope.row.metadata.name}}</span>
+            <!-- <span class="tke-text-link" @click="goCronJobDetail(scope.row)">{{scope.row.metadata.name}}</span> -->
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column prop label="执行策略">
@@ -105,6 +119,7 @@
         <div class="block">
           <el-pagination
             @size-change="handleSizeChange"
+            :pager-count="7"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
             :page-sizes="[10, 20, 50, 100]"

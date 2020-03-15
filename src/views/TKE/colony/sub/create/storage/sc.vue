@@ -34,8 +34,9 @@
               <el-radio-button label="cloud.tencent.com/qcloud-cbs">云硬盘CBS</el-radio-button>
                <el-tooltip class="item" effect="light" placement="top">
                 <div slot="content">
-                  扩展组件功能处于白名单体验阶段，如需使用，请
-                  <a>工单咨询</a>
+                  扩展组件功能处于白名单体验阶段，如需使用
+                  <!-- 请
+                  <a>工单咨询</a> -->
                 </div>
                 <el-radio-button label="cloud.tencent.com/qcloud-cfs" disabled>文件存储CFS</el-radio-button>
                </el-tooltip>
@@ -65,7 +66,7 @@
               <p>仅支持保留的回收策略</p>
               <p>
                 如您需要购买包年包月云硬盘，需要为角色TKE_QCSRole添加策略 QcloudCVMFinanceAccess 配置支付权限， 否则可能因为没支付权限导致创建基于包年包月storageclass的PVC失败。
-                <a>点击前往角色控制台进行授权</a>
+                <!-- <a>点击前往角色控制台进行授权</a> -->
               </p>
             </div>
           </el-form-item>
@@ -75,8 +76,8 @@
               <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
             </el-radio-group>
             <div>
-              容量限制可查看
-              <a href>CBS类型说明</a>
+              容量限制可查看CBS类型说明
+              <!-- <a href>CBS类型说明</a> -->
             </div>
           </el-form-item>
           <el-form-item label="回收策略" class="m0">
@@ -117,7 +118,7 @@
               </span>
               <p>
                 设置定期备份可有效保护数据安全，备份数据将产生额外费用，请见
-                <a>价格总览</a>
+                <!-- <a>价格总览</a> -->
                 <i class="el-icon-edit-outline"></i>
               </p>
             </div>

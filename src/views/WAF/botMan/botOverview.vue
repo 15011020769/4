@@ -18,6 +18,7 @@
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
         </el-button-group>
         <el-date-picker
+          ref="mypicker"
           v-model="dateTimeValue"
           type="datetimerange"
           class="timeValue"
@@ -165,11 +166,6 @@ export default {
     ELine,
   },
   watch: {
-    dateTimeValue(val, oldVal) {
-      if(val.join() !== oldVal.join()) {
-        this.getBotDomainStat()
-      }
-    },
     topValue() {
       this.getBotDomainStat()
     },
@@ -241,14 +237,21 @@ export default {
           break;
       }
       times[1] = times[1].endOf('day')
+      this.$refs.mypicker.userInput = null
       this.dateTimeValue = times
       this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
       this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
+      this.$nextTick(() => {
+        this.getBotDomainStat()
+      })
     },
     changeTimeValue(val) {
       this.selBtn = 0
       this.startTime = moment(val[0]).utc().valueOf()
       this.endTime = moment(val[1]).utc().valueOf()
+      this.$nextTick(() => {
+        this.getBotDomainStat()
+      })
     },
     
   }

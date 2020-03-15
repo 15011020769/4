@@ -21,7 +21,7 @@
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
-                  <i class="el-icon-setting" @click="setValue"></i>
+                  <!-- <i class="el-icon-setting" @click="setValue"></i> -->
                   <i class="el-icon-download" @click="exportExcel"></i>
                 </div>
               </div>
@@ -99,7 +99,7 @@
                       >
                         <div
                           style="border:0;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
-                        >{{timeFormat(scope.row.LastOccurTime)}}</div>
+                        >{{timeFormat(57600)}}</div>
                       </el-tooltip>
                     </template>
                   </el-table-column>
@@ -269,7 +269,7 @@ export default {
       return res;
     },
     timeFormat(times) {
-      //事件格式转化
+      //时间格式转化
       if (times == "-") {
         return "-";
       }

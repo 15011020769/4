@@ -22,8 +22,8 @@
             <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="2">仅在集群内访问</el-radio>
             <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="3">VPC内网访问</el-radio>
             <el-radio :disabled="serviceName.includes('headless')?true:false" v-model="svc.radio" label="4">主机端口访问</el-radio>
-            <a href="javascript:;" style="padding-left:10px;">如何选择</a>
-            <i class="el-icon-edit-outline"></i>
+            <!-- <a href="javascript:;" style="padding-left:10px;">如何选择</a> -->
+            <!-- <i class="el-icon-edit-outline"></i> -->
             <!-- 方式介绍 -->
             <div>
               <div v-if="svc.radio=='1'">
@@ -33,8 +33,8 @@
                 </div>
                 <div>
                   如您需要公网通过HTTP/HTTPS协议或根据URL转发，您可以在Ingress页面使用Ingress进行路由转发，
-                  <a href>查看详情</a>
-                  <i class="el-icon-edit-outline"></i>
+                  <!-- <a href>查看详情</a>
+                  <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
               <div v-if="svc.radio=='2'">
@@ -55,16 +55,16 @@
                 <div>将提供一个可以被集群所在VPC下的其他资源访问的入口，支持TCP/UDP协议，需要被同一VPC下其他集群、云服务器等访问的服务可以选择VPC内网访问的形式。</div>
                 <div>
                   支持Ingress
-                  <a href>查看详情</a>
-                  <i class="el-icon-edit-outline"></i>
+                  <!-- <a href>查看详情</a>
+                  <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
               <div v-if="svc.radio=='4'">
                 <div>提供一个主机端口映射到容器的访问方式，支持TCP&UDP， 可用于业务定制上层LB转发到Node。</div>
                 <div>
                   支持Ingress
-                  <a href>查看详情</a>
-                  <i class="el-icon-edit-outline"></i>
+                  <!-- <a href>查看详情</a>
+                  <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
             </div>
@@ -100,11 +100,11 @@
             </div>
             <p v-show="svc.loadBalance=='1'">
               自动创建CLB用于公网/内网访问Service，请勿手动修改由TKE创建的CLB监听器，
-              <a href="">查看更多说明</a>
+              <!-- <a href="">查看更多说明</a> -->
             </p>
             <div v-show="svc.loadBalance=='2'">
               使用已有的CLB用于公网/内网访问Service，不覆盖已有监听器规则，请勿手动修改由TKE创建的CLB监听器，仅支持未被容器服务TKE使用的CLB
-              <a href="">查看更多说明</a>
+              <!-- <a href="">查看更多说明</a> -->
               <p>
                 <el-select v-model="svc.value" placeholder="请选择">
 				        	<el-option

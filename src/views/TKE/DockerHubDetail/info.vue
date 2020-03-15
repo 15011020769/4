@@ -10,7 +10,7 @@
               <div>{{repotype}}</div>
             </el-form-item>
             <el-form-item label="来源">
-              <div><a>https://hub.docker.com/_/{{reponame}}</a></div>
+              <div><a :href="'https://hub.docker.com/_/'+reponame">https://hub.docker.com/_/{{reponame}}</a></div>
             </el-form-item>
             <el-form-item label="获取镜像">
               <div>docker pull {{reponame}}:latest</div>

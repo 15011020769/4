@@ -31,9 +31,9 @@
           <el-menu-item index="/myFavorite" @click="_class" :class="{'active':classValue=='/myFavorite'}">
             <span slot="title">我的收藏</span>
           </el-menu-item>
-          <el-menu-item index="/DockerHub" @click="_class" :class="{'active':classValue=='/DockerHub'}">
+          <!-- <el-menu-item index="/DockerHub" @click="_class" :class="{'active':classValue=='/DockerHub'}">
             <span slot="title">DockerHub镜像</span>
-          </el-menu-item>
+          </el-menu-item> -->
           <el-menu-item index="/totalMirror" @click="_class" :class="{'active':classValue=='/totalMirror'}">
             <span slot="title">公有镜像</span>
           </el-menu-item>
@@ -42,9 +42,9 @@
       <el-menu-item index="/logCollection" @click="_class" :class="{'active':classValue=='/logCollection'}">
         <span slot="title">日志采集</span>
       </el-menu-item>
-      <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
+      <!-- <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
         <span slot="title">告警设置</span>
-      </el-menu-item>
+      </el-menu-item> -->
       <el-menu-item index="/persistence" @click="_class" :class="{'active':classValue=='/persistence'}">
         <span slot="title">事件持久化</span>
       </el-menu-item>

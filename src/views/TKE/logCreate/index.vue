@@ -36,15 +36,15 @@
               </el-radio-group>
               <p v-if='tabPosition=="one"'>
                 {{$t('TKE.overview.jzc')}}
-                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
+                <!-- <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a> -->
               </p>
               <p v-if='tabPosition=="two"'>
                 {{$t('TKE.overview.cjzdrq')}}
-                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
+                <!-- <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a> -->
               </p>
               <p v-if='tabPosition=="three"'>
                 {{$t('TKE.overview.zdlj')}}
-                <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a>
+                <!-- <a href="" style="margin-left:10px;">{{$t('TKE.overview.cksl')}}</a> -->
               </p>
             </div>
             <div v-else>
@@ -244,7 +244,7 @@
                   </el-radio-group>
                   <div style="font-size:10px;">
                     {{$t('TKE.overview.xxfw')}}
-                    <a href="">{{$t('TKE.overview.cksl')}}</a>
+                    <!-- <a href="">{{$t('TKE.overview.cksl')}}</a> -->
                   </div>
                 </el-form-item>
                 <div v-if="consumer == 'one'">

@@ -14,11 +14,11 @@
           <h2 class="header-title">{{ this.$route.query.clusterId }}</h2>
         </div>
         <!-- 右侧 -->
-        <div class="grid-right">
+        <!-- <div class="grid-right">
           <el-button size="small" type="primary" @click="createYaml()"
             >YAML创建资源</el-button
           >
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -67,7 +67,7 @@
                 >CronJob</el-menu-item
               >
             </el-submenu>
-            <el-menu-item index="/colony/sub/list/hpa">自动伸缩</el-menu-item>
+            <!-- <el-menu-item index="/colony/sub/list/hpa">自动伸缩</el-menu-item> -->
             <el-submenu index="6">
               <template slot="title"><span>服务</span></template>
               <el-menu-item index="/colony/sub/list/service/svc"

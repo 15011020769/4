@@ -180,17 +180,17 @@ export default {
     },
     //存储
     elastic() {
-      // var reg = "http://[1-9]{1}.[1-9]{1}.[1-9]{1}.[1-9]{1}";
-      // if (this.elasticVal.match(reg)) {
-      //   this.placement="输入正确"
-      // }else{
-      //   this.placement="输入正确"
-      // }
-      console.log(this.elasticVal);
+      var reg = "http://[1-9]{1}.[1-9]{1}.[1-9]{1}.[1-9]{1}";
+      if (this.elasticVal.match(reg)) {
+        this.placement="输入正确"
+      }else{
+        this.placement="输入正确"
+      }
+      // console.log(this.elasticVal);
     },
     //索引
     indexes() {
-      console.log(this.indexesVal);
+      // console.log(this.indexesVal);
     },
     status() {
       if (this.value == false) {
@@ -246,8 +246,10 @@ export default {
             '"}}}}',
           ClusterName: this.$route.query.ClusterId
         };
+        console.log(params);
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
+            console.log(res);
             this.loadShow = false;
           } else {
             let ErrTips = {};

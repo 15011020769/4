@@ -174,7 +174,7 @@
             <el-form-item label="已选节点">
               <div class="selected-node">
                 <p v-for="(item, index) in rightList" :key="index">
-                  <a href="#">{{ item.InstanceId }}</a
+                  <a href="../cloudHost">{{ item.InstanceId }}</a
                   >,
                 </p>
               </div>
@@ -211,11 +211,10 @@
             <el-form-item label="新增资源所属项目">
               <p style="color:#000;">{{ projectName }}</p>
               <span
-                >集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。<a
-                  href="#"
-                  >使用指引</a
-                ><i class="el-icon-edit-outline"></i
-              ></span>
+                >集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。
+                <!-- <a href="#">使用指引</a> -->
+                <!-- <i class="el-icon-edit-outline"></i> -->
+              </span>
             </el-form-item>
             <el-form-item>
               <span slot="label"
@@ -252,9 +251,9 @@
                   </el-option>
                 </el-select>
                 <i class="el-icon-refresh ml5"></i>
-                <a href="#">使用指引</a><i class="el-icon-edit-outline"></i>
+                <!-- <a href="#">使用指引</a><i class="el-icon-edit-outline"></i> -->
                 <p>
-                  如您现有的密钥不合适，可以<a href="#">现在创建</a
+                  如您现有的密钥不合适，可以<a href="../sshkey">现在创建</a
                   ><i class="el-icon-edit-outline"></i>
                 </p>
               </div>
@@ -329,9 +328,8 @@
             <el-form-item label="安全加固">
               <el-checkbox v-model="safetyCheck">免费开通</el-checkbox>
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护<a href="#"
-                  >详细介绍</a
-                ><i class="el-icon-edit-outline"></i>
+                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
             <el-form-item label="云监控">
@@ -340,10 +338,8 @@
                 取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标<a
-                  href="#"
-                  >详细介绍</a
-                ><i class="el-icon-edit-outline"></i>
+                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
             <p>
@@ -375,11 +371,10 @@
               <el-checkbox v-model="openBlockadeCheck">开启封锁</el-checkbox>
               <el-form-item>
                 <p>
-                  封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点，或在自定义数据中执行<a
-                    href="https://cloud.tencent.com/document/product/457/18824"
-                    target="_blank"
+                  封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点，或在自定义数据中执行
+                  <!-- <a href="https://cloud.tencent.com/document/product/457/18824" target="_blank"
                     >取消封锁命令</a
-                  ><i class="el-icon-edit-outline"></i>
+                  ><i class="el-icon-edit-outline"></i> -->
                 </p>
               </el-form-item>
             </el-form-item>

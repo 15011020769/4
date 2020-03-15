@@ -2,7 +2,7 @@
   <div class="subscription-wrap">
     <Header title="平台事件訂閱" />
     <div class="table">
-      <p class="boxLi">
+      <p class="boxLi" style="border-top:1px solid #ebeef5;border-bottom:1px solid #ebeef5">
         <i class="el-icon-arrow-down"></i>
         <span>问题：</span>
       </p>

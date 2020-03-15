@@ -34,7 +34,9 @@
                </p>
              </div>
              <div v-if="upn.type=='2'">
-               <p>满足任一设定条件，则自动调节实例（pod）数目<a href="#">查看更多</a> </p>
+               <p>满足任一设定条件，则自动调节实例（pod）数目
+                 <!-- <a href="#">查看更多</a> -->
+               </p>
                <el-form-item label="触发策略" style="margin-top:10px">
                  <div class="bottom10" v-for="(val,index) in optionsData" :key="index">
 

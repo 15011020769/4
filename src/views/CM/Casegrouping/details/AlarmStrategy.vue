@@ -102,7 +102,7 @@
               <template slot-scope="scope">
                 <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                   <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
-                  <p>有效期：</p>
+                  <p>有效期：{{ Moment(i.startTime) }}</p>
                   <p>
                     渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                       >{{ j | NotifyWay
@@ -110,8 +110,8 @@
                     >
                   </p>
                 </div>
-              </template> </el-table-column
-            >…
+              </template>
+            </el-table-column>
             <el-table-column label="告警启停">
               <template slot-scope="scope">
                 <el-switch
@@ -151,14 +151,15 @@
       title="告警操作确认"
       :visible.sync="startStop"
       width="500px"
-      custom-class="tke-dialog"
+      class="tke-dialog"
+      :before-close="CelStart"
     >
       <div>
         <p>确定停用告警策略【{{ GroupName }}】</p>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="SureStart()">确定</el-button>
-        <el-button @click="startStop = false">取消</el-button>
+        <el-button @click="CelStart">取消</el-button>
       </div>
     </el-dialog>
     <!-- 解除绑定 -->
@@ -187,6 +188,7 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
+import moment from "moment";
 import {
   CM_GROUPING_ALARM_STRATEGY,
   CM_GROUPING_UNBINDING,
@@ -300,6 +302,9 @@ export default {
         }
       });
     },
+    Moment(val) {
+      console.log(moment(val).format("HH:mm:ss"));
+    },
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
@@ -365,6 +370,10 @@ export default {
           });
         }
       });
+    },
+    CelStart() {
+      this.startStop = false;
+      this.tableData[this.indexs].IsOpen = !this.tableData[this.indexs].IsOpen;
     },
     // 解除绑定
     UnDelete(row) {

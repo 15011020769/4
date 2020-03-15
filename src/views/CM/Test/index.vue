@@ -4,11 +4,17 @@
       v-on:switchData="GetDat" />
 
     <EcharS :time='time' :series='series' :period='period' />
+    <type v-on:PassData="PassData" />
+    <div style="width: 600px">
+      <Cam></Cam>
+    </div>
   </div>
 </template>
 <script>
   import TimeDropDown from '@/components/public/TimeDropDown'
   import EcharS from '@/components/public/EcharS'
+  import Cam from '@/views/CM/CM_assembly/Cam'
+  import type from '@/views/CM/CM_assembly/product_type'
   export default {
     data() {
       return {
@@ -139,7 +145,9 @@
     },
     components: {
       TimeDropDown,
-      EcharS
+      EcharS,
+      Cam,
+      type
     },
     methods: {
       GetDat(data) {
@@ -153,6 +161,9 @@
           });
 
         });
+      },
+      PassData(data) {
+        console.log(data)
       }
     },
   }

@@ -103,6 +103,7 @@
       <div class="tke-page">
         <div class="block">
           <el-pagination
+            :pager-count="7"
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
