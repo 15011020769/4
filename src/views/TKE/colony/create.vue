@@ -12,7 +12,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">创建集群</h2>
+          <h2 class="header-title">{{$t('TKE.colony.cjjq')}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -22,7 +22,7 @@
       <div class="tke-step tke-grid">
         <div class="tke-step-item is-curr">
           <span class="num">1</span>
-          <span class="title">集群信息</span>
+          <span class="title">{{$t('TKE.colony.jqxx')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div
@@ -30,7 +30,7 @@
           :class="{ 'is-curr': secondBox || thirdBox || fourthBox }"
         >
           <span class="num">2</span>
-          <span class="title">选择机型</span>
+          <span class="title">{{$t('TKE.colony.xzjx')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div
@@ -38,19 +38,19 @@
           :class="{ 'is-curr': thirdBox || fourthBox }"
         >
           <span class="num">3</span>
-          <span class="title">云服务器配置</span>
+          <span class="title">{{$t('TKE.colony.yfwqpz')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div class="tke-step-item" :class="{ 'is-curr': fourthBox }">
           <span class="num">4</span>
-          <span class="title">信息确认</span>
+          <span class="title">{{$t('TKE.colony.xxqr')}}</span>
         </div>
       </div>
       <hr />
       <!-- 第一步 -->
       <div v-if="firstBox">
         <div class="tke-reminder">
-          当您使用容器服务时，需要先创建集群，容器服务运行在集群中。一个集群由若干节点（云服务器）构成，可运行多个容器服务。集群的更多说明参考
+          {{$t('TKE.colony.syrqfw')}}
           <!-- <a href="#">集群概述</a> -->
         </div>
         <div class="tke-card tke-formpanel-wrap mb60">
@@ -61,29 +61,29 @@
             label-width="120px"
             size="mini"
           >
-            <el-form-item label="集群名称">
+            <el-form-item :label="$t('TKE.colony.jqmc')">
               <el-input
                 class="w200"
                 v-model="colony.name"
                 :class="{ 'cluster-wran': colony.nameWran }"
                 @blur="ClusterNameBlur"
                 @focus="ClusterNameFocus"
-                placeholder="请输入集群名称，不超过60个字符"
+                :placeholder="$t('TKE.colony.qsrjqmc')"
               ></el-input>
               <el-tooltip
                 effect="light"
-                content="集群名称不能为空"
+                :content="$t('TKE.colony.jqmcbwk')"
                 placement="right"
                 v-if="colony.nameWran"
                 ><i class="el-icon-warning-outline ml5"></i>
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="新增资源所属项目">
+            <el-form-item :label="$t('TKE.colony.xzzyssxm')">
               <el-select
                 class="w200"
                 v-model="colony.projectValue"
                 filterable
-                placeholder="请选择"
+                :placeholder="$t('TKE.overview.qxz')"
               >
                 <el-option
                   v-for="item in colony.projectOptions"
@@ -94,7 +94,7 @@
                 </el-option>
               </el-select>
               <p>
-                集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。
+                {{$t('TKE.colony.zyzdfpxm')}}
                 <!-- <a href="../../index.html#/documentcenter/doc/11185">使用指引</a> -->
               </p>
             </el-form-item>
@@ -102,7 +102,7 @@
               <el-select
                 class="w200"
                 v-model="colony.kuValue"
-                placeholder="请选择"
+                :placeholder="$t('TKE.overview.qxz')"
                 @change="KubernetesChange"
               >
                 <el-option
@@ -114,7 +114,7 @@
                 </el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="运行时组件">
+            <el-form-item :label="$t('TKE.colony.yxszj')">
               <el-radio-group v-model="colony.assemblyRadio" size="small">
                 <el-radio-button label="docker">docker</el-radio-button>
                 <el-radio-button label="containerd" v-if="!colony.assemblyDis"
@@ -122,7 +122,7 @@
                 >
                 <el-tooltip
                   effect="light"
-                  content="仅支持 Kubernetes 1.12.x 及以上版本"
+                  :content="$t('TKE.colony.jzcbb')"
                   placement="top"
                   v-if="colony.assemblyDis"
                 >
@@ -133,49 +133,49 @@
               </el-radio-group>
               <el-popover placement="right" width="450" trigger="click">
                 <div class="how-choose">
-                  <h3>如何选择</h3>
-                  <p>TKE 支持用户选择 containerd 和 docker 作为运行时组件：</p>
+                  <h3>{{$t('TKE.colony.rhxz')}}</h3>
+                  <p>{{$t('TKE.colony.tkezcyhxz')}}</p>
                   <p>
-                    containerd 调用链更短，组件更少，更稳定，占用节点资源更少。
-                    建议选择 containerd。
+                    {{$t('TKE.colony.cdylgd')}}
+                    {{$t('TKE.colony.jyxz')}} containerd。
                   </p>
-                  <p>以下情况，请选择 docker 作为运行时组件：</p>
+                  <p>{{$t('TKE.colony.qxdzwzj')}}</p>
                   <ul>
-                    <li><span></span>如需使用 docker in docker</li>
+                    <li><span></span>{{$t('TKE.colony.rxsy')}} docker in docker</li>
                     <li>
-                      <span></span>如需在 TKE 节点使用 docker
+                      <span></span>{{$t('TKE.colony.rxjdsyd')}}
                       build/push/save/load 等命令
                     </li>
-                    <li><span></span>如需调用 docker API</li>
+                    <li><span></span>{{$t('TKE.colony.rxdy')}} docker API</li>
                     <li><span></span>如需 docker compose 或 docker swarm</li>
-                    <li><span></span>如需在集群内创建GPU应用</li>
-                    <li><span></span>如需使用TKE日志采集功能</li>
+                    <li><span></span>{{$t('TKE.colony.rxcjyy')}}</li>
+                    <li><span></span>{{$t('TKE.colony.rxrzcj')}}</li>
                   </ul>
                   <p class="hover-target">
                     <!-- <a href="../../index.html#/documentcenter/doc/35747" class="ml5" slot="reference">查看详情</a> -->
                   </p>
                 </div>
-                <a href="javascript:;" class="ml5" slot="reference">如何选择</a>
+                <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a>
               </el-popover>
 
               <p v-if="colony.assemblyRadio == 'docker'">
-                dockerd是社区版运行时组件，支持docker api
+                {{$t('TKE.colony.dzcapi')}}
               </p>
               <p v-else>
-                containerd是更为稳定的运行时组件，支持OCI标准，不支持docker
+                {{$t('TKE.colony.cbzcd')}}
                 api，不支持GPU
               </p>
             </el-form-item>
             <el-form-item label="所在地域">
               <el-radio-group v-model="colony.cityRadio" size="small">
-                <el-radio-button label="tb">台湾台北</el-radio-button>
+                <el-radio-button label="tb">{{$t('TKE.overview.zgtb')}}</el-radio-button>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="集群网络">
+            <el-form-item :label="$t('TKE.colony.jqwl')">
               <el-select
                 class="w200"
                 v-model="colony.networkValue"
-                placeholder="请选择集群网络"
+                :placeholder="$t('TKE.colony.qxzjqwl')"
                 @change="NetWork"
               >
                 <el-option
@@ -189,15 +189,15 @@
               <i class="el-icon-refresh ml5" @click="NetworkRefresh()"></i>
               <span class="ml5 text-gray">CIDR: {{ colony.CidrBlock }}</span>
               <p>
-                如现有的网络不合适，您可以去控制台<a href="../priNetwork">新建私有网络</a>
+                {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>
               </p>
             </el-form-item>
             <el-form-item>
               <span slot="label"
-                >容器网络
+                >{{$t('TKE.colony.rqwl')}}
                 <el-tooltip
                   effect="light"
-                  content="系统将为集群内的容器分配在此地址范围内的IP地址，容器网络不能与节点网络冲突。"
+                  :content="$t('TKE.colony.rqbyjdct')"
                   placement="right"
                   ><i class="el-icon-info"></i> </el-tooltip
               ></span>
@@ -282,7 +282,7 @@
                       v-if="colony.CIDRTips.IsConflict"
                     >
                       <p>
-                        同VPC其他集群CIDR存在冲突
+                        {{$t('TKE.colony.czct')}}
                         {{ colony.CIDRTips.ConflictType }}
                       </p>
                       <p>{{ colony.CIDRTips.ConflictMsg }}</p>
@@ -296,11 +296,11 @@
                                         </div> -->
                     </div>
                   </el-form-item>
-                  <el-form-item label="Pod数量上限/节点">
+                  <el-form-item :label="$t('TKE.colony.pslsx')">
                     <el-select
                       class="w200"
                       v-model="colony.PodValue"
-                      placeholder="请选择"
+                      :placeholder="$t('TKE.overview.qxz')"
                     >
                       <el-option
                         v-for="item in colony.PodOptions"
@@ -311,11 +311,11 @@
                       </el-option>
                     </el-select>
                   </el-form-item>
-                  <el-form-item label="Service数量上限/集群">
+                  <el-form-item :label="$t('TKE.colony.sslsx')">
                     <el-select
                       class="w200"
                       v-model="colony.ServiceValue"
-                      placeholder="请选择"
+                      :placeholder="$t('TKE.overview.qxz')"
                     >
                       <el-option
                         v-for="item in colony.ServiceOptions"
@@ -332,12 +332,12 @@
                             </p> -->
               </div>
             </el-form-item>
-            <el-form-item label="操作系统">
+            <el-form-item :label="$t('TKE.colony.czxt')">
               <el-select
                 class="w320"
                 v-model="colony.OSvalue"
                 filterable
-                placeholder="请选择"
+                :placeholder="$t('TKE.overview.qxz')"
               >
                 <el-option
                   v-for="group in colony.OSoptions"
@@ -349,22 +349,22 @@
               </el-select>
               <el-popover placement="right" width="550" trigger="click">
                 <div class="how-choose">
-                  <h2>TKE-Optimized 的优势</h2>
-                  <h3>内核定制</h3>
-                  <li>基于内核社区长期支持的4.14.105版本定制</li>
-                  <li>增加适用于云场景的新特性、改进内核性能并修复重大缺陷</li>
+                  <h2>TKE-Optimized 的{{$t('TKE.colony.ys')}}</h2>
+                  <h3>{{$t('TKE.colony.nhdz')}}</h3>
+                  <li>{{$t('TKE.colony.jynh')}}</li>
+                  <li>{{$t('TKE.colony.zjxtx')}}</li>
                   <h3>容器支持</h3>
-                  <li>针对容器场景进行优化，提供了隔离增强和性能优化特性</li>
-                  <li>支持 meminfo、vmstat、cpuinfo、stat、loadavg 等隔离</li>
-                  <li>支持 sysctl 隔离，如 tcp_no_delay_ack、tcp_max_orphans</li>
-                  <li>修复了大量文件系统和网络的 bug</li>
-                  <h3>性能优化</h3>
-                  <li>优化 xfs 内存分配，解决 xfs kmem_alloc 分配失败告警</li>
-                  <li>优化网络收包大内存分配问题，解决 UDP 包量大时，占据过多内存问题</li>
-                  <li>限制系统 page cache 占用内存比例，从而避免内存不足影响业务的性能或者 OOM</li>
+                  <li>{{$t('TKE.colony.zdrqcj')}}</li>
+                  <li>支持 meminfo、vmstat、cpuinfo、stat、loadavg {{$t('TKE.colony.dgl')}}</li>
+                  <li>支持 sysctl {{$t('TKE.colony.gli')}}，如 tcp_no_delay_ack、tcp_max_orphans</li>
+                  <li>{{$t('TKE.colony.xf')}} bug</li>
+                  <h3>{{$t('TKE.colony.xnyh')}}</h3>
+                  <li>{{$t('TKE.colony.yhncfp')}}</li>
+                  <li>{{$t('TKE.colony.yhwlsb')}}</li>
+                  <li>{{$t('TKE.colony.xzxt')}} OOM</li>
                 </div>
                 <!-- <a href="javascript:;" class="ml5">如何选择</a> -->
-                <a href="javascript:;" class="ml5" slot="reference">如何选择</a>
+                <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a>
               </el-popover>
               <!-- <a href="#" class="ml5">如何选择</a> -->
             </el-form-item>
@@ -373,7 +373,7 @@
                 class="w420"
                 type="textarea"
                 :rows="6"
-                placeholder="请输入集群描述"
+                :placeholder="$t('TKE.colony.qsrjqms')"
                 v-model="colony.desc"
               >
               </el-input>
@@ -381,8 +381,8 @@
             <el-form-item label="ipvs支持">
               <el-switch v-model="colony.ipvs"> </el-switch>
               <p>
-                开启Kube-proxy
-                Ipvs支持，注意开启后将不支持关闭，适用于大规模场景下提供更优的转发性能。
+                {{$t('TKE.colony.kq')}}Kube-proxy
+                {{$t('TKE.colony.ipvszc')}}
               </p>
             </el-form-item>
           </el-form>
@@ -400,14 +400,14 @@
         v-if="secondBox"
         class="tke-second-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form
           ref="form"
           :model="colonySecond"
           label-width="120px"
           label-position="left"
         >
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ dispose.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
@@ -416,13 +416,13 @@
           <el-form-item label="所在地域">
             <p>{{ dispose.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
+          <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>{{ dispose.container }}</p>
           </el-form-item>
           <div class="tke-second-tips">
             <p>
-              操作系统<el-tooltip
-                content="操作系统为集群级别，您可以前往集群详情页进行修改，修改后新增或重装的节点将使用新的操作系统。"
+              {{$t('TKE.colony.czxt')}}<el-tooltip
+                :content="$t('TKE.colony.xghsyxxt')"
                 placement="right"
                 effect="light"
                 ><i class="el-icon-info ml5"></i
@@ -432,42 +432,42 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
-          <el-form-item label="节点来源">
+          <el-form-item :label="$t('TKE.colony.jdly')">
             <div class="tke-second-radio-btn">
               <el-radio-group
                 v-model="colonySecond.source"
                 @change="NodeSource"
               >
-                <el-radio-button label="1">新增节点</el-radio-button>
-                <el-radio-button label="2">已有节点</el-radio-button>
+                <el-radio-button label="1">{{$t('TKE.colony.xzjdian')}}</el-radio-button>
+                <el-radio-button label="2">{{$t('TKE.colony.yyjd')}}</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item label="Master 节点">
+          <el-form-item :label="$t('TKE.colony.mjd')">
             <div class="tke-second-radio-btn">
               <el-radio-group
                 v-model="colonySecond.master"
                 @change="SecondMaster"
               >
-                <el-radio-button label="1">平台托管</el-radio-button>
-                <el-radio-button label="2">独立部署</el-radio-button>
+                <el-radio-button label="1">{{$t('TKE.colony.pttg')}}</el-radio-button>
+                <el-radio-button label="2">{{$t('TKE.colony.dlbs')}}</el-radio-button>
               </el-radio-group>
               <p>
-                默认集群的Master、Etcd等组件由腾讯云提供维护和服务；为了方便管理，您也可以购买CVM部署Master，详情请参考
+                {{$t('TKE.colony.mrjqm')}}
                 <!-- <a href="#">《集群托管模式说明》</a> -->
                 <i class=""></i>
               </p>
             </div>
           </el-form-item>
           <div v-if="colonySecond.boxShow">
-            <el-form-item label="Worker 节点" v-if="colonySecond.workerShow">
+            <el-form-item :label="$t('TKE.colony.wjd')" v-if="colonySecond.workerShow">
               <div class="tke-second-radio-btn">
                 <el-radio-group
                   v-model="colonySecond.worker"
                   @change="WorkerNodeChange"
                 >
                   <el-radio-button label="1">立即部署</el-radio-button>
-                  <el-radio-button label="2">暂不部署</el-radio-button>
+                  <el-radio-button label="2">{{$t('TKE.colony.zbbs')}}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -477,19 +477,19 @@
               v-if="colonySecond.sourceShow"
             >
               <p>
-                计费模式
+                {{$t('TKE.colony.jfms')}}
                 <el-popover placement="right" width="450" trigger="hover">
                   <div class="charging-mode">
                     <div>
-                      <span>按量计费</span>
+                      <span>{{$t('TKE.colony.aljf')}}</span>
                       <p>
-                        是按秒计费按小时结算的弹性计费模式。此种计费方式适用于电商抢购等设备需求量瞬间大幅波动的场景。
+                        {{$t('TKE.colony.amjf')}}
                       </p>
                     </div>
                     <div>
                       <span>包年包月</span>
                       <p>
-                        是以月/年为计费周期的云服务器计费模式。此种计费方式适合长期稳定的成熟业务。
+                        {{$t('TKE.colony.syny')}}
                       </p>
                     </div>
                   </div>
@@ -501,14 +501,14 @@
                   v-model="colonySecond.charging"
                   @change="SecondCharging"
                 >
-                  <el-radio-button label="1">按量计费</el-radio-button>
+                  <el-radio-button label="1">{{$t('TKE.colony.aljf')}}</el-radio-button>
                   <!-- <el-radio-button label="2">包年包月</el-radio-button> -->
                 </el-radio-group>
                 <!-- <a href="#">详细对比</a> -->
               </div>
             </div>
             <el-form-item
-              label="购买时长"
+              :label="$t('TKE.colony.gmsc')"
               v-if="colonySecond.chargingShow"
               class="tke-second-radio-time"
             >
@@ -517,20 +517,20 @@
                   v-model="colonySecond.buyTime"
                   @change="BuyTime"
                 >
-                  <el-radio-button label="1">1个月</el-radio-button>
-                  <el-radio-button label="2">2个月</el-radio-button>
-                  <el-radio-button label="3">3个月</el-radio-button>
-                  <el-radio-button label="4">6个月</el-radio-button>
+                  <el-radio-button label="1">1{{$t('TKE.colony.gy')}}</el-radio-button>
+                  <el-radio-button label="2">2{{$t('TKE.colony.gy')}}</el-radio-button>
+                  <el-radio-button label="3">3{{$t('TKE.colony.gy')}}</el-radio-button>
+                  <el-radio-button label="4">6{{$t('TKE.colony.gy')}}</el-radio-button>
                   <el-radio-button label="12">1年</el-radio-button>
                   <el-radio-button label="24">2年</el-radio-button>
                   <el-radio-button label="36">3年</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
-            <el-form-item label="自动续费" v-if="colonySecond.chargingShow">
+            <el-form-item :label="$t('TKE.colony.zdxf')" v-if="colonySecond.chargingShow">
               <div class="tke-second-checkbox">
                 <el-checkbox v-model="colonySecond.renew"
-                  >账户余额足够时，设备到期后按月自动续费</el-checkbox
+                  >{{$t('TKE.colony.zhyezg')}}</el-checkbox
                 >
               </div>
             </el-form-item>
@@ -549,28 +549,28 @@
                 >
                   <div class="tke-second-worker-array" v-if="item.showText">
                     <p v-if="colonySecond.masterOneList.length > 0">
-                      <span @click="EditWorker(index, 2)">编辑</span>
+                      <span @click="EditWorker(index, 2)">{{$t('TKE.overview.bj')}}</span>
                       <span
                         @click="DeleteWorker(index, 2)"
                         v-if="colonySecond.masterOneList.length > 0"
-                        >删除</span
+                        >{{$t('TKE.overview.sc')}}</span
                       >
                       <el-tooltip
                         v-else
-                        content="不可删除，至少选择一个机型"
+                        :content="$t('TKE.colony.bksc')"
                         placement="top"
                         effect="light"
                       >
-                        <span class="delete-color">删除</span>
+                        <span class="delete-color">{{$t('TKE.overview.sc')}}</span>
                       </el-tooltip>
                     </p>
                     <ol>
                       <li>
-                        <span>可用区</span>
-                        <span>台北一区</span>
+                        <span>{{$t('TKE.colony.kyq')}}</span>
+                        <span>{{$t('TKE.colony.tbyq')}}</span>
                       </li>
                       <li>
-                        <span>节点网络</span>
+                        <span>{{$t('TKE.colony.jdwl')}}</span>
                         <span>{{ item.workerNodeNetworkValue }}</span>
                       </li>
                       <li>
@@ -582,25 +582,25 @@
                         >
                       </li>
                       <li>
-                        <span>系统盘</span>
+                        <span>{{$t('TKE.colony.xtp')}}</span>
                         <span
                           >{{ item.systemDiskValue }}
                           {{ item.systemDiskNumber }}GB</span
                         >
                       </li>
                       <li>
-                        <span>数据盘</span>
+                        <span>{{$t('TKE.colony.sjp')}}</span>
                         <span>{{ item.dataDiskValue }}</span>
                       </li>
                       <li>
-                        <span>公网带宽</span>
+                        <span>{{$t('TKE.colony.gwdk')}}</span>
                         <span
                           >{{ item.broadbandValue }}
                           {{ item.broadbandNumber }}Mbps</span
                         >
                       </li>
                       <li>
-                        <span>数量</span>
+                        <span>{{$t('TKE.colony.sliang')}}</span>
                         <span>{{ item.dataNum }} 台</span>
                       </li>
                     </ol>
@@ -608,8 +608,8 @@
                   <ul v-if="item.showEdit">
                     <li>
                       <p>
-                        可用区<el-tooltip
-                          content="可用区是同一地域下，电力和网络互相独立的物理区域（一般是一个物理机房）单可用区故障不会影响其他可用区云服务的正常运行"
+                        {{$t('TKE.colony.kyq')}}<el-tooltip
+                          :content="$t('TKE.colony.kyqstydy')"
                           placement="right"
                           effect="light"
                           ><i class="el-icon-info ml5"></i
@@ -617,14 +617,14 @@
                       </p>
                       <div>
                         <el-radio-group v-model="colonySecond.usableArea">
-                          <el-radio-button label="1">台北一区</el-radio-button>
+                          <el-radio-button label="1">{{$t('TKE.colony.tbyq')}}</el-radio-button>
                         </el-radio-group>
                       </div>
                     </li>
                     <li>
                       <p>
-                        节点网络<el-tooltip
-                          content="系统将为集群内主机分配在节点网络地址范围内的IP地址"
+                        {{$t('TKE.colony.jdwl')}}<el-tooltip
+                          :content="$t('TKE.colony.xtwjqzjfp')"
                           placement="right"
                           effect="light"
                           ><i class="el-icon-info ml5"></i
@@ -633,7 +633,7 @@
                       <div class="tke-second-worker-select">
                         <el-select
                           v-model="colony.networkValue"
-                          placeholder="请选择"
+                          :placeholder="$t('TKE.overview.qxz')"
                           disabled
                         >
                           <el-option
@@ -646,7 +646,7 @@
                         </el-select>
                         <el-select
                           v-model="item.workerNodeNetworkVal"
-                          placeholder="请选择"
+                          :placeholder="$t('TKE.overview.qxz')"
                           @change="NodeSelect"
                         >
                           <el-option
@@ -658,19 +658,19 @@
                           </el-option>
                         </el-select>
                         <span
-                          >共{{ item.nodeTotalNum }}个子网IP，剩{{
+                          >共{{ item.nodeTotalNum }}{{$t('TKE.colony.gzw')}}{{
                             item.nodeSurplusNum
-                          }}个可用</span
+                          }}{{$t('TKE.overview.ge')}}可用</span
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <p>
-                          如现有的网络不合适，您可以去控制台<a href="../priNetwork">新建私有网络</a>或
-                          <a href="../subnet">新建子网</a>
+                          {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>或
+                          <a href="../subnet">{{$t('TKE.colony.xjzw')}}</a>
                         </p>
                       </div>
                     </li>
                     <li>
-                      <p>机型</p>
+                      <p>{{$t('TKE.colony.jxing')}}</p>
                       <p class="tke-second-worker-text">
                         {{ item.modelName }}({{ item.modelType }},{{
                           item.modelHe
@@ -686,7 +686,7 @@
                       >
                         <div class="tke-second-worker-model">
                           <p>
-                            <span>选择机型</span
+                            <span>{{$t('TKE.colony.xzjx')}}</span
                             ><i
                               class="el-icon-close"
                               @click="item.modelShow = false"
@@ -696,7 +696,7 @@
                             <div>
                               <el-select
                                 v-model="colonySecond.AllCPUVal"
-                                placeholder="请选择"
+                                :placeholder="$t('TKE.overview.qxz')"
                                 @change="TableFilter(2)"
                               >
                                 <el-option
@@ -709,7 +709,7 @@
                               </el-select>
                               <el-select
                                 v-model="colonySecond.AllRAMVal"
-                                placeholder="请选择"
+                                :placeholder="$t('TKE.overview.qxz')"
                                 @change="TableFilter(2)"
                               >
                                 <el-option
@@ -730,16 +730,16 @@
                                 "
                               >
                                 <el-radio-button label="1"
-                                  >全部实例族</el-radio-button
+                                  >{{$t('TKE.colony.qbslz')}}</el-radio-button
                                 >
                                 <el-radio-button label="Standard"
-                                  >标准型</el-radio-button
+                                  >{{$t('TKE.colony.bzx')}}</el-radio-button
                                 >
                                 <el-radio-button label="MEM-optimized"
-                                  >内存型</el-radio-button
+                                  >{{$t('TKE.colony.ncx')}}</el-radio-button
                                 >
                                 <el-radio-button label="Compute"
-                                  >计算型</el-radio-button
+                                  >{{$t('TKE.colony.jsx')}}</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -749,16 +749,16 @@
                                 @change="TableFilter(2)"
                               >
                                 <el-radio-button label="1"
-                                  >全部实例类型</el-radio-button
+                                  >{{$t('TKE.colony.qbsllx')}}</el-radio-button
                                 >
                                 <el-radio-button label="S3" v-if="S3show"
-                                  >标准型S3</el-radio-button
+                                  >{{$t('TKE.colony.bzx')}}S3</el-radio-button
                                 >
                                 <el-radio-button label="C3" v-if="C3show"
-                                  >计算型C3</el-radio-button
+                                  >{{$t('TKE.colony.jsx')}}C3</el-radio-button
                                 >
                                 <el-radio-button label="M3" v-if="M3show"
-                                  >内存型M3</el-radio-button
+                                  >{{$t('TKE.colony.ncx')}}M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -784,12 +784,12 @@
                                     </el-radio>
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="机型">
+                                <el-table-column :label="$t('TKE.colony.jxing')">
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="规则">
+                                <el-table-column :label="$t('TKE.colony.gz')">
                                   <template slot-scope="scope">
                                     {{ scope.row.InstanceType }}
                                   </template>
@@ -799,16 +799,16 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="内存">
+                                <el-table-column :label="$t('TKE.overview.ncun')">
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="配置费用">
+                                <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/小时起
+                                    >元/{{$t('TKE.colony.xs')}}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -835,7 +835,7 @@
                                       <i></i>
                                     </el-radio>
                                     <el-tooltip
-                                      content="不能重复选择同一可用区的同一机型"
+                                      :content="$t('TKE.colony.bncfxz')"
                                       placement="right"
                                       effect="light"
                                       v-if="scope.row.tableDisShow"
@@ -844,12 +844,12 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="机型">
+                                <el-table-column :label="$t('TKE.colony.jxing')">
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="规则">
+                                <el-table-column :label="$t('TKE.colony.gz')">
                                   <template slot-scope="scope">
                                     {{ scope.row.InstanceType }}
                                   </template>
@@ -859,16 +859,16 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="内存">
+                                <el-table-column :label="$t('TKE.overview.ncun')">
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="配置费用">
+                                <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/小时起
+                                    >元/{{$t('TKE.colony.xs')}}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -878,7 +878,7 @@
                             <el-button
                               class="determine"
                               @click="ModelSure(index, 2)"
-                              >确定</el-button
+                              >{{$t('TKE.overview.qd')}}</el-button
                             >
                             <el-button
                               class="cancel"
@@ -890,7 +890,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>系统盘</p>
+                      <p>{{$t('TKE.colony.xtp')}}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.systemDiskValue }}
@@ -908,7 +908,7 @@
                               <div>
                                 <el-select
                                   v-model="item.systemDiskVal"
-                                  placeholder="请选择"
+                                  :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.systemDiskOptions"
@@ -924,10 +924,10 @@
                                   :max="500"
                                 ></el-input-number>
                                 <span>GB</span>
-                                <p>范围：50~500，步长：1</p>
+                                <p>{{$t('TKE.colony.fw')}}：50~500，{{$t('TKE.colony.bc')}}：1</p>
                                 <div class="btn">
                                   <el-button @click="SystemDiskSure(index, 2)"
-                                    >确定</el-button
+                                    >{{$t('TKE.overview.qd')}}</el-button
                                   >
                                   <el-button
                                     @click="item.systemDiskShow = false"
@@ -941,7 +941,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>数据盘</p>
+                      <p>{{$t('TKE.colony.sjp')}}</p>
                       <div class="tke-second-worker-text">
                         <span>{{ item.dataDiskValue }}</span>
                         <div class="tke-second-worker-icon-pen">
@@ -962,18 +962,18 @@
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
                                   @change="BuyDataDisk(index, 2)"
-                                  >购买数据盘</el-checkbox
+                                  >{{$t('TKE.colony.gmsjp')}}</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
                                 <div class="tke-second-worker-popover-data-bg">
                                   <div>
                                     <div class="box">
-                                      <p>云盘设置</p>
+                                      <p>{{$t('TKE.colony.ypsz')}}</p>
                                       <div>
                                         <el-select
                                           v-model="item.dataDiskVal"
-                                          placeholder="请选择"
+                                          :placeholder="$t('TKE.overview.qxz')"
                                           @change="DataDiskChange(2, index)"
                                         >
                                           <el-option
@@ -997,14 +997,14 @@
                                             item.dataDiskVal === 'CLOUD_PREMIUM'
                                           "
                                         >
-                                          范围：10~16000，步长：10
+                                          {{$t('TKE.colony.fw')}}：10~16000，{{$t('TKE.colony.bc')}}：10
                                         </p>
                                         <p
                                           v-if="
                                             item.dataDiskVal === 'CLOUD_SSD'
                                           "
                                         >
-                                          范围：100~16000，步长：10
+                                          {{$t('TKE.colony.fw')}}：100~16000，{{$t('TKE.colony.bc')}}：10
                                         </p>
                                       </div>
                                     </div>
@@ -1013,7 +1013,7 @@
                               </div>
                               <div class="btn">
                                 <el-button @click="DataDiskSure(index, 2)"
-                                  >确定</el-button
+                                  >{{$t('TKE.overview.qd')}}</el-button
                                 >
                                 <el-button @click="item.dataDiskShow = false"
                                   >取消</el-button
@@ -1025,7 +1025,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>公网带宽</p>
+                      <p>{{$t('TKE.colony.gwdk')}}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.broadbandValue }}
@@ -1043,7 +1043,7 @@
                               <div>
                                 <el-select
                                   v-model="item.broadbandVal"
-                                  placeholder="请选择"
+                                  :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.broadbandOptions"
@@ -1059,14 +1059,14 @@
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
-                                <p>带宽上限：0~100</p>
+                                <p>{{$t('TKE.colony.dksx')}}：0~100</p>
                                 <div
                                   class="tke-second-worker-popover-data-bg distribution"
                                 >
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >分配免费公网IP，
+                                    >{{$t('TKE.colony.fpmfgw')}}，
                                     <!-- <a href="#"
                                       >查看详情</a
                                     > -->
@@ -1075,7 +1075,7 @@
                                 </div>
                                 <div class="btn">
                                   <el-button @click="BroadbandSure(index, 2)"
-                                    >确定</el-button
+                                    >{{$t('TKE.overview.qd')}}</el-button
                                   >
                                   <el-button @click="item.broadbandShow = false"
                                     >取消</el-button
@@ -1089,8 +1089,8 @@
                     </li>
                     <li>
                       <p>
-                        数据<el-tooltip
-                          content="Masters机型最少部署3台，可跨可用区部署"
+                        {{$t('TKE.colony.sj')}}<el-tooltip
+                          :content="$t('TKE.colony.mzsbs')"
                           placement="right"
                           effect="light"
                           ><i class="el-icon-info ml5"></i
@@ -1103,18 +1103,18 @@
                           :max="1"
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
-                          CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                          您可以通过提交工单申请提升配额。
+                          {{$t('TKE.colony.cvmzdpe')}}
+                         {{$t('TKE.colony.tjgnsqpe') }}
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
-                          CVM配额:当前账号最大可购买100台
+                          {{$t('TKE.colony.cvmpe')}}
                         </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
                             @click="WorkerSure(index, 2)"
-                            >确定</el-button
+                            >{{$t('TKE.overview.qd')}}</el-button
                           >
                           <el-button
                             class="worker-cancel-btn"
@@ -1125,7 +1125,7 @@
 
                           <el-tooltip
                             v-else
-                            content="至少选择一个机型"
+                            :content="$t('TKE.colony.zsxzygjx')"
                             placement="right"
                             effect="light"
                           >
@@ -1139,22 +1139,22 @@
                   </ul>
                 </div>
                 <div class="tke-second-worker-add-models">
-                  <el-button @click="MasterAddModel">添加机型</el-button>
+                  <el-button @click="MasterAddModel">{{$t('TKE.colony.tjjx')}}</el-button>
                 </div>
               </div>
             </div>
             <el-form-item
-              label="Master数据盘挂载"
+              :label="$t('TKE.colony.msjpgz')"
               v-if="colonySecond.masterDataDiskMountShow"
               class="tke-second-checkbox"
             >
               <el-checkbox v-model="colonySecond.masterDataDiskMount"
-                >自动格式化 Master
-                节点数据盘成ext4，仅对拥有一块数据盘的节点生效</el-checkbox
+                >{{$t('TKE.colony.zdgsh')}} Master
+                {{$t('TKE.colony.jdsjpc')}}</el-checkbox
               >
               <el-input
                 v-model="colonySecond.masterDataDiskMountVal"
-                placeholder="请输入内容"
+                :placeholder="$t('TKE.colony.qsrnr')"
                 v-if="colonySecond.masterDataDiskMount"
               ></el-input>
             </el-form-item>
@@ -1170,17 +1170,17 @@
                     <div class="left-box">
                       <div class="search">
                         <el-input
-                          placeholder="请输入节点名称或完整ID"
+                          :placeholder="$t('TKE.colony.qsrjdmc')"
                           v-model="searchInputMaster"
                           class="input-with-select"
                         >
                           <el-select
                             v-model="selectListMaster"
                             slot="prepend"
-                            placeholder="请选择"
+                            :placeholder="$t('TKE.overview.qxz')"
                           >
                             <el-option label="完整ID" value="1"></el-option>
-                            <el-option label="节点名称" value="2"></el-option>
+                            <el-option :label="$t('TKE.colony.jdmc')" value="2"></el-option>
                           </el-select>
                           <el-button
                             slot="append"
@@ -1264,7 +1264,7 @@
                             <span
                               class="el-delete"
                               @click="DeleteListMaster(scope.row)"
-                              >删除</span
+                              >{{$t('TKE.overview.sc')}}</span
                             >
                           </template>
                         </el-table-column>
@@ -1280,13 +1280,13 @@
                       colonySecond.master == 2
                   "
                 >
-                  <p>注意细则：</p>
+                  <p>{{$t('TKE.colony.zyxz')}}：</p>
                   <p>
-                    1、所选云服务器需重装系统，重装后云服务器系统盘所有数据将被清除；
+                    1、{{$t('TKE.colony.sxxczxt')}}
                   </p>
-                  <p>2、所选云服务器将迁移至集群所属项目；</p>
+                  <p>2、{{$t('TKE.colony.sxyfwq')}}</p>
                   <p>
-                    3、云服务器迁移项目会导致安全组解绑，需要重新绑定安全组；
+                    3、{{$t('TKE.colony.yfwqxzqy')}}
                   </p>
                 </div>
               </div>
@@ -1304,28 +1304,28 @@
                 >
                   <div class="tke-second-worker-array" v-if="item.showText">
                     <p>
-                      <span @click="EditWorker(index, 1)">编辑</span>
+                      <span @click="EditWorker(index, 1)">{{$t('TKE.overview.bj')}}</span>
                       <span
                         @click="DeleteWorker(index, 1)"
                         v-if="colonySecond.workerOneList.length > 1"
-                        >删除</span
+                        >{{$t('TKE.overview.sc')}}</span
                       >
                       <el-tooltip
                         v-else
-                        content="不可删除，至少选择一个机型"
+                        :content="$t('TKE.colony.bksc')"
                         placement="top"
                         effect="light"
                       >
-                        <span class="delete-color">删除</span>
+                        <span class="delete-color">{{$t('TKE.overview.sc')}}</span>
                       </el-tooltip>
                     </p>
                     <ol>
                       <li>
-                        <span>可用区</span>
-                        <span>台北一区</span>
+                        <span>{{$t('TKE.colony.kyq')}}</span>
+                        <span>{{$t('TKE.colony.tbyq')}}</span>
                       </li>
                       <li>
-                        <span>节点网络</span>
+                        <span>{{$t('TKE.colony.jdwl')}}</span>
                         <span>{{ item.workerNodeNetworkValue }}</span>
                       </li>
                       <li>
@@ -1337,25 +1337,25 @@
                         >
                       </li>
                       <li>
-                        <span>系统盘</span>
+                        <span>{{$t('TKE.colony.xtp')}}</span>
                         <span
                           >{{ item.systemDiskValue }}
                           {{ item.systemDiskNumber }}GB</span
                         >
                       </li>
                       <li>
-                        <span>数据盘</span>
+                        <span>{{$t('TKE.colony.sjp')}}</span>
                         <span>{{ item.dataDiskValue }}</span>
                       </li>
                       <li>
-                        <span>公网带宽</span>
+                        <span>{{$t('TKE.colony.gwdk')}}</span>
                         <span
                           >{{ item.broadbandValue }}
                           {{ item.broadbandNumber }}Mbps</span
                         >
                       </li>
                       <li>
-                        <span>数量</span>
+                        <span>{{$t('TKE.colony.sliang')}}</span>
                         <span>{{ item.dataNum }} 台</span>
                       </li>
                     </ol>
@@ -1363,8 +1363,8 @@
                   <ul v-if="item.showEdit">
                     <li>
                       <p>
-                        可用区<el-tooltip
-                          content="可用区是同一地域下，电力和网络互相独立的物理区域（一般是一个物理机房）单可用区故障不会影响其他可用区云服务的正常运行"
+                        {{$t('TKE.colony.kyq')}}<el-tooltip
+                          :content="$t('TKE.colony.kyqstydy')"
                           placement="right"
                           effect="light"
                           ><i class="el-icon-info ml5"></i
@@ -1372,14 +1372,14 @@
                       </p>
                       <div>
                         <el-radio-group v-model="colonySecond.usableArea">
-                          <el-radio-button label="1">台北一区</el-radio-button>
+                          <el-radio-button label="1">{{$t('TKE.colony.tbyq')}}</el-radio-button>
                         </el-radio-group>
                       </div>
                     </li>
                     <li>
                       <p>
-                        节点网络<el-tooltip
-                          content="系统将为集群内主机分配在节点网络地址范围内的IP地址"
+                        {{$t('TKE.colony.jdwl')}}<el-tooltip
+                          :content="$t('TKE.colony.xtwjqzjfp')"
                           placement="right"
                           effect="light"
                           ><i class="el-icon-info ml5"></i
@@ -1388,7 +1388,7 @@
                       <div class="tke-second-worker-select">
                         <el-select
                           v-model="colony.networkValue"
-                          placeholder="请选择"
+                          :placeholder="$t('TKE.overview.qxz')"
                           disabled
                         >
                           <el-option
@@ -1401,7 +1401,7 @@
                         </el-select>
                         <el-select
                           v-model="item.workerNodeNetworkVal"
-                          placeholder="请选择"
+                          :placeholder="$t('TKE.overview.qxz')"
                           @change="NodeSelect"
                         >
                           <el-option
@@ -1413,20 +1413,20 @@
                           </el-option>
                         </el-select>
                         <span
-                          >共{{ item.nodeTotalNum }}个子网IP，剩{{
+                          >共{{ item.nodeTotalNum }}{{$t('TKE.colony.gzw')}}{{
                             item.nodeSurplusNum
-                          }}个可用</span
+                          }}{{$t('TKE.overview.ge')}}可用</span
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <p>
-                          如现有的网络不合适，您可以去控制台<a href="#"
-                            >新建私有网络</a
-                          >或<a href="#">新建子网</a>
+                          {{$t('TKE.colony.wlbhs')}}<a href="#"
+                            >{{$t('TKE.colony.xjsywl')}}</a
+                          >或<a href="#">{{$t('TKE.colony.xjzw')}}</a>
                         </p>
                       </div>
                     </li>
                     <li>
-                      <p>机型</p>
+                      <p>{{$t('TKE.colony.jxing')}}</p>
                       <p class="tke-second-worker-text">
                         {{ item.modelName }}({{ item.modelType }},{{
                           item.modelHe
@@ -1442,7 +1442,7 @@
                       >
                         <div class="tke-second-worker-model">
                           <p>
-                            <span>选择机型</span
+                            <span>{{$t('TKE.colony.xzjx')}}</span
                             ><i
                               class="el-icon-close"
                               @click="item.modelShow = false"
@@ -1452,7 +1452,7 @@
                             <div>
                               <el-select
                                 v-model="colonySecond.AllCPUVal"
-                                placeholder="请选择"
+                                :placeholder="$t('TKE.overview.qxz')"
                                 @change="TableFilter(1)"
                               >
                                 <el-option
@@ -1465,7 +1465,7 @@
                               </el-select>
                               <el-select
                                 v-model="colonySecond.AllRAMVal"
-                                placeholder="请选择"
+                                :placeholder="$t('TKE.overview.qxz')"
                                 @change="TableFilter(1)"
                               >
                                 <el-option
@@ -1486,16 +1486,16 @@
                                 "
                               >
                                 <el-radio-button label="1"
-                                  >全部实例族</el-radio-button
+                                  >{{$t('TKE.colony.qbslz')}}</el-radio-button
                                 >
                                 <el-radio-button label="Standard"
-                                  >标准型</el-radio-button
+                                  >{{$t('TKE.colony.bzx')}}</el-radio-button
                                 >
                                 <el-radio-button label="MEM-optimized"
-                                  >内存型</el-radio-button
+                                  >{{$t('TKE.colony.ncx')}}</el-radio-button
                                 >
                                 <el-radio-button label="Compute"
-                                  >计算型</el-radio-button
+                                  >{{$t('TKE.colony.jsx')}}</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -1505,16 +1505,16 @@
                                 @change="TableFilter(1)"
                               >
                                 <el-radio-button label="1"
-                                  >全部实例类型</el-radio-button
+                                  >{{$t('TKE.colony.qbsllx')}}</el-radio-button
                                 >
                                 <el-radio-button label="S3" v-if="S3show"
-                                  >标准型S3</el-radio-button
+                                  >{{$t('TKE.colony.bzx')}}S3</el-radio-button
                                 >
                                 <el-radio-button label="C3" v-if="C3show"
-                                  >计算型C3</el-radio-button
+                                  >{{$t('TKE.colony.jsx')}}C3</el-radio-button
                                 >
                                 <el-radio-button label="M3" v-if="M3show"
-                                  >内存型M3</el-radio-button
+                                  >{{$t('TKE.colony.ncx')}}M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -1543,7 +1543,7 @@
                                       <i></i>
                                     </el-radio>
                                     <el-tooltip
-                                      content="不能重复选择同一可用区的同一机型"
+                                      :content="$t('TKE.colony.bncfxz')"
                                       placement="right"
                                       effect="light"
                                       v-if="scope.row.tableDisShow"
@@ -1552,12 +1552,12 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="机型">
+                                <el-table-column :label="$t('TKE.colony.jxing')">
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="规则">
+                                <el-table-column :label="$t('TKE.colony.gz')">
                                   <template slot-scope="scope">
                                     {{ scope.row.InstanceType }}
                                   </template>
@@ -1567,16 +1567,16 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="内存">
+                                <el-table-column :label="$t('TKE.overview.ncun')">
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="配置费用">
+                                <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/小时起
+                                    >元/{{$t('TKE.colony.xs')}}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1606,7 +1606,7 @@
                                       <i></i>
                                     </el-radio>
                                     <el-tooltip
-                                      content="不能重复选择同一可用区的同一机型"
+                                      :content="$t('TKE.colony.bncfxz')"
                                       placement="right"
                                       effect="light"
                                       v-if="scope.row.tableDisShow"
@@ -1615,12 +1615,12 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="机型">
+                                <el-table-column :label="$t('TKE.colony.jxing')">
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="规则">
+                                <el-table-column :label="$t('TKE.colony.gz')">
                                   <template slot-scope="scope">
                                     {{ scope.row.InstanceType }}
                                   </template>
@@ -1630,16 +1630,16 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="内存">
+                                <el-table-column :label="$t('TKE.overview.ncun')">
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
                                 </el-table-column>
-                                <el-table-column label="配置费用">
+                                <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/小时起
+                                    >元/{{$t('TKE.colony.xs')}}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1649,7 +1649,7 @@
                             <el-button
                               class="determine"
                               @click="ModelSure(index, 1)"
-                              >确定</el-button
+                              >{{$t('TKE.overview.qd')}}</el-button
                             >
                             <el-button
                               class="cancel"
@@ -1661,7 +1661,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>系统盘</p>
+                      <p>{{$t('TKE.colony.xtp')}}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.systemDiskValue }}
@@ -1679,7 +1679,7 @@
                               <div>
                                 <el-select
                                   v-model="item.systemDiskVal"
-                                  placeholder="请选择"
+                                  :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.systemDiskOptions"
@@ -1695,10 +1695,10 @@
                                   :max="500"
                                 ></el-input-number>
                                 <span>GB</span>
-                                <p>范围：50~500，步长：1</p>
+                                <p>{{$t('TKE.colony.fw')}}：50~500，{{$t('TKE.colony.bc')}}：1</p>
                                 <div class="btn">
                                   <el-button @click="SystemDiskSure(index, 1)"
-                                    >确定</el-button
+                                    >{{$t('TKE.overview.qd')}}</el-button
                                   >
                                   <el-button
                                     @click="item.systemDiskShow = false"
@@ -1712,7 +1712,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>数据盘</p>
+                      <p>{{$t('TKE.colony.sjp')}}</p>
                       <div class="tke-second-worker-text">
                         <span>{{ item.dataDiskValue }}</span>
                         <div class="tke-second-worker-icon-pen">
@@ -1733,7 +1733,7 @@
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
                                   @change="BuyDataDisk(index, 1)"
-                                  >购买数据盘</el-checkbox
+                                  >{{$t('TKE.colony.gmsjp')}}</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
@@ -1744,11 +1744,11 @@
                                 >
                                   <div>
                                     <div class="box">
-                                      <p>云盘设置</p>
+                                      <p>{{$t('TKE.colony.ypsz')}}</p>
                                       <div>
                                         <el-select
                                           v-model="x.dataDiskVal"
-                                          placeholder="请选择"
+                                          :placeholder="$t('TKE.overview.qxz')"
                                           @change="DataDiskChange(1, index, i)"
                                         >
                                           <el-option
@@ -1772,17 +1772,17 @@
                                             x.dataDiskVal === 'CLOUD_PREMIUM'
                                           "
                                         >
-                                          范围：10~16000，步长：10
+                                          {{$t('TKE.colony.fw')}}：10~16000，{{$t('TKE.colony.bc')}}：10
                                         </p>
                                         <p v-if="x.dataDiskVal === 'CLOUD_SSD'">
-                                          范围：100~16000，步长：10
+                                          {{$t('TKE.colony.fw')}}：100~16000，{{$t('TKE.colony.bc')}}：10
                                         </p>
                                       </div>
                                       <p
                                         style="margin-top:16px;"
                                         v-if="x.formatMount"
                                       >
-                                        格式化设置
+                                        {{$t('TKE.colony.gshsz')}}
                                       </p>
                                       <div
                                         style="margin-top:16px;"
@@ -1790,7 +1790,7 @@
                                       >
                                         <el-select
                                           v-model="x.latticeSetVal"
-                                          placeholder="请选择"
+                                          :placeholder="$t('TKE.overview.qxz')"
                                         >
                                           <el-option
                                             v-for="x in colonySecond.latticeSetOpt"
@@ -1821,11 +1821,11 @@
                                 "
                                 @click="AddDataDisk(index)"
                               >
-                                添加数据盘
+                                {{$t('TKE.colony.tjsjp')}}
                               </div>
                               <div class="btn">
                                 <el-button @click="DataDiskSure(index, 1)"
-                                  >确定</el-button
+                                  >{{$t('TKE.overview.qd')}}</el-button
                                 >
                                 <el-button @click="item.dataDiskShow = false"
                                   >取消</el-button
@@ -1837,7 +1837,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>公网带宽</p>
+                      <p>{{$t('TKE.colony.gwdk')}}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.broadbandValue }}
@@ -1855,7 +1855,7 @@
                               <div>
                                 <el-select
                                   v-model="item.broadbandVal"
-                                  placeholder="请选择"
+                                  :placeholder="$t('TKE.overview.qxz')"
                                 >
                                   <el-option
                                     v-for="item in colonySecond.broadbandOptions"
@@ -1871,14 +1871,14 @@
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
-                                <p>带宽上限：0~100</p>
+                                <p>{{$t('TKE.colony.dksx')}}：0~100</p>
                                 <div
                                   class="tke-second-worker-popover-data-bg distribution"
                                 >
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >分配免费公网IP，
+                                    >{{$t('TKE.colony.fpmfgw')}}，
                                     <!-- <a href="#"
                                       >查看详情</a
                                     > -->
@@ -1887,7 +1887,7 @@
                                 </div>
                                 <div class="btn">
                                   <el-button @click="BroadbandSure(index, 1)"
-                                    >确定</el-button
+                                    >{{$t('TKE.overview.qd')}}</el-button
                                   >
                                   <el-button @click="item.broadbandShow = false"
                                     >取消</el-button
@@ -1900,7 +1900,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>数据</p>
+                      <p>{{$t('TKE.colony.sj')}}</p>
                       <div class="tke-second-worker-data">
                         <el-input-number
                           v-model="item.dataNum"
@@ -1908,18 +1908,18 @@
                           :max="1"
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
-                          CVM配额:您当前云服务器个数配额为0/0，您最多可购买0台，
-                          您可以通过提交工单申请提升配额。
+                          {{$t('TKE.colony.cvmzdpe')}}
+                          {{$t('TKE.colony.tjgnsqpe')}}
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
-                          CVM配额:当前账号最大可购买100台
+                          {{$t('TKE.colony.cvmpe')}}
                         </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
                             @click="WorkerSure(index, 1)"
-                            >确定</el-button
+                            >{{$t('TKE.overview.qd')}}</el-button
                           >
                           <el-button
                             class="worker-cancel-btn"
@@ -1930,7 +1930,7 @@
 
                           <el-tooltip
                             v-else
-                            content="至少选择一个机型"
+                            :content="$t('TKE.colony.zsxzygjx')"
                             placement="right"
                             effect="light"
                           >
@@ -1944,7 +1944,7 @@
                   </ul>
                 </div>
                 <div class="tke-second-worker-add-models">
-                  <el-button @click="OneAddModel">添加机型</el-button>
+                  <el-button @click="OneAddModel">{{$t('TKE.colony.tjjx')}}</el-button>
                 </div>
               </div>
             </div>
@@ -1956,17 +1956,17 @@
                     <div class="left-box">
                       <div class="search">
                         <el-input
-                          placeholder="请输入节点名称或完整ID"
+                          :placeholder="$t('TKE.colony.qsrjdmc')"
                           v-model="searchInput"
                           class="input-with-select"
                         >
                           <el-select
                             v-model="selectList"
                             slot="prepend"
-                            placeholder="请选择"
+                            :placeholder="$t('TKE.overview.qxz')"
                           >
                             <el-option label="完整ID" value="1"></el-option>
-                            <el-option label="节点名称" value="2"></el-option>
+                            <el-option :label="$t('TKE.colony.jdmc')" value="2"></el-option>
                           </el-select>
                           <el-button
                             slot="append"
@@ -2046,7 +2046,7 @@
                               class="el-delete"
                               @click="DeleteList(scope.row)"
                             >
-                              删除</span
+                              {{$t('TKE.overview.sc')}}</span
                             >
                           </template>
                         </el-table-column>
@@ -2055,33 +2055,33 @@
                   </div>
                 </div>
                 <div class="tips">
-                  <p>注意细则：</p>
+                  <p>{{$t('TKE.colony.zyxz')}}：</p>
                   <p>
-                    1、所选云服务器需重装系统，重装后云服务器系统盘所有数据将被清除；
+                    1、{{$t('TKE.colony.sxxczxt')}}
                   </p>
-                  <p>2、所选云服务器将迁移至集群所属项目；</p>
+                  <p>2、{{$t('TKE.colony.sxyfwq')}}</p>
                   <p>
-                    3、云服务器迁移项目会导致安全组解绑，需要重新绑定安全组；
+                    3、{{$t('TKE.colony.yfwqxzqy')}}
                   </p>
                 </div>
               </div>
             </div>
-            <el-form-item label="总计费用" v-if="colonySecond.sourceShow">
+            <el-form-item :label="$t('TKE.colony.zjfy')" v-if="colonySecond.sourceShow">
               <div class="tke-second-cost-query" v-if="colonySecond.costShow">
-                查询中...
+                {{$t('TKE.colony.cxz')}}...
               </div>
               <div class="tke-second-cost" v-if="!colonySecond.costShow">
                 <span class="tke-second-cost-num">{{
                   colonySecond.allocationCost
                 }}</span
-                ><span class="tke-second-cost-h">元/小时</span
-                ><span class="tke-second-cost-t">(配置费用)</span>
+                ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+                ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
                 <i>|</i>
                 <span class="tke-second-cost-num">{{
                   colonySecond.networkCost
                 }}</span
-                ><span class="tke-second-cost-h">元/小时</span
-                ><span class="tke-second-cost-w"> (网络费用)</span>
+                ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+                ><span class="tke-second-cost-w"> ({{$t('TKE.colony.wlfyong')}})</span>
               </div>
             </el-form-item>
           </div>
@@ -2102,10 +2102,10 @@
             >
           </p>
           <span class="footer-tips" v-if="colonySecond.workerTips">
-            请选择 Worker 节点
+            {{$t('TKE.colony.qxzwjd')}}
           </span>
           <span class="footer-tips" v-if="colonySecond.masterTips">
-            Master 节点最少选择3台
+            Master {{$t('TKE.colony.jdzsxz')}}
           </span>
           <el-button
             size="small"
@@ -2122,14 +2122,14 @@
         v-if="thirdBox"
         class="tke-second-box tke-third-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form
           ref="form"
           :model="colonyThird"
           label-width="120px"
           label-position="left"
         >
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ dispose.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
@@ -2138,16 +2138,16 @@
           <el-form-item label="所在地域">
             <p>{{ dispose.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
+          <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>{{ dispose.container }}</p>
           </el-form-item>
-          <el-form-item label="计费模式">
-            <p>{{ colonySecond.charging == 1 ? "按量计费" : "包年包月" }}</p>
+          <el-form-item :label="$t('TKE.colony.jfms')">
+            <p>{{ colonySecond.charging == 1 ? "按量計費" : "包年包月" }}</p>
           </el-form-item>
           <div class="tke-second-tips">
             <p>
-              操作系统<el-tooltip
-                content="操作系统为集群级别，您可以前往集群详情页进行修改，修改后新增或重装的节点将使用新的操作系统。"
+              {{$t('TKE.colony.czxt')}}<el-tooltip
+                :content="$t('TKE.colony.xghsyxxt')"
                 placement="right"
                 effect="light"
                 ><i class="el-icon-info ml5"></i
@@ -2157,30 +2157,30 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
-          <el-form-item label="数据盘挂载" v-if="colonySecond.workerDeployShow">
+          <el-form-item :label="$t('TKE.colony.sjpgz')" v-if="colonySecond.workerDeployShow">
             <el-checkbox v-model="colonyThird.dataDiskChecked"
-              >自动格式化数据盘成ext4，仅对拥有一块数据盘的节点生效</el-checkbox
+              >{{$t('TKE.colony.zdgshsjp')}}</el-checkbox
             >
             <el-input
               v-model="colonyThird.dataDiskInput"
-              placeholder="请输入内容"
+              :placeholder="$t('TKE.colony.qsrnr')"
               v-if="colonyThird.dataDiskChecked"
             ></el-input>
           </el-form-item>
-          <el-form-item label="容器目录">
+          <el-form-item :label="$t('TKE.colony.rqml')">
             <el-checkbox v-model="colonyThird.containerChecked"
-              >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
+              >{{$t('TKE.colony.jyccdsjp')}}</el-checkbox
             >
             <el-input
               v-model="colonyThird.containerInput"
-              placeholder="请输入内容"
+              :placeholder="$t('TKE.colony.qsrnr')"
               v-if="colonyThird.containerChecked"
             ></el-input>
           </el-form-item>
           <div class="tke-third-tips">
             <p>
-              安全组<el-tooltip
-                content="安全组具有防火墙功能，用于设置云服务器 CVM 的网络访问控制"
+              {{$t('TKE.colony.aqz')}}<el-tooltip
+                :content="$t('TKE.colony.aqzyfhqgn')"
                 placement="right"
                 effect="light"
                 ><i class="el-icon-info ml5"></i
@@ -2188,7 +2188,7 @@
             </p>
             <div class="input-box">
               <p v-if="colonyThird.defaultSafeBox">
-                <el-input value="新建并绑定默认安全组" disabled></el-input>
+                <el-input :value="$t('TKE.colony.xjbdaqz')" disabled></el-input>
                 <i
                   class="el-icon-error"
                   v-if="colonyThird.defaultSafe"
@@ -2199,7 +2199,7 @@
                 <div v-for="(item, index) in colonyThird.safeArr" :key="index">
                   <div>
                     <el-select
-                      placeholder="请选择安全组"
+                      :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
                     >
                       <el-option
@@ -2219,47 +2219,47 @@
                 </div>
               </div>
               <p v-if="colonyThird.safeArr.length === 0">
-                集群节点间的正常通信需要放通部分端口，集群创建完成后可查看安全组及修改规则。
+                {{$t('TKE.colony.xggz')}}
                 <!-- <a href="#">预览默认安全组规则</a> -->
               </p>
 
               <p>
                 <span v-if="colonyThird.safeArr.length === 0"
-                  >如您业务需要自定义配置安全组规则，可</span
-                ><a href="javascript:;" @click="AddSafe">添加安全组</a>
+                  >{{$t('TKE.colony.ywxyzdy')}}</span
+                ><a href="javascript:;" @click="AddSafe">{{$t('TKE.colony.tjaqz')}}</a>
               </p>
             </div>
           </div>
-          <el-form-item label="登录方式">
+          <el-form-item :label="$t('TKE.colony.dlfs')">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group
                 v-model="colonyThird.loginModeRadio"
                 @change="LoginMode"
               >
                 <el-tooltip
-                  content="SSH密钥是一种比常规密码更安全的登录云服务器的方式"
+                  :content="$t('TKE.colony.sshmyscgmy')"
                   placement="top"
                   effect="light"
                 >
-                  <el-radio-button label="1">立即关联密钥</el-radio-button>
+                  <el-radio-button label="1">{{$t('TKE.colony.ljglmy')}}</el-radio-button>
                 </el-tooltip>
-                <el-radio-button label="2">自动生成密码</el-radio-button>
-                <el-radio-button label="3">设置密码</el-radio-button>
+                <el-radio-button label="2">{{$t('TKE.colony.zdscmm')}}</el-radio-button>
+                <el-radio-button label="3">{{$t('TKE.colony.szmm')}}</el-radio-button>
               </el-radio-group>
               <p v-if="colonyThird.two">
-                注：创建后，自动生成的密码将通过站内信发送给您。也可登录CVM控制台重置密码。
+                {{$t('TKE.colony.czmm')}}
               </p>
             </div>
           </el-form-item>
           <el-form-item
-            label="用户名"
+            :label="$t('TKE.overview.yhm')"
             v-if="colonyThird.one || colonyThird.three"
           >
             <p>ubuntu</p>
           </el-form-item>
-          <el-form-item label="SSH密钥" v-if="colonyThird.one">
+          <el-form-item :label="$t('TKE.colony.sshmy')" v-if="colonyThird.one">
             <div class="tke-third-select">
-              <el-select placeholder="请选择" v-model="colonyThird.sshKeySel">
+              <el-select :placeholder="$t('TKE.overview.qxz')" v-model="colonyThird.sshKeySel">
                 <el-option
                   v-for="item in colonyThird.sshKey"
                   :key="item.KeyId"
@@ -2269,12 +2269,12 @@
                 </el-option>
               </el-select>
               <i class="el-icon-refresh ml5"></i>
-              <p>如您现有的密钥不合适，可以<a href="../sshkey">现在创建</a></p>
+              <p>{{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a></p>
             </div>
           </el-form-item>
-          <el-form-item label="密码" v-if="colonyThird.three" class="password">
+          <el-form-item :label="$t('TKE.overview.mm')" v-if="colonyThird.three" class="password">
             <el-input
-              placeholder="请输入主机密码"
+              :placeholder="$t('TKE.colony.qsrzjmm')"
               :class="{ 'cluster-wran': colonyThird.passwordWran }"
               v-model="colonyThird.password"
               @blur="PasswordInput(colonyThird.password)"
@@ -2288,8 +2288,8 @@
               ><i class="el-icon-warning-outline ml5"></i>
             </el-tooltip>
             <p>
-              linux机器密码需8到16位，至少包括两项（[a-z,A-Z] ,
-              [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
+              linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] ,
+              [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符號）
             </p>
           </el-form-item>
           <!-- <el-form-item
@@ -2306,24 +2306,24 @@
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
               <el-checkbox v-model="colonyThird.safetyChecked"
-                >免费开通</el-checkbox
+                >{{$t('TKE.colony.mfkt')}}</el-checkbox
               >
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                {{$t('TKE.colony.azzjmfkt')}}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="云监控">
+          <el-form-item :label="$t('TKE.colony.yjk')">
             <div class="tke-third-checkbox">
               <el-checkbox v-model="colonyThird.cloudwatchChecked"
-                >免费开通</el-checkbox
+                >{{$t('TKE.colony.mfkt')}}</el-checkbox
               >
               <p class="checkbox-tips" v-if="!colonyThird.cloudwatchChecked">
-                取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
+                {{$t('TKE.colony.qxgx')}}
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                {{$t('TKE.colony.mfktzj')}}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
@@ -2342,35 +2342,35 @@
         v-if="fourthBox"
         class="tke-second-box tke-fourth-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form ref="form" label-width="120px" label-position="left">
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ dispose.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
             <p>{{ dispose.kuValue }}</p>
           </el-form-item>
-          <el-form-item label="集群类型">
-            <p>{{ colonySecond.master == 1 ? "托管集群" : "独立集群" }}</p>
+          <el-form-item :label="$t('TKE.colony.jqlx')">
+            <p>{{ colonySecond.master == 1 ? "託管集群" : "獨立集群" }}</p>
           </el-form-item>
           <el-form-item label="所在地域">
             <p>{{ dispose.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
+          <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>
               {{ dispose.container }}，{{
                 colony.ServiceValue
-              }}个Service/集群，{{ colony.PodValue }}个Pod/节点
+              }}{{$t('TKE.overview.ge')}}Service/集群，{{ colony.PodValue }}{{$t('TKE.colony.gjd')}}
             </p>
           </el-form-item>
-          <el-form-item label="计费模式">
-            <p>{{ colonySecond.charging == 1 ? "按量计费" : "包年包月" }}</p>
+          <el-form-item :label="$t('TKE.colony.jfms')">
+            <p>{{ colonySecond.charging == 1 ? "按量計費" : "包年包月" }}</p>
           </el-form-item>
-          <el-form-item label="操作系统">
+          <el-form-item :label="$t('TKE.colony.czxt')">
             {{ dispose.OSvalue }}
           </el-form-item>
           <el-form-item
-            label="Master&Etcd节点"
+            :label="$t('TKE.colony.mejd')"
             v-if="colonySecond.source == 2 && colonySecond.master == 2"
             class="tke-fourth-node-text"
           >
@@ -2380,7 +2380,7 @@
             </p>
           </el-form-item>
           <el-form-item
-            label="Node节点"
+            :label="$t('TKE.colony.nodejd')"
             v-if="!colonySecond.sourceShow"
             class="tke-fourth-node-text"
           >
@@ -2390,7 +2390,7 @@
             </p>
           </el-form-item>
           <el-form-item
-            label="Master&Etcd节点"
+            :label="$t('TKE.colony.mejd')"
             class="tke-fourth-node"
             style="padding:0px;border:0px;"
             v-if="colonySecond.workerShow === true && colonySecond.source == 1"
@@ -2399,25 +2399,25 @@
               v-for="(item, index) in colonySecond.masterOneList"
               :key="index"
             >
-              <p>可用区:台北一区</p>
+              <p>{{$t('TKE.colony.kyq')}}:{{$t('TKE.colony.tbyq')}}</p>
               <p>
-                机型:{{ item.modelName }}({{ item.modelType }},{{
+                {{$t('TKE.colony.jxing')}}:{{ item.modelName }}({{ item.modelType }},{{
                   item.modelHe
                 }}核{{ item.modelGB }}GB)
               </p>
               <p>
-                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+                {{$t('TKE.colony.xtp')}}:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
               </p>
-              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>{{$t('TKE.colony.sjp')}}:{{ item.dataDiskValue }}</p>
               <p>
-                公网带宽:{{ item.broadbandValue }}
+                {{$t('TKE.colony.gwdk')}}:{{ item.broadbandValue }}
                 {{ item.broadbandNumber }}Mbps
               </p>
-              <p>数量:{{ item.dataNum }}</p>
+              <p>{{$t('TKE.colony.sliang')}}:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
           <el-form-item
-            label="Node节点"
+            :label="$t('TKE.colony.nodejd')"
             class="tke-fourth-node"
             v-if="colonySecond.sourceShow && colonySecond.worker != 2"
           >
@@ -2425,39 +2425,39 @@
               v-for="(item, index) in colonySecond.workerOneList"
               :key="index"
             >
-              <p>可用区:台北一区</p>
+              <p>{{$t('TKE.colony.kyq')}}:{{$t('TKE.colony.tbyq')}}</p>
               <p>
-                机型:{{ item.modelName }}({{ item.modelType }},{{
+                {{$t('TKE.colony.jxing')}}:{{ item.modelName }}({{ item.modelType }},{{
                   item.modelHe
                 }}核{{ item.modelGB }}GB)
               </p>
               <p>
-                系统盘:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+                {{$t('TKE.colony.xtp')}}:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
               </p>
-              <p>数据盘:{{ item.dataDiskValue }}</p>
+              <p>{{$t('TKE.colony.sjp')}}:{{ item.dataDiskValue }}</p>
               <p>
-                公网带宽:{{ item.broadbandValue }}
+                {{$t('TKE.colony.gwdk')}}:{{ item.broadbandValue }}
                 {{ item.broadbandNumber }}Mbps
               </p>
-              <p>数量:{{ item.dataNum }}</p>
+              <p>{{$t('TKE.colony.sliang')}}:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
           <el-form-item
-            label="总计费用"
+            :label="$t('TKE.colony.zjfy')"
             v-if="colonySecond.sourceShow && colonySecond.worker != 2"
           >
             <div class="tke-second-cost">
               <span class="tke-second-cost-num">{{
                 colonySecond.allocationCost
               }}</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-t">(配置费用)</span>
+              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+              ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
               <i>|</i>
               <span class="tke-second-cost-num">{{
                 colonySecond.networkCost
               }}</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-w"> (网络费用)</span>
+              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+              ><span class="tke-second-cost-w"> ({{$t('TKE.colony.wlfyong')}})</span>
             </div>
           </el-form-item>
         </el-form>
@@ -2514,7 +2514,7 @@ export default {
         projectOptions: [
           {
             projectId: "0",
-            projectName: "默认项目"
+            projectName: "預設專案"
           }
         ],
         projectValue: "0",
@@ -2547,7 +2547,7 @@ export default {
         CIDRValueDis_2: false,
         CIDRValueDis_3: true,
         CIDRValueDis_4: true,
-        CIDRValueContent_2: "范围：16, 18, ... , 31",
+        CIDRValueContent_2: "範圍：16, 18, ... , 31",
         CIDRValueContent_3: "",
         CIDRTipsDis_2: false,
         CIDRTipsDis_3: true,
@@ -2663,10 +2663,10 @@ export default {
             broadbandShow: false,
             workerNodeNetworkValue: "",
             systemDiskVal: "CLOUD_PREMIUM",
-            systemDiskValue: "高性能云硬盘",
+            systemDiskValue: "高性能雲硬碟",
             systemDiskNumber: "50",
             // 数据盘
-            dataDiskValue: "暂不购买",
+            dataDiskValue: "暫不購買",
             buyDataDisk: false,
             dataDiskArr: [],
             buyDataDiskArr: [],
@@ -2676,7 +2676,7 @@ export default {
             dataDiskMinNum: 10,
             latticeSetVal: "ext3",
             setValue: "/var/lib/docker",
-            broadbandValue: "按宽带计费",
+            broadbandValue: "按寬頻計費",
             broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
@@ -2700,10 +2700,10 @@ export default {
             workerNodeNetworkValue: "",
             InstanceChargeType: "POSTPAID_BY_HOUR",
             systemDiskVal: "CLOUD_PREMIUM",
-            systemDiskValue: "高性能云硬盘",
+            systemDiskValue: "高性能雲硬碟",
             systemDiskNumber: "50",
             // 数据盘
-            dataDiskValue: "暂不购买",
+            dataDiskValue: "暫不購買",
             dataDiskArr: [],
             buyDataDiskArr: [],
             buyDataDisk: false,
@@ -2712,7 +2712,7 @@ export default {
             dataDiskNum1: "100",
             latticeSetVal: "ext3",
             setValue: "/var/lib/docker",
-            broadbandValue: "按宽带计费",
+            broadbandValue: "按寬頻計費",
             broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
@@ -2796,7 +2796,7 @@ export default {
         AllRAM: [
           {
             value: "0",
-            label: "全部内存"
+            label: "全部記憶體"
           },
           {
             value: "1",
@@ -2875,11 +2875,11 @@ export default {
         systemDiskOptions: [
           {
             value: "CLOUD_PREMIUM",
-            label: "高性能云硬盘"
+            label: "高性能雲硬碟"
           },
           {
             value: "CLOUD_SSD",
-            label: "SSD云硬盘"
+            label: "SSD雲硬碟"
           }
         ],
         systemDiskNumber: "50",
@@ -2888,11 +2888,11 @@ export default {
         dataDiskOptions: [
           {
             value: "CLOUD_PREMIUM",
-            label: "高性能云硬盘"
+            label: "高性能雲硬碟"
           },
           {
             value: "CLOUD_SSD",
-            label: "SSD云硬盘"
+            label: "SSD雲硬碟"
           }
         ],
         latticeSetOpt: [
@@ -2908,7 +2908,7 @@ export default {
         broadbandOptions: [
           {
             value: "BANDWIDTH_POSTPAID_BY_HOUR",
-            label: "按宽带计费"
+            label: "按寬頻計費"
           },
           {
             value: "TRAFFIC_POSTPAID_BY_HOUR",
@@ -2934,8 +2934,8 @@ export default {
       VpcId: "",
       leftList: [],
       rightList: [],
-      leftListVal: "共 0 云服务器",
-      rightListVal: "已选择 0 台",
+      leftListVal: "共 0 雲伺服器",
+      rightListVal: "已選擇 0 台",
       // Master
       searchInputMaster: "",
       basicNewsMaster: "",
@@ -2943,8 +2943,8 @@ export default {
       VpcIdMaster: "",
       leftListMaster: [],
       rightListMaster: [],
-      leftListMasterVal: "共 0 云服务器",
-      rightListMasterVal: "已选择 0 台",
+      leftListMasterVal: "共 0 雲伺服器",
+      rightListMasterVal: "已選擇 0 台",
 
       // 第三步
       colonyThird: {
@@ -2966,7 +2966,7 @@ export default {
         // 密码
         password: "",
         passwordWran: false,
-        passwordTips: "密码不能为空",
+        passwordTips: "密碼不能為空",
         // 确认密码
         confirmPassword: "",
         // SSH密钥
@@ -2988,7 +2988,7 @@ export default {
       dispose: {
         name: "",
         kuValue: "",
-        cityRadio: "台湾台北",
+        cityRadio: "台灣台北",
         container: "",
         OSvalue: ""
       },
@@ -3050,8 +3050,8 @@ export default {
           }
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "内部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -3187,7 +3187,7 @@ export default {
         this.colony.CIDRValue_2 = "16";
         this.colony.CIDRValueDis_2 = false;
         this.colony.CIDRTipsDis_2 = false;
-        this.colony.CIDRValueContent_2 = "范围：16, 18, ... , 31";
+        this.colony.CIDRValueContent_2 = "範圍：16, 18, ... , 31";
         this.colony.CIDRValue_3 = "0";
         this.colony.CIDRValueDis_3 = true;
         this.colony.CIDRTipsDis_3 = true;
@@ -3219,7 +3219,7 @@ export default {
         this.colony.CIDRValueDis_3 = true;
         this.colony.CIDRTipsDis_3 = true;
         this.colony.CIDRValue_5 = "14";
-        this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
+        this.colony.CIDRValueContent_2 = "範圍：0, 4, ... , 252";
         this.colony.CIDROptions_5 = [];
         this.colony.CIDROptions_5.push(
           {
@@ -3342,11 +3342,11 @@ export default {
     },
     CIDchange_5(val) {
       if (val == 17) {
-        this.colony.CIDRValueContent_3 = "范围：0, 128";
+        this.colony.CIDRValueContent_3 = "範圍：0, 128";
       } else if (val == 18) {
-        this.colony.CIDRValueContent_3 = "范围：0, 64, 128, 192";
+        this.colony.CIDRValueContent_3 = "範圍：0, 64, 128, 192";
       } else {
-        this.colony.CIDRValueContent_3 = "范围：0, 32, ... , 224";
+        this.colony.CIDRValueContent_3 = "範圍：0, 32, ... , 224";
       }
       if (this.colony.CIDRValue_1 == "192") {
         this.colony.CIDRValueDis_3 = false;
@@ -3359,13 +3359,13 @@ export default {
       if (this.colony.CIDRValue_1 == "10") {
         if (val == "14") {
           this.colony.CIDRValue_2 = 0;
-          this.colony.CIDRValueContent_2 = "范围：0, 4, ... , 252";
+          this.colony.CIDRValueContent_2 = "範圍：0, 4, ... , 252";
         } else if (val == 15) {
           this.colony.CIDRValue_2 = 0;
-          this.colony.CIDRValueContent_2 = "范围：0, 2, ... , 254";
+          this.colony.CIDRValueContent_2 = "範圍：0, 2, ... , 254";
         } else if (Number(val) >= 16) {
           this.colony.CIDRValue_2 = 0;
-          this.colony.CIDRValueContent_2 = "范围：0, 1, ... , 255";
+          this.colony.CIDRValueContent_2 = "範圍：0, 1, ... , 255";
         }
         if (Number(val) > 16) {
           this.colony.CIDRValue_3 = "0";
@@ -3711,7 +3711,7 @@ export default {
     // left 列表
     handleSelectionChange(val) {
       this.rightList = val;
-      this.rightListVal = "已选择 " + this.rightList.length + " 台";
+      this.rightListVal = "已選擇 " + this.rightList.length + " 台";
       this.IfStatus();
     },
     // right 列表删除
@@ -3735,7 +3735,7 @@ export default {
     // left 列表
     handleSelectionChangeMaster(val) {
       this.rightListMaster = val;
-      this.rightListMasterVal = "已选择 " + this.rightListMaster.length + " 台";
+      this.rightListMasterVal = "已選擇 " + this.rightListMaster.length + " 台";
       this.IfStatus();
     },
     // right 列表删除
@@ -3777,35 +3777,35 @@ export default {
         if (res.Response.Error === undefined) {
           this.leftList = res.Response.ExistedInstanceSet;
           // console.log(res.Response.ExistedInstanceSet);
-          this.leftListVal = " 共 " + this.leftList.length + " 云服务器";
+          this.leftListVal = " 共 " + this.leftList.length + " 雲伺服器";
         } else {
           this.leftList = [];
           let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
-            "InternalError.AccountUserNotAuthenticate": "账户未通过认证。",
-            "InternalError.CreateMasterFailed": "创建集群失败。",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
+            FailedOperation: "操作失敗",
+            InternalError: "内部錯誤",
+            "InternalError.AccountUserNotAuthenticate": "帳戶未通過認證。",
+            "InternalError.CreateMasterFailed": "創建集群失敗。",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
             "InternalError.CvmNotFound": "cvm不存在。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DbRecordNotFound": "记录未找到。",
-            "InternalError.ImageIdNotFound": "镜像未找到。",
-            "InternalError.InitMasterFailed": "初始化master失败。",
-            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
-            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DbRecordNotFound": "記錄未找到。",
+            "InternalError.ImageIdNotFound": "映像未找到。",
+            "InternalError.InitMasterFailed": "初始化master失敗。",
+            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
+            "InternalError.OsNotSupport": "映像OS不支持。",
             "InternalError.Param": "Param。",
-            "InternalError.UnexceptedInternal	": "内部错误",
-            "InternalError.VpcCommon": "VPC报错。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制",
-            MissingParameter: "缺少参数错误",
-            ResourceInUse: "资源被占用",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用",
-            UnauthorizedOperation: "未授权操作",
-            UnknownParameter: "未知参数错误",
+            "InternalError.UnexceptedInternal	": "内部錯誤",
+            "InternalError.VpcCommon": "VPC報錯。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制",
+            MissingParameter: "缺少參數錯誤",
+            ResourceInUse: "資源被佔用",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不可用",
+            UnauthorizedOperation: "未授權操作",
+            UnknownParameter: "未知參數錯誤",
             UnsupportedOperation: "操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -3848,35 +3848,35 @@ export default {
           this.leftListMaster = res.Response.ExistedInstanceSet;
           // console.log(res.Response.ExistedInstanceSet);
           this.leftListMasterVal =
-            " 共 " + this.leftListMaster.length + " 云服务器";
+            " 共 " + this.leftListMaster.length + " 雲伺服器";
         } else {
           this.leftListMaster = [];
           let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
-            "InternalError.AccountUserNotAuthenticate": "账户未通过认证。",
-            "InternalError.CreateMasterFailed": "创建集群失败。",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
+            FailedOperation: "操作失敗",
+            InternalError: "内部錯誤",
+            "InternalError.AccountUserNotAuthenticate": "帳戶未通過認證。",
+            "InternalError.CreateMasterFailed": "創建集群失敗。",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
             "InternalError.CvmNotFound": "cvm不存在。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DbRecordNotFound": "记录未找到。",
-            "InternalError.ImageIdNotFound": "镜像未找到。",
-            "InternalError.InitMasterFailed": "初始化master失败。",
-            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
-            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DbRecordNotFound": "記錄未找到。",
+            "InternalError.ImageIdNotFound": "映像未找到。",
+            "InternalError.InitMasterFailed": "初始化master失敗。",
+            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
+            "InternalError.OsNotSupport": "映像OS不支持。",
             "InternalError.Param": "Param。",
-            "InternalError.UnexceptedInternal	": "内部错误",
-            "InternalError.VpcCommon": "VPC报错。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制",
-            MissingParameter: "缺少参数错误",
-            ResourceInUse: "资源被占用",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用",
-            UnauthorizedOperation: "未授权操作",
-            UnknownParameter: "未知参数错误",
+            "InternalError.UnexceptedInternal	": "内部錯誤",
+            "InternalError.VpcCommon": "VPC報錯。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制",
+            MissingParameter: "缺少參數錯誤",
+            ResourceInUse: "資源被佔用",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不可用",
+            UnauthorizedOperation: "未授權操作",
+            UnknownParameter: "未知參數錯誤",
             UnsupportedOperation: "操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -4079,8 +4079,8 @@ export default {
           this.TotalCost();
         } else {
           let ErrTips = {
-            "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
-            "InvalidRegion.NotFound": "未找到该区域",
+            "InvalidInstanceType.Malformed": "指定InstanceType參數格式不合法",
+            "InvalidRegion.NotFound": "未找到該區域",
             "InvalidZone.MismatchRegion": "指定的zone不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -4096,11 +4096,11 @@ export default {
     // 机型
     ModelTypeName(val) {
       if (val === "Standard S3") {
-        return "标准型S3";
+        return "標準型S3";
       } else if (val === "Compute C3") {
-        return "计算型C3";
+        return "計算型C3";
       } else if (val === "MEM-optimized M3") {
-        return "内存型M3";
+        return "記憶體型M3";
       }
     },
     // 机型
@@ -4265,7 +4265,7 @@ export default {
       let text = [];
       let text_2 = "";
       if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
-        this.colonySecond.workerOneList[index].dataDiskValue = "暂不购买";
+        this.colonySecond.workerOneList[index].dataDiskValue = "暫不購買";
       }
 
       if (a == 1) {
@@ -4305,7 +4305,7 @@ export default {
       } else {
         console.log(_masterOneList[index].buyDataDisk);
         if (!_masterOneList[index].buyDataDisk) {
-          _masterOneList[index].dataDiskValue = "暂不购买";
+          _masterOneList[index].dataDiskValue = "暫不購買";
         } else {
           for (let i in this.colonySecond.dataDiskOptions) {
             if (
@@ -4455,10 +4455,10 @@ export default {
         broadbandShow: false,
         workerNodeNetworkValue: "",
         systemDiskVal: "CLOUD_PREMIUM",
-        systemDiskValue: "高性能云硬盘",
+        systemDiskValue: "高性能雲硬碟",
         systemDiskNumber: "50",
         // 数据盘
-        dataDiskValue: "暂不购买",
+        dataDiskValue: "暫不購買",
         buyDataDisk: false,
         dataDiskArr: [],
         buyDataDiskArr: [],
@@ -4468,7 +4468,7 @@ export default {
         dataDiskNum1: "100",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
-        broadbandValue: "按宽带计费",
+        broadbandValue: "按寬頻計費",
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
@@ -4519,10 +4519,10 @@ export default {
         broadbandShow: false,
         workerNodeNetworkValue: "",
         systemDiskVal: "CLOUD_PREMIUM",
-        systemDiskValue: "高性能云硬盘",
+        systemDiskValue: "高性能雲硬碟",
         systemDiskNumber: "50",
         // 数据盘
-        dataDiskValue: "暂不购买",
+        dataDiskValue: "暫不購買",
         buyDataDisk: false,
         dataDiskArr: [],
         buyDataDiskArr: [],
@@ -4532,7 +4532,7 @@ export default {
         dataDiskNum1: "100",
         latticeSetVal: "ext3",
         setValue: "/var/lib/docker",
-        broadbandValue: "按宽带计费",
+        broadbandValue: "按寬頻計費",
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
@@ -4623,29 +4623,29 @@ export default {
             this.costAll.push(_data);
           } else {
             let ErrTips = {
-              AccountQualificationRestrictions: "该请求账户未通过资格审计。",
+              AccountQualificationRestrictions: "該請求帳戶未通過資格審計。",
               InstancesQuotaLimitExceeded:
-                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+                "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
               "InvalidClientToken.TooLong":
-                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+                "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不属于该请求账号所有。",
+                "指定的HostId不存在，或不屬於該請求帳號所有。",
               "InvalidInstanceName.TooLong":
-                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+                "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
-                "指定InstanceType参数格式不合法。",
-              InvalidParameterCombination: "表示参数组合不正确。",
+                "指定InstanceType參數格式不合法。",
+              InvalidParameterCombination: "表示參數組合不正確。",
               InvalidParameterValue:
-                "无效参数值。参数值格式错误或者参数值不被支持等。",
+                "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
-                "无效参数值。参数值取值范围不合法。",
+                "無效參數值。參數值取值範圍不合法。",
               InvalidPassword:
-                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+                "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
               InvalidPeriod:
-                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-              InvalidPermission: "账户不支持该操作。",
+                "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+              InvalidPermission: "帳戶不支持該操作。",
               "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              MissingParameter: "参数缺失。请求没有带必选参数。"
+              MissingParameter: "參數缺失。請求沒有帶必選參數。"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -4709,29 +4709,29 @@ export default {
               this.costAll2.push(_data);
             } else {
               let ErrTips = {
-                AccountQualificationRestrictions: "该请求账户未通过资格审计。",
-                InstancesQuotaLimitExceeded:
-                  "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
-                "InvalidClientToken.TooLong":
-                  "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
-                "InvalidHostId.NotFound":
-                  "指定的HostId不存在，或不属于该请求账号所有。",
-                "InvalidInstanceName.TooLong":
-                  "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
-                "InvalidInstanceType.Malformed":
-                  "指定InstanceType参数格式不合法。",
-                InvalidParameterCombination: "表示参数组合不正确。",
-                InvalidParameterValue:
-                  "无效参数值。参数值格式错误或者参数值不被支持等。",
-                "InvalidParameterValue.Range":
-                  "无效参数值。参数值取值范围不合法。",
-                InvalidPassword:
-                  "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
-                InvalidPeriod:
-                  "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-                InvalidPermission: "账户不支持该操作。",
-                "InvalidZone.MismatchRegion": "指定的zone不存在。",
-                MissingParameter: "参数缺失。请求没有带必选参数。"
+                AccountQualificationRestrictions: "該請求帳戶未通過資格審計。",
+              InstancesQuotaLimitExceeded:
+                "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
+              "InvalidClientToken.TooLong":
+                "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
+              "InvalidHostId.NotFound":
+                "指定的HostId不存在，或不屬於該請求帳號所有。",
+              "InvalidInstanceName.TooLong":
+                "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
+              "InvalidInstanceType.Malformed":
+                "指定InstanceType參數格式不合法。",
+              InvalidParameterCombination: "表示參數組合不正確。",
+              InvalidParameterValue:
+                "無效參數值。參數值格式錯誤或者參數值不被支持等。",
+              "InvalidParameterValue.Range":
+                "無效參數值。參數值取值範圍不合法。",
+              InvalidPassword:
+                "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
+              InvalidPeriod:
+                "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+              InvalidPermission: "帳戶不支持該操作。",
+              "InvalidZone.MismatchRegion": "指定的zone不存在。",
+              MissingParameter: "參數缺失。請求沒有帶必選參數。"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -4852,35 +4852,35 @@ export default {
           this.$router.go(-1);
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            "InternalError.AccountUserNotAuthenticated": "账户未通过认证。",
-            "InternalError.AsCommon": "伸缩组资源创建报错。",
+            InternalError: "内部錯誤",
+            "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證。",
+            "InternalError.AsCommon": "伸縮組資源創建報錯。",
             "InternalError.CidrConflictWithOtherCluster":
-              "CIDR和其他集群CIDR冲突。",
-            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由冲突。",
-            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc冲突。",
+              "CIDR和其他集群CIDR衝突。",
+            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由衝突。",
+            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc衝突。",
             "InternalError.CidrConflictWithVpcGlobalRoute":
-              "CIDR和全局路由冲突。",
-            "InternalError.CidrInvali": "CIDR无效。",
-            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩码无效。",
-            "InternalError.CreateMasterFailed": "创建集群失败。",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DfwGetUSGCount": "获得当前安全组总数失败。",
-            "InternalError.DfwGetUSGQuota": "获得安全组配额失败。",
-            "InternalError.InitMasterFailed": "初始化master失败。",
-            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
+              "CIDR和全局路由衝突。",
+            "InternalError.CidrInvali": "CIDR無效。",
+            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩碼無效。",
+            "InternalError.CreateMasterFailed": "創建集群失敗。",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DfwGetUSGCount": "獲得當前安全組總數失敗。",
+            "InternalError.DfwGetUSGQuota": "獲得安全組配額失敗。",
+            "InternalError.InitMasterFailed": "初始化master失敗。",
+            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
             "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-            "InternalError.QuotaUSGLimit": "安全组配额不足。",
-            "InternalError.UnexceptedInternal": "内部错误",
-            "InternalError.VpcCommon": "VPC报错。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+            "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+            "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+            "InternalError.QuotaUSGLimit": "安全組配額不足。",
+            "InternalError.UnexceptedInternal": "内部錯誤",
+            "InternalError.VpcCommon": "VPC報錯。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -5173,10 +5173,10 @@ export default {
     // 设置密码
     PasswordInput(val) {
       if (val == "") {
-        this.colonyThird.passwordTips = "密码不能为空";
+        this.colonyThird.passwordTips = "密碼不能為空";
         this.colonyThird.passwordWran = true;
       } else if (val.length <= 8 || val.length > 16) {
-        this.colonyThird.passwordTips = "密码必须为8到16位";
+        this.colonyThird.passwordTips = "密碼必須為8到16位";
         this.colonyThird.passwordWran = true;
       } else if (
         !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
@@ -5185,7 +5185,7 @@ export default {
       ) {
         // ()`~!@#$%^&}*-+=|{}[]:;',.?/
         this.colonyThird.passwordTips =
-          "密码必须包含数字、字母、特殊字符中至少两项";
+          "密碼必須包含數字、字母、特殊字元中至少兩項";
         this.colonyThird.passwordWran = true;
       } else {
         this.colonyThird.passwordWran = false;
@@ -5610,35 +5610,35 @@ export default {
           this.$router.go(-1);
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            "InternalError.AccountUserNotAuthenticated": "账户未通过认证。",
-            "InternalError.AsCommon": "伸缩组资源创建报错。",
+            InternalError: "内部錯誤",
+            "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證。",
+            "InternalError.AsCommon": "伸縮組資源創建報錯。",
             "InternalError.CidrConflictWithOtherCluster":
-              "CIDR和其他集群CIDR冲突。",
-            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由冲突。",
-            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc冲突。",
+              "CIDR和其他集群CIDR衝突。",
+            "InternalError.CidrConflictWithOtherRoute": "CIDR和其他路由衝突。",
+            "InternalError.CidrConflictWithVpcCidr": "CIDR和vpc衝突。",
             "InternalError.CidrConflictWithVpcGlobalRoute":
-              "CIDR和全局路由冲突。",
-            "InternalError.CidrInvali": "CIDR无效。",
-            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩码无效。",
-            "InternalError.CreateMasterFailed": "创建集群失败。",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DfwGetUSGCount": "获得当前安全组总数失败。",
-            "InternalError.DfwGetUSGQuota": "获得安全组配额失败。",
-            "InternalError.InitMasterFailed": "初始化master失败。",
-            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
+              "CIDR和全局路由衝突。",
+            "InternalError.CidrInvali": "CIDR無效。",
+            "InternalError.CidrMaskSizeOutOfRange": "CIDR掩碼無效。",
+            "InternalError.CreateMasterFailed": "創建集群失敗。",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DfwGetUSGCount": "獲得當前安全組總數失敗。",
+            "InternalError.DfwGetUSGQuota": "獲得安全組配額失敗。",
+            "InternalError.InitMasterFailed": "初始化master失敗。",
+            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
             "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-            "InternalError.QuotaUSGLimit": "安全组配额不足。",
-            "InternalError.UnexceptedInternal": "内部错误",
-            "InternalError.VpcCommon": "VPC报错。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+            "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+            "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+            "InternalError.QuotaUSGLimit": "安全組配額不足。",
+            "InternalError.UnexceptedInternal": "内部錯誤",
+            "InternalError.VpcCommon": "VPC報錯。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
