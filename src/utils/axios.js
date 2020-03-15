@@ -11,7 +11,7 @@ const conf = {
   loading: true,
   withCredentials: true,
   headers: {
-   uuid: VueCookie.get('uuid'),
+    uuid: VueCookie.get('uuid'),
     //  uuid: 100011921910,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
@@ -47,12 +47,12 @@ Plugin.install = function (vue) {
   window.axios = instance
   Object.defineProperties(vue.prototype, {
     axios: {
-      get() {
+      get () {
         return instance
       }
     },
     $axios: {
-      get() {
+      get () {
         return instance
       }
     }

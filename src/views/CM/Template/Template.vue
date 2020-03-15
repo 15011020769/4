@@ -44,16 +44,17 @@
                   {{ `${it.eventShowName},不重复告警` }}</p>
               </div>
               <div slot="reference" class="name-wrapper">
-                <p class="textEps">
-                  {{ `${scope.row.conditions[0].metricShowName}
-                      ${scope.row.conditions[0].calcType}
-                      ${scope.row.conditions[0].calcValue}
-                      ${scope.row.conditions[0].unit},持续
-                      ${scope.row.conditions[0].continueTime/60}分钟,按
-                      ${scope.row.conditions[0].calcType}天重复告警` }}
+                <p class="textEps" v-for="items in scope.row.conditions.slice(0,3)" :key="items.metricShowName">
+                  {{ `${items.metricShowName}
+                      ${items.calcType}
+                      ${items.calcValue}
+                      ${items.unit},持续
+                      ${items.continueTime/60}分钟,
+                      ${items.calcType}` }}
                 </p>
-                <p class="textEps">
-                  {{ `${scope.row.eventConditions[0].eventShowName},不重复告警` }}
+                <p class="textEps"
+                 v-for="items in scope.row.eventConditions.slice(0,3-scope.row.conditions.length<=0?0:3-scope.row.conditions.length)" :key="items.eventShowName">
+                  {{ `${items.eventShowName},不重复告警` }}
                 </p>
               </div>
             </el-popover>
@@ -95,21 +96,23 @@
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
-          :page-size="pagesize"
+          @size-change="handleSizesChange"
+          @current-change="handleCurrentChange"
+          :page-size="pageSize"
+          :page-sizes="[10,20,50,100]"
           :current-page="currpage"
           :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
+          layout="sizes,prev, pager, next"
           :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
     <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="35%">
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%">
       <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
       <el-form :model="templateObj" :rules="rules" ref="form">
         <el-form-item prop="groupName">
-          <el-input maxlength="20" v-model="templateObj.groupName"></el-input>
+          <el-input maxlength="20" v-model="templateObj.groupName" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -151,9 +154,8 @@ import {
   GET_POLICY_GROUP_TYPE,
   GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO,
-  GET_TENCENTCLOUDAPI,
-  GET_TEMPLATE_LIST,
-  UPDATE_INFO } from '@/constants/CM-yhs.js'
+  GET_TEMPLATE_LIST
+} from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -324,8 +326,8 @@ export default {
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       // 分页
       TotalCount: 0, // 总条数
-      pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      pageSize: 10, // 分页条数
+      currpage: 0, // 当前页码
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
       triggerInput: '', // 触发条件模板名
@@ -380,7 +382,7 @@ export default {
         groupName: '',
         lang: 'zh',
         limit: this.pageSize,
-        offset: 0
+        offset: this.currpage
         // Version: '2018-07-24'
       }
       if (this.triggerInput !== '') params.groupName = this.triggerInput
@@ -626,6 +628,10 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.getListData()
+    },
+    handleSizesChange (val) {
+      this.pageSize = val
       this.getListData()
     }
   },
