@@ -84,7 +84,7 @@
             </el-table-column>
             <el-table-column prop label="對象詳情" width="200">
               <template slot-scope="scope">
-                <div v-for="item in scope.row.Dimensions">
+                <div v-for="item in scope.row.Dimensions" :key="item">
                   <p><span>{{item.Name}}：</span>{{item.Value}}</p>
                 </div>
               </template>
