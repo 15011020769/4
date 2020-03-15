@@ -199,7 +199,8 @@ export default {
       ipPro:{},//防护概览过来数据
       traffictable:[],
       pkgtable:[],
-      numtable:[]
+      numtable:[],
+      choiceClick:false
 
     };
   },
@@ -227,7 +228,8 @@ export default {
       //   }
       //   this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
       // }
-      let num = (value[1].getTime() - value[0].getTime()) / 86400000
+      if (!this.choiceClick && value !== null) {
+        let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
         let maxDate = moment(value[1])
         let arr = []
@@ -245,25 +247,26 @@ export default {
           } else if (num < 31) {
             this.period = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
-          }}
-      this.timey = arr;
-      this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      this.describeDDoSNetTrend(this.timey);
-      this.describeDDoSNetEvList();
-      for (let index in this.metricNames) {
-        this.metricName2 = this.metricNames[index];
-        this.describeDDoSNetCount();
+          }
+        }
+        this.timey = arr;
+        this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+        this.describeDDoSNetTrend(this.timey);
+        this.describeDDoSNetEvList();
+        for (let index in this.metricNames) {
+          this.metricName2 = this.metricNames[index];
+          this.describeDDoSNetCount();
+        }
+        for (let i =0; i < this.btnData.length; i++) {
+          this.btnData[i]['selected'] = false;
+        }
       }
-      for (let i =0; i < this.btnData.length; i++) {
-        this.btnData[i]['selected'] = false;
-      }
+      this.choiceClick = false
     },
     selectId: function() {
-      console.log('watch||selectId =' + this.selectId)
       this.changeId();
     },
     selectIp () {
-      console.log('watch||changeIp =' + this.changeIp)
       this.changeIp()
     }
   },
@@ -521,6 +524,7 @@ export default {
       if(this.selectId == "") {
         return
       }
+      this.choiceClick = true
       for (let i =0; i < this.btnData.length; i++) {
         this.btnData[i]['selected'] = false;
         this.btnData[thisTime - 1]['selected'] = true
@@ -895,8 +899,6 @@ export default {
       })
       legendDatas = datas.filter(e => e.Key).map(e => e.Key)
       seriesDatas = datas.filter(e => e.Value).map(e => e.Value)
-      console.log('legendDatas=' + JSON.stringify(legendDatas))
-       console.log('seriesDatas=' + JSON.stringify(seriesDatas))
       let IDName = 'chart-' + id
       let myChartPie = this.$echarts.init(document.getElementById(IDName))
       myChartPie.setOption({
