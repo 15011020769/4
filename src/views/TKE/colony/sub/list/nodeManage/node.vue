@@ -256,6 +256,7 @@
         <div class="block">
           <el-pagination
             @size-change="handleSizeChange"
+            :pager-count="7"
             @current-change="handleCurrentChange"
             :current-page="pageIndex"
             :page-sizes="[10, 20, 50, 100]"
