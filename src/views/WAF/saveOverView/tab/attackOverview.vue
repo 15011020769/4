@@ -36,6 +36,7 @@
             >
           </el-button-group>
           <el-date-picker
+            ref="mypicker"
             v-model="dateTimeValue"
             type="daterange"
             class="dateTimeValue"
@@ -288,6 +289,7 @@ export default {
           break
       }
       times[1] = times[1].endOf('day')
+      this.$refs.mypicker.userInput = null
       this.dateTimeValue = times
       this.startTime = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
       this.endTime = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')

@@ -37,14 +37,15 @@
           <el-button @click="checkTime(5)" :class="selBtn=='5'?'addStyleBtn':''">近7天</el-button>
         </el-button-group>
         <el-date-picker
+          ref="mypicker"
           v-model="dateTimeValue"
           type="datetimerange"
           class="timeValue"
           range-separator="至"
           :start-placeholder="t('开始日期', 'WAF.ksrq')"
           :end-placeholder="t('结束日期', 'WAF.jsrq')"
-          :clearable= false
           @change="changeTimeValue"
+          :clearable= false
         ></el-date-picker>
         <i class="el-icon-refresh" @click="id+=1" />
         <el-input
@@ -217,9 +218,12 @@ export default {
           break;
       }
       times[1] = times[1].endOf('day')
+      // this.$set(this.dateTimeValue, 0, times[0])
+      // this.$set(this.dateTimeValue, 1, times[1])
+      this.$refs.mypicker.userInput = null
       this.dateTimeValue = times
-      this.startTime = moment(this.dateTimeValue[0]).utc().valueOf()
-      this.endTime = moment(this.dateTimeValue[1]).utc().valueOf()
+      this.startTime = moment(times[0]).utc().valueOf()
+      this.endTime = moment(times[1]).utc().valueOf()
     },
     changeTimeValue(val) {
       if (val == null) val = []
