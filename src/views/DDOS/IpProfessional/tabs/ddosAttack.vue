@@ -61,21 +61,27 @@
               <div class="colDivThree">
                 <h1>{{$t('DDOS.Statistical_forms.Attack_distribution')}}</h1>
                 <p class="count">({{$t('DDOS.Statistical_forms.SettingB')}})</p>
-                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
+                <p v-if="traffictable.length === 0 " class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</p>
+                <div  id="chart-traffic" ></div>
+                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
                 <h1>{{$t('DDOS.Statistical_forms.Attack_pp_distribution')}}</h1>
                 <p class="count">({{$t('DDOS.Statistical_forms.Unit_packe')}})</p>
-                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
+                <p v-if="pkgtable.length === 0 " class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</p>
+                <div  id="chart-pkg"  ></div>
+                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
               </div>
             </el-col>
             <el-col :span="8">
               <div class="colDivThree">
                 <h1>{{$t('DDOS.Statistical_forms.Attack_typedistribution')}}</h1>
                 <p class="count">({{$t('DDOS.Statistical_forms.Unit_Times')}})</p>
-                <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div>
+                <p v-if="numtable.length === 0 " class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</p>
+                 <div  id="chart-num"></div>
+                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
               </div>
             </el-col>
           </el-row>
@@ -89,13 +95,30 @@
             :data="tableDataOfDescribeDDoSNetEvList.slice((currentPage-1)*pageSize,currentPage*pageSize)"
             empty-text='暫無數據'
           >
-            <el-table-column prop="attackTime" :label="$t('DDOS.Statistical_forms.Attack_time')"></el-table-column>
-            <el-table-column prop="durnTime" :label="$t('DDOS.Statistical_forms.Duration')"></el-table-column>
-            <el-table-column prop="attackType" :label="$t('DDOS.Statistical_forms.Type_ofattack')"></el-table-column>
-            <el-table-column prop="attackStatus" :label="$t('DDOS.Statistical_forms.Attack_state')"></el-table-column>
-            <el-table-column prop="attackAction" label="操作" width="180">
+            <el-table-column prop="StartTime" :label="$t('DDOS.Statistical_forms.Attack_time')">
+
+            </el-table-column>
+            <el-table-column prop="durnTime" :label="$t('DDOS.Statistical_forms.Duration')">
+               <template slot-scope="scope">
+                  {{durationDate(scope.row.EndTime,scope.row.StartTime)}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="AttackType" :label="$t('DDOS.Statistical_forms.Type_ofattack')"></el-table-column>
+            <el-table-column prop="AttackStatus" :label="$t('DDOS.Statistical_forms.Attack_state')">
+               <template slot-scope="scope">
+            <div v-if="scope.row.AttackStatus == '0'">
+              {{ $t("DDOS.basicProtection.gongjiz") }}
+            </div>
+            <div v-else-if="scope.row.AttackStatus == '1'">
+              {{ $t("DDOS.basicProtection.gjjs") }}
+            </div>
+          </template>
+            </el-table-column>
+            <el-table-column prop="attackAction" label="操作" >
               <template slot-scope>
-                <el-button type="text" size="small">操作</el-button>
+                <el-button type="text" size="small">攻擊包下載</el-button>
+                <el-button type="text" size="small">攻擊詳情</el-button>
+                <el-button type="text" size="small">攻擊日誌</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -123,6 +146,7 @@ import {
   DDOS_EVENT,
   DDOS_ATTACK,
   DDOS_DATA,
+  DDOS_TREND,
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
@@ -172,7 +196,11 @@ export default {
       timey: [],
       tableDataEnd: [],
       period: 3600, //统计粒度，取值[300(5分鐘)，3600(1小时)，86400(1天)]
-      ipPro:{} //防护概览过来数据
+      ipPro:{},//防护概览过来数据
+      traffictable:[],
+      pkgtable:[],
+      numtable:[]
+
     };
   },
   watch: {
@@ -299,21 +327,24 @@ export default {
       this.selectIp = this.IpList[0]
       // this.choiceTime('1')
       this.describeDDoSNetTrend(this.timey);
-      for (let index in this.metricNames) {
-        this.metricName2 = this.metricNames[index];
+       this.metricNames.forEach((name, i) => {
+        this.metricName2 = this.metricNames[i];
         this.describeDDoSNetCount();
-      }
+      })
       this.describeDDoSNetEvList();
     },
     // DDOS资源Ip变化时，重新获取数据
     changeIp() {
       // 资源ID改变时，IP默认为总览
-      // this.choiceTime('1')
-      this.describeDDoSNetTrend(this.timey);
-      for (let index in this.metricNames) {
-        this.metricName2 = this.metricNames[index];
-        this.describeDDoSNetCount();
+      if (this.selectIp !== '總覽') { 
+        this.describeDDoSTrend(this.timey);
+      } else {
+        this.describeDDoSNetTrend(this.timey);
       }
+      this.metricNames.forEach((name, i) => {
+        this.metricName2 = this.metricNames[i];
+        this.describeDDoSNetCount();
+      })
       this.describeDDoSNetEvList();
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
@@ -345,6 +376,38 @@ export default {
         this.loading = false;
       });
     },
+     // 1.1.获取DDoS攻击指标数据
+    describeDDoSTrend (date) {
+      let params = {
+        Version: '2018-07-09',
+        Business: "net",
+        Id: this.selectId,
+        Ip: this.selectIp,
+        MetricName: this.metricName,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        Period: this.period
+      }
+      this.axios.post(DDOS_TREND, params).then(res => {
+        if (res.Response.Error === undefined) {
+          // this.bps = res.Response.Data
+          if (this.metricName === "bps") {
+            this.drawLine(res.Response.Data, date);
+          } else {
+            this.drawLine2(res.Response.Data, date);
+          }
+        } else {
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
+    },
     // 1.2.获取高防IP专业版资源的DDoS攻击占比分析
     describeDDoSNetCount() {
       let params = {
@@ -359,13 +422,14 @@ export default {
       };
       this.axios.post(DDOS_ATTACK, params).then(res => {
         if (res.Response.Error === undefined) {
-          if (this.metricName2 == "traffic") {
-            this.traffictable = res.data;
-          } else if (this.metricName2 == "pkg") {
-            this.pkgtable = res.data;
-          } else if (this.metricName2 == "num") {
-            this.numtable = res.data;
+          if (res.Response.MetricName == "traffic") {
+            this.traffictable = res.Response.Data;
+          } else if (res.Response.MetricName == "pkg") {
+            this.pkgtable = res.Response.Data;
+          } else if (res.Response.MetricName == "num") {
+            this.numtable = res.Response.Data;
           }
+          this.drawPie(res.Response.Data, res.Response.MetricName)
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -682,9 +746,122 @@ export default {
       window.addEventListener("resize", function() {
         myChart2.resize();
       });
-    }
+    },
+    // 画饼图
+    drawPie (datas, id) {
+      // datas.forEach(e => console.log('Key=' + e.Key +'***value=' + e.Value)) 
+      let legendDatas = []
+      let seriesDatas = []
+      let objData ={}
+      let edata = {}
+      let dw = ''
+      if (id === 'traffic') {
+        dw = 'B' 
+      } else if (id === 'pkg') {
+        dw = 'packet'
+      } else if (id === 'num') {
+        dw = '次'
+      }
+      datas.forEach((m, i) => {
+        // legendDatas[i] = m.Key + ':' + m.Value + dw
+        // objData[m.Key] = m.Value + dw
+        // console.log('objData = ' + objData.Value )
+        // seriesDatas[i] = objData
+      })
+      legendDatas = datas.filter(e => e.Key).map(e => e.Key)
+      seriesDatas = datas.filter(e => e.Value).map(e => e.Value)
+      console.log('legendDatas=' + JSON.stringify(legendDatas))
+       console.log('seriesDatas=' + JSON.stringify(seriesDatas))
+      let IDName = 'chart-' + id
+      let myChartPie = this.$echarts.init(document.getElementById(IDName))
+      myChartPie.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+          orient: 'vertical',
+          bottom: 'bottom',
+          data: seriesDatas,
+           // x 设置水平安放位置，默认全图居中，可选值：'center' ¦ 'left' ¦ 'right' ¦ {number}（x坐标，单位px）
+            x: 'left',
+            // y 设置垂直安放位置，默认全图顶端，可选值：'top' ¦ 'bottom' ¦ 'center' ¦ {number}（y坐标，单位px）
+            y: 'center',
+            itemWidth: 24,   // 设置图例图形的宽
+            itemHeight: 18,  // 设置图例图形的高
+          backgroundColor: '#fff',  // 设置整个图例区域背景颜色
+        },
+        series: [
+          {
+            name: '',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: seriesDatas,
+            itemStyle: {
+              emphasis: {
+                shadowBlur: 0,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            },
+             // 设置值域的那指向线
+              labelLine: {
+                normal: {
+                  show: false  // show设置线是否显示，默认为true，可选值：true ¦ false
+                }
+              },
+              // 设置值域的标签
+              label: {
+                normal: {
+                  position: 'inner',  // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'
+                  // formatter: '{a} {b} : {c}个 ({d}%)'   设置标签显示内容 ，默认显示{b}
+                  // {a}指series.name  {b}指series.data的name
+                  // {c}指series.data的value  {d}%指这一部分占总数的百分比
+                  formatter: "{a} <br/>{b} : {c} ({d}%)"
+                }
+              }
+          }
+        ]
+      })
+      myChartPie.resize()
+      window.addEventListener("resize", function() {
+        myChartPie.resize()
+      })
+    },
+     // 获取持续时间
+    durationDate (endTime, StartTime) {
+      let durationTime = ''
+      let stime = new Date(StartTime).getTime()
+      let etime = new Date(endTime).getTime()
+      let dateDiff = etime - stime
+      let dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)) // 计算出相差天数
+      if (dayDiff > 0) {
+        durationTime += dayDiff + '天'
+      }
+      let leave1 = dateDiff % (24 * 3600 * 1000) // 计算天数后剩余的毫秒数
+      let hours = Math.floor(leave1 / (3600 * 1000)) // 计算出小时数
+      if (hours > 0) {
+        durationTime += hours + '小時'
+      }
+      // 计算相差分钟数
+      let leave2 = leave1 % (3600 * 1000) // 计算小时数后剩余的毫秒数
+      let minutes = Math.floor(leave2 / (60 * 1000)) // 计算相差分钟数
+      if (minutes > 0) {
+        durationTime += minutes + '分鐘'
+      }
+      // 计算相差秒数
+      let leave3 = leave2 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      let seconds = Math.round(leave3 / 1000)
+      let leave4 = leave3 % (60 * 1000) // 计算分钟数后剩余的毫秒数
+      let minseconds = Math.round(leave4 / 1000)
+      if (minseconds > 0) {
+        durationTime += minseconds + '秒'
+      }
+      return durationTime
+    },
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .Right-style {
@@ -812,4 +989,19 @@ export default {
   height: 380px;
   margin: 20px 0;
 }
+#chart-traffic {
+  width: 300px;
+  height: 300px;
+  margin:0 0 0 150px;
+  }
+  #chart-pkg {
+  width: 300px;
+  height: 300px;
+ margin:0 0 0 150px;
+  }
+  #chart-num {
+   width: 300px;
+   height: 300px;
+   margin:0 0 0 150px;
+  }
 </style>
