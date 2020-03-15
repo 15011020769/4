@@ -281,7 +281,7 @@ export default {
           this.ResIpList = res.Response.Resource;
           let jsonStr = sessionStorage.getItem('IpPro')
           console.log('created||json =' + jsonStr)
-          if (jsonStr !== '' && jsonStr.length > 0) {
+          if (jsonStr !== null && jsonStr !== '') {
             this.ipPro = JSON.parse(jsonStr)
             this.selectId = this.ipPro.Id
             this.selectIp = this.ipPro.Vip
