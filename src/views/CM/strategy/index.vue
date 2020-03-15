@@ -118,16 +118,16 @@
       <p class="addBtn">
         <el-row>
           <el-button type="primary" @click="addCreate">新增</el-button>
-          <el-button
-            :disable="operationFlag == -1 ? true : false"
-            @click="deleteAllDialogVisible = true"
+          <el-button v-if="multipleSelection.length > 0" @click="AllDelete"
             >删除</el-button
           >
+          <el-button v-else disabled>删除</el-button>
           <el-button
-            :disable="operationFlag == -1 ? true : false"
+            v-if="multipleSelection.length > 0"
             @click="ModifyDialogVisible = true"
             >修改告警渠道</el-button
           >
+          <el-button v-else disabled>修改告警渠道</el-button>
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-setting" @click="buyMessgae"></i>
@@ -136,13 +136,11 @@
         </el-row>
       </p>
       <el-table
-        @cell-mouse-enter="mouseoverDefault"
-        @cell-mouse-leave="mouseoutDefault"
         :data="tableData"
         style="width: 100%"
+        v-loading="loadShow"
         height="450"
-        v-loading="dataListLoading"
-        :default-sort="{ prop: 'changeData', order: 'descending' }"
+        @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
@@ -150,56 +148,144 @@
             <a
               class="defaultDialog"
               @click="defaultClick(scope.row.grounpId)"
-              >{{ scope.row.groupName }}</a
+              >{{ scope.row.GroupName }}</a
             >
-            <i @click="modifyNameDialogVisible = true" class="el-icon-edit"></i>
+            <i @click="NameModify(scope.row)" class="el-icon-edit"></i>
           </template>
         </el-table-column>
         <el-table-column label="触发条件">
           <template slot-scope="scope">
-            <!-- {{scope.chufa1}} -->
-            <p v-if="scope.row.chufa1.tiaojian">
-              <span>触发条件：</span>
-              <span>{{ scope.row.chufa1.tiaojian }}</span>
-            </p>
-            <p v-if="scope.row.chufa1.zhiling">
-              <span>指令告警：</span>
-              <span>{{ scope.row.chufa1.zhiling }}</span>
-            </p>
-            <p v-if="scope.row.chufa1.shijian">
-              <span>事件告警：</span>
-              <span>{{ scope.row.chufa1.shijian }}</span>
-            </p>
+            <el-popover placement="left-start" width="400" trigger="hover">
+              <div class="popover-box">
+                <p class="text-color">指标告警（任意）：</p>
+                <div
+                  v-for="i in scope.row.Conditions"
+                  class="trigger-condition"
+                >
+                  <p>
+                    {{ i.MetricShowName }}
+                    {{ i.CalcType | CalcType }} {{ i.CalcValue
+                    }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，按{{
+                      i.AlarmNotifyPeriod | AlarmNotifyPeriod
+                    }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+                  </p>
+                </div>
+                <p class="text-color">事件告警：</p>
+                <div
+                  v-for="j in scope.row.EventConditions"
+                  class="trigger-condition"
+                >
+                  <p>
+                    {{ j.EventShowName }}，{{
+                      j.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                    }}
+                  </p>
+                </div>
+              </div>
+              <div slot="reference">
+                <div
+                  v-for="(item, index) in scope.row.Conditions"
+                  :key="index"
+                  class="trigger-condition"
+                >
+                  <p>
+                    {{ item.MetricShowName }}
+                    {{ item.CalcType | CalcType }} {{ item.CalcValue
+                    }}{{ item.Unit }}，持续{{
+                      item.ContinueTime / 60
+                    }}分钟，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                    }}{{
+                      item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                    }}
+                  </p>
+                </div>
+                <div
+                  v-for="(items, indexs) in scope.row.EventConditions"
+                  class="trigger-condition"
+                >
+                  <p>
+                    {{ items.EventShowName }}，{{
+                      items.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                    }}
+                  </p>
+                </div>
+              </div>
+            </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="object" label="所属项目"></el-table-column>
+        <el-table-column label="所属项目">
+          <template slot-scope="scope">
+            {{ scope.row.ProjectId | ProjectName }}
+          </template>
+        </el-table-column>
         <el-table-column label="策略类型">
           <template slot-scope="scope">
-            <b>{{ scope.row.type }}</b>
+            <el-popover placement="left-start" trigger="hover">
+              <div>
+                <p>
+                  <span
+                    >策略类型： <span v-if="scope.row.IsDefault == 1">默认</span
+                    >{{ scope.row.Name }}</span
+                  >
+                </p>
+                <p
+                  v-if="
+                    scope.row.IsDefault == 0 &&
+                      scope.row.CanSetDefault === false
+                  "
+                  style="color:#888;"
+                >
+                  此告警策略绑定的对象是实力组，当前不支持设置为默认策略
+                </p>
+              </div>
+              <div slot="reference">
+                <div
+                  :class="{ strong: scope.row.IsDefault == 1 }"
+                  @mouseenter="enter(scope.$index)"
+                  @mouseleave="leave()"
+                >
+                  <span v-if="scope.row.IsDefault == 1">默认</span
+                  >{{ scope.row.Name }}
+                  <p
+                    v-show="edit && scope.$index == current"
+                    v-if="scope.row.IsDefault != 1 && scope.row.CanSetDefault"
+                  >
+                    <a href="javascript:;" @click="SetDefault(scope.row)"
+                      >设置默认</a
+                    >
+                  </p>
+                </div>
+              </div>
+            </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="YS" label="已启用/实例数"></el-table-column>
+        <el-table-column label="已启用/实例数">
+          <template slot-scope="scope">
+            <p>{{ scope.row.NoShieldedSum }} / {{ scope.row.UseSum }}</p>
+            <p class="group-color" v-if="scope.row.InstanceGroup != undefined">
+              组：{{ scope.row.InstanceGroup.GroupName }}
+            </p>
+          </template>
+        </el-table-column>
         <el-table-column label="最后修改">
           <template slot-scope="scope">
-            <p>{{ scope.row.lastChange.id }}</p>
-            <p>{{ scope.row.lastChange.data }}</p>
+            <p>{{ scope.row.LastEditUin }}</p>
+            <p>{{ scope.row.UpdateTime | formatDate }}</p>
           </template>
         </el-table-column>
         <el-table-column label="告警渠道">
           <template slot-scope="scope">
-            <div v-if="scope.row.qudao">
-              <p class="qudaoInfo">
-                <span>接收组：</span>
-                <span>{{ scope.row.qudao.jieshou }}个</span>
-              </p>
-              <p class="qudaoInfo">
-                <span>有效期：</span>
-                <span>{{ scope.row.qudao.youxiao }}</span>
-              </p>
-              <p class="qudaoInfo">
-                <span>渠道：</span>
-                <span>{{ scope.row.qudao.qudao }}</span>
-              </p>
+            <div v-if="scope.row.ReceiverInfos != undefined">
+              <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
+                <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
+                <p>有效期：</p>
+                <p>
+                  渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                    >{{ j | NotifyWay
+                    }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
+                  >
+                </p>
+              </div>
             </div>
             <div v-else>-</div>
           </template>
@@ -207,16 +293,42 @@
         <el-table-column label="告警启停">
           <template slot-scope="scope">
             <el-switch
-              v-model="scope.row.zanting"
+              v-model="scope.row.IsOpen"
               active-color="#006eff"
               inactive-color="#888"
-            ></el-switch>
+              @change="AlarmStart(scope.row, scope.$index)"
+            >
+            </el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn">复制</el-button>
-            <el-button type="text" class="deleteBtn" @click="Delete(scope.row)"
+            <el-tooltip
+              content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
+              placement="left"
+              effect="light"
+              v-if="scope.row.IsDefault != 0"
+            >
+              <el-button type="text" class="deleteBtn-color deleteBtn"
+                >删除</el-button
+              >
+            </el-tooltip>
+            <el-tooltip
+              content="解绑所有资源后支持删除"
+              placement="left"
+              effect="light"
+              v-else-if="scope.row.UseSum != 0"
+            >
+              <el-button type="text" class="deleteBtn-color deleteBtn"
+                >删除</el-button
+              >
+            </el-tooltip>
+            <el-button
+              type="text"
+              class="deleteBtn"
+              v-else
+              @click="Delete(scope.row)"
               >删除</el-button
             >
           </template>
@@ -251,13 +363,13 @@
         <el-input
           size="small"
           placeholder="请输告警策略名称，20字以内"
-          v-model="editSearchVal"
+          v-model="GroupName"
           @input="EditTips"
         ></el-input>
         <p v-if="tipsShow">告警策略名称不能为空</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="NameSure">确定</el-button>
         <el-button @click="modifyNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -271,7 +383,7 @@
     >
       <div>您确定要删除此条告警策略吗？</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteList()">确定</el-button>
+        <el-button type="primary" @click="DeleteSure()">确定</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -284,17 +396,68 @@
       class="dialog-box"
     >
       <div>
-        <p>您已选择1条策略，详情如下:</p>
+        <p>您已选择{{ multipleSelection.length }}条策略，详情如下:</p>
         <div class="delete-table">
-          <el-table :data="deleteTableData" style="width: 100%" height="150px">
-            <el-table-column prop="date" label="策略名"> </el-table-column>
-            <el-table-column prop="name" label="备注"> </el-table-column>
+          <el-table
+            :data="multipleSelection"
+            style="width: 100%"
+            height="200px"
+          >
+            <el-table-column label="策略名">
+              <template slot-scope="scope">
+                {{ scope.row.GroupName }}
+              </template>
+            </el-table-column>
+            <el-table-column label="备注">
+              <template slot-scope="scope">
+                <p
+                  class="text-color-red"
+                  v-if="scope.row.IsDefault != 0"
+                  id="text-color-red"
+                >
+                  <span>默认策略,无法删除</span>
+                  <el-tooltip
+                    content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
+                    placement="left"
+                    effect="light"
+                  >
+                    <i class="el-icon-info ml5"></i>
+                  </el-tooltip>
+                </p>
+
+                <p
+                  class="text-color-red"
+                  v-else-if="scope.row.UseSum != 0"
+                  id="text-color-red"
+                >
+                  <span>已关联对象,无法删除</span>
+                  <el-tooltip
+                    content="解绑所有资源后支持删除"
+                    placement="left"
+                    effect="light"
+                  >
+                    <i class="el-icon-info ml5"></i>
+                  </el-tooltip>
+                </p>
+
+                <p v-else class="text-color-grey">可删除</p>
+              </template>
+            </el-table-column>
           </el-table>
         </div>
-        <p class="tips">无可删除策略</p>
+        <div v-if="showIsAll">
+          <p class="tips">确定删除所选可删除策略？</p>
+          <p class="tips-grey">删除后,策略配置将彻底销毁</p>
+        </div>
+        <div v-if="showIsDefault">
+          <p class="tips">无可删除策略</p>
+        </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" v-if="!showIsDefault" @click="DeleteSure"
+          >确定</el-button
+        >
+        <el-button disabled v-if="showIsDefault">确定</el-button>
         <el-button @click="deleteAllDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -358,13 +521,38 @@
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
+    <!-- 告警启停 -->
+    <el-dialog
+      title="告警操作确认"
+      :visible.sync="startStop"
+      width="500px"
+      custom-class="tke-dialog"
+      :before-close="CelStart"
+    >
+      <div>
+        <p>确定停用告警策略【{{ GroupName }}】</p>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="SureStart()">确定</el-button>
+        <el-button @click="CelStart()">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
 import { ErrorTips } from "@/components/ErrorTips";
-import { CM_ALARM_LIST } from "@/constants";
+import {
+  CM_ALARM_LIST,
+  ALL_PROJECT,
+  CM_GROUPING_LIST_TYPE,
+  CM_GROUPING_ALARM_START,
+  CM_ALARM_DELETE,
+  CM_ALARM_SET_DEFAULT,
+  CM_GROUPING_LIST_EDIT
+} from "@/constants";
+var project = [];
 export default {
   name: "strategy",
   data() {
@@ -382,7 +570,6 @@ export default {
         }
       ],
       isIndeterminate: true,
-
       formInline: {
         product_name: "产品类型", //策略
         product_kind: [
@@ -447,156 +634,10 @@ export default {
         product_value: "", //产品
         strategy_value: "" //策略
       },
-      tableData: [
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "",
-            shijian: ""
-          },
-          chufa: "容量使用率>80%,持续5分钟，不重复告警",
-          object: "東崋雲计算有限公司",
-          type: "默认云数据库-Redis-其他版本",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "",
-            shijian: "我是事件"
-          },
-          chufa: "容量使用率>80%,持续5分钟",
-          object: "東崋雲计算有限公司",
-          type: "默认云数据库",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: {
-            jieshou: "1",
-            youxiao: "00:00:00 - 23:59:59",
-            qudao: "邮箱、短信"
-          },
-          zanting: false
-        },
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "",
-            shijian: "我是事件"
-          },
-          chufa: "容量使用率>80%",
-          object: "東崋雲计算有限公司",
-          type: "東崋雲云数据库",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        },
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "我是指令",
-            shijian: "我是事件"
-          },
-          chufa: "容量使用率>80%,持续5分钟，不重复告警",
-          object: "東崋雲计算有限公司",
-          type: "默认云数据库-Redis-其他版本",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "我是指令",
-            shijian: "我是事件"
-          },
-          chufa: "容量使用率>80%,持续5分钟",
-          object: "東崋雲计算有限公司",
-          type: "默认云数据库",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
-        },
-        {
-          grounpId: 3290043,
-          groupName: "默认",
-          isOpen: true,
-          chufa1: {
-            tiaojian: "我是条件",
-            zhiling: "我是指令",
-            shijian: "我是事件"
-          },
-          chufa: "容量使用率>80%",
-          object: "東崋雲计算有限公司",
-          type: "東崋雲云数据库",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastChange: {
-            id: "100011921910",
-            data: "2019/12/31 13:21:32"
-          },
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        }
-      ], //表格数据
+      tableData: [], //表格数据
+      loadShow: true,
+      edit: false,
+      current: "", // 编辑
       //分页
       total: 0, //总条数
       pageSize: 10, // 分页条数
@@ -608,32 +649,21 @@ export default {
       defaultIconFlag: false, //鼠标事件
       deleteDialogVisible: false,
       deleteAllDialogVisible: false,
-      deleteTableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ],
+      deleteTableData: [],
       ModifyDialogVisible: false,
       modifyNameDialogVisible: false,
       editSearchVal: "",
-      tipsShow: false
+      tipsShow: false,
+      project,
+      GroupId: "",
+      GroupName: "",
+      startStop: false,
+      IsOpen: false,
+      inputVal: "",
+      indexs: "",
+      multipleSelection: [],
+      showIsDefault: false,
+      showIsAll: true
     };
   },
   components: {
@@ -642,21 +672,141 @@ export default {
   },
   mounted() {
     this.ListInit();
+    this.Project();
   },
   methods: {
     async ListInit() {
+      this.loadShow = true;
       let params = {
         Version: "2018-07-24",
-        Region: "ap-guangzhou",
+        Region: "ap-taipei",
         Module: "monitor",
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
       await this.axios.post(CM_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
+          var _tableData = res.Response.GroupList;
+          this.total = res.Response.Total;
+          let param = {
+            Version: "2018-07-24",
+            Module: "monitor"
+          };
+          this.axios.post(CM_GROUPING_LIST_TYPE, param).then(res => {
+            if (res.Response.Error === undefined) {
+              let Conditions = res.Response.Conditions;
+              for (let i in _tableData) {
+                for (let j in Conditions) {
+                  if (_tableData[i].ViewName === Conditions[j].PolicyViewName) {
+                    _tableData[i]["Name"] = Conditions[j].Name;
+                  }
+                }
+              }
+              this.tableData = _tableData;
+              console.log("tableData", this.tableData);
+              this.loadShow = false;
+            } else {
+              this.loadShow = false;
+              let ErrTips = {
+                "AuthFailure.UnauthorizedOperation":
+                  "请求未授权。请参考 CAM 文档对鉴权的说明。",
+                DryRunOperation:
+                  "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+                FailedOperation: "操作失败。",
+                "FailedOperation.AlertFilterRuleDeleteFailed":
+                  "删除过滤条件失败。",
+                "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+                "FailedOperation.AlertPolicyDescribeFailed":
+                  "告警策略查询失败。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+                "FailedOperation.AlertTriggerRuleDeleteFailed":
+                  "删除触发条件失败。",
+                "FailedOperation.DbQueryFailed": "数据库查询失败。",
+                "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+                "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+                "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+                "FailedOperation.DbTransactionBeginFailed":
+                  "数据库事务开始失败。",
+                "FailedOperation.DbTransactionCommitFailed":
+                  "数据库事务提交失败。",
+                "FailedOperation.DimQueryRequestFailed":
+                  "请求维度查询服务失败。",
+                "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+                "FailedOperation.DuplicateName": "名字重复。",
+                "FailedOperation.ServiceNotEnabled":
+                  "服务未启用，开通服务后方可使用。",
+                InternalError: "内部错误。",
+                "InternalError.ExeTimeout": "	执行超时。",
+                InvalidParameter: "	参数错误。",
+                "InvalidParameter.InvalidParameter": "参数错误。",
+                "InvalidParameter.InvalidParameterParam": "参数错误。",
+                InvalidParameterValue: "无效的参数值。",
+                LimitExceeded: "超过配额限制。",
+                "LimitExceeded.MetricQuotaExceeded":
+                  "指标数量达到配额限制，禁止含有未注册指标的请求。",
+                MissingParameter: "缺少参数错误。",
+                ResourceInUse: "资源被占用。",
+                ResourceInsufficient: "资源不足。",
+                ResourceNotFound: "资源不存在。",
+                ResourceUnavailable: "资源不可用。",
+                ResourcesSoldOut: "资源售罄。",
+                UnauthorizedOperation: "未授权操作。",
+                UnknownParameter: "未知参数错误。",
+                UnsupportedOperation: "操作不支持。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。UnknownParameter	未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -666,6 +816,81 @@ export default {
           });
         }
       });
+    },
+    // 项目
+    Project() {
+      this.axios.get(ALL_PROJECT).then(res => {
+        if (res.codeDesc === "Success") {
+          var arr = res.data;
+          project = arr;
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 告警启停
+    AlarmStart(row, index) {
+      console.log(row);
+      this.startStop = true;
+      this.GroupId = row.GroupId;
+      this.GroupName = row.GroupName;
+      this.IsOpen = !row.IsOpen;
+      this.indexs = index;
+    },
+    SureStart() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.GroupId
+      };
+      if (this.IsOpen === false) {
+        param["IsShielded"] = 0;
+      } else {
+        param["IsShielded"] = 1;
+      }
+      this.axios.post(CM_GROUPING_ALARM_START, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.startStop = false;
+          this.ListInit();
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    CelStart() {
+      this.startStop = false;
+      this.tableData[this.indexs].IsOpen = !this.tableData[this.indexs].IsOpen;
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
     },
     handleCheckAllChange(val) {
       this.checkedCities = val ? cityOptions : [];
@@ -734,17 +959,258 @@ export default {
       // alert('/strategy/create');
       this.$router.push({ path: "/strategy/create" });
     },
+    // 修改名称
+    NameModify(row) {
+      this.modifyNameDialogVisible = true;
+      this.GroupId = row.GroupId;
+      this.GroupName = row.GroupName;
+    },
+    NameSure() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.GroupId,
+        GroupType: 1,
+        Key: "groupName",
+        Value: this.GroupName
+      };
+      this.axios.post(CM_GROUPING_LIST_EDIT, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.modifyNameDialogVisible = false;
+          this.ListInit();
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     // 删除
     Delete(row) {
+      console.log(row);
       this.deleteDialogVisible = true;
-      this.instanceGroupId = row.instanceGroupId;
+      this.GroupId = row.GroupId;
+      this.multipleSelection = row;
+    },
+    // 全部删除
+    AllDelete() {
+      this.deleteAllDialogVisible = true;
+      this.$nextTick(() => {
+        let dom = document.getElementsByClassName("text-color-red");
+        if (dom.length === this.multipleSelection.length) {
+          this.showIsDefault = true;
+          this.showIsAll = false;
+        }
+        if (dom.length < this.multipleSelection.length) {
+          this.showIsDefault = false;
+          this.showIsAll = true;
+        }
+      });
+    },
+    DeleteSure() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        Region: "ap-taipei"
+      };
+      if (!Array.isArray(this.multipleSelection)) {
+        param["GroupId.0"] = this.GroupId;
+      } else {
+        for (let i in this.multipleSelection) {
+          param["GroupId." + i] = this.multipleSelection[i].GroupId;
+        }
+      }
+      this.axios.post(CM_ALARM_DELETE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.deleteDialogVisible = false;
+          this.deleteAllDialogVisible = false;
+          this.ListInit();
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "	数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 策略类型
+    enter(index) {
+      this.edit = true;
+      this.current = index;
+    },
+    leave() {
+      this.edit = false;
+      this.current = null;
+    },
+    // 设置默认
+    SetDefault(row) {
+      let param = {
+        groupId: row.GroupId,
+        lang: "zh"
+      };
+      this.axios.post(CM_ALARM_SET_DEFAULT, param).then(res => {
+        // if (res.Response.Error === undefined) {
+        console.log(res);
+        this.ListInit();
+        // } else {
+        //   let ErrTips = {
+
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
     },
     // 修改名称
     EditTips() {
-      if (this.editSearchVal == "") {
+      if (this.GroupName == "") {
         this.tipsShow = true;
       } else {
         this.tipsShow = false;
+      }
+    }
+  },
+  filters: {
+    formatDate(value) {
+      let date = new Date(value * 1000);
+      let y = date.getFullYear();
+      let MM = date.getMonth() + 1;
+      MM = MM < 10 ? "0" + MM : MM;
+      let d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      let h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      let m = date.getMinutes();
+      m = m < 10 ? "0" + m : m;
+      let s = date.getSeconds();
+      s = s < 10 ? "0" + s : s;
+      return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
+    },
+    CalcType(value) {
+      if (value == 1) {
+        return ">";
+      } else if (value == 2) {
+        return ">=";
+      } else if (value == 3) {
+        return "<";
+      } else if (value == 4) {
+        return "<=";
+      } else if (value == 5) {
+        return "=";
+      } else if (value == 6) {
+        return "!=";
+      } else if (value == 7) {
+        return "日同比上涨";
+      } else if (value == 8) {
+        return "日同比下降";
+      } else if (value == 9) {
+        return "周同比上涨";
+      } else if (value == 10) {
+        return "周同比下降";
+      } else if (value == 11) {
+        return "周期环比上涨";
+      } else if (value == 12) {
+        return "周期环比下降";
+      }
+    },
+    AlarmNotifyPeriod(val) {
+      if ((val / 60 / 60) % 1 == 0) {
+        if ((val / 60 / 60 / 24) % 1 == 0) {
+          return val / 60 / 60 / 24 + "天";
+        } else {
+          return val / 60 / 60 + "小时";
+        }
+      } else if ((val / 60) % 1 == 0) {
+        return val / 60 + "分钟";
+      }
+    },
+    NotifyWay(val) {
+      if (val === "EMAIL") {
+        return "邮件";
+      } else if (val === "SMS") {
+        return "短信";
+      } else if (val === "WECHAT") {
+        return "微信";
+      } else if (val === "CALL") {
+        return "站内信";
+      }
+    },
+    ProjectName(val) {
+      if (val == 0) {
+        return "默认项目";
+      }
+      for (let i in project) {
+        if (val == project[i].projectId) {
+          return project[i].projectName;
+        }
       }
     }
   }
@@ -970,6 +1436,10 @@ a:hover {
     font-size: 12px;
     vertical-align: middle;
     font-weight: 700;
+    .tips-grey {
+      color: #bbb;
+      font-size: 14px;
+    }
   }
   .modify-box {
     & > div {
@@ -1025,5 +1495,52 @@ a:hover {
       text-align: center;
     }
   }
+}
+.popover-box {
+  .text-color {
+    font-size: 12px;
+    color: #888;
+    &:nth-of-type(2) {
+      margin-top: 20px;
+    }
+  }
+}
+.trigger-condition {
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
+}
+.tke-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: row-reverse;
+  background: #fff;
+}
+.group-color {
+  color: #888;
+  font-size: 14px;
+}
+.deleteBtn-color {
+  cursor: pointer;
+  color: #bbb;
+}
+.strong {
+  font-weight: 700;
+}
+.text-color-red {
+  span {
+    color: #e54545;
+  }
+  i {
+    color: #888;
+    margin-left: 2px;
+  }
+}
+
+.text-color-grey {
+  color: #bbb;
 }
 </style>

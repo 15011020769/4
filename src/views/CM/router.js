@@ -402,7 +402,7 @@ export default new Router({
     {
       path: '/CasegroupingDetails', //           实例分组详情
       name: 'CasegroupingDetails',
-      component: () => import('./Casegrouping/details/details.vue'),
+      component: () => import( /* webpackChunkName: "strategy" */ './Casegrouping/details/details.vue'),
       meta: {
         keepAlive: true,
 
