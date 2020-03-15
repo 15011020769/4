@@ -34,19 +34,19 @@
         </div>
         <div class="table_head">
           <div class="table_head_left">
-            <div class="error">
+            <div :class="OverViewBgcolor === 1 ? 'error hoverBgcolor' : 'error'" @click="overViewClick('Type',1,true)">
               <p>異常事件</p>
               <p>
                 <span>{{unNormalEventAmount}}</span>个
               </p>
             </div>
-            <div class="noerror">
+            <div :class="OverViewBgcolor === 2 ? 'noerror hoverBgcolor' : 'noerror'" @click="overViewClick('Status',2,true)">
               <p>未恢復異常事件</p>
               <p style="color:red">
                 <span>{{unRecoverAmount}}</span>个
               </p>
             </div>
-            <div class="nopageerror">
+            <div :class="OverViewBgcolor === 3 ? 'nopageerror hoverBgcolor' : 'nopageerror'" @click="overViewClick('IsAlarmConfig',3,true)">
               <p>未配置告警異常事件</p>
               <p>
                 <span>{{unConfigAlarmAmount}}</span>个
@@ -54,7 +54,7 @@
             </div>
           </div>
           <div class="table_head_right">
-            <div class="pages">
+            <div :class="OverViewBgcolor === 4 ? 'pages hoverBgcolor' : 'pages'" @click="overViewClick('Type',4,true)">
               <p>狀態變更</p>
               <p>
                 <span>{{statusChangeAmount}}</span>个
@@ -106,7 +106,7 @@
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置">
               <template slot-scope="scope">
-                  <p><span>{{scope.row.SupportAlarm == 1 ? '已配置' : '未配置'}}</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
+                  <p><span>{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
               </template>
             </el-table-column>
           </el-table>
@@ -142,6 +142,8 @@ export default {
   name: "product",
   data() {
     return {
+      OverViewBgcolorTrigger: false,
+      OverViewBgcolor: 0,
       statusChangeAmount: 0, // 状态变更
       unConfigAlarmAmount: 0, // 未配置异常事件
       unNormalEventAmount: 0, // 异常事件
@@ -149,12 +151,12 @@ export default {
       activeName: "first",
       value: 13,
       dialogVisible: false, //弹框
-
+      Total: 0,
       searchInput: "", //搜索框的值
       searchOptions: [
         {
             value: "InstanceId",
-            label: "實例ID"
+            label: "影響對象ID"
           },
           {
             value: "EventCName",
@@ -226,6 +228,7 @@ export default {
       },
     //获取数据
     getProductList(data) {
+      let types = typeof data;
       this.loadShow = true; //加载
       const params = {
         Region: localStorage.getItem("regionv2"),
@@ -236,15 +239,14 @@ export default {
         EndTime: this.EndTime,
       };
      if (this.searchInput !== "" && this.searchValue !== "") {
-        params[this.searchValue] = [
-          this.searchInput
-        ]
+        params['Limit'] =  this.Total
      }
+     if (types == 'string') {
+          params['Limit'] =  this.Total
+     };
             //  monitor2/DescribeProductEventList   //接口
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
-        
-
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据
           this.TotalCount = res.Response.Total;
@@ -255,29 +257,15 @@ export default {
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
+          this.Total = res.Response.Total
           // 筛选逻辑
           if (this.searchInput !== "" && this.searchValue !== "") {
-            console.log(321321)
-            params['AffectResource.Name'] = this.searchValue
-            params['AffectResource.Values'] = this.searchInput
-          //  let tableListData = []
-          //   res.Response.Events.forEach((currentValue,index,arr) => {
-          //       if(arr[index].EventCName === this.searchInput && this.searchValue == "EventCName") {
-          //          tableListData.push(arr[index])
-          //          this.tableData = tableListData;
-          //       } else if (arr[index].InstanceId === this.searchInput && this.searchValue == "InstanceId") {
-          //         tableListData.push(arr[index])
-          //         this.tableData = tableListData;
-          //       }
-          //   });
-          //   if(this.tableData.length < 1 ){
-          //     this.$message.error("請輸入正確搜索信息");
-          //     this.tableData = res.Response.Events; //列表数据
-          //   }else {
-          //     this.TotalCount = this.tableData.length;
-          //   }
+            this.filtration (res, {'name': this.searchValue, value : this.searchInput})
           };
           
+          if (types == 'string') {
+            this.filtration (res,data)
+          };
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -290,6 +278,47 @@ export default {
           });
         }
       });
+    },
+    filtration (res,data) {
+      let tableListData = [];
+      let dataType = typeof data;
+      if (dataType == 'object') {
+        res.Response.Events.forEach((currentValue,index,arr) => {
+          if(arr[index].EventCName === data.value && data.name == "EventCName") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          } else if (arr[index].InstanceId === data.value && data.name == "InstanceId") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          }
+        });
+      }else if (dataType == 'string' && this.OverViewBgcolor != 0){
+        
+        res.Response.Events.forEach((currentValue,index,arr) => {
+          if (arr[index].Type === "abnormal" && data == "Type") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          } else if (arr[index].Status === "alarm" && data == "Status") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          } else if (arr[index].IsAlarmConfig === 0 && data == "IsAlarmConfig") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          } else if (arr[index].Type === "status_change" && data == "Type") {
+            tableListData.push(arr[index])
+            this.tableData = tableListData;
+          }
+          
+        });
+        
+      }
+      
+      if(this.tableData.length < 1 ){
+        this.$message.error("請輸入正確搜索信息");
+        this.tableData = res.Response.Events; //列表数据
+      }else {
+        this.TotalCount = this.tableData.length;
+      }
     },
     //分页
     handleCurrentChange(val) {
@@ -306,7 +335,36 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-
+    // 概览
+    overViewClick (events,num,Trigger) {
+        if (num != this.OverViewBgcolor) {
+          this.getProductList(events);
+          this.OverViewBgcolor = num;
+        }else {
+          switch (this.OverViewBgcolor) {
+            case 1: 
+              this.OverViewBgcolorTrigger= !Trigger;
+              break;
+            case 2: 
+              this.OverViewBgcolorTrigger= !Trigger;
+              break;
+            case 3: 
+              this.OverViewBgcolorTrigger= !Trigger;
+              break;
+            case 4: 
+              this.OverViewBgcolorTrigger= !Trigger;
+              break;
+          }
+          if (!this.OverViewBgcolorTrigger) {
+            this.OverViewBgcolor = 0;
+            this.getProductList();
+          }
+        }
+        
+        
+           
+    },
+    
     //导出表格
       exportExcel() {
         return '';
@@ -327,6 +385,7 @@ export default {
         this.searchInput = val;
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.getProductList();
+          
         } else {
           this.$message.error("請輸入正確搜索信息");
         }
@@ -430,6 +489,15 @@ export default {
         padding-bottom: 20px;
         flex: 4;
       }
+      .error:hover {
+         background: rgb(242, 242, 242);
+      }
+      .noerror:hover {
+         background: rgb(242, 242, 242);
+      }
+      .nopageerror:hover {
+         background: rgb(242, 242, 242);
+      }
     }
     .table_head_right {
       margin-left: 20px;
@@ -439,7 +507,11 @@ export default {
         margin: 20px 20px;
         padding: 10px;
       }
+      .pages:hover {
+         background: rgb(242, 242, 242);
+      }
     }
+    
   }
   .table {
     width: 100%;
@@ -481,5 +553,8 @@ export default {
   font-size: 19px;
   display: inline-block;
   margin: 0 5px;
+}
+.hoverBgcolor {
+      background: rgb(242, 242, 242);
 }
 </style>  
