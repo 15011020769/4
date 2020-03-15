@@ -445,76 +445,8 @@
         </div>
         <div class="alarm-channel">
           <span>告警渠道</span>
-          <div class="qudaoContent">
-            <p class="receiving-objects">
-              <span>接收对象</span>
-              <el-select v-model="formInline.jieshou" style="width:100px;">
-                <el-option
-                  v-for="(item, index) in formInline.jieshouArr"
-                  :key="index"
-                  :label="item.name"
-                  :value="item.value"
-                  label-width="40px"
-                ></el-option>
-              </el-select>
-              <el-row class="seek" style="display:flex;margin:0 10px;">
-                <el-input v-model="triggerInput" placeholder></el-input>
-                <el-button
-                  icon="el-icon-search"
-                  style="margin-left:-1px;"
-                ></el-button>
-              </el-row>
-              <a>新增接收组</a>
-              <!-- <a>新增接收人</a> -->
-            </p>
-            <div>
-              <el-table
-                :data="tableData"
-                style="width: 100%"
-                height="430"
-                :default-sort="{ prop: 'changeData', order: 'descending' }"
-              >
-                <el-table-column type="selection" width="55"></el-table-column>
-                <el-table-column
-                  prop="userGroupName"
-                  label="用户组名"
-                ></el-table-column>
-                <el-table-column
-                  prop="userName"
-                  label="用户名"
-                ></el-table-column>
-              </el-table>
-            </div>
-
-            <p class="effective-period">
-              <span>有效时段</span>
-              <el-time-picker
-                style="width:150px"
-                v-model="value1"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00'
-                }"
-                placeholder="任意时间点"
-              ></el-time-picker>
-              <i>&nbsp;至&nbsp;</i>
-              <el-time-picker
-                style="width:150px"
-                arrow-control
-                v-model="value2"
-                :picker-options="{
-                  selectableRange: '18:30:00 - 20:30:00'
-                }"
-                placeholder="任意时间点"
-              ></el-time-picker>
-            </p>
-            <p style="display:flex">
-              <span>接收渠道</span>
-              <el-checkbox-group v-model="qudaoCheckList">
-                <el-checkbox label="邮件"></el-checkbox>
-                <el-checkbox label="短信"></el-checkbox>
-                <el-checkbox label="微信"></el-checkbox>
-              </el-checkbox-group>
-            </p>
+          <div class="cam-component">
+            <Cam></Cam>
           </div>
         </div>
         <div class>
@@ -575,6 +507,7 @@
 import Header from "./Head";
 import Transfer from "./transfer";
 import GroupingType from "@/components/GroupingType";
+import Cam from '@/views/CM/CM_assembly/Cam'
 export default {
   data() {
     return {
@@ -600,33 +533,9 @@ export default {
       radioChufa: "1", //触发条件单选
       input: "",
       input1: "",
-      tableData: [
-        {
-          userGroupName: "测试勿删",
-          userName: "test、test02"
-        },
-        {
-          userGroupName: "勿删",
-          userName:
-            "测试1、TX测试---李慧、腾讯李慧、測試、test、mytest、test02、test03、test04、test111"
-        },
-        {
-          userGroupName: "可以删除",
-          userName: "测试一下"
-        }
-      ],
       options: [],
       values: "",
-      qudaoCheckList: ["邮件", "短信"], //渠道选择
       formInline: {
-        jieshou: "接收组",
-        jieshouArr: [
-          { value: "0", name: "接收组" },
-          {
-            value: "1",
-            name: "接收人"
-          }
-        ],
         apiStr: "http", //接口回调
         apiArr: [
           {
@@ -662,7 +571,8 @@ export default {
   components: {
     Header,
     Transfer,
-    GroupingType
+    GroupingType,
+    Cam
   },
   methods: {
     all() {
@@ -775,27 +685,12 @@ export default {
       border-radius: 0px;
     }
   }
-  .chufaContent,
-  .qudaoContent {
-    width: 94%;
-    > div {
-      margin: 10px 0;
-      padding: 10px 20px;
-      background-color: #f2f2f2;
-      line-height: 30px;
-      .content {
-        margin-top: 10px;
-        padding: 10px;
-        p {
-        }
-      }
-    }
-  }
   .chufaContent {
     padding: 0;
   }
-  .qudaoContent {
+  .cam-component {
     background-color: #f2f2f2;
+    width: 100%;
   }
   .qudao {
     display: flex;
@@ -974,13 +869,6 @@ export default {
       border-radius: 0px;
       height: 30px;
       padding: 0px 10px;
-    }
-    .qudaoContent {
-      padding: 10px;
-      .receiving-objects {
-        display: flex;
-        align-items: center;
-      }
     }
   }
 }
