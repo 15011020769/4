@@ -204,7 +204,9 @@
         });
       },
       _Reset() {
+        this.ChoiceValue = ''
         this.requestId = ''
+        this._GetJournal();
       },
       _search() {
         if (this.requestId == "") {
