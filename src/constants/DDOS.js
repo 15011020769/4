@@ -74,3 +74,5 @@ export const PAY_DEALS = 'billing/PayDeals' // DDOS 高防IP购买支付订单
 
 // 统计报表相关接口
 export const DESCRIBE_BARADDATA = 'dayu2/DescribeBaradData' //获取转发报表数据
+export const DESCRIBE_DDOSNETEVINFO = 'dayu2/DescribeDDoSNetEvInfo' //获取高防IP专业版资源的DDoS攻击事件详情
+export const DESCRIBE_DDOSIPLOG = 'dayu2/DescribeDDoSIpLog' //获取DDoSIP攻击日志
