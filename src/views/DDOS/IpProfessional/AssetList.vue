@@ -251,11 +251,20 @@
               </el-table-column>
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <a
-                    class="marginRightA"
-                    href="#"
-                    style="pointer-events:none; color:#999;"
-                  >{{ $t("DDOS.AssetList.keyBack") }}</a>
+                  <div v-for="(item, index) in scope.row.Record" :key="index" style="float: left;">
+                    <a
+                      class="marginRightA"
+                      href="#"
+                      style="pointer-events:none; color:#999;"
+                      v-if="item.Key == 'CurrentGroup' && item.Value == '100'"
+                    >{{ $t("DDOS.AssetList.keyBack") }}</a>
+                    <a
+                      class="marginRightA"
+                      href="#"
+                      v-if="item.Key == 'CurrentGroup' && item.Value == '300'"
+                      @click="toNetReturn(scope.row)"
+                    >{{ $t("DDOS.AssetList.keyBack") }}</a>
+                  </div>
                   <a
                     class="marginRightA"
                     href="#"
@@ -295,6 +304,54 @@
                   @click="changeAutoReturnHour"
                 >{{$t('DDOS.Proteccon_figura.Determination')}}</el-button>
                 <el-button @click="autoReturnTimeDialogVisible = false">取 消</el-button>
+              </div>
+            </el-dialog>
+            <!-- 一键回切确认弹框 -->
+            <el-dialog
+              :title="$t('DDOS.AssetList.netReturnSure')"
+              :visible.sync="netReturnDialogVisible"
+              width="43%"
+            >
+              <div>
+                {{ $t('DDOS.AssetList.netReturnSureMsg') }}
+              </div>
+              <div slot="footer" style="text-align: center">
+                <el-button
+                  type="primary"
+                  @click="netReturnSure"
+                >{{$t('DDOS.AssetList.return')}}</el-button>
+                <el-button @click="netReturnDialogVisible = false">取 消</el-button>
+              </div>
+            </el-dialog>
+            <!-- 一键回切成功返回弹框 -->
+            <el-dialog
+              :visible.sync="netReturnSuccessDialogVisible"
+              width="43%"
+            >
+              <div>
+                {{ $t('DDOS.AssetList.netReturnSuccessMsg') }}
+              </div>
+              <div slot="footer" style="text-align: center">
+                <el-button
+                  type="primary"
+                  @click="netReturnSuccessDialogVisible = false"
+                >{{$t('DDOS.AssetList.iKnow')}}</el-button>
+              </div>
+            </el-dialog>
+            <!-- 一键回切失败返回弹框 -->
+            <el-dialog
+              :title="$t('DDOS.AssetList.netReturnError')"
+              :visible.sync="netReturnErrorDialogVisible"
+              width="43%"
+            >
+              <div>
+                {{ $t('DDOS.AssetList.netReturnErrorMsg') }}
+              </div>
+              <div slot="footer" style="text-align: center">
+                <el-button
+                  type="primary"
+                  @click="netReturnErrorDialogVisible = false"
+                >{{$t('DDOS.AssetList.iKnow')}}</el-button>
               </div>
             </el-dialog>
             <!-- 资源列表详情弹框 -->
@@ -352,7 +409,8 @@ import {
   INSTANCENAME_CONT,
   L4_RULES,
   MODIFY_RENEWFLAG,
-  Modify_NetReturnSwitch
+  Modify_NetReturnSwitch,
+  CREATE_NETRETURN
 } from "@/constants";
 import resouseListModel from "./model/resouseListModel";
 import upgradeModel from "./model/upgradeModel";
@@ -389,6 +447,9 @@ export default {
       // 资源列表
 
       // 业务列表
+      netReturnDialogVisible: false, //一键回切-确认弹框
+      netReturnSuccessDialogVisible: false, //一键回切-成功返回弹框
+      netReturnErrorDialogVisible: false, //一键回切-失败返回弹框
       autoReturnTimeDialogVisible: false, //自动回切-修改时间弹框
       autoReturnTimeList: [1, 2, 3, 4, 5, 6], //自动回切-时间数组
       // 分页
@@ -670,7 +731,41 @@ export default {
         }
       });
     },
+    // 1.7. 一键回切
+    creatNetReturn(id) {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: id
+      };
+      this.axios.post(CREATE_NETRETURN, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.describeResourceList();
+          this.netReturnSuccessDialogVisible = true;
+        } else {
+          this.netReturnErrorDialogVisible = true;
+        }
+      });
+    },
 
+    // 跳转一键回切确认弹框
+    toNetReturn(row) {
+      this.resourceObj = JSON.parse(JSON.stringify(row));
+      this.netReturnDialogVisible = true;
+    },
+    // 一键回切 确认
+    netReturnSure() {
+      let id = "";
+      for (let i = 0; i < this.resourceObj.Record.length; i++) {
+        if (this.resourceObj.Record[i].Key == "Id") {
+          id = this.resourceObj.Record[i].Value;
+          this.creatNetReturn(id);
+          this.netReturnDialogVisible = false;
+          return
+        }
+      }
+    },
     // 自动回切 按钮
     changeSwitch(row) {
       let id = "";
