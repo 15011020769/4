@@ -136,7 +136,8 @@ module.exports = {
       yxsryw: "邮箱输入有误",
       cdzf: "长度为8-32个字符",
       bhzf: "包含数字，特殊字符，小写字母，大写字母",
-      mmbnyyhmxt: "密码不能与当前用户名相同"
+      mmbnyyhmxt: "密码不能与当前用户名相同",
+      xzyhz: '选择用户组',
     },
     userGroup: {
       title: "用户组",
