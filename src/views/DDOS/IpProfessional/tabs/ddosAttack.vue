@@ -205,32 +205,49 @@ export default {
   },
   watch: {
     dateChoice: function(value) {
-      console.log('watch||dateChoice =' + value)
       if(this.selectId == "") {
         return
       }
-      var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
-      if(num == 0) {//选择时间为一天
-        this.period = 3600;
-        var arr = [];
-        for (var i = 24; i >= 0; i--) {
-          var d = new Date(value[1].getTime() + 3600000 * i);
-          arr.push(moment(d).format("MM-DD HH:mm:ss"));
-        }
-        this.endTime = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
-      } else {
-        this.period = 86400;
-        var arr = [];
-        for (var i = 0; i <= num / 86400000; i++) {
-          //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
-          var d = new Date(value[1].getTime() - 86400000 * i);
-          arr.push(moment(d).format("MM-DD"));
-        }
-        this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      }
+      // var num = value[1].getTime() - value[0].getTime(); //计算时间戳的差
+      // if(num == 0) {//选择时间为一天
+      //   this.period = 3600;
+      //   var arr = [];
+      //   for (var i = 24; i >= 0; i--) {
+      //     var d = new Date(value[1].getTime() + 3600000 * i);
+      //     arr.push(moment(d).format("MM-DD HH:mm:ss"));
+      //   }
+      //   this.endTime = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
+      // } else {
+      //   this.period = 86400;
+      //   var arr = [];
+      //   for (var i = 0; i <= num / 86400000; i++) {
+      //     //根据时间戳的差以及时间粒度计算出开始时间与结束时间之间有多少天/小时
+      //     var d = new Date(value[1].getTime() - 86400000 * i);
+      //     arr.push(moment(d).format("MM-DD"));
+      //   }
+      //   this.endTime = moment(value[1]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+      // }
+      let num = (value[1].getTime() - value[0].getTime()) / 86400000
+        let dateValue = moment(value[0])
+        let maxDate = moment(value[1])
+        let arr = []
+        arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
+        while (!dateValue.isSameOrAfter(maxDate)) {
+          if (num > 0 && num < 2) {
+            this.period = 300
+            arr.push(dateValue.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
+          } else if (num < 6) {
+            this.period = 1800
+            arr.push(dateValue.add(30, 'm').format('YYYY-MM-DD HH:mm:ss'))
+          } else if (num < 16) {
+            this.period = 3600
+            arr.push(dateValue.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          } else if (num < 31) {
+            this.period = 21600
+            arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          }}
       this.timey = arr;
       this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
-      
       this.describeDDoSNetTrend(this.timey);
       this.describeDDoSNetEvList();
       for (let index in this.metricNames) {
@@ -280,16 +297,12 @@ export default {
           }
           this.ResIpList = res.Response.Resource;
           let jsonStr = sessionStorage.getItem('IpPro')
-          console.log('created||json =' + jsonStr)
           if (jsonStr !== null && jsonStr !== '') {
             this.ipPro = JSON.parse(jsonStr)
             this.selectId = this.ipPro.Id
             this.selectIp = this.ipPro.Vip
             this.startTime = moment(this.ipPro.StartTime,'YYYY-MM-DD 00:00:00').toDate()
             this.endTime = moment(this.ipPro.EndTime,'YYYY-MM-DD 00:00:00').toDate()
-            console.log('created||selectId =' + this.selectId)
-            console.log('created||startTime =' + this.startTime)
-            console.log('created||endTime =' + this.endTime)
             this.dateChoice = [this.startTime, this.endTime]
             sessionStorage.setItem('IpPro', '')
             for (let i =0; i < this.btnData.length; i++) {
@@ -512,70 +525,174 @@ export default {
         this.btnData[i]['selected'] = false;
         this.btnData[thisTime - 1]['selected'] = true
       }
-      var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
-      var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
-      const end = new Date();
-      const start = new Date();
-      if (thisTime == "1") {//'今天'，时间从00：00：00到new Date()
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        var zeroTime = new Date(moment(end).format("YYYY-MM-DD 00:00:00"));
-        var maxI = Math.floor((end.getTime()-zeroTime.getTime())/3600000);
-        var arr = [];
-        for (var i = maxI; i >= 0; i--) {
-          var d = new Date(zeroTime.getTime() + 3600000 * i);
-          arr.push(moment(d).format("MM-DD HH:mm:ss"));
-        }
+      // var ipt1 = document.querySelector(".newDataTime input:nth-child(2)");
+      // var ipt2 = document.querySelector(".newDataTime input:nth-child(4)");
+      // const end = new Date();
+      // const start = new Date();
+      // if (thisTime == "1") {//'今天'，时间从00：00：00到new Date()
+      //   ipt1.value = moment(start).format("YYYY-MM-DD");
+      //   ipt2.value = moment(end).format("YYYY-MM-DD");
+      //   var zeroTime = new Date(moment(end).format("YYYY-MM-DD 00:00:00"));
+      //   var maxI = Math.floor((end.getTime()-zeroTime.getTime())/3600000);
+      //   var arr = [];
+      //   for (var i = maxI; i >= 0; i--) {
+      //     var d = new Date(zeroTime.getTime() + 3600000 * i);
+      //     arr.push(moment(d).add(5, 'm').format("MM-DD HH:mm:ss"));
+      //   }
 
-        this.startTime = moment(end).format("YYYY-MM-DD 00:00:00");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        let misTime = new Date(this.endTime).getTime() - new Date(this.startTime).getTime()
-        if(misTime / 3600*1000 < 1) 
-          this.period = 300;
-        else this.period = 3600;
-        
-        this.timey = arr;
-      } else if (thisTime == "2") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(end.getTime() - 3600 * 1000 * 24 * 7);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "3") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(end.getTime() - 3600 * 1000 * 24 * 15);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "4") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
-      } else if (thisTime == "5") {
-        //ddos攻击-攻击流量带宽
-        start.setTime(end.getTime() - 3600 * 1000 * 24 * 30 * 6);
-        ipt1.value = moment(start).format("YYYY-MM-DD");
-        ipt2.value = moment(end).format("YYYY-MM-DD");
-        this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
-        this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
-        this.period = 86400;
-        this.timedone(end, start, 86400000);
-        //ddos攻击-攻击流量带宽
+      //   this.startTime = moment(end).format("YYYY-MM-DD 00:00:00");
+      //   this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      //   let misTime = new Date(this.endTime).getTime() - new Date(this.startTime).getTime()
+      //   if(misTime / 3600*1000 < 1) 
+      //     this.period = 300;
+      //   else this.period = 3600;
+
+      //   this.period = 300 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      //   this.timey = arr;
+      // } else if (thisTime == "2") {
+      //   //ddos攻击-攻击流量带宽
+      //   start.setTime(end.getTime() - 3600 * 1000 * 24 * 7);
+      //   ipt1.value = moment(start).format("YYYY-MM-DD");
+      //   ipt2.value = moment(end).format("YYYY-MM-DD");
+      //   this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      //   this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      //   // this.period = 86400;
+
+      //   this.period = 3600 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      //   this.timedone(end, start, 86400000,1,'h');
+      //   //ddos攻击-攻击流量带宽
+      // } else if (thisTime == "3") {
+      //   //ddos攻击-攻击流量带宽
+      //   start.setTime(end.getTime() - 3600 * 1000 * 24 * 15);
+      //   ipt1.value = moment(start).format("YYYY-MM-DD");
+      //   ipt2.value = moment(end).format("YYYY-MM-DD");
+      //   this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      //   this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      //   // this.period = 86400;
+
+      //   this.period = 3600 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      //   this.timedone(end, start, 86400000, 1, 'h');
+      //   //ddos攻击-攻击流量带宽
+      // } else if (thisTime == "4") {
+      //   //ddos攻击-攻击流量带宽
+      //   start.setTime(end.getTime() - 3600 * 1000 * 24 * 30);
+      //   ipt1.value = moment(start).format("YYYY-MM-DD");
+      //   ipt2.value = moment(end).format("YYYY-MM-DD");
+      //   this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      //   this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      //   // this.period = 86400;
+      //   this.period = 21600 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+      //   this.timedone(end, start, 86400000, 6, 'h');
+      //   //ddos攻击-攻击流量带宽
+      // } else if (thisTime == "5") {
+      //   //ddos攻击-攻击流量带宽
+      //   start.setTime(end.getTime() - 3600 * 1000 * 24 * 30 * 6);
+      //   ipt1.value = moment(start).format("YYYY-MM-DD");
+      //   ipt2.value = moment(end).format("YYYY-MM-DD");
+      //   this.startTime = moment(start).format("YYYY-MM-DD HH:mm:ss");
+      //   this.endTime = moment(end).format("YYYY-MM-DD HH:mm:ss");
+      //   this.period = 86400;
+      //   this.timedone(end, start, 86400000);
+      //   //ddos攻击-攻击流量带宽
+      // }
+
+
+      let start
+      let end = moment()
+      const times = []
+      if (thisTime == '1') {
+        start = moment().startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        this.startTime = moment()
+          .startOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment()
+          .endOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        // 今天：0点到当前的时间，粒度5分钟一个值
+        this.period = 300 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        this.timey = times
+      } else if (thisTime == '2') {
+        start = moment()
+          .subtract(6, 'd')
+          .startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        this.startTime = moment()
+          .subtract(6, 'd')
+          .startOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment()
+          .endOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        // 2-5天：时间粒度为30分钟一个值
+        this.period = 3600 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        this.timey = times
+        this.timeValue = [this.startTime, this.endTime]
+        // ddos攻击-攻击流量带宽
+      } else if (thisTime == '3') {
+        // ddos攻击-攻击流量带宽
+        start = moment()
+          .subtract(14, 'd')
+          .startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        this.startTime = moment()
+          .subtract(14, 'd')
+          .startOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment()
+          .endOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        // 6-15天：时间粒度为1小时一个值
+        this.period = 3600
+        this.timey = times
+        // ddos攻击-攻击流量带宽
+      } else if (thisTime == '4') {
+        start = moment()
+          .subtract(29, 'd')
+          .startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        this.startTime = moment()
+          .subtract(29, 'd')
+          .startOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment()
+          .endOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        // 16-30天：时间粒度为6小时一个值
+        this.period = 21600 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        this.timey = times
+      } else if (thisTime == '5') {
+        start = moment()
+          .subtract(180, 'd')
+          .startOf('day')
+        times.push(start.format('YYYY-MM-DD HH:mm:ss'))
+        while (!start.isSameOrAfter(end)) {
+          times.push(start.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
+        }
+        this.startTime = moment()
+          .subtract(180, 'd')
+          .startOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        this.endTime = moment()
+          .endOf('day')
+          .format('YYYY-MM-DD HH:mm:ss')
+        // 16-30天：时间粒度为6小时一个值
+        this.period = 86400 // 统计粒度，取值[300(5分钟)，3600(小时)，86400(天)]
+        this.timey = times
       }
+      this.dateChoice = [this.startTime, this.endTime]
       this.describeDDoSNetTrend(this.timey);
       for (let index in this.metricNames) {
         this.metricName2 = this.metricNames[index];
@@ -594,7 +711,15 @@ export default {
       }
       this.timey = arr;
     },
-
+    timedone(end, start, p,a,b) {
+      var num = end.getTime() - start.getTime();
+      var arr = [];
+      for (var i = 0; i <= num / p; i++) {
+        var d = new Date(end.getTime() - p * i);
+        arr.push(moment(d).add(a,b).format("YYYY-MM-DD HH:mm:ss"));
+      }
+      this.timey = arr;
+    },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {
       let o = {
@@ -626,7 +751,7 @@ export default {
           trigger: 'axis'
         },
         xAxis: {
-          data: arr
+          data: date
           // type : 'time',
           // minInterval: 1
         },
@@ -644,7 +769,7 @@ export default {
             show: false
           },
           axisLabel: {
-            formatter: "{value}bps"
+            formatter: "{value}Mbps"
           },
           boundaryGap: true
         },
