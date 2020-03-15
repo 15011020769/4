@@ -25,7 +25,13 @@
           ></tkeSearch>
         </div>
         <!-- 内容 -->
-        <el-table :data="tableData" style="width: 100%" v-loading="loadShow"  @cell-mouse-enter="hoverShow" @cell-mouse-leave="hoverHide">
+        <el-table
+          :data="tableData"
+          style="width: 100%"
+          v-loading="loadShow"
+          @cell-mouse-enter="hoverShow"
+          @cell-mouse-leave="hoverHide"
+        >
           <el-table-column :label="$t('TKE.overview.idmc')" width="220">
             <template slot-scope="scope">
               <span
@@ -38,7 +44,12 @@
                     : ''
                 "
               >{{ scope.row.ClusterId }}</span>
-              <i class="el-icon-document u-btn" style="cursor: pointer;" v-show="showFlag" @click="getContext($event)"></i>
+              <i
+                class="el-icon-document u-btn"
+                style="cursor: pointer;"
+                v-show="showFlag"
+                @click="getContext($event)"
+              ></i>
               <br />
               <span>{{ scope.row.ClusterName }}</span>
             </template>
@@ -132,7 +143,7 @@ export default {
       pageIndex: 0,
       searchSelect: "",
       searchInput: "",
-      showFlag:false,
+      showFlag: false,
       listStatus: [], // 集群列表节点数状态
       listStatusArr: [], // 集群列表节点数状态
       searchOptions: [
@@ -154,12 +165,11 @@ export default {
     this.getColonyList();
   },
   methods: {
-    hoverHide(){
-      this.showFlag=false;
+    hoverHide() {
+      this.showFlag = false;
     },
-    hoverShow(){
-      console.log('11');
-      this.showFlag=true;
+    hoverShow() {
+      this.showFlag = true;
     },
     // 查看详情跳转
     goColonySub(id) {
@@ -217,7 +227,6 @@ export default {
       oInput.value = url;
       document.body.appendChild(oInput);
       oInput.select(); // 选择对象;
-      console.log(oInput.value);
       document.execCommand("Copy"); // 执行浏览器复制命令
       this.$message({
         message: "复制成功",
@@ -238,6 +247,7 @@ export default {
         params["Filters.0.Values.0"] = this.searchInput;
       }
       const res = await this.axios.post(TKE_COLONY_LIST, params);
+      //  console.log(res);
       if (res.Response.Error === undefined) {
         let paramsD = {
           Method: "GET",
@@ -249,6 +259,15 @@ export default {
 
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
+          // console.log(data.items);
+          if (data.items.length <= 0) {
+            this.$message({
+              message: "暫無資料",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          }
           k8sList = data.items;
           this.loadShow = false;
         } else {
@@ -263,8 +282,8 @@ export default {
         }
         if (res.Response.Clusters.length > 0) {
           res.Response.Clusters.map(cluster => {
-            k8sList.map(k8s => {
-              if (cluster.ClusterId == k8s.spec.clusterName) {
+            k8sList.map(k8s => {  
+              if (cluster.ClusterId === k8s.spec.clusterName) {
                 if (k8s.status && k8s.status.phase) {
                   cluster.targetStatus = k8s.status.phase;
                   cluster.targetStatusTip = k8s.status.reason;
@@ -285,6 +304,7 @@ export default {
                 }
               }
             });
+            // console.log(cluster);
             return cluster;
           });
         }
@@ -347,14 +367,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.u-btn{
-    display: none;
+.u-btn {
+  display: none;
+}
+.el-table__body tr:hover {
+  .u-btn {
+    display: inline;
   }
-  .el-table__body tr:hover{
-    .u-btn{
-      display: inline;
-    }
-  }
+}
 .hd-button {
   width: 80px;
   height: 22px;
