@@ -294,7 +294,7 @@ export default {
     async onSubmit() {
       let appid = this.appid
       if (!appid) {
-        const res = await this.axios.get(`redesc/selectAppid?uin=${this.$cookie.get('uuid')}`)
+        const res = await this.axios.get(`redesc/selectAppid?uin=${this.$cookie.get('uin')}`)
         appid = res.data[0].app_id
       }
       const rule = {
