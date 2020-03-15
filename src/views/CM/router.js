@@ -402,7 +402,7 @@ export default new Router({
     {
       path: '/CasegroupingDetails', //           实例分组详情
       name: 'CasegroupingDetails',
-      component: () => import( /* webpackChunkName: "strategy" */ './Casegrouping/details/details.vue'),
+      component: () => import( /* webpackChunkName: "CasegroupingDetails" */ './Casegrouping/details/details.vue'),
       meta: {
         keepAlive: true,
 
@@ -423,7 +423,7 @@ export default new Router({
       path: '/strategy/create', //    新增告警策略
       name: 'strategyCreate',
       component: () =>
-        import( /* webpackChunkName: "strategy" */ './strategy/components/create.vue'),
+        import( /* webpackChunkName: "strategyCreate" */ './strategy/components/create.vue'),
       meta: {
         keepAlive: true
       }
@@ -433,7 +433,7 @@ export default new Router({
       path: '/strategy/create:11111', //    新增告警策略默认点击按钮（详情），写死了，到时候可动态:id访问
       name: 'strategyCreateDetail',
       component: () =>
-        import( /* webpackChunkName: "strategy" */ './strategy/components/defaultDetail.vue'),
+        import( /* webpackChunkName: "strategyCreateDetail" */ './strategy/components/defaultDetail.vue'),
       meta: {
         keepAlive: true
       }
