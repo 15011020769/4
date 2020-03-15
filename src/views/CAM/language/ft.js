@@ -249,6 +249,7 @@ module.exports = {
       cdzf: '長度為8-32個字元',
       bhzf: '包含數字，特殊字元，小寫字母，大寫字母',
       mmbnyyhmxt: '密碼不能與當前用戶名相同',
+      xzyhz: '選擇用戶組',
     },
     userGroup: {
       title: '用戶組',
