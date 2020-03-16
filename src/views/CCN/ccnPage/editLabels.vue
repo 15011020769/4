@@ -113,11 +113,6 @@ export default {
             Version:'2018-08-13',
             Action:'ModifyResourceTags',
         }
-       
-        console.log(JSON.stringify(fnDel(delArrSure))!='{}')
-        console.log(JSON.stringify(fnEdit(addArr))!='{}')
-        console.log(JSON.stringify(fnEdit(editArrSure2))!="{}")
-        console.log(params)
         if(JSON.stringify(fnDel(delArrSure))!='{}'||JSON.stringify(fnEdit(addArr))!='{}'||JSON.stringify(fnEdit(editArrSure2))!="{}"){
             this.axios.post(EDIT_LABELS_JZ,params).then(res=>{
                 console.log(res)
@@ -247,7 +242,7 @@ export default {
               for (let i = 0; i < val.length; i++) {
                 setTimeout(() => {
                  for(let j = i+1; j<val.length;j++){
-                     if(val[i].Key==val[j].Key){
+                     if(val[i].Key===val[j].Key){
                              val[j].Key=''
                      }
                  }
