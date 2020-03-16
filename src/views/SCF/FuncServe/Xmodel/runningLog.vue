@@ -5,8 +5,7 @@
         <el-option v-for="item in ChoiceOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <TimeDropDown :TimeArr="TimeArr" :Datecontrol="true" :Graincontrol="false" :Difference="'H'"
-        v-on:switchData="GetDat" />
-      <el-button size="small" @click="_Reset" class="TimeDropDown">重置</el-button>
+        v-on:switchData="GetDat" v-on:_Reset="_Reset" />
       <el-input :placeholder="$t('SCF.total.qsrid')" v-model="requestId" @change="_search"></el-input>
       <el-button icon="el-icon-search" size="small" @click="_GetJournal"></el-button>
     </div>
@@ -100,7 +99,7 @@
   import {
     ErrorTips
   } from "@/components/ErrorTips";
-  import TimeDropDown from "@/components/public/TimeDropDown"; //引入时间组件
+  import TimeDropDown from "./TimeDropDown"; //引入时间组件
   export default {
     props: ["FunctionVersion"],
     data() {
@@ -205,6 +204,7 @@
         });
       },
       _Reset() {
+        this.ChoiceValue = ''
         this.requestId = ''
         this._GetJournal();
       },

@@ -55,48 +55,6 @@
           </el-tab-pane>
         </el-tabs>
       </div>
-      <div class="mainConListAll">
-        <div>
-          <el-row>
-            <el-col :span="8">
-              <div class="colDivThree">
-                <h1>{{$t('DDOS.Statistical_forms.Attack_distribution')}}</h1>
-                <p class="count">({{$t('DDOS.Statistical_forms.SettingB')}})</p>
-                <p
-                  v-if="traffictable.length === 0 "
-                  class="dataList"
-                >{{$t('DDOS.Statistical_forms.Nodate')}}</p>
-                <div id="chart-traffic"></div>
-                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="colDivThree">
-                <h1>{{$t('DDOS.Statistical_forms.Attack_pp_distribution')}}</h1>
-                <p class="count">({{$t('DDOS.Statistical_forms.Unit_packe')}})</p>
-                <p
-                  v-if="pkgtable.length === 0 "
-                  class="dataList"
-                >{{$t('DDOS.Statistical_forms.Nodate')}}</p>
-                <div id="chart-pkg"></div>
-                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
-              </div>
-            </el-col>
-            <el-col :span="8">
-              <div class="colDivThree">
-                <h1>{{$t('DDOS.Statistical_forms.Attack_typedistribution')}}</h1>
-                <p class="count">({{$t('DDOS.Statistical_forms.Unit_Times')}})</p>
-                <p
-                  v-if="numtable.length === 0 "
-                  class="dataList"
-                >{{$t('DDOS.Statistical_forms.Nodate')}}</p>
-                <div id="chart-num"></div>
-                <!-- <div class="dataList">{{$t('DDOS.Statistical_forms.Nodate')}}</div> -->
-              </div>
-            </el-col>
-          </el-row>
-        </div>
-      </div>
       <div class="mainConListAll mainConListFour">
         <h3>{{$t('DDOS.Statistical_forms.DDoS_details')}}</h3>
         <div class="ddosTableMin">
@@ -119,7 +77,7 @@
             </el-table-column>
             <el-table-column prop="attackAction" label="操作">
               <template slot-scope="scope">
-                <el-button type="text" size="small">攻擊包下載</el-button>
+                <!-- <el-button type="text" size="small">攻擊包下載</el-button> -->
                 <el-button type="text" size="small" @click="describeDDoS(scope.row, true)">攻擊詳情</el-button>
                 <el-button type="text" size="small" @click="describeDDoS(scope.row, false)">攻擊日誌</el-button>
               </template>
@@ -289,10 +247,10 @@ export default {
         this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
         this.describeDDoSNetTrend(this.timey);
         this.describeDDoSNetEvList();
-        for (let index in this.metricNames) {
-          this.metricName2 = this.metricNames[index];
-          this.describeDDoSNetCount();
-        }
+        // for (let index in this.metricNames) {
+        //   this.metricName2 = this.metricNames[index];
+        //   this.describeDDoSNetCount();
+        // }
         for (let i =0; i < this.btnData.length; i++) {
           this.btnData[i]['selected'] = false;
         }
@@ -393,10 +351,10 @@ export default {
       } else {
         this.describeDDoSNetTrend(this.timey);
       }
-      this.metricNames.forEach((name, i) => {
-        this.metricName2 = this.metricNames[i];
-        this.describeDDoSNetCount();
-      });
+      // this.metricNames.forEach((name, i) => {
+      //   this.metricName2 = this.metricNames[i];
+      //   this.describeDDoSNetCount();
+      // });
       this.describeDDoSNetEvList();
     },
     // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
@@ -481,7 +439,7 @@ export default {
           } else if (res.Response.MetricName == "num") {
             this.numtable = res.Response.Data;
           }
-          this.drawPie(res.Response.Data, res.Response.MetricName);
+          // this.drawPie(res.Response.Data, res.Response.MetricName);
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -808,10 +766,10 @@ export default {
       }
       this.dateChoice = [this.startTime, this.endTime]
       this.describeDDoSNetTrend(this.timey);
-      for (let index in this.metricNames) {
-        this.metricName2 = this.metricNames[index];
-        this.describeDDoSNetCount();
-      }
+      // for (let index in this.metricNames) {
+      //   this.metricName2 = this.metricNames[index];
+      //   this.describeDDoSNetCount();
+      // }
       this.describeDDoSNetEvList();
     },
     //时间按钮
@@ -948,7 +906,7 @@ export default {
             show: false
           },
           axisLabel: {
-            formatter: "{value}bps"
+            formatter: "{value}pps"
           },
           boundaryGap: true
         },
@@ -987,85 +945,85 @@ export default {
       });
     },
     // 画饼图
-    drawPie(datas, id) {
-      // datas.forEach(e => console.log('Key=' + e.Key +'***value=' + e.Value))
-      let legendDatas = [];
-      let seriesDatas = [];
-      let objData = {};
-      let edata = {};
-      let dw = "";
-      if (id === "traffic") {
-        dw = "B";
-      } else if (id === "pkg") {
-        dw = "packet";
-      } else if (id === "num") {
-        dw = "次";
-      }
-      datas.forEach((m, i) => {
-        // legendDatas[i] = m.Key + ':' + m.Value + dw
-        // objData[m.Key] = m.Value + dw
-        // console.log('objData = ' + objData.Value )
-        // seriesDatas[i] = objData
-      })
-      legendDatas = datas.filter(e => e.Key).map(e => e.Key)
-      seriesDatas = datas.filter(e => e.Value).map(e => e.Value)
-      let IDName = 'chart-' + id
-      let myChartPie = this.$echarts.init(document.getElementById(IDName))
-      myChartPie.setOption({
-        tooltip: {
-          trigger: "item",
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-          orient: "vertical",
-          bottom: "bottom",
-          data: seriesDatas,
-          // x 设置水平安放位置，默认全图居中，可选值：'center' ¦ 'left' ¦ 'right' ¦ {number}（x坐标，单位px）
-          x: "left",
-          // y 设置垂直安放位置，默认全图顶端，可选值：'top' ¦ 'bottom' ¦ 'center' ¦ {number}（y坐标，单位px）
-          y: "center",
-          itemWidth: 24, // 设置图例图形的宽
-          itemHeight: 18, // 设置图例图形的高
-          backgroundColor: "#fff" // 设置整个图例区域背景颜色
-        },
-        series: [
-          {
-            name: "",
-            type: "pie",
-            radius: "55%",
-            center: ["50%", "60%"],
-            data: seriesDatas,
-            itemStyle: {
-              emphasis: {
-                shadowBlur: 0,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)"
-              }
-            },
-            // 设置值域的那指向线
-            labelLine: {
-              normal: {
-                show: false // show设置线是否显示，默认为true，可选值：true ¦ false
-              }
-            },
-            // 设置值域的标签
-            label: {
-              normal: {
-                position: "inner", // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'
-                // formatter: '{a} {b} : {c}个 ({d}%)'   设置标签显示内容 ，默认显示{b}
-                // {a}指series.name  {b}指series.data的name
-                // {c}指series.data的value  {d}%指这一部分占总数的百分比
-                formatter: "{a} <br/>{b} : {c} ({d}%)"
-              }
-            }
-          }
-        ]
-      });
-      myChartPie.resize();
-      window.addEventListener("resize", function() {
-        myChartPie.resize();
-      });
-    },
+    // drawPie(datas, id) {
+    //   // datas.forEach(e => console.log('Key=' + e.Key +'***value=' + e.Value))
+    //   let legendDatas = [];
+    //   let seriesDatas = [];
+    //   let objData = {};
+    //   let edata = {};
+    //   let dw = "";
+    //   if (id === "traffic") {
+    //     dw = "B";
+    //   } else if (id === "pkg") {
+    //     dw = "packet";
+    //   } else if (id === "num") {
+    //     dw = "次";
+    //   }
+    //   datas.forEach((m, i) => {
+    //     // legendDatas[i] = m.Key + ':' + m.Value + dw
+    //     // objData[m.Key] = m.Value + dw
+    //     // console.log('objData = ' + objData.Value )
+    //     // seriesDatas[i] = objData
+    //   })
+    //   legendDatas = datas.filter(e => e.Key).map(e => e.Key)
+    //   seriesDatas = datas.filter(e => e.Value).map(e => e.Value)
+    //   let IDName = 'chart-' + id
+    //   let myChartPie = this.$echarts.init(document.getElementById(IDName))
+    //   myChartPie.setOption({
+    //     tooltip: {
+    //       trigger: "item",
+    //       formatter: "{a} <br/>{b} : {c} ({d}%)"
+    //     },
+    //     legend: {
+    //       orient: "vertical",
+    //       bottom: "bottom",
+    //       data: seriesDatas,
+    //       // x 设置水平安放位置，默认全图居中，可选值：'center' ¦ 'left' ¦ 'right' ¦ {number}（x坐标，单位px）
+    //       x: "left",
+    //       // y 设置垂直安放位置，默认全图顶端，可选值：'top' ¦ 'bottom' ¦ 'center' ¦ {number}（y坐标，单位px）
+    //       y: "center",
+    //       itemWidth: 24, // 设置图例图形的宽
+    //       itemHeight: 18, // 设置图例图形的高
+    //       backgroundColor: "#fff" // 设置整个图例区域背景颜色
+    //     },
+    //     series: [
+    //       {
+    //         name: "",
+    //         type: "pie",
+    //         radius: "55%",
+    //         center: ["50%", "60%"],
+    //         data: seriesDatas,
+    //         itemStyle: {
+    //           emphasis: {
+    //             shadowBlur: 0,
+    //             shadowOffsetX: 0,
+    //             shadowColor: "rgba(0, 0, 0, 0.5)"
+    //           }
+    //         },
+    //         // 设置值域的那指向线
+    //         labelLine: {
+    //           normal: {
+    //             show: false // show设置线是否显示，默认为true，可选值：true ¦ false
+    //           }
+    //         },
+    //         // 设置值域的标签
+    //         label: {
+    //           normal: {
+    //             position: "inner", // 设置标签位置，默认在饼状图外 可选值：'outer' ¦ 'inner（饼状图上）'
+    //             // formatter: '{a} {b} : {c}个 ({d}%)'   设置标签显示内容 ，默认显示{b}
+    //             // {a}指series.name  {b}指series.data的name
+    //             // {c}指series.data的value  {d}%指这一部分占总数的百分比
+    //             formatter: "{a} <br/>{b} : {c} ({d}%)"
+    //           }
+    //         }
+    //       }
+    //     ]
+    //   });
+    //   myChartPie.resize();
+    //   window.addEventListener("resize", function() {
+    //     myChartPie.resize();
+    //   });
+    // },
     // 获取持续时间
     durationDate(endTime, StartTime) {
       let durationTime = "";
@@ -1225,20 +1183,5 @@ export default {
   width: 100%;
   height: 380px;
   margin: 20px 0;
-}
-#chart-traffic {
-  width: 300px;
-  height: 300px;
-  margin: 0 0 0 150px;
-}
-#chart-pkg {
-  width: 300px;
-  height: 300px;
-  margin: 0 0 0 150px;
-}
-#chart-num {
-  width: 300px;
-  height: 300px;
-  margin: 0 0 0 150px;
 }
 </style>

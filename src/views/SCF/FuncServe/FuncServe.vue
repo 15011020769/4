@@ -75,7 +75,7 @@
     <!-- 设置命名空间模态框 -->
     <div>
       <el-dialog :title="$t('SCF.total.mmkjgl')" :visible.sync="SpaceVisible">
-        <el-table :data="SpaceListK">
+        <el-table :data="SpaceListK" v-loading='mmkjglshow'>
           <el-table-column :label="$t('SCF.total.mmkj')" width="250">
             <template slot-scope="$scope">
               <div v-if="$scope.row.disabled">
@@ -186,7 +186,8 @@
         DeleteVisible: false, //删除函数模态框
         FunctionName: '', //函数名字
         CopyVisible: false, //复制函数模态框
-        SpaceDate: {} //选择函数  单一数据
+        SpaceDate: {}, //选择函数  单一数据
+        mmkjglshow: true,
       }
     },
     components: {
@@ -272,6 +273,7 @@
                 })
               }
             });
+            this.mmkjglshow = false
           } else {
             let ErrTips = {
               'InvalidParameterValue.Filters': 'Filters參數錯誤',
@@ -315,6 +317,7 @@
       },
       //删除命名空间
       _deleteSpace(item, index) {
+        this.mmkjglshow = true
         this.SpaceListK.splice(index, 1);
         if (item.name !== '') {
           let param = {
@@ -324,7 +327,7 @@
           };
           this.axios.post(NAME_SPACE_DEL, param).then(res => {
             if (res.Response.Error == undefined) {
-              console.log('刪除成功')
+
             } else {
               let ErrTips = {
                 'FailedOperation.DeleteNamespace': '無法刪除預設Namespace',
@@ -332,7 +335,7 @@
                 'InvalidParameterValue': '參數取值錯誤',
                 'InvalidParameterValue.Namespace': 'Namespace參數傳入錯誤',
                 'InvalidParameterValue.NamespaceInvalid': '規則不正確，Namespace為英文字母、數字、-_ 符號組成，長度30',
-                'ResourceInUse.Namespace': 'Namespace已存在',
+                'ResourceInUse.Namespace': '命名空間下有函數存在，無法刪除',
                 'ResourceNotFound.Namespace': 'Namespace不存在',
                 'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
               }
@@ -343,6 +346,7 @@
                 showClose: true,
                 duration: 0
               });
+              this._GetSpaceList()
             }
           })
         }

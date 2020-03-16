@@ -29,7 +29,7 @@
           <div class="tke-step-item is-curr">
             <span class="num">1</span>
 
-            <span class="title">选择节点</span>
+            <span class="title">{{$t('TKE.colony.xzjd')}}</span>
 
             <i class="el-icon-arrow-right"></i>
           </div>
@@ -37,7 +37,7 @@
           <div class="tke-step-item" :class="{ 'is-curr': secondTab }">
             <span class="num">2</span>
 
-            <span class="title">云服务器配置</span>
+            <span class="title">{{$t('TKE.colony.yfwqpz')}}</span>
           </div>
         </div>
 
@@ -49,25 +49,25 @@
           <div class="flex">
             <div class="left-box">
               <p>
-                当前集群所在VPC（{{ VpcId }}）下有以下可用节点 共{{
+                {{$t('TKE.colony.dqjqsz')}}（{{ VpcId }}）{{$t('TKE.colony.yxkyjd')}}{{
                   leftList.length
-                }}项 已加载 {{ leftList.length }} 项
+                }}{{$t('TKE.colony.yjz')}} {{ leftList.length }} {{$t('TKE.colony.xiang')}}
               </p>
 
               <div class="search">
                 <el-input
-                  placeholder="请输入内容"
+                  :placeholder="$t('TKE.colony.qsrnr')"
                   v-model="searchInput"
                   class="input-with-select"
                 >
                   <el-select
                     v-model="selectList"
                     slot="prepend"
-                    placeholder="请选择"
+                    :placeholder="$t('TKE.overview.qxz')"
                   >
                     <el-option label="instanceId" value="1"></el-option>
 
-                    <el-option label="实例名" value="2"></el-option>
+                    <el-option :label="$t('TKE.colony.slm')" value="2"></el-option>
 
                     <el-option label="ip" value="3"></el-option>
                   </el-select>
@@ -97,7 +97,7 @@
                   >
                   </el-table-column>
 
-                  <el-table-column label="ID/节点名">
+                  <el-table-column :label="$t('TKE.colony.idjdm')">
                     <template slot-scope="scope">
                       <p>{{ scope.row.InstanceId }}</p>
 
@@ -121,14 +121,14 @@
               <i class="el-icon-arrow-right"></i>
             </div>
             <div class="right-box">
-              <p>已选择{{ rightList.length }}项</p>
+              <p>{{$t('TKE.colony.yxze')}}{{ rightList.length }}{{$t('TKE.colony.xiang')}}</p>
               <el-table
                 :data="rightList"
                 tooltip-effect="dark"
                 style="width: 430px;"
                 height="390"
               >
-                <el-table-column label="ID/节点名">
+                <el-table-column :label="$t('TKE.colony.idjdm')">
                   <template slot-scope="scope">
                     <p>
                       {{ scope.row.InstanceId }}
@@ -154,7 +154,7 @@
               </el-table>
             </div>
           </div>
-          <div v-if="selNode" class="select-node">请选择节点</div>
+          <div v-if="selNode" class="select-node">{{$t('TKE.colony.qxzjd')}}</div>
         </div>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -171,7 +171,7 @@
             label-width="120px"
             size="mini"
           >
-            <el-form-item label="已选节点">
+            <el-form-item :label="$t('TKE.colony.yxjd')">
               <div class="selected-node">
                 <p v-for="(item, index) in rightList" :key="index">
                   <a href="../cloudHost">{{ item.InstanceId }}</a
@@ -179,69 +179,69 @@
                 </p>
               </div>
               <span class="tke-tips"
-                >提示：以上节点需要重装系统，同时会将以上节点迁移至当前集群的新增资源所属项目下。注意：重装后，节点系统盘内的所有数据将被清除，恢复到初始状态；迁移项目后原安全组解绑，需要重新绑定安全组。</span
+                >{{$t('TKE.colony.tsbdaqz')}}</span
               >
             </el-form-item>
-            <el-form-item label="数据盘挂载" class="item-box">
+            <el-form-item :label="$t('TKE.colony.sjpgz')" class="item-box">
               <el-checkbox v-model="dataMountCheck"></el-checkbox>
               <!-- <input class="tke-checkbox" type="checkbox"/> -->
               <span style="color:#000;"
-                >自动格式化数据盘成ext4，仅对拥有一块数据盘的节点生效</span
+                >{{$t('TKE.colony.zdgshsjp')}}</span
               >
               <div v-if="dataMountCheck">
                 <el-input v-model="dataDiskMount"></el-input>
                 <p class="tke-tips">
-                  注意：已格式化的ext3，ext4，xfs文件系统的数据盘将直接挂载，其他文件系统或未格式化的数据盘将自动格式化为ext4并挂载
+                  {{$t('TKE.colony.zygshd')}}
                 </p>
                 <p class="tke-tips-ash">
-                  注意：无数据盘或有多块数据盘的云服务器的容器目录设置不生效。
+                  {{$t('TKE.colony.zywsj')}}
                 </p>
               </div>
             </el-form-item>
-            <el-form-item label="容器目录" class="item-box">
+            <el-form-item :label="$t('TKE.colony.rqml')" class="item-box">
               <el-checkbox v-model="containerListCheck"></el-checkbox>
               <span style="color:#000;"
-                >设置容器和镜像存储目录，建议存储到数据盘</span
+                >{{$t('TKE.colony.jyccdsjp')}}</span
               >
               <div v-if="containerListCheck">
                 <el-input v-model="containerList"></el-input>
               </div>
             </el-form-item>
             <hr />
-            <el-form-item label="新增资源所属项目">
+            <el-form-item :label="$t('TKE.colony.xzzyssxm')">
               <p style="color:#000;">{{ projectName }}</p>
               <span
-                >集群内新增的云服务器、负载均衡器等资源将会自动分配到该项目下。
+                >{{$t('TKE.colony.zyzdfpxm')}}
                 <!-- <a href="#">使用指引</a> -->
                 <!-- <i class="el-icon-edit-outline"></i> -->
               </span>
             </el-form-item>
             <el-form-item>
               <span slot="label"
-                >操作系统
+                >{{$t('TKE.colony.czxt')}}
                 <el-tooltip
                   effect="dark"
-                  content="操作系统为集群级别，您可以前往集群详情页进行修改，修改后新增或重装的节点将使用新的操作系统。"
+                  :content="$t('TKE.colony.xghsyxxt')"
                   placement="right"
                   ><i class="el-icon-info"></i> </el-tooltip
               ></span>
               <p style="color:#000;">Ubuntu Server 16.04.1 LTS 64bit</p>
             </el-form-item>
-            <el-form-item label="登录方式">
+            <el-form-item :label="$t('TKE.colony.dlfs')">
               <div class="tke-second-radio-btn">
                 <el-radio-group @change="changeType" v-model="loginType">
-                  <el-radio-button label="1">立即关联秘钥</el-radio-button>
-                  <el-radio-button label="2">自动生成密码</el-radio-button>
-                  <el-radio-button label="3">设置密码</el-radio-button>
+                  <el-radio-button label="1">{{$t('TKE.colony.ljglmy')}}</el-radio-button>
+                  <el-radio-button label="2">{{$t('TKE.colony.zdscmm')}}</el-radio-button>
+                  <el-radio-button label="3">{{$t('TKE.colony.szmm')}}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
-            <el-form-item label="用户名" v-if="joinPassWord">
+            <el-form-item :label="$t('TKE.overview.yhm')" v-if="joinPassWord">
               <p style="color:#000;">ubuntu</p>
             </el-form-item>
-            <el-form-item label="SSH密钥" v-if="joinPassWord">
+            <el-form-item :label="$t('TKE.colony.sshmy')" v-if="joinPassWord">
               <div class="tke-third-select">
-                <el-select placeholder="请选择" v-model="sshKeySel">
+                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="sshKeySel">
                   <el-option
                     v-for="item in sshKey"
                     :key="item.KeyId"
@@ -253,17 +253,17 @@
                 <i class="el-icon-refresh ml5"></i>
                 <!-- <a href="#">使用指引</a><i class="el-icon-edit-outline"></i> -->
                 <p>
-                  如您现有的密钥不合适，可以<a href="../sshkey">现在创建</a
+                  {{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a
                   ><i class="el-icon-edit-outline"></i>
                 </p>
               </div>
             </el-form-item>
-            <el-form-item label="用户名" v-if="setPassWord">
+            <el-form-item :label="$t('TKE.overview.yhm')" v-if="setPassWord">
               <p style="color:#000;">ubuntu</p>
             </el-form-item>
-            <el-form-item label="密码" v-if="setPassWord" class="password">
+            <el-form-item :label="$t('TKE.overview.mm')" v-if="setPassWord" class="password">
               <el-input
-                placeholder="请输入主机密码"
+                :placeholder="$t('TKE.colony.qsrzjmm')"
                 :class="{ 'cluster-wran': colonyThird.passwordWran }"
                 v-model="passwordVal"
                 @blur="PasswordInput(passwordVal)"
@@ -277,14 +277,14 @@
                 ><i class="el-icon-warning-outline ml5"></i>
               </el-tooltip>
               <p>
-                linux机器密码需8到16位，至少包括两项（[a-z,A-Z] ,
-                [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
+                linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] ,
+                [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符號）
               </p>
             </el-form-item>
             <el-form-item>
-              <span slot="label">安全组 <i class="el-icon-info"></i></span>
+              <span slot="label">{{$t('TKE.colony.aqz')}} <i class="el-icon-info"></i></span>
               <div class="tke-third-select" style="margin-bottom:6px;">
-                <el-select placeholder="请选择" v-model="securityGroupSel">
+                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="securityGroupSel">
                   <el-option
                     v-for="x in securityGroupOpt"
                     :key="x.label"
@@ -301,7 +301,7 @@
                 :key="index"
                 style="margin-bottom:6px;display: flex;align-items: center;"
               >
-                <el-select placeholder="请选择" v-model="item.securityGroupSel">
+                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="item.securityGroupSel">
                   <el-option
                     v-for="x in securityGroupOpt"
                     :key="x.value"
@@ -321,24 +321,24 @@
                   href="javascript:;"
                   @click="addExceptPrice"
                   v-if="itemArr.length < 9"
-                  >添加安全组</a
+                  >{{$t('TKE.colony.tjaqz')}}</a
                 >
               </p>
             </el-form-item>
-            <el-form-item label="安全加固">
-              <el-checkbox v-model="safetyCheck">免费开通</el-checkbox>
+            <el-form-item :label="$t('TKE.colony.aqjg')">
+              <el-checkbox v-model="safetyCheck">{{$t('TKE.colony.mfkt')}}</el-checkbox>
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                {{$t('TKE.colony.azzjmfkt')}}
                 <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
-            <el-form-item label="云监控">
-              <el-checkbox v-model="cloudMonitorCheck">免费开通</el-checkbox>
+            <el-form-item :label="$t('TKE.colony.yjk')">
+              <el-checkbox v-model="cloudMonitorCheck">{{$t('TKE.colony.mfkt')}}</el-checkbox>
               <p class="tke-tips-orange" v-if="!cloudMonitorCheck">
-                取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
+                {{$t('TKE.colony.qxgx')}}
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                {{$t('TKE.colony.mfktzj')}}
                 <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
@@ -352,26 +352,26 @@
                 type="text"
                 style="font-size:12px;"
                 @click="isActive = !isActive"
-                >高级设置</el-button
+                >{{$t('TKE.colony.gjszhi')}}</el-button
               >
             </p>
             <el-form-item v-show="isActive">
-              <span slot="label">自定义数据 <i class="el-icon-info"></i></span>
+              <span slot="label">{{$t('TKE.colony.zdysj')}} <i class="el-icon-info"></i></span>
               <el-input
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 4 }"
-                placeholder="可选，用于启动时配置实例，支持Shell格式，原始数据不能超过16KB"
+                :placeholder="$t('TKE.colony.kx')"
                 v-model="textarea2"
                 class="w420"
               >
               </el-input>
             </el-form-item>
 
-            <el-form-item label="封锁（cordon）" v-show="isActive">
-              <el-checkbox v-model="openBlockadeCheck">开启封锁</el-checkbox>
+            <el-form-item :label="$t('TKE.colony.fs')" v-show="isActive">
+              <el-checkbox v-model="openBlockadeCheck">{{$t('TKE.colony.kqfs')}}</el-checkbox>
               <el-form-item>
                 <p>
-                  封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点，或在自定义数据中执行
+                  {{$t('TKE.colony.fsjdh')}}
                   <!-- <a href="https://cloud.tencent.com/document/product/457/18824" target="_blank"
                     >取消封锁命令</a
                   ><i class="el-icon-edit-outline"></i> -->
@@ -401,10 +401,10 @@
               <el-form-item>
                 <el-button type="text" @click="addDomain2">新增Lable</el-button>
                 <p>
-                  标签名称只能包含字母、数字及分隔符("-"、"_"、"."、"/")，且必须以字母、数字开头和结尾
+                  {{$t('TKE.colony.yzmsjjw')}}
                 </p>
                 <p>
-                  标签值只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾
+                  {{$t('TKE.colony.ktjw')}}
                 </p>
               </el-form-item>
             </el-form-item>
@@ -492,7 +492,7 @@ export default {
       // 第三步
       colonyThird: {
         passwordWran: false,
-        passwordTips: "密码不能为空"
+        passwordTips: "密碼不能為空"
       }
     };
   },
@@ -526,18 +526,18 @@ export default {
         this.DataList();
       } else {
         let ErrTips = {
-          InternalError: "内部错误",
-          "InternalError.CamNoAuth": "没有权限。",
-          "InternalError.Db": "db错误。",
-          "InternalError.DbAffectivedRows": "DB错误",
+          InternalError: "內部錯誤",
+          "InternalError.CamNoAuth": "沒有權限。",
+          "InternalError.Db": "db錯誤。",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param。",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-          InvalidParameter: "参数错误",
-          "InvalidParameter.Param": "参数错误。",
-          LimitExceeded: "超过配额限制",
-          ResourceNotFound: "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制",
+          InvalidParameter: "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤",
+          LimitExceeded: "超過配額限制",
+          ResourceNotFound: "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -581,31 +581,31 @@ export default {
         } else {
           this.leftList = [];
           let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
-            "InternalError.AccountUserNotAuthenticate": "账户未通过认证。",
-            "InternalError.CreateMasterFailed": "创建集群失败。",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
+            FailedOperation: "操作失敗",
+            InternalError: "內部錯誤",
+            "InternalError.AccountUserNotAuthenticate": "帳戶未通過認證。",
+            "InternalError.CreateMasterFailed": "創建集群失敗。",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
             "InternalError.CvmNotFound": "cvm不存在。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DbRecordNotFound": "记录未找到。",
-            "InternalError.ImageIdNotFound": "镜像未找到。",
-            "InternalError.InitMasterFailed": "初始化master失败。",
-            "InternalError.InvalidPrivateNetworkCidr": "无效CIDR。",
-            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DbRecordNotFound": "記錄未找到。",
+            "InternalError.ImageIdNotFound": "映像未找到。",
+            "InternalError.InitMasterFailed": "初始化master失敗。",
+            "InternalError.InvalidPrivateNetworkCidr": "無效CIDR。",
+            "InternalError.OsNotSupport": "映像OS不支持。",
             "InternalError.Param": "Param。",
-            "InternalError.UnexceptedInternal	": "内部错误",
-            "InternalError.VpcCommon": "VPC报错。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制",
-            MissingParameter: "缺少参数错误",
-            ResourceInUse: "资源被占用",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用",
-            UnauthorizedOperation: "未授权操作",
-            UnknownParameter: "未知参数错误",
+            "InternalError.UnexceptedInternal	": "内部錯誤",
+            "InternalError.VpcCommon": "VPC報錯。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制",
+            MissingParameter: "缺少參數錯誤",
+            ResourceInUse: "資源被佔用",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不可用",
+            UnauthorizedOperation: "未授權操作",
+            UnknownParameter: "未知參數錯誤",
             UnsupportedOperation: "操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -624,7 +624,7 @@ export default {
           var arr = res.data;
           for (var i in arr) {
             if (this.projectId == 0) {
-              this.projectName = "默认项目";
+              this.projectName = "預設專案";
             } else {
               if (this.projectId === arr[i].projectId) {
                 this.projectName = arr[i].projectName;
@@ -634,8 +634,8 @@ export default {
           this.SecurityGroup();
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "内部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -768,10 +768,10 @@ export default {
     // 设置密码
     PasswordInput(val) {
       if (val == "") {
-        this.colonyThird.passwordTips = "密码不能为空";
+        this.colonyThird.passwordTips = "密碼不能為空";
         this.colonyThird.passwordWran = true;
       } else if (val.length <= 8 || val.length > 16) {
-        this.colonyThird.passwordTips = "密码必须为8到16位";
+        this.colonyThird.passwordTips = "密碼必須為8到16位";
         this.colonyThird.passwordWran = true;
       } else if (
         !/^(?![A-Z]+$)(?![a-z]+$)(?![0-9]+$)(?![/`!#$%^&*()-+=|{\\[\\]':;,.?}\/]+$)[\da-zA-Z0-9`!#$%^&*()-+=|{[\]':;,.?/}].{8,16}$/.test(
@@ -780,7 +780,7 @@ export default {
       ) {
         // ()`~!@#$%^&}*-+=|{}[]:;',.?/
         this.colonyThird.passwordTips =
-          "密码必须包含数字、字母、特殊字符中至少两项";
+          "密碼必須包含數字、字母、特殊字元中至少兩項";
         this.colonyThird.passwordWran = true;
       } else {
         this.colonyThird.passwordWran = false;
@@ -881,12 +881,12 @@ export default {
             });
           } else {
             let ErrTips = {
-              InternalError: "	内部错误",
-              "InternalError.Db": "	db错误。",
-              "InternalError.DbAffectivedRows": "	DB错误",
+              InternalError: "	内部錯誤",
+              "InternalError.Db": "	db錯誤。",
+              "InternalError.DbAffectivedRows": "	DB錯誤",
               "InternalError.Param": "	Param。",
-              InvalidParameter: "参数错误",
-              LimitExceeded: "	超过配额限制"
+              InvalidParameter: "參數錯誤",
+              LimitExceeded: "	超過配額限制"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

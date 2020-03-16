@@ -12,7 +12,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">新建节点</h2>
+          <h2 class="header-title">{{$t('TKE.colony.xjjd')}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -22,12 +22,12 @@
       <div class="tke-step tke-grid">
         <div class="tke-step-item is-curr">
           <span class="num">1</span>
-          <span class="title">集群信息</span>
+          <span class="title">{{$t('TKE.colony.jqxx')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div class="tke-step-item is-curr">
           <span class="num">2</span>
-          <span class="title">选择机型</span>
+          <span class="title">{{$t('TKE.colony.xzjx')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div
@@ -35,12 +35,12 @@
           :class="{ 'is-curr': thirdBox || fourthBox }"
         >
           <span class="num">3</span>
-          <span class="title">云服务器配置</span>
+          <span class="title">{{$t('TKE.colony.yfwqpz')}}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div class="tke-step-item" :class="{ 'is-curr': fourthBox }">
           <span class="num">4</span>
-          <span class="title">信息确认</span>
+          <span class="title">{{$t('TKE.colony.xxqr')}}</span>
         </div>
       </div>
       <hr />
@@ -49,14 +49,14 @@
         v-if="secondBox"
         class="tke-second-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form
           ref="form"
           :model="nodeForm"
           label-width="120px"
           label-position="left"
         >
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
@@ -65,11 +65,11 @@
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
+          <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>{{ nodeForm.container }}</p>
           </el-form-item>
           <div class="tke-second-tips">
-            <p>操作系统<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.czxt')}}<i class="el-icon-info"></i></p>
             <p>
               {{nodeForm.os}}
             </p>
@@ -78,13 +78,13 @@
             class="tke-second-tips"
             style="border: 0px;margin:0px;padding:0px;"
           >
-            <p>计费模式<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.jfms')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group
                 v-model="nodeForm.instanceChargeType"
                 @change="SecondCharging();costPrice()"
               >
-                <el-radio-button label="POSTPAID_BY_HOUR">按量计费</el-radio-button>
+                <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
                 <!-- <el-radio-button label="PREPAID">包年包月</el-radio-button> -->
               </el-radio-group>
               <!-- <a href="#">详细对比</a> -->
@@ -97,10 +97,10 @@
             class="tke-second-tips"
             style="border: 0px;margin:0px;padding-bottom:16px;"
           >
-            <p>可用区<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.kyq')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group v-model="nodeForm.charging">
-                <el-radio-button label="1">台北一区</el-radio-button>
+                <el-radio-button label="1">{{$t('TKE.colony.tbyq')}}</el-radio-button>
               </el-radio-group>
             </div>
           </div>
@@ -108,9 +108,9 @@
             class="tke-second-tips"
             style="border: 0px;margin:0px;padding-bottom:11px;"
           >
-            <p>节点网络<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.jdwl')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-worker-select">
-              <el-select v-model="nodeForm.groupVps" disabled placeholder="请选择">
+              <el-select v-model="nodeForm.groupVps" disabled :placeholder="$t('TKE.overview.qxz')">
                 <el-option
                   v-for="item in nodeForm.describeVpcs"
                   :key="item.VpcId"
@@ -119,7 +119,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="nodeForm.subnetId" placeholder="请选择">
+              <el-select v-model="nodeForm.subnetId" :placeholder="$t('TKE.overview.qxz')">
                 <el-option
                   v-for="item in nodeForm.subNetList"
                   :key="item.SubnetId"
@@ -130,9 +130,9 @@
               </el-select>
             </div>
           </div>
-          <el-form-item label="CPU&内存">
+          <el-form-item :label="$t('TKE.colony.cpunc')">
             <div class="tke-second-radio-btn tke-second-icon-btn">
-              <el-select v-model="nodeForm.cpu" placeholder="请选择" @change="getFilterZoneList()">
+              <el-select v-model="nodeForm.cpu" :placeholder="$t('TKE.overview.qxz')" @change="getFilterZoneList()">
                 <el-option
                   v-for="item in nodeForm.AllCPU"
                   :key="item.value"
@@ -141,7 +141,7 @@
                 >
                 </el-option>
               </el-select>
-              <el-select v-model="nodeForm.memory" placeholder="请选择" @change="getFilterZoneList()">
+              <el-select v-model="nodeForm.memory" :placeholder="$t('TKE.overview.qxz')" @change="getFilterZoneList()">
                 <el-option
                   v-for="item in nodeForm.AllRAM"
                   :key="item.value"
@@ -152,23 +152,23 @@
               </el-select>
             </div>
           </el-form-item>
-          <el-form-item label="实例族">
+          <el-form-item :label="$t('TKE.colony.slz')">
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group v-model="nodeForm.example" @change="getFilterZoneList()">
-                <el-radio-button label="all">全部实例族</el-radio-button>
-                <el-radio-button label="S3">标准型</el-radio-button>
-                <el-radio-button label="M3">内存型</el-radio-button>
-                <el-radio-button label="C3">计算型</el-radio-button>
+                <el-radio-button label="all">{{$t('TKE.colony.qbslz')}}</el-radio-button>
+                <el-radio-button label="S3">{{$t('TKE.colony.bzx')}}</el-radio-button>
+                <el-radio-button label="M3">{{$t('TKE.colony.ncx')}}</el-radio-button>
+                <el-radio-button label="C3">{{$t('TKE.colony.jsx')}}</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item label="实例类型">
+          <el-form-item :label="$t('TKE.colony.sllx')">
             <div class="tke-second-radio-btn tke-second-icon-btn">
               <el-radio-group v-model="nodeForm.exampleType" @change="getFilterZoneList()">
-                <el-radio-button label="all">全部实例类型</el-radio-button>
-                <el-radio-button label="S3" v-show="nodeForm.example === 'all' || nodeForm.example === 'S3'">标准型S3</el-radio-button>
-                <el-radio-button label="C3" v-show="nodeForm.example === 'all' || nodeForm.example === 'M3'">计算型C3</el-radio-button>
-                <el-radio-button label="M3" v-show="nodeForm.example === 'all' || nodeForm.example === 'C3'">内存型M3</el-radio-button>
+                <el-radio-button label="all">{{$t('TKE.colony.qbsllx')}}</el-radio-button>
+                <el-radio-button label="S3" v-show="nodeForm.example === 'all' || nodeForm.example === 'S3'">{{$t('TKE.colony.bzx')}}S3</el-radio-button>
+                <el-radio-button label="C3" v-show="nodeForm.example === 'all' || nodeForm.example === 'M3'">{{$t('TKE.colony.jsx')}}C3</el-radio-button>
+                <el-radio-button label="M3" v-show="nodeForm.example === 'all' || nodeForm.example === 'C3'">{{$t('TKE.colony.ncx')}}M3</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -188,12 +188,12 @@
                     ></el-radio>
                   </template>
                 </el-table-column>
-                <el-table-column property="date" label="机型">
+                <el-table-column property="date" :label="$t('TKE.colony.jxing')">
                   <template slot-scope="scope">
                     <span>{{scope.row.TypeName | ModelTypeName}}</span>
                   </template>
                 </el-table-column>
-                <el-table-column property="name" label="规格">
+                <el-table-column property="name" :label="$t('TKE.colony.gg')">
                   <template slot-scope="scope">
                     <span>{{scope.row.InstanceType}}</span>
                   </template>
@@ -203,16 +203,16 @@
                     <span>{{scope.row.Cpu}}核</span>
                   </template>
                 </el-table-column>
-                <el-table-column property="address" label="内存">
+                <el-table-column property="address" :label="$t('TKE.overview.nc')">
                   <template slot-scope="scope">
                     <span>{{scope.row.Memory}}GB</span>
                   </template>
                 </el-table-column>
-                <el-table-column property="address" label="配置费用">
+                <el-table-column property="address" :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
                     <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">￥{{ scope.row.Price.UnitPrice }}</span>
                     <span class="text-orange" style="color:#ff7800;" v-else>￥{{ scope.row.Price.DiscountPrice }}</span>
-                    元/{{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小时' : '月'}}起
+                    元/{{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小時' : '月'}}起
                   </template>
                 </el-table-column>
               </el-table>
@@ -231,7 +231,7 @@
         v-if="thirdBox"
         class="tke-second-box tke-third-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form
           ref="nodeForm"
           :model="nodeForm"
@@ -239,7 +239,7 @@
           label-position="left"
           :rules="rules"
         >
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
@@ -248,29 +248,29 @@
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
+          <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>{{ nodeForm.container }}</p>
           </el-form-item>
-          <el-form-item label="计费模式">
+          <el-form-item :label="$t('TKE.colony.jfms')">
             <p>{{nodeForm.instanceChargeType | instanceChargeType}}</p>
           </el-form-item>
           <div class="tke-second-tips tke-third-tips-h">
-            <p>操作系统<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.czxt')}}<i class="el-icon-info"></i></p>
             <p>
               {{nodeForm.os}}
             </p>
           </div>
-          <el-form-item label="机型">
+          <el-form-item :label="$t('TKE.colony.jxing')">
             <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
           </el-form-item>
-          <el-form-item label="规格" class="norms">
+          <el-form-item :label="$t('TKE.colony.gg')" class="norms">
             <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
           </el-form-item>
-          <el-form-item label="系统盘">
+          <el-form-item :label="$t('TKE.colony.xtp')">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.systemDiskType" @change="changeSyetemType">
-                <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
-                <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
+                <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
+                <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
               </el-radio-group>
               <div class="block">
                 <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input @change="changeSyetem"></el-slider>
@@ -278,31 +278,31 @@
             </div>
           </el-form-item>
           <div class="tke-second-tips tke-third-tips-h">
-            <p>数据盘</p>
+            <p>{{$t('TKE.colony.sjp')}}</p>
             <div class="data-disk">
               <el-checkbox v-model="nodeForm.isShowDataDisk" @change="isBuyDataDisk"
-                >购买数据盘</el-checkbox
+                >{{$t('TKE.colony.gmsjp')}}</el-checkbox
               >
             </div>
             <div v-if="nodeForm.dataDiskShow" style="margin: 0 120px;background-color: #f2f2f2;" class="tke-second-radio-btn tke-third-radio-btn">
               <div>
                 <div v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i" style="display: flex;"><!--v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i"-->
                   <div style="flex: 1;">
-                    <el-form-item label="数据盘类型" class="norms" style="padding-left: 10px;" >
+                    <el-form-item :label="$t('TKE.colony.sjplx')" class="norms" style="padding-left: 10px;" >
                       <el-radio-group v-model="item.dataDiskType" @change="changeDataDiskType">
-                        <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
-                        <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
+                        <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
+                        <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
                       <div class="block">
                         <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize" show-input @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
-                    <el-form-item label="格式化设置" class="norms" style="padding-left: 10px;">
+                    <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
                       <el-checkbox v-model="item.fomatAndMount" @change="isFomatMount">
-                        格式化并挂载          
+                        {{$t('TKE.colony.gshbgz')}}          
                       </el-checkbox>
                       <div v-if="item.fomatAndMount" style="display: flex;">
-                        <el-select v-model="item.fileSystem" placeholder="请选择" style="padding-right: 10px;">
+                        <el-select v-model="item.fileSystem" :placeholder="$t('TKE.overview.qxz')" style="padding-right: 10px;">
                           <el-option
                             v-for="item in nodeForm.latticeSetOpt"
                             :key="item.value"
@@ -311,7 +311,7 @@
                           >
                           </el-option>
                         </el-select>
-                        <el-input v-model="item.filePath" placeholder="请输入挂载路径"></el-input>
+                        <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
                       </div>
                     </el-form-item>
                   </div>
@@ -328,26 +328,26 @@
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
               >
-                <el-button @click="AddDataDisk()" style="color: #006eff;">添加数据盘</el-button> 
+                <el-button @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button> 
               </div>
             </div>
           </div>
-          <el-form-item label="容器目录" v-if="nodeForm.dataDiskShow">
+          <el-form-item :label="$t('TKE.colony.rqml')" v-if="nodeForm.dataDiskShow">
             <el-checkbox v-model="nodeForm.containerChecked"
-              >设置容器和镜像存储目录，建议存储到数据盘</el-checkbox
+              >{{$t('TKE.colony.jyccdsjp')}}</el-checkbox
             >
             <el-input
               v-model="nodeForm.containerInput"
-              placeholder="容器目录格式如 /var/lib/docker"
+              :placeholder="$t('TKE.colony.rqmlgs')"
               v-if="nodeForm.containerChecked"
               prop="container"
             ></el-input>
           </el-form-item>
           <div class="tke-second-tips tke-third-broadband">
-            <p>公网宽带<i class="el-icon-info"></i></p>
+            <p>{{$t('TKE.colony.gwdk')}}<i class="el-icon-info"></i></p>
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.internetChargeType" @change="changeInternetType">
-                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">按带宽计费</el-radio-button>
+                <el-radio-button label="BANDWIDTH_POSTPAID_BY_HOUR">{{$t('TKE.colony.adkjf')}}</el-radio-button>
                 <el-radio-button label="TRAFFIC_POSTPAID_BY_HOUR">按使用流量</el-radio-button>
               </el-radio-group>
               <div style="overflow:hidden;margin-left:120px;">
@@ -357,57 +357,57 @@
                 </div>
                 <div class="data-disk">
                   <p v-show="nodeForm.internetMaxBandwidthOut === 0">
-                    您设置的带宽为0，容器服务将无法直接提供外网服务
+                    {{$t('TKE.colony.nszkd')}}
                   </p>
                   <el-checkbox v-model="nodeForm.publicIpAssigned" :disabled = "nodeForm.disabled"
-                    >免费分配公网IP
+                    >{{$t('TKE.colony.mffpgw')}}
                     <!-- <a href="javascript:;">使用指引</a> -->
                   </el-checkbox>
                   <p v-show="nodeForm.internetMaxBandwidthOut === 0 || nodeForm.publicIpAssigned === false">
-                    如果您对业务安全有要求不希望业务直接暴露到公网，同时又希望访问公网，您可以使用腾讯云NAT网关,点击查看
+                    {{$t('TKE.colony.ywyq')}}
                     <!-- <a href="javascript:;">NAT网关详细介绍</a> -->
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          <el-form-item label="实例名称">
+          <el-form-item :label="$t('TKE.colony.slmc')">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.instanceNameType">
-                <el-radio-button label="auto">自动命名</el-radio-button>
-                <el-radio-button label="manual">手动命名</el-radio-button>
+                <el-radio-button label="auto">{{$t('TKE.colony.zdmm')}}</el-radio-button>
+                <el-radio-button label="manual">{{$t('TKE.colony.sdmm')}}</el-radio-button>
               </el-radio-group>
-              <p v-show="nodeForm.instanceNameType === 'auto'">云服务器将自动命名为 tke_集群id_worker</p>
+              <p v-show="nodeForm.instanceNameType === 'auto'">{{$t('TKE.colony.yfwqjzdmm')}}</p>
             </div>
           </el-form-item>
           <el-form-item v-show="nodeForm.instanceNameType === 'manual'" style="margin-top: 20px;">
-            <el-input type="text" v-model="nodeForm.instanceName" placeholder="请输入内容" @blur="nameManual(nodeForm.instanceName)" ></el-input>
-            <p>实例名称不超过60个字符</p>
+            <el-input type="text" v-model="nodeForm.instanceName" :placeholder="$t('TKE.colony.qsrnr')" @blur="nameManual(nodeForm.instanceName)" ></el-input>
+            <p>{{$t('TKE.colony.slmcbcg')}}</p>
           </el-form-item>
-          <el-form-item label="登录方式">
+          <el-form-item :label="$t('TKE.colony.dlfs')">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group
                 v-model="nodeForm.loginSettings"
                 @change="LoginMode"
               >
-                <el-radio-button label="relation">立即关联密钥</el-radio-button>
-                <el-radio-button label="auto">自动生成密码</el-radio-button>
-                <el-radio-button label="set">设置密码</el-radio-button>
+                <el-radio-button label="relation">{{$t('TKE.colony.ljglmy')}}</el-radio-button>
+                <el-radio-button label="auto">{{$t('TKE.colony.zdscmm')}}</el-radio-button>
+                <el-radio-button label="set">{{$t('TKE.colony.szmm')}}</el-radio-button>
               </el-radio-group>
               <p v-if="nodeForm.loginSettings === 'auto'">
-                注：创建后，自动生成的密码将通过站内信发送给您。也可登录CVM控制台重置密码。
+                {{$t('TKE.colony.czmm')}}
               </p>
             </div>
           </el-form-item>
           <el-form-item
-            label="用户名"
+            :label="$t('TKE.overview.yhm')"
             v-if="nodeForm.loginSettings === 'relation' || nodeForm.loginSettings === 'set'"
           >
             <p>ubuntu</p>
           </el-form-item>
-          <el-form-item label="SSH密钥" v-if="nodeForm.loginSettings === 'relation'">
+          <el-form-item :label="$t('TKE.colony.sshmy')" v-if="nodeForm.loginSettings === 'relation'">
             <div class="tke-third-select">
-              <el-select v-model="nodeForm.keyIds" placeholder="请选择">
+              <el-select v-model="nodeForm.keyIds" :placeholder="$t('TKE.overview.qxz')">
                 <el-option
                   v-for="item in nodeForm.secretList"
                   :key="item.KeyId"
@@ -416,36 +416,36 @@
                 >
                 </el-option>
               </el-select>
-              <p>如您现有的密钥不合适，可以<a href="#">现在创建</a></p>
+              <p>{{$t('TKE.colony.mybhs')}}<a href="#">{{$t('TKE.colony.xzcj')}}</a></p>
             </div>
           </el-form-item>
-          <el-form-item label="密码" v-if="nodeForm.loginSettings === 'set'" class="password">
+          <el-form-item :label="$t('TKE.overview.mm')" v-if="nodeForm.loginSettings === 'set'" class="password">
             <el-input
-              placeholder="请输入主机密码"
+              :placeholder="$t('TKE.colony.qsrzjmm')"
               v-model="nodeForm.password"
               @blur="PasswordInput(nodeForm.password)"
               show-password
             ></el-input>
             <p>
-              linux机器密码需8到16位，至少包括两项（[a-z,A-Z] ,
-              [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符号）
+              linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] ,
+              [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符號）
             </p>
           </el-form-item>
           <el-form-item
-            label="确认密码"
+            :label="$t('TKE.colony.qrmm')"
             v-if="nodeForm.loginSettings === 'set'"
             class="password"
           >
             <el-input
-              placeholder="请输入主机密码"
+              :placeholder="$t('TKE.colony.qsrzjmm')"
               v-model="nodeForm.confirmPassword"
               @blur="confirmPasswordInput(nodeForm.confirmPassword)"
               show-password
             ></el-input>
           </el-form-item>
           <div class="tke-third-tips">
-            <p>安全组<el-tooltip
-                content="安全组具有防火墙功能，用于设置云服务器 CVM 的网络访问控制"
+            <p>{{$t('TKE.colony.aqz')}}<el-tooltip
+                :content="$t('TKE.colony.aqzyfhqgn')"
                 placement="right"
                 effect="light"
                 ><i class="el-icon-info ml5"></i
@@ -453,7 +453,7 @@
 
             <div class="input-box">
               <el-select
-                placeholder="请选择安全组"
+                :placeholder="$t('TKE.colony.qxzaqz')"
                 v-model="nodeForm.securityId"
               >
                 <el-option
@@ -468,7 +468,7 @@
               <div v-for="(item, index) in nodeForm.safeArr" :key="index">
                 <div>
                   <el-select
-                    placeholder="请选择安全组"
+                    :placeholder="$t('TKE.colony.qxzaqz')"
                     v-model="item.securityId"
                   >
                     <el-option
@@ -486,30 +486,30 @@
                   ></i>
                 </div>
               </div>
-              <p @click="AddSafe" style="color:blue;">添加安全组</p>
+              <p @click="AddSafe" style="color:blue;">{{$t('TKE.colony.tjaqz')}}</p>
             </div>
           </div>
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
               <el-checkbox v-model="nodeForm.securityService"
-                >免费开通</el-checkbox
+                >{{$t('TKE.colony.mfkt')}}</el-checkbox
               >
               <p>
-                安装组件免费开通DDoS防护、WAF和云镜主机防护
+                {{$t('TKE.colony.azzjmfkt')}}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="云监控">
+          <el-form-item :label="$t('TKE.colony.yjk')">
             <div class="tke-third-checkbox">
               <el-checkbox v-model="nodeForm.monitorService"
-                >免费开通</el-checkbox
+                >{{$t('TKE.colony.mfkt')}}</el-checkbox
               >
               <p class="checkbox-tips" v-if="!nodeForm.monitorService">
-                取消勾选将无法获得集群、主机、容器等相关监控信息及告警等能力，请慎重选择
+                {{$t('TKE.colony.qxgx')}}
               </p>
               <p>
-                免费开通云产品监控、分析和实施告警，安装组件获取主机监控指标
+                {{$t('TKE.colony.mfktzj')}}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
@@ -528,9 +528,9 @@
         v-if="fourthBox"
         class="tke-second-box tke-fourth-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">已选配置</div>
+        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
         <el-form ref="form" label-width="120px" label-position="left">
-          <el-form-item label="集群名">
+          <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ nodeForm.name }}</p>
           </el-form-item>
           <el-form-item label="Kubernetes版本">
@@ -539,40 +539,40 @@
           <el-form-item label="所在地域">
             <p>{{ nodeForm.cityRadio }}</p>
           </el-form-item>
-          <el-form-item label="容器网络">
-            <p>{{ nodeForm.container }}, {{clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}个service/集群, {{clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}个Pod/节点, 上限1008个节点</p>
+          <el-form-item :label="$t('TKE.colony.rqwl')">
+            <p>{{ nodeForm.container }}, {{clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}{{$t('TKE.overview.ge')}}service/集群, {{clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}{{$t('TKE.colony.sxjd')}}</p>
           </el-form-item>
-          <el-form-item label="计费模式">
+          <el-form-item :label="$t('TKE.colony.jfms')">
             <p>{{nodeForm.instanceChargeType | instanceChargeType}}</p>
           </el-form-item>
-          <el-form-item label="机型">
+          <el-form-item :label="$t('TKE.colony.jxing')">
             <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
           </el-form-item>
-          <el-form-item label="规格">
+          <el-form-item :label="$t('TKE.colony.gg')">
             <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
           </el-form-item>
-          <el-form-item label="操作系统">
+          <el-form-item :label="$t('TKE.colony.czxt')">
             {{nodeForm.os}}
           </el-form-item>
-          <el-form-item label="系统盘">
+          <el-form-item :label="$t('TKE.colony.xtp')">
             <p>{{nodeForm.systemDiskType | systemDiskType}} ({{nodeForm.systemSize}}GB)</p>
           </el-form-item>
-          <el-form-item label="数据盘">
-            <p v-if="!nodeForm.isShowDataDisk">暂不购买</p>
+          <el-form-item :label="$t('TKE.colony.sjp')">
+            <p v-if="!nodeForm.isShowDataDisk">{{$t('TKE.colony.zbgm')}}</p>
             <p v-else>{{nodeForm.buyDataDiskArr | buyDataDiskArr}}</p>
             
           </el-form-item>
-          <el-form-item label="公网带宽" class="tke-fourth-broadband">
+          <el-form-item :label="$t('TKE.colony.gwdk')" class="tke-fourth-broadband">
             <p>{{nodeForm.internetChargeType | internetChargeType}} ({{nodeForm.internetMaxBandwidthOut}}Mbps)</p>
           </el-form-item>
-          <el-form-item label="云服务器数量" class="cvm-num" v-if="nodeForm.instanceChargeType === 'PREPAID'">
+          <el-form-item :label="$t('TKE.colony.yfwqsl')" class="cvm-num" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="10" @change="costPrice"></el-input-number>
           </el-form-item>
-          <el-form-item label="云服务器数量" class="cvm-num" v-else>
+          <el-form-item :label="$t('TKE.colony.yfwqsl')" class="cvm-num" v-else>
             <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="1" @change="costPrice"></el-input-number>
           </el-form-item>
           <el-form-item
-            label="购买时长"
+            :label="$t('TKE.colony.gmsc')"
             v-if="nodeForm.instanceChargeType === 'PREPAID' "
             class="tke-second-radio-time"
           >
@@ -581,24 +581,24 @@
                 v-model="nodeForm.buyTime"
                 @change="BuyTime"
               >
-                <el-radio-button label="1">1个月</el-radio-button>
-                <el-radio-button label="2">2个月</el-radio-button>
-                <el-radio-button label="3">3个月</el-radio-button>
-                <el-radio-button label="4">6个月</el-radio-button>
+                <el-radio-button label="1">1{{$t('TKE.colony.gy')}}</el-radio-button>
+                <el-radio-button label="2">2{{$t('TKE.colony.gy')}}</el-radio-button>
+                <el-radio-button label="3">3{{$t('TKE.colony.gy')}}</el-radio-button>
+                <el-radio-button label="4">6{{$t('TKE.colony.gy')}}</el-radio-button>
                 <el-radio-button label="12">1年</el-radio-button>
                 <el-radio-button label="24">2年</el-radio-button>
                 <el-radio-button label="36">3年</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item label="自动续费" v-if="nodeForm.instanceChargeType === 'PREPAID'">
+          <el-form-item :label="$t('TKE.colony.zdxf')" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <div class="tke-second-checkbox">
               <el-checkbox v-model="nodeForm.renew"
-                >账户余额足够时，设备到期后按月自动续费</el-checkbox
+                >{{$t('TKE.colony.zhyezg')}}</el-checkbox
               >
             </div>
           </el-form-item>
-          <el-form-item label="总计费用" v-if="nodeForm.instanceChargeType === 'PREPAID'">
+          <el-form-item :label="$t('TKE.colony.zjfy')" v-if="nodeForm.instanceChargeType === 'PREPAID'">
             <div class="tke-second-cost">
               <span class="tke-second-cost-num">{{nodeForm.totalPrice}}</span
               ><span class="tke-second-cost-h">元</span
@@ -606,15 +606,15 @@
             
             </div>
           </el-form-item>
-          <el-form-item label="总计费用" v-else>
+          <el-form-item :label="$t('TKE.colony.zjfy')" v-else>
             <div class="tke-second-cost">
               <span class="tke-second-cost-num">{{nodeForm.allocationCost}}</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-t">(配置费用)</span>
+              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+              ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
               <i>|</i>
               <span class="tke-second-cost-num">{{nodeForm.networkCost}}</span
-              ><span class="tke-second-cost-h">元/小时</span
-              ><span class="tke-second-cost-w"> (网络费用-按带宽计费)</span>
+              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
+              ><span class="tke-second-cost-w"> {{$t('TKE.colony.wlfy')}}</span>
             </div>
           </el-form-item>
         </el-form>
@@ -659,7 +659,7 @@ export default {
       nodeForm: {
         name: "", // 集群名称
         kuValue: "", // 版本
-        cityRadio: "台湾台北",//区域
+        cityRadio: "台灣台北",//区域
         container: "",//容器网络
         os:'',//操作系统
         clusterVersion: {},//kubernetes版本
@@ -687,11 +687,11 @@ export default {
         dataDiskOptions: [
           {
             value: "CLOUD_PREMIUM",
-            label: "高性能云硬盘"
+            label: "高性能雲硬碟"
           },
           {
             value: "CLOUD_SSD",
-            label: "SSD云硬盘"
+            label: "SSD雲硬碟"
           }
         ], 
         latticeSetOpt: [
@@ -777,7 +777,7 @@ export default {
         AllRAM: [
           {
             value: "all",
-            label: "全部内存"
+            label: "全部記憶體"
           },
           {
             value: 1,
@@ -861,7 +861,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (this.nodeForm.containerChecked && value === '') {
-                callback(new Error('容器目录不能为空'))
+                callback(new Error('容器目錄不能為空'))
               } else {
                 callback()
               }
@@ -1002,18 +1002,18 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          "InternalError": "内部错误",
-          "InternalError.CamNoAuth": "没有权限。",
-          "InternalError.Db": "db错误。",
-          "InternalError.DbAffectivedRows": "DB错误",
+          "InternalError": "内部錯誤",
+          "InternalError.CamNoAuth": "沒有權限。",
+          "InternalError.Db": "db錯誤。",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param。",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-          "InvalidParameter": "参数错误",
-          "InvalidParameter.Param": "参数错误。",
-          "LimitExceeded": "超过配额限制",
-          "ResourceNotFound": "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+          "InvalidParameter": "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤",
+          "LimitExceeded": "超過配額限制。",
+          "ResourceNotFound": "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -1040,8 +1040,8 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "InvalidInstanceType.Malformed": "指定InstanceType参数格式不合法",
-            "InvalidRegion.NotFound": "未找到该区域",
+            "InvalidInstanceType.Malformed": "指定InstanceType參數格式不合法",
+            "InvalidRegion.NotFound": "未找到該區域",
             "InvalidZone.MismatchRegion": "指定的zone不存在",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1324,7 +1324,7 @@ export default {
     PasswordInput(val) {
       if (val == "") {
         this.$message({
-          message: "密码不能为空",
+          message: "密碼不能為空",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1332,7 +1332,7 @@ export default {
         this.nodeForm.isShowathirdNext = true;
       } else if (val.length < 8 || val.length > 16) {
         this.$message({
-          message: "密码必须为8到16位",
+          message: "密碼必須為8到16位",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1344,7 +1344,7 @@ export default {
         )
       ) {
         this.$message({
-          message: "密码必须包含数字、字母、特殊字符中至少两项",
+          message: "密碼必須包含數字、字母、特殊字元中至少兩項",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1358,7 +1358,7 @@ export default {
     confirmPasswordInput(val) {
       if(this.nodeForm.password !== val) {
         this.$message({
-          message: "两次输入端密码不一致",
+          message: "兩次輸入端密碼不一致",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1372,7 +1372,7 @@ export default {
     nameManual(val) {
       if(val === '') {
         this.$message({
-          message: "实例名称不能为空",
+          message: "實例名稱不能為空",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1380,7 +1380,7 @@ export default {
         this.nodeForm.isShowathirdNext = true;
       } else if (val.length > 60) {
         this.$message({
-          message: "实例名称长度不能超过60个字符",
+          message: "實例名稱長度不能超過60個字元",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1515,7 +1515,7 @@ export default {
       await this.axios.post(TKE_ADD_NODE, param).then(res => {
         if(res.Response.Error === undefined) {
           this.$message({
-            message: "创建成功",
+            message: "創建成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -1525,30 +1525,30 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "FailedOperation":"操作失败",
-            "InternalError": "内部错误",
-            "InternalError.CvmCommon": "cvm创建节点报错。",
+            "FailedOperation":"操作失敗",
+            "InternalError": "内部錯誤",
+            "InternalError.CvmCommon": "cvm創建節點報錯。",
             "InternalError.CvmNotFound": "cvm不存在。",
-            "InternalError.Db": "db错误。",
-            "InternalError.DbAffectivedRows": "DB错误",
-            "InternalError.DbRecordNotFound": "记录未找到。",
-            "InternalError.ImageIdNotFound": "镜像未找到。",
-            "InternalError.OsNotSupport": "镜像OS不支持。",
+            "InternalError.Db": "db錯誤。",
+            "InternalError.DbAffectivedRows": "DB錯誤",
+            "InternalError.DbRecordNotFound": "記錄未找到。",
+            "InternalError.ImageIdNotFound": "映像未找到。",
+            "InternalError.OsNotSupport": "映像OS不支持。",
             "InternalError.Param": "Param。",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-            "InternalError.QuotaMaxNodLimit":"超过配额限制。",
-            "InternalError.QuotaMaxRtLimit":"超过配额限制。",
-            "InternalError.UnexceptedInternal":"内部错误",
-            "InternalError.VpcCommon":"VPC报错。",
-            "InternalError.VpcPeerNotFound":"对等连接不存在。",
-            "InternalError.VpcRecodrNotFound": "未发现vpc记录。",
-            "InvalidParameter": "参数错误",
-            "MissingParameter":"缺少参数错误",
-            "ResourceInUse":"资源被占用",
-            "ResourceNotFound":	"资源不存在",
-            "ResourceUnavailable":	"资源不可用",
-            "UnauthorizedOperation":"未授权操作",
-            "UnknownParameter": "未知参数错误",
+            "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+            "InternalError.QuotaMaxNodLimit":"超過配額限制。",
+            "InternalError.QuotaMaxRtLimit":"超過配額限制。",
+            "InternalError.UnexceptedInternal":"内部錯誤",
+            "InternalError.VpcCommon":"VPC報錯。",
+            "InternalError.VpcPeerNotFound":"對等連接不存在。",
+            "InternalError.VpcRecodrNotFound": "未發現vpc記錄。",
+            "InvalidParameter": "參數錯誤",
+            "MissingParameter":"缺少參數錯誤",
+            "ResourceInUse":"資源被佔用",
+            "ResourceNotFound":	"資源不存在",
+            "ResourceUnavailable":	"資源不可用",
+            "UnauthorizedOperation":"未授權操作",
+            "UnknownParameter": "未知參數錯誤",
             "UnsupportedOperation": "操作不支持"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1606,29 +1606,29 @@ export default {
           } else {
             this.loadShow = false;
             let ErrTips = {
-              "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
+              "AccountQualificationRestrictions": "該請求帳戶未通過資格審計。",
               "InstancesQuotaLimitExceeded":
-                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+                "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
               "InvalidClientToken.TooLong":
-                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+                "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不属于该请求账号所有。",
+                "指定的HostId不存在，或不屬於該請求帳號所有。",
               "InvalidInstanceName.TooLong":
-                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+                "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
-                "指定InstanceType参数格式不合法。",
-              "InvalidParameterCombination": "表示参数组合不正确。",
+                "指定InstanceType參數格式不合法。",
+              "InvalidParameterCombination": "表示參數組合不正確。",
               "InvalidParameterValue":
-                "无效参数值。参数值格式错误或者参数值不被支持等。",
+                "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
-                "无效参数值。参数值取值范围不合法。",
+                "無效參數值。參數值取值範圍不合法。",
               "InvalidPassword":
-                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+                "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
               "InvalidPeriod":
-                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-              "InvalidPermission": "账户不支持该操作。",
+                "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+              "InvalidPermission": "帳戶不支持該操作。",
               "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              "MissingParameter": "参数缺失。请求没有带必选参数。"
+              "MissingParameter": "參數缺失。請求沒有帶必選參數。"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -1648,29 +1648,29 @@ export default {
           } else {
             this.loadShow = false;
             let ErrTips = {
-              "AccountQualificationRestrictions": "该请求账户未通过资格审计。",
+              "AccountQualificationRestrictions": "該請求帳戶未通過資格審計。",
               "InstancesQuotaLimitExceeded":
-                "表示当前创建的实例个数超过了该账户允许购买的剩余配额数。",
+                "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
               "InvalidClientToken.TooLong":
-                "指定的ClientToken字符串长度超出限制，必须小于等于64字节。",
+                "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不属于该请求账号所有。",
+                "指定的HostId不存在，或不屬於該請求帳號所有。",
               "InvalidInstanceName.TooLong":
-                "指定的InstanceName字符串长度超出限制，必须小于等于60字节。",
+                "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
-                "指定InstanceType参数格式不合法。",
-              "InvalidParameterCombination": "表示参数组合不正确。",
+                "指定InstanceType參數格式不合法。",
+              "InvalidParameterCombination": "表示參數組合不正確。",
               "InvalidParameterValue":
-                "无效参数值。参数值格式错误或者参数值不被支持等。",
+                "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
-                "无效参数值。参数值取值范围不合法。",
+                "無效參數值。參數值取值範圍不合法。",
               "InvalidPassword":
-                "无效密码。指定的密码不符合密码复杂度限制。例如密码长度不符合限制等。",
+                "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
               "InvalidPeriod":
-                "无效时长。目前只支持时长：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，单位：月。",
-              "InvalidPermission": "账户不支持该操作。",
+                "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+              "InvalidPermission": "帳戶不支持該操作。",
               "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              "MissingParameter": "参数缺失。请求没有带必选参数。"
+              "MissingParameter": "參數缺失。請求沒有帶必選參數。"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -1687,18 +1687,18 @@ export default {
   filters: {
     ModelTypeName(val) {
       if (val === "Standard S3") {
-        return "标准型S3";
+        return "標準型S3";
       } else if (val === "Compute C3") {
-        return "计算型C3";
+        return "計算型C3";
       } else if (val === "MEM-optimized M3") {
-        return "内存型M3";
+        return "記憶體型M3";
       }
     },
     //付费模式
     instanceChargeType(val) {
       if(val) {
         if(val === 'POSTPAID_BY_HOUR') {
-          return '按量计费';
+          return '按量計費';
         } else {
           return '包年包月';
         }
@@ -1708,9 +1708,9 @@ export default {
     systemDiskType(val) {
       if(val) {
         if(val === 'CLOUD_PREMIUM') {
-          return "高性能云盘";
+          return "高性能雲盤";
         } else {
-          return "SSD云盘";
+          return "SSD雲碟";
         }
       }
     },
@@ -1718,9 +1718,9 @@ export default {
     dataDiskType() {
       if(val) {
         if(val === 'CLOUD_PREMIUM') {
-          return "高性能云盘";
+          return "高性能雲盤";
         } else {
-          return "SSD云盘";
+          return "SSD雲碟";
         }
       }
     },
@@ -1728,7 +1728,7 @@ export default {
     internetChargeType(val) {
       if(val) {
         if(val === 'BANDWIDTH_POSTPAID_BY_HOUR') {
-          return '按带宽计费';
+          return '按頻寬計費';
         } else {
           return '按使用流量';
         }
@@ -1740,9 +1740,9 @@ export default {
       if(val.length > 0) {
         for(let i = 0; i< val.length; i++) {
           if(val[i].dataDiskType === 'CLOUD_PREMIUM') {
-            res += '[' + (i+1) + ']高性能云硬盘' + val[i].dataSize + 'GB;';
+            res += '[' + (i+1) + ']高性能雲硬碟' + val[i].dataSize + 'GB;';
           } else {
-            res += '[' + (i+1) + ']SSD硬盘' + val[i].dataSize + 'GB;';
+            res += '[' + (i+1) + ']SSD硬碟' + val[i].dataSize + 'GB;';
           }
         }
       }

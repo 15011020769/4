@@ -32,4 +32,9 @@ export const DISABLE_CCNROUTES = 'vpc2/DisableCcnRoutes' // 停用路由
 //  // cvm
 export const REGIONS_LIST = 'cvm2/DescribeRegions' // 查询地域列表
 
+//获取标签列表
+export const GET_LABELS_LIST='tag/GetTagKeys'
+
+//批量修改资源关联的标签
+export  const EDIT_LABELS_JZ='tag2/ModifyResourceTags'
 

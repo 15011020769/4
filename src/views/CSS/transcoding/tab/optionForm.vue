@@ -73,21 +73,21 @@
           /><br />
           <span>視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
         </el-form-item>
-
-        <el-form-item
-          label="碼率壓縮比"
-          prop="AdaptBitratePercent"
-          :show-message="false"
-          v-show="ruleForm.AiTransCode === '1'"
-        >
-          <el-input
-            type="textarea"
-            v-model="ruleForm.AdaptBitratePercent"
-            style="width:330px;"
-          /><br />
-          <span>請輸入10-50之間的整數，表示相比視頻碼率節省的碼率</span>
-        </el-form-item>
       </template>
+
+      <el-form-item
+        label="碼率壓縮比"
+        prop="AdaptBitratePercent"
+        :show-message="false"
+        v-show="ruleForm.AiTransCode == '1'"
+      >
+        <el-input
+          type="textarea"
+          v-model="ruleForm.AdaptBitratePercent"
+          style="width:330px;"
+        /><br />
+        <span>請輸入10-50之間的整數，表示相比視頻碼率節省的碼率</span>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
           >保存</el-button
@@ -192,46 +192,76 @@ export default {
       }
 
       // 音频就到这里了
-      if (this.selectType === "純音頻") {
-        return true;
-      }
+      if (this.selectType !== "純音頻") {
+        const VideoBitrate = this.ruleForm.VideoBitrate;
 
-      const VideoBitrate = this.ruleForm.VideoBitrate;
-
-      if (VideoBitrate.length === 0) {
-        this.$message({
-          message: "請輸入影音碼率",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
-      }
-
-      if (VideoBitrate < 100 || VideoBitrate > 8000) {
-        this.$message({
-          message: "編碼範圍為100K-8000K",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
-      }
-
-      if (VideoBitrate >= 100 && VideoBitrate <= 1000) {
-        if (VideoBitrate % 100 !== 0) {
+        if (VideoBitrate.length === 0) {
           this.$message({
-            message: "編碼範圍1000K以內僅支持整百填寫",
+            message: "請輸入影音碼率",
             type: "error",
             showClose: true,
             duration: 0
           });
           return false;
         }
-      } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
-        if (VideoBitrate % 500 !== 0) {
+
+        if (VideoBitrate < 100 || VideoBitrate > 8000) {
           this.$message({
-            message: "編碼範圍1000Kbps以上僅支持整500填寫",
+            message: "編碼範圍為100K-8000K",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (VideoBitrate >= 100 && VideoBitrate <= 1000) {
+          if (VideoBitrate % 100 !== 0) {
+            this.$message({
+              message: "編碼範圍1000K以內僅支持整百填寫",
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return false;
+          }
+        } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
+          if (VideoBitrate % 500 !== 0) {
+            this.$message({
+              message: "編碼範圍1000Kbps以上僅支持整500填寫",
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+            return false;
+          }
+        }
+
+        const Height = this.ruleForm.Height;
+
+        if (Height.length === 0) {
+          this.$message({
+            message: "請輸入影音高度",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (Height < 0 || Height > 3000) {
+          this.$message({
+            message: "影音高度範圍為0-3000",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (Height % 4 !== 0) {
+          this.$message({
+            message: "視頻高度要求為4的倍數，寬度按等比例縮放",
             type: "error",
             showClose: true,
             duration: 0
@@ -239,39 +269,6 @@ export default {
           return false;
         }
       }
-
-      const Height = this.ruleForm.Height;
-
-      if (Height.length === 0) {
-        this.$message({
-          message: "請輸入影音高度",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
-      }
-
-      if (Height < 0 || Height > 3000) {
-        this.$message({
-          message: "影音高度範圍為0-3000",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
-      }
-
-      if (Height % 4 !== 0) {
-        this.$message({
-          message: "視頻高度要求為4的倍數，寬度按等比例縮放",
-          type: "error",
-          showClose: true,
-          duration: 0
-        });
-        return false;
-      }
-
       let AdaptBitratePercent = this.ruleForm.AdaptBitratePercent;
       let AiTransCode = this.ruleForm.AiTransCode;
 
@@ -311,9 +308,9 @@ export default {
     },
 
     submitForm(formName) {
-      const params = Object.assign(this.ruleForm, {
-        Version: "2018-08-01"
-      });
+
+      const params = JSON.parse(JSON.stringify(this.ruleForm))
+      params.Version = "2018-08-01"
 
       if (this.selectType === "純音頻") {
         params.Height = 0;
@@ -325,12 +322,14 @@ export default {
         params.NeedAudio = 1;
       }
 
+      params.AiTransCode = parseInt(params.AiTransCode)
+
       if (!this.validateForm()) {
         return;
       }
 
       let AiTransCode = params.AiTransCode;
-      if (AiTransCode === "0") {
+      if (AiTransCode === 0) {
         delete params.AdaptBitratePercent;
       } else {
         params.AdaptBitratePercent = params.AdaptBitratePercent * 0.01;

@@ -9,7 +9,7 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <h2 class="header-title">集群管理</h2>
-          <el-button size="small" type="primary">台湾台北</el-button>
+          <el-button size="small" type="primary">{{$t('TKE.overview.zgtb')}}</el-button>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -28,7 +28,7 @@
         <div class="grid-right">
           <tkeSearch
             exportData
-            inputPlaceholder="请输入名称搜索"
+            :inputPlaceholder="$t('TKE.colony.qsrmcss')"
             :typeSelect="false"
             :typeOptions="searchOptions"
             :searchInput="searchInput"
@@ -49,7 +49,7 @@
           style="width: 100%"
           id="exportTable"
         >
-          <el-table-column label="ID/名称">
+          <el-table-column :label="$t('TKE.overview.idmc')">
             <template slot-scope="scope">
               <span
                 :class="[
@@ -72,7 +72,7 @@
               </p>
             </template>
           </el-table-column>
-          <el-table-column prop label="监控">
+          <el-table-column prop :label="$t('TKE.colony.jk')">
             <template slot-scope="scope">
               <i
                 class="icon-chart"
@@ -89,27 +89,27 @@
             prop="ClusterVersion"
             label="kubernetes版本"
           ></el-table-column>
-          <el-table-column prop="address" label="类型/状态">
+          <el-table-column prop="address" :label="$t('TKE.colony.lxzt')">
             <template slot-scope="scope">
               <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'"
-                >托管集群</span
+                >{{$t('TKE.colony.tgjq')}}</span
               >
-              <span v-else>独立部署</span>
+              <span v-else>{{$t('TKE.colony.dlbs')}}</span>
               (
               <span
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="text-green"
-                >运行中</span
+                >{{$t('TKE.colony.yxz')}}</span
               >
               <span
                 v-else-if="scope.row.ClusterStatus == 'Creating'"
                 class="text-green"
-                >创建中</span
+                >{{$t('TKE.colony.cjz')}}</span
               >
-              <span v-else class="text-red">异常</span>)
+              <span v-else class="text-red">{{$t('TKE.overview.yc')}}</span>)
             </template>
           </el-table-column>
-          <el-table-column prop="nodeTotal" label="节点数">
+          <el-table-column prop="nodeTotal" :label="$t('TKE.colony.jds')">
             <template slot-scope="scope">
               <a href="javascript:;" @click="NodeTotal(scope.row)"
                 >{{ scope.row.ClusterNodeNum }}台</a
@@ -123,9 +123,9 @@
               <span
                 class="text-red"
                 v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'"
-                >全部异常</span
+                >{{$t('TKE.colony.qbyc')}}</span
               >
-              <span class="text-red" v-else>部分异常</span>)
+              <span class="text-red" v-else>{{$t('TKE.colony.bfyc')}}</span>)
               <el-popover
                 width="50"
                 trigger="hover"
@@ -133,20 +133,20 @@
                 v-if="scope.row.ClusterInstanceState != 'AllNormal'"
               >
                 <div class="node-popover">
-                  <p>创建中：{{ scope.row.ClusterInitNodeNum }}台</p>
-                  <p>运行中：{{ scope.row.ClusterRunningNodeNum }}台</p>
-                  <p>异常：{{ scope.row.ClusterFailedNodeNum }}台</p>
-                  <p>已关机：{{ scope.row.ClusterClosedNodeNum }}台</p>
-                  <p>关机中：{{ scope.row.ClusterClosingNodeNum }}台</p>
+                  <p>{{$t('TKE.colony.cjz')}}：{{ scope.row.ClusterInitNodeNum }}台</p>
+                  <p>{{$t('TKE.colony.yxz')}}：{{ scope.row.ClusterRunningNodeNum }}台</p>
+                  <p>{{$t('TKE.overview.yc')}}：{{ scope.row.ClusterFailedNodeNum }}台</p>
+                  <p>{{$t('TKE.colony.ygj')}}：{{ scope.row.ClusterClosedNodeNum }}台</p>
+                  <p>{{$t('TKE.colony.gjz')}}：{{ scope.row.ClusterClosingNodeNum }}台</p>
                 </div>
                 <i class="el-icon-warning-outline" slot="reference"></i>
               </el-popover>
             </template>
           </el-table-column>
-          <el-table-column prop="address" label="已分配/总配置">
+          <el-table-column prop="address" :label="$t('TKE.colony.yfpzpz')">
             <template slot-scope="scope">
               <p>CPU: -/{{ scope.row.root }}核</p>
-              <p>内存: -/-GB</p>
+              <p>{{$t('TKE.overview.ncun')}}: -/-GB</p>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="220">
@@ -164,10 +164,10 @@
                 @click="goAddExist(scope.row)"
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="tke-text-link ml10"
-                >添加已有节点</span
+                >{{$t('TKE.colony.tjyyjd')}}</span
               >
               <span v-else class="tke-text-link ml10 tke-text-link-dis"
-                >添加已有节点</span
+                >{{$t('TKE.colony.tjyyjd')}}</span
               >
               <el-dropdown class="ml10 tke-dropdown">
                 <span class="el-dropdown-link">
@@ -182,12 +182,12 @@
                     <span
                       class="tke-text-link"
                       @click="ViewCluster(scope.row.ClusterId)"
-                      >查看集群凭证</span
+                      >{{$t('TKE.colony.ckjqpz')}}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item command="a" v-else>
                     <span class="tke-text-link tke-text-link-dis"
-                      >查看集群凭证</span
+                      >{{$t('TKE.colony.ckjqpz')}}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item
@@ -197,12 +197,12 @@
                     <span
                       class="tke-text-link"
                       @click="goExpand(scope.row.ClusterId)"
-                      >新建节点</span
+                      >{{$t('TKE.colony.xjjd')}}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item command="b" v-else>
                     <span class="tke-text-link tke-text-link-dis"
-                      >新建节点</span
+                      >{{$t('TKE.colony.xjjd')}}</span
                     >
                   </el-dropdown-item>
 
@@ -214,10 +214,10 @@
                       class="tke-text-link"
                       href="javascript:;"
                       @click="Delete(scope.row)"
-                      >删除</span
+                      >{{$t('TKE.overview.sc')}}</span
                     > </el-dropdown-item
                   ><el-dropdown-item command="b" v-else>
-                    <span class="tke-text-link tke-text-link-dis">删除</span>
+                    <span class="tke-text-link tke-text-link-dis">{{$t('TKE.overview.sc')}}</span>
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -244,20 +244,20 @@
 
     <!-- 编辑集群名称弹窗 -->
     <el-dialog
-      title="编辑集群名称"
+      :title="$t('TKE.colony.bjjqmc')"
       :visible.sync="editNameDialogVisible"
       width="500px"
       custom-class="tke-dialog"
     >
       <div>
         <el-form label-width="80px">
-          <el-form-item label="原名称">
+          <el-form-item :label="$t('TKE.colony.ymc')">
             <p>{{ oldnName }}</p>
           </el-form-item>
-          <el-form-item label="新名称">
+          <el-form-item :label="$t('TKE.colony.xmc')">
             <el-input
               size="small"
-              placeholder="请输入新名称"
+              :placeholder="$t('TKE.colony.qsrxmc')"
               v-model="editSearchVal"
             ></el-input>
           </el-form-item>
@@ -271,18 +271,18 @@
 
     <!-- 删除 -->
     <el-dialog
-      title="删除集群"
+      :title="$t('TKE.colony.scjq')"
       v-loading="deleteLoadShow"
       :visible.sync="deleteDialogVisible"
       width="550px"
       custom-class="tke-dialog tke-delete-dialog"
     >
       <div class="content">
-        <p>您确定要删除集群"{{ deleteID }}（{{ deleteName }}）"吗？</p>
+        <p>{{$t('TKE.colony.qdyscjq')}}"{{ deleteID }}（{{ deleteName }}）"嗎？</p>
         <p>
-          该集群下拥有{{ deteleNodeNum + deteleMaterNodeNum }}个节点，其中
-          <span>0台</span>为包年包月节点，
-          <a href="javascript:;" @click="DetailsShow">查看详情</a>
+          {{$t('TKE.colony.gjqyy')}}{{ deteleNodeNum + deteleMaterNodeNum }}{{$t('TKE.colony.qz')}}
+          <span>0台</span>{{$t('TKE.colony.bnbyjd')}}
+          <a href="javascript:;" @click="DetailsShow">{{$t('TKE.overview.ckxq')}}</a>
           <i class="el-icon-caret-bottom" v-if="!detailsShow"></i>
           <i class="el-icon-caret-top" v-if="detailsShow"></i>
         </p>
@@ -297,7 +297,7 @@
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" width="100">
+            <el-table-column :label="$t('TKE.overview.zt')" width="100">
               <template slot-scope="scope">
                 <p
                   v-if="scope.row.InstanceState === 'running'"
@@ -309,14 +309,14 @@
                   v-else-if="scope.row.InstanceState === 'initializing'"
                   class="text-orange"
                 >
-                  创建中
+                  {{$t('TKE.colony.cjz')}}
                 </p>
-                <p v-else class="text-red">异常</p>
+                <p v-else class="text-red">{{$t('TKE.overview.yc')}}</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
               <template>
-                <p>Master&Etcd，不可移出</p>
+                <p>Master&Etcd，{{$t('TKE.colony.bkyc')}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -332,7 +332,7 @@
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" width="180">
+            <el-table-column :label="$t('TKE.overview.zt')" width="180">
               <template slot-scope="scope">
                 <p
                   v-if="scope.row.InstanceState === 'running'"
@@ -344,14 +344,14 @@
                   v-else-if="scope.row.InstanceState === 'initializing'"
                   class="text-orange"
                 >
-                  创建中
+                  {{$t('TKE.colony.cjz')}}
                 </p>
-                <p v-else class="text-red">异常</p>
+                <p v-else class="text-red">{{$t('TKE.overview.yc')}}</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
               <template>
-                <p>可移出并销毁</p>
+                <p>{{$t('TKE.colony.kycbxh')}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -359,13 +359,13 @@
 
         <div class="detele-destruction">
           <p>
-            集群在删除期间，无法对外提供服务，请提前做好准备，以免造成影响；
+            {{$t('TKE.colony.ymyx')}}
           </p>
           <p>
-            删除集群将移出节点包年包月节点，您可以选择是否销毁按量计费节点。
+            {{$t('TKE.colony.kxzsfxh')}}
           </p>
           <el-checkbox v-model="deteleCheck"
-            >销毁按量计费的节点（销毁后不可恢复，请谨慎操作，并提前备份好数据）</el-checkbox
+            >{{$t('TKE.colony.xhjdbbf')}}</el-checkbox
           >
         </div>
       </div>
@@ -423,11 +423,11 @@ export default {
       searchOptions: [
         {
           value: "name",
-          label: "名称"
+          label: "名稱"
         },
         {
           value: "tag",
-          label: "标签"
+          label: "標籤"
         }
       ],
       search: "", // 搜索
@@ -569,18 +569,18 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          InternalError: "内部错误",
-          "InternalError.CamNoAuth": "没有权限。",
-          "InternalError.Db": "db错误。",
-          "InternalError.DbAffectivedRows": "DB错误",
+          InternalError: "內部錯誤",
+          "InternalError.CamNoAuth": "沒有權限。",
+          "InternalError.Db": "db錯誤。",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param。",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-          InvalidParameter: "参数错误",
-          "InvalidParameter.Param": "参数错误。",
-          LimitExceeded: "超过配额限制",
-          ResourceNotFound: "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+          InvalidParameter: "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤",
+          LimitExceeded: "超過配額限制",
+          ResourceNotFound: "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -813,14 +813,14 @@ export default {
             } else {
               this.deleteLoadShow = false;
               let ErrTips = {
-                FailedOperation: "操作失败",
-                InternalError: "内部错误",
+                FailedOperation: "操作失敗",
+                InternalError: "內部錯誤",
                 "InternalError.Param": "Param。",
                 "InternalError.PublicClusterOpNotSupport":
-                  "集群不支持当前操作。",
-                InvalidParameter: "参数错误",
-                ResourceNotFound: "资源不存在",
-                ResourceUnavailable: "资源不可用"
+                  "集群不支持當前操作。",
+                InvalidParameter: "參數錯誤",
+                ResourceNotFound: "資源不存在",
+                ResourceUnavailable: "資源不存在"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({
@@ -865,13 +865,13 @@ export default {
           this.getColonyList();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败",
-            InternalError: "内部错误",
+            FailedOperation: "操作失敗",
+            InternalError: "內部錯誤",
             "InternalError.Param": "Param。",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-            InvalidParameter: "参数错误",
-            ResourceNotFound: "资源不存在",
-            ResourceUnavailable: "资源不可用"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+            InvalidParameter: "參數錯誤",
+            ResourceNotFound: "資源不存在",
+            ResourceUnavailable: "資源不存在"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
