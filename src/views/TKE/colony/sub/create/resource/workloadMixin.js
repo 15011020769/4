@@ -25,8 +25,8 @@ let instanceContent = {
       surviveExamine: false, // 存活检查
       readyToCheck: false, // 就绪检查
       surviveExamineContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-        inspectMethodValue: 'TCP端口检查',
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+        inspectMethodValue: 'TCP端口檢查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue: 'HTTP',
         executiveOrder: '', // 执行命令
@@ -39,8 +39,8 @@ let instanceContent = {
         unhealthyThreshold: 1 // 不健康阀值
       },
       readyToCheckContent: {
-        inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-        inspectMethodValue: 'TCP端口检查',
+        inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+        inspectMethodValue: 'TCP端口檢查',
         inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
         inspectProtocolValue: 'HTTP',
         executiveOrder: '', // 执行命令
@@ -326,9 +326,9 @@ export default {
       nameValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('Workload名称不能为空'))
+            callback(new Error('Workload名稱不能為空'))
           } else if (value.length > 40) {
-            callback(new Error('Workload名称不能超过40个字符'))
+            callback(new Error('Workload名稱不能超過40個字元'))
           } else {
             callback()
           }
@@ -339,7 +339,7 @@ export default {
       labelKeyValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('Key不能为空'))
+            callback(new Error('Key不能為空'))
           } else {
             callback()
           }
@@ -350,7 +350,7 @@ export default {
       labelValueValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('Value不能为空'))
+            callback(new Error('Value不能為空'))
           } else {
             callback()
           }
@@ -365,7 +365,7 @@ export default {
             return
           }
           if (value === '') {
-            callback(new Error('执行策略不能为空'))
+            callback(new Error('執行策略不能為空'))
           } else {
             callback()
           }
@@ -376,9 +376,9 @@ export default {
       instanceContentNameValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('容器名称不能为空'))
+            callback(new Error('容器名稱不能為空'))
           } else if (value.length > 63) {
-            callback(new Error('容器名称不能超过63个字符'))
+            callback(new Error('容器名稱不能超過63個字元'))
           } else {
             callback()
           }
@@ -389,7 +389,7 @@ export default {
       instanceContentMirrorImgValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('镜像不能为空'))
+            callback(new Error('映像不能為空'))
           } else {
             callback()
           }
@@ -404,7 +404,7 @@ export default {
             return
           }
           if (value === '') {
-            callback(new Error('执行次数至少为1'))
+            callback(new Error('執行次數至少為1'))
           } else {
             callback()
           }
@@ -419,7 +419,7 @@ export default {
             return
           }
           if (value === '') {
-            callback(new Error('Job并行度至少为1'))
+            callback(new Error('Job並行度至少為1'))
           } else {
             callback()
           }
@@ -434,7 +434,7 @@ export default {
             return
           }
           if (value === '') {
-            callback(new Error('请输入容器端口'))
+            callback(new Error('請輸入容器端口'))
           } else {
             callback()
           }
@@ -449,7 +449,7 @@ export default {
             return
           }
           if (value === '') {
-            callback(new Error('请输入服务端口'))
+            callback(new Error('請輸入服務端口'))
           } else {
             callback()
           }
@@ -460,7 +460,7 @@ export default {
       dataVolumesNfsServerAndPathValidator: [{
         validator: (rule, value, callback) => {
           if (value === '') {
-            callback(new Error('NFS路径不能为空'))
+            callback(new Error('NFS路徑不能為空'))
           } else {
             callback()
           }
