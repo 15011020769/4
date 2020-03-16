@@ -878,6 +878,9 @@ module.exports = {
             bq: '标签',
             qsrmsxx: '请输入描述信息，不超过1000个字符',
             qsrwmc: '请输入Workload名称',
+            xzrqfwjx: '选择容器服务镜像',
+            dhjx: 'Docker Hub镜像',
+            podsl: 'Pod数量',
         }
     },
     COM: require('@/components/language/jt')

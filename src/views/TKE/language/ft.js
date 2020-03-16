@@ -878,6 +878,9 @@ module.exports = {
             bq: '標籤',
             qsrmsxx: '請輸入描述信息，不超過1000個字元',
             qsrwmc: '請輸入Workload名稱',
+            xzrqfwjx: '選擇容器服務映像',
+            dhjx: 'Docker Hub映像',
+            podsl: 'Pod數量',
         }
     },
     COM: require('@/components/language/ft')
