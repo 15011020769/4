@@ -2,11 +2,11 @@
   <div class="room">
     <div class="room-center">
       <div class="explain" style="margin-bottom:20px;">
-        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库版本数为0个，<span v-show="this.input1||this.input2?false:true">您可设置
-            <el-button type="text" size="small" @click="dialogVisible = true">设置自动清理策略</el-button>
-            以仅保留较新版本的容器镜像，以免因达到配额限制而无法上传新版本镜像。</span>
-            <span v-show='this.input1?true:false'>当前自动清理策略为仅保留最新的{{input1}}个镜像版本，您可<el-button type="text" size="small" @click="deleteAuto()">删除自动清理策略</el-button>后重新设置。</span>
-            <span v-show='this.input2?true:false'>当前自动清理策略为仅保留最新的{{input2}}天以内的镜像版本，您可<el-button type="text" size="small" @click="deleteAuto()">删除自动清理策略</el-button>后重新设置。</span>
+        <p>{{$t('TKE.mirrorDetail.dqzhxjxck')}}，<span v-show="this.input1||this.input2?false:true">{{$t('TKE.mirrorDetail.nksz')}}
+            <el-button type="text" size="small" @click="dialogVisible = true">{{$t('TKE.mirrorDetail.szzdqccl')}}</el-button>
+            {{$t('TKE.mirrorDetail.yjbljxbb')}}</span>
+            <span v-show='this.input1?true:false'>{{$t('TKE.mirrorDetail.dqzdqlcl')}}{{input1}}{{$t('TKE.mirrorDetail.gjxbbnk')}}<el-button type="text" size="small" @click="deleteAuto()">{{$t('TKE.mirrorDetail.sczdqlcl')}}</el-button>{{$t('TKE.mirrorDetail.hcxsz')}}</span>
+            <span v-show='this.input2?true:false'>{{$t('TKE.mirrorDetail.dqzdqlcl')}}{{input2}}{{$t('TKE.mirrorDetail.tyndjxbbnk')}}<el-button type="text" size="small" @click="deleteAuto()">{{$t('TKE.mirrorDetail.sczdqlcl')}}</el-button>{{$t('TKE.mirrorDetail.hcxsz')}}</span>
         </p>
       </div>
     </div>
@@ -18,31 +18,31 @@
           class="botton-size"
           @click="dialogFormVisible = true"
         >使用索引</el-button> -->
-        <el-button disabled size="mini" class="botton-size">删除</el-button>
+        <el-button disabled size="mini" class="botton-size">{{$t('TKE.overview.sc')}}</el-button>
       </div>
       <div class="top-right">
           <i v-show="this.input1||this.input2?false:true" class="el-icon-setting"  @click="dialogVisible = true"></i>
-          <span v-show="this.input1||this.input2?false:true">设置自动清理旧版本镜像策略</span>
-          <p v-show="this.input1?true:false">当前仅保留最新的{{input1}}个镜像版本<el-button type="text" size="mini" @click="deleteAuto()">删除自动清理策略</el-button></p>
-          <p v-show="this.input2?true:false">当前仅保留最近{{input2}}天以内的镜像版本<el-button type="text" size="mini"  @click="deleteAuto()">删除自动清理策略</el-button></p>
+          <span v-show="this.input1||this.input2?false:true">{{$t('TKE.mirrorDetail.szzdqijbb')}}</span>
+          <p v-show="this.input1?true:false">{{$t('TKE.mirrorDetail.dqjblzxd')}}{{input1}}{{$t('TKE.mirrorDetail.gjxbb')}}<el-button type="text" size="mini" @click="deleteAuto()">{{$t('TKE.mirrorDetail.sczdqlcl')}}</el-button></p>
+          <p v-show="this.input2?true:false">{{$t('TKE.mirrorDetail.dqjblzx')}}{{input2}}{{$t('TKE.mirrorDetail.tyndjxbb')}}<el-button type="text" size="mini"  @click="deleteAuto()">{{$t('TKE.mirrorDetail.sczdqlcl')}}</el-button></p>
       </div>
     </div>
     <div class="room-bottom">
       <el-table :data="tableData" style="width: 100%" height="450">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="address" label="镜像版本"></el-table-column>
-        <el-table-column prop="address" label="创建时间"></el-table-column>
-        <el-table-column prop="address" label="修改时间"></el-table-column>
-        <el-table-column prop="address" label="静态ID（SHA256）"></el-table-column>
+        <el-table-column prop="address" :label="$t('TKE.overview.jxbb')"></el-table-column>
+        <el-table-column prop="address" :label="$t('TKE.overview.cjsj')"></el-table-column>
+        <el-table-column prop="address" :label="$t('TKE.mirrorDetail.xgsj')"></el-table-column>
+        <el-table-column prop="address" :label="$t('TKE.mirrorDetail.jtid')"></el-table-column>
         <el-table-column prop="address" label="大小"></el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.mirrorDetail.ye')}}</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -99,23 +99,23 @@
       width="40%"
     >
       <div class="explain2" style="margin-bottom:20px;">
-        <p>当前账号下镜像仓库内镜像版本配额为1000个，当前仓库内镜像版本数达到此配额后，将触发自动清理策略。</p>
+        <p>{{$t('TKE.mirrorDetail.dqzhxjxck2')}}</p>
       </div>
       <el-form :model="ruleForm" ref="ruleForm" label-width="30px" class="demo-ruleForm" :rules="rules" :show-message='false'>
         <el-form-item prop="input1" >
           <el-radio v-model="radio" label="keep_last_nums">
-            保留最新的<el-input v-model.number="ruleForm.input1" :disabled="flag1" class="dialog-input" size="mini" autocomplete="off"></el-input>个镜像版本
+            {{$t('TKE.mirrorDetail.blzxd')}}<el-input v-model.number="ruleForm.input1" :disabled="flag1" class="dialog-input" size="mini" autocomplete="off"></el-input>{{$t('TKE.mirrorDetail.gjxbb')}}
           </el-radio>
         </el-form-item>
          <el-form-item prop="input2">
           <el-radio v-model="radio" label="keep_last_days">
-            保留最新的<el-input v-model.number="ruleForm.input2" :disabled="flag2" class="dialog-input" size="mini" autocomplete="off"></el-input>天内的镜像版本
+            {{$t('TKE.mirrorDetail.blzxd')}}<el-input v-model.number="ruleForm.input2" :disabled="flag2" class="dialog-input" size="mini" autocomplete="off"></el-input>{{$t('TKE.mirrorDetail.tyndjxbb')}}
           </el-radio>
         </el-form-item>
       </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="submitForm ('ruleForm')">确 定</el-button>
+          <el-button type="primary" @click="submitForm ('ruleForm')">{{$t('TKE.overview.qd')}}</el-button>
         </span>
     </el-dialog>
   </div>
@@ -153,11 +153,11 @@ export default {
       rules:{
         input1:[
           { required: true},
-          { type: 'number', message: '请输入一个正整数'}
+          { type: 'number', message: this.$t('TKE.mirrorDetail.qsrygzzs')}
         ],
         input2:[
           { required: true},
-          { type: 'number', message: '请输入一个正整数'}
+          { type: 'number', message: this.$t('TKE.mirrorDetail.qsrygzzs')}
         ]
       }
     }
@@ -171,7 +171,7 @@ export default {
         this.$refs['ruleForm'].clearValidate();
         this.input2 = ''
         this.ruleForm.input2 = ''
-        
+
         // this.$refs['ruleForm'].clearValidate();
       }
       if (newName == 'keep_last_days') {
@@ -197,7 +197,7 @@ export default {
       this.currpage = val
     },
     submitForm(formName) {
-       
+
         this.$refs[formName].validate((valid) => {
           if (this.ruleForm.input1 !== '' || this.ruleForm.input2 !== '') {
              valid = !valid
@@ -210,7 +210,7 @@ export default {
                 return false;
               }
           }
-         
+
         });
       },
     // submitForm (formName) {
@@ -233,7 +233,7 @@ export default {
       console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
-        message: '复制成功',
+        message: this.$t('TKE.mirrorDetail.fzcg'),
         type: 'success'
       })
       oInput.remove()
@@ -270,12 +270,12 @@ export default {
                   this.rag1 = true
                   this.rag2 = false
                   this.input1 = strategyInfo[i].value
-                  console.log(this.input1)  
+                  console.log(this.input1)
              } else if(strategyInfo[i].type == "keep_last_days" && strategyInfo[i].valid){
                   this.rag2 = true
                   this.rag1 = false
-                  this.input2 = strategyInfo[i].value  
-                  console.log(this.input2) 
+                  this.input2 = strategyInfo[i].value
+                  console.log(this.input2)
              }
            }
           // this.server = res.data.server
@@ -303,7 +303,7 @@ export default {
           this.rag1 = ''
           this.rag2 = ''
           this.$message({
-              message:"删除成功",
+              message: this.$t('TKE.myMirror.sccg'),
               type: "success",
               showClose: true,
               duration: 0

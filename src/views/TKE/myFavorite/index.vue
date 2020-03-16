@@ -8,7 +8,7 @@
             <el-button :disabled="this.multipleSelection.length?false:true" size="mini" class="botton-size" @click="disFavor()">取消收藏</el-button>
           </div>
           <div class="top-right">
-              <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
+              <el-input v-model.trim="input" :placeholder="$t('TKE.myMirror.qsrjxmc')" size="mini" ></el-input>
               <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
               <i class="el-icon-download" @click="exportExcel()"></i>
           </div>
@@ -23,14 +23,14 @@
             v-loading="loadShow"
           >
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="reponame" label="名称">
+            <el-table-column prop="reponame" :label="$t('TKE.overview.mc')">
                <template slot-scope="scope">
                  <p>
                    <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame}}</a>
                  </p>
               </template>
             </el-table-column>
-            <el-table-column prop="public" label="类型">
+            <el-table-column prop="public" :label="$t('TKE.overview.lx')">
               <template slot-scope="scope">
                  {{scope.row.public | publics}}
               </template>
@@ -48,7 +48,7 @@
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
             <el-pagination
               :page-size="pagesize"
               layout="sizes,prev, pager, next"
@@ -127,7 +127,7 @@ export default {
         this.GetFavor()
       } else {
         this.$message({
-              message: "当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符('.'、'_'、'-')",
+              message: this.$t('TKE.myMirror.mydqsrdjxmc'),
               type: "warning",
               showClose: true,
               duration: 0
@@ -266,7 +266,7 @@ export default {
     },
   },
   // 路由跳转
- 
+
   filters: {
     publics: function (val) {
       if (val == 1) {

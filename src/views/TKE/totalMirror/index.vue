@@ -1,6 +1,6 @@
 <template>
   <div class="DockerHub-wrap">
-    <HeadCom title="公有镜像">
+    <HeadCom :title="$t('TKE.totalMirror.gyjx')">
       <slot>
         <div class="head-address">
           <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
@@ -12,7 +12,7 @@
         <div class="room-top">
           <div class="context-center">
             <div>
-              <el-input placeholder="请输入名称" v-model="input" class="input-with-select">
+              <el-input :placeholder="$t('TKE.colony.qsrmcss')" v-model="input" class="input-with-select">
                 <el-button slot="append" icon="el-icon-search" class="btn-search" @click="getSearch()"></el-button>
               </el-input>
             </div>
@@ -35,26 +35,26 @@
             </el-table-column>
             <el-table-column  align="center" min-width="10%">
               <template>
-                
+
               </template>
             </el-table-column>
-            <el-table-column prop="reponame" label="名称" min-width="20%">
+            <el-table-column prop="reponame" :label="$t('TKE.overview.mc')" min-width="20%">
               <template slot-scope="scope">
                 <p>
                   <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame}}</a>
                 </p>
               </template>
             </el-table-column>
-            <el-table-column prop="isQcloudOfficial" label="类型" min-width="20%">
+            <el-table-column prop="isQcloudOfficial" :label="$t('TKE.overview.lx')" min-width="20%">
               <template slot-scope="scope">
                 {{scope.row.isQcloudOfficial|isQcloudOfficials}}
               </template>
             </el-table-column>
             <el-table-column prop="favorCount" label="收藏量" min-width="20%"></el-table-column>
-            <el-table-column prop="pullCount" label="下载量" min-width="20%" sortable></el-table-column>
+            <el-table-column prop="pullCount" :label="$t('TKE.totalMirror.xzl')" min-width="20%" sortable></el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;页</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.mirrorDetail.ye')}}</span>
             <el-pagination
               :page-size="pagesize"
               layout="sizes,prev, pager, next"
@@ -150,7 +150,7 @@ export default {
         this.GetRepositoryList()
       } else {
         this.$message({
-              message: "当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符('.'、'_'、'-')",
+              message: this.$t('TKE.myMirror.mydqsrdjxmc'),
               type: "warning",
               showClose: true,
               duration: 0
@@ -214,7 +214,7 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
-        } 
+        }
         // else {
         //   this.$message({
         //       message: ErrorTips[res.codeDesc],
@@ -235,7 +235,7 @@ export default {
         if (res.code === 0 && res.Error == undefined) {
           this.loadShow = true
           this.GetRepositoryList()
-        } 
+        }
         // else {
         //   console.log(2)
         //   this.$message({
@@ -253,7 +253,7 @@ export default {
       if (val) {
         return 'Tencent官方'
       } else {
-        return '用户公开'
+        return '用戶公開'
       }
     }
   }
@@ -389,6 +389,6 @@ i{
     margin-left:20px;
     width: 250px;
     display: flex;
-    justify-content: space-between;   
+    justify-content: space-between;
   }
 </style>

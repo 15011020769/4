@@ -8,37 +8,37 @@
           class="botton-size"
           @click="dialogFormVisible = true"
         >新建</el-button>
-        <el-button :disabled="this.multipleSelection.length>=1?false:true" size="mini" class="botton-size" @click="deleteOpen()">删除</el-button>
-        <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">重置密码</el-button>
+        <el-button :disabled="this.multipleSelection.length>=1?false:true" size="mini" class="botton-size" @click="deleteOpen()">{{$t('TKE.overview.sc')}}</el-button>
+        <el-button size="mini" class="botton-size" @click="dialogFormVisible2 = true">{{$t('TKE.myMirror.czmm')}}</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model.trim="input" placeholder="请输入镜像名称" size="mini" ></el-input>
+          <el-input v-model.trim="input" :placeholder="$t('TKE.myMirror.qsrjxmc')" size="mini" ></el-input>
           <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
       </div>
     </div>
     <div class="room-center">
       <div class="explain" style="margin-bottom:20px;">
-        <p>当前默认地域内镜像仓库暂不支持海外集群通过内网访问，请配置公网进行访问，或使用与集群位于相同地域的镜像仓库</p>
+        <p>{{$t('TKE.myMirror.mydqmrdynjxck')}}</p>
       </div>
     </div>
     <div class="room-bottom">
       <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="reponame" label="名称">
+        <el-table-column prop="reponame" :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <p>
               <a style="cursor:pointer;" @click="jump(scope.row)">{{scope.row.reponame|reponameCg}}</a>
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="public" label="类型">
+        <el-table-column prop="public" :label="$t('TKE.overview.lx')">
            <template slot-scope="scope">
                 {{scope.row.public|publics}}
             </template>
         </el-table-column>
         <el-table-column prop="reponame">
           <template slot="header">
-            命名空间
+            {{$t('TKE.overview.mmkj')}}
             <!-- <ul>
               <li>全部</li>
             </ul> -->
@@ -47,20 +47,20 @@
                 {{scope.row.reponame|reponameCgs}}
             </template>
         </el-table-column>
-        <el-table-column prop="reponame" label="镜像地址">
+        <el-table-column prop="reponame" :label="$t('TKE.myMirror.jxdz')">
           <template slot-scope="scope">
                 {{tableServer+'/'+scope.row.reponame}}
             </template>
         </el-table-column>
-        <el-table-column prop="creationTime" label="创建时间"></el-table-column>
+        <el-table-column prop="creationTime" :label="$t('TKE.overview.cjsj')"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleClick(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
         <el-pagination
           :page-size="pagesize"
           layout="sizes, prev, pager, next"
@@ -73,7 +73,7 @@
       </div>
     </div>
     <!-- 新建弹出窗 -->
-    <el-dialog title="新建镜像仓库" :visible.sync="dialogFormVisible" width="550px" :before-close="close">
+    <el-dialog :title="$t('TKE.myMirror.xjjxck')" :visible.sync="dialogFormVisible" width="550px" :before-close="close">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -84,33 +84,33 @@
         style="width:500px"
         label-position="left"
       >
-        <el-form-item label="名称" prop="name" size="mini">
+        <el-form-item :label="$t('TKE.overview.mc')" prop="name" size="mini">
           <el-input  v-model="name" @change="getName()" style="width:200px"></el-input>
-          <p class="form-p">最长为200个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头或结尾</p>
+          <p class="form-p">{{$t('TKE.myMirror.zcw200gzf')}}</p>
         </el-form-item>
-        <el-form-item label="类型"  size="mini">
+        <el-form-item :label="$t('TKE.overview.lx')"  size="mini">
           <el-select v-model="ruleForm.region" label="私有">
             <el-option label="私有" value="0"></el-option>
             <el-option label="公有" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="命名空间" prop="region2" size="mini">
-           <el-select v-model="ruleForm.region2" filterable placeholder="请选择">
+        <el-form-item :label="$t('TKE.overview.mmkj')" prop="region2" size="mini">
+           <el-select v-model="ruleForm.region2" filterable :placeholder="$t('TKE.overview.qxz')">
               <el-option v-for="(item,key) in spaceName" :key="key" :label="item.namespace" :value="item.namespace"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="desc" size="mini">
           <el-input type="textarea" size="medium" v-model="ruleForm.desc" :autosize="{ minRows: 2, maxRows: 4}" maxlength=1000></el-input>
-          <p class="form-p">最长为1000个字符</p>
+          <p class="form-p">{{$t('TKE.myMirror.zcw1000gzf')}}</p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">{{$t('TKE.myMirror.qd')}}</el-button>
         <el-button @click="close()">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 重置密码弹出窗口 -->
-    <el-dialog title="重置密码" :visible.sync="dialogFormVisible2" width="550px">
+    <el-dialog :title="$t('TKE.myMirror.czmm')" :visible.sync="dialogFormVisible2" width="550px">
       <el-form
         :model="rulePass"
         :rules="rules"
@@ -121,20 +121,20 @@
         style="width:500px"
         label-position="left"
       >
-        <p class="form-pt">您将重置使用docker login命令登录到腾讯云镜像仓库的密码</p>
-        <el-form-item label="名称">
+        <p class="form-pt">{{$t('TKE.myMirror.njczsy')}}</p>
+        <el-form-item :label="$t('TKE.overview.mc')">
             <p>{{nameId}}</p>
         </el-form-item>
-        <el-form-item label="密码" prop="pass" size="mini"> 
+        <el-form-item :label="$t('TKE.overview.mm')" prop="pass" size="mini">
           <el-input type="password" v-model="rulePass.pass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="checkPass" size="mini">
+        <el-form-item :label="$t('TKE.colony.qrmm')" prop="checkPass" size="mini">
           <el-input type="password" v-model="rulePass.checkPass" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitPass('rulePass')">确 定</el-button>
-        <el-button @click="dialogFormVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="submitPass('rulePass')">{{$t('TKE.myMirror.qd')}}</el-button>
+        <el-button @click="dialogFormVisible2 = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 删除弹窗 -->
@@ -142,32 +142,30 @@
       title="提示"
       :visible.sync="dialogVisible"
       width="40%">
-      <p>您确定要删除镜像仓库"{{reponame}}"吗？</p>
-      <p class="form-p">该镜像仓库下的所有镜像版本将一并销毁，请提前备份好数据。</p>
+      <p>{{$t('TKE.myMirror.nqdyscjxck')}}"{{reponame}}"{{$t('TKE.myMirror.ma')}}？</p>
+      <p class="form-p">{{$t('TKE.myMirror.gjxckxdsyjx')}}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteOne()">确 定</el-button>
-        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="deleteOne()">{{$t('TKE.myMirror.qd')}}</el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
     <!-- 全选删除弹窗 -->
     <el-dialog title="提示" :visible.sync="dialogTableVisible" width="35%">
-      <p>您确定要移出以下镜像仓库么？</p>
-      <div>已选择<span style="color:#ff9d00;">{{this.deleteData.length}}个</span>镜像仓库,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+      <p>{{$t('TKE.myMirror.nqdyycyxjxck')}}？</p>
+      <div>{{$t('TKE.colony.yxze')}}<span style="color:#ff9d00;">{{this.deleteData.length}}{{$t('TKE.overview.ge')}}</span>{{$t('TKE.myMirror.jxck')}},<a @click="show=!show" style="cursor: pointer;">{{$t('TKE.overview.ckxq')}}</a></div>
           <el-collapse-transition>
             <div v-show="show">
               <el-table :data="deleteData" height="200">
-                <el-table-column property="reponame" label="名称" width="150"></el-table-column>
-                <el-table-column label="状态" width="200">
-                  <template>
-                      可删除
-                  </template>
+                <el-table-column property="reponame" :label="$t('TKE.overview.mc')" width="150"></el-table-column>
+                <el-table-column :label="$t('TKE.overview.zt')" width="200">
+                  <template>{{$t('TKE.myMirror.ksc')}}</template>
                 </el-table-column>
               </el-table>
             </div>
           </el-collapse-transition>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="deleteAll()">确 定</el-button>
-          <el-button @click="dialogTableVisible = false">取 消</el-button>
+          <el-button type="primary" @click="deleteAll()">{{$t('TKE.myMirror.qd')}}</el-button>
+          <el-button @click="dialogTableVisible = false">取消</el-button>
         </span>
     </el-dialog>
   </div>
@@ -181,11 +179,11 @@ export default {
     var validatePass = (rule, value, callback) => {
       var ckAll = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\x00-\xff]+$).+$/
       if (value === '') {
-        callback(new Error('请输入密码'))
-      }else if(value.length<8 && value.length>16){
-        callback(new Error('密码必须为8到16位'))
+        callback(new Error(this.$t('TKE.myMirror.qsrmm')))
+      }else if(value.length<8 || value.length>16){
+        callback(new Error(this.$t('TKE.myMirror.mmbxw')))
       }else if(!ckAll.test(value)){
-        callback(new Error('密码必须包含数字、字母、特殊字符中至少两项'))
+        callback(new Error(this.$t('TKE.myMirror.mmbxbh')))
       } else {
         if (this.rulePass.checkPass !== '') {
           this.$refs.rulePass.validateField('checkPass')
@@ -197,15 +195,15 @@ export default {
     var validatePass2 = (rule, value, callback) => {
       var ckAll = /^(?![a-zA-Z]+$)(?!\d+$)(?![^\x00-\xff]+$).+$/
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error(this.$t('TKE.myMirror.qzcsrmm')))
       } else if (value !== this.rulePass.pass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else if(value.length<8 && value.length>16){
-        callback(new Error('密码必须为8到16位'))
+        callback(new Error(this.$t('TKE.myMirror.lcsrmmbyz')))
+      } else if(value.length<8 || value.length>16){
+        callback(new Error(this.$t('TKE.myMirror.mmbxw')))
       }else if(!ckAll.test(value)){
-        callback(new Error('密码必须包含数字、字母、特殊字符中至少两项'))
+        callback(new Error('TKE.myMirror.mmbxbh'))
       }  else {
-        callback()  
+        callback()
       }
     }
     var validatePass3 = (rule, value, callback) => {
@@ -216,9 +214,9 @@ export default {
       }
       this.axios.post(TKE_MIRROR_PRESENCE, param).then(res => {
         if (res.code == 0 && res.data.isExist) {
-          callback(new Error('镜像名称已存在'))
+          callback(new Error(this.$t('TKE.myMirror.jxmcycz')))
         } else if (!version.test(this.ruleForm.name)) {
-          callback(new Error('镜像格式不正确'))
+          callback(new Error(this.$t('TKE.myMirror.jxgsbzq')))
         } else {
           callback()
         }
@@ -267,12 +265,12 @@ export default {
           { validator: validatePass2, trigger: 'blur' }
         ],
         name: [
-          { required: true, message: '请输入镜像名称', trigger: 'blur' },
-          { max: 200, message: '镜像名称不能超过200个字符', trigger: 'blur' },
+          { required: true, message: this.$t('TKE.myMirror.qsrjxmc'), trigger: 'blur' },
+          { max: 200, message: this.$t('TKE.myMirror.jxmcbncg200gzf'), trigger: 'blur' },
           { validator: validatePass3, trigger: 'blur,change' }
         ],
         region2: [
-          { required: true, message: '命名空间不能为空', trigger: 'change' }
+          { required: true, message: this.$t('TKE.myMirror.mmkjbnwk'), trigger: 'change' }
         ]
       }
     }
@@ -280,7 +278,7 @@ export default {
   created () {
     this.GetMyMirror()
     this.GetSpaceName()
-    
+
   },
   computed: {
     dateRange () {
@@ -329,7 +327,7 @@ export default {
         if (valid) {
           this.dialogFormVisible = !valid
           this.CreateMyMirror()
-          
+
           this.$refs.ruleForm.clearValidate()
           this.$refs.ruleForm.resetFields()
           this.name = ''
@@ -394,7 +392,7 @@ export default {
         this.GetMyMirror()
       } else {
         this.$message({
-          message: '当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符("."、"_"、"-")',
+          message: this.$t('TKE.myMirror.mydqsrdjxmc'),
           type: 'warning',
           showClose: true,
           duration: 0
@@ -430,7 +428,7 @@ export default {
     //   })
     // },
     // 获得我的镜像数据
-    GetMyMirror () { 
+    GetMyMirror () {
       const param = {
         reponame: this.input,
         offset: 20 * (this.currpage - 1),
@@ -462,7 +460,7 @@ export default {
           this.loadShow = true
           this.deleteSpace = ''
           this.$message({
-              message: "删除成功",
+              message: this.$t('TKE.myMirror.sccg'),
               type: "success",
               showClose: true,
               duration: 0

@@ -11,6 +11,7 @@ import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import i18n from './language/i18n.js' // 引入i18n包
+import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
 import {
   codemirror
 } from 'vue-codemirror'
@@ -55,6 +56,8 @@ Vue.config.productionTip = false
 Vue.use(ElementUI, {locale})
 Vue.use(VueCookie)
 Vue.use(codemirror)
+Vue.prototype.$message = message // 覆盖原有的message方法
+
 new Vue({
   router,
   i18n,

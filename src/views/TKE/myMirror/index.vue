@@ -11,12 +11,12 @@
         <ul class="my-ul">
           <router-link :to="{name: 'myMirrorUser'}">
             <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
-              我的镜像<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
+              {{$t('TKE.myMirror.wdjx')}}<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
           </router-link>
           <router-link :to="{name: 'myMirrorLocal'}">
             <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
-                命名空间<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
+                {{$t('TKE.overview.mmkj')}}<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
             </li>
           </router-link>
         </ul>
@@ -133,6 +133,6 @@ export default {
     width: 250px;
     display: flex;
     justify-content: space-between;
-   
+
 }
 </style>
