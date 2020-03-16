@@ -99,14 +99,11 @@
                 </div>
                 <div v-if="InfoOrLog == false">
                   <div v-for="(item, index) in DDoSIpLogData" :key="index">
-                    <div v-for="(item2, index2) in item.Data" :key="index2+'i'">
-                      <div v-for="(item3, index3) in item2.Record" :key="index3+'j'" style="float: left;">
-                        <span v-if="item3.Key == 'LogTime'">{{ item3.Value }}</span>
-                      </div>
-                      <span v-if="selectIp == '總覽'" style="float: left;">{{ "&nbsp;&nbsp;" + item.Ip }}</span>
-                      <div v-for="(item4, index4) in item2.Record" :key="index4+'k'">
-                        <span v-if="item4.Key == 'LogMessage'">{{ "&nbsp;&nbsp;" + item4.Value }}</span>
-                      </div>
+                    <div v-for="(item2, index2) in item.Record" :key="index2+'i'" style="float: left;">
+                      <span v-if="item2.Key == 'LogTime'">{{ item2.Value }}</span>
+                    </div>
+                    <div v-for="(item3, index3) in item.Record" :key="index3+'j'">
+                      <span v-if="item3.Key == 'LogMessage'">{{ "&nbsp;&nbsp;" + item3.Value }}</span>
                     </div>
                   </div>
                 </div>
@@ -140,6 +137,7 @@ import {
   DDOS_TREND,
   DESCRIBE_DDOSNETEVINFO,
   DESCRIBE_DDOSIPLOG,
+  DESCRIBE_DDOSNETIPLOG,
   DESCRIBE_DDOSATTACKSOURCE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -530,42 +528,38 @@ export default {
         Business: "net",
         Id: row.Id,
         StartTime: row.StartTime,
+        EndTime: row.EndTime,
+        Ip: this.selectIp
+      };
+      this.DDoSIpLogData = [];
+      await this.axios.post(DESCRIBE_DDOSIPLOG, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.DDoSIpLogData = JSON.parse(JSON.stringify(res.Response.Data));
+        } else {
+          
+        }
+      });
+    },
+    // 1.6. 获取高防IP专业版资源的DDoSIP攻击日志
+    async describeDDoSNetIpLog(row) {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: row.Id,
+        StartTime: row.StartTime,
         EndTime: row.EndTime
       };
       this.DDoSIpLogData = [];
-      // IP参数
-      if (this.selectIp !== "總覽") {
-        params["Ip"] = this.selectIp;
-        await this.axios.post(DESCRIBE_DDOSIPLOG, params).then(res => {
-          if (res.Response.Error === undefined) {
-            this.DDoSIpLogData.push(JSON.parse(JSON.stringify(res.Response)));
-          } else {
-            
-          }
-        });
-      } else {
-        for (let i in this.IpList) {
-          if (this.IpList[i] != "總覽") {
-            params["Ip"] = this.IpList[i];
-            await this.axios.post(DESCRIBE_DDOSIPLOG, params).then(res => {
-              if (res.Response.Error === undefined) {
-                this.DDoSIpLogData.push(JSON.parse(JSON.stringify(res.Response)));
-              } else {
-                // let ErrTips = {};
-                // let ErrOr = Object.assign(ErrorTips, ErrTips);
-                // this.$message({
-                //   message: ErrOr[res.Response.Error.Code],
-                //   type: "error",
-                //   showClose: true,
-                //   duration: 0
-                // });
-              }
-            });
-          }
+      await this.axios.post(DESCRIBE_DDOSNETIPLOG, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.DDoSIpLogData = JSON.parse(JSON.stringify(res.Response.Data));
+        } else {
+          
         }
-      }
+      });
     },
-    // 1.6. 获取DDoS攻击源列表
+    // 1.7. 获取DDoS攻击源列表
     describeDDoSAttackSource() {
       // let params = {
       //   Version: "2018-07-09",
@@ -605,15 +599,21 @@ export default {
       }
       this.InfoOrLog = flg;
       let $table = this.$refs.ddosTable;
+      // 关闭所有table展开行
       this.tableDataOfDescribeDDoSNetEvList.map((item) => {
         if (row.Id != item.Id) {
           $table.toggleRowExpansion(item, false);
         }
       });
+      // 调用接口
       if (flg) {
         await this.describeDDoSNetEvInfo(row);
       } else {
-        await this.describeDDoSIpLog(row);
+        if (this.selectIp == "總覽") {
+          await this.describeDDoSNetIpLog(row);
+        } else {
+          await this.describeDDoSIpLog(row);
+        }
       }
       $table.toggleRowExpansion(row);
     },
