@@ -74,7 +74,11 @@
       <bandlimit class="card" />
       <request class="card" />
       <request class="card" />
-      <error-code class="card" />
+      <error-code
+        :params="params"
+        v-if="showFields.includes('errorCode')"
+        class="card"
+      />
       <top-url />
     </div>
   </div>
