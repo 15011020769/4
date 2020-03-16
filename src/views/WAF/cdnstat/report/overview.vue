@@ -41,12 +41,12 @@ export default {
   },
   methods: {
     init() {
-      const { projectId, domainName, interval, time } = this.params
+      const { projectId, domainName, interval, times } = this.params
 
       const params = {
         Version: "2018-06-06",
-        StartTime: "2020-03-15 00:00:00",
-        EndTime: "2020-03-15 23:59:59",
+        StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
+        EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
         Area: "overseas",
         Interval: interval
       }
