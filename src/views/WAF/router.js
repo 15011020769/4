@@ -14,6 +14,33 @@ const router = new Router({
       redirect: '/protectionSettings'
     },
     {
+      path: '/cdn/report', // 安全概览
+      name: 'cdnreport',
+      component: () => import(/* webpackChunkName: "ipMan" */ './cdnstat/report/index.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/cdn/statistics/analysis', // 安全概览
+      name: 'cdnstatisticsanalysis',
+      component: () => import(/* webpackChunkName: "ipMan" */ './cdnstat/statistics/analysis/index.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
+      path: '/cdn/global', // 安全概览
+      name: 'cdnglobal',
+      component: () => import(/* webpackChunkName: "ipMan" */ './cdnstat/global/index.vue'),
+      meta: {
+        keepAlive: true,
+        leftNav:true
+      }
+    },
+    {
       path: '/saveOverView', // 安全概览
       name: 'saveOverView',
       component: () => import(/* webpackChunkName: "ipMan" */ './saveOverView/saveOverView.vue'),
