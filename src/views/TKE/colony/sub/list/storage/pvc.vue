@@ -15,10 +15,10 @@
           typeSelect
           refreshData
           exportData
-          typeLabel="命名空间"
+          :typeLabel="$t('TKE.overview.mmkj')"
           :typeOptions="searchOptions"
           :typeValue="searchType"
-          inputPlaceholder="请输入关键词搜索"
+          :inputPlaceholder="$t('TKE.storage.qsrgjcss')"
           :searchInput="searchInput"
           @changeType="changeSearchType"
           @changeInput="changeSearchInput"
@@ -32,12 +32,12 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table :data="list" v-loading="loadShow" style="width: 100%" id="exportTable">
-        <el-table-column label="名称" prop="metadata">
+        <el-table-column :label="$t('TKE.overview.mc')" prop="metadata">
           <template slot-scope="scope">
             <span @click="goPvcDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" :label="$t('TKE.overview.zt')">
           <template slot-scope="scope">
             <span :class="[scope.row.status.phase =='Pending'?'text-red':'text-green']">{{scope.row.status.phase}}</span>
           </template>
@@ -47,7 +47,7 @@
             <span>{{scope.row.status|capacitys}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="spec" label="访问权限">
+        <el-table-column prop="spec" :label="$t('TKE.storage.fwqx')">
           <template slot-scope="scope">
             <p>{{scope.row.spec.accessModes | accessModess}}</p>
           </template>
@@ -57,15 +57,15 @@
             <p>{{scope.row.spec.storageClassName}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="metadata" label="创建时间">
+        <el-table-column prop="metadata" :label="$t('TKE.overview.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.metadata.creationTimestamp|creationTimestamps}}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
-            <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
+            <span class="tke-text-link" @click="editYaml(scope.row)">{{$t('TKE.overview.bj')}}YAML</span>
+            <span class="tke-text-link ml10" @click="deleteOne(scope.row)">{{$t('TKE.overview.sc')}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -85,10 +85,10 @@
       </div>
     </div>
     <!-- 删除提示 -->
-    <el-dialog title="删除资源" :visible.sync="centerDialogVisible" width="30%">
-      <span>您确定要删除PersistentVolumeClaim：{{deleteName}}吗？</span>
+    <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="centerDialogVisible" width="30%">
+      <span>{{$t('TKE.storage.nqdysc')}}PersistentVolumeClaim：{{deleteName}}{{$t('TKE.myMirror.ma')}}？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteList()">确 定</el-button>
+        <el-button type="primary" @click="DeleteList()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="centerDialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -348,7 +348,7 @@ export default {
           this.centerDialogVisible = false;
           this.getList();
           this.$message({
-            message: "删除成功",
+            message: this.$t('TKE.myMirror.sccg'),
             type: "success",
             showClose: true,
             duration: 0
@@ -379,7 +379,7 @@ export default {
       if (value) {
         for (let i = 0; i < value.length; i++) {
           if (value[i] == "ReadWriteOnce") {
-            return "单机读写";
+            return "單機讀寫";
           }
         }
       } else {

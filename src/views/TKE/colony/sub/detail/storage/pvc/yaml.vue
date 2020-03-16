@@ -4,10 +4,10 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button  size="small" type="primary" @click="editYaml()">编辑YAML</el-button>
+        <el-button  size="small" type="primary" @click="editYaml()">{{$t('TKE.overview.bj')}}YAML</el-button>
       </div>
     </div>
-    
+
     <div class="tke-card mt10 tke-formpanel-wrap">
         <codemirror
         style="background-color: #444;"
@@ -72,7 +72,7 @@ export default {
             ClusterName: this.$route.query.clusterId,
             Method: "GET",
             Path: "/api/v1/namespaces/"+this.$route.query.np+"/persistentvolumeclaims/"+this.$route.query.resourceIns,
-            Version: "2018-05-25"}  
+            Version: "2018-05-25"}
             // np=aasd&resourceIns=saad2
       this.axios.post(POINT_REQUEST, param).then(res => {
           if (res.Response.Error == undefined) {

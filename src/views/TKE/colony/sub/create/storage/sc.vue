@@ -25,27 +25,27 @@
           ref="pv"
           class="tke-form m0"
         >
-          <el-form-item label="名称" prop="name">
-            <el-input class="w200" v-model="pv.name" placeholder="请输入StorageClass名称"></el-input>
-            <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+          <el-form-item :label="$t('TKE.overview.mc')" prop="name">
+            <el-input class="w200" v-model="pv.name" :placeholder="$t('TKE.overview.qsrmc')"></el-input>
+            <p>{{$t('TKE.overview.xz')}}</p>
           </el-form-item>
           <el-form-item label="Provisioner" class="m0">
             <el-radio-group v-model="pv.cloud" style="margin-bottom: 30px;">
-              <el-radio-button label="cloud.tencent.com/qcloud-cbs">云硬盘CBS</el-radio-button>
+              <el-radio-button label="cloud.tencent.com/qcloud-cbs">{{$t('TKE.storage.yyp')}}CBS</el-radio-button>
                <el-tooltip class="item" effect="light" placement="top">
                 <div slot="content">
-                  扩展组件功能处于白名单体验阶段，如需使用
+                  {{$t('TKE.storage.kzzjgncybmd')}}
                   <!-- 请
                   <a>工单咨询</a> -->
                 </div>
-                <el-radio-button label="cloud.tencent.com/qcloud-cfs" disabled>文件存储CFS</el-radio-button>
+                <el-radio-button label="cloud.tencent.com/qcloud-cfs" disabled>{{$t('TKE.storage.wjcc')}}CFS</el-radio-button>
                </el-tooltip>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="地域">
-            <div>港澳台地区(中国台北)</div>
+            <div>{{$t('TKE.storage.gatdqtwtb')}}</div>
           </el-form-item>
-          <el-form-item label="可用区">
+          <el-form-item :label="$t('TKE.colony.kyq')">
             <!-- <el-checkbox v-model="pv.city">随机可用区</el-checkbox> -->
             <el-checkbox-group v-model="pv.city">
               <el-checkbox
@@ -56,43 +56,43 @@
               ></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="计费模式">
+          <el-form-item :label="$t('TKE.colony.jfms')">
             <el-radio-group v-model="pv.money" @change="getChange($event)">
-              <el-radio-button label="POSTPAID">按量计费</el-radio-button>
+              <el-radio-button label="POSTPAID">{{$t('TKE.colony.aljf')}}</el-radio-button>
               <el-radio-button label="PREPAID">包年包月</el-radio-button>
             </el-radio-group>
-            <div v-show="!flag">支持删除和保留的回收策略</div>
+            <div v-show="!flag">{{$t('TKE.storage.zcschbldhscl')}}</div>
             <div v-show="flag">
-              <p>仅支持保留的回收策略</p>
+              <p>{{$t('TKE.storage.jzcbldhscl')}}</p>
               <p>
-                如您需要购买包年包月云硬盘，需要为角色TKE_QCSRole添加策略 QcloudCVMFinanceAccess 配置支付权限， 否则可能因为没支付权限导致创建基于包年包月storageclass的PVC失败。
+                {{$t('TKE.storage.rnxygmbnbyyyp')}}
                 <!-- <a>点击前往角色控制台进行授权</a> -->
               </p>
             </div>
           </el-form-item>
-          <el-form-item label="云盘类型">
+          <el-form-item :label="$t('TKE.storage.yplx')">
             <el-radio-group v-model="pv.ps">
-              <el-radio-button label="CLOUD_PREMIUM">高性能云硬盘</el-radio-button>
-              <el-radio-button label="CLOUD_SSD">SSD云硬盘</el-radio-button>
+              <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
+              <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
             </el-radio-group>
             <div>
-              容量限制可查看CBS类型说明
+              {{$t('TKE.storage.rlxzkckcbs')}}
               <!-- <a href>CBS类型说明</a> -->
             </div>
           </el-form-item>
           <el-form-item label="回收策略" class="m0">
             <el-radio-group v-model="pv.del" style="margin-bottom: 30px;">
-              <el-radio-button label="Delete" :disabled="flag">删除</el-radio-button>
+              <el-radio-button label="Delete" :disabled="flag">{{$t('TKE.overview.sc')}}</el-radio-button>
               <el-radio-button label="Retain">保留</el-radio-button>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="定期备份" class="m0">
-            <el-checkbox v-model="pv.checked" @change="!pv.checked">设置定期备份</el-checkbox>
+          <el-form-item :label="$t('TKE.storage.dqbf')" class="m0">
+            <el-checkbox v-model="pv.checked" @change="!pv.checked">{{$t('TKE.storage.szdqbf')}}</el-checkbox>
             <div v-show="pv.checked">
               <el-select
                 v-model="pv.backup"
                 filterable
-                placeholder="请选择"
+                :placeholder="$t('TKE.overview.qxz')"
                 :filter-method="dataFilter"
               >
                 <el-option
@@ -103,21 +103,21 @@
                 ></el-option>
               </el-select>
               <span style="margin-left:10px;">
-                策略详情
+                {{$t('TKE.storage.clxq')}}
                 <el-tooltip class="item" effect="light" placement="top" v-if="toolData.length">
-                  <div slot="content" style="fontWeight:700;">ID/名称</div>
+                  <div slot="content" style="fontWeight:700;">ID/{{$t('TKE.overview.mc')}}</div>
                   <div slot="content">{{pv.backup}}({{toolData[0].AutoSnapshotPolicyName}})</div>
                   <div slot="content" style="fontWeight:700;">日期</div>
                   <div slot="content">{{getfilterWeek(toolData[0].Policy[0].DayOfWeek[0])}}</div>
-                  <div slot="content" style="fontWeight:700;">时间</div>
+                  <div slot="content" style="fontWeight:700;">{{$t('TKE.storage.sj')}}</div>
                   <div slot="content">{{getfilterDay(toolData[0].Policy[0].Hour[0])}}</div>
-                  <div slot="content" style="fontWeight:700;">保留时间</div>
+                  <div slot="content" style="fontWeight:700;">保留{{$t('TKE.storage.sj')}}</div>
                   <div slot="content">{{getfilterRetention(toolData[0].RetentionDays)}}</div>
                   <i class="el-icon-info"></i>
                 </el-tooltip>
               </span>
               <p>
-                设置定期备份可有效保护数据安全，备份数据将产生额外费用，请见
+                {{$t('TKE.storage.szdqbfkyx')}}
                 <!-- <a>价格总览</a> -->
                 <i class="el-icon-edit-outline"></i>
               </p>
@@ -150,11 +150,11 @@ export default {
       const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/;
       if (value === "") {
         // console.log(222)
-        callback(new Error("请输入应用户名"));
+        callback(new Error("請輸入用戶名"));
       } else if (!version.test(value)) {
-        callback(new Error("格式不正确"));
+        callback(new Error("格式不正確"));
       } else if (value.length > 63) {
-        callback(new Error("长度不能超过63个字符"));
+        callback(new Error("長度不能超過63個字元"));
       } else {
         callback();
       }
@@ -168,8 +168,8 @@ export default {
         name: "",
         checked: false,
         checkListO: [],
-        checkListT: ["台北一区"],
-        city: ["台北一区"],
+        checkListT: ["台北一區"],
+        city: ["台北一區"],
         backup: "" //备份数据
       },
       info: [],
@@ -225,7 +225,7 @@ export default {
     },
     getfilterRetention(val) {
       if (val) {
-        return "保留" + val + "后自动删除";
+        return "保留" + val + this.$t('TKE.storage.hzdsc');
       } else {
         return "永久保留";
       }
