@@ -61,6 +61,12 @@
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
       </div>
+      <div class="Content" v-if="!Congigload">
+           <p>标签</p>
+           <span v-for="(v,i) in ConfigDate.Tags" :key="i">{{v}}</span>
+           <p><i @click="modifyLabels()" class="el-icon-edit" style="cursor:pointer"></i></p>
+      </div>
+      <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'  ></editLabel>
     </div>
     <div v-if="edit===true">
       <div class="Content">
@@ -191,11 +197,14 @@
   import {
     ErrorTips
   } from "@/components/ErrorTips";
+  import editLabel from './editLabels.vue'
   export default {
     props: ['FunctionVersion'],
     data() {
       return {
         disedit: false, //编辑按钮禁用
+        dialogVisible:false,//标签弹出框
+        labelsInfo:{},
         Congigload: true,
         edit: false,
         functionName: this.$route.query.functionName,
@@ -290,6 +299,30 @@
       }
     },
     methods: {
+         //编辑标签
+      modifyLabels(){
+        this.dialogVisible=true;
+        // this.labelsInfo={
+        //   TagSet:row.TagSet,
+        //   resourceId:row.CcnId
+        // }
+      },
+      getLabelsFather(){
+        let params={
+          FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue,
+          Qualifier: this.FunctionVersion,
+          Region: "ap-taipei",
+          ShowCode: "TRUE",
+          Version: "2018-04-16",
+        }
+        this.axios.post(SCF_DETAILS, params).then(res=>{
+          console.log(res)
+           if (res.Response.Error === undefined){
+
+           }
+        })
+      },
       //获取详情数据
       GetDate() {
         this.Congigload = true
@@ -300,9 +333,15 @@
           Qualifier: this.FunctionVersion,
           Namespace: this.$route.query.SpaceValue
         };
+        console.log(param)
         this.axios.post(SCF_DETAILS, param).then(res => {
           if (res.Response.Error === undefined) {
+            console.log( res.Response)
             this.ConfigDate = res.Response
+            this.labelsInfo={
+              TagSet:res.Response.Tags,
+              resourceId:res.Response.FunctionId
+            }
             this.Variables = res.Response.Environment.Variables
             if (this.Variables.length !== 0) {
               this.ScienceArr = this.Variables
@@ -545,7 +584,8 @@
       _cancel() {
         this.edit = false
       }
-    }
+    },
+    components:{editLabel},
   }
 
 </script>

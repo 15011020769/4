@@ -468,7 +468,7 @@ export default {
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
-        return "站内信";
+        return "电话";
       }
     }
   }

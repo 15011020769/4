@@ -122,12 +122,10 @@
             >删除</el-button
           >
           <el-button v-else disabled>删除</el-button>
-          <el-button
-            v-if="multipleSelection.length > 0"
-            @click="ModifyDialogVisible = true"
+          <el-button v-if="ModifyAlarm" @click="ModifyAlarmBtn()"
             >修改告警渠道</el-button
           >
-          <el-button v-else disabled>修改告警渠道</el-button>
+          <el-button v-if="!ModifyAlarm" disabled>修改告警渠道</el-button>
         </el-row>
         <el-row class="iconBtn">
           <i class="el-icon-setting" @click="buyMessgae"></i>
@@ -279,12 +277,13 @@
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                 <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
                 <p>有效期：</p>
-                <p>
+                <p v-if="i.NotifyWay.length > 0">
                   渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                     >{{ j | NotifyWay
                     }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
                   >
                 </p>
+                <p v-else>渠道：-</p>
               </div>
             </div>
             <div v-else>-</div>
@@ -478,46 +477,75 @@
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
-          您已选择20条策略，其中6条支持修改。接收渠道统计如下:
+          您已选择{{ multipleSelection.length }}条策略，其中{{
+            arr.length
+          }}条支持修改。接收渠道统计如下:
         </p>
         <div class="modify-box">
           <div>
             <p>
               <span>邮件</span>
-              <span>已开通数:5,未开通数:1</span>
+              <span>已开通数:{{ emailOpen }},未开通数:{{ emailClose }}</span>
             </p>
-            <el-select>
-              <el-option></el-option>
+            <el-select v-model="emailVal" placeholder="请选择">
+              <el-option
+                v-for="item in emailOpt"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </div>
           <div>
             <p>
               <span>短信</span>
-              <span>已开通数:5,未开通数:1</span>
+              <span>已开通数:{{ SMSOpen }},未开通数:{{ SMSClose }}</span>
             </p>
-            <el-select>
-              <el-option></el-option>
+            <el-select v-model="SMSVal" placeholder="请选择">
+              <el-option
+                v-for="item in SMSOpt"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </div>
           <div>
             <p>
               <span>微信</span>
-              <span>已开通数:5,未开通数:1</span>
+              <span>已开通数:{{ wechatOpen }},未开通数:{{ wechatClose }}</span>
             </p>
-            <el-select>
-              <el-option></el-option>
+            <el-select v-model="wechatVal" placeholder="请选择">
+              <el-option
+                v-for="item in wechatOpt"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </div>
           <div>
-            <p><span>电话</span> <span>已开通数:5,未开通数:1</span></p>
-            <el-select>
-              <el-option></el-option>
+            <p>
+              <span>电话</span>
+              <span>已开通数:{{ callOpen }},未开通数:{{ callClose }}</span>
+            </p>
+            <el-select v-model="callVal" placeholder="请选择">
+              <el-option
+                v-for="item in callOpt"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
             </el-select>
           </div>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="ModifyNotifySure">确定</el-button>
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -550,7 +578,8 @@ import {
   CM_GROUPING_ALARM_START,
   CM_ALARM_DELETE,
   CM_ALARM_SET_DEFAULT,
-  CM_GROUPING_LIST_EDIT
+  CM_GROUPING_LIST_EDIT,
+  CM_ALARM_MODIFY_NOTIFY
 } from "@/constants";
 var project = [];
 export default {
@@ -645,11 +674,11 @@ export default {
       operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
       dialogVisible: false, //设置弹出框
-      value: true,
       defaultIconFlag: false, //鼠标事件
       deleteDialogVisible: false,
       deleteAllDialogVisible: false,
       deleteTableData: [],
+      ModifyAlarm: false,
       ModifyDialogVisible: false,
       modifyNameDialogVisible: false,
       editSearchVal: "",
@@ -662,8 +691,51 @@ export default {
       inputVal: "",
       indexs: "",
       multipleSelection: [],
+      arr: [],
+      arrOpen: [],
+      arrClose: [],
       showIsDefault: false,
-      showIsAll: true
+      showIsAll: true,
+      // 邮件
+      emailVal: "1",
+      emailOpt: [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ],
+      emailOpen: 0,
+      emailClose: 0,
+      // 短信
+      SMSVal: "1",
+      SMSOpt: [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ],
+      SMSOpen: 0,
+      SMSClose: 0,
+      // 微信
+      wechatVal: "1",
+      wechatOpt: [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ],
+      wechatOpen: 0,
+      wechatClose: 0,
+      // 电话
+      callVal: "1",
+      callOpt: [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ],
+      callOpen: 0,
+      callClose: 0
     };
   },
   components: {
@@ -891,16 +963,21 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
-    },
-    handleCheckAllChange(val) {
-      this.checkedCities = val ? cityOptions : [];
-      this.isIndeterminate = false;
-    },
-    handleCheckedCitiesChange(value) {
-      let checkedCount = value.length;
-      this.checkAll = checkedCount === this.cities.length;
-      this.isIndeterminate =
-        checkedCount > 0 && checkedCount < this.cities.length;
+      this.arr = [];
+      console.log(this.multipleSelection);
+      for (let i in this.multipleSelection) {
+        if (this.multipleSelection[i].IsDefault == 0) {
+          this.arr.push(this.multipleSelection[i]);
+        }
+      }
+      if (this.arr.length > 0) {
+        this.ModifyAlarm = true;
+      } else {
+        this.ModifyAlarm = false;
+      }
+      if (this.multipleSelection.length === 0) {
+        this.ModifyAlarm = false;
+      }
     },
     onSubmit() {
       console.log("submit!");
@@ -1004,7 +1081,6 @@ export default {
     },
     // 删除
     Delete(row) {
-      console.log(row);
       this.deleteDialogVisible = true;
       this.GroupId = row.GroupId;
       this.multipleSelection = row;
@@ -1136,6 +1212,250 @@ export default {
       } else {
         this.tipsShow = false;
       }
+    },
+    // 修改告警渠道
+    ModifyAlarmBtn() {
+      this.ModifyDialogVisible = true;
+      // console.log(this.arr[0].ReceiverInfos[0].NotifyWay);
+      // for (let i = 0; i < this.arr.length; i++) {
+      //   if (this.arr[i]) {
+      //   }
+      // }
+      // 邮件
+      this.emailOpt = [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ];
+      this.emailOpen = 0;
+      this.emailClose = 0;
+      this.emailVal = "1";
+      // 短信
+      this.SMSOpt = [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ];
+      this.SMSOpen = 0;
+      this.SMSClose = 0;
+      this.SMSVal = "1";
+      // 微信
+      this.wechatOpt = [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ];
+      this.wechatOpen = 0;
+      this.wechatClose = 0;
+      this.wechatVal = "1";
+      // 电话
+      this.callOpt = [
+        {
+          value: "1",
+          label: "-(保持不变)"
+        }
+      ];
+      this.callOpen = 0;
+      this.callClose = 0;
+      this.callVal = "1";
+      for (let i in this.arr) {
+        if (this.arr[i].ReceiverInfos[0].NotifyWay.length > 0) {
+          for (let k in this.arr[i].ReceiverInfos[0].NotifyWay) {
+            console.log(this.arr[i].ReceiverInfos[0].NotifyWay);
+            // if(this.arr[i].ReceiverInfos[0].NotifyWay.toString())
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[k] === "EMAIL") {
+              this.emailOpen++;
+            }
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[k] === "SMS") {
+              this.SMSOpen++;
+            }
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[k] === "WECHAT") {
+              this.wechatOpen++;
+            }
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[k] === "CALL") {
+              this.callOpen++;
+            }
+          }
+        } else {
+          this.emailClose = this.arr.length - this.emailOpen;
+          this.SMSClose = this.arr.length - this.SMSOpen;
+          this.wechatClose = this.arr.length - this.wechatOpen;
+          this.callClose = this.arr.length - this.callOpen;
+        }
+      }
+      this.emailClose = this.arr.length - this.emailOpen;
+      this.SMSClose = this.arr.length - this.SMSOpen;
+      this.wechatClose = this.arr.length - this.wechatOpen;
+      this.callClose = this.arr.length - this.callOpen;
+      if (this.emailOpen > 0) {
+        this.emailOpt.push({
+          value: "2",
+          label: "关闭已开通的" + this.emailOpen + "条策略"
+        });
+      }
+      if (this.emailClose > 0) {
+        this.emailOpt.unshift({
+          value: "0",
+          label: "开启未开通的" + this.emailClose + "条策略"
+        });
+      }
+
+      if (this.SMSOpen > 0) {
+        this.SMSOpt.push({
+          value: "2",
+          label: "关闭已开通的" + this.SMSOpen + "条策略"
+        });
+      }
+      if (this.SMSClose > 0) {
+        this.SMSOpt.unshift({
+          value: "0",
+          label: "开启未开通的" + this.SMSClose + "条策略"
+        });
+      }
+
+      if (this.wechatOpen > 0) {
+        this.wechatOpt.push({
+          value: "2",
+          label: "关闭已开通的" + this.wechatOpen + "条策略"
+        });
+      }
+      if (this.wechatClose > 0) {
+        this.wechatOpt.unshift({
+          value: "0",
+          label: "开启未开通的" + this.wechatClose + "条策略"
+        });
+      }
+
+      if (this.callOpen > 0) {
+        this.callOpt.push({
+          value: "2",
+          label: "关闭已开通的" + this.callOpen + "条策略"
+        });
+      }
+      if (this.callClose > 0) {
+        this.callOpt.unshift({
+          value: "0",
+          label: "开启未开通的" + this.callClose + "条策略"
+        });
+      }
+    },
+    ModifyNotifySure() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      for (let i in this.arr) {
+        param["GroupNotifyInfos." + i + ".GroupId"] = this.arr[i].GroupId;
+
+        if (this.emailVal == 0) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.0"] = "EMAIL";
+        } else if (this.emailVal == 1) {
+          if (!this.arr[i].ReceiverInfos[0].NotifyWay.indexOf("EMAIL")) {
+            param["GroupNotifyInfos." + i + ".NotifyWay.0"] = "EMAIL";
+          } else {
+            param["GroupNotifyInfos." + i + ".NotifyWay.0"] = "";
+          }
+        } else if (this.emailVal == 2) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.0"] = "";
+        }
+        if (this.SMSVal == 0) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.1"] = "SMS";
+        } else if (this.SMSVal == 1) {
+          if (!this.arr[i].ReceiverInfos[0].NotifyWay.indexOf("SMS")) {
+            param["GroupNotifyInfos." + i + ".NotifyWay.1"] = "SMS";
+          } else {
+            param["GroupNotifyInfos." + i + ".NotifyWay.1"] = "";
+          }
+        } else if (this.SMSVal == 2) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.1"] = "";
+        }
+        if (this.wechatVal == 0) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.2"] = "WECHAT";
+        } else if (this.wechatVal == 1) {
+          if (!this.arr[i].ReceiverInfos[0].NotifyWay.indexOf("WECHAT")) {
+            param["GroupNotifyInfos." + i + ".NotifyWay.2"] = "WECHAT";
+          } else {
+            param["GroupNotifyInfos." + i + ".NotifyWay.2"] = "";
+          }
+        } else if (this.wechatVal == 2) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.2"] = "";
+        }
+        if (this.callVal == 0) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.3"] = "CALL";
+        } else if (this.callVal == 1) {
+          if (!this.arr[i].ReceiverInfos[0].NotifyWay.indexOf("CALL")) {
+            param["GroupNotifyInfos." + i + ".NotifyWay.3"] = "CALL";
+          } else {
+            param["GroupNotifyInfos." + i + ".NotifyWay.3"] = "";
+          }
+        } else if (this.callVal == 2) {
+          param["GroupNotifyInfos." + i + ".NotifyWay.3"] = "";
+        }
+
+        for (let j in this.arr[i].ReceiverInfos[0].NotifyWay) {
+          if (this.emailVal == 1) {
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[j] === "EMAIL") {
+              param["GroupNotifyInfos." + i + ".NotifyWay.0"] = this.arr[
+                i
+              ].ReceiverInfos[0].NotifyWay[j];
+            }
+          }
+          if (this.SMSVal == 1) {
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[j] === "SMS") {
+              param["GroupNotifyInfos." + i + ".NotifyWay.1"] = this.arr[
+                i
+              ].ReceiverInfos[0].NotifyWay[j];
+            }
+          }
+          if (this.wechatVal == 1) {
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[j] === "WECHAT") {
+              param["GroupNotifyInfos." + i + ".NotifyWay.2"] = this.arr[
+                i
+              ].ReceiverInfos[0].NotifyWay[j];
+            }
+          }
+          if (this.callVal == 1) {
+            if (this.arr[i].ReceiverInfos[0].NotifyWay[j] === "CALL") {
+              param["GroupNotifyInfos." + i + ".NotifyWay.3"] = this.arr[
+                i
+              ].ReceiverInfos[0].NotifyWay[j];
+            }
+          }
+        }
+      }
+      console.log(param);
+      this.axios.post(CM_ALARM_MODIFY_NOTIFY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.ModifyDialogVisible = false;
+          this.ListInit();
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     }
   },
   filters: {
@@ -1200,7 +1520,7 @@ export default {
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
-        return "站内信";
+        return "电话";
       }
     },
     ProjectName(val) {

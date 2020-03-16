@@ -28,7 +28,7 @@
 
       <el-input
         clearable
-        placeholder="搜索用戶名/ID/SecretId/備註"
+        placeholder="支持多關鍵詞(間隔為空格)搜索用戶名/賬戶ID/備註"
         size="small"
         class="inputSearch"
         v-model="inpVal"

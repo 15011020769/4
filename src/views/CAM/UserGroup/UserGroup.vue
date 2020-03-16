@@ -18,7 +18,7 @@
           size="small"
           v-model="searchValue"
           clearable
-          :placeholder="$t('CAM.userGroup.placeholder')"
+          placeholder="支持搜索用戶組名稱/備註"
           style="width: 300px;"
           @change="toQuery"
         >

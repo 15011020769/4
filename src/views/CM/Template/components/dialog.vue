@@ -181,7 +181,7 @@
 </template>
 <script>
 import GroupingType from '@/components/GroupingType'
-import { GET_TENCENTCLOUDAPI, UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
+import {  UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
 export default {
   data () {
     return {

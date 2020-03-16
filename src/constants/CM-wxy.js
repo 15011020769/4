@@ -50,3 +50,6 @@ export const CM_ALARM_DELETE = 'monitor2/DeletePolicyGroup'
 
 // 告警策略 列表 策略类型 设置默认
 export const CM_ALARM_SET_DEFAULT = 'monitor/SetDefaultPolicyGroup'
+
+// 告警策略 列表 策略类型 修改告警渠道
+export const CM_ALARM_MODIFY_NOTIFY = 'monitor2/ModifyNotifyBatch'

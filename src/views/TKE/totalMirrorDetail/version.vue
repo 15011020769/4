@@ -8,18 +8,18 @@
                 >
                 <el-table-column
                     prop="tagName"
-                    label="镜像版本"
+                    :label="$t('TKE.overview.jxbb')"
                     min-width="15%">
                 </el-table-column>
                 <el-table-column
                     prop="pushTime"
-                    label="创建时间"
+                    :label="$t('TKE.overview.cjsj')"
                     min-width="30%"
                     :show-overflow-tooltip="true">
                 </el-table-column>
                 <el-table-column
                     prop="tagId"
-                    label="镜像ID（SHA256）"
+                    :label="$t('TKE.mirrorDetail.jxid')"
                     min-width="40%"
                     :show-overflow-tooltip="true">
                 </el-table-column>
@@ -30,7 +30,7 @@
                 </el-table-column>
             </el-table>
             <div class="Right-style pagstyle">
-              <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+              <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
               <el-pagination
                 :page-size="pagesize"
                 layout="prev, pager, next"

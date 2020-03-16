@@ -25,7 +25,10 @@ for (let key in CMfilters) {
   Vue.filter(key, CMfilters[key])
 }
 
-
+const onlineEdit = document.createElement("script");
+onlineEdit.src= 'https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js'
+document.body.appendChild(onlineEdit)
+console.log('sssssss')
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)

@@ -69,11 +69,26 @@
         v-if="showFields.includes('overview')"
         class="card"
       />
-      <region-top class="card" />
-      <flux class="card" />
-      <bandlimit class="card" />
-      <request class="card" />
-      <request class="card" />
+      <region-top
+        :params="params"
+        v-if="showFields.includes('regionTop')"
+        class="card"
+      />
+      <flux
+        :params="params"
+        v-if="showFields.includes('flux')"
+        class="card"
+      />
+      <bandlimit
+        :params="params"
+        v-if="showFields.includes('bandlimit')"
+        class="card"
+      />
+      <request
+        :params="params"
+        v-if="showFields.includes('request')"
+        class="card"
+      />
       <error-code
         :params="params"
         v-if="showFields.includes('errorCode')"
@@ -127,12 +142,17 @@ export default {
   computed: {
     params() {
       const { interval, projectId, domainName, time } = this
+      console.log(time)
       let times = time
-      if (interval === '5min') {
-        times = [time, time]
-      } else if (interval === 'day') {
-        times = [time, ]
+      if (interval === '5min') { // 日报
+        times = [moment(time).startOf('d').format('YYYY-MM-DD HH:mm:ss'), moment(time).endOf('d').format('YYYY-MM-DD HH:mm:ss')]
+      } else if (interval === 'day') { // 月报
+        times = [moment(time).startOf('d').format('YYYY-MM-DD HH:mm:ss'), moment(time).endOf('month').format('YYYY-MM-DD HH:mm:ss')]
+      } else { // 周报
+        times = [time[0].startOf('d').format('YYYY-MM-DD HH:mm:ss'), time[1].endOf('d').format('YYYY-MM-DD HH:mm:ss')]
       }
+      console.log(times[0])
+      console.log(times[1])
       return {interval, projectId, domainName, times}
     }
   },

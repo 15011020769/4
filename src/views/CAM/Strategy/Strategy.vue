@@ -29,7 +29,7 @@
 
           <el-input
             style="width:300px;"
-            :placeholder="$t('CAM.Role.searchRole')"
+            placeholder="支持搜索策略名稱/備註"
             size="small"
             v-model="searchValue"
             @change="toQuery"
@@ -128,22 +128,18 @@
       </div>
     </div>
     <!-- 关联用户/用户组 模态窗 -->
-    <div v-if="dialogVisible">
+    <!-- <div v-if="dialogVisible"> -->
       <el-dialog
-        title
+        title="關聯用戶/用戶組"
         :visible.sync="dialogVisible"
         width="72%"
         :before-close="beforeClose"
       >
-        <h3 style="color:#000;margin-bottom:20px;">
-          {{ $t("CAM.strategy.straGroup") }}
-        </h3>
-        <div class="dialog_div">
-          <!-- v-if="transferFlag" -->
-          <transfer ref="userTransfer" :PolicyId="policyId"></transfer>
-          <!-- :userArr="userArr"
-            :groupArr="groupArr" -->
-        </div>
+        <transfer
+            ref="userTransfer"
+            :policyId="policyId"
+            :visible.sync="dialogVisible" 
+          ></transfer>
         <span slot="footer" class="dialog-footer">
           <el-button size="mini" @click="dialogVisible = false"
             >取 消</el-button
@@ -153,17 +149,19 @@
           }}</el-button>
         </span>
       </el-dialog>
-    </div>
+    <!-- </div> -->
   </div>
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import transfer from "./component/transfer";
+import transfer from "./transfer";
 import {
   POLICY_LIST,
   DELETE_POLICY,
   LIST_ENPOLICY,
-  GET_SERVICE_API_LIST
+  GET_SERVICE_API_LIST,
+  ATTACH_USERS_POLICY,
+  ATTACH_GROUPS_POLICY,
 } from "@/constants";
 
 let serviceList = [];
@@ -358,58 +356,61 @@ export default {
       // this.groupArr = [];
       done();
     },
-    // // 获取策略关联的实体列表
-    // getAttachPolicys(val) {
-    //   const params = {
-    //     Version: "2019-01-16",
-    //     PolicyId: val,
-    //     Page: this.entitiesForPolicyPage,
-    //     Rp: this.entitiesForPolicyRp,
-    //   };
-    //   var userArr = [];
-    //   var groupArr = [];
-    //   this.axios.post(LIST_ENPOLICY, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       if (res.Response.List) {
-    //         this.entitiesForPolicy = this.entitiesForPolicy.concat(res.Response.List)
-    //         if (this.entitiesForPolicy.length != res.Response.TotalNum) {
-    //           this.entitiesForPolicyPage += 1
-    //           this.getAttachPolicys(val)
-    //         } else {
-    //           this.entitiesForPolicy.forEach(item => {
-    //             if (item.RelatedType == 1) {
-    //               userArr.push(item);
-    //             } else {
-    //               groupArr.push(item);
-    //             }
-    //           })
-    //             this.userArr = this.userArr.concat(userArr);
-    //             this.groupArr = this.userArr.concat(groupArr);
-    //         }
-    //       }
-    //     } else {
-    //       let ErrTips = {
-    //         "ResourceNotFound.UserNotExist": "用戶不存在"
-    //       };
-    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
-    //       this.$message({
-    //         message: ErrOr[res.Response.Error.Code],
-    //         type: "error",
-    //         showClose: true,
-    //         duration: 0
-    //       });
-    //     }
-    //   });
-    // },
     // 穿梭框：value右侧框值、direction操作、movedKeys移动值
     handleChange(value, direction, movedKeys) {
       this.transfer_data_right = value;
     },
-    // 关联用户/用户组
+    // 策略添加用户/用户组
     attachPolicy() {
-      this.$refs.userTransfer.attachPolicy();
-      this.getData();
-      this.dialogVisible = false;
+      const selectedData = this.$refs.userTransfer.selectedData
+      if (selectedData.length === 0) {
+        return void this.$message({
+          message: '請選擇用戶/用戶組',
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+
+      const users = []
+      const groups = []
+      const p = []
+      selectedData.forEach(d => {
+        if (d.type === 'user') {
+          users.push(d.uin)
+        } else {
+          groups.push(d.groupId)
+        }
+      })
+      if (users.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyId
+        }
+        users.forEach((id, i) => {
+          params[`TargetUin.${i}`] = id
+        })
+        p.push(this.axios.post(ATTACH_USERS_POLICY, params))
+      }
+      if (groups.length) {
+        const params = {
+          Version: '2019-01-16',
+          PolicyId: this.policyId
+        }
+        groups.forEach((id, i) => {
+          params[`GroupId.${i}`] = id
+        })
+        p.push(this.axios.post(ATTACH_GROUPS_POLICY, params))
+      }
+      Promise.all(p).then(() => {
+        this.$message({
+          message: '關聯成功',
+          type: "success",
+          showClose: true,
+          duration: 0
+        });
+        this.dialogVisible = false;
+      })
     },
     // table标题栏选择项
     handleCommand(command) {

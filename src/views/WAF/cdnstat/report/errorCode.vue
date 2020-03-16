@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       seriesPieErrorCode: [],
-      colorPie: ['#006eff', 'rgb(41, 204, 133)', '#434348', '#74BD48', "#F7A35C", '#8D62AE'],
+      colorPie: ['#006eff', '#29cc85', '#434348', '#74BD48', "#F7A35C", '#8D62AE'],
       legendTextPieError: [],
       totalNumber: 1,
       loading: true,
@@ -68,8 +68,8 @@ export default {
 
       const params = {
         Version: "2018-06-06",
-        StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
-        EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
         Interval: interval
       }

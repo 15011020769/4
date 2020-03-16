@@ -377,7 +377,6 @@
           TagSet:row.TagSet,
           resourceId:row.CcnId
         }
-        console.log(row)
       },
       //取消修改姓名
       cancel1() {

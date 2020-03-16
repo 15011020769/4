@@ -109,15 +109,17 @@ export default {
             ...fnDel(delArrSure),
             ...fnEdit(addArr),
             ...fnEdit(editArrSure2),
-            Resource: `qcs::vpc:ap-guangzhou:uin/${VueCookie.get('uuid')}:ccn/${this.resourceId}`,
+            Resource: `qcs::scf:ap-taipei:uin/${VueCookie.get('uuid')}:lam/${this.resourceId}`,
             Version:'2018-08-13',
             Action:'ModifyResourceTags',
         }
+        console.log(params)
         if(JSON.stringify(fnDel(delArrSure))!='{}'||JSON.stringify(fnEdit(addArr))!='{}'||JSON.stringify(fnEdit(editArrSure2))!="{}"){
             this.axios.post(EDIT_LABELS_JZ,params).then(res=>{
                 console.log(res)
                  if (res.Response.Error === undefined){
-                     this.$parent.getData()
+                     this.$parent.getLabelsFather()
+
                       this.$message({
                         message:'操作成功',
                         type: "success",

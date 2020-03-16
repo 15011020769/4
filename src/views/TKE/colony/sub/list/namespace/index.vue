@@ -14,7 +14,7 @@
         <tkeSearch 
           exportData
           refreshData
-          inputPlaceholder='请输入名称'
+          :inputPlaceholder="$t('TKE.myMirror.qsrmc')"
           :searchInput='searchInput'
           @changeInput="changeSearchInput"
           @clickSearch="clickSearch"
@@ -33,7 +33,7 @@
         style="width: 100%"
         id="exportTable">
         <el-table-column
-          label="名称"
+          :label="$t('TKE.overview.mc')"
           >
           <template slot-scope="scope">
             <span @click="goNamespaceDetail(scope.row.metadata.name)" class="tke-text-link" >{{scope.row.metadata.name}}</span>
@@ -41,7 +41,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="状态"
+          :label="$t('TKE.overview.zt')"
           >
           <template slot-scope="scope">
               <span class="text-green">{{scope.row.status.phase}}</span>
@@ -58,7 +58,7 @@
         
         <el-table-column
           prop=""
-          label="创建时间"
+          :label="$t('TKE.overview.cjsj')"
           >
           <template slot-scope="scope">
               <span>{{scope.row.addTime}}</span>
@@ -68,7 +68,7 @@
           label="操作"
           >
           <template slot-scope="scope">
-            <el-button size="small" type="text" :disabled="scope.row.isDelete?true:false" @click="deleteNameSpace(scope.row)">删除</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDelete?true:false" @click="deleteNameSpace(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,11 +88,11 @@
         </div>
       </div>
     </div>
-    <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
-      <p style="color:#444;font-weight:bolder;">您确定要删除Namespace：{{nameSpaceName}}吗？</p>
-      <p style="color:#e54545">删除Namespace将销毁Namespace下的所有资源，销毁后不可恢复，请谨慎操作。</p>
+    <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="showNameSpaceModal" width="35%">
+      <p style="color:#444;font-weight:bolder;">{{$t('TKE.overview.qdsc')}}Namespace：{{nameSpaceName}}嗎？</p>
+      <p style="color:#e54545">{{$t('TKE.subList.scmmkj')}}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitDelete()">确 定</el-button>
+        <el-button type="primary" @click="submitDelete()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showNameSpaceModal = false">取 消</el-button>
       </span>
     </el-dialog>  
@@ -196,7 +196,7 @@ export default {
           this.loadShow = false;
           this.showNameSpaceModal = false;
           this.$message({
-            message: "删除成功",
+            message: "刪除成功",
             type: "success",
             showClose: true,
             duration: 0

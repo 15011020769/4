@@ -229,7 +229,7 @@ export default {
       oInput.select(); // 选择对象;
       document.execCommand("Copy"); // 执行浏览器复制命令
       this.$message({
-        message: "复制成功",
+        message: this.$t('TKE.mirrorDetail.fzcg'),
         type: "success",
         showClose: true
       });
@@ -282,7 +282,7 @@ export default {
         }
         if (res.Response.Clusters.length > 0) {
           res.Response.Clusters.map(cluster => {
-            k8sList.map(k8s => {  
+            k8sList.map(k8s => {
               if (cluster.ClusterId === k8s.spec.clusterName) {
                 if (k8s.status && k8s.status.phase) {
                   cluster.targetStatus = k8s.status.phase;

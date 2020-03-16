@@ -77,9 +77,10 @@
             </el-table-column>
             <el-table-column prop="attackAction" label="操作">
               <template slot-scope="scope">
-                <!-- <el-button type="text" size="small">攻擊包下載</el-button> -->
+                <el-button type="text" size="small" @click="describeDDoS(false, true)">攻擊包下載</el-button>
                 <el-button type="text" size="small" @click="describeDDoS(scope.row, true)">攻擊詳情</el-button>
                 <el-button type="text" size="small" @click="describeDDoS(scope.row, false)">攻擊日誌</el-button>
+                <el-button v-if="selectIp !== '總覽'" type="text" size="small" @click="toDDOSAttackSource(scope.row)">攻擊源信息</el-button>
               </template>
             </el-table-column>
             <el-table-column type="expand" width="1px">
@@ -97,13 +98,12 @@
                   </tr>
                 </div>
                 <div v-if="InfoOrLog == false">
-                  <div v-for="(item, index) in DDoSIpLogData.Data" :key="index">
+                  <div v-for="(item, index) in DDoSIpLogData" :key="index">
                     <div v-for="(item2, index2) in item.Record" :key="index2+'i'" style="float: left;">
                       <span v-if="item2.Key == 'LogTime'">{{ item2.Value }}</span>
                     </div>
-                    <span  style="float: left;">{{ "&nbsp;&nbsp;" + DDoSIpLogData.Ip + "&nbsp;&nbsp;" }}</span>
                     <div v-for="(item3, index3) in item.Record" :key="index3+'j'">
-                      <span v-if="item3.Key == 'LogMessage'">{{ item3.Value }}</span>
+                      <span v-if="item3.Key == 'LogMessage'">{{ "&nbsp;&nbsp;" + item3.Value }}</span>
                     </div>
                   </div>
                 </div>
@@ -136,7 +136,9 @@ import {
   DDOS_DATA,
   DDOS_TREND,
   DESCRIBE_DDOSNETEVINFO,
-  DESCRIBE_DDOSIPLOG
+  DESCRIBE_DDOSIPLOG,
+  DESCRIBE_DDOSNETIPLOG,
+  DESCRIBE_DDOSATTACKSOURCE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
@@ -492,7 +494,7 @@ export default {
       });
     },
     // 1.4. 获取高防IP专业版资源的DDoS攻击事件详情
-    describeDDoSNetEvInfo(row) {
+    async describeDDoSNetEvInfo(row) {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -501,7 +503,7 @@ export default {
         StartTime: row.StartTime,
         EndTime: row.EndTime
       };
-      this.axios.post(DESCRIBE_DDOSNETEVINFO, params).then(res => {
+      await this.axios.post(DESCRIBE_DDOSNETEVINFO, params).then(res => {
         if (res.Response.Error === undefined) {
           this.Pps = res.Response.Pps;
           this.Mbps = res.Response.Mbps;
@@ -519,7 +521,27 @@ export default {
       });
     },
     // 1.5. 获取DDoSIP攻击日志
-    describeDDoSIpLog(row) {
+    async describeDDoSIpLog(row) {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: row.Id,
+        StartTime: row.StartTime,
+        EndTime: row.EndTime,
+        Ip: this.selectIp
+      };
+      this.DDoSIpLogData = [];
+      await this.axios.post(DESCRIBE_DDOSIPLOG, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.DDoSIpLogData = JSON.parse(JSON.stringify(res.Response.Data));
+        } else {
+          
+        }
+      });
+    },
+    // 1.6. 获取高防IP专业版资源的DDoSIP攻击日志
+    async describeDDoSNetIpLog(row) {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -528,42 +550,76 @@ export default {
         StartTime: row.StartTime,
         EndTime: row.EndTime
       };
-      // IP参数
-      if (this.selectIp !== "總覽") {
-        params["Ip"] = this.selectIp;
-      }
-      this.axios.post(DESCRIBE_DDOSIPLOG, params).then(res => {
+      this.DDoSIpLogData = [];
+      await this.axios.post(DESCRIBE_DDOSNETIPLOG, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.DDoSIpLogData = JSON.parse(JSON.stringify(res.Response));
+          this.DDoSIpLogData = JSON.parse(JSON.stringify(res.Response.Data));
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          
         }
       });
     },
-    // ddosTable 攻击详情 或 攻击日志
-    describeDDoS(row, flg) {
+    // 1.7. 获取DDoS攻击源列表
+    describeDDoSAttackSource() {
+      // let params = {
+      //   Version: "2018-07-09",
+      //   Region: localStorage.getItem("regionv2"),
+      //   Business: "net",
+      //   Id: row.Id,
+      //   StartTime: row.StartTime,
+      //   EndTime: row.EndTime
+      // };
+      // await this.axios.post(DESCRIBE_DDOSNETEVINFO, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     this.Pps = res.Response.Pps;
+      //     this.Mbps = res.Response.Mbps;
+      //     this.TotalTraffic = res.Response.TotalTraffic;
+      //   } else {
+      //     let ErrTips = {};
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: "error",
+      //       showClose: true,
+      //       duration: 0
+      //     });
+      //   }
+      // });
+    },
+    // ddosTable (row=false攻击包下载，flg=true攻击详情，false攻击日志)
+    async describeDDoS(row, flg) {
+      if (!row) {
+        this.$message({
+          message: '該地區暫不支持攻擊包下載',
+          type: 'success',
+          showClose: true,
+          duration: 1000
+        })
+        return
+      }
       this.InfoOrLog = flg;
       let $table = this.$refs.ddosTable;
+      // 关闭所有table展开行
       this.tableDataOfDescribeDDoSNetEvList.map((item) => {
         if (row.Id != item.Id) {
           $table.toggleRowExpansion(item, false);
         }
       });
+      // 调用接口
       if (flg) {
-        this.describeDDoSNetEvInfo(row);
+        await this.describeDDoSNetEvInfo(row);
       } else {
-        this.describeDDoSIpLog(row);
+        if (this.selectIp == "總覽") {
+          await this.describeDDoSNetIpLog(row);
+        } else {
+          await this.describeDDoSIpLog(row);
+        }
       }
-      setTimeout(() => {
-        $table.toggleRowExpansion(row);
-      }, 800);
+      $table.toggleRowExpansion(row);
+    },
+    // 打开ddos攻击源列表弹框
+    toDDOSAttackSource(row) {
+
     },
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {

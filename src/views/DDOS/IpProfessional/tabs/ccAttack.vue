@@ -41,7 +41,13 @@
         </el-select>
       </div>
       <div class="mainConListAll mainConListTwo">
-        <div id="myChart3" ref="chart"></div>
+          <div id="myChart3" ref="chart"></div>
+          <div>
+             <div class="text-label">總請求峰值 </div>
+             <div class="text-indent">{{ReqQpsTotal}}QPS</div>
+             <div class="text-label">攻擊請求峰值</div>
+             <div class="text-indent">{{DropQpsTotal}}QPS</div>
+          </div>
       </div>
       <div class="mainConListAll">
         <h3>{{$t('DDOS.Statistical_forms.CC_attack_record')}}</h3>
@@ -131,10 +137,14 @@ export default {
       startTimeService: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
-      tableDataEnd: [],
       periodCC: 3600, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
       ResIpList: [],
-      choiceClick: false
+      choiceClick: false,
+      ReqQpsTotal: 0,
+      DropQpsTotal: 0,
+      dropqps: [],
+      inqpsdata: []
+
     };
   },
   watch: {
@@ -523,6 +533,8 @@ export default {
         StartTime: this.startTimeCC,
         EndTime: this.endTimeCC
       };
+      this.DropQpsTotal = 0
+      this.ReqQpsTotal = 0
       this.axios.post(CC_DATA, params).then(res => {
         if (res.Response.Error === undefined) {
           if (res.Response.MetricName === "inqps") {
@@ -530,7 +542,9 @@ export default {
           } else {
             this.dropqps = res.Response.Data;
           }
-          this.drawLine3(this.timey, this.inqpsdata, this.dropqps)  
+          this.drawLine3(this.timey, this.inqpsdata, this.dropqps) 
+          this.DropQpsTotal = Math.max.apply(Math, this.dropqps)
+          this.ReqQpsTotal = Math.max.apply(Math, this.inqpsdata)
         }
       })
     },
@@ -559,7 +573,7 @@ export default {
       let myChart3 = this.$echarts.init(this.$refs.chart);
       // 绘制图表
       myChart3.setOption({
-        color: ["rgb(124, 181, 236)"],
+        color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
         title: { text: "" },
         tooltip: {},
         //       legend: {
@@ -608,7 +622,7 @@ export default {
             itemStyle: {
               normal: {
                 lineStyle: {
-                  color: "#f40"
+                  color: "rgb(50, 205, 50)"
                 }
               }
             }
@@ -625,7 +639,7 @@ export default {
             fontWeight: "bold"
           },
           lineStyle: {
-            color: "rgb(124, 181, 236)"
+            color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
           }
         }
       });
@@ -737,9 +751,31 @@ export default {
   border-top: 1px solid #ddd;
   text-align: right;
 }
+.mainConListTwo {
+  display: flex;
+}
+.text-label{
+    color: #888 ;
+    font-size: 16px;
+    margin-top: 20px;
+}
+.text-indent {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 18px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left:100px;
+    padding-right: 10px;
+    margin-top: 30px;
+    margin-bottom: 80px;
+    text-align: right;
+    color:black;
+}
 #myChart3 {
-  width: 100%;
+  width: 80%;
   height: 380px;
   margin: 20px 0;
 }
+
 </style>

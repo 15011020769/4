@@ -61,11 +61,11 @@
       <div class="number">共 {{total}} 项</div>
     </el-card>
     <!-- 修改名称弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="35%">
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%">
       <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
       <el-form :model="infoData" :rules="rules" ref="form">
         <el-form-item prop="groupName">
-          <el-input maxlength="20" v-model="infoData.groupName" :value="infoData.groupName"></el-input>
+          <el-input maxlength="20" v-model="infoData.groupName" :value="infoData.groupName" style="width:200px" size="small"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -196,26 +196,31 @@
               </p>
               <ul class="color">
               <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
-              <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
-                <p>
-                  <!-- <el-select :disabled="isDisGJ" v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small"> -->
-                    <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;" size="small">
-                    <el-option
-                      v-for="(item,index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                </p>
-                <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delShijian(item)" v-if="eventAry.length>1"></i>
-              </li>
-              <a @click="addShijian" style="cursor:pointer">添加</a>
-              <i class="rubbish-icon"></i>
-            </ul>
+                <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
+                  <p>
+                    <!-- <el-select :disabled="isDisGJ" v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small"> -->
+                      <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;" size="small">
+                      <el-option
+                        v-for="(item,index) in formInline.project"
+                        :key="index"
+                        :label="item.name"
+                        :value="item.value"
+                        label-width="40px"
+                      ></el-option>
+                    </el-select>
+                  </p>
+                  <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delShijian(item)" v-if="eventAry.length>1"></i>
+                </li>
+                <a @click="addShijian" style="cursor:pointer">添加</a>
+                <i class="rubbish-icon"></i>
+              </ul>
             </div>
+            <p class="red-text">该告警触发条件模板已经关联了0个策略，若修改，修改内容将应用到所有已关联的告警策略上</p>
           </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
+          <el-button type="primary" size="small">保存</el-button>
+          <el-button size="small" @click="showDelDialog3=false">取消</el-button>
         </div>
       </div>
     </el-dialog>
@@ -224,12 +229,12 @@
 
 <script>
 import {
-  GET_TENCENTCLOUDAPI,
   GET_TEMPLATE_LIST,
   GET_GROUP_LIST,
   GET_POLICY_GROUP_TYPE,
   UPDATE_INFO,
-  DESCRIBE_METRICS
+  DESCRIBE_METRICS,
+  MODIFYPOLICYGROUPINFO
 } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
@@ -564,17 +569,23 @@ export default {
         }
       })
     },
-    // 修改名称(未完成 修改不成,报错缺少Version)
+    // 修改名称
     async submitName (val) {
       let params = {
-        groupType: 3,
-        key: 'groupName',
-        lang: 'zh',
-        value: val,
-        groupId: Number(this.id)
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupId: this.id,
+        GroupType: 3,
+        Key: 'groupName',
+        Value: val
+        // groupType: 3,
+        // key: 'groupName',
+        // lang: 'zh',
+        // value: val,
+        // groupId: Number(this.id)
         // Version: '2018-07-24'
       }
-      await this.axios.post(UPDATE_INFO, params).then(res => {
+      await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         this.showDelDialog1 = false
         this.$message({
           message: '修改成功',
@@ -584,17 +595,22 @@ export default {
         })
       })
     },
-    // 修改备注(未完成 修改不成,报错缺少Version)
+    // 修改备注
     async submitRemark (val) {
       let params = {
-        groupType: 3,
-        key: 'remark',
-        lang: 'zh',
-        value: val,
-        groupId: Number(this.id)
-        // Version: '2018-07-24'
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupId: this.id,
+        GroupType: 3,
+        Key: 'remark',
+        Value: val
+        // groupType: 3,
+        // key: 'remark',
+        // lang: 'zh',
+        // value: val,
+        // groupId: Number(this.id)
       }
-      await this.axios.post(UPDATE_INFO, params).then(res => {
+      await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         this.showDelDialog2 = false
         this.$message({
           message: '修改成功',
@@ -849,5 +865,10 @@ export default {
   p {
     margin: 5px 0;
   }
+}
+.red-text{
+  font-size: 12px;
+  color:red;
+  line-height: 30px;
 }
 </style>

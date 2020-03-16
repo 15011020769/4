@@ -1,6 +1,6 @@
 <template>
   <div class="myMirror-wrap">
-    <HeadCom title="我的镜像">
+    <HeadCom :title="$t('')">
       <slot>
         <div class="head-address">
           <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>
