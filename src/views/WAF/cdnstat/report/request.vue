@@ -27,7 +27,7 @@ export default {
       seriesLastCycle: [],
       xAxisCurrent: [],
       legendText: ['当前请求数', '上一周期请求数'],
-      color: ['#006eff', '#29cc85',"#FF584C", "#FF9D00", "#006eff"],
+      color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
         formatter(params) {

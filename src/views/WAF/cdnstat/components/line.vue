@@ -15,6 +15,13 @@ export default {
     window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
   },
   props: {
+    isShowPeak: {
+      type: Boolean,
+      default: false
+    },
+    peak: {
+      type: Number,
+    },
     color: {
       type: Array,
       default: () => []
@@ -37,18 +44,21 @@ export default {
       type: Array,
       default: () => []
     },
-    series3: {
-      type: Array,
-      default: () => []
-    },
     legendText: {
       type: Array,
       default: () => []
     }
   },
   watch: {
+    isShowPeak(val) {
+      this.isShowPeak = val
+      this.echart();
+    },
+    peak(val) {
+      this.peak = val
+      this.echart()
+    },
     tooltip(val) {
-      console.log(val)
       this.tooltip = val
       this.echart();
     },
@@ -62,10 +72,6 @@ export default {
     },
      series2(val) {
       this.series2 = val;
-      this.echart();
-    },
-     series3(val) {
-      this.series3 = val;
       this.echart();
     },
     legendText(val) {
@@ -85,19 +91,6 @@ export default {
           containLabel: true
         },
         tooltip: this.tooltip,
-        // tooltip: {
-        //   trigger: 'axis',
-        //   formatter(params) {
-        //     var relVal = params[0].name;  
-        //     for (var i = 0, l = params.length; i < l; i++) {
-        //       if(params[i].seriesName == "上行帶寬" || params[i].seriesName == "下行帶寬") {
-        //         relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"bps";
-        //       }
-        //       relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"次";
-        //     }
-        //     return relVal;  
-        //   }
-        // },
         legend: {
             data: this.legendText,
             bottom: 0,
@@ -145,6 +138,13 @@ export default {
             type: "line",
             smooth: true,
             symbol: "none",
+            markLine: {
+              symbol:"none",
+              data: this.isShowPeak ? [{
+                yAxis: this.peak,
+                lineStyle: {color: 'red'}
+              }] : ''
+            },
             itemStyle: {
               normal: {
                 color: this.color[0],
@@ -163,21 +163,6 @@ export default {
             itemStyle: {
               normal: {
                 color: this.color[1],
-                lineStyle:{
-                  width:2//设置线条粗细
-                }
-              }
-            }
-          },
-          {
-            name: this.legendText[2],
-            data: this.series3,
-            type: "line",
-            smooth: true,
-            symbol: "none",
-            itemStyle: {
-              normal: {
-                color: this.color[2],
                 lineStyle:{
                   width:2//设置线条粗细
                 }
