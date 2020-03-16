@@ -19,15 +19,17 @@
 export default {
   data() {
     return {
-      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'deal'        // 默认选中的菜单
+      activeMenu: localStorage.getItem('activeMenu')       // 默认选中的菜单
     };
   },
- 
+  created() {
+    localStorage.setItem('activeMenu', 'deal')
+  },
   methods: {
     // 选中菜单点击事件
     handleSelect(key, keyPath) {
       this.activeMenu = key
-      localStorage.setItem('activeMenu', this.activeMenu)
+      localStorage.setItem('activeMenu', key)
     }
   }
 };
