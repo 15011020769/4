@@ -48,6 +48,12 @@
             <div id="myChart5"></div>
           </el-tab-pane>
         </el-tabs>
+        <div>
+             <div class="text-label">{{chartDes1}}</div>
+             <div class="text-indent">{{chartValue1}}</div>
+             <div class="text-label">{{chartDes2}}</div>
+             <div class="text-indent">{{chartValue2}}</div>
+          </div>
       </div>
     </div>
   </div>
@@ -82,7 +88,11 @@ export default {
       startTimeService: this.getDateString(
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
-      choiceClick:false
+      choiceClick:false,
+      chartDes1: '入流量頻寬峰值',
+      chartDes2: '出流量頻寬峰值',
+      chartValue1: '0bps',
+      chartValue2: '0bps'
     };
   },
   watch: {
@@ -144,7 +154,7 @@ export default {
       this.changeIdService()
     },
     ywTimeBtnSelect2() {
-      this.describeResourceList();
+      // this.describeResourceList();
       this.getDataService();
     }
 
@@ -154,12 +164,12 @@ export default {
   },
   methods: {
     getDataService() {
-      this.describleL4Rules();
+      // this.describleL4Rules();
       this.describeTransmitStatis();
-      for (let index in this.metricNameService2s) {
-        this.metricNameService2 = this.metricNameService2s[index];
-        this.describeBaradData();
-      }
+      // for (let index in this.metricNameService2s) {
+      //   this.metricNameService2 = this.metricNameService2s[index];
+      //   this.describeBaradData();
+      // }
     },
     //获取资源的IP列表
     GetID() {
@@ -241,7 +251,7 @@ export default {
       this.ywTimeBtnSelect2 = this.IpList[0]
       this.resourceId = this.inputIdService;
       this.thisTime('1')
-      this.describeResourceList();
+      // this.describeResourceList();
       this.getDataService();
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
@@ -286,15 +296,31 @@ export default {
       } else {
         params['IpList.' + 0] = this.ywTimeBtnSelect2
       }
+      if (this.metricNameService === "traffic") {
+        this.chartDes1 = '入流量頻寬峰值'
+        this.chartDes2 = '出流量頻寬峰值'
+        this.chartValue1 = '0bps'
+        this.chartValue2 = '0bps'
+      } else if (this.metricNameService === "pkg") {
+        this.chartDes1 = '入流量包速率峰值'
+        this.chartDes2 = '出流量包速率峰值'
+        this.chartValue1 = '0pps'
+        this.chartValue2 = '0pps'
+      }
       this.axios.post(STATIC_LIST, params).then(res => {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
-          this.drawLine4(this.timey, this.InDataList, this.OutDataList);
+          this.drawLine4(this.timey, this.InDataList, this.OutDataList)
+          this.chartValue1 = Math.max.apply(Math, this.InDataList) + 'bps'
+          this.chartValue2 = Math.max.apply(Math, this.OutDataList) + 'bps'
         } else if (this.metricNameService == "pkg") {
-          this.drawLine5(this.timey, this.InDataList, this.OutDataList);
+          this.drawLine5(this.timey, this.InDataList, this.OutDataList)
+          this.chartValue1 = Math.max.apply(Math, this.InDataList) + 'pps'
+          this.chartValue2 = Math.max.apply(Math, this.OutDataList) + 'pps'
         }
         this.loading = false;
+        
       });
     },
     // // 业务资源id变化时，重新获取数据
@@ -501,9 +527,10 @@ export default {
       let myChart4 = this.$echarts.init(document.getElementById("myChart4"));
       // 绘制图表
       myChart4.setOption({
-        color: ["rgb(124, 181, 236)"],
+        color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+        },
         //       legend: {
         //     data:['总请求峰值','攻击请求峰值']
         // },
@@ -550,7 +577,7 @@ export default {
             itemStyle: {
               normal: {
                 lineStyle: {
-                  color: "#f40"
+                  color: "rgb(50, 205, 50)"
                 }
               }
             }
@@ -567,7 +594,7 @@ export default {
             fontWeight: "bold"
           },
           lineStyle: {
-            color: "rgb(124, 181, 236)"
+             color: ['rgb(124, 181, 236)','rgb(50, 205, 50)']
           }
         }
       });
@@ -587,7 +614,7 @@ export default {
       let myChart5 = this.$echarts.init(document.getElementById("myChart5"));
       // 绘制图表
       myChart5.setOption({
-        color: ["rgb(124, 181, 236)"],
+        color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
         title: { text: "" },
         tooltip: {},
         //       legend: {
@@ -618,25 +645,25 @@ export default {
         },
         series: [
           {
-            name: "入流量頻寬峰值",
+            name: "入流量包速率峰值",
             type: "line",
             data: data1,
             itemStyle: {
               normal: {
                 lineStyle: {
-                  color: "rgb(124, 181, 236)"
+                  color: "rgb(135, 206, 250)"
                 }
               }
             }
           },
           {
-            name: "出流量頻寬峰值",
+            name: "出流量包速率峰值",
             type: "line",
             data: data2,
             itemStyle: {
               normal: {
                 lineStyle: {
-                  color: "#f40"
+                  color: "rgb(50, 205, 50)"
                 }
               }
             }
@@ -653,7 +680,7 @@ export default {
             fontWeight: "bold"
           },
           lineStyle: {
-            color: "rgb(124, 181, 236)"
+            color: ['rgb(124, 181, 236)','rgb(50, 205, 50)']
           }
         }
       });
@@ -743,11 +770,35 @@ export default {
 #myChart4 {
   width: 100%;
   height: 380px;
-  margin: 20px 0;
+  margin: 20px 0 20px 0;
 }
 #myChart5 {
   width: 100%;
   height: 380px;
-  margin: 20px 0;
+  margin: 0 0 20px 0;
+}
+.mainConListTwo {
+  display: flex;
+}
+.tabsCard {
+  width: 80%;
+}
+.text-label{
+    color: #888 ;
+    font-size: 16px;
+    margin-top: 50px;
+}
+.text-indent {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 18px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding-left:100px;
+    padding-right: 10px;
+    margin-top: 30px;
+    margin-bottom: 50px;
+    text-align: right;
+    color:black;
 }
 </style>
