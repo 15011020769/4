@@ -6,7 +6,7 @@
           選擇策略
           <span>（共{{strategiesTotalNum}}條）</span>
           <el-input
-            placeholder="請輸入策略名稱/描述"
+            placeholder="支持搜索策略名稱/描述/備註"
             v-model="policyInp"
             class="input-with-select"
             clearable

@@ -2,7 +2,7 @@
   <div class="Cam">
     <div class="container">
       <div class="container-left">
-        <p>{{$t('CAM.userList.listTitle')}}</p>
+        <p>關聯{{ tableTitle }}</p>
         <el-input :placeholder="$t('CAM.strategy.searchUserName')" clearable size="small" v-model="search" style="width:100%"
           @change="toQuery">
           <i slot="suffix" class="el-input__icon el-icon-search" @click="toQuery"></i>
