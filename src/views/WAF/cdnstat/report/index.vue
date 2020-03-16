@@ -125,7 +125,7 @@ export default {
       } else if (interval === 'day') {
         times = [time, ]
       }
-      return {interval, projectId, domainName, time}
+      return {interval, projectId, domainName, times}
     }
   },
   watch: {
