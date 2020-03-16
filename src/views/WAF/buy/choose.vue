@@ -297,14 +297,14 @@ export default {
           [`Goods.${index}.Platform`]: 1,
           [`Goods.${index}.GoodsDetail`]: {
             productInfo: [{
-              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              name: this.t('QPS扩展包', 'WAF.qpskzb'),
               value: `${this.qpsPackageCount * 1000}QPS`
             }],
             timeSpan: this.mounthType,
             timeUnit: 'm',
             type: goodstype,
             pid: pid,
-            [pricetype]: 1,
+            [pricetype]: this.qpsPackageCount * 1000,
             autoRenewFlag: Number(this.autoRenewFlag),
             Currency: 'CNY'
           },
@@ -332,7 +332,7 @@ export default {
             pid: pid,
             type: goodstype,
             autoRenewFlag: Number(this.autoRenewFlag),
-            [pricetype]: 1,
+            [pricetype]: this.domainPackageCount,
             Currency: 'CNY'
           },
         }
@@ -358,7 +358,7 @@ export default {
             timeUnit: 'm',
             pid: pid,
             type: goodstype,
-            [pricetype]: 1,
+            [pricetype]: this.clsPackageCount,
             autoRenewFlag: Number(this.autoRenewFlag),
             Currency: 'CNY'
           },
@@ -396,7 +396,6 @@ export default {
     },
     //跳转支付页面
     pay(){
-      console.log(this.costInfo)
       const { clsPackageCount, qpsPackageCount, domainPackageCount } = this
       const orders = [{
         name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[this.thisType].name}-CLB${this.t('新购', 'WAF.ng')}`,

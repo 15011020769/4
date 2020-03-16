@@ -337,9 +337,10 @@ router.beforeEach((to, from, next) => {
         }
       })
     })
-  } else if (waf === 0) {
+  } else if (waf === 0 && to.params.intercept !== false) {
     next('/toBuy')
   } else {
+    waf = 1
     next()
   }
 })
