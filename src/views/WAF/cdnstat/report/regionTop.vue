@@ -20,7 +20,7 @@
           <el-table-column prop="name" label="区域"></el-table-column>
           <el-table-column prop="value" label="消耗量">
             <template slot-scope="scope">
-              {{scope.row.value | formatValue }}
+              {{fluxStr(scope.row.value)}}
             </template>
           </el-table-column>
           <el-table-column label="占比">
@@ -53,6 +53,7 @@ export default {
     params: Object
   },
   data() {
+    let vue = this
     return {
       seriesMap: [],
       tableData: [], //表格数据
@@ -68,13 +69,20 @@ export default {
     echartMap,
   },
   filters: {
-    formatValue(value) {
-      if(value >= 1000) {
-        value = (value / 1000).toFixed(2) + 'KB'
-      } else {
-        value = value + 'B'
+    fluxStr(v) {
+      if (v > 1e12) {
+        return [v / 1e12, 'TB'].join('')
       }
-      return value
+      if (v > 1e9) {
+        return [v / 1e9, 'GB'].join('')
+      }
+      if (v > 1e6) {
+        return [v / 1e6, 'MB'].join('')
+      }
+      if (v > 1e3) {
+        return [v / 1e3, 'KB'].join('')
+      }
+      return [v, 'B'].join('')
     }
   },
   watch: {
@@ -87,6 +95,24 @@ export default {
     }
   },
   methods: {
+    fixed(v) {
+      return Math.ceil(v) !== v ? v.toFixed(2) : v
+    },
+    fluxStr(v) {
+      if (v > 1e12) {
+        return [v / 1e12, 'TB'].join('')
+      }
+      if (v > 1e9) {
+        return [v / 1e9, 'GB'].join('')
+      }
+      if (v > 1e6) {
+        return [v / 1e6, 'MB'].join('')
+      }
+      if (v > 1e3) {
+        return [this.fixed(v / 1e3), 'KB'].join('')
+      }
+      return [v, 'B'].join('')
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
 
@@ -107,7 +133,8 @@ export default {
     getListTopData(params) {
       this.loading = true
       const regionsArr = []
-      let total = 0
+      const tableArr = []
+      let total = 1
       this.axios.post('cdn2/ListTopData', {
         ...params,
         Metric: "District",
@@ -115,17 +142,23 @@ export default {
       })
         .then(({ Response }) => {
           const res = Response.Data[0].DetailData
-          res && res.map((v) => {
-            regionsArr.push({
+          res && res.map(v => {
+            total += v.Value
+            tableArr.push({
               name: this.COUNTRY_MAP[v.Name],
               value: v.Value
             })
-            total += v.Value
           })
-          this.seriesMap = regionsArr
-          this.tableData = regionsArr
-          this.totalItems = regionsArr.length
           this.totalNumber = total
+          res && res.map((v) => {
+            regionsArr.push({
+              name: this.COUNTRY_MAP[v.Name],
+              value: (v.Value / this.totalNumber * 100).toFixed(2)
+            })
+          })
+          this.seriesMap = regionsArr // 传百分数因为比较的就是百分比
+          this.tableData = tableArr
+          this.totalItems = tableArr.length
           this.loading = false
         })
     },

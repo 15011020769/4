@@ -20,7 +20,7 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
     };
   },
   mounted() {
@@ -36,7 +36,7 @@ export default {
     total(val) {
       this.total = val
       this.initChart()
-    },
+    }
   },
   methods: {
     initChart() {
@@ -55,8 +55,7 @@ export default {
             if (!val.data) {
               return
             }
-            relVal += val.marker+ '流量占比' + '<br/>' + val.data.name + ' : ' + (val.data.value / that.total * 100).toFixed(2) + "%";
-            // return val.data.name + ': ' + val.data.value
+            relVal += val.marker+ '流量占比' + '<br/>' + val.data.name + ' : ' + val.data.value + "%";
             return relVal
           }
         },
@@ -102,7 +101,7 @@ export default {
             // 高亮状态下的多边形和标签样式
             emphasis: {
               label: {
-                show: true, // 是否显示标签
+                show: false, // 是否显示标签
                 color: '#94002d' // 文字的颜色 如果设置为 'auto'，则为视觉映射得到的颜色，如系列色
               },
               itemStyle: {
