@@ -6,12 +6,14 @@
         <i class="el-icon-arrow-down"></i>
         <span>问题：</span>
       </p>
-      <el-table :data="tableData" style="width: 100%;">
+      <el-table :data="tableData" style="width: 100%;" v-loading="loadShow">
         <el-table-column label="事件类型" width="180">
           <template slot-scope="scope">
-            <span style="margin-left: 0px;flex-wrap:nowrap">{{
+            <span style="margin-left: 0px;flex-wrap:nowrap">
+              {{
               scope.row.type
-            }}</span>
+              }}
+            </span>
             <i class="el-icon-info" style="margin:0 5px;"></i>
           </template>
         </el-table-column>
@@ -53,18 +55,8 @@
         </el-table-column>-->
         <el-table-column label>
           <template :slot-scope="$scope.row">
-            <el-button
-              type="text"
-              class="btn subBtn"
-              @click="dialogSubscribe = true"
-              >订阅管理</el-button
-            >
-            <el-button
-              type="text"
-              class="btn unSubBtn"
-              @click="dialogcancel = true"
-              >取消订阅</el-button
-            >
+            <el-button type="text" class="btn subBtn" @click="dialogSubscribe = true">订阅管理</el-button>
+            <el-button type="text" class="btn unSubBtn" @click="dialogcancel = true">取消订阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -79,21 +71,16 @@
             :label="city"
             :key="city"
             style="margin:0 10px;"
-            >{{ city }}</el-checkbox
-          >
+          >{{ city }}</el-checkbox>
         </p>
         <p class="search">
           <span>
             请选择接收人(已选
-            <b>{{ num }}</b
-            >人)
+            <b>{{ num }}</b>人)
           </span>
           <el-row class="seek" style="display:flex;">
             <el-input v-model="triggerSearch" placeholder="搜索"></el-input>
-            <el-button
-              icon="el-icon-search"
-              style="margin-left:-1px;"
-            ></el-button>
+            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
           </el-row>
         </p>
         <el-table
@@ -113,24 +100,14 @@
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer center">
-        <el-button
-          class="subscribe"
-          type="primary"
-          @click="dialogSubscribe = false"
-          >确定</el-button
-        >
+        <el-button class="subscribe" type="primary" @click="dialogSubscribe = false">确定</el-button>
         <el-button @click="dialogSubscribe = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog title="取消订阅" :visible.sync="dialogcancel" width="30%">
       <span>取消订阅云服务器存储问题？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button
-          class="cancelsubscribe"
-          type="primary"
-          @click="dialogcancel = false"
-          >取消订阅</el-button
-        >
+        <el-button class="cancelsubscribe" type="primary" @click="dialogcancel = false">取消订阅</el-button>
         <el-button @click="dialogcancel = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -138,12 +115,17 @@
 </template>
 
 <script>
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { BASICS_ALARM_LIST } from "@/constants/CM-lxx.js"; /////////
+
 import Header from "@/components/public/Head";
 const cityOptions = ["短信", "邮件", "站内信"];
 export default {
   name: "subscription",
   data() {
     return {
+      loadShow: true, // 加载是否显示
       triggerSearch: "", //选择触发条件名搜索
       num: 1, //已选择几人
       cities: cityOptions,
@@ -178,7 +160,41 @@ export default {
   components: {
     Header
   },
+  created() {
+    this.getEventList();
+  },
   methods: {
+    getEventList() {
+      this.loadShow = true; //加载
+      var params = {
+        Region: localStorage.getItem("regionv2"),
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      // params.ObjLike = this.input;
+      // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
+      // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
+      this.axios.post(BASICS_ALARM_LIST, params).then(res => {
+        console.log(res.Response, "数据");
+        if (res.Response.Error === undefined) {
+          // this.tableData = res.Response.Alarms;
+          // this.TotalCount = res.Response.Alarms.length;
+          // this.showNameSpaceModal = false;
+
+          this.loadShow = false; //取消加载
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
