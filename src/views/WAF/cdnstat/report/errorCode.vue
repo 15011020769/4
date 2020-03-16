@@ -16,6 +16,7 @@
       <el-col :span="14">
         <el-table
           :data="tableData"
+          v-loading="loading"
         >
           <el-table-column prop="Metric" label="错误码"></el-table-column>
           <el-table-column prop="SummarizedData.Value" label="数量(次)"></el-table-column>

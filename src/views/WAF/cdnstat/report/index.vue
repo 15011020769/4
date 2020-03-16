@@ -79,7 +79,11 @@
         v-if="showFields.includes('errorCode')"
         class="card"
       />
-      <top-url />
+      <top-url
+        :params="params"
+        v-if="showFields.includes('topUrl')"
+        class="card"
+      />
     </div>
   </div>
 </template>
