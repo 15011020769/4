@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="你已选择1个资源" :visible.sync="visible" width="50%" :before-close="handleClose">
+  <el-dialog title="你已选择1个资源" :visible.sync="visible" width="50%" >
       <div class="dialog-content">
           <div>
             <div class="dc-1">
@@ -34,6 +34,9 @@
   </el-dialog>
 </template>
 <script>
+ import {
+    ErrorTips
+  } from "@/components/ErrorTips";
 import {EDIT_LABELS_JZ,GET_LABELS_LIST}  from "@/constants";
 import VueCookie from 'vue-cookie'
 export default {
@@ -59,24 +62,14 @@ export default {
   methods: {
     submit(){
         this.visible=false;
-        let addArr=this.list.map(item=>{//新增数组
-            if(item.action=='new'&&item.Key!=''){
-                 return {
-                    tagKey:item.Key,
-                    tagValue:item.Value
-                }
-            }
+        let addArr=this.list.filter(item=>{//新增数组
+            return item.action=='new'&&item.Key!=''
         })
 
-        let delArrSure=this.delArr.map(item=>{//删除的数组
-            if(item.action=='showAgain'){
-                return {
-                    tagKey:item.Key,
-                    tagValue:item.Value
-                }
-            }
+        let delArrSure=this.delArr.filter(item=>{//删除的数组
+            return item.action=='showAgain'
         })
-        let editArrSure=this.editArr.map(item=>{//编辑的数组
+        let editArrSure=this.editArr.filter(item=>{//编辑的数组
             if(item.action=='showAgain'){
                 return {
                     tagKey:item.Key,
@@ -97,28 +90,65 @@ export default {
             editArrSure2=editArrSure
         }
     
-        let   fn=(arr)=>{
-            let arr2=[];
+        let   fnDel=(arr)=>{
             let obj={}; 
             arr.forEach((v,i)=>{
-                obj[`ReplaceTags.[${i}].TagKey`]=v.tagKey
-                obj[`ReplaceTags.[${i}].TagValue`]=v.tagValue
+                obj[`DeleteTags.${i}.TagKey`]=v.Key
             })
             return obj
         }
-      
-        console.log(fn(delArrSure))
-        let params={
-            ...fn(delArrSure),
-            // ReplaceTags:JSON.stringify([]),
-            // resourceId:this.resourceId,
-            Resource: `qcs::vpc:ap-guangzhou:uin/${VueCookie.get('uuid')}:ccn/${this.resourceId}`,
-            Version:'2018-08-13'
+        let  fnEdit=(arr)=>{
+            let obj={}; 
+            arr.forEach((v,i)=>{
+                obj[`ReplaceTags.${i}.TagKey`]=v.Key
+                obj[`ReplaceTags.${i}.TagValue`]=v.Value
+            })
+            return obj
         }
-      console.log(params)
-        // this.axios.post(EDIT_LABELS_JZ,params).then(res=>{
-        //     console.log(res)
-        // })
+        let params={
+            ...fnDel(delArrSure),
+            ...fnEdit(addArr),
+            ...fnEdit(editArrSure2),
+            Resource: `qcs::vpc:ap-guangzhou:uin/${VueCookie.get('uuid')}:ccn/${this.resourceId}`,
+            Version:'2018-08-13',
+            Action:'ModifyResourceTags',
+        }
+       
+        console.log(JSON.stringify(fnDel(delArrSure))!='{}')
+        console.log(JSON.stringify(fnEdit(addArr))!='{}')
+        console.log(JSON.stringify(fnEdit(editArrSure2))!="{}")
+        console.log(params)
+        if(JSON.stringify(fnDel(delArrSure))!='{}'||JSON.stringify(fnEdit(addArr))!='{}'||JSON.stringify(fnEdit(editArrSure2))!="{}"){
+            this.axios.post(EDIT_LABELS_JZ,params).then(res=>{
+                console.log(res)
+                 if (res.Response.Error === undefined){
+                     this.$parent.getData()
+                      this.$message({
+                        message:'操作成功',
+                        type: "success",
+                        showClose: true,
+                        duration: 0
+                      });
+                 }else{
+                    let ErrTips = {
+                        "InvalidParameter.Tag": "Tag参数错误",
+                        "InvalidParameterValue.DeleteTagsParamError":'DeleteTags中不能包含ReplaceTags或AddTags中元素',
+                        "InvalidParameterValue.ResourceDescriptionError":'资源描述错误',
+                        "LimitExceeded.TagKey":'用户创建标签键达到上限数 1000',
+                        "LimitExceeded.TagValue":'单个标签键对应标签值达到上限数 1000',
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                    }); 
+                 }
+            })
+
+        }
+       
     },
     getLabels(){
         this.axios.post(GET_LABELS_LIST,{rp:1000}).then(res=>{
@@ -133,13 +163,13 @@ export default {
                let ErrTips = {
                  "InvalidParameterValue.UinInvalid": "Uin參數不合法",
                };
-            let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-            this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-            });
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+                });
            }
       })
     },
@@ -181,13 +211,6 @@ export default {
         }, []);//去重
         this.editArr=arr;//拿到实际操作要编辑的数组
     },
-    handleClose(done) {
-        this.$confirm('确认关闭？')
-            .then(_ => {
-            done();
-            })
-            .catch(_ => {});
-    }
   },
   watch:{
       editVisible:function(val){
@@ -210,8 +233,12 @@ export default {
               arr.push({Key:'',Value:'',action:'new'})//默认进来添加一条
               this.list=arr;
               this.storageDefaultInfoDataByTransmit=arr;
-              this.resourceId=val.resourceId
-              console.log(this.resourceId)
+              this.resourceId=val.resourceId;
+              //清除默认数据
+              this.listCopy=[];
+              this.delArr=[];
+              this.editArr=[];
+              this.editArrCopy=[]
           },
           deep:true
       },
