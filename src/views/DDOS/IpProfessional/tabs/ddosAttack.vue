@@ -539,7 +539,7 @@ export default {
         }
       });
     },
-    // ddosTable攻击详情 或 攻击日志
+    // ddosTable 攻击详情 或 攻击日志
     describeDDoS(row, flg) {
       this.InfoOrLog = flg;
       let $table = this.$refs.ddosTable;
@@ -555,7 +555,7 @@ export default {
       }
       setTimeout(() => {
         $table.toggleRowExpansion(row);
-      }, 500);
+      }, 800);
     },
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {

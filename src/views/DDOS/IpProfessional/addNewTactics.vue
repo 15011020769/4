@@ -226,10 +226,10 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled>0</el-input>
+              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled></el-input>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled>1</el-input>
+              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled></el-input>
             </td>
             <td>
               <el-select
@@ -237,8 +237,8 @@
                 v-model="item.IsNot"
                 :placeholder="$t('DDOS.Proteccon_figura.qxz')"
               >
-                <el-option label="包含" value="1"></el-option>
-                <el-option label="不包含" value="0"></el-option>
+                <el-option label="包含" value=1></el-option>
+                <el-option label="不包含" value=0></el-option>
               </el-select>
             </td>
             <td>
@@ -1241,8 +1241,14 @@ export default {
           this.$message("報文過濾特徵不能超過5條");
           return;
         }
-        des.Depth = "100";
+        des.PktlenMin = 0;
+        des.PktlenMax = 0;
+        des.MatchType = "sunday";
+        des.Offset = 0;
+        des.Depth = 1;
+        des.IsNot = 1;
         des.MatchBegin = "no_match";
+        des.Action = "drop";
         this.tags1.push(des);
       } else if (type == 3) {
         if (this.tags3.length >= 4) {
