@@ -277,7 +277,7 @@ export default {
     },
     regionIds:function(val){
         if(val == 39){
-          return '港澳台地区(中国台北)'
+          return '港澳台地区(台灣台北)'
         } else {
           return '-'
         }

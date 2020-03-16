@@ -14,12 +14,12 @@
         <ul class="my-ul">
           <router-link :to="{name: 'totalMirrorDetailVersion',query: {id:$route.query.id}}">
             <li @click="getTrue()" class="li-one" :style="{fontWeight:this.dataObject.flag==true?'700':''}">
-              镜像版本<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
+              {{$t('TKE.overview.jxbb')}}<div class="bottom-one" :style="{width:this.dataObject.flag==true?'78px':'0'}"></div>
             </li>
           </router-link>
           <router-link :to="{name: 'totalMirrorDetailInfo',query: {id:$route.query.id}}">
             <li @click="getFalse()" class="li-two" :style="{fontWeight:this.dataObject.flag==false?'700':''}">
-              镜像信息<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
+              {{$t('TKE.mirrorDetail.jxxx')}}<div class="bottom-two" :style="{width:this.dataObject.flag==false?'78px':'0'}"></div>
             </li>
           </router-link>
         </ul>

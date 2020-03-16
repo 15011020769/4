@@ -490,7 +490,7 @@ module.exports = {
             zcw200gzf: '最長為200個字元，只能包含小寫字母、數字及分隔符("."、"_"、"-")，且不能以分隔符開頭或結尾',
             xjjxck: '新建映像倉庫',
             zcw1000gzf: '最長為1000個字元',
-            njczsy: '您將重置使用docker login命令登錄到雲映像倉庫的密碼',
+            njczsy: '您將重置使用docker login命令登入到雲映像倉庫的密碼',
             jxck: '映像倉庫',
             ksc: '可刪除',
             ma: '嗎',
@@ -531,8 +531,10 @@ module.exports = {
             ckmc: '倉庫名稱',
             ckdz: '倉庫地址',
             xgjxcklx: '修改映像倉庫類型',
+            xgjxckms: '修改映像倉庫描述',
             msbnwk: '描述不能為空',
-            cdbncg1000gzf: '長度不能超過1000個字元'
+            cdbncg1000gzf: '長度不能超過1000個字元',
+            jxid: '映像ID（SHA256）'
         },
         totalMirror: {
           xzl: '下載量',

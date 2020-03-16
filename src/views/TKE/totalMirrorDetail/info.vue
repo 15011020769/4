@@ -1,14 +1,14 @@
 <template>
     <el-card class="box-card">
-        <p class="box-info">基本信息</p>
+        <p class="box-info">{{$t('TKE.overview.jbxx')}}</p>
         <el-form  class="tke-form"  label-position='left' label-width="120px" size="mini">
-          <el-form-item label="仓库名称">
+          <el-form-item :label="$t('TKE.mirrorDetail.ckmc')">
             <div class="tke-form-item_text"><span>{{$route.query.id}}</span></div>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item :label="$t('TKE.overview.lx')">
             <div class="tke-form-item_text"><span>{{publics | publicsEdit}}</span></div>
           </el-form-item>
-          <el-form-item label="仓库地址">
+          <el-form-item :label="$t('TKE.mirrorDetail.ckdz')">
             <div class="tke-form-item_text"><span>{{server}}/{{$route.query.id}}</span>
             <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i>
             </div>
@@ -16,13 +16,13 @@
           <el-form-item label="收藏量">
             <div class="tke-form-item_text"><span>{{favorCount}}</span></div>
           </el-form-item>
-          <el-form-item label="下载量">
+          <el-form-item :label="$t('TKE.totalMirror.xzl')">
             <div class="tke-form-item_text"><span>{{pullCount}}</span></div>
           </el-form-item>
           <el-form-item label="描述">
             <div class="tke-form-item_text"><span>{{description | descriptions}}</span></div>
           </el-form-item>
-          <el-form-item label="创建时间">
+          <el-form-item :label="$t('TKE.overview.cjsj')">
             <div class="tke-form-item_text"><span>{{updateTime}}</span></div>
           </el-form-item>
         </el-form>
@@ -58,7 +58,7 @@ export default {
       console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
-        message: '复制成功',
+        message: this.$t('TKE.mirrorDetail.fzcg'),
         type: 'success',
         showClose: true,
         duration: 0
@@ -102,7 +102,7 @@ export default {
     },
     descriptions: function (value) {
       if (value === '') {
-        return '无'
+        return '無'
       } else {
         return value
       }

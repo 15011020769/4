@@ -531,8 +531,10 @@ module.exports = {
             ckmc: '仓库名称',
             ckdz: '仓库地址',
             xgjxcklx: '修改镜像仓库类型',
+            xgjxckms: '修改镜像仓库描述',
             msbnwk: '描述不能为空',
-            cdbncg1000gzf: '长度不能超过1000个字符'
+            cdbncg1000gzf: '长度不能超过1000个字符',
+            jxid: '镜像ID（SHA256）'
         },
         totalMirror: {
           xzl: '下载量',
@@ -642,7 +644,7 @@ module.exports = {
             dqrqwl: '当前容器网络 172.16.0.0/16 最大支持 1008个节点',
             kkrjds: '可扩容节点数量受VPC网络、容器网络、TKE集群节点配额、可购买云主机配额限制',
             jqgmsx: '集群规模上限',
-            
+
         }
     },
     COM: require('@/components/language/jt')
