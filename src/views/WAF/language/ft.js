@@ -132,6 +132,7 @@ module.exports = {
       mgymb: '每個域名包包含：10個域名防護，僅支持1個一級域名',
       aqrzfwb: '安全日誌服務',
       aqrzfwxf: '安全日誌服務續費',
+      aqrzfwxg: '安全日誌服務新購',
       ygbbh: '一個包包含1T日誌服務存儲容量',
       g: '個',
       qpskzb: 'QPS擴展包',

@@ -180,6 +180,7 @@
                 class="selectChange1"
                 v-model="item.Protocol"
                 :placeholder="$t('DDOS.Proteccon_figura.qxz')"
+                @change="protocolChange(index)"
               >
                 <el-option label="TCP" value="tcp"></el-option>
                 <el-option label="UDP" value="udp"></el-option>
@@ -206,7 +207,7 @@
               <el-input class="inputChange1" v-model="item.PktlenMax" autocomplete="off"></el-input>
             </td>
             <td>
-              <el-select class="selectChange1" v-model="item.MatchBegin">
+              <el-select class="selectChange1" v-model="item.MatchBegin" @change="matchBeginChange(index)">
                 <el-option
                   v-for="(item, index) in matchBeginList"
                   :label="item.label"
@@ -226,10 +227,10 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" disabled>0</el-input>
+              <el-input class="inputChange1" v-model="item.Offset" autocomplete="off" :disabled="item.MatchBegin == 'no_match'?true:false"></el-input>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" disabled>1</el-input>
+              <el-input class="inputChange1" v-model="item.Depth" autocomplete="off" :disabled="item.MatchBegin == 'no_match'?true:false"></el-input>
             </td>
             <td>
               <el-select
@@ -242,7 +243,7 @@
               </el-select>
             </td>
             <td>
-              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" disabled></el-input>
+              <el-input class="inputChange1" v-model="item.Str" autocomplete="off" :disabled="item.MatchBegin == 'no_match'?true:false"></el-input>
             </td>
             <td>
               <el-select
@@ -253,8 +254,8 @@
                 <!-- 策略动作，取值范围[drop，drop_black，drop_rst，drop_black_rst，transmit] -->
                 <el-option :label="$t('DDOS.updateddos.dqbw')" value="drop"></el-option>
                 <el-option :label="$t('DDOS.updateddos.dqqlh')" value="drop_black"></el-option>
-                <el-option :label="$t('DDOS.updateddos.dqqdk')" value="drop_rst"></el-option>
-                <el-option :label="$t('DDOS.updateddos.dqdkqlh')" value="drop_black_rst"></el-option>
+                <el-option v-if="item.Protocol == 'tcp'" :label="$t('DDOS.updateddos.dqqdk')" value="drop_rst"></el-option>
+                <el-option v-if="item.Protocol == 'tcp'" :label="$t('DDOS.updateddos.dqdkqlh')" value="drop_black_rst"></el-option>
                 <el-option :label="$t('DDOS.updateddos.zjzf')" value="transmit"></el-option>
               </el-select>
             </td>
@@ -1222,6 +1223,21 @@ export default {
       };
       return des;
     },
+    // 报文过滤特征
+    protocolChange(i){
+      if (this.tags1[i].Protocol == "udp") {
+        if (this.tags1[i].Action == "drop_rst" || this.tags1[i].Action == "drop_black_rst") {
+          this.tags1[i].Action = "drop";
+        }
+      }
+    },
+    matchBeginChange(i){
+      if (this.tags1[i].MatchBegin == "no_match") {
+        this.tags1[i].Offset = 0;
+        this.tags1[i].Depth = 1;
+        this.tags1[i].Str = "";
+      }
+    },
     //新增一行
     addRow: function(type) {
       var des = this.copyObj();
@@ -1241,8 +1257,14 @@ export default {
           this.$message("報文過濾特徵不能超過5條");
           return;
         }
-        des.Depth = "100";
+        des.PktlenMin = 0;
+        des.PktlenMax = 0;
+        des.MatchType = "sunday";
+        des.Offset = 0;
+        des.Depth = 1;
+        des.IsNot = "1";
         des.MatchBegin = "no_match";
+        des.Action = "drop";
         this.tags1.push(des);
       } else if (type == 3) {
         if (this.tags3.length >= 4) {

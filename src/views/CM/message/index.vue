@@ -16,19 +16,14 @@
           <el-button type="primary" @click="addMessage">新增消息策略</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input
-            v-model="triggerInput"
-            placeholder="请输入策略ID、策略名称搜索"
-          ></el-input>
-          <el-button
-            icon="el-icon-search"
-            style="margin-left:-1px;"
-          ></el-button>
-          <i
+          <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
+          <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
+         <!-- 设置框---已完成 -->
+          <!-- <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
             @click="buyMessgae"
-          ></i>
+          ></i> -->
         </el-row>
       </div>
 
@@ -36,30 +31,24 @@
         :data="tableData"
         style="width: 100%"
         height="450"
+        v-loading="loadShow"
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
         <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
-        <el-table-column
-          prop="chufa"
-          label="近24小时触发告警"
-        ></el-table-column>
+        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
         <el-table-column prop="type" label="消息接收组"></el-table-column>
         <el-table-column prop="address" label="告警渠道"></el-table-column>
         <el-table-column label="操作">
           <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="Edit"
-              >编辑</el-button
-            >
+            <el-button type="text" class="cloneBtn" @click="Edit">编辑</el-button>
             <el-button type="text" class="deleteBtn">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
       <div class="Right-style pagstyle" style="background: #fff;">
-        <span class="pagtotal"
-          >共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CVM.strip") }}</span
-        >
+        <span class="pagtotal">共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CVM.strip") }}</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
@@ -77,6 +66,10 @@
 <script>
 import Header from "@/components/public/Head";
 import Dialog from "./components/dialog";
+
+import Loading from "@/components/public/Loading";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { BASICS_ALARM_LIST } from "@/constants/CM-lxx.js";
 
 export default {
   name: "message",
@@ -181,6 +174,7 @@ export default {
         }
       ], //表格数据
       //分页
+        loadShow: true, // 加载是否显示
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
@@ -196,7 +190,57 @@ export default {
     Dialog
     // Search  //搜索框组件
   },
+  created() {
+    this.getCustomMessage();
+  },
   methods: {
+    //获取数据
+    getCustomMessage() {
+     
+      this.loadShow = true; //加载
+      var params = {
+        Region: localStorage.getItem("regionv2"),
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      // params.ObjLike = this.input;
+      // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
+      // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
+      this.axios.post(BASICS_ALARM_LIST, params).then(res => {
+        console.log(res.Response.Alarms, "数据");
+        if (res.Response.Error === undefined) {
+          // this.tableData = res.Response.Alarms;
+          // this.TotalCount = res.Response.Alarms.length;
+
+          // this.showNameSpaceModal = false;
+          this.loadShow = false; //取消加载
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    searchList(){
+       //搜索框
+      if (this.triggerInput == "") {
+        this.getCustomMessage();
+      }
+    },
+    searchBtn() {
+      //搜索按钮
+      if (this.triggerInput == "") {
+        this.getCustomMessage();
+      }
+      // params.ObjLike = this.input;
+      this.getCustomMessage();
+    },
     //新增消息策略
     addMessage() {
       // alert("/message/create")

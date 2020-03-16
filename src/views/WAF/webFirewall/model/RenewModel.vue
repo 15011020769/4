@@ -116,7 +116,7 @@ export default {
             "timeSpan": this.month,
             "timeUnit": "m",
             "type": BUY_LOG_TYPES.goodstype,
-            [BUY_LOG_TYPES.pricetype]: 1,
+            [BUY_LOG_TYPES.pricetype]: this.package.Cls.Count,
             "pid": BUY_LOG_TYPES.pid,
           }
         })
@@ -129,7 +129,7 @@ export default {
             "timeSpan": this.month,
             "timeUnit": "m",
             "type": CLB_BUY_QPS_TYPES.goodstype,
-            [CLB_BUY_QPS_TYPES.pricetype]: 1,
+            [CLB_BUY_QPS_TYPES.pricetype]: this.package.QPS.Count,
             "pid": CLB_BUY_QPS_TYPES.pid,
           }
         })
@@ -142,7 +142,7 @@ export default {
             "timeSpan": this.month,
             "timeUnit": "m",
             "type": CLB_BUY_DOMAIN_TYPES.goodstype,
-            [CLB_BUY_DOMAIN_TYPES.pricetype]: 1,
+            [CLB_BUY_DOMAIN_TYPES.pricetype]: this.package.DomainPkg.Count,
             "pid": CLB_BUY_DOMAIN_TYPES.pid,
           }
         })
@@ -173,7 +173,7 @@ export default {
       const orders = [{
         name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}-CLB${this.t('续费', 'WAF.xf')}`,
         config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${CLB_PACKAGE_CFG_TYPES[this.package.Level].name}`,
-        price: this.costInfo[CLB_PACKAGE_CFG_TYPES[this.package.Level].pid].RealTotalCost, // 单价
+        price: `${this.costInfo[CLB_PACKAGE_CFG_TYPES[this.package.Level].pid].RealTotalCost}元/月`, // 单价
         cost: this.costInfo[CLB_PACKAGE_CFG_TYPES[this.package.Level].pid].RealTotalCost, // 费用
         purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
       }]
@@ -181,26 +181,26 @@ export default {
         orders.push({
           name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${this.t('安全日志服务续费', 'WAF.aqrzfwxf')}`,
           config: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}：1T`,
-          price: this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost, // 单价
+          price: `${this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost}元/月`, // 单价
           cost: this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost, // 费用
           purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
       if (this.package.QPS) {
         orders.push({
-          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'域名包', 'WAF.域名包'}`,
-          config: `${this.t('全量域名包', 'WAF.域名包')}：1T`,
-          price: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 单价
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${this.t('QPS扩展包', 'WAF.QPS扩展包')}-CLB`,
+          config: `${this.t('QPS扩展包', 'WAF.QPS扩展包')}：${this.package.QPS.Count}QPS`,
+          price: `${this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost}元/月`, // 单价
           cost: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 费用
           purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
       if (this.package.DomainPkg) {
         orders.push({
-          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${'QPS扩展包', 'WAF.QPS扩展包'}`,
-          config: `${this.t('QPS扩展包', 'WAF.QPS扩展包')}：1T`,
-          cost: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 单价
-          price: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 费用
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-CLB續費`,
+          config: `域名包：${this.package.DomainPkg.Count}${this.t('个', 'WAF.g')}`,
+          price: `${this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost}元/月`, // 单价
+          cost: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 费用
           purchaseTime: `${this.month}${this.t('个', 'WAF.g')}月`,
         })
       }
@@ -272,8 +272,8 @@ export default {
       if (DomainPkg) {
         index += 1
         const { ValidTime: domainValidTime, ResourceIds: domainResourceIds, Count: domainCount } = DomainPkg
-        clsParam = {
-          // 日志包产品
+        domainParam = {
+          // 域名包产品
           [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_DOMAIN_TYPES.categoryid,
           [`Goods.${index}.RegionId`]: 1,
           [`Goods.${index}.ZoneId`]: 0,
@@ -299,7 +299,7 @@ export default {
       if (QPS) {
         index += 1
         const { ValidTime: qpsValidTime, ResourceIds: qpsResourceIds, Count: qpsCount } = QPS
-        clsParam = {
+        qpsParam = {
           // 日志包产品
           [`Goods.${index}.GoodsCategoryId`]: CLB_BUY_QPS_TYPES.categoryid,
           [`Goods.${index}.RegionId`]: 1,

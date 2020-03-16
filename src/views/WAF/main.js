@@ -12,6 +12,8 @@ import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
+import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
+
 import { ErrorTips } from "@/components/ErrorTips"
 import VueClipboard from 'vue-clipboard2'
 import { COMMON_ERROR } from './constants'
@@ -97,6 +99,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
 Vue.use(VueClipboard)
+Vue.prototype.$message = message // 覆盖原有的message方法
 
 new Vue({
     router,

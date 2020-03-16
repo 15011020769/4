@@ -283,6 +283,9 @@ export default {
                 border-top:solid 1px #ddd ;
                 padding: 14px 0px;  
                 align-items: center;
+                &:hover{
+                    background: #eeeeee;
+                }
                 ::v-deep .el-input{
                     width: 180px;
                     margin-left: 20px;

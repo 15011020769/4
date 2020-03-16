@@ -10,6 +10,7 @@ import VueCookie from 'vue-cookie'
 import '@/assets/iconfont/iconfont.css'
 import filters from '@/filters/filters.js'
 import i18n from './language/i18n.js' // 引入i18n包
+import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
 import CMfilters from '@/filters/CMfilters.js'
 import echarts from 'echarts'
 Vue.prototype.$echarts = echarts
@@ -24,6 +25,7 @@ for (let key in CMfilters) {
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
+Vue.prototype.$message = message // 覆盖原有的message方法
 new Vue({
   router,
   i18n,

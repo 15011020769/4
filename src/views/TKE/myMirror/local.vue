@@ -5,25 +5,25 @@
         <el-button type="primary" size="mini" class="botton-size" @click="dialogVisible = true" :disabled="tableData.length == 10">新建</el-button>
       </div>
       <div class="top-right">
-          <el-input v-model.trim="input" placeholder="请输入名称" size="mini" ></el-input>
+          <el-input v-model.trim="input" :placeholder="$t('TKE.myMirror.qsrmc')" size="mini" ></el-input>
           <el-button icon="el-icon-search" size="mini" style="margin-left:-1px;height:28px;" :plain="true" @click="getSearch()"></el-button>
       </div>
     </div>
     <div class="room-bottom">
        <el-table :data="tableData" style="width: 100%" height="450" v-loading="loadShow">
-            <el-table-column prop="namespace" label="命名空间"></el-table-column>
-            <el-table-column prop="repoCount" label="仓库数目" ></el-table-column>
-            <el-table-column prop="creationTime" label="创建时间"></el-table-column>
+            <el-table-column prop="namespace" :label="$t('TKE.overview.mmkj')"></el-table-column>
+            <el-table-column prop="repoCount" :label="$t('TKE.myMirror.cksm')"></el-table-column>
+            <el-table-column prop="creationTime" :label="$t('TKE.overview.cjsj')"></el-table-column>
             <el-table-column prop="repoCount" label="操作" >
               <template slot-scope="scope">
                   <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false" >
-                    删除
+                    {{$t('TKE.overview.sc')}}
                     </el-button>
               </template>
             </el-table-column>
         </el-table>
         <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
             <el-pagination
               :page-size="pagesize"
               layout="sizes,prev, pager, next"
@@ -34,20 +34,16 @@
             ></el-pagination>
         </div>
     </div>
-    <el-dialog
-      title="新建命名空间"
-      :visible.sync="dialogVisible"
-      width="50%"
-    >
+    <el-dialog :title="$t('TKE.myMirror.xjmmkj')" :visible.sync="dialogVisible" width="50%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm tke-form">
-        <el-form-item label="名称:" prop="name">
+        <el-form-item :label="$t('TKE.overview.mc')+':'" prop="name">
            <!-- @blur="getExist()" -->
           <el-input v-model="ruleForm.name" size="mini" style="width:40%;"></el-input>
-          <p  class="form-p">最长30个字符，只能包含小写字母、数字及分隔符("."、"_"、"-")，且不能以分隔符开头、结尾或连续</p>
+          <p  class="form-p">{{$t('TKE.myMirror.myzc')}}</p>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('ruleForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')">{{$t('TKE.myMirror.qd')}}</el-button>
         <el-button @click="getClose()">取 消</el-button>
       </span>
     </el-dialog>
@@ -68,9 +64,9 @@ export default {
       this.axios.post(SPACENAME_PRESENCE, param).then(res => {
         console.log(res)
         if (res.code === 0 && res.data.isExist) {
-          callback(new Error('命名空间已存在'))
+          callback(new Error(this.$t('TKE.myMirror.mmkjycz')))
         } else if(!regex.test(value)){
-          callback(new Error('命名空间格式不正确'))
+          callback(new Error(this.$t('TKE.myMirror.mmkjgsbzq')))
         }else {
           callback()
         }
@@ -93,9 +89,9 @@ export default {
       dialogVisible: false,
       rules: {
         name: [
-          { required: true, message: '请输入命名空间名称', trigger: 'blur' },
-          { min: 4, message: '命名空间少于4个字符', trigger: 'blur' },
-          { max: 30, message: '命名空间不能超过30个字符', trigger: 'blur' },
+          { required: true, message: this.$t('TKE.myMirror.qsrmmkjmc'), trigger: 'blur' },
+          { min: 4, message: this.$t('TKE.myMirror.mmkjsy4gzf'), trigger: 'blur' },
+          { max: 30, message: this.$t('TKE.myMirror.mmkjbncg30zf'), trigger: 'blur' },
           { validator: validatePass, trigger: 'blur' }
         ]
       }
@@ -162,7 +158,7 @@ export default {
         this.GetSpaceName()
       } else {
         this.$message({
-          message: '当前输入的镜像名称不符合镜像仓库命名规范，仅支持小写字母、数字及分隔符("."、"_"、"-")',
+          message: this.$t('TKE.myMirror.mydqsrdjxmc'),
           type: 'warning'
         })
       }
@@ -198,7 +194,7 @@ export default {
           this.loadShow = true
           this.GetSpaceName()
           this.$message({
-            message: "删除成功",
+            message: this.$t('TKE.myMirror.sccg'),
             type: "success",
             showClose: true,
             duration: 0
@@ -220,7 +216,7 @@ export default {
       this.axios.post(CREATE_SPACENAME, param).then(res => {
         console.log(res)
         if(res.code == 0 && res.Error == undefined){
-           this.GetSpaceName() 
+           this.GetSpaceName()
            this.$message({
               message: "新建成功",
               type: "success",
@@ -230,7 +226,7 @@ export default {
            return
         }
         let Errtip = {
-          'UserNamespaceMaxLimit':'(202)用户命名空间数达到配额'
+          'UserNamespaceMaxLimit': '(202)' + this.$t('TKE.myMirror.yhmmkjsddpe')
         }
         let Error = Object.assign(ErrorTips,Errtip)
         this.$message({

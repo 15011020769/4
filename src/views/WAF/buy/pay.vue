@@ -88,7 +88,7 @@ export default {
           'UnauthorizedOperation.NotFinanceAuth': '帳號沒有財務授權，支付失敗'
         }
         this.generalRespHandler(resp, () => {
-          this.$router.push('/')
+          this.$router.push('/protectionSettings')
         }, ErrTips, '支付成功')
       })
     },

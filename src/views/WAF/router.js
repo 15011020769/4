@@ -239,28 +239,31 @@ const router = new Router({
       }
     },
     {
-      path: '/toBuy', // bot详情
+      path: '/toBuy',
       name: 'toBuy',
       component: () => import(/* webpackChunkName: "ipMan" */ './buy/toBuy.vue'),
       meta: {
+        interceptBuy: false,
         keepAlive: true,
         leftNav:true
       }
     },
     {
-      path: '/choose', // bot详情
+      path: '/choose',
       name: 'choose',
       component: () => import(/* webpackChunkName: "ipMan" */ './buy/choose.vue'),
       meta: {
+        interceptBuy: false,
         keepAlive: true,
         leftNav:false
       }
     },
     {
-      path: '/pay', // bot详情
+      path: '/pay',
       name: 'pay',
       component: () => import(/* webpackChunkName: "ipMan" */ './buy/pay.vue'),
       meta: {
+        interceptBuy: false,
         keepAlive: true,
         leftNav:false
       }
@@ -316,7 +319,7 @@ const botIntercept = (to, from, next) => {
 
 let waf = -1 // 0 未购买 1 已购买
 router.beforeEach((to, from, next) => {
-  if (to.path === '/toBuy') {
+  if (to.meta.interceptBuy === false) {
     next()
     return
   }

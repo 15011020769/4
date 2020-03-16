@@ -169,7 +169,7 @@ export default {
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1])
+        let maxDate = moment(value[1]).add(1, 'd')
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
@@ -185,10 +185,14 @@ export default {
           } else if (num < 31) {
             this.period = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          } else {
+            this.period = 86400
+            arr.push(dateValue.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
           }
         }
         this.timey = arr
-        this.startTimeCC = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+        this.startTimeCC = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
+        this.endTimeCC = moment(value[1]).format("YYYY-MM-DD 23:59:59")
         this.every();
         this.describeCCEvList();
       }
@@ -546,11 +550,11 @@ export default {
       return o.y+"-"+o.M+"-"+o.d+" " +o.h+":"+o.m+":"+o.s;
     },
     drawLine3(time, data1, data2) {
-      var arr = [];
-      for (let i in time) {
-        arr.unshift(time[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in time) {
+      //   arr.unshift(time[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart3 = this.$echarts.init(this.$refs.chart);
       // 绘制图表

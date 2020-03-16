@@ -175,24 +175,26 @@ export default {
             duration: 0
           })
         } else {
-          const botArr = data.Response.Data.Res
-          let tempArr = []
-          let arr = []
-          this.tableDataBegin.forEach(item => {
-            let temp = botArr.find(_item => _item.Domain === item.Domain)
-            tempArr.push(temp)
-          })
-          tempArr.map((v) => {
-            if(v.Status == 1) {
-              arr.push(v)
-            }
-          })
-          this.options = arr
+          if (data.Response.Data) {
+            const botArr = data.Response.Data.Res
+            let tempArr = []
+            let arr = []
+            this.tableDataBegin.forEach(item => {
+              let temp = botArr.find(_item => _item.Domain === item.Domain)
+              tempArr.push(temp)
+            })
+            tempArr.map((v) => {
+              if(v.Status == 1) {
+                arr.push(v)
+              }
+            })
+            this.options = arr
+          }
         }
       }).then(() => {
         if (this.$route.query.domain) {
           this.domainValue = this.$route.query.domain
-        } else {
+        } else if (this.options.length){
           this.domainValue = this.options[0].Domain;
         }
       })
