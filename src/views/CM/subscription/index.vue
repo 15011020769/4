@@ -7,7 +7,7 @@
         <span>问题：</span>
       </p>
       <el-table :data="tableData" style="width: 100%;" v-loading="loadShow">
-        <el-table-column label="事件类型" width="180">
+        <el-table-column label="事件类型" width="200">
           <template slot-scope="scope">
             <span style="margin-left: 0px;flex-wrap:nowrap">
               {{

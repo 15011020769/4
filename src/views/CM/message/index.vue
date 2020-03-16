@@ -18,12 +18,12 @@
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
           <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
-         <!-- 设置框---已完成 -->
+          <!-- 设置框---已完成 -->
           <!-- <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
             @click="buyMessgae"
-          ></i> -->
+          ></i>-->
         </el-row>
       </div>
 
@@ -42,7 +42,7 @@
           <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Edit">编辑</el-button>
-            <el-button type="text" class="deleteBtn">删除</el-button>
+            <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,6 +60,20 @@
     </div>
     <!-- 点击设置 -->
     <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
+
+    <!-- 删除 -->
+    <el-dialog
+      title="确定删除所选策略？"
+      :visible.sync="deleteDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+    >
+      <p>删除后,相关接收人将不能接收到对应的告警内容</p>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="DeleteList()">确定删除</el-button>
+        <el-button @click="deleteDialogVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -69,7 +83,10 @@ import Dialog from "./components/dialog";
 
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import { BASICS_ALARM_LIST } from "@/constants/CM-lxx.js";
+import {
+  BASICS_ALARM_LIST,
+  CM_GROUPING_LIST_DELETE
+} from "@/constants/CM-lxx.js";
 
 export default {
   name: "message",
@@ -174,14 +191,15 @@ export default {
         }
       ], //表格数据
       //分页
-        loadShow: true, // 加载是否显示
+      loadShow: true, // 加载是否显示
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
       currpage: 1, // 当前页码
       operationFlag: -1, //按钮禁用开关
       searchName: "",
       dialogVisible: false, //设置弹出框
-      triggerInput: "" //搜索
+      triggerInput: "", //搜索
+      deleteDialogVisible: false
       //分页
     };
   },
@@ -196,7 +214,6 @@ export default {
   methods: {
     //获取数据
     getCustomMessage() {
-     
       this.loadShow = true; //加载
       var params = {
         Region: localStorage.getItem("regionv2"),
@@ -227,8 +244,35 @@ export default {
         }
       });
     },
-    searchList(){
-       //搜索框
+    // 删除
+    Delete(row) {
+      this.deleteDialogVisible = true;
+    },
+    DeleteList() {
+      this.loadShow = true;
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.deleteDialogVisible = false;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {};
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    searchList() {
+      //搜索框
       if (this.triggerInput == "") {
         this.getCustomMessage();
       }

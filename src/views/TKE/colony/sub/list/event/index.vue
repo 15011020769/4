@@ -3,10 +3,10 @@
   <div>
     <subTitle title="事件" />
     <div class="tke-card tke-formpanel-wrap">
-      <h4 class="tke-formpanel-title">条件筛选</h4>
+      <h4 class="tke-formpanel-title">{{$t('TKE.event.tjsx')}}</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
-        <el-form-item label="命名空间">
-          <el-select v-model="nsValue" placeholder="请选择命名空间" @change="getKind">
+        <el-form-item :label="$t('TKE.overview.mmkj')">
+          <el-select v-model="nsValue" :placeholder="$t('TKE.event.qxzmmkj')" @change="getKind">
             <el-option
               v-for="item in nsOptions"
               :key="item.value"
@@ -15,8 +15,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="类型">
-          <el-select v-model="typeValue" filterable placeholder="请选择类型" @change="getEventList">
+        <el-form-item :label="$t('TKE.overview.lx')">
+          <el-select v-model="typeValue" filterable :placeholder="$t('TKE.event.qxzlx')" @change="getEventList">
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -25,10 +25,10 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <el-select
             v-model="nameValue"
-            placeholder="请选择名称"
+            :placeholder="$t('TKE.event.qxzmc')"
             :disabled="nameFlag"
             @change="getNameList"
           >
@@ -40,9 +40,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="其余选项">
+        <el-form-item :label="$t('TKE.event.qyxx')">
           <div class="tke-form-item_text">
-            <span>自动刷新</span>
+            <span>{{$t('TKE.overview.zdsx')}}</span>
             <el-switch v-model="autoRefresh" class="ml10"></el-switch>
           </div>
         </el-form-item>
@@ -52,29 +52,29 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table :data="list" v-loading="loadShow" style="width: 100%">
-        <el-table-column label="首次出现时间">
+        <el-table-column :label="$t('TKE.event.sccxsj')">
           <template slot-scope="scope">
             <p>{{scope.row.firstTimestamp}}</p>
           </template>
         </el-table-column>
-        <el-table-column label="最后出现时间">
+        <el-table-column :label="$t('TKE.event.zhcxsj')">
           <template slot-scope="scope">
             <p>{{scope.row.lastTimestamp}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="级别">
+        <el-table-column prop :label="$t('TKE.event.jb')">
           <template slot-scope="scope">
             <span v-if="scope.row.type=='Warning'" class="text-red">{{scope.row.type}}</span>
             <span v-if="scope.row.type=='Normal'">{{scope.row.type}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop label="资源类型">
+        <el-table-column prop :label="$t('TKE.event.zylx')">
           <template slot-scope="scope">
             <span v-if="scope.row.involvedObject.kind">{{scope.row.involvedObject.kind}}</span>
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop label="资源名称">
+        <el-table-column prop :label="$t('TKE.event.zymc')">
           <template slot-scope="scope">
             <span>{{scope.row.metadata.name}}</span>
           </template>
@@ -84,12 +84,12 @@
             <span>{{scope.row.reason}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="nodeTotal" label="详细描述">
+        <el-table-column prop="nodeTotal" :label="$t('TKE.event.xxms')">
           <template slot-scope="scope">
             <p>{{scope.row.message}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop label="出现次数">
+        <el-table-column prop :label="$t('TKE.event.cxcs')">
           <template slot-scope="scope">
             <p>{{scope.row.count}}</p>
           </template>

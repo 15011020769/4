@@ -15,10 +15,9 @@
                     <el-button @click="contrast">数据对比</el-button>
                     <span><span>对比</span><span>&times;</span></p>
                   </div> -->
-
                   <div class="export">
-                    <a @click="exportData" style="margin-right:10px;">导出数据</a>
-                    <a @click="exportImg">导出图片</a>
+                    <a @click="exportExcel" style="margin-right:10px;">导出数据</a>
+                    <!-- <a @click="exportImg">导出图片</a> -->
                   </div>
                 </div>
                 <h3>外网出带宽</h3>
@@ -35,6 +34,7 @@
                   height="450"
                   :default-sort="{prop: 'date', order: 'descending'}"
                   v-loading="loadShow"
+                  id='exportTable'
                 >
                   <el-table-column prop="times" label="时间" sortable>
                       <template slot-scope="scope">
@@ -76,6 +76,8 @@ import TimeDropDown from "@/components/public/TimeDropDown.vue"
 import {All_MONITOR} from "@/constants"
 import moment from 'moment';
 import EcharLine from '@/components/public/echars-line.vue'
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 // import Ecarts from "@/components/public/echars-line"
 export default {
   name: "history",
@@ -204,9 +206,28 @@ export default {
       this.loadShow = true
       this.GetMonitor()
     },
-    exportData() {
-      //导出数据
-      alert("导出数据");
+     //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      console.log(wb)
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          '1300560919-monitor-data'+ ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
     exportImg() {
       //导出图片

@@ -85,18 +85,25 @@ export default {
   methods: {
     init() {
       const { projectId, domainName, interval, times } = this.params
-
+      let timeType = 'days'
+      if(interval == '5min') {
+        timeType = 'days'
+      } else if(interval == 'hour') {
+        timeType = 'weeks'
+      } else {
+        timeType = 'months'
+      }
       const params1 = {
         Version: "2018-06-06",
-        StartTime: moment().subtract(1, 'days').startOf('days').format('YYYY-MM-DD HH:mm:ss'),
-        EndTime: moment().subtract(1, 'days').endOf('days').format('YYYY-MM-DD HH:mm:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
         Interval: interval
       }
       const params2 = {
         Version: "2018-06-06",
-        StartTime: moment().subtract(2, 'days').startOf('days').format('YYYY-MM-DD HH:mm:ss'),
-        EndTime: moment().subtract(2, 'days').endOf('days').format('YYYY-MM-DD HH:mm:ss'),
+        StartTime: moment(times[0]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(times[1]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
         Area: "overseas",
         Interval: interval
       }

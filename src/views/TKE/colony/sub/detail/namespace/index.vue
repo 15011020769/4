@@ -9,7 +9,7 @@
             <i class="el-icon-back"></i>
           </span>
           <span class="goback" @click="goColonyList()">
-            集群(中国台北) /
+            {{$t('TKE.overview.zgtb')}} /
           </span>
           <span class="goback" @click="goBack()">
             {{this.clusterId}}(tfy_test1) /
@@ -23,7 +23,7 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'namespaceDetailInfo',query: {clusterId: clusterId,name: name}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'namespaceDetailInfo',query: {clusterId: clusterId,name: name}}">{{$t('TKE.overview.xq')}}</router-link>
       <router-link class="nav-item" :to="{name:'namespaceDetailYaml',query: {clusterId: clusterId,name: name}}">YAML</router-link>
     </div> 
 

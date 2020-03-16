@@ -1,19 +1,19 @@
 <template>
-  <el-dialog title="选择镜像" :visible.sync="visible" class="dialog" :before-close="handleClose" :close-on-click-modal='set'
+  <el-dialog :title="$t('TKE.subList.xzjxiang')" :visible.sync="visible" class="dialog" :before-close="handleClose" :close-on-click-modal='set'
              :close-on-press-escape='set'>
     <div class="dialog-content">
       <p>
         <el-radio-group v-model="radio" text-color="#000">
-          <el-radio label="选择容器服务镜像"></el-radio>
+          <el-radio :label="$t('TKE.subList.xzrqfwjx')"></el-radio>
         </el-radio-group>
       </p>
       <el-tabs v-model="activeName" @tab-click="handleClick(activeName)">
-        <el-tab-pane label="我的镜像" name="first"></el-tab-pane>
+        <el-tab-pane :label="$t('TKE.myMirror.wdjx')" name="first"></el-tab-pane>
         <el-tab-pane label="我的收藏" name="second"></el-tab-pane>
-        <el-tab-pane label="公有镜像" name="third"></el-tab-pane>
-        <el-tab-pane label="Docker Hub镜像" name="fourth"></el-tab-pane>
+        <el-tab-pane :label="$t('TKE.totalMirror.gyjx')" name="third"></el-tab-pane>
+        <el-tab-pane :label="$t('TKE.subList.dhjx')" name="fourth"></el-tab-pane>
       </el-tabs>
-      <el-input placeholder="请输入镜像名称" class="input-set">
+      <el-input :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
         <i slot="suffix" class="el-input__icon el-icon-search"></i>
       </el-input>
       <div v-show="activeName === 'first'">
@@ -24,14 +24,14 @@
               <el-radio v-model="mirrorImageRadio" :label="scope.row.reponame">&nbsp;</el-radio>
             </template>
           </el-table-column>
-          <el-table-column label="名称" width="120">
+          <el-table-column :label="$t('TKE.overview.mc')" width="120">
             <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column prop="publicText" label="类型" width="120">
+          <el-table-column prop="publicText" :label="$t('TKE.overview.lx')" width="120">
           </el-table-column>
-          <el-table-column prop="namespace" label="命名空间">
+          <el-table-column prop="namespace" :label="$t('TKE.overview.mmkj')">
           </el-table-column>
-          <el-table-column prop="address" label="仓库地址" show-overflow-tooltip>
+          <el-table-column prop="address" :label="$t('TKE.mirrorDetail.ckdz')" show-overflow-tooltip>
             <template slot-scope="scope">tpeccr.ccs.tencentyun.com/{{ scope.row.reponame }}</template>
           </el-table-column>
         </el-table>
@@ -44,9 +44,9 @@
               <el-radio v-model="mirrorImageRadio" :label="scope.row.reponame">&nbsp;</el-radio>
             </template>
           </el-table-column>
-          <el-table-column prop="reponame" label="名称" width="220">
+          <el-table-column prop="reponame" :label="$t('TKE.overview.mc')" width="220">
           </el-table-column>
-          <el-table-column prop="repotype" label="类型" width="220">
+          <el-table-column prop="repotype" :label="$t('TKE.overview.lx')" width="220">
           </el-table-column>
           <el-table-column prop="favorCount" label="收藏量">
           </el-table-column>
@@ -54,7 +54,7 @@
       </div>
       <!-- 分页 -->
       <div class="pagstyle" style="height:70px;">
-        <span>共&nbsp;{{ TotalCount }}&nbsp;项</span>
+        <span>共&nbsp;{{ TotalCount }}&nbsp;{{$t('TKE.colony.xiang')}}</span>
         <div class="pagestyle_right">
           <el-pagination :page-size="pagesize" :pager-count="7" :page-sizes="[50, 40, 30, 20, 10]"
                          layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
@@ -66,7 +66,7 @@
     </div>
     <span slot="footer" class="dialog-footer">
       <el-button @click="cancle">取 消</el-button>
-      <el-button type="primary" @click="sure">确 定</el-button>
+      <el-button type="primary" @click="sure">{{$t('TKE.overview.qd')}}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -78,7 +78,7 @@ export default {
     return {
       visible: false,
       set: false,
-      radio: '选择容器服务镜像',
+      radio: '選擇容器服務映像',
       // radio1: '默认区域',
       activeName: 'first',
       // city: ['默认区域', '1', '2', '3', '4', '5', '6', '7', '8'],

@@ -16,7 +16,7 @@
       <el-table-column prop="Name" label="URL"></el-table-column>
       <el-table-column prop="Value" label="流量">  
         <template slot-scope="scope">
-          {{scope.row.Value | formatValue }}
+          {{fluxStr(scope.row.Value)}}
         </template>
       </el-table-column>
     </el-table>
@@ -71,13 +71,31 @@ export default {
     }
   },
   methods: {
+    fixed(v) {
+      return Math.ceil(v) !== v ? v.toFixed(2) : v
+    },
+    fluxStr(v) {
+      if (v > 1e12) {
+        return [v / 1e12, 'TB'].join('')
+      }
+      if (v > 1e9) {
+        return [v / 1e9, 'GB'].join('')
+      }
+      if (v > 1e6) {
+        return [v / 1e6, 'MB'].join('')
+      }
+      if (v > 1e3) {
+        return [this.fixed(v / 1e3), 'KB'].join('')
+      }
+      return [v, 'B'].join('')
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
+      
       const params = {
         Version: "2018-06-06",
-        StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
-        EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
       }
       if (projectId) {

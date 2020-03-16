@@ -9,7 +9,7 @@
             <i class="el-icon-back"></i>
           </span>
           <span class="goback" @click="goColonyList()">
-            集群(中国台北) /
+            集群({{$t('TKE.overview.zgtb')}}) /
           </span>
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /
@@ -23,10 +23,10 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'scDetailInfo',query: {clusterId: clusterId,resourceIns:resourceIns}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'scDetailInfo',query: {clusterId: clusterId,resourceIns:resourceIns}}">{{$t('TKE.overview.xq')}}</router-link>
       <router-link class="nav-item" :to="{name:'scDetailEvent',query: {clusterId: clusterId,resourceIns:resourceIns}}">事件</router-link>
       <router-link class="nav-item" :to="{name:'scDetailYaml',query: {clusterId: clusterId,resourceIns:resourceIns}}">YAML</router-link>
-    </div> 
+    </div>
 
     <!-- 子页面 -->
     <keep-alive>
@@ -34,7 +34,7 @@
           <router-view></router-view>
         </transition>
     </keep-alive>
-   
+
   </div>
 </template>
 
@@ -49,7 +49,7 @@ export default {
     };
   },
   components: {
-    
+
   },
   created() {
     // 从路由获取集群id
@@ -61,14 +61,14 @@ export default {
     goBack(){
       this.$router.push({
         name:'colonyStorageSc',
-        
+
       })
     },
     //返回集群列表
     goColonyList(){
       this.$router.push({
         name:'colony',
-        
+
       })
     },
   }

@@ -2,27 +2,27 @@
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
-      <h4  class="tke-formpanel-title">基本信息</h4>
+      <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <div class="tke-form-item_text">{{detail.metadata.name}}</div>
         </el-form-item>
-        <el-form-item label="状态">
+        <el-form-item :label="$t('TKE.overview.zt')">
           <div class="tke-form-item_text"><span class="text-green">{{detail.status && detail.status.phase}}</span></div>
         </el-form-item>
         <el-form-item label="描述">
           <div class="tke-form-item_text">{{detail.metadata.annotations?detail.metadata.annotations.description:'-'}}</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{changeTime(detail.metadata.creationTimestamp)}}</div>
         </el-form-item>
-        <el-form-item label="镜像仓库秘钥">
+        <el-form-item :label="$t('TKE.subList.jxckmy')">
           <div style="overflow: visible; max-width: 550px;">
             <el-table
               :data="secretsList"
               style="width: 100%">
               <el-table-column
-                label="名称"
+                :label="$t('TKE.overview.mc')"
                 width="300"
                 >
                 <template slot-scope="scope">
@@ -31,11 +31,11 @@
               </el-table-column>
               <el-table-column
                 prop=""
-                label="状态"
+                :label="$t('TKE.overview.zt')"
                 >
                 <template slot-scope="scope">
-                  <span v-if="scope.row.status===true" class="text-green">已下发 <i class="el-icon-success"></i></span>
-                  <span v-else class="text-red">未下发 <i class="el-icon-warning"></i></span>
+                  <span v-if="scope.row.status===true" class="text-green">已{{$t('TKE.subList.xfa')}} <i class="el-icon-success"></i></span>
+                  <span v-else class="text-red">未{{$t('TKE.subList.xfa')}} <i class="el-icon-warning"></i></span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -43,10 +43,10 @@
                 label="操作"
                 >
                 <template slot-scope="scope">
-                  <el-tooltip v-if="scope.row.status===true" effect="dark" content="当前密钥已下发，无需再次下发" placement="right">
-                    <span  class="text-gray" @click="sendDown(scope.row)">下发</span>
+                  <el-tooltip v-if="scope.row.status===true" effect="dark" :content="$t('TKE.subList.dqmyyxf')" placement="right">
+                    <span  class="text-gray" @click="sendDown(scope.row)">{{$t('TKE.subList.xfa')}}</span>
                   </el-tooltip>
-                  <span v-else class="tke-text-link">下发</span>
+                  <span v-else class="tke-text-link">{{$t('TKE.subList.xfa')}}</span>
                 </template>
               </el-table-column>
               
