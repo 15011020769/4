@@ -274,6 +274,15 @@ export default {
         StartTime: this.startTimeService,
         EndTime: this.endTimeService
       };
+      if (this.ywTimeBtnSelect2 === '總覽') {
+        this.IpList.forEach((e, i) => {
+          if (e !== '總覽') {
+            params['IpList.' + (i - 1)] = e
+          }
+        })
+      } else {
+        params['IpList.' + 0] = this.ywTimeBtnSelect2
+      }
       this.axios.post(STATIC_LIST, params).then(res => {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
@@ -600,7 +609,7 @@ export default {
             show: false
           },
           axisLabel: {
-            formatter: "{value}bps"
+            formatter: "{value}pps"
           },
           boundaryGap: true
         },

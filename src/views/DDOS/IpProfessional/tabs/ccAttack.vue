@@ -580,7 +580,7 @@ export default {
             show: false
           },
           axisLabel: {
-            formatter: "{value}bps"
+            formatter: "{value}QPS"
           },
           boundaryGap: true
         },
