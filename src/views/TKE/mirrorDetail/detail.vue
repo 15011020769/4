@@ -1,14 +1,14 @@
 <template>
     <el-card class="box-card">
-        <p class="box-info">基本信息</p>
+        <p class="box-info">{{$t('TKE.overview.jbxx')}}</p>
         <el-form  class="tke-form"  label-position='left' label-width="120px" size="mini">
-          <el-form-item label="仓库名称">
+          <el-form-item :label="$t('TKE.mirrorDetail.ckmc')">
             <div class="tke-form-item_text"><span>{{name}}</span></div>
           </el-form-item>
-          <el-form-item label="类型">
+          <el-form-item :label="$t('TKE.overview.lx')">
             <div class="tke-form-item_text"><span>{{form.region|publicsEdit}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEdit()"></i></span></div>
           </el-form-item>
-          <el-form-item label="仓库地址">
+          <el-form-item :label="$t('TKE.mirrorDetail.ckdz')">
             <div class="tke-form-item_text"><span>{{server}}/{{name}}</span>
             <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i>
             </div>
@@ -16,15 +16,15 @@
           <el-form-item label="描述">
             <div class="tke-form-item_text"><span>{{description| descriptions}}<i class="el-icon-edit" style="cursor: pointer;" @click="getEditTwo()"></i></span></div>
           </el-form-item>
-          <el-form-item label="创建时间">
+          <el-form-item :label="$t('TKE.overview.cjsj')">
             <div class="tke-form-item_text"><span>{{creationTime}}</span></div>
           </el-form-item>
         </el-form>
         <!-- 修改类型 -->
-        <el-dialog title="修改镜像仓库类型" :visible.sync="dialogFormVisible">
+        <el-dialog :title="$t('TKE.mirrorDetail.xgjxcklx')" :visible.sync="dialogFormVisible">
           <el-form :model="form" class="tke-form">
-            <el-form-item label="类型" :label-width="formLabelWidth">
-              <el-select v-model="form.region" placeholder="请选择活动区域"  size="mini">
+            <el-form-item :label="$t('TKE.overview.lx')" :label-width="formLabelWidth">
+              <el-select v-model="form.region" :placeholder="$t('TKE.overview.xzhdqy')"  size="mini">
                 <el-option label="私有" value='0'></el-option>
                 <el-option label="公有" value='1'></el-option>
               </el-select>
@@ -32,30 +32,30 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="setPublic()">确 定</el-button>
+            <el-button type="primary" @click="setPublic()">{{$t('TKE.overview.qd')}}</el-button>
           </div>
         </el-dialog>
         <!-- 修改描述 -->
-        <el-dialog title="修改镜像仓库描述" :visible.sync="dialogFormVisible2">
+          <el-dialog title="修改镜像仓库描述" :visible.sync="dialogFormVisible2">
           <el-form :model="forminput" ref="forminput" :rules="rules">
             <el-form-item label="描述" :label-width="formLabelWidth"  prop="textarea"
             :rules="[
-              { max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' },
-              { required: true, message: '描述不能为空', trigger: 'blur' }
+              { max: 1000, message: $t('TKE.mirrorDetail.cdbncg1000gzf'), trigger: 'blur' },
+              { required: true, message: $t('TKE.mirrorDetail.msbnwk'), trigger: 'blur' }
             ]" class="tke-form">
                 <el-input
                   type="textarea"
                   :rows="4"
-                  placeholder="请输入内容"
+                  :placeholder="$t('TKE.colony.qsrnr')"
                   v-model="forminput.textarea"
                   size="mini">
                 </el-input>
-                 <p style="font-size:12px;color:#bbb;">最长为1000个字符</p>
+                 <p style="font-size:12px;color:#bbb;">{{$t('TKE.myMirror.zcw1000gzf')}}</p>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="resetForm">取 消</el-button>
-            <el-button type="primary" @click="submitForm('forminput')">确 定</el-button>
+            <el-button type="primary" @click="submitForm('forminput')">{{$t('TKE.overview.qd')}}</el-button>
           </div>
         </el-dialog>
     </el-card>
@@ -85,8 +85,8 @@ export default {
       formLabelWidth: '100px',
       rules:{
          textarea: [
-          { max: 1000, message: '描述不能超过1000个字符', trigger: 'blur' },
-          { required: true, message: '描述不能为空', trigger: 'blur' },
+          { max: 1000, message: this.$t('TKE.mirrorDetail.cdbncg1000gzf'), trigger: 'blur' },
+          { required: true, message: this.$t('TKE.mirrorDetail.msbnwk'), trigger: 'blur' }
         ]
       }
     }
@@ -141,7 +141,7 @@ export default {
       console.log(oInput.value)
       document.execCommand('Copy') // 执行浏览器复制命令
       this.$message({
-        message: '复制成功',
+        message: this.$t('TKE.mirrorDetail.fzcg'),
         type: 'success',
         showClose: true,
       })
@@ -187,7 +187,7 @@ export default {
                   duration: 0
               })
           return
-        } 
+        }
         this.$message({
             message: ErrorTips[res.codeDesc],
             type: "error",
@@ -232,7 +232,7 @@ export default {
     },
     descriptions: function (value) {
       if (value == '') {
-        return '无'
+        return '無'
       } else {
         return value
       }
