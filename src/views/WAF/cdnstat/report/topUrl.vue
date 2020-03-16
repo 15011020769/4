@@ -91,10 +91,10 @@ export default {
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
+      
       const params = {
         Version: "2018-06-06",
-        StartTime:times[0],
+        StartTime: times[0],
         EndTime: times[1],
         Area: "overseas",
       }
