@@ -96,7 +96,11 @@
                 <span>{{ t("QPS扩展包", "WAF.qpskzb") }}</span>
                 <span
                   >{{ t("到期时当前QPS峰值间", "WAF.dqqpsfz") }}
-                  <a class="greenHref">{{ package.MaxQPS }}</a>
+                  <a class="greenHref">{{ package.MaxQPS || 0}} </a>
+                  <el-tooltip class="item" effect="dark" content="最近31天的最大值，每10秒统计一次。" placement="right">
+                    <i class="el-icon-info" />
+                  </el-tooltip>
+                  
                   {{ t("当前套餐QPS", "WAF.dqqps") }}
                   <a class="orangeHref">
                     {{

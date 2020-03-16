@@ -180,6 +180,8 @@ export default {
         this.getBotAction()
         this.getBotRegions()
         this.getBotFlow()  
+      } else {
+        this.loading = false
       }
     },
     // 获取Bot_V2 Bot流量统计
