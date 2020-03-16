@@ -33,7 +33,7 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime" :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false" :MetricName='disName[scope.row.MetricName]'></echart-line>
+              <echart-line :id="scope.row.MetricName + 1" :time="scope.row.DataPoints[0].Timestamps | UpTime" :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false" :MetricName='disName[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -72,8 +72,8 @@
 
         <el-table-column prop>
           <template slot-scope="scope">
-            <a class="a-1">导出图片</a>
-            <a :id="scope.row.MetricName" class="a-1" @click="downCsvOne(scope.row)">导出数据</a>
+            <!-- <a class="a-1" @click="downPng(scope.row)">導出圖片</a> -->
+            <a :id="scope.row.MetricName" class="a-1" :download="disName[scope.row.MetricName]" @click="downCsvOne(scope.row)">導出數據</a>
           </template>
         </el-table-column>
       </el-table>
@@ -175,7 +175,7 @@ import {
   ALL_Basics,
   All_MONITOR
 } from '@/constants'
-import { initDownload } from "@/components/public/derive"
+import { initDownload, downloadEchartPic } from "@/components/public/derive"
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -431,7 +431,21 @@ export default {
           duration: 0
         });
       }
-    }
+    },
+
+    // 导出图片
+    // downPng(data) {
+    //   if (data.DataPoints[0].Values.length !== 0) {
+    //     downloadEchartPic(data.MetricName + 1, data.DataPoints[0].Dimensions[0].Value + '_default_' + data.DataPoints[0].Dimensions[1].Value + '_' + this.disName[data.MetricName] + '.png')
+    //   } else {
+    //     this.$message({
+    //       message: '無數據',
+    //       type: "warning",
+    //       showClose: true,
+    //       duration: 0
+    //     });
+    //   }
+    // }
 
   },
   filters: {
