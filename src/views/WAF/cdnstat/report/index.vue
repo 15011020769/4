@@ -69,8 +69,16 @@
         v-if="showFields.includes('overview')"
         class="card"
       />
-      <region-top class="card" />
-      <flux class="card" />
+      <region-top
+        :params="params"
+        v-if="showFields.includes('regionTop')"
+        class="card"
+      />
+      <flux
+        :params="params"
+        v-if="showFields.includes('flux')"
+        class="card"
+      />
       <bandlimit
         :params="params"
         v-if="showFields.includes('bandlimit')"

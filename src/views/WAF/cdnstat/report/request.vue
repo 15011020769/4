@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>请求数<span style="color:#bbb;">(次)</span></h3>
+      <h3>请求数<span style="color:#bbb;fontSize:12px;">(次)</span></h3>
       <i class="el-icon-download icon" />
     </el-row>
     <echart-line

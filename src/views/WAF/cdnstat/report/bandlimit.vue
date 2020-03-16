@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>带宽</h3>
+      <h3>带宽<span style="color:#bbb;fontSize:12px;">(Mbps)</span></h3>
       <i class="el-icon-download icon" />
     </el-row>
     <el-row type="flex" class="header" justify="space-between">
