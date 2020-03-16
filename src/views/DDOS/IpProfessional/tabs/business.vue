@@ -112,7 +112,7 @@ export default {
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1])
+        let maxDate = moment(value[1]).add(1, 'd')
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
@@ -128,10 +128,14 @@ export default {
           } else if (num < 31) {
             this.period = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          } else {
+            this.period = 86400
+            arr.push(dateValue.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
           }
         }
         this.timey = arr
-        this.startTimeService = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+        this.startTimeService = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
+         this.endTimeService = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
         this.describeTransmitStatis();
       }
       this.choiceClick = false
@@ -224,7 +228,6 @@ export default {
     // 业务资源id变化时，重新获取数据
     changeIdService() {
       this.IpList = []
-      console.log('inputIdService =' + this.inputIdService)
       for (const i in this.ResIpList) {
         if (this.ResIpList.hasOwnProperty(i)) {
           const element = this.ResIpList[i];
@@ -489,11 +492,11 @@ export default {
     },
 
     drawLine4(time, data1, data2) {
-      var arr = [];
-      for (let i in time) {
-        arr.unshift(time[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in time) {
+      //   arr.unshift(time[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart4 = this.$echarts.init(document.getElementById("myChart4"));
       // 绘制图表
@@ -505,7 +508,7 @@ export default {
         //     data:['总请求峰值','攻击请求峰值']
         // },
         xAxis: {
-          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          data: time //["12-05", "12-04", "12-03", "12-02", "12-01"]
           // type : 'time',
           // minInterval: 1
         },
@@ -575,11 +578,11 @@ export default {
     },
 
     drawLine5(time, data1, data2) {
-      var arr = [];
-      for (let i in time) {
-        arr.unshift(time[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in time) {
+      //   arr.unshift(time[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart5 = this.$echarts.init(document.getElementById("myChart5"));
       // 绘制图表
@@ -591,7 +594,7 @@ export default {
         //     data:['总请求峰值','攻击请求峰值']
         // },
         xAxis: {
-          data: arr //["12-05", "12-04", "12-03", "12-02", "12-01"]
+          data: time //["12-05", "12-04", "12-03", "12-02", "12-01"]
           // type : 'time',
           // minInterval: 1
         },

@@ -225,11 +225,11 @@ export default {
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1])
+        let maxDate = moment(value[1]).add(1, 'd')
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
-          if (num > 0 && num < 2) {
+          if (num < 2) {
             this.period = 300
             arr.push(dateValue.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 6) {
@@ -241,17 +241,25 @@ export default {
           } else if (num < 31) {
             this.period = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
+          } else {
+            this.period = 86400
+            arr.push(dateValue.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
           }
         }
         this.timey = arr;
-        this.startTime = moment(value[0]).format("YYYY-MM-DD HH:mm:ss"); //格式处理
+        this.startTime = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
+        this.endTime = moment(value[1]).format("YYYY-MM-DD 23:59:59")
+        if (this.selectIp !== "總覽") {
+        this.describeDDoSTrend(this.timey);
+      } else {
         this.describeDDoSNetTrend(this.timey);
+      }
         this.describeDDoSNetEvList();
         // for (let index in this.metricNames) {
         //   this.metricName2 = this.metricNames[index];
         //   this.describeDDoSNetCount();
         // }
-        for (let i =0; i < this.btnData.length; i++) {
+        for (let i = 0; i < this.btnData.length; i++) {
           this.btnData[i]['selected'] = false;
         }
       }
@@ -298,8 +306,8 @@ export default {
             this.ipPro = JSON.parse(jsonStr)
             this.selectId = this.ipPro.Id
             this.selectIp = this.ipPro.Vip
-            this.startTime = moment(this.ipPro.StartTime,'YYYY-MM-DD 00:00:00').toDate()
-            this.endTime = moment(this.ipPro.EndTime,'YYYY-MM-DD 00:00:00').toDate()
+            this.startTime = moment(this.ipPro.StartTime, 'YYYY-MM-DD 00:00:00').toDate()
+            this.endTime = moment(this.ipPro.EndTime, 'YYYY-MM-DD 23:59:59').toDate()
             this.dateChoice = [this.startTime, this.endTime]
             sessionStorage.setItem('IpPro', '')
             for (let i =0; i < this.btnData.length; i++) {
