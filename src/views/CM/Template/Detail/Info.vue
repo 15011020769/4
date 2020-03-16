@@ -21,7 +21,7 @@
         <el-form-item label="备注">
           <div class="item-text">
             <span>{{infoData.remark}}</span>
-            <i class="el-icon-edit" @click="openRemark()" style="cursor:pointer"></i>
+            <i class="el-icon-edit" @click="openRemark(infoData.remark)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
       </el-form>
@@ -61,26 +61,29 @@
       <div class="number">共 {{total}} 项</div>
     </el-card>
     <!-- 修改名称弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%">
-      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
-      <el-form :model="infoData" :rules="rules" ref="form">
-        <el-form-item prop="groupName">
-          <el-input maxlength="20" v-model="infoData.groupName" :value="infoData.groupName" style="width:200px" size="small"></el-input>
-        </el-form-item>
-      </el-form>
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改条件模板名称">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p> -->
+      <div>
+        <el-input maxlength="20" v-model="editGroupName" style="width:200px;margin-top:20px" size="small"></el-input>
+        <p v-if="editGroupName==''" class="edit-text-tips">条件模板名称不能为空</p>
+        <p v-if="editGroupName.length==20" class="edit-text-tips">条件模板名称不能超过20个字符</p>
+      </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitName(infoData.groupName)">保 存</el-button>
+        <el-button type="primary" @click="submitName()">保 存</el-button>
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 修改备注弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%">
-      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板备注</p>
-      <el-form :model="infoData" :rules="rules" ref="form">
-        <el-form-item prop="remark">
-          <el-input type="textarea" rows="5" maxlength="100" v-model="infoData.remark" :value="infoData.remark" show-word-limit></el-input>
-        </el-form-item>
-      </el-form>
+    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改条件模板备注">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板备注</p> -->
+      <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
+        <!-- <el-form-item prop="remark"> -->
+          <div>
+          <el-input type="textarea" rows="5" maxlength="100" v-model="editRemark" show-word-limit></el-input>
+          <p v-if="editRemark.length==100" class="edit-text-tips">条件模板备注不能超过100个字符</p>
+          </div>
+        <!-- </el-form-item> -->
+      <!-- </el-form> -->
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitRemark(infoData.remark)">保 存</el-button>
         <el-button @click="showDelDialog2 = false">取 消</el-button>
@@ -254,6 +257,8 @@ export default {
       infoData: {}, // 详情信息
       total: 0, // 告警策略列表总数
       id: '', // 模板id
+      editGroupName: '', // 编辑的模板名称
+      editRemark: '', // 编辑的备注
       Conditions: [],
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
@@ -377,37 +382,7 @@ export default {
       conditionsData: [], // 触发条件数据
       conditions: ['任意', '所有'], // 满足条件
       groupList: [], // 策略组列表
-      channelList: [], // 渠道列表
-      rules: {
-        groupName: [// 验证名字
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('名称不能为空'))
-              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
-                callback(new Error('条件模板名称不能超过20个字符'))
-              } else {
-                callback()
-              }
-            },
-            trigger: 'change',
-            required: true
-          }
-        ],
-        remark: [// 验证备注
-          {
-            validator: (rule, value, callback) => {
-              if (value.length === 100) {
-                callback(new Error('条件模板备注不能超过100个字符'))
-              } else {
-                callback()
-              }
-            },
-            trigger: 'change',
-            required: true
-          }
-        ]
-      }
+      channelList: [] // 渠道列表
     }
   },
   components: {
@@ -569,24 +544,24 @@ export default {
         }
       })
     },
+    openName (name) { // 修改名字弹框
+      this.editGroupName = name
+      this.showDelDialog1 = true
+    },
     // 修改名称
-    async submitName (val) {
+    async submitName () {
       let params = {
         Version: '2018-07-24',
         Module: 'monitor',
         GroupId: this.id,
         GroupType: 3,
         Key: 'groupName',
-        Value: val
-        // groupType: 3,
-        // key: 'groupName',
+        Value: this.editGroupName
         // lang: 'zh',
-        // value: val,
-        // groupId: Number(this.id)
-        // Version: '2018-07-24'
       }
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         this.showDelDialog1 = false
+        this.getDetailInfo()
         this.$message({
           message: '修改成功',
           type: 'success',
@@ -595,23 +570,24 @@ export default {
         })
       })
     },
+    openRemark (remark) { // 修改备注弹框
+      this.editRemark = remark
+      this.showDelDialog2 = true
+    },
     // 修改备注
-    async submitRemark (val) {
+    async submitRemark () {
       let params = {
         Version: '2018-07-24',
         Module: 'monitor',
         GroupId: this.id,
         GroupType: 3,
         Key: 'remark',
-        Value: val
-        // groupType: 3,
-        // key: 'remark',
+        Value: this.editRemark
         // lang: 'zh',
-        // value: val,
-        // groupId: Number(this.id)
       }
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         this.showDelDialog2 = false
+        this.getDetailInfo()
         this.$message({
           message: '修改成功',
           type: 'success',
@@ -639,12 +615,6 @@ export default {
     // 格式化时间
     upTime (value) {
       return moment(value).format('YYYY/MM/DD HH :mm:ss')
-    },
-    openName () { // 修改名字弹框
-      this.showDelDialog1 = true
-    },
-    openRemark () { // 修改备注弹框
-      this.showDelDialog2 = true
     },
     // 告警触发条件弹框(未完成)
     openEdit () {
@@ -870,5 +840,10 @@ export default {
   font-size: 12px;
   color:red;
   line-height: 30px;
+}
+.edit-text-tips{
+  color: red;
+  font-size: 12px;
+  margin-top:10px;
 }
 </style>
