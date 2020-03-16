@@ -5,18 +5,48 @@
       <i class="el-icon-download icon" />
     </el-row>
     <el-row>
-      <el-col :span="18">
+      <el-col :span="16">
         <echart-map
           :series="seriesMap"
+          :total="totalNumber"
+          v-loading="loading"
         />
       </el-col>
-      <el-col></el-col>
+      <el-col :span="8">
+        <el-table
+          :data="tableData.slice((currpage - 1) * pageSize, currpage * pageSize)"
+          v-loading="loading"
+        >
+          <el-table-column prop="name" label="区域"></el-table-column>
+          <el-table-column prop="value" label="消耗量">
+            <template slot-scope="scope">
+              {{scope.row.value | formatValue }}
+            </template>
+          </el-table-column>
+          <el-table-column label="占比">
+            <template slot-scope="scope">
+              {{(scope.row.value / totalNumber * 100).toFixed(2) + '%'}}
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
+          <el-pagination
+            :page-size="pageSize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="totalItems"
+          ></el-pagination>
+        </div>
+      </el-col>
     </el-row>
   </el-card>
 </template>
 <script>
 import moment from 'moment'
 import echartMap from '../components/worldMap'
+import { COUNTRY_MAP } from '../components/constants'
 
 export default {
   props: {
@@ -25,10 +55,27 @@ export default {
   data() {
     return {
       seriesMap: [],
+      tableData: [], //表格数据
+      COUNTRY_MAP,
+      loading: true, //加载状态
+      totalNumber: 1, // 总消耗量
+      currpage: 1, //页数
+      pageSize: 6, //每页数量
+      totalItems: 0, //总条数
     }
   },
   components: {
     echartMap,
+  },
+  filters: {
+    formatValue(value) {
+      if(value >= 1000) {
+        value = (value / 1000).toFixed(2) + 'KB'
+      } else {
+        value = value + 'B'
+      }
+      return value
+    }
   },
   watch: {
     params: {
@@ -48,7 +95,6 @@ export default {
         StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
         EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
         Area: "overseas",
-        Interval: interval
       }
       if (projectId) {
         params.Project = projectId
@@ -56,7 +102,36 @@ export default {
       if (domainName) {
         params['Domains.0'] = domainName
       }
-      // this.getFluxHitRate(params)
+      this.getListTopData(params)
+    },
+    getListTopData(params) {
+      this.loading = true
+      const regionsArr = []
+      let total = 0
+      this.axios.post('cdn2/ListTopData', {
+        ...params,
+        Metric: "District",
+        Filter: "flux"
+      })
+        .then(({ Response }) => {
+          const res = Response.Data[0].DetailData
+          res && res.map((v) => {
+            regionsArr.push({
+              name: this.COUNTRY_MAP[v.Name],
+              value: v.Value
+            })
+            total += v.Value
+          })
+          this.seriesMap = regionsArr
+          this.tableData = regionsArr
+          this.totalItems = regionsArr.length
+          this.totalNumber = total
+          this.loading = false
+        })
+    },
+    handleCurrentChange(val) {
+      this.currpage = val;
+      this.getListTopData();
     },
   }
 }
@@ -70,4 +145,26 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
+.Right-style {
+    display: flex;
+    justify-content: space-between;
+
+    .esach-inputL {
+      width: 300px;
+      margin-right: 20px;
+    }
+  }
+  .pagstyle {
+    padding: 20px;
+
+    .pagtotal {
+      font-size: 13px;
+      font-weight: 400;
+      color: #565656;
+      line-height: 62px;
+    }
+    .el-pagination {
+      border-bottom: none;
+    }
+  }
 </style>
