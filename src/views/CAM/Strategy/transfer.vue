@@ -6,7 +6,7 @@
           關聯{{tableTitle}}
           <span>（共{{totalNum}}條）</span>
           <el-input
-            :placeholder="commandObj.value === 'user' ? '請輸入用戶名/ID/備註' : '請輸入用戶組名稱/備註'"
+            :placeholder="commandObj.value === 'user' ? '支持多關鍵詞(間隔為空格)搜索用戶名/賬戶ID/備註' : '支持用戶組名稱/備註'"
             v-model="keyword"
             class="input-with-select"
             clearable

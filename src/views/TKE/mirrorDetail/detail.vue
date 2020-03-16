@@ -36,7 +36,7 @@
           </div>
         </el-dialog>
         <!-- 修改描述 -->
-          <el-dialog title="修改镜像仓库描述" :visible.sync="dialogFormVisible2">
+          <el-dialog :title="$t('TKE.mirrorDetail.xgjxckms')" :visible.sync="dialogFormVisible2">
           <el-form :model="forminput" ref="forminput" :rules="rules">
             <el-form-item label="描述" :label-width="formLabelWidth"  prop="textarea"
             :rules="[

@@ -145,7 +145,8 @@ export default {
     buyImmediate(){
       let validTime = this.package.ValidTime
       let d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
-      let time = d/(365/12) // 到期月数
+      let time = Math.ceil(moment(this.package.ValidTime).diff(moment(), 'month', true)) // 到期月数
+      let time1 = time
       let newEdiPrice
       let curEdiPrice
       let price = `${this.cost / d}/天` // 新购时单价 /每天
@@ -155,15 +156,20 @@ export default {
       if (this.package.DomainPkg) { // 变配
         validTime = this.package.DomainPkg.ValidTime
         d = Math.ceil(moment(validTime).diff(moment(), 'd', true)) // 到期天数
-        time = d/(365/12) // 到期月数
+        time = Math.ceil(moment(this.package.ValidTime).diff(moment(), 'month', true)) // 到期天数
+        time1 = time
+        if (Math.ceil(time) !== time) {
+          time = time.toFixed(2)
+          time1 = time.toFixed(8)
+        }
         newEdiPrice = (this.buyNum + this.package.DomainPkg.Count) * 2000 * this.exchange
         curEdiPrice = this.package.DomainPkg.Count * 2000 * this.exchange
         name = `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-${this.t('变配', 'WAF.bp')}`
         price = '-'
-        purchaseTime = `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
+        purchaseTime = `${time}${this.t('个', 'WAF.g')}月`,
         tips = [
-          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
-          `(2).${this.t('时长', 'WAF.sc')}:${time.toFixed(8)}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
+          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice}*${this.t('时长', 'WAF.sc')}${time1} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice}*${this.t('时长', 'WAF.sc')}${time1}]`,
+          `(2).${this.t('时长', 'WAF.sc')}:${time1}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
         ]
       }
       const order = {

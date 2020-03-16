@@ -152,17 +152,23 @@ export default {
       const { name, price: newEdiPrice } = CLB_PACKAGE_CFG_TYPES[this.type]
       const { price: curEdiPrice } = CLB_PACKAGE_CFG_TYPES[this.package.Level]
 
+      let time = Math.ceil(moment(this.package.ValidTime).diff(moment(), 'month', true)) // 到期天数
+      let time1 = time
+      if (Math.ceil(time) !== time) {
+        time = time.toFixed(2)
+        time1 = time.toFixed(8)
+      }
       const d = Math.ceil(moment(this.package.ValidTime).diff(moment(), 'd', true)) // 到期天数
-      const time = d/(365/12) // 到期月数
+      // const time = d/(365/12) // 到期月数
       const orders = [{
         name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${name}-CLB${this.t('变配', 'WAF.bp')}`,
         config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${name}`,
         price: '-', // 单价
         cost: this.cost, // 费用
-        purchaseTime: `${time.toFixed(2)}${this.t('个', 'WAF.g')}月`,
+        purchaseTime: `${time}${this.t('个', 'WAF.g')}月`,
         tips: [
-          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time.toFixed(8)}]`,
-          `(2).${this.t('时长', 'WAF.sc')}:${time.toFixed(8)}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
+          `(1).${this.t('变配订单金额', 'WAF.bpddje')}：${this.cost} [${this.t('新配置单价', 'WAF.xpzdj')}${newEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time1} - ${this.t('旧配置单价', 'WAF.jpzdj')}${curEdiPrice * this.exchange}*${this.t('时长', 'WAF.sc')}${time1}]`,
+          `(2).${this.t('时长', 'WAF.sc')}:${time1}月[${this.t('天数', 'WAF.ts')}${d}/(365/12)]`,
         ]
       }]
       localStorage.setItem(ORDER_INFO, JSON.stringify({
@@ -209,6 +215,7 @@ export default {
     },
     checkType(type){
       this.type = type
+      this.queryPrice()
     }
   }
 }

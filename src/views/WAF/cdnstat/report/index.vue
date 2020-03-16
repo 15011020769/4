@@ -71,9 +71,16 @@
       />
       <region-top class="card" />
       <flux class="card" />
-      <bandlimit class="card" />
-      <request class="card" />
-      <request class="card" />
+      <bandlimit
+        :params="params"
+        v-if="showFields.includes('bandlimit')"
+        class="card"
+      />
+      <request
+        :params="params"
+        v-if="showFields.includes('request')"
+        class="card"
+      />
       <error-code
         :params="params"
         v-if="showFields.includes('errorCode')"

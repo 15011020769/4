@@ -184,6 +184,8 @@ export default {
     init() {
       if(this.domain) {
         this.getBotTcbList()
+      } else {
+        this.loading = false
       }
     },
     handleCommand(action) {

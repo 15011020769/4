@@ -7,7 +7,7 @@
             <span>
               提交方法<i class="el-icon-question"></i>
             </span>
-            <el-select v-model="SubmissionValue" placeholder="请选择" class="select">
+            <el-select v-model="SubmissionValue" placeholder="请选择" class="select" @change="changSubmit()">
               <el-option v-for="item in SubmissionArr" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -102,8 +102,10 @@
         </div>
 
       </div>
-
-
+      <div>
+        <el-input type="file" id="fileID"></el-input>
+      </div>
+      <div id="sdk-root" style="width: 100%; height: 100%"></div>
       <div class="functest">
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
         <el-button size="small">测试</el-button>
@@ -119,6 +121,8 @@
     </div>
   </div>
 </template>
+
+<script src="https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js"></script>
 <script>
   import
   JsZip
@@ -174,6 +178,52 @@
     },
     created() {
       this.GetDate()
+      
+    },
+    mounted() {
+      document.querySelector('#fileID').onchange = e => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const initConfig = {
+            rootNode: document.querySelector('#sdk-root'),
+            funcName: "",
+            modeType: window.ModeTypeEnum.ZIP,
+            helpDocLink: "",
+            blobData: new Blob(),
+            i18nType: "zh-cn",
+            // entryPath: 'index.html', // 如果需要默认打开文件，则指定entryPath
+          }
+          execLiteServiceConstructor(initConfig, 2, reader.result);
+        };
+        reader.readAsBinaryString(e.target.files[0]);
+      }
+      const formatWorkerUrl = function (name) {
+        return window.location.origin + "/worker/" + name;
+      };
+      CloudStudioLiteFilesServiceSDK.MonacoWorkerUrl([
+        { label: "typescript", url: formatWorkerUrl("typescript.worker.js") },
+        { label: "editor", url: formatWorkerUrl("editor.worker.js") },
+        { label: "json", url: formatWorkerUrl("json.worker.js") },
+      ]);
+
+      const liteSDK = new CloudStudioLiteFilesServiceSDK();
+      // // 构造 litesdk
+      const execLiteServiceConstructor = function (config, permissionModeType, blobData) {
+        if (!config & !permissionModeType & !blobData) return;
+        liteSDK.init(config);
+        console.log("init done");
+        liteSDK.setPermission(permissionModeType);
+        liteSDK.refreshRenderDOM();
+        liteSDK.addListener({
+          onRead: function () {
+            return new Promise(function (res) {
+              res({ content: blobData });
+            });
+          },
+        });
+      };
+
+      window.liteSDK = liteSDK;
     },
     methods: {
       //获取详情数据

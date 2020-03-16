@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       seriesPieErrorCode: [],
-      colorPie: ['#006eff', 'rgb(41, 204, 133)', '#434348', '#74BD48', "#F7A35C", '#8D62AE'],
+      colorPie: ['#006eff', '#29cc85', '#434348', '#74BD48', "#F7A35C", '#8D62AE'],
       legendTextPieError: [],
       totalNumber: 1,
       loading: true,

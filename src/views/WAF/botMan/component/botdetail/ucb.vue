@@ -169,6 +169,8 @@ export default {
     init() {
       if(this.domain) {
         this.getBotUcbList()
+      } else {
+        this.loading = false
       }
     },
     handleCommand(action) {

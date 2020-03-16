@@ -223,12 +223,14 @@ export default {
         .then(resp => {
           this.generalRespHandler(resp, ({ Data }) => {
             this.loadShow = false
-            const botArr = Data.Res
-            this.tableDataBegin.forEach(item => {
-              let temp = botArr.find(_item => _item.Domain === item.Domain)
-              this.$set(item, 'botStatus', temp.Status)
-            })
-            localStorage.setItem('tableList', JSON.stringify(this.tableDataBegin))
+            if (Data) {
+              const botArr = Data.Res
+              this.tableDataBegin.forEach(item => {
+                let temp = botArr.find(_item => _item.Domain === item.Domain)
+                this.$set(item, 'botStatus', temp.Status)
+              })
+              localStorage.setItem('tableList', JSON.stringify(this.tableDataBegin))
+            }
           })
         })
     },

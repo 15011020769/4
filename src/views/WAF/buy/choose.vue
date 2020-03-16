@@ -103,6 +103,8 @@
                 <el-button @click="mounth(24)" :class="mounthType==24?'addColor':''">2年</el-button>
                 <el-button @click="mounth(36)" :class="mounthType==36?'addColor':''">3年</el-button>
               </el-button-group>
+              <br />
+              <el-checkbox style="margin-top: 10px;" v-model="autoRenewFlag">账户余额足够时，到期后按月自动续费</el-checkbox>
             </div>
           </div>
         </div>
@@ -127,6 +129,7 @@ import {
   BUY_LOG_TYPES,
   CLB_BUY_DOMAIN_TYPES,
   CLB_BUY_QPS_TYPES,
+  ORDER_INFO,
 } from '../constants'
 export default {
   data(){
@@ -139,6 +142,7 @@ export default {
       loading: true,
       costInfo: undefined,
       price: 0,
+      autoRenewFlag: false,
     }
   },
   watch: {
@@ -247,89 +251,192 @@ export default {
           this.loading = false
         })
       })
-      this.generateDeal()
+      // this.generateDeal()
     },
-    generateDeal() {
-      const { categoryid, edit_categoryid, goodstype, pid, pricetype, key } = CLB_PACKAGE_CFG_TYPES[4]
-      // 企业版升级到旗舰版
-      // this.axios.post(GENERATE_DEALS, {
-      //   Version: '2018-07-09',
-      //   'Goods.0.GoodsCategoryId': edit_categoryid,
-      //   'Goods.0.RegionId': 1,
-      //   'Goods.0.ZoneId': 0,
-      //   'Goods.0.GoodsNum': 1,
-      //   'Goods.0.ProjectId': 0,
-      //   'Goods.0.PayMode': 1,
-      //   'Goods.0.Platform': 1,
-      //   'Goods.0.GoodsDetail': JSON.stringify({
-      //     productInfo: [{
-      //       name: "Web应用防火墙",
-      //       value: '旗舰版', // 升级新的name
-      //     }],
-      //     curDeadline: '2020-03-13 10:13:19',
-      //     resourceId: 'waf_000q5mgau',
-      //     oldConfig: {
-      //       pid: 1001152, // 企业版的pid
-      //       type: 'sp_wsm_waf_enterprise_clb', // 企业版的key
-      //       sv_wsm_waf_package_enterprise_clb: 1,
-      //     },
-      //     newConfig: {
-      //       pid,
-      //       type: key,
-      //       [pricetype]: 1,
-      //     }
-      //   }),
-      // })
+    getDealParam() {
+      const { first_categoryid, key, categoryid, name, pid, pricetype } = CLB_PACKAGE_CFG_TYPES[this.thisType]
+      let index = 0
       // 续费  去掉续费的curDeadline和resourceId，categoryid改为first_categoryid就是新购的下单
-      this.axios.post(GENERATE_DEALS, {
+      const param = {
         Version: '2018-07-09',
-        'Goods.0.GoodsCategoryId': categoryid,
+        'Goods.0.GoodsCategoryId': first_categoryid,
         'Goods.0.RegionId': 1,
         'Goods.0.ZoneId': 0,
         'Goods.0.GoodsNum': 1,
         'Goods.0.ProjectId': 0,
         'Goods.0.PayMode': 1,
         'Goods.0.Platform': 1,
-        'Goods.0.GoodsDetail': JSON.stringify({
+        'Goods.0.GoodsDetail': {
            productInfo: [{
-            name: "Web应用防火墙",
-            value: '企业版'
+            name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}`,
+            value: name
           }],
-          curDeadline: '2020-03-13 10:13:19',
-          timeSpan: 1,
+          timeSpan: this.mounthType,
           timeUnit: 'm',
-          resourceId: 'waf_000q5mgau',
+          type: key,
           pid: pid,
           [pricetype]: 1,
+          autoRenewFlag: Number(this.autoRenewFlag),
           Currency: 'CNY'
-        }),
-        // 日志包产品
-        'Goods.1.GoodsCategoryId': BUY_LOG_TYPES.categoryid,
-        'Goods.1.RegionId': 1,
-        'Goods.1.ZoneId': 0,
-        'Goods.1.GoodsNum': 1,
-        'Goods.1.ProjectId': 0,
-        'Goods.1.PayMode': 1,
-        'Goods.1.Platform': 1,
-        'Goods.1.GoodsDetail': JSON.stringify({
-           productInfo: [{
-            name: "Web应用防火墙",
-            value: '日志服务包'
-          }],
-          curDeadline: '2020-03-13 10:51:09',
-          timeSpan: 1,
-          timeUnit: 'm',
-          resourceId: 'waf_000q5udxm_cls',
-          pid: BUY_LOG_TYPES.pid,
-          [BUY_LOG_TYPES.pricetype]: 1,
-          Currency: 'CNY'
-        }),
+        },
+      }
+      let clsParam = {}
+      let domainParam = {}
+      let qpsParam = {}
+      // 选择了QPS
+      if (this.qpsPackageCount) {
+        index += 1
+        const { first_categoryid, pid, pricetype, goodstype, } = CLB_BUY_QPS_TYPES
+        qpsParam = {
+          [`Goods.${index}.GoodsCategoryId`]: first_categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: this.t('QPS扩展包', 'WAF.qpskzb'),
+              value: `${this.qpsPackageCount * 1000}QPS`
+            }],
+            timeSpan: this.mounthType,
+            timeUnit: 'm',
+            type: goodstype,
+            pid: pid,
+            [pricetype]: this.qpsPackageCount * 1000,
+            autoRenewFlag: Number(this.autoRenewFlag),
+            Currency: 'CNY'
+          },
+        }
+      }
+      // 选择了扩展域名包
+      if (this.domainPackageCount) {
+        index += 1
+        const { first_categoryid, pid, pricetype, goodstype } = CLB_BUY_DOMAIN_TYPES
+        domainParam = {
+          [`Goods.${index}.GoodsCategoryId`]: first_categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('扩展', 'WAF.kz')}域名包`,
+              value: `${this.domainPackageCount}${this.t('个', 'WAF.g')}`
+            }],
+            timeSpan: this.mounthType,
+            timeUnit: 'm',
+            pid: pid,
+            type: goodstype,
+            autoRenewFlag: Number(this.autoRenewFlag),
+            [pricetype]: this.domainPackageCount,
+            Currency: 'CNY'
+          },
+        }
+      }
+      // 选择了安全日志服务包
+      if (this.clsPackageCount) {
+        index += 1
+        const { first_categoryid, pid, pricetype, goodstype } = BUY_LOG_TYPES
+        clsParam = {
+          [`Goods.${index}.GoodsCategoryId`]: first_categoryid,
+          [`Goods.${index}.RegionId`]: 1,
+          [`Goods.${index}.ZoneId`]: 0,
+          [`Goods.${index}.GoodsNum`]: 1,
+          [`Goods.${index}.ProjectId`]: 0,
+          [`Goods.${index}.PayMode`]: 1,
+          [`Goods.${index}.Platform`]: 1,
+          [`Goods.${index}.GoodsDetail`]: {
+            productInfo: [{
+              name: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}`,
+              value: `${this.clsPackageCount}T`
+            }],
+            timeSpan: this.mounthType,
+            timeUnit: 'm',
+            pid: pid,
+            type: goodstype,
+            [pricetype]: this.clsPackageCount,
+            autoRenewFlag: Number(this.autoRenewFlag),
+            Currency: 'CNY'
+          },
+        }
+      }
+      return JSON.stringify({
+        ...param,
+        ...qpsParam,
+        ...domainParam,
+        ...clsParam,
       })
+      // this.axios.post(GENERATE_DEALS, {
+      //   // 日志包产品
+      //   'Goods.1.GoodsCategoryId': BUY_LOG_TYPES.categoryid,
+      //   'Goods.1.RegionId': 1,
+      //   'Goods.1.ZoneId': 0,
+      //   'Goods.1.GoodsNum': 1,
+      //   'Goods.1.ProjectId': 0,
+      //   'Goods.1.PayMode': 1,
+      //   'Goods.1.Platform': 1,
+      //   'Goods.1.GoodsDetail': JSON.stringify({
+      //      productInfo: [{
+      //       name: "Web应用防火墙",
+      //       value: '日志服务包'
+      //     }],
+      //     curDeadline: '2020-03-13 10:51:09',
+      //     timeSpan: 1,
+      //     timeUnit: 'm',
+      //     resourceId: 'waf_000q5udxm_cls',
+      //     pid: BUY_LOG_TYPES.pid,
+      //     [BUY_LOG_TYPES.pricetype]: 1,
+      //     Currency: 'CNY'
+      //   }),
+      // })
     },
     //跳转支付页面
     pay(){
+      const { clsPackageCount, qpsPackageCount, domainPackageCount } = this
+      const orders = [{
+        name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${CLB_PACKAGE_CFG_TYPES[this.thisType].name}-CLB${this.t('新购', 'WAF.ng')}`,
+        config: `Web${this.t('应用防火墙', 'WAF.yyfhq')}：${CLB_PACKAGE_CFG_TYPES[this.thisType].name}`,
+        price: `${this.costInfo[CLB_PACKAGE_CFG_TYPES[this.thisType].pid].RealTotalCost}元/月`, // 单价
+        cost: this.costInfo[CLB_PACKAGE_CFG_TYPES[this.thisType].pid].RealTotalCost, // 费用
+        purchaseTime: `${this.mounthType}${this.t('个', 'WAF.g')}月`,
+      }]
+      if (clsPackageCount) {
+        orders.push({
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${this.t('安全日志服务新购', 'WAF.aqrzfwxg')}`,
+          config: `${this.t('全量日志服务包', 'WAF.qlrzfwb')}：${clsPackageCount}T`,
+          price: `${this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost}元/月`, // 单价
+          cost: this.costInfo[BUY_LOG_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.mounthType}${this.t('个', 'WAF.g')}月`,
+        })
+      }
+      if (qpsPackageCount) {
+        orders.push({
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-${this.t('QPS扩展包', 'WAF.qpskzb')}-${this.t('新购', 'WAF.ng')}`,
+          config: `${this.t('QPS扩展包', 'WAF.qpskzb')}：${qpsPackageCount * 1000}QPS`,
+          price: `${this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost}元/月`, // 单价
+          cost: this.costInfo[CLB_BUY_QPS_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.mounthType}${this.t('个', 'WAF.g')}月`,
+        })
+      }
+      if (domainPackageCount) {
+        orders.push({
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-CLB續費`,
+          config: `域名包：${domainPackageCount}${this.t('个', 'WAF.g')}`,
+          price: `${this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost}元/月`, // 单价
+          cost: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 费用
+          purchaseTime: `${this.mounthType}${this.t('个', 'WAF.g')}月`,
+        })
+      }
+      localStorage.setItem(ORDER_INFO, JSON.stringify({
+        orders,
+        dealParam: this.getDealParam()
+      }))
       this.$router.push({
-        name:'pay'
+        name: 'pay'
       })
     }
   }

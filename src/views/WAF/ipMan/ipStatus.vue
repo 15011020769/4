@@ -410,8 +410,10 @@ export default {
           })
         } else {
           this.ipSearchOptions = data.Response.HostList
-          this.ipSearch = this.ipSearchOptions[0].Domain
-          this.onSearch()
+          if (this.ipSearchOptions.length) {
+            this.ipSearch = this.ipSearchOptions[0].Domain
+          }
+            this.onSearch()
         }
       })
     },

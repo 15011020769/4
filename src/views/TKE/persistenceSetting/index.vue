@@ -182,9 +182,9 @@ export default {
     elastic() {
       var reg = "http://[1-9]{1}.[1-9]{1}.[1-9]{1}.[1-9]{1}";
       if (this.elasticVal.match(reg)) {
-        this.placement="输入正确"
+        this.placement="輸入正確"
       }else{
-        this.placement="输入正确"
+        this.placement="輸入正確"
       }
       // console.log(this.elasticVal);
     },

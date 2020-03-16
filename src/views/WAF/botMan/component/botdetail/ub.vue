@@ -4,7 +4,6 @@
       <el-table
         :data="ubList"
         row-key="Id"
-        :empty-text="t('暂无数据', 'WAF.zwsj')"
         v-loading="loading"
       >
         <el-table-column
@@ -182,6 +181,8 @@ export default {
     init() {
       if(this.domain) {
         this.getBotUbList()
+      } else {
+        this.loading = false
       }
     },
     // 加黑

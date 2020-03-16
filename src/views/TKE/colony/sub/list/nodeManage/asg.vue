@@ -1,7 +1,7 @@
  <!-- 伸缩组列表 -->
 <template>
   <div >
-    <subTitle title='伸缩组列表'  />
+    <subTitle :title="$t('TKE.subList.sszlb')"  />
      <!-- 全局配置 -->
     <div class="tke-card tke-formpanel-wrap" v-show="saw">
       <div class="tke-grid ">
@@ -11,41 +11,41 @@
         </div>
         <!-- 右侧 -->
         <div class="grid-right" style="padding-bottom:20px">
-          <span class="tke-text-link" @click="dialogFormVisible = true">编辑</span>
+          <span class="tke-text-link" @click="dialogFormVisible = true">{{$t('TKE.overview.bj')}}</span>
         </div>
       </div>
       
       <el-form  class="tke-form"  label-position='left' label-width="120px" size="mini">
-        <el-form-item label="自动缩容">
+        <el-form-item :label="$t('TKE.subList.zdsr')">
           <div class="tke-form-item_text">{{global.IsScaleDownEnabled|IsScaleDownEnableds}}</div>
         </el-form-item>
-        <el-form-item label="最大并发缩容数" v-show='control'>
+        <el-form-item :label="$t('TKE.subList.zdbfsrs')" v-show='control'>
           <div class="tke-form-item_text">{{global.MaxEmptyBulkDelete}}</div>
         </el-form-item>
-        <el-form-item label="缩容计算方法" v-show='control'>
-          <div class="tke-form-item_text">	Pod占用资源/可分配资源小于{{global.ScaleDownUtilizationThreshold}}%开始判断缩容条件</div>
-          <div class="tke-form-item_text" v-show='global.IgnoreDaemonSetsUtilization'>DaemonSet类型不计入pod占用资源</div>
+        <el-form-item :label="$t('TKE.subList.srjsff')" v-show='control'>
+          <div class="tke-form-item_text">	{{$t('TKE.subList.bzhi')}}{{global.ScaleDownUtilizationThreshold}}{{$t('TKE.subList.pdsrtj')}}</div>
+          <div class="tke-form-item_text" v-show='global.IgnoreDaemonSetsUtilization'>{{$t('TKE.subList.dlxbzzy')}}</div>
         </el-form-item>
-        <el-form-item label="节点连续空闲" v-show='control'>
-          <div class="tke-form-item_text">{{global.ScaleDownUnneededTime}}分钟后被缩容</div>
+        <el-form-item :label="$t('TKE.subList.jdlxkx')" v-show='control'>
+          <div class="tke-form-item_text">{{global.ScaleDownUnneededTime}}{{$t('TKE.subList.fzhbsr')}}</div>
         </el-form-item>
 
-        <el-form-item label="集群扩容" v-show='control'>
-          <div class="tke-form-item_text">{{global.ScaleDownDelay}}分钟后开始判断缩容条件</div>
+        <el-form-item :label="$t('TKE.subList.jqkr')" v-show='control'>
+          <div class="tke-form-item_text">{{global.ScaleDownDelay}}{{$t('TKE.subList.fzhpdsrtj')}}</div>
         </el-form-item>
-        <el-form-item label="不缩容节点" v-show='control'>
+        <el-form-item :label="$t('TKE.subList.bsrjd')" v-show='control'>
           <div class="tke-form-item_text">{{global.SkipNodesWithLocalStorage|SkipNodesWithLocalStorages}}</div>
           <div class="tke-form-item_text">{{global.SkipNodesWithSystemPods|SkipNodesWithSystemPodss}}</div>
         </el-form-item>
-        <el-form-item label="扩容算法">
+        <el-form-item :label="$t('TKE.subList.krsf')">
           <div class="tke-form-item_text">{{global.Expander|Expanders}}</div>
         </el-form-item>
-        <el-form-item label="集群规模上限">
+        <el-form-item :label="$t('TKE.subList.jqgmsx')">
           <div class="tke-form-item_text">
-            可扩容节点数量受VPC网络、容器网络、TKE集群节点配额、可购买云主机配额限制 <br>
-            当前容器网络 172.16.0.0/16 最大支持 1008个节点<br>
-            当前地域下集群节点数量上限配额为：5000<br>
-            当前地域下按量计费云服务器剩余配额为：100<br>
+            {{$t('TKE.subList.kkrjds')}} <br>
+            {{$t('TKE.subList.dqrqwl')}}<br>
+            {{$t('TKE.subList.dqdyjqjd')}}：5000<br>
+            {{$t('TKE.subList.dqdyaljf')}}：100<br>
           </div>
         </el-form-item>
       </el-form>
@@ -54,14 +54,14 @@
     <div class="tke-grid mt10" style="margin-top: 10px;">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button @click="goAsgCreate" size="small" type="primary">新建伸缩组</el-button>
-        <el-button size="small" :disabled="this.deleteData.length>=1?false:true" @click="openDeleteAllDialog()">删除</el-button>
+        <el-button @click="goAsgCreate" size="small" type="primary">{{$t('TKE.subList.xjssz')}}</el-button>
+        <el-button size="small" :disabled="this.deleteData.length>=1?false:true" @click="openDeleteAllDialog()">{{$t('TKE.overview.sc')}}</el-button>
       </div>
       <!-- 右侧 -->
       <div class="grid-right">
         <tkeSearch 
             exportData
-            inputPlaceholder='请输入伸缩组ID'
+            :inputPlaceholder="$t('TKE.subList.qsrsszid')"
             :searchInput='searchInput'
             @changeInput="changeSearchInput"
             @clickSearch="clickSearch"
@@ -84,7 +84,7 @@
           width="55">
         </el-table-column>
         <el-table-column
-          label="伸缩组ID/名称"
+          :label="$t('TKE.subList.sszmc')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.AutoScalingGroupId}}</span>
@@ -94,16 +94,16 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="扩缩模式"
+          :label="$t('TKE.subList.ksms')"
           >
           <template slot-scope="scope">
-              <span v-if="scope.row.ServiceSettings.ScalingMode==='CLASSIC_SCALING'">释放模式</span>
+              <span v-if="scope.row.ServiceSettings.ScalingMode==='CLASSIC_SCALING'">{{$t('TKE.subList.sfms')}}</span>
               <span v-else-if="scope.row.ServiceSettings.ScalingMode==='WAKE_UP_STOPPED_SCALING'"></span>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
-          label="状态"
+          :label="$t('TKE.overview.zt')"
           >
           <template slot-scope="scope">
               <span :class="[scope.row.status === 'enabled' ? 'text-green' : '']">{{ChangeStatus(scope.row.status)}}</span>
@@ -111,7 +111,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="子机数量"
+          :label="$t('TKE.subList.zjsl')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.InstanceCount}}</span>
@@ -119,7 +119,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="期望伸缩数"
+          :label="$t('TKE.subList.qwsss')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.DesiredCapacity}}</span>
@@ -127,7 +127,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="最小伸缩数"
+          :label="$t('TKE.subList.zxsss')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.MinSize}}</span>
@@ -136,14 +136,14 @@
         <el-table-column
           prop="address"
             width="200"
-          label="最大伸缩数">
+          :label="$t('TKE.subList.zdsss')">
           <template slot-scope="scope">
             <span>{{scope.row.MaxSize}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="address"
-          label="启动配置ID/名称">
+          :label="$t('TKE.subList.qdpzmc')">
           <template slot-scope="scope">
             <p><a :href="'../startCon/secDetails/' + scope.row.LaunchConfigurationId">{{scope.row.LaunchConfigurationId}}</a></p>
             <p>{{scope.row.LaunchConfigurationName}}</p>
@@ -154,7 +154,7 @@
           width="130"
           >
           <template slot-scope="scope">
-            <el-button size="small" type="text" :disabled="scope.row.status==='disabled'?false:true" @click="showUse(scope.row)">启用</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.status==='disabled'?false:true" @click="showUse(scope.row)">{{$t('TKE.subList.qiy')}}</el-button>
             <el-button size="small" type="text" :disabled="scope.row.status==='enabled'?false:true" @click="showStop(scope.row)">停用</el-button>
             
             <el-dropdown class=" tke-dropdown" >
@@ -162,9 +162,9 @@
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item command="a">
-                  <el-button size="small" type="text" :disabled="scope.row.status==='enabled'?false:true" @click="showToConfigure(scope.row)">调整配置</el-button>
+                  <el-button size="small" type="text" :disabled="scope.row.status==='enabled'?false:true" @click="showToConfigure(scope.row)">{{$t('TKE.subList.tzpz')}}</el-button>
                 </el-dropdown-item>
-                <el-dropdown-item command="a"><span class="tke-text-link" @click="deleteSigle(scope.row)">删除</span></el-dropdown-item>
+                <el-dropdown-item command="a"><span class="tke-text-link" @click="deleteSigle(scope.row)">{{$t('TKE.overview.sc')}}</span></el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -187,137 +187,137 @@
     </div>
 
     <!-- 编辑 -->
-    <el-dialog title="设置集群伸缩全局配置" :visible.sync="dialogFormVisible" width="70%">
+    <el-dialog :title="$t('TKE.subList.szjqss')" :visible.sync="dialogFormVisible" width="70%">
       <el-card class="box-card">
         <el-form :model="global" :rules="rules" ref="ruleForm" label-position='left' label-width="250px" >
-            <el-form-item label="自动缩容" :label-width="formLabelWidth" class='bottom' >
-              <el-checkbox v-model="global.IsScaleDownEnabled" >开启自动缩容</el-checkbox>
-              <p>集群中节点空闲资源较多时将触发缩容。详情请查看
+            <el-form-item :label="$t('TKE.subList.zdsrong')" :label-width="formLabelWidth" class='bottom' >
+              <el-checkbox v-model="global.IsScaleDownEnabled" >{{$t('TKE.subList.kqzdsr')}}</el-checkbox>
+              <p>{{$t('TKE.subList.jqjdkx')}}
                 <!-- <a>集群自动扩缩容说明</a> -->
               </p>
             </el-form-item>
-            <el-form-item label="缩容配置" :label-width="formLabelWidth" class='bottom' v-show='global.IsScaleDownEnabled'>
-              <el-form-item label="最大并发缩容数" prop="MaxEmptyBulkDelete">
-                  <el-input v-model="global.MaxEmptyBulkDelete" placeholder="请输入内容" class='input-w' prop="input1" size='mini'></el-input>
+            <el-form-item :label="$t('TKE.subList.srpz')" :label-width="formLabelWidth" class='bottom' v-show='global.IsScaleDownEnabled'>
+              <el-form-item :label="$t('TKE.subList.zdbfsrs')" prop="MaxEmptyBulkDelete">
+                  <el-input v-model="global.MaxEmptyBulkDelete" :placeholder="$t('TKE.colony.qsrnr')" class='input-w' prop="input1" size='mini'></el-input>
               </el-form-item>
               <!-- <i class='el-icon-warning-outline'></i> -->
-              <el-form-item label="Pod占用资源/可分配资源小于" class='bottom'  prop="ScaleDownUtilizationThreshold" >
-                  <el-input v-model="global.ScaleDownUtilizationThreshold" placeholder="请输入内容" class='input-w'  size='mini'></el-input><span>%时开始判断缩容条件</span>
-                  <p v-if="global.ScaleDownUtilizationThreshold != ''">占比范围为0-80。<span v-if="global.ScaleDownUtilizationThreshold == 0">占比为0时,仅在节点内的所有Pod运行完成后才开始缩容。</span></p>
+              <el-form-item :label="$t('TKE.subList.bzhi')" class='bottom'  prop="ScaleDownUtilizationThreshold" >
+                  <el-input v-model="global.ScaleDownUtilizationThreshold" :placeholder="$t('TKE.colony.qsrnr')" class='input-w'  size='mini'></el-input><span>{{$t('TKE.subList.kspdsrtj')}}</span>
+                  <p v-if="global.ScaleDownUtilizationThreshold != ''">{{$t('TKE.subList.zbfw')}}<span v-if="global.ScaleDownUtilizationThreshold == 0">{{$t('TKE.subList.zbw')}}</span></p>
               </el-form-item>
               <el-form-item label=" " class='bottom'>
                   <p>
-                  <el-checkbox v-model="global.IgnoreDaemonSetsUtilization">DaemonSet类型不计入pod占用资源</el-checkbox>
+                  <el-checkbox v-model="global.IgnoreDaemonSetsUtilization">{{$t('TKE.subList.dlxbzzy')}}</el-checkbox>
                   </p>
               </el-form-item>
-              <el-form-item label="节点连续空闲" class='bottom' prop="ScaleDownUnneededTime">
-                  <el-input v-model="global.ScaleDownUnneededTime" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后被缩容</span>
+              <el-form-item :label="$t('TKE.subList.jdlxkx')" class='bottom' prop="ScaleDownUnneededTime">
+                  <el-input v-model="global.ScaleDownUnneededTime" :placeholder="$t('TKE.colony.qsrnr')" class='input-w' prop="input3" size='mini'></el-input><span>{{$t('TKE.subList.fzhbsr')}}</span>
               </el-form-item>
-               <el-form-item label="集群扩容" class='bottom' prop="ScaleDownDelay">
-                  <el-input v-model="global.ScaleDownDelay" placeholder="请输入内容" class='input-w' prop="input3" size='mini'></el-input><span>分钟后开始判断缩容条件</span>
+               <el-form-item :label="$t('TKE.subList.jqkr')" class='bottom' prop="ScaleDownDelay">
+                  <el-input v-model="global.ScaleDownDelay" :placeholder="$t('TKE.colony.qsrnr')" class='input-w' prop="input3" size='mini'></el-input><span>{{$t('TKE.subList.fzhpdsrtj')}}</span>
               </el-form-item>
-               <el-form-item label="不缩容节点" class='bottom'>
-                  <el-checkbox v-model="global.SkipNodesWithLocalStorage" >含有本地存储Pod的节点</el-checkbox>
-                  <p><el-checkbox v-model="global.SkipNodesWithSystemPods" >含有kube-system namespace下非DaemonSet管理的Pod的节点</el-checkbox></p>
+               <el-form-item :label="$t('TKE.subList.bsrjd')" class='bottom'>
+                  <el-checkbox v-model="global.SkipNodesWithLocalStorage" >{{$t('TKE.subList.hybdjd')}}</el-checkbox>
+                  <p><el-checkbox v-model="global.SkipNodesWithSystemPods" >{{$t('TKE.subList.hypjd')}}</el-checkbox></p>
               </el-form-item>
             </el-form-item>
-            <el-form-item label="扩容算法" :label-width="formLabelWidth">
+            <el-form-item :label="$t('TKE.subList.krsf')" :label-width="formLabelWidth">
                 <el-radio-group v-model="global.Expander" class='left' @change='setRadio($event)'>
-                  <el-radio label="random">随机</el-radio>
+                  <el-radio label="random">{{ $t('TKE.subList.sji')}}</el-radio>
                   <el-radio label="most-pods">most-pods</el-radio>
                   <el-radio label="least-waste">least-waste</el-radio>
                 </el-radio-group>
-              <p class='left' v-if="global.Expander === 'random'">随机选择一个伸缩组进行扩容</p>
-              <p class='left' v-else-if="global.Expander === 'most-pods'">选择能调度更多pod的伸缩组进行扩容</p>
-              <p class='left' v-else-if="global.Expander === 'least-waste'">选择pod调度后资源剩余更少的伸缩组进行扩容</p>
+              <p class='left' v-if="global.Expander === 'random'">{{$t('TKE.subList.sjxz')}}</p>
+              <p class='left' v-else-if="global.Expander === 'most-pods'">{{$t('TKE.subList.xzddssz')}}</p>
+              <p class='left' v-else-if="global.Expander === 'least-waste'">{{$t('TKE.subList.xzdd')}}</p>
             </el-form-item>
         </el-form>
       </el-card>
       <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="setTrue()">确 定</el-button>
+          <el-button type="primary" @click="setTrue()">{{$t('TKE.overview.qd')}}</el-button>
       </div>
     </el-dialog>
     <!-- 全选删除弹窗 -->
-    <el-dialog title="删除伸缩组" :visible.sync="iSdialogDeleteAll" width="35%">
-      <p>确定要删除以下伸缩组么？</p>
-      <div>已选择<span style="color:#ff9d00;">{{this.deleteData.length}}个</span>伸缩组,<a @click="show=!show" style="cursor: pointer;">查看详情</a></div>
+    <el-dialog :title="$t('TKE.subList.scssz')" :visible.sync="iSdialogDeleteAll" width="35%">
+      <p>{{$t('TKE.subList.qdscyxssz')}}</p>
+      <div>{{$t('TKE.colony.yxz')}}<span style="color:#ff9d00;">{{this.deleteData.length}}{{$t('TKE.overview.ge')}}</span>{{$t('TKE.subList.ssz')}},<a @click="show=!show" style="cursor: pointer;">{{$t('TKE.overview.ckqx')}}</a></div>
           <el-collapse-transition>
             <div v-show="show">
               <el-table :data="deleteData" height="200">
                 <el-table-column property="AutoScalingGroupId" label="ID" width="150"></el-table-column>
-                <el-table-column property="status" label="状态" width="150"></el-table-column>
-                <el-table-column label="状态" width="200">
+                <el-table-column property="status" :label="$t('TKE.overview.zt')" width="150"></el-table-column>
+                <el-table-column :label="$t('TKE.overview.zt')" width="200">
                   <template>
-                      可删除
+                      {{$t('TKE.subList.ksc')}}
                   </template>
                 </el-table-column>
               </el-table>
             </div>
           </el-collapse-transition>
           <el-checkbox v-model="checkedItem" @change="changeDel(checkedItem)"></el-checkbox>
-          <span>销毁按量计费的节点（销毁后不可恢复，请谨慎操作并提前备份数据），包年包月不支持销毁</span>
+          <span>{{$t('TKE.subList.xhaljfjd')}}</span>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="deleteSingleGroup('all')">确 定</el-button>
+          <el-button type="primary" @click="deleteSingleGroup('all')">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="iSdialogDeleteAll = false">取 消</el-button>
         </span>
     </el-dialog>
     <!--停用伸缩组-->
-    <el-dialog title="停用伸缩组" :visible.sync="showStopModal" width="35%">
-      <p>确定要停用伸缩组{{groupId}}么？</p>
+    <el-dialog :title="$t('TKE.subList.tyssz')" :visible.sync="showStopModal" width="35%">
+      <p>{{$t('TKE.subList.qdtyssz')}}{{groupId}}么？</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="EnabledGroup()">确 定</el-button>
+          <el-button type="primary" @click="EnabledGroup()">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="showStopModal = false">取 消</el-button>
         </span>
     </el-dialog>
     <!--启用伸缩组-->
-    <el-dialog title="停用伸缩组" :visible.sync="showUseModal" width="35%">
-      <p>确定要启用伸缩组{{groupId}}么？</p>
+    <el-dialog :title="$t('TKE.subList.qyssz')" :visible.sync="showUseModal" width="35%">
+      <p>{{$t('TKE.subList.qdqyssz')}}{{groupId}}么？</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="EnabledGroup()">确 定</el-button>
+        <el-button type="primary" @click="EnabledGroup()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showUseModal = false">取 消</el-button>
       </span>
     </el-dialog>
     <!--调整配置-->
-    <el-dialog title="调整伸缩组配置" :visible.sync="showToConfigureModal" width="35%">
+    <el-dialog :title="$t('TKE.subList.tzsszpz')" :visible.sync="showToConfigureModal" width="35%">
       <el-form label-width="80px">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <p>{{groupObj.AutoScalingGroupId}}({{groupObj.AutoScalingGroupName}})</p>
         </el-form-item>
-        <el-form-item label="实例范围">
+        <el-form-item :label="$t('TKE.subList.slfw')">
           <el-input size="small" v-model="minSize" style="width:30%;"></el-input>
           <span>~</span>
           <el-input size="small" v-model="maxSize" style="width:30%;"></el-input>
-          <p>在设定的实例范围内自动调节，不会超出该设定范围</p>
+          <p>{{$t('TKE.subList.zdtj')}}</p>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitToConfigure()">确 定</el-button>
+        <el-button type="primary" @click="submitToConfigure()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showToConfigureModal = false">取 消</el-button>
       </span>
     </el-dialog>
     <!--单个删除伸缩组-->
-    <el-dialog title="删除伸缩组" :visible.sync="deleteSingleModal" width="35%">
-      <p>确定要删除伸缩组{{groupId}}么？</p>
+    <el-dialog :title="$t('TKE.subList.scssz')" :visible.sync="deleteSingleModal" width="35%">
+      <p>{{$t('TKE.subList.qdscssz')}}{{groupId}}么？</p>
       <el-checkbox v-model="checkedItem" @change="changeDel(checkedItem)"></el-checkbox>
-      <span>销毁按量计费的节点（销毁后不可恢复，请谨慎操作并提前备份数据），包年包月不支持销毁</span>
+      <span>{{$t('TKE.subList.xhaljfjd')}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteSingleGroup('single')">确 定</el-button>
+        <el-button type="primary" @click="deleteSingleGroup('single')">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="deleteSingleModal = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="修改伸缩组名称" :visible.sync="showModifyNameModal" width="35%">
+    <el-dialog :title="$t('TKE.subList.xgsszmc')" :visible.sync="showModifyNameModal" width="35%">
       <el-form label-width="80px">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <p>{{groupObj.AutoScalingGroupName}}</p>
         </el-form-item>
-        <el-form-item label="实例范围">
+        <el-form-item :label="$t('TKE.subList.slfw')">
           <el-input size="small" v-model="groupName"></el-input>
-          <p>名称不超过25个字符，仅支持中文、英文、数字、下划线，分隔符("-")及小数点</p>
+          <p>{{$t('TKE.subList.mcbcgzf')}}</p>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="modifyName()">确 定</el-button>
+        <el-button type="primary" @click="modifyName()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showModifyNameModal = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -398,16 +398,16 @@ export default {
       formLabelWidth: '80px',
       rules: {
         MaxEmptyBulkDelete: [
-          { required: true, message: '最大并发缩容数不能为空', trigger: 'change' }
+          { required: true, message: '最大並發縮容數不能為空', trigger: 'change' }
         ],
         ScaleDownUtilizationThreshold: [
-          { required: true, message: '占比不能为空', trigger: 'change' }
+          { required: true, message: '佔比不能為空', trigger: 'change' }
         ],
          ScaleDownUnneededTime: [
-          { required: true, message: '时间不能为空', trigger: 'change' }
+          { required: true, message: '時間不能為空', trigger: 'change' }
         ],
          ScaleDownDelay: [
-          { required: true, message: '时间不能为空', trigger: 'change' }
+          { required: true, message: '時間不能為空', trigger: 'change' }
         ],
       }
     };
@@ -523,13 +523,13 @@ export default {
       }else{
         this.loadShow = false;
         let ErrTips = {
-          "FailedOperation": "操作失败",
-          "InternalError": "内部错误",
-          "InternalError.AccountUserNotAuthenticated": "账户未通过认证",
-          "InternalError.AsCommon": "伸缩组资源创建报错",
-          "InternalError.CamNoAuth": "没有权限",
+          "FailedOperation": "操作失敗",
+          "InternalError": "内部錯誤",
+          "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證",
+          "InternalError.AsCommon": "伸縮組資源創建報錯",
+          "InternalError.CamNoAuth": "沒有權限",
           "InternalError.Param": "Param",
-          "UnknownParameter": "未知参数错误",
+          "UnknownParameter": "未知參數錯誤",
           "UnsupportedOperation": "UnsupportedOperation",
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -609,16 +609,16 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          "FailedOperation": "操作失败",
-          "InternalError": "内部错误",
-          "InternalError.AccountUserNotAuthenticated": "账户未通过认证",
-          "InternalError.AsCommon": "伸缩组资源创建报错",
-          "InternalError.Db": "db错误",
+          "FailedOperation": "操作失敗",
+          "InternalError": "内部錯誤",
+          "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證",
+          "InternalError.AsCommon": "伸縮組資源創建報錯",
+          "InternalError.Db": "db錯誤",
           "InternalError.PodNotFound": "Pod未找到",
           "InternalError.Param": "Param",
-          "InternalError.VpcCommon": "VPC报错",
-          "InternalError.VpcPeerNotFound": "对等连接不存在",
-          "InternalError.VpcRecodrNotFound": "未发现vpc记录",
+          "InternalError.VpcCommon": "VPC報錯",
+          "InternalError.VpcPeerNotFound": "對等連接不存在",
+          "InternalError.VpcRecodrNotFound": "未發現vpc記錄",
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -660,16 +660,16 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          "FailedOperation": "操作失败",
-          "InternalError": "内部错误",
-          "InternalError.AccountUserNotAuthenticated": "账户未通过认证",
-          "InternalError.AsCommon": "伸缩组资源创建报错",
-          "InternalError.Db": "db错误",
+          "FailedOperation": "操作失敗",
+          "InternalError": "内部錯誤",
+          "InternalError.AccountUserNotAuthenticated": "帳戶未通過認證",
+          "InternalError.AsCommon": "伸縮組資源創建報錯",
+          "InternalError.Db": "db錯誤",
           "InternalError.PodNotFound": "Pod未找到",
           "InternalError.Param": "Param",
-          "InternalError.VpcCommon": "VPC报错",
-          "InternalError.VpcPeerNotFound": "对等连接不存在",
-          "InternalError.VpcRecodrNotFound": "未发现vpc记录",
+          "InternalError.VpcCommon": "VPC報錯",
+          "InternalError.VpcPeerNotFound": "對等連接不存在",
+          "InternalError.VpcRecodrNotFound": "未發現vpc記錄",
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -707,10 +707,10 @@ export default {
         }else{
           this.loadShow = false;
           let ErrTips = {
-            "InvalidFilter": "无效的过滤器",
-            "InvalidParameterConflict": "指定的两个参数冲突，不能同时存在",
-            "InvalidParameterValue.Filter": "无效的过滤器",
-            "InvalidPermission": "账户不支持该操作",
+            "InvalidFilter": "無效的過濾器",
+            "InvalidParameterConflict": "指定的兩個參數衝突，不能同時存在",
+            "InvalidParameterValue.Filter": "無效的過濾器",
+            "InvalidPermission": "帳戶不支持該操作",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -783,26 +783,26 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "InvalidParameter.InScenario": "在特定场景下的不合法参数。",
-            "InvalidParameterValue.CvmError":	"CVM参数校验异常。",
-            "InvalidParameterValue.GroupNameDuplicated": "伸缩组名称重复。",
-            "InvalidParameterValue.LaunchConfigurationNotFound":	"找不到指定启动配置。",
-            "InvalidParameterValue.LbProjectInconsistent": "负载均衡器项目不一致。",
-            "InvalidParameterValue.LbVpcInconsistent": "负载均衡器和伸缩组的VPC不一致。",
+            "InvalidParameter.InScenario": "在特定場景下的不合法參數。",
+            "InvalidParameterValue.CvmError":	"CVM參數校驗異常。",
+            "InvalidParameterValue.GroupNameDuplicated": "伸縮組名稱重複。",
+            "InvalidParameterValue.LaunchConfigurationNotFound":	"找不到指定啟動配置。",
+            "InvalidParameterValue.LbProjectInconsistent": "負載均衡器專案不一致。",
+            "InvalidParameterValue.LbVpcInconsistent": "負載均衡器和伸縮組的VPC不一致。",
             "InvalidParameterValue.LimitExceeded":	"取值超出限制。",
-            "InvalidParameterValue.OnlyVpc":	"账号仅支持VPC网络。",
-            "InvalidParameterValue.Range":	"取值超出指定范围。",
-            "InvalidParameterValue.Size":	"伸缩组最大数量、最小数量、期望实例数取值不合法。",
-            "InvalidParameterValue.SubnetIds":	"子网信息不合法。",
-            "InvalidParameterValue.TooLong":	"取值过多。",
-            "LimitExceeded":	"超过配额限制",
-            "LimitExceeded.MaxSizeLimitExceeded":	"最大实例数大于限制。",
-            "LimitExceeded.MinSizeLimitExceeded":	"最小实例数低于限制。",
-            "MissingParameter":	"缺少参数错误",
-            "MissingParameter.InScenario":	"在特定场景下缺少参数。",
-            "ResourceNotFound.AutoScalingGroupIdNotFound":	"伸缩组不存在。",
-            "ResourceUnavailable.LaunchConfigurationStatusAbnormal":	"启动配置状态异常。",
-            "ResourceUnavailable.ProjectInconsistent":	"项目不一致。",
+            "InvalidParameterValue.OnlyVpc":	"帳號僅支持VPC網路。",
+            "InvalidParameterValue.Range":	"取值超出指定範圍。",
+            "InvalidParameterValue.Size":	"伸縮組最大數量、最小數量、期望實例數取值不合法。",
+            "InvalidParameterValue.SubnetIds":	"子網訊息不合法。",
+            "InvalidParameterValue.TooLong":	"取值過多。",
+            "LimitExceeded":	"超過配額限制",
+            "LimitExceeded.MaxSizeLimitExceeded":	"最大實例數大於限制。",
+            "LimitExceeded.MinSizeLimitExceeded":	"最小實例數低於限制。",
+            "MissingParameter":	"缺少參數錯誤",
+            "MissingParameter.InScenario":	"在特定場景下缺少參數。",
+            "ResourceNotFound.AutoScalingGroupIdNotFound":	"伸縮組不存在。",
+            "ResourceUnavailable.LaunchConfigurationStatusAbnormal":	"啟動配置狀態異常。",
+            "ResourceUnavailable.ProjectInconsistent":	"專案不一致。",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -848,7 +848,7 @@ export default {
             this.deleteSingleModal = false;
           }
           this.$message({
-            message: '删除成功',
+            message: '刪除成功',
             type: "success",
             showClose: true,
             duration: 0
@@ -857,24 +857,24 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "FailedOperation": "操作失败",
-            "InternalError": "内部错误",
-            "InternalError.AccountUserNotAuthenticated	": "账户未通过认证",
-            "InternalError.AsCommon": "伸缩组资源创建报错",
+            "FailedOperation": "操作失敗",
+            "InternalError": "内部錯誤",
+            "InternalError.AccountUserNotAuthenticated	": "帳戶未通過認證",
+            "InternalError.AsCommon": "伸縮組資源創建報錯",
             "InternalError.Param": "Param",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
-            "InternalError.QuotaMaxClsLimit": "超过配额限制",
-            "InternalError.QuotaMaxNodLimit": "超过配额限制",
-            "InternalError.QuotaMaxRtLimit": "超过配额限制",
-            "InvalidParameter": "参数错误",
-            "InvalidParameter.AsCommonError": "弹性伸缩组创建参数错误",
-            "InvalidParameter.Param": "参数错误",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作",
+            "InternalError.QuotaMaxClsLimit": "超過配額限制",
+            "InternalError.QuotaMaxNodLimit": "超過配額限制",
+            "InternalError.QuotaMaxRtLimit": "超過配額限制",
+            "InvalidParameter": "參數錯誤",
+            "InvalidParameter.AsCommonError": "彈性伸縮組創建參數錯誤",
+            "InvalidParameter.Param": "參數錯誤",
             "InvalidParameter.RouteTableNotEmpty": "路由表非空",
-            "LimitExceeded": "超过配额限制",
-            "MissingParameter": "缺少参数错误",
-            "ResourceInUse": "资源被占用",
-            "ResourceNotFound": "资源不存在",
-            "UnknownParameter": "未知参数错误",
+            "LimitExceeded": "超過配額限制",
+            "MissingParameter": "缺少參數錯誤",
+            "ResourceInUse": "資源被佔用",
+            "ResourceNotFound": "資源不存在",
+            "UnknownParameter": "未知參數錯誤",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -921,24 +921,24 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "FailedOperation": "操作失败",
-            "InternalError": "内部错误",
-            "InternalError.AccountUserNotAuthenticated	": "账户未通过认证",
-            "InternalError.AsCommon": "伸缩组资源创建报错",
-            "InternalError.CamNoAuth": "没有权限",
-            "InvalidParameter": "参数错误",
-            "InvalidParameter.AsCommonError": "弹性伸缩组创建参数错误",
+            "FailedOperation": "操作失敗",
+            "InternalError": "内部錯誤",
+            "InternalError.AccountUserNotAuthenticated	": "帳戶未通過認證",
+            "InternalError.AsCommon": "伸縮組資源創建報錯",
+            "InternalError.CamNoAuth": "沒有權限",
+            "InvalidParameter": "參數錯誤",
+            "InvalidParameter.AsCommonError": "彈性伸縮組創建參數錯誤",
             "InvalidParameter.CidrOutOfRouteTable": "CIDR不在路由表之内",
-            "InvalidParameter.GatewayAlreadyAssociatedCidr": "下一跳地址已关联CIDR",
-            "InvalidParameter.Param": "参数错误",
+            "InvalidParameter.GatewayAlreadyAssociatedCidr": "下一跳地址已關聯CIDR",
+            "InvalidParameter.Param": "參數錯誤",
             "InvalidParameter.RouteTableNotEmpty": "路由表非空",
-            "LimitExceeded": "超过配额限制",
-            "MissingParameter": "缺少参数错误",
-            "ResourceInUse": "资源被占用",
-            "ResourceNotFound": "资源不存在",
-            "ResourceUnavailable": "资源不可用",
-            "UnauthorizedOperation": "未授权操作",
-            "UnknownParameter": "未知参数错误",
+            "LimitExceeded": "超過配額限制",
+            "MissingParameter": "缺少參數錯誤",
+            "ResourceInUse": "資源被佔用",
+            "ResourceNotFound": "資源不存在",
+            "ResourceUnavailable": "資源不可用",
+            "UnauthorizedOperation": "未授權操作",
+            "UnknownParameter": "未知參數錯誤",
             "UnsupportedOperation": "操作不支持",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -956,7 +956,7 @@ export default {
     async submitToConfigure() {
       if(this.minSize === '') {
         this.$message({
-          message: '请输入最小值',
+          message: '請輸入最小值',
           type: "warning",
           showClose: true,
           duration: 0
@@ -965,7 +965,7 @@ export default {
       }
       if(this.maxSize === '') {
         this.$message({
-          message: '请输入最大值',
+          message: '請輸入最大值',
           type: "warning",
           showClose: true,
           duration: 0
@@ -974,7 +974,7 @@ export default {
       }
       if(Number(this.minSize) > Number(this.maxSize)) {
         this.$message({
-          message: '最小值不能大于最大值',
+          message: '最小值不能大於最大值',
           type: "warning",
           showClose: true,
           duration: 0
@@ -995,7 +995,7 @@ export default {
           this.loadShow = false;
           this.showToConfigureModal = false;
           this.$message({
-            message: '调整成功',
+            message: '調整成功',
             type: "success",
             showClose: true,
             duration: 0
@@ -1004,24 +1004,24 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "FailedOperation": "操作失败",
-            "InternalError": "内部错误",
-            "InternalError.AccountUserNotAuthenticated	": "账户未通过认证",
-            "InternalError.AsCommon": "伸缩组资源创建报错",
-            "InternalError.CamNoAuth": "没有权限",
-            "InvalidParameter": "参数错误",
-            "InvalidParameter.AsCommonError": "弹性伸缩组创建参数错误",
+            "FailedOperation": "操作失敗",
+            "InternalError": "内部錯誤",
+            "InternalError.AccountUserNotAuthenticated	": "帳戶未通過認證",
+            "InternalError.AsCommon": "伸縮組資源創建報錯",
+            "InternalError.CamNoAuth": "沒有權限",
+            "InvalidParameter": "參數錯誤",
+            "InvalidParameter.AsCommonError": "彈性伸縮組創建參數錯誤",
             "InvalidParameter.CidrOutOfRouteTable": "CIDR不在路由表之内",
-            "InvalidParameter.GatewayAlreadyAssociatedCidr": "下一跳地址已关联CIDR",
-            "InvalidParameter.Param": "参数错误",
+            "InvalidParameter.GatewayAlreadyAssociatedCidr": "下一跳地址已關聯CIDR",
+            "InvalidParameter.Param": "參數錯誤",
             "InvalidParameter.RouteTableNotEmpty": "路由表非空",
-            "LimitExceeded": "超过配额限制",
-            "MissingParameter": "缺少参数错误",
-            "ResourceInUse": "资源被占用",
-            "ResourceNotFound": "资源不存在",
-            "ResourceUnavailable": "资源不可用",
-            "UnauthorizedOperation": "未授权操作",
-            "UnknownParameter": "未知参数错误",
+            "LimitExceeded": "超過配額限制",
+            "MissingParameter": "缺少參數錯誤",
+            "ResourceInUse": "資源被佔用",
+            "ResourceNotFound": "資源不存在",
+            "ResourceUnavailable": "資源不可用",
+            "UnauthorizedOperation": "未授權操作",
+            "UnknownParameter": "未知參數錯誤",
             "UnsupportedOperation": "操作不支持",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1037,21 +1037,21 @@ export default {
     
     ChangeStatus(val) {
       if(val === 'enabled') {
-        return '已启用';
+        return '已啟用';
       } else if (val === 'enabling') {
-        return '开启中';
+        return '開啟中';
       } else if (val === 'disabled') {
         return '已停用';
       } else if (val === 'disabling') {
-        return '关闭中';
+        return '關閉中';
       } else if (val === 'updating') {
         return '更新中';
       } else if (val === 'deleting') {
-        return '删除中';
+        return '刪除中';
       } else if (val === 'scaleDownEnabling') {
-        return '开启缩容中';
+        return '開啟縮容中';
       } else if (val === 'scaleDownDisabling') {
-        return '关闭缩容中';
+        return '關閉縮容中';
       }
     }
     // DescribeClusterAsGroupOption
@@ -1065,15 +1065,15 @@ export default {
     IsScaleDownEnableds:function(val){
       if(val){
         // this.control = true
-        return "已开启"
+        return "已開啟"
       }
       else{
-        return "已关闭"
+        return "已關閉"
       }
     },
     SkipNodesWithLocalStorages:function(val){
       if(val){
-        return "含有本地存储Pod的节点"
+        return "含有本地儲存Pod的節點"
       }
       else{
         return ''
@@ -1081,14 +1081,14 @@ export default {
     },
     SkipNodesWithSystemPodss:function(val){
       if(val){
-        return "含有kube-system namespace下非DaemonSet管理的Pod的节点"
+        return "含有kube-system namespace下非DaemonSet管理的Pod的節點"
       } else{
         return ''
       }
     },
     Expanders:function(val){
       if(val == 'random'){
-        return "随机"
+        return "隨機"
       } else if (val == 'most-pods') {
         return 'most-pods';
       } else if (val == 'least-waste') {
