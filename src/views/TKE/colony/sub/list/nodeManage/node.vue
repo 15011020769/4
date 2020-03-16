@@ -8,10 +8,10 @@
       <!-- 左侧 -->
       <div class="grid-left">
         <el-button size="small" @click="goExpand" type="primary"
-          >新建节点</el-button
+          >{{$t('TKE.colony.xjjd')}}</el-button
         >
-        <el-button size="small" @click="toMonitor">监控</el-button>
-        <el-button size="small" @click="goAddExist">添加已有节点</el-button>
+        <el-button size="small" @click="toMonitor">{{$t('TKE.colony.jk')}}</el-button>
+        <el-button size="small" @click="goAddExist">{{$t('TKE.colony.tjyyjd')}}</el-button>
         <el-button
           size="small"
           :disabled="this.multipleSelection.length > 0 ? false : true"
@@ -24,7 +24,7 @@
             this.multipleSelection.length > 0 && blockadeType ? false : true
           "
           @click="showBlockModal()"
-          >封锁</el-button
+          >{{$t('TKE.subList.fsuo')}}</el-button
         >
         <el-button
           size="small"
@@ -32,13 +32,13 @@
             this.multipleSelection.length > 0 && unBlockadeType ? false : true
           "
           @click="showUnBlockModal()"
-          >解除封锁</el-button
+          >{{$t('TKE.subList.jcfs')}}</el-button
         >
       </div>
       <!-- 右侧 -->
       <div class="tool">
         <div class="searchRight">
-          <el-select placeholder="请选择" v-model="ChoiceValue">
+          <el-select :placeholder="$t('TKE.overview.qxz')" v-model="ChoiceValue">
             <el-option
               v-for="item in searchTypes"
               :key="item.value"
@@ -49,7 +49,7 @@
           <el-input
             v-model="searchValue"
             class="searchs"
-            placeholder="请输入内容"
+            :placeholder="$t('TKE.colony.qsrnr')"
             @change="_searchchange"
           >
           </el-input>
@@ -62,7 +62,7 @@
             <el-tooltip
               class="tooltip"
               effect="dark"
-              content="導出表格"
+              :content="$t('TKE.subList.dcbg')"
               placement="top"
             >
               <i
@@ -91,7 +91,7 @@
           width="55"
         >
         </el-table-column>
-        <el-table-column label="ID/节点名">
+        <el-table-column :label="$t('TKE.colony.idjdm')">
           <template slot-scope="scope">
             <!-- <span @click="goNodeDetail(scope.row)" class="tke-text-link">{{
               scope.row.InstanceId
@@ -104,7 +104,7 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="状态">
+        <el-table-column prop="" :label="$t('TKE.overview.zt')">
           <template slot-scope="scope">
             <span
               :class="[
@@ -112,10 +112,10 @@
               ]"
               >{{ scope.row.status | changeStatus }}
             </span>
-            <p v-if="scope.row.unschedulable" class="text-red">已封锁</p>
+            <p v-if="scope.row.unschedulable" class="text-red">{{$t('TKE.subList.yfs')}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="可用区">
+        <el-table-column prop="" :label="$t('TKE.colony.kyq')">
           <template slot-scope="scope">
             <el-tooltip
               effect="light"
@@ -144,9 +144,9 @@
             {{ scope.row.CPU }}核 , {{ scope.row.Memory }}GB ,
             {{ scope.row.InternetAccessible.InternetMaxBandwidthOut }}
             Mbps<br />
-            系统盘:
+            {{$t('TKE.colony.xtp')}}:
             {{ scope.row.SystemDisk && scope.row.SystemDisk.DiskSize }}GB
-            高性能云硬盘<br />
+            {{$t('TKE.colony.gxnyp')}}<br />
           </template>
         </el-table-column>
         <el-table-column prop="nodeTotal" label="IP地址">
@@ -165,21 +165,21 @@
             </p>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="已分配/总资源">
+        <el-table-column prop="address" :label="$t('TKE.subList.yfpzzy')">
           <template slot-scope="scope">
             <p>CPU: -/{{scope.row.cpuTotal}}</p>
-            <p>内存: -/{{scope.row.memoyTotal}}</p>
+            <p>{{$t('TKE.overview.ncun')}}: -/{{scope.row.memoyTotal}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="所属伸缩组">
+        <el-table-column prop="" :label="$t('TKE.subList.ssssz')">
           <template slot-scope="scope">
             <p>{{scope.row.group || '-'}}</p>
           </template>
         </el-table-column>
-        <el-table-column width="200" prop="" label="计费模式">
+        <el-table-column width="200" prop="" :label="$t('TKE.colony.jfms')">
           <template slot-scope="scope">
             <p>{{ scope.row.InstanceChargeType | changeChargeType }}</p>
-            <p>{{ scope.row.addTime }}创建</p>
+            <p>{{ scope.row.addTime }}{{$t('TKE.subList.cj')}}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -214,7 +214,7 @@
                     class="tke-text-link"
                     type="text"
                     @click="showBlockModal(scope.row)"
-                    >封锁
+                    >{{$t('TKE.subList.fsuo')}}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item command="a">
@@ -229,7 +229,7 @@
                     class="tke-text-link"
                     type="text"
                     @click="showUnBlockModal(scope.row)"
-                    >取消封锁
+                    >{{$t('TKE.subList.qxfsuo')}}
                   </el-button>
                 </el-dropdown-item>
                 <el-dropdown-item command="b">
@@ -243,7 +243,7 @@
                     class="tke-text-link"
                     type="text"
                     @click="showExpelDialog(scope.row)"
-                    >驱逐
+                    >{{$t('TKE.subList.qzhu')}}
                   </el-button>
                 </el-dropdown-item>
               </el-dropdown-menu>
@@ -269,112 +269,112 @@
       </div>
     </div>
     <el-dialog
-      title="您确定封锁以下节点么？"
+      :title="$t('TKE.subList.qdfs')"
       :visible.sync="showBlockademodal"
       width="35%"
     >
       <div>
-        已选择<span style="color:#ff9d00;"
-          >{{ this.multipleSelection.length }}个</span
-        >节点,<a @click="show = !show" style="cursor: pointer;">查看详情</a>
+        {{$t('TKE.colony.yxze')}}<span style="color:#ff9d00;"
+          >{{ this.multipleSelection.length }}{{$t('TKE.overview.ge')}}</span
+        >{{$t('TKE.overview.jd')}},<a @click="show = !show" style="cursor: pointer;">{{$t('TKE.overview.ckxq')}}</a>
       </div>
       <el-collapse-transition>
         <div v-show="show">
           <el-table :data="multipleSelection" height="200">
             <el-table-column
               property="InstanceId"
-              label="名称"
+              :label="$t('TKE.subList.mcheng')"
               width="150"
             ></el-table-column>
             <el-table-column
               property="InstanceName"
-              label="节点名称"
+              :label="$t('TKE.colony.jdmc')"
               width="200"
             ></el-table-column>
-            <el-table-column label="状态" width="200">
+            <el-table-column :label="$t('TKE.overview.zt')" width="200">
               <template>
-                可删除
+                {{$t('TKE.subList.ksc')}}
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-collapse-transition>
-      <p>封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点。</p>
+      <p>{{$t('TKE.subList.fsjdhou')}}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="blockNode()">确 定</el-button>
+        <el-button type="primary" @click="blockNode()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showBlockademodal = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="您确定取消封锁以下节点么？"
+      :title="$t('TKE.subList.qxfs')"
       :visible.sync="showUnBlockademodal"
       width="35%"
     >
       <div>
-        已选择<span style="color:#ff9d00;"
-          >{{ this.multipleSelection.length }}个</span
-        >节点,<a @click="show = !show" style="cursor: pointer;">查看详情</a>
+        {{$t('TKE.colony.yxze')}}<span style="color:#ff9d00;"
+          >{{ this.multipleSelection.length }}{{$t('TKE.overview.ge')}}</span
+        >{{$t('TKE.overview.jd')}},<a @click="show = !show" style="cursor: pointer;">{{$t('TKE.overview.ckxq')}}</a>
       </div>
       <el-collapse-transition>
         <div v-show="show">
           <el-table :data="multipleSelection" height="200">
             <el-table-column
               property="InstanceId"
-              label="名称"
+              :label="$t('TKE.subList.mcheng')"
               width="150"
             ></el-table-column>
             <el-table-column
               property="InstanceName"
-              label="节点名称"
+              :label="$t('TKE.colony.jdmc')"
               width="200"
             ></el-table-column>
-            <el-table-column label="状态" width="200">
+            <el-table-column :label="$t('TKE.overview.zt')" width="200">
               <template>
-                可删除
+                {{$t('TKE.subList.ksc')}}
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-collapse-transition>
-      <p>封锁节点后，将不接受新的Pod调度到该节点，需要手动取消封锁的节点。</p>
+      <p>{{$t('TKE.subList.fsjdhou')}}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="unBlockNode()">确 定</el-button>
+        <el-button type="primary" @click="unBlockNode()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showUnBlockademodal = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="您确定删除以下节点么？"
+      :title="$t('TKE.subList.qdscyxjd')"
       :visible.sync="showDelModal"
       width="35%"
     >
       <div>
-        已选择<span style="color:#ff9d00;"
-          >{{ this.multipleSelection.length }}个</span
-        >节点,<a @click="show = !show" style="cursor: pointer;">查看详情</a>
+        {{$t('TKE.colony.yxze')}}<span style="color:#ff9d00;"
+          >{{ this.multipleSelection.length }}{{$t('TKE.overview.ge')}}</span
+        >{{$t('TKE.overview.jd')}},<a @click="show = !show" style="cursor: pointer;">{{$t('TKE.overview.ckxq')}}</a>
       </div>
       <el-collapse-transition>
         <div v-show="show">
           <el-table :data="multipleSelection" height="200">
             <el-table-column
               property="InstanceId"
-              label="名称"
+              :label="$t('TKE.subList.mcheng')"
               width="150"
             ></el-table-column>
-            <el-table-column label="状态" width="150">
+            <el-table-column :label="$t('TKE.overview.zt')" width="150">
               <template>
-                可删除
+                {{$t('TKE.subList.ksc')}}
               </template>
             </el-table-column>
-            <el-table-column label="状态" width="200">
+            <el-table-column :label="$t('TKE.overview.zt')" width="200">
               <template>
-                可移出并销毁
+                {{$t('TKE.colony.kycbxh')}}
               </template>
             </el-table-column>
           </el-table>
         </div>
       </el-collapse-transition>
       <p style="color: red;">
-        移除节点后若需重新加入到集群需重装系统，请谨慎操作。
+        {{$t('TKE.subList.ycjdh')}}
       </p>
       <!-- <el-checkbox-group v-model="checkedItem"> -->
       <el-checkbox
@@ -383,47 +383,47 @@
       ></el-checkbox>
       <!-- </el-checkbox-group> -->
       <span
-        >销毁按量计费的节点（销毁后不可恢复，请谨慎操作并提前备份数据），包年包月不支持销毁</span
+        >{{$t('TKE.subList.xhaljfjd')}}</span
       >
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteNode()">确 定</el-button>
+        <el-button type="primary" @click="deleteNode()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showDelModal = false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="您确定对选中节点进行驱逐么？"
+      :title="$t('TKE.subList.bslx')"
       :visible.sync="showExpelModal"
       width="35%"
     >
       <div>
-        已选择<span style="color:#ff9d00;"
-          >{{ this.podList.length || 0 }}个</span
-        >实例,<a @click="show = !show" style="cursor: pointer;">查看详情</a>
+        {{$t('TKE.colony.yxze')}}<span style="color:#ff9d00;"
+          >{{ this.podList.length || 0 }}{{$t('TKE.overview.ge')}}</span
+        >{{$t('TKE.subList.sli')}},<a @click="show = !show" style="cursor: pointer;">{{$t('TKE.overview.ckxq')}}</a>
       </div>
       <el-collapse-transition>
         <div v-show="show">
           <el-table :data="podList" height="200">
             <el-table-column
               property="Name"
-              label="实例(Pod)名称"
+              :label="$t('TKE.subList.slpmc')"
               width="200"
             ></el-table-column>
             <el-table-column
               property="Namespace"
-              label="所属集群空间"
+              :label="$t('TKE.subList.ssjqkj')"
               width="200"
             ></el-table-column>
           </el-table>
         </div>
       </el-collapse-transition>
       <p>
-        节点驱逐后，将会把节点内的所有Pod（不包含DaemonSet管理的Pod）从节点中驱逐到集群内其他节点，并将节点设置为封锁状态。
+        {{$t('TKE.subList.jdqzh')}}
       </p>
       <p style="color: red;">
-        注意：本地存储的Pod被驱逐后数据将丢失，请谨慎操作
+        {{$t('TKE.subList.bqzh')}}
       </p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="expelNode()">确 定</el-button>
+        <el-button type="primary" @click="expelNode()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showExpelModal = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -456,7 +456,7 @@ export default {
   name: "colonyNodeManageNode",
   data() {
     return {
-      tit: "节点列表",
+      tit: "節點清單",
       clusterId: "",
       searchInput: "", // 输入的搜索关键字
       loadShow: false, // 加载是否显示
@@ -482,12 +482,12 @@ export default {
       podList: [],
       clusterIds: [],
       instanceId: "",
-      name: "节点",
+      name: "節點",
       ProjectId: "",
       searchTypes: [
         {
           value: "name",
-          label: "节点名称"
+          label: "節點名稱"
         },
         {
           value: "ip",
@@ -495,7 +495,7 @@ export default {
         },
         {
           value: "id",
-          label: "节点ID"
+          label: "節點ID"
         }
       ]
     };
@@ -761,7 +761,7 @@ export default {
         this.podList = [];
         this.loadShow = false;
         this.$message({
-          message: "驱逐成功",
+          message: "驅逐成功",
           type: "success",
           showClose: true,
           duration: 0
@@ -898,13 +898,13 @@ export default {
           this.multipleSelection = [];
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            "InternalError.Db": "db错误",
-            "InternalError.DbAffectivedRows": "DB错误",
+            InternalError: "内部錯誤",
+            "InternalError.Db": "db錯誤",
+            "InternalError.DbAffectivedRows": "DB錯誤",
             "InternalError.Param": "Param",
-            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作",
-            InvalidParameter: "参数错误",
-            LimitExceeded: "超过配额限制"
+            "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作",
+            InvalidParameter: "參數錯誤",
+            LimitExceeded: "超過配額限制"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -1003,7 +1003,7 @@ export default {
         // this._GetFuncList()
       } else {
         this.$message({
-          message: "请选择过滤条件且输入搜索值",
+          message: "請選擇過濾條件且輸入搜索值",
           type: "warning",
           showClose: true,
           duration: 0
@@ -1104,11 +1104,11 @@ export default {
     //返回状态
     changeStatus(status) {
       if (status === "failed") {
-        return "异常";
+        return "異常";
       } else if (status === "initializing") {
-        return "创建中";
+        return "創建中";
       } else if (status === "upgrading") {
-        return "升级中";
+        return "升級中";
       } else if (status === "running") {
         return "健康";
       }
@@ -1116,20 +1116,20 @@ export default {
     //返回计费模式
     changeChargeType(type) {
       if (type === "POSTPAID_BY_HOUR") {
-        return "按量计费";
+        return "按量計費";
       } else if (type === "PREPAID") {
-        return "报年报月";
+        return "包年包月";
       } else if (type === "SPOTPAID") {
-        return "按量计费-竞价";
+        return "按量計費-競價";
       } else if (type === "CDHPAID") {
-        return "CDH付费";
+        return "CDH付費";
       }
     },
     //可用区
     zone(val) {
       if (val) {
         if (val.substring(3, val.length - 2) === "taipei") {
-          return "台北" + val.substring(val.length - 1, val.length) + "区";
+          return "台北" + val.substring(val.length - 1, val.length) + "區";
         }
       }
     },
@@ -1137,11 +1137,11 @@ export default {
     instanceType(val) {
       if (val) {
         if (val.substring(0, 1) === "S") {
-          return "标准型" + val.substring(0, 2);
+          return "標準型" + val.substring(0, 2);
         } else if (val.substring(0, 1) === "M") {
-          return "内存型" + val.substring(0, 2);
+          return "記憶體型" + val.substring(0, 2);
         } else if (val.substring(0, 1) === "C") {
-          return "计算型" + val.substring(0, 2);
+          return "計算型" + val.substring(0, 2);
         }
       }
     },
@@ -1149,9 +1149,9 @@ export default {
     diskType(val) {
       if (val) {
         if (val === "CLOUD_SSD") {
-          return "SSD云硬盘";
+          return "SSD雲硬碟";
         } else {
-          return "高性能云硬盘";
+          return "高性能雲硬碟";
         }
       }
     }

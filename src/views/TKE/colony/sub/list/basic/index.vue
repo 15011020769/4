@@ -1,29 +1,29 @@
  <!-- 基本信息 -->
 <template>
   <div >
-    <subTitle title='基本信息'  />
+    <subTitle :title="$t('TKE.overview.jbxx')"  />
 
     <el-row :gutter="20" style="display:flex;  align-items: stretch;">
       <el-col :span="12">
         <div class="tke-card tke-formpanel-wrap">
-          <h4 class="tke-formpanel-title">集群信息</h4>
+          <h4 class="tke-formpanel-title">{{$t('TKE.colony.jqxx')}}</h4>
           <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
-            <el-form-item label="集群名称">
+            <el-form-item :label="$t('TKE.colony.jqmc')">
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterName}}</span><i class="el-icon-edit tke-icon" @click="showUpdateName = true"></i></div>
             </el-form-item>
             <el-form-item label="集群ID">
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterId}}</span></div>
             </el-form-item>
-            <el-form-item label="部署类型">
+            <el-form-item :label="$t('TKE.subList.bslx')">
               <div class="tke-form-item_text"><span>{{changeClusterType(clusterInfo.ClusterType)}}</span></div>
             </el-form-item>
-            <el-form-item label="状态">
+            <el-form-item :label="$t('TKE.overview.zt')">
               <div class="tke-form-item_text"><span>{{changeStatus(clusterInfo.ClusterStatus)}}</span></div>
             </el-form-item>
             <el-form-item label="所在地域">
-              <div class="tke-form-item_text"><span>港澳台地区(中国台北)</span></div>
+              <div class="tke-form-item_text"><span>{{$t('TKE.overview.zgtb')}}</span></div>
             </el-form-item>
-            <el-form-item label="新增资源所属项目">
+            <el-form-item :label="$t('TKE.colony.xzzyssxm')">
               <div class="tke-form-item_text"><span>{{projectName}}</span><i class="el-icon-edit tke-icon" @click="showUpdateProject = true"></i></div>
             </el-form-item>
             <el-form-item label="kubernetes版本">
@@ -32,13 +32,13 @@
                 <p>Node {{clusterVersion.InstanceVersions && clusterVersion.InstanceVersions.length > 0 && clusterVersion.InstanceVersions[0].InstanceVersion || ''}}</p>
               </div>
             </el-form-item>
-            <el-form-item label="运行时组件">
+            <el-form-item :label="$t('TKE.colony.yxszj')">
               <div class="tke-form-item_text"><span>{{clusterInfo.ContainerRuntime}}</span></div>
             </el-form-item>
             <el-form-item label="集群描述">
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterDescription}}</span><i class="el-icon-edit tke-icon" @click="showUpdateDescribe = true"></i></div>
             </el-form-item>
-            <el-form-item label="创建时间">
+            <el-form-item :label="$t('TKE.overview.cjsj')">
               <div class="tke-form-item_text"><span>{{upTime(clusterInfo.CreatedTime)}}</span></div>
             </el-form-item>
           </el-form>
@@ -47,39 +47,39 @@
       </el-col>
       <el-col :span="12">
         <div class="tke-card tke-formpanel-wrap">
-          <h4 class="tke-formpanel-title">节点和网络信息</h4>
+          <h4 class="tke-formpanel-title">{{$t('TKE.subList.jdhwlxx')}}</h4>
           <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
-            <el-form-item label="节点数量">
-              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNodeNum}}个</span></div>
+            <el-form-item :label="$t('TKE.subList.jdsl')">
+              <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNodeNum}}{{$t('TKE.overview.ge')}}</span></div>
             </el-form-item>
-            <el-form-item label="默认操作系统">
+            <el-form-item :label="$t('TKE.subList.mrczxt')">
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterOs}}</span><i class="el-icon-edit tke-icon" @click="showOsModal()"></i></div>
             </el-form-item>
 
-            <el-form-item label="系统镜像来源">
-              <div class="tke-form-item_text"><span>公共镜像 - {{changeOsCustomizeType(clusterInfo.OsCustomizeType)}}</span></div>
+            <el-form-item :label="$t('TKE.subList.xtjxly')">
+              <div class="tke-form-item_text"><span>{{$t('TKE.subList.ggjx')}} - {{changeOsCustomizeType(clusterInfo.OsCustomizeType)}}</span></div>
             </el-form-item>
-            <el-form-item label="网络节点">
+            <el-form-item :label="$t('TKE.subList.wljd')">
               <div class="tke-form-item_text"><span>
                 <a :href="'../priNetwork/priNetworkDetial/' + clusterInfo.ClusterNetworkSettings.VpcId">{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}<i class="el-icon-edit-outline"></i></a></span>
               </div>
             </el-form-item>
-            <el-form-item label="容器网络">
+            <el-form-item :label="$t('TKE.colony.rqwl')">
               <div class="tke-form-item_text">
                 <p>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.ClusterCIDR}}</p>
-                <p>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}个Service/集群，{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}个Pod/节点,1008个节点/集群</p>
+                <p>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxClusterServiceNum}}{{$t('TKE.overview.ge')}}Service/集群，{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.MaxNodePodNum}}{{$t('TKE.subList.gjdian')}}</p>
               </div>
             </el-form-item>
-            <el-form-item label="网络模式">
+            <el-form-item :label="$t('TKE.subList.wlms')">
               <div class="tke-form-item_text"><span>{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Cni === true? 'cni' : 'bridge'}}</span></div>
             </el-form-item>
-            <el-form-item label="云联网">
+            <el-form-item :label="$t('TKE.subList.ylw')">
               <div class="tke-form-item_text" v-if="vpcList.length > 0">
                 <el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
-                <span>{{autoRefresh ? '已注册' : '未注册'}}</span>
+                <span>{{autoRefresh ? '已註冊' : '未註冊'}}</span>
               </div>
               
-              <div class="tke-form-item_text" v-else><span>当前VPC尚未关联云联网</span></div>
+              <div class="tke-form-item_text" v-else><span>{{$t('TKE.subList.dqswglylw')}}</span></div>
             </el-form-item>
             <el-form-item label="ipvs支持">
               <div class="tke-form-item_text"><span>{{changeipvs(clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.Ipvs)}}</span></div>
@@ -128,7 +128,7 @@
       </div>
     </div> -->
 
-    <el-dialog title="编辑集群名称" :visible.sync="showUpdateName" width="550px">
+    <el-dialog :title="$t('TKE.colony.bjjqmc')" :visible.sync="showUpdateName" width="550px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -138,10 +138,10 @@
         size="small"
         style="width:500px"
       >
-        <el-form-item label="原名称" >
+        <el-form-item :label="$t('TKE.colony.ymc')" >
             <p>{{clusterInfo.ClusterName}}</p>
         </el-form-item>
-        <el-form-item label="新名称" prop="name">
+        <el-form-item :label="$t('TKE.colony.xmc')" prop="name">
           <el-input type="text" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
         </el-form-item>
       </el-form>
@@ -150,7 +150,7 @@
         <el-button @click="closeDialog('1')">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="编辑新增资源所属项目" :visible.sync="showUpdateProject" width="750px">
+    <el-dialog :title="$t('TKE.subList.bjxzzy')" :visible.sync="showUpdateProject" width="750px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -160,10 +160,10 @@
         size="small"
         style="width:700px"
       >
-        <el-form-item label="原项目">
+        <el-form-item :label="$t('TKE.subList.yxm')">
             <p>{{projectName}}</p>
         </el-form-item>
-        <el-form-item label="新项目" prop="projectId">
+        <el-form-item :label="$t('TKE.subList.xxm')" prop="projectId">
           <el-select type="text" v-model="ruleForm.projectId" autocomplete="off" style="width:300px">
             <el-option
               v-for="item in projectData"
@@ -172,7 +172,7 @@
               :value="item.projectId"
             ></el-option>
           </el-select>
-          <p>集群内新增的云服务器、负载均衡器等资源将自动分配到该项目下<a href="#">使用指引</a><i class="el-icon-edit-outline"></i></p>
+          <p>{{$t('TKE.subList.jqxzfwq')}}<a href="#">使用指引</a><i class="el-icon-edit-outline"></i></p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -180,7 +180,7 @@
         <el-button @click="closeDialog('2')">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="设置集群操作系统" :visible.sync="showUpdateOs" width="750px">
+    <el-dialog :title="$t('TKE.subList.szjqczxt')" :visible.sync="showUpdateOs" width="750px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -190,7 +190,7 @@
         size="small"
         style="width:700px"
       >
-        <el-form-item label="操作系统" prop="pass">
+        <el-form-item :label="$t('TKE.colony.czxt')" prop="pass">
           <el-select type="text" v-model="os" autocomplete="off" style="width:300px" @change="changeOs">
             <el-option
               v-for="item in osList"
@@ -199,7 +199,7 @@
               :value="item"
             ></el-option>
           </el-select>
-          <p>注意：更改操作系统仅决定集群内新增或者重装升级节点的操作系统，不影响正在运行节点的操作系统，更多<a href="#">查看详情</a><i class="el-icon-edit-outline"></i></p>
+          <p>{{$t('TKE.subList.ggczxt')}}<a href="#">{{$t('TKE.overview.ckxq')}}</a><i class="el-icon-edit-outline"></i></p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -207,7 +207,7 @@
         <el-button @click="closeDialog('4')">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="内网访问设置" :visible.sync="isShowintranetDialog" width="750px">
+    <el-dialog :title="$t('TKE.subList.nwfwsz')" :visible.sync="isShowintranetDialog" width="750px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -217,7 +217,7 @@
         size="small"
         style="width:700px"
       >
-        <el-form-item label="子网" prop="pass">
+        <el-form-item :label="$t('TKE.subList.zw')" prop="pass">
           <el-select type="text" v-model="subNet" autocomplete="off" style="width:300px" @change="changeOs">
             <el-option
               v-for="item in subnetList"
@@ -233,7 +233,7 @@
         <el-button @click="isShowintranetDialog = false">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="编辑集群描述" :visible.sync="showUpdateDescribe" width="750px">
+    <el-dialog :title="$t('TKE.subList.bjjqms')" :visible.sync="showUpdateDescribe" width="750px">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -250,7 +250,7 @@
           <el-input
             type="textarea"
             :rows="4"
-            placeholder="请输入内容"
+            :placeholder="$t('TKE.colony.qsrnr')"
             v-model="ruleForm.textarea"
             >
           </el-input>
@@ -261,8 +261,8 @@
         <el-button @click="closeDialog('3')">取 消</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="确定要关闭注册？" :visible.sync="showCloseCidr" width="750px">
-      <p style="#e54545;">关闭注册容器网络到云联网，可能会造成已有的云联网和容器间路由不通</p>
+    <el-dialog :title="$t('TKE.subList.qdygbzc')" :visible.sync="showCloseCidr" width="750px">
+      <p style="#e54545;">{{$t('TKE.subList.gbzcrq')}}</p>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="closeNet">提 交</el-button>
         <el-button @click="unRegister">取 消</el-button>
@@ -318,9 +318,9 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('集群名称不能为空'))
+                callback(new Error('集群名稱不能為空'))
               } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('集群名称格式不正确'))
+                callback(new Error('集群名稱格式不正確'))
               } else {
                 callback()
               }
@@ -334,7 +334,7 @@ export default {
             required: true,
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('请选择项目'))
+                callback(new Error('請選擇專案'))
               } else {
                 callback()
               }
@@ -347,7 +347,7 @@ export default {
             required: true,
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('请选择项目'))
+                callback(new Error('請選擇專案'))
               } else {
                 callback()
               }
@@ -434,18 +434,18 @@ export default {
       } else {
         this.loadShow = false;
         let ErrTips = {
-          "InternalError": "内部错误",
-          "InternalError.CamNoAuth": "没有权限。",
-          "InternalError.Db": "db错误。",
-          "InternalError.DbAffectivedRows": "DB错误",
+          "InternalError": "内部錯誤",
+          "InternalError.CamNoAuth": "沒有權限。",
+          "InternalError.Db": "db錯誤。",
+          "InternalError.DbAffectivedRows": "DB錯誤",
           "InternalError.Param": "Param。",
-          "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
-          "InternalError.QuotaMaxClsLimit": "超过配额限制。",
-          "InternalError.QuotaMaxNodLimit": "超过配额限制。",
-          "InvalidParameter": "参数错误",
-          "InvalidParameter.Param": "参数错误。",
-          "LimitExceeded": "超过配额限制",
-          "ResourceNotFound": "资源不存在"
+          "InternalError.PublicClusterOpNotSupport": "集群不支持當前操作。",
+          "InternalError.QuotaMaxClsLimit": "超過配額限制。",
+          "InternalError.QuotaMaxNodLimit": "超過配額限制。",
+          "InvalidParameter": "參數錯誤",
+          "InvalidParameter.Param": "參數錯誤",
+          "LimitExceeded": "超過配額限制。",
+          "ResourceNotFound": "資源不存在"
         };
         let ErrOr = Object.assign(ErrorTips, ErrTips);
         this.$message({
@@ -919,40 +919,40 @@ export default {
     //根据集群状态返回中文状态
     changeStatus (type) {
       if(type === 'Running') {
-        return '运行中';
+        return '運行中';
       } else if (type === 'Creating') {
-        return '创建中';
+        return '創建中';
       } else {
-        return '异常';
+        return '異常';
       }
     },
 
     //根据集群类型返回中文状态
     changeClusterType (type) {
       if(type === 'MANAGED_CLUSTER') {
-        return '托管集群';
+        return '託管集群';
       } else if (type === 'INDEPENDENT_CLUSTER') {
-        return '独立集群';
+        return '獨立集群';
       }
     },
 
     //根据系统镜像返回中文
     changeOsCustomizeType(type) {
       if(type === 'DOCKER_CUSTOMIZE') {
-        return 'TKE定制镜像';
+        return 'TKE定製映像';
       } else if (type === 'GENERAL') {
-        return '基础镜像';
+        return '基礎映像';
       } else {
-        return '基础镜像';
+        return '基礎映像';
       }
     },
 
     //根据ipvs状态返回中文
     changeipvs(status) {
       if(status === true) {
-        return '已开启';
+        return '已開啟';
       } else if (status === false) {
-        return '未开启';
+        return '未開啟';
       }
     },
 

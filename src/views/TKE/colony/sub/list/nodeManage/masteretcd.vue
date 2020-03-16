@@ -6,7 +6,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary" @click='toMonitor'>监控</el-button>
+        <el-button size="small" type="primary" @click='toMonitor'>{{$t('TKE.colony.jk')}}</el-button>
       </div>
       <!-- 右侧 -->
       <!-- <div class="grid-right">
@@ -25,7 +25,7 @@
           v-loading="loadShow"
           style="width: 100%">
           <el-table-column
-            label="ID/节点名"
+            :label="$t('TKE.colony.idjdm')"
             >
             <template slot-scope="scope">
               <span @click="goMasteretcdDetail(scope.row)" class="tke-text-link" >{{scope.row.InstanceId}}</span>
@@ -34,7 +34,7 @@
           </el-table-column>
           <el-table-column
             prop=""
-            label="状态"
+            :label="$t('TKE.overview.zt')"
             >
             <template slot-scope="scope">
               <span :class="[
@@ -45,14 +45,14 @@
           </el-table-column>
           <el-table-column
             prop=""
-            label="类型"
+            :label="$t('TKE.overview.lx')"
             >
              <p>MASTER_ETCD</p>
           </el-table-column>
           
           <el-table-column
             prop=""
-            label="可用区"
+            :label="$t('TKE.colony.kyq')"
             >
             <template slot-scope="scope">
               <el-tooltip effect="light" :content="scope.row.Placement.Zone | zone" placement="top">
@@ -62,7 +62,7 @@
           </el-table-column>
           <el-table-column
             prop=""
-            label="主机类型">
+            :label="$t('TKE.subList.zjlx')">
             <template slot-scope="scope">
              <p>{{scope.row.InstanceType | instanceType}}</p>
             </template>
@@ -73,7 +73,7 @@
             label="配置">
             <template slot-scope="scope">
               {{scope.row.CPU}}核 , {{scope.row.Memory}}GB , {{scope.row.InternetAccessible.InternetMaxBandwidthOut}} Mbps<br />
-              系统盘: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB {{scope.row.SystemDisk.DiskType | diskType}}<br />
+              {{$t('TKE.colony.xtp')}}: {{scope.row.SystemDisk && scope.row.SystemDisk.DiskSize}}GB {{scope.row.SystemDisk.DiskType | diskType}}<br />
             </template>
           </el-table-column>
           <el-table-column
@@ -86,19 +86,19 @@
           </el-table-column>
           <el-table-column
             prop="address"
-            label="已分配/总资源">
+            :label="$t('TKE.subList.yfpzzy')">
             <template slot-scope="scope">
               <p>CPU: -/{{scope.row.cpuTotal}}</p>
-              <p>内存: -/{{scope.row.memoyTotal}}</p>
+              <p>{{$t('TKE.overview.ncun')}}: -/{{scope.row.memoyTotal}}</p>
             </template>
           </el-table-column>
           <el-table-column
             width="200"
             prop=""
-            label="计费模式">
+            :label="$t('TKE.colony.jfms')">
             <template slot-scope="scope">
               <p>{{scope.row.InstanceChargeType | changeChargeType}}</p>
-              <p>{{scope.row.addTime}}创建</p>
+              <p>{{scope.row.addTime}}{{$t('TKE.subList.cj')}}</p>
             </template>
           </el-table-column>
         </el-table>
@@ -138,7 +138,7 @@ export default {
   name: "colonyNodeManageMasteretcd",
   data() {
     return {
-      tit:"Master&Etcd列表",
+      tit:"Master&Etcd清單",
       clusterId:'',
       loadShow: false, //加载是否显示
       list:[], //列表
@@ -309,11 +309,11 @@ export default {
     //返回状态
     changeStatus(status) {
       if(status === 'failed') {
-        return '异常';
+        return '異常';
       } else if(status === 'initializing') {
-        return '创建中';
+        return '創建中';
       } else if(status === 'upgrading') {
-        return "升级中";
+        return "升級中";
       } else if(status === 'running') {
         return '健康';
       }
@@ -321,20 +321,20 @@ export default {
     //返回计费模式
     changeChargeType(type) {
       if(type === 'POSTPAID_BY_HOUR') {
-        return '按量计费';
+        return '按量計費';
       } else if(type === 'PREPAID') {
-        return '报年报月';
+        return '包年包月';
       } else if(type === 'SPOTPAID') {
-        return '按量计费-竞价';
+        return '按量計費-競價';
       } else if (type === 'CDHPAID') {
-        return 'CDH付费';
+        return 'CDH付費';
       }
     },
     //可用区
     zone(val) {
       if(val) {
         if (val.substring(3, val.length - 2) === "taipei") {
-          return "台北" + val.substring(val.length - 1, val.length) + "区";
+          return "台北" + val.substring(val.length - 1, val.length) + "區";
         }
       }
     },
@@ -342,11 +342,11 @@ export default {
     instanceType(val) {
       if(val) {
         if(val.substring(0,1) === 'S') {
-          return '标准型'+ val.substring(0,2);
+          return '標準型'+ val.substring(0,2);
         } else if (val.substring(0,1) === 'M') {
-          return '内存型'+ val.substring(0,2);
+          return '記憶體型'+ val.substring(0,2);
         } else if (val.substring(0,1) === 'C') {
-          return '计算型'+ val.substring(0,2);
+          return '計算型'+ val.substring(0,2);
         }
       }
     },
@@ -354,9 +354,9 @@ export default {
     diskType(val) {
       if(val) {
         if(val === 'CLOUD_SSD') {
-          return 'SSD云硬盘';
+          return 'SSD雲硬碟';
         } else {
-          return '高性能云硬盘';
+          return '高性能雲硬碟';
         }
       }
     }
