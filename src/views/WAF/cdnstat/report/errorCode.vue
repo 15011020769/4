@@ -68,8 +68,8 @@ export default {
 
       const params = {
         Version: "2018-06-06",
-        StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
-        EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
         Interval: interval
       }
