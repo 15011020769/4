@@ -167,8 +167,8 @@
         </el-table-column>
         <el-table-column prop="address" :label="$t('TKE.subList.yfpzzy')">
           <template slot-scope="scope">
-            <p>CPU: -/{{scope.row.cpuTotal}}</p>
-            <p>{{$t('TKE.overview.ncun')}}: -/{{scope.row.memoyTotal}}</p>
+            <p>CPU: {{scope.row.cpu}}/{{scope.row.cpuTotal}}</p>
+            <p>{{$t('TKE.overview.ncun')}}: {{scope.row.memory}}/{{scope.row.memoyTotal}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="" :label="$t('TKE.subList.ssssz')">
@@ -560,6 +560,8 @@ export default {
           Version: "2018-05-25",
           ClusterName: this.clusterId
         };
+        var now = new Date;
+        now.setMinutes (now.getMinutes () - 10);
         let paramJob = {
           EndTime: new Date().getTime(),
           Limit: 65535,
@@ -568,7 +570,7 @@ export default {
           Offset: 0,
           Order: "desc",
           OrderBy: "timestamp",
-          StartTime: new Date().getTime(),
+          StartTime: new Date(now).getTime(),
           Version: "2019-06-06"
         };
         paramJob["Conditions.0"] = JSON.stringify([
@@ -583,7 +585,6 @@ export default {
         paramJob["GroupBys.1"] = "unInstanceId";
         if (ids.length > 0) {
           this.list = [];
-          // debugger
           for (let i = 0; i < ids.length; i++) {
             param["InstanceIds." + i] = ids[i];
           }
@@ -605,14 +606,55 @@ export default {
               duration: 0
             });
           }
+          let dataResult = {};
           let jobRes = await this.axios.post(JOB_ID, paramJob);
-          let param3 = {
-            Version: "2019-06-06",
-            JobId: jobRes.Response.JobId,
-            Module: "/front/v1"
-          };
-
-          let jobRes22 = await this.axios.post(MOMITOR_TKE, param3);
+          if(jobRes.Response.Error === undefined) {
+            let param3 = {
+              Version: "2019-06-06",
+              JobId: jobRes.Response.JobId,
+              Module: "/front/v1"
+            };
+            let resultRes = await this.axios.post(MOMITOR_TKE, param3);
+            if(resultRes.Response.Error === undefined) {
+              let result = JSON.parse(resultRes.Response.Data);
+              if(result.length > 0) {
+                for(let i = 0; i < result.length; i++) {
+                  let item = result[i];
+                  let key = item[1];
+                  let value = dataResult[key];
+                  if(value) {
+                    value.push(result[i]);
+                  } else {
+                    value = [];
+                    value.push(result[i]);
+                  }
+                  dataResult[key] = value;
+                }
+              }
+              console.log(dataResult);
+            } else {
+              this.loadShow = false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[resultRes.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[jobRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+          
 
           // this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
@@ -620,6 +662,15 @@ export default {
             this.loadShow = false;
             if (nodeRes.Response.InstanceSet.length > 0) {
               nodeRes.Response.InstanceSet.map(node => {
+                let resultList = dataResult[node.InstanceId];
+                if(resultList.length > 0) {
+                  if(resultList[resultList.length - 1][2]) {
+                    node.cpu = resultList[resultList.length - 1][2].toFixed(2);
+                  }
+                  if(resultList[resultList.length - 1][3]) {
+                    node.memory = (resultList[resultList.length - 1][3]/(1024*1024*1024)).toFixed(2);
+                  }
+                }
                 node.addTime = moment(node.CreatedTime).format(
                   "YYYY-MM-DD HH:mm:ss"
                 );

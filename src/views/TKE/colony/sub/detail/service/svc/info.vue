@@ -2,9 +2,9 @@
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
-      <h4  class="tke-formpanel-title">基本信息</h4>
+      <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.name}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
@@ -22,20 +22,20 @@
           </div>
           <div class="tke-form-item_text" v-else>-</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{upTime(detailData.metadata && detailData.metadata.creationTimestamp)}}</div>
         </el-form-item>
         <el-form-item label="Selector">
           <!-- <div class="tke-form-item_text">k8s-app：{{detailData.k8sApp}} 、qcloud-app：{{detailData.qcloudApp}}</div> -->
           <div class="tke-form-item_text">{{detailData.k8sApp?'k8s-app：'+detailData.k8sApp+' 、'+'qcloud-app：'+detailData.qcloudApp:'-'}}</div>
         </el-form-item>
-        <el-form-item label="访问方式">
+        <el-form-item :label="$t('TKE.subList.fwfs')">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type}}</div>
         </el-form-item>
         <el-form-item label="集群IP">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.clusterIP}}</div>
         </el-form-item>
-        <el-form-item label="负载均衡IP">
+        <el-form-item :label="$t('TKE.subList.fzjhip')">
           <!-- <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress && detailData.status.loadBalancer.ingress[0].ip}}</div> -->
           <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress? detailData.status.loadBalancer.ingress[0].ip:'-'}}</div>
         </el-form-item>
@@ -47,7 +47,7 @@
               style="width: 100%">
               <el-table-column
                 prop="protocol"
-                label="协议"
+                :label="$t('TKE.subList.xy')"
                 >
               </el-table-column>
               <el-table-column
@@ -57,12 +57,12 @@
               </el-table-column>
               <el-table-column
                 prop="nodePort"
-                label="主机端口"
+                :label="$t('TKE.subList.zjdk')"
                 >
               </el-table-column>
               <el-table-column
                 prop="targetPort"
-                label="服务端口"
+                :label="$t('TKE.subList.fwdk')"
                 >
               </el-table-column>
 
@@ -73,7 +73,7 @@
     </div>
 
     <div class="tke-card tke-formpanel-wrap mt10">
-      <h4  class="tke-formpanel-title">高级设置</h4>
+      <h4  class="tke-formpanel-title">{{$t('TKE.colony.gjszhi')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="130px" size="mini">
         <el-form-item label="ExternalTrafficPolicy">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.externalTrafficPolicy||'-'}}</div>
@@ -81,7 +81,7 @@
         <el-form-item label="Session Affinity">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinity}}</div>
         </el-form-item>
-        <el-form-item label="最大会话保持时间" v-if="detailData.spec&&detailData.spec.sessionAffinity==='ClientIP'">
+        <el-form-item :label="$t('TKE.subList.zdhhbcsj')" v-if="detailData.spec&&detailData.spec.sessionAffinity==='ClientIP'">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinityConfig.clientIP.timeoutSeconds+'秒'}}</div>
         </el-form-item>
       </el-form>

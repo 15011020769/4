@@ -18,16 +18,16 @@
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form  class="tke-form" :model="svc" :rules="rules" ref="form" label-position='left' label-width="120px" size="mini">
 					<div style="padding: 0 10px 10px 10px;border-bottom:1px solid #dcdfe6;">
-						<h3 style="margin-bottom:11px;">基本信息</h3>
-						<el-form-item label="名称" prop='name'>
-							<el-input class="w200" v-model="svc.name" placeholder="请输入名称"></el-input>
-							<p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+						<h3 style="margin-bottom:11px;">{{$t('TKE.overview.jbxx')}}</h3>
+						<el-form-item :label="$t('TKE.overview.mc')" prop='name'>
+							<el-input class="w200" v-model="svc.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
+							<p>{{$t('TKE.overview.xz')}}</p>
 						</el-form-item>
 						<el-form-item label="描述">
-							<textarea v-model="svc.describe" name="" class="ms" placeholder="请输入描述信息，不超过1000个字符" id="" cols="30" rows="10"></textarea>
+							<textarea v-model="svc.describe" name="" class="ms" :placeholder="$t('TKE.subList.qsrmsxx')" id="" cols="30" rows="10"></textarea>
 						</el-form-item>
-						<el-form-item label="命名空间">
-							<el-select v-model="svc.value" placeholder="请选择">
+						<el-form-item :label="$t('TKE.overview.mmkj')">
+							<el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
 								<el-option
 									v-for="item in svc.options"
 									:key="item.metadata.name"
@@ -41,12 +41,12 @@
 					<Service :personObj="{ownLoadBalancer,LBsubnet,vpcNameAry}" :svcData.sync='svc'></Service>
          <!-- Selectors中的workload选填 -->
 					<div class="card">
-						<h3 style="padding-bottom:20px;">Workload（选填）</h3>
+						<h3 style="padding-bottom:20px;">Workload（{{$t('TKE.subList.xt')}}）</h3>
 						<el-form-item label="Selectors">
 							<div style="padding-bottom:10px;" v-for="it in svc.workload" :key="it.key">
 								<el-input v-model="it.key" placeholder="key" class="w100"></el-input>=
 								<el-input v-model="it.value" placeholder="value" class="w100"></el-input>
-								<el-tooltip class="item" effect="dark" content="删除" placement="right">
+								<el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
 									<i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removework(it)"></i>
 								</el-tooltip>
 							</div>
@@ -59,23 +59,23 @@
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="submitSer('form')">创建Service</el-button>
+          <el-button size="small" type="primary" @click="submitSer('form')">{{$t('TKE.subList.cj')}}Service</el-button>
           <el-button size="small">取消</el-button>
         </div>
       </div>
     </div>
 		<!-- 幕布层 -->
-		<el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+		<el-dialog :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
 			<el-form label-width="100px">
-				<el-form-item label="资源类型">
+				<el-form-item :label="$t('TKE.event.zylx')">
 					<el-radio-group v-model="svc.tabPosition" style="margin-left:70px;">
 						<el-radio-button label="dep" @click.native="handleType1">Deploymemt</el-radio-button>
 						<el-radio-button label="state" @click.native="handleType2">Statefulset</el-radio-button>
 						<el-radio-button label="daem" @click.native="handleType3">Daemonset</el-radio-button>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="资源列表">
-					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'请选择':'无可用资源'"
+				<el-form-item :label="$t('TKE.overview.zylb')">
+					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'請選擇':'無可用資源'"
           :disabled="resourcesList.length?false:true" style="margin-left:70px;">
 						<el-option
 							v-for="item in resourcesList"
@@ -84,11 +84,11 @@
 							:value="item.metadata.name">
 						</el-option>
 					</el-select>
-					<div v-if="resourcesList.length?false:true" style="margin-left:70px;">无可用资源，可前往<a href="">资源控制台</a>新建</div>
+					<div v-if="resourcesList.length?false:true" style="margin-left:70px;">{{$t('TKE.subList.wkyzy')}}<a href="">{{$t('TKE.subList.zykzt')}}</a>新建</div>
 				</el-form-item>
 				<el-form-item label="Labels">
 					<div style="margin-left:70px;">
-            <p v-if="resourcesList.length === 0">请先选择Workload</p>
+            <p v-if="resourcesList.length === 0">{{$t('TKE.subList.qxxz')}}Workload</p>
             <div v-else v-for="(v1, i1) in resourcesList" :key="i1">
               <!-- <p v-if="v1">1313</p> -->
               <p v-for="(item, key) in v1.metadata.labels" :key="key"
@@ -100,7 +100,7 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="handlerDet">确 定</el-button>
+				<el-button type="primary" @click="handlerDet">{{$t('TKE.overview.qd')}}</el-button>
 			</div>
 		</el-dialog>
   </div>
@@ -155,9 +155,9 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('名称不能为空'))
+                callback(new Error('名稱不能為空'))
               } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('名称格式不正确'))
+                callback(new Error('名稱格式不正確'))
               } else {
                 callback()
               }
@@ -589,7 +589,7 @@ export default {
       // console.log(this.svc.workloadObj)
     },
     handleClose (done) {
-      this.$confirm('确认关闭？')
+      this.$confirm('確認關閉？')
         .then(_ => {
           done()
         })

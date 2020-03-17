@@ -2,9 +2,9 @@
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
-      <h4 class="tke-formpanel-title">基本信息</h4>
+      <h4 class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form class="tke-form" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <div class="tke-form-item_text">{{ingressName}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
@@ -19,11 +19,11 @@
         <el-form-item label="Labels">
           <div class="tke-form-item_text">-</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{upTime(ingressDetail.metadata && ingressDetail.metadata.creationTimestamp)}}</div>
         </el-form-item>
-        <el-form-item label="网络类型">
-          <div class="tke-form-item_text">公网</div>
+        <el-form-item :label="$t('TKE.subList.wllx')">
+          <div class="tke-form-item_text">{{$t('TKE.subList.gw')}}</div>
         </el-form-item>
         <el-form-item label="annotations">
           <div class="tke-form-item_text">
@@ -34,14 +34,14 @@
     </div>
 
     <div class="tke-card tke-formpanel-wrap mt10">
-      <h4 class="tke-formpanel-title">转发配置</h4>
+      <h4 class="tke-formpanel-title">{{$t('TKE.subList.zfpz')}}</h4>
       <el-table :data="list" style="width: 100%">
-        <el-table-column prop="protocol" label="协议"></el-table-column>
-        <el-table-column prop="listenPort" label="监听端口">80</el-table-column>
+        <el-table-column prop="protocol" :label="$t('TKE.subList.xy')"></el-table-column>
+        <el-table-column prop="listenPort" :label="$t('TKE.subList.jtdk')">80</el-table-column>
         <el-table-column prop="domainName" label="域名"></el-table-column>
-        <el-table-column prop="url" label="URL路径"></el-table-column>
-        <el-table-column prop="backend" label="后端服务"></el-table-column>
-        <el-table-column prop="servicePort" label="服务端口"></el-table-column>
+        <el-table-column prop="url" :label="$t('TKE.subList.urllj')"></el-table-column>
+        <el-table-column prop="backend" :label="$t('TKE.subList.hdfw')"></el-table-column>
+        <el-table-column prop="servicePort" :label="$t('TKE.subList.fwdk')"></el-table-column>
       </el-table>
     </div>
   </div>
