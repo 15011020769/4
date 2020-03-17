@@ -42,7 +42,7 @@
                   <span>{{ props.row.SecretId }}</span>
                 </el-form-item> -->
                 <el-form-item :label="$t('CLA.total.qy')">
-                  <span>{{ props.row.EventRegion }}</span>
+                  <span>ap-taipei</span>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.cwm')">
                   <span>{{ props.row.ErrorCode }}</span>
@@ -112,9 +112,6 @@
         </el-table>
       </div>
 
-
-
-
       <div class="tab-list" v-show="false">
         <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
           :empty-text="$t('CLA.total.zwsj')" id="exportTable">
@@ -147,8 +144,6 @@
               </p>
             </template>
           </el-table-column>
-
-
           <el-table-column :label="$t('CLA.total.cwm')">
             <template slot-scope="scope">
               <p>
@@ -186,6 +181,7 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
         </el-table>
       </div>
     </div>
@@ -249,7 +245,8 @@
       this.axios
         .post(YJS_GETATTRIBUTEKEY, {
           Version: "2019-03-19",
-          Region: localStorage.getItem("regionv2")
+          // Region: localStorage.getItem("regionv2")
+          Region: 'ap-guangzhou',
         })
         .then(data => {
           if (data.Response.Error === undefined) {
@@ -328,8 +325,8 @@
         this.vloading = true;
         const params = {
           Version: "2019-03-19",
-          Region: localStorage.getItem("regionv2"),
-          // Region: 'ap-guangzhou',
+          // Region: localStorage.getItem("regionv2"),
+          Region: 'ap-guangzhou',
           EndTime: this.nowtime,
           StartTime: this.oldTime,
           MaxResults: this.MaxResults
@@ -388,7 +385,8 @@
           }
           let params = {
             Version: "2019-03-19",
-            Region: localStorage.getItem("regionv2"),
+            // Region: localStorage.getItem("regionv2"),
+            Region: 'ap-guangzhou',
             EndTime: this.nowtime,
             MaxResults: this.MaxResults,
             StartTime: this.oldTime
@@ -441,7 +439,8 @@
         }
         let params = {
           Version: "2019-03-19",
-          Region: localStorage.getItem("regionv2"),
+          // Region: localStorage.getItem("regionv2"),
+          Region: 'ap-guangzhou',
           EndTime: this.nowtime,
           MaxResults: this.MaxResults,
           StartTime: this.oldTime
