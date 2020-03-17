@@ -812,6 +812,9 @@ a {
   padding-top: 0;
   border-radius: 0;
 }
+.wrap >>> .el-transfer-panel {
+  width: 280px;
+}
 
 .newClear:after {
   content: "";

@@ -109,10 +109,9 @@ export default {
         ['结束时间', times[1]],
         [],
       ]
-      let json
       let name
       if(type1 == 'used') {
-        json = this.used_json
+        data.push(['URL', '流量（B）'])
         name = 'flux'
         this.fluxTableData.map(item => {
           data.push([
@@ -121,7 +120,7 @@ export default {
           ])
         })
       } else {
-        data.push(['URL', '请求数（次）',])
+        data.push(['URL', '请求数（次）'])
         name = 'request'
         this.RequestTableData.map(item => {
           data.push([
@@ -130,7 +129,6 @@ export default {
           ])
         })
       }
-      data = [...data, ...json]
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, `${name}_top10_urls`);
@@ -159,7 +157,6 @@ export default {
     },
     getFluxTopData(params) {
       this.loading = true
-      const tempArr = [['URL', '流量（B）']]
       let detailData = []
       this.axios.post('cdn2/ListTopData', {
         ...params,
@@ -169,30 +166,24 @@ export default {
         .then(({ Response }) => {
           if (Response.Data && Response.Data.length) {
             detailData = Response.Data[0].DetailData
-            detailData && detailData.map(v => {
-              tempArr.push([v.Name, v.Value])
-            })
           }
           this.fluxTableData = detailData
-          this.used_json = tempArr
           this.loading = false
         })
     },
     getRequestTopData(params) {
       this.loading = true
-      let tempArr = [['URL', '请求数（次）']]
+      let res = []
       this.axios.post('cdn2/ListTopData', {
         ...params,
         Metric: "url",
         Filter: "request",
       })
         .then(({ Response }) => {
-          const res = Response.Data[0].DetailData
+          if (Response.Data && Response.Data.length) {
+            res = Response.Data[0].DetailData
+          } 
           this.RequestTableData = res
-          res && res.map(v => {
-            tempArr.push([v.Name, v.Value])
-          })
-          this.request_json = tempArr
           this.loading = false
         })
     },

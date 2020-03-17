@@ -394,7 +394,14 @@ export default {
               this.btnData[i]['selected'] = false;
             }
           } else {
-            this.selectId = this.ResIpList[0].Id;
+            if (this.selectId == "") {
+              // 判断是从‘资产列表-资源列表’跳转的，还是目录跳转的
+              if(this.$route.query.selectId === undefined){
+                this.selectId = this.ResIpList[0].Id;
+              } else {
+                this.selectId = this.$route.query.selectId;
+              }
+            }
             this.choiceTime(1);
           }
         } else {

@@ -145,7 +145,7 @@ export default {
         Metric: "request",
       })
         .then(({ Response: { Data } }) => {
-          if (Response.Data && Response.Data.length) {
+          if (Data && Data.length) {
             Data[0].CdnData[0].DetailData.map((item) => {
               lastCycleArr.push(item.Value)
             })

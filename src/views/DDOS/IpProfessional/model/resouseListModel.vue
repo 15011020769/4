@@ -79,9 +79,9 @@
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span
                   class="basicLabel"
-                  v-if="item.Key=='DDoSAI'"
+                  v-if="item.Key=='ElasticLimit'"
                 >{{$t('DDOS.choose.ElasticProtection')}}</span>
-                <span class="basicIpt" v-if="item.Key=='DDoSAI'">{{item.Value=='off'?$t('DDOS.choose.doNotOpen'):item.Value}}</span>
+                <span class="basicIpt" v-if="item.Key=='ElasticLimit'">{{item.Value=='0'?$t('DDOS.choose.doNotOpen'):(item.Value/1000+'G')}}</span>
               </div>
               <div class="newClear" v-for="(item) in resObj.Record" :key="item.key">
                 <span class="basicLabel" v-if="item.Key=='CCMax'">{{$t('DDOS.choose.CCMinimum')}}</span>

@@ -31,7 +31,8 @@ import { ErrorTips } from "@/components/ErrorTips";
 export default {
   data() {
     return {
-      activeName: "ddos" //一级tab标识
+      activeName: "ddos", //一级tab标识
+      selectId: ""
     };
   },
   components: {
