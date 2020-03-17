@@ -1,5 +1,5 @@
 <template>
-<!-- 接入配置-编辑转发规则 -->
+  <!-- 接入配置-编辑转发规则 -->
   <div>
     <div>
       <el-dialog
@@ -10,9 +10,7 @@
         :before-close="handleClose"
       >
         <div class="createRulesForm">
-          <p class="tc-15-msg error" v-if="checkflg == false">
-            {{$t('DDOS.accessCopy.editWarning')}}
-          </p>
+          <p class="tc-15-msg error" v-if="checkflg == false">{{$t('DDOS.accessCopy.editWarning')}}</p>
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.AccesstoCon.businessDoma')}}</span>
             <span class="ruleListIpt">
@@ -23,10 +21,7 @@
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.accessCopy.ForwardingPro')}}</span>
             <span class="ruleListIpt">
-              <el-select
-                class="forwardHttp"
-                v-model="EnidData.Protocol"
-              >
+              <el-select class="forwardHttp" v-model="EnidData.Protocol">
                 <el-option
                   v-for="(item, index) in protocolList"
                   :label="item.pro"
@@ -75,9 +70,16 @@
             </span>
           </div>
           <div class="ruleList newClear">
-            <span class="ruleListLabel">{{EnidData.SourceType==1?'源站域名':$t('DDOS.accessCopy.SourceIp')}}</span>
+            <span
+              class="ruleListLabel"
+            >{{EnidData.SourceType==1?'源站域名':$t('DDOS.accessCopy.SourceIp')}}</span>
             <span class="ruleListIpt">
-              <el-input type="textarea" class="resoureStation" v-model="textData" @input="textDataChange" />
+              <el-input
+                type="textarea"
+                class="resoureStation"
+                v-model="textData"
+                @input="textDataChange"
+              />
               <p>{{EnidData.SourceType==1?$t('DDOS.accessCopy.domainTitle'):$t('DDOS.accessCopy.SoutceTitle')}}</p>
             </span>
           </div>
@@ -94,7 +96,7 @@
 import { ENID_CREATE } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 export default {
-  inject: ['describleL4Rules'],
+  inject: ["describleL4Rules"],
   props: {
     isShow3: Boolean,
     resourceId: String
@@ -102,10 +104,10 @@ export default {
   data() {
     return {
       dialogVisible: "", //弹框状态
-      protocolList: [{pro: 'TCP'}, {pro: 'UDP'}],
+      protocolList: [{ pro: "TCP" }, { pro: "UDP" }],
       EnidData: "", //获取某一条数据
-      textData: '',
-      checkflg: true, //textData是否通过校验
+      textData: "",
+      checkflg: true //textData是否通过校验
     };
   },
   computed: {
@@ -123,24 +125,34 @@ export default {
       this.$emit("closeEditModel", this.dialogVisible);
     },
     init(scopeRow) {
-      this.textData = '';
-      if (scopeRow.SourceType == 1) { //域名
-        this.protocolList = [{pro: 'TCP'}];
+      this.textData = "";
+      if (scopeRow.SourceType == 1) {
+        //域名
+        this.protocolList = [{ pro: "TCP" }];
         for (let i = 0; i < scopeRow.SourceList.length; i++) {
-          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + ((i+1)==scopeRow.SourceList.length?'':'\n'))
+          this.textData = this.textData.concat(
+            scopeRow.SourceList[i].Source +
+              (i + 1 == scopeRow.SourceList.length ? "" : "\n")
+          );
         }
-      } else if (scopeRow.SourceType == 2) { //IP
-        this.protocolList = [{pro: 'TCP'}, {pro: 'UDP'}];
+      } else if (scopeRow.SourceType == 2) {
+        //IP
+        this.protocolList = [{ pro: "TCP" }, { pro: "UDP" }];
         for (let i = 0; i < scopeRow.SourceList.length; i++) {
-          this.textData = this.textData.concat(scopeRow.SourceList[i].Source + '\ ' + scopeRow.SourceList[i].Weight + ((i+1)==scopeRow.SourceList.length?'':'\n'))
+          this.textData = this.textData.concat(
+            scopeRow.SourceList[i].Source +
+              " " +
+              scopeRow.SourceList[i].Weight +
+              (i + 1 == scopeRow.SourceList.length ? "" : "\n")
+          );
         }
       }
       this.EnidData = JSON.parse(JSON.stringify(scopeRow));
     },
     //编辑确定按钮
     editSure() {
-      if(!this.checkflg){
-        return
+      if (!this.checkflg) {
+        return;
       }
       let params = {
         Version: "2018-07-09",
@@ -158,15 +170,17 @@ export default {
       };
 
       let arr = this.textData.split(/[\s\n]/);
-      if (this.EnidData.SourceType == 1) {//域名
+      if (this.EnidData.SourceType == 1) {
+        //域名
         for (let i = 0; i < arr.length; i++) {
           params["Rule.SourceList." + i + ".Source"] = arr[i];
           params["Rule.SourceList." + i + ".Weight"] = 0;
         }
-      } else if (this.EnidData.SourceType == 2) {//IP
-        for (let i = 0; i < arr.length/2; i++) {
-          params["Rule.SourceList." + i + ".Source"] = arr[i*2];
-          params["Rule.SourceList." + i + ".Weight"] = arr[i*2 + 1];
+      } else if (this.EnidData.SourceType == 2) {
+        //IP
+        for (let i = 0; i < arr.length / 2; i++) {
+          params["Rule.SourceList." + i + ".Source"] = arr[i * 2];
+          params["Rule.SourceList." + i + ".Weight"] = arr[i * 2 + 1];
         }
       }
       this.axios.post(ENID_CREATE, params).then(res => {
@@ -174,8 +188,8 @@ export default {
         if (res.Response.Error === undefined) {
           this.$message({
             showClose: true,
-            message: '編輯成功',
-            type: 'success'
+            message: "編輯成功",
+            type: "success"
           });
           this.describleL4Rules();
           this.dialogVisible = false;
@@ -206,14 +220,16 @@ export default {
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
       var regNUM = /(^[1-9]\d*$)/;
       this.checkflg = true;
-      if(this.EnidData.SourceType=="2"){//IP回源
-        for(let i=0; i<arr.length/2; i++) {
-          if(!regIP.test(arr[i*2]) || !regNUM.test(arr[i*2 + 1])) {
+      if (this.EnidData.SourceType == "2") {
+        //IP回源
+        for (let i = 0; i < arr.length / 2; i++) {
+          if (!regIP.test(arr[i * 2]) || !regNUM.test(arr[i * 2 + 1])) {
             this.checkflg = false;
             // return
           }
         }
-      }else if(this.EnidData.SourceType=="1"){//域名回源
+      } else if (this.EnidData.SourceType == "1") {
+        //域名回源
         // for(let i=0; i<arr.length; i++) {
         //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
         // }
