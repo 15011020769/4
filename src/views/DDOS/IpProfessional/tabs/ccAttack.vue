@@ -611,7 +611,21 @@ export default {
       myChart3.setOption({
         color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: 'axis',
+          textStyle: {
+            color: 'black',
+            decoration: 'none',
+            fontFamily: 'Verdana, sans-serif',
+            fontSize: 12,
+            // fontStyle: 'italic',
+            fontWeight: 'bold'
+          },
+          backgroundColor: 'rgba(252,252,252)',
+          formatter: function (params) {
+            return '<div>' + params[0].name + '</div></br><div><span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:' + params[0].color + ';"></span>' + params[0].seriesName + ': ' + params[0].value +'QPS</div><div><span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+params[1].color+';"></span>'+params[1].seriesName+': '+params[1].value+'QPS</div>'
+          }
+        },
         //       legend: {
         //     data:['总请求峰值','攻击请求峰值']
         // },
