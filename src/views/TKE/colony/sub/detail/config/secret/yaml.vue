@@ -4,7 +4,7 @@
     <div class="tke-grid">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" type="primary" @click="goSecretDetail">编辑YAML</el-button>
+        <el-button size="small" type="primary" @click="goSecretDetail">{{$t('TKE.overview.bj')}}YAML</el-button>
       </div>
     </div>
 

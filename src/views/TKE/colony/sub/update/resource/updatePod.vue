@@ -8,7 +8,7 @@
            <span class="goback" @click="goBack">
              <i class="el-icon-back"></i>
            </span>
-           <h2 class="header-title" >更新Pod数量</h2>
+           <h2 class="header-title" >{{$t('TKE.subList.gxsl')}}</h2>
          </div>
          <!-- 右侧 -->
          <div class="grid-right"></div>
@@ -18,26 +18,26 @@
        <div class="tke-card tke-formpanel-wrap mb60">
          <el-form class="tke-form" :model="upn" label-position="left" label-width="120px" size="mini"
            >
-           <el-form-item label="当前实例数量">
+           <el-form-item :label="$t('TKE.subList.dqslsl')">
              <span>{{caseNum}}</span>
            </el-form-item>
-           <el-form-item label="实例数量">
+           <el-form-item :label="$t('TKE.subList.slsl')">
              <el-radio-group v-model="upn.type" style="margin-bottom: 5px;">
-               <el-radio-button label="1">手动调节</el-radio-button>
-               <el-radio-button label="2">自动调节</el-radio-button>
+               <el-radio-button label="1">{{$t('TKE.subList.sdtj')}}</el-radio-button>
+               <el-radio-button label="2">{{$t('TKE.subList.zdtjie')}}</el-radio-button>
              </el-radio-group>
              <div v-if='upn.type=="1"'>
-               <p>直接设定实例数量</p>
+               <p>{{$t('TKE.subList.zjsd')}}</p>
                <p style="background:#f2f2f2;width:80%;height:60px;line-height:60px;margin-top:6px;padding:0px 10px;">
-                 <span>实例数量</span>
-                 <el-input-number class="ml100" v-model="upn.num" size="small" :value="1" :min="0"></el-input-number>个
+                 <span>{{$t('TKE.subList.slsl')}}</span>
+                 <el-input-number class="ml100" v-model="upn.num" size="small" :value="1" :min="0"></el-input-number>{{$t('TKE.overview.ge')}}
                </p>
              </div>
              <div v-if="upn.type=='2'">
-               <p>满足任一设定条件，则自动调节实例（pod）数目
+               <p>{{$t('TKE.subList.mzrysdtj')}}
                  <!-- <a href="#">查看更多</a> -->
                </p>
-               <el-form-item label="触发策略" style="margin-top:10px">
+               <el-form-item :label="$t('TKE.subList.cfcl')" style="margin-top:10px">
                  <div class="bottom10" v-for="(val,index) in optionsData" :key="index">
 
                    <el-select class="w100" v-model="val.value1" @change="changeOne(val.value1,index)">
@@ -45,7 +45,7 @@
                        :value="item.value">
                      </el-option>
                    </el-select>
-                   <el-select v-model="val.value2" placeholder="请选择" size="mini" style="margin:0px 6px">
+                   <el-select v-model="val.value2" :placeholder="$t('TKE.overview.qxz')" size="mini" style="margin:0px 6px">
                    <el-option v-for="item in val.option1" :key="item.label" :label="item.label" :value="item.value"
                      v-if='val.value1 == 1'>
                    </el-option>
@@ -69,7 +69,7 @@
                  <!-- <el-input class="w100" :class="{ 'pod-wran': val.valueKey==''||!reg.test(val.valueKey) }"  @blur="podMathBlur(val.valueKey)"
                 @focus="podMathFocus(val.valueKey)" v-model="val.valueKey" style="margin-right:6px"></el-input> -->
                   <span v-if='val.value2 == 1'>核</span>
-                  <el-tooltip v-if='val.value2 == 2||val.value2 == 3||val.value2 == 4||val.value2 == 7||val.value2 == 8||val.value2 == 9||val.value2 == 10||val.value2 == 11||val.value2 == 12' class="item" effect="light" content="阙值范围0-100" placement="right">
+                  <el-tooltip v-if='val.value2 == 2||val.value2 == 3||val.value2 == 4||val.value2 == 7||val.value2 == 8||val.value2 == 9||val.value2 == 10||val.value2 == 11||val.value2 == 12' class="item" effect="light" :content="$t('TKE.subList.yzfw')" placement="right">
                      <span>%</span>
                    </el-tooltip>
                  <span v-if='val.value2 == 5||val.value2 == 6'>MiB</span>
@@ -77,22 +77,22 @@
                  <span v-if='val.value2 == 15||val.value2 == 16'>次/s</span>
                  <span v-if='val.value2 == 17||val.value2 == 18||val.value1 == 4'>Mbps</span>
                  <span v-if='val.value2 == 21||val.value2 == 22'>个</span>
-                 <el-tooltip class="item" effect="light" content="至少保留一个指标" placement="right">
+                 <el-tooltip class="item" effect="light" :content="$t('TKE.subList.blygzb')" placement="right">
                    <i class="el-icon-close" @click.prevent="removeOptions(optionsData,index)"></i>
                  </el-tooltip>
                  </div>
-                 <p  v-if="colorFlag"    style="color:red">不能使用两个相同的指标</p>
-                 <a  @click="newAddTarget">新增指标</a>
+                 <p  v-if="colorFlag"    style="color:red">{{$t('TKE.subList.bnsyxtzb')}}</p>
+                 <a  @click="newAddTarget">{{$t('TKE.subList.xzzb')}}</a>
                </el-form-item>
-               <el-form-item label="实例范围">
+               <el-form-item :label="$t('TKE.subList.slfw')">
 
-                  <el-tooltip class="item"  :disabled="vLeft!=''" effect="light" content="最小副本数不能为空" placement="right">
+                  <el-tooltip class="item"  :disabled="vLeft!=''" effect="light" :content="$t('TKE.subList.zxfbbwk')" placement="right">
                    <el-input :class="{'pod-warn':leftFlag}"  @focus="matchTwoFocus(vLeft)"  @blur="matchTwoBlur(vLeft)" v-model.number="vLeft" class="w100" ></el-input>
                  </el-tooltip>
                     ~
                  <!-- <el-input  :class="{ 'pod-wran': mathWarn }"  @blur="podMathBlur"
                 @focus="podMathFocus"    v-model.number="vLeft" class="w100" ></el-input>~ -->
-                 <el-tooltip class="item" :disabled="vRight!=''" effect="light" content="最大副本数不能为空" placement="right">
+                 <el-tooltip class="item" :disabled="vRight!=''" effect="light" :content="$t('TKE.subList.zdfbsbwk')" placement="right">
                    <el-input :class="{'pod-warn':rightFlag}"     @focus="matchThreeFocus(vRight)"  @blur="matchThreeBlur(vRight)" v-model.number="vRight" class="w100"></el-input>
                  </el-tooltip>
                </el-form-item>
@@ -103,7 +103,7 @@
 
          <!-- 底部 -->
          <div class="tke-formpanel-footer">
-           <el-button size="small" type="primary" @click="updatePodNumber()">更新实例数目</el-button>
+           <el-button size="small" type="primary" @click="updatePodNumber()">{{$t('TKE.subList.gxslsm')}}</el-button>
            <el-button size="small" @click="$router.go(-1)">取消</el-button>
          </div>
        </div>
@@ -147,13 +147,13 @@
                label: 'CPU'
              }, {
                value: 2,
-               label: '内存'
+               label: '記憶體'
              }, {
                value: 3,
-               label: '硬盘'
+               label: '硬碟'
              }, {
                value: 4,
-               label: '网络'
+               label: '網路'
              }],
 
              option1: [{
@@ -161,73 +161,73 @@
                label: 'CPU使用量'
              }, {
                value: 2,
-               label: 'CPU利用率(占节点)'
+               label: 'CPU利用率(佔節點)'
              }, {
                value: 3,
-               label: 'CPU利用率(占Request)'
+               label: 'CPU利用率(佔Request)'
              }, {
                value: 4,
-               label: 'CPU利用率(占Limit)'
+               label: 'CPU利用率(佔Limit)'
              }],
 
              option2: [{
                value: 5,
-               label: '内存使用量'
+               label: '記憶體使用量'
              }, {
                value: 6,
-               label: '内存使用量(不含Cache)'
+               label: '記憶體使用量(不含Cache)'
              }, {
                value: 7,
-               label: '内存使用量(占节点)'
+               label: '記憶體使用量(佔節點)'
              }, {
                value: 8,
-               label: '内存使用量(占节点、不含Cache)'
+               label: '記憶體使用量(佔節點、不含Cache)'
              }, {
                value: 9,
-               label: '内存使用量(占Request)'
+               label: '記憶體使用量(佔Request)'
              }, {
                value: 10,
-               label: '内存使用量(占Request、不含Cache)'
+               label: '記憶體使用量(佔Request、不含Cache)'
              }, {
                value: 11,
-               label: '内存使用量(占Limit)'
+               label: '記憶體使用量(佔Limit)'
              }, {
                value: 12,
-               label: '内存使用量(占Limit、不含Cache)'
+               label: '記憶體使用量(佔Limit、不含Cache)'
              }],
 
              option3: [{
                value: 13,
-               label: '硬盘写流量'
+               label: '硬碟寫流量'
              }, {
                value: 14,
-               label: '硬盘读流量'
+               label: '硬碟讀流量'
              }, {
                value: 15,
-               label: '硬盘读IOPS'
+               label: '硬碟讀IOPS'
              }, {
                value: 16,
-               label: '硬盘写IOPS'
+               label: '硬碟寫IOPS'
              }],
 
              option4: [{
                value: 17,
-               label: '网络出带宽'
+               label: '網路出頻寬'
              }, {
                value: 18,
-               label: '网络入带宽'
+               label: '網路入頻寬'
              }, {
                value: 19,
-               label: '网络出流量'
+               label: '網路出流量'
              }, {
                value: 20,
-               label: '网络入流量'
+               label: '網路入流量'
              }, {
                value: 21,
-               label: '网络出包量'
+               label: '網路出包量'
              }, {
                value: 22,
-               label: '网络入包量'
+               label: '網路入包量'
              }],
              value1: 1,
              value2: 1,
@@ -310,7 +310,7 @@
          })
          if(arr2.length!=0){
             this.$message({
-            message:"触发策略阈值不能为空",
+            message:"觸發策略閾值不能為空",
             type:'warning',
             showClose: true,
             duration: 0
@@ -320,7 +320,7 @@
 
          if(this.vLeft>this.vRight||this.vLeft==this.vRight||this.vLeft==''||this.vLeft==''){
             this.$message({
-            message:"最小副本数不能大于等于最大副本数",
+            message:"最小副本數不能大於等於最大副本數",
             type:'warning',
             showClose: true,
             duration: 0
@@ -489,13 +489,13 @@
                label: 'CPU'
              }, {
                value: 2,
-               label: '内存'
+               label: '記憶體'
              }, {
                value: 3,
-               label: '硬盘'
+               label: '硬碟'
              }, {
                value: 4,
-               label: '网络'
+               label: '網路'
              }],
 
              option1: [{
@@ -503,73 +503,73 @@
                label: 'CPU使用量'
              }, {
                value: 2,
-               label: 'CPU利用率(占节点)'
+               label: 'CPU利用率(佔節點)'
              }, {
                value: 3,
-               label: 'CPU利用率(占Request)'
+               label: 'CPU利用率(佔Request)'
              }, {
                value: 4,
-               label: 'CPU利用率(占Limit)'
+               label: 'CPU利用率(佔Limit)'
              }],
 
              option2: [{
                value: 5,
-               label: '内存使用量'
+               label: '記憶體使用量'
              }, {
                value: 6,
-               label: '内存使用量(不含Cache)'
+               label: '記憶體使用量(不含Cache)'
              }, {
                value: 7,
-               label: '内存使用量(占节点)'
+               label: '記憶體使用量(佔節點)'
              }, {
                value: 8,
-               label: '内存使用量(占节点、不含Cache)'
+               label: '記憶體使用量(佔節點、不含Cache)'
              }, {
                value: 9,
-               label: '内存使用量(占Request)'
+               label: '記憶體使用量(佔Request)'
              }, {
                value: 10,
-               label: '内存使用量(占Request、不含Cache)'
+               label: '記憶體使用量(佔Request、不含Cache)'
              }, {
                value: 11,
-               label: '内存使用量(占Limit)'
+               label: '記憶體使用量(佔Limit)'
              }, {
                value: 12,
-               label: '内存使用量(占Limit、不含Cache)'
+               label: '記憶體使用量(佔Limit、不含Cache)'
              }],
 
              option3: [{
                value: 13,
-               label: '硬盘写流量'
+               label: '硬碟寫流量'
              }, {
                value: 14,
-               label: '硬盘读流量'
+               label: '硬碟讀流量'
              }, {
                value: 15,
-               label: '硬盘读IOPS'
+               label: '硬碟讀IOPS'
              }, {
                value: 16,
-               label: '硬盘写IOPS'
+               label: '硬碟寫IOPS'
              }],
 
              option4: [{
                value: 17,
-               label: '网络出带宽'
+               label: '網路出頻寬'
              }, {
                value: 18,
-               label: '网络入带宽'
+               label: '網路入頻寬'
              }, {
                value: 19,
-               label: '网络出流量'
+               label: '網路出流量'
              }, {
                value: 20,
-               label: '网络入流量'
+               label: '網路入流量'
              }, {
                value: 21,
-               label: '网络出包量'
+               label: '網路出包量'
              }, {
                value: 22,
-               label: '网络入包量'
+               label: '網路入包量'
              }],
              value1: x,
              value2: y,
@@ -819,87 +819,87 @@
              label: 'CPU'
            }, {
              value: 2,
-             label: '内存'
+             label: '記憶體'
            }, {
              value: 3,
-             label: '硬盘'
-           }, {
-             value: 4,
-             label: '网络'
-           }],
+             label: '硬碟'
+             }, {
+               value: 4,
+               label: '網路'
+             }],
 
-           option1: [{
-             value: 1,
-             label: 'CPU使用量'
-           }, {
-             value: 2,
-             label: 'CPU利用率(占节点)'
-           }, {
-             value: 3,
-             label: 'CPU利用率(占Request)'
-           }, {
-             value: 4,
-             label: 'CPU利用率(占Limit)'
-           }],
+             option1: [{
+               value: 1,
+               label: 'CPU使用量'
+             }, {
+               value: 2,
+               label: 'CPU利用率(佔節點)'
+             }, {
+               value: 3,
+               label: 'CPU利用率(佔Request)'
+             }, {
+               value: 4,
+               label: 'CPU利用率(佔Limit)'
+             }],
 
-           option2: [{
-             value: 5,
-             label: '内存使用量'
-           }, {
-             value: 6,
-             label: '内存使用量(不含Cache)'
-           }, {
-             value: 7,
-             label: '内存使用量(占节点)'
-           }, {
-             value: 8,
-             label: '内存使用量(占节点、不含Cache)'
-           }, {
-             value: 9,
-             label: '内存使用量(占Request)'
-           }, {
-             value: 10,
-             label: '内存使用量(占Request、不含Cache)'
-           }, {
-             value: 11,
-             label: '内存使用量(占Limit)'
-           }, {
-             value: 12,
-             label: '内存使用量(占Limit、不含Cache)'
-           }],
+             option2: [{
+               value: 5,
+               label: '記憶體使用量'
+             }, {
+               value: 6,
+               label: '記憶體使用量(不含Cache)'
+             }, {
+               value: 7,
+               label: '記憶體使用量(佔節點)'
+             }, {
+               value: 8,
+               label: '記憶體使用量(佔節點、不含Cache)'
+             }, {
+               value: 9,
+               label: '記憶體使用量(佔Request)'
+             }, {
+               value: 10,
+               label: '記憶體使用量(佔Request、不含Cache)'
+             }, {
+               value: 11,
+               label: '記憶體使用量(佔Limit)'
+             }, {
+               value: 12,
+               label: '記憶體使用量(佔Limit、不含Cache)'
+             }],
 
-           option3: [{
-             value: 13,
-             label: '硬盘写流量'
-           }, {
-             value: 14,
-             label: '硬盘读流量'
-           }, {
-             value: 15,
-             label: '硬盘读IOPS'
-           }, {
-             value: 16,
-             label: '硬盘写IOPS'
-           }],
+             option3: [{
+               value: 13,
+               label: '硬碟寫流量'
+             }, {
+               value: 14,
+               label: '硬碟讀流量'
+             }, {
+               value: 15,
+               label: '硬碟讀IOPS'
+             }, {
+               value: 16,
+               label: '硬碟寫IOPS'
+             }],
 
-           option4: [{
-             value: 17,
-             label: '网络出带宽'
-           }, {
-             value: 18,
-             label: '网络入带宽'
-           }, {
-             value: 19,
-             label: '网络出流量'
-           }, {
-             value: 20,
-             label: '网络入流量'
-           }, {
-             value: 21,
-             label: '网络出包量'
-           }, {
-             value: 22,
-             label: '网络入包量'
+             option4: [{
+               value: 17,
+               label: '網路出頻寬'
+             }, {
+               value: 18,
+               label: '網路入頻寬'
+             }, {
+               value: 19,
+               label: '網路出流量'
+             }, {
+               value: 20,
+               label: '網路入流量'
+             }, {
+               value: 21,
+               label: '網路出包量'
+             }, {
+               value: 22,
+               label: '網路入包量'
            }],
            value1: 1,//选择框1
            value2: 1,//选择框2

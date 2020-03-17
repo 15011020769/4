@@ -9,7 +9,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新调度策略</h2>
+          <h2 class="header-title">{{$t('TKE.subList.gxddcl')}}</h2>
         </div>
         <!-- 右侧 -->
       </div>
@@ -23,16 +23,16 @@
 					label-width="120px"
 					size="mini"
 				>
-					<el-form-item label="节点调度策略">
+					<el-form-item :label="$t('TKE.subList.jdddcl')">
 						<el-radio-group class="tke-radio-group" v-model="se.radio">
-							<el-radio label="1">不使用调度策略</el-radio>
-							<el-radio label="2">指定节点调度</el-radio>
-							<el-radio label="3">自定义调度规则</el-radio>
+							<el-radio label="1">{{$t('TKE.subList.bsyddcl')}}</el-radio>
+							<el-radio label="2">{{$t('TKE.subList.zdjddd')}}</el-radio>
+							<el-radio label="3">{{$t('TKE.subList.zdyddgz')}}</el-radio>
 						</el-radio-group>
-				    <p>可根据调度规则，将Pod调度到符合预期的Label的节点中。设置工作负载的调度规则指引</p>
+				    <p>{{$t('TKE.subList.gjddgz')}}</p>
             <div v-show="se.radio==2" class="bg">
               <div style="height:110px;overflow:auto">
-              <p>台北一区</p>
+              <p>{{$t('TKE.colony.tbyq')}}</p>
                 <!-- <p>
                   <el-checkbox></el-checkbox>ins-4bhved3k(as-变化的2)
                 </p>
@@ -48,16 +48,16 @@
             </div> 
 					</el-form-item>
           <div  v-show="se.radio==3">
-              <el-form-item label="强制满足条件">
-                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则调度失败。"
+              <el-form-item :label="$t('TKE.subList.qzmztj')">
+                <el-tooltip class="item" effect="light" :content="$t('TKE.subList.ddqj')"
                   placement="right">
                   <i class="el-icon-info  setPosition2"></i>
                 </el-tooltip>
                 <div class="bg2" v-for="(val,idx) in mustCondition" :key="idx">
                   <i class="el-icon-close set-i1" @click="delMustCondition(idx)"></i>
                   <div style="clear: both; margin-bottom:10px"></div>
-                  <p style="float:left">条件
-                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                  <p style="float:left">{{$t('TKE.subList.tiaoj')}}
+                    <el-tooltip class="item" effect="light" :content="$t('TKE.subList.dggztsmz')" placement="right">
                       <i class="el-icon-info "></i>
                     </el-tooltip>
                   </p>
@@ -65,7 +65,7 @@
                     <div v-for="(i,index) in val.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
                         <el-tooltip
                           effect="light"
-                          content="标签名不能为空"
+                          :content="$t('TKE.subList.bqmbwk')"
                           placement="bottom"
                           :disabled="i.key!=''"
                         >
@@ -76,30 +76,30 @@
                           :value="item.value">
                         </el-option>
                       </el-select>
-                      <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  placeholder="DoesNotExist,Exists操作符不需要填写value" ></el-input>
+                      <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  :placeholder="$t('TKE.subList.czbxytx')" ></el-input>
                        <el-tooltip
                           v-else
                           effect="light"
-                          content="自定义规则不能为空"
+                          :content="$t('TKE.subList.zdygzbwk')"
                           placement="bottom"
                           :disabled="i.values!=''"
                         >
                       <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
                       </el-tooltip>
-                      <el-tooltip v-if="val.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器" placement="top">
+                      <el-tooltip v-if="val.matchExpressions.length==1" class="item" effect="light" :content="$t('TKE.subList.zspzygxzq')" placement="top">
                         <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
                       </el-tooltip>
                       <i class="el-icon-close" v-else @click="val.matchExpressions.splice(index,1)"
                         style="font-size:20px;cursor:pointer"></i>
                     </div>
-                    <a  class="cursor"  @click="addRule1(idx)">添加规则</a>
+                    <a  class="cursor"  @click="addRule1(idx)">{{$t('TKE.subList.tjgz')}}</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a @click="addCondition"  class="cursor">添加条件</a>
+                <a @click="addCondition"  class="cursor">{{$t('TKE.subList.tjtj')}}</a>
               </el-form-item>
-              <el-form-item label="尽量满足条件">
-                <el-tooltip class="item" effect="light" content="调度期间如果满足其中一个亲和性条件则调度到对应node，如果没有节点满足条件则随机调度到任意节点。"
+              <el-form-item :label="$t('TKE.subList.jlmztj')">
+                <el-tooltip class="item" effect="light" :content="$t('TKE.subList.sjddryjd')"
                   placement="right">
                   <i class="el-icon-info  setPosition2"></i>
                 </el-tooltip>
@@ -107,9 +107,9 @@
                   <i class="el-icon-close set-i1" @click="delNeedCondition(idx)"></i>
                   <div style="clear: both; margin-bottom:10px"></div>
                   <div style="float:left">
-                  <p style="margin-bottom:10px">权重</p>
-                    <p>条件
-                    <el-tooltip class="item" effect="light" content="多个规则为同时满足" placement="right">
+                  <p style="margin-bottom:10px">{{$t('TKE.subList.quanz')}}</p>
+                    <p>{{$t('TKE.subList.tiaoj')}}
+                    <el-tooltip class="item" effect="light" :content="$t('TKE.subList.dggztsmz')" placement="right">
                       <i class="el-icon-info "></i>
                     </el-tooltip></p>
                   </div>
@@ -118,7 +118,7 @@
                       <div v-for="(i,index) in val.preference.matchExpressions" :key="index" style="margin-bottom:6px;" class="flex">
                           <el-tooltip
                           effect="light"
-                          content="标签名不能为空"
+                          :content="$t('TKE.subList.bqmbwk')"
                           placement="bottom"
                           :disabled="i.key!=''"
                         >
@@ -129,28 +129,28 @@
                             :value="item.value">
                           </el-option>
                         </el-select>
-                        <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  placeholder="DoesNotExist,Exists操作符不需要填写value" ></el-input>
+                        <el-input  disabled  class="w200" v-if="i.operator=='DoesNotExist'||i.operator=='Exists'"  :placeholder="$t('TKE.subList.czbxytx')" ></el-input>
                         <el-tooltip
                           v-else
                           effect="light"
-                          content="自定义规则不能为空"
+                          :content="$t('TKE.subList.zdygzbwk')"
                           placement="bottom"
                           :disabled="i.values!=''"
                         >
                            <el-input :class="{warn:i.values==''}" class="w200" v-model.trim="i.values" ></el-input>
                         </el-tooltip>
-                        <el-tooltip v-if="val.preference.matchExpressions.length==1" class="item" effect="light" content="至少配置一个选择器"
+                        <el-tooltip v-if="val.preference.matchExpressions.length==1" class="item" effect="light" :content="$t('TKE.subList.zspzygxzq')"
                           placement="top">
                           <i class="el-icon-close" style="font-size:20px;cursor:pointer"></i>
                         </el-tooltip>
                         <i class="el-icon-close" v-else @click="val.preference.matchExpressions.splice(index,1)"
                           style="font-size:20px;cursor:pointer"></i>
                       </div>
-                      <a @click="addRule2(idx)"  class="cursor">添加规则</a>
+                      <a @click="addRule2(idx)"  class="cursor">{{$t('TKE.subList.tjgz')}}</a>
                   </div>
                   <div style="clear: both;"></div>
                 </div>
-                <a @click="addCondition2"  class="cursor">添加条件</a>
+                <a @click="addCondition2"  class="cursor">{{$t('TKE.subList.tjtj')}}</a>
               </el-form-item>
             </div>
         </el-form>

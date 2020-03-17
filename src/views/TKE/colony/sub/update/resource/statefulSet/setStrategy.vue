@@ -9,7 +9,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">设置更新策略</h2>
+          <h2 class="header-title">{{$t('TKE.subList.szgxcl')}}</h2>
         </div>
         <!-- 右侧 -->
       </div>
@@ -26,11 +26,11 @@
 				>
 					 <el-form-item label="更新方式" >
               <el-select v-model="updateWay">
-                <el-option label="滚动更新（推荐）" value="1"> </el-option>
+                <el-option :label="$t('TKE.subList.gdgxtj')" value="1"> </el-option>
                 <el-option label="OnDelete" value="2"> </el-option>
               </el-select>
-              <p v-show="updateWay=='1'"> 对实例进行逐个更新，这种方式可以让您不中断业务实现对服务的更新</p>
-              <p v-show="updateWay=='2'">手动删除实例时触发更新</p>
+              <p v-show="updateWay=='1'"> {{$t('TKE.subList.dslzggx')}}</p>
+              <p v-show="updateWay=='2'">{{$t('TKE.subList.sdsc')}}</p>
             </el-form-item>
             <div v-show="updateWay=='1'">
               <el-form-item label="策略配置" >

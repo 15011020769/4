@@ -2,15 +2,15 @@
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
-      <h4 class="tke-formpanel-title">基本信息</h4>
+      <h4 class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <div class="tke-form-item_text">{{Info.name}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
           <div class="tke-form-item_text">{{Info.np}}</div>
         </el-form-item>
-        <el-form-item label="类型">
+        <el-form-item :label="$t('TKE.overview.lx')">
           <div class="tke-form-item_text" v-if="this.secretData.type">Opaque</div>
         </el-form-item>
         <el-form-item label="Labels">
@@ -20,7 +20,7 @@
           >{{Object.keys(Info.labels).toString()}}:{{Object.values(Info.labels).toString()}}</div>
           <div class="tke-form-item_text" v-else>-</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">
             {{Info.time.substring(0,10)}}
             {{Info.time.substring(11,19)}}
