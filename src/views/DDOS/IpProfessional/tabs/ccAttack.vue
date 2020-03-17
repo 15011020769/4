@@ -5,11 +5,18 @@
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+            <!-- <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
             <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
             <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+            <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button> -->
+            <el-button
+              v-for="(item, index) in btnData"
+              :key="index"
+              :type="item.selected ? 'primary' : ''"
+              class="buttonGroup"
+              @click="thisTime(index + 1)"
+            >{{$t('DDOS.Statistical_forms.' + item.title)}}</el-button>
           </el-button-group>
           <el-date-picker
             v-model="dateChoice2"
@@ -143,6 +150,28 @@ export default {
       ReqQpsTotal: 0,
       DropQpsTotal: 0,
       dropqps: [],
+      btnData: [
+        {
+          selected: true,
+          title: "Today"
+        },
+        {
+          selected: false,
+          title: "Nearly_sedays"
+        },
+        {
+          selected: false,
+          title: "Fifteendays"
+        },
+        {
+          selected: false,
+          title: "Halfamonth"
+        },
+        {
+          selected: false,
+          title: "Halfayear"
+        }
+      ],
       inqpsdata: []
 
     };
@@ -205,6 +234,9 @@ export default {
         this.endTimeCC = moment(value[1]).format("YYYY-MM-DD 23:59:59")
         this.every();
         this.describeCCEvList();
+        for (let i = 0; i < this.btnData.length; i++) {
+          this.btnData[i]['selected'] = false
+        }
       }
       this.choiceClick = false
     },
@@ -417,6 +449,10 @@ export default {
       //   this.timedone(end, start, 86400000);
       //   //ddos攻击-攻击流量带宽
       // }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
+        this.btnData[thisTime - 1]['selected'] = true
+      }
       this.choiceClick = true
       let start
       let end = moment()

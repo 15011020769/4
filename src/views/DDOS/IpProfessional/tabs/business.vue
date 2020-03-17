@@ -5,11 +5,18 @@
       <div class="mainConListAll mainConListOne">
         <div class="newClear">
           <el-button-group class="buttonGroupAll">
-            <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
+            <!-- <el-button class="buttonGroup" @click="thisTime(1)">今天</el-button>
             <el-button class="buttonGroup" @click="thisTime(2)">近7天</el-button>
             <el-button class="buttonGroup" @click="thisTime(3)">近15天</el-button>
             <el-button class="buttonGroup" @click="thisTime(4)">近30天</el-button>
-            <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button>
+            <el-button class="buttonGroup" @click="thisTime(5)">近半年</el-button> -->
+            <el-button
+              v-for="(item, index) in btnData"
+              :key="index"
+              :type="item.selected ? 'primary' : ''"
+              class="buttonGroup"
+              @click="thisTime(index + 1)"
+            >{{$t('DDOS.Statistical_forms.' + item.title)}}</el-button>
           </el-button-group>
           <el-date-picker
             v-model="dateChoice3"
@@ -89,6 +96,28 @@ export default {
         new Date(new Date().getTime() - 24 * 60 * 60 * 1000)
       ),
       choiceClick:false,
+      btnData: [
+        {
+          selected: true,
+          title: "Today"
+        },
+        {
+          selected: false,
+          title: "Nearly_sedays"
+        },
+        {
+          selected: false,
+          title: "Fifteendays"
+        },
+        {
+          selected: false,
+          title: "Halfamonth"
+        },
+        {
+          selected: false,
+          title: "Halfayear"
+        }
+      ],
       chartDes1: '入流量頻寬峰值',
       chartDes2: '出流量頻寬峰值',
       chartValue1: '0bps',
@@ -145,8 +174,11 @@ export default {
         }
         this.timey = arr
         this.startTimeService = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
-         this.endTimeService = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
+        this.endTimeService = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
         this.describeTransmitStatis();
+        for (let i = 0; i < this.btnData.length; i++) {
+          this.btnData[i]['selected'] = false;
+        }
       }
       this.choiceClick = false
     },
@@ -406,6 +438,10 @@ export default {
       //   this.periodService = 86400;
       //   this.timedone(end, start, 86400000);
       // }
+      for (let i =0; i < this.btnData.length; i++) {
+        this.btnData[i]['selected'] = false;
+        this.btnData[thisTime - 1]['selected'] = true
+      }
       let start
       let end = moment()
       const times = []
