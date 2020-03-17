@@ -153,8 +153,7 @@ import {
   DELETE_TEMPLATE,
   GET_POLICY_GROUP_TYPE,
   GET_CONDITIONSTEMPLATELIST,
-  MODIFYPOLICYGROUPINFO,
-  GET_TEMPLATE_LIST
+  MODIFYPOLICYGROUPINFO
 } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
@@ -578,7 +577,7 @@ export default {
         //   groupId: id,
         //   groupName: name
         // }
-        path: `/Template/Detail/index/${id}`,
+        path: `/Template/Detail/index/${id}`
         // params: { groupName: name }
       })
     },
