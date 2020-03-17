@@ -101,7 +101,11 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
+          <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName">
+
+
+
+          </el-table-column>
           <div v-if="Show" slot="append" style="line-height:40px;padding:0 20px;color:#006eff;">
             <p v-show="!loading" @click="more()" style="cursor: pointer;">{{ $t('CLA.total.djjz') }}</p>
             <p v-show="loading" style="width:100%;text-align:center;">
@@ -181,7 +185,14 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('CLA.total.zymc')" prop="Resources.ResourceName"></el-table-column>
+          <el-table-column :label="$t('CLA.total.zymc')">
+            <template slot-scope="scope">
+              <div>
+                {{scope.row.Resources.ResourceName}}
+
+              </div>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
