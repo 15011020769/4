@@ -26,12 +26,17 @@
           <el-divider></el-divider>
           <h3 style='margin-bottom:20px;'>{{$t('TKE.overview.rzxx')}}</h3>
           <el-form-item :label="$t('TKE.overview.rzlx')">
-            <span v-if="$route.query.type == 'host-log'">{{$t('TKE.overview.zdrqrz')}}</span>
-            <span v-if="$route.query.type == 'container-log'">{{$t('TKE.overview.rqbzsc')}}</span>
-            <span v-if="$route.query.type == 'pod-log'">{{$t('TKE.overview.zdrqwj')}}</span>
+            <span v-if="$route.query.type.type == 'host-log'">{{$t('TKE.overview.zdrqrz')}}</span>
+            <span v-if="$route.query.type['container_log_input']['all_namespaces']">{{$t('TKE.overview.rqbzsc')}}</span>
+            <span v-if="!$route.query.type['container_log_input']['all_namespaces']">	指定容器日志</span>
+            <span v-if="$route.query.type.type == 'pod-log'">{{$t('TKE.overview.zdrqwj')}}</span>
           </el-form-item>
-          <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   :label="$t('TKE.overview.rzy')">
+          <!-- <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   :label="$t('TKE.overview.rzy')"> -->
+          <el-form-item  :label="$t('TKE.overview.rzy')">
             <span>{{$t('TKE.overview.syrq')}}</span>
+            <div v-for="(v,i) in logInfo" :key="i">
+             <p v-for="(vc,ic) in v.workloads" :key="ic">{{v.namespace}}/{{vc.type}}/{{vc.name}}</p>
+            </div>
           </el-form-item>
           <div  v-if="$route.query.type == 'pod-log'">
              <el-form-item :label="$t('TKE.overview.gzfz')">
@@ -89,14 +94,14 @@ import {
             case:'',
             topic:''
         },
-        id:''
+        id:'',
+        logInfo:[],
       }
     },
     created(){
-      
+      console.log(this.$route.query.type)
         if(this.$route.query.clusterId&&this.$route.query.stashName&&this.$route.query.namespace){
-            console.log(1)
-            this.findData()
+          this.findData()
         }
         this.id=this.$route.query.clusterId
     },
@@ -106,7 +111,8 @@ import {
       this.$router.push({
         name: "colonySub",
         query: {
-          clusterId: this.id.split("(")[0]
+          clusterId: this.id.split("(")[0],
+          ProjectId:0
         }
       });
 
@@ -115,7 +121,8 @@ import {
       timeFormat(times) {
         var d = new Date(times);
         var n = d.getFullYear();
-        var y = d.getMonth() + 1;
+        var y = (d.getMonth() + 1)<9?'0'+(d.getMonth() + 1):(d.getMonth() + 1);
+        
         var r = d.getDate();
         var h = d.getHours(); //12
         var m = d.getMinutes(); //12
@@ -141,6 +148,20 @@ import {
                   console.log(data)
                   this.createTime=data.metadata.creationTimestamp;
                   this.type=data.spec.output.type;
+                  let namespaces=data.spec.input.container_log_input.namespaces;
+                  this.logInfo=namespaces
+                  console.log(namespaces)
+                  if(namespaces.length!=0){
+
+                    namespaces.forEach(item => {
+                      if(item.all_containers){
+                        
+                      }
+                    });
+
+                  }
+
+
                   if(data.spec.output.type=='kafka'){
                       this.kafka.ip=data.spec.output.kafka_output.host
                       this.kafka.port=data.spec.output.kafka_output.port
