@@ -188,6 +188,7 @@ module.exports = {
       domainSure: '确 定',
       WeightedPoll: '加权轮询',
       AddAsk: '添加访问控制策略',
+      EditAsk: '编辑访问控制策略',
       AddAskTitle: '请添加需要访问控制策略，添加完成后默认开启该策略',
       strageName: '策略名称',
       searchStarge: '请输入策略名称，最长20个字',

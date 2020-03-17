@@ -948,7 +948,6 @@ export default {
         });
         this.dialogConfigModel = true;
       }, 1000);
-      
     },
     // 防护配置弹框关闭按钮
     closeConfigModel(isShow) {

@@ -141,15 +141,14 @@
 
               <el-table-column prop="action" label="操作" width="180">
                 <template slot-scope="scope">
-                  <el-button @click="changeRow(scope.$index, scope.row)" type="text" size="small">修改</el-button>
+                  <el-button @click="changeRow(scope.row)" type="text" size="small">修改</el-button>
                 </template>
               </el-table-column>
               <!-- 修改弹框 -->
               <changeModel
-                :configShow="changeModel"
+                :configShow="dialogConfigModel"
                 @closeConfigModel="closeConfigModel"
-                :modifyDDosRes="modifyDDosRes"
-                :policysData="tableDataPolicy"
+                ref="protectConfigModel"
               />
             </el-table>
           </div>
@@ -328,7 +327,7 @@ export default {
       loading: true,
       tableDataBegin: [], //DDoS攻击防护列表
       // 过滤刷新列表过程中使用
-      changeModel: false, //修改框
+      dialogConfigModel: false, //修改框
       modifyDDosRes: {}, //修改使用对象
       options1: [
         {
@@ -457,11 +456,11 @@ export default {
                     if(res.Response.DDosPolicyList.length == 0){
                       const obj2 = {
                         Key: "SPolicyName",
-                        Value: "-"
+                        Value: ""
                       };
                       const obj2Id = {
                         Key: "SPolicyId",
-                        Value: "0000"
+                        Value: ""
                       }
                       val.Record.push(obj2);
                       val.Record.push(obj2Id);
@@ -524,11 +523,6 @@ export default {
         this.loading = false;
       });
     },
-    //修改弹框关闭按钮
-    closeConfigModel(isShow) {
-      this.changeModel = isShow;
-      this.describeResourceList();
-    },
     // 1.2.获取DDoS高级策略
     describeDDoSPolicy() {
       this.loading = true;
@@ -579,9 +573,19 @@ export default {
       });
     },
     // 修改
-    changeRow(changeIndex, ddosRes) {
-      this.modifyDDosRes = ddosRes;
-      this.changeModel = true;
+    changeRow(row) {
+      this.resourceObj = JSON.parse(JSON.stringify(row));
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.$refs.protectConfigModel.init(this.resourceObj);
+        });
+        this.dialogConfigModel = true;
+      }, 1000);
+    },
+    //修改弹框关闭按钮
+    closeConfigModel(isShow) {
+      this.dialogConfigModel = isShow;
+      this.describeResourceList();
     },
     // 搜索
     doFilter() {

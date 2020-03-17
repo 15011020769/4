@@ -3,7 +3,7 @@
     <div>
       <el-dialog
         class="addAccessModel"
-        :title="$t('DDOS.accessCopy.AddAsk')"
+        :title="editFlag ? $t('DDOS.accessCopy.EditAsk') : $t('DDOS.accessCopy.AddAsk')"
         :visible.sync="dislogModelShow"
         width="40%"
         :before-close="handleClose">
