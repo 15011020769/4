@@ -22,6 +22,8 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
+            :picker-options="pickerOptions"
+            :default-time="defTime"
           ></el-date-picker>
         </div>
         <div style="margin-top:12px;">
@@ -144,6 +146,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 export default {
   data() {
+    let that = this
     return {
       loading: true,
       btnData: [
@@ -197,7 +200,34 @@ export default {
       traffictable:[],
       pkgtable:[],
       numtable:[],
-      choiceClick:false
+      choiceClick:false,
+      // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
+      chclikMinDate: '',
+      chclikMaxDate: '',
+      defTime: ['00:00:00', '23:59:59'],
+      pickerOptions: { // 时间选择控件限制选择范围
+        disabledDate (date) {
+          let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
+          let Date6Moths = moment(Date.now()).subtract(181, 'days').toDate().getTime()
+          if (that.chclikMinDate === '') {
+            return date.getTime() < Date6Moths || date.getTime() > nowDate
+          } else {
+            if (that.chclikMaxDate === '') {
+              let maxDate = moment(that.chclikMinDate).add(30, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(30, 'days').toDate().getTime()
+              minDate = minDate < Date6Moths ? Date6Moths : minDate
+              maxDate = maxDate > nowDate ? nowDate : maxDate
+              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
+            } else {
+              return date.getTime() < Date6Moths || date.getTime() > nowDate
+            }
+          }
+        },
+        onPick ({ maxDate, minDate }) {
+          that.chclikMinDate = minDate
+          that.chclikMaxDate = maxDate === null ? '' : maxDate
+        }
+      }
     };
   },
   watch: {
@@ -345,7 +375,7 @@ export default {
       this.IpList.splice(0, 0, "總覽");
       // 资源ID改变时，IP默认为总览
       this.selectIp = this.IpList[0];
-      // this.choiceTime('1')
+      this.choiceTime('1')
       this.describeDDoSNetTrend(this.timey);
       this.metricNames.forEach((name, i) => {
         this.metricName2 = this.metricNames[i];
@@ -624,8 +654,10 @@ export default {
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {
       this.metricName = value.name;
-      this.choiceTime(1);
-    },
+      // this.choiceTime(1);
+      this.describeDDoSNetTrend(this.timey);
+      this.describeDDoSNetEvList();
+},
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;

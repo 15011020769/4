@@ -45,10 +45,10 @@ export default {
     handleClick(tab, event) {
       if (tab.name == "ddos") {
         //DDOS攻击防护
-        this.$refs.ddosAttack.choiceTime(1);
+        // this.$refs.ddosAttack.choiceTime(1);
       } else if (tab.name == "cc") {
         //CC攻击防护
-        this.$refs.ccAttack.getDataCC();
+        this.$refs.ccAttack.getDataCC()
       } else if (tab.name == "service") {
         //业务
         this.$refs.servers.getDataService();

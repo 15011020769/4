@@ -25,6 +25,8 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
+            :picker-options="pickerOptions"
+            :default-time="defTime"
           ></el-date-picker>
         </div>
         <br />
@@ -70,6 +72,7 @@ import { GET_ID, RESOURCE_LIST, STATIC_LIST, L4_RULES, DESCRIBE_BARADDATA } from
 import moment from "moment";
 export default {
   data() {
+    let that = this
     return {
       loading: true,
       activeName2: "traffic", //业务-二级tab标识
@@ -121,8 +124,35 @@ export default {
       chartDes1: '入流量頻寬峰值',
       chartDes2: '出流量頻寬峰值',
       chartValue1: '0bps',
-      chartValue2: '0bps'
-    };
+      chartValue2: '0bps',
+      // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
+      chclikMinDate: '',
+      chclikMaxDate: '',
+      defTime: ['00:00:00', '23:59:59'],
+      pickerOptions: { // 时间选择控件限制选择范围
+        disabledDate (date) {
+          let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
+          let Date6Moths = moment(Date.now()).subtract(181, 'days').toDate().getTime()
+          if (that.chclikMinDate === '') {
+            return date.getTime() < Date6Moths || date.getTime() > nowDate
+          } else {
+            if (that.chclikMaxDate === '') {
+              let maxDate = moment(that.chclikMinDate).add(30, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(30, 'days').toDate().getTime()
+              minDate = minDate < Date6Moths ? Date6Moths : minDate
+              maxDate = maxDate > nowDate ? nowDate : maxDate
+              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
+            } else {
+              return date.getTime() < Date6Moths || date.getTime() > nowDate
+            }
+          }
+        },
+        onPick ({ maxDate, minDate }) {
+          that.chclikMinDate = minDate
+          that.chclikMaxDate = maxDate === null ? '' : maxDate
+        }
+      }
+    }
   },
   watch: {
     dateChoice3: function(value) {
@@ -192,7 +222,8 @@ export default {
 
   },
   created() {
-    this.GetID();
+    this.GetID()
+    // this.thisTime(1)
   },
   methods: {
     getDataService() {
@@ -225,6 +256,7 @@ export default {
           }
           this.ResIpList = res.Response.Resource
           this.inputIdService = res.Response.Resource[0].Id;
+          this.thisTime(1)
 				} else {
 					let ErrTips = {};
 					let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -282,7 +314,7 @@ export default {
       // 资源ID改变时，IP默认为总览
       this.ywTimeBtnSelect2 = this.IpList[0]
       this.resourceId = this.inputIdService;
-      this.thisTime('1')
+      this.thisTime(1)
       // this.describeResourceList();
       this.getDataService();
     },
