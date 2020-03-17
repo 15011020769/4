@@ -99,10 +99,8 @@ export default {
         Module: 'monitor',
         ModuleId: 1,
         DId: this.groudId
-        // dId: this.groudId,
         // lang: 'zh',
         // limit: 20,
-        // moduleId: 1,
         // offset: 0
       }
       await this.axios.post(GET_DESCRIBETRANSLOG, params).then(res => {

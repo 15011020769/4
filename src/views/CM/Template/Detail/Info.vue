@@ -5,23 +5,23 @@
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
         <el-form-item label="模板名称" class="form-item">
           <div class="item-text">
-            {{infoData.groupName}}
-            <i class="el-icon-edit" @click="openName(infoData.groupName)" style="cursor:pointer"></i>
+            {{infoData.GroupName}}
+            <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
           <div class="item-text">{{infoData.Name}}</div>
         </el-form-item>
         <el-form-item label="最后修改人">
-          <div class="item-text">{{infoData.lastEditUin}}</div>
+          <div class="item-text">{{infoData.LastEditUin}}</div>
         </el-form-item>
         <el-form-item label="最后修改时间">
-          <div class="item-text">{{infoData?infoData.updateTime : '' | formatDate}}</div>
+          <div class="item-text">{{infoData?infoData.UpdateTime : '' | formatDate}}</div>
         </el-form-item>
         <el-form-item label="备注">
           <div class="item-text">
-            <span>{{infoData.remark}}</span>
-            <i class="el-icon-edit" @click="openRemark(infoData.remark)" style="cursor:pointer"></i>
+            <span>{{infoData.Remark}}</span>
+            <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
       </el-form>
@@ -29,13 +29,13 @@
     <el-card class="card2">
       <h4 class="title-text">告警触发条件 <span @click="openEdit()" style="cursor:pointer">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
-      <p class="text-color2" v-for="(it) in infoData.conditions" :key="it.metricShowName">
+      <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
         <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
-        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
+        {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
-      <p class="text-color2" v-for="(it) in infoData.eventConditions" :key="it.eventShowName">
-        {{ `${it.eventShowName},不重复告警` }}
+      <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
+        {{ `${it.EventDisplayName},不重复告警` }}
       </p>
     </el-card>
     <el-card class="card3">
@@ -237,6 +237,7 @@ import {
   GET_POLICY_GROUP_TYPE,
   UPDATE_INFO,
   DESCRIBE_METRICS,
+  GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO
 } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
@@ -391,35 +392,13 @@ export default {
   created () {
     this.id = this.$route.params.id
     this.getInfo()
-    // this.getInfo2()
-    // this.getDetailInfo()
-    // this.getPolicyGroupList()
   },
   methods: {
     async getInfo () {
-      // await this.getTemplateList()
       await this.getPolicyType()
       await this.getDetailInfo()
-      await this.getPolicyGroupList()
-      // await this.getConditionsTemplateList()
+      // await this.getPolicyGroupList()
     },
-    // 获取告警策略模板列表
-    // async getConditionsTemplateList () {
-    //   let { groupName, groupId, viewName } = this.conditionsData
-    //   let params = {
-    //     Module: 'monitor',
-    //     ViewName: viewName,
-    //     GroupName: groupName,
-    //     GroupID: groupId,
-    //     UpdateTimeOrder: 'desc',
-    //     Limit: 1,
-    //     Offset: 0,
-    //     Version: '2018-07-24'
-    //   }
-    //   this.axios.post(GET_DESCRIBECONDITIONSTEMPLATELIST, params).then(res => {
-    //     console.log(res)
-    //   })
-    // },
     // 获取策略类型
     async getPolicyType  () {
       this.loadShow = true
@@ -451,33 +430,36 @@ export default {
     async getDetailInfo () {
       this.loadShow = true
       let params = {
-        groupId: this.id,
-        lang: 'zh'
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupID: this.id,
       }
-      await this.axios.post(GET_TEMPLATE_LIST, params).then(res => {
-        if (res.codeDesc === 'Success') {
-          var msg = res.data.templateGroupList
-          this.conditionsData = msg[0]
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
+        // console.log(res)
+        if (res.Response.Error === undefined) {
+          var msg = res.Response.TemplateGroupList
+          // this.conditionsData = msg[0]
           let ct = this.Conditions
           for (let i in msg) {
             for (let j in ct) {
-              if (msg[i].viewName === ct[j].PolicyViewName) {
+              if (msg[i].ViewName === ct[j].PolicyViewName) {
                 msg[i]['Name'] = ct[j].Name
               }
             }
           }
           msg.forEach(ele => {
-            ele.conditions.forEach((item, i) => {
-              item.calcType = this.SymbolList[item.calcType - 1]
-              let time1 = item.alarmNotifyPeriod / 60
-              let time2 = item.alarmNotifyPeriod / (60 * 60)
-              if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+            ele.Conditions.forEach((item, i) => {
+              let ct = Number(item.CalcType)
+              item.CalcType = this.SymbolList[ct - 1]
+              let time1 = item.AlarmNotifyPeriod / 60
+              let time2 = item.AlarmNotifyPeriod / (60 * 60)
+              if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重复告警'
-              } else if (item.alarmNotifyType == 1) {
+              } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指数递增重复告警'
-              } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
                 item.alarm = `按${time1}分钟重复告警`
-              } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+              } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小时重复告警`
               } else {
                 item.alarm = '按1天重复告警'

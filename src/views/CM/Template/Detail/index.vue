@@ -1,12 +1,12 @@
 <template>
-  <div class='detail-container'>
+  <div class='detail-container' v-loading="loadShow">
     <div class="header">
       <div class="header1">
         <div class="header2">
           <span class="goback" @click="goBack()">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">msg</h2>
+          <h2 class="header-title">{{groupName}}</h2>
         </div>
       </div>
     </div>
@@ -15,8 +15,8 @@
     <div class="detial-nav">
       <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'}">模板信息</router-link> -->
       <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">变更日志</router-link> -->
-      <router-link class="nav-item" :to="{path:`/Template/Detail/${groudId}/Info`}">模板信息</router-link>
-      <router-link class="nav-item" :to="{path:`/Template/Detail/${groudId}/Update`}">变更日志</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Info`}">模板信息</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Update`}">变更日志</router-link>
     </div>
 
     <!-- 子页面 -->
@@ -29,17 +29,53 @@
 </template>
 
 <script>
+import { GET_CONDITIONSTEMPLATELIST } from '@/constants/CM-yhs.js'
+import Loading from '@/components/public/Loading'
+import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
 export default {
   name: 'TemplateDetail',
   data () {
     return {
-      groudId: ''
+      loadShow: false,
+      groupId: '',
+      groupName: ''
     }
+  },
+  components: {
+    Loading
   },
   created () {
     this.groudId = this.$route.params.id
+    this.getGroupName()
   },
   methods: {
+    async getGroupName () {
+      this.loadShow = true
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupID: this.groudId
+      }
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          let msg = res.Response.TemplateGroupList
+          msg.forEach(ele => {
+            this.groupName = ele.GroupName
+          })
+          this.loadShow = false
+        } else {
+          this.loadShow = false
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
+    },
     // 返回上一层
     goBack () {
       this.$router.push({
