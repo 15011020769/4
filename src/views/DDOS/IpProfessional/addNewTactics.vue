@@ -130,7 +130,7 @@
             </td>
             <td>
               <!-- 端口号 -->
-              <el-input class="inputChange" v-model="item.portNum" autocomplete="off"></el-input>
+              <el-input class="inputChange" v-model="item.portNum" autocomplete="off" @input="updateView($event)"></el-input>
             </td>
             <td>
               <!-- 动作 -->
@@ -1513,7 +1513,11 @@ export default {
       this.tableDataBegin2 = []; //lxx
       this.tableDataBegin2.push(temp);
       this.dialogVisible = false;
-    }
+    },
+    // 端口再次輸入失敗修復
+    updateView(e) {
+    this.$forceUpdate()
+    } 
   }
 };
 </script>
