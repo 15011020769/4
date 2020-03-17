@@ -11,8 +11,8 @@ const conf = {
   loading: true,
   withCredentials: true,
   headers: {
-    //  uuid: VueCookie.get('uuid'),
-    uuid: 100012845766,
+    uuid: VueCookie.get('uuid'),
+    // uuid: 100011921910,
     Pragma: 'no-cache',
     'Cache-Control': 'no-cache',
     'Content-Type': 'application/json; charset=utf-8'
