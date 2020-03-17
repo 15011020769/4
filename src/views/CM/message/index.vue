@@ -84,8 +84,8 @@ import Dialog from "./components/dialog";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import {
-  BASICS_ALARM_LIST,
-  CM_GROUPING_LIST_DELETE
+  CUSTON_MESSAGE_LIST,
+  DETELE_CUSTON_MESSAGE
 } from "@/constants/CM-lxx.js";
 
 export default {
@@ -223,7 +223,7 @@ export default {
       // params.ObjLike = this.input;
       // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
       // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
-      this.axios.post(BASICS_ALARM_LIST, params).then(res => {
+      this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
         console.log(res.Response.Alarms, "数据");
         if (res.Response.Error === undefined) {
           // this.tableData = res.Response.Alarms;
@@ -254,7 +254,7 @@ export default {
         Version: "2018-07-24",
         Module: "monitor"
       };
-      this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
+      this.axios.post(DETELE_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.deleteDialogVisible = false;
           this.loadShow = false;

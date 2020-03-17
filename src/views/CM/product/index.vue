@@ -11,7 +11,7 @@
       <div class="box">
         <div class="table_top"> 
           <div class="type_data">
-            <TimeDropDown :TimeArr='TimeArr' :classsvalue="value" :Datecontrol='true' :Graincontrol='false' :Difference="'D'"
+            <TimeDropDown :TimeArr='TimeArr' :classsvalue="values" :Datecontrol='Datecontrol' :Graincontrol='Graincontrol' :Difference="Difference"
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
@@ -84,8 +84,8 @@
             </el-table-column>
             <el-table-column prop label="對象詳情" width="200">
               <template slot-scope="scope">
-                <div v-for="item in scope.row.Dimensions" :key="item">
-                  <p><span>{{item.Name}}：</span>{{item.Value}}</p>
+                <div v-for="(items,index) in scope.row.Dimensions" :key="index">
+                  <p><span>{{items.Name}}：</span>{{items.Value}}</p>
                 </div>
               </template>
             </el-table-column>
@@ -149,7 +149,10 @@ export default {
       unNormalEventAmount: 0, // 异常事件
       unRecoverAmount: 0, // 未恢复异常事件
       activeName: "first",
-      value: 13,
+      Datecontrol: true,
+      Graincontrol: false,
+      Difference: 'D',
+      values: 13,
       dialogVisible: false, //弹框
       Total: 0,
       searchInput: "", //搜索框的值
@@ -259,8 +262,9 @@ export default {
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
           this.Total = res.Response.Total
           // 筛选逻辑
+          let obj = {'names': this.searchValue, values : this.searchInput};
           if (this.searchInput !== "" && this.searchValue !== "") {
-            this.filtration (res, {'name': this.searchValue, value : this.searchInput})
+            this.filtration (res, obj)
           };
           
           if (types == 'string') {
@@ -284,10 +288,10 @@ export default {
       let dataType = typeof data;
       if (dataType == 'object') {
         res.Response.Events.forEach((currentValue,index,arr) => {
-          if(arr[index].EventCName === data.value && data.name == "EventCName") {
+          if(arr[index].EventCName === data.values && data.names == "EventCName") {
             tableListData.push(arr[index])
             this.tableData = tableListData;
-          } else if (arr[index].InstanceId === data.value && data.name == "InstanceId") {
+          } else if (arr[index].InstanceId === data.values && data.names == "InstanceId") {
             tableListData.push(arr[index])
             this.tableData = tableListData;
           }

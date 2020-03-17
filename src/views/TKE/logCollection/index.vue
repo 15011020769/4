@@ -40,6 +40,7 @@
         <el-table-column :label="$t('TKE.overview.mc')" width="180">
            <template slot-scope="scope">
             <a @click='goLogDetail(scope.row)'>{{scope.row.metadata.name}}</a>
+             <i class="el-icon-document" style="cursor: pointer;"  @click="getContext($event)"></i>
           </template>
         </el-table-column>
         <el-table-column prop="name" :label="$t('TKE.overview.zt')" width="180">
@@ -207,6 +208,27 @@
       }
     },
     methods: {
+
+    getContext (e) {
+      let getText = e.currentTarget.previousElementSibling.innerHTML
+      this.copy(getText)
+    },
+    copy (data) { // 复制功能
+      let url = data
+      let oInput = document.createElement('input')
+      oInput.value = url
+      document.body.appendChild(oInput)
+      oInput.select() // 选择对象;
+      console.log(oInput.value)
+      document.execCommand('Copy') // 执行浏览器复制命令
+      this.$message({
+        message: this.$t('TKE.mirrorDetail.fzcg'),
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+      oInput.remove()
+    },
       // 获取集群列表
       async getWarningList() {
         let params = {
@@ -269,7 +291,7 @@
       goLogDetail(row){
          var stashName=row.metadata.name;
         var namespace=row.metadata.namespace;
-         var type=row.spec.input.type
+         var type=row.spec.input
         this.$router.push({
           path: '/logDetail',
           query: {

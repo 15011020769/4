@@ -6,10 +6,14 @@
     </el-row>
     <el-row>
       <el-col :span="10">
+        <el-row class="empty" v-if="seriesPieErrorCode.length == 0 ? true : false">
+          暂无数据
+        </el-row>
         <echart-pie
           :series="seriesPieErrorCode"
           :color="colorPie"
           :totalNumber="totalNumber"
+          v-else
           v-loading="loading"
         />
       </el-col>
@@ -139,5 +143,12 @@ export default {
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
+}
+ .empty {
+  height: 400px;
+  width: 100%;
+  line-height: 400px;
+  text-align: center;
+  font-weight: bold
 }
 </style>

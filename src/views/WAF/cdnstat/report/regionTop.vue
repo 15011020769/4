@@ -6,10 +6,14 @@
     </el-row>
     <el-row>
       <el-col :span="16">
+        <el-row class="empty" v-if="seriesMap.length == 0 ? true : false">
+          暂无数据
+        </el-row>
         <echart-map
           :series="seriesMap"
           :total="totalNumber"
           v-loading="loading"
+          v-else
         />
       </el-col>
       <el-col :span="8">
@@ -223,4 +227,11 @@ export default {
       border-bottom: none;
     }
   }
+  .empty {
+      height: 480px;
+      width: 100%;
+      line-height: 480px;
+      text-align: center;
+      font-weight: bold
+    }
 </style>

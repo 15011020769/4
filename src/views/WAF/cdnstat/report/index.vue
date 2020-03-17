@@ -8,12 +8,12 @@
         <el-form>
           <el-row type="flex">
             <el-form-item label="统计项目" style="width: 300px">
-              <el-select v-model="projectId" size="small" placeholder="全部项目">
+              <el-select v-model="project" value-key="ProjectId" size="small" placeholder="全部项目">
                 <el-option value="">全部项目</el-option>
                 <el-option
                   v-for="p in projectList"
                   :key="p.ProjectId"
-                  :value="p.ProjectId"
+                  :value="p"
                   :label="p.ProjectName"
                 ></el-option>
               </el-select>
@@ -40,14 +40,14 @@
             </el-form-item>
             <el-form-item label="时间选择" style="width: 300px">
               <el-date-picker
-                ref="datePicker"
                 style="width: 230px"
                 size="small"
                 v-model="time"
-                :format="interval === 'day' ? 'yyyy-MM' : 'yyyy-MM-dd'"
-                :type="interval === 'hour' ? 'datetimerange' : 'date'"
+                :format="interval === 'day' ? 'yyyy-MM' : (interval === 'hour' ? `yyyy-MM-dd - ${weekEnd}` : 'yyyy-MM-dd')"
+                :type="interval === 'day' ? 'month' : 'date'"
+                @change="onChangeDate"
                 :picker-options="pickerOptions"
-                placeholder="选择日期">
+                :clearable="false">
               </el-date-picker>
             </el-form-item>
           </el-row>
@@ -127,46 +127,54 @@ export default {
       projectList: [],
       domainListCopy: [],
       domainList: [],
-      projectId: '',
+      project: '',
       domainName: '',
       interval: '5min',
       time: moment().subtract(1, 'd'),
       showFields: ['overview', 'regionTop', 'flux', 'bandlimit', 'request', 'errorCode', 'topUrl'],
+      weekEnd: '',
       pickerOptions: {
-        onPick({ maxDate, minDate }) {
-          console.log(maxDate, minDate)
+        disabledDate: (date) => {
+          if (this.interval === 'day') {
+            return moment(date).isAfter(moment().subtract(1, 'month')) || moment(date).isBefore(moment().add(2, 'month').subtract(1, 'year'))
+          }
+          if (this.interval === 'hour') {
+            return moment(date).isAfter(moment().subtract(moment().day(), 'd')) || moment(date).isBefore(moment().add(1, 'week').subtract(1, 'year'))
+          }
+          return moment(date).isAfter(moment().subtract(1, 'd')) || moment(date).isBefore(moment().add(1, 'd').subtract(1, 'year'))
         }
       }
     }
   },
   computed: {
     params() {
-      const { interval, projectId, domainName, time } = this
-      console.log(time)
+      const { interval, project, domainName, time } = this
       let times = time
+      let type = '日报'
       if (interval === '5min') { // 日报
-        times = [moment(time).startOf('d').format('YYYY-MM-DD HH:mm:ss'), moment(time).endOf('d').format('YYYY-MM-DD HH:mm:ss')]
+        times = [moment(time).startOf('d').format('YYYY-MM-DD 00:00:00'), moment(time).endOf('d').format('YYYY-MM-DD 23:59:59')]
       } else if (interval === 'day') { // 月报
-        times = [moment(time).startOf('d').format('YYYY-MM-DD HH:mm:ss'), moment(time).endOf('month').format('YYYY-MM-DD HH:mm:ss')]
+        type = '月报'
+        times = [moment(time).format('YYYY-MM-01 00:00:00'), moment(time).endOf('month').format('YYYY-MM-DD 23:59:59')]
       } else { // 周报
-        times = [time[0].startOf('d').format('YYYY-MM-DD HH:mm:ss'), time[1].endOf('d').format('YYYY-MM-DD HH:mm:ss')]
+        type = '周报'
+        times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
       }
-      console.log(times[0])
-      console.log(times[1])
-      return {interval, projectId, domainName, times}
+      return {interval, type, projectId: project.ProjectId, projectName: project.projectName, domainName, times}
     }
   },
   watch: {
-    projectId(projectId) {
-      if (!projectId) {
+    project(project) {
+      if (!project) {
         this.domainList = [...this.domainListCopy]
         return
       }
-      this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === projectId)
+      this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === project.ProjectId)
     },
     interval(interval) {
       if (interval === 'hour') {
-        this.time = [moment().subtract(7, 'd'), moment().subtract(1, 'd')]
+        this.time = moment().subtract(7, 'd').startOf('week').add(1, 'd').format('YYYY-MM-DD')
+        this.weekEnd = moment().subtract(7, 'd').endOf('week').add(1, 'd').format('YYYY-MM-DD')
       } else if (interval === 'day') {
         this.time = moment().subtract(1, 'month').format('YYYY-MM')
       } else {
@@ -175,10 +183,20 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$refs.datePicker)
     this.init()
   },
   methods: {
+    onChangeDate(date) {
+      if (this.interval === 'hour') {
+        if (moment(date).day() === 0) {
+          this.time = moment(date).subtract(6, 'd').format('YYYY-MM-DD')
+          this.weekEnd = moment(date).format('YYYY-MM-DD')
+        } else {
+          this.time = moment(date).startOf('week').add(1, 'd').format('YYYY-MM-DD')
+          this.weekEnd = moment(date).endOf('week').add(1, 'd').format('YYYY-MM-DD')
+        }
+      }
+    },
     init() {
       this.getProjects()
       this.getDomains()
@@ -227,6 +245,8 @@ export default {
 ::v-deep .el-date-editor.el-input {
   width: 200px;
 }
-
+::v-deep .el-input--suffix .el-input__inner {
+  padding-right: 0;
+}
 
 </style>

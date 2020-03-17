@@ -18,55 +18,55 @@
        <div class="tke-card tke-formpanel-wrap mb60">
          <!-- config -->
          <el-form class="tke-form"  label-position="left" label-width="120px" size="mini">
-           <el-form-item label="数据卷（选填）">
+           <el-form-item :label="$t('TKE.subList.sjjxt')">
              <div class="search-one" v-for="(item, index) in  wl.dataJuan" :key="index">
-               <el-select v-model="item.name1" placeholder="请选择" @change="initReelData(item.name1,index)"   >
+               <el-select v-model="item.name1" :placeholder="$t('TKE.overview.qxz')" @change="initReelData(item.name1,index)"   >
                  <el-option v-for="item in searchOptions" :key="item.value" :label="item.label" :value="item.value">
                  </el-option>
                </el-select>
-               <el-input class="search-input" v-model="item.name2" placeholder="名称  如val"  ></el-input>
+               <el-input class="search-input" v-model="item.name2" placeholder="名稱  如val"  ></el-input>
                <div class="search-hidden">
                  <div v-if="item.name1 == 'usePath'">
                    <p v-if="item.name3!=''&&item.name4!=''">
                       <el-tooltip  placement="top"  effect="light">
                         <div slot="content">
-                          <p>主机路径:{{item.name3}}</p>
-                          <p>检查类型:{{item.name4}}</p>
+                          <p>{{$t('TKE.subList.zjlj')}}:{{item.name3}}</p>
+                          <p>{{$t('TKE.subList.jclx')}}:{{item.name4}}</p>
                         </div>
-                        <span>主机路径设置 <i class="el-icon-info"></i></span>
+                        <span>{{$t('TKE.subList.zjljsz')}} <i class="el-icon-info"></i></span>
                       </el-tooltip>
-                      <span class="add-check" @click="resetHostPath(item.name3,item.name4,index)" >重新设置</span>
+                      <span class="add-check" @click="resetHostPath(item.name3,item.name4,index)" >{{$t('TKE.subList.cxsz')}}</span>
                    </p>
                    <p v-else>
-                    <span>暂未设置主机路径</span>
-                    <span class="add-check" @click="setHostPath(index)">设置主机路径</span>
+                    <span>{{$t('TKE.subList.zwszzjlj')}}</span>
+                    <span class="add-check" @click="setHostPath(index)">{{$t('TKE.subList.szzjlj')}}</span>
                    </p>
                  </div>
                  <div v-if="item.name1 == 'useNFS'">
-                   <el-input class="search-input" v-model="item.name3" placeholder="NFS路径 如：127.0.0.1:/dir"></el-input>
+                   <el-input class="search-input" v-model="item.name3" placeholder="NFS路徑 如：127.0.0.1:/dir"></el-input>
                  </div>
                  <div v-if="item.name1 == 'usePVC'">
-                   <el-select v-model="item.name3" placeholder="请选择pvc">
+                   <el-select v-model="item.name3" :placeholder="$t('TKE.subList.qxzvpc')">
                      <el-option v-for="(val,i3) in pvcOption" :key="i3" :value="val.metadata.name" :label="val.metadata.name"></el-option>
                    </el-select>
                  </div>
                  <div v-if="item.name1 == 'useYun'">
                    <p v-if="item.name3==''">
-                    <span class="add-check" @click="selectYun(index)">选择云硬盘</span>&nbsp;&nbsp;
-                    <el-tooltip class="item" effect="light" content="数据卷类型为云硬盘，实例数量最大为1" placement="top">
+                    <span class="add-check" @click="selectYun(index)">{{$t('TKE.subList.xzyyp')}}</span>&nbsp;&nbsp;
+                    <el-tooltip class="item" effect="light" :content="$t('TKE.subList.sjjlx')" placement="top">
                       <i style="cursor:pointer" class="el-icon-warning"></i>
                     </el-tooltip>
                    </p>
                    <p v-if="item.name3!=''">
                      <span>{{item.name3}}</span>
-                     <span class="add-check" @click="selectYun(index)" >重新选择</span>
-                     <el-tooltip class="item" effect="light" content="数据卷类型为云硬盘，实例数量最大为1" placement="top">
+                     <span class="add-check" @click="selectYun(index)" >{{$t('TKE.subList.cxxz')}}</span>
+                     <el-tooltip class="item" effect="light" :content="$t('TKE.subList.sjjlx')" placement="top">
                       <i style="cursor:pointer" class="el-icon-warning"></i>
                      </el-tooltip>
                    </p>
                  </div>
                  <div v-if="item.name1 == 'useConfig'" style="display:flex;align-items:center">
-                    <span v-if="item.name3==''"> 暂未选择ConfigMap</span>
+                    <span v-if="item.name3==''"> {{$t('TKE.subList.zwxz')}}ConfigMap</span>
                     <span v-if="item.name3!=''">
                       <span> {{item.name3}}</span><br/>
                       <span v-if="item.name4=='all'">全部Key</span>
@@ -74,13 +74,13 @@
                          <div slot="content">
                            <p v-for="(v,i) in item.name4" :key="i">{{v.key}}、{{v.path}}、{{v.mode}}</p>
                         </div>
-                       <span >指定部分Key</span>
+                       <span >{{$t('TKE.subList.zdbf')}}Key</span>
                       </el-tooltip>
                     </span>
-                    <span class="add-check" @click="selectConfig(index)">选择配置项</span>
+                    <span class="add-check" @click="selectConfig(index)">{{$t('TKE.subList.xzpzx')}}</span>
                  </div>
                  <div v-if="item.name1 == 'useSecret'"  style="display:flex;align-items:center" >
-                    <span v-if="item.name3==''">暂未选择Secret</span>
+                    <span v-if="item.name3==''">{{$t('TKE.subList.zwxz')}}Secret</span>
                     <span v-if="item.name3!=''">
                       <span> {{item.name3}}</span><br/>
                       <span v-if="item.name4=='all'">全部Key</span>
@@ -88,38 +88,38 @@
                          <div slot="content">
                            <p v-for="(v,i) in item.name4" :key="i">{{v.key}}、{{v.path}}、{{v.mode}}</p>
                         </div>
-                       <span >指定部分Key</span>
+                       <span >{{$t('TKE.subList.zdbf')}}Key</span>
                       </el-tooltip>
                     </span>
-                   <span class="add-check" @click="selectSecret(index)">选择Secret</span>
+                   <span class="add-check" @click="selectSecret(index)">{{$t('TKE.subList.xuanze')}}Secret</span>
                  </div>
                </div>
-               <el-tooltip v-if="firstPointInfoData.indexOf(item.name2)!=-1&&item.name2!=''" class="item" effect="light" content="该数据卷已被挂载，不可删除" placement="top">
+               <el-tooltip v-if="firstPointInfoData.indexOf(item.name2)!=-1&&item.name2!=''" class="item" effect="light" :content="$t('TKE.subList.sjjbgz')" placement="top">
                  <i style="cursor:pointer" class="el-icon-close"></i>
                </el-tooltip>
                <i v-if="firstPointInfoData.indexOf(item.name2)==-1"    class="el-icon-close" @click="wl.dataJuan.splice(index, 1)"></i>
              </div>
              <p style="margin-top:8px">
-               <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">添加数据卷</el-button>
+               <el-button type="text"  :disabled="yesOrnoAddDataJuan" @click="addDataJuan">{{$t('TKE.subList.tjsjj')}}</el-button>
              </p>
              <p>
-               为容器提供存储，目前支持临时路径、主机路径、云硬盘数据卷、文件存储NFS、配置文件、PVC，还需挂载到容器的指定路径中。
+               {{$t('TKE.subList.gzljzdrq')}}
                <!-- <span style="color:#409eff;cursor:pointer" >使用指引</span> -->
              </p>
            </el-form-item>
-           <el-form-item label="实例内容器">
+           <el-form-item :label="$t('TKE.subList.slnrq')">
              <div  v-for="(v,i) in wl.instanceContent" :key="i">
                <div v-show="v.editStatus" class="case-content" style="margin-bottom: 18px">
                  <el-form-item style="margin-bottom: 0px">
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" :content="$t('TKE.subList.qwcdbjx')" placement="top" :disabled="v.completed">
                         <i class="el-icon-check"
                            style="font-size:20px;margin-left:20px;"
                            :style="{cursor: v.completed?'pointer':'no-drop'}"
                            @click="v.completed?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
-                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                      <el-tooltip effect="light" :content="$t('TKE.subList.bksczs')" placement="top" :disabled="wl.instanceContent.length!==1">
                         <i class="el-icon-close"
                            style="font-size:20px;margin-left:20px;cursor:pointer"
                            @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
@@ -127,32 +127,32 @@
                       </el-tooltip>
                     </div>
                   </el-form-item>
-                 <el-form-item label="名称" style="margin-bottom: 10px">
+                 <el-form-item :label="$t('TKE.overview.mc')" style="margin-bottom: 10px">
                    <span  v-if='lengths==wl.instanceContent.length'  v-text="v.name"></span>
-                    <el-input v-else class="w192" v-model="v.name" placeholder="请输入容器名称"></el-input>
+                    <el-input v-else class="w192" v-model="v.name" :placeholder="$t('TKE.subList.srrqmc')"></el-input>
                  </el-form-item>
-                 <el-form-item label="镜像">
+                 <el-form-item :label="$t('TKE.overview.jx')">
                    <el-input class="w192" v-model="v.mirrorImg"></el-input>
-                   <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">选择镜像</el-button>
+                   <el-button type="text" size="mini" @click="SelectMirrorImgFlag=true">{{$t('TKE.subList.xzjxiang')}}</el-button>
                    <SelectMirrorImg :dialogVisible.sync='SelectMirrorImgFlag' @confirm='confirmMirrorImg($event, i)'></SelectMirrorImg>
                  </el-form-item>
-                 <el-form-item label="镜像版本（Tag）">
+                 <el-form-item :label="$t('TKE.subList.jxbbt')">
                    <el-input class="w192" v-model="v.versions"></el-input>
                  </el-form-item>
-                 <el-form-item label="镜像拉取策略">
+                 <el-form-item :label="$t('TKE.subList.jxlqcl')">
                    <template>
                      <el-radio-group v-model="v.imagePullPolicy" style="margin-bottom: 5px;">
                        <el-radio-button label="Always">Always</el-radio-button>
                        <el-radio-button label="IfNotPresent">IfNotPresent</el-radio-button>
                        <el-radio-button label="Never">Never</el-radio-button>
                      </el-radio-group>
-                     <p v-show="v.imagePullPolicy === ''">若不设置镜像拉取策略，当镜像版本为空或:latest时，使用Always策略，否则使用IfNotPresent策略</p>
-                     <p v-show="v.imagePullPolicy=='Always'">总是从远程拉取该镜像</p>
-                     <p v-show="v.imagePullPolicy=='IfNotPresent'">默认使用本地镜像，若本地无该镜像则远程拉取该镜像</p>
-                     <p v-show="v.imagePullPolicy=='Never'">只使用本地镜像，若本地没有该镜像将报异常</p>
+                     <p v-show="v.imagePullPolicy === ''">{{$t('TKE.subList.bszlqjx')}}</p>
+                     <p v-show="v.imagePullPolicy=='Always'">{{$t('TKE.subList.yclqjx')}}</p>
+                     <p v-show="v.imagePullPolicy=='IfNotPresent'">{{$t('TKE.subList.mrsybdjx')}}</p>
+                     <p v-show="v.imagePullPolicy=='Never'">{{$t('TKE.subList.zsybdjx')}}</p>
                    </template>
                  </el-form-item>
-                 <el-form-item label="挂载点" v-show="isExistvolumesData">
+                 <el-form-item :label="$t('TKE.subList.gzd')" v-show="isExistvolumesData">
                     <div  v-for="(point,i2) in v.mountPoint" :key="i2" class="mount-point">
                       <el-select v-model="point.name" class="w100">
                         <el-option v-for="(item,i3) in autoChangeOption" :key="i3" :value="item" :label="item"></el-option>
@@ -160,14 +160,14 @@
                       <el-input v-model="point.mountPath" class="w192 ml8"></el-input>
                       <el-input v-model="point.subPath" class="w192 ml8"></el-input>
                       <el-select  v-model="point.readOnly" class="w100 ml8">
-                        <el-option value="false" label="读写"></el-option>
-                        <el-option value="true" label="只读"></el-option>
+                        <el-option value="false" :label="$t('TKE.subList.dxie')"></el-option>
+                        <el-option value="true" :label="$t('TKE.subList.zdu')"></el-option>
                       </el-select>
                        <i class="el-icon-close" @click="deleteMountPoint(i,i2,point.name)" style="font-size:20px;margin-left:20px;cursor:pointer"></i>
                     </div>
-                    <el-button type="text" @click="addMountPoint(i)">添加挂载点</el-button>
+                    <el-button type="text" @click="addMountPoint(i)">{{$t('TKE.subList.tjgzd')}}</el-button>
                   </el-form-item>
-                 <el-form-item label="CPU/内存限制">
+                 <el-form-item :label="$t('TKE.subList.cpuncxz')">
                    <div class="cpu-limit">
                      <div>
                        <p>CPU限制</p>
@@ -183,7 +183,7 @@
                        </div>
                      </div>
                      <div>
-                       <p>内存限制</p>
+                       <p>{{$t('TKE.subList.ncxz')}}</p>
                        <div style="display:flex">
                          <div class="cpu-limit2">
                            <span>request</span>
@@ -197,18 +197,18 @@
                      </div>
                    </div>
                    <p style="margin-top:10px;">
-                     Request用于预分配资源,当集群中的节点没有request所要求的资源数量时,容器会创建失败。Limit用于设置容器使用资源的最大上限,避免异常情况下节点资源消耗过多。</p>
+                     {{$t('TKE.subList.jdzyxhgd')}}。</p>
                  </el-form-item>
                  <el-form-item label="GPU限制">
-                   <el-input-number v-model="v.gpuNum" size="small" :min="0"></el-input-number>个
+                   <el-input-number v-model="v.gpuNum" size="small" :min="0"></el-input-number>{{$t('TKE.overview.ge')}}
                  </el-form-item>
-                 <el-form-item label="环境变量">
-                   <el-tooltip class="item" effect="light" content="设置容器中的变量" placement="top">
+                 <el-form-item :label="$t('TKE.subList.hjbl')">
+                   <el-tooltip class="item" effect="light" :content="$t('TKE.subList.szrqbl')" placement="top">
                      <i class="el-icon-info  setPosition"></i>
                    </el-tooltip>
                    <div v-for="(ve,ie) in v.environmentVar" :key="ie">
-                     <el-input class="w100" v-model="ve.name" placeholder="变量名"></el-input> =
-                     <el-input class="w192" v-model="ve.value" placeholder="变量值"></el-input>
+                     <el-input class="w100" v-model="ve.name" :placeholder="$t('TKE.overview.blm')"></el-input> =
+                     <el-input class="w192" v-model="ve.value" :placeholder="$t('TKE.overview.blz')"></el-input>
                      <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer"
                       @click="delEnvironmentVar(i,ie)"></i>
                    </div>
@@ -222,14 +222,14 @@
                           </el-select>
                         </el-form-item>
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
-                          <el-select v-model="val.value2"  placeholder="请选择资源" :disabled="val.value1===''||val.value2=='暂无数据'" class="w100" style="margin:0px 10px;"  @change="citeCsValue2Change($event, val)">
+                          <el-select v-model="val.value2"  :placeholder="$t('TKE.subList.qxzzy')" :disabled="val.value1===''||val.value2=='暫無數據'" class="w100" style="margin:0px 10px;"  @change="citeCsValue2Change($event, val)">
                             <el-option v-for="item in val.option2" :key="item.name" :label="item.name"
                                        :value="item.name">
                             </el-option>
                           </el-select>
                         </el-form-item>
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
-                          <el-select v-model="val.value3" :disabled="val.value1===''||val.value2=='暂无数据'" class="w100">
+                          <el-select v-model="val.value3" :disabled="val.value1===''||val.value2=='暫無數據'" class="w100">
                             <el-option v-for="item in val.option3" :key="item" :label="item"
                                        :value="item">
                             </el-option>
@@ -238,197 +238,197 @@
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
                           <el-input class="w150" v-model="val.input1"></el-input>
                         </el-form-item>
-                        为别名
+                        {{$t('TKE.subList.wbm')}}
                         <i class="el-icon-close" style="font-size:20px;margin-left:20px;cursor:pointer" @click="delCiteCs(i, val.key)"></i>
                    </div>
-                  <el-button type="text" size="mini" @click='addEnvironmentVar(i)'>新增变量</el-button>
+                  <el-button type="text" size="mini" @click='addEnvironmentVar(i)'>{{$t('TKE.overview.xzbl')}}</el-button>
                   <el-button type="text" size="mini" @click='addCiteCs(i)'>引用ConfigMap/Secret</el-button>
-                   <p>只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母开头</p>
+                   <p>{{$t('TKE.subList.znbh')}}</p>
                  </el-form-item>
                  
                  <div v-show="v.disAdvancedSetting">
-                   <el-form-item label="工作目录">
+                   <el-form-item :label="$t('TKE.subList.gzml')">
                      <el-input class="w192" v-model="v.workDirectory"></el-input>
-                     <p> 指定容器运行后的工作目录，
+                     <p> {{$t('TKE.subList.zdgzml')}}
                        <!-- <a href="#">查看详情</a>  -->
                      </p>
                    </el-form-item>
-                   <el-form-item label="运行命令">
+                   <el-form-item :label="$t('TKE.subList.yxml')">
                      <el-input type="textarea"  v-model="v.runCommand" class="w400"  rows="3" resize="none"></el-input>
-                     <p> 控制容器运行的输入命令，
+                     <p> {{$t('TKE.subList.kzsrml')}}，
                        <!-- <a href="#">查看详情</a>  -->
                       </p>
                    </el-form-item>
-                   <el-form-item label="运行参数">
+                   <el-form-item :label="$t('TKE.subList.yxcs')">
                      <el-input type="textarea"  v-model="v.runParam"   class="w400"  rows="3" resize="none"></el-input>
-                     <p>传递给容器运行命令的输入参数，注意每个参数单独一行，
+                     <p>{{$t('TKE.subList.srcs')}}，
                        <!-- <a href="#">查看详情</a>  -->
                       </p>
                    </el-form-item>
-                   <el-form-item label="容器健康检查">
-                     <el-tooltip class="item" effect="light" content="健康检查可以帮助你探测容器是否正常，以保证服务的正常运作" placement="top">
+                   <el-form-item :label="$t('TKE.subList.rqjkjc')">
+                     <el-tooltip class="item" effect="light" :content="$t('TKE.subList.jkjcbzzcyz')" placement="top">
                        <i class="el-icon-info  setPosition2"></i>
                      </el-tooltip>
                      <p>
-                       <el-checkbox v-model="v.surviveExamine">存活检查</el-checkbox> <span>检查容器是否正常，不正常则重启实例</span>
+                       <el-checkbox v-model="v.surviveExamine">{{$t('TKE.subList.chjc')}}</el-checkbox> <span>{{$t('TKE.subList.jcrqsfzc')}}</span>
                      </p>
                      <div v-show="v.surviveExamine"  class="from-1">
                        <!--存活检查 -->
                        <div style="background: #f2f2f2;box-sizing:border-box;padding: 6px;">
-                         <el-form-item label="检查方法">
+                         <el-form-item :label="$t('TKE.subList.jcff')">
                            <el-select v-model="v.surviveExamineContent.inspectMethodValue">
                              <el-option v-for="item in v.surviveExamineContent.inspectMethodOption" :key="item" :label="item"
                                :value="item">
                              </el-option>
                            </el-select>
                          </el-form-item>
-                         <el-form-item label="检查协议" v-show="v.surviveExamineContent.inspectMethodValue=='HTTP请求检查'">
+                         <el-form-item :label="$t('TKE.subList.jcxy')" v-show="v.surviveExamineContent.inspectMethodValue=='HTTP請求檢查'">
                            <el-select v-model="v.surviveExamineContent.inspectProtocolValue">
                               <el-option v-for="item in v.surviveExamineContent.inspectProtocolOption" :key="item" :label="item"
                                          :value="item">
                               </el-option>
                             </el-select>
                          </el-form-item>
-                         <el-form-item label="执行命令" v-show="v.surviveExamineContent.inspectMethodValue==='执行命令检查'">
+                         <el-form-item :label="$t('TKE.subList.zxml')" v-show="v.surviveExamineContent.inspectMethodValue==='執行命令檢查'">
                            <el-input type="textarea" class="w192" v-model="v.surviveExamineContent.executiveOrder" rows="4" resize="none"></el-input>
                          </el-form-item>
-                         <el-form-item label="检查端口" v-show="v.surviveExamineContent.inspectMethodValue!=='执行命令检查'">
+                         <el-form-item :label="$t('TKE.subList.jcdk')" v-show="v.surviveExamineContent.inspectMethodValue!=='執行命令檢查'">
                             <el-input class="w100" v-model="v.surviveExamineContent.inspectPort"></el-input>
-                            <span>端口范围：1~65535</span>
+                            <span>端口{{$t('TKE.colony.fw')}}：1~65535</span>
                           </el-form-item>
-                          <el-form-item label="请求路径" v-show="v.surviveExamineContent.inspectMethodValue==='HTTP请求检查'">
+                          <el-form-item :label="$t('TKE.subList.qqlj')" v-show="v.surviveExamineContent.inspectMethodValue==='HTTP請求檢查'">
                             <el-input class="w100" v-model="v.surviveExamineContent.requestPath"></el-input>
                           </el-form-item>
-                          <el-form-item label="启动延时">
-                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.qdys')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.rqysqd')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.surviveExamineContent.startDelay"></el-input>
-                            <span>范围：0~60秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：0~60秒</span>
                           </el-form-item>
-                          <el-form-item label="响应超时">
-                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.xycs')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.jcxyzcsj')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.surviveExamineContent.responseTimeout"></el-input>
-                            <span>范围：2~60秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：2~60秒</span>
                           </el-form-item>
-                          <el-form-item label="间隔时间">
-                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.jgsj')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.jkjcsjjg')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.surviveExamineContent.intervalTime"></el-input>
-                            <span>范围：2~300秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：2~300秒</span>
                           </el-form-item>
-                          <el-form-item label="健康阙值">
-                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                          <el-form-item :label="$t('TKE.subList.jkyz')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.hdrqsbdcg')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.surviveExamineContent.healthyThreshold" :disabled="true"></el-input>
-                            <span>范围：1次</span>
+                            <span>{{$t('TKE.colony.fw')}}：1次</span>
                           </el-form-item>
-                          <el-form-item label="不健康阙值">
-                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                          <el-form-item :label="$t('TKE.subList.bjkyz')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.hdrqcgdsb')" placement="right">
                               <i class="el-icon-info  setPosition3"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.surviveExamineContent.unhealthyThreshold"></el-input>
-                            <span>范围：1~10次</span>
+                            <span>{{$t('TKE.colony.fw')}}：1~10次</span>
                           </el-form-item>
                        </div>
                      </div>
                      <p>
-                       <el-checkbox v-model="v.readyToCheck">就绪检查</el-checkbox> <span>检查容器是否就绪，不就绪则停止转发流量到当前实例</span>
+                       <el-checkbox v-model="v.readyToCheck">{{$t('TKE.subList.jxjc')}}</el-checkbox> <span>{{$t('TKE.subList.jcrqsfjx')}}</span>
                      </p>
                      <div v-show="v.readyToCheck" class="from-1">
                        <!--就绪检查 -->
                        <div style="background: #f2f2f2;padding: 6px;">
-                        <el-form-item label="检查方法">
+                        <el-form-item :label="$t('TKE.subList.jcff')">
                             <el-select v-model="v.readyToCheckContent.inspectMethodValue">
                               <el-option v-for="item in v.readyToCheckContent.inspectMethodOption" :key="item" :label="item"
                                          :value="item">
                               </el-option>
                             </el-select>
                           </el-form-item>
-                          <el-form-item label="检查协议" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                          <el-form-item :label="$t('TKE.subList.jcxy')" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP請求檢查'">
                             <el-select v-model="v.readyToCheckContent.inspectProtocolValue">
                               <el-option v-for="item in v.readyToCheckContent.inspectProtocolOption" :key="item" :label="item"
                                          :value="item">
                               </el-option>
                             </el-select>
                           </el-form-item>
-                          <el-form-item label="执行命令" v-show="v.readyToCheckContent.inspectMethodValue==='执行命令检查'">
+                          <el-form-item :label="$t('TKE.subList.zxml')" v-show="v.readyToCheckContent.inspectMethodValue==='執行命令檢查'">
                             <el-input type="textarea" class="w192" v-model="v.readyToCheckContent.executiveOrder" rows="4" resize="none"></el-input>
                           </el-form-item>
-                          <el-form-item label="检查端口" v-show="v.readyToCheckContent.inspectMethodValue!=='执行命令检查'">
+                          <el-form-item :label="$t('TKE.subList.jcdk')" v-show="v.readyToCheckContent.inspectMethodValue!=='執行命令檢查'">
                             <el-input class="w100" v-model="v.readyToCheckContent.inspectPort"></el-input>
-                            <span>端口范围：1~65535</span>
+                            <span>端口{{$t('TKE.colony.fw')}}：1~65535</span>
                           </el-form-item>
-                          <el-form-item label="请求路径" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP请求检查'">
+                          <el-form-item :label="$t('TKE.subList.qqlj')" v-show="v.readyToCheckContent.inspectMethodValue==='HTTP請求檢查'">
                             <el-input class="w100" v-model="v.readyToCheckContent.requestPath"></el-input>
                           </el-form-item>
-                          <el-form-item label="启动延时">
-                            <el-tooltip effect="light" content="容器延时启动健康检查的时间，范围：0~60秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.qdys')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.rqysqd')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.startDelay"></el-input>
-                            <span>范围：0~60秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：0~60秒</span>
                           </el-form-item>
-                          <el-form-item label="响应超时">
-                            <el-tooltip effect="light" content="每次健康检查响应的最大超时时间，范围：2~60秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.xycs')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.jcxyzcsj')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.responseTimeout"></el-input>
-                            <span>范围：2~60秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：2~60秒</span>
                           </el-form-item>
-                          <el-form-item label="间隔时间">
-                            <el-tooltip effect="light" content="进行健康检查的时间间隔，范围：大于响应超时，小于300秒" placement="right">
+                          <el-form-item :label="$t('TKE.subList.jgsj')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.jkjcsjjg')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.intervalTime"></el-input>
-                            <span>范围：2~300秒</span>
+                            <span>{{$t('TKE.colony.fw')}}：2~300秒</span>
                           </el-form-item>
-                          <el-form-item label="健康阙值">
-                            <el-tooltip effect="light" content="表示后端容器从失败到成功的连续健康检查成功次数，范围：只能为1" placement="right">
+                          <el-form-item :label="$t('TKE.subList.jkyz')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.hdrqsbdcg')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.healthyThreshold"></el-input>
-                            <span>范围：1~10次</span>
+                            <span>{{$t('TKE.colony.fw')}}：1~10次</span>
                           </el-form-item>
-                          <el-form-item label="不健康阙值">
-                            <el-tooltip effect="light" content="表示后端容器从成功到失败的连续健康检查成功次数，范围：1~10次" placement="right">
+                          <el-form-item :label="$t('TKE.subList.bjkyz')">
+                            <el-tooltip effect="light" :content="$t('TKE.subList.hdrqcgdsb')" placement="right">
                               <i class="el-icon-info  setPosition3"></i>
                             </el-tooltip>
                             <el-input class="w100" v-model="v.readyToCheckContent.unhealthyThreshold"></el-input>
-                            <span>范围：1~10次</span>
+                            <span>{{$t('TKE.colony.fw')}}：1~10次</span>
                           </el-form-item>
                        </div>
                      </div>
 
-                     <p>查看健康检查和就绪检查
+                     <p>{{$t('TKE.subList.cjjkjc')}}
                        <!-- <a href="#">使用指引</a> -->
                       </p>
                    </el-form-item>
-                   <el-form-item label="特权级容器">
+                   <el-form-item :label="$t('TKE.subList.tqjrq')">
                      <el-switch  v-model="v.privilegeLevelContainer" active-color="#006eff" inactive-color="#888">
                      </el-switch>
-                     <p> 容器开启特权级，将拥有宿主机的root权限 </p>
+                     <p> {{$t('TKE.subList.rqkqtq')}} </p>
                    </el-form-item>
                  </div>
                   <el-button type="text" size="mini" @click="v.disAdvancedSetting = !v.disAdvancedSetting">
-                      {{v.disAdvancedSetting?'隐藏高级设置':'显示高级设置'}}
+                      {{v.disAdvancedSetting?'隱藏高級設置':'顯示高級設置'}}
                   </el-button>
                </div>
                <div v-show="!v.editStatus" class="case-content" style="margin-bottom: 18px">
                   <el-form-item style="margin-bottom: 0px" label-width="0px">
                     <div style="float: left">{{v.name}} ({{v.mirrorImg}}) </div>
                     <div style="float: right">
-                      <el-tooltip effect="light" content="请完成待编辑项" placement="top" :disabled="v.completed">
+                      <el-tooltip effect="light" :content="$t('TKE.subList.qwcdbjx')" placement="top" :disabled="v.completed">
                         <i class="el-icon-edit-outline"
                            style="font-size:20px;margin-left:20px;cursor:pointer"
                            @click="v.completed?editInstanceContent(i):''">
                         </i>
                       </el-tooltip>
-                      <el-tooltip effect="light" content="不可删除，至少创建一个容器" placement="top" :disabled="wl.instanceContent.length!==1">
+                      <el-tooltip effect="light" :content="$t('TKE.subList.bksczs')" placement="top" :disabled="wl.instanceContent.length!==1">
                         <i class="el-icon-close"
                            style="font-size:20px;margin-left:20px;cursor:pointer"
                            @click="wl.instanceContent.length!==1?delInstanceContent(i):''">
@@ -439,9 +439,9 @@
                 </div>
              </div>
              <p class="addcontent"    style='cursor:pointer' :style="{color: isAddContainer?'#006eff':'#bbbbbb'}" @click="isAddContainer?addInstanceContent0():''">添加容器</p>
-             <p>注意：Workload创建完成后，容器的配置信息可以通过更新YAML的方式进行修改</p>
+             <p>{{$t('TKE.subList.zyxg')}}</p>
            </el-form-item>
-           <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">显示高级设置</a>
+           <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">{{$t('TKE.subList.xsgjsz')}}</a>
            <div v-show="highLevelSetShow2">
             <el-form-item label="imagePullSecrets">
               <el-select   v-model='upn.type1' disabled style="margin-top:10px" >
@@ -454,17 +454,17 @@
               </el-select>
               <p style="cursor:pointer">添加</p>
             </el-form-item>
-            <a @click="highLevelSetShow2=!highLevelSetShow2">隐藏高级设置</a>
+            <a @click="highLevelSetShow2=!highLevelSetShow2">{{$t('TKE.subList.yczgsz')}}</a>
          </div>
          </el-form>
 
          <!-- 设置主机路径 -->
-         <el-dialog :model='dataReelDialog.portPath'   title="设置主机路径" :visible.sync="dialogVisiblePath" width="30%">
+         <el-dialog :model='dataReelDialog.portPath'   :title="$t('TKE.subList.szzjlj')" :visible.sync="dialogVisiblePath" width="30%">
            <el-form  label-position="left" ref="pathForm" label-width="120px" size="mini">
-             <el-form-item label="主机路径"  :rules="portPathRules" style="margin-top:10px">
+             <el-form-item :label="$t('TKE.subList.zjlj')"  :rules="portPathRules" style="margin-top:10px">
                <el-input class="w192" v-model="dataReelDialog.portPath.name" placeholder="如：/data/dev"></el-input>
              </el-form-item>
-             <el-form-item label="检查类型">
+             <el-form-item :label="$t('TKE.subList.jclx')">
                <el-select v-model="dataReelDialog.portPath.type"  class="w192" >
                  <el-option v-for="item in portPathOptions" :key="item" :label="item" :value="item">
                  </el-option>
@@ -472,16 +472,16 @@
              </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="selectHostPath('pathForm')">确 定</el-button>
+             <el-button type="primary" @click="selectHostPath('pathForm')">{{$t('TKE.overview.qd')}}</el-button>
              <el-button @click="dialogVisiblePath = false">取 消</el-button>
            </span>
          </el-dialog>
          <!-- 选择云硬盘 -->
-         <el-dialog title="选择云硬盘" :visible.sync="dialogVisibleYun" width="45%">
+         <el-dialog :title="$t('TKE.subList.xzyyp')" :visible.sync="dialogVisibleYun" width="45%">
            <div class="select-yun">
-             <el-button   plain>台北一区</el-button>
+             <el-button   plain>{{$t('TKE.colony.tbyq')}}</el-button>
              <p style="margin-left:30px">
-              <el-input   v-model="dataReelDialog.yunDisks.name"  placeholder="请输入数据盘ID" clearable>
+              <el-input   v-model="dataReelDialog.yunDisks.name"  :placeholder="$t('TKE.subList.srsjpid')" clearable>
                 <i slot="suffix" @click="getDescribeDisks"   class="el-input__icon el-icon-search"></i>
               </el-input>
              </p>
@@ -498,7 +498,7 @@
                <el-table-column label="ID" width="120">
                  <template slot-scope="scope">{{ scope.row.DiskId }}</template>
                </el-table-column>
-               <el-table-column prop="name" label="名称" show-overflow-tooltip    >
+               <el-table-column prop="name" :label="$t('TKE.overview.mc')" show-overflow-tooltip    >
                    <template slot-scope="scope">{{ scope.row.DiskName }}</template>
                </el-table-column>
                <el-table-column prop="address" width="120"  label="大小" show-overflow-tooltip>
@@ -507,7 +507,7 @@
              </el-table>
              <!-- 分页 -->
              <div class="pagstyle" style="height:70px;">
-               <span>共&nbsp;{{ TotalCount }}&nbsp;项</span>
+               <span>共&nbsp;{{ TotalCount }}&nbsp;{{$t('TKE.colony.xiang')}}</span>
                <div class="pagestyle_right">
                  <el-pagination :page-size="pagesize" :pager-count="7" :page-sizes="[50, 40, 30, 20, 10]"
                    layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
@@ -516,25 +516,25 @@
              </div>
            </div>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="selectYunHardDisk">确 定</el-button>
+             <el-button type="primary" @click="selectYunHardDisk">{{$t('TKE.overview.qd')}}</el-button>
              <el-button @click="dialogVisibleYun = false">取 消</el-button>
            </span>
          </el-dialog>
 
          <!-- 设置Configmap -->
-         <el-dialog title="设置ConfigMap" :visible.sync="dialogVisibleConfig" width="50%">
+         <el-dialog :title="$t('TKE.subList.szcm')" :visible.sync="dialogVisibleConfig" width="50%">
            <div class="set-configmap">
               <el-form label-position="left" label-width="120px" size="mini" >
-                <el-form-item label="选择ConfigMap">
-                  <el-select v-model="dataReelDialog.configMap.name"  @change="dialogConfigMapName" placeholder="请选择ConfigMap">
+                <el-form-item :label="$t('TKE.subList.xzcm')">
+                  <el-select v-model="dataReelDialog.configMap.name"  @change="dialogConfigMapName" :placeholder="$t('TKE.subList.qxzcm')">
                       <el-option v-for="item in configMap.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
                       </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="选项">
+                <el-form-item :label="$t('TKE.subList.xxiang')">
                   <el-radio-group v-model="dataReelDialog.configMap.checked ">
                     <el-radio label="all">全部</el-radio>
-                    <el-radio label="part">指定部分Key</el-radio>
+                    <el-radio label="part">{{$t('TKE.subList.zdbf')}}Key</el-radio>
                   </el-radio-group>
                 </el-form-item>
                 <el-form-item label="Items" v-show="dataReelDialog.configMap.checked == 'part'">
@@ -543,39 +543,39 @@
                       <el-option v-for="(v1,i1) in dataReelDialog.configMap.partKeyOption" :key="i1" :value="v1" :label="v1">
                       </el-option>
                      </el-select>
-                    <el-input class="w192 ml10" v-model="v.path" placeholder="请输入子路径,eg:dev"></el-input>
-                    <el-input class="w192 ml10" v-model="v.mode" placeholder="文件权限,如0644"></el-input>
-                    <el-tooltip class="item"  v-if="dataReelDialog.configMap.items.length=='1'"   effect="light" content="不可删除，至少指定一个Key" placement="top">
+                    <el-input class="w192 ml10" v-model="v.path" :placeholder="$t('TKE.subList.qsrzlj')"></el-input>
+                    <el-input class="w192 ml10" v-model="v.mode" :placeholder="$t('TKE.subList.wjqx')"></el-input>
+                    <el-tooltip class="item"  v-if="dataReelDialog.configMap.items.length=='1'"   effect="light" :content="$t('TKE.subList.zszdk')" placement="top">
                       <i class="el-icon-close" style="cursor:pointer"></i>
                     </el-tooltip>
                     <i class="el-icon-close"  v-else @click="delConfigItem(it)"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
                   </p>
                   <el-button type="text" :disabled="dataReelDialog.configMap.partKeyOption.length==dataReelDialog.configMap.items.length" @click="addConfigItem" >添加Item</el-button>
-                  <el-tooltip class="item" effect="light" content="ConfigMap无更多可用Key" placement="top">
+                  <el-tooltip class="item" effect="light" :content="$t('TKE.subList.wgdky')" placement="top">
                     <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
                   </el-tooltip>
                 </el-form-item>
               </el-form>
            </div>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="selectConfigSure">确 定</el-button>
+             <el-button type="primary" @click="selectConfigSure">{{$t('TKE.overview.qd')}}</el-button>
              <el-button @click="dialogVisibleConfig = false">取 消</el-button>
            </span>
          </el-dialog>
 
          <!-- 设置Secret -->
-         <el-dialog title="设置Secret" :visible.sync="dialogVisibleSecret" width="50%">
+         <el-dialog :title="$t('TKE.subList.szs')" :visible.sync="dialogVisibleSecret" width="50%">
            <el-form label-position="left" label-width="120px" size="mini">
-             <el-form-item label="选择Secret">
-               <el-select v-model="dataReelDialog.Secret.name"  @change="dialogSecretName" placeholder="请选择Secret" >
+             <el-form-item :label="$t('TKE.subList.xzs')">
+               <el-select v-model="dataReelDialog.Secret.name"  @change="dialogSecretName" :placeholder="$t('TKE.subList.qxzs')" >
                 <el-option v-for="item in secrets.items" :key="item.metadata.name" :label="item.metadata.name" :value="item.metadata.name"> 
                   </el-option>
                </el-select>
              </el-form-item>
-             <el-form-item label="选项">
+             <el-form-item :label="$t('TKE.subList.xxiang')">
                <el-radio-group v-model="dataReelDialog.Secret.checked">
                  <el-radio label="all">全部</el-radio>
-                 <el-radio label="part">指定部分Key</el-radio>
+                 <el-radio label="part">{{$t('TKE.subList.zdbf')}}Key</el-radio>
                </el-radio-group>
              </el-form-item>
               <el-form-item label="Items" v-show="dataReelDialog.Secret.checked == 'part'">
@@ -584,21 +584,21 @@
                     <el-option v-for="(v1,i1) in dataReelDialog.Secret.partKeyOption" :key="i1" :value="v1" :label="v1">
                     </el-option>
                   </el-select>
-                  <el-input class="w192 ml10" v-model="v.path" placeholder="请输入子路径,eg:dev"></el-input>
-                  <el-input class="w192 ml10" v-model="v.mode" placeholder="文件权限,如0644"></el-input>
-                  <el-tooltip class="item"  v-if="dataReelDialog.Secret.items.length=='1'"   effect="light" content="不可删除，至少指定一个Key" placement="top">
+                  <el-input class="w192 ml10" v-model="v.path" :placeholder="$t('TKE.subList.qsrzlj')"></el-input>
+                  <el-input class="w192 ml10" v-model="v.mode" :placeholder="$t('TKE.subList.wjqx')"></el-input>
+                  <el-tooltip class="item"  v-if="dataReelDialog.Secret.items.length=='1'"   effect="light" :content="$t('TKE.subList.zszdk')" placement="top">
                     <i class="el-icon-close" style="cursor:pointer"></i>
                   </el-tooltip>
                   <i class="el-icon-close"  v-else @click="delSecretItem(it)"  style="font-size:20px;margin-left:20px;cursor:pointer"></i>
                 </p>
                 <el-button type="text" :disabled="dataReelDialog.Secret.partKeyOption.length==dataReelDialog.Secret.items.length" @click="addSecretItem" >添加Item</el-button>
-                <el-tooltip class="item" effect="light" content="ConfigMap无更多可用Key" placement="top">
+                <el-tooltip class="item" effect="light" :content="$t('TKE.subList.wgdky')" placement="top">
                   <i class="el-icon-warning-outline" style="color:red;cursor:pointer"></i>
                 </el-tooltip>
               </el-form-item>
            </el-form>
            <span slot="footer" class="dialog-footer">
-             <el-button type="primary" @click="selectSecretSure">确 定</el-button>
+             <el-button type="primary" @click="selectSecretSure">{{$t('TKE.overview.qd')}}</el-button>
              <el-button @click="dialogVisibleSecret = false">取 消</el-button>
            </span>
          </el-dialog>
@@ -700,7 +700,7 @@ export default {
           option2: [],
           value2: ''
         },
-        updateWay: '滚动更新（推荐）',
+        updateWay: '滾動更新（推薦）',
         updateTactics: 1, // 更新策略 单选
         updateInterval: 0, // 更新间隔
         configTacticsPods: 1, // 配置策略-》pods
@@ -718,7 +718,7 @@ export default {
         loadBalance: '1', // 负载均衡器 1.自动创建 2.使用已有
         portMapping: [], // 端口映射 数组
         isShowAdvancedSet: false, // 访问设置 显示隐藏高级设置
-        describeLoadBalancersValue: '暂无数据', // 负载均衡值
+        describeLoadBalancersValue: '暫無數據', // 负载均衡值
         ETP: 'Cluster', // 访问设置-》高级设置-》ExternalTrafficPolicy
         SA: 'None', // 访问设置-》高级设置-》Session Affinity
         maxSessionTime: 30, // 最大会话保持时间
@@ -739,15 +739,15 @@ export default {
       SelectMirrorImgFlag:false,
       searchOptions: [{
           value: "useMenu",
-          label: "使用临时目录"
+          label: "使用臨時目錄"
         },
         {
           value: "usePath",
-          label: "使用主机路径"
+          label: "使用主機路徑"
         },
         {
           value: "useNFS",
-          label: "使用NFS盘"
+          label: "使用NFS盤"
         },
         {
           value: "usePVC",
@@ -755,7 +755,7 @@ export default {
         },
         {
           value: "useYun",
-          label: "使用云硬盘"
+          label: "使用雲硬碟"
         },
         {
           value: "useConfig",
@@ -826,15 +826,15 @@ export default {
         if (parseInt(startDelay) !== 0) {
           newObj.initialDelaySeconds = parseInt(startDelay)
         }
-        if (inspectMethodValue === 'TCP端口检查') {
+        if (inspectMethodValue === 'TCP端口檢查') {
           newObj.tcpSocket = { port: parseInt(inspectPort) }
-        } else if (inspectMethodValue === 'HTTP请求检查') {
+        } else if (inspectMethodValue === 'HTTP請求檢查') {
           newObj.httpGet = {
             path: requestPath,
             port: parseInt(inspectPort),
             scheme: inspectProtocolValue
           }
-        } else if (inspectMethodValue === '执行命令检查' && executiveOrder !== '') {
+        } else if (inspectMethodValue === '執行命令檢查' && executiveOrder !== '') {
           newObj.exec = {
             command: executiveOrder.split('\n')
           }
@@ -1105,7 +1105,7 @@ export default {
         }else{
         let ErrTips = {}
         let ErrOr = Object.assign(this.$ErrorTips, ErrTips)
-        if(ErrOr[res.Response.Error.Code]=='参数错误'){
+        if(ErrOr[res.Response.Error.Code]=='參數錯誤'){
               this.tableData=[];
               this.TotalCount=0
         }else{
@@ -1173,8 +1173,8 @@ export default {
           let arr2=[],arr3=[];
           this.lengths=arr.length;
           let surviveExamineContentObj={
-            inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-            inspectMethodValue: 'TCP端口检查',
+            inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+            inspectMethodValue: 'TCP端口檢查',
             inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
             inspectProtocolValue: '',
             executiveOrder: '', // 执行命令
@@ -1187,8 +1187,8 @@ export default {
             unhealthyThreshold: '1' // 不健康阀值
           }
       let readyToCheckContentObj={
-            inspectMethodOption: ['TCP端口检查', 'HTTP请求检查', '执行命令检查'], // 检查方法
-            inspectMethodValue: 'TCP端口检查',
+            inspectMethodOption: ['TCP端口檢查', 'HTTP請求檢查', '執行命令檢查'], // 检查方法
+            inspectMethodValue: 'TCP端口檢查',
             inspectProtocolOption: ['HTTP', 'HTTPS'], // 检查协议
             inspectProtocolValue: '',
             executiveOrder: '', // 执行命令
@@ -1473,7 +1473,7 @@ watch: {
           if (disAdvancedSetting) { // 高级设置为显示时
             if (surviveExamine) { // 存活检查
               let { inspectMethodOption, executiveOrder, responseTimeout, intervalTime, unhealthyThreshold, inspectPort } = surviveExamineContent
-              if (inspectMethodOption === '执行命令检查') {
+              if (inspectMethodOption === '執行命令檢查') {
                 if (executiveOrder === '' || responseTimeout === '' || intervalTime === '' || unhealthyThreshold === '') {
                   completed = false
                 }
@@ -1485,7 +1485,7 @@ watch: {
             }
             if (readyToCheck) { // 就绪检查
               let { inspectMethodOption, executiveOrder, responseTimeout, intervalTime, healthyThreshold, unhealthyThreshold, inspectPort } = readyToCheck
-              if (inspectMethodOption === '执行命令检查') {
+              if (inspectMethodOption === '執行命令檢查') {
                 if (executiveOrder === '' || responseTimeout === '' || intervalTime === '' || healthyThreshold === '' || unhealthyThreshold === '') {
                   completed = false
                 }
