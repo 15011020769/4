@@ -254,12 +254,34 @@ export default {
       }
       this.axios.post(CCALARMTHRESHOLD_MODIFY, params).then(res => {
         // console.log(params, res);
+        if (res.Response.Success.Message === 'Success') {
+          this.$message({
+            message: '設置成功',
+            type: 'success',
+            showClose: true,
+            duration: 1500
+          })
+        }
       });
     },
-    // 修改CC告警通知阈值
+    // 修改CC告警通知阈值延遲兩秒
     changeAlarmThreshold() {
-      if(this.ccResourceId != undefined && this.ccResourceId != ""){
-        this.modifyCCAlarmThreshold();
+      setTimeout(this.changeAlarmTimeOut(), 2000)
+    },
+    // 修改CC告警通知阈值
+    changeAlarmTimeOut () {
+      let isReg = new RegExp(/^[1-9]\d*$/).test(this.alarmThreshold)
+      if (isReg) {
+        if (this.ccResourceId !== undefined && this.ccResourceId !== "") {
+          this.modifyCCAlarmThreshold()
+        }
+      } else {
+        this.$message({
+          message: 'HTTP CC攻警閾值為正整數',
+          type: 'error',
+          showClose: true,
+          duration: 1500
+        }) 
       }
     }
   }
