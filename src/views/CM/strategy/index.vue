@@ -128,9 +128,9 @@
           <el-button v-if="!ModifyAlarm" disabled>修改告警渠道</el-button>
         </el-row>
         <el-row class="iconBtn">
-          <i class="el-icon-setting" @click="buyMessgae"></i>
-          <i class="el-icon-refresh"></i>
-          <i class="el-icon-download"></i>
+          <!-- <i class="el-icon-setting" @click="buyMessgae"></i> -->
+          <i class="el-icon-refresh" @click="ListInit"></i>
+          <i class="el-icon-download" @click="exportExcel"></i>
         </el-row>
       </p>
       <el-table
@@ -139,6 +139,7 @@
         v-loading="loadShow"
         height="450"
         @selection-change="handleSelectionChange"
+        id="exportTable"
       >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
@@ -570,6 +571,8 @@
 <script>
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_ALARM_LIST,
@@ -1456,6 +1459,29 @@ export default {
           });
         }
       });
+    },
+    // 导出表格
+    exportExcel() {
+      console.log("exportExcel...");
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          "download(policy).xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     }
   },
   filters: {
