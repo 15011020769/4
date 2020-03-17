@@ -127,7 +127,7 @@ export default {
           if (lastFlux !== 0) {
             fluxChain = (flux - lastFlux) /  lastFlux * 100
           } else {
-            fluxChain = flux * 100
+            fluxChain = 0
           }
           if (Math.ceil(fluxChain) !== fluxChain) {
             fluxChain = fluxChain.toFixed(2)
@@ -160,7 +160,7 @@ export default {
           if (lastFluxHitRate !== 0) {
             fluxHitRateChain = (this.fluxHitRate - lastFluxHitRate) / lastFluxHitRate * 100
           } else {
-            fluxHitRateChain = this.fluxHitRate * 100
+            fluxHitRateChain = 0
           }
           if (Math.ceil(fluxHitRateChain) !== fluxHitRateChain) {
             fluxHitRateChain = fluxHitRateChain.toFixed(2)
@@ -193,7 +193,7 @@ export default {
           if (lastRequest !== 0) {
             requestChain = (this.request - lastRequest) / lastRequest * 100
           } else {
-            requestChain = this.request * 100
+            requestChain = 0
           }
           if (Math.ceil(requestChain) !== requestChain) {
             requestChain = requestChain.toFixed(2)
@@ -234,9 +234,19 @@ export default {
   font-size: 14px;
   color: #000;
 }
-._info {
+.info {
   font-size: 12px;
   color: #888;
   margin-top: -6px;
+}
+.el-icon-bottom {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(87, 187, 102);
+}
+.el-icon-top {
+  font-size: 16px;
+  font-weight: bold;
+  color: rgb(212, 82, 76);
 }
 </style>
