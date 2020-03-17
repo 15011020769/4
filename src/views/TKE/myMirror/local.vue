@@ -2,7 +2,15 @@
   <div class="room">
     <div class="room-top">
       <div class="top-left">
-        <el-button type="primary" size="mini" class="botton-size" @click="dialogVisible = true" :disabled="tableData.length == 10">新建</el-button>
+         <el-popover
+          placement="right"
+          width="300"
+          :trigger="tableData.length == 10 ?'hover':''"
+          content="数量已达到限制">
+          <div slot="reference">
+            <el-button type="primary" size="mini"  @click="dialogVisible = true" :disabled="tableData.length == 10" >新建</el-button>
+          </div>
+         </el-popover>
       </div>
       <div class="top-right">
           <el-input v-model.trim="input" :placeholder="$t('TKE.myMirror.qsrmc')" size="mini" ></el-input>
@@ -16,9 +24,18 @@
             <el-table-column prop="creationTime" :label="$t('TKE.overview.cjsj')"></el-table-column>
             <el-table-column prop="repoCount" label="操作" >
               <template slot-scope="scope">
-                  <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false" >
-                    {{$t('TKE.overview.sc')}}
-                    </el-button>
+                  <el-popover
+                    placement="left"
+                    width="300"
+                    :trigger="scope.row.repoCount ?'hover':''"
+                    content="镜像仓库数量不为零，不能进行删除操作"
+                   >
+                  <div slot="reference">
+                      <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false" >
+                        {{$t('TKE.overview.sc')}}
+                      </el-button>
+                  </div>
+                </el-popover>
               </template>
             </el-table-column>
         </el-table>
@@ -57,7 +74,7 @@ export default {
   data () {
     var validatePass = (rule, value, callback) => {
       // 获取命名空间是否存在的接口
-      var regex = /^[^-\._]([0-9a-z_\.-](?!(\-\-)|(\.\.)|(\-\.)|(\.\-)|(\_\_)|(\-\_)|(\.\_))[0-9a-z_\.-])(?!-\._$){4,30}$/g
+      var regex = /[0-9a-z]([0-9a-z_\.-](?!(\-\-)|(\.\.)|(\-\.)|(\.\-)|(\_\_)|(\-\_)|(\.\_))[0-9a-z_\.-])(?!-\._$){4,30}$/
       const param = {
         namespace: this.ruleForm.name
       }
@@ -82,6 +99,7 @@ export default {
       ruleForm: {
         name: ''
       },
+      flag:false,// 提示判断
       TotalCount: 0, // 总条数
       pagesize: 20, // 分页条数
       currpage: 1, // 当前页码
@@ -314,4 +332,18 @@ export default {
   line-height: 1.8;
   color: #bbb;
 }
+.touch-delete{
+   &:hover .touch-right{
+      width: 100px;
+      height: 80px;
+      color:black;
+      font-size: 14px;
+   }
+}
+// .touch-delete:hover .touch-right{
+//       width: 100px;
+//       height: 80px;
+//       color:black;
+//       font-size: 14px;
+// }
 </style>

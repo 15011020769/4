@@ -54,7 +54,7 @@
             <el-table-column prop="pullCount" :label="$t('TKE.totalMirror.xzl')" min-width="20%" sortable></el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.mirrorDetail.ye')}}</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
             <el-pagination
               :page-size="pagesize"
               layout="sizes,prev, pager, next"
@@ -84,6 +84,17 @@ import { ErrorTips } from "@/components/ErrorTips";
 import HeadCom from '@/components/public/Head'
 import City from '@/components/public/CITY'
 import { TKE_GET_REPOSITORY_LIST, TKE_DELETE_FAVOR, TKE_ADD_FAVOR,ALL_CITY } from '@/constants'
+// 防抖
+// function debounce(fn,wait){
+//     var timer = null;
+//     // console.log("防抖")
+//     return function(){
+//         if(timer !== null){
+//             clearTimeout(timer);
+//         }
+//         timer = setTimeout(fn,wait);
+//     }
+// }
 export default {
   name: 'totalMirror',
   components: {
@@ -120,8 +131,12 @@ export default {
   methods: {
     handleClick (row) {
       if (row.isUserFavor) {
+        // console.log(2)
+        // debounce(this.DeleteFavor(row),2000)
         this.DeleteFavor(row)
       } else {
+        // debounce(this.AddFavor(row),2000)
+
         this.AddFavor(row)
       }
     },
