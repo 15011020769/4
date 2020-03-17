@@ -229,7 +229,7 @@
                 prop="Mbps"
                 :label="$t('DDOS.Protective.AgainstBandwidth')"
               >
-                <template slot-scope="scope">{{ scope.row.Mbps }}bps</template>
+                <template slot-scope="scope">{{ scope.row.Mbps }}Mbps</template>
               </el-table-column>
               <el-table-column
                 prop="Pps"

@@ -34,8 +34,8 @@ export const DESCRIBE_METRICS = 'monitor/DescribeBaseMetrics'
 // 新建触发条件模板
 export const UPDATE_TEMPLATE = 'monitor/UpdateConditionsTemplate'
 
-// 获取条件模板列表
-export const GET_TENCENTCLOUDAPI = 'monitor2/tencentcloudapi'
+// 新建
+export const NEWBUILD_TEMPLATE = 'monitor2/ModifyConditionsTemplate'
 
 // 变更日志获取模板详情
 export const GET_DESCRIBETRANSLOG = 'monitor2/DescribeTransLog'

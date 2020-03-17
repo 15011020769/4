@@ -13,7 +13,7 @@
         <tkeSearch
           refreshData
           exportData
-          inputPlaceholder="请输入关键词搜索"
+          :inputPlaceholder="$t('TKE.storage.qsrgjcss')"
           :searchInput="searchInput"
           @changeInput="changeSearchInput"
           @clickSearch="clickSearch"
@@ -26,22 +26,22 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10" >
       <el-table :data="list" v-loading="loadShow" style="width: 100%" id="exportTable">
-        <el-table-column prop="metadata" label="名称">
+        <el-table-column prop="metadata" :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <span @click="goScDetail(scope.row)" class="tke-text-link">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="provisioner" label="来源">
+        <el-table-column prop="provisioner" :label="$t('TKE.overview.ly')">
           <template slot-scope="scope">
             <p>{{scope.row.provisioner}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="parameters" label="云盘类型">
+        <el-table-column prop="parameters" :label="$t('TKE.storage.yplx')">
           <template slot-scope="scope">
             <span>{{scope.row.parameters.type|parameterss}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="parameters" label="计费模式" width="100">
+        <el-table-column prop="parameters" :label="$t('TKE.storage.jfms')" width="100">
           <template slot-scope="scope">
             <p>{{scope.row.parameters.paymode|paymodes}}</p>
           </template>
@@ -51,15 +51,15 @@
             <p>{{scope.row.reclaimPolicy}}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="metadata" label="创建时间">
+        <el-table-column prop="metadata" :label="$t('TKE.overview.cjsj')">
           <template slot-scope="scope">
             <p>{{scope.row.metadata.creationTimestamp|creationTimestamps}}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="editYaml(scope.row)">编辑YAML</span>
-            <span class="tke-text-link ml10" @click="deleteOne(scope.row)">删除</span>
+            <span class="tke-text-link" @click="editYaml(scope.row)">{{$t('TKE.overview.bj')}}YAML</span>
+            <span class="tke-text-link ml10" @click="deleteOne(scope.row)">{{$t('TKE.overview.sc')}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -77,10 +77,10 @@
           ></el-pagination>
         </div>
       </div>
-      <el-dialog title="删除资源" :visible.sync="centerDialogVisible" width="30%">
-        <span>您确定要删除StorageClass：{{deleteName}}吗？</span>
+      <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="centerDialogVisible" width="30%">
+        <span>{{$t('TKE.storage.nqdysc')}}StorageClass：{{deleteName}}{{$t('TKE.myMirror.ma')}}？</span>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="DeleteList()">确 定</el-button>
+          <el-button type="primary" @click="DeleteList()">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="centerDialogVisible = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -290,7 +290,7 @@ export default {
           this.loadShow = true;
           this.GetList();
           this.$message({
-            message: "删除成功",
+            message: this.$t('TKE.myMirror.sccg'),
             type: "success",
             showClose: true,
             duration: 0
@@ -311,16 +311,16 @@ export default {
   filters: {
     parameterss: function(value) {
       if (value == "CLOUD_PREMIUM") {
-        return "高性能云硬盘";
+        return "高性能雲硬碟";
       } else if (value == "CLOUD_SSD") {
-        return "SSD云硬盘";
+        return "SSD雲硬碟";
       } else {
-        return "普通云硬盘";
+        return "普通雲硬碟";
       }
     },
     paymodes: function(value) {
       if (value == "POSTPAID") {
-        return "按量计费";
+        return "按量計費";
       } else if (value == "PREPAID") {
         return "包年包月";
       } else {

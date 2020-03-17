@@ -7,7 +7,7 @@
         <div class="grid-left">
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
-            <span>{{title}} / 监控</span>
+            <span>{{title}} / {{$t('TKE.colony.jk')}}</span>
           </span>
         </div>
       </div>
@@ -27,7 +27,7 @@
             <el-select
               size="mini"
               v-model="resourceName"
-              placeholder="请选择"
+              :placeholder="$t('TKE.overview.qxz')"
               @change="changeResource"
               style="margin-left:10px;height:30px;"
             >
@@ -43,83 +43,83 @@
       </div>
       <div class="box-bottom">
         <div class="box-bottom-right">
-          <p>Pod数量(个)</p>
-          <div class="dataNone" v-if="podNumbers.length === 0">暂无数据</div>
+          <p>{{$t('TKE.subList.podsl')}}({{$t('TKE.overview.ge')}})</p>
+          <div class="dataNone" v-if="podNumbers.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='podNumbers' :name='podName' style="width:90%;height:200px;" />
           </div>
-          <p>Pod重启次数(次)</p>
-          <div class="dataNone" v-if="podStarts.length === 0">暂无数据</div>
+          <p>{{$t('TKE.colony.pcqcs')}}</p>
+          <div class="dataNone" v-if="podStarts.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='podStarts' :name='restartName' style="width:90%;height:200px;" />
           </div>
           <p>CPU使用量(核)</p>
-          <div class="dataNone" v-if="cpuUseds.length === 0">暂无数据</div>
+          <div class="dataNone" v-if="cpuUseds.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUseds' :name='cpuName' style="width:90%;height:200px;" />
           </div>
-          <p>CPU利用率(占集群)(%)</p>
-          <div class="dataNone" v-if="cpuUsedColonys.length === 0">暂无数据</div>
+          <p>CPU利用率({{$t('TKE.overview.zhan')}}集群)(%)</p>
+          <div class="dataNone" v-if="cpuUsedColonys.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUsedColonys' :name='cpuRateName' style="width:90%;height:200px;" />
           </div>
-          <p>内存使用量(B)</p>
-          <div class="dataNone" v-if="cpuRequests.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.ncsyl')}}(B)</p>
+          <div class="dataNone" v-if="cpuRequests.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuRequests' :name='memoryName' style="width:90%;height:200px;" />
           </div>
-          <p>内存利用率(占集群)(%)</p>
-          <div class="dataNone" v-if="cpuUsedmaxs.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.nclyl')}}({{$t('TKE.overview.zhan')}}集群)(%)</p>
+          <div class="dataNone" v-if="cpuUsedmaxs.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='cpuUsedmaxs' :name='memRateName' style="width:90%;height:200px;" />
           </div>
-          <p>网络入带宽(Bps)</p>
-          <div class="dataNone" v-if="memorys.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlrdk')}}(Bps)</p>
+          <div class="dataNone" v-if="memorys.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memorys' :name='internetName' style="width:90%;height:200px;" />
           </div>
-          <p>网络出带宽(Bps)</p>
-          <div class="dataNone" v-if="memusages.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlcdk')}}(Bps)</p>
+          <div class="dataNone" v-if="memusages.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memusages' :name='internetOutName' style="width:90%;height:200px;" />
           </div>
-          <p>网络入流量(B)</p>
-          <div class="dataNone" v-if="memrequests.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlrll')}}(B)</p>
+          <div class="dataNone" v-if="memrequests.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memrequests' :name='netName' style="width:90%;height:200px;" />
           </div>
-          <p>网络出流量(B)</p>
-          <div class="dataNone" v-if="menNocaches.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlcll')}}(B)</p>
+          <div class="dataNone" v-if="menNocaches.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='menNocaches' :name='netOutName' style="width:90%;height:200px;" />
           </div>
-          <p>网络入包量(个/s)</p>
-          <div class="dataNone" v-if="memUsageBytes.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlrbl')}}({{$t('TKE.overview.ge')}}/s)</p>
+          <div class="dataNone" v-if="memUsageBytes.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memUsageBytes' :name='inflagName' style="width:90%;height:200px;" />
           </div>
-          <p>网络出包量(个/s)</p>
-          <div class="dataNone" v-if="memNoYsages.length === 0">暂无数据</div>
+          <p>{{$t('TKE.overview.wlcbl')}}({{$t('TKE.overview.ge')}}/s)</p>
+          <div class="dataNone" v-if="memNoYsages.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='memNoYsages' :name='outflagName' style="width:90%;height:200px;" />
           </div>
           <p>GPU使用量(卡)</p>
-          <div class="dataNone" v-if="GpuUseds.length === 0">暂无数据</div>
+          <div class="dataNone" v-if="GpuUseds.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUseds' :name='gpuName' style="width:90%;height:200px;" />
           </div>
-          <p>GPU显存使用量(B)</p>
-          <div class="dataNone" v-if="GpuUsedSees.length === 0">暂无数据</div>
+          <p>GPU{{$t('TKE.overview.xcsyl')}}(B)</p>
+          <div class="dataNone" v-if="GpuUsedSees.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedSees' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
-          <p>GPU利用率（占集群）(%)</p>
-          <div class="dataNone" v-if="GpuUsedColoys.length === 0">暂无数据</div>
+          <p>GPU利用率（{{$t('TKE.overview.zhan')}}集群）(%)</p>
+          <div class="dataNone" v-if="GpuUsedColoys.length === 0">{{$t('TKE.overview.zwsj')}}</div>
            <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedColoys' :name='gpeuesdName' style="width:90%;height:200px;" />
           </div>
-          <p>GPU显存利用率（占集群）(%)</p>
-          <div class="dataNone" v-if="GpuUsedSeeColoys.length === 0">暂无数据</div>
+          <p>GPU{{$t('TKE.overview.xclyl')}}（{{$t('TKE.overview.zhan')}}集群）(%)</p>
+          <div class="dataNone" v-if="GpuUsedSeeColoys.length === 0">{{$t('TKE.overview.zwsj')}}</div>
           <div class="box-top-left" style="margin-bottom:20px;" v-else>
             <EcharTKE :time='times' :opData='GpuUsedSeeColoys' :name='gpumemName' style="width:90%;height:200px;" />
           </div>
@@ -186,7 +186,7 @@ export default {
       GpuUsedSeeColoys : [],
       TimeArr: [
         {
-          name: "实时",
+          name: "實時",
           Time: "realTime",
           TimeGranularity: [
             {
@@ -223,7 +223,7 @@ export default {
             },
             {
               value: "86400",
-              label: "24小时"
+              label: "24小時"
             }
           ]
         }
@@ -238,22 +238,22 @@ export default {
       timestamp: "", //粒度长度
       resourceName: '',//资源名称
       loadShow: false,
-      podName: 'Pod数量',
-      restartName: 'Pod重启次数',
+      podName: 'Pod數量',
+      restartName: 'Pod重啟次數',
       cpuName: 'CPU使用量',
-      cpuRateName: 'CPU利用率(占集群)',
-      memoryName: '内存使用量',
-      memRateName: '内存利用率(占集群)',
-      internetName: '网络入带宽',
-      internetOutName: '网络出带宽',
-      netName: '网络入流量',
-      netOutName: '网络出流量',
-      inflagName: '网络入包量',
-      outflagName: '网络出包量',
+      cpuRateName: 'CPU利用率(佔集群)',
+      memoryName: '記憶體使用量',
+      memRateName: '記憶體利用率(佔集群)',
+      internetName: '網路入頻寬',
+      internetOutName: '網路出頻寬',
+      netName: '網路入流量',
+      netOutName: '網路出流量',
+      inflagName: '網路入包量',
+      outflagName: '網路出包量',
       gpuName: 'GPU使用量',
-      gpumemName: 'GPU显存使用量',
+      gpumemName: 'GPU顯存使用量',
       gpeuesdName: 'GPU利用率',
-      gpumemName: 'GPU显存利用率(占集群)'
+      gpumemName: 'GPU顯存利用率(佔集群)'
     };
   },
   watch: {},

@@ -17,12 +17,12 @@
     <div class="colony-main">
       <div class="tke-card tke-formpanel-wrap mb60">
         <el-form class="tke-form" label-position="left" label-width="120px" size="mini" :model="ing" ref="form">
-          <el-form-item label="监听端口">
+          <el-form-item :label="$t('TKE.subList.jtdk')">
             <el-checkbox disabled v-model="ing.checked">Http:80</el-checkbox>
             <el-checkbox v-model="ing.checkedtwo">Https:443</el-checkbox>
           </el-form-item>
-          <el-form-item label="服务器证书" v-if="ing.checkedtwo">
-            <el-select v-model="ing.certValue" placeholder="请选择">
+          <el-form-item :label="$t('TKE.subList.fwqzs')" v-if="ing.checkedtwo">
+            <el-select v-model="ing.certValue" :placeholder="$t('TKE.overview.qxz')">
               <el-option
                 v-for="item in ing.certOption"
                 :key="item.id"
@@ -30,31 +30,31 @@
                 :value="item.id">
               </el-option>
             </el-select>
-            <div>如您现有的证书不合适，可以<a href="">现在创建</a><i class="el-icon-edit-outline"></i></div>
+            <div>{{$t('TKE.subList.zsbhs')}}<a href="">{{$t('TKE.subList.xzcj')}}</a><i class="el-icon-edit-outline"></i></div>
           </el-form-item>
-          <el-form-item label="转发配置">
+          <el-form-item :label="$t('TKE.subList.zfpz')">
             <div class="port">
               <!-- 头部 -->
               <div class="flex">
-                <div style="padding-left:10px;width:150px;">协议</div>
-                <div style="width:80px;">监听端口</div>
+                <div style="padding-left:10px;width:150px;">{{$t('TKE.subList.xy')}}</div>
+                <div style="width:80px;">{{$t('TKE.subList.jtdk')}}</div>
                 <div style="width:168px;padding-left:12px">域名
-                  <el-tooltip content="非通配的域名支持的字符集a-z 0-9.-;通配的域名，目前只支持*.example.com的形式，且单个域名中只出现一次" placement="top" effect="light">
+                  <el-tooltip :content="$t('TKE.subList.ftpym')" placement="top" effect="light">
                     <i class="el-icon-warning"></i>
                   </el-tooltip>
                 </div>
-                <div style="width:80px;">路径</div>
-                <div style="width:150px;padding-left:40px;">后端服务
-                  <el-tooltip content="转发规则后端服务无法添加访问方式为集群内访问的服务，如有需要可更新服务的访问方式。不支持配置访问方式为不启用的服务" placement="top" effect="light">
+                <div style="width:80px;">{{$t('TKE.subList.lj')}}</div>
+                <div style="width:150px;padding-left:40px;">{{$t('TKE.subList.hdfw')}}
+                  <el-tooltip :content="$t('TKE.subList.zfgzhd')" placement="top" effect="light">
                     <i class="el-icon-warning"></i>
                   </el-tooltip>
                 </div>
-                <div style="padding-left:40px;">服务端口</div>
+                <div style="padding-left:40px;">{{$t('TKE.subList.fwdk')}}</div>
               </div>
               <!-- 内容 -->
               <div style="border-top:1px solid #ddd;padding: 10px;">
                 <div style="padding:5px 0;" v-for="(it, i) in ing.list" :key="it.key">
-                  <el-select style="width:120px;" v-model="it.protocolValue" placeholder="请选择" @change="protocolChange($event, it.key)">
+                  <el-select style="width:120px;" v-model="it.protocolValue" :placeholder="$t('TKE.overview.qxz')" @change="protocolChange($event, it.key)">
                     <el-option
                       v-for="item in ing.protocolOption"
                       :key="item"
@@ -63,12 +63,12 @@
                     </el-option>
                   </el-select>
                   <span style="padding-left:23px">{{it.portNumber}}</span>
-                  <el-input style="width:200px;padding-left:75px;" placeholder="默认为IPv4 IP"></el-input>
+                  <el-input style="width:200px;padding-left:75px;" :placeholder="$t('TKE.subList.mrw')"></el-input>
                   <el-form-item style="display: inline-block;width:120px;padding-left:30px;" :prop="`list.${i}.path`" :rules="pathValidator">
                     <el-input v-model="it.path"></el-input>
                   </el-form-item>
                   <el-form-item style="display: inline-block;padding-left:30px;width:150px;" :prop="`list.${i}.backendServiceSelect`" :rules="bssValidator">
-                    <el-select v-model="it.backendServiceSelect" placeholder="请选择" @change="backendServiceChange($event, it.key)">
+                    <el-select v-model="it.backendServiceSelect" :placeholder="$t('TKE.overview.qxz')" @change="backendServiceChange($event, it.key)">
                       <el-option
                         v-for="item in ing.backendService"
                         :key="item.metadata.name"
@@ -79,7 +79,7 @@
                   </el-form-item>
                   <el-form-item style="display: inline-block;padding-left:30px;width:150px;"
                                 :prop="`list.${i}.backendServicePortSelect`" :rules="bspValidator">
-                    <el-select v-model="it.backendServicePortSelect" placeholder="请选择" :disabled="it.backendServiceSelect==='请选择后端服务'">
+                    <el-select v-model="it.backendServicePortSelect" :placeholder="$t('TKE.overview.qxz')" :disabled="it.backendServiceSelect==='請選擇後端服務'">
                       <el-option
                         v-for="item in it.backendServicePortOption"
                         :key="item.name"
@@ -89,7 +89,7 @@
                     </el-select>
                   </el-form-item>
                   <div style="display: inline-block">
-                    <el-tooltip class="item" effect="dark" content="不可删除，至少指定一个端口映射" placement="right" v-if="ing.list.length === 1">
+                    <el-tooltip class="item" effect="dark" :content="$t('TKE.subList.zslgdk')" placement="right" v-if="ing.list.length === 1">
                       <i style="font-size:18px;padding-left:20px;" class="el-icon-close"></i>
                     </el-tooltip>
                     <i style="font-size:18px;padding-left:20px;" class="el-icon-close" @click="removeprot(it)" v-else></i>
@@ -97,7 +97,7 @@
                 </div>
               </div>
             </div>
-            <a href="javascript:;" @click="addport()">添加转发规则</a>
+            <a href="javascript:;" @click="addport()">{{$t('TKE.subList.tjzfgz')}}</a>
           </el-form-item>
         </el-form>
       </div>
@@ -148,9 +148,9 @@ export default {
         validator: (rule, value, callback) => {
           console.log(value)
           if (value === '') {
-            callback(new Error('路径不能为空'))
+            callback(new Error('路徑不能為空'))
           } else if (value.substr(0, 1) !== '/') {
-            callback(new Error('格式不正确'))
+            callback(new Error('格式不正確'))
           } else {
             callback()
           }
@@ -160,8 +160,8 @@ export default {
       }],
       bssValidator: [{
         validator: (rule, value, callback) => {
-          if (value === '请选择后端服务') {
-            callback(new Error('请选择后端服务'))
+          if (value === '請選擇後端服務') {
+            callback(new Error('請選擇後端服務'))
           } else {
             callback()
           }
@@ -171,8 +171,8 @@ export default {
       }],
       bspValidator: [{
         validator: (rule, value, callback) => {
-          if (value === '请选择端口') {
-            callback(new Error('请选择端口'))
+          if (value === '請選擇端口') {
+            callback(new Error('請選擇端口'))
           } else {
             callback()
           }
@@ -231,8 +231,8 @@ export default {
         let portsArr = this.ing.backendService.find(item => {
           return item.metadata.name === result.backendServiceSelect
         }).spec.ports
-        result.backendServicePortOption = [{ port: '请选择端口' }, ...portsArr]
-        result.backendServicePortSelect = backendServicePortSelect || '请选择端口'
+        result.backendServicePortOption = [{ port: '請選擇端口' }, ...portsArr]
+        result.backendServicePortSelect = backendServicePortSelect || '請選擇端口'
       })
     },
     initNetworkRequery: async function () {
@@ -368,7 +368,7 @@ export default {
       await this.axios.post(POINT_REQUEST, param).then(res => {
         let { Response: { ResponseBody } } = res
         this.ing.backendService = [{
-          metadata: { name: '请选择后端服务' },
+          metadata: { name: '請選擇後端服務' },
           spec: { ports: [] }
         }, ...JSON.parse(ResponseBody).items]
       })
@@ -483,7 +483,7 @@ export default {
         key: Date.now(),
         protocolValue: 'http',
         portNumber: 80,
-        backendServiceSelect: '请选择后端服务', // 命名空间选中的值
+        backendServiceSelect: '請選擇後端服務', // 命名空间选中的值
         backendServicePortOption: [],
         backendServicePortSelect: '', // 选中的端口号
         path: '' // 路径

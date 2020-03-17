@@ -135,19 +135,27 @@ export default {
         }
       }else if(this.updateWay==1){//滚动更新
         
-
+        let obj={};
         if(this.updateTactics==1){
-          let obj={
+          obj={
             "spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":Number(this.cl.podNum) ,"maxUnavailable":0}}}
           }
-          params={
-            ClusterName:this.clusterId,
-            ContentType: "application/strategic-merge-patch+json",
-            Method: "PATCH",
-            Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-            RequestBody:JSON.stringify(obj),
-            Version: "2018-05-25",
+        }else if(this.updateTactics==2){
+           obj={
+            "spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":0 ,"maxUnavailable":Number(this.cl.podNum)}}}
           }
+        }else{
+           obj={
+            "spec":{"minReadySeconds":Number(this.cl.timeInterval) ,"strategy":{"type":"RollingUpdate","rollingUpdate":{"maxSurge":this.cl.maxPodOver.indexOf('%')!=-1?this.cl.maxPodOver:Number(this.cl.maxPodOver),"maxUnavailable":this.cl.maxPodNot.indexOf('%')!=-1?this.cl.maxPodNot:Number(this.cl.maxPodNot)}}}
+          }
+        }
+        params={
+          ClusterName:this.clusterId,
+          ContentType: "application/strategic-merge-patch+json",
+          Method: "PATCH",
+          Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
+          RequestBody:JSON.stringify(obj),
+          Version: "2018-05-25",
         }
       }
       console.log(params)
@@ -193,6 +201,21 @@ export default {
          if(this.type=='RollingUpdate'){
             this.updateWay='1'//滚动更新
             this.cl.timeInterval=obj.spec.minReadySeconds;
+
+            let maxSurge=obj.spec.strategy.rollingUpdate.maxSurge;
+            let maxUnavailable=obj.spec.strategy.rollingUpdate.maxUnavailable;
+
+            if(maxSurge===0){
+              this.updateTactics='2';
+              this.cl.podNum=maxUnavailable
+            }else if( maxUnavailable===0){
+               this.updateTactics='1';
+               this.cl.podNum=maxSurge
+            }else{
+               this.updateTactics='3';
+               this.cl.maxPodOver=maxSurge;
+               this.cl.maxPodNot= maxUnavailable
+            }
            }else{
            this.updateWay='2'//快速更新
          }

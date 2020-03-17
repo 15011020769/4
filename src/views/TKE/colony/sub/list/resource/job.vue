@@ -13,11 +13,11 @@
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
-          <span style="margin-right:10px;">命名空间</span>
+          <span style="margin-right:10px;">{{$t('TKE.overview.mmkj')}}</span>
           <el-select
             size="mini"
             v-model="searchType"
-            placeholder="请选择"
+            :placeholder="$t('TKE.overview.qxz')"
             @change="changeSearchType()"
             style="margin-bottom:5px;"
           >
@@ -41,7 +41,7 @@
         ></tkeSearch> -->
         <tkeSearch
           :typeValue="searchType"
-          inputPlaceholder="请输入关键词搜索"
+          :inputPlaceholder="$t('TKE.subList.qsrgjzss')"
           :searchInput="searchInput"
           @changeInput="changeSearchInput"
           @clickSearch="clickSearch"
@@ -54,7 +54,7 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id="exportTable" style="width: 100%">
-        <el-table-column label="名称">
+        <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <!-- <span
               class="tke-text-link"
@@ -74,42 +74,42 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="并行度">
+        <el-table-column prop :label="$t('TKE.subList.bxd')">
           <template slot-scope="scope">
             <span>{{scope.row.spec.parallelism || 0}}</span>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="重复次数">
+        <el-table-column prop :label="$t('TKE.subList.cfcs')">
           <template slot-scope="scope">
             <span>{{scope.row.spec.completions || 0}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-             <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的资源不可编辑YAML,如需查看YAML,请前往详情页" placement="right">
+             <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" :content="$t('TKE.subList.dqbkbj')" placement="right">
                    <el-button
                     type="text"
                     class="notuse"
-                    >编辑YAML</el-button>
+                    >{{$t('TKE.overview.bj')}}YAML</el-button>
                   </el-tooltip>
                    <span
                      v-else
                      class="tke-text-link"
                      @click="goUpdateYaml(scope.row)"
-                  >编辑YAML</span>
-              <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" content="当前Namespace下的不可进行此操作" placement="right">
+                  >{{$t('TKE.overview.bj')}}YAML</span>
+              <el-tooltip  v-if="searchType=='kube-system'"   class="item" effect="light" :content="$t('TKE.subList.dqbkcz')" placement="right">
                    <el-button
                     type="text"
                     class="notuse"
-                    >删除</el-button>
+                    >{{$t('TKE.overview.sc')}}</el-button>
                   </el-tooltip>
                   <span
                     v-else
                     class="tke-text-link ml10"
                     type="text"
                     @click="deleteDeployment(scope.row)"
-                  >删除</span>
+                  >{{$t('TKE.overview.sc')}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -128,11 +128,11 @@
           ></el-pagination>
         </div>
       </div>
-      <el-dialog title="删除资源" :visible.sync="isShowDeleteModal" width="35%">
-        <p style="font-weight: bolder;color: #444;">您确定要删除Deployment：{{deploymentName}}吗？</p>
-        <p style="color:#e54545;">该Workload下所有Pods将一并销毁，销毁后不可恢复，请谨慎操作。</p>
+      <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="isShowDeleteModal" width="35%">
+        <p style="font-weight: bolder;color: #444;">{{$t('TKE.overview.qdsc')}}Deployment：{{deploymentName}}嗎？</p>
+        <p style="color:#e54545;">{{$t('TKE.subList.gwxsy')}}</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitDelete()">确 定</el-button>
+          <el-button type="primary" @click="submitDelete()">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="isShowDeleteModal = false">取 消</el-button>
         </span>
      </el-dialog>
@@ -361,7 +361,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.$message({
                 type: "success",
-                message: "删除成功",
+                message: "刪除成功",
                 duration: 0,
                 showClose: true
             });

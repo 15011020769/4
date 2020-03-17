@@ -301,6 +301,8 @@ module.exports = {
       Attack_Mbps: '攻击最大带宽',
       Attack_tt: '累计清洗流量值',
       Attack_distribution: '攻击流量分布',
+      AttackSource_PacketLen: '累计攻击流量',
+      AttackSource_PacketSum: '累计攻击包量',
       SettingB: '单位：MB',
       Nodate: '暂无数据',
       Attack_pp_distribution: '攻击包协议分布',

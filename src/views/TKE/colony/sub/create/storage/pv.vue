@@ -25,24 +25,24 @@
           :rules="rules"
           ref="pv"
         >
-          <el-form-item label="来源设置" class="m0">
+          <el-form-item :label="$t('TKE.storage.lysz')" class="m0">
             <el-radio-group
               v-model="pv.tabPosition"
               style="margin-bottom: 30px;"
               @change="getNull()"
             >
-              <el-radio-button label="jt">静态创建</el-radio-button>
-              <el-radio-button label="dt">动态创建</el-radio-button>
+              <el-radio-button label="jt">{{$t('TKE.storage.jtcj')}}</el-radio-button>
+              <el-radio-button label="dt">{{$t('TKE.storage.dtcj')}}</el-radio-button>
             </el-radio-group>
           </el-form-item>
           <div v-if="pv.tabPosition=='jt'">
-            <el-form-item label="名称" class="m0" prop="name">
-              <el-input class="w200" v-model="pv.name" placeholder="请输入名称"></el-input>
-              <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+            <el-form-item :label="$t('TKE.overview.mc')" class="m0" prop="name">
+              <el-input class="w200" v-model="pv.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
+              <p>{{$t('TKE.overview.xz')}}</p>
             </el-form-item>
             <el-form-item label="Provisioner" class="m0">
               <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
-                <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
+                <el-radio-button label="CBS">{{$t('TKE.storage.yyp')}}CBS</el-radio-button>
                 <!-- <el-tooltip class="item" effect="light" placement="top">
                   <div slot="content">
                     扩展组件功能处于白名单体验阶段，如需使用，请
@@ -59,22 +59,22 @@
                 </el-tooltip> -->
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="读写权利" class="m0">
+            <el-form-item :label="$t('TKE.storage.dxql')" class="m0">
               <el-radio-group v-model="pv.rw" style="margin-bottom: 30px;">
-                <el-radio-button label="orw">单机读写</el-radio-button>
+                <el-radio-button label="orw">{{$t('TKE.storage.djdx')}}</el-radio-button>
                 <el-tooltip class="item" effect="light" placement="top">
-                  <div slot="content">云硬盘CBS仅支持单机读写</div>
-                  <el-radio-button label="tor" :disabled="pv.ps=='CBS'">多机只读</el-radio-button>
+                  <div slot="content">{{$t('TKE.storage.yypjzcdjdx')}}</div>
+                  <el-radio-button label="tor" :disabled="pv.ps=='CBS'">{{$t('TKE.storage.djzd')}}</el-radio-button>
                 </el-tooltip>
                 <el-tooltip class="item" effect="light" placement="top">
-                  <div slot="content">云硬盘CBS仅支持单机读写</div>
-                  <el-radio-button label="trw" :disabled="pv.ps=='CBS'">多机读写</el-radio-button>
+                  <div slot="content">{{$t('TKE.storage.yypjzcdjdx')}}</div>
+                  <el-radio-button label="trw" :disabled="pv.ps=='CBS'">{{$t('TKE.storage.duojdx')}}</el-radio-button>
                 </el-tooltip>
               </el-radio-group>
             </el-form-item>
             <div v-if="pv.ps=='CBS'">
               <el-form-item label="StorageClass">
-                <el-select v-model="pv.storageValue" placeholder="暂无数据">
+                <el-select v-model="pv.storageValue" :placeholder="$t('TKE.overview.zwsj')">
                   <el-option
                     v-for="(item,index) in StorageClass"
                     :key="index"
@@ -89,17 +89,17 @@
                   @click="GetStorageValue()"
                 ></el-button>
               </el-form-item>
-              <el-form-item label="选择云盘" class="m0">
+              <el-form-item :label="$t('TKE.storage.xzyp')" class="m0">
                 <div v-show="radioName ==''?true:false">
-                  未选择数据盘
-                  <a @click="dialogFormVisible=true" style="cursor:pointer;">选择云硬盘</a>
+                  {{$t('TKE.storage.wxzsjp')}}
+                  <a @click="dialogFormVisible=true" style="cursor:pointer;">{{$t('TKE.storage.xzyyp')}}</a>
                 </div>
                 <div v-show="radioName !=''?true:false">
                   {{radioName}}
-                  <a @click="dialogFormVisible=true" style="cursor:pointer;">重新选择</a>
+                  <a @click="dialogFormVisible=true" style="cursor:pointer;">{{$t('TKE.storage.cxxz')}}</a>
                 </div>
               </el-form-item>
-              <el-form-item label="文件系统" class="m0">
+              <el-form-item :label="$t('TKE.storage.wjxt')" class="m0">
                 <el-radio v-model="pv.radio" label="ext4">ext4</el-radio>
               </el-form-item>
             </div>
@@ -136,8 +136,8 @@
             </div>-->
           </div>
           <div v-if="pv.tabPosition=='dt'">
-            <el-form-item label="说明">
-              <div>动态创建无须您手动创建PV，创建工作负载时指定数据卷为PVC类型，将自动创建PV</div>
+            <el-form-item :label="$t('TKE.storage.sm')">
+              <div>{{$t('TKE.storage.dtcjwxnsdcj')}}</div>
             </el-form-item>
           </div>
         </el-form>
@@ -148,7 +148,7 @@
             type="primary"
             @click="submitForm('pv')"
             :disabled="pv.tabPosition == 'dt'"
-          >创建PersistentVolume</el-button>
+          >{{$t('TKE.subList.cj')}}PersistentVolume</el-button>
           <el-button size="small" @click="jump()">取消</el-button>
           <div class="explain" v-show="see">
             <p>persistentvolumes "{{pv.name}}" already exists</p>
@@ -156,9 +156,9 @@
         </div>
       </div>
     </div>
-    <el-dialog title="选择云硬盘" :visible.sync="dialogFormVisible" width="50%">
+    <el-dialog :title="$t('TKE.storage.xzyyp')" :visible.sync="dialogFormVisible" width="50%">
       <div class="post-room">
-        <el-select v-model="form.login" placeholder="请选择" size="mini" style="width:200px;">
+        <el-select v-model="form.login" :placeholder="$t('TKE.overview.qxz')" size="mini" style="width:200px;">
           <el-option
             v-for="item in LoginOptions"
             :key="item.ZoneId"
@@ -168,7 +168,7 @@
         </el-select>
         <el-input
           v-model="form.input"
-          placeholder="请输入内容"
+          :placeholder="$t('TKE.colony.qsrnr')"
           size="mini"
           style="width:200px;margin-left:10px;"
         ></el-input>
@@ -188,17 +188,17 @@
           >
             <el-table-column label max-width="10%">
               <template slot-scope="scope">
-                <el-radio v-model="form.radio" :label="scope.row">选择云硬盘</el-radio>
+                <el-radio v-model="form.radio" :label="scope.row">{{$t('TKE.storage.xzyyp')}}</el-radio>
               </template>
             </el-table-column>
             <el-table-column label="ID" width="180" prop="DiskId" max-width="30%"></el-table-column>
-            <el-table-column prop="DiskName" label="名称" max-width="40%"></el-table-column>
+            <el-table-column prop="DiskName" :label="$t('TKE.storage.xzyyp')" max-width="40%"></el-table-column>
             <el-table-column prop="DiskSize" label="大小" max-width="20%">
               <template slot-scope="scope">{{scope.row.DiskSize}}G</template>
             </el-table-column>
           </el-table>
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;条</span>
+            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.overview.tiao')}}</span>
             <el-pagination
               :page-size="pagesize"
               layout="prev, pager, next"
@@ -209,7 +209,7 @@
           </div>
         </div>
         <div slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="getAllData()">确 定</el-button>
+          <el-button type="primary" @click="getAllData()">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="dialogFormVisible = false">取 消</el-button>
         </div>
       </div>
@@ -234,11 +234,11 @@ export default {
       const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/;
       if (value === "") {
         // console.log(222)
-        callback(new Error("请输入应用户名"));
+        callback(new Error("請輸入用戶名"));
       } else if (!version.test(value)) {
-        callback(new Error("格式不正确"));
+        callback(new Error("格式不正確"));
       } else if (value.length > 63) {
-        callback(new Error("长度不能超过63个字符"));
+        callback(new Error("長度不能超過63個字元"));
       } else {
         callback();
       }

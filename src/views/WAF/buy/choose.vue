@@ -115,7 +115,8 @@
               <template v-if="loading">计算中...</template>
               <template v-else>NT$ {{price}}</template>
             </span><br/>
-            <el-button size="mini" class="immePay" @click="pay">立即支付</el-button>
+            <el-button size="mini" :disabled="ordered !== 0 || loading" class="buyImmediate" @click="pay">立即支付</el-button>
+            <p v-if="ordered === 1" style="clear: both; margin-left: 105px; color: #fa7821;">您已购买，无需重复购买。</p>
           </p>
         </div>
       </div>
@@ -123,7 +124,7 @@
   </div>
 </template>
 <script>
-import { DESCRIBE_WAF_PRICE, GENERATE_DEALS } from '@/constants'
+import { DESCRIBE_WAF_PRICE, GENERATE_DEALS, DESCRIBE_USER_EDITION } from '@/constants'
 import { 
   CLB_PACKAGE_CFG_TYPES,
   BUY_LOG_TYPES,
@@ -143,6 +144,7 @@ export default {
       costInfo: undefined,
       price: 0,
       autoRenewFlag: false,
+      ordered: -1, // 0 未购买  1 已购买
     }
   },
   watch: {
@@ -160,6 +162,15 @@ export default {
     },
   },
   mounted() {
+    this.axios.post(DESCRIBE_USER_EDITION, {
+      Version: '2018-01-25'
+    }).then(({ Response }) => {
+      if (Response.Data.includes('clb-waf')) {
+        this.ordered = 1
+      } else {
+        this.ordered = 0
+      }
+    })
     this.queryPrice()
   },
   methods:{
@@ -570,11 +581,11 @@ export default {
             font-size: 12px;
           }
         }
-        ::v-deep button{
-          background-color:#fa7821;
-          color:#fff;
-          margin-top:12px;
-        }
+        // ::v-deep button{
+        //   background-color:#fa7821;
+        //   color:#fff;
+        //   margin-top:12px;
+        // }
       }
     }
   }
@@ -582,5 +593,17 @@ export default {
 ::v-deep input{
   height:30px;
   line-height: 20px;
+}
+::v-deep button.buyImmediate{
+  background-color:#ff9700;
+  color:#fff;
+  border:none;
+  margin: 5px 0;
+  &.is-disabled {
+    background: #ccc;
+    &:hover {
+      color: #f5f7fa;
+    }
+  }
 }
 </style>

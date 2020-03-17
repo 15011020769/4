@@ -48,7 +48,7 @@
         </el-form-item>
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>
-      <h4 class="title-text">告警触发条件 <span @click="openEdit()">编辑</span></h4>
+      <h4 class="title-text">告警触发条件</h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
         {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}

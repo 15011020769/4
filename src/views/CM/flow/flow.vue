@@ -9,22 +9,21 @@
               <div class="table-top">
                 <div class="table_top_head">
                   <div style>
-                    <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
+                    <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDate" :Difference="'D'" v-if=""></TimeDropDown>
                   </div>
-                  <div class="contrast">
+                  <!-- <div class="contrast">
                     <el-button @click="contrast">数据对比</el-button>
-                    <!-- <span><span>对比</span><span>&times;</span></p> -->
-                  </div>
-
+                    <span><span>对比</span><span>&times;</span></p>
+                  </div> -->
                   <div class="export">
-                    <a @click="exportData" style="margin-right:10px;">导出数据</a>
-                    <a @click="exportImg">导出图片</a>
+                    <a @click="exportExcel" style="margin-right:10px;">导出数据</a>
                   </div>
                 </div>
                 <h3>外网出带宽</h3>
-                <div class="echarts" style="width:100%">
+                <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                   <!-- <Ecarts/> -->
-                </div>
+                   <EcharLine :xdata="true" :time="times" :opData='Points' :period="Period" style="height:300px;width:100%" v-if="times.length"></EcharLine>
+                <!-- </div> -->
               </div>
               <h3>报表详情</h3>
               <div class="table">
@@ -33,9 +32,19 @@
                   style="width: 100%"
                   height="450"
                   :default-sort="{prop: 'date', order: 'descending'}"
+                  v-loading="loadShow"
+                  id='exportTable'
                 >
-                  <el-table-column prop="address" label="时间" sortable></el-table-column>
-                  <el-table-column prop="address" label="外出带宽"></el-table-column>
+                  <el-table-column prop="times" label="时间" sortable>
+                      <template slot-scope="scope">
+                        {{scope.row.times}}
+                      </template>
+                  </el-table-column>
+                  <el-table-column prop="Points" label="外出带宽" >
+                     <template slot-scope="scope">
+                        {{scope.row.Points}}Mbps
+                      </template>
+                  </el-table-column>
                 </el-table>
                 <!-- 分页 -->
                 <div class="Right-style pagstyle">
@@ -43,8 +52,10 @@
                   <el-pagination
                     :page-size="pagesize"
                     :pager-count="7"
-                    layout="prev, pager, next"
+                    layout="sizes,prev, pager, next"
                     @current-change="handleCurrentChange"
+                    @size-change="handleSizeChange"
+                    :page-sizes="[10, 20, 50, 100]"
                     :total="TotalCount"
                   ></el-pagination>
                 </div>
@@ -60,6 +71,12 @@
 <script>
 import Header from "@/components/public/Head";
 import XTimeX from "@/components/public/TimeN";
+import TimeDropDown from "@/components/public/TimeDropDown.vue"
+import {All_MONITOR} from "@/constants"
+import moment from 'moment';
+import EcharLine from '@/components/public/echars-line.vue'
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 // import Ecarts from "@/components/public/echars-line"
 export default {
   name: "history",
@@ -69,43 +86,148 @@ export default {
       value: 1,
       dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
-      tableData: [],
-      //分页
+      tableData: [],// table数据
       TotalCount: 0, //总条数
       pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      currpage: 1, // 当前页码
+      StartTime:"",//开始时间
+      EndTime:"",//结束时间
+      Period:"",// 粒度
+      loadShow:true,
+      Points:[],//带宽
+      times:[],// 时间
+      TimeArr: [{
+          name: '实时',
+          Time: 'realTime',
+          TimeGranularity: [
+            {
+              value: "60",
+              label: "1分鐘"
+            },
+            {
+              value: "300",
+              label: "5分鐘"
+            }
+          ]
+        },
+        {
+          name: '近一天',
+          Time: 'Nearly_24_hours',
+          TimeGranularity: [
+            {
+              value: "300",
+              label: "5分鐘"
+            },
+            {
+              value: "3600",
+              label: "1小時"
+            }
+          ]
+        },
+        {
+          name: '近7天',
+          Time: 'Nearly_7_days',
+          TimeGranularity: [{
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "24小时"
+            }
+          ]
+        }
+      ],
     };
   },
   components: {
     Header,
-    XTimeX
-    // Ecarts
+    TimeDropDown,
+    EcharLine
   },
   created() {},
   methods: {
-    //获取数据
-    GetDat(data) {
-      // console.log(data);
+    GetDate(val){
+      this.Period = val[0]
+      this.StartTime = moment(val[1].StartTIme).format()
+      this.EndTime = moment(val[1].EndTIme).format()
+      this.loadShow = true
+      this.GetMonitor()
+      console.log(val)
     },
-    //取消
-    // cancel() {
-    //   this.dialogVisible = false;
-    // },
-    // //确定
-    // save() {
-    //   this.dialogVisible = false;
-    // },
+    //获取数据
+    GetMonitor() {
+        const param={
+          'Dimensions.0.appId': "1300560919",
+          EndTime: this.EndTime,
+          MetricName: "total_outtraffic",
+          Namespace: "qce/lb",
+          Period: this.Period,
+          StartTime: this.StartTime,
+          Version: "2017-03-12",
+        }
+        this.axios.post(All_MONITOR, param).then(res => {
+          let times = new Date(res.Response.StartTime).getTime()
+          let Points = res.Response.DataPoints[0].Points
+          console.log(new Date(res.Response.StartTime).getTime())
+          this.tableData=[]
+          this.times=[]
+          this.Points=[]
+          let table = []
+          for(let i in Points){
+            if(Points[i]!=null){
+              table.push({
+                times:moment(times+(this.Period*1000)*i).format("YYYY-MM-DD HH:mm:ss"),
+                Points:Points[i]
+              })
+              this.times.push(moment(times+(this.Period*1000)*i).format("YYYY-MM-DD HH:mm:ss"))
+              this.Points.push(Points[i])
+            }
+          }
+          // 分页处理
+          for(let j = (this.currpage-1)*this.pagesize ; j <table.length;j++){
+              if(j<(this.currpage-1)*this.pagesize+this.pagesize){
+                  this.tableData.push(table[j])  
+              }
+          }
+          this.TotalCount = table.length
+          this.loadShow = false
+        })
+    },
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
+      this.loadShow = true
+      this.GetMonitor()
     },
-    contrast() {
-      //数据对比
-      alert("对比");
+    //整分页
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.loadShow = true
+      this.GetMonitor()
     },
-    exportData() {
-      //导出数据
-      alert("导出数据");
+     //导出表格
+    exportExcel() {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      console.log(wb)
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          '1300560919-monitor-data'+ ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
     exportImg() {
       //导出图片
@@ -195,7 +317,7 @@ export default {
       box-sizing: border-box;
     }
     .table-top {
-      border: 1px solid #ccc;
+      // border: 1px solid #ccc;
       height: 450px;
       margin-bottom: 10px;
       .table_top_head {
@@ -211,7 +333,7 @@ export default {
           }
         }
         .export {
-          margin-top: 22px;
+          // margin-top: 22px;
           margin-left: 15px;
         }
       }

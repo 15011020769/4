@@ -48,13 +48,13 @@ Plugin.install = function(vue) {
   window.axios = instance;
   Object.defineProperties(vue.prototype, {
     axios: {
-      get() {
-        return instance;
+      get () {
+        return instance
       }
     },
     $axios: {
-      get() {
-        return instance;
+      get () {
+        return instance
       }
     }
   });

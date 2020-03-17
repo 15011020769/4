@@ -2,14 +2,18 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>错误码</h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <el-row>
       <el-col :span="10">
+        <el-row class="empty" v-if="seriesPieErrorCode.length == 0 ? true : false">
+          暂无数据
+        </el-row>
         <echart-pie
           :series="seriesPieErrorCode"
           :color="colorPie"
           :totalNumber="totalNumber"
+          v-else
           v-loading="loading"
         />
       </el-col>
@@ -32,6 +36,7 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
 import echartPie from "../components/pie"
 export default {
   props: {
@@ -63,13 +68,34 @@ export default {
     // console.log(this.params)
   },
   methods: {
+    exportEchart() {
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [],
+        ['错误码', '数量（次）', '占比（%）']
+      ]
+      this.tableData.map(item => {
+        data.push([
+          item.Metric,
+          item.SummarizedData.Value,
+         (item.SummarizedData.Value / this.totalNumber * 100).toFixed(2)
+        ])
+      })
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);
+      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
       const params = {
         Version: "2018-06-06",
-        StartTime: moment(times[0]).format('YYYY-MM-DD HH:hh:ss'),
-        EndTime: moment(times[1]).format('YYYY-MM-DD HH:hh:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
         Interval: interval
       }
@@ -117,5 +143,12 @@ export default {
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
+}
+ .empty {
+  height: 400px;
+  width: 100%;
+  line-height: 400px;
+  text-align: center;
+  font-weight: bold
 }
 </style>

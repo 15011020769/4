@@ -44,16 +44,17 @@
                   {{ `${it.eventShowName},不重复告警` }}</p>
               </div>
               <div slot="reference" class="name-wrapper">
-                <p class="textEps">
-                  {{ `${scope.row.conditions[0].metricShowName}
-                      ${scope.row.conditions[0].calcType}
-                      ${scope.row.conditions[0].calcValue}
-                      ${scope.row.conditions[0].unit},持续
-                      ${scope.row.conditions[0].continueTime/60}分钟,按
-                      ${scope.row.conditions[0].calcType}天重复告警` }}
+                <p class="textEps" v-for="items in scope.row.conditions.slice(0,3)" :key="items.metricShowName">
+                  {{ `${items.metricShowName}
+                      ${items.calcType}
+                      ${items.calcValue}
+                      ${items.unit},持续
+                      ${items.continueTime/60}分钟,
+                      ${items.calcType}` }}
                 </p>
-                <p class="textEps">
-                  {{ `${scope.row.eventConditions[0].eventShowName},不重复告警` }}
+                <p class="textEps"
+                 v-for="items in scope.row.eventConditions.slice(0,3-scope.row.conditions.length<=0?0:3-scope.row.conditions.length)" :key="items.eventShowName">
+                  {{ `${items.eventShowName},不重复告警` }}
                 </p>
               </div>
             </el-popover>
@@ -95,23 +96,25 @@
       <div class="Right-style pagstyle">
         <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
         <el-pagination
-          :page-size="pagesize"
+          @size-change="handleSizesChange"
+          @current-change="handleCurrentChange"
+          :page-size="pageSize"
+          :page-sizes="[10,20,50,100]"
           :current-page="currpage"
           :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
+          layout="sizes,prev, pager, next"
           :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
     <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="35%">
-      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
-      <el-form :model="templateObj" :rules="rules" ref="form">
-        <el-form-item prop="groupName">
-          <el-input maxlength="20" v-model="templateObj.groupName"></el-input>
-        </el-form-item>
-      </el-form>
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改条件模板名称">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p> -->
+          <div>
+            <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
+            <p v-if="editGroupName==''" class="edit-text-tips">条件模板名称不能为空</p>
+            <p v-if="editGroupName.length==20" class="edit-text-tips">条件模板名称不能超过20个字符</p>
+          </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
         <el-button @click="ShowEditDialog = false">取 消</el-button>
@@ -151,9 +154,8 @@ import {
   GET_POLICY_GROUP_TYPE,
   GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO,
-  GET_TENCENTCLOUDAPI,
-  GET_TEMPLATE_LIST,
-  UPDATE_INFO } from '@/constants/CM-yhs.js'
+  GET_TEMPLATE_LIST
+} from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
   data () {
@@ -167,7 +169,9 @@ export default {
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
       groupName: '', // 模板名称
-      templateObj: {}, // 当前模板数据对象
+      editGroupName: '', // 编辑的模板名称
+      editGroupId: '', // 编辑的模板id
+      // templateObj: {}, // 当前模板数据对象
       formInline: {
         product_kind: [
           {
@@ -324,28 +328,28 @@ export default {
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       // 分页
       TotalCount: 0, // 总条数
-      pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      pageSize: 10, // 分页条数
+      currpage: 0, // 当前页码
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
       triggerInput: '', // 触发条件模板名
-      rules: {// 验证名字
-        groupName: [
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('名称不能为空'))
-              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
-                callback(new Error('条件模板名称不能超过20个字符'))
-              } else {
-                callback()
-              }
-            },
-            trigger: 'change',
-            required: true
-          }
-        ]
-      }
+      // rules: {// 验证名字
+        // groupName: [
+        //   {
+        //     validator: (rule, value, callback) => {
+        //       if (value === '') {
+        //         callback(new Error('名称不能为空'))
+        //       } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
+        //         callback(new Error('条件模板名称不能超过20个字符'))
+        //       } else {
+        //         callback()
+        //       }
+        //     },
+        //     trigger: 'change',
+        //     required: true
+        //   }
+        // ]
+      // }
     }
   },
   components: {
@@ -380,7 +384,7 @@ export default {
         groupName: '',
         lang: 'zh',
         limit: this.pageSize,
-        offset: 0
+        offset: this.currpage
         // Version: '2018-07-24'
       }
       if (this.triggerInput !== '') params.groupName = this.triggerInput
@@ -451,29 +455,26 @@ export default {
     },
     // 编辑模板名称按钮
     showEditNameDlg (obj) {
+      this.editGroupName = obj.groupName
+      this.editGroupId = obj.groupId
       this.ShowEditDialog = true
-      this.templateObj = obj
+      // this.templateObj = obj
     },
     // 确定编辑模板名称完成
     async submitEditName () {
-      // console.log(this.templateObj.groupId)
-      let { groupId, groupName } = this.templateObj
-      this.ShowEditDialog = false
+      // let { groupId, groupName } = this.templateObj
       let params = {
         Version: '2018-07-24',
         Module: 'monitor',
-        GroupId: groupId,
+        GroupId: this.editGroupId,
         GroupType: 3,
         Key: 'groupName',
-        Value: groupName
-        // groupId: this.groupId,
-        // groupType: 3,
-        // key: 'groupName',
+        Value: this.editGroupName
         // lang: 'zh',
-        // value: this.groupName
       }
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.ShowEditDialog = false
           this.getListData()
         } else {
           this.errorPrompt(res)
@@ -626,6 +627,10 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+      this.getListData()
+    },
+    handleSizesChange (val) {
+      this.pageSize = val
       this.getListData()
     }
   },
@@ -830,4 +835,9 @@ a:hover {
 //     border-radius: 0;
 //   }
 // }
+.edit-text-tips{
+  color: red;
+  font-size: 12px;
+  margin-top:10px;
+}
 </style>

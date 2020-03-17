@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>带宽<span style="color:#bbb;fontSize:12px;">(Mbps)</span></h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart(type)"/>
     </el-row>
     <el-row type="flex" class="header" justify="space-between">
       <el-radio-group v-model="type" size="small">
@@ -28,6 +28,8 @@
       :series2="serLastOrigin"
       :legendText="legendOrigin"
       :tooltip="tooltip"
+      :isShowPeak="peak"
+      :peak="curOriginMax"
       :color="color"
       v-if="type=='origin'"
     />
@@ -35,6 +37,7 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
 import echartLine from '../components/line'
 export default {
   props: {
@@ -54,6 +57,7 @@ export default {
       legendOrigin: ['当前回源带宽', '上一周期回源带宽'],
       curBillMax: 0,
       lastBillMax: 0,
+      curOriginMax: 0,
       color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
@@ -83,20 +87,63 @@ export default {
     }
   },
   methods: {
+    exportEchart(type) {
+      let name=''
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [], 
+      ]
+      if (type == 'billing') {
+        data.push(['时间', '当前计费流量（bps）', '上一周期计费流量（bps）'])
+        name="billing_bandwidth"
+        this.xAxisCurBill.forEach((item,index) => {
+          data.push([
+            item,
+            this.serCurBill[index],
+            this.serLastBill[index]
+          ])
+        })
+      } else {
+        data.push(['时间', '当前回源流量（bps）', '上一周期回源流量（bps）'])
+        name="bandwidth_trend"
+        this.xAxisCurOrigin.forEach((item,index) => {
+          data.push([
+            item,
+            this.serCurOrigin[index],
+            this.serLastOrigin[index]
+          ])
+        })
+      }
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_${name}`);
+      XLSX.writeFile(wb, `${moment().format('x')}_${name}.xlsx`);
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
+      let timeType = 'days'
+      if(interval == '5min') {
+        timeType = 'days'
+      } else if(interval == 'hour') {
+        timeType = 'weeks'
+      } else {
+        timeType = 'months'
+      }
       const params1 = {
         Version: "2018-06-06",
-        StartTime: moment().subtract(1, 'days').startOf('days').format('YYYY-MM-DD HH:mm:ss'),
-        EndTime: moment().subtract(1, 'days').endOf('days').format('YYYY-MM-DD HH:mm:ss'),
+        StartTime: times[0],
+        EndTime: times[1],
         Area: "overseas",
         Interval: interval
       }
       const params2 = {
         Version: "2018-06-06",
-        StartTime: moment().subtract(2, 'days').startOf('days').format('YYYY-MM-DD HH:mm:ss'),
-        EndTime: moment().subtract(2, 'days').endOf('days').format('YYYY-MM-DD HH:mm:ss'),
+        StartTime: moment(times[0]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(times[1]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
         Area: "overseas",
         Interval: interval
       }
@@ -157,6 +204,7 @@ export default {
         Metric: "bandwidth"
       })
         .then(({ Response: { Data } }) => {
+          this.curOriginMax = Data[0].OriginData[0].SummarizedData.Value
           const curOriginArr = []
           const xAxisArr = []
           const res = Data[0].OriginData[0].DetailData

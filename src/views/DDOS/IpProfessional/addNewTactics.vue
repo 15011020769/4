@@ -753,7 +753,6 @@ export default {
       thisRadio10: false,
       input10: "",
       policyTemp: {}, //编辑用的暂存对象
-      useKind: 0, //全局存Kind值
       depthChangeVale: 0, //depth[0-1500]
       proStr: "", //全局协议
       speedStr: "",
@@ -789,11 +788,16 @@ export default {
       this.DdisableProtocol.push(
         this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
-      this.tags = this.policyTemp.PortLimits; //禁用协议
+      this.tags = JSON.parse(JSON.stringify(this.policyTemp.PortLimits)); //禁用协议
+      console.log(this.tags)
       for (let i in this.tags) {
-        this.tags[i].portNum =
-          this.tags[i].DPortStart + "-" + this.tags[i].DPortEnd;
+        if (this.tags[i].DPortStart == this.tags[i].DPortEnd) {
+          this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart;
+        } else {
+          this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart + "-" + this.policyTemp.PortLimits[i].DPortEnd;
       }
+      }
+      console.log(this.tags)
       this.tags1 = this.policyTemp.PacketFilters; //报文
       // var speedLimit="";
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
@@ -1040,30 +1044,27 @@ export default {
         }
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         for (let i in this.tags) {
+          if (this.tags[i].portNum.length > 1) {//此处需要对输入的端口区间进行校验（暂时未做）
           params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+            
           let portArr = this.tags[i].portNum.split("-");
+            if (portArr.length = 1) {
+              portArr[1] = portArr[0];
+            }
           params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
           params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
-          this.useKind = this.tags[i].Kind;
-          if (this.tags[i].Kind == 0) {
-            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
-            params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
-          } else if (this.tags[i].Kind == 1) {
-            params["PortLimits." + i + ".SPortEnd"] = this.tags[i].SPortEnd; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
-            params["PortLimits." + i + ".SPortStart"] = this.tags[i].SPortStart; //开始源端口，取值范围[0,65535]
-          } else if (this.tags[i].Kind == 2) {
-            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
+            if (this.tags[i].Kind != 0) {
+              params["PortLimits." + i + ".SPortStart"] = portArr[0]; //开始源端口，取值范围[0,65535]
+              params["PortLimits." + i + ".SPortEnd"] = portArr[1]; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
+            }
             params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
           }
         }
-
         // PacketFilters.N 报文过滤特征，当没有报文过滤时填空数组
-        if (this.tags1 && this.tableDataBegin2[0]) {
           for (let i in this.tags1) {
             params["PacketFilters." + i + ".Protocol"] = this.tags1[i].Protocol;
-            params["PacketFilters." + i + ".SportStart"] = this.tags1[
-              i
-            ].SportStart;
+          params["PacketFilters." + i + ".SportStart"] = this.tags1[i].SportStart;
             params["PacketFilters." + i + ".SportEnd"] = this.tags1[i].SportEnd;
             params["PacketFilters." + i + ".DportStart"] = this.tags1[
               i
@@ -1088,12 +1089,12 @@ export default {
             params["PacketFilters." + i + ".Action"] = this.tags1[i].Action;
           }
           // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
-          params["WaterPrint.0.Offset"] = this.tableDataBegin2[0].Offset; //	水印偏移量，取值范围[0, 100)
-          params["WaterPrint.0.RemoveSwitch"] =
-            this.tableDataBegin2[0].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
-          params["WaterPrint.0.OpenStatus"] = 1;
+        for (let i in this.tableDataBegin2) {
+          params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[i].Offset; //	水印偏移量，取值范围[0, 100)
+          params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[i].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
+          params["WaterPrint." + i + ".OpenStatus"] = 1;
 
-          let arr = this.tableDataBegin2[0].tcpPort.map(t => {
+          let arr = this.tableDataBegin2[i].tcpPort.map(t => {
             return t.split(",");
           });
           if (arr == []) {
@@ -1101,9 +1102,9 @@ export default {
             return;
           }
           arr.forEach((item, index) => {
-            params["WaterPrint.0.TcpPortList." + index] = item[0];
+            params["WaterPrint." + i + ".TcpPortList." + index] = item[0];
           });
-          let arr2 = this.tableDataBegin2[0].udpPort.map(t => {
+          let arr2 = this.tableDataBegin2[i].udpPort.map(t => {
             return t.split(",");
           });
           if (this.radios12 == "開啟") {
@@ -1113,7 +1114,7 @@ export default {
             }
           }
           arr2.forEach((item, index) => {
-            params["WaterPrint.0.UdpPortList." + index] = item[0];
+            params["WaterPrint." + i + ".UdpPortList." + index] = item[0];
           });
         }
         if (bl) {
@@ -1214,15 +1215,6 @@ export default {
       this.tableShow = true;
       this.$emit("closePage", { message: this.tableShow });
     },
-    copyObj: function() {
-      var des = {
-        Protocol: "tcp",
-        tortType: "",
-        beginPort: "",
-        endPort: ""
-      };
-      return des;
-    },
     // 报文过滤特征
     protocolChange(i){
       if (this.tags1[i].Protocol == "udp") {
@@ -1240,17 +1232,14 @@ export default {
     },
     //新增一行
     addRow: function(type) {
-      var des = this.copyObj();
+      var des = {Protocol: "tcp", tortType: "", beginPort: "", endPort: ""};
       if (type == 1) {
         if (this.tags.length >= 16) {
           this.$message("禁用端口數量不能超過16條");
           return;
         }
+        des.portNum = "";
         des.Action = "drop";
-        if (this.useKind == 1) {
-          des.SPortEnd = "";
-          des.SPortStart = "";
-        }
         this.tags.push(des);
       } else if (type == 2) {
         if (this.tags1.length >= 5) {

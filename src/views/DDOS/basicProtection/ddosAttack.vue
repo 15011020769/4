@@ -403,6 +403,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: '攻擊流量寬頻',
             type: 'line',
             data: y,

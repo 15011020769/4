@@ -1,11 +1,11 @@
  <!-- Service-事件 -->
 <template>
   <div class="colony-main">
-    <div class="tke-reminder">资源事件只保存最近1小时内发生的事件，请尽快查阅。</div>
+    <div class="tke-reminder">{{$t('TKE.storage.zysjjbczq1xs')}}</div>
     <div class="tke-grid ">
       <!-- 右侧 -->
       <div class="grid-right">
-        <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
+        <span>{{$t('TKE.overview.zdsx')}}</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch()" ></el-switch>
       </div>
     </div>
 
@@ -16,14 +16,14 @@
         v-loading="loadShow"
         style="width: 100%">
         <el-table-column
-          label="首次出现时间"
+          :label="$t('TKE.event.sccxsj')"
           >
           <template slot-scope="scope">
             <p>{{upTime(scope.row.firstTimestamp)}}</p>
           </template>
         </el-table-column>
         <el-table-column
-          label="最后出现时间"
+          :label="$t('TKE.event.zhcxsj')"
           >
           <template slot-scope="scope">
             <p>{{upTime(scope.row.lastTimestamp)}}</p>
@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="级别"
+          :label="$t('TKE.event.jb')"
           >
           <template slot-scope="scope">
               <span class="text-red">{{scope.row.type}}</span>
@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column
           prop=""
-          label="资源类型"
+          :label="$t('TKE.event.zylx')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.involvedObject && scope.row.involvedObject.kind}}</span>
@@ -48,7 +48,7 @@
 
         <el-table-column
           prop=""
-          label="资源名称"
+          :label="$t('TKE.event.zymc')"
           >
           <template slot-scope="scope">
             <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
@@ -64,14 +64,14 @@
         <el-table-column
           width=200
           prop="nodeTotal"
-          label="详细描述">
+          :label="$t('TKE.event.xxms')">
           <template slot-scope="scope">
             <p style="white-space: nowrap; width: 180px; overflow: hidden;text-overflow: ellipsis">{{scope.row.message}}</p>
           </template>
         </el-table-column>
         <el-table-column
           prop=""
-          label="出现次数">
+          :label="$t('TKE.event.cxcs')">
           <template slot-scope="scope">
             <p>{{scope.row.count}}</p>
           </template>
