@@ -9,7 +9,7 @@
               <div class="table-top">
                 <div class="table_top_head">
                   <div style>
-                    <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDate" :Difference="'D'" ></TimeDropDown>
+                    <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="false" v-on:switchData="GetDate" :Difference="'D'" v-if=""></TimeDropDown>
                   </div>
                   <!-- <div class="contrast">
                     <el-button @click="contrast">数据对比</el-button>
@@ -17,13 +17,12 @@
                   </div> -->
                   <div class="export">
                     <a @click="exportExcel" style="margin-right:10px;">导出数据</a>
-                    <!-- <a @click="exportImg">导出图片</a> -->
                   </div>
                 </div>
                 <h3>外网出带宽</h3>
                 <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                   <!-- <Ecarts/> -->
-                   <EcharLine :xdata="true" :time="times" :opData='Points' :period="Period" style="height:300px;width:100%"></EcharLine>
+                   <EcharLine :xdata="true" :time="times" :opData='Points' :period="Period" style="height:300px;width:100%" v-if="times.length"></EcharLine>
                 <!-- </div> -->
               </div>
               <h3>报表详情</h3>
@@ -152,6 +151,7 @@ export default {
       this.Period = val[0]
       this.StartTime = moment(val[1].StartTIme).format()
       this.EndTime = moment(val[1].EndTIme).format()
+      this.loadShow = true
       this.GetMonitor()
       console.log(val)
     },
