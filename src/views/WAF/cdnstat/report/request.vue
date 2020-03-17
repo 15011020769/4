@@ -55,12 +55,21 @@ export default {
   },
   methods: {
     exportEchart() {
+      const { projectName, domainName, type, times, interval } = this.params
+      let fileName
+      const start = times[0].split(' ')[0]
+      const end = times[1].split(' ')[0]
+      if (interval === '5min') { // 日报
+        fileName = `${start}_request_trend.xlsx`
+      } else {
+        fileName = `${start}-${end}_request_trend.xlsx`
+      }
       let data = [
-        ['统计项目', '全部项目'],
-        ['统计域名', '全部域名'],
-        ['报表类型', '日报'],
-        ['开始时间', this.params.times[0]],
-        ['结束时间', this.params.times[1]],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['报表类型', type],
+        ['开始时间', times[0]],
+        ['结束时间', times[1]],
         [],
         ['时间', '当前请求数（次）', '上一次请求数（次）']
       ]
@@ -73,8 +82,8 @@ export default {
       })
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_request_trend`);
-      XLSX.writeFile(wb, `${moment().format('x')}_request_trend.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'request_trend');
+      XLSX.writeFile(wb, fileName);
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
@@ -112,17 +121,19 @@ export default {
       this.getLastCycleData(params2)
     },
     getCurrentData(params) {
-          const xAxisArr = []
-          const currentArr = []
+      const xAxisArr = []
+      const currentArr = []
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
         Metric: "request",
       })
         .then(({ Response: { Data }}) => {
-          Data[0].CdnData[0].DetailData.map((item) => {
-            xAxisArr.push(item.Time)
-            currentArr.push(item.Value)
-          })
+          if (Data && Data.length) {
+            Data[0].CdnData[0].DetailData.map((item) => {
+              xAxisArr.push(item.Time)
+              currentArr.push(item.Value)
+            })
+          }
           this.seriesCurrent = currentArr
           this.xAxisCurrent = xAxisArr
         })
@@ -134,9 +145,11 @@ export default {
         Metric: "request",
       })
         .then(({ Response: { Data } }) => {
-          Data[0].CdnData[0].DetailData.map((item) => {
-            lastCycleArr.push(item.Value)
-          })
+          if (Response.Data && Response.Data.length) {
+            Data[0].CdnData[0].DetailData.map((item) => {
+              lastCycleArr.push(item.Value)
+            })
+          }
           this.seriesLastCycle = lastCycleArr
         })
     }
