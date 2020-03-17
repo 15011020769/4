@@ -69,12 +69,21 @@ export default {
   },
   methods: {
     exportEchart() {
+      const { projectName, domainName, type, times, interval } = this.params
+      let fileName
+      const start = times[0].split(' ')[0]
+      const end = times[1].split(' ')[0]
+      if (interval === '5min') { // 日报
+        fileName = `${start}_error_code.xlsx`
+      } else {
+        fileName = `${start}-${end}_error_code.xlsx`
+      }
       let data = [
-        ['统计项目', '全部项目'],
-        ['统计域名', '全部域名'],
-        ['报表类型', '日报'],
-        ['开始时间', this.params.times[0]],
-        ['结束时间', this.params.times[1]],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['报表类型', type],
+        ['开始时间', times[0]],
+        ['结束时间', times[1]],
         [],
         ['错误码', '数量（次）', '占比（%）']
       ]
@@ -87,8 +96,8 @@ export default {
       })
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);
-      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'error_code');
+      XLSX.writeFile(wb, fileName);
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
@@ -118,14 +127,16 @@ export default {
           const legendArr = []
           let total = 0
           const tableArr = []
-          Response.Data[0].CdnData.map((item) => {
-            if(item.Metric.indexOf(4) !== -1 && item.Metric !== '4xx') {
-              errCode.push({name: item.Metric, value: item.SummarizedData.Value})
-              legendArr.push(item.Metric)
-              total += item.SummarizedData.Value
-              tableArr.push(item)
-            }
-          })
+          if (Response.Data && Response.Data.length) {
+            Response.Data[0].CdnData.map((item) => {
+              if(item.Metric.indexOf(4) !== -1 && item.Metric !== '4xx') {
+                errCode.push({name: item.Metric, value: item.SummarizedData.Value})
+                legendArr.push(item.Metric)
+                total += item.SummarizedData.Value
+                tableArr.push(item)
+              }
+            })
+          }
           this.seriesPieErrorCode = errCode
           this.legendTextPieError = legendArr
           this.totalNumber = total

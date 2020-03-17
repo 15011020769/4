@@ -87,17 +87,21 @@ export default {
     }
   },
   methods: {
-    exportEchart(type) {
-      let name=''
+    exportEchart(type1) {
+      const { projectName, domainName, type, times, interval } = this.params
+      let fileName
+      const start = times[0].split(' ')[0]
+      const end = times[1].split(' ')[0]
       let data = [
-        ['统计项目', '全部项目'],
-        ['统计域名', '全部域名'],
-        ['报表类型', '日报'],
-        ['开始时间', this.params.times[0]],
-        ['结束时间', this.params.times[1]],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['报表类型', type],
+        ['开始时间', times[0]],
+        ['结束时间', times[1]],
         [], 
       ]
-      if (type == 'billing') {
+      let name=''
+      if (type1 == 'billing') {
         data.push(['时间', '当前计费流量（bps）', '上一周期计费流量（bps）'])
         name="billing_bandwidth"
         this.xAxisCurBill.forEach((item,index) => {
@@ -118,10 +122,16 @@ export default {
           ])
         })
       }
+
+      if (interval === '5min') { // 日报
+        fileName = `${start}_${name}.xlsx`
+      } else {
+        fileName = `${start}-${end}_${name}.xlsx`
+      }
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_${name}`);
-      XLSX.writeFile(wb, `${moment().format('x')}_${name}.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, name);
+      XLSX.writeFile(wb, fileName);
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
@@ -170,14 +180,16 @@ export default {
         Metric: "bandwidth"
       })
         .then(({ Response: { Data } }) => {
-          this.curBillMax = Data[0].BillingData[0].SummarizedData.Value
           const curBillArr = []
           const xAxisArr = []
-          const res = Data[0].BillingData[0].DetailData
-          res && res.map((item) => {
-            xAxisArr.push(item.Time)
-            curBillArr.push(item.Value)
-          })
+          if (Data && Data.length) {
+            this.curBillMax = Data[0].BillingData[0].SummarizedData.Value
+            const res = Data[0].BillingData[0].DetailData
+            res && res.map((item) => {
+              xAxisArr.push(item.Time)
+              curBillArr.push(item.Value)
+            })
+          }
           this.xAxisCurBill = xAxisArr
           this.serCurBill = curBillArr
         })
@@ -190,10 +202,12 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastBillArr = []
-          const res = Data[0].BillingData[0].DetailData
-          res && res.map((item) => {
-            lastBillArr.push(item.Value)
-          })
+          if (Data && Data.length) {
+            const res = Data[0].BillingData[0].DetailData
+            res && res.map((item) => {
+              lastBillArr.push(item.Value)
+            })
+          }
           this.serLastBill = lastBillArr
         })
     },
@@ -204,14 +218,16 @@ export default {
         Metric: "bandwidth"
       })
         .then(({ Response: { Data } }) => {
-          this.curOriginMax = Data[0].OriginData[0].SummarizedData.Value
           const curOriginArr = []
           const xAxisArr = []
-          const res = Data[0].OriginData[0].DetailData
-          res && res.map((item) => {
-            xAxisArr.push(item.Time)
-            curOriginArr.push(item.Value)
-          })
+          if (Data && Data.length) {
+            this.curOriginMax = Data[0].OriginData[0].SummarizedData.Value
+            const res = Data[0].OriginData[0].DetailData
+            res && res.map((item) => {
+              xAxisArr.push(item.Time)
+              curOriginArr.push(item.Value)
+            })
+          }
           this.xAxisCurOrigin = xAxisArr
           this.serCurOrigin = curOriginArr
         })
@@ -224,10 +240,12 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastOriginArr = []
-          const res = Data[0].OriginData[0].DetailData
-          res && res.map((item) => {
-            lastOriginArr.push(item.Value)
-          })
+          if (Data && Data.length) {
+            const res = Data[0].OriginData[0].DetailData
+            res && res.map((item) => {
+              lastOriginArr.push(item.Value)
+            })
+          }
           this.serLastOrigin = lastOriginArr
         })
     },
