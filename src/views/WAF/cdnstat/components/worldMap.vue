@@ -1,5 +1,10 @@
 <template>
-  <div ref="worldmap_dv" style="width: 100%;height: 480px;"></div>
+  <div>
+    <el-row class="btnGroup">
+      <el-button @click="add">+</el-button><br/><el-button @click="dec">-</el-button>
+    </el-row>
+    <div ref="worldmap_dv" style="width: 100%;height: 480px;"></div>
+  </div>
 </template>
 
 <script>
@@ -21,6 +26,7 @@ export default {
   data() {
     return {
       chart: null,
+      i: 1
     };
   },
   mounted() {
@@ -39,6 +45,21 @@ export default {
     }
   },
   methods: {
+    add() {
+      this.i += 0.5
+      var myChart = this.$echarts.init(this.$refs.worldmap_dv);
+      myChart.setOption({ geo: { zoom: this.i } })
+      myChart.setOption({ series: { zoom: this.i } }) 
+    },
+    dec() {
+      if(this.i > 1) {
+        this.i -= 0.5
+      }else {
+        return
+      }
+      var myChart = this.$echarts.init(this.$refs.worldmap_dv); 
+      myChart.setOption({ series: { zoom: this.i } }) 
+    },
     initChart() {
       let that = this
       this.chart = this.$echarts.init(this.$refs.worldmap_dv);
@@ -57,6 +78,13 @@ export default {
             }
             relVal += val.marker+ '流量占比' + '<br/>' + val.data.name + ' : ' + val.data.value + "%";
             return relVal
+          }
+        },
+        roamController: {//控制地图的上下左右放大缩小 图上没有显示
+          show: true,
+          x: 'right',
+          mapTypeControl: {
+            'world': true
           }
         },
         // 视觉映射组件
@@ -88,6 +116,10 @@ export default {
             name: '',
             mapType: 'world', // 地图类型
             roam: true,
+            zoom: 1,
+            scaleLimit: { //滚轮缩放的极限控制
+              min: 1,
+            },
             label: {
               show: false // 是否显示对应地名
             },
@@ -120,3 +152,9 @@ export default {
 };
 
 </script>
+<style lang="scss" scoped>
+  .btnGroup {
+    position: absolute;
+    z-index: 10;
+  }
+</style>
