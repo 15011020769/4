@@ -150,7 +150,7 @@ export default {
         desc: [{ required: false }],
         Height: [{ required: true }],
         VideoBitrate: [{ required: true }],
-        AdaptBitratePercent: [{ required: true }]
+        AdaptBitratePercent: [{ required: true, type: 'number' }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
@@ -406,8 +406,8 @@ export default {
         Object.keys(this.ruleForm).forEach(key => {
           this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
           this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString();
-          this.ruleForm.AdaptBitratePercent =
-            this.ruleForm.AdaptBitratePercent * 100;
+          this.ruleForm.AdaptBitratePercent = 
+            Math.floor(this.ruleForm.AdaptBitratePercent * 100)
         });
       } else {
         // 默认选择普通
