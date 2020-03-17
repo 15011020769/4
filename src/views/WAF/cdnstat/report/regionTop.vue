@@ -201,8 +201,7 @@ export default {
         })
     },
     handleCurrentChange(val) {
-      this.currpage = val;
-      this.getListTopData();
+      this.currpage = val
     },
   }
 }
