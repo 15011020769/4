@@ -28,6 +28,8 @@
       :series2="serLastOrigin"
       :legendText="legendOrigin"
       :tooltip="tooltip"
+      :isShowPeak="peak"
+      :peak="curOriginMax"
       :color="color"
       v-if="type=='origin'"
     />
@@ -55,6 +57,7 @@ export default {
       legendOrigin: ['当前回源带宽', '上一周期回源带宽'],
       curBillMax: 0,
       lastBillMax: 0,
+      curOriginMax: 0,
       color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
@@ -201,6 +204,7 @@ export default {
         Metric: "bandwidth"
       })
         .then(({ Response: { Data } }) => {
+          this.curOriginMax = Data[0].OriginData[0].SummarizedData.Value
           const curOriginArr = []
           const xAxisArr = []
           const res = Data[0].OriginData[0].DetailData
