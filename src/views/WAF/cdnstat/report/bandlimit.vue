@@ -102,7 +102,11 @@ export default {
       ]
       let name=''
       if (type1 == 'billing') {
-        data.push(['时间', '当前计费流量（bps）', '上一周期计费流量（bps）'])
+        data.push(
+          ['峰值带宽', this.curBillMax + 'bps'],
+          [],
+          ['时间', '当前计费流量（bps）', '上一周期计费流量（bps）']
+        )
         name="billing_bandwidth"
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
@@ -112,7 +116,11 @@ export default {
           ])
         })
       } else {
-        data.push(['时间', '当前回源流量（bps）', '上一周期回源流量（bps）'])
+        data.push(
+          ['峰值带宽', this.curOriginMax + 'bps'],
+          [],
+          ['时间', '当前回源流量（bps）', '上一周期回源流量（bps）']
+        )
         name="bandwidth_trend"
         this.xAxisCurOrigin.forEach((item,index) => {
           data.push([
