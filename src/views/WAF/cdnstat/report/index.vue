@@ -3,12 +3,16 @@
     <div class="header">
       <h2>运营报表</h2>
     </div>
-    <div  class="container">
+    <div class="container">
       <el-card class="card">
         <el-form>
           <el-row type="flex">
             <el-form-item label="统计项目" style="width: 300px">
-              <el-select v-model="projectId" size="small" placeholder="全部项目">
+              <el-select
+                v-model="projectId"
+                size="small"
+                placeholder="全部项目"
+              >
                 <el-option value="">全部项目</el-option>
                 <el-option
                   v-for="p in projectList"
@@ -19,7 +23,11 @@
               </el-select>
             </el-form-item>
             <el-form-item label="统计域名" style="width: 300px">
-              <el-select v-model="domainName" size="small" placeholder="全部域名">
+              <el-select
+                v-model="domainName"
+                size="small"
+                placeholder="全部域名"
+              >
                 <el-option value="">全部域名</el-option>
                 <el-option
                   v-for="p in domainList"
@@ -47,7 +55,8 @@
                 :format="interval === 'day' ? 'yyyy-MM' : 'yyyy-MM-dd'"
                 :type="interval === 'hour' ? 'datetimerange' : 'date'"
                 :picker-options="pickerOptions"
-                placeholder="选择日期">
+                placeholder="选择日期"
+              >
               </el-date-picker>
             </el-form-item>
           </el-row>
@@ -56,7 +65,7 @@
               <el-checkbox label="overview">数据概览</el-checkbox>
               <el-checkbox label="regionTop">区域流量分布</el-checkbox>
               <el-checkbox label="flux">流量</el-checkbox>
-              <el-checkbox label="bandlimit" >带宽</el-checkbox>
+              <el-checkbox label="bandlimit">带宽</el-checkbox>
               <el-checkbox label="request">请求数</el-checkbox>
               <el-checkbox label="errorCode">错误码</el-checkbox>
               <el-checkbox label="topUrl">TOP10 URL</el-checkbox>
@@ -69,16 +78,13 @@
         v-if="showFields.includes('overview')"
         class="card"
       />
+
       <region-top
         :params="params"
         v-if="showFields.includes('regionTop')"
         class="card"
       />
-      <flux
-        :params="params"
-        v-if="showFields.includes('flux')"
-        class="card"
-      />
+      <flux :params="params" v-if="showFields.includes('flux')" class="card" />
       <bandlimit
         :params="params"
         v-if="showFields.includes('bandlimit')"
@@ -120,9 +126,9 @@ export default {
     Bandlimit,
     Request,
     ErrorCode,
-    TopUrl,
+    TopUrl
   },
-  data() {
+  data () {
     return {
       projectList: [],
       domainListCopy: [],
@@ -133,33 +139,33 @@ export default {
       time: moment().subtract(1, 'd'),
       showFields: ['overview', 'regionTop', 'flux', 'bandlimit', 'request', 'errorCode', 'topUrl'],
       pickerOptions: {
-        onPick({ maxDate, minDate }) {
+        onPick ({ maxDate, minDate }) {
           console.log(maxDate, minDate)
         }
       }
     }
   },
   computed: {
-    params() {
+    params () {
       const { interval, projectId, domainName, time } = this
       let times = time
       if (interval === '5min') {
         times = [time, time]
       } else if (interval === 'day') {
-        times = [time, ]
+        times = [time ]
       }
-      return {interval, projectId, domainName, times}
+      return { interval, projectId, domainName, times }
     }
   },
   watch: {
-    projectId(projectId) {
+    projectId (projectId) {
       if (!projectId) {
         this.domainList = [...this.domainListCopy]
         return
       }
       this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === projectId)
     },
-    interval(interval) {
+    interval (interval) {
       if (interval === 'hour') {
         this.time = [moment().subtract(7, 'd'), moment().subtract(1, 'd')]
       } else if (interval === 'day') {
@@ -169,28 +175,28 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     console.log(this.$refs.datePicker)
     this.init()
   },
   methods: {
-    init() {
+    init () {
       this.getProjects()
       this.getDomains()
     },
-    getProjects() {
+    getProjects () {
       this.axios.post('cdn2/ListCdnProjects', flatObj({
-        "Version": "2018-06-06",
-        Interfaces: ["DescribeCdnData", "ListTopData", "DescribeOriginData", "DescribeBillingData"]
+        'Version': '2018-06-06',
+        Interfaces: ['DescribeCdnData', 'ListTopData', 'DescribeOriginData', 'DescribeBillingData']
       }))
         .then(({ Response }) => {
           this.projectList = Response.ProjectList
         })
     },
-    getDomains() {
+    getDomains () {
       this.axios.post('cdn2/ListCdnDomains', flatObj({
-        "Version": "2018-06-06",
-        Interfaces: ["DescribeCdnData", "ListTopData", "DescribeOriginData", "DescribeBillingData"]
+        'Version': '2018-06-06',
+        Interfaces: ['DescribeCdnData', 'ListTopData', 'DescribeOriginData', 'DescribeBillingData']
       }))
         .then(({ Response }) => {
           this.domainList = Response.DomainList.filter(domain => domain.Area === 'overseas')
@@ -206,7 +212,7 @@ export default {
 }
 .header {
   h2 {
-  padding-left: 20px;
+    padding-left: 20px;
     font-size: 16px;
     line-height: 51px;
     color: #000;
@@ -216,12 +222,10 @@ export default {
 .card {
   margin-bottom: 20px;
 }
-::v-deep .el-checkbox+.el-checkbox {
+::v-deep .el-checkbox + .el-checkbox {
   margin-left: 0px;
 }
 ::v-deep .el-date-editor.el-input {
   width: 200px;
 }
-
-
 </style>
