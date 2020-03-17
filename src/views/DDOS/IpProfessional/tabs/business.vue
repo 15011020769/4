@@ -608,6 +608,7 @@ export default {
         },
         series: [
           {
+            symbol: "none",
             name: "入流量頻寬峰值",
             type: "line",
             data: data1,
@@ -620,6 +621,7 @@ export default {
             }
           },
           {
+            symbol: "none",
             name: "出流量頻寬峰值",
             type: "line",
             data: data2,
@@ -708,6 +710,7 @@ export default {
         },
         series: [
           {
+            symbol: "none",
             name: "入流量包速率峰值",
             type: "line",
             data: data1,
@@ -720,6 +723,7 @@ export default {
             }
           },
           {
+            symbol: "none",
             name: "出流量包速率峰值",
             type: "line",
             data: data2,

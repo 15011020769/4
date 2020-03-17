@@ -654,6 +654,7 @@ export default {
         },
         series: [
           {
+            symbol: "none",
             name: "總請求峰值",
             type: "line",
             data: data1,
@@ -666,6 +667,7 @@ export default {
             }
           },
           {
+            symbol: "none",
             name: "攻擊請求峰值",
             type: "line",
             data: data2,

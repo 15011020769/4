@@ -872,11 +872,11 @@ export default {
       return o.y + "-" + o.M + "-" + o.d + " " + o.h + ":" + o.m + ":" + o.s;
     },
     drawLine(y, date) {
-      var arr = [];
-      for (let i in date) {
-        arr.unshift(date[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("chart-bps"));
       // 绘制图表
@@ -911,6 +911,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: "攻擊流量寬頻",
             type: "line",
             data: y,
@@ -941,20 +942,22 @@ export default {
     },
     drawLine2(y, date) {
       // 基于准备好的dom，初始化echarts实例
-      var arr = [];
-      for (let i in date) {
-        arr.unshift(date[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // console.log(arr)
       let myChart2 = this.$echarts.init(document.getElementById("chart-pps"));
       // 绘制图表
       myChart2.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: "axis"
+        },
         xAxis: {
-          data: arr
+          data: date
         },
         yAxis: {
           axisLine: {
@@ -976,6 +979,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: "總攻擊流量",
             type: "line",
             data: y,
