@@ -374,7 +374,7 @@ export default {
         return
       }
       const params = {
-        Password: "yes",
+        Password: this.ruleForm.pwdRadio ? this.ruleForm.Password : "Tfc123456",
         QcloudUin: this.$cookie.get("uin"), //uin
         SecretId: res.Response.SecretId,
         SecretKey: res.Response.SecretKey,

@@ -25,12 +25,12 @@
           :rules="rules"
           ref="pv"
         >
-          <el-form-item label="名称" class="m0" prop="name">
-            <el-input class="w200" v-model="pv.name" placeholder="请输入名称"></el-input>
-            <p>最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+          <el-form-item :label="$t('TKE.overview.mc')" class="m0" prop="name">
+            <el-input class="w200" v-model="pv.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
+            <p>{{$t('TKE.overview.xz')}}</p>
           </el-form-item>
-          <el-form-item label="命名空间" style="margin-top:20px;">
-            <el-select v-model="pv.nameValue" placeholder="请选择">
+          <el-form-item :label="$t('TKE.overview.mmkj')" style="margin-top:20px;">
+            <el-select v-model="pv.nameValue" :placeholder="$t('TKE.overview.qxz')">
               <el-option
                 v-for="(item,index) in Namespace"
                 :key="index"
@@ -41,7 +41,7 @@
           </el-form-item>
           <el-form-item label="Provisioner" class="m0">
             <el-radio-group v-model="pv.ps" style="margin-bottom: 30px;">
-              <el-radio-button label="CBS">云硬盘CBS</el-radio-button>
+              <el-radio-button label="CBS">{{$t('TKE.storage.yyp')}}CBS</el-radio-button>
               <!-- <el-tooltip class="item" effect="light" placement="top">
                 <div slot="content">
                   扩展组件功能处于白名单体验阶段，如需使用，请
@@ -58,22 +58,22 @@
               </el-tooltip> -->
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="读写权利" class="m0">
+          <el-form-item :label="$t('TKE.storage.dxql')" class="m0">
             <el-radio-group v-model="pv.rw" style="margin-bottom: 30px;">
-              <el-radio-button label="ReadWriteOnce">单机读写</el-radio-button>
+              <el-radio-button label="ReadWriteOnce">{{$t('TKE.storage.djdx')}}</el-radio-button>
               <el-tooltip class="item" effect="light" placement="top">
-                <div slot="content">云硬盘CBS仅支持单机读写</div>
-                <el-radio-button label="tor" :disabled="pv.ps=='CBS'">多机只读</el-radio-button>
+                <div slot="content">{{$t('TKE.storage.yypjzcdjdx')}}</div>
+                <el-radio-button label="tor" :disabled="pv.ps=='CBS'">{{$t('TKE.storage.djzd')}}</el-radio-button>
               </el-tooltip>
               <el-tooltip class="item" effect="light" placement="top">
-                <div slot="content">云硬盘CBS仅支持单机读写</div>
-                <el-radio-button label="trw" :disabled="pv.ps=='CBS'">多机读写</el-radio-button>
+                <div slot="content">{{$t('TKE.storage.yypjzcdjdx')}}</div>
+                <el-radio-button label="trw" :disabled="pv.ps=='CBS'">{{$t('TKE.storage.duojdx')}}</el-radio-button>
               </el-tooltip>
             </el-radio-group>
           </el-form-item>
           <div v-if="pv.ps=='CBS'">
             <el-form-item label="StorageClass" class="m0">
-              <el-select v-model="pv.storageValue" placeholder="请选择">
+              <el-select v-model="pv.storageValue" :placeholder="$t('TKE.overview.qxz')">
                 <el-option
                   v-for="(item,index) in StorageClass"
                   :key="index"
@@ -86,29 +86,29 @@
                 style="height:28px;padding-bottom:2px;border:none;"
                 icon="el-icon-refresh"
               ></el-button>
-              <div>PersistentVolumeClaim将自动绑定具有相同StoragClass，且容量大于或等于当前PVC设置的容量大小的静态创建的PersistentVolume</div>
+              <div>{{$t('TKE.storage.pvcjzdbd')}}</div>
             </el-form-item>
-            <el-form-item label="云盘类型">
-              <div>普通云硬盘</div>
+            <el-form-item :label="$t('TKE.storage.yplx')">
+              <div>{{$t('TKE.storage.ptyyp')}}</div>
               <div>
-                StorageClass为cbs，默认为普通云硬盘，最小为10GiB，
-                <span class="red">若普通云盘售罄时将自动创建高性能云硬盘，最小为10GiB</span>
+                {{$t('TKE.storage.scwcbs')}}
+                <span class="red">{{$t('TKE.storage.rptypsqs')}}</span>
               </div>
             </el-form-item>
             <el-form-item label="容量" prop="input">
-              <el-tooltip content="普通云硬盘硬盘大小为10GB,最大为16000GB" placement="top" effect="light">
+              <el-tooltip :content="$t('TKE.storage.ptyypypdx')" placement="top" effect="light">
                 <el-input style="width:150px" v-model="pv.input" @change="getMoney()">
                   <template slot="append">GiB</template>
                 </el-input>
               </el-tooltip>
             </el-form-item>
-            <el-form-item label="费用">
-              <div>请先输入合法的云盘容量</div>
+            <el-form-item :label="$t('TKE.storage.fy')">
+              <div>{{$t('TKE.storage.qxsrhfdyprl')}}</div>
             </el-form-item>
           </div>
           <div v-if="pv.ps=='CFS'">
             <el-form-item label="StorageClass" class="m0">
-              <el-select class="err" v-model="pv.storageValue" placeholder="暂无数据" disabled>
+              <el-select class="err" v-model="pv.storageValue" :placeholder="$t('TKE.overview.zwsj')" disabled>
                 <el-option
                   v-for="(item,index) in pv.StorageClass"
                   :key="index"
@@ -124,7 +124,7 @@
               ></el-button>
               <i class="el-icon-warning red"></i>
               <div>
-                当前类型无可用StorageClass，请前往
+                {{$t('TKE.storage.dqlxwky')}}
                 <a href>StorageClass</a>
                 <i class="el-icon-edit-outline"></i>新建
               </div>
@@ -156,7 +156,7 @@ export default {
     var validatePass = (rule, value, callback) => {
       const version = /^(?!-)(?![0-9])(?!.*-$)[a-z0-9-]+$/;
       if (!version.test(this.pv.name)) {
-        callback(new Error("格式不正确"));
+        callback(new Error("格式不正確"));
       } else {
         callback();
       }
@@ -165,9 +165,9 @@ export default {
       //  const version = /^(?!_)(?!.*-$)[a-z0-9_]+$/
       // console.log(value)
       if (this.pv.input % 10 !== 0) {
-        callback(new Error("硬盘大小需为10的倍数"));
+        callback(new Error("硬碟大小需為10的倍數"));
       } else if (this.pv.input >= 16000) {
-        callback(new Error("最大为16000GB"));
+        callback(new Error("最大為16000GB"));
       } else {
         callback();
       }
@@ -188,12 +188,12 @@ export default {
       see: false,
       rules: {
         name: [
-          { required: true, message: "名称不能为空", trigger: "blur,change" },
-          { max: 63, message: "名称不能超过63个字符", trigger: "blur,change" },
+          { required: true, message: "名稱不能為空", trigger: "blur,change" },
+          { max: 63, message: "名稱不能超過63個字元", trigger: "blur,change" },
           { validator: validatePass, trigger: "blur,change" }
         ],
         input: [
-          { required: true, message: "容量不能为空", trigger: "blur,change" },
+          { required: true, message: "容量不能為空", trigger: "blur,change" },
           { validator: validatePass2, trigger: "blur,change" }
         ]
       }

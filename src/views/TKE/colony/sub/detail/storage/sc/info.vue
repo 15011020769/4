@@ -2,15 +2,15 @@
 <template>
   <div class="colony-main">
     <div class="tke-card tke-formpanel-wrap">
-      <h4  class="tke-formpanel-title">基本信息</h4>
+      <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="名称">
+        <el-form-item :label="$t('TKE.overview.mc')">
           <div class="tke-form-item_text">{{this.$route.query.resourceIns}}</div>
         </el-form-item>
-        <el-form-item label="云盘类型">
+        <el-form-item :label="$t('TKE.storage.yplx')">
           <div class="tke-form-item_text">{{list.parameters.type|parameterss}}</div>
         </el-form-item>
-        <el-form-item label="来源">
+        <el-form-item :label="$t('TKE.overview.ly')">
           <div class="tke-form-item_text">{{list.provisioner}}</div>
         </el-form-item>
         <el-form-item label="回收策略">
@@ -19,7 +19,7 @@
         <el-form-item label="Default Class">
           <div class="tke-form-item_text">{{list.metadata.annotations|annotationses}}</div>
         </el-form-item>
-        <el-form-item label="创建时间">
+        <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{list.metadata.creationTimestamp|creationTimestamps}}</div>
         </el-form-item>
       </el-form>
@@ -38,7 +38,7 @@ export default {
     };
   },
   components: {
-   
+
   },
   created() {
      // 从路由获取类型
@@ -72,16 +72,16 @@ export default {
         }
       });
     },
-    
+
   },
   filters:{
     parameterss:function(value){
         if(value == "CLOUD_PREMIUM"){
-          return "高性能云硬盘"
+          return "高性能雲硬碟"
         } else if(value == "CLOUD_SSD"){
-          return "SSD云硬盘"
+          return "SSD雲硬碟"
         } else {
-          return "普通云硬盘"
+          return "普通雲硬碟"
         }
     },
     annotationses:function(value){

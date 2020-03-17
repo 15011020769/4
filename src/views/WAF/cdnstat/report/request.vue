@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>请求数<span style="color:#bbb;fontSize:12px;">(次)</span></h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <echart-line
       :xAxis="xAxisCurrent"
@@ -16,6 +16,7 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
 import echartLine from '../components/line'
 export default {
   props: {
@@ -53,6 +54,28 @@ export default {
     }
   },
   methods: {
+    exportEchart() {
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [],
+        ['时间', '当前请求数（次）', '上一次请求数（次）']
+      ]
+      this.xAxisCurrent.map((item, index) => {
+        data.push([
+          item,
+          this.seriesCurrent[index],
+          this.seriesLastCycle[index]
+        ])
+      })
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_request_trend`);
+      XLSX.writeFile(wb, `${moment().format('x')}_request_trend.xlsx`);
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
       let timeType = 'days'

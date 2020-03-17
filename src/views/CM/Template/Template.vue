@@ -108,13 +108,13 @@
       </div>
     </div>
     <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%">
-      <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p>
-      <el-form :model="templateObj" :rules="rules" ref="form">
-        <el-form-item prop="groupName">
-          <el-input maxlength="20" v-model="templateObj.groupName" style="width:200px"></el-input>
-        </el-form-item>
-      </el-form>
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改条件模板名称">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p> -->
+          <div>
+            <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
+            <p v-if="editGroupName==''" class="edit-text-tips">条件模板名称不能为空</p>
+            <p v-if="editGroupName.length==20" class="edit-text-tips">条件模板名称不能超过20个字符</p>
+          </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
         <el-button @click="ShowEditDialog = false">取 消</el-button>
@@ -169,7 +169,9 @@ export default {
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
       groupName: '', // 模板名称
-      templateObj: {}, // 当前模板数据对象
+      editGroupName: '', // 编辑的模板名称
+      editGroupId: '', // 编辑的模板id
+      // templateObj: {}, // 当前模板数据对象
       formInline: {
         product_kind: [
           {
@@ -331,23 +333,23 @@ export default {
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
       triggerInput: '', // 触发条件模板名
-      rules: {// 验证名字
-        groupName: [
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('名称不能为空'))
-              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
-                callback(new Error('条件模板名称不能超过20个字符'))
-              } else {
-                callback()
-              }
-            },
-            trigger: 'change',
-            required: true
-          }
-        ]
-      }
+      // rules: {// 验证名字
+        // groupName: [
+        //   {
+        //     validator: (rule, value, callback) => {
+        //       if (value === '') {
+        //         callback(new Error('名称不能为空'))
+        //       } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
+        //         callback(new Error('条件模板名称不能超过20个字符'))
+        //       } else {
+        //         callback()
+        //       }
+        //     },
+        //     trigger: 'change',
+        //     required: true
+        //   }
+        // ]
+      // }
     }
   },
   components: {
@@ -453,29 +455,26 @@ export default {
     },
     // 编辑模板名称按钮
     showEditNameDlg (obj) {
+      this.editGroupName = obj.groupName
+      this.editGroupId = obj.groupId
       this.ShowEditDialog = true
-      this.templateObj = obj
+      // this.templateObj = obj
     },
     // 确定编辑模板名称完成
     async submitEditName () {
-      // console.log(this.templateObj.groupId)
-      let { groupId, groupName } = this.templateObj
-      this.ShowEditDialog = false
+      // let { groupId, groupName } = this.templateObj
       let params = {
         Version: '2018-07-24',
         Module: 'monitor',
-        GroupId: groupId,
+        GroupId: this.editGroupId,
         GroupType: 3,
         Key: 'groupName',
-        Value: groupName
-        // groupId: this.groupId,
-        // groupType: 3,
-        // key: 'groupName',
+        Value: this.editGroupName
         // lang: 'zh',
-        // value: this.groupName
       }
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         if (res.Response.Error === undefined) {
+          this.ShowEditDialog = false
           this.getListData()
         } else {
           this.errorPrompt(res)
@@ -836,4 +835,9 @@ a:hover {
 //     border-radius: 0;
 //   }
 // }
+.edit-text-tips{
+  color: red;
+  font-size: 12px;
+  margin-top:10px;
+}
 </style>

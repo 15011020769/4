@@ -20,15 +20,18 @@ import { message } from '@/utils/resetMessage' // 重写element-ui的message方�
 require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
+// const cloudStudio = document.createElement('script')
+// cloudStudio.src = 'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js'
+// document.body.appendChild(cloudStudio)
+
+// const onlineEdit = document.createElement("script")
+// onlineEdit.src= 'https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js'
+// document.body.appendChild(onlineEdit)
 Vue.prototype.$echarts = echarts
 for (let key in CMfilters) {
   Vue.filter(key, CMfilters[key])
 }
 
-const onlineEdit = document.createElement("script");
-onlineEdit.src= 'https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js'
-document.body.appendChild(onlineEdit)
-console.log('sssssss')
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)

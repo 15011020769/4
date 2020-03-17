@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>错误码</h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <el-row>
       <el-col :span="10">
@@ -32,6 +32,7 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
 import echartPie from "../components/pie"
 export default {
   props: {
@@ -63,9 +64,30 @@ export default {
     // console.log(this.params)
   },
   methods: {
+    exportEchart() {
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [],
+        ['错误码', '数量（次）', '占比（%）']
+      ]
+      this.tableData.map(item => {
+        data.push([
+          item.Metric,
+          item.SummarizedData.Value,
+         (item.SummarizedData.Value / this.totalNumber * 100).toFixed(2)
+        ])
+      })
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);
+      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
       const params = {
         Version: "2018-06-06",
         StartTime: times[0],

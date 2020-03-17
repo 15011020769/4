@@ -112,7 +112,7 @@ export default {
             ContentType: "application/strategic-merge-patch+json",
             Method: "PATCH",
             Path: "/apis/apps/v1beta2/namespaces/"+this.spaceName+"/"+this.workload+"/"+this.name,
-            RequestBody:JSON.stringify({"spec":{"minReadySeconds":Number(this.cl.timeInterval),"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"maxUnavailable":this.cl.podNum}}}}),
+            RequestBody:JSON.stringify({"spec":{"minReadySeconds":Number(this.cl.timeInterval),"updateStrategy":{"type":"RollingUpdate","rollingUpdate":{"maxUnavailable":this.cl.podNum.indexOf('%')!=-1?this.cl.podNum:Number(this.cl.podNum)}}}}),
             Version: "2018-05-25",
           }
       }

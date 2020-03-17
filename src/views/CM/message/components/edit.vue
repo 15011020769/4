@@ -1,8 +1,10 @@
 <template>
   <div class="create-wrap">
-    <Header title="新建消息策略" backShow="true"></Header>
+    <Header title="编辑消息策略" backShow="true"></Header>
     <div class="create-main">
+      
       <div class="box">
+        <p></p>
         <p class="rowCont">
           <span>策略名称</span>
           <el-input

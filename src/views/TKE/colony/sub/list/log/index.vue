@@ -1,22 +1,22 @@
  <!-- 日志 -->
 <template>
   <div>
-    <h2>日志</h2>
+    <h2>{{$t('TKE.event.rz')}}</h2>
     <el-card class="box-card">
-      <h3 style="margin-bottom:20px;">条件筛选</h3>
+      <h3 style="margin-bottom:20px;">{{$t('TKE.event.tjsx')}}</h3>
       <el-form class="tke-form">
-        <el-form-item label="工作负载选项">
+        <el-form-item :label="$t('TKE.overview.gzfzxx')">
           <el-tooltip
             class="item"
             effect="light"
-            content="工作负载类型、命名空间、Workload实例"
+            :content="$t('TKE.event.gzfzlxmmkj')"
             placement="right"
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
           <el-select
             v-model="value1"
-            placeholder="请选择"
+            :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
             @change="nameSpaceList1"
@@ -31,7 +31,7 @@
           </el-select>
           <el-select
             v-model="value2"
-            placeholder="请选择工作负载类型"
+            :placeholder="$t('TKE.event.qxzgzfzlx')"
             size="mini"
             class="ml10"
             @change="nameSpaceList"
@@ -44,7 +44,7 @@
               :value="item.value"
             ></el-option>
           </el-select>
-          <el-select v-model="value3" placeholder="请选择Workload" size="mini" class="ml10">
+          <el-select v-model="value3" :placeholder="$t('TKE.event.qxzwork')" size="mini" class="ml10">
             <!-- 工作负载实例 -->
             <el-option
               v-for="(item,index) in option3"
@@ -54,13 +54,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="Pod选项">
-          <el-tooltip class="item" effect="light" content="Pod实例、Container实例" placement="right">
+        <el-form-item :label="$t('TKE.event.podxx')">
+          <el-tooltip class="item" effect="light" :content="$t('TKE.event.pscs')" placement="right">
             <i class="el-icon-info"></i>
           </el-tooltip>
           <el-select
             v-model="value4"
-            placeholder="请选择"
+            :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
             @change="getPodData"
@@ -75,7 +75,7 @@
           </el-select>
           <el-select
             v-model="value5"
-            placeholder="请选择"
+            :placeholder="$t('TKE.overview.qxz')"
             :disabled="listNumFlag"
             size="mini"
             class="ml10"
@@ -90,13 +90,13 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="其他选项">
-          <span>自动刷新</span>
+        <el-form-item :label="$t('TKE.event.qtxx')">
+          <span>{{$t('TKE.overview.zdsx')}}</span>
           <!-- 自动刷新 -->
           <el-switch v-model="autoRefresh"  class="ml10"></el-switch>
           <el-select
             v-model="value6"
-            placeholder="请选择"
+            :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
             :disabled="listNumFlag"
@@ -114,7 +114,7 @@
     </el-card>
     <el-card class="box-card">
       <div class="box-black">
-        <ul v-if="htmls==''">1.暂无日志</ul>
+        <ul v-if="htmls==''">1.{{$t('TKE.event.zwrz')}}</ul>
         <ul v-else>
           <li
             v-for="(item,index) in htmls"
@@ -127,7 +127,7 @@
   </div>
 </template>
 
-<script>
+<script type="text/javascript">
 import HeadCom from "@/components/public/Head";
 import SEARCH from "@/components/public/SEARCH";
 import FileSaver from "file-saver";
@@ -167,20 +167,20 @@ export default {
       option5: [],
       option6: [
         {
-          value: "显示100条数据",
-          label: "显示100条数据"
+          value: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`,
+          label: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`
         },
         {
-          value: "显示200条数据",
-          label: "显示200条数据"
+          value: `${this.$t('TKE.event.xs')}200${this.$t('TKE.event.tsj')}`,
+          label: `${this.$t('TKE.event.xs')}200${this.$t('TKE.event.tsj')}`
         },
         {
-          value: "显示500条数据",
-          label: "显示500条数据"
+          value: `${this.$t('TKE.event.xs')}500${this.$t('TKE.event.tsj')}`,
+          label: `${this.$t('TKE.event.xs')}500${this.$t('TKE.event.tsj')}`
         },
         {
-          value: "显示1000条数据",
-          label: "显示1000条数据"
+          value: `${this.$t('TKE.event.xs')}1000${this.$t('TKE.event.tsj')}`,
+          label: `${this.$t('TKE.event.xs')}1000${this.$t('TKE.event.tsj')}`
         }
       ],
       value1: "default",
@@ -188,7 +188,7 @@ export default {
       value3: "",
       value4: "",
       value5: "",
-      value6: "显示100条数据",
+      value6: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`,
       autoRefresh: false, //自动刷新
       loadShow: true // 加载是否显示
     };
@@ -304,7 +304,7 @@ export default {
             this.value4 = this.option4[0].value;
           } else {
             this.option4 = [];
-            this.value4 = "Pod列表为空";
+            this.value4 = "Pod" + this.$t('TKE.event.lbwk');
             return;
           }
           if (mes.items.length > 0) {
@@ -322,7 +322,7 @@ export default {
             this.getLog();
           } else {
             this.option5 = [];
-            this.value5 = "Container列表为空";
+            this.value5 = "Container" + this.$t('TKE.event.lbwk');
             return;
           }
           this.loadShow = false;
@@ -351,9 +351,9 @@ export default {
         this.option3 = [];//工作负载实例
         this.option4 = [];
         this.option5 = [];
-        this.value3 = "Workload列表为空";
-        this.value4 = "Pod列表为空";
-        this.value5 = "Container列表为空";
+        this.value3 = "Workload" + this.$t('TKE.event.lbwk');
+        this.value4 = "Pod" + this.$t('TKE.event.lbwk');
+        this.value5 = "Container" + this.$t('TKE.event.lbwk');
         this.htmls='';
         this.autoRefresh=false;
         var params = {
@@ -375,14 +375,14 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           if (mes === []) {
-            this.value3 = "Workload列表为空";
-            this.value4 = "Pod列表为空";
-            this.value5 = "Container列表为空";
+            this.value3 = "Workload" + this.$t('TKE.event.lbwk');
+            this.value4 = "Pod" + this.$t('TKE.event.lbwk');
+            this.value5 = "Container" + this.$t('TKE.event.lbwk');
             this.option3 = [];////工作负载实例
             this.option4 = [];
             this.option5 = [];
              this.htmls='';
-              
+
              this.autoRefresh=false;
             this.listNumFlag = true;
             return;
