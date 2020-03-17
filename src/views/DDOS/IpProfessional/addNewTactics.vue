@@ -997,25 +997,17 @@ export default {
         }
 
         this.tags3.map((item, index) => {
-          if (item.protocol == "ICPM") {
-            params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+          if (item.protocol == "ICMP") {
+            params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
           }
           if (item.protocol == "OTHER") {
-            params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DOtherMbpsLimit"] = item.speedLimit
           }
           if (item.protocol == "TCP") {
-            params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DTcpMbpsLimit"] = item.speedLimit
           }
           if (item.protocol == "UDP") {
-            params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DUdpMbpsLimit"] = item.speedLimit
           }
         });
         if (this.radios3 == "開啟") {
