@@ -2,9 +2,11 @@
   <div class="create-wrap">
     <Header title="编辑消息策略" backShow="true"></Header>
     <div class="create-main">
-      
       <div class="box">
-        <p></p>
+        <p>
+          <span>策略ID</span>
+          <span>{{}}</span>
+        </p>
         <p class="rowCont">
           <span>策略名称</span>
           <el-input
@@ -44,6 +46,10 @@
 <script>
 import Header from "./Header";
 import Transfer from "./transfer";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import {
+  EDIT_CUSTON_MESSAGE
+} from "@/constants/CM-lxx.js";
 export default {
   data() {
     return {

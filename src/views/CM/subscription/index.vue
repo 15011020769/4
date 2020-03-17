@@ -117,7 +117,7 @@
 <script>
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import { BASICS_ALARM_LIST } from "@/constants/CM-lxx.js"; /////////
+import { SUBSCRIPTION_LIST,SUBSCRIPTION_ADMINISTRATION,CANCEL_SUBSCRIPTION } from "@/constants/CM-lxx.js"; /////////
 
 import Header from "@/components/public/Head";
 const cityOptions = ["短信", "邮件", "站内信"];
@@ -174,7 +174,7 @@ export default {
       // params.ObjLike = this.input;
       // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
       // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
-      this.axios.post(BASICS_ALARM_LIST, params).then(res => {
+      this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
         console.log(res.Response, "数据");
         if (res.Response.Error === undefined) {
           // this.tableData = res.Response.Alarms;

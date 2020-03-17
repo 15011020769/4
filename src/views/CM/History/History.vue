@@ -147,15 +147,18 @@
                   </el-table-column>
                 </el-table>
                 <!-- 分页 -->
-                <div class="Right-style pagstyle">
-                  <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
-                  <el-pagination
-                    :page-size="pagesize"
-                    :pager-count="7"
-                    layout="prev, pager, next"
-                    @current-change="handleCurrentChange"
-                    :total="TotalCount"
-                  ></el-pagination>
+                <div class="tke-page">
+                  <div class="block">
+                    <el-pagination
+                      @size-change="handleSizeChange"
+                      @current-change="handleCurrentChange"
+                      :current-page="pageIndex"
+                      :page-sizes="[10, 20, 50, 100]"
+                      :page-size="pageSize"
+                      layout="total, sizes, prev, pager, next"
+                      :total="total"
+                    ></el-pagination>
+                  </div>
                 </div>
               </div>
             </div>
@@ -193,14 +196,15 @@ export default {
       loadShow: true, // 加载是否显示
       activeName: "first",
       value: 1,
+
       dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
       tableData: [], //列表数据
       dialogVisible1: false, //设置显示参数弹框
       //分页
-      TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
-      currpage: 1 // 当前页码
+      total: 0, //总条数
+      pageSize: 10, //每页10条
+      pageIndex: 0 // 当前页码
     };
   },
   components: {
@@ -222,25 +226,14 @@ export default {
     //确定
     save1(values) {
       this.dialogVisible1 = false;
-      // console.log(values);
     },
     cancel1() {
       //取消弹框
       this.dialogVisible1 = false;
     },
     getObjectValues(object) {
-      //获取键值
-      // if (object) {
-      //   var values = [];
-      //   for (var i in object) values.push(object[i].InstanceGroupName);
-      //   console.log(values.join(","));
-      //   return values.join(",");
-      // } else if(!object){
-      //   return "-";
-      // }
       var values = [];
       for (var i in object) values.push(object[i].InstanceGroupName);
-      // console.log(values.join(","));
       return values.join(",");
     },
     formatSeconds(value) {
@@ -294,13 +287,14 @@ export default {
       if (!val) {
         return;
       }
-      // console.log(val);
       this.value = val[1];
       this.loadShow = true; //加载
       var params = {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        Limit: this.pageSize,
+        Offset: this.pageIndex
       };
       params.ObjLike = this.input;
       params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
@@ -309,7 +303,7 @@ export default {
         console.log(res.Response.Alarms, "数据");
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
-          this.TotalCount = res.Response.Alarms.length;
+          this.total = res.Response.Alarms.length;
           this.loadShow = false; //取消加载
           this.showNameSpaceModal = false;
         } else {
@@ -324,6 +318,17 @@ export default {
           });
         }
       });
+    },
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getBasicsList();
+    },
+    //分页
+    handleCurrentChange(val) {
+      this.pageIndex = val - 1;
+      this.getBasicsList();
+      this.pageIndex += 1;
     },
     searchName() {
       //搜索框
@@ -373,10 +378,6 @@ export default {
     //确定
     save() {
       this.dialogVisible = false;
-    },
-    //分页
-    handleCurrentChange(val) {
-      this.currpage = val;
     }
   }
 };
@@ -399,6 +400,11 @@ export default {
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.tke-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: row-reverse;
 }
 .history-wrap {
   .head {
