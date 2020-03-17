@@ -41,7 +41,7 @@
         <el-table-column label="操作">
           <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="Edit">编辑</el-button>
+            <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">编辑</el-button>
             <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
@@ -287,8 +287,8 @@ export default {
     },
     //新增消息策略
     addMessage() {
-      // alert("/message/create")
-      this.$router.push({ path: "/message/create" });
+      // alert("/message/create")messageCreate
+      this.$router.push({ name: "messageCreate" });
     },
     //分页
     handleCurrentChange(val) {
