@@ -40,7 +40,7 @@
       <li>
         <el-row type="flex">
           <el-col :span="5">碼率壓縮比</el-col>
-          <el-col class="text-black">{{ selectItem.AdaptBitratePercent }}</el-col>
+          <el-col class="text-black">{{ Math.floor(selectItem.AdaptBitratePercent * 100) }}</el-col>
         </el-row>
       </li>
     </ul>
