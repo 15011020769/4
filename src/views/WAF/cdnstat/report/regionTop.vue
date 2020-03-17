@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>区域流量分布</h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <el-row>
       <el-col :span="16">
@@ -45,6 +45,7 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
 import echartMap from '../components/worldMap'
 import { COUNTRY_MAP } from '../components/constants'
 
@@ -95,6 +96,28 @@ export default {
     }
   },
   methods: {
+    exportEchart() {
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [],
+        ['区域', '消耗量（B）', '占比（%）']
+      ]
+      this.tableData.map(item => {
+        data.push([
+          item.name,
+          item.value,
+         (item.value / this.totalNumber * 100).toFixed(2)
+        ])
+      })
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_traffic_distribution`);
+      XLSX.writeFile(wb, `${moment().format('x')}_traffic_distribution.xlsx`);
+    },
     fixed(v) {
       return Math.ceil(v) !== v ? v.toFixed(2) : v
     },

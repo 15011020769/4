@@ -33,7 +33,6 @@
 <script>
 import moment from 'moment'
 import XLSX from 'xlsx'
-import FileSaver from "file-saver";
 import echartPie from "../components/pie"
 export default {
   props: {
@@ -47,7 +46,6 @@ export default {
       totalNumber: 1,
       loading: true,
       tableData: [],
-      errcode_json: []
     }
   },
   components: {
@@ -67,14 +65,29 @@ export default {
   },
   methods: {
     exportEchart() {
-      const ws = XLSX.utils.json_to_sheet(this.errcode_json);/* 新建空workbook，然后加入worksheet */
-      const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);/* 生成xlsx文件(book,sheet数据,sheet命名) */
-      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);/*写文件(book,xlsx文件名称)*/
+      let data = [
+        ['统计项目', '全部项目'],
+        ['统计域名', '全部域名'],
+        ['报表类型', '日报'],
+        ['开始时间', this.params.times[0]],
+        ['结束时间', this.params.times[1]],
+        [],
+        ['错误码', '数量（次）', '占比（%）']
+      ]
+      this.tableData.map(item => {
+        data.push([
+          item.Metric,
+          item.SummarizedData.Value,
+         (item.SummarizedData.Value / this.totalNumber * 100).toFixed(2)
+        ])
+      })
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);
+      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
-
       const params = {
         Version: "2018-06-06",
         StartTime: times[0],
@@ -101,7 +114,6 @@ export default {
           const legendArr = []
           let total = 0
           const tableArr = []
-          const tempArr = []
           Response.Data[0].CdnData.map((item) => {
             if(item.Metric.indexOf(4) !== -1 && item.Metric !== '4xx') {
               errCode.push({name: item.Metric, value: item.SummarizedData.Value})
@@ -114,14 +126,6 @@ export default {
           this.legendTextPieError = legendArr
           this.totalNumber = total
           this.tableData = tableArr
-          this.tableData.map(item => {
-            tempArr.push({
-              '错误码': item.Metric,
-              '数量（次）': item.SummarizedData.Value,
-              '占比（%）': (item.SummarizedData.Value / this.totalNumber * 100).toFixed(2)
-            })
-          })
-          this.errcode_json = tempArr
         }).then(() => this.loading = false)
     },
   }
