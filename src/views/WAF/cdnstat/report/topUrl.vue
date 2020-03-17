@@ -48,8 +48,6 @@ export default {
       fluxTableData: [],
       RequestTableData: [],
       loading: true,
-      used_json: [],
-      request_json: []
     }
   },
   watch: {
@@ -116,9 +114,21 @@ export default {
       if(type1 == 'used') {
         json = this.used_json
         name = 'flux'
+        this.fluxTableData.map(item => {
+          data.push([
+            item.Name,
+            item.Value
+          ])
+        })
       } else {
-        json = this.request_json
+        data.push(['URL', '请求数（次）',])
         name = 'request'
+        this.RequestTableData.map(item => {
+          data.push([
+            item.Name,
+            item.Value
+          ])
+        })
       }
       data = [...data, ...json]
       const ws = XLSX.utils.aoa_to_sheet(data);

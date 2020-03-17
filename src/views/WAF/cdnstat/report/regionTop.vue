@@ -150,7 +150,7 @@ export default {
       return [v, 'B'].join('')
     },
     init() {
-      const { projectId, domainName, interval, times } = this.params
+      const { projectId, type, projectName, domainName, interval, times } = this.params
 
       const params = {
         Version: "2018-06-06",
