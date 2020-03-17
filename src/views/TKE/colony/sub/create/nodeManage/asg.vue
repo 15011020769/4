@@ -1050,7 +1050,7 @@ export default {
     },
     //机型model确定选择数据
     ModelSure() {
-      let modeData = this.modeData;
+      var modeData = this.modeData;
       this.asg.zoneInstanceConfigInfo =
         modeData.InstanceType +
         "(" +

@@ -71,15 +71,16 @@
               <el-table-column label="ID/主机名" width="180">
                 <template slot-scope="scope">
                   <p>
-                    <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                    {{ scope.row.InstanceId }}
+                    <!-- <a href="javascript:;">{{ scope.row.InstanceId }}</a> -->
                   </p>
                   <p>{{ scope.row.InstanceName }}</p>
                 </template>
               </el-table-column>
-              <el-table-column prop="name" label="网络类型" width="180">
+              <el-table-column label="网络类型" width="180">
                 VPC 网络
               </el-table-column>
-              <el-table-column prop="address" label="IP地址">
+              <el-table-column label="IP地址">
                 <template slot-scope="scope">
                   <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
                   <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>

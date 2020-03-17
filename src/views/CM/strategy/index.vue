@@ -144,11 +144,9 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
           <template slot-scope="scope">
-            <a
-              class="defaultDialog"
-              @click="defaultClick(scope.row.grounpId)"
-              >{{ scope.row.GroupName }}</a
-            >
+            <a class="defaultDialog" @click="defaultClick(scope.row)">{{
+              scope.row.GroupName
+            }}</a>
             <i @click="NameModify(scope.row)" class="el-icon-edit"></i>
           </template>
         </el-table-column>
@@ -356,8 +354,7 @@
       title="修改告警策略名称"
       :visible.sync="modifyNameDialogVisible"
       width="500px"
-      custom-class="tke-dialog"
-      class="dialog-box"
+      custom-class="dialog-box"
     >
       <div class="edit-dialog">
         <el-input
@@ -1009,22 +1006,14 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-    defaultClick(id) {
-      //点击默认按钮
-      console.log(id, "id");
-      //这里是写死的:id动态路由，写数据的时候改成动态的id
-      this.$router.push({ path: "/strategy/create:" + id });
-      // this.$router.push({
-      //   path: "/strategy/create:"+"id", // 新增告警策略默认点击按钮（详情），写死了，到时候可动态访问
-      //   name: "strategy",
-      //   component: () =>
-      //     import(
-      //       /* webpackChunkName: "strategy" */ "./components/defaultDetail.vue"
-      //     ),
-      //   meta: {
-      //     keepAlive: true
-      //   }
-      // });
+    defaultClick(row) {
+      console.log(row);
+      this.$router.push({
+        name: "strategyCreateDetail",
+        query: {
+          groupId: row.GroupId
+        }
+      });
     },
     //思路：便利你所有的数据，给每条都加上defaultIconFlag：false属性，当你划过的时候就可以改成true
     mouseoverDefault() {
@@ -1774,6 +1763,26 @@ a:hover {
     ::v-deep .el-table {
       border: 1px solid #ebeef5;
       margin-left: 1px;
+    }
+  }
+  .edit-dialog {
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    p {
+      color: #b43537;
+      border: 1px solid #f6b5b5;
+      background-color: #fcecec;
+      width: 258px;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    ::v-deep .el-dialog__footer {
+      text-align: center;
     }
   }
   .tips {

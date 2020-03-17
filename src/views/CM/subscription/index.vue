@@ -132,27 +132,6 @@ export default {
       dialogcancel: false, //取消订阅确认框
       dialogSubscribe: false, //订阅管理确认框
       tableData: [
-        {
-          type: "云服务器存储问题",
-          info: 0,
-          email: 0,
-          zhanneixin: 0,
-          receive: "开发商，共1人"
-        },
-        {
-          type: "云服务器网络连接问题",
-          info: 1,
-          email: 1,
-          zhanneixin: 1,
-          receive: "开发商，共1人"
-        },
-        {
-          type: "云服务器运行异常",
-          info: 0,
-          email: 1,
-          zhanneixin: 0,
-          receive: "开发商，共1人"
-        }
       ],
       multipleSelection: []
     };
@@ -169,7 +148,9 @@ export default {
       var params = {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        Limit: 10,
+        Offset: 1
       };
       // params.ObjLike = this.input;
       // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
@@ -177,9 +158,7 @@ export default {
       this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
         console.log(res.Response, "数据");
         if (res.Response.Error === undefined) {
-          // this.tableData = res.Response.Alarms;
-          // this.TotalCount = res.Response.Alarms.length;
-          // this.showNameSpaceModal = false;
+         
 
           this.loadShow = false; //取消加载
         } else {

@@ -29,7 +29,7 @@
                 <el-table
                   :data="tableData"
                   style="width: 100%"
-                  height="750"
+                  height="450"
                   v-loading="loadShow"
                   id="exportTable"
                   :default-sort="{prop: 'FirstOccurTime', order: 'descending'}"
@@ -99,7 +99,7 @@
                       >
                         <div
                           style="border:0;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;"
-                        >{{timeFormat(57600)}}</div>
+                        >{{timeFormat(scope.row.LastOccurTime)}}</div>
                       </el-tooltip>
                     </template>
                   </el-table-column>
@@ -151,12 +151,13 @@
                   <div class="block">
                     <el-pagination
                       @size-change="handleSizeChange"
+                      :pager-count="7"
                       @current-change="handleCurrentChange"
                       :current-page="pageIndex"
                       :page-sizes="[10, 20, 50, 100]"
                       :page-size="pageSize"
                       layout="total, sizes, prev, pager, next"
-                      :total="total"
+                      :total="totals"
                     ></el-pagination>
                   </div>
                 </div>
@@ -196,15 +197,15 @@ export default {
       loadShow: true, // 加载是否显示
       activeName: "first",
       value: 1,
-
       dialogVisible: false, //购买短信弹出框
       input: "", //搜索框的值
       tableData: [], //列表数据
       dialogVisible1: false, //设置显示参数弹框
+      timeObjs: [],
       //分页
-      total: 0, //总条数
+      totals: 0, //总条数
       pageSize: 10, //每页10条
-      pageIndex: 0 // 当前页码
+      pageIndex: 1 // 当前页码
     };
   },
   components: {
@@ -217,9 +218,6 @@ export default {
     this.getBasicsList(); //获取基础告警列表
   },
   methods: {
-    // TotalCount1(){
-
-    // },
     setValue() {
       this.dialogVisible1 = true;
     },
@@ -280,32 +278,41 @@ export default {
     },
     setStrategy(data) {
       //跳转设置策略
-      console.log("跳转设置策略开发中");
+      this.$router.push({ path: "/strategy/create:" + data.Id });
     },
     //获取数据
     getBasicsList(val) {
-      if (!val) {
-        return;
-      }
-      this.value = val[1];
       this.loadShow = true; //加载
-      var params = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2018-07-24",
-        Module: "monitor",
-        Limit: this.pageSize,
-        Offset: this.pageIndex
-      };
-      params.ObjLike = this.input;
-      params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
-      params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
+      this.timeObjs = val;
+      if (this.timeObjs) {
+        this.value = this.timeObjs[1];
+        var params = {
+          Region: localStorage.getItem("regionv2"),
+          Version: "2018-07-24",
+          Module: "monitor",
+          Limit: this.pageSize,
+          Offset: (this.pageIndex - 1) * this.pageSize
+        };
+        params.ObjLike = this.input;
+        params.StartTime = Date.parse(this.timeObjs[0].StartTIme) / 1000; //开始时间戳
+        params.EndTime = Date.parse(this.timeObjs[0].EndTIme) / 1000; //结束时间戳
+      } else {
+        var params = {
+          Region: localStorage.getItem("regionv2"),
+          Version: "2018-07-24",
+          Module: "monitor",
+          Limit: this.pageSize,
+          Offset: (this.pageIndex - 1) * this.pageSize
+        };
+        params.ObjLike = this.input;
+        // params.StartTime = Date.parse(this.timeObjs[0].StartTIme) / 1000; //开始时间戳
+        // params.EndTime = Date.parse(this.timeObjs[0].EndTIme) / 1000; //结束时间戳
+      }
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
-        console.log(res.Response.Alarms, "数据");
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Alarms;
-          this.total = res.Response.Alarms.length;
+          this.totals = res.Response.Total;
           this.loadShow = false; //取消加载
-          this.showNameSpaceModal = false;
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -320,29 +327,35 @@ export default {
       });
     },
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
-      this.getBasicsList();
+      this.getBasicsList(this.timeObjs);
     },
     //分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
-      this.getBasicsList();
+      this.getBasicsList(this.timeObjs);
       this.pageIndex += 1;
     },
     searchName() {
+      this.pageIndex = 1;
       //搜索框
       if (this.input == "") {
-        this.getBasicsList();
+        this.input = "";
+        this.getBasicsList(this.timeObjs);
       }
+      this.getBasicsList(this.timeObjs);
     },
     searchBtn() {
+      this.pageIndex = 1;
+
       //搜索按钮
       if (this.input == "") {
-        this.getBasicsList();
+        this.input = "";
+        this.getBasicsList(this.timeObjs);
       }
       // params.ObjLike = this.input;
-      this.getBasicsList();
+      this.getBasicsList(this.timeObjs);
     },
     // 导出表格
     exportExcel() {
@@ -459,7 +472,7 @@ export default {
     }
 
     .box {
-      height: 880px;
+      height: 580px;
       background: white;
       padding: 20px;
       padding-bottom: 0;
