@@ -122,7 +122,6 @@
   </div>
 </template>
 
-<script src="https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js"></script>
 <script>
   import
   JsZip
