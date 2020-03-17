@@ -44,26 +44,30 @@ export default {
         if (!domain) {
           const defaultDomain = Response.DomainList.find(domain => domain.Name.endsWith('livepush.myqcloud.com'))
           domainName = defaultDomain.Name.replace('livepush', 'liveplay')
+          const url = `http://${domainName}/live/${this.stream.StreamName}.flv`
+          this.play(url)
+          this.loading = false
         } else {
           domainName = domain.Name
+          let url = `http://${domainName}/live/${this.stream.StreamName}.flv`
+          this.axios
+            .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
+              Version: "2018-08-01",
+              DomainName: domainName
+            })
+            .then(res => {
+              const playKey = res.Response.PlayAuthKeyInfo
+              if (playKey.Enable === 1) {
+                var r = (new Date).getTime() / 1e3
+                var a = parseInt(r.toString()).toString(16).toUpperCase()
+                var t = md5(playKey.AuthKey + this.stream.StreamName + a)
+                url += `?txSecret=${t}&txTime=${a}`
+              } 
+              this.play(url)
+              this.loading = false
+            })
         }
-        let url = `http://${domainName}/live/${this.stream.StreamName}.flv`
-        this.axios
-          .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
-            Version: "2018-08-01",
-            DomainName: domainName
-          })
-          .then(res => {
-            const playKey = res.Response.PlayAuthKeyInfo
-            if (playKey.Enable === 1) {
-              var r = (new Date).getTime() / 1e3
-              var a = parseInt(r.toString()).toString(16).toUpperCase()
-              var t = md5(playKey.AuthKey + this.stream.StreamName + a)
-              url += `?txSecret=${t}&txTime=${a}`
-            } 
-            this.play(url)
-            this.loading = false
-          })
+        
       })
     },
     play(url) {

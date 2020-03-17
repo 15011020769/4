@@ -62,31 +62,25 @@ export default {
   },
   methods: {
     add() {
-      this.i += 0.5
-      var myChart = this.$echarts.init(this.$refs.worldmap_dv);
-      window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
-      myChart.setOption({ series: { zoom: this.i } })
-      // myChart.setOption({ geo: {zoom: this.i} })
+      this.chart.dispatchAction({
+        type: "geoRoam",
+        zoom: 1.3,
+        originX: this.chart.getWidth() / 2,
+        originY: this.chart.getHeight() / 2,
+      })
     },
     dec() {
-      var myChart = this.$echarts.init(this.$refs.worldmap_dv);
-      if(this.i > 1) {
-        this.i -= 0.5
-      }else {
-        this.i = 1
-      }
-      console.log(this.i)
-      // myChart.setOption({ geo: {zoom: this.i} })
-      myChart.setOption({ series: { zoom: this.i } }) 
+      this.chart.dispatchAction({
+       type: "geoRoam",
+        zoom: 0.7,
+        originX: this.chart.getWidth() / 2,
+        originY: this.chart.getHeight() / 2,
+      })
     },
     initChart() {
       let that = this
       this.chart = this.$echarts.init(this.$refs.worldmap_dv);
       window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
-      this.chart.on('georoam', function (params) {
-        console.log(params);
-        this.i = params.zoom
-      });
       // 把配置和数据放这里
       this.chart.setOption({
         // 提示框组件
