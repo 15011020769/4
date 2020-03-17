@@ -9,7 +9,7 @@
             <i class="el-icon-back"></i>
           </span>
           <span class="goback" @click="goColonyList()">
-            集群(中国台北) /
+            集群({{$t('TKE.overview.zgtb')}}) /
           </span>
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /
@@ -23,7 +23,7 @@
 
     <!-- 详情子菜单导航 -->
     <div class="tke-detial-nav">
-      <router-link class="nav-item" :to="{name:'ingressDetailInfo',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">详情</router-link>
+      <router-link class="nav-item" :to="{name:'ingressDetailInfo',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">{{$t('TKE.overview.xq')}}</router-link>
       <router-link class="nav-item" :to="{name:'ingressDetailEvent',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">事件</router-link>
       <router-link class="nav-item" :to="{name:'ingressDetailYaml',query: {clusterId: clusterId, namespace: namespace, ingressName: ingressName}}">YAML</router-link>
     </div>

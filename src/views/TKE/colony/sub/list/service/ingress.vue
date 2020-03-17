@@ -14,10 +14,10 @@
           typeSelect
           refreshData
           exportData
-          typeLabel='命名空间'
+          :typeLabel="$t('TKE.overview.mmkj')"
           :typeOptions='searchOptions'
           :typeValue='searchType'
-          inputPlaceholder='请输入关键词搜索'
+          :inputPlaceholder="$t('TKE.subList.qsrgjzss')"
           :searchInput='searchInput'
 
           @changeType="changeSearchType"
@@ -32,15 +32,15 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table :data="list" v-loading="loadShow" id="exportTable" style="width: 100%">
-        <el-table-column label="名称">
+        <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <span @click="goIngressDetail(scope.row.metadata.name)" class="tke-text-link">{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="" label="类型">
+        <el-table-column prop="" :label="$t('TKE.overview.lx')">
           <template slot-scope="scope">
             <span class="tke-text-link">{{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}</span>
-            <p>负载均衡</p>
+            <p>{{$t('TKE.subList.fzjh')}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="" label="VIP">
@@ -49,7 +49,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="后端服务" width="350">
+        <el-table-column prop="" :label="$t('TKE.subList.hdfw')" width="350">
           <template slot-scope="scope">
             <span class="tke-text-link">
               http://{{scope.row.status.loadBalancer.ingress?scope.row.status.loadBalancer.ingress[0].ip:'-'}}{{scope.row.spec.rules[0].http.paths[0].path}}
@@ -60,16 +60,16 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="" label="创建时间">
+        <el-table-column prop="" :label="$t('TKE.overview.cjsj')">
           <template slot-scope="scope">
             <p v-for="v in upTime(scope.row.metadata.creationTimestamp)" :key="v">{{v}}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <span class="tke-text-link" @click="toUpdateConfigure(scope.row)">更新转发配置</span>
-            <span class="tke-text-link ml10" @click="toYmal(scope.row)">编辑YAML</span>
-            <span class="tke-text-link ml10" @click="showDeleteDialog(scope.row)">删除</span>
+            <span class="tke-text-link" @click="toUpdateConfigure(scope.row)">{{$t('TKE.subList.gxzfpz')}}</span>
+            <span class="tke-text-link ml10" @click="toYmal(scope.row)">{{$t('TKE.overview.bj')}}YAML</span>
+            <span class="tke-text-link ml10" @click="showDeleteDialog(scope.row)">{{$t('TKE.overview.sc')}}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -89,11 +89,11 @@
       </div>
     </div>
 
-    <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
-      <p style="color:#444;font-weight:bolder;">您确定要删除Ingress：{{ingressItem.name}}吗？</p>
-      <p style="color:#e54545">该Ingress下的所有规则将一并删除，销毁后不可恢复，请谨慎操作。</p>
+    <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="showNameSpaceModal" width="35%">
+      <p style="color:#444;font-weight:bolder;">{{$t('TKE.storage.nqdysc')}}Ingress：{{ingressItem.name}}嗎？</p>
+      <p style="color:#e54545">{{$t('TKE.subList.schbkhf')}}</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="deleteIngress()">确 定</el-button>
+        <el-button type="primary" @click="deleteIngress()">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="showNameSpaceModal = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -153,7 +153,7 @@ export default {
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         this.$message({
-          message: '删除成功',
+          message: '刪除成功',
           showClose: true,
           type: 'success',
           duration: 2000

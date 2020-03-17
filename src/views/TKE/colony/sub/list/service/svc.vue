@@ -12,8 +12,8 @@
       <!-- 右侧 -->
       <div class="grid-right">
         <div>
-          <span>命名空间</span>
-          <el-select size="small" v-model="nameSpaceName" placeholder="请选择" @change="changNameSpace">
+          <span>{{$t('TKE.overview.mmkj')}}</span>
+          <el-select size="small" v-model="nameSpaceName" :placeholder="$t('TKE.overview.qxz')" @change="changNameSpace">
             <el-option
               v-for="item in searchOptions"
               :key="item.metadata.name"
@@ -25,7 +25,7 @@
           refreshData
           exportData
           :typeValue="searchType"
-          inputPlaceholder="请输入关键词搜索"
+          :inputPlaceholder="$t('TKE.subList.qsrgjzss')"
           :searchInput="searchInput"
           @changeInput="changeSearchInput"
           @clickSearch="clickSearch"
@@ -38,7 +38,7 @@
     <!-- 数据列表展示 -->
     <div class="tke-card mt10">
       <el-table id="exportTable" :data="list" v-loading="loadShow" style="width: 100%">
-        <el-table-column label="名称">
+        <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <span
               @click="goSvcDetail(scope.row.metadata.name)"
@@ -46,14 +46,14 @@
             >{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
-        <el-table-column prop label="类型">
+        <el-table-column prop :label="$t('TKE.overview.lx')">
           <template slot-scope="scope">
             <!-- :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'" -->
             <div v-if="scope.row.spec.type !== 'ClusterIP' && scope.row.spec.type !== 'NodePort'">
               <a v-if="scope.row.metadata.annotations"
               :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id'] + '/1'"
               :class="scope.row.idDb?'tke-text-link':''">{{scope.row.metadata.annotations['service.kubernetes.io/loadbalance-id']}}</a>
-              <p v-if="scope.row.idDb?true:false">负载均衡</p>
+              <p v-if="scope.row.idDb?true:false">{{$t('TKE.subList.fzjh')}}</p>
             </div>
             <span v-else>{{scope.row.spec.type}}</span>
           </template>
@@ -64,7 +64,7 @@
             <span v-if="scope.row.spec.selector">
               <span v-for="(val,key,i) in scope.row.spec.selector" :key="i">{{key+':'+val+' '}}</span>
             </span>
-            <span v-else>{{'无'}}</span>
+            <span v-else>{{'無'}}</span>
           </template>
         </el-table-column>
 
@@ -77,12 +77,12 @@
               </span>
               <span v-else>{{'-'}}</span>
               <br>
-              <span>{{scope.row.spec.clusterIP+'(服务IP)'}}</span>
+              <span>{{scope.row.spec.clusterIP+'(服務IP)'}}</span>
             </p>
           </template>
         </el-table-column>
 
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('TKE.overview.cjsj')">
           <template slot-scope="scope">
             <!-- <p>2020-01-10<br>14:16:37</p> -->
             <p>{{upTime(scope.row.metadata.creationTimestamp)}}</p>
@@ -93,9 +93,9 @@
             <!-- <span :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</span> -->
             <!-- <span class=" ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</span> -->
             <!-- <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span> -->
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">更新访问方式</el-button>
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goEdit(scope.row)">编辑YAML</el-button>
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">{{$t('TKE.subList.gxfwfs')}}</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goEdit(scope.row)">{{$t('TKE.overview.bj')}}YAML</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -115,11 +115,11 @@
         </div>
       </div>
       <!-- 删除弹框 -->
-      <el-dialog title="删除资源" :visible.sync="showNameSpaceModal" width="35%">
-        <p style="color:#444;font-weight:bolder;">您确定要删除Namespace：{{nameSpaceName}}吗？</p>
-        <p style="color:#e54545">删除Namespace将销毁Namespace下的所有资源，销毁后不可恢复，请谨慎操作。</p>
+      <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="showNameSpaceModal" width="35%">
+        <p style="color:#444;font-weight:bolder;">{{$t('TKE.storage.nqdysc')}}Namespace：{{nameSpaceName}}嗎？</p>
+        <p style="color:#e54545">{{$t('TKE.subList.scmmkj')}}</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitDelete()">确 定</el-button>
+          <el-button type="primary" @click="submitDelete()">{{$t('TKE.overview.qd')}}</el-button>
           <el-button @click="showNameSpaceModal = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -265,7 +265,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.getList()
           this.showNameSpaceModal = false
-          this.$message.success('删除成功')
+          this.$message.success('刪除成功')
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
