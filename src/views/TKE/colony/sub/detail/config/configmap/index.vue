@@ -8,7 +8,7 @@
           <span class="goback" @click="goBack()">
             <i class="el-icon-back"></i>
           </span>
-          <span class="goback" @click="goColonyList()">集群(中国台北) /</span>
+          <span class="goback" @click="goColonyList()">集群({{$t('TKE.overview.zgtb')}}) /</span>
           <span class="goback" @click="goBack()">{{clusterId}} /</span>
           <h2 class="header-title">ConfigMap:{{Info.name}}({{Info.np}})</h2>
         </div>
@@ -22,7 +22,7 @@
       <router-link
         class="nav-item"
         :to="{name:'configmapDetailInfo',query: {clusterId: clusterId,name:Info.name,np:Info.np}}"
-      >详情</router-link>
+      >{{$t('TKE.overview.xq')}}</router-link>
       <router-link
         class="nav-item"
         :to="{name:'configmapDetailYaml',query: {clusterId: clusterId,name:Info.name,np:Info.np}}"

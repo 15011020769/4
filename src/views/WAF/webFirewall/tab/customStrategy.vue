@@ -24,7 +24,7 @@
       <el-table-column :label="t('匹配条件', 'WAF.pptj')">
         <template slot-scope="scope">
           <p v-for="strategy in scope.row.Strategies" :key="strategy.Field">
-            <span style="font-weight: 600;">{{ MATCH_KEY[strategy.Field].name}}</span> {{LOGIC_SYMBOL[strategy.CompareFunc]}} {{strategy.Content}}
+            <span style="font-weight: 600;">{{ MATCH_KEY[strategy.Field].name }}</span> {{LOGIC_SYMBOL[strategy.CompareFunc]}} {{strategy.Content || '-'}}
           </p>
         </template>
       </el-table-column>
@@ -115,7 +115,7 @@
 import { DESCRIBE_CUSTOM_RULES, MODIFY_CUSTOM_RULE_STATUS, DELETE_CUSTOM_RULE } from '@/constants'
 import { POLICY_RULE_ACTION_ARR, POLICY_RULE_ACTION, MATCH_KEY, LOGIC_SYMBOL, COMMON_ERROR } from '../../constants'
 import Rule from '../model/rule'
-import { flatObj } from '@/utils'
+import { flatObj, isValidIPv6 } from '@/utils'
 import moment from 'moment'
 export default {
   props: {
@@ -153,7 +153,23 @@ export default {
       this.getCustomRules()
     }
   },
+  filters: {
+    getField(strategy) {
+      const field = MATCH_KEY[strategy.Field].name
+      if (strategy.Field === 'IP' && isValidIPv6(strategy.Content)) {
+        return `${field}V6`
+      }
+      return field
+    },
+  },
   methods: {
+    processField(strategys) {
+      strategys.forEach(strategy => {
+        if (strategy.Field === 'IP' && isValidIPv6(strategy.Content)) {
+          strategy.Field += 'V6'
+        }
+      })
+    },
     delRule(rule) {
       rule.delDialog = false
       this.axios.post(DELETE_CUSTOM_RULE, {
@@ -222,6 +238,7 @@ export default {
             rule.StatusBool = !!Number(rule.Status)
             rule.delDialog = false
             ruleNames.push(rule.Name)
+            this.processField(rule.Strategies)
           })
           this.ruleNames = ruleNames
           this.total = Number(TotalCount)

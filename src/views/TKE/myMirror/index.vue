@@ -1,6 +1,6 @@
 <template>
   <div class="myMirror-wrap">
-    <HeadCom :title="$t('')">
+    <HeadCom :title="$t('TKE.myMirror.wdjx')">
       <slot>
         <div class="head-address">
           <City :Cityvalue.sync="selectedRegion" :cities="cities" class="city" @changeCity="changeCity"></City>

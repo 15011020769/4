@@ -75,6 +75,7 @@
               v-if="MATCH_KEY[scope.row.Field].input !== false"
               :prop="`Strategies[${scope.$index}].Content`"
               :rules="[
+                {required: true, message: MATCH_KEY[scope.row.Field].placeholder},
                 { validator:  MATCH_KEY[scope.row.Field].validator(MATCH_KEY[scope.row.Field])},
               ]"
               class="content-input"
@@ -85,7 +86,7 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-link type="info" @click="delStrategy(scope.$index)" style="cursor: pointer;">删除</el-link>
+            <el-link type="info" @click="delStrategy(scope.$index)" :disabled="selectedMatchKeys.length === 1">删除</el-link>
           </template>
         </el-table-column>
       </el-table>
@@ -286,13 +287,22 @@ export default {
     onSubmit() {
       this.$refs.form.validate((valid) => {
         if (valid) {
+          const strategies = this.form.Strategies.map(s => {
+            if (s.Field === 'IPV6') {
+              return {
+                ...s,
+                Field: 'IP'
+              }
+            }
+            return s
+          })
           const param = {
             Version: '2018-01-25',
             SortId: this.form.SortId,
             ExpireTime: this.form.ExpireTimeType === 0 ? 0 : moment(this.ExpireTimeDay).startOf('day').format("X"),
             Domain: this.domain.Domain,
             Edition: 'clb-waf',
-            Strategies: this.form.Strategies,
+            Strategies: strategies,
           }
 
           let url = ADD_CUSTOM_RULE

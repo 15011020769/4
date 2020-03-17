@@ -363,53 +363,61 @@ export default {
       };
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         if (res.Response.Error === undefined) {
+          console.log(res);
           var _enterList = res.Response.InstanceList;
           this.total = res.Response.Total;
-          let params = {
-            Version: "2017-03-12",
-            Limit: this.pageSize,
-            Offset: this.pageIndex
-          };
-          for (let i in _enterList) {
-            params["InstanceIds." + i] = JSON.parse(
-              _enterList[i].Dimensions
-            ).unInstanceId;
-          }
-          this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.enterList = res.Response.InstanceSet;
-              for (let i in _enterList) {
-                for (let j in this.enterList) {
-                  if (
-                    JSON.parse(_enterList[i].Dimensions).unInstanceId ===
-                    this.enterList[j].InstanceId
-                  ) {
-                    this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+          if (_enterList.length > 0) {
+            let params = {
+              Version: "2017-03-12",
+              Limit: this.pageSize,
+              Offset: this.pageIndex
+            };
+
+            for (let i in _enterList) {
+              params["InstanceIds." + i] = JSON.parse(
+                _enterList[i].Dimensions
+              ).unInstanceId;
+            }
+
+            this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+              if (res.Response.Error === undefined) {
+                this.enterList = res.Response.InstanceSet;
+                for (let i in _enterList) {
+                  for (let j in this.enterList) {
+                    if (
+                      JSON.parse(_enterList[i].Dimensions).unInstanceId ===
+                      this.enterList[j].InstanceId
+                    ) {
+                      this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                    }
                   }
                 }
+                console.log(this.enterList);
+                this.loadShow = false;
+              } else {
+                let ErrTips = {
+                  FailedOperation: "操作失败",
+                  InternalError: "内部错误",
+                  "InternalError.Param": "Param。",
+                  "InternalError.PublicClusterOpNotSupport":
+                    "集群不支持当前操作。",
+                  InvalidParameter: "参数错误",
+                  ResourceNotFound: "资源不存在",
+                  ResourceUnavailable: "资源不可用"
+                };
+                let ErrOr = Object.assign(ErrorTips, ErrTips);
+                this.$message({
+                  message: ErrOr[res.Response.Error.Code],
+                  type: "error",
+                  showClose: true,
+                  duration: 0
+                });
               }
-              console.log(this.enterList);
-              this.loadShow = false;
-            } else {
-              let ErrTips = {
-                FailedOperation: "操作失败",
-                InternalError: "内部错误",
-                "InternalError.Param": "Param。",
-                "InternalError.PublicClusterOpNotSupport":
-                  "集群不支持当前操作。",
-                InvalidParameter: "参数错误",
-                ResourceNotFound: "资源不存在",
-                ResourceUnavailable: "资源不可用"
-              };
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
+            });
+          } else {
+            this.enterList = [];
+            this.loadShow = false;
+          }
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);

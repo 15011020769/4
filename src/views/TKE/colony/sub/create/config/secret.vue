@@ -25,34 +25,34 @@
           label-width="120px"
           size="mini"
         >
-          <el-form-item label="名称" prop="name">
-            <el-input class="w200" v-model="se.name" placeholder="请输入名称"></el-input>
-            <p :class="{ activeColor: fontColor }">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+          <el-form-item :label="$t('TKE.overview.mc')" prop="name">
+            <el-input class="w200" v-model="se.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
+            <p :class="{ activeColor: fontColor }">{{$t('TKE.overview.xz')}}</p>
           </el-form-item>
-          <el-form-item label="Secret类型">
+          <el-form-item :label="$t('TKE.subList.slx')">
             <el-radio-group v-model="se.tabPosition" style="margin-bottom: 30px;">
               <el-radio-button label="jt">Opaque</el-radio-button>
               <el-radio-button label="dt">Dockercfg</el-radio-button>
             </el-radio-group>
             <!-- <div>适用于保存秘钥证书和配置文件，Value将以base64格式编码</div> -->
           </el-form-item>
-          <el-form-item label="生效范围">
+          <el-form-item :label="$t('TKE.subList.sxfw')">
             <div>
               <el-radio-group v-model="se.radio" style="margin-bottom: 30px;">
-                <el-radio label="1">存量所有命名空间（不包括kube-system、kube-public和后续增量命名空间）</el-radio>
+                <el-radio label="1">{{$t('TKE.subList.clsymmkj')}}</el-radio>
                 <br />
                 <br />
-                <el-radio label="2">指定命名空间</el-radio>
+                <el-radio label="2">{{$t('TKE.subList.zdmmkj')}}</el-radio>
               </el-radio-group>
               <div class="bg">
                 <p>
-                  <b>当前集群有以下可用命名空间</b>
+                  <b>{{$t('TKE.subList.dqjqy')}}</b>
                 </p>
                 <div v-if="se.radio=='2'">
                   <el-transfer
                     filterable
                     :filter-method="filterMethod"
-                    filter-placeholder="请输入"
+                    :filter-placeholder="$t('TKE.subList.qsru')"
                     v-model="se.value"
                     :data="data"
                     @change="getSpaceNameData()"
@@ -66,8 +66,8 @@
               <div class="border">
                 <!-- 头部 -->
                 <div class="flex f12 header">
-                  <div class="pl5">变量名</div>
-                  <div class="pl5">变量值</div>
+                  <div class="pl5">{{$t('TKE.overview.blm')}}</div>
+                  <div class="pl5">{{$t('TKE.overview.blz')}}</div>
                 </div>
                 <!-- 主体 -->
                 <div class="flex1" style="padding:10px;border-top:1px solid #ddd;">
@@ -79,14 +79,14 @@
                       :prop="'domains.' + index + '.value'"
                     >
                       <div class="form-input">
-                        <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                        <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                         <span>=</span>
                         <textarea class="text" v-model="domain.valueKey"></textarea>
                         <el-tooltip
                           v-if="dynamicValidateForm.domains.length=='1'"
                           class="item"
                           effect="dark"
-                          content="不可删除，至少设置一项"
+                          :content="$t('TKE.subList.zsszyx')"
                           placement="right"
                         >
                           <i class="el-icon-close"></i>
@@ -95,7 +95,7 @@
                           v-else
                           class="item"
                           effect="dark"
-                          content="删除"
+                          :content="$t('TKE.overview.sc')"
                           placement="right"
                         >
                           <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
@@ -104,31 +104,31 @@
                     </el-form-item>
                   </el-form>
                   <div>
-                    <el-link type="primary" style="cursor: pointer;" @click="addDomain">新增变量</el-link>
+                    <el-link type="primary" style="cursor: pointer;" @click="addDomain">{{$t('TKE.overview.xzbl')}}</el-link>
                   </div>
                 </div>
                 <p
                   v-show="errorShow"
                   style="color:red"
-                >新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+                >{{$t('TKE.subList.xzblmgs')}}</p>
               </div>
             </el-form-item>
           </div>
           <div v-if="se.tabPosition=='dt'">
-            <el-form-item label="仓库域名">
-              <el-input class="w200" v-model="se.ips" placeholder="请输入域名或IP"></el-input>
+            <el-form-item :label="$t('TKE.subList.ckym')">
+              <el-input class="w200" v-model="se.ips" :placeholder="$t('TKE.subList.qsrymip')"></el-input>
             </el-form-item>
-            <el-form-item label="用户名">
-              <el-input class="w200" v-model="se.names" placeholder="请输入第三方仓库的用户名"></el-input>
+            <el-form-item :label="$t('TKE.overview.yhm')">
+              <el-input class="w200" v-model="se.names" :placeholder="$t('TKE.subList.srdsfyhm')"></el-input>
             </el-form-item>
-            <el-form-item label="密码">
-              <el-input class="w200" v-model="se.pwds" placeholder="请输入第三方仓库的登录密码"></el-input>
+            <el-form-item :label="$t('TKE.overview.mm')">
+              <el-input class="w200" v-model="se.pwds" :placeholder="$t('TKE.subList.srdsfmm')"></el-input>
             </el-form-item>
           </div>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="creatSecret()">创建Secret</el-button>
+          <el-button size="small" type="primary" @click="creatSecret()">{{$t('TKE.subList.cj')}}Secret</el-button>
           <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
@@ -235,7 +235,7 @@ export default {
       if (this.se.name == "") {
         this.$refs.form.validateField("name");
         this.$message({
-          message: "名称不能为空",
+          message: "名稱不能為空",
           type: "warning",
           showClose: true,
           duration: 0
@@ -405,7 +405,7 @@ export default {
       let selectList = this.se.value;
       if(this.se.radio == "2" && selectList.length === 0) {
         this.$message({
-          message: '清先至少选择一条命名空间',
+          message: '請先至少選擇一條命名空間',
           type: "warning",
           showClose: true,
           duration: 0
@@ -414,7 +414,7 @@ export default {
       }
       if(this.se.radio == "1" && arr.length === 0) {
         this.$message({
-          message: '清先填写选择一条内容',
+          message: '請先填寫選擇一條內容',
           type: "warning",
           showClose: true,
           duration: 0

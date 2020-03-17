@@ -12,6 +12,7 @@
       </el-select>
     </div>
     <template v-if="resourceIPs.length > 0">
+    <!-- HTTP CC防护 -->
     <div class="ccProtectPartTwo">
       <h2>{{$t('DDOS.Proteccon_figura.HTTP_protection')}}</h2>
       <div class="partTwoIpt">
@@ -23,6 +24,8 @@
               v-model="switchState"
               active-color="#006eff"
               inactive-color="#bbb"
+              style="margin-top: 20px;"
+              @click="modifyCCThreshold"
             ></el-switch>
             <span class="switchTip">{{$t('DDOS.Proteccon_figura.Sensitive_services')}}</span>
           </p>
@@ -36,6 +39,7 @@
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
+                @click="modifyCCThreshold"
               ></el-option>
             </el-select>
             <span class="marginLeftSpan">{{$t('DDOS.Proteccon_figura.numbe_HTTP')}}</span>
@@ -44,7 +48,7 @@
         <div class="newClear" v-if="switchState==true?true:false">
           <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.gjgjyz')}}</p>
           <p class="partTwoPT">
-            <el-input v-model="alarmThreshold" class="partTwoPTIpt" :onchange="changeAlarmThreshold()"></el-input>
+            <el-input v-model="alarmThreshold" class="partTwoPTIpt" :onchange="changeAlarmThreshold()" @focus="inputFlgFun(true)" @blur="inputFlgFun(false)"></el-input>
             <span class="marginLeftSpan">QPS</span>
           </p>
           <span class="botTop">{{$t('DDOS.Proteccon_figura.CC_classified')}}</span>
@@ -149,6 +153,8 @@ export default {
         }
       ], //http请求阈值数据
       alarmThreshold: 1000, //HTTP CC攻击告警阈值
+      flg: false,
+      alarmThresholdT: 1000 
     };
   },
   components: {
@@ -162,12 +168,6 @@ export default {
     ccResourceId: function(value) {
       this.describeResourceList();
       this.describeCCAlarmThreshold();
-    },
-    switchState: function(value) {
-      this.modifyCCThreshold();
-    },
-    httpRequestNum: function(value) {
-      this.modifyCCThreshold();
     }
   },
   methods: {
@@ -232,6 +232,7 @@ export default {
       this.axios.post(CCALARMTHRESHOLD_GET, params).then(res => {
         // console.log(params, res);
         this.alarmThreshold = res.Response.CCAlarmThreshold.AlarmThreshold;
+        this.alarmThresholdT = res.Response.CCAlarmThreshold.AlarmThreshold;
       });
     },
     // 1.4.设置CC告警通知阈值
@@ -254,10 +255,43 @@ export default {
       }
       this.axios.post(CCALARMTHRESHOLD_MODIFY, params).then(res => {
         // console.log(params, res);
+        if (res.Response.Error === undefined) {
+          this.alarmThresholdT = this.alarmThreshold;
+          this.$message({
+            message: "修改成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
+    },
+    inputFlgFun(bl) {
+      this.flg = bl;
     },
     // 修改CC告警通知阈值
     changeAlarmThreshold() {
+      if (!this.flg || this.alarmThreshold == this.alarmThresholdT) {
+        return
+      }
+      var regNUM = /(^[1-9]\d*$)/;
+      if (!regNUM.test(this.alarmThreshold)) {
+        this.$message({
+          showClose: true,
+          message: "HTTP CC告警閾值為正整數",
+          type: "warning"
+        });
+        return
+      }
       if(this.ccResourceId != undefined && this.ccResourceId != ""){
         this.modifyCCAlarmThreshold();
       }

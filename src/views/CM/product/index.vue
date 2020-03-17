@@ -2,16 +2,16 @@
   <div class="product-wrap">
     <Header title="產品事件"></Header>
     <div class="product-main">
-      <div class="explain" style="margin-bottom:20px;">
+      <!-- <div class="explain" style="margin-bottom:20px;">
         <p>
           事件中心概述，產品事件與平台事件區別
           <a>點擊了解</a>
         </p>
-      </div>
+      </div> -->
       <div class="box">
         <div class="table_top"> 
           <div class="type_data">
-            <TimeDropDown :TimeArr='TimeArr' :classsvalue="value" :Datecontrol='true' :Graincontrol='false' :Difference="'D'"
+            <TimeDropDown :TimeArr='TimeArr' :classsvalue="values" :Datecontrol='Datecontrol' :Graincontrol='Graincontrol' :Difference="Difference"
       v-on:switchData="GetDat" />
           </div>
           <div class="writeput">
@@ -28,8 +28,8 @@
             </SEARCH>
           </div>
           <div class="icons">
-            <i class="el-icon-setting" @click="dialog"></i>
-            <i class="el-icon-download"></i>
+            <!-- <i class="el-icon-setting" @click="dialog"></i>
+            <i class="el-icon-download"></i> -->
           </div>
         </div>
         <div class="table_head">
@@ -84,8 +84,8 @@
             </el-table-column>
             <el-table-column prop label="對象詳情" width="200">
               <template slot-scope="scope">
-                <div v-for="item in scope.row.Dimensions" :key="item">
-                  <p><span>{{item.Name}}：</span>{{item.Value}}</p>
+                <div v-for="(items,index) in scope.row.Dimensions" :key="index">
+                  <p><span>{{items.Name}}：</span>{{items.Value}}</p>
                 </div>
               </template>
             </el-table-column>
@@ -149,18 +149,29 @@ export default {
       unNormalEventAmount: 0, // 异常事件
       unRecoverAmount: 0, // 未恢复异常事件
       activeName: "first",
-      value: 13,
+      Datecontrol: true,
+      Graincontrol: false,
+      Difference: 'D',
+      values: 13,
       dialogVisible: false, //弹框
       Total: 0,
       searchInput: "", //搜索框的值
       searchOptions: [
         {
-            value: "InstanceId",
+            value: "InstanceId.0",
             label: "影響對象ID"
           },
           {
-            value: "EventCName",
+            value: "EventName.0",
             label: "事件名"
+          },
+          {
+            value: "Status.0",
+            label: "告警配置状态"
+          },
+          {
+            value: "Type.0",
+            label: "事件类型"
           },
       ],
       searchValue: "", //inp输入的值
@@ -227,7 +238,7 @@ export default {
           return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`
       },
     //获取数据
-    getProductList(data) {
+    getProductList(events) {
       let types = typeof data;
       this.loadShow = true; //加载
       const params = {
@@ -239,12 +250,28 @@ export default {
         EndTime: this.EndTime,
       };
      if (this.searchInput !== "" && this.searchValue !== "") {
-        params['Limit'] =  this.Total
+        params[this.searchValue] =  this.searchInput
      }
-     if (types == 'string') {
-          params['Limit'] =  this.Total
-     };
-            //  monitor2/DescribeProductEventList   //接口
+     switch (events) {
+            case 1: 
+            console.log(events)
+             params['Type.0'] = "abnormal";
+              break;
+            case 2: 
+            console.log(events)
+              params['Status.0'] = "alarm";
+              break;
+            case 3: 
+            console.log(events)
+              params['IsAlarmConfig'] = 0;
+              break;
+            case 4: 
+            console.log(events)
+              params['Type.0'] = "status_change";
+              break;
+          }
+     
+      //  monitor2/DescribeProductEventList   //接口
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -258,14 +285,7 @@ export default {
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
           this.Total = res.Response.Total
-          // 筛选逻辑
-          if (this.searchInput !== "" && this.searchValue !== "") {
-            this.filtration (res, {'name': this.searchValue, value : this.searchInput})
-          };
           
-          if (types == 'string') {
-            this.filtration (res,data)
-          };
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -279,47 +299,7 @@ export default {
         }
       });
     },
-    filtration (res,data) {
-      let tableListData = [];
-      let dataType = typeof data;
-      if (dataType == 'object') {
-        res.Response.Events.forEach((currentValue,index,arr) => {
-          if(arr[index].EventCName === data.value && data.name == "EventCName") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].InstanceId === data.value && data.name == "InstanceId") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          }
-        });
-      }else if (dataType == 'string' && this.OverViewBgcolor != 0){
-        
-        res.Response.Events.forEach((currentValue,index,arr) => {
-          if (arr[index].Type === "abnormal" && data == "Type") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].Status === "alarm" && data == "Status") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].IsAlarmConfig === 0 && data == "IsAlarmConfig") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].Type === "status_change" && data == "Type") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          }
-          
-        });
-        
-      }
-      
-      if(this.tableData.length < 1 ){
-        this.$message.error("請輸入正確搜索信息");
-        this.tableData = res.Response.Events; //列表数据
-      }else {
-        this.TotalCount = this.tableData.length;
-      }
-    },
+    
     //分页
     handleCurrentChange(val) {
       this.currpage = val;
@@ -337,9 +317,9 @@ export default {
     },
     // 概览
     overViewClick (events,num,Trigger) {
-        if (num != this.OverViewBgcolor) {
-          this.getProductList(events);
+        if (this.OverViewBgcolor != num) {
           this.OverViewBgcolor = num;
+          this.getProductList(this.OverViewBgcolor);
         }else {
           switch (this.OverViewBgcolor) {
             case 1: 
@@ -357,12 +337,9 @@ export default {
           }
           if (!this.OverViewBgcolorTrigger) {
             this.OverViewBgcolor = 0;
-            this.getProductList();
+            this.getProductList(this.OverViewBgcolor);
           }
-        }
-        
-        
-           
+        }       
     },
     
     //导出表格

@@ -8,7 +8,7 @@
            <span class="goback" @click="goBack">
              <i class="el-icon-back"></i>
            </span>
-           <h2 class="header-title">更新Pod配置</h2>
+           <h2 class="header-title">更新Pod配置1</h2>
          </div>
          <!-- 右侧 -->
          <div class="grid-right"></div>

@@ -128,9 +128,9 @@
           <el-button v-if="!ModifyAlarm" disabled>修改告警渠道</el-button>
         </el-row>
         <el-row class="iconBtn">
-          <i class="el-icon-setting" @click="buyMessgae"></i>
-          <i class="el-icon-refresh"></i>
-          <i class="el-icon-download"></i>
+          <!-- <i class="el-icon-setting" @click="buyMessgae"></i> -->
+          <i class="el-icon-refresh" @click="ListInit"></i>
+          <i class="el-icon-download" @click="exportExcel"></i>
         </el-row>
       </p>
       <el-table
@@ -139,15 +139,14 @@
         v-loading="loadShow"
         height="450"
         @selection-change="handleSelectionChange"
+        id="exportTable"
       >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="策略名称">
           <template slot-scope="scope">
-            <a
-              class="defaultDialog"
-              @click="defaultClick(scope.row.grounpId)"
-              >{{ scope.row.GroupName }}</a
-            >
+            <a class="defaultDialog" @click="defaultClick(scope.row)">{{
+              scope.row.GroupName
+            }}</a>
             <i @click="NameModify(scope.row)" class="el-icon-edit"></i>
           </template>
         </el-table-column>
@@ -355,8 +354,7 @@
       title="修改告警策略名称"
       :visible.sync="modifyNameDialogVisible"
       width="500px"
-      custom-class="tke-dialog"
-      class="dialog-box"
+      custom-class="dialog-box"
     >
       <div class="edit-dialog">
         <el-input
@@ -570,6 +568,8 @@
 <script>
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
+import FileSaver from "file-saver";
+import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_ALARM_LIST,
@@ -1006,22 +1006,14 @@ export default {
     save() {
       this.dialogVisible = false;
     },
-    defaultClick(id) {
-      //点击默认按钮
-      console.log(id, "id");
-      //这里是写死的:id动态路由，写数据的时候改成动态的id
-      this.$router.push({ path: "/strategy/create:" + id });
-      // this.$router.push({
-      //   path: "/strategy/create:"+"id", // 新增告警策略默认点击按钮（详情），写死了，到时候可动态访问
-      //   name: "strategy",
-      //   component: () =>
-      //     import(
-      //       /* webpackChunkName: "strategy" */ "./components/defaultDetail.vue"
-      //     ),
-      //   meta: {
-      //     keepAlive: true
-      //   }
-      // });
+    defaultClick(row) {
+      console.log(row);
+      this.$router.push({
+        name: "strategyCreateDetail",
+        query: {
+          groupId: row.GroupId
+        }
+      });
     },
     //思路：便利你所有的数据，给每条都加上defaultIconFlag：false属性，当你划过的时候就可以改成true
     mouseoverDefault() {
@@ -1456,6 +1448,29 @@ export default {
           });
         }
       });
+    },
+    // 导出表格
+    exportExcel() {
+      console.log("exportExcel...");
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          "download(policy).xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     }
   },
   filters: {
@@ -1748,6 +1763,26 @@ a:hover {
     ::v-deep .el-table {
       border: 1px solid #ebeef5;
       margin-left: 1px;
+    }
+  }
+  .edit-dialog {
+    ::v-deep .el-input__inner {
+      border-radius: 0px;
+      width: 200px;
+      height: 30px;
+      padding: 0 10px;
+    }
+    p {
+      color: #b43537;
+      border: 1px solid #f6b5b5;
+      background-color: #fcecec;
+      width: 258px;
+      box-sizing: border-box;
+      padding: 10px 20px;
+      margin-top: 10px;
+    }
+    ::v-deep .el-dialog__footer {
+      text-align: center;
     }
   }
   .tips {

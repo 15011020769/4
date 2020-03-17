@@ -15,10 +15,10 @@
           typeSelect
           refreshData
           exportData
-          typeLabel="命名空间"
+          :typeLabel="$t('TKE.overview.mmkj')"
           :typeOptions="searchOptions"
           :typeValue="searchType"
-          inputPlaceholder="请输入关键词搜索"
+          :inputPlaceholder="$t('TKE.subList.qsrgjzss')"
           :searchInput="searchInput"
           @changeType="changeSearchType"
           @changeInput="changeSearchInput"
@@ -37,7 +37,7 @@
         v-loading="loadShow"
         style="width: 100%"
       >
-        <el-table-column label="名称">
+        <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
             <span
               @click="goConfigmapDetail(scope.row)"
@@ -52,7 +52,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop label="创建时间">
+        <el-table-column prop :label="$t('TKE.overview.cjsj')">
           <template slot-scope="scope">
             <p>{{timeFormat(scope.row.metadata.creationTimestamp)}}</p>
           </template>
@@ -63,7 +63,7 @@
               <el-tooltip
                 class="tooltip"
                 effect="dark"
-                content="当前Namespace下的不可进行此操作"
+                :content="$t('TKE.subList.dqbkcz')"
                 placement="top"
               >
                 <el-button class="btn btn2">更新配置</el-button>
@@ -71,24 +71,24 @@
               <el-tooltip
                 class="tooltip"
                 effect="dark"
-                content="当前Namespace下的不可进行此操作"
+                :content="$t('TKE.subList.dqbkcz')"
                 placement="top"
               >
-                <el-button class="btn btn2">编辑YAML</el-button>
+                <el-button class="btn btn2">{{$t('TKE.overview.bj')}}YAML</el-button>
               </el-tooltip>
               <el-tooltip
                 class="tooltip"
                 effect="dark"
-                content="当前Namespace下的不可进行此操作"
+                :content="$t('TKE.subList.dqbkcz')"
                 placement="top"
               >
-                <el-button class="btn btn2">删除</el-button>
+                <el-button class="btn btn2">{{$t('TKE.overview.sc')}}</el-button>
               </el-tooltip>
             </div>
             <div v-else>
               <el-button class="btn" @click="goUpdateConfig(scope.row)">更新配置</el-button>
-              <el-button class="btn" @click="goUpdateYaml(scope.row)">编辑YAML</el-button>
-              <el-button class="btn" @click="delConfig(scope.row)">删除</el-button>
+              <el-button class="btn" @click="goUpdateYaml(scope.row)">{{$t('TKE.overview.bj')}}YAML</el-button>
+              <el-button class="btn" @click="delConfig(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
             </div>
             <!-- <span class="tke-text-link " @click="goUpdateConfig(scope.row)">更新配置</span> -->
             <!-- <span class="tke-text-link ml10">编辑YAML</span> -->
@@ -111,10 +111,10 @@
         </div>
       </div>
     </div>
-    <el-dialog title="删除资源" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
-      <span>您确定要删除ConfigMap:{{name}}</span>
+    <el-dialog :title="$t('TKE.overview.sczy')" :visible.sync="dialogVisible" width="30%" :before-close="handleClose">
+      <span>{{$t('TKE.storage.nqdysc')}}ConfigMap:{{name}}</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="delSure">确 定</el-button>
+        <el-button type="primary" @click="delSure">{{$t('TKE.overview.qd')}}</el-button>
         <el-button @click="dialogVisible = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -207,7 +207,7 @@ export default {
         if (res.Response.Error == undefined) {
            this.$message({
                 type: "success",
-                message: "删除成功",
+                message: "刪除成功",
                 duration: 0,
                 showClose: true
             });
@@ -225,7 +225,7 @@ export default {
       });
     },
     handleClose(done) {
-      this.$confirm("确认关闭？")
+      this.$confirm("確認關閉？")
         .then(_ => {
           done();
         })

@@ -42,6 +42,9 @@
 <script>
 import Header from "./Header";
 import Transfer from "./transfer";
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ADD_CUSTON_MESSAGE } from "@/constants/CM-lxx.js"; /////////
+
 export default {
   data() {
     return {

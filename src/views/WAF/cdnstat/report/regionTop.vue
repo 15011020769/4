@@ -6,10 +6,14 @@
     </el-row>
     <el-row>
       <el-col :span="16">
+        <el-row class="empty" v-if="seriesMap.length == 0 ? true : false">
+          暂无数据
+        </el-row>
         <echart-map
           :series="seriesMap"
           :total="totalNumber"
           v-loading="loading"
+          v-else
         />
       </el-col>
       <el-col :span="8">
@@ -97,12 +101,21 @@ export default {
   },
   methods: {
     exportEchart() {
+      const { projectName, domainName, type, times, interval } = this.params
+      let fileName
+      const start = times[0].split(' ')[0]
+      const end = times[1].split(' ')[0]
+      if (interval === '5min') { // 日报
+        fileName = `${start}_traffic_distribution.xlsx`
+      } else {
+        fileName = `${start}-${end}_traffic_distribution.xlsx`
+      }
       let data = [
-        ['统计项目', '全部项目'],
-        ['统计域名', '全部域名'],
-        ['报表类型', '日报'],
-        ['开始时间', this.params.times[0]],
-        ['结束时间', this.params.times[1]],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['报表类型', type],
+        ['开始时间', times[0]],
+        ['结束时间', times[1]],
         [],
         ['区域', '消耗量（B）', '占比（%）']
       ]
@@ -115,8 +128,8 @@ export default {
       })
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_traffic_distribution`);
-      XLSX.writeFile(wb, `${moment().format('x')}_traffic_distribution.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws);
+      XLSX.writeFile(wb, fileName);
     },
     fixed(v) {
       return Math.ceil(v) !== v ? v.toFixed(2) : v
@@ -137,7 +150,7 @@ export default {
       return [v, 'B'].join('')
     },
     init() {
-      const { projectId, domainName, interval, times } = this.params
+      const { projectId, type, projectName, domainName, interval, times } = this.params
 
       const params = {
         Version: "2018-06-06",
@@ -164,21 +177,23 @@ export default {
         Filter: "flux"
       })
         .then(({ Response }) => {
-          const res = Response.Data[0].DetailData
-          res && res.map(v => {
-            total += v.Value
-            tableArr.push({
-              name: this.COUNTRY_MAP[v.Name],
-              value: v.Value
+          if (Response.Data && Response.Data.length) {
+            const res = Response.Data[0].DetailData
+            res && res.forEach(v => {
+              total += v.Value
+              tableArr.push({
+                name: this.COUNTRY_MAP[v.Name],
+                value: v.Value
+              })
             })
-          })
+            res && res.forEach(v => {
+              regionsArr.push({
+                name: this.COUNTRY_MAP[v.Name],
+                value: (v.Value / total * 100).toFixed(2)
+              })
+            })
+          }
           this.totalNumber = total
-          res && res.map((v) => {
-            regionsArr.push({
-              name: this.COUNTRY_MAP[v.Name],
-              value: (v.Value / this.totalNumber * 100).toFixed(2)
-            })
-          })
           this.seriesMap = regionsArr // 传百分数因为比较的就是百分比
           this.tableData = tableArr
           this.totalItems = tableArr.length
@@ -186,8 +201,7 @@ export default {
         })
     },
     handleCurrentChange(val) {
-      this.currpage = val;
-      this.getListTopData();
+      this.currpage = val
     },
   }
 }
@@ -223,4 +237,11 @@ export default {
       border-bottom: none;
     }
   }
+  .empty {
+      height: 480px;
+      width: 100%;
+      line-height: 480px;
+      text-align: center;
+      font-weight: bold
+    }
 </style>

@@ -13,7 +13,7 @@
             class="upload-demo"
             action="/"
             accept=".png"
-            :before-upload="beforeUpload"
+            :on-change="beforeUpload"
             list-type="picture"
             :show-file-list="false"
             :auto-upload="false"
@@ -150,7 +150,9 @@ export default {
       this.ruleForm.XPosition = Math.ceil(x / 640 * 100)
       this.ruleForm.YPosition = Math.ceil(y / 360 * 100)
     },
-    beforeUpload(file) {
+    beforeUpload(f) {
+      // console.log(file)
+      const file = f.raw
       const isPNG = file.type === 'image/png'
       if (!isPNG) {
         this.$message({

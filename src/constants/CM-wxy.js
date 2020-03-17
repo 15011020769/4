@@ -53,3 +53,24 @@ export const CM_ALARM_SET_DEFAULT = 'monitor/SetDefaultPolicyGroup'
 
 // 告警策略 列表 策略类型 修改告警渠道
 export const CM_ALARM_MODIFY_NOTIFY = 'monitor2/ModifyNotifyBatch'
+
+// 告警策略 详情
+export const CM_ALARM_STRATEGY_DETAILS = 'monitor2/DescribePolicyGroupInfo'
+
+// 告警策略 详情 告警触发条件
+export const CM_ALARM_TRIGGER_CONDITION = 'monitor2/DescribeConditionsTemplateList'
+
+// 告警策略 详情 告警对象 列表
+export const CM_ALARM_OBJECT_LIST = 'monitor2/DescribeBindingPolicyObjectList'
+
+// 告警策略 详情 告警对象 列表 移除
+export const CM_ALARM_OBJECT_LIST_OUT = 'monitor2/UnBindingPolicyObject'
+
+// 告警策略 详情 告警对象 列表 全部移除
+export const CM_ALARM_OBJECT_LIST_ALLOUT = 'monitor2/UnBindingAllPolicyObject'
+
+// 告警策略 详情 告警接收对象 列表
+export const CM_ALARM_RECEIVE_OBJECT_LIST = 'monitor2/DescribeContactList'
+
+// 告警策略 详情 回调接口
+export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'

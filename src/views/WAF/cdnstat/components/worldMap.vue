@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-row class="btnGroup">
-      <el-button @click="add">+</el-button><br/><el-button @click="dec">-</el-button>
+      <el-button @click="add"><span style="width: 10px; display: inline-block">+</span></el-button>
+      <br/><el-button @click="dec"><span style="width: 10px; display: inline-block">-</span></el-button>
     </el-row>
     <div ref="worldmap_dv" style="width: 100%;height: 480px;"></div>
   </div>
@@ -10,7 +11,10 @@
 <script>
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/tooltip'
-import 'echarts/map/js/world.js' // 引入中国地图数据
+import 'echarts/lib/component/geo'
+import roamController from 'echarts/lib/component/helper/RoamController'
+import 'echarts/lib/component/visualMap'
+import 'echarts/map/js/world.js' // 引入世界地图数据
 import nameComparison from './nameComparison '
 export default {
   name: "myChart",
@@ -42,23 +46,36 @@ export default {
     total(val) {
       this.total = val
       this.initChart()
+    },
+    i(val) {
+      this.i = val
+      this.initChart()
+      // var myChart = this.$echarts.init(this.$refs.worldmap_dv);
+      // myChart.on('georoam', function (params) {
+      //   var option = myChart.getOption();
+      //   console.log(option.series[0].zoom)
+      //   this.i = option.series[0].zoom
+      //   console.log(params);
+      //   params.zoom += 0.1
+      // });
     }
   },
   methods: {
     add() {
-      this.i += 0.5
-      var myChart = this.$echarts.init(this.$refs.worldmap_dv);
-      myChart.setOption({ geo: { zoom: this.i } })
-      myChart.setOption({ series: { zoom: this.i } }) 
+      this.chart.dispatchAction({
+        type: "geoRoam",
+        zoom: 1.3,
+        originX: this.chart.getWidth() / 2,
+        originY: this.chart.getHeight() / 2,
+      })
     },
     dec() {
-      if(this.i > 1) {
-        this.i -= 0.5
-      }else {
-        return
-      }
-      var myChart = this.$echarts.init(this.$refs.worldmap_dv); 
-      myChart.setOption({ series: { zoom: this.i } }) 
+      this.chart.dispatchAction({
+       type: "geoRoam",
+        zoom: 0.7,
+        originX: this.chart.getWidth() / 2,
+        originY: this.chart.getHeight() / 2,
+      })
     },
     initChart() {
       let that = this
@@ -80,12 +97,20 @@ export default {
             return relVal
           }
         },
-        roamController: {//控制地图的上下左右放大缩小 图上没有显示
+        roamController: {//控制地图的上下左右放大缩小
           show: true,
           x: 'right',
+          width: 120,
+          height:200,
+          backgroundColor:'rgba(0,0,0,0.1)',
+          fillerColor:'red',
           mapTypeControl: {
             'world': true
-          }
+          },
+        },
+        geo: {
+          roam: true,
+          zoom: 1,
         },
         // 视觉映射组件
         visualMap: {
@@ -116,7 +141,7 @@ export default {
             name: '',
             mapType: 'world', // 地图类型
             roam: true,
-            zoom: 1,
+            zoom: this.i,
             scaleLimit: { //滚轮缩放的极限控制
               min: 1,
             },
@@ -156,5 +181,8 @@ export default {
   .btnGroup {
     position: absolute;
     z-index: 10;
+    .el-button {
+      padding:12px;
+    }
   }
 </style>

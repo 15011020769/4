@@ -80,27 +80,6 @@ export default {
               color: '#333333',
               fontWeight: 'bold',
             },
-            formatter(name){
-              let total = 1
-              let arrdetail = []
-              that.series.map(v => {
-                total += Number(v.value)
-              })
-              that.series.map(v => {
-                if (name == v.name) {
-                  if(v.name.length > 31) {
-                    arrdetail.push(
-                      v.name.substring(0,22)+ '...' + ' ' + v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
-                    )
-                  } else {
-                     arrdetail.push(
-                      v.name + ' ' + v.value + '次,  ' + that.t('占比', 'WAF.zb') + (v.value/total*100).toFixed(1) + '%'
-                    )
-                  }
-                }
-              })
-             return arrdetail.join('\n')
-            },
         },
         series: [
           {

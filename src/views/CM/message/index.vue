@@ -84,112 +84,15 @@ import Dialog from "./components/dialog";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import {
-  BASICS_ALARM_LIST,
-  CM_GROUPING_LIST_DELETE
+  CUSTON_MESSAGE_LIST,
+  DETELE_CUSTON_MESSAGE
 } from "@/constants/CM-lxx.js";
 
 export default {
   name: "message",
   data() {
     return {
-      tableData: [
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        }
-      ], //表格数据
+      tableData: [], //表格数据
       //分页
       loadShow: true, // 加载是否显示
       TotalCount: 0, //总条数
@@ -223,13 +126,11 @@ export default {
       // params.ObjLike = this.input;
       // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
       // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
-      this.axios.post(BASICS_ALARM_LIST, params).then(res => {
-        console.log(res.Response.Alarms, "数据");
+      this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
+        console.log(res.Response.PolicyList, "数据");
         if (res.Response.Error === undefined) {
-          // this.tableData = res.Response.Alarms;
-          // this.TotalCount = res.Response.Alarms.length;
-
-          // this.showNameSpaceModal = false;
+          this.tableData = res.Response.PolicyList;
+          this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
         } else {
           this.loadShow = false;
@@ -254,7 +155,7 @@ export default {
         Version: "2018-07-24",
         Module: "monitor"
       };
-      this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
+      this.axios.post(DETELE_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.deleteDialogVisible = false;
           this.loadShow = false;

@@ -507,7 +507,9 @@
 import Header from "./Head";
 import Transfer from "./transfer";
 import GroupingType from "@/components/GroupingType";
-import Cam from '@/views/CM/CM_assembly/Cam'
+import Cam from "@/views/CM/CM_assembly/Cam";
+import { ErrorTips } from "@/components/ErrorTips";
+import { CM_ALARM_STRATEGY_DETAILS } from "@/constants";
 export default {
   data() {
     return {
@@ -574,7 +576,31 @@ export default {
     GroupingType,
     Cam
   },
+  mounted() {
+    this.DetailsInit();
+  },
   methods: {
+    async DetailsInit() {
+      let params = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     all() {
       //全部对象
       //   alert("all");

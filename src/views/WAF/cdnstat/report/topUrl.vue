@@ -48,8 +48,6 @@ export default {
       fluxTableData: [],
       RequestTableData: [],
       loading: true,
-      used_json: [],
-      request_json: []
     }
   },
   watch: {
@@ -93,25 +91,48 @@ export default {
       }
       return [v, 'B'].join('')
     },
-    exportTable(type) {
-      let json
-      let name
-      if(type == 'used') {
-        json = this.used_json
-        name = 'flux'
+    exportTable(type1) {
+      const { projectName, domainName, type, times, interval } = this.params
+      let fileName
+      const start = times[0].split(' ')[0]
+      const end = times[1].split(' ')[0]
+      if (interval === '5min') { // 日报
+        fileName = `${start}_top10_urls.xlsx`
       } else {
-        json = this.request_json
-        name = 'request'
+        fileName = `${start}-${end}_top10_urls.xlsx`
       }
-      var opt = {
-            rowIndex: 4
-        };
-      const ws = XLSX.utils.json_to_sheet(json);
+      let data = [
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['报表类型', type],
+        ['开始时间', times[0]],
+        ['结束时间', times[1]],
+        [],
+      ]
+      let name
+      if(type1 == 'used') {
+        data.push(['URL', '流量（B）'])
+        name = 'flux'
+        this.fluxTableData.map(item => {
+          data.push([
+            item.Name,
+            item.Value
+          ])
+        })
+      } else {
+        data.push(['URL', '请求数（次）'])
+        name = 'request'
+        this.RequestTableData.map(item => {
+          data.push([
+            item.Name,
+            item.Value
+          ])
+        })
+      }
+      const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_${name}_top10_urls`);
-      XLSX.writeFile(wb, `${moment().format('x')}_${name}_top10_urls.xlsx`);
-      // XLSX.utils.book_append_sheet(wb, ws, `1300560919-overseas-${this.times[0]}-${this.times[1]}-${name}-top10_ur`);
-      // XLSX.writeFile(wb, `1300560919-overseas-${this.times[0]}-${this.times[1]}-${name}-top10_ur.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, `${name}_top10_urls`);
+      XLSX.writeFile(wb, fileName);
     },
     init() {
       const { projectId, domainName, interval, times } = this.params
@@ -136,37 +157,33 @@ export default {
     },
     getFluxTopData(params) {
       this.loading = true
-      let tempArr = []
+      let detailData = []
       this.axios.post('cdn2/ListTopData', {
         ...params,
         Metric: "url",
         Filter: "flux",
       })
         .then(({ Response }) => {
-          const res = Response.Data[0].DetailData
-          this.fluxTableData = res
-          res && res.map(v => {
-            tempArr.push({URL: v.Name, '流量（B）': v.Value})
-          })
-          this.used_json = tempArr
+          if (Response.Data && Response.Data.length) {
+            detailData = Response.Data[0].DetailData
+          }
+          this.fluxTableData = detailData
           this.loading = false
         })
     },
     getRequestTopData(params) {
       this.loading = true
-      let tempArr = []
+      let res = []
       this.axios.post('cdn2/ListTopData', {
         ...params,
         Metric: "url",
         Filter: "request",
       })
         .then(({ Response }) => {
-          const res = Response.Data[0].DetailData
+          if (Response.Data && Response.Data.length) {
+            res = Response.Data[0].DetailData
+          } 
           this.RequestTableData = res
-          res && res.map(v => {
-            tempArr.push({URL: v.Name, '请求数（次）': v.Value})
-          })
-          this.request_json = tempArr
           this.loading = false
         })
     },

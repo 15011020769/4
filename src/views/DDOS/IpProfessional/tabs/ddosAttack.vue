@@ -22,6 +22,8 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
+            :picker-options="pickerOptions"
+            :default-time="defTime"
           ></el-date-picker>
         </div>
         <div style="margin-top:12px;">
@@ -111,7 +113,6 @@
             </el-table-column>
           </el-table>
         </div>
-
         <div class="Right-style pagstyle">
           <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{$t('DDOS.UnsealCode.tiao')}}</span>
           <el-pagination
@@ -123,6 +124,47 @@
           ></el-pagination>
         </div>
       </div>
+      <!-- 攻击源信息弹框 -->
+      <el-dialog
+        :title="$t('DDOS.Statistical_forms.Attack_source')"
+        :visible.sync="attackSourceDialogVisible"
+        width="43%"
+      >
+        <div class="ddosTableMin">
+          <el-table
+            height="450"
+            :data="attackSourceList"
+            empty-text="暫無數據"
+          >
+            <el-table-column prop="SrcIp" :label="$t('DDOS.Statistical_forms.Attack_source') + 'IP'"></el-table-column>
+            <el-table-column prop="Nation" :label="$t('DDOS.Proteccon_figura.region')"></el-table-column>
+            <el-table-column prop="PacketLen" :label="$t('DDOS.Statistical_forms.AttackSource_PacketLen')">
+              <template slot-scope="scope">
+                <span v-if="scope.row.PacketLen < 1000">{{ scope.row.PacketLen + " B" }}</span>
+                <span v-else-if="scope.row.PacketLen >= 1000000">{{ Math.round(scope.row.PacketLen / 1000000 * 10) / 10 + " MB" }}</span>
+                <span v-else>{{ Math.round(scope.row.PacketLen / 1000 * 10) / 10 + " KB" }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="PacketSum" :label="$t('DDOS.Statistical_forms.AttackSource_PacketSum')"></el-table-column>
+          </el-table>
+        </div>
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{attackSourceTotal}}&nbsp;項，每頁顯示行</span>
+          <el-select v-model="attackSourcePageSize" @change="attackSourcePageSizeChange" style="width: 63px;">
+            <el-option v-for="(item, index) in pageSizeList" :label="item" :value="item" :key="index"></el-option>
+          </el-select>
+          <el-pagination
+            @current-change="attackSourceCurrentChange"
+            :current-page.sync="attackSourceCurrentPage"
+            :page-size="attackSourcePageSize"
+            layout="prev, pager, next"
+            :total="attackSourceTotal">
+          ></el-pagination>
+        </div>
+        <div slot="footer" style="text-align: center">
+          <el-button @click="attackSourceDialogVisible = false">关闭</el-button>
+        </div>
+      </el-dialog>
       <!-- </template> -->
     </div>
   </div>
@@ -144,6 +186,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import moment from "moment";
 export default {
   data() {
+    let that = this
     return {
       loading: true,
       btnData: [
@@ -175,11 +218,18 @@ export default {
       selectIp: "總覽", //下拉框IP
       activeName: "bps", //DDoS攻击防护-二级tab标识
       tableDataOfDescribeDDoSNetEvList: [], //DDoS攻击事件列表
+      DDoSEvObj: {}, //DDoS攻击事件-对象
       Mbps: "", //攻击最大带宽
       Pps: "", //攻击最大包速率
       TotalTraffic: "", //累计清洗流量值
       DDoSIpLogData: [], //DDOS攻击日志
       InfoOrLog: true, //攻击详情 或 攻击日志
+      attackSourceDialogVisible: false, //攻击源信息弹框标识
+      attackSourceList: [], //攻击源列表
+      attackSourceTotal: 0, //攻击源总条数
+      attackSourcePageSize: 10, //攻击源列表每页条数
+      attackSourceCurrentPage: 1, //攻击源列表当前页数
+      pageSizeList: [10, 15, 20, 25, 30, 35, 40, 45, 50],
       currentPage: 1, //当前页
       pageSize: 10, //每页长度
       totalItems: 0, //总条数
@@ -197,7 +247,34 @@ export default {
       traffictable:[],
       pkgtable:[],
       numtable:[],
-      choiceClick:false
+      choiceClick:false,
+      // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
+      chclikMinDate: '',
+      chclikMaxDate: '',
+      defTime: ['00:00:00', '23:59:59'],
+      pickerOptions: { // 时间选择控件限制选择范围
+        disabledDate (date) {
+          let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
+          let Date6Moths = moment(Date.now()).subtract(181, 'days').toDate().getTime()
+          if (that.chclikMinDate === '') {
+            return date.getTime() < Date6Moths || date.getTime() > nowDate
+          } else {
+            if (that.chclikMaxDate === '') {
+              let maxDate = moment(that.chclikMinDate).add(30, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(30, 'days').toDate().getTime()
+              minDate = minDate < Date6Moths ? Date6Moths : minDate
+              maxDate = maxDate > nowDate ? nowDate : maxDate
+              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
+            } else {
+              return date.getTime() < Date6Moths || date.getTime() > nowDate
+            }
+          }
+        },
+        onPick ({ maxDate, minDate }) {
+          that.chclikMinDate = minDate
+          that.chclikMaxDate = maxDate === null ? '' : maxDate
+        }
+      }
     };
   },
   watch: {
@@ -252,11 +329,12 @@ export default {
         this.startTime = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
         this.endTime = moment(value[1]).format("YYYY-MM-DD 23:59:59")
         if (this.selectIp !== "總覽") {
-        this.describeDDoSTrend(this.timey);
-      } else {
-        this.describeDDoSNetTrend(this.timey);
-      }
-        this.describeDDoSNetEvList();
+          this.describeDDoSTrend(this.timey);
+          this.describeDDoSEvList();
+        } else {
+          this.describeDDoSNetTrend(this.timey);
+          this.describeDDoSNetEvList();
+        }
         // for (let index in this.metricNames) {
         //   this.metricName2 = this.metricNames[index];
         //   this.describeDDoSNetCount();
@@ -316,7 +394,14 @@ export default {
               this.btnData[i]['selected'] = false;
             }
           } else {
-            this.selectId = this.ResIpList[0].Id;
+            if (this.selectId == "") {
+              // 判断是从‘资产列表-资源列表’跳转的，还是目录跳转的
+              if(this.$route.query.selectId === undefined){
+                this.selectId = this.ResIpList[0].Id;
+              } else {
+                this.selectId = this.$route.query.selectId;
+              }
+            }
             this.choiceTime(1);
           }
         } else {
@@ -345,7 +430,7 @@ export default {
       this.IpList.splice(0, 0, "總覽");
       // 资源ID改变时，IP默认为总览
       this.selectIp = this.IpList[0];
-      // this.choiceTime('1')
+      this.choiceTime('1')
       this.describeDDoSNetTrend(this.timey);
       this.metricNames.forEach((name, i) => {
         this.metricName2 = this.metricNames[i];
@@ -358,43 +443,15 @@ export default {
       // 资源ID改变时，IP默认为总览
       if (this.selectIp !== "總覽") {
         this.describeDDoSTrend(this.timey);
+        this.describeDDoSEvList();
       } else {
         this.describeDDoSNetTrend(this.timey);
+        this.describeDDoSNetEvList();
       }
       // this.metricNames.forEach((name, i) => {
       //   this.metricName2 = this.metricNames[i];
       //   this.describeDDoSNetCount();
       // });
-      this.describeDDoSNetEvList();
-    },
-    // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
-    describeDDoSNetEvList() {
-      this.loading = true;
-      let params = {
-        Version: "2018-07-09",
-        Region: localStorage.getItem("regionv2"),
-        Business: "net",
-        Id: this.selectId,
-        StartTime: this.startTime,
-        EndTime: this.endTime
-        //Limit: '',  //一页条数，填0表示不分页
-        //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
-      };
-      this.axios.post(DDOS_EVENT, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
-        } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-        this.loading = false;
-      });
     },
     // 1.1.获取DDoS攻击指标数据
     describeDDoSTrend(date) {
@@ -412,6 +469,37 @@ export default {
         if (res.Response.Error === undefined) {
           // this.bps = res.Response.Data
           if (this.metricName === "bps") {
+            this.drawLine(res.Response.Data, date);
+          } else {
+            this.drawLine2(res.Response.Data, date);
+          }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 1.1.2 获取高防IP专业版资源的DDoS攻击指标数据
+    describeDDoSNetTrend(date) {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: this.selectId,
+        MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
+        Period: this.period, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
+        StartTime: this.startTime,
+        EndTime: this.endTime
+      };
+      this.axios.post(DDOS_DATA, params).then(res => {
+        if (res.Response.Error === undefined) {
+          if (this.metricName == "bps") {
             this.drawLine(res.Response.Data, date);
           } else {
             this.drawLine2(res.Response.Data, date);
@@ -462,25 +550,23 @@ export default {
         }
       });
     },
-    // 1.1.获取高防IP专业版资源的DDoS攻击指标数据
-    describeDDoSNetTrend(date) {
+    // 1.3.获取高防IP专业版资源的DDoS攻击事件列表
+    describeDDoSNetEvList() {
+      this.loading = true;
+      this.tableDataOfDescribeDDoSNetEvList = [];
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
         Id: this.selectId,
-        MetricName: this.metricName, //指标，取值[bps(攻击流量带宽，pps(攻击包速率))]
-        Period: this.period, //统计粒度，取值[300(5分鐘)，3600(小时)，86400(天)]
         StartTime: this.startTime,
         EndTime: this.endTime
+        //Limit: '',  //一页条数，填0表示不分页
+        //Offset: ''  //页起始偏移，取值为(页码-1)*一页条数
       };
-      this.axios.post(DDOS_DATA, params).then(res => {
+      this.axios.post(DDOS_EVENT, params).then(res => {
         if (res.Response.Error === undefined) {
-          if (this.metricName == "bps") {
-            this.drawLine(res.Response.Data, date);
-          } else {
-            this.drawLine2(res.Response.Data, date);
-          }
+          this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -491,17 +577,47 @@ export default {
             duration: 0
           });
         }
+        this.loading = false;
       });
     },
-    // 1.4. 获取高防IP专业版资源的DDoS攻击事件详情
-    async describeDDoSNetEvInfo(row) {
+    // 1.3.2. 获取DDoS攻击事件列表
+    describeDDoSEvList() {
+      this.loading = true;
+      this.tableDataOfDescribeDDoSNetEvList = [];
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        Id: row.Id,
-        StartTime: row.StartTime,
-        EndTime: row.EndTime
+        Id: this.selectId,
+        StartTime: this.startTime,
+        EndTime: this.endTime,
+        "IpList.0": this.selectIp
+      };
+      this.axios.post(DDOS_EV_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.tableDataOfDescribeDDoSNetEvList = res.Response.Data;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+        this.loading = false;
+      });
+    },
+    // 1.4. 获取高防IP专业版资源的DDoS攻击事件详情
+    async describeDDoSNetEvInfo() {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: this.DDoSEvObj.Id,
+        StartTime: this.DDoSEvObj.StartTime,
+        EndTime: this.DDoSEvObj.EndTime
       };
       await this.axios.post(DESCRIBE_DDOSNETEVINFO, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -517,18 +633,21 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.Pps = "-1";
+          this.Mbps = "-1";
+          this.TotalTraffic = "-1000";
         }
       });
     },
     // 1.5. 获取DDoSIP攻击日志
-    async describeDDoSIpLog(row) {
+    async describeDDoSIpLog() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        Id: row.Id,
-        StartTime: row.StartTime,
-        EndTime: row.EndTime,
+        Id: this.DDoSEvObj.Id,
+        StartTime: this.DDoSEvObj.StartTime,
+        EndTime: this.DDoSEvObj.EndTime,
         Ip: this.selectIp
       };
       this.DDoSIpLogData = [];
@@ -540,15 +659,15 @@ export default {
         }
       });
     },
-    // 1.6. 获取高防IP专业版资源的DDoSIP攻击日志
-    async describeDDoSNetIpLog(row) {
+    // 1.5.2. 获取高防IP专业版资源的DDoSIP攻击日志
+    async describeDDoSNetIpLog() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
         Business: "net",
-        Id: row.Id,
-        StartTime: row.StartTime,
-        EndTime: row.EndTime
+        Id: this.DDoSEvObj.Id,
+        StartTime: this.DDoSEvObj.StartTime,
+        EndTime: this.DDoSEvObj.EndTime
       };
       this.DDoSIpLogData = [];
       await this.axios.post(DESCRIBE_DDOSNETIPLOG, params).then(res => {
@@ -559,32 +678,44 @@ export default {
         }
       });
     },
-    // 1.7. 获取DDoS攻击源列表
-    describeDDoSAttackSource() {
-      // let params = {
-      //   Version: "2018-07-09",
-      //   Region: localStorage.getItem("regionv2"),
-      //   Business: "net",
-      //   Id: row.Id,
-      //   StartTime: row.StartTime,
-      //   EndTime: row.EndTime
-      // };
-      // await this.axios.post(DESCRIBE_DDOSNETEVINFO, params).then(res => {
-      //   if (res.Response.Error === undefined) {
-      //     this.Pps = res.Response.Pps;
-      //     this.Mbps = res.Response.Mbps;
-      //     this.TotalTraffic = res.Response.TotalTraffic;
-      //   } else {
-      //     let ErrTips = {};
-      //     let ErrOr = Object.assign(ErrorTips, ErrTips);
-      //     this.$message({
-      //       message: ErrOr[res.Response.Error.Code],
-      //       type: "error",
-      //       showClose: true,
-      //       duration: 0
-      //     });
-      //   }
-      // });
+    // 1.6. 获取DDoS攻击源列表
+    async describeDDoSAttackSource() {
+      let params = {
+        Version: "2018-07-09",
+        Region: localStorage.getItem("regionv2"),
+        Business: "net",
+        Id: this.DDoSEvObj.Id,
+        StartTime: this.DDoSEvObj.StartTime,
+        EndTime: this.DDoSEvObj.EndTime,
+        Limit: this.attackSourcePageSize, //一页条数，填0表示不分页
+        Offset: (this.attackSourceCurrentPage-1)*this.attackSourcePageSize, //页起始偏移，取值为(页码-1)*一页条数
+        "IpList.0": this.selectIp
+      };
+      await this.axios.post(DESCRIBE_DDOSATTACKSOURCE, params).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response)
+          this.attackSourceList = res.Response.AttackSourceList;
+          this.attackSourceTotal = res.Response.Total;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 攻击源列表页数切换
+    attackSourceCurrentChange() {
+      this.describeDDoSAttackSource();
+    },
+    // 攻击源列表每页条数切换
+    attackSourcePageSizeChange(val) {
+      this.attackSourcePageSize = val;
+      this.describeDDoSAttackSource();
     },
     // ddosTable (row=false攻击包下载，flg=true攻击详情，false攻击日志)
     async describeDDoS(row, flg) {
@@ -605,27 +736,35 @@ export default {
           $table.toggleRowExpansion(item, false);
         }
       });
+      this.DDoSEvObj = row;
       // 调用接口
       if (flg) {
-        await this.describeDDoSNetEvInfo(row);
+        await this.describeDDoSNetEvInfo();
       } else {
         if (this.selectIp == "總覽") {
-          await this.describeDDoSNetIpLog(row);
+          await this.describeDDoSNetIpLog();
         } else {
-          await this.describeDDoSIpLog(row);
+          await this.describeDDoSIpLog();
         }
       }
       $table.toggleRowExpansion(row);
     },
     // 打开ddos攻击源列表弹框
     toDDOSAttackSource(row) {
-
+      this.attackSourceTotal = 0;
+      this.attackSourcePageSize = 10;
+      this.attackSourceCurrentPage = 1;
+      this.DDoSEvObj = row;
+      this.describeDDoSAttackSource();
+      this.attackSourceDialogVisible = true;
     },
     // DDOS攻击防护-二级tab切换
     handleClick1(value) {
       this.metricName = value.name;
-      this.choiceTime(1);
-    },
+      // this.choiceTime(1);
+      this.describeDDoSNetTrend(this.timey);
+      this.describeDDoSNetEvList();
+},
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
@@ -732,7 +871,6 @@ export default {
       //   //ddos攻击-攻击流量带宽
       // }
 
-
       let start
       let end = moment()
       const times = []
@@ -834,7 +972,11 @@ export default {
       //   this.metricName2 = this.metricNames[index];
       //   this.describeDDoSNetCount();
       // }
-      this.describeDDoSNetEvList();
+      if (this.selectIp !== "總覽") {
+        this.describeDDoSEvList();
+      } else {
+        this.describeDDoSNetEvList();
+      }
     },
     //时间按钮
     //计算时间间隔
@@ -872,11 +1014,11 @@ export default {
       return o.y + "-" + o.M + "-" + o.d + " " + o.h + ":" + o.m + ":" + o.s;
     },
     drawLine(y, date) {
-      var arr = [];
-      for (let i in date) {
-        arr.unshift(date[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
       let myChart = this.$echarts.init(document.getElementById("chart-bps"));
       // 绘制图表
@@ -911,6 +1053,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: "攻擊流量寬頻",
             type: "line",
             data: y,
@@ -941,20 +1084,22 @@ export default {
     },
     drawLine2(y, date) {
       // 基于准备好的dom，初始化echarts实例
-      var arr = [];
-      for (let i in date) {
-        arr.unshift(date[i]); //属性
-      }
-      arr.splice(arr.length - 1, 1);
+      // var arr = [];
+      // for (let i in date) {
+      //   arr.unshift(date[i]); //属性
+      // }
+      // arr.splice(arr.length - 1, 1);
       // console.log(arr)
       let myChart2 = this.$echarts.init(document.getElementById("chart-pps"));
       // 绘制图表
       myChart2.setOption({
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
-        tooltip: {},
+        tooltip: {
+          trigger: "axis"
+        },
         xAxis: {
-          data: arr
+          data: date
         },
         yAxis: {
           axisLine: {
@@ -976,6 +1121,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: "總攻擊流量",
             type: "line",
             data: y,

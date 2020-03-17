@@ -31,7 +31,7 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogFormVisible = false">取 消</el-button>
+            <el-button @click="disClose()">取 消</el-button>
             <el-button type="primary" @click="setPublic()">{{$t('TKE.overview.qd')}}</el-button>
           </div>
         </el-dialog>
@@ -102,6 +102,10 @@ export default {
   methods: {
     getEdit () {
       this.dialogFormVisible = true
+    },
+    disClose(){
+      this.form.region = this.region
+        this.dialogFormVisible = false
     },
     setPublic () {
       this.SetMyMirrorPublic()

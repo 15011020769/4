@@ -19,8 +19,8 @@
             <div class="border">
               <!-- 头部 -->
               <div class="flex f12 header">
-                <div class="pl5" style="width:800px;">变量名</div>
-                <div class="pl5" style="width:50%">变量值</div>
+                <div class="pl5" style="width:800px;">{{$t('TKE.overview.blm')}}</div>
+                <div class="pl5" style="width:50%">{{$t('TKE.overview.blz')}}</div>
               </div>
               <!-- 主体 -->
               <div class="flex " style="padding:10px;border-top:1px solid #ddd;">
@@ -33,22 +33,22 @@
                     :prop="'domains.' + index + '.value'"
                   >
                     <div class="form-input">
-                      <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                      <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                       <span>=</span>
                       <textarea class="text" v-model="domain.valueKey"></textarea>
-                      <el-tooltip v-if="dynamicValidateForm.domains.length=='1'"    class="item" effect="dark" content="不可删除，至少设置一项" placement="right">
+                      <el-tooltip v-if="dynamicValidateForm.domains.length=='1'"    class="item" effect="dark" :content="$t('TKE.subList.zsszyx')" placement="right">
                         <i class="el-icon-close"></i>
                       </el-tooltip>
-                      <el-tooltip v-else   class="item" effect="dark" content="删除" placement="right">
+                      <el-tooltip v-else   class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
                         <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
                     </div>
                   </el-form-item>
                 </el-form>
               </div>
-              <p  v-show="errorShow" style="color:red;margin:-10px 0px 10px 10px">新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+              <p  v-show="errorShow" style="color:red;margin:-10px 0px 10px 10px">{{$t('TKE.subList.xzblmgs')}}</p>
                 <p>
-                <el-link type="primary" style="cursor: pointer;margin:0px 0px 10px 10px" @click="addDomain">新增变量</el-link>
+                <el-link type="primary" style="cursor: pointer;margin:0px 0px 10px 10px" @click="addDomain">{{$t('TKE.overview.xzbl')}}</el-link>
                 </p>
             </div>
 
@@ -80,7 +80,7 @@ export default {
       cm: {
         name: "",
         value: "default",
-        options: ["请选择Namespace"]
+        options: ["請選擇Namespace"]
       },
       dynamicValidateForm: {
         domains: [{
@@ -107,7 +107,7 @@ export default {
 
          if(arr.length!=Array.from(new Set(arr)).length){
               this.$message({
-                message: "函数名不能重复",
+                message: "函數名不能重複",
                 type: "error",
                  showClose: true,
                 duration: 0

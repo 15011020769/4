@@ -119,13 +119,13 @@ export default {
       pickerOptions: {
         disabledDate (date) {
           let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
-          let Date6Moths = moment(Date.now()).subtract(180, 'days').toDate().getTime()
+          let Date6Moths = moment(Date.now()).subtract(181, 'days').toDate().getTime()
           if (that.chclikMinDate === '') {
             return date.getTime() < Date6Moths || date.getTime() > nowDate
           } else {
             if (that.chclikMaxDate === '') {
-              let maxDate = moment(that.chclikMinDate).add(29, 'days').toDate().getTime()
-              let minDate = moment(that.chclikMinDate).subtract(29, 'days').toDate().getTime()
+              let maxDate = moment(that.chclikMinDate).add(30, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(30, 'days').toDate().getTime()
               minDate = minDate < Date6Moths ? Date6Moths : minDate
               maxDate = maxDate > nowDate ? nowDate : maxDate
               return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
@@ -403,6 +403,7 @@ export default {
         },
         series: [
           {
+            symbol: 'none',
             name: '攻擊流量寬頻',
             type: 'line',
             data: y,
