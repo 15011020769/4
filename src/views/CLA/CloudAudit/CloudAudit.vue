@@ -415,6 +415,7 @@
       seachpicker() {
         this.nowtime = String(moment(this.value1[1]).valueOf() / 1000)
         this.oldTime = String(moment(this.value1[0]).valueOf() / 1000)
+        this.tableData = []
         this.Loading()
       },
       //加载更多
