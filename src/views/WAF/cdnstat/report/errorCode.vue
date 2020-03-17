@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>错误码</h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <el-row>
       <el-col :span="10">
@@ -32,6 +32,8 @@
 </template>
 <script>
 import moment from 'moment'
+import XLSX from 'xlsx'
+import FileSaver from "file-saver";
 import echartPie from "../components/pie"
 export default {
   props: {
@@ -45,6 +47,7 @@ export default {
       totalNumber: 1,
       loading: true,
       tableData: [],
+      errcode_json: []
     }
   },
   components: {
@@ -63,6 +66,12 @@ export default {
     // console.log(this.params)
   },
   methods: {
+    exportEchart() {
+      const ws = XLSX.utils.json_to_sheet(this.errcode_json);/* 新建空workbook，然后加入worksheet */
+      const wb = XLSX.utils.book_new();/*新建book*/
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_error_code`);/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, `${moment().format('x')}_error_code.xlsx`);/*写文件(book,xlsx文件名称)*/
+    },
     init() {
       const { projectId, domainName, interval, times } = this.params
 
@@ -92,6 +101,7 @@ export default {
           const legendArr = []
           let total = 0
           const tableArr = []
+          const tempArr = []
           Response.Data[0].CdnData.map((item) => {
             if(item.Metric.indexOf(4) !== -1 && item.Metric !== '4xx') {
               errCode.push({name: item.Metric, value: item.SummarizedData.Value})
@@ -104,6 +114,14 @@ export default {
           this.legendTextPieError = legendArr
           this.totalNumber = total
           this.tableData = tableArr
+          this.tableData.map(item => {
+            tempArr.push({
+              '错误码': item.Metric,
+              '数量（次）': item.SummarizedData.Value,
+              '占比（%）': (item.SummarizedData.Value / this.totalNumber * 100).toFixed(2)
+            })
+          })
+          this.errcode_json = tempArr
         }).then(() => this.loading = false)
     },
   }
