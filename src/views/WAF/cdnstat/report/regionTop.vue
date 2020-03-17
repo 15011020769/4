@@ -179,17 +179,17 @@ export default {
         .then(({ Response }) => {
           if (Response.Data && Response.Data.length) {
             const res = Response.Data[0].DetailData
-            res && res.map(v => {
+            res && res.forEach(v => {
               total += v.Value
               tableArr.push({
                 name: this.COUNTRY_MAP[v.Name],
                 value: v.Value
               })
             })
-            res && res.map((v) => {
+            res && res.forEach(v => {
               regionsArr.push({
                 name: this.COUNTRY_MAP[v.Name],
-                value: (v.Value / this.totalNumber * 100).toFixed(2)
+                value: (v.Value / total * 100).toFixed(2)
               })
             })
           }
