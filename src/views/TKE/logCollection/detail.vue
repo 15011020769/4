@@ -153,11 +153,7 @@ import {
                   console.log(namespaces)
                   if(namespaces.length!=0){
 
-                    namespaces.forEach(item => {
-                      if(item.all_containers){
-                        
-                      }
-                    });
+                   
 
                   }
 
