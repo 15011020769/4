@@ -208,7 +208,9 @@
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
+                setTimeout(() => {
+                  this._GetMonitorData(item.MetricName)
+                }, 500);
               }
             });
           } else {
@@ -231,7 +233,7 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'directConnectGatewayId',
+          'Instances.0.Dimensions.0.Name': 'directConnectConnId',
           'Instances.0.Dimensions.0.Value': this.ID,
         }
         this.axios.post(All_MONITOR, parms).then(data => {

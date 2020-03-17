@@ -138,7 +138,17 @@
         ],
         ID: this.$route.query.id,
         BaseList: [], //全部指标列表
-        BaseListK: [], //用到的指标列表
+        BaseListK: [{
+            MetricName: "Outbandwidth"
+          },
+          {
+            MetricName: "Inbandwidth"
+          }, {
+            MetricName: "Outpkg",
+          }, {
+            MetricName: "Inpkg",
+          }
+        ], //用到的指标列表
         TableLoad: true,
         Period: '', //粒度
         Time: {}, //监控传递时间
@@ -202,31 +212,13 @@
       },
       //获取基础指标详情
       _GetBase() {
-        let parms = {
-          Version: '2018-07-24',
-          Region: localStorage.getItem('regionv2'),
-          Namespace: 'QCE/DCX'
-        }
-        this.axios.post(ALL_Basics, parms).then(res => {
-          if (res.Response.Error == undefined) {
-            this.BaseList = res.Response.MetricSet
-            this.MonitorData = []
-            this.BaseListK = []
-            this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
-              }
-            });
-          } else {
-            this.$message({
-              message: ErrorTips[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
+        this.MonitorData = []
+        this.BaseListK.forEach(item => {
+          setTimeout(() => {
+            this._GetMonitorData(item.MetricName)
+          }, 500);
         });
+
       },
       //获取监控数据
       _GetMonitorData(MetricName) {
@@ -238,7 +230,7 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: MetricName,
-          'Instances.0.Dimensions.0.Name': 'directConnectId',
+          'Instances.0.Dimensions.0.Name': 'directConnectConnId',
           'Instances.0.Dimensions.0.Value': this.ID,
         }
         this.axios.post(All_MONITOR, parms).then(data => {
