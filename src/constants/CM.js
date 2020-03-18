@@ -39,3 +39,8 @@ export const OBJ_LIST = 'bucket/list' // 列表
 export const NETIP_LIST = 'vpc2/DescribeAddresses' // 列表
 
 export const CVM_LIST_STATUS = 'dayu2/DescribeBasicDeviceStatus' // 列表 狀態
+
+
+export const CREATDASHBORD = 'monitor2/CreateDashboardView' // 列表 狀態
+
+
