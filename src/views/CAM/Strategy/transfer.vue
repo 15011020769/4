@@ -64,7 +64,7 @@
         </div>
       </div>
       <div class="mid">
-        <i class="el-icon-connection"></i>
+        <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
       </div>
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">
@@ -80,8 +80,7 @@
               </template>
               
             </el-table-column>
-            <el-table-column :label="$t('CAM.userGroup.colHandle')" width="50">
-            &lt;!&ndash;
+            <el-table-column :label="$t('CAM.userGroup.colHandle')" width="80">
             <template slot-scope="scope">
               <el-button @click.native.prevent="deleteRow(scope.$index, scope.row)" type="text" size="small">x
               </el-button>
@@ -276,7 +275,7 @@ export default {
         .post(LIST_GROUPS_V2, params)
         .then(res => {
           this.page += 1
-          this.userGroupTotalNum = res.data.totalNum
+          this.totalNum = res.data.totalNum
           const data = []
           res.data.groupInfo.forEach(group => {
             data.push({type: 'group', groupId: group.groupId, name: group.groupName, disabled: group.isSelected === 1, checked: this.selectedGroupId.includes(group.groupId)})
@@ -371,5 +370,9 @@ export default {
 }
 ::v-deep .el-table::before {
   background-color: transparent !important;
+}
+::v-deep th {
+  padding: 0;
+  line-height: 50px;
 }
 </style>

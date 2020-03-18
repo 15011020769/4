@@ -11,7 +11,7 @@
             <el-step :title="t('选择监听器', 'WAF.xzjtq')" ></el-step>
           </el-steps>
         </div>
-        <domain @next="next" :domain.sync="domain" v-if="active === 1" />
+        <domain @next="next" :level="package.Level" :domain.sync="domain" v-if="active === 1" />
         <listener :domain.sync="domain" v-if="active === 2" />
       </div>
     </div>
@@ -20,7 +20,7 @@
 <script>
 import { ErrorTips } from "@/components/ErrorTips"
 import { COMMON_ERROR } from '../constants'
-import { DESCRIBE_HOSTS } from '@/constants'
+import { DESCRIBE_HOSTS, DESCRIBE_USER_INFO } from '@/constants'
 import Domain from './components/domain'
 import Listener from './components/listener'
 
@@ -32,7 +32,8 @@ export default {
       domain: {
         IsCdn: 0,
         Domain: ''
-      }
+      },
+      package: {},
     }
   },
   components: {
@@ -40,6 +41,7 @@ export default {
     Listener
   },
   mounted() {
+    this.getPackage()
     const { domainId } = this.$route.query
     this.domainId = domainId
     if (domainId) {
@@ -64,6 +66,15 @@ export default {
     }
   },
   methods: {
+    getPackage () {
+      this.axios.post(DESCRIBE_USER_INFO, {
+        Version: '2018-01-25'
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Data }) => {
+          this.package = Data
+        })
+      })
+    },
     next() {
       this.active = 2
     },

@@ -84,6 +84,28 @@ export default {
     }
   },
   methods: {
+    validate() {
+      const domain = this.domain.Domain.trim()
+      if (this.level !== 4) {
+        if (/^([*]\.)(([a-z0-9-_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
+          this.error = '当前版本不支持泛域名，请升级到旗舰版'
+          return false
+        }
+        if (!/^((?=[a-z0-9-_]{1,63}\.)(xn--)?[a-z0-9_]+(-[a-z0-9_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
+          this.error = '域名格式错误'
+          return false
+        }
+      } else {
+        if (/^([*]\.)(([a-z0-9-_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
+           return true
+         }
+        if (!/^((?=[a-z0-9-_]{1,63}\.)(xn--)?[a-z0-9_]+(-[a-z0-9_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
+          this.error = '域名格式错误'
+          return false
+        }
+      }
+      return true
+    },
     // 保存按钮
     next () {
       if (this.notExists === 1 || this.domain.DomainId) {
@@ -95,19 +117,10 @@ export default {
         this.error = '域名不能为空'
         return
       }
-      // 旗舰版支持泛域名
-      if (/^([*]\.)(([a-z0-9-_]+)*\.)+[a-z]{2,63}$/.test(domain) && this.level !== 4) {
-        this.error = '当前版本不支持泛域名，请升级到旗舰版'
+      if (!this.validate()) {
         return
       }
-      if (/^([*]\.)(([a-z0-9-_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
-        this.error = '域名格式错误'
-        return
-      }
-      if (!/^((?=[a-z0-9-_]{1,63}\.)(xn--)?[a-z0-9_]+(-[a-z0-9_]+)*\.)+[a-z]{2,63}$/.test(domain)) {
-        this.error = '域名格式错误'
-        return
-      }
+      
       this.notExists = 2
       this.axios.post(DESCRIBE_HOST_LIMIT, {
         Version: '2018-01-25',
