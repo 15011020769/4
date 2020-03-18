@@ -91,7 +91,7 @@
             </el-table-column>
             <el-table-column prop label="狀態" width="70">
               <template slot-scope="scope">
-                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "無狀態"}}</p>
+                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "-"}}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="開始時間" width="90">
