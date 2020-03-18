@@ -86,152 +86,155 @@
               @openDeleteSure="openDeleteSure" @closeDeleteSure="closeDeleteSure" />
           </div>
         </div>
-        <div class="projectDetailOne"
-          v-if="keyList.Origin == 'EXTERNAL'|| ishowkms==false?keyStatus=true:keyStatus=false">
-          <h2>{{$t('KMS.total.kmsMaterial')}}</h2>
-          <div class="detailList">
-            <p><span>{{$t('KMS.total.kmsOrigin')}}</span><span>{{projectDetail.Origin}}</span></p>
-            <p v-if='keyList.KeyState=="PendingImport"?true:false'><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a
-                  href="#" @click="dialogModel3=true">{{$t('KMS.total.importKmsM')}}</a></span></p>
-            <div
-              v-if='keyList.KeyState=="Enabled"||keyList.KeyState=="Disabled" ||keyList.KeyState=="PendingDelete"?true:false'>
-              <p><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#"
-                    :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''"
-                    @click="dialogModel3=true">{{$t('KMS.total.reImport')}}</a>&nbsp;&nbsp;&nbsp;<a href="#"
-                    :class=" keyList.KeyState=='PendingDelete'?'atclor':''"
-                    @click="dialogModel4=true">{{$t('KMS.total.deleteKmsM')}}</a></span></p>
-              <p><span>{{$t('KMS.total.outTime')}}</span><span><span
-                    style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
+        <div v-if="projectDetail.Origin!=='KMS'">
+          <div class="projectDetailOne"
+            v-if="keyList.Origin == 'EXTERNAL'|| ishowkms==false?keyStatus=true:keyStatus=false">
+            <h2>{{$t('KMS.total.kmsMaterial')}}</h2>
+            <div class="detailList">
+              <p><span>{{$t('KMS.total.kmsOrigin')}}</span><span>{{projectDetail.Origin}}</span></p>
+              <p v-if='keyList.KeyState=="PendingImport"?true:false'>
+                <span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#"
+                    @click="dialogModel3=true">{{$t('KMS.total.importKmsM')}}</a></span></p>
+              <div
+                v-if='keyList.KeyState=="Enabled"||keyList.KeyState=="Disabled" ||keyList.KeyState=="PendingDelete"?true:false'>
+                <p><span>{{$t('KMS.total.kmsMaterial')}}</span><span><a href="#"
+                      :class=" keyList.KeyState=='PendingDelete' || keyList.KeyState=='Disabled'?'atclor':''"
+                      @click="dialogModel3=true">{{$t('KMS.total.reImport')}}</a>&nbsp;&nbsp;&nbsp;<a href="#"
+                      :class=" keyList.KeyState=='PendingDelete'?'atclor':''"
+                      @click="dialogModel4=true">{{$t('KMS.total.deleteKmsM')}}</a></span></p>
+                <p><span>{{$t('KMS.total.outTime')}}</span><span><span
+                      style="color: #000;width: auto;">{{timestampToTime(keyList.ValidTo)}}</span></span></p>
+              </div>
+              <el-dialog class="changeNameModel" :title="$t('KMS.total.importKmsM')" :visible.sync="dialogModel3"
+                width="40%" :before-close="handleClose3">
+                <div class="dialogModelConT">
+                  <div class="TopStepDownload" v-if="thisStepOne">
+                    <div class="topStepOne newClear">
+                      <p class="stepOne step"><span class="stepCir">1</span><span
+                          class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="step"><span class="stepCir">2</span><span
+                          class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="step"><span class="stepCir">3</span><span
+                          class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
+                    </div>
+                    <div class="tipBlue">
+                      {{$t('KMS.total.tip5')}}
+                    </div>
+                    <div class="labelCheck newClear">
+                      <div class="newClear"><span class="labelCheckText">{{$t('KMS.total.algorithmType')}}</span><span>
+                          <el-radio v-model="thisSuanType" label="RSA_2048"></el-radio>
+                        </span></div>
+                      <div class="newClear">
+                        <span class="labelCheckText">{{$t('KMS.total.EncryptionAlgorithm')}}</span>
+                        <span>
+                          <el-select class="selectSuan" v-model="thisAddSuan">
+                            <el-option label="RSAES_PKCS1_V1_5" value="RSAES_PKCS1_V1_5"></el-option>
+                            <el-option label="RSAES_OAEP_SHA_1" value="RSAES_OAEP_SHA_1"></el-option>
+                            <el-option label="RSAES_OAEP_SHA_256" value="RSAES_OAEP_SHA_256"></el-option>
+                          </el-select>
+                          <el-button @click="downloadTxt1">{{$t('KMS.total.downLoad')}}</el-button>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="botBtn">
+                      <el-button @click="dialogModel3 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                      <el-button type="primary" @click="nextStepOne">{{$t('KMS.total.next')}}</el-button>
+                    </div>
+                  </div>
+                  <div class="TopStepDownload" v-if="thisStepTwo">
+                    <div class="topStepOne newClear">
+                      <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
+                          class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="stepOne step"><span class="stepCir">2</span><span
+                          class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="step"><span class="stepCir">3</span><span
+                          class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
+                    </div>
+                    <div class="labelCheckTwo newClear">
+                      <div class="newClear">
+                        <span class="labelCheckText">{{$t('KMS.total.CryptographicKeyMaterial')}}</span>
+                        <span><input class="choseFileText" type="text" v-model="PlaintextRead"
+                            :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#"
+                            class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file"
+                              @change="PlaintextReadHande" ref="inputer"></a></span>
+                      </div>
+                      <div class="newClear">
+                        <span class="labelCheckText">{{$t('KMS.total.ImportToken')}}</span>
+                        <span><input class="choseFileText" v-model="exportRead" type="text"
+                            :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#"
+                            class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file"
+                              @change="exportChange"></a></span>
+                      </div>
+                      <div class="newClear">
+                        <span class="labelCheckText">{{$t('KMS.total.kmsMoutTime')}}</span>
+                        <span>
+                          <el-select class="selectSuanTwo" v-model="outTimeSet" @change="timeOutChange">
+                            <el-option :label="$t('KMS.total.foverNoTime')" value="forver"></el-option>
+                            <el-option :label="$t('KMS.total.setTimeOut')" value="setTime"></el-option>
+                          </el-select>
+                          <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date" :picker-options="picker"
+                            :placeholder="$t('KMS.total.chooseTime')" class="setTimeOutTime">
+                          </el-date-picker><br />
+                          <span class="tipStep">{{$t('KMS.total.tip6')}}</span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="botBtn">
+                      <el-button type="primary" @click="prevOne">{{$t('KMS.total.prev')}}</el-button>
+                      <el-button @click="nextStepTwo" :disabled="PlaintextRead==''||exportRead==''?true:false">
+                        {{$t('KMS.total.impoetKms')}}</el-button>
+                    </div>
+                  </div>
+                  <div class="TopStepDownload" v-if="thisStepThree">
+                    <div class="topStepOne newClear">
+                      <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
+                          class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
+                          class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
+                      <span class="rightArrow">></span>
+                      <p class="stepOne step"><span class="stepCir">3</span><span
+                          class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
+                    </div>
+                    <div class="labelCheckTwo newClear">
+                      <p v-if="ishowkms" style="text-align: center;padding: 50px;"><i
+                          class="el-icon-circle-check iconys"></i>{{$t('KMS.total.kmsImportSuccess')}}</p>
+                      <p v-if="!ishowkms" style="text-align: center;padding: 50px;"><i
+                          class="el-icon-circle-close iconys"></i>{{$t('KMS.total.tip7')}}</p>
+                    </div>
+                    <div class="botBtn">
+                      <el-button type="primary" @click="prevTwo">{{$t('KMS.total.prev')}}</el-button>
+                      <el-button @click="dialogModel3=false" :disabled="!ishowkms==false?false:true">
+                        {{$t('KMS.total.modelSure')}}</el-button>
+                    </div>
+                  </div>
+                </div>
+              </el-dialog>
+
+              <el-dialog class="changeNameModel" :title="$t('KMS.total.deleteKmsM')" :visible.sync="dialogModel4"
+                width="40%" :before-close="handleClose4">
+                <div class="dialogModelConT">
+                  <div class="TopStepDownload" v-if="thisStepOne">
+                    <div class="tipBlue">
+                      {{$t('KMS.total.tip8')}}
+                    </div>
+                    <div class="labelCheck newClear">
+                      <div class="newClear">{{$t('KMS.total.tip9')}}</div>
+
+                    </div>
+                    <div class="botBtn">
+                      <el-button @click="dialogModel4 = false">{{$t('KMS.total.modelClose')}}</el-button>
+                      <el-button type="primary" @click="deletekms">{{$t('KMS.total.modelSure')}}</el-button>
+                    </div>
+                  </div>
+                </div>
+              </el-dialog>
+
             </div>
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.importKmsM')" :visible.sync="dialogModel3"
-              width="40%" :before-close="handleClose3">
-              <div class="dialogModelConT">
-                <div class="TopStepDownload" v-if="thisStepOne">
-                  <div class="topStepOne newClear">
-                    <p class="stepOne step"><span class="stepCir">1</span><span
-                        class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">2</span><span
-                        class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">3</span><span
-                        class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
-                  </div>
-                  <div class="tipBlue">
-                    {{$t('KMS.total.tip5')}}
-                  </div>
-                  <div class="labelCheck newClear">
-                    <div class="newClear"><span class="labelCheckText">{{$t('KMS.total.algorithmType')}}</span><span>
-                        <el-radio v-model="thisSuanType" label="RSA_2048"></el-radio>
-                      </span></div>
-                    <div class="newClear">
-                      <span class="labelCheckText">{{$t('KMS.total.EncryptionAlgorithm')}}</span>
-                      <span>
-                        <el-select class="selectSuan" v-model="thisAddSuan">
-                          <el-option label="RSAES_PKCS1_V1_5" value="RSAES_PKCS1_V1_5"></el-option>
-                          <el-option label="RSAES_OAEP_SHA_1" value="RSAES_OAEP_SHA_1"></el-option>
-                          <el-option label="RSAES_OAEP_SHA_256" value="RSAES_OAEP_SHA_256"></el-option>
-                        </el-select>
-                        <el-button @click="downloadTxt1">{{$t('KMS.total.downLoad')}}</el-button>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="botBtn">
-                    <el-button @click="dialogModel3 = false">{{$t('KMS.total.modelClose')}}</el-button>
-                    <el-button type="primary" @click="nextStepOne">{{$t('KMS.total.next')}}</el-button>
-                  </div>
-                </div>
-                <div class="TopStepDownload" v-if="thisStepTwo">
-                  <div class="topStepOne newClear">
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
-                        class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="stepOne step"><span class="stepCir">2</span><span
-                        class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="step"><span class="stepCir">3</span><span
-                        class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
-                  </div>
-                  <div class="labelCheckTwo newClear">
-                    <div class="newClear">
-                      <span class="labelCheckText">{{$t('KMS.total.CryptographicKeyMaterial')}}</span>
-                      <span><input class="choseFileText" type="text" v-model="PlaintextRead"
-                          :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#"
-                          class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file"
-                            @change="PlaintextReadHande" ref="inputer"></a></span>
-                    </div>
-                    <div class="newClear">
-                      <span class="labelCheckText">{{$t('KMS.total.ImportToken')}}</span>
-                      <span><input class="choseFileText" v-model="exportRead" type="text"
-                          :placeholder="$t('KMS.total.nofileChoose')" readonly /><a href="#"
-                          class="chooseFile"><span>{{$t('KMS.total.chooseFile')}}</span><input type="file"
-                            @change="exportChange"></a></span>
-                    </div>
-                    <div class="newClear">
-                      <span class="labelCheckText">{{$t('KMS.total.kmsMoutTime')}}</span>
-                      <span>
-                        <el-select class="selectSuanTwo" v-model="outTimeSet" @change="timeOutChange">
-                          <el-option :label="$t('KMS.total.foverNoTime')" value="forver"></el-option>
-                          <el-option :label="$t('KMS.total.setTimeOut')" value="setTime"></el-option>
-                        </el-select>
-                        <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date" :picker-options="picker"
-                          :placeholder="$t('KMS.total.chooseTime')" class="setTimeOutTime">
-                        </el-date-picker><br />
-                        <span class="tipStep">{{$t('KMS.total.tip6')}}</span>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="botBtn">
-                    <el-button type="primary" @click="prevOne">{{$t('KMS.total.prev')}}</el-button>
-                    <el-button @click="nextStepTwo" :disabled="PlaintextRead==''||exportRead==''?true:false">
-                      {{$t('KMS.total.impoetKms')}}</el-button>
-                  </div>
-                </div>
-                <div class="TopStepDownload" v-if="thisStepThree">
-                  <div class="topStepOne newClear">
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
-                        class="stepText">{{$t('KMS.total.kmsParamsDownload')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="stepTwo step"><span class="stepCir"><i class="el-icon-check"></i></span><span
-                        class="stepText">{{$t('KMS.total.kmsImport')}}</span></p>
-                    <span class="rightArrow">></span>
-                    <p class="stepOne step"><span class="stepCir">3</span><span
-                        class="stepText">{{$t('KMS.total.importStatus')}}</span></p>
-                  </div>
-                  <div class="labelCheckTwo newClear">
-                    <p v-if="ishowkms" style="text-align: center;padding: 50px;"><i
-                        class="el-icon-circle-check iconys"></i>{{$t('KMS.total.kmsImportSuccess')}}</p>
-                    <p v-if="!ishowkms" style="text-align: center;padding: 50px;"><i
-                        class="el-icon-circle-close iconys"></i>{{$t('KMS.total.tip7')}}</p>
-                  </div>
-                  <div class="botBtn">
-                    <el-button type="primary" @click="prevTwo">{{$t('KMS.total.prev')}}</el-button>
-                    <el-button @click="dialogModel3=false" :disabled="!ishowkms==false?false:true">
-                      {{$t('KMS.total.modelSure')}}</el-button>
-                  </div>
-                </div>
-              </div>
-            </el-dialog>
-
-            <el-dialog class="changeNameModel" :title="$t('KMS.total.deleteKmsM')" :visible.sync="dialogModel4"
-              width="40%" :before-close="handleClose4">
-              <div class="dialogModelConT">
-                <div class="TopStepDownload" v-if="thisStepOne">
-                  <div class="tipBlue">
-                    {{$t('KMS.total.tip8')}}
-                  </div>
-                  <div class="labelCheck newClear">
-                    <div class="newClear">{{$t('KMS.total.tip9')}}</div>
-
-                  </div>
-                  <div class="botBtn">
-                    <el-button @click="dialogModel4 = false">{{$t('KMS.total.modelClose')}}</el-button>
-                    <el-button type="primary" @click="deletekms">{{$t('KMS.total.modelSure')}}</el-button>
-                  </div>
-                </div>
-              </div>
-            </el-dialog>
-
           </div>
         </div>
         <div class="projectDetailThree newClear">
@@ -355,6 +358,7 @@
       GetList() {
         this.loading = true;
         this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
+        console.log(this.projectDetail)
         this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState ==
           "PendingDelete" ? this.thisType = "0" : 3
         let params = {
@@ -364,7 +368,9 @@
         };
         this.axios.post(Des_KMS, params).then(res => {
           if (res.Response.Error === undefined) {
+
             this.keyList = res.Response.KeyMetadata;
+            console.log(this.keyList)
             this.loading = false;
           } else {
             let ErrTips = {
