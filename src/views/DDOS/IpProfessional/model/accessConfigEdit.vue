@@ -218,7 +218,7 @@ export default {
     textDataChange() {
       let arr = this.textData.split(/[\s\n]/);
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
-      var regNUM = /(^[1-9]\d*$)/;
+      var regNUM = /(^[0-9]\d*$)/;
       this.checkflg = true;
       if (this.EnidData.SourceType == "2") {
         //IP回源
@@ -251,5 +251,87 @@ export default {
   position: relative;
   max-width: 1360px;
   margin-block-end: 1em;
+}
+.newClear:after {
+  display: block;
+  content: "";
+  clear: both;
+}
+.dialogModel {
+  .el-dialog__header {
+    font-size: 14px !important;
+    font-weight: 600;
+    .el-dialog__title {
+      font-size: 14px !important;
+      font-weight: 600;
+    }
+  }
+  .el-dialog__body {
+    padding: 10px 20px;
+  }
+  .titleTip {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 12px;
+  }
+  .lookDetails {
+    font-size: 12px;
+    color: #000;
+    .fontweight {
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+}
+.createRulesForm {
+  padding: 10px 0;
+  .ruleList {
+    margin-bottom: 15px;
+    color: #999;
+    font-size: 12px;
+    input {
+      border-radius: 0;
+      width: 178px;
+      height: 30px;
+    }
+    span.ruleListLabel {
+      display: inline-block;
+      width: 100px;
+      text-align: left;
+      float: left;
+    }
+    span.ruleListIpt {
+      float: left;
+      width: calc(100% - 100px);
+      .forwardHttp {
+        width: 178px;
+        div {
+          width: 178px;
+        }
+      }
+      .BackResouse {
+        padding: 0 20px;
+        line-height: 30px;
+        height: 30px;
+        border-radius: 0;
+      }
+      .el-button:not(:last-child) {
+        margin-right: 0;
+      }
+      .resoureStation {
+        width: 65%;
+        height: 100px;
+        border-radius: 0;
+        resize: none;
+        textarea {
+          width: 100%;
+          height: 100px;
+          border-radius: 0;
+          resize: none;
+        }
+      }
+    }
+  }
 }
 </style>
