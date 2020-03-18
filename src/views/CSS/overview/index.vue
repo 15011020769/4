@@ -282,6 +282,7 @@ export default {
       }
       if (u === 'month') {
         start = start.add(1, 'd')
+        end = moment().endOf('d')
       }
       this.timeValue = [start, end]
     },
@@ -431,7 +432,6 @@ export default {
           const fluxData = [];
           const bandwidthArr = [];
           const fluxArr = [];
-          console.log(DataInfoList)
           DataInfoList.forEach(item => {
             times.push(item.Time);
             bandwidthData.push(item.Bandwidth);
