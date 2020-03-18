@@ -1037,15 +1037,14 @@ export default {
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         for (let i in this.tags) {
           if (this.tags[i].portNum.length > 1) {//此处需要对输入的端口区间进行校验（暂时未做）
-          params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+            params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
             params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
-            
-          let portArr = this.tags[i].portNum.split("-");
-            if (portArr.length = 1) {
-              portArr[1] = portArr[0];
+            let portArr = this.tags[i].portNum.split('-')
+            if (portArr.length === 1) {
+              portArr[1] = portArr[0]
             }
-          params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
-          params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+            params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
+            params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
             if (this.tags[i].Kind != 0) {
               params["PortLimits." + i + ".SPortStart"] = portArr[0]; //开始源端口，取值范围[0,65535]
               params["PortLimits." + i + ".SPortEnd"] = portArr[1]; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
