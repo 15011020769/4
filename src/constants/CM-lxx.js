@@ -5,10 +5,10 @@ export const BASICS_ALARM_LIST = 'monitor2/DescribeBasicAlarmList' // 列表ok
 export const SUBSCRIPTION_LIST = 'monitor2/DescribeContactList'
 
 //订阅管理
-export const SUBSCRIPTION_ADMINISTRATION = 'monitor2/DescribeDBInstances'
+export const SUBSCRIPTION_ADMINISTRATION = 'monitor2/DescribeSubscribeInfo'
 
 //取消订阅
-export const CANCEL_SUBSCRIPTION = 'monitor2/DescribeDBInstances'
+export const CANCEL_SUBSCRIPTION = 'monitor2/UnSubscribeEvent'
 
 //获取自定义消息列表
 export const CUSTON_MESSAGE_LIST = 'monitor2/DescribeMsgPolicyList'//ok
