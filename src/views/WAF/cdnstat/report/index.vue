@@ -8,7 +8,12 @@
         <el-form>
           <el-row type="flex">
             <el-form-item label="统计项目" style="width: 300px">
-              <el-select v-model="project" value-key="ProjectId" size="small" placeholder="全部项目">
+              <el-select
+                v-model="project"
+                value-key="ProjectId"
+                size="small"
+                placeholder="全部项目"
+              >
                 <el-option value="">全部项目</el-option>
                 <el-option
                   v-for="p in projectList"
@@ -47,11 +52,18 @@
                 style="width: 230px"
                 size="small"
                 v-model="time"
-                :format="interval === 'day' ? 'yyyy-MM' : (interval === 'hour' ? `yyyy-MM-dd - ${weekEnd}` : 'yyyy-MM-dd')"
+                :format="
+                  interval === 'day'
+                    ? 'yyyy-MM'
+                    : interval === 'hour'
+                    ? `yyyy-MM-dd - ${weekEnd}`
+                    : 'yyyy-MM-dd'
+                "
                 :type="interval === 'day' ? 'month' : 'date'"
                 @change="onChangeDate"
                 :picker-options="pickerOptions"
-                :clearable="false">
+                :clearable="false"
+              >
               </el-date-picker>
             </el-form-item>
           </el-row>
@@ -148,7 +160,7 @@ export default {
     }
   },
   computed: {
-    params() {
+    params () {
       const { interval, project, domainName, time } = this
       let times = time
       let type = '日报'
@@ -161,11 +173,11 @@ export default {
         type = '周报'
         times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
       }
-      return {interval, type, projectId: project.ProjectId, projectName: project.projectName, domainName, times}
+      return { interval, type, projectId: project.ProjectId, projectName: project.projectName, domainName, times }
     }
   },
   watch: {
-    project(project) {
+    project (project) {
       if (!project) {
         this.domainList = [...this.domainListCopy]
         return
@@ -183,11 +195,11 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.init()
   },
   methods: {
-    onChangeDate(date) {
+    onChangeDate (date) {
       if (this.interval === 'hour') {
         if (moment(date).day() === 0) {
           this.time = moment(date).subtract(6, 'd').format('YYYY-MM-DD')
@@ -198,7 +210,7 @@ export default {
         }
       }
     },
-    init() {
+    init () {
       this.getProjects()
       this.getDomains()
     },
@@ -249,5 +261,4 @@ export default {
 ::v-deep .el-input--suffix .el-input__inner {
   padding-right: 0;
 }
-
 </style>

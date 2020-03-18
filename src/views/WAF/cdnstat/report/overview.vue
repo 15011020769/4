@@ -3,29 +3,34 @@
     <el-row type="flex" class="header" justify="space-between">
       <el-col :span="8" v-loading="fluxLoading">
         <p class="title">总流量</p>
-        <p class="number">{{Math.ceil(flux[0]) === flux[0] ? flux[0] : flux[0].toFixed(2)}}<span class="unit"> {{flux[1]}}</span></p>
+        <p class="number">
+          {{ Math.ceil(flux[0]) === flux[0] ? flux[0] : flux[0].toFixed(2)
+          }}<span class="unit"> {{ flux[1] }}</span>
+        </p>
         <p class="info">
           <i class="el-icon-top" v-if="fluxChain > 0" />
           <i class="el-icon-bottom" v-if="fluxChain < 0" />
-          {{fluxChain !== 0 ? fluxChain : '-'}}%（{{type}}环比）
+          {{ fluxChain !== 0 ? fluxChain : "-" }}%（{{ type }}环比）
         </p>
       </el-col>
       <el-col :span="8" v-loading="fluxHitRateLoading">
         <p class="title">平均流量命中率</p>
-        <p class="number">{{fluxHitRate}}<span class="unit"> %</span></p>
+        <p class="number">{{ fluxHitRate }}<span class="unit"> %</span></p>
         <p class="info">
           <i class="el-icon-top" v-if="fluxHitRateChain > 0" />
           <i class="el-icon-bottom" v-if="fluxHitRateChain < 0" />
-          {{fluxHitRateChain !== 0 ? fluxHitRateChain : '-'}}%（{{type}}环比）
+          {{ fluxHitRateChain !== 0 ? fluxHitRateChain : "-" }}%（{{
+            type
+          }}环比）
         </p>
       </el-col>
       <el-col :span="8" v-loading="requestLoading">
         <p class="title">请求数</p>
-        <p class="number">{{request}}</p>
+        <p class="number">{{ request }}</p>
         <p class="info">
           <i class="el-icon-top" v-if="requestChain > 0" />
           <i class="el-icon-bottom" v-if="requestChain < 0" />
-          {{requestChain !== 0 ? requestChain : '-'}}%（{{type}}环比）
+          {{ requestChain !== 0 ? requestChain : "-" }}%（{{ type }}环比）
         </p>
       </el-col>
     </el-row>
@@ -37,7 +42,7 @@ export default {
   props: {
     params: Object
   },
-  data() {
+  data () {
     return {
       fluxHitRate: 0,
       flux: [0, 'B'],
@@ -49,20 +54,20 @@ export default {
       chainEndTime: '',
       fluxLoading: true,
       fluxHitRateLoading: true,
-      requestLoading: true,
+      requestLoading: true
     }
   },
   watch: {
     params: {
-      handler() {
+      handler () {
         this.init()
       },
       immediate: true,
-      deep: true,
+      deep: true
     }
   },
   computed: {
-    type() {
+    type () {
       if (this.params.interval === 'hour') {
         return '周'
       }
@@ -73,14 +78,14 @@ export default {
     }
   },
   methods: {
-    init() {
+    init () {
       const { projectId, domainName, interval, times } = this.params
 
       const params = {
-        Version: "2018-06-06",
+        Version: '2018-06-06',
         StartTime: times[0],
         EndTime: times[1],
-        Area: "overseas",
+        Area: 'overseas',
         Interval: interval
       }
       if (projectId) {
@@ -102,11 +107,11 @@ export default {
       this.getFlux(params)
       this.getRequest(params)
     },
-    getFlux(params) {
+    getFlux (params) {
       this.fluxLoading = true
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
-        Metric: "flux",
+        Metric: 'flux'
       })
         .then(({ Response }) => {
           const flux = Response.Data[0].CdnData[0].SummarizedData.Value
@@ -114,18 +119,18 @@ export default {
           this.getFluxChain(params, flux)
         })
     },
-    getFluxChain(params, flux) {
+    getFluxChain (params, flux) {
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
         StartTime: this.chainStartTime,
         EndTime: this.chainEndTime,
-        Metric: "flux",
+        Metric: 'flux'
       })
         .then(({ Response }) => {
           const lastFlux = Response.Data[0].CdnData[0].SummarizedData.Value
           let fluxChain
           if (lastFlux !== 0) {
-            fluxChain = (flux - lastFlux) /  lastFlux * 100
+            fluxChain = (flux - lastFlux) / lastFlux * 100
           } else {
             fluxChain = 0
           }
@@ -136,23 +141,23 @@ export default {
           this.fluxLoading = false
         })
     },
-    getFluxHitRate(params) {
+    getFluxHitRate (params) {
       this.fluxHitRateLoading = true
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
-        Metric: "fluxHitRate",
+        Metric: 'fluxHitRate'
       })
         .then(({ Response }) => {
           this.fluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
           this.getFluxHitRateChain(params)
         })
     },
-    getFluxHitRateChain(params) {
+    getFluxHitRateChain (params) {
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
         StartTime: this.chainStartTime,
         EndTime: this.chainEndTime,
-        Metric: "fluxHitRate",
+        Metric: 'fluxHitRate'
       })
         .then(({ Response }) => {
           const lastFluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
@@ -169,23 +174,23 @@ export default {
           this.fluxHitRateLoading = false
         })
     },
-    getRequest(params) {
+    getRequest (params) {
       this.requestLoading = true
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
-        Metric: "request",
+        Metric: 'request'
       })
         .then(({ Response }) => {
           this.request = Response.Data[0].CdnData[0].SummarizedData.Value
           this.getRequestChain(params)
         })
     },
-    getRequestChain(params) {
+    getRequestChain (params) {
       this.axios.post('cdn2/DescribeCdnData', {
         ...params,
         StartTime: this.chainStartTime,
         EndTime: this.chainEndTime,
-        Metric: "request",
+        Metric: 'request'
       })
         .then(({ Response }) => {
           const lastRequest = Response.Data[0].CdnData[0].SummarizedData.Value
@@ -202,7 +207,7 @@ export default {
           this.requestLoading = false
         })
     },
-    fluxStr(v) {
+    fluxStr (v) {
       if (v > 1e12) {
         return [v / 1e12, 'TB']
       }

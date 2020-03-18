@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>区域流量分布</h3>
-      <i class="el-icon-download icon" @click="exportEchart"/>
+      <i class="el-icon-download icon" @click="exportEchart" />
     </el-row>
     <el-row>
       <el-col :span="16">
@@ -18,23 +18,25 @@
       </el-col>
       <el-col :span="8">
         <el-table
-          :data="tableData.slice((currpage - 1) * pageSize, currpage * pageSize)"
+          :data="
+            tableData.slice((currpage - 1) * pageSize, currpage * pageSize)
+          "
           v-loading="loading"
         >
           <el-table-column prop="name" label="区域"></el-table-column>
           <el-table-column prop="value" label="消耗量">
             <template slot-scope="scope">
-              {{fluxStr(scope.row.value)}}
+              {{ fluxStr(scope.row.value) }}
             </template>
           </el-table-column>
           <el-table-column label="占比">
             <template slot-scope="scope">
-              {{(scope.row.value / totalNumber * 100).toFixed(2) + '%'}}
+              {{ ((scope.row.value / totalNumber) * 100).toFixed(2) + "%" }}
             </template>
           </el-table-column>
         </el-table>
         <div class="Right-style pagstyle">
-          <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;條</span>
+          <span class="pagtotal">共&nbsp;{{ totalItems }}&nbsp;條</span>
           <el-pagination
             :page-size="pageSize"
             :pager-count="7"
@@ -57,24 +59,24 @@ export default {
   props: {
     params: Object
   },
-  data() {
+  data () {
     let vue = this
     return {
       seriesMap: [],
-      tableData: [], //表格数据
+      tableData: [], // 表格数据
       COUNTRY_MAP,
-      loading: true, //加载状态
+      loading: true, // 加载状态
       totalNumber: 1, // 总消耗量
-      currpage: 1, //页数
-      pageSize: 6, //每页数量
-      totalItems: 0, //总条数
+      currpage: 1, // 页数
+      pageSize: 6, // 每页数量
+      totalItems: 0 // 总条数
     }
   },
   components: {
-    echartMap,
+    echartMap
   },
   filters: {
-    fluxStr(v) {
+    fluxStr (v) {
       if (v > 1e12) {
         return [v / 1e12, 'TB'].join('')
       }
@@ -92,15 +94,15 @@ export default {
   },
   watch: {
     params: {
-      handler() {
+      handler () {
         this.init()
       },
       immediate: true,
-      deep: true,
+      deep: true
     }
   },
   methods: {
-    exportEchart() {
+    exportEchart () {
       let data = [
         ['统计项目', '全部项目'],
         ['统计域名', '全部域名'],
@@ -114,18 +116,18 @@ export default {
         data.push([
           item.name,
           item.value,
-         (item.value / this.totalNumber * 100).toFixed(2)
+          (item.value / this.totalNumber * 100).toFixed(2)
         ])
       })
       const ws = XLSX.utils.aoa_to_sheet(data)
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_traffic_distribution`);
-      XLSX.writeFile(wb, `${moment().format('x')}_traffic_distribution.xlsx`);
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, `${moment().format('x')}_traffic_distribution`)
+      XLSX.writeFile(wb, `${moment().format('x')}_traffic_distribution.xlsx`)
     },
-    fixed(v) {
+    fixed (v) {
       return Math.ceil(v) !== v ? v.toFixed(2) : v
     },
-    fluxStr(v) {
+    fluxStr (v) {
       if (v > 1e12) {
         return [v / 1e12, 'TB'].join('')
       }
@@ -140,14 +142,14 @@ export default {
       }
       return [v, 'B'].join('')
     },
-    init() {
+    init () {
       const { projectId, domainName, interval, times } = this.params
 
       const params = {
-        Version: "2018-06-06",
+        Version: '2018-06-06',
         StartTime: times[0],
         EndTime: times[1],
-        Area: "overseas",
+        Area: 'overseas'
       }
       if (projectId) {
         params.Project = projectId
@@ -157,15 +159,16 @@ export default {
       }
       this.getListTopData(params)
     },
-    getListTopData(params) {
+    getListTopData (params) {
+      console.log(params, '000====')
       this.loading = true
       const regionsArr = []
       const tableArr = []
       let total = 1
       this.axios.post('cdn2/ListTopData', {
         ...params,
-        Metric: "District",
-        Filter: "flux"
+        Metric: 'District',
+        Filter: 'flux'
       })
         .then(({ Response }) => {
           const res = Response.Data[0].DetailData
@@ -189,10 +192,10 @@ export default {
           this.loading = false
         })
     },
-    handleCurrentChange(val) {
-      this.currpage = val;
-      this.getListTopData();
-    },
+    handleCurrentChange (val) {
+      this.currpage = val
+      this.getListTopData()
+    }
   }
 }
 </script>
@@ -206,32 +209,32 @@ export default {
   font-weight: bold;
 }
 .Right-style {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 
-    .esach-inputL {
-      width: 300px;
-      margin-right: 20px;
-    }
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
   }
-  .pagstyle {
-    padding: 20px;
+}
+.pagstyle {
+  padding: 20px;
 
-    .pagtotal {
-      font-size: 13px;
-      font-weight: 400;
-      color: #565656;
-      line-height: 62px;
-    }
-    .el-pagination {
-      border-bottom: none;
-    }
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 62px;
   }
-  .empty {
-      height: 480px;
-      width: 100%;
-      line-height: 480px;
-      text-align: center;
-      font-weight: bold
-    }
+  .el-pagination {
+    border-bottom: none;
+  }
+}
+.empty {
+  height: 480px;
+  width: 100%;
+  line-height: 480px;
+  text-align: center;
+  font-weight: bold;
+}
 </style>

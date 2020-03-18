@@ -5,7 +5,7 @@
     </div>
     <el-row type="flex" align="middle" justify="space-between" class="actions">
       <el-col>
-        <el-button-group>
+        <el-button-group style="margin-top:-4px">
           <el-button
             size="small"
             :type="createTimeType === '0d' ? 'primary' : ''"
@@ -21,7 +21,7 @@
           <el-button
             size="small"
             :type="createTimeType === '7d' ? 'primary' : ''"
-            @click="onTimeClick(6, 'd')"
+            @click="onTimeClick(7, 'd')"
             >近7天</el-button
           >
           <el-button
@@ -33,18 +33,22 @@
         </el-button-group>
         <el-date-picker
           size="small"
-          style="border-left: none;"
+          style="border-left: none;width:350px"
           v-model="time"
-          format="yyyy-MM-dd"
           type="datetimerange"
           :picker-options="pickerOptions"
         ></el-date-picker>
-        <el-select v-model="projectId" size="small" placeholder="全部项目">
+        <el-select
+          v-model="project"
+          value-key="ProjectId"
+          size="small"
+          placeholder="全部项目"
+        >
           <el-option value="">全部项目</el-option>
           <el-option
             v-for="p in projectList"
             :key="p.ProjectId"
-            :value="p.ProjectId"
+            :value="p"
             :label="p.ProjectName"
           ></el-option>
         </el-select>
@@ -57,8 +61,6 @@
             :label="p.DomainName"
           ></el-option>
         </el-select>
-        <!-- <el-select class="split" size="small" v-model="projectId"></el-select>
-        <el-select class="split" size="small" v-model="domainName"></el-select> -->
       </el-col>
       <i class="el-icon-setting icon" />
     </el-row>
@@ -69,7 +71,7 @@
       </el-radio-group>
     </el-row>
     <div class="container">
-      <region class="card" />
+      <region :params="params" class="card" />
     </div>
   </div>
 </template>
@@ -88,7 +90,7 @@ export default {
       domainList: [],
       domainListCopy: [],
       type: 'server',
-      projectId: '',
+      project: '',
       domainName: '',
       time: [moment(), moment()],
       createTimeType: '0d',
@@ -112,16 +114,53 @@ export default {
     }
   },
   computed: {
+    params () {
+      const { project, domainName, type, time } = this
 
+      let times = time
+      //  let type = '日报'
+      // if (interval === '5min') { // 日报
+      // times = [moment(time).startOf('d').format('YYYY-MM-DD 00:00:00'), moment(time).endOf('d').format('YYYY-MM-DD 23:59:59')]
+      // console.log(this.createTimeType, times, 'time---')
+      // } else if (interval === 'day') { // 月报
+      //   type = '月报'
+      //   times = [moment(time).format('YYYY-MM-01 00:00:00'), moment(time).endOf('month').format('YYYY-MM-DD 23:59:59')]
+      // } else { // 周报
+      //   type = '周报'
+      //   times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
+      // }
+      return { projectId: project.ProjectId, AreaType: type, projectName: project.projectName, domainName, times }
+    }
   },
   watch: {
-    projectId (projectId) {
-      if (!projectId) {
+    project (project) {
+      if (!project) {
         this.domainList = [...this.domainListCopy]
         return
       }
-      this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === projectId)
+      this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === project.ProjectId)
+    },
+    type (val) {
+      // this.params.AreaType = val
+    },
+    time (val) {
+      // this.time = []
+      // val.forEach(val => {
+      //   this.time.push(val.format('YYYY-MM-DD HH:mm:ss'))
+      //   console.log(val.format('YYYY-MM-DD HH:mm:ss'), 'val')
+      // })
+      // console.log(val, this.params, 'shijia')
     }
+    // interval (interval) {
+    //   if (interval === 'hour') {
+    //     this.time = moment().subtract(7, 'd').startOf('week').add(1, 'd').format('YYYY-MM-DD')
+    //     this.weekEnd = moment().subtract(7, 'd').endOf('week').add(1, 'd').format('YYYY-MM-DD')
+    //   } else if (interval === 'day') {
+    //     this.time = moment().subtract(1, 'month').format('YYYY-MM')
+    //   } else {
+    //     this.time = moment().subtract(1, 'd')
+    //   }
+    // }
 
   },
   mounted () {
@@ -152,13 +191,26 @@ export default {
         })
     },
     onTimeClick (n, u) {
+      // var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
+      // var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
+      // let startTime = moment().subtract(num, unit)
+      // if (unit === 'd') {
+      //   startTime = moment().subtract(num, unit).startOf('d')
+      // }
+      // ipt1.value = startTime.format('YYYY-MM-DD HH:mm:ss')
+      // ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      // this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
+      // this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+
       this.createTimeType = `${n}${u}`
+
       let start = moment().subtract(n, u)
       let end = moment()
       if (this.createTimeType === '1d') {
         end = moment().subtract(1, 'd')
       }
       this.time = [start, end]
+      // console.log(start, 'this.time')
     }
   }
 }

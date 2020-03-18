@@ -14,6 +14,7 @@ import 'echarts/lib/component/legend'
 import 'echarts/lib/component/tooltip'
 import 'echarts/map/js/world.js' // 引入中国地图数据
 import nameComparison from './nameComparison '
+import type from '@/views/CM/CM_assembly/product_type'
 export default {
   name: 'myChart',
   props: {
@@ -23,12 +24,17 @@ export default {
     },
     series: {
       type: Array
+    },
+    trafficOrVisits: {
+      type: String,
+      default: 'flux'
     }
   },
   data () {
     return {
       chart: null,
-      i: 1
+      i: 1,
+      trafficOrVisitData: this.trafficOrVisits
     }
   },
   mounted () {
@@ -44,7 +50,12 @@ export default {
     total (val) {
       this.total = val
       this.initChart()
+    },
+    trafficOrVisits (val) {
+      this.trafficOrVisitData = this.trafficOrVisits
+      this.initChart()
     }
+
   },
   methods: {
     add () {
@@ -78,7 +89,12 @@ export default {
             if (!val.data) {
               return
             }
-            relVal += val.marker + '流量占比' + '<br/>' + val.data.name + ' : ' + val.data.value + '%'
+            if (that.trafficOrVisitData === 'flux') {
+              relVal += val.marker + '流量' + '<br/>' + val.data.name + ' : ' + val.data.value + '%'
+            } else {
+              relVal += val.marker + '访问次数' + '<br/>' + val.data.name + ' : ' + val.data.value
+            }
+
             return relVal
           }
         },
