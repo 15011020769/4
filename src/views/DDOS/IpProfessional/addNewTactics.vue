@@ -238,8 +238,8 @@
                 v-model="item.IsNot"
                 :placeholder="$t('DDOS.Proteccon_figura.qxz')"
               >
-                <el-option label="包含" value="1"></el-option>
-                <el-option label="不包含" value="0"></el-option>
+                <el-option label="包含" :value="1"></el-option>
+                <el-option label="不包含" :value="0"></el-option>
               </el-select>
             </td>
             <td>
@@ -489,7 +489,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <a href="#" class="addNewRow" @click.once="dialogVisible = true">
+        <a href="#" class="addNewRow" @click.once="dialogVisible = true" v-if="tableDataBegin2.length<1">
           {{ $t("DDOS.Proteccon_figura.Click_open") }}
         </a>
         <el-dialog
@@ -918,7 +918,7 @@ export default {
           tcpPort: this.policyTemp.WaterPrint[0].TcpPortList,
           udpPort: this.policyTemp.WaterPrint[0].UdpPortList,
           RemoveSwitch: this.radios12,
-          OpenStatus: 1,
+          OpenStatus: this.policyTemp.WaterPrint[0].OpenStatus,
           Offset: this.moveNum
         });
       }
@@ -1083,7 +1083,7 @@ export default {
         for (let i in this.tableDataBegin2) {
           params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[i].Offset; //	水印偏移量，取值范围[0, 100)
           params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[i].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
-          params["WaterPrint." + i + ".OpenStatus"] = 1;
+          params["WaterPrint." + i + ".OpenStatus"] = this.tableDataBegin2[i].OpenStatus;
 
           let arr = this.tableDataBegin2[i].tcpPort.map(t => {
             return t.split(",");
@@ -1099,7 +1099,7 @@ export default {
             return t.split(",");
           });
           if (this.radios12 == "開啟") {
-            if (arr2 == []) {
+            if (arr2.length == 0) {
               this.$message("開啟UDP防護端口不能為空");
               return;
             }
@@ -1242,7 +1242,7 @@ export default {
         des.MatchType = "sunday";
         des.Offset = 0;
         des.Depth = 1;
-        des.IsNot = "1";
+        des.IsNot = 1;
         des.MatchBegin = "no_match";
         des.Action = "drop";
         this.tags1.push(des);
