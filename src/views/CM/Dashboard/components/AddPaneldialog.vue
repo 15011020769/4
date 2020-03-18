@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="dialogVisible">
+    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="dialogVisible" @close="close">
       <el-form :model="form">
         <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="120px">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -37,6 +37,9 @@ export default {
     }
   },
   methods: {
+    close() {
+      this.$emit("cancel");
+    },
     cancel() {
       this.$emit("cancel");
     },
