@@ -34,12 +34,22 @@
         v-loading="loadShow"
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
-        <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
-        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
+        <el-table-column prop="groupName" label="ID/策略名">
+          <template slot-scope="scope">
+            <p>
+              <b>{{scope.row.PolicyID}}</b>
+            </p>
+            <p>{{scope.row.PolicyName}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="chufa" label="近24小时触发告警">
+          
+           <template slot-scope="scope">
+           <p>{{scope.row.AlarmCount}}</p>
+          </template></el-table-column>
         <el-table-column prop="type" label="消息接收组"></el-table-column>
         <el-table-column prop="address" label="告警渠道"></el-table-column>
         <el-table-column label="操作">
-          <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">编辑</el-button>
             <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>

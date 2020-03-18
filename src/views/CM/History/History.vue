@@ -361,24 +361,24 @@ export default {
     exportExcel() {
       console.log("exportExcel...");
       /* generate workbook object from table */
-      // var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-      // /* get binary string as output */
-      // var wbout = XLSX.write(wb, {
-      //   bookType: "xlsx",
-      //   bookSST: true,
-      //   type: "array"
-      // });
-      // try {
-      //   FileSaver.saveAs(
-      //     new Blob([wbout], {
-      //       type: "application/octet-stream"
-      //     }),
-      //     this.$t("CVM.clBload.fzjh") + ".xlsx"
-      //   );
-      // } catch (e) {
-      //   if (typeof console !== "undefined") console.log(e, wbout);
-      // }
-      // return wbout;
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          "告警历史—基础告警告警列表.xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
     },
     //购买短信
     buyMessgae() {
