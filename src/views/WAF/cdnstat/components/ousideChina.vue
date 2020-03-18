@@ -14,12 +14,19 @@ import nameComparison from './nameComparison '
 export default {
   name: "myChart",
   props: {
-    total: {
-      type: Number,
-      default: 1,
-    },
     series: {
       type: Array,
+    },
+    pieces: {
+      type: Array,
+      default: () => {}
+    },
+    tooltip: {
+      type: Object
+    },
+    inverse: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -29,18 +36,24 @@ export default {
   },
   mounted() {
     this.initChart();
-    // this.chinaConfigure();
-    // console.log(this.series)
   },
   watch: {
     series(val) {
       this.series = val
       this.initChart()
     },
-    total(val) {
-      this.total = val
+    pieces(val) {
+      this.pieces = val
       this.initChart()
     },
+    tooltip(val) {
+      this.tooltip = val
+      this.initChart()
+    },
+    inverse(val) {
+      this.inverse = val
+      this.initChart()
+    }
   },
   methods: {
     initChart() {
@@ -57,20 +70,7 @@ export default {
           containLabel: true
         },
         // 提示框组件
-        tooltip: {
-          trigger: 'item', // 触发类型, 数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用
-          // 提示框浮层内容格式器，支持字符串模板和回调函数两种形式
-          // 使用函数模板  传入的数据值 -> value: number | Array
-          formatter: function (val) {
-            console.log(val)
-            let relVal = '';
-            if (!val.data) {
-              return
-            }
-            relVal += val.data.name + '<br/>' + '时延'  + ' : ' + (val.data.value * 1000).toFixed(2) + 'ms';
-            return relVal
-          }
-        },
+        tooltip: this.tooltip,
         geo: {
           roam: true,
           zoom: 1,
@@ -80,16 +80,15 @@ export default {
           type: 'piecewise', // continuous 类型为连续型  piecewise 类型为分段型
           show: true,
           left: "2%",
-          // min: 0,
-          // max: this.max,
-          pieces: [
-            {lte: 1, label: '<1s',color: '#319a18'},
-            {gt: 1, lte: 2, label: '1-5s',color: '#51af32'},
-            {gt: 2, lte: 3, label: '2-3s',color: '#ffb800'},
-            {gt: 3, lte: 5, label: '3-5s',color: '#e1504a'},
-            {gt: 5, label: '>5s',color: '#e32310'},
-          ],
-          inverse: true, 
+          pieces: this.pieces,
+          // pieces: [
+          //   {lte: 1, label: '好(<1s)',color: '#319a18'},
+          //   {gt: 1, lte: 2, label: '较好(1-5s)',color: '#51af32'},
+          //   {gt: 2, lte: 3, label: '告警(2-3s)',color: '#ffb800'},
+          //   {gt: 3, lte: 5, label: '较差(3-5s)',color: '#e1504a'},
+          //   {gt: 5, label: '差(>5s)',color: '#e32310'},
+          // ],
+          inverse: this.inverse, 
           // 文本样式
           textStyle: {
             fontSize: 14,
@@ -104,9 +103,9 @@ export default {
             name: '',
             mapType: 'world', // 地图类型
             roam: false,
-            zoom: 1.1,
+            zoom: 1.2,
             label: {
-              show: true // 是否显示对应地名
+              show: false // 是否显示对应地名
             },
             // 地图区域的多边形 图形样式
             itemStyle: {
@@ -118,8 +117,12 @@ export default {
             // 高亮状态下的多边形和标签样式
             emphasis: {
               label: {
-                show: false, // 是否显示标签
-                color: '#94002d' // 文字的颜色 如果设置为 'auto'，则为视觉映射得到的颜色，如系列色
+                show: true, // 是否显示标签
+                fontWeight: 'bold',
+                color: '#000',
+                fill: 'rgb(255, 255, 255)',
+                textShadow: '0px 0px 6px #000',
+                textRendering: 'geometricprecision',
               },
               itemStyle: {
                 areaColor: '#e2ecf4'

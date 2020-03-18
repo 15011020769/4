@@ -3,15 +3,23 @@
     <el-row type="flex" class="header" justify="space-between">
       <h3>全网实时状态概览</h3>
     </el-row>
-    <el-radio-group v-model="region" size="small" style="margin-right: 30px;">
-      <el-radio-button label="china">中国境内</el-radio-button>
-      <el-radio-button label="world">中国境外</el-radio-button>
-    </el-radio-group>
     <el-radio-group v-model="type" size="small">
       <el-radio-button label="delay">时延</el-radio-button>
-      <el-radio-button label="usability">可用性</el-radio-button>
+      <el-radio-button label="useability">可用性</el-radio-button>
     </el-radio-group>
-    <outside-china :series="outsideData"/>
+    <outside-china
+      :series="outDelayData"
+      :pieces="piecesDelay"
+      :tooltip="tooltipDelay"
+      v-if="type === 'delay'"
+    />
+    <outside-china
+      :series="outUseData"
+      :pieces="piecesUse"
+      :tooltip="tooltipUse"
+      :inverse='false'
+      v-if="type === 'useability'"
+    />
   </el-card>
 </template>
 <script>
@@ -21,9 +29,49 @@ export default {
   data() {
     return {
       type: 'delay',
-      region: 'world',
       Ja,
-      outsideData: []
+      outDelayData: [],
+      outUseData: [],
+      piecesDelay: [
+        {lte: 1, label: '好(<1s)',color: '#319a18'},
+        {gt: 1, lte: 2, label: '较好(1-5s)',color: '#51af32'},
+        {gt: 2, lte: 3, label: '告警(2-3s)',color: '#ffb800'},
+        {gt: 3, lte: 5, label: '较差(3-5s)',color: '#e1504a'},
+        {gt: 5, label: '差(>5s)',color: '#e32310'},
+      ],
+      piecesUse: [
+        {lte: 92, label: '差(<92%)',color: '#e32310'},
+        {gt: 92, lte: 94, label: '较差(94-92%)',color: '#e1504a'},
+        {gt: 94, lte: 96, label: '告警(96-94%)',color: '#ffb800'},
+        {gt: 96, lte: 98, label: '较好(98-96%)',color: '#51af32'},
+        {gt: 98, label: '好(>98%)',color: '#319a18'},
+      ],
+      tooltipDelay: {
+        trigger: 'item',
+        formatter: function (val) {
+          let relVal = '';
+          if (!val.data) {
+            return
+          }
+          if(val.data.value == 0) {
+            relVal = val.data.name + '<br/>' + '时延'  + ' : ' + '--';
+          } else {
+            relVal = val.data.name + '<br/>' + '时延'  + ' : ' + (val.data.value * 1000).toFixed(2) + 'ms';
+          }
+          return relVal
+        }
+      },
+      tooltipUse: {
+        trigger: 'item',
+        formatter: function (val) {
+          let relVal = '';
+          if (!val.data) {
+            return
+          }
+          relVal = val.data.name + '<br/>' + '可用性'  + ' : ' + val.data.value + '%';
+          return relVal
+        }
+      }
     }
   },
   components: {
@@ -31,27 +79,37 @@ export default {
   },
   mounted() {
     this.getOutsideData()
-    console.log(this.Ja)
   },
   methods: {
     getOutsideData() {
       const params = {
         Version: '2018-06-06',
       }
-      let temp = []
+      let tempDelay = []
+      let tempDelayout = []
+      let tempUse = []
+      let tempUseOut = []
+      let Names = []
       this.axios.post('cdn2/DescribeOverseaMonitorRealtimeData', params)
           .then(({Response}) => {
             if(Response.Data && Response.Data.length) {
-              console.log(Response.Data)
               Response.Data.forEach(item => {
+                Names.push(item.EnglishName)
                 this.Ja.world.features.forEach(val => {
                   if(val.properties.continent === item.EnglishName) {
-                    temp.push({name: val.properties.name, value: (item.DelayTime / 1000)})
+                    tempDelay.push({name: val.properties.name, value: (item.DelayTime / 1000)})
+                    tempUse.push({name: val.properties.name, value: (item.SuccRate).toFixed(2)})
                   }
                 })
               })
-              console.log(temp)
-              this.outsideData = temp
+              this.Ja.world.features.forEach(val => {
+                if(!Names.includes(val.properties.continent)) {
+                  tempDelayout.push({name: val.properties.name, value: 0})
+                  tempUseOut.push({name: val.properties.name, value: 99.99})
+                }
+              })
+              this.outDelayData = tempDelay.concat(tempDelayout)
+              this.outUseData = tempUse.concat(tempUseOut)
             }
           })
     }
