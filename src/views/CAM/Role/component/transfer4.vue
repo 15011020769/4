@@ -28,7 +28,7 @@
             <el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
             <el-table-column :label="$t('CAM.userList.strategyNames')">
               <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
+                <el-tooltip class="item" effect="dark" :content="scope.row.IsAttached ? '當前策略已被關聯，如需解除關聯請前往詳情頁操作' : scope.row.Description" placement="bottom">
                   <div>
                     <p>{{scope.row.PolicyName}}</p>
                     <p class="desc">{{scope.row.Description}}</p>
@@ -53,7 +53,7 @@
         </div>
       </div>
       <div class="mid">
-        <i class="el-icon-connection"></i>
+        <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
       </div>
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">

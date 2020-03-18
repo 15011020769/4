@@ -1,11 +1,15 @@
 <template>
-  <div ref="worldmap_dv" style="width: 100%;height: 600px;"></div>
+  <div>
+    <div ref="worldmap_dv" style="width: 100%;height: 600px;"></div>
+  </div>
 </template>
 
 <script>
 import 'echarts/lib/component/legend'
 import 'echarts/lib/component/tooltip'
-import 'echarts/map/js/world.js' // 引入中国地图数据
+import 'echarts/lib/component/geo'
+import 'echarts/lib/component/visualMap'
+import 'echarts/map/js/world.js' // 引入世界地图数据
 import nameComparison from './nameComparison '
 export default {
   name: "myChart",
@@ -14,12 +18,20 @@ export default {
       type: Array,
     },
     pieces: {
-      type: Array
+      type: Array,
+      default: () => {}
+    },
+    tooltip: {
+      type: Object
+    },
+    inverse: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
     };
   },
   mounted() {
@@ -33,33 +45,50 @@ export default {
     pieces(val) {
       this.pieces = val
       this.initChart()
+    },
+    tooltip(val) {
+      this.tooltip = val
+      this.initChart()
+    },
+    inverse(val) {
+      this.inverse = val
+      this.initChart()
     }
   },
   methods: {
     initChart() {
+      let that = this
       this.chart = this.$echarts.init(this.$refs.worldmap_dv);
       window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize;
       // 把配置和数据放这里
       this.chart.setOption({
+         grid: {
+          left: '0%',
+          right: '0%',
+          bottom: '0%',
+          top: '0%',
+          containLabel: true
+        },
         // 提示框组件
-        tooltip: {
-          trigger: 'item',
-          formatter: function (val) {
-            if (!val.data) {
-              // return val.name + ': ' + 0
-              return 0
-            }
-            // return val.data.name + ': ' + val.data.value
-            return val.data.value
-          }
+        tooltip: this.tooltip,
+        geo: {
+          roam: true,
+          zoom: 1,
         },
         // 视觉映射组件
         visualMap: {
           type: 'piecewise', // continuous 类型为连续型  piecewise 类型为分段型
-          show: true, 
+          show: true,
           left: "2%",
           pieces: this.pieces,
-          inverse: true,
+          // pieces: [
+          //   {lte: 1, label: '好(<1s)',color: '#319a18'},
+          //   {gt: 1, lte: 2, label: '较好(1-5s)',color: '#51af32'},
+          //   {gt: 2, lte: 3, label: '告警(2-3s)',color: '#ffb800'},
+          //   {gt: 3, lte: 5, label: '较差(3-5s)',color: '#e1504a'},
+          //   {gt: 5, label: '差(>5s)',color: '#e32310'},
+          // ],
+          inverse: this.inverse, 
           // 文本样式
           textStyle: {
             fontSize: 14,
@@ -71,27 +100,33 @@ export default {
         series: [
           {
             type: 'map', // 类型
-            // 系列名称，用于tooltip的显示，legend 的图例筛选 在 setOption 更新数据和配置项时用于指定对应的系列
             name: '',
             mapType: 'world', // 地图类型
-            // 是否开启鼠标缩放和平移漫游 默认不开启 如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move' 设置成 true 为都开启
-            roam: true,
-            // 图形上的文本标签
+            roam: false,
+            zoom: 1.2,
             label: {
               show: false // 是否显示对应地名
             },
             // 地图区域的多边形 图形样式
             itemStyle: {
-              borderWidth: 0.5, // 描边线宽 为 0 时无描边
-              borderColor: '#000', // 图形的描边颜色 支持的颜色格式同 color，不支持回调函数
-              borderType: 'solid' // 描边类型，默认为实线，支持 'solid', 'dashed', 'dotted'
+              borderWidth: 0.5,
+              borderColor: '#000',
+              borderType: 'solid', // 描边类型，默认为实线，支持 'solid', 'dashed', 'dotted',
+              areaColor: '#F8F8F8'
             },
             // 高亮状态下的多边形和标签样式
             emphasis: {
               label: {
                 show: true, // 是否显示标签
-                color: '#94002d' // 文字的颜色 如果设置为 'auto'，则为视觉映射得到的颜色，如系列色
+                fontWeight: 'bold',
+                color: '#000',
+                fill: 'rgb(255, 255, 255)',
+                textShadow: '0px 0px 6px #000',
+                textRendering: 'geometricprecision',
               },
+              itemStyle: {
+                areaColor: '#e2ecf4'
+              }
             },
             // 自定义地区的名称映射
             nameMap: nameComparison,
@@ -105,3 +140,12 @@ export default {
 };
 
 </script>
+<style lang="scss" scoped>
+  .btnGroup {
+    position: absolute;
+    z-index: 10;
+    .el-button {
+      padding:12px;
+    }
+  }
+</style>

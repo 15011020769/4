@@ -216,7 +216,6 @@
               class="inputSearchCl"
               clearable
               @keyup.enter.native="searchGroup"
-              @change="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
             </el-input>
@@ -228,7 +227,7 @@
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
-            style="width: 80%; border:1px solid #ddd;"
+            style="border:1px solid #ddd;"
             :data="userGroup"
             @select="toggleGroup"
             @select-all="toggleAllGroup"
@@ -255,14 +254,16 @@
             </infinite-loading>
           </el-table>
         </div>
-
+        <div class="mid">
+          <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
+        </div>
         <div class="container-left">
           <span>{{$t('CAM.userList.choose')}}({{selectedStrategiesWithoutGroup.length}})</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
             height="400"
-            style="width: 80%;border:1px solid #ddd"
+            style="border:1px solid #ddd"
             :data="selectedStrategiesWithoutGroup"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
@@ -282,7 +283,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addUserList">{{$t('CAM.userList.suerAdd')}}</el-button>
-        <el-button @click="authorization = false">{{$t('CAM.userList.handClose')}}</el-button>
+        <el-button @click="handleClose">{{$t('CAM.userList.handClose')}}</el-button>
       </span>
     </el-dialog>
     <!-- <deleteDialog :dialogDeleteUser="flag" @suerClose="suerClose" @confirm="confirm" /> -->
@@ -540,10 +541,18 @@ export default {
       checkIndex.forEach(item => {
         let params = {
           Version: "2019-01-16",
-          Name: item.Name
+          Name: item.Name,
+          Force: 1,
         };
         this.axios.post(DELETE_USER, params).then(res => {
-          if (res.Response.Error == undefined) {
+          if (res.Response.Error == undefined || res.Response.Error.Code === 'ResourceNotFound.UserNotExist') {
+            this.currpage = 1
+            this.$message({
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
             this.init();
           } else {
             let ErrTips = {
@@ -581,12 +590,20 @@ export default {
     suerDelUser() {
       let params = {
         Version: "2019-01-16",
-        Name: this.deleteRowName
+        Name: this.deleteRowName,
+        Force: 1,
       };
       this.axios
         .post(DELETE_USER, params)
         .then(res => {
-          if (res.Response.Error === undefined) {
+          if (res.Response.Error == undefined || res.Response.Error.Code === 'ResourceNotFound.UserNotExist') {
+            this.currpage = 1
+            this.$message({
+              message: '删除成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
             this.init();
           } else {
             let ErrTips = {
@@ -887,6 +904,7 @@ export default {
           this.axios.post(BATCH_OPERATE_CAM_STRATEGY, param)
             .then(res => {
               if (res.Response.Error === undefined) {
+                this.currpage = 1
                 this.init();
                 this.authorization = false
                 this.$message({
@@ -1016,6 +1034,8 @@ export default {
     },
     //点击弹框中的×号隐藏弹框
     handleClose() {
+      console.log(323)
+      this.searchGroupValue = ''
       this.authorization = false;
     },
     selectedRow(row, column, event) {
@@ -1323,18 +1343,18 @@ export default {
   display: flex;
 
   .container-right {
-    width: 70%;
+    width: 50%;
     flex-direction: column;
     justify-content: center;
-    margin-left: 100px;
+    // margin-left: 100px;
 
-    .inputSearchCl {
-      width: 80%;
-    }
+    // .inputSearchCl {
+    //   width: 80%;
+    // }
   }
 
   .container-left {
-    width: 70%;
+    width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -1371,5 +1391,15 @@ export default {
     color: #57bb66;
     font-size: 12px;
   } 
+}
+.mid {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 20px;
+  }
 }
 </style>

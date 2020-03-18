@@ -199,7 +199,7 @@ export default {
         {
           value: 3600,
           label: '1小時'
-        }
+        },
       ],
       timeValue: [moment().startOf('d'), moment()],
       domainData: [],
@@ -262,6 +262,33 @@ export default {
     timeValue: {
       handler() {
         this.getTrend()
+        if(moment(this.timeValue[1]).diff(this.timeValue[0], 'days') > 0) {
+          this.options = [
+            {
+              value: 300,
+              label: '5分鐘'
+            },
+            {
+              value: 3600,
+              label: '1小時'
+            },
+            {
+              value: 86400,
+              label: '1天'
+            },
+          ]
+        } else {
+          this.options = [
+             {
+              value: 300,
+              label: '5分鐘'
+            },
+            {
+              value: 3600,
+              label: '1小時'
+            },
+          ]
+        }
       },
       immediate: true
     },
@@ -282,6 +309,7 @@ export default {
       }
       if (u === 'month') {
         start = start.add(1, 'd')
+        end = moment().endOf('d')
       }
       this.timeValue = [start, end]
     },
@@ -431,7 +459,6 @@ export default {
           const fluxData = [];
           const bandwidthArr = [];
           const fluxArr = [];
-          console.log(DataInfoList)
           DataInfoList.forEach(item => {
             times.push(item.Time);
             bandwidthData.push(item.Bandwidth);

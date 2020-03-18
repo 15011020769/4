@@ -293,6 +293,8 @@
       },
       //搜索
       _search() {
+        this.pagesize = 10
+        this.currpage = 0
         if (this.ChoiceValue !== '' && this.searchValue !== '') {
           this._GetFuncList()
         } else {

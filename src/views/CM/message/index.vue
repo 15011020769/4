@@ -18,7 +18,7 @@
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
           <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
-          <!-- 设置框---已完成 -->
+          <!-- 设置框---已完成---uat功能暂无 -->
           <!-- <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
@@ -34,12 +34,32 @@
         v-loading="loadShow"
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
-        <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
-        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
+        <el-table-column prop="groupName" label="ID/策略名">
+          <template slot-scope="scope">
+            <p>
+              <b>{{scope.row.PolicyID}}</b>
+            </p>
+            <p>{{scope.row.PolicyName}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="chufa" label="近24小时触发告警">
+          <template slot-scope="scope">
+            <p>{{scope.row.AlarmCount}}</p>
+          </template>
+        </el-table-column>
         <el-table-column prop="type" label="消息接收组"></el-table-column>
-        <el-table-column prop="address" label="告警渠道"></el-table-column>
+        <el-table-column prop="address" label="告警渠道">
+          <template slot-scope="scope">
+            <p v-if="scope.row.NotifyWay">
+               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
+                 <b v-if="v=='EMAIL'">邮件、</b>
+                 <b v-if="v=='SMS'">短信</b>
+               </span>
+            </p>
+            <p v-else>-</p>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
-          <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">编辑</el-button>
             <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>

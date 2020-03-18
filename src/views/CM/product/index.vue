@@ -91,7 +91,7 @@
             </el-table-column>
             <el-table-column prop label="狀態" width="70">
               <template slot-scope="scope">
-                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "無狀態"}}</p>
+                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "-"}}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="開始時間" width="90">
@@ -113,14 +113,15 @@
 
           <!-- 分页 -->
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
             <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next"
+                :total="TotalCount"
+              ></el-pagination>
           </div>
         </div>
       </div>
@@ -142,37 +143,40 @@ export default {
   name: "product",
   data() {
     return {
+      // 概览
       OverViewBgcolorTrigger: false,
       OverViewBgcolor: 0,
       statusChangeAmount: 0, // 状态变更
       unConfigAlarmAmount: 0, // 未配置异常事件
       unNormalEventAmount: 0, // 异常事件
       unRecoverAmount: 0, // 未恢复异常事件
+
       activeName: "first",
+      // 时间控件
       Datecontrol: true,
       Graincontrol: false,
       Difference: 'D',
       values: 13,
+
       dialogVisible: false, //弹框
-      Total: 0,
       searchInput: "", //搜索框的值
       searchOptions: [
-        {
+          {
             value: "InstanceId.0",
             label: "影響對象ID"
           },
-          {
-            value: "EventName.0",
-            label: "事件名"
-          },
-          {
-            value: "Status.0",
-            label: "告警配置状态"
-          },
-          {
-            value: "Type.0",
-            label: "事件类型"
-          },
+          // {
+          //   value: "EventName.0",
+          //   label: "事件名"
+          // },
+          // {
+          //   value: "Status.0",
+          //   label: "告警配置状态"
+          // },
+          // {
+          //   value: "Type.0",
+          //   label: "事件类型"
+          // },
       ],
       searchValue: "", //inp输入的值
 
@@ -182,8 +186,8 @@ export default {
       EndTime: "", //结束时间
       //分页
       TotalCount: 0, //总条数
-      pagesize: 20, // 分页条数
-      currpage: 1, // 当前页码
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
       TimeArr: [
           
           {
@@ -245,7 +249,8 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor",
-        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pageSize,
+        Offset: this.pageIndex,
         StartTime: this.StartTime,
         EndTime: this.EndTime,
       };
@@ -284,7 +289,6 @@ export default {
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
-          this.Total = res.Response.Total
           
         } else {
           this.loadShow = false;
@@ -299,11 +303,16 @@ export default {
         }
       });
     },
-    
-    //分页
+    // 分页
     handleCurrentChange(val) {
-      this.currpage = val;
-      this.getProductList()
+      this.pageIndex = val - 1;
+      this.getProductList();
+      this.pageIndex += 1;
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getProductList();
     },
     //弹框
     dialog() {

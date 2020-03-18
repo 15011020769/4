@@ -210,7 +210,9 @@
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 console.log(item.MetricName, item.Meaning.Zh)
                 this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
+                setTimeout(() => {
+                  this._GetMonitorData(item.MetricName)
+                }, 500);
               }
             });
           } else {

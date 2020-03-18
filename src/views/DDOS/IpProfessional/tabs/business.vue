@@ -181,7 +181,7 @@ export default {
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1]).add(1, 'd')
+        let maxDate = moment(value[1])
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {

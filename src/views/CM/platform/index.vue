@@ -3,12 +3,12 @@
     <Header title="平台事件">
     </Header>
     <div class="platform-main">
-      <div class="explain" style="margin-bottom:20px;">
+      <!-- <div class="explain" style="margin-bottom:20px;">
         <p>
           事件中心概述，平台事件與平台事件區別
           <a>點擊了解</a>
         </p>
-      </div>
+      </div> -->
       <div class="box">
         <div class="table_top">
           <div class="type_data">
@@ -29,8 +29,8 @@
               
           </div>
           <div class="icons">
-                <i class="el-icon-setting" @click="dialog"></i>
-                <i class="el-icon-download"></i>
+                <!-- <i class="el-icon-setting" @click="dialog"></i>
+                <i class="el-icon-download"></i> -->
           </div>
         </div>
         <div class="table">
@@ -62,14 +62,15 @@
 
           <!-- 分页 -->
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
             <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next"
+                :total="TotalCount"
+              ></el-pagination>
           </div>
         </div>
       </div>
@@ -95,7 +96,24 @@ export default {
       dialogVisible: false, //弹出框
 
       searchInput: "", //搜索框的值
-      searchOptions: [],
+      searchOptions: [
+          {
+            value: "InstanceId.0",
+            label: "影響對象ID"
+          },
+          // {
+          //   value: "EventName.0",
+          //   label: "事件名"
+          // },
+          // {
+          //   value: "Status.0",
+          //   label: "状态"
+          // },
+          // {
+          //   value: "Type.0",
+          //   label: "事件类型"
+          // },
+      ],
       searchValue: "", //inp输入的值
 
       loadShow: true, // 加载是否显示
@@ -104,8 +122,8 @@ export default {
       EndTime: "", //结束时间
       //分页
       TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
-      currpage: 1, // 当前页码
+      pageSize: 10, // 分页条数
+      pageIndex: 1, // 当前页码
       TimeArr: [
           
           {
@@ -164,17 +182,16 @@ export default {
       const params = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-07-24",
-        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pageSize,
+        Offset: pageIndex,
         Module: "monitor",
         StartTime: this.StartTime,
         EndTime: this.EndTime
       };
       if (this.searchValue !== "" && this.searchInput !== "") {
-          param["Filters.0.Name"] = this.searchValue;
-          param["Filters.0.Values.0"] = this.searchInput;
+           params[this.searchValue] =  this.searchInput
         }
       //  monitor2/DescribeAccidentEventList   //接口
-    
       console.log(JSON.stringify(params));
       this.axios.post(PLATFORM_EVENT_LIST, params).then(res => {
         console.log(res);
@@ -196,17 +213,22 @@ export default {
           });
         }
       });
-      // console.log(data);
     },
-     //分页
+    
+    // 分页
     handleCurrentChange(val) {
-      this.currpage = val;
+      this.pageIndex = val - 1;
+      this.GetPlatformList();
+      this.pageIndex += 1;
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
       this.GetPlatformList();
     },
      //弹框
     dialog(){
       this.dialogVisible = true;
-      console.log(this.dialogVisible)
     },
     cancel(){
       this.dialogVisible = false;
@@ -223,14 +245,14 @@ export default {
         this.searchInput = val;
         if (this.searchInput === "") {
           this.currpage = 1;
-          this.getProductList();
+          this.GetPlatformList();
         }
       },
       clicksearch(val) {
         this.currpage = 1;
         this.searchInput = val;
         if (this.searchInput !== "" && this.searchValue !== "") {
-          this.getProductList();
+          this.GetPlatformList();
         } else {
           this.$message.error("請輸入正確搜索信息");
         }

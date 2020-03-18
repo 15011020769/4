@@ -27,7 +27,6 @@
               size="small"
               class="inputSearchCl"
               clearable
-              @keyup.enter.native="searchGroup"
             >
               <i slot="suffix" class="el-input__icon el-icon-search" @click="searchGroup"></i>
             </el-input>
@@ -39,7 +38,7 @@
             ref="multipleOption"
             tooltip-effect="dark"
             height="400"
-            style="width: 80%; border:1px solid #ddd;"
+            style="border:1px solid #ddd;"
             :data="userGroup"
             @select="toggleGroup"
             @select-all="toggleAllGroup"
@@ -66,14 +65,16 @@
             </infinite-loading>
           </el-table>
         </div>
-
+        <div class="mid">
+          <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
+        </div>
         <div class="container-left">
           <span>{{$t('CAM.userList.choose')}}({{selectedStrategiesWithoutGroup.length}})</span>
           <el-table
             ref="multipleSelected"
             tooltip-effect="dark"
             height="400"
-            style="width: 80%;border:1px solid #ddd"
+            style="border:1px solid #ddd"
             :data="selectedStrategiesWithoutGroup"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
@@ -439,16 +440,16 @@ export default {
     padding: 20px;
     box-sizing: border-box;
     .container-right {
-      width: 70%;
+      width: 50%;
       flex-direction: column;
       justify-content: center;
-      margin-left: 100px;
-      .inputSearchCl {
-        width: 80%;
-      }
+      // margin-left: 100px;
+      // .inputSearchCl {
+      //   width: 80%;
+      // }
     }
     .container-left {
-      width: 70%;
+      width: 50%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -459,5 +460,15 @@ export default {
 .step >>> .el-steps {
   background: white;
   padding-bottom: 25px;
+}
+.mid {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i {
+    font-size: 20px;
+  }
 }
 </style>

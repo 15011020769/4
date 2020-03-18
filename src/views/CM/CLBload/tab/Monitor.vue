@@ -221,7 +221,9 @@
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
                 this.BaseListK.push(item)
-                this._GetMonitorData(item.MetricName)
+                setTimeout(() => {
+                  this._GetMonitorData(item.MetricName)
+                }, 500);
               }
             });
           } else {

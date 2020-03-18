@@ -9,7 +9,7 @@
             <el-input
               style="width:330px;margin:0"
               maxlength="20"
-              v-model="strategy_name"
+              v-model="formInline.strategy_name"
               placeholder="1-20个中英文字符或下划线"
             ></el-input>
           </el-form-item>
@@ -401,7 +401,7 @@ export default {
                 callback()
               }
             },
-            trigger: 'blur',
+            trigger: 'change',
             required: true
           }
         ],
@@ -431,7 +431,7 @@ export default {
     }
   },
   components: {
-    GroupingType,
+    // GroupingType,
     ProductTypeCpt
   },
   props: {

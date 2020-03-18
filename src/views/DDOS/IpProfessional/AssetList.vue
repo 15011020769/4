@@ -499,7 +499,7 @@ export default {
       this.describeResourceList();
     },
     // 1.1.获取资源列表接口
-    describeResourceList() {
+    async describeResourceList() {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
@@ -536,7 +536,7 @@ export default {
         }
       }
       // -----调用接口-----
-      this.axios.post(RESOURCE_LIST, params).then(res => {
+      await this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(params, res);
         this.tableData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
@@ -584,7 +584,7 @@ export default {
       });
     },
     // 1.2.获取资源的规则数接口
-    describeRuleSets() {
+    async describeRuleSets() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -597,7 +597,7 @@ export default {
           }
         }
       }
-      this.axios.post(RULESETS_CONT, params).then(res => {
+      await this.axios.post(RULESETS_CONT, params).then(res => {
         // console.log(params, res)
         this.ruleSets = res.Response;
         // 循环tableData
@@ -618,7 +618,8 @@ export default {
                         // 将RuleNameList的值添加进tableData
                         item.RuleNameList = map3.Value;
                       } else if (map3.Key == "RuleNum") {
-                        item.RuleNum = map3.Value;
+                        // item.RuleNum = map3.Value;
+                        this.$set(item, 'RuleNum', map3.Value);
                       }
                     });
                   }

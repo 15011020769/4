@@ -216,7 +216,9 @@
       _GetBase() {
         this.MonitorData = []
         this.BaseListK.forEach(item => {
-          this._GetMonitorData(item.MetricName)
+          setTimeout(() => {
+            this._GetMonitorData(item.MetricName)
+          }, 500);
         });
 
 

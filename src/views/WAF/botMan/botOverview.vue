@@ -27,6 +27,7 @@
           :end-placeholder="t('结束日期', 'WAF.jsrq')"
           :clearable= false
           @change="changeTimeValue"
+          :picker-options="pickerOptions"
         ></el-date-picker>
         <i class="el-icon-refresh" @click="id+=1" />
       </el-row>
@@ -157,6 +158,11 @@ export default {
           label: 'TOP10'
         }
       ],
+      pickerOptions: {
+        disabledDate(time) {
+          return moment(new Date()).diff(time, 'days') > 30 || time > moment()
+        }
+      }
     }
   },
   components: {

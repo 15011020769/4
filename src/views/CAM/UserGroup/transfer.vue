@@ -47,7 +47,7 @@
         </div>
       </div>
       <div class="mid">
-        <i class="el-icon-connection"></i>
+        <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
       </div>
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">

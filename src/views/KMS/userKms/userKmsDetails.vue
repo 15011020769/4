@@ -174,7 +174,7 @@
                           <el-option :label="$t('KMS.total.foverNoTime')" value="forver"></el-option>
                           <el-option :label="$t('KMS.total.setTimeOut')" value="setTime"></el-option>
                         </el-select>
-                        <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date"
+                        <el-date-picker v-if="isSettimeOut" v-model="selectTime" type="date" :picker-options="picker"
                           :placeholder="$t('KMS.total.chooseTime')" class="setTimeOutTime">
                         </el-date-picker><br />
                         <span class="tipStep">{{$t('KMS.total.tip6')}}</span>
@@ -336,7 +336,11 @@
         ishowkms: false, //密钥材料显示
         EncryptedKeyMaterial1: '', //加密秘钥材料参数
         ImportToken1: '', //导入令牌参数
-
+        picker: {
+          disabledDate(time) {
+            return time.getTime() < Date.now()
+          }
+        },
       }
     },
     components: {
