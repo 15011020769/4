@@ -199,7 +199,7 @@ export default {
         {
           value: 3600,
           label: '1小時'
-        }
+        },
       ],
       timeValue: [moment().startOf('d'), moment()],
       domainData: [],
@@ -262,6 +262,33 @@ export default {
     timeValue: {
       handler() {
         this.getTrend()
+        if(moment(this.timeValue[1]).diff(this.timeValue[0], 'days') > 0) {
+          this.options = [
+            {
+              value: 300,
+              label: '5分鐘'
+            },
+            {
+              value: 3600,
+              label: '1小時'
+            },
+            {
+              value: 86400,
+              label: '1天'
+            },
+          ]
+        } else {
+          this.options = [
+             {
+              value: 300,
+              label: '5分鐘'
+            },
+            {
+              value: 3600,
+              label: '1小時'
+            },
+          ]
+        }
       },
       immediate: true
     },

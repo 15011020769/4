@@ -70,7 +70,7 @@
                   placement="bottom"
                   v-if="scope.row.BCName === 1"
                 >
-                  <i class="el-icon-success"></i>
+                  <i class="el-icon-success" style="color: #0abf5b;"></i>
                 </el-tooltip>
 
                 <el-tooltip
@@ -79,7 +79,7 @@
                   placement="bottom"
                   v-else
                 >
-                  <i class="el-icon-warning"></i>
+                  <i class="el-icon-warning" style="color: #e54545;"></i>
                 </el-tooltip>
                 {{ scope.row.TargetDomain }}
                 <!-- <span v-if="scope.row.Status==0">{{scope.row.TargetDomain}}</span>
