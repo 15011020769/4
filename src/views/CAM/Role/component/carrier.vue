@@ -468,6 +468,7 @@ export default {
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
     .flex_right {
+      width: 100%;
       padding-left: 20px;
       .el-checkbox {
         margin-left: 0;
