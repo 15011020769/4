@@ -54,3 +54,9 @@ export const SUBNET_LIST = 'vpc2/DescribeSubnets' //子网列表
 export const TEST_MODEL = 'scf2/CreateFunctionTestModel' //新建测试模板
 
 export const TOP_LIST = 'monitor2/DescribeSortObjectList' //top
+
+export const TESTMODELS_LIST = 'scf2/ListFunctionTestModels'//函数的测试模板列表
+
+export const DELETE_MODAL = 'scf2/DeleteFunctionTestModel'//删除测试模板
+
+export const TEST_MODAL = 'scf2/GetFunctionTestModel'//函数测试模板
