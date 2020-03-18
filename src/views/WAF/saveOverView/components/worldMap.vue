@@ -10,12 +10,11 @@ import nameComparison from './nameComparison '
 export default {
   name: "myChart",
   props: {
-    max: {
-      type: Number,
-      default: 50000
-    },
     series: {
       type: Array,
+    },
+    pieces: {
+      type: Array
     }
   },
   data() {
@@ -25,16 +24,14 @@ export default {
   },
   mounted() {
     this.initChart();
-    // this.chinaConfigure();
-    // console.log(this.series)
   },
   watch: {
     series(val) {
       this.series = val
       this.initChart()
     },
-    max(val) {
-      this.max = val
+    pieces(val) {
+      this.pieces = val
       this.initChart()
     }
   },
@@ -46,9 +43,7 @@ export default {
       this.chart.setOption({
         // 提示框组件
         tooltip: {
-          trigger: 'item', // 触发类型, 数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用
-          // 提示框浮层内容格式器，支持字符串模板和回调函数两种形式
-          // 使用函数模板  传入的数据值 -> value: number | Array
+          trigger: 'item',
           formatter: function (val) {
             if (!val.data) {
               // return val.name + ': ' + 0
@@ -60,22 +55,11 @@ export default {
         },
         // 视觉映射组件
         visualMap: {
-          type: 'continuous', // continuous 类型为连续型  piecewise 类型为分段型
-          show: true, // 是否显示 visualMap-continuous 组件 如果设置为 false，不会显示，但是数据映射的功能还存在
-          // 指定 visualMapContinuous 组件的允许的最小/大值。'min'/'max' 必须用户指定。
-          // [visualMap.min, visualMax.max] 形成了视觉映射的『定义域』
+          type: 'piecewise', // continuous 类型为连续型  piecewise 类型为分段型
+          show: true, 
           left: "2%",
-          min: 0,
-          max: this.max,
-          // pieces: [                           //自定义『分段式视觉映射组件（visualMapPiecewise）』的每一段的范围，以及每一段的文字，以及每一段的特别的样式
-          //   {min: 1500},                     // 不指定 max，表示 max 为无限大（Infinity）。
-          //   {min: 900, max: 1500},
-          //   {min: 310, max: 1000},
-          //   {min: 200, max: 300},
-          //   {min: 10, max: 200, label: '10 到 200（自定义label）'},
-          //   {value: 123, label: '123（自定义特殊颜色）', color: 'grey'}, // 表示 value 等于 123 的情况。
-          //   {max: 5}
-          //   ],                     // 不指定 min，表示 min 为无限大（-Infinity）。
+          pieces: this.pieces,
+          inverse: true,
           // 文本样式
           textStyle: {
             fontSize: 14,
@@ -83,10 +67,6 @@ export default {
           },
           realtime: false, // 拖拽时，是否实时更新
           calculable: true, // 是否显示拖拽用的手柄
-          // 定义 在选中范围中 的视觉元素
-          inRange: {
-            color: ['#9fb5ea', '#006eff']
-          }
         },
         series: [
           {

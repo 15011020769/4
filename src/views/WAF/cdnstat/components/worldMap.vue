@@ -86,8 +86,6 @@ export default {
         // 提示框组件
         tooltip: {
           trigger: 'item', // 触发类型, 数据项图形触发，主要在散点图，饼图等无类目轴的图表中使用
-          // 提示框浮层内容格式器，支持字符串模板和回调函数两种形式
-          // 使用函数模板  传入的数据值 -> value: number | Array
           formatter: function (val) {
             let relVal = '';
             if (!val.data) {
@@ -117,8 +115,6 @@ export default {
           type: 'piecewise', // continuous 类型为连续型  piecewise 类型为分段型
           show: true,
           left: "2%",
-          // min: 0,
-          // max: this.max,
           pieces: [
             {lte: 1, label: '<1%',color: '#cfe4ff'},
             {gt: 1, lte: 5, label: '1%-5%',color: '#a7cdff'},
