@@ -52,7 +52,7 @@
             v-loading="loading"
             :empty-text="$t('CAM.strategy.zwsj')"
           >
-            <el-table-column width="65">
+            <el-table-column width="80">
               <template slot="header" slot-scope="scope">
                 <el-checkbox
                   :indeterminate="isIndeterminate"
@@ -63,7 +63,7 @@
               <template slot-scope="scope">
                 <el-tooltip
                   v-if="scope.row.Type === 2"
-                  content="预选策略无法选中删除"
+                  content="預設策略無法選中刪除"
                   placement="top-start"
                 >
                   <el-checkbox disabled />
@@ -576,5 +576,8 @@ export default {
 ::v-deep .el-input__clear {
   position: absolute;
   right: 20px;
+}
+::v-deep th .cell {
+  padding-left: 20px;
 }
 </style>

@@ -90,7 +90,6 @@
             <div class="block">
               <el-pagination
                 @size-change="handleSizeChange"
-                :pager-count="7"
                 @current-change="handleCurrentChange"
                 :current-page="pageIndex"
                 :page-sizes="[10, 20, 50, 100]"
@@ -446,7 +445,6 @@ export default {
       this.axios.post(CM_GROUPING_LIST_COPY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.copyDialogVisible = false;
-          this.ListInit();
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",

@@ -5,23 +5,23 @@
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
         <el-form-item label="模板名称" class="form-item">
           <div class="item-text">
-            {{infoData.groupName}}
-            <i class="el-icon-edit" @click="openName(infoData.groupName)" style="cursor:pointer"></i>
+            {{infoData.GroupName}}
+            <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
           <div class="item-text">{{infoData.Name}}</div>
         </el-form-item>
         <el-form-item label="最后修改人">
-          <div class="item-text">{{infoData.lastEditUin}}</div>
+          <div class="item-text">{{infoData.LastEditUin}}</div>
         </el-form-item>
         <el-form-item label="最后修改时间">
-          <div class="item-text">{{infoData?infoData.updateTime : '' | formatDate}}</div>
+          <div class="item-text">{{infoData?infoData.UpdateTime : '' | formatDate}}</div>
         </el-form-item>
         <el-form-item label="备注">
           <div class="item-text">
-            <span>{{infoData.remark}}</span>
-            <i class="el-icon-edit" @click="openRemark(infoData.remark)" style="cursor:pointer"></i>
+            <span>{{infoData.Remark}}</span>
+            <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i>
           </div>
         </el-form-item>
       </el-form>
@@ -29,13 +29,13 @@
     <el-card class="card2">
       <h4 class="title-text">告警触发条件 <span @click="openEdit()" style="cursor:pointer">编辑</span></h4>
       <p class="text-color1">指标告警(任意)</p>
-      <p class="text-color2" v-for="(it) in infoData.conditions" :key="it.metricShowName">
+      <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
         <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
-        {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
+        {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1">事件告警</p>
-      <p class="text-color2" v-for="(it) in infoData.eventConditions" :key="it.eventShowName">
-        {{ `${it.eventShowName},不重复告警` }}
+      <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
+        {{ `${it.EventDisplayName},不重复告警` }}
       </p>
     </el-card>
     <el-card class="card3">
@@ -106,10 +106,10 @@
                 <span>满足</span>
                 <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;" size="small">
                   <el-option
-                    v-for="(item,index) in conditions"
+                    v-for="(item,index) in meetConditions"
                     :key="index"
-                    :label="item"
-                    :value="item"
+                    :label="item.label"
+                    :value="item.value"
                     label-width="40px"
                   ></el-option>
                 </el-select>
@@ -121,7 +121,7 @@
                   <p>
                     if&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.MetricDisplayName" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in conditionsData.conditions"
                         :key="index"
@@ -131,29 +131,30 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:130px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:130px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.Period" style="width:130px;" size="small">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in tongjiZQ"
                         :key="index"
-                        :label="item.name"
+                        :label="item.label"
                         :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:60px;" size="small"> -->
-                      <el-select :disabled="isDisabled" v-model="it.projectName" style="width:60px;" size="small">
+                      <el-select :disabled="isDisabled" v-model="it.CalcType" style="width:75px;" size="small">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in SymbolList"
                         :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        :label="item"
+                        :value="item"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     <input :disabled="isDisabled"
                       placeholder="指标"
-                      style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
+                      style="height: 30px;line-height: 30px;padding:0 10px;width:60px;border: 1px solid #dcdfe6;"
                       value="0"
+                      v-model="it.CalcValue"
                       min="0"
                       max="100"
                       type="number"
@@ -163,27 +164,33 @@
                     >%</b>
                     &nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:110px;" size="small"> -->
-                      <el-select :disabled="isDisabled" v-model="it.projectName" style="width:110px;" size="small">
+                      <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in continuePeriod"
                         :key="index"
-                        :label="item.name"
+                        :label="item.label"
                         :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     then&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.alarm" style="width:150px;" size="small">
                       <el-option
-                        v-for="(item,index) in formInline.project"
+                        v-for="(item,index) in jinggaoZQ"
                         :key="index"
-                        :label="item.name"
+                        :label="item.label"
                         :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    <el-popover placement="top" trigger="hover" width="300">
+                      <div>
+                        <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
+                        <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                      </div>
+                      <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    </el-popover>
                   </p>
                   <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
@@ -202,7 +209,7 @@
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                   <p>
                     <!-- <el-select :disabled="isDisGJ" v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small"> -->
-                      <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;" size="small">
+                      <el-select :disabled="isDisGJ" v-model="item.EventDisplayName" style="width:180px;margin:0 5px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -232,11 +239,10 @@
 
 <script>
 import {
-  GET_TEMPLATE_LIST,
   GET_GROUP_LIST,
   GET_POLICY_GROUP_TYPE,
-  UPDATE_INFO,
   DESCRIBE_METRICS,
+  GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO
 } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
@@ -259,8 +265,30 @@ export default {
       id: '', // 模板id
       editGroupName: '', // 编辑的模板名称
       editRemark: '', // 编辑的备注
-      Conditions: [],
+      Conditions: [], // 策略类型
+      tongjiZQ: [{ label: '统计周期1分钟', value: 60 }, { label: '统计周期5分钟', value: 300 }],
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
+      continuePeriod: [// 持续周期
+        { label: '持续1个周期', value: 1 },
+        { label: '持续2个周期', value: 2 },
+        { label: '持续3个周期', value: 3 },
+        { label: '持续4个周期', value: 4 },
+        { label: '持续5个周期', value: 5 }
+      ],
+      jinggaoZQ: [// 警告周期
+        { label: '不重复', value: 0 },
+        { label: '每5分钟警告一次', value: 300 },
+        { label: '每10分钟警告一次', value: 600 },
+        { label: '每15分钟警告一次', value: 900 },
+        { label: '每30分钟警告一次', value: 1800 },
+        { label: '每1小时警告一次', value: 3600 },
+        { label: '每2小时警告一次', value: 7200 },
+        { label: '每3小时警告一次', value: 10800 },
+        { label: '每6小时警告一次', value: 21600 },
+        { label: '每12小时警告一次', value: 43200 },
+        { label: '每1天警告一次', value: 86400 },
+        { label: '周期指数递增', value: 1 }
+      ],
       formInline: {
         jieshou: '接收组',
         jieshouArr: [
@@ -299,88 +327,10 @@ export default {
           }
         ]
       },
-      indexAry: [ // 指标告警数组
-        {
-          jieshou: '接收组',
-          jieshouArr: [
-            { value: '0', name: '接收组' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回调
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '云服务器-基础监控'
-            }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
-          project: [
-            {
-              value: 0,
-              name: '默认项目'
-            }
-          ]
-        }
-      ],
-      eventAry: [// 事件告警数组
-        {
-          jieshou: '接收组',
-          jieshouArr: [
-            { value: '0', name: '接收组' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回调
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '云服务器-基础监控'
-            }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
-          project: [
-            {
-              value: 0,
-              name: '默认项目'
-            }
-          ]
-        }
-      ],
+      indexAry: [], // 指标告警数组
+      eventAry: [], // 事件告警数组
       conditionsData: [], // 触发条件数据
-      conditions: ['任意', '所有'], // 满足条件
+      meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
       groupList: [], // 策略组列表
       channelList: [] // 渠道列表
     }
@@ -391,35 +341,13 @@ export default {
   created () {
     this.id = this.$route.params.id
     this.getInfo()
-    // this.getInfo2()
-    // this.getDetailInfo()
-    // this.getPolicyGroupList()
   },
   methods: {
     async getInfo () {
-      // await this.getTemplateList()
       await this.getPolicyType()
       await this.getDetailInfo()
-      await this.getPolicyGroupList()
-      // await this.getConditionsTemplateList()
+      // await this.getPolicyGroupList()
     },
-    // 获取告警策略模板列表
-    // async getConditionsTemplateList () {
-    //   let { groupName, groupId, viewName } = this.conditionsData
-    //   let params = {
-    //     Module: 'monitor',
-    //     ViewName: viewName,
-    //     GroupName: groupName,
-    //     GroupID: groupId,
-    //     UpdateTimeOrder: 'desc',
-    //     Limit: 1,
-    //     Offset: 0,
-    //     Version: '2018-07-24'
-    //   }
-    //   this.axios.post(GET_DESCRIBECONDITIONSTEMPLATELIST, params).then(res => {
-    //     console.log(res)
-    //   })
-    // },
     // 获取策略类型
     async getPolicyType  () {
       this.loadShow = true
@@ -451,40 +379,53 @@ export default {
     async getDetailInfo () {
       this.loadShow = true
       let params = {
-        groupId: this.id,
-        lang: 'zh'
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupID: this.id
       }
-      await this.axios.post(GET_TEMPLATE_LIST, params).then(res => {
-        if (res.codeDesc === 'Success') {
-          var msg = res.data.templateGroupList
-          this.conditionsData = msg[0]
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
+        // console.log(res)
+        if (res.Response.Error === undefined) {
+          var msg = res.Response.TemplateGroupList
+          // this.conditionsData = msg[0]
           let ct = this.Conditions
           for (let i in msg) {
             for (let j in ct) {
-              if (msg[i].viewName === ct[j].PolicyViewName) {
+              if (msg[i].ViewName === ct[j].PolicyViewName) {
                 msg[i]['Name'] = ct[j].Name
               }
             }
           }
           msg.forEach(ele => {
-            ele.conditions.forEach((item, i) => {
-              item.calcType = this.SymbolList[item.calcType - 1]
-              let time1 = item.alarmNotifyPeriod / 60
-              let time2 = item.alarmNotifyPeriod / (60 * 60)
-              if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
+            ele.Conditions.forEach((item, i) => {
+              let ct = Number(item.CalcType)
+              item.CalcType = this.SymbolList[ct - 1]
+              let time = item.Period / 60// 编辑触发条件
+              item['Period'] = `统计周期${time}分钟`// 编辑触发条件
+              let num = item.ContinueTime / (time * 60)// 编辑触发条件
+              item['ContinuePeriod'] = `持续${num}个周期`// 编辑触发条件
+              let time1 = item.AlarmNotifyPeriod / 60
+              let time2 = item.AlarmNotifyPeriod / (60 * 60)
+              if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重复告警'
-              } else if (item.alarmNotifyType == 1) {
+              } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指数递增重复告警'
-              } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
+              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
                 item.alarm = `按${time1}分钟重复告警`
-              } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+              } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小时重复告警`
               } else {
                 item.alarm = '按1天重复告警'
               }
             })
+            // if(ele.IsUnionRule===0){
+
+            // }
+            this.infoData = ele
+            this.indexAry = ele.Conditions// 编辑触发条件
+            this.eventAry = ele.EventConditions// 编辑触发条件
           })
-          this.infoData = msg[0]
+          // this.infoData = msg[0]
           this.loadShow = false
         } else {
           this.loadShow = false

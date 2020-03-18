@@ -25,12 +25,12 @@
           label-width="120px"
           size="mini"
         >
-          <el-form-item label="名称" prop="name">
-            <el-input class="w200" v-model="cm.name" placeholder="请输入名称"></el-input>
-            <p :class="{ activeColor: fontColor }">最长63个字符，只能包含小写字母、数字及分隔符("-")，且必须以小写字母开头，数字或小写字母结尾</p>
+          <el-form-item :label="$t('TKE.overview.mc')" prop="name">
+            <el-input class="w200" v-model="cm.name" :placeholder="$t('TKE.myMirror.qsrmc')"></el-input>
+            <p :class="{ activeColor: fontColor }">{{$t('TKE.overview.xz')}}</p>
           </el-form-item>
-          <el-form-item label="命名空间">
-            <el-select v-model="cm.value" placeholder="请选择">
+          <el-form-item :label="$t('TKE.overview.mmkj')">
+            <el-select v-model="cm.value" :placeholder="$t('TKE.overview.qxz')">
               <el-option
                 v-for="(item,index) in cm.options"
                 :key="index"
@@ -43,8 +43,8 @@
             <div class="border">
               <!-- 头部 -->
               <div class="flex f12 header">
-                <div class="pl5" style="width:800px;">变量名</div>
-                <div class="pl5" style="width:50%">变量值</div>
+                <div class="pl5" style="width:800px;">{{$t('TKE.overview.blm')}}</div>
+                <div class="pl5" style="width:50%">{{$t('TKE.overview.blz')}}</div>
               </div>
               <!-- 主体 -->
               <div class="flex" style="padding:10px;border-top:1px solid #ddd;">
@@ -56,39 +56,39 @@
                     :prop="'domains.' + index + '.value'"
                   >
                     <div class="form-input">
-                      <el-input v-model="domain.value" size="mini" placeholder="变量名"></el-input>
+                      <el-input v-model="domain.value" size="mini" :placeholder="$t('TKE.overview.blm')"></el-input>
                       <span>=</span>
                       <textarea class="text" v-model="domain.valueKey"></textarea>
                       <el-tooltip
                         v-if="dynamicValidateForm.domains.length=='1'"
                         class="item"
                         effect="dark"
-                        content="不可删除，至少设置一项"
+                        :content="$t('TKE.subList.zsszyx')"
                         placement="right"
                       >
                         <i class="el-icon-close"></i>
                       </el-tooltip>
-                      <el-tooltip v-else class="item" effect="dark" content="删除" placement="right">
+                      <el-tooltip v-else class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
                         <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
                       </el-tooltip>
                     </div>
                   </el-form-item>
                 </el-form>
                 <p>
-                  <el-link type="primary" style="cursor: pointer;" @click="addDomain">新增变量</el-link>
+                  <el-link type="primary" style="cursor: pointer;" @click="addDomain">{{$t('TKE.overview.xzbl')}}</el-link>
                 </p>
               </div>
               <p
                 v-show="errorShow"
                 style="color:red"
-              >新增变量名格式不正确，只能包含字母、数字及分隔符("-"、"_"、".")，且必须以字母、数字开头和结尾</p>
+              >{{$t('TKE.subList.xzblmgs')}}</p>
             </div>
           </el-form-item>
         </el-form>
 
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
-          <el-button size="small" type="primary" @click="creatConfigmap">创建ConfigMap</el-button>
+          <el-button size="small" type="primary" @click="creatConfigmap">{{$t('TKE.subList.cj')}}ConfigMap</el-button>
           <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
@@ -141,7 +141,7 @@ export default {
       cm: {
         name: "",
         value: "default",
-        options: ["请选择Namespace"]
+        options: ["請選擇Namespace"]
       },
       dynamicValidateForm: {
         domains: [
@@ -182,7 +182,7 @@ export default {
     creatConfigmap() {
       if (this.cm.name == "") {
         this.$refs.form.validateField("name");
-        this.$message("名称不能為空");
+        this.$message("名稱不能為空");
         return false;
       }
 
@@ -194,7 +194,7 @@ export default {
 
       if (arr[0].value == "") {
         this.$message({
-          message: "变量名不能為空，至少设置一项",
+          message: "變數名不能為空，至少設置一項",
           type: "error"
         });
         return false;

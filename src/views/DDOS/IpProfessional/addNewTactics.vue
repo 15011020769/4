@@ -130,7 +130,7 @@
             </td>
             <td>
               <!-- 端口号 -->
-              <el-input class="inputChange" v-model="item.portNum" autocomplete="off"></el-input>
+              <el-input class="inputChange" v-model="item.portNum" autocomplete="off" @input="updateView($event)"></el-input>
             </td>
             <td>
               <!-- 动作 -->
@@ -238,8 +238,8 @@
                 v-model="item.IsNot"
                 :placeholder="$t('DDOS.Proteccon_figura.qxz')"
               >
-                <el-option label="包含" value="1"></el-option>
-                <el-option label="不包含" value="0"></el-option>
+                <el-option label="包含" :value="1"></el-option>
+                <el-option label="不包含" :value="0"></el-option>
               </el-select>
             </td>
             <td>
@@ -489,7 +489,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <a href="#" class="addNewRow" @click.once="dialogVisible = true">
+        <a href="#" class="addNewRow" @click.once="dialogVisible = true" v-if="tableDataBegin2.length<1">
           {{ $t("DDOS.Proteccon_figura.Click_open") }}
         </a>
         <el-dialog
@@ -918,7 +918,7 @@ export default {
           tcpPort: this.policyTemp.WaterPrint[0].TcpPortList,
           udpPort: this.policyTemp.WaterPrint[0].UdpPortList,
           RemoveSwitch: this.radios12,
-          OpenStatus: 1,
+          OpenStatus: this.policyTemp.WaterPrint[0].OpenStatus,
           Offset: this.moveNum
         });
       }
@@ -997,25 +997,17 @@ export default {
         }
 
         this.tags3.map((item, index) => {
-          if (item.protocol == "ICPM") {
-            params["DropOptions.0.DIcmpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+          if (item.protocol == "ICMP") {
+            params["DropOptions.0.DIcmpMbpsLimit"] = item.speedLimit;
           }
           if (item.protocol == "OTHER") {
-            params["DropOptions.0.DOtherMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DOtherMbpsLimit"] = item.speedLimit
           }
           if (item.protocol == "TCP") {
-            params["DropOptions.0.DTcpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DTcpMbpsLimit"] = item.speedLimit
           }
           if (item.protocol == "UDP") {
-            params["DropOptions.0.DUdpMbpsLimit"] = this.tags3[
-              index
-            ].speedLimit;
+            params["DropOptions.0.DUdpMbpsLimit"] = item.speedLimit
           }
         });
         if (this.radios3 == "開啟") {
@@ -1045,15 +1037,14 @@ export default {
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
         for (let i in this.tags) {
           if (this.tags[i].portNum.length > 1) {//此处需要对输入的端口区间进行校验（暂时未做）
-          params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+            params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
             params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
-            
-          let portArr = this.tags[i].portNum.split("-");
-            if (portArr.length = 1) {
-              portArr[1] = portArr[0];
+            let portArr = this.tags[i].portNum.split('-')
+            if (portArr.length === 1) {
+              portArr[1] = portArr[0]
             }
-          params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
-          params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
+            params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
+            params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
             if (this.tags[i].Kind != 0) {
               params["PortLimits." + i + ".SPortStart"] = portArr[0]; //开始源端口，取值范围[0,65535]
               params["PortLimits." + i + ".SPortEnd"] = portArr[1]; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
@@ -1092,7 +1083,7 @@ export default {
         for (let i in this.tableDataBegin2) {
           params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[i].Offset; //	水印偏移量，取值范围[0, 100)
           params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[i].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
-          params["WaterPrint." + i + ".OpenStatus"] = 1;
+          params["WaterPrint." + i + ".OpenStatus"] = this.tableDataBegin2[i].OpenStatus;
 
           let arr = this.tableDataBegin2[i].tcpPort.map(t => {
             return t.split(",");
@@ -1108,7 +1099,7 @@ export default {
             return t.split(",");
           });
           if (this.radios12 == "開啟") {
-            if (arr2 == []) {
+            if (arr2.length == 0) {
               this.$message("開啟UDP防護端口不能為空");
               return;
             }
@@ -1251,7 +1242,7 @@ export default {
         des.MatchType = "sunday";
         des.Offset = 0;
         des.Depth = 1;
-        des.IsNot = "1";
+        des.IsNot = 1;
         des.MatchBegin = "no_match";
         des.Action = "drop";
         this.tags1.push(des);
@@ -1513,7 +1504,11 @@ export default {
       this.tableDataBegin2 = []; //lxx
       this.tableDataBegin2.push(temp);
       this.dialogVisible = false;
-    }
+    },
+    // 端口再次輸入失敗修復
+    updateView(e) {
+    this.$forceUpdate()
+    } 
   }
 };
 </script>

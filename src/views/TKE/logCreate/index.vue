@@ -522,8 +522,6 @@
       },
       formTwo: {
         handler(val) {
-          // console.log(val.value1);命名空间
-          // console.log(val.value2); 工作负载类型
           var params = {
             ClusterName: this.$route.query.clusterId.split("(")[0],
             Method: "GET",
@@ -579,11 +577,8 @@
                 } else {
                   val.optionAll[0].value4 = '無'
                 }
-                // val.optionAll[0].option4.push({})
-                // this.formTwo.value3=this.formTwo.option3[1];
-              } else {
-                // this.formTwo.value3 = '无'
               }
+              
             }
           });
 
@@ -635,7 +630,7 @@
         handler(val) {
           for (let key in val) {
             if (val[key].length == '0') {
-              this.newroomFlag = true
+              // this.newroomFlag = true
             } else {
               this.newroomFlag = false
             }
@@ -650,16 +645,20 @@
       if (this.$route.query.stashName) {
         this.editStatus = true;
         //回显数据
-        this.findEditData();
+        this.reflowData()
       } else {
         this.editStatus = false;
       }
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
-      this.nameSpaceList();
+      // this.nameSpaceList();
     },
     mounted() {},
     methods: {
+       async reflowData(){
+         await this.nameSpaceList()
+         await this.findEditData();
+      },
       //创建
       logCreat() {
         if (this.form.name == "") {
@@ -836,7 +835,7 @@
           });
       },
       //编辑数据回显
-      findEditData() {
+     async   findEditData() {
         var stashName = this.$route.query.stashName;
         var namespace = this.$route.query.namespace;
         var clusterId = this.$route.query.clusterId;
@@ -851,7 +850,7 @@
             stashName,
           Version: "2018-05-25"
         };
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+     await   this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
             console.log(data)
@@ -897,11 +896,7 @@
               //指定文件
               if (!data.spec.input.container_log_input.all_namespaces) {
                 this.vlog = 'two';
-                if(this.formFour.length!=this.namespaceOptions.length){
-                  this.newroomFlag=false
-                }else{
-                   this.newroomFlag=true 
-                }
+               
               }
               let namespace=data.spec.input.container_log_input.namespaces;
               var arr=[],arr2=[],arr3=[],arr4=[],arr5=[],arr6=[],arr21=[],arr31=[],arr41=[],arr51=[],arr61=[];
@@ -947,8 +942,16 @@
                 }
                
               })
+
               if(arr.length!=0){
                 this.formFour=arr;
+              }
+              console.log(this.formFour.length)
+              console.log(this.namespaceOptions.length)
+              if(this.formFour.length!=this.namespaceOptions.length){
+                this.newroomFlag=false
+              }else{
+                  this.newroomFlag=true 
               }
               this.Checkbox.checkbox0=arr2
               this.Checkbox.checkbox1=arr3
@@ -1293,7 +1296,7 @@
         });
       },
       //命名空间选项
-      nameSpaceList() {
+      async nameSpaceList() {
         if (this.$route.query.clusterId) {
           var params = {
             ClusterName: this.$route.query.clusterId.split("(")[0],
@@ -1301,15 +1304,16 @@
             Path: "/api/v1/namespaces",
             Version: "2018-05-25"
           };
-          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        await  this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response) {
               var data = JSON.parse(res.Response.ResponseBody);
+              this.namespaceOptions=[];
+              this.namespaceOption1s=[];
               data.items.forEach(item => {
                 this.namespaceOptions.push(item.metadata.name);
                 this.namespaceOptions1.push(item.metadata.name);
               });
               this.formFour[0].value1 = this.namespaceOptions[0];
-              // this.formTwo.value1 = this.namespaceOptions[0];//设置工作负载选项命名空间默认值
             }
           });
         }
@@ -1329,10 +1333,6 @@
             this.show1 = data.status.phase == "running" ? false : true;
           } else {}
         });
-      },
-
-      onSubmit() {
-        alert("已提交");
       },
       removeDomain(item) {
         var index = this.formTwo.optionAll.indexOf(item);
@@ -1432,7 +1432,6 @@
         return reg.test(str)
       }
     },
-    props: ["uid"],
     components: {
       HeadCom
     }

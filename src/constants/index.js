@@ -37,3 +37,7 @@ export * from './MAOTKE' // 容器服务
 export * from './CM-wzh' //容器服务
 
 export * from './CM-wxy' // 云监控 实例分组
+
+export * from './CM-dashboard' // 云监控 dashboard
+
+

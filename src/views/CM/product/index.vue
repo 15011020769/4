@@ -2,12 +2,12 @@
   <div class="product-wrap">
     <Header title="產品事件"></Header>
     <div class="product-main">
-      <div class="explain" style="margin-bottom:20px;">
+      <!-- <div class="explain" style="margin-bottom:20px;">
         <p>
           事件中心概述，產品事件與平台事件區別
           <a>點擊了解</a>
         </p>
-      </div>
+      </div> -->
       <div class="box">
         <div class="table_top"> 
           <div class="type_data">
@@ -28,8 +28,8 @@
             </SEARCH>
           </div>
           <div class="icons">
-            <i class="el-icon-setting" @click="dialog"></i>
-            <i class="el-icon-download"></i>
+            <!-- <i class="el-icon-setting" @click="dialog"></i>
+            <i class="el-icon-download"></i> -->
           </div>
         </div>
         <div class="table_head">
@@ -91,7 +91,7 @@
             </el-table-column>
             <el-table-column prop label="狀態" width="70">
               <template slot-scope="scope">
-                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "無狀態"}}</p>
+                <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "-"}}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="開始時間" width="90">
@@ -113,14 +113,15 @@
 
           <!-- 分页 -->
           <div class="Right-style pagstyle">
-            <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t("CVM.strip")}}</span>
             <el-pagination
-              :page-size="pagesize"
-              :pager-count="7"
-              layout="prev, pager, next"
-              @current-change="handleCurrentChange"
-              :total="TotalCount"
-            ></el-pagination>
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="pageIndex"
+                :page-sizes="[10, 20, 50, 100]"
+                :page-size="pageSize"
+                layout="total, sizes, prev, pager, next"
+                :total="TotalCount"
+              ></el-pagination>
           </div>
         </div>
       </div>
@@ -142,29 +143,40 @@ export default {
   name: "product",
   data() {
     return {
+      // 概览
       OverViewBgcolorTrigger: false,
       OverViewBgcolor: 0,
       statusChangeAmount: 0, // 状态变更
       unConfigAlarmAmount: 0, // 未配置异常事件
       unNormalEventAmount: 0, // 异常事件
       unRecoverAmount: 0, // 未恢复异常事件
+
       activeName: "first",
+      // 时间控件
       Datecontrol: true,
       Graincontrol: false,
       Difference: 'D',
       values: 13,
+
       dialogVisible: false, //弹框
-      Total: 0,
       searchInput: "", //搜索框的值
       searchOptions: [
-        {
-            value: "InstanceId",
+          {
+            value: "InstanceId.0",
             label: "影響對象ID"
           },
-          {
-            value: "EventCName",
-            label: "事件名"
-          },
+          // {
+          //   value: "EventName.0",
+          //   label: "事件名"
+          // },
+          // {
+          //   value: "Status.0",
+          //   label: "告警配置状态"
+          // },
+          // {
+          //   value: "Type.0",
+          //   label: "事件类型"
+          // },
       ],
       searchValue: "", //inp输入的值
 
@@ -174,8 +186,8 @@ export default {
       EndTime: "", //结束时间
       //分页
       TotalCount: 0, //总条数
-      pagesize: 20, // 分页条数
-      currpage: 1, // 当前页码
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
       TimeArr: [
           
           {
@@ -230,24 +242,41 @@ export default {
           return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`
       },
     //获取数据
-    getProductList(data) {
+    getProductList(events) {
       let types = typeof data;
       this.loadShow = true; //加载
       const params = {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor",
-        Offset: this.currpage * this.pagesize - this.pagesize,
+        Limit: this.pageSize,
+        Offset: this.pageIndex,
         StartTime: this.StartTime,
         EndTime: this.EndTime,
       };
      if (this.searchInput !== "" && this.searchValue !== "") {
-        params['Limit'] =  this.Total
+        params[this.searchValue] =  this.searchInput
      }
-     if (types == 'string') {
-          params['Limit'] =  this.Total
-     };
-            //  monitor2/DescribeProductEventList   //接口
+     switch (events) {
+            case 1: 
+            console.log(events)
+             params['Type.0'] = "abnormal";
+              break;
+            case 2: 
+            console.log(events)
+              params['Status.0'] = "alarm";
+              break;
+            case 3: 
+            console.log(events)
+              params['IsAlarmConfig'] = 0;
+              break;
+            case 4: 
+            console.log(events)
+              params['Type.0'] = "status_change";
+              break;
+          }
+     
+      //  monitor2/DescribeProductEventList   //接口
       // console.log(JSON.stringify(params));
       this.axios.post(PRODUCT_EVENT_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -260,16 +289,7 @@ export default {
           this.unConfigAlarmAmount = res.Response.OverView.UnConfigAlarmAmount; // 未配置异常事件
           this.unNormalEventAmount = res.Response.OverView.UnNormalEventAmount; // 异常事件
           this.unRecoverAmount = res.Response.OverView.UnRecoverAmount; // 未恢复异常事件
-          this.Total = res.Response.Total
-          // 筛选逻辑
-          let obj = {'names': this.searchValue, values : this.searchInput};
-          if (this.searchInput !== "" && this.searchValue !== "") {
-            this.filtration (res, obj)
-          };
           
-          if (types == 'string') {
-            this.filtration (res,data)
-          };
         } else {
           this.loadShow = false;
           let ErrTips = {};
@@ -283,51 +303,16 @@ export default {
         }
       });
     },
-    filtration (res,data) {
-      let tableListData = [];
-      let dataType = typeof data;
-      if (dataType == 'object') {
-        res.Response.Events.forEach((currentValue,index,arr) => {
-          if(arr[index].EventCName === data.values && data.names == "EventCName") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].InstanceId === data.values && data.names == "InstanceId") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          }
-        });
-      }else if (dataType == 'string' && this.OverViewBgcolor != 0){
-        
-        res.Response.Events.forEach((currentValue,index,arr) => {
-          if (arr[index].Type === "abnormal" && data == "Type") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].Status === "alarm" && data == "Status") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].IsAlarmConfig === 0 && data == "IsAlarmConfig") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          } else if (arr[index].Type === "status_change" && data == "Type") {
-            tableListData.push(arr[index])
-            this.tableData = tableListData;
-          }
-          
-        });
-        
-      }
-      
-      if(this.tableData.length < 1 ){
-        this.$message.error("請輸入正確搜索信息");
-        this.tableData = res.Response.Events; //列表数据
-      }else {
-        this.TotalCount = this.tableData.length;
-      }
-    },
-    //分页
+    // 分页
     handleCurrentChange(val) {
-      this.currpage = val;
-      this.getProductList()
+      this.pageIndex = val - 1;
+      this.getProductList();
+      this.pageIndex += 1;
+    },
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getProductList();
     },
     //弹框
     dialog() {
@@ -341,9 +326,9 @@ export default {
     },
     // 概览
     overViewClick (events,num,Trigger) {
-        if (num != this.OverViewBgcolor) {
-          this.getProductList(events);
+        if (this.OverViewBgcolor != num) {
           this.OverViewBgcolor = num;
+          this.getProductList(this.OverViewBgcolor);
         }else {
           switch (this.OverViewBgcolor) {
             case 1: 
@@ -361,12 +346,9 @@ export default {
           }
           if (!this.OverViewBgcolorTrigger) {
             this.OverViewBgcolor = 0;
-            this.getProductList();
+            this.getProductList(this.OverViewBgcolor);
           }
-        }
-        
-        
-           
+        }       
     },
     
     //导出表格

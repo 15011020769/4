@@ -114,7 +114,10 @@ export default {
         Metric: 'flux'
       })
         .then(({ Response }) => {
-          const flux = Response.Data[0].CdnData[0].SummarizedData.Value
+          let flux = 0
+          if (Response.Data && Response.Data.length) {
+            flux = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           this.flux = this.fluxStr(flux)
           this.getFluxChain(params, flux)
         })
@@ -127,7 +130,10 @@ export default {
         Metric: 'flux'
       })
         .then(({ Response }) => {
-          const lastFlux = Response.Data[0].CdnData[0].SummarizedData.Value
+          let lastFlux = 0
+          if (Response.Data && Response.Data.length) {
+            lastFlux = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           let fluxChain
           if (lastFlux !== 0) {
             fluxChain = (flux - lastFlux) / lastFlux * 100
@@ -148,7 +154,9 @@ export default {
         Metric: 'fluxHitRate'
       })
         .then(({ Response }) => {
-          this.fluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
+          if (Response.Data && Response.Data.length) {
+            this.fluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           this.getFluxHitRateChain(params)
         })
     },
@@ -160,7 +168,10 @@ export default {
         Metric: 'fluxHitRate'
       })
         .then(({ Response }) => {
-          const lastFluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
+          let lastFluxHitRate = 0
+          if (Response.Data && Response.Data.length) {
+            lastFluxHitRate = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           let fluxHitRateChain
           if (lastFluxHitRate !== 0) {
             fluxHitRateChain = (this.fluxHitRate - lastFluxHitRate) / lastFluxHitRate * 100
@@ -181,7 +192,9 @@ export default {
         Metric: 'request'
       })
         .then(({ Response }) => {
-          this.request = Response.Data[0].CdnData[0].SummarizedData.Value
+          if (Response.Data && Response.Data.length) {
+            this.request = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           this.getRequestChain(params)
         })
     },
@@ -193,7 +206,10 @@ export default {
         Metric: 'request'
       })
         .then(({ Response }) => {
-          const lastRequest = Response.Data[0].CdnData[0].SummarizedData.Value
+          let lastRequest = 0
+          if (Response.Data && Response.Data.length) {
+            lastRequest = Response.Data[0].CdnData[0].SummarizedData.Value
+          }
           let requestChain
           if (lastRequest !== 0) {
             requestChain = (this.request - lastRequest) / lastRequest * 100

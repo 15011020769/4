@@ -4,7 +4,11 @@
       {{t('攻击来源区域分布', 'WAF.gjlyqyfb')}}
       <span style="color:#bbb;">(次)</span>
     </h3>
-    <EMap :series="seriesMap" v-loading="loading" :max="50000" />
+    <EMap
+      :series="seriesMap"
+      v-loading="loading"
+      :pieces="pieces"
+    />
   </el-row>
 </template>
 <script>
@@ -44,6 +48,13 @@ export default {
     return {
       seriesMap: [],
       loading: true,
+      pieces: [
+        {gt: 1, lte: 999, label: '1~999',color: '#cfe4ff'},
+        {gt: 1000, lte: 4999, label: '1000~4999',color: '#a7cdff'},
+        {gt: 5000, lte: 19999, label: '5000~19999',color: '#76b1ff'},
+        {gt: 20000, lte: 49999, label: '20000~49999',color: '#3d91fe'},
+        {gt: 50000, label: '50000~',color: '#016eff'},
+      ],
     }
   },
   mounted() {

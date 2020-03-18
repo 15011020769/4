@@ -129,7 +129,7 @@ export default{
             let ErrTips = {};
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
-              message: ErrOr[res.Response.Error.Code],
+              message: ErrOr[res.Response.Error.Code] === 'FailedOperation.BalanceInsufficient' ? '餘額不足' : '購買失敗',
               type: "error",
               showClose: true,
               duration: 0

@@ -78,11 +78,15 @@
                   >
                 </div>
                 <div v-else-if="selectedSubarea == 'nat'">
-                  <span
+                  <!-- <span v-if="scope.row.PublicIpAddressSet.length ===1"> -->
+                    <!-- 參照騰訊云 只展示第一個 -->
+                    <span>
+                    {{ scope.row.PublicIpAddressSet[0].PublicIpAddress }}
+                  </span>
+                  <!-- <span v-else
                     v-for="(item, index) in scope.row.PublicIpAddressSet"
                     :key="index"
-                    >{{ item.PublicIpAddress }}</span
-                  >
+                    >{{ item.PublicIpAddress }}；</span> -->
                 </div>
               </template>
             </el-table-column>

@@ -663,14 +663,17 @@ export default {
             if (nodeRes.Response.InstanceSet.length > 0) {
               nodeRes.Response.InstanceSet.map(node => {
                 let resultList = dataResult[node.InstanceId];
-                if(resultList.length > 0) {
-                  if(resultList[resultList.length - 1][2]) {
-                    node.cpu = resultList[resultList.length - 1][2].toFixed(2);
-                  }
-                  if(resultList[resultList.length - 1][3]) {
-                    node.memory = (resultList[resultList.length - 1][3]/(1024*1024*1024)).toFixed(2);
+                if(resultList) {
+                  if(resultList.length > 0) {
+                    if(resultList[resultList.length - 1][2]) {
+                      node.cpu = resultList[resultList.length - 1][2].toFixed(2);
+                    }
+                    if(resultList[resultList.length - 1][3]) {
+                      node.memory = (resultList[resultList.length - 1][3]/(1024*1024*1024)).toFixed(2);
+                    }
                   }
                 }
+                
                 node.addTime = moment(node.CreatedTime).format(
                   "YYYY-MM-DD HH:mm:ss"
                 );

@@ -320,9 +320,6 @@ export default {
     //添加访问控制策略确定按钮
     addAccessContSure(isShow) {
       this.addAccessContModel = isShow;
-      setTimeout(() => {
-        this.describeCCSelfDefinePolicy();
-      }, 1500);
     },
     //编辑
     handelEdit(ccPolicy) {

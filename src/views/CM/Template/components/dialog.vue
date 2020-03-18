@@ -8,7 +8,8 @@
             <!-- v-model="formInline.strategy_name" -->
             <el-input
               style="width:330px;margin:0"
-              v-model="strategy_name"
+              maxlength="20"
+              v-model="formInline.strategy_name"
               placeholder="1-20个中英文字符或下划线"
             ></el-input>
           </el-form-item>
@@ -31,7 +32,8 @@
       </el-form>
       <p class="rowCont" style="display: flex">
         <span>策略类型</span>
-        <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type>
+        <product-type-cpt v-on:PassData="passData" />
+        <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-select v-model="formInline.strategy" style="width:200px;">
           <el-option
             v-for="(item,index) in formInline.strategy_kind"
@@ -80,8 +82,8 @@
                       <el-option
                         v-for="(item,index) in zhibiaoType"
                         :key="index"
-                        :label="item"
-                        :value="item"
+                        :label="item.label"
+                        :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -181,7 +183,8 @@
 </template>
 <script>
 import GroupingType from '@/components/GroupingType'
-import {  UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
+import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
+import { UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
 export default {
   data () {
     return {
@@ -204,6 +207,7 @@ export default {
       errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
+      productData: {}, // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
         jieshou: '接收组',
@@ -363,7 +367,7 @@ export default {
         '内网入带宽',
         '内网出带宽'
       ],
-      eventType:[//事件告警类型
+      eventType: [// 事件告警类型
         '磁盘只读',
         '内核故障',
         '内存oom',
@@ -389,15 +393,15 @@ export default {
         strategy_name: [
           {
             validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('名称不能为空'))
-              } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,20}$/.test(value))) {
-                callback(new Error('名称格式不正确'))
+              if (value.length === 0) {
+                callback(new Error('模板名称不能为空'))
+              } else if (value.length === 20) {
+                callback(new Error('模板名称不能超过 20 字'))
               } else {
                 callback()
               }
             },
-            trigger: 'blur',
+            trigger: 'change',
             required: true
           }
         ],
@@ -427,7 +431,8 @@ export default {
     }
   },
   components: {
-    GroupingType
+    // GroupingType,
+    ProductTypeCpt
   },
   props: {
     dialogVisible: {
@@ -464,6 +469,10 @@ export default {
     //     console.log(res)
     //   })
     // },
+    passData (item) {
+      this.productData = item
+      this.zhibiaoType = item.MetricName
+    },
     // 类型
     msgBtn (index) {
       this.liIndex = index

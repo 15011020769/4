@@ -575,11 +575,11 @@ export default {
         regionRadio: "region1",
         sshKeySel: "", //ssh秘钥
         security: "", //安全组
-        zoneInstanceConfigInfo: "", //机型
+        zoneInstanceConfigInfo: "S3.SMALL2(標準型S3,1核2GB)", //机型
         minSize: "", //最小节点数量
         maxSize: "", //最大节点数
         restart: "IMMEDIATE_RETRY", //重试策略
-        instanceType: "", //机器类型
+        instanceType: "S3.SMALL1", //机器类型
         diskType: "CLOUD_PREMIUM", //云盘类型
         groupVps: "", //支持的网络
         diskCapacity: 50, //系统盘容量
@@ -1050,7 +1050,7 @@ export default {
     },
     //机型model确定选择数据
     ModelSure() {
-      let modeData = this.modeData;
+      var modeData = this.modeData;
       this.asg.zoneInstanceConfigInfo =
         modeData.InstanceType +
         "(" +

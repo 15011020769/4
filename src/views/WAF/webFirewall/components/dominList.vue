@@ -76,14 +76,8 @@
           </el-table-column>
           <el-table-column prop="domin" label="域名/ID">
             <template slot-scope="scope">
-              <el-link type="primary">{{ scope.row.Domain }}</el-link>
-              <p>
-                {{ scope.row.DomainId }}
-                <i
-                  v-if="abnormal.includes(scope.row.State)"
-                  class="el-icon-loading"
-                /><i v-if="scope.row.State === 0" class="el-icon-success" />
-              </p>
+              <el-link type="primary" @click.native.prevent="toProtectConfig(scope.row)">{{scope.row.Domain}}</el-link>
+              <p>{{scope.row.DomainId}} <i v-if="abnormal.includes(scope.row.State)" class="el-icon-loading" /><i v-if="scope.row.State === 0" class="el-icon-success" /></p>
             </template>
           </el-table-column>
           <el-table-column prop="proStatus" width="120">

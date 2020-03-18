@@ -43,6 +43,7 @@
               :data="tableData.slice((currentPage - 1) * pageSize, currentPage * pageSize)"
               v-if="listSelect == 'resourceList'"
               v-loading="loading"
+              height="460"
               empty-text="暫無數據"
             >
               <el-table-column prop="Record" :label="$t('DDOS.AssetList.AssetListName')">
@@ -164,7 +165,7 @@
                   <a
                     class="marginRightA"
                     href="#"
-                    @click="lookReportList(scope.row)"
+                    @click="lookReportList(scope.row.Record)"
                   >{{ $t("DDOS.AssetList.CheckReport") }}</a>
                 </template>
               </el-table-column>
@@ -203,12 +204,23 @@
                 </template>
               </el-table-column>
               <el-table-column prop="nowIp" :label="$t('DDOS.AssetList.currentIp')">
+                <!-- 当前IP-->
                 <template slot-scope="scope">
                   <div v-for="(item, index) in scope.row.Record" :key="index">
-                    <div v-if="item.Key == 'IPText'">
-                      <span>{{ item.Value[0] }}</span>
+                    <div v-if="item.Key == 'GroupIpList'">
+                      <div v-for="(item2, index2) in item.Value.split(';')" :key="index2+'i'">
+                        <div v-for="(item3, index3) in scope.row.Record" :key="index3+'j'">
+                          <div v-if="item3.Key == 'CurrentGroup'">
+                            <div v-if="item2.indexOf('-'+item3.Value+'-')>-1">
+                              {{ item2.substring(0, item2.indexOf('-')) }}
+                              <span style="color: #999;">
+                                {{ item2.substring(item2.indexOf('-')+1, item2.indexOf('-', item2.indexOf('-')+1)) == 'tpe'?'台湾台北(BGP)':item2.substring(item2.indexOf('-')+1, item2.indexOf('-', 2)) }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <!-- IP地址-->
                   </div>
                 </template>
               </el-table-column>
@@ -268,7 +280,7 @@
                   <a
                     class="marginRightA"
                     href="#"
-                    @click="lookReportList(scope.row)"
+                    @click="lookReportList(scope.row.Record)"
                   >{{ $t("DDOS.AssetList.CheckReport") }}</a>
                 </template>
               </el-table-column>
@@ -487,7 +499,7 @@ export default {
       this.describeResourceList();
     },
     // 1.1.获取资源列表接口
-    describeResourceList() {
+    async describeResourceList() {
       this.loading = true;
       let params = {
         Version: "2018-07-09",
@@ -524,7 +536,7 @@ export default {
         }
       }
       // -----调用接口-----
-      this.axios.post(RESOURCE_LIST, params).then(res => {
+      await this.axios.post(RESOURCE_LIST, params).then(res => {
         // console.log(params, res);
         this.tableData = res.Response.ServicePacks;
         this.totalItems = res.Response.Total;
@@ -572,7 +584,7 @@ export default {
       });
     },
     // 1.2.获取资源的规则数接口
-    describeRuleSets() {
+    async describeRuleSets() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -585,7 +597,7 @@ export default {
           }
         }
       }
-      this.axios.post(RULESETS_CONT, params).then(res => {
+      await this.axios.post(RULESETS_CONT, params).then(res => {
         // console.log(params, res)
         this.ruleSets = res.Response;
         // 循环tableData
@@ -606,7 +618,8 @@ export default {
                         // 将RuleNameList的值添加进tableData
                         item.RuleNameList = map3.Value;
                       } else if (map3.Key == "RuleNum") {
-                        item.RuleNum = map3.Value;
+                        // item.RuleNum = map3.Value;
+                        this.$set(item, 'RuleNum', map3.Value);
                       }
                     });
                   }
@@ -936,7 +949,6 @@ export default {
         });
         this.dialogConfigModel = true;
       }, 1000);
-      
     },
     // 防护配置弹框关闭按钮
     closeConfigModel(isShow) {
@@ -944,9 +956,21 @@ export default {
       this.describeResourceList();
     },
     // 查看报表跳转页面
-    lookReportList() {
+    lookReportList(record) {
+      let resId = "";
+      for (const i in record) {
+        if (record.hasOwnProperty(i)) {
+          const element = record[i];
+          if (element.Key == "Id") {
+            resId = element.Value;
+          }
+        }
+      }
       this.$router.push({
-        path: "/IpProfessional"
+        path: "/IpProfessional",
+        query: {
+          selectId: resId
+        }
       });
     },
 

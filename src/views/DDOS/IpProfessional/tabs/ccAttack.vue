@@ -25,6 +25,8 @@
             range-separator="至"
             :start-placeholder="$t('DDOS.UnsealCode.beginDate')"
             :end-placeholder="$t('DDOS.UnsealCode.overDate')"
+            :picker-options="pickerOptions"
+            :default-time="defTime"
           ></el-date-picker>
         </div>
         <br />
@@ -117,6 +119,7 @@ import { GET_ID, CC_LIST, CC_DATA } from "@/constants";
 import moment from "moment";
 export default {
   data() {
+    let that = this
     return {
       loading: true,
       inputIdCC: "",
@@ -172,9 +175,35 @@ export default {
           title: "Halfayear"
         }
       ],
-      inqpsdata: []
-
-    };
+      inqpsdata: [],
+      // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
+      chclikMinDate: '',
+      chclikMaxDate: '',
+      defTime: ['00:00:00', '23:59:59'],
+      pickerOptions: { // 时间选择控件限制选择范围
+        disabledDate (date) {
+          let nowDate = moment(Date.now()).hour(23).minute(59).second(59).toDate().getTime()
+          let Date6Moths = moment(Date.now()).subtract(181, 'days').toDate().getTime()
+          if (that.chclikMinDate === '') {
+            return date.getTime() < Date6Moths || date.getTime() > nowDate
+          } else {
+            if (that.chclikMaxDate === '') {
+              let maxDate = moment(that.chclikMinDate).add(30, 'days').toDate().getTime()
+              let minDate = moment(that.chclikMinDate).subtract(30, 'days').toDate().getTime()
+              minDate = minDate < Date6Moths ? Date6Moths : minDate
+              maxDate = maxDate > nowDate ? nowDate : maxDate
+              return date.getTime() > maxDate || date.getTime() < minDate || date.getTime() > nowDate || date.getTime() < Date6Moths
+            } else {
+              return date.getTime() < Date6Moths || date.getTime() > nowDate
+            }
+          }
+        },
+        onPick ({ maxDate, minDate }) {
+          that.chclikMinDate = minDate
+          that.chclikMaxDate = maxDate === null ? '' : maxDate
+        }
+      }
+    }
   },
   watch: {
     dateChoice2: function(value) {
@@ -208,7 +237,7 @@ export default {
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1]).add(1, 'd')
+        let maxDate = moment(value[1])
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
@@ -244,12 +273,13 @@ export default {
       this.changeIdCC()
     },
     ccTimeBtnSelect2() {
-       this.changeIp()
+      this.changeIp()
     }
   },
   created() {
     this.$nextTick(function() {
-      this.GetID();
+      this.GetID()
+      // this.thisTime(1)
     });
   },
   methods: {
@@ -272,27 +302,27 @@ export default {
             this.loading = false
             return
           }
-          this.ResIpList = res.Response.Resource;
-          this.inputIdCC = res.Response.Resource[0].Id;
+          this.ResIpList = res.Response.Resource
+          this.inputIdCC = res.Response.Resource[0].Id
           for (const i in this.ResIpList) {
-        if (this.ResIpList.hasOwnProperty(i)) {
-          const element = this.ResIpList[i];
-          if(this.inputIdCC == element.Id){
-            Object.assign(this.IpList, element.IpList)
+            if (this.ResIpList.hasOwnProperty(i)) {
+              const element = this.ResIpList[i]
+              if (this.inputIdCC === element.Id) {
+                Object.assign(this.IpList, element.IpList)
+              }
+            }
           }
+          this.thisTime(1)
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
         }
-      }
-          this.thisTime('1')
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
       });
     },
     // CC资源Id变化时，重新获取数据
@@ -301,22 +331,24 @@ export default {
       for (const i in this.ResIpList) {
         if (this.ResIpList.hasOwnProperty(i)) {
           const element = this.ResIpList[i];
-          if(this.inputIdCC == element.Id){
+          if (this.inputIdCC === element.Id) {
             Object.assign(this.IpList, element.IpList)
           }
         }
       }
       // 资源ID改变时，IP默认为总览
       this.ccTimeBtnSelect2 = this.IpList[0]
-      this.getDataCC();
+      this.thisTime(1)
+      this.getDataCC()
     },
-     // DDOS资源Ip变化时，重新获取数据
+    // DDOS资源Ip变化时，重新获取数据
     changeIp() {
       this.getDataCC()
     },
     getDataCC() {
-      this.thisTime('1');
-      this.describeCCEvList();
+      // this.thisTime(1)
+      this.describeCCEvList()
+      this.every()
     },
     every() {
       for (let index in this.metricNameCCs) {
@@ -329,8 +361,8 @@ export default {
       );
     },
     // 2.2.获取 CC 攻击事件列表
-    describeCCEvList() {
-      this.loading = true;
+    describeCCEvList () {
+      this.loading = true
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -344,10 +376,13 @@ export default {
       // })
       params['IpList.0'] = this.ccTimeBtnSelect2
       this.axios.post(CC_LIST, params).then(res => {
-        this.tableDataOfDescribeDDoSNetEvListcc = res.Response.Data
-        this.totalItems = res.Response.Data.length;
-        this.loading = false;
-      });
+        if (res.Response.Error === undefined) {
+          this.tableDataOfDescribeDDoSNetEvListcc = res.Response.Data
+          this.totalItems = res.Response.Data.length
+          // this.loading = false
+        }
+        this.loading = false
+      })
     },
     handleSizeChange(val) {
       this.pageSize = val;

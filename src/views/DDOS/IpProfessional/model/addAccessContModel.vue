@@ -3,7 +3,7 @@
     <div>
       <el-dialog
         class="addAccessModel"
-        :title="$t('DDOS.accessCopy.AddAsk')"
+        :title="editFlag ? $t('DDOS.accessCopy.EditAsk') : $t('DDOS.accessCopy.AddAsk')"
         :visible.sync="dislogModelShow"
         width="40%"
         :before-close="handleClose">
@@ -193,11 +193,11 @@ export default {
           this.$message.error('添加失敗');
           return
         }
-        this.$emit('init')
+        this.$emit('init');
       });
     },
     // 1.2.修改CC自定义策略
-    modifyCCSelfDefinePolicy() {
+    async modifyCCSelfDefinePolicy() {
       let params = {
         Version: "2018-07-09",
         Region: localStorage.getItem("regionv2"),
@@ -240,7 +240,7 @@ export default {
           return
         }
       }
-      this.axios.post(CCSELFDEFINEPOLICY_MODIFY, params).then(res => {
+      await this.axios.post(CCSELFDEFINEPOLICY_MODIFY, params).then(res => {
         // console.log(params, res);
         if(res.Response.Error !== undefined && res.Response.Error.Message == "speedlimit must less than 1"){
           this.$message({
@@ -264,6 +264,7 @@ export default {
           this.$emit("addAccessContSure",this.dialogVisible);
         }
       });
+      this.$emit('init');
     },
     //弹框关闭按钮
     handleClose(){

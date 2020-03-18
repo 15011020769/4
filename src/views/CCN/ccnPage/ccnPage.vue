@@ -98,8 +98,8 @@
               $t('CCN.total.td1')
               }}
             </el-button>
-             <el-button @click="modifyLabels(scope.row)" type="text" size="small">
-             编辑标签
+            <el-button @click="modifyLabels(scope.row)" type="text" size="small">
+              编辑标签
             </el-button>
             <el-button type="text" size="small" @click="deleteCcn(scope.row)">
               {{
@@ -288,7 +288,7 @@
         <el-button type="primary" @click="upTags(tags)">{{ $t('CCN.total.sure') }}</el-button>
       </div>
     </el-dialog>
-    <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'  ></editLabel>
+    <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'></editLabel>
   </div>
 </template>
 
@@ -311,8 +311,8 @@
   export default {
     data() {
       return {
-        dialogVisible:false,//编辑标签
-        labelsInfo:{},//编辑标签所需要信息
+        dialogVisible: false, //编辑标签
+        labelsInfo: {}, //编辑标签所需要信息
         newCreateshow: false,
         delload: false,
         tableload: true,
@@ -370,12 +370,12 @@
       this.getData();
     },
     methods: {
-        //编辑标签
-      modifyLabels(row){
-        this.dialogVisible=true;
-        this.labelsInfo={
-          TagSet:row.TagSet,
-          resourceId:row.CcnId
+      //编辑标签
+      modifyLabels(row) {
+        this.dialogVisible = true;
+        this.labelsInfo = {
+          TagSet: row.TagSet,
+          resourceId: row.CcnId
         }
       },
       //取消修改姓名
@@ -594,8 +594,8 @@
           }
         });
       },
-    
-     
+
+
       // 删除ccn弹窗
       deleteCcn(ccnDetail) {
         this.gridData[0].CcnId = ccnDetail.CcnId;
@@ -640,7 +640,6 @@
       // 修改名称弹窗
       updateName(ccnDetail) {
         this.ccnPublic = ccnDetail;
-        this.tableload = true;
         this.updateNameVisible = true;
       },
       // 修改备注弹窗
@@ -782,7 +781,7 @@
         this.dialogTagVisible = false;
       }
     },
-    components:{
+    components: {
       editLabel
     }
   };

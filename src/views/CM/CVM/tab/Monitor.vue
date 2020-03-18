@@ -288,6 +288,54 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
+            if (this.Period == 10) {
+              this.available = [
+                'AccOuttraffic',
+                'BaseCpuUsage',
+                'Cpuloadavg15m',
+                'Cpuloadavg5m',
+                'CpuLoadavg',
+                'CpuUsage',
+                'DiskIoAwait',
+                'LanInpkg',
+                'LanIntraffic',
+                'LanOutpkg',
+                'LanOuttraffic',
+                'MemUsage',
+                'MemUsed',
+                'TcpCurrEstab',
+                'WanInpkg',
+                'WanIntraffic',
+                'WanOutpkg',
+                'WanOuttraffic'
+              ] //可用指标
+            } else {
+              this.available = [
+                'AccOuttraffic',
+                'BaseCpuUsage',
+                'Cpuloadavg15m',
+                'Cpuloadavg5m',
+                'CpuLoadavg',
+                'CpuUsage',
+                'DiskIoAwait',
+                'DiskReadIops',
+                'DiskReadTrafficNew',
+                'DiskSvctm',
+                'DiskUtil',
+                'DiskWriteTrafficNew',
+                'LanInpkg',
+                'LanIntraffic',
+                'LanOutpkg',
+                'LanOuttraffic',
+                'MemUsage',
+                'MemUsed',
+                'TcpCurrEstab',
+                'WanInpkg',
+                'WanIntraffic',
+                'WanOutpkg',
+                'WanOuttraffic'
+              ] //可用指标
+            }
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
@@ -295,7 +343,9 @@
                 if (item.MetricName === element) {
                   if (item.Period.indexOf(Number(this.Period)) !== -1) {
                     this.BaseListK.push(item)
-                    this._GetMonitorData(item.MetricName)
+                    setTimeout(() => {
+                      this._GetMonitorData(item.MetricName)
+                    }, 500);
                   }
                 }
               });

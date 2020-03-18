@@ -12,6 +12,7 @@
           </el-form-item>
           <el-form-item label="備註" prop="Remark">
             <el-input v-model="userInfo.Remark" style="width: 330px"></el-input>
+            <p style="color: #888;">100個英文字母、數字或漢字以內，支持@、._[]-:</p>
           </el-form-item>
         </el-form>
         <!--<table width="100%" boder="1" cellspacing="0" cellpadding="1">
@@ -115,13 +116,13 @@ export default {
       userData: {}, //用户信息
       userInp: false, //用户信息input
       rules: {
-        Remark:[
-          { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
-          {
-            pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
-            message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
-          }
-        ]
+        // Remark:[
+        //   { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
+        //   {
+        //     pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
+        //     message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
+        //   }
+        // ]
       }
     };
   },

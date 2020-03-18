@@ -71,7 +71,12 @@
               ></el-option>
             </el-select>  
         </el-row>
-      <world-map :series="seriesWorldMap" v-if="radio == 'global'" v-loading="loading" :max="100"/>
+      <world-map
+        :series="seriesWorldMap"
+        v-if="radio == 'global'"
+        v-loading="loading"
+        :pieces="pieces"
+      />
       <china-map :series="seriesWorldMap" v-else v-loading="loading"/>
     </div>
   </div>
@@ -123,6 +128,13 @@ export default {
           return relVal;  
         }
       },
+      pieces: [
+        {gt: 1, lte: 20, label: '1~20',color: '#cfe4ff'},
+        {gt: 21, lte: 40, label: '21~40',color: '#a7cdff'},
+        {gt: 41, lte: 60, label: '41~60',color: '#76b1ff'},
+        {gt: 61, lte: 80, label: '61~80',color: '#3d91fe'},
+        {gt: 81, lte: 100, label: '81~100',color: '#016eff'},
+      ],
     }
   },
   props: {

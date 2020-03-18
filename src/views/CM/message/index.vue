@@ -18,7 +18,7 @@
         <el-row class="seek">
           <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
           <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
-          <!-- 设置框---已完成 -->
+          <!-- 设置框---已完成---uat功能暂无 -->
           <!-- <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
@@ -34,12 +34,36 @@
         v-loading="loadShow"
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
-        <el-table-column prop="groupName" label="ID/策略名"></el-table-column>
-        <el-table-column prop="chufa" label="近24小时触发告警"></el-table-column>
-        <el-table-column prop="type" label="消息接收组"></el-table-column>
-        <el-table-column prop="address" label="告警渠道"></el-table-column>
+        <el-table-column prop="groupName" label="ID/策略名">
+          <template slot-scope="scope">
+            <p>
+              <b>{{scope.row.PolicyID}}</b>
+            </p>
+            <p>{{scope.row.PolicyName}}</p>
+          </template>
+        </el-table-column>
+        <el-table-column prop="chufa" label="近24小时触发告警">
+          <template slot-scope="scope">
+            <a @click="alarmDialog">{{scope.row.AlarmCount}}</a>
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" label="消息接收组">
+          <template slot-scope="scope">
+            <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a>
+          </template>
+        </el-table-column>
+        <el-table-column prop="address" label="告警渠道">
+          <template slot-scope="scope">
+            <p v-if="scope.row.NotifyWay">
+              <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
+                <b v-if="v=='EMAIL'">邮件、</b>
+                <b v-if="v=='SMS'">短信</b>
+              </span>
+            </p>
+            <p v-if="scope.row.NotifyWay==''">-</p>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
-          <!-- <template slot-scope="scope"> -->
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Edit(scope.row)">编辑</el-button>
             <el-button type="text" class="deleteBtn" @click="Delete(scope.row)">删除</el-button>
@@ -74,6 +98,37 @@
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 接收组 -->
+    <el-dialog
+      title="消息接收组详情"
+      :visible.sync="deleteDialogVisible1"
+      width="500px"
+      custom-class="tke-dialog"
+    >
+      <div>
+        <p>策略名：{{groups.PolicyName}}</p>
+        <div>
+          接收组：
+          <el-table :data="lists" style="width: 490px" height="100">
+            <el-table-column prop="index" label="序号">
+              <template slot-scope="scope">
+                111
+              </template>
+            </el-table-column>
+            <el-table-column prop="chufa" label="接收人">
+              <template slot-scope="scope">22222</template>
+            </el-table-column>
+            <el-table-column prop="type" label="接收组">
+              <template slot-scope="scope">3333</template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="ok">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -85,111 +140,15 @@ import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import {
   CUSTON_MESSAGE_LIST,
-  DETELE_CUSTON_MESSAGE
+  DETELE_CUSTON_MESSAGE,
+  RECEIVING_GROUP_DETAILE
 } from "@/constants/CM-lxx.js";
 
 export default {
   name: "message",
   data() {
     return {
-      tableData: [
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "3/3",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:52:55",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "0/0",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 13:21:32",
-          qudao: "",
-          zanting: true
-        },
-        {
-          address: "邮件",
-          grounpId: 3290043,
-          groupName: "啊啊啊",
-          isOpen: true,
-          chufa: "0",
-          object: "東崋雲计算有限公司",
-          type: "1",
-          YS: "15/15",
-          yiqiying: 3,
-          shilishu: 3,
-          lastEditUin: 100011921910,
-          changeData: "2019/12/31 7:16:46",
-          qudao: "",
-          zanting: true
-        }
-      ], //表格数据
+      tableData: [], //表格数据
       //分页
       loadShow: true, // 加载是否显示
       TotalCount: 0, //总条数
@@ -199,8 +158,10 @@ export default {
       searchName: "",
       dialogVisible: false, //设置弹出框
       triggerInput: "", //搜索
-      deleteDialogVisible: false
-      //分页
+      deleteDialogVisible: false,
+      deleteDialogVisible1: false,
+      groups: {},
+      lists: [] 
     };
   },
   components: {
@@ -220,16 +181,12 @@ export default {
         Version: "2018-07-24",
         Module: "monitor"
       };
-      // params.ObjLike = this.input;
-      // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
-      // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
-      this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
-        console.log(res.Response.Alarms, "数据");
-        if (res.Response.Error === undefined) {
-          // this.tableData = res.Response.Alarms;
-          // this.TotalCount = res.Response.Alarms.length;
 
-          // this.showNameSpaceModal = false;
+      this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
+        // console.log(res.Response.PolicyList, "数据");
+        if (res.Response.Error === undefined) {
+          this.tableData = res.Response.PolicyList;
+          this.TotalCount = res.Response.Total;
           this.loadShow = false; //取消加载
         } else {
           this.loadShow = false;
@@ -243,6 +200,41 @@ export default {
           });
         }
       });
+    },
+    receiverGroup(val) {
+      //接收组
+      console.log(val.ReceiverGroupIds);
+      this.groups = val;
+      this.groups.ReceiverGroupIds.forEach((item, index) => {
+        var params = {
+          Version: "2018-07-24",
+          GroupId: item
+        };
+        this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
+          if (res.Response.Error === undefined) {
+            console.log(res);
+            this.lists.push();
+            // this.deleteDialogVisible1 = false;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      });
+
+      this.deleteDialogVisible1 = true;
+    },
+    ok() {
+      // 确定接收组
+    },
+    alarmDialog() {
+      //触发告警
     },
     // 删除
     Delete(row) {

@@ -24,8 +24,8 @@
       >
         <el-table-column prop label="模板名称">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.groupName}`">
-              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{scope.row.groupName}}</span>
+            <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.GroupName}`">
+              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID,scope.row.GroupName)">{{scope.row.GroupName}}</span>
             </el-popover>
             <i class="el-icon-edit ml5" @click="showEditNameDlg(scope.row)" style="cursor:pointer"></i>
           </template>
@@ -35,26 +35,26 @@
             <el-popover trigger="hover" placement="right">
               <div>
                 <p style="color:#999;font-size:12px">指标告警(任意):</p>
-                <p v-for="(it,i) in scope.row.conditions" :key="i" style="font-size:12px">
-                  {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}</p>
+                <p v-for="(it,i) in scope.row.Conditions" :key="i" style="font-size:12px">
+                  {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}</p>
               </div>
               <div>
                 <p style="color:#999;font-size:12px">事件告警:</p>
-                <p v-for="(it,i) in scope.row.eventConditions" :key="i" style="font-size:12px">
-                  {{ `${it.eventShowName},不重复告警` }}</p>
+                <p v-for="(it,i) in scope.row.EventConditions" :key="i" style="font-size:12px">
+                  {{ `${it.EventDisplayName},不重复告警` }}</p>
               </div>
               <div slot="reference" class="name-wrapper">
-                <p class="textEps" v-for="items in scope.row.conditions.slice(0,3)" :key="items.metricShowName">
-                  {{ `${items.metricShowName}
-                      ${items.calcType}
-                      ${items.calcValue}
-                      ${items.unit},持续
-                      ${items.continueTime/60}分钟,
-                      ${items.calcType}` }}
+                <p class="textEps" v-for="items in scope.row.Conditions.slice(0,3)" :key="items.MetricDisplayName">
+                  {{ `${items.MetricDisplayName}
+                      ${items.CalcType}
+                      ${items.CalcValue}
+                      ${items.Unit},持续
+                      ${items.ContinueTime/60}分钟,
+                      ${items.alarm}` }}
                 </p>
                 <p class="textEps"
-                 v-for="items in scope.row.eventConditions.slice(0,3-scope.row.conditions.length<=0?0:3-scope.row.conditions.length)" :key="items.eventShowName">
-                  {{ `${items.eventShowName},不重复告警` }}
+                 v-for="items in scope.row.EventConditions.slice(0,3-scope.row.Conditions.length<=0?0:3-scope.row.Conditions.length)" :key="items.EventDisplayName">
+                  {{ `${items.EventDisplayName},不重复告警` }}
                 </p>
               </div>
             </el-popover>
@@ -67,28 +67,28 @@
         </el-table-column>
         <el-table-column prop label="备注">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" :content="scope.row.remark||'-'">
-              <span class="textEps" slot="reference">{{scope.row.remark || '-'}}</span>
+            <el-popover trigger="hover" placement="right" :content="scope.row.Remark||'-'">
+              <span class="textEps" slot="reference">{{scope.row.Remark || '-'}}</span>
             </el-popover>
           </template>
         </el-table-column>
         <el-table-column prop label="绑定告警策略数">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" content="点击查看详情">
-              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.groupId)">{{`${scope.row.policyGroups.length}个`}}</span>
+              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID)">{{`${scope.row.PolicyGroups.length}个`}}</span>
             </el-popover>
           </template>
         </el-table-column>
         <el-table-column prop sortable label="最后修改">
           <template slot-scope="scope">
-            <p>{{ scope.row.lastEditUin }}</p>
-            <p>{{ scope.row.updateTime | formatDate }}</p>
+            <p>{{ scope.row.LastEditUin }}</p>
+            <p>{{ scope.row.UpdateTime | formatDate }}</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row.groupId,scope.row,groupName)">复制</el-button>
-            <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.groupId)">删除</el-button>
+            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row)">复制</el-button>
+            <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.GroupID)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -153,8 +153,7 @@ import {
   DELETE_TEMPLATE,
   GET_POLICY_GROUP_TYPE,
   GET_CONDITIONSTEMPLATELIST,
-  MODIFYPOLICYGROUPINFO,
-  GET_TEMPLATE_LIST
+  MODIFYPOLICYGROUPINFO
 } from '@/constants/CM-yhs.js'
 export default {
   name: 'Template',
@@ -172,6 +171,7 @@ export default {
       editGroupName: '', // 编辑的模板名称
       editGroupId: '', // 编辑的模板id
       // templateObj: {}, // 当前模板数据对象
+      Conditions: [], // 策略类型
       formInline: {
         product_kind: [
           {
@@ -332,24 +332,7 @@ export default {
       currpage: 0, // 当前页码
       operationFlag: -1, // 按钮禁用开关
       searchName: '',
-      triggerInput: '', // 触发条件模板名
-      // rules: {// 验证名字
-        // groupName: [
-        //   {
-        //     validator: (rule, value, callback) => {
-        //       if (value === '') {
-        //         callback(new Error('名称不能为空'))
-        //       } else if (!(/^[\u4e00-\u9fa5_a-zA-Z_]{1,19}$/.test(value))) {
-        //         callback(new Error('条件模板名称不能超过20个字符'))
-        //       } else {
-        //         callback()
-        //       }
-        //     },
-        //     trigger: 'change',
-        //     required: true
-        //   }
-        // ]
-      // }
+      triggerInput: '' // 触发条件模板名
     }
   },
   components: {
@@ -359,88 +342,89 @@ export default {
   },
   created () {
     // this.getReportUserLastVisit()
-    this.getListData()
-    // console.log(this.upTime(1583490304))
+    this.getDataInit()
   },
   methods: {
+    async getDataInit () {
+      await this.getPolicyType()
+      await this.getTemplateList()
+    },
     // 打开弹窗时的回调
     openDialogEvent () {
       this.getTemplateList()
     },
-    // 获取触发条件列表
-    async getTemplateList () {
+    // 获取策略类型
+    async getPolicyType  () {
+      this.loadShow = true
       let params = {
         Version: '2018-07-24',
         Module: 'monitor'
       }
-      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
-        console.log(res)
+      this.loadShow = true
+      await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.Conditions = res.Response.Conditions
+          // console.log(this.Conditions)
+          this.loadShow = false
+        } else {
+          this.loadShow = false
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
       })
     },
-    // 获取列表数据
-    async getListData () {
+    // 获取触发条件列表
+    async getTemplateList () {
       this.loadShow = true
       let params = {
-        groupName: '',
-        lang: 'zh',
-        limit: this.pageSize,
-        offset: this.currpage
-        // Version: '2018-07-24'
+        Version: '2018-07-24',
+        Module: 'monitor'
+
       }
-      if (this.triggerInput !== '') params.groupName = this.triggerInput
-      await this.axios.post(GET_TEMPLATE_LIST, params).then(res => {
-        // console.log(res.data.templateGroupList)
-        this.TotalCount = res.data.total
-        let msg = res.data.templateGroupList
-        let params = {
-          Version: '2018-07-24',
-          // Region:"",
-          Module: 'monitor'
-        }
-        this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
-          // console.log(res.Response.Conditions)
-          if (res.Response.Error === undefined) {
-            let Conditions = res.Response.Conditions
-            for (let i in msg) {
-              for (let j in Conditions) {
-                if (msg[i].viewName === Conditions[j].PolicyViewName) {
-                  msg[i]['Name'] = Conditions[j].Name
-                }
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          // console.log(res)
+          let msg = res.Response.TemplateGroupList
+          let ct = this.Conditions
+          for (let i in msg) {
+            for (let j in ct) {
+              if (msg[i].ViewName === ct[j].PolicyViewName) {
+                msg[i]['Name'] = ct[j].Name
               }
             }
-            msg.forEach(ele => {
-              ele.conditions.forEach((item, i) => {
-                item.calcType = this.SymbolList[item.calcType - 1]// 符号
-                let time1 = item.alarmNotifyPeriod / 60
-                let time2 = item.alarmNotifyPeriod / (60 * 60)
-                // 告警模式
-                if (item.alarmNotifyPeriod == 0 && item.alarmNotifyType == 0) {
-                  item.alarm = '不重复告警'
-                } else if (item.alarmNotifyType == 1) {
-                  item.alarm = '按周期指数递增重复告警'
-                } else if (item.alarmNotifyPeriod > 0 && time1 < 30) {
-                  item.alarm = `按${time1}分钟重复告警`
-                } else if (item.alarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
-                  item.alarm = `按${time2}小时重复告警`
-                } else {
-                  item.alarm = '按1天重复告警'
-                }
-              })
-            })
-            this.tableData = msg
-            this.loadShow = false
-          } else {
-            this.loadShow = false
-            let ErrTips = {}
-            let ErrOr = Object.assign(ErrorTips, ErrTips)
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: 'error',
-              showClose: true,
-              duration: 0
-            })
           }
-        })
+          msg.forEach(ele => {
+            ele.Conditions.forEach((item, i) => {
+              let ct = Number(item.CalcType)
+              let anp = item.AlarmNotifyPeriod
+              item.CalcType = this.SymbolList[ct - 1]
+              let time1 = anp / 60
+              let time2 = anp / (60 * 60)
+              if (anp == 0 && item.AlarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.AlarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (anp > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (anp > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+          })
+          this.tableData = msg
+          this.loadShow = false
+        } else {
+          this.loadShow = false
+          this.submitDelete(res)
+        }
       })
     },
     // 格式化时间
@@ -451,12 +435,12 @@ export default {
     clickSerch (val) {
       // console.log(val)
       this.triggerInput = val
-      this.getListData()
+      this.getTemplateList()
     },
     // 编辑模板名称按钮
     showEditNameDlg (obj) {
-      this.editGroupName = obj.groupName
-      this.editGroupId = obj.groupId
+      this.editGroupName = obj.GroupName
+      this.editGroupId = obj.GroupID
       this.ShowEditDialog = true
       // this.templateObj = obj
     },
@@ -475,18 +459,17 @@ export default {
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         if (res.Response.Error === undefined) {
           this.ShowEditDialog = false
-          this.getListData()
+          this.getTemplateList()
         } else {
           this.errorPrompt(res)
         }
       })
     },
     // 复制按钮
-    copyBtn (id, name) {
+    copyBtn (row) {
       this.showCopyDialog = true
-      this.groupId = id
-      this.groupName = name.groupName
-      console.log(id)
+      this.groupId = row.GroupID
+      this.groupName = row.GroupName
     },
     // 复制数据完成
     async coptData () {
@@ -501,7 +484,7 @@ export default {
       await this.axios.post(COPY_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
           this.showCopyDialog = false
-          this.getListData()
+          this.getTemplateList()
           // console.log(res)
           this.$message.success('复制成功')
           this.loadShow = false
@@ -530,7 +513,7 @@ export default {
       }
       await this.axios.post(DELETE_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.getListData()
+          this.getTemplateList()
           this.showDelDialog = false
           this.$message.success('删除成功')
         } else {
@@ -587,13 +570,15 @@ export default {
       })
     },
     // 去详情页
-    goDetail (id) {
+    goDetail (id, name) {
       this.$router.push({
         // name: 'TemplateDetail',
         // query: {
-        //   grounpId: id
+        //   groupId: id,
+        //   groupName: name
         // }
         path: `/Template/Detail/index/${id}`
+        // params: { groupName: name }
       })
     },
     // 设置弹框//新建实例分组
@@ -627,11 +612,11 @@ export default {
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
-      this.getListData()
+      this.getTemplateList()
     },
     handleSizesChange (val) {
       this.pageSize = val
-      this.getListData()
+      this.getTemplateList()
     }
   },
   filters: {

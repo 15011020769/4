@@ -65,6 +65,7 @@
                 v-model="ruleForm.Remark"
                 :placeholder="$t('CAM.userList.userRemarkPlaceholder')"
               ></el-input>
+              <p style="color: #888;">100個英文字母、數字或漢字以內，支持@、._[]-:</p>
             </el-form-item>
             <el-form-item :label="$t('CAM.userList.askWay')" required>
               <el-checkbox-group v-model="ruleForm.type" @change="_visitType" class="check">
@@ -232,13 +233,13 @@ export default {
             trigger: "blur"
           }
         ],
-        Remark:[
-          { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
-          {
-            pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
-            message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
-          }
-        ]
+        // Remark:[
+        //   { max: 100, message: "100個英文字母、數字或漢字以內，支持@、._[]-:" },
+        //   {
+        //     pattern: /^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g,
+        //     message: "100個英文字母、數字或漢字以內，支持@、._[]-:"
+        //   }
+        // ]
       }, //规则
       userpolicyData: {},
       //步骤三表格页数
@@ -523,6 +524,7 @@ export default {
         return
       }
       if (this.active === 3) {
+        // console.log(object)
         if (this.ruleForm.Remark && !/^[\u4E00-\u9FFFa-zA-Z0-9@_、.\-:\[\]]+$/g.test(this.ruleForm.Remark)) {
            this.$message({
             showClose: true,

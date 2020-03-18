@@ -45,6 +45,7 @@
           :start-placeholder="t('开始日期', 'WAF.ksrq')"
           :end-placeholder="t('结束日期', 'WAF.jsrq')"
           @change="changeTimeValue"
+          :picker-options="pickerOptions"
           :clearable= false
         ></el-date-picker>
         <i class="el-icon-refresh" @click="id+=1" />
@@ -110,6 +111,11 @@ export default {
       tableDataBegin: [],
       sourceIp: "", // 搜索框绑定
       id: 0, // 用于父组件点击查询
+      pickerOptions: {
+        disabledDate(time) {
+          return moment(new Date()).diff(time, 'days') > 30 || time > moment()
+        }
+      }
     }
   },
   components: {
@@ -188,6 +194,9 @@ export default {
                 arr.push(v)
               }
             })
+            if(arr.length === 0) {
+              this.$router.push({path: '/botSetting'})
+            }
             this.options = arr
           }
         }

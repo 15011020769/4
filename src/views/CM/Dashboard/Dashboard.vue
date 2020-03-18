@@ -12,7 +12,7 @@
       <a
         class="addPanel"
         style="font-size:12px;font-weight:20"
-        @click="buyMessgae"
+        @click="addPanel"
       >{{$t('CVM.Dashboard.tjjkmb')}}</a>
       <AddPanel :dialogVisible="panelFlag" @cancel="cancel" @save="save" />
     </Header>
@@ -97,22 +97,15 @@
 import Header from "@/components/public/Head";
 import TimeX from "./components/Time";
 import AddPanel from "./components/AddPaneldialog";
+import { GET_DASHBOARD_LIST } from "@/constants";
+import { ErrorTips } from "@/components/ErrorTips"; //公共错误码
 export default {
   name: "Dashboard",
   data() {
     return {
       panelFlag: false, //面板开关
-      panelValue: "監控面板01", //监控面板默认值
-      options: [
-        {
-          value: "選項1",
-          label: "監控面板01"
-        },
-        {
-          value: "選項2",
-          label: "監控面板02"
-        }
-      ],
+      panelValue: "", //监控面板默认值
+      options: [],
       openName: "展開", //展开收起名字显示
       openChartFlag: true, //展开图表开关
       retractChartFlag: false,
@@ -146,7 +139,9 @@ export default {
     TimeX,
     AddPanel
   },
-  created() {},
+  created() {
+    this.getDashboardList(); // 获取Dashboard列表数据
+  },
   methods: {
      //设置弹框//新建实例分组
     buyMessgae() {
@@ -155,20 +150,22 @@ export default {
     },
     //取消设置弹框
     cancel() {
-      this.dialogVisible = false;
+      // this.dialogVisible = false;
+      this.panelFlag = false;
     },
     //确定设置弹框
     save() {
-      this.dialogVisible = false;
+      // this.dialogVisible = false;
+      this.panelFlag = false;
     },
     // panelStatus(flag) {
     //   //父组件事件
     //   this.panelFlag = flag;
     // },
-    // addPanel() {
-    //   //添加dialog面板
-    //   this.panelFlag = true;
-    // },
+    addPanel() {
+      //添加dialog面板
+      this.panelFlag = true;
+    },
     openChart() {
       //展开图表
       this.openChartFlag = false;
@@ -189,6 +186,74 @@ export default {
     GetData(data) {
       // console.log(data);
     },
+    // 获取Dashboard列表数据
+    async getDashboardList() {
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        // ProductType: '',
+        // CustomID: ''
+      }
+      await this.axios.get(GET_DASHBOARD_LIST, { params: params} ).then(res => {
+        if (res.Response.Error === undefined) {
+          res.Response.DashboardList.forEach(ele => {
+            this.options.push({
+              value: ele.DashboardID, label: ele.DescName
+            });
+            this.panelValue = this.options[0].label;
+          });
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            "DryRunOperation":	"DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            "FailedOperation":	"操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed":	"删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed":	"创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed":	"告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed":	"告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed":	"告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":	"删除触发条件失败。",
+            "FailedOperation.DbQueryFailed":	"数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed":	"创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed":	"数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed":	"数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed":	"数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed":	"数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed":	"请求维度查询服务失败。",
+            "FailedOperation.DivisionByZero":	"被除数为0。",
+            "FailedOperation.DruidQueryFailed":	"查询分析数据失败。",
+            "FailedOperation.DruidTableNotFound":	"druid表不存在。",
+            "FailedOperation.DuplicateName":	"名字重复。",
+            "FailedOperation.ServiceNotEnabled":	"服务未启用，开通服务后方可使用。",
+            "InternalError":	"内部错误。",
+            "InternalError.ExeTimeout":	"执行超时。",
+            "InvalidParameter":	"参数错误。",
+            "InvalidParameter.InvalidParameter":	"参数错误。",
+            "InvalidParameter.InvalidParameterParam":	"参数错误。",
+            "InvalidParameterValue":	"无效的参数值。",
+            "LimitExceeded":	"超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":	"指标数量达到配额限制，禁止含有未注册指标的请求。",
+            "MissingParameter":	"缺少参数错误。",
+            "ResourceInUse":	"资源被占用。",
+            "ResourceInsufficient":	"资源不足。",
+            "ResourceNotFound":	"资源不存在。",
+            "ResourceUnavailable":	"资源不可用。",
+            "ResourcesSoldOut":	"资源售罄。",
+            "UnauthorizedOperation":	"未授权操作。",
+            "UnknownParameter":	"未知参数错误。",
+            "UnsupportedOperation":	"操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+    }
+
     // //取消
     // cancel() {
     //   this.dialogVisible = false;

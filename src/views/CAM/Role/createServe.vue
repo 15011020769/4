@@ -368,8 +368,10 @@ export default {
         padding-bottom: 20px;
         .flex_right {
           padding-left: 20px;
+          width: 100%;
           .el-checkbox {
             margin-left: 0;
+            width: calc(25% - 30px);
           }
         }
       }

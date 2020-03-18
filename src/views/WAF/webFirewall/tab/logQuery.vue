@@ -504,6 +504,10 @@ export default {
       ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
       this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
       this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      if (num === 1 && unit === 'd') {
+        this.endTime = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
+        ipt2.value = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      }
     },
     // 创建下载任务
     createDownTask () {

@@ -53,7 +53,7 @@
         </div>
       </div>
       <div class="mid">
-        <i class="el-icon-connection"></i>
+        <i class="el-icon-sort" style="transform: rotate(90deg);"></i>
       </div>
       <div class="right">
         <p class="title" style="margin-bottom: 15px;">
@@ -64,7 +64,7 @@
           <el-table :data="selectedStrategiesWithoutGroup" style="width: 100%;height: 562px; overflow-y: scroll;" :empty-text="$t('CAM.strategy.zwsj')">
             <el-table-column prop="PolicyName" label="策略名">
               <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" :content="scope.row.Description" placement="bottom">
+                <el-tooltip class="item" effect="dark" :content="scope.row.IsAttached ? '當前策略已被關聯，如需解除關聯請前往詳情頁操作' : scope.row.Description" placement="bottom">
                   <div>
                     <p>{{scope.row.PolicyName}}</p>
                     <p class="desc">{{scope.row.Description}}</p>

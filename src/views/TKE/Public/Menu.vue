@@ -1,6 +1,6 @@
 <template>
   <div class="CLA">
-    <div class="big-title">容器服务</div>
+    <div class="big-title">容器服務</div>
     <el-menu
       default-active="2"
       class="el-menu-vertical-demo"
@@ -12,7 +12,7 @@
       :router="true"
     >
       <el-menu-item index="/overview" @click="_class" :class="{'active':classValue=='/overview'}">
-        <span slot="title">概览</span>
+        <span slot="title">概覽</span>
       </el-menu-item>
       <el-menu-item index="/colony" @click="_class" :class="{'active':classValue=='/colony'}">
         <span slot="title">集群</span>
@@ -22,11 +22,11 @@
       </el-menu-item>
       <el-submenu index="1">
         <template slot="title" @click="_class" :class="{'active':classValue=='/title'}">
-          <span>镜像仓库</span>
+          <span>映像倉庫</span>
         </template>
         <el-menu-item-group style="margin-left: 30px;">
           <el-menu-item index="/myMirror" @click="_class" :class="{'active':classValue=='/myMirror'}">
-            <span slot="title">我的镜像</span>
+            <span slot="title">我的映像</span>
           </el-menu-item>
           <el-menu-item index="/myFavorite" @click="_class" :class="{'active':classValue=='/myFavorite'}">
             <span slot="title">我的收藏</span>
@@ -35,12 +35,12 @@
             <span slot="title">DockerHub镜像</span>
           </el-menu-item> -->
           <el-menu-item index="/totalMirror" @click="_class" :class="{'active':classValue=='/totalMirror'}">
-            <span slot="title">公有镜像</span>
+            <span slot="title">公有映像</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="/logCollection" @click="_class" :class="{'active':classValue=='/logCollection'}">
-        <span slot="title">日志采集</span>
+        <span slot="title">日誌採集</span>
       </el-menu-item>
       <!-- <el-menu-item index="/warnings" @click="_class" :class="{'active':classValue=='/warnings'}">
         <span slot="title">告警设置</span>

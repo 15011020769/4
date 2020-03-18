@@ -83,7 +83,8 @@
           >
             <el-table-column :label="$t('TKE.overview.yym')" max-width="10%" prop="name">
               <template slot-scope="scope">
-                <div @click="jumpDetail(scope.row)">
+                <div>
+                  <!-- @click="jumpDetail(scope.row)" -->
                   <a style="cursor:pointer;">{{scope.row.name}}</a>
                 </div>
               </template>
@@ -314,7 +315,7 @@ export default {
       flagSE: true,
       flagAgin: "",
       flagLast: false,
-      loadShow: true,
+      loadShow: "",
       centerDialogVisible: false,
       centerDialogVisible2: false,
       centerDialogVisible3: false,
@@ -475,7 +476,6 @@ export default {
     getUpdate() {
       this.loadShow = true;
       this.setHelm();
-
       this.centerDialogVisible = false;
     },
     // 移除新增变量
@@ -569,6 +569,7 @@ export default {
             this.value = res.Response.Clusters[0].ClusterId;
           }
           // this.getHelmList()
+          this.loadShow = true
           this.getCreate();
           this.getFlag();
         } else {

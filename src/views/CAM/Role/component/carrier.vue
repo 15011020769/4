@@ -57,7 +57,7 @@
         <div class="box contant_flex">
           <div class="flex_left">
             <p style="margin-top:5px;text-overflow:ellipsis;white-space:nowrap">
-              {{ $t("CAM.Role.support") }}*
+              {{ $t("CAM.Role.support") }}<span class="reds">*</span>
             </p>
           </div>
           <div class="flex_right">
@@ -468,9 +468,11 @@ export default {
     border-bottom: 1px solid #ddd;
     padding-bottom: 20px;
     .flex_right {
+      width: 100%;
       padding-left: 20px;
       .el-checkbox {
         margin-left: 0;
+        width: calc(25% - 30px);
       }
     }
   }
@@ -492,5 +494,8 @@ export default {
       padding-top: 0px;
     }
   }
+}
+.reds {
+  color: #F56C6C;
 }
 </style>
