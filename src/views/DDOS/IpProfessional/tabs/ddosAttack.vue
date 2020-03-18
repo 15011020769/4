@@ -250,7 +250,8 @@ export default {
       traffictable:[],
       pkgtable:[],
       numtable:[],
-      choiceClick:false,
+      choiceClick: false,
+      jumpFlg: false,
       // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天
       chclikMinDate: '',
       chclikMaxDate: '',
@@ -306,8 +307,9 @@ export default {
       // }
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
+        console.log('num =' + num)
         let dateValue = moment(value[0])
-        let maxDate = moment(value[1]).add(1, 'd')
+        let maxDate = moment(value[1])
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
@@ -386,11 +388,12 @@ export default {
           this.ResIpList = res.Response.Resource;
           let jsonStr = sessionStorage.getItem('IpPro')
           if (jsonStr !== null && jsonStr !== '') {
+            this.jumpFlg = true
             this.ipPro = JSON.parse(jsonStr)
             this.selectId = this.ipPro.Id
             this.selectIp = this.ipPro.Vip
             this.startTime = moment(this.ipPro.StartTime, 'YYYY-MM-DD 00:00:00').toDate()
-            this.endTime = moment(this.ipPro.EndTime, 'YYYY-MM-DD 23:59:59').toDate()
+            this.endTime = moment(this.ipPro.EndTime, 'YYYY-MM-DD 00:00:00').hour(23).minute(59).second(59).toDate()
             this.dateChoice = [this.startTime, this.endTime]
             sessionStorage.setItem('IpPro', '')
             for (let i =0; i < this.btnData.length; i++) {
@@ -432,8 +435,11 @@ export default {
       }
       this.IpList.splice(0, 0, "總覽");
       // 资源ID改变时，IP默认为总览
-      this.selectIp = this.IpList[0];
+      if (!this.jumpFlg) {
+      this.jumpFlg = false
+      this.selectIp = this.IpList[0]
       this.choiceTime('1')
+      }
       this.describeDDoSNetTrend(this.timey);
       this.metricNames.forEach((name, i) => {
         this.metricName2 = this.metricNames[i];
