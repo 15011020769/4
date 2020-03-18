@@ -175,7 +175,7 @@ export default {
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)
-              curBillArr.push(item.Value)
+              curBillArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
             })
           }
           this.xAxisCurBill = xAxisArr
@@ -193,7 +193,7 @@ export default {
           if (Data && Data.length) {
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
-              lastBillArr.push(item.Value)
+              lastBillArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
             })
           }
           this.serLastBill = lastBillArr
@@ -212,7 +212,7 @@ export default {
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)
-              curOriginArr.push(item.Value)
+              curOriginArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
             })
           }
           this.xAxisCurOrigin = xAxisArr
@@ -230,7 +230,7 @@ export default {
           if (Data && Data.length) {
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
-              lastOriginArr.push(item.Value)
+              lastOriginArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
             })
           }
           this.serLastOrigin = lastOriginArr
