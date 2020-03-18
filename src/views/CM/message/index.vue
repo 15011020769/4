@@ -44,19 +44,23 @@
         </el-table-column>
         <el-table-column prop="chufa" label="近24小时触发告警">
           <template slot-scope="scope">
-            <p>{{scope.row.AlarmCount}}</p>
+            <a @click="alarmDialog">{{scope.row.AlarmCount}}</a>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="消息接收组"></el-table-column>
+        <el-table-column prop="type" label="消息接收组">
+          <template slot-scope="scope">
+            <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a>
+          </template>
+        </el-table-column>
         <el-table-column prop="address" label="告警渠道">
           <template slot-scope="scope">
             <p v-if="scope.row.NotifyWay">
-               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
-                 <b v-if="v=='EMAIL'">邮件、</b>
-                 <b v-if="v=='SMS'">短信</b>
-               </span>
+              <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
+                <b v-if="v=='EMAIL'">邮件、</b>
+                <b v-if="v=='SMS'">短信</b>
+              </span>
             </p>
-            <p v-else>-</p>
+            <p v-if="scope.row.NotifyWay==''">-</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -94,6 +98,37 @@
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
+
+    <!-- 接收组 -->
+    <el-dialog
+      title="消息接收组详情"
+      :visible.sync="deleteDialogVisible1"
+      width="500px"
+      custom-class="tke-dialog"
+    >
+      <div>
+        <p>策略名：{{groups.PolicyName}}</p>
+        <div>
+          接收组：
+          <el-table :data="lists" style="width: 490px" height="100">
+            <el-table-column prop="index" label="序号">
+              <template slot-scope="scope">
+                111
+              </template>
+            </el-table-column>
+            <el-table-column prop="chufa" label="接收人">
+              <template slot-scope="scope">22222</template>
+            </el-table-column>
+            <el-table-column prop="type" label="接收组">
+              <template slot-scope="scope">3333</template>
+            </el-table-column>
+          </el-table>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="ok">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -105,7 +140,8 @@ import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import {
   CUSTON_MESSAGE_LIST,
-  DETELE_CUSTON_MESSAGE
+  DETELE_CUSTON_MESSAGE,
+  RECEIVING_GROUP_DETAILE
 } from "@/constants/CM-lxx.js";
 
 export default {
@@ -122,8 +158,10 @@ export default {
       searchName: "",
       dialogVisible: false, //设置弹出框
       triggerInput: "", //搜索
-      deleteDialogVisible: false
-      //分页
+      deleteDialogVisible: false,
+      deleteDialogVisible1: false,
+      groups: {},
+      lists: [] 
     };
   },
   components: {
@@ -143,11 +181,9 @@ export default {
         Version: "2018-07-24",
         Module: "monitor"
       };
-      // params.ObjLike = this.input;
-      // params.StartTime = Date.parse(val[0].StartTIme) / 1000; //开始时间戳
-      // params.EndTime = Date.parse(val[0].EndTIme) / 1000; //结束时间戳
+
       this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
-        console.log(res.Response.PolicyList, "数据");
+        // console.log(res.Response.PolicyList, "数据");
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.PolicyList;
           this.TotalCount = res.Response.Total;
@@ -164,6 +200,41 @@ export default {
           });
         }
       });
+    },
+    receiverGroup(val) {
+      //接收组
+      console.log(val.ReceiverGroupIds);
+      this.groups = val;
+      this.groups.ReceiverGroupIds.forEach((item, index) => {
+        var params = {
+          Version: "2018-07-24",
+          GroupId: item
+        };
+        this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
+          if (res.Response.Error === undefined) {
+            console.log(res);
+            this.lists.push();
+            // this.deleteDialogVisible1 = false;
+          } else {
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      });
+
+      this.deleteDialogVisible1 = true;
+    },
+    ok() {
+      // 确定接收组
+    },
+    alarmDialog() {
+      //触发告警
     },
     // 删除
     Delete(row) {

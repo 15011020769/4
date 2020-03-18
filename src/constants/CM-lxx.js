@@ -13,6 +13,9 @@ export const CANCEL_SUBSCRIPTION = 'monitor2/UnSubscribeEvent'
 //获取自定义消息列表
 export const CUSTON_MESSAGE_LIST = 'monitor2/DescribeMsgPolicyList'//ok
 
+//获取自定义消息列表消息接收组详情
+export const RECEIVING_GROUP_DETAILE = 'cam/GetGroup'//ok
+
 //编辑自定义消息
 export const EDIT_CUSTON_MESSAGE = 'monitor2/DescribeDBInstances' 
 
