@@ -33,11 +33,13 @@
         </el-button-group>
         <el-date-picker
           size="small"
-          style="border-left: none;width:350px"
+          style="border-left: none;width:260px"
           v-model="time"
           type="datetimerange"
+          :clearable="false"
+          format="yyyy-MM-dd"
           :picker-options="pickerOptions"
-        ></el-date-picker>
+        ></el-date-picker>&nbsp;&nbsp;
         <el-select
           v-model="project"
           value-key="ProjectId"
@@ -51,7 +53,7 @@
             :value="p"
             :label="p.ProjectName"
           ></el-option>
-        </el-select>
+        </el-select>&nbsp;&nbsp;
         <el-select v-model="domainName" size="small" placeholder="全部域名">
           <el-option value="">全部域名</el-option>
           <el-option
@@ -62,7 +64,6 @@
           ></el-option>
         </el-select>
       </el-col>
-      <i class="el-icon-setting icon" />
     </el-row>
     <el-row class="actions">
       <el-radio-group v-model="type" size="small">
@@ -103,12 +104,13 @@ export default {
           }
         },
         disabledDate: (date) => {
+          const last90d = moment().subtract(90, 'd')
           if (this.selectDate !== '') {
             const minTime = moment(this.selectDate).subtract(1, 'month')
             const maxTime = moment(this.selectDate).add(1, 'month')
-            return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || date.getTime() > Date.now()
+            return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || date.getTime() > Date.now() || moment(date).isBefore(last90d)
           }
-          return date.getTime() > Date.now()
+          return date.getTime() > Date.now() || moment(date).isBefore(last90d)
         }
       }
     }
@@ -116,20 +118,7 @@ export default {
   computed: {
     params () {
       const { project, domainName, type, time } = this
-
-      let times = time
-      //  let type = '日报'
-      // if (interval === '5min') { // 日报
-      // times = [moment(time).startOf('d').format('YYYY-MM-DD 00:00:00'), moment(time).endOf('d').format('YYYY-MM-DD 23:59:59')]
-      // console.log(this.createTimeType, times, 'time---')
-      // } else if (interval === 'day') { // 月报
-      //   type = '月报'
-      //   times = [moment(time).format('YYYY-MM-01 00:00:00'), moment(time).endOf('month').format('YYYY-MM-DD 23:59:59')]
-      // } else { // 周报
-      //   type = '周报'
-      //   times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
-      // }
-      return { projectId: project.ProjectId, AreaType: type, projectName: project.projectName, domainName, times }
+      return { projectId: project.ProjectId, AreaType: type, projectName: project.ProjectName, domainName, times: time }
     }
   },
   watch: {
@@ -140,27 +129,6 @@ export default {
       }
       this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === project.ProjectId)
     },
-    type (val) {
-      // this.params.AreaType = val
-    },
-    time (val) {
-      // this.time = []
-      // val.forEach(val => {
-      //   this.time.push(val.format('YYYY-MM-DD HH:mm:ss'))
-      //   console.log(val.format('YYYY-MM-DD HH:mm:ss'), 'val')
-      // })
-      // console.log(val, this.params, 'shijia')
-    }
-    // interval (interval) {
-    //   if (interval === 'hour') {
-    //     this.time = moment().subtract(7, 'd').startOf('week').add(1, 'd').format('YYYY-MM-DD')
-    //     this.weekEnd = moment().subtract(7, 'd').endOf('week').add(1, 'd').format('YYYY-MM-DD')
-    //   } else if (interval === 'day') {
-    //     this.time = moment().subtract(1, 'month').format('YYYY-MM')
-    //   } else {
-    //     this.time = moment().subtract(1, 'd')
-    //   }
-    // }
 
   },
   mounted () {

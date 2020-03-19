@@ -31,7 +31,7 @@
           </el-table-column>
           <el-table-column label="占比">
             <template slot-scope="scope">
-              {{ ((scope.row.value / totalNumber) * 100).toFixed(2) + "%" }}
+              {{ totalNumber === 0 ? 0 : fixed((scope.row.value / totalNumber) * 100) }}%
             </template>
           </el-table-column>
         </el-table>
@@ -105,8 +105,8 @@ export default {
     exportEchart() {
       const { projectName, domainName, type, times, interval } = this.params;
       let fileName;
-      const start = times[0].split(" ")[0];
-      const end = times[1].split(" ")[0];
+      const start = moment(times[0]).format('YYYY-MM-DD');
+      const end = tmoment(times[1]).format('YYYY-MM-DD');
       if (interval === "5min") {
         // 日报
         fileName = `${start}_traffic_distribution.xlsx`;
@@ -177,11 +177,10 @@ export default {
       this.getListTopData(params);
     },
     getListTopData(params) {
-      console.log(params, "000====");
       this.loading = true;
       const regionsArr = [];
       const tableArr = [];
-      let total = 1;
+      let total = 0;
       this.axios
         .post("cdn2/ListTopData", {
           ...params,
