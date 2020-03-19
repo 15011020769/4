@@ -243,19 +243,19 @@ export default {
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
           if (num > 0 && num < 2) {
-            this.period = 300
+            this.periodCC = 300
             arr.push(dateValue.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 6) {
-            this.period = 1800
+            this.periodCC = 1800
             arr.push(dateValue.add(30, 'm').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 16) {
-            this.period = 3600
+            this.periodCC = 3600
             arr.push(dateValue.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 31) {
-            this.period = 21600
+            this.periodCC = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
           } else {
-            this.period = 86400
+            this.periodCC = 86400
             arr.push(dateValue.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
           }
         }
@@ -341,6 +341,7 @@ export default {
       this.ccTimeBtnSelect2 = this.IpList[0]
       this.thisTime(1)
       this.getDataCC()
+      sessionStorage.setItem("selectId", this.inputIdCC)
     },
     // DDOS资源Ip变化时，重新获取数据
     changeIp() {
@@ -735,6 +736,12 @@ export default {
       window.addEventListener("resize", function() {
         myChart3.resize();
       });
+    },
+    tabchangeId () {
+      let jsonIp = sessionStorage.getItem('selectId')
+      if (jsonIp !== null) {
+        this.inputIdCC = jsonIp
+      }
     }
   }
 };

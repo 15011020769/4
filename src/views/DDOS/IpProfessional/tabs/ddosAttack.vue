@@ -279,7 +279,7 @@ export default {
           that.chclikMinDate = minDate
           that.chclikMaxDate = maxDate === null ? '' : maxDate
         }
-      }
+      },
     };
   },
   watch: {
@@ -351,7 +351,7 @@ export default {
       }
       this.choiceClick = false
     },
-    selectId: function() {
+    selectId () {
       this.changeId();
     },
     selectIp () {
@@ -396,20 +396,23 @@ export default {
             this.startTime = moment(this.ipPro.StartTime, 'YYYY-MM-DD 00:00:00').toDate()
             this.endTime = moment(this.ipPro.EndTime, 'YYYY-MM-DD 00:00:00').hour(23).minute(59).second(59).toDate()
             this.dateChoice = [this.startTime, this.endTime]
-            sessionStorage.setItem('IpPro', '')
+            sessionStorage.removeItem('IpPro')
             for (let i =0; i < this.btnData.length; i++) {
               this.btnData[i]['selected'] = false;
             }
           } else {
             if (this.selectId == "") {
               // 判断是从‘资产列表-资源列表’跳转的，还是目录跳转的
-              if(this.$route.query.selectId === undefined){
+              if (this.$route.query.selectId === undefined) {
                 this.selectId = this.ResIpList[0].Id;
               } else {
                 this.selectId = this.$route.query.selectId;
               }
             }
             this.choiceTime(1);
+          }
+          if (this.selectId !== '') {
+            sessionStorage.setItem("selectId", this.selectId)
           }
         } else {
           let ErrTips = {};
@@ -447,6 +450,8 @@ export default {
         this.describeDDoSNetCount();
       });
       this.describeDDoSNetEvList();
+      //每次切换ID 保存一次
+      sessionStorage.setItem("selectId", this.selectId)
     },
     // DDOS资源Ip变化时，重新获取数据
     changeIp() {
@@ -1298,6 +1303,12 @@ export default {
         durationTime += minseconds + "秒";
       }
       return durationTime;
+    },
+    tabchangeId () {
+      let jsonIp = sessionStorage.getItem('selectId')
+      if (jsonIp !== null) {
+        this.selectId = jsonIp
+      }
     }
   }
 };
