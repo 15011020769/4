@@ -16,9 +16,9 @@
           <el-button type="primary" @click="addMessage">新增消息策略</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
-          <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
-          <!-- 设置框---已完成---uat功能暂无 -->
+          <!-- <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
+          <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>-->
+          <!-- 设置框---初步完成---uat功能暂无 -->
           <!-- <i
             class="el-icon-setting"
             style="line-height:30px;padding:0 20px;cursor: pointer;"
@@ -44,12 +44,14 @@
         </el-table-column>
         <el-table-column prop="chufa" label="近24小时触发告警">
           <template slot-scope="scope">
-            <a @click="alarmDialog">{{scope.row.AlarmCount}}</a>
+            {{scope.row.AlarmCount}}
+            <!-- <a @click="alarmDialog">{{scope.row.AlarmCount}}</a> -->
           </template>
         </el-table-column>
         <el-table-column prop="type" label="消息接收组">
           <template slot-scope="scope">
-            <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a>
+            {{scope.row.ReceiverGroupIds.length}}
+            <!-- <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a> -->
           </template>
         </el-table-column>
         <el-table-column prop="address" label="告警渠道">
@@ -72,7 +74,7 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <div class="Right-style pagstyle" style="background: #fff;">
+      <!-- <div class="Right-style pagstyle" style="background: #fff;">
         <span class="pagtotal">共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CVM.strip") }}</span>
         <el-pagination
           :page-size="pagesize"
@@ -81,6 +83,21 @@
           @current-change="handleCurrentChange"
           :total="TotalCount"
         ></el-pagination>
+      </div>-->
+      <!-- 分页 -->
+      <div class="tke-page">
+        <div class="block">
+          <el-pagination
+            @size-change="handleSizeChange"
+            :pager-count="7"
+            @current-change="handleCurrentChange"
+            :current-page="currpage"
+            :page-sizes="[10, 20, 50, 100]"
+            :page-size="pageSize"
+            layout="total, sizes, prev, pager, next"
+            :total="TotalCount"
+          ></el-pagination>
+        </div>
       </div>
     </div>
     <!-- 点击设置 -->
@@ -140,7 +157,7 @@
     >
       <p>删除后,相关接收人将不能接收到对应的告警内容</p>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteList()">确定删除</el-button>
+        <el-button type="primary" @click="DeleteList">确定删除</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -199,8 +216,9 @@ export default {
       //分页
       loadShow: true, // 加载是否显示
       TotalCount: 0, //总条数
-      pagesize: 10, // 分页条数
+      pageSize: 10, // 分页条数
       currpage: 1, // 当前页码
+      deteleId:"",//要删除的id
       operationFlag: -1, //按钮禁用开关
       searchName: "",
       valueT: "",
@@ -223,6 +241,11 @@ export default {
     this.getCustomMessage();
   },
   methods: {
+    handleSizeChange(val) {
+      // console.log(`每页 ${val} 条`);
+      this.pageSize = val;
+      this.getCustomMessage(this.timeObjs);
+    },
     searchZIIDBtn() {
       //搜索24小时告警列表按钮
     },
@@ -235,9 +258,11 @@ export default {
       var params = {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        Limit: this.pageSize,
+        Offset: (this.currpage - 1) * this.pageSize
       };
-      // params.
+      // params.Filter       //筛选数据
       this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
         // console.log(res.Response.PolicyList, "数据");
         if (res.Response.Error === undefined) {
@@ -246,7 +271,14 @@ export default {
           this.loadShow = false; //取消加载
         } else {
           this.loadShow = false;
-          let ErrTips = {};
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            LimitExceeded: "超过配额限制。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -260,29 +292,29 @@ export default {
     receiverGroup(val) {
       //接收组
       console.log(val.ReceiverGroupIds);
-      this.groups = val;
-      this.groups.ReceiverGroupIds.forEach((item, index) => {
-        var params = {
-          Version: "2018-07-24",
-          GroupId: item
-        };
-        this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
-          console.log(res);
-          this.lists.push();
-          if (res.codeDesc === "Success") {
-            // this.deleteDialogVisible1 = false;
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
-      });
+      // this.groups = val;
+      // this.groups.ReceiverGroupIds.forEach((item, index) => {
+      //   var params = {
+      //     Version: "2018-07-24",
+      //     GroupId: item
+      //   };
+      //   this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
+      //     console.log(res);
+      //     this.lists.push();
+      //     if (res.codeDesc === "Success") {
+      //       // this.deleteDialogVisible1 = false;
+      //     } else {
+      //       let ErrTips = {};
+      //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+      //       this.$message({
+      //         message: ErrOr[res.Response.Error.Code],
+      //         type: "error",
+      //         showClose: true,
+      //         duration: 0
+      //       });
+      //     }
+      //   });
+      // });
 
       this.deleteDialogVisible1 = true;
     },
@@ -296,20 +328,37 @@ export default {
     getAlarmList() {},
     // 删除
     Delete(row) {
+      console.log(row.PolicyID);
+      this.deteleId=row.PolicyID;
       this.deleteDialogVisible = true;
     },
     DeleteList() {
+      //删除
       this.loadShow = true;
       let param = {
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        PolicyID: this.deteleId
       };
       this.axios.post(DETELE_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
+          this.getCustomMessage();
+           this.$message({
+            message: "删除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
           this.deleteDialogVisible = false;
-          this.loadShow = false;
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持"
+          };
           this.loadShow = false;
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -342,7 +391,9 @@ export default {
     },
     //分页
     handleCurrentChange(val) {
-      this.currpage = val;
+      this.pageIndex = val - 1;
+      this.getCustomMessage(this.timeObjs);
+      this.pageIndex += 1;
     },
     //设置弹框
     buyMessgae() {
@@ -375,6 +426,11 @@ export default {
   padding-top: 0;
   line-height: 30px;
   font-size: 12px;
+}
+.tke-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: row-reverse;
 }
 .seek {
   display: flex;
