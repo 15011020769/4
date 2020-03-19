@@ -339,7 +339,7 @@ export default {
         Version: '2018-01-25',
         Domain: this.domain.Domain,
         Edition: 'clb-waf',
-        Offset: this.offset - 1,
+        Offset: (this.offset - 1) * this.limit,
         Limit: this.limit,
         Sort: this.sort
       }).then(resp => {

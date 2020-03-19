@@ -100,16 +100,18 @@ export default {
           HttpsKey
         })
         .then(resp => {
-          this.loading = false;
+          
           if (resp.Response.Error) {
             this.msg(error[resp.Response.Error.Code]);
           } else {
-            if (enable) {
-              this.bindCert(resp.Response.CertId);
-            } else {
-              this.msg("保存成功", "success");
-              this.$emit("success");
-            }
+            this.bindCert(resp.Response.CertId);
+            // if (enable) {
+            //   this.bindCert(resp.Response.CertId);
+            // } else {
+            //   this.loading = false;
+            //   this.msg("保存成功", "success");
+            //   this.$emit("success");
+            // }
           }
         });
     },
@@ -121,9 +123,14 @@ export default {
           CertId: certId,
           Status: Number(this.form.enable)
         })
-        .then(() => {
-          this.msg("保存成功", "success");
-          this.$emit("success");
+        .then(resp => {
+          this.loading = false;
+          if (resp.Response.Error) {
+            this.msg(error[resp.Response.Error.Code]);
+          } else {
+            this.msg("保存成功", "success");
+            this.$emit("success");
+          }
         });
     },
     modifyCert() {

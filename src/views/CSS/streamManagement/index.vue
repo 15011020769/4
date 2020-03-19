@@ -58,7 +58,7 @@
 
             <template v-if="type === $t('CSS.domainManagement.33')">
               <el-table-column :label="$t('CSS.domainManagement.37')" width="180">
-                <template slot-scope="scope">{{format(scope.row.PublishTimeList[0].PublishTime)}}</template>
+                <template slot-scope="scope">{{format(scope.row.PublishTimeList && scope.row.PublishTimeList[0].PublishTime)}}</template>
               </el-table-column>
             </template>
 

@@ -147,7 +147,7 @@
           v-for="item in CC_RULE_ACTION_ARR"
           :key="item.value"
           :label="item.name"
-          :value="item.value"
+          :value="Number(item.value)"
         >
         </el-option>
       </el-select>&nbsp;
@@ -215,6 +215,7 @@ export default {
   watch: {
     rule: {
       handler(r) {
+        console.log(CC_RULE_ACTION_ARR)
         this.names = [...this.ruleNames.filter(name => name !== (this.rule && this.rule.Name || ''))]
         if (r) {
           const rule = JSON.parse(JSON.stringify(r))
