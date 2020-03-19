@@ -10,7 +10,7 @@ import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/geo'
 import 'echarts/lib/component/visualMap'
 import 'echarts/map/js/world.js' // 引入世界地图数据
-import nameComparison from './nameComparison '
+import nameComparison from './outsideNameCom'
 export default {
   name: "myChart",
   props: {

@@ -78,7 +78,7 @@ let nameComparison = {
   "Montenegro": "黑山共和國",
   "Cayman Is.": "開曼群島",
   "Togo": "多哥",
-  "China": "中國大陸",
+  "China": "中國",
   "Heard I. and McDonald Is.": "赫德島和麥克唐納群島",
   "Armenia": "亞美尼亞",
   "Falkland Is.": "馬爾維納斯群島（福克蘭）",
