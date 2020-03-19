@@ -58,29 +58,29 @@
 </template>
 
 <script>
-import { LIVE_ADDLIVEWATERMARK, LIVE_UPDATELIVEWATERMARK } from "@/constants"
+import { LIVE_ADDLIVEWATERMARK, LIVE_UPDATELIVEWATERMARK } from '@/constants'
 import DraggableResizable from 'vue-draggable-resizable'
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css'
 import COS from 'cos-js-sdk-v5'
 import moment from 'moment'
 import Vue from 'vue'
 const cos = new COS({
-        getAuthorization: async (_, callback) => {
-          const res = await Vue.prototype.axios({
-            url: "bucket/uploadKey3",
-            method: "get",
-          })
-          console.log(res)
-          callback({
-            TmpSecretId: res.data.secretId,
-            TmpSecretKey: res.data.secretKey,
-            XCosSecurityToken: res.data.sessionToken,
-            ExpiredTime: res.data.extra.expiredTime, // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
-          })
-        },
-      })
+  getAuthorization: async (_, callback) => {
+    const res = await Vue.prototype.axios({
+      url: 'bucket/uploadKey3',
+      method: 'get'
+    })
+    console.log(res)
+    callback({
+      TmpSecretId: res.data.secretId,
+      TmpSecretKey: res.data.secretKey,
+      XCosSecurityToken: res.data.sessionToken,
+      ExpiredTime: res.data.extra.expiredTime // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
+    })
+  }
+})
 export default {
-  name: "optionForm",
+  name: 'optionForm',
   components: {
     DraggableResizable
   },
@@ -90,13 +90,13 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       ruleForm: {
         WatermarkName: '',
         PictureUrl: '',
         YPosition: 0,
-        XPosition: 0,
+        XPosition: 0
       },
       w: 52,
       h: 27,
@@ -104,23 +104,24 @@ export default {
       y: 0,
       rules: {
         WatermarkName: [
-          { required: true, message: "填寫水印名稱", trigger: "blur" },
-          { validator(rule, value, callback) {
+          { required: true, message: '填寫水印名稱', trigger: 'blur' },
+          { validator (rule, value, callback) {
             if (!/^[\u4e00-\u9fa5a-zA-Z\d_-]{1,30}$/.test(value)) {
               callback(new Error('僅支持中文、英文、數字、_、-，不超過30個字符'))
             } else {
               callback()
             }
-          }, trigger: "blur" }
+          },
+          trigger: 'blur' }
         ],
         PictureUrl: [
-          { required: true, message: "請上傳圖片", trigger: 'blur' },
-        ],
-      },
+          { required: true, message: '請上傳圖片', trigger: 'blur' }
+        ]
+      }
     }
   },
 
-  mounted() {
+  mounted () {
     this.initTableParams()
     if (this.selectItem) {
       const w = Math.ceil(this.selectItem.Width * 640 / 100)
@@ -136,21 +137,21 @@ export default {
   },
 
   methods: {
-    onResize(x, y, width, height) {
+    onResize (x, y, width, height) {
       this.x = x
       this.y = y
       this.w = width
       this.h = height
     },
-    onDrag(x, y) {
+    onDrag (x, y) {
       this.x = x
       this.y = y
     },
-    onDragstop(x, y) {
+    onDragstop (x, y) {
       this.ruleForm.XPosition = Math.ceil(x / 640 * 100)
       this.ruleForm.YPosition = Math.ceil(y / 360 * 100)
     },
-    beforeUpload(f) {
+    beforeUpload (f) {
       // console.log(file)
       const file = f.raw
       const isPNG = file.type === 'image/png'
@@ -169,28 +170,27 @@ export default {
         })
         return isLt2M
       }
-       
-      
+
       cos.putObject({
         Bucket: 'livewatermark-1300560981', // 'watermark-1300560981', // 'wjtest-1301459465' "workorder-1300560981",
-        Region: "ap-taipei",
-        StorageClass: "STANDARD",
-        Key: "/" + moment(new Date()).format("YYYY-MM-DD").valueOf() + "/" + file.name,
-        Body: file, // 上传文件对象
+        Region: 'ap-taipei',
+        StorageClass: 'STANDARD',
+        Key: '/' + moment(new Date()).format('YYYY-MM-DD').valueOf() + '/' + file.name,
+        Body: file // 上传文件对象
       },
       (err, data) => {
         this.ruleForm.PictureUrl = `https://${data.Location}`
-      },
-    )
+      }
+      )
       return true
     },
-    xblur() {
+    xblur () {
       if (!this.ruleForm.XPosition) this.ruleForm.XPosition = 0
     },
-    yblur() {
+    yblur () {
       if (!this.ruleForm.YPosition) this.ruleForm.YPosition = 0
     },
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 如果有selectItem则为修改
@@ -213,12 +213,11 @@ export default {
           }
 
           this.handleAdd(params)
-
         }
       })
     },
 
-    handleAdd(params) {
+    handleAdd (params) {
       this.axios.post(LIVE_ADDLIVEWATERMARK, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
@@ -233,7 +232,7 @@ export default {
       })
     },
 
-    handleUpdate(params) {
+    handleUpdate (params) {
       this.axios.post(LIVE_UPDATELIVEWATERMARK, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
@@ -248,13 +247,13 @@ export default {
       })
     },
 
-    initTableParams() {
+    initTableParams () {
       if (Object.keys(this.selectItem).length) {
         this.ruleForm = JSON.parse(JSON.stringify(this.selectItem))
       }
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

@@ -65,13 +65,13 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       tableData: []
     }
   },
 
-  mounted() {
+  mounted () {
     this.tableData = TEMPLATE_TYPE.map(item => {
       const currentItem = { ...this.selectItem[item.paramName] }
       currentItem.TemplateName = item.TemplateName
@@ -81,7 +81,7 @@ export default {
   },
 
   methods: {
-    onEdit() {
+    onEdit () {
       this.$emit('update:formShow', true)
     }
   },
@@ -103,21 +103,21 @@ export default {
   },
 
   filters: {
-    RecordInterval(item) {
+    RecordInterval (item) {
       if (item.TemplateName === 'HLS') {
         return '無時長限制'
       }
-      return item.RecordInterval / 60 //单位为分钟
+      return item.RecordInterval / 60 // 单位为分钟
     },
 
-    StorageTimeFilter(item) {
+    StorageTimeFilter (item) {
       if (item.StorageTime > 0) {
         return item.StorageTime / 60 / 60 / 24 // 单位为天
       }
       return '永久保存'
     },
 
-    HlsSpecialParamFilter(item) {
+    HlsSpecialParamFilter (item) {
       if (item.TemplateName === 'HLS') {
         return item.HlsSpecialParam.FlowContinueDuration
       }

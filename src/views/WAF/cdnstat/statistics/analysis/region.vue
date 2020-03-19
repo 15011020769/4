@@ -1,8 +1,9 @@
+/* eslint-disable no-unreachable */
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <h3>访问用户区域分布</h3>
-      <i class="el-icon-download icon" />
+      <i class="el-icon-download icon" @click="_export" />
     </el-row>
     <el-row type="flex" class="header" justify="space-between">
       <el-radio-group v-model="type" size="small" @change="changeRadio">
@@ -27,41 +28,41 @@
       </el-col>
       <el-col class="box-right" :span="8">
         <el-table
-          :data="domainsList"
+          :data="tableData.slice((currpage - 1) * pageSize, currpage * pageSize)"
           v-loading="loading"
           :empty-text="t('暂无数据', 'WAF.zwsj')"
         >
           <el-table-column prop="name" label="用户所在区域"></el-table-column>
-          <el-table-column v-if="type == 'flux'" prop="value" label="流量">
-          </el-table-column>
-          <el-table-column v-if="type == 'flux'" prop="ratio" label="流量占比">
+          <el-table-column v-if="type === 'flux'" prop="value" label="流量">
             <template slot-scope="scope">
-              {{ ((scope.row.Value / totalNumber) * 100).toFixed(2) + "%" }}
+              {{ fluxStr(scope.row.value) }}
+            </template>
+          </el-table-column>
+          <el-table-column v-if="type === 'flux'" prop="ratio" label="流量占比">
+            <template slot-scope="scope">
+              {{ totalNumber === 0 ? 0 : fixed(((scope.row.value / totalNumber) * 100)) }}%
             </template>
           </el-table-column>
           <el-table-column
-            v-if="type == 'request'"
-            prop="Value"
+            v-if="type === 'request'"
+            prop="value"
             label="访问次数"
-          ></el-table-column>
+          >
+            <template slot-scope="scope">
+              {{ scope.row.value }}次
+            </template>
+          </el-table-column>
         </el-table>
-        <!-- <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 15, 20, 25, 30, 35, 40, 45, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next"
-          :total="total"
-        >
-        </el-pagination> -->
-
-        <!-- <analyslist
-          :domainsList="domainsList"
-          :loading="loading"
-          :total="total"
-          :trafficOrVisits="type"
-        ></analyslist> -->
+        <div class="Right-style pagstyle">
+          <span class="pagtotal">共&nbsp;{{ totalItems }}&nbsp;條</span>
+          <el-pagination
+            :page-size="pageSize"
+            :pager-count="7"
+            layout="prev, pager, next"
+            @current-change="handleCurrentChange"
+            :total="totalItems"
+          ></el-pagination>
+        </div>
       </el-col>
     </el-row>
   </el-card>
@@ -69,14 +70,11 @@
 
 <script>
 import moment from 'moment'
-
-import { LIST_TOP_DATA, DESCRIBE_HOSTS } from '@/constants'
-import { ErrorTips } from '@/components/ErrorTips'
+import XLSX from 'xlsx'
+import { LIST_TOP_DATA } from '@/constants'
 import { COUNTRY_MAP } from '../../components/constants'
-import { flatObj } from '@/utils'
 import echartMap from '../../components/worldMap'
-import type from '@/views/CM/CM_assembly/product_type'
-import Header from '@/components/public/Head'
+
 export default {
   components: {
     echartMap
@@ -90,16 +88,18 @@ export default {
   },
   data () {
     return {
-      domainsList: [],
-      package: [],
+      tableData: [],
       type: 'flux',
-      AreaTypeData: this.params,
       loading: true,
       total: 0,
       seriesMap: [],
       totalNumber: 1,
-      COUNTRY_MAP
-
+      COUNTRY_MAP,
+      pageSize: 6, // 每页数量
+      currpage: 1, // 页数
+      totalItems: 0,
+      fluxData: [],
+      requestData: []
     }
   },
   watch: {
@@ -109,21 +109,8 @@ export default {
       },
       immediate: true,
       deep: true
-    },
-
-    totalNumber () {
-      this.getData()
-    },
-    AreaTypeData () {
-      this.getData()
     }
-
   },
-
-  created () {
-    this.getData()
-  },
-
   methods: {
 
     fixed (v) {
@@ -143,105 +130,156 @@ export default {
         if (v > 1e3) {
           return [this.fixed(v / 1e3), 'KB'].join('')
         }
-        console.log([v, 'B'].join(''), '[v,')
         return [v, 'B'].join('')
       }
     },
+    _export () {
+      const { projectName, domainName, AreaType, times, interval } = this.params
 
-    YymmddFormat (newDate) {
-      let Month = newDate.getMonth() + 1
-      Month = Month >= 10 ? Month : '0' + Month
-      let d = newDate.getDate()
-      d = d >= 10 ? d : '0' + d
-      let h = newDate.getHours()
-      h = h >= 10 ? h : '0' + h
-      let m = newDate.getMinutes()
-      m = m >= 10 ? m : '0' + m
-      let s = newDate.getSeconds()
-      s = s >= 10 ? s : '0' + s
-      return [
-        [newDate.getFullYear(), Month, d].join('-'), [h, m, s].join(':')
-      ].join(' ')
+      const start = moment(times[0]).format('YYYY-MM-DD')
+      const end = moment(times[1]).format('YYYY-MM-DD')
+      let fileName = start
+      if (start !== end) {
+        fileName = `${start}-${end}`
+      }
+      fileName += '_district_detail.xlsx'
+      let data = [
+        ['开始时间', moment(times[0]).format('YYYY-MM-DD')],
+        ['结束时间', moment(times[1]).format('YYYY-MM-DD')],
+        ['统计数据类型', AreaType === 'client' ? '客户端地区' : '服务地区'],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['导出时间', moment().format('YYYYMMDDHHmmss')],
+        [],
+        ['地区', '流量（GB）', '访问次数']
+      ]
+      const { fluxData, requestData } = this
+      const result = fluxData.map((data, i) => {
+        return [data.name, (data.value / 1e9).toFixed(2) === '0.00' ? 0 : (data.value / 1e9).toFixed(2), requestData[i].value]
+      })
+
+      data = data.concat(result)
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws)
+      XLSX.writeFile(wb, fileName)
     },
     init () {
-      const { projectId, domainName, AreaType, times } = this.params
-
+      const {
+        projectId,
+        projectName,
+        domainName,
+        interval,
+        times,
+        AreaType
+      } = this.params
       const params = {
-        AreaType: AreaType,
-        StartTime: (times[0].format === undefined) ? this.YymmddFormat(times[0]) : times[0].format('YYYY-MM-DD HH:mm:ss'),
-        EndTime: (times[1].format === undefined) ? this.YymmddFormat(times[1]) : times[1].format('YYYY-MM-DD HH:mm:ss')
-
+        AreaType,
+        StartTime: moment(times[0]).format('YYYY-MM-DD 00:00:00'),
+        EndTime: moment(times[1]).format('YYYY-MM-DD 23:59:59')
       }
 
       if (projectId) {
         params.Project = projectId
       }
       if (domainName) {
-        params['Domains1.0'] = domainName
+        params['Domains.0'] = domainName
       }
 
       this.getData(params)
     },
     // 获取数据
     getData (params) {
-      this.loading = true
-      const regionsArr = []
-      let total = 1
+      this.getFlux(params)
+      this.getRequest(params)
+    },
+    getFlux (params) {
+      if (this.type === 'flux') {
+        this.loading = true
+      }
+      let regionsArr = []
+      const tableArr = []
+      let total = 0
       this.axios.post(LIST_TOP_DATA,
         { ...params,
           Area: 'overseas',
           Version: '2018-06-06',
           Metric: 'District',
-          Filter: this.type
+          Filter: 'flux'
         })
-        .then(resp => {
-          let res = resp.Response.Data[0].DetailData
-          console.log(res, 'res')
-          this.$nextTick(function () {
-            this.domainsList = resp.Response.Data[0].DetailData
-            if (resp.Response.Data[0].DetailData.length != 0) {
-              resp.Response.Data[0].DetailData.forEach(item => {
-                total += item.Value
-                if (this.type === 'flux') {
-                  if (item.Value > 1e12) {
-                    item.value = item.Value / 1e12 + 'TB'
-                  } else if (item.Value > 1e9) {
-                    item.value = item.Value / 1e9 + 'GB'
-                  } else if (item.Value > 1e6) {
-                    item.value = item.Value / 1e6 + 'MB'
-                  } else if (item.Value > 1e3) {
-                    item.value = item.Value / 1e3 + 'KB'
-                  } else {
-                    item.value = item.Value + 'B'
-                  }
-                }
-                item.name = this.COUNTRY_MAP[item.Name]
+        .then(({ Response }) => {
+          if (Response.Data && Response.Data.length) {
+            const res = Response.Data[0].DetailData
+            res &&
+              res.forEach(v => {
+                total += v.Value
+                tableArr.push({
+                  name: this.COUNTRY_MAP[v.Name],
+                  value: v.Value
+                })
               })
-            }
-
+            res && res.forEach(v => {
+              regionsArr.push({
+                name: this.COUNTRY_MAP[v.Name],
+                value: ((v.Value / total) * 100).toFixed(2)
+              })
+            })
+          }
+          if (this.type === 'flux') {
             this.totalNumber = total
-          })
-          res && res.map((v) => {
-            if (this.type === 'flux') {
-              regionsArr.push({
-                name: this.COUNTRY_MAP[v.Name],
-                value: (v.Value / this.totalNumber * 100).toFixed(2)
-              })
-            } else {
-              regionsArr.push({
-                name: this.COUNTRY_MAP[v.Name],
-                value: v.Value
-              })
-            }
-          })
-          this.seriesMap = regionsArr
+            this.seriesMap = regionsArr // 传百分数因为比较的就是百分比
+            this.tableData = tableArr
+            this.totalItems = tableArr.length
+          }
+          this.fluxData = tableArr
+          this.loading = false
         }).then(() => {
           this.loading = false
         })
     },
-    changeRadio (val) {
+    getRequest (params) {
+      if (this.type === 'request') {
+        this.loading = true
+      }
+      const tableArr = []
+      let total = 0
+      this.axios.post(LIST_TOP_DATA,
+        { ...params,
+          Area: 'overseas',
+          Version: '2018-06-06',
+          Metric: 'District',
+          Filter: 'request'
+        })
+        .then(({ Response }) => {
+          if (Response.Data && Response.Data.length) {
+            const res = Response.Data[0].DetailData
+            res &&
+              res.forEach(v => {
+                total += v.Value
+                tableArr.push({
+                  name: this.COUNTRY_MAP[v.Name],
+                  value: v.Value
+                })
+              })
+          }
+          if (this.type === 'request') {
+            this.totalNumber = total
+            this.seriesMap = tableArr // 传百分数因为比较的就是百分比
+            this.tableData = tableArr
+            this.totalItems = tableArr.length
+          }
+          this.requestData = tableArr
+          this.loading = false
+        }).then(() => {
+          this.loading = false
+        })
+    },
+    changeRadio () {
       this.loading = true
-      this.getData()
+      this.init()
+    },
+    handleCurrentChange (val) {
+      this.currpage = val
     }
   }
 }
@@ -255,10 +293,33 @@ export default {
   font-size: 18px;
   font-weight: bold;
 }
-.box-left {
-  // border: 1px solid #ebeef5;
+.Right-style {
+  display: flex;
+  justify-content: space-between;
+
+  .esach-inputL {
+    width: 300px;
+    margin-right: 20px;
+  }
 }
-.box-right {
-  // border-top: 1px solid #ebeef5;
+.pagstyle {
+  padding: 20px;
+
+  .pagtotal {
+    font-size: 13px;
+    font-weight: 400;
+    color: #565656;
+    line-height: 62px;
+  }
+  .el-pagination {
+    border-bottom: none;
+  }
+}
+.empty {
+  height: 480px;
+  width: 100%;
+  line-height: 480px;
+  text-align: center;
+  font-weight: bold;
 }
 </style>

@@ -90,6 +90,7 @@ export default {
     initChart () {
       let that = this
       this.chart = this.$echarts.init(this.$refs.worldmap_dv)
+      this.chart.clear()
       window.onresize = this.$echarts.init(this.$refs.worldmap_dv).resize
       // 把配置和数据放这里
       this.chart.setOption({
@@ -101,7 +102,7 @@ export default {
             if (!val.data) {
               return
             }
-            if (that.trafficOrVisitData === 'flux') {
+            if (that.trafficOrVisits === 'flux') {
               relVal +=
                 val.marker +
                 '流量' +
@@ -117,7 +118,8 @@ export default {
                 '<br/>' +
                 val.data.name +
                 ' : ' +
-                val.data.value
+                val.data.value +
+                '次'
             }
 
             return relVal

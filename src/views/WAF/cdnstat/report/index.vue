@@ -173,7 +173,7 @@ export default {
         type = '周报'
         times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
       }
-      return {interval, type, projectId: project.ProjectId, projectName: project.ProjectName, domainName, times}
+      return { interval, type, projectId: project.ProjectId, projectName: project.ProjectName, domainName, times }
     }
   },
   watch: {

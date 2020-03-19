@@ -10,54 +10,54 @@
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
       <h3>回調配置</h3>
-      <el-button type="text" @click="onEdit">編輯</el-button>
+      <el-button type="text" @click="onEdit">{{$t('CSS.domainManagement.10')}}</el-button>
     </el-row>
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="7">範本名稱</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.7')}}}</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">範本描述</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.8')}}</el-col>
           <el-col class="text-black">{{ selectItem.Description }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">回調金鑰</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.20')}}</el-col>
           <el-col class="text-black">{{ selectItem.CallbackKey }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">推流回調</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.21')}}</el-col>
           <el-col class="text-black">{{ selectItem.StreamBeginNotifyUrl }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">斷流回調</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.22')}}</el-col>
           <el-col class="text-black">{{ selectItem.StreamEndNotifyUrl }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">錄製回調</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.23')}}</el-col>
           <el-col class="text-black">{{ selectItem.RecordNotifyUrl }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">截圖回調</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.24')}}</el-col>
           <el-col class="text-black">{{ selectItem.SnapshotNotifyUrl }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="7">鑑黃回調</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.25')}}</el-col>
           <el-col class="text-black">{{ selectItem.PornCensorshipNotifyUrl }}</el-col>
         </el-row>
       </li>
@@ -75,19 +75,19 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
     }
   },
 
-  mounted() {
+  mounted () {
   },
 
   methods: {
-    onEdit() {
+    onEdit () {
       this.$emit('update:formShow', true)
     }
-  },
+  }
 
 }
 

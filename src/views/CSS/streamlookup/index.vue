@@ -1,12 +1,13 @@
 <template>
   <div class="streamlookup-wrap">
-    <Header title="流詳情查詢" />
+    <Header :title="$t('CSS.appreciation.14')" />
     <div class="toolbar">
       <div class="search-wrap">
-        <p>可對單個視頻流查詢推流和播放數據詳情</p>
+        <p>{{$t('CSS.appreciation.15')}}</p>
+
         <div class="search">
-          <el-input v-model="StreamName" placeholder="輸入StreamName(流ID)進行查詢"></el-input>
-          <el-button type="primary" size="small" class="searchbtn" @click="search">查詢</el-button>
+          <el-input v-model="StreamName" :placeholder="$t('CSS.appreciation.16')"></el-input>
+          <el-button type="primary" size="small" class="searchbtn" @click="search">{{$t('CSS.appreciation.0')}}</el-button>
         </div>
       </div>
     </div>
@@ -37,34 +38,34 @@
 </template>
 
 <script>
-import moment from "moment";
-import Header from "@/components/public/Head";
-import XTimeD from "@/components/public/TimeD";
-import Stream from "./tab/stream";
-import Play from "./tab/play";
+import moment from 'moment'
+import Header from '@/components/public/Head'
+import XTimeD from '@/components/public/TimeD'
+import Stream from './tab/stream'
+import Play from './tab/play'
 export default {
-  name: "streamlookup",
-  data() {
+  name: 'streamlookup',
+  data () {
     return {
-      value: 1, //时间组件默认选中值
-      selectStream: "1",
-      StreamName: "",
-      streamIDAfterSearch: "",
+      value: 1, // 时间组件默认选中值
+      selectStream: '1',
+      StreamName: '',
+      streamIDAfterSearch: '',
       showMain: false,
       showPlay: true,
       options: [
         {
-          value: "1",
-          label: "查看播放數據"
+          value: '1',
+          label: '查看播放數據'
         },
         {
-          value: "2",
-          label: "查看推流數據"
+          value: '2',
+          label: '查看推流數據'
         }
       ],
-      StartTime: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-      EndTime: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-    };
+      StartTime: moment(new Date()).format('YYYY-MM-DD 00:00:00'),
+      EndTime: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   components: {
     Header,
@@ -72,57 +73,57 @@ export default {
     Stream,
     Play
   },
-  created() {},
+  created () {},
   methods: {
-    search() {
-      if (this.StreamName == "" && this.showMain == false) {
-        this.$message.error("請輸入流id");
+    search () {
+      if (this.StreamName == '' && this.showMain == false) {
+        this.$message.error('請輸入流id')
       } else {
-        this.streamIDAfterSearch = this.StreamName;
-        this.showMain = true;
-        if (this.selectStream == "1") {
+        this.streamIDAfterSearch = this.StreamName
+        this.showMain = true
+        if (this.selectStream == '1') {
           this.$nextTick(() => {
-            this.$refs.tab1.init();
-          });
+            this.$refs.tab1.init()
+          })
         } else {
           this.$nextTick(() => {
-            this.$refs.tab2.init();
-          });
+            this.$refs.tab2.init()
+          })
         }
       }
     },
-    //时间组件返回的数据
-    GetDat(val) {
-      val[0].StartTIme = moment(val[0].StartTIme).format("YYYY-MM-DD HH:mm:ss");
-      this.value = val[1];
-      this.timeData = val;
-      this.StartTime = this.timeData[0].StartTIme;
-      this.EndTime = this.timeData[0].EndTIme;
-      if (this.selectStream == "1") {
+    // 时间组件返回的数据
+    GetDat (val) {
+      val[0].StartTIme = moment(val[0].StartTIme).format('YYYY-MM-DD HH:mm:ss')
+      this.value = val[1]
+      this.timeData = val
+      this.StartTime = this.timeData[0].StartTIme
+      this.EndTime = this.timeData[0].EndTIme
+      if (this.selectStream == '1') {
         this.$nextTick(() => {
-          this.$refs.tab1.init();
-        });
+          this.$refs.tab1.init()
+        })
       } else {
         this.$nextTick(() => {
-          this.$refs.tab2.init();
-        });
+          this.$refs.tab2.init()
+        })
       }
     },
-    changeOption(val) {
-      if (val == "1") {
-        this.showPlay = true;
+    changeOption (val) {
+      if (val == '1') {
+        this.showPlay = true
         this.$nextTick(() => {
-          this.$refs.tab1.init();
-        });
+          this.$refs.tab1.init()
+        })
       } else {
-        this.showPlay = false;
+        this.showPlay = false
         this.$nextTick(() => {
-          this.$refs.tab2.init();
-        });
+          this.$refs.tab2.init()
+        })
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

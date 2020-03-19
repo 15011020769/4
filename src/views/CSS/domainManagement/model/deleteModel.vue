@@ -8,10 +8,10 @@
         :before-close="handleClosede"
       >
         <div>
-          <span class="tip">確定删除：{{ getCon[0] }}?</span>
+          <span class="tip">{{$t('CSS.domainManagement.43')}}删除：{{ getCon[0] }}?</span>
         </div>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="deleteDominSure">確 定</el-button>
+          <el-button type="primary" @click="deleteDominSure">{{$t('CSS.domainManagement.43')}}</el-button>
           <el-button @click="handleClosede">取 消</el-button>
         </span>
       </el-dialog>

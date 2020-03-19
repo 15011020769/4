@@ -8,24 +8,24 @@
       label-width="120px"
       class="demo-ruleForm"
     >
-      <el-form-item label="範本名稱" prop="TemplateName">
+      <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="範本描述" prop="Description">
+      <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
       </el-form-item>
       <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
       </el-form-item>
-      <el-form-item label="啟用智慧鑒黃" prop="PornFlag">
+      <el-form-item :label="$t('CSS.domainManagement.7')+$t('CSS.domainManagement.16')" prop="PornFlag">
         <el-switch v-model="ruleForm.PornFlag" />
         <div class="explain" v-if="ruleForm.PornFlag">
-          <p>啟用智慧鑑黃後，需配置回調才可收到鑑黃結果</p>
+          <p>{{$t('CSS.domainManagement.50')}}</p>
         </div>
       </el-form-item>
       <el-form-item label="儲存位置">
         <div class="explain">
-          <p>截圖將儲存在您配置的 COS bucket 中，請您確認 COS bucket 已授權雲直播寫入</p>
+          <p>{{$t('CSS.domainManagement.51')}}</p>
         </div>
       </el-form-item>
       <el-form-item label="CosAppId" prop="CosAppId">
@@ -46,12 +46,12 @@
 </template>
 
 <script>
-import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from "@/constants";
+import { ADD_SNAPSHOT_TEMPLATE, UPDATE_SNAPSHOT_TEMPLATE } from '@/constants'
 
-const regex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
+const regex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/
 
 export default {
-  name: "optionForm",
+  name: 'optionForm',
 
   props: {
     selectItem: {
@@ -59,147 +59,147 @@ export default {
     }
   },
 
-  data() {
+  data () {
     let checkTemplateName = (rule, value, callback) => {
-      let result = regex.test(value);
+      let result = regex.test(value)
       if (!result) {
-        callback(new Error("範本僅支持中文、英文、數字、_、-，不超過30個字符"));
+        callback(new Error('範本僅支持中文、英文、數字、_、-，不超過30個字符'))
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkDesc = (rule, value, callback) => {
-      let result = regex.test(value);
+      let result = regex.test(value)
       if (!result) {
         callback(
-          new Error("範本描述僅支持中文、英文、數字、_、-，不超過100個字符")
-        );
+          new Error('範本描述僅支持中文、英文、數字、_、-，不超過100個字符')
+        )
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkSnapshotInterval = (rule, value, callback) => {
       if (value < 5 || value > 300) {
-        callback(new Error("截圖間隔取值範圍為5秒-300秒，必須為5的倍數"));
+        callback(new Error('截圖間隔取值範圍為5秒-300秒，必須為5的倍數'))
       }
 
       if (value % 5 !== 0) {
-        callback(new Error("截圖間隔取值範圍為5秒-300秒，必須為5的倍數"));
+        callback(new Error('截圖間隔取值範圍為5秒-300秒，必須為5的倍數'))
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkCosAppId = (rule, value, callback) => {
       if (!/^[1-9]\d*$/.test(value)) {
-        callback(new Error("CosAppId必须是整数"));
+        callback(new Error('CosAppId必须是整数'))
       }
-      callback();
+      callback()
     }
 
     return {
       ruleForm: {
-        TemplateName: "",
-        Description: "",
+        TemplateName: '',
+        Description: '',
         SnapshotInterval: 10, // 截圖間隔
         PornFlag: 0, // 是否开启鉴黄，0：不开启，1：开启。默认：0。
-        CosAppId: "",
-        CosBucket: "",
-        CosRegion: ""
+        CosAppId: '',
+        CosBucket: '',
+        CosRegion: ''
       },
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入範本名稱", trigger: "blur" },
-          { validator: checkTemplateName, trigger: "blur" }
+          { required: true, message: '請輸入範本名稱', trigger: 'blur' },
+          { validator: checkTemplateName, trigger: 'blur' }
         ],
-        desc: [{ required: false }, { validator: checkDesc, trigger: "blur" }],
+        desc: [{ required: false }, { validator: checkDesc, trigger: 'blur' }],
         SnapshotInterval: [
-          { required: true, message: "請輸入截圖間隔", trigger: "blur" },
-          { validator: checkSnapshotInterval, trigger: "blur" }
+          { required: true, message: '請輸入截圖間隔', trigger: 'blur' },
+          { validator: checkSnapshotInterval, trigger: 'blur' }
         ],
         CosAppId: [
-          { required: true, message: "請輸入CosAppId", trigger: "blur" },
-          { validator: checkCosAppId, trigger: "blur" }
+          { required: true, message: '請輸入CosAppId', trigger: 'blur' },
+          { validator: checkCosAppId, trigger: 'blur' }
         ],
         CosBucket: [
-          { required: true, message: "請輸入CosBucket", trigger: "blur" }
+          { required: true, message: '請輸入CosBucket', trigger: 'blur' }
         ],
         CosRegion: [
-          { required: true, message: "請輸入CosRegion", trigger: "blur" }
+          { required: true, message: '請輸入CosRegion', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
 
-  mounted() {
-    this.initTableParams();
+  mounted () {
+    this.initTableParams()
   },
 
   methods: {
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 如果有selectItem则为修改
 
-          const params = { ...this.ruleForm };
-          params.Version = "2018-08-01";
-          params.PornFlag = this.ruleForm.PornFlag ? 1 : 0;
+          const params = { ...this.ruleForm }
+          params.Version = '2018-08-01'
+          params.PornFlag = this.ruleForm.PornFlag ? 1 : 0
 
           if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId;
-            params.CosAppId = Number(params.CosAppId);
-            this.handleUpdate(params);
-            return;
+            params.TemplateId = this.selectItem.TemplateId
+            params.CosAppId = Number(params.CosAppId)
+            this.handleUpdate(params)
+            return
           }
 
-          this.handleAdd(params);
+          this.handleAdd(params)
         }
-      });
+      })
     },
 
-    handleAdd(params) {
+    handleAdd (params) {
       this.axios.post(ADD_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "添加成功",
-            type: "success",
+            message: '添加成功',
+            type: 'success',
             showClose: true,
-            duration: 0,
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            duration: 0
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        this.$message.error(data.Response.Error.Message);
-      });
+        this.$message.error(data.Response.Error.Message)
+      })
     },
 
-    handleUpdate(params) {
+    handleUpdate (params) {
       this.axios.post(UPDATE_SNAPSHOT_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            message: '修改成功',
+            type: 'success'
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        this.$message.error(data.Response.Error.Message);
-      });
+        this.$message.error(data.Response.Error.Message)
+      })
     },
 
-    initTableParams() {
+    initTableParams () {
       if (Object.keys(this.selectItem).length) {
-        const currentParams = {};
+        const currentParams = {}
         Object.keys(this.ruleForm).forEach(key => {
-          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
-          this.ruleForm.PornFlag = this.selectItem.PornFlag > 0;
-        });
+          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
+          this.ruleForm.PornFlag = this.selectItem.PornFlag > 0
+        })
       }
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

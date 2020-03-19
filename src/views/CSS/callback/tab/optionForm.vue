@@ -8,57 +8,57 @@
       label-width="120px"
       class="demo-ruleForm"
     >
-      <el-form-item label="範本名稱" prop="TemplateName">
-        <el-input v-model="ruleForm.TemplateName" placeholder="請輸入範本名稱" style="width:330px;" />
+      <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
+        <el-input v-model="ruleForm.TemplateName" :placeholder="$t('CSS.transcribe.31')" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="範本描述" prop="Description">
+      <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input
           type="textarea"
-          placeholder="請輸入範本描述"
+          :placeholder="$t('CSS.transcribe.26')"
           v-model="ruleForm.Description"
           style="width:330px;"
         />
       </el-form-item>
-      <el-form-item label="回調金鑰" prop="CallbackKey">
+      <el-form-item :label="$t('CSS.transcribe.20')" prop="CallbackKey">
         <el-input
           v-model="ruleForm.CallbackKey"
           style="width:330px;"
-          placeholder="請輸入回調金鑰(由大小寫字母及數字組成，最長32個字符)"
+          :placeholder="$t('CSS.transcribe.27')"
         />
       </el-form-item>
-      <el-form-item label="推流回調" prop="StreamBeginNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.21')" prop="StreamBeginNotifyUrl">
         <el-input
           v-model="ruleForm.StreamBeginNotifyUrl"
           style="width:330px;"
-          placeholder="請輸入推流回調URL(協議頭:http、https等))"
+          :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
-      <el-form-item label="斷流回調" prop="StreamEndNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.22')" prop="StreamEndNotifyUrl">
         <el-input
           v-model="ruleForm.StreamEndNotifyUrl"
           style="width:330px;"
-          placeholder="請輸入斷流回調URL(協議頭:http、https等))"
+          :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
-      <el-form-item label="錄製回調" prop="RecordNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.23')" prop="RecordNotifyUrl">
         <el-input
           v-model="ruleForm.RecordNotifyUrl"
           style="width:330px;"
-          placeholder="請輸入錄製回調URL(協議頭:http、https等))"
+          :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
-      <el-form-item label="截圖回調" prop="SnapshotNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.24')" prop="SnapshotNotifyUrl">
         <el-input
           v-model="ruleForm.SnapshotNotifyUrl"
           style="width:330px;"
-          placeholder="請輸入截圖回調URL(協議頭:http、https等))"
+          :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
-      <el-form-item label="鑑黃回調" prop="PornCensorshipNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.30')" prop="PornCensorshipNotifyUrl">
         <el-input
           v-model="ruleForm.PornCensorshipNotifyUrl"
           style="width:330px;"
-          placeholder="請輸入鑑黃回調URL(協議頭:http、https等))"
+          :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
       <el-form-item>
@@ -70,11 +70,11 @@
 </template>
 
 <script>
-import { ADD_CALLBACK_TEMPLATE, UPDATE_CALLBACK_TEMPLATES } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../../components/CSSErrorTips";
+import { ADD_CALLBACK_TEMPLATE, UPDATE_CALLBACK_TEMPLATES } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 export default {
-  name: "optionForm",
+  name: 'optionForm',
 
   props: {
     selectItem: {
@@ -82,192 +82,192 @@ export default {
     }
   },
 
-  data() {
+  data () {
     let checkCallbackKey = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = /^[a-zA-Z0-9]{1,32}$/.test(value);
+        let result = /^[a-zA-Z0-9]{1,32}$/.test(value)
         console.log(result)
         if (!result) {
           return callback(
-            new Error("回調金鑰由大小寫字母及數字組成，最長32個字符")
-          );
+            new Error('回調金鑰由大小寫字母及數字組成，最長32個字符')
+          )
         }
       }
 
-      callback();
-    };
+      callback()
+    }
     let checkStreamBeginNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = this.isHttpOrHttps(value);
+        let result = this.isHttpOrHttps(value)
         if (!result) {
-          return callback(new Error("推流回調URL不合法"));
+          return callback(new Error('推流回調URL不合法'))
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkStreamEndNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = this.isHttpOrHttps(value);
+        let result = this.isHttpOrHttps(value)
         if (!result) {
-          return callback(new Error("斷流回調URL不合法"));
+          return callback(new Error('斷流回調URL不合法'))
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkRecordNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = this.isHttpOrHttps(value);
+        let result = this.isHttpOrHttps(value)
         if (!result) {
-          return callback(new Error("錄製回調URL不合法"));
+          return callback(new Error('錄製回調URL不合法'))
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     let checkSnapshotNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = this.isHttpOrHttps(value);
+        let result = this.isHttpOrHttps(value)
         if (!result) {
-          return callback(new Error("截圖回調URL不合法"));
+          return callback(new Error('截圖回調URL不合法'))
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     let PornCensorshipNotifyUrl = (rule, value, callback) => {
       if (value && value.length > 0) {
-        let result = this.isHttpOrHttps(value);
+        let result = this.isHttpOrHttps(value)
         if (!result) {
-          return callback(new Error("鑑黃回調URL不合法"));
+          return callback(new Error('鑑黃回調URL不合法'))
         }
       }
-      callback();
-    };
+      callback()
+    }
 
     return {
       ruleForm: {
-        TemplateName: "",
-        Description: "",
-        CallbackKey: "",
-        PornCensorshipNotifyUrl: "",
-        SnapshotNotifyUrl: "",
-        RecordNotifyUrl: "",
-        StreamEndNotifyUrl: "",
-        StreamBeginNotifyUrl: ""
+        TemplateName: '',
+        Description: '',
+        CallbackKey: '',
+        PornCensorshipNotifyUrl: '',
+        SnapshotNotifyUrl: '',
+        RecordNotifyUrl: '',
+        StreamEndNotifyUrl: '',
+        StreamBeginNotifyUrl: ''
       },
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入範本名稱", trigger: "blur" },
-          { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
+          { required: true, message: '請輸入範本名稱', trigger: 'blur' },
+          { min: 1, max: 30, message: '長度不能超過30個字符', trigger: 'blur' }
         ],
         desc: [
           { required: false },
-          { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
+          { max: 100, message: '長度不能超過100個字符', trigger: 'blur' }
         ],
         CallbackKey: [
           { required: false },
-          { validator: checkCallbackKey, trigger: "blur" }
+          { validator: checkCallbackKey, trigger: 'blur' }
         ],
         StreamBeginNotifyUrl: [
-          { validator: checkStreamBeginNotifyUrl, trigger: "blur" }
+          { validator: checkStreamBeginNotifyUrl, trigger: 'blur' }
         ],
         StreamEndNotifyUrl: [
-          { validator: checkStreamEndNotifyUrl, trigger: "blur" }
+          { validator: checkStreamEndNotifyUrl, trigger: 'blur' }
         ],
-        RecordNotifyUrl: [{ validator: checkRecordNotifyUrl, trigger: "blur" }],
+        RecordNotifyUrl: [{ validator: checkRecordNotifyUrl, trigger: 'blur' }],
         SnapshotNotifyUrl: [
-          { validator: checkSnapshotNotifyUrl, trigger: "blur" }
+          { validator: checkSnapshotNotifyUrl, trigger: 'blur' }
         ],
         PornCensorshipNotifyUrl: [
-          { validator: PornCensorshipNotifyUrl, trigger: "blur" }
+          { validator: PornCensorshipNotifyUrl, trigger: 'blur' }
         ]
       }
-    };
+    }
   },
 
-  mounted() {
-    this.initTableParams();
+  mounted () {
+    this.initTableParams()
   },
 
   methods: {
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           // 如果有selectItem则为修改
 
-          const params = { ...this.ruleForm };
-          params.Version = "2018-08-01";
+          const params = { ...this.ruleForm }
+          params.Version = '2018-08-01'
 
           if (
-            params["StreamBeginNotifyUrl"].length == 0 &&
-            params["StreamEndNotifyUrl"].length == 0 &&
-            params["RecordNotifyUrl"].length == 0 &&
-            params["SnapshotNotifyUrl"].length == 0 &&
-            params["PornCensorshipNotifyUrl"].length == 0
+            params['StreamBeginNotifyUrl'].length == 0 &&
+            params['StreamEndNotifyUrl'].length == 0 &&
+            params['RecordNotifyUrl'].length == 0 &&
+            params['SnapshotNotifyUrl'].length == 0 &&
+            params['PornCensorshipNotifyUrl'].length == 0
           ) {
-            this.$message.error("請至少填寫一個回調地址");
-            return;
+            this.$message.error('請至少填寫一個回調地址')
+            return
           }
 
           if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId;
-            this.handleUpdate(params);
-            return;
+            params.TemplateId = this.selectItem.TemplateId
+            this.handleUpdate(params)
+            return
           }
 
-          this.handleAdd(params);
+          this.handleAdd(params)
         }
-      });
+      })
     },
 
-    handleAdd(params) {
+    handleAdd (params) {
       this.axios.post(ADD_CALLBACK_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "添加成功",
-            type: "success"
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            message: '添加成功',
+            type: 'success'
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    handleUpdate(params) {
+    handleUpdate (params) {
       this.axios.post(UPDATE_CALLBACK_TEMPLATES, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            message: '修改成功',
+            type: 'success'
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    initTableParams() {
+    initTableParams () {
       if (Object.keys(this.selectItem).length) {
-        const currentParams = {};
+        const currentParams = {}
         Object.keys(this.ruleForm).forEach(key => {
-          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
-        });
+          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
+        })
       }
     },
-    isHttpOrHttps(url) {
-      return /(http|https):\/\/([\w.]+\/?)\S*/.test(url);
+    isHttpOrHttps (url) {
+      return /(http|https):\/\/([\w.]+\/?)\S*/.test(url)
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

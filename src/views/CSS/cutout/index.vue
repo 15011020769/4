@@ -105,13 +105,14 @@ export default {
       loading: true,
       selectDate: '',
       pickerOptions: {
-        onPick: ({maxDate, minDate}) => {
-          this.selectDate= minDate.getTime();
+        onPick: ({ maxDate, minDate }) => {
+          this.selectDate = minDate.getTime()
           if (maxDate) {
-            this.selectDate= ''
+            this.selectDate = ''
           }
-        }, disabledDate: (date) => {
-          if (this.selectDate!== '') {
+        },
+        disabledDate: (date) => {
+          if (this.selectDate !== '') {
             const minTime = moment(this.selectDate).subtract(1, 'month')
             const maxTime = moment(this.selectDate).add(1, 'month')
             return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || moment(date) < moment().subtract(2, 'month') || date.getTime() > Date.now()
@@ -127,14 +128,14 @@ export default {
   },
   watch: {
     timeValue: {
-      handler() {
+      handler () {
         this.getDATA()
       },
       immediate: true
-    },
+    }
   },
   methods: {
-    onTimeClick(t, u) {
+    onTimeClick (t, u) {
       this.createTimeType = `${t}${u}`
       let start = moment().subtract(t, u).startOf('d')
       let end = moment().endOf('d')

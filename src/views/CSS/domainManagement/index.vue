@@ -181,13 +181,13 @@
 </template>
 
 <script>
-import HeadCom from "@/components/public/Head";
-import addModel from "./model/addModel";
-import stopModel from "./model/stopModel";
-import deleteModel from "./model/deleteModel";
-import editTagsModel from "./model/editTagsModel";
-import { DOMAIN_LIST, ENABLE_DOMAIN, PROHIBIT_DOMAIN } from "@/constants";
-import { isOwnDomain } from "./utils/OwnDomain";
+import HeadCom from '@/components/public/Head'
+import addModel from './model/addModel'
+import stopModel from './model/stopModel'
+import deleteModel from './model/deleteModel'
+import editTagsModel from './model/editTagsModel'
+import { DOMAIN_LIST, ENABLE_DOMAIN, PROHIBIT_DOMAIN } from '@/constants'
+import { isOwnDomain } from './utils/OwnDomain'
 
 export default {
   components: {
@@ -197,11 +197,11 @@ export default {
     deleteModel: deleteModel, // 删除弹框
     editTagsModel: editTagsModel // 编辑标签
   },
-  name: "domainManagement",
-  data() {
+  name: 'domainManagement',
+  data () {
     return {
       tableDataBegin: [], // 表格数据
-      tableDataName: "", // 搜索框值
+      tableDataName: '', // 搜索框值
       tableDataEnd: [], // 定义一个空数组
       currentPage: 1, // 当前页数
       pageSize: 10, // 每页长度
@@ -211,44 +211,43 @@ export default {
       checkArr: [], // 被选中选项
       addModel: false, // 添加域名弹框
       stopModel: false, // 禁用弹框
-      DomainName: "", // 禁用域名传值
+      DomainName: '', // 禁用域名传值
       deleteDominArr: [], // 删除域名数组传值
       deleteModel: false, // 删除弹框
       editTagsModel: false, // 编辑标签弹框
       loadShow: false, // 加载
       allData: [], //
-      typeNew: "" // 类型
-    };
+      typeNew: '' // 类型
+    }
   },
-  mounted() {
+  mounted () {
     // this.getData();
-    this.describeLiveDomains();
+    this.describeLiveDomains()
   },
   methods: {
     // 1.1.查询域名列表(支持分页查询)
-    describeLiveDomains() {
-      this.loadShow = true;
+    describeLiveDomains () {
+      this.loadShow = true
       let params = {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         PageSize: this.pageSize, // 分页大小，范围：10~100。默认10
         PageNum: this.currentPage // 取第几页，范围：1~100000。默认1
         // DomainPrefix: this.tableDataName
-      };
+      }
       if (this.tableDataName) {
-        params.DomainPrefix = this.tableDataName;
+        params.DomainPrefix = this.tableDataName
       }
       this.axios.post(DOMAIN_LIST, params).then(res => {
-
         // 是否是自有域名
         res.Response.DomainList.forEach(element => {
           element.isOwnDomain = isOwnDomain(element.Name)
-        });
+        })
 
-        console.log(res.Response.DomainList);
-        this.allData = res.Response.DomainList;
-        this.tableDataBegin = res.Response.DomainList;
-        this.totalItems = res.Response.AllCount;
-        this.loadShow = false;
+        console.log(res.Response.DomainList)
+        this.allData = res.Response.DomainList
+        this.tableDataBegin = res.Response.DomainList
+        this.totalItems = res.Response.AllCount
+        this.loadShow = false
         // if(false) {
         //   this.$message({
         //     message: '恭喜你，这是一条成功消息',
@@ -257,138 +256,138 @@ export default {
         // } else {
         //   this.$message.error('错了哦，这是一条错误消息');
         // }
-      });
+      })
     },
     // 搜索
-    doFilter() {
-      this.currentPage = 1;
-      this.$nextTick(this.describeLiveDomains);
+    doFilter () {
+      this.currentPage = 1
+      this.$nextTick(this.describeLiveDomains)
     },
     // 切换pagesize
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-      this.pageSize = val;
-      this.$nextTick(this.describeLiveDomains);
+    handleSizeChange (val) {
+      console.log(`每页 ${val} 条`)
+      this.pageSize = val
+      this.$nextTick(this.describeLiveDomains)
     },
     // 切换分页
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.currentPage = val;
+    handleCurrentChange (val) {
+      console.log(`当前页: ${val}`)
+      this.currentPage = val
       // 分页查询
-      this.$nextTick(this.describeLiveDomains);
+      this.$nextTick(this.describeLiveDomains)
     }, // 组件自带监控当前页码
 
-    currentChangePage(list) {
-      let from = (this.currentPage - 1) * this.pageSize;
-      let to = this.currentPage * this.pageSize;
-      this.tableDataEnd = [];
+    currentChangePage (list) {
+      let from = (this.currentPage - 1) * this.pageSize
+      let to = this.currentPage * this.pageSize
+      this.tableDataEnd = []
       for (; from < to; from++) {
         if (list[from]) {
-          this.tableDataEnd.push(list[from]);
+          this.tableDataEnd.push(list[from])
         }
       }
     },
     // 启用域名按钮
-    startBtn(index, row) {
-      this.DomainName = row.Name;
+    startBtn (index, row) {
+      this.DomainName = row.Name
       let params = {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         DomainName: this.DomainName
-      };
+      }
       this.axios.post(ENABLE_DOMAIN, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "启用域名成功",
-            type: "success"
-          });
-          this.describeLiveDomains(); // 刷新列表页面
+            message: '启用域名成功',
+            type: 'success'
+          })
+          this.describeLiveDomains() // 刷新列表页面
         } else {
-          this.$message.error(data.Response.Error.Message);
+          this.$message.error(data.Response.Error.Message)
         }
-      });
+      })
     },
     // 禁用域名按钮
-    stopBtn(index, row) {
-      this.stopModel = true;
-      this.DomainName = row.Name;
+    stopBtn (index, row) {
+      this.stopModel = true
+      this.DomainName = row.Name
     },
     // 关闭禁用域名弹框
-    closeStopDominModel(isShow) {
+    closeStopDominModel (isShow) {
       if (isShow) {
         // 是否确认禁用
-        console.log(isShow);
+        console.log(isShow)
         let param = {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           DomainName: this.DomainName
-        };
+        }
         this.axios.post(PROHIBIT_DOMAIN, param).then(data => {
           if (data.Response.Error == undefined) {
             this.$message({
-              message: "禁用域名成功",
-              type: "success"
-            });
-            this.describeLiveDomains(); // 刷新列表页面
+              message: '禁用域名成功',
+              type: 'success'
+            })
+            this.describeLiveDomains() // 刷新列表页面
           } else {
-            this.$message.error(data.Response.Error.Message);
+            this.$message.error(data.Response.Error.Message)
           }
-        });
+        })
       }
-      this.stopModel = false;
+      this.stopModel = false
     },
     // 删除按钮
-    deleteRow(index, row) {
-      this.deleteDominArr = [];
-      this.deleteModel = true;
-      this.deleteDominArr.push(row.Name);
-      this.deleteDominArr.push(row.Type);
+    deleteRow (index, row) {
+      this.deleteDominArr = []
+      this.deleteModel = true
+      this.deleteDominArr.push(row.Name)
+      this.deleteDominArr.push(row.Type)
       // console.log(this.deleteDominArr)
     },
     // 关闭删除弹框
-    closedeleteDominModel(isShow) {
-      this.deleteModel = isShow;
+    closedeleteDominModel (isShow) {
+      this.deleteModel = isShow
     },
     // 编辑标签
-    editTags() {
+    editTags () {
       if (this.checkArr.length == 0) {
         this.$message({
           showClose: true,
-          message: "没有選擇域名"
-        });
-        return false;
+          message: '没有選擇域名'
+        })
+        return false
       } else {
-        this.editTagsModel = true;
+        this.editTagsModel = true
       }
     },
     // 关闭编辑标签弹框
-    closeEditTagsModel(isShow) {
-      this.editTagsModel = isShow;
+    closeEditTagsModel (isShow) {
+      this.editTagsModel = isShow
     },
     // 添加域名
-    addDomin() {
-      this.addModel = true;
+    addDomin () {
+      this.addModel = true
     },
     // 关闭添加域名弹框
-    closeAddModel(isShow) {
-      this.addModel = isShow;
+    closeAddModel (isShow) {
+      this.addModel = isShow
     },
     // 跳转详情页
-    toDetail(row) {
+    toDetail (row) {
       if (row.Type === 1) {
         // 播放域名
         this.$router.push({
-          name: "detailPlay",
+          name: 'detailPlay',
           query: row
-        });
+        })
       } else if (row.Type === 0) {
         // 推流域名
         this.$router.push({
-          name: "detailPushStream",
+          name: 'detailPushStream',
           query: row
-        });
+        })
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

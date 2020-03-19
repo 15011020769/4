@@ -69,19 +69,19 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
     }
   },
 
-  mounted() {
+  mounted () {
   },
 
   methods: {
-    onEdit() {
+    onEdit () {
       this.$emit('update:formShow', true)
     }
-  },
+  }
 
 }
 

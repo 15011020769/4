@@ -57,7 +57,7 @@
         <el-row type="flex">
           <div>
             <el-button type="text" @click="previewDialog = true"
-              >預覽</el-button
+              >{{ $t("CSS.watermark.11")}}</el-button
             >
           </div>
           <!-- <div class="text-black">{{ selectItem.CosBucket }}</div> -->
@@ -93,14 +93,14 @@
 
 <script>
 export default {
-  name: "configDetail",
+  name: 'configDetail',
   filters: {
-    position(b) {
-      if (!b) return;
-      if (b.XPosition < 50 && b.YPosition < 50) return "左上角";
-      if (b.XPosition >= 50 && b.YPosition < 50) return "右上角";
-      if (b.XPosition < 50 && b.YPosition >= 50) return "左下角";
-      if (b.XPosition >= 50 && b.YPosition >= 50) return "右下角";
+    position (b) {
+      if (!b) return
+      if (b.XPosition < 50 && b.YPosition < 50) return '左上角'
+      if (b.XPosition >= 50 && b.YPosition < 50) return '右上角'
+      if (b.XPosition < 50 && b.YPosition >= 50) return '左下角'
+      if (b.XPosition >= 50 && b.YPosition >= 50) return '右下角'
     }
   },
   props: {
@@ -109,20 +109,20 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       previewDialog: false
-    };
+    }
   },
   methods: {
-    onEdit() {
-      this.$emit("update:formShow", true);
+    onEdit () {
+      this.$emit('update:formShow', true)
     },
-    handleOpen() {
-      console.log(this.selectItem);
+    handleOpen () {
+      console.log(this.selectItem)
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

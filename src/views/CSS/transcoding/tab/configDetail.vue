@@ -9,19 +9,19 @@
 <template>
   <div class="detail-wrap">
     <el-row type="flex" justify="space-between" align="middle">
-      <h3>轉碼配置</h3>
-      <el-button type="text" @click="onEdit">編輯</el-button>
+      <h3>{{$t('CSS.detailPlay.TranscodingConfiguration') }}</h3>
+      <el-button type="text" @click="onEdit">{{$t('CSS.domainManagement.10')}} </el-button>
     </el-row>
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="5">範本名稱</el-col>
+          <el-col :span="5"> {{$t('CSS.transcribe.7')}}</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>
       <li>
         <el-row type="flex">
-          <el-col :span="5">範本描述</el-col>
+          <el-col :span="5">{{$t('CSS.transcribe.8')}}</el-col>
           <el-col class="text-black">{{ selectItem.Description }}</el-col>
         </el-row>
       </li>
@@ -58,19 +58,19 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
     }
   },
 
-  mounted() {
+  mounted () {
   },
 
   methods: {
-    onEdit() {
+    onEdit () {
       this.$emit('update:formShow', true)
     }
-  },
+  }
 
 }
 

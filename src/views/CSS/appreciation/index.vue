@@ -28,38 +28,38 @@
 </template>
 
 <script>
-import moment from "moment";
-import Header from "@/components/public/Head";
-import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM, CSS_CODECHARTS } from "@/constants";
-import Tab1 from "./tab/tab1";
-import Tab2 from "./tab/tab2";
-import Tab3 from "./tab/tab3";
+import moment from 'moment'
+import Header from '@/components/public/Head'
+import XTimeX from '@/components/public/TimeN'
+import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM, CSS_CODECHARTS } from '@/constants'
+import Tab1 from './tab/tab1'
+import Tab2 from './tab/tab2'
+import Tab3 from './tab/tab3'
 export default {
-  name: "appreciation",
-  data() {
+  name: 'appreciation',
+  data () {
     return {
-      value: 1, //时间组件默认选中值
-      region: "台灣台北", //地域
-      tabIndex: 0, //tab默认选中值
-      //tab内容
+      value: 1, // 时间组件默认选中值
+      region: '台灣台北', // 地域
+      tabIndex: 0, // tab默认选中值
+      // tab内容
       tab: [
         {
-          name: "截圖累計值",
+          name: '截圖纍計值',
           value: 0
         },
         {
-          name: "轉碼總時長",
+          name: '轉碼總時長',
           value: 0
         },
         {
-          name: "錄製峰值",
+          name: '錄製峰值',
           value: 0
         }
       ],
-      StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-      EndTIme: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-    };
+      StartTIme: moment(new Date()).format('YYYY-MM-DD 00:00:00'),
+      EndTIme: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    }
   },
   components: {
     Header,
@@ -68,16 +68,16 @@ export default {
     Tab2,
     Tab3
   },
-  created() {
-    this.getCity();
-    this.getScreens();
-    this.getPeaks();
-    this.getDurations();
+  created () {
+    this.getCity()
+    this.getScreens()
+    this.getPeaks()
+    this.getDurations()
   },
   methods: {
-    //查询
-    search() {
-      this.StartTIme = this.timeData[0].StartTIme;
+    // 查询
+    search () {
+      this.StartTIme = this.timeData[0].StartTIme
       this.EndTIme = this.timeData[0].EndTIme
       if (this.tabIndex == 0) {
         this.getScreens()
@@ -85,45 +85,45 @@ export default {
           this.$refs.tab1.getCharts()
         })
       } else if (this.tabIndex == 1) {
-        this.getDurations();
+        this.getDurations()
         this.$nextTick(() => {
-          this.$refs.tab2.getCharts();
+          this.$refs.tab2.getCharts()
         })
       } else if (this.tabIndex == 2) {
-        this.getPeaks();
+        this.getPeaks()
         this.$nextTick(() => {
-           this.$refs.tab3.getCharts();
+          this.$refs.tab3.getCharts()
         })
       }
     },
-    //时间组件返回的数据
-    GetDat(val) {
-      val[0].StartTIme = moment(val[0].StartTIme).format("YYYY-MM-DD HH:mm:ss");
-      this.value = val[1];
-      this.timeData = val;
+    // 时间组件返回的数据
+    GetDat (val) {
+      val[0].StartTIme = moment(val[0].StartTIme).format('YYYY-MM-DD HH:mm:ss')
+      this.value = val[1]
+      this.timeData = val
     },
-    //获取城市
-    getCity() {
+    // 获取城市
+    getCity () {
       this.axios.post(ALL_CITY).then(res => {
-        this.region = res.data[0].zone;
-      });
+        this.region = res.data[0].zone
+      })
     },
-    //tab切换
-    tabClick(index) {
-      this.tabIndex = index;
+    // tab切换
+    tabClick (index) {
+      this.tabIndex = index
     },
-    getScreens() {
+    getScreens () {
       let totalScreen = 0
       const params = {
-        Version: "2018-08-01",
-        Granularity: "Minute",
+        Version: '2018-08-01',
+        Granularity: 'Minute',
         // Zone: "Oversea",
         StartTime: moment(this.StartTIme).utc().format(),
-        EndTime: moment(this.EndTIme).utc().format(),
-      };
+        EndTime: moment(this.EndTIme).utc().format()
+      }
       this.axios.post(CSS_SCREEN, params).then(res => {
         if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
+          this.$message.error(res.Response.Error.Message)
         } else {
           res.Response.DataInfoList.map(v => {
             totalScreen += v.Num
@@ -132,32 +132,32 @@ export default {
         }
       })
     },
-    getPeaks() {
+    getPeaks () {
       const params = {
-        Version: "2018-08-01",
-        StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
-        EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
+        Version: '2018-08-01',
+        StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
         // MainlandOrOversea: "Oversea",
-        LiveType: "NormalLive",
-      };
+        LiveType: 'NormalLive'
+      }
       this.axios.post(CSS_RECORDSTREAM, params).then(res => {
         if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
+          this.$message.error(res.Response.Error.Message)
         } else {
           this.tab[2].value = Math.max(...res.Response.DataInfoList.map(item => item.Num))
         }
-      });
+      })
     },
-    getDurations() {
+    getDurations () {
       const params = {
-        Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-      };
+        Version: '2018-08-01',
+        StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss')
+      }
       let total = 0
       this.axios.post(CSS_CODECHARTS, params).then(res => {
         if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
+          this.$message.error(res.Response.Error.Message)
         } else {
           res.Response.DataInfoList.map(v => {
             total += v.Duration
@@ -167,7 +167,7 @@ export default {
       })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
