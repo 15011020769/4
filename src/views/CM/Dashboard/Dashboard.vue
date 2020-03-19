@@ -76,7 +76,7 @@
   import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
   import AddPanel from "./components/AddPaneldialog";
   import {
-    GET_DASHBOARD_LIST
+    GET_DASHBOARD
   } from "@/constants";
   import {
     ErrorTips
