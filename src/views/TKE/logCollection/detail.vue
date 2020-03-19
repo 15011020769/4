@@ -33,9 +33,11 @@
           </el-form-item>
           <!-- <el-form-item  v-if="$route.query.type == 'host-log'||$route.query.type == 'container-log'"   :label="$t('TKE.overview.rzy')"> -->
           <el-form-item  :label="$t('TKE.overview.rzy')">
-            <span>{{$t('TKE.overview.syrq')}}</span>
-            <div v-for="(v,i) in logInfo" :key="i">
-             <p v-for="(vc,ic) in v.workloads" :key="ic">{{v.namespace}}/{{vc.type}}/{{vc.name}}</p>
+            <span v-if="!logInfo">{{$t('TKE.overview.syrq')}}</span>
+            <div v-if="logInfo">
+              <div v-for="(v,i) in logInfo" :key="i">
+                <p v-for="(vc,ic) in v.workloads" :key="ic">{{v.namespace}}/{{vc.type}}/{{vc.name}}</p>
+              </div>
             </div>
           </el-form-item>
           <div  v-if="$route.query.type == 'pod-log'">
