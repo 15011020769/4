@@ -48,6 +48,7 @@
             :productData="productListData"
             v-on:projectId="projectIds"
             v-on:searchParam="searchParams"
+            v-on:multipleSelection="selectDatas"
           ></CamTransferCpt>
         </div>
       </div>
@@ -77,11 +78,7 @@ export default {
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
       productListData: {},
-<<<<<<< Updated upstream
-      projectId: "",
-=======
       projectId: 0,
->>>>>>> Stashed changes
       searchParam: {},
       productData: {},
       isShow: false,
@@ -98,29 +95,8 @@ export default {
       type: Object,
       default: () => []
     }
-  },
-<<<<<<< Updated upstream
-  watch: {
-    productData: {
-      hander(val) {
-        this.productListData = val;
-      },
-      deep: true
-    }
-=======
-  watch:{
-    // productData:{
-    //   hander(val) {
-    //     debugger
-    //     this.productListData = val
-    //     console.log("productListDataasdasdsadasdasdasdasd",productListData)
-    //   },
-    //   deep: true
-    // }
-    
-  },
+  }, 
   mounted() {
->>>>>>> Stashed changes
   },
   mounted() {},
   methods: {
@@ -144,11 +120,11 @@ export default {
       this.projectId = data;
     },
     searchParams(data) {
-<<<<<<< Updated upstream
-=======
-      console.log("data1312312312",data);
->>>>>>> Stashed changes
       this.searchParam = data;
+    },
+    //选择右侧表格数据
+    selectDatas(val) {
+      this.rightData  = val;
     },
     // 分组名
     GroupingNameInput() {

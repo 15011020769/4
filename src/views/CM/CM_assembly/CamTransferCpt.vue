@@ -452,7 +452,7 @@ export default {
       }
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val;
+      this.$emit("multipleSelection", val);
     },
     DeleteList(row) {
       this.$refs.multipleTable.toggleRowSelection(row);
