@@ -172,7 +172,8 @@ module.exports = {
       cjjkmb: '创建监控面板',
       mcheng: '名称',
       qd: '确 定',
-      cmmjkmb: '重命名监控面板'
+      cmmjkmb: '重命名监控面板',
+      zjklbz: '在监控面板中添加监控图表，让您更便捷查看指标监控！'
     },
     overview: {
       syysy: '剩余1000条/已使用0条',

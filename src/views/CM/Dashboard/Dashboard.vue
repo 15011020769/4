@@ -22,14 +22,23 @@
         <p>{{$t('CVM.Dashboard.zcbbdc')}}</p>
       </div>
       <div class="headBtn">
-        <el-button type="primary" @click="showChartEdit = true">{{$t('CVM.Dashboard.tjjktb')}}</el-button>
-        <div>
+        <el-button v-show="!this.showEmptyControlPanel" type="primary" @click="showChartEdit = true">
+          {{$t('CVM.Dashboard.tjjktb')}}
+        </el-button>
+        <div style="float: right">
           <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
-            v-on:switchData="GetDat" />
-
+            v-on:switchData="GetDat" style="float: left" />
+          <el-button type="text" style="float: left"><i class="el-icon-refresh"></i></el-button>
+          <el-dropdown>
+            <el-button type="text" style="float: left;margin-left: 0px;"><i class="el-icon-more"></i></el-button>
+            <el-dropdown-menu slot="dropdown">
+              <div style="padding: 0 10px 10px;color: #bbb">自动刷新</div>
+              <el-dropdown-item v-for="item in refreshTimeArr" :key="item.value">{{item.label}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </div>
       </div>
-      <div class="chart">
+      <div class="chart" v-if="!this.showEmptyControlPanel">
         <div class="chartList">
           <div class="chartItem">
             <p>
@@ -75,6 +84,13 @@
           </div>
           <div class="chartContent" v-show="retractChartFlag">content</div>
         </div>
+      </div>
+      <!-- 新增控制面板页面 -->
+      <div class="emptyControlPanelPage" v-if="this.showEmptyControlPanel">
+        <p>{{$t('CVM.Dashboard.zjklbz')}}</p>
+        <el-button v-if="this.showEmptyControlPanel" type="primary" @click="showChartEdit = true">
+          {{$t('CVM.Dashboard.tjjktb')}}
+        </el-button>
       </div>
     </div>
     <chart-edit :dialogVisible.sync="showChartEdit"></chart-edit>
@@ -166,6 +182,11 @@ export default {
       showChartEdit: false, // 添加图表的弹窗
       selectButtonShow: '', // 下拉框按钮是否展示
       renameControlName: '', // 重命名监控面板名称
+      refreshTimeArr: [
+        { label: '暂停', value: 0}, { label: '30秒', value: 30}, { label: '1分钟', value: 60}, 
+        { label: '2分钟', value: 120}, { label: '5分钟', value: 300}, { label: '10分钟', value: 600},
+      ],
+      showEmptyControlPanel: false, // 是否展示空的监控面板
     };
   },
   components: {
@@ -305,7 +326,7 @@ export default {
     handleRenameControl(name) {
         this.$refs.renameControlPanel.show = true;
         this.renameControlName = name;
-    }
+    },
 
     // //取消
     // cancel() {
@@ -370,8 +391,8 @@ export default {
   }
 
   .Dashboard-wrap>>>.headBtn {
-    display: flex;
-    justify-content: space-between;
+    // display: flex;
+    // justify-content: space-between;
     margin: 20px 0;
 
     >div {
@@ -460,6 +481,26 @@ export default {
         }
       }
     }
+  }
+
+  .Dashboard-wrap {
+    .el-icon-refresh, .el-icon-more {
+       font-weight: 700;
+       font-size: 16px;
+       color: #888888;
+    }
+  }
+
+  .Dashboard-wrap .emptyControlPanelPage {
+      clear: both;
+      p {
+        margin: 100px 0 30px;
+        text-align: center;
+      }
+      .el-button {
+        margin: 0 auto;
+        display: block;
+      }
   }
 
 </style>

@@ -132,6 +132,8 @@ export default {
             duration: 0
           });
         }
+      }).finally(() => {
+        this.$parent.$parent.showEmptyControlPanel = true;
       })
     }
   }
