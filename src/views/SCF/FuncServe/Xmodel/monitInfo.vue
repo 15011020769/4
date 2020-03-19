@@ -105,14 +105,10 @@
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
-              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
-                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
-            </div>
-            <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <p v-for="(item,index) in scope.row.DataPoints[0].Timestamps" :key="index">
-                {{item|UpTime}}
+                {{item | UpTime1}}、
               </p>
+
             </div>
           </template>
         </el-table-column>
@@ -121,7 +117,7 @@
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <p v-for="(item,index) in scope.row.DataPoints[0].Values" :key="index">
-                {{item}}
+                {{item}}、
               </p>
             </div>
           </template>
@@ -427,7 +423,7 @@
           let dataArr = [] // 表体的数据
           for (let i = 0; i < data.DataPoints[0].Values.length; i++) {
             dataArr.push({
-              time: UpTime(data.DataPoints[0].Timestamps)[i],
+              time: moment((data.DataPoints[0].Timestamps)[i] * 1000).format("YYYY-MM-DD HH:mm:ss"),
               data: data.DataPoints[0].Values[i]
             })
           }
@@ -442,20 +438,6 @@
         }
       },
 
-      // 导出图片
-      // downPng(data) {
-      //   if (data.DataPoints[0].Values.length !== 0) {
-      //     downloadEchartPic(data.MetricName + 1, data.DataPoints[0].Dimensions[0].Value + '_default_' + data.DataPoints[0].Dimensions[1].Value + '_' + this.disName[data.MetricName] + '.png')
-      //   } else {
-      //     this.$message({
-      //       message: '無數據',
-      //       type: "warning",
-      //       showClose: true,
-      //       duration: 0
-      //     });
-      //   }
-      // }
-
     },
     filters: {
       UpTime(value) {
@@ -465,6 +447,12 @@
           timeArr.push(uptime);
         }
         return timeArr;
+      },
+      UpTime1(value) {
+
+        let uptime = moment(value * 1000).format("YYYY-MM-DD HH:mm:ss");
+
+        return uptime;
       }
     }
   }
