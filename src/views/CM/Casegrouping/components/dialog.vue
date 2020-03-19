@@ -35,7 +35,7 @@
         </div>
         <div class="p">
           <span>分组类型</span>
-          <product-type-cpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId" /> 
+          <product-type-cpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId" :productValue='productValue' /> 
         </div>
         <div class="p">
           <span>添加至组</span>
@@ -74,6 +74,7 @@ export default {
       searchParam: {},
       productData: {},
       isShow: false,
+      productValue: 'cvm_device'
     };
   },
   components: {
