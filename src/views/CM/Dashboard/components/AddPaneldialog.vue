@@ -1,14 +1,14 @@
 <template>
   <div class="dialog">
-    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="show" @close="close">
-      <el-form :model="form">
-        <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="120px">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="show" @close="close" width="30%">
+      <el-form :model="form" label-position="left" :rules="rules" ref="addPanelForm">
+        <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="80px" prop="name">
+          <el-input v-model="form.name" autocomplete="off" style="width: 50%"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel">取 消</el-button>
         <el-button type="primary" @click="save">{{$t('CVM.Dashboard.qd')}}</el-button>
+        <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -33,8 +33,11 @@ export default {
         resource: "",
         desc: ""
       },
-      show: this.dialogVisible
+      show: this.dialogVisible,
       // dialogFormVisible: false //监控面板的开关
+      rules: {
+        name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
+      }
     };
   },
    props: {
@@ -72,7 +75,7 @@ export default {
         Version: '2018-07-24',
         Module: 'monitor',
         DescName: this.form.name,
-        Meta: '', // 元数据，json串
+        Meta: '{index: 3}', // 元数据，json串
       }
       await this.axios.get(CREATE_DASHBOARD, {
         params: params
@@ -134,6 +137,8 @@ export default {
   }
 };
 </script>
-<style lang="sass" scoped>
-
+<style lang="scss" scoped>
+  .dialog >>> .el-form-item__label {
+    text-align: left;
+  }
 </style>

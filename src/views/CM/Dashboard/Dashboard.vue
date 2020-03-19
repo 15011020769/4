@@ -2,12 +2,13 @@
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
       <el-select v-model="panelValue" :placeholder="$t('CVM.Dashboard.qxz')" style="margin:0 20px 0 40px;width:260px">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" @mouseover.native="mouseoverSelect(item.value)">
-            <span style="float: left">{{ item.label }}</span>
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            <!-- @mouseover.native="mouseoverSelect(item.value)" -->
+            <!-- <span style="float: left">{{ item.label }}</span>
             <div class="slot-button-div" style="float: right" v-if="item.value == selectButtonShow">
                <el-button type="text" style="padding: 0" @click="handleRenameControl(item.value)">重命名</el-button>  
                <el-button type="text" style="padding: 0">删除</el-button>  
-            </div>
+            </div> -->
         </el-option>
       </el-select>
       <a class="addPanel" style="font-size:12px;font-weight:20" @click="addPanel">{{$t('CVM.Dashboard.tjjkmb')}}</a>
@@ -458,12 +459,6 @@ export default {
           }
         }
       }
-    }
-  }
-
-  .Dashboard-wrap {
-    .slot-button-div {
-      background-color: #bfa;
     }
   }
 
