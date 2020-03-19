@@ -1035,7 +1035,19 @@ export default {
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
         tooltip: {
-          trigger: "axis"
+          trigger: 'axis',
+          textStyle: {
+            color: 'black',
+            decoration: 'none',
+            fontFamily: 'Verdana, sans-serif',
+            fontSize: 12,
+            // fontStyle: 'italic',
+            fontWeight: 'bold'
+          },
+          backgroundColor: 'rgba(252,252,252)',
+          formatter: function (params) {
+            return '<div>' + params[0].name + '</div></br><div><span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:' + params[0].color + ';"></span>' + params[0].seriesName + ': ' + params[0].value + 'Mbps</div>'
+          }
         },
         xAxis: {
           data: date
@@ -1105,7 +1117,19 @@ export default {
         color: ["rgb(124, 181, 236)"],
         title: { text: "" },
         tooltip: {
-          trigger: "axis"
+          trigger: 'axis',
+          textStyle: {
+            color: 'black',
+            decoration: 'none',
+            fontFamily: 'Verdana, sans-serif',
+            fontSize: 12,
+            // fontStyle: 'italic',
+            fontWeight: 'bold'
+          },
+          backgroundColor: 'rgba(252,252,252)',
+          formatter: function (params) {
+            return '<div>' + params[0].name + '</div></br><div><span style="display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:' + params[0].color + ';"></span>' + params[0].seriesName + ': ' + params[0].value + 'pps</div>'
+          }
         },
         xAxis: {
           data: date
