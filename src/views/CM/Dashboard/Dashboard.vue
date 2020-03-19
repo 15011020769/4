@@ -5,7 +5,7 @@
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
       </el-select>
       <a class="addPanel" style="font-size:12px;font-weight:20" @click="addPanel">{{$t('CVM.Dashboard.tjjkmb')}}</a>
-      <AddPanel :dialogVisible="panelFlag" @cancel="cancel" @save="save" />
+      <AddPanel :dialogVisible.sync="panelFlag" @cancel="cancel" @save="save" />
     </Header>
     <div class="Dashboard-main">
       <div class="explain">

@@ -1,6 +1,6 @@
 <template>
   <div class="dialog">
-    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="dialogVisible" @close="close">
+    <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="show" @close="close">
       <el-form :model="form">
         <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="120px">
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -33,6 +33,7 @@ export default {
         resource: "",
         desc: ""
       },
+      show: this.dialogVisible
       // dialogFormVisible: false //监控面板的开关
     };
   },
@@ -40,6 +41,14 @@ export default {
     dialogVisible: {
       default: false,
       type: Boolean
+    }
+  },
+  watch: {
+    show: function (val) {
+      this.$emit('update:dialogVisible', val)
+    },
+    dialogVisible: function (val) {
+      this.show = val
     }
   },
   methods: {
