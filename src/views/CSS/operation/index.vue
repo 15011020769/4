@@ -273,41 +273,43 @@ export default {
       this.tabIndex = index;
     },
     getTotal() {
-      const params1 = {
+      // 因为默认是台湾所以用接口DESCRIBE_PLAY_STAT_INFOLIST
+      const params = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
         Granularity: 60,
         "CountryOrAreaNames.0": "Taiwan"
       };
-      const params2 = {
-        Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
-        Granularity: 60,
-        MainlandOrOversea: "Oversea",
-      };
+      // const params2 = {
+      //   Version: "2018-08-01",
+      //   StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+      //   EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+      //   Granularity: 60,
+      //   MainlandOrOversea: "Oversea",
+      // };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
-          params1["PlayDomains." + index] = item;
-          params2["PlayDomains." + index] = item;
+          params["PlayDomains." + index] = item;
         });
       }
       // 不查运营商 看腾讯页面0和1的数据请求CSS_MBPS，2和3的数据请求DESCRIBE_PLAY_STAT_INFOLIST
-      this.axios.post(CSS_MBPS, params2).then(res => {
+      // this.axios.post(CSS_MBPS, params2).then(res => {
+      //   if (res.Response.Error) {
+      //     this.$message.error(res.Response.Error.Message);
+      //   } else {
+      //     this.tab[0].value = res.Response.PeakBandwidth
+      //     this.tab[1].value = res.Response.SumFlux
+      //   }
+      // });
+      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
         if (res.Response.Error) {
           this.$message.error(res.Response.Error.Message);
         } else {
-          this.tab[0].value = res.Response.PeakBandwidth
-          this.tab[1].value = res.Response.SumFlux
-        }
-      });
-      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
-        if (res.Response.Error) {
-          this.$message.error(res.Response.Error.Message);
-        } else {
-          this.tab[2].value = res.Response.TotalRequest
-          this.tab[3].value = res.Response.MaxOnline
+          this.tab[0].value = res.Response.MaxBandwidth // 带宽峰值
+          this.tab[1].value = res.Response.TotalFlux // 总流量
+          this.tab[2].value = res.Response.TotalRequest // 总请求数
+          this.tab[3].value = res.Response.MaxOnline // 并发连接数
         }
       });
     },
