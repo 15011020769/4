@@ -1,10 +1,27 @@
 <template>
   <div class="appreciation-wrap">
     <Header title="增值功能" />
-    <div class="seek">
-      <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary">{{region}}</el-button>
-      <el-button style="margin-top:22.5px;margin-left:20px;" type="primary" @click="search">{{$t('CSS.appreciation.0')}}</el-button>
+    <div class="topSelect">
+      <el-button-group>
+        <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">今天</el-button>
+        <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">昨天</el-button>
+        <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">近7天</el-button>
+        <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">近30天</el-button>
+      </el-button-group>
+      <el-date-picker
+        ref="mypicker"
+        v-model="dateTimeValue"
+        type="datetimerange"
+        class="timeValue"
+        range-separator="至"
+        start-placeholder="開始日期"
+        end-placeholder="結束日期"
+        @change="changeTimeValue"
+        :picker-options="pickerOptions"
+        :clearable= false
+      ></el-date-picker>
+      <el-button style="margin-left:20px;" type="primary">{{region}}</el-button>
+      <el-button style="margin-left:20px;" type="primary" @click="search">{{$t('CSS.appreciation.0')}}</el-button>
     </div>
     <div class="appreciation-main">
       <div class="tab-box">
@@ -30,7 +47,7 @@
 <script>
 import moment from "moment";
 import Header from "@/components/public/Head";
-import XTimeX from "@/components/public/TimeN";
+// import XTimeX from "@/components/public/TimeN";
 import { ALL_CITY, CSS_SCREEN, CSS_RECORDSTREAM, CSS_CODECHARTS } from "@/constants";
 import Tab1 from "./tab/tab1";
 import Tab2 from "./tab/tab2";
@@ -38,6 +55,7 @@ import Tab3 from "./tab/tab3";
 export default {
   name: "appreciation",
   data() {
+    let vue = this
     return {
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
@@ -58,12 +76,30 @@ export default {
         }
       ],
       StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-      EndTIme: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
+      EndTIme: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
+      dateTimeValue: [moment().startOf('day'), moment()], // 日期绑定
+      selBtn: 1, // 默认选中今天按钮
+      pickerOptions: {
+        disabledDate(time) {
+          let timeOptionRange = vue.timeOptionRange;
+          if(timeOptionRange){
+            return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+          }
+          return time > moment()
+        },
+        onPick(time){
+          if(time.minDate && !time.maxDate){
+              vue.timeOptionRange = time.minDate;
+          }
+          if(time.maxDate){
+              vue.timeOptionRange = null;
+          }
+        }
+      }
     };
   },
   components: {
     Header,
-    XTimeX,
     Tab1,
     Tab2,
     Tab3
@@ -77,8 +113,9 @@ export default {
   methods: {
     //查询
     search() {
-      this.StartTIme = this.timeData[0].StartTIme;
-      this.EndTIme = this.timeData[0].EndTIme
+      this.getScreens()
+      this.getPeaks()
+      this.getDurations()
       if (this.tabIndex == 0) {
         this.getScreens()
         this.$nextTick(() => {
@@ -96,11 +133,33 @@ export default {
         })
       }
     },
-    //时间组件返回的数据
-    GetDat(val) {
-      val[0].StartTIme = moment(val[0].StartTIme).format("YYYY-MM-DD HH:mm:ss");
-      this.value = val[1];
-      this.timeData = val;
+    // 时间点击事件
+    checkTime (val) {
+      let times = [moment().startOf('day'), moment()] // 默认今天
+      this.selBtn = val
+      switch (val) {
+        case 2:
+          times = [moment().subtract(24, 'hours'), moment().subtract(24, 'hours').endOf('day')]
+          break
+        case 3:
+          times = [moment().subtract(6, 'days'), moment().endOf('day')]
+          break
+        case 4:
+          times = [moment().subtract(28, 'days'), moment().endOf('day')]
+          break
+        default:
+          break
+      }
+      times[0] = times[0].startOf('day')
+      this.$refs.mypicker.userInput = null
+      this.dateTimeValue = times
+      this.StartTIme = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
+      this.EndTIme = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')
+    },
+    changeTimeValue () {
+      this.selBtn = 0
+      this.StartTIme = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
+      this.EndTIme = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
     },
     //获取城市
     getCity() {
@@ -137,7 +196,7 @@ export default {
         Version: "2018-08-01",
         StartTime : moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
         EndTime : moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
-        // MainlandOrOversea: "Oversea",
+        MainlandOrOversea: "Oversea",
         LiveType: "NormalLive",
       };
       this.axios.post(CSS_RECORDSTREAM, params).then(res => {
@@ -236,4 +295,58 @@ export default {
     }
   }
 }
+.topSelect {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  box-sizing: border-box;
+    & > * {
+      float: left;
+    }
+    .selectDomin {
+      width: 230px;
+    }
+    ::v-deep .el-input__inner {
+      height: 30px;
+      line-height: 30px;
+      border-radius: 0;
+    }
+    ::v-deep {
+      
+      flex-wrap: wrap !important;
+    }
+    ::v-deep .el-button{
+      font-size: 12px !important;
+    }
+    ::v-deep .el-range__icon {
+        line-height: 22px;
+    }
+    ::v-deep .el-range-separator {
+      line-height: 22px;
+      width: 7%;
+    }
+    ::v-deep .el-select {
+      margin-right: 10px;
+    }
+    ::v-deep .el-input {
+      width: 250px;
+    }
+    button {
+      padding: 0 20px;
+    }
+    .addStyleBtn {
+      background-color: #006eff !important;
+      color: #fff;
+    }
+  }
+  button {
+    height: 30px;
+    line-height: 6px;
+    border-radius: 0;
+  }
+  .timeValue {
+    border-left: none;
+    width: 380px;
+    font-size: 12px !important;
+  }
 </style>

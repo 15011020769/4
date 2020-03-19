@@ -8,7 +8,6 @@
       </p>
     </div>
     <el-row class="topSelect">
-      </el-select>
       <el-button-group>
         <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">今天</el-button>
         <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">昨天</el-button>
@@ -150,6 +149,7 @@ import Tab4 from "./tab/tab4";
 export default {
   name: "operation",
   data() {
+    let vue = this
     return {
       domainsData: [],
       domainCheckedList: [],
@@ -205,8 +205,20 @@ export default {
       selBtn: 1, // 默认选中今天按钮
       pickerOptions: {
         disabledDate(time) {
-          return time > moment() || moment(new Date()).diff(time, 'days') > 30;
+          let timeOptionRange = vue.timeOptionRange;
+          if(timeOptionRange){
+            return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+          }
+          return time > moment()
         },
+        onPick(time){
+          if(time.minDate && !time.maxDate){
+              vue.timeOptionRange = time.minDate;
+          }
+          if(time.maxDate){
+              vue.timeOptionRange = null;
+          }
+        }
       }
     };
   },
