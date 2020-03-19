@@ -145,7 +145,7 @@
           danwei: '(次)',
           y: [2, 244, 52, 52]
         }],
-        projectId: '',
+        projectId: 0,
         searchParam: {},
         ceshi999: '',
         productValue: 'nat_tc_stat'
