@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrap">
-    <h4>錄製配置</h4>
+    <h4> {{$t('CSS.transcribe.0')}}</h4>
     <el-form
       :model="ruleForm"
       :rules="rules"
@@ -8,17 +8,17 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="可用範本" prop="template">
+      <el-form-item :label="$t('CSS.transcribe.18')" prop="template">
         <el-radio-group v-model="ruleForm.template" @change="radioChange">
           <el-radio label="FLV" />
           <el-radio label="MP4" />
           <el-radio label="HLS" />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="範本名稱" prop="TemplateName">
+      <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
       </el-form-item>
-      <el-form-item label="範本描述" prop="Description">
+      <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input
           type="textarea"
           v-model="ruleForm.Description"
@@ -99,31 +99,31 @@
 </template>
 
 <script>
-import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from "../constance";
-import { ADD_RECORDING_CONFIG, UPDATE_RECORDING_CONFIG } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from '../constance'
+import { ADD_RECORDING_CONFIG, UPDATE_RECORDING_CONFIG } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 let ErrTips = {
-  InternalError: "內部錯誤",
-  InvalidParameter: "參數錯誤",
-  "InvalidParameterValue.InstanceNotExist": "實例不存在",
-  "InvalidParameterValue.RepetitionValue": "已存在相同參數",
-  "InvalidParameterValue.SubnetIdInvalid": "無效的子網id",
-  "InvalidParameterValue.SubnetNotBelongToZone": "子網不屬於zone",
-  "InvalidParameterValue.VpcIdInvalid": "無效的 Vpc Id",
-  "InvalidParameterValue.WrongAction": "Action參數取值錯誤",
-  "InvalidParameterValue.ZoneNotSupport": "zone不支持",
-  ResourceUnavailable: "資源不可用",
-  UnauthorizedOperation: "未授權操作",
-  "UnsupportedOperation.BatchDelInstanceLimit": "批量刪除實例限制",
-  "UnsupportedOperation.OssReject": "Oss拒絕該操作"
-};
+  InternalError: '內部錯誤',
+  InvalidParameter: '參數錯誤',
+  'InvalidParameterValue.InstanceNotExist': '實例不存在',
+  'InvalidParameterValue.RepetitionValue': '已存在相同參數',
+  'InvalidParameterValue.SubnetIdInvalid': '無效的子網id',
+  'InvalidParameterValue.SubnetNotBelongToZone': '子網不屬於zone',
+  'InvalidParameterValue.VpcIdInvalid': '無效的 Vpc Id',
+  'InvalidParameterValue.WrongAction': 'Action參數取值錯誤',
+  'InvalidParameterValue.ZoneNotSupport': 'zone不支持',
+  ResourceUnavailable: '資源不可用',
+  UnauthorizedOperation: '未授權操作',
+  'UnsupportedOperation.BatchDelInstanceLimit': '批量刪除實例限制',
+  'UnsupportedOperation.OssReject': 'Oss拒絕該操作'
+}
 
-const defaultStorageTime = 0;
-const defaultRecordInterval = 30;
-const defaultFlowContinueDuration = 0;
+const defaultStorageTime = 0
+const defaultRecordInterval = 30
+const defaultFlowContinueDuration = 0
 
 export default {
-  name: "optionForm",
+  name: 'optionForm',
 
   props: {
     selectItem: {
@@ -131,48 +131,48 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       form: {
-        desc: "", // 範本描述
-        template: "", // 可用範本
-        name: "" // 範本名称
+        desc: '', // 範本描述
+        template: '', // 可用範本
+        name: '' // 範本名称
       },
 
       ruleForm: {
-        TemplateName: "",
-        Description: "",
-        TemplateType: " " // 此处为“ ”是为了让表单校验通过
+        TemplateName: '',
+        Description: '',
+        TemplateType: ' ' // 此处为“ ”是为了让表单校验通过
       },
 
       rules: {
         TemplateName: [
-          { required: true, message: "請輸入範本名稱", trigger: "blur" },
-          { min: 1, max: 30, message: "長度不能超過30個字符", trigger: "blur" }
+          { required: true, message: '請輸入範本名稱', trigger: 'blur' },
+          { min: 1, max: 30, message: '長度不能超過30個字符', trigger: 'blur' }
         ],
         desc: [
           { required: false },
-          { max: 100, message: "長度不能超過100個字符", trigger: "blur" }
+          { max: 100, message: '長度不能超過100個字符', trigger: 'blur' }
         ],
         TemplateType: [{ required: true }]
       },
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
       tableParams: JSON.parse(JSON.stringify(TEMPLATE_TYPE_PARAMS))
-    };
+    }
   },
 
-  mounted() {
-    this.initTableParams();
-    this.initInfo();
+  mounted () {
+    this.initTableParams()
+    this.initInfo()
   },
 
   methods: {
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          const sortParams = {};
-          const keyArr = Object.keys(this.tableParams);
+          const sortParams = {}
+          const keyArr = Object.keys(this.tableParams)
 
           // 先取出，再验证，再算值
           keyArr.forEach(key => {
@@ -180,304 +180,304 @@ export default {
               sortParams[`${key}.${_key}`] = this.getDefaultValueForEmptyInput(
                 _key,
                 this.tableParams[key][_key]
-              );
-            });
-          });
+              )
+            })
+          })
 
           if (!this.validateTableParameters(sortParams)) {
-            return;
+            return
           }
 
           Object.keys(sortParams).forEach(element => {
-            let eleString = element.toString();
+            let eleString = element.toString()
 
-            if (eleString.endsWith("RecordInterval")) {
-              sortParams[eleString] = parseInt(sortParams[eleString]) * 60;
+            if (eleString.endsWith('RecordInterval')) {
+              sortParams[eleString] = parseInt(sortParams[eleString]) * 60
             }
 
-            if (eleString.endsWith("StorageTime")) {
+            if (eleString.endsWith('StorageTime')) {
               sortParams[eleString] =
-                parseInt(sortParams[eleString]) * 3600 * 24;
+                parseInt(sortParams[eleString]) * 3600 * 24
             }
-          });
+          })
 
           const params = Object.assign(sortParams, {
-            Version: "2018-08-01",
+            Version: '2018-08-01',
             TemplateName: this.ruleForm.TemplateName,
             Description: this.ruleForm.Description
-          });
+          })
 
           // 如果有selectItem则为修改
 
           if (Object.keys(this.selectItem).length) {
-            params.TemplateId = this.selectItem.TemplateId;
-            delete params["HlsParam.RecordInterval"];
-            this.handleUpdate(params);
-            return;
+            params.TemplateId = this.selectItem.TemplateId
+            delete params['HlsParam.RecordInterval']
+            this.handleUpdate(params)
+            return
           }
 
-          this.handleAdd(params);
+          this.handleAdd(params)
         }
-      });
+      })
     },
-    validateTableParameters(parameters) {
+    validateTableParameters (parameters) {
       // 验证table中各个参数的正确性
 
       if (
-        parameters["HlsParam.Enable"] === 0 &&
-        parameters["Mp4Param.Enable"] === 0 &&
-        parameters["FlvParam.Enable"] === 0 &&
-        parameters["AacParam.Enable"] === 0
+        parameters['HlsParam.Enable'] === 0 &&
+        parameters['Mp4Param.Enable'] === 0 &&
+        parameters['FlvParam.Enable'] === 0 &&
+        parameters['AacParam.Enable'] === 0
       ) {
-        this.$message.error("至少填寫選擇一種錄製文件類型");
-        return false;
+        this.$message.error('至少填寫選擇一種錄製文件類型')
+        return false
       }
 
-      if (!this.isPositiveNumber(parameters["Mp4Param.StorageTime"])) {
-        this.$message.error("MP4錄製文件時長應為正整數");
-        return false;
+      if (!this.isPositiveNumber(parameters['Mp4Param.StorageTime'])) {
+        this.$message.error('MP4錄製文件時長應為正整數')
+        return false
       }
 
-      const maxStorageSeconds = 1080; // 秒
-      const maxHLSFlowContinueDuration = 300; // 秒
+      const maxStorageSeconds = 1080 // 秒
+      const maxHLSFlowContinueDuration = 300 // 秒
 
       // 如果启用了HLS
-      if (parameters["HlsParam.Enable"] === 1) {
-        if (parameters["HlsParam.StorageTime"] > maxStorageSeconds) {
-          this.$message.error("HLS文件保存時長範圍0~1080天");
-          return false;
+      if (parameters['HlsParam.Enable'] === 1) {
+        if (parameters['HlsParam.StorageTime'] > maxStorageSeconds) {
+          this.$message.error('HLS文件保存時長範圍0~1080天')
+          return false
         }
 
         if (
           !this.isPositiveNumber(
-            parameters["HlsSpecialParam.FlowContinueDuration"]
+            parameters['HlsSpecialParam.FlowContinueDuration']
           )
         ) {
-          this.$message.error("HLS續錄超時時長應為正整數");
-          return false;
+          this.$message.error('HLS續錄超時時長應為正整數')
+          return false
         }
         if (
-          parameters["HlsSpecialParam.FlowContinueDuration"] >
+          parameters['HlsSpecialParam.FlowContinueDuration'] >
             maxHLSFlowContinueDuration ||
-          parameters["HlsSpecialParam.FlowContinueDuration"] < 0
+          parameters['HlsSpecialParam.FlowContinueDuration'] < 0
         ) {
-          this.$message.error("HLS續錄超時時長範圍0~300秒");
-          return false;
+          this.$message.error('HLS續錄超時時長範圍0~300秒')
+          return false
         }
       }
 
-      const maxRecordInterval = 120; // 分
-      const minRecordInterval = 5; // 分
+      const maxRecordInterval = 120 // 分
+      const minRecordInterval = 5 // 分
 
       // 如果启用了MP4
-      if (parameters["Mp4Param.Enable"] === 1) {
-        if (!this.isPositiveNumber(parameters["Mp4Param.RecordInterval"])) {
-          this.$message.error("MP4錄製文件時長應為正整數");
-          return false;
+      if (parameters['Mp4Param.Enable'] === 1) {
+        if (!this.isPositiveNumber(parameters['Mp4Param.RecordInterval'])) {
+          this.$message.error('MP4錄製文件時長應為正整數')
+          return false
         }
 
         if (
-          parameters["Mp4Param.RecordInterval"] < minRecordInterval ||
-          parameters["Mp4Param.RecordInterval"] > maxRecordInterval
+          parameters['Mp4Param.RecordInterval'] < minRecordInterval ||
+          parameters['Mp4Param.RecordInterval'] > maxRecordInterval
         ) {
-          this.$message.error("MP4錄製文件時長範圍5~120分鐘");
-          return false;
+          this.$message.error('MP4錄製文件時長範圍5~120分鐘')
+          return false
         }
-        if (!this.isPositiveNumber(parameters["HlsParam.StorageTime"])) {
-          this.$message.error("HLS文件保存時長應為正整數");
-          return false;
+        if (!this.isPositiveNumber(parameters['HlsParam.StorageTime'])) {
+          this.$message.error('HLS文件保存時長應為正整數')
+          return false
         }
 
-        if (parameters["Mp4Param.StorageTime"] > maxStorageSeconds) {
-          this.$message.error("MP4文件保存時長範圍0~1080天");
-          return false;
+        if (parameters['Mp4Param.StorageTime'] > maxStorageSeconds) {
+          this.$message.error('MP4文件保存時長範圍0~1080天')
+          return false
         }
       }
 
       // 如果启用了FLV
-      if (parameters["FlvParam.Enable"] === 1) {
-        if (!this.isPositiveNumber(parameters["FlvParam.RecordInterval"])) {
-          this.$message.error("FLV錄製文件時長應為正整數");
-          return false;
+      if (parameters['FlvParam.Enable'] === 1) {
+        if (!this.isPositiveNumber(parameters['FlvParam.RecordInterval'])) {
+          this.$message.error('FLV錄製文件時長應為正整數')
+          return false
         }
 
         if (
-          parameters["FlvParam.RecordInterval"] < minRecordInterval ||
-          parameters["FlvParam.RecordInterval"] > maxRecordInterval
+          parameters['FlvParam.RecordInterval'] < minRecordInterval ||
+          parameters['FlvParam.RecordInterval'] > maxRecordInterval
         ) {
-          this.$message.error("FLV錄製文件時長範圍5~120分鐘");
-          return false;
+          this.$message.error('FLV錄製文件時長範圍5~120分鐘')
+          return false
         }
 
-        if (!this.isPositiveNumber(parameters["FlvParam.StorageTime"])) {
-          this.$message.error("FLV文件時長應為正整數");
-          return false;
+        if (!this.isPositiveNumber(parameters['FlvParam.StorageTime'])) {
+          this.$message.error('FLV文件時長應為正整數')
+          return false
         }
 
-        if (parameters["FlvParam.StorageTime"] > maxStorageSeconds) {
-          this.$message.error("FLV文件保存時長範圍0~1080天");
-          return false;
+        if (parameters['FlvParam.StorageTime'] > maxStorageSeconds) {
+          this.$message.error('FLV文件保存時長範圍0~1080天')
+          return false
         }
       }
 
       // 如果启用了AAC
-      if (parameters["AacParam.Enable"] === 1) {
-        if (!this.isPositiveNumber(parameters["AacParam.RecordInterval"])) {
-          this.$message.error("ACC錄製文件時長應為正整數");
-          return false;
+      if (parameters['AacParam.Enable'] === 1) {
+        if (!this.isPositiveNumber(parameters['AacParam.RecordInterval'])) {
+          this.$message.error('ACC錄製文件時長應為正整數')
+          return false
         }
 
         if (
-          parameters["AacParam.RecordInterval"] < minRecordInterval ||
-          parameters["AacParam.RecordInterval"] > maxRecordInterval
+          parameters['AacParam.RecordInterval'] < minRecordInterval ||
+          parameters['AacParam.RecordInterval'] > maxRecordInterval
         ) {
-          this.$message.error("ACC錄製文件時長範圍5~120分鐘");
-          return false;
+          this.$message.error('ACC錄製文件時長範圍5~120分鐘')
+          return false
         }
 
-        if (!this.isPositiveNumber(parameters["AacParam.StorageTime"])) {
-          this.$message.error("ACC文件時長應為正整數");
-          return false;
+        if (!this.isPositiveNumber(parameters['AacParam.StorageTime'])) {
+          this.$message.error('ACC文件時長應為正整數')
+          return false
         }
 
-        if (parameters["AacParam.StorageTime"] > maxStorageSeconds) {
-          this.$message.error("ACC文件保存時長範圍0~1080天");
-          return false;
+        if (parameters['AacParam.StorageTime'] > maxStorageSeconds) {
+          this.$message.error('ACC文件保存時長範圍0~1080天')
+          return false
         }
       }
 
-      return true;
+      return true
     },
-    handleAdd(params) {
+    handleAdd (params) {
       this.axios.post(ADD_RECORDING_CONFIG, params).then(data => {
         if (data.Response.Error === undefined) {
           this.$message({
-            message: "添加成功",
-            type: "success"
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            message: '添加成功',
+            type: 'success'
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
 
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    handleUpdate(params) {
+    handleUpdate (params) {
       this.axios.post(UPDATE_RECORDING_CONFIG, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "修改成功",
-            type: "success"
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+            message: '修改成功',
+            type: 'success'
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        let ErrOr = Object.assign(ErrorTips, ErrTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    handleSelectionChange(e) {
+    handleSelectionChange (e) {
       // 先清空所有的选中
       this.tableData.forEach(item => {
-        this.tableParams[item.paramName].Enable = 0;
-      });
+        this.tableParams[item.paramName].Enable = 0
+      })
 
       // 选中指定项
       e.forEach(item => {
-        this.tableParams[item.paramName].Enable = 1;
-      });
+        this.tableParams[item.paramName].Enable = 1
+      })
 
       // 根据选中项，配置默认值，如果已填写则不用设置默认值
       this.tableData.forEach(item => {
-        let Enable = this.tableParams[item.paramName].Enable;
+        let Enable = this.tableParams[item.paramName].Enable
 
         // 设置已选中的默认值
         if (Enable === 1) {
-          let RecordInterval = this.tableParams[item.paramName].RecordInterval;
-          let StorageTime = this.tableParams[item.paramName].StorageTime;
+          let RecordInterval = this.tableParams[item.paramName].RecordInterval
+          let StorageTime = this.tableParams[item.paramName].StorageTime
 
           this.tableParams[item.paramName].RecordInterval = !RecordInterval
             ? defaultRecordInterval
-            : RecordInterval;
+            : RecordInterval
           this.tableParams[item.paramName].StorageTime = !StorageTime
             ? defaultStorageTime
-            : StorageTime;
+            : StorageTime
         }
-      });
+      })
     },
 
-    radioChange(rows) {
+    radioChange (rows) {
       const index = this.tableData.findIndex(
         item => item.TemplateName === rows
-      );
-      this.$refs.multipleTable.clearSelection();
+      )
+      this.$refs.multipleTable.clearSelection()
       if (rows) {
-        this.$refs.multipleTable.toggleRowSelection(this.tableData[index]);
+        this.$refs.multipleTable.toggleRowSelection(this.tableData[index])
       }
     },
 
-    initTableParams() {
+    initTableParams () {
       if (Object.keys(this.selectItem).length) {
-        const currentParams = {};
+        const currentParams = {}
         Object.keys(this.tableParams).forEach(key => {
           this.tableParams[key] = JSON.parse(
             JSON.stringify(this.selectItem[key])
-          );
+          )
 
           if (this.tableParams[key].RecordInterval) {
             this.tableParams[key].RecordInterval =
-              this.tableParams[key].RecordInterval / 60;
+              this.tableParams[key].RecordInterval / 60
           }
 
           if (this.tableParams[key].StorageTime) {
             this.tableParams[key].StorageTime =
-              this.tableParams[key].StorageTime / 3600 / 24;
+              this.tableParams[key].StorageTime / 3600 / 24
           }
-        });
+        })
       }
     },
 
-    initInfo() {
-      this.ruleForm.Description = this.selectItem.Description;
-      this.ruleForm.TemplateName = this.selectItem.TemplateName;
+    initInfo () {
+      this.ruleForm.Description = this.selectItem.Description
+      this.ruleForm.TemplateName = this.selectItem.TemplateName
 
-      const currentArr = [];
+      const currentArr = []
       Object.keys(this.tableParams).map(key => {
         if (this.tableParams[key].Enable === 1) {
           const currentItem = this.tableData.findIndex(
             item => item.paramName === key
-          );
-          currentArr.push(currentItem);
+          )
+          currentArr.push(currentItem)
         }
-      });
+      })
       currentArr.forEach(index => {
-        this.$refs.multipleTable.toggleRowSelection(this.tableData[index]);
-      });
+        this.$refs.multipleTable.toggleRowSelection(this.tableData[index])
+      })
     },
-    isPositiveNumber(val) {
-      return /^[+]{0,1}(\d+)$/.test(val);
+    isPositiveNumber (val) {
+      return /^[+]{0,1}(\d+)$/.test(val)
     },
-    getDefaultValueForEmptyInput(_key, text) {
-      if (typeof text === "string" && text.length === 0) {
-        if (_key == "StorageTime") {
-          return defaultStorageTime;
+    getDefaultValueForEmptyInput (_key, text) {
+      if (typeof text === 'string' && text.length === 0) {
+        if (_key == 'StorageTime') {
+          return defaultStorageTime
         } else {
-          return defaultRecordInterval;
+          return defaultRecordInterval
         }
       } else {
-        return text;
+        return text
       }
     },
-    handleInput(e) {
-      console.log(e);
+    handleInput (e) {
+      console.log(e)
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

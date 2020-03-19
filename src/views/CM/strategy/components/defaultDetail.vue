@@ -1,6 +1,11 @@
 <template>
   <div class="defaultDetail">
     <Header title="管理告警策略" :backShow="backShow" />
+    <product-type
+      v-on:PassData="passData"
+      :searchParam="searchParam"
+      :projectId="projectId"
+    />
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%">
         <h3>基本信息</h3>
@@ -52,13 +57,19 @@
         <a @click="editGaoJing">编辑</a>
       </div>
       <div class="box-content">
+        <p v-if="basicNews.ConditionsTemp">
+          <span class="textColor" style="margin-right:20px;">
+            模板名称
+          </span>
+          {{ basicNews.ConditionsTemp.GroupName }}
+        </p>
         <span class="textColor"
           >指标告警（{{ basicNews.IsUnionRule === 0 ? "任意" : "所有" }}）</span
         >
         <div
-          v-for="(i, x) in basicNews.ConditionsConfig"
+          v-for="i in basicNews.ConditionsConfig"
           class="trigger-condition"
-          :key="x"
+          :key="i.MetricShowName"
         >
           <p>
             {{ i.MetricShowName }}
@@ -266,7 +277,7 @@
         <el-button @click="modifyRemarksDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 告警条件编辑 -->
+    <!-- 告警触发条件编辑 -->
     <el-dialog
       title="修改告警触发条件"
       :visible.sync="dialogEditGaojing"
@@ -281,7 +292,7 @@
                 >触发条件模板</el-radio
               >
               <a style="margin-left:15px;">新增触发条件模板</a>
-              <div class="content" v-show="showChufa1 == true ? true : false">
+              <div class="content" v-if="radioChufa == 1">
                 <p>
                   <el-select
                     v-model="nameVal"
@@ -334,8 +345,10 @@
                           disabled
                         >
                           <el-option
-                            label
-                            value
+                            v-for="i in typeOpt"
+                            :key="i.value"
+                            :label="i.label"
+                            :value="i.value"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
@@ -345,8 +358,8 @@
                           disabled
                         >
                           <el-option
-                            v-for="i in cycle"
-                            :key="i.value"
+                            v-for="(i, x) in cycle"
+                            :key="x"
                             :label="i.label"
                             :value="i.value"
                             label-width="40px"
@@ -386,20 +399,26 @@
                             :value="i.value"
                             label-width="40px"
                           ></el-option> </el-select
-                        >&nbsp; <span>then</span>&nbsp;
-                        <el-select
-                          v-model="item.AlarmNotifyPeriod"
-                          style="width:180px;"
-                          disabled
+                        >&nbsp;
+                        <div
+                          v-if="!basicNews.ConditionsTemp"
+                          style="display:flex;aline-items:center;"
                         >
-                          <el-option
-                            v-for="x in AlarmNotifyPeriod"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
-                            label-width="40px"
-                          ></el-option>
-                        </el-select>
+                          <span style="width:40px;margin:0px;">then</span>&nbsp;
+                          <el-select
+                            v-model="item.AlarmNotifyPeriod"
+                            style="width:180px;"
+                            disabled
+                          >
+                            <el-option
+                              v-for="(x, i) in AlarmNotifyPeriod"
+                              :key="i"
+                              :label="x.label"
+                              :value="x.value"
+                              label-width="40px"
+                            ></el-option>
+                          </el-select>
+                        </div>
                         <el-popover placement="top" width="360" trigger="hover">
                           <div>
                             <p>
@@ -419,10 +438,43 @@
                       </div>
                     </li>
                   </ul>
+                  <div style="margin-top:10px;" v-if="basicNews.ConditionsTemp">
+                    <span>then</span>&nbsp;
+                    <el-select
+                      v-model="alarmNotifyPeriodVal"
+                      style="width:180px;"
+                      disabled
+                    >
+                      <el-option
+                        v-for="(x, i) in AlarmNotifyPeriod"
+                        :key="i"
+                        :label="x.label"
+                        :value="x.value"
+                        label-width="40px"
+                      ></el-option>
+                    </el-select>
+
+                    <el-popover placement="top" width="360" trigger="hover">
+                      <div>
+                        <p>
+                          重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                        </p>
+                        <p style="margin-top:5px;">
+                          周期指数递增通知:
+                          告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                        </p>
+                      </div>
+                      <i
+                        class="el-icon-info"
+                        style="color:#888; margin:0 5px;"
+                        slot="reference"
+                      ></i>
+                    </el-popover>
+                  </div>
                 </div>
                 <div v-if="nameVal !== '当前策略下没有触发条件模板'">
-                  <p>
-                    <el-checkbox disabled>
+                  <p v-if="basicNews.EventConfig">
+                    <el-checkbox disabled v-if="Conditions.EventConditions">
                       事件告警
                     </el-checkbox>
                     <el-popover placement="right" trigger="hover">
@@ -457,10 +509,7 @@
               <el-radio v-model="radioChufa" label="2" @change="config"
                 >配置触发条件</el-radio
               >
-              <div
-                class="content content-pz"
-                v-show="showChufa2 == true ? true : false"
-              >
+              <div class="content content-pz" v-if="radioChufa == 2">
                 <div>
                   <p style="line-height:30px;">
                     <el-checkbox
@@ -504,8 +553,8 @@
                           style="width:140px;"
                         >
                           <el-option
-                            v-for="x in cycle"
-                            :key="x.value"
+                            v-for="(x, i) in cycle"
+                            :key="i"
                             :label="x.label"
                             :value="x.value"
                             label-width="40px"
@@ -577,10 +626,10 @@
                         </el-popover>
                       </div>
                       <i
-                        v-if="formWrite.arr.length > 0"
+                        v-if="formWrite.arr.length !== 1"
                         class="el-icon-error"
                         style="color:#888; margin:10px 5px;"
-                        @click="delZhibiao"
+                        @click="delZhibiao('deploy', index)"
                       ></i>
                     </li>
                     <a @click="addZhibiao('deploy')">添加</a>
@@ -648,7 +697,7 @@
                         >&nbsp;
                       </div>
                     </li>
-                    <a @click="addZhibiao("all")">添加</a>
+                    <a @click="addZhibiao('all')">添加</a>
                     <div>
                       <span>then</span>&nbsp;
                       <el-select
@@ -684,11 +733,11 @@
                       v-if="formWrite.arr.length === 0"
                       class="el-icon-error"
                       style="color:#888; margin:10px 5px;"
-                      @click="delZhibiao"
+                      @click="delZhibiao('all', index)"
                     ></i>
                   </ul>
                 </div>
-                <div>
+                <!-- <div v-if="basicNews.EventConfig">
                   <p>
                     <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
@@ -704,8 +753,7 @@
                       </el-popover>
                     </el-checkbox>
                   </p>
-                  <!-- 在这里进行便利，添加 -->
-                  <ul>
+                  <ul class="ul-one">
                     <li v-for="(i, x) in formWrite.gaoArr" :key="x">
                       <p>
                         <el-select
@@ -722,23 +770,22 @@
                         </el-select>
                       </p>
                       <i
+                        v-if="formWrite.gaoArr.length !== 1"
                         class="el-icon-error"
                         style="color:#888; margin:0 5px;"
-                        @click="delShijian"
+                        @click="delShijian(x)"
                       ></i>
                     </li>
                     <a @click="addShijian">添加</a>
                   </ul>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogEditGaojing = false"
-          >保 存</el-button
-        >
+        <el-button type="primary" @click="GaoJingKeepBtn">保 存</el-button>
         <el-button @click="dialogEditGaojing = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -871,8 +918,10 @@ import {
   CM_ALARM_RECEIVE_OBJECT_LIST,
   CM_CALLBACK,
   CM_ALARM_TRIGGER_CONDITION,
-  CM_ALARM_RECEIVE_OBJECT_RELIEVE
+  CM_ALARM_RECEIVE_OBJECT_RELIEVE,
+  CM_ALARM_TRIGGER_MODIFY
 } from "@/constants";
+import ProductType from "@/views/CM/CM_assembly/product_type";
 var project = [];
 var _ReceiverUserList = [];
 export default {
@@ -936,8 +985,6 @@ export default {
         alarm: "", //策略类型
         projectName: "默认项目"
       },
-      showChufa1: false, //触发条件1显示开关
-      showChufa2: true, //触发条件2显示开关
       showQudao1: false, //渠道选择1显示开关
       showQudao2: false, //渠道选择2显示开关
       errorTip1: false, //触发条件模板错误提示
@@ -976,11 +1023,11 @@ export default {
       ViewName: "",
       cycle: [
         {
-          value: "60",
+          value: 60,
           label: "统计周期1分钟"
         },
         {
-          value: "300",
+          value: 300,
           label: "统计周期5分钟"
         }
       ],
@@ -1022,32 +1069,34 @@ export default {
         }
       ],
       ContinueTime: [],
+      alarmNotifyPeriodVal: "",
       AlarmNotifyPeriod: [],
       formWrite: {
         checkedZhibiao: true,
         satisfyVal: 0,
         checkedGaojing: true,
         warningVal: 0,
-        index:0,
+        index: 0,
+        gaoIndex: 0,
         arr: [
           {
             typeVal: "1",
-            censusVal: "300",
+            censusVal: 60,
             calcTypeVal: "1",
             number: "0",
             unit: "%",
-            continuousCycleVal: "1",
-            warningVal: "0"
+            continuousCycleVal: 1,
+            warningVal: 0
           }
         ],
         arrAll: [
           {
             typeVal: "1",
-            censusVal: "300",
+            censusVal: 300,
             calcTypeVal: "1",
             number: "0",
             unit: "%",
-            continuousCycleVal: "1"
+            continuousCycleVal: 1
           }
         ],
         gaoArr: [
@@ -1144,73 +1193,73 @@ export default {
       ],
       continuousCycleOpt: [
         {
-          value: "1",
+          value: 1,
           label: "持续1个周期"
         },
         {
-          value: "2",
+          value: 2,
           label: "持续2个周期"
         },
         {
-          value: "3",
+          value: 3,
           label: "持续3个周期"
         },
         {
-          value: "4",
+          value: 4,
           label: "持续4个周期"
         },
         {
-          value: "5",
+          value: 5,
           label: "持续5个周期"
         }
       ],
       warningOpt: [
         {
-          value: "0",
+          value: 0,
           label: "不重复"
         },
         {
-          value: "300",
+          value: 300,
           label: "每5分钟警告一次"
         },
         {
-          value: "600",
+          value: 600,
           label: "每10分钟警告一次"
         },
         {
-          value: "900",
+          value: 900,
           label: "每15分钟警告一次"
         },
         {
-          value: "1800",
+          value: 1800,
           label: "每30分钟警告一次"
         },
         {
-          value: "3600",
+          value: 3600,
           label: "每1小时警告一次"
         },
         {
-          value: "7200",
+          value: 7200,
           label: "每2小时警告一次"
         },
         {
-          value: "10800",
+          value: 10800,
           label: "每3小时警告一次"
         },
         {
-          value: "21600",
+          value: 21600,
           label: "每6小时警告一次"
         },
         {
-          value: "43200",
+          value: 43200,
           label: "每12小时警告一次"
         },
         {
-          value: "86400",
+          value: 86400,
           label: "每1天警告一次"
         },
         {
-          value: "1",
+          value: 60,
           label: "周期指数递增"
         }
       ],
@@ -1247,10 +1296,12 @@ export default {
           value: "8",
           label: "子机nvme设备error"
         }
-      ]
+      ],
+      projectId: "",
+      searchParam: {}
     };
   },
-  components: { Header },
+  components: { Header, ProductType },
   mounted() {
     this.DetailsInit();
     this.Project();
@@ -1258,6 +1309,12 @@ export default {
     this.AlarmObjectList();
   },
   methods: {
+    passData(item) {
+      console.log(item);
+    },
+    searchParams(data) {
+      console.log("data1312312312", data);
+    },
     async DetailsInit() {
       let params = {
         Version: "2018-07-24",
@@ -1267,8 +1324,14 @@ export default {
       await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.basicNews = res.Response;
+          console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
-          if (this.basicNews.ReceiverInfos !== undefined) {
+          this.GroupName = this.basicNews.GroupName;
+          this.projectId = this.basicNews.ProjectId.toString();
+          if (
+            this.basicNews.ReceiverInfos !== undefined &&
+            this.basicNews.ReceiverInfos[0].ReceiverUserList.length != 0
+          ) {
             _ReceiverUserList = this.basicNews.ReceiverInfos[0]
               .ReceiverUserList;
 
@@ -1278,7 +1341,6 @@ export default {
               this.receivingObjectData = [];
               this.Offset++;
               let params = {
-                // Region: "ap-taipei",
                 Version: "2018-07-24",
                 Module: "monitor",
                 Limit: 100,
@@ -1440,23 +1502,26 @@ export default {
       this.dialogEditGaojing = true;
       this.AlarmTriggerCondition();
       console.log(this.basicNews);
-      this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
-      if (this.basicNews.ConditionsConfig) {
-        var _ConditionsConfig = this.basicNews.ConditionsConfig;
-        this.formWrite.arr = [];
-        for (let i in _ConditionsConfig) {
-          this.formWrite.arr.push({
-            typeVal: _ConditionsConfig[i].MetricShowName,
-            censusVal: _ConditionsConfig[i].Period.toString(),
-            calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
-            number: _ConditionsConfig[i].CalcValue.toString(),
-            unit: _ConditionsConfig[i].Unit,
-            continuousCycleVal: (
-              Number(_ConditionsConfig[i].ContinueTime) /
-              Number(_ConditionsConfig[i].Period)
-            ).toString(),
-            warningVal: _ConditionsConfig[i].AlarmNotifyPeriod.toString()
-          });
+      if (this.basicNews.ConditionsTemp) {
+        this.radioChufa = "1";
+      } else {
+        this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
+        if (this.basicNews.ConditionsConfig) {
+          var _ConditionsConfig = this.basicNews.ConditionsConfig;
+          this.formWrite.arr = [];
+          for (let i in _ConditionsConfig) {
+            this.formWrite.arr.push({
+              typeVal: _ConditionsConfig[i].MetricShowName,
+              censusVal: _ConditionsConfig[i].Period,
+              calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
+              number: _ConditionsConfig[i].CalcValue.toString(),
+              unit: _ConditionsConfig[i].Unit,
+              continuousCycleVal:
+                Number(_ConditionsConfig[i].ContinueTime) /
+                Number(_ConditionsConfig[i].Period),
+              warningVal: _ConditionsConfig[i].AlarmNotifyPeriod
+            });
+          }
         }
       }
     },
@@ -1469,16 +1534,62 @@ export default {
       };
       this.axios.post(CM_ALARM_TRIGGER_CONDITION, param).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res.Response);
           this.triggerCondition = res.Response.TemplateGroupList;
-          console.log(this.triggerCondition);
-          this.nameVal =
-            this.triggerCondition.length === 0
-              ? "当前策略下没有触发条件模板"
-              : this.triggerCondition[0].GroupID;
+          if (this.basicNews.ConditionsTemp) {
+            this.nameVal = this.basicNews.ConditionsTemp.GroupId;
+            this.alarmNotifyPeriodVal = this.triggerCondition[0].Conditions[0].AlarmNotifyPeriod;
+          } else {
+            this.nameVal =
+              this.triggerCondition.length === 0
+                ? "当前策略下没有触发条件模板"
+                : this.triggerCondition[0].GroupID;
+          }
+
           this.TriggerChange();
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "	请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -1490,14 +1601,13 @@ export default {
       });
     },
     TriggerChange() {
-      console.log(this.nameVal);
-
+      this.ContinueTime = [];
+      var _AlarmNotifyPeriod = [];
       for (let i in this.triggerCondition) {
         if (this.triggerCondition[i].GroupID == this.nameVal) {
           this.Conditions = this.triggerCondition[i];
         }
       }
-
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
@@ -1545,7 +1655,173 @@ export default {
           });
         }
       }
-      console.log(" this.Conditions ", this.Conditions);
+      let newobj = {};
+      this.ContinueTime = this.ContinueTime.reduce((preVal, curVal) => {
+        newobj[curVal.value]
+          ? ""
+          : (newobj[curVal.value] = preVal.push(curVal));
+        return preVal;
+      }, []);
+      let obj = {};
+      this.AlarmNotifyPeriod = this.AlarmNotifyPeriod.reduce(
+        (preVal, curVal) => {
+          obj[curVal.value] ? "" : (obj[curVal.value] = preVal.push(curVal));
+          return preVal;
+        },
+        []
+      );
+    },
+    // 告警触发条件保存
+    GaoJingKeepBtn() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId,
+        ViewName: this.ViewName,
+        GroupName: this.GroupName
+      };
+      let _Conditions = this.Conditions.Conditions;
+      console.log(_Conditions);
+      let _EventConfig = this.Conditions.EventConditions;
+      let _arr = this.formWrite.arr;
+      let _arrAll = this.formWrite.arrAll;
+      let _gaoArr = this.formWrite.gaoArr;
+      if (this.radioChufa == 1) {
+        param["IsUnionRule"] = this.Conditions.IsUnionRule;
+        for (let i in _Conditions) {
+          param["Conditions." + i + ".MetricId"] = _Conditions[i].MetricID;
+          param["Conditions." + i + ".CalcType"] = _Conditions[i].CalcType;
+          param["Conditions." + i + ".CalcValue"] = Number(
+            _Conditions[i].CalcValue
+          );
+          param["Conditions." + i + ".CalcPeriod"] = _Conditions[i].Period;
+          param["Conditions." + i + ".ContinuePeriod"] =
+            Number(_Conditions[i].ContinueTime) / Number(_Conditions[i].Period);
+          param["Conditions." + i + ".AlarmNotifyType"] =
+            _Conditions[i].AlarmNotifyType;
+          param["Conditions." + i + ".AlarmNotifyPeriod"] =
+            _Conditions[i].AlarmNotifyPeriod;
+          param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
+        }
+        for (let j in _EventConfig) {
+          param["EventConditions." + j + ".EventId"] = Number(
+            _EventConfig[j].EventID
+          );
+          param["EventConditions." + j + ".AlarmNotifyType"] =
+            _EventConfig[j].AlarmNotifyType;
+          param["EventConditions." + j + ".AlarmNotifyPeriod"] =
+            _EventConfig[j].AlarmNotifyPeriod;
+          param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
+        }
+      } else {
+        console.log(_gaoArr);
+        param["IsUnionRule"] = this.formWrite.satisfyVal;
+
+        if (this.formWrite.satisfyVal == 0) {
+          for (let i in _arr) {
+            param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
+            param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
+            param["Conditions." + i + ".CalcValue"] = _arr[i].number;
+            param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
+            param["Conditions." + i + ".ContinuePeriod"] =
+              _arr[i].continuousCycleVal;
+            if (_arr[i].warningVal == 60) {
+              param["Conditions." + i + ".AlarmNotifyType"] = 1;
+            } else {
+              param["Conditions." + i + ".AlarmNotifyType"] = 0;
+            }
+
+            param["Conditions." + i + ".AlarmNotifyPeriod"] =
+              _arr[i].warningVal;
+          }
+        } else {
+          for (let i in _arrAll) {
+            param["Conditions." + i + ".MetricId"] = _arrAll[i].typeVal;
+            param["Conditions." + i + ".CalcType"] = _arrAll[i].calcTypeVal;
+            param["Conditions." + i + ".CalcValue"] = _arrAll[i].number;
+            param["Conditions." + i + ".CalcPeriod"] = _arrAll[i].censusVal;
+            param["Conditions." + i + ".ContinuePeriod"] =
+              _arrAll[i].continuousCycleVal;
+            if (_arrAll[i].warningVal == 60) {
+              param["Conditions." + i + ".AlarmNotifyType"] = 1;
+            } else {
+              param["Conditions." + i + ".AlarmNotifyType"] = 0;
+            }
+
+            param[
+              "Conditions." + i + ".AlarmNotifyPeriod"
+            ] = this.formWrite.warningVal;
+          }
+        }
+        // for (let j in _gaoArr) {
+        //   param["EventConditions." + j + ".EventId"] = Number(
+        //     _gaoArr[j].EventID
+        //   );
+        //   param["EventConditions." + j + ".AlarmNotifyType"] =
+        //     _gaoArr[j].AlarmNotifyType;
+        //   param["EventConditions." + j + ".AlarmNotifyPeriod"] =
+        //     _gaoArr[j].AlarmNotifyPeriod;
+        //   param["EventConditions." + j + ".RuleId"] = _gaoArr[j].RuleID;
+        // }
+      }
+      this.axios.post(CM_ALARM_TRIGGER_MODIFY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.dialogEditGaojing = false;
+          console.log(res);
+          this.DetailsInit();
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "	请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     editInfo(name) {
       //编辑备注
@@ -2001,8 +2277,6 @@ export default {
 
     chufaTemplate() {
       //触发条件模板
-      this.showChufa1 = true;
-      this.showChufa2 = false;
     },
     config() {
       //配置触发条件
@@ -2011,36 +2285,43 @@ export default {
     },
     addZhibiao(val) {
       //添加触发条件的指标告警
-      alert("你要添加此项触发条件的指标告警");
-      if(val === 'deploy'){
+      if (val === "deploy") {
         this.formWrite.index++;
-        if(this.formWrite.index+1 === this.formWrite.arr.length){
-          this.formWrite.index = 0
+        if (this.formWrite.index + 1 === this.formWrite.arr.length) {
+          this.formWrite.index = 0;
         }
-this.formWrite.arr.push({
-  typeVal: this.typeOpt[this.formWrite.index].value,
-            censusVal: "60",
-            calcTypeVal: "1",
-            number: "0",
-            unit: "",
-            continuousCycleVal: "1",
-            warningVal: "0"
-})
-      }else{
-
+        this.formWrite.arr.push({
+          typeVal: this.typeOpt[this.formWrite.index].value,
+          censusVal: "60",
+          calcTypeVal: "1",
+          number: "0",
+          unit: "",
+          continuousCycleVal: "1",
+          warningVal: 0
+        });
+      } else {
       }
     },
-    delZhibiao() {
+    delZhibiao(val, index) {
       //删除触发条件的指标告警
-      alert("你要删除此项触发条件的指标告警");
+      if (val === "deploy") {
+        this.formWrite.arr.splice(index, 1);
+      } else {
+        this.formWrite.arrAll.splice(index, 1);
+      }
     },
     addShijian() {
       //添加触发条件的事件告警
-      alert("你要添加此项触发条件的事件告警");
+      this.formWrite.gaoIndex++;
+      if (this.formWrite.gaoIndex + 1 === this.formWrite.gaoArr.length) {
+        this.formWrite.gaoIndex = 0;
+      }
+      this.formWrite.gaoArr.push({
+        eventVal: this.eventOpt[this.formWrite.gaoIndex].value
+      });
     },
-    delShijian() {
-      //删除触发条件的事件告警
-      alert("你要删除此项触发条件的事件告警");
+    delShijian(index) {
+      this.formWrite.gaoArr.splice(index, 1);
     }
   },
   filters: {
@@ -2431,7 +2712,7 @@ input {
   .ul-two {
     li {
       & > div {
-        width: 98%;
+        width: 97%;
         flex-wrap: wrap;
       }
     }

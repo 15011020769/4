@@ -42,8 +42,8 @@
   </div>
 </template>
 <script>
-import { LIVE_MODIFYLIVEPUSHAUTHKEY } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import { LIVE_MODIFYLIVEPUSHAUTHKEY } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
   props: {
     isShow: {
@@ -56,70 +56,70 @@ export default {
       default: {}
     }
   },
-  data() {
+  data () {
     return {
       switchvalue: false, // 开关
-      mainKey: "", // 主KEY
-      readyKey: "" // 备KEY
-    };
+      mainKey: '', // 主KEY
+      readyKey: '' // 备KEY
+    }
   },
   watch: {
-    pushAuthKeyInfo() {
-      this.mainKey = this.pushAuthKeyInfo.MasterAuthKey; // 主KEY
-      this.readyKey = this.pushAuthKeyInfo.BackupAuthKey;
-      this.switchvalue = this.pushAuthKeyInfo.Enable === 1;
+    pushAuthKeyInfo () {
+      this.mainKey = this.pushAuthKeyInfo.MasterAuthKey // 主KEY
+      this.readyKey = this.pushAuthKeyInfo.BackupAuthKey
+      this.switchvalue = this.pushAuthKeyInfo.Enable === 1
     },
-    mainKey(newVal, oldVal) {
-      this.mainKey = newVal.replace(/[^\da-zA-Z]/g, "");
+    mainKey (newVal, oldVal) {
+      this.mainKey = newVal.replace(/[^\da-zA-Z]/g, '')
     },
-    readyKey(newVal, oldVal) {
-      this.readyKey = newVal.replace(/[^\da-zA-Z]/g, "");
+    readyKey (newVal, oldVal) {
+      this.readyKey = newVal.replace(/[^\da-zA-Z]/g, '')
     }
   },
   methods: {
     // 关闭
-    handleClose() {
-      this.$emit("closeModel", false);
+    handleClose () {
+      this.$emit('closeModel', false)
     },
     // 保存按钮
-    saveSet() {
+    saveSet () {
       if (this.mainKey.length === 0) {
         this.$message({
-          type: "error",
-          message: "請輸入主key",
+          type: 'error',
+          message: '請輸入主key',
           showClose: true,
           duration: 0
-        });
-        return;
+        })
+        return
       }
 
       this.axios
         .post(LIVE_MODIFYLIVEPUSHAUTHKEY, {
           DomainName: this.$route.query.Name,
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           Enable: Number(this.switchvalue),
           MasterAuthKey: this.mainKey,
           BackupAuthKey: this.readyKey
         })
         .then(Response => {
-          console.log(Response, "Response");
+          console.log(Response, 'Response')
           if (Response.Error) {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            let ErrTips = {}
+            let ErrOr = Object.assign(ErrorTips, ErrTips)
             this.$message({
-              type: "error",
+              type: 'error',
               message: ErrOr[Response.Error.Code],
               showClose: true,
               duration: 0
-            });
+            })
           } else {
-            this.$emit("changed");
+            this.$emit('changed')
           }
-        });
-      this.$emit("closeModel", false);
+        })
+      this.$emit('closeModel', false)
     }
   }
-};
+}
 </script>
 <style  lang="scss" scoped>
 .newClear:after {

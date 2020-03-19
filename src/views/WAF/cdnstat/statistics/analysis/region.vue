@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
@@ -69,11 +70,9 @@
 
 <script>
 import moment from 'moment'
-import XLSX from "xlsx";
+import XLSX from 'xlsx'
 import { LIST_TOP_DATA } from '@/constants'
-import { ErrorTips } from '@/components/ErrorTips'
 import { COUNTRY_MAP } from '../../components/constants'
-import { flatObj } from '@/utils'
 import echartMap from '../../components/worldMap'
 
 export default {
@@ -100,7 +99,7 @@ export default {
       currpage: 1, // 页数
       totalItems: 0,
       fluxData: [],
-      requestData: [],
+      requestData: []
     }
   },
   watch: {
@@ -110,7 +109,7 @@ export default {
       },
       immediate: true,
       deep: true
-    },
+    }
   },
   methods: {
 
@@ -134,36 +133,36 @@ export default {
         return [v, 'B'].join('')
       }
     },
-    _export() {
-      const { projectName, domainName, AreaType, times, interval } = this.params;
-      console.log(this.params)
-      return
-      const start = moment(times[0]).format('YYYY-MM-DD');
-      const end = moment(times[1]).format('YYYY-MM-DD');
+    _export () {
+      const { projectName, domainName, AreaType, times, interval } = this.params
+
+      const start = moment(times[0]).format('YYYY-MM-DD')
+      const end = moment(times[1]).format('YYYY-MM-DD')
       let fileName = start
       if (start !== end) {
         fileName = `${start}-${end}`
       }
       fileName += '_district_detail.xlsx'
       let data = [
-        ["开始时间", moment(times[0]).format('YYYY-MM-DD')],
-        ["结束时间", moment(times[1]).format('YYYY-MM-DD')],
-        ["统计数据类型", AreaType === 'client' ? '客户端地区' : '服务地区'],
-        ["统计项目", projectName || "全部项目"],
-        ["统计域名", domainName || "全部域名"],
-        ["导出时间", moment().format('YYYYMMDDHHmmss')],
+        ['开始时间', moment(times[0]).format('YYYY-MM-DD')],
+        ['结束时间', moment(times[1]).format('YYYY-MM-DD')],
+        ['统计数据类型', AreaType === 'client' ? '客户端地区' : '服务地区'],
+        ['统计项目', projectName || '全部项目'],
+        ['统计域名', domainName || '全部域名'],
+        ['导出时间', moment().format('YYYYMMDDHHmmss')],
         [],
-        ["地区", "流量（GB）", "访问次数"]
-      ];
+        ['地区', '流量（GB）', '访问次数']
+      ]
       const { fluxData, requestData } = this
       const result = fluxData.map((data, i) => {
         return [data.name, (data.value / 1e9).toFixed(2) === '0.00' ? 0 : (data.value / 1e9).toFixed(2), requestData[i].value]
       })
+
       data = data.concat(result)
-      const ws = XLSX.utils.aoa_to_sheet(data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws);
-      XLSX.writeFile(wb, fileName);
+      const ws = XLSX.utils.aoa_to_sheet(data)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws)
+      XLSX.writeFile(wb, fileName)
     },
     init () {
       const {
@@ -177,7 +176,7 @@ export default {
       const params = {
         AreaType,
         StartTime: moment(times[0]).format('YYYY-MM-DD 00:00:00'),
-        EndTime: moment(times[1]).format('YYYY-MM-DD 23:59:59'),
+        EndTime: moment(times[1]).format('YYYY-MM-DD 23:59:59')
       }
 
       if (projectId) {
@@ -194,13 +193,13 @@ export default {
       this.getFlux(params)
       this.getRequest(params)
     },
-    getFlux(params) {
+    getFlux (params) {
       if (this.type === 'flux') {
         this.loading = true
       }
-      let regionsArr = [];
-      const tableArr = [];
-      let total = 0;
+      let regionsArr = []
+      const tableArr = []
+      let total = 0
       this.axios.post(LIST_TOP_DATA,
         { ...params,
           Area: 'overseas',
@@ -210,41 +209,40 @@ export default {
         })
         .then(({ Response }) => {
           if (Response.Data && Response.Data.length) {
-            const res = Response.Data[0].DetailData;
+            const res = Response.Data[0].DetailData
             res &&
               res.forEach(v => {
-                total += v.Value;
+                total += v.Value
                 tableArr.push({
                   name: this.COUNTRY_MAP[v.Name],
                   value: v.Value
-                });
-              });
-            res &&
-              res.forEach(v => {
-                regionsArr.push({
-                  name: this.COUNTRY_MAP[v.Name],
-                  value: ((v.Value / total) * 100).toFixed(2)
-                });
-              });
+                })
+              })
+            res && res.forEach(v => {
+              regionsArr.push({
+                name: this.COUNTRY_MAP[v.Name],
+                value: ((v.Value / total) * 100).toFixed(2)
+              })
+            })
           }
           if (this.type === 'flux') {
-            this.totalNumber = total;
-            this.seriesMap = regionsArr; // 传百分数因为比较的就是百分比
-            this.tableData = tableArr;
-            this.totalItems = tableArr.length;
-          } 
+            this.totalNumber = total
+            this.seriesMap = regionsArr // 传百分数因为比较的就是百分比
+            this.tableData = tableArr
+            this.totalItems = tableArr.length
+          }
           this.fluxData = tableArr
-          this.loading = false;
+          this.loading = false
         }).then(() => {
           this.loading = false
         })
     },
-    getRequest(params) {
+    getRequest (params) {
       if (this.type === 'request') {
         this.loading = true
       }
-      const tableArr = [];
-      let total = 0;
+      const tableArr = []
+      let total = 0
       this.axios.post(LIST_TOP_DATA,
         { ...params,
           Area: 'overseas',
@@ -254,24 +252,24 @@ export default {
         })
         .then(({ Response }) => {
           if (Response.Data && Response.Data.length) {
-            const res = Response.Data[0].DetailData;
+            const res = Response.Data[0].DetailData
             res &&
               res.forEach(v => {
-                total += v.Value;
+                total += v.Value
                 tableArr.push({
                   name: this.COUNTRY_MAP[v.Name],
                   value: v.Value
-                });
-              });
+                })
+              })
           }
           if (this.type === 'request') {
-            this.totalNumber = total;
-            this.seriesMap = tableArr; // 传百分数因为比较的就是百分比
-            this.tableData = tableArr;
-            this.totalItems = tableArr.length;
+            this.totalNumber = total
+            this.seriesMap = tableArr // 传百分数因为比较的就是百分比
+            this.tableData = tableArr
+            this.totalItems = tableArr.length
           }
           this.requestData = tableArr
-          this.loading = false;
+          this.loading = false
         }).then(() => {
           this.loading = false
         })
@@ -280,8 +278,8 @@ export default {
       this.loading = true
       this.init()
     },
-    handleCurrentChange(val) {
-      this.currpage = val;
+    handleCurrentChange (val) {
+      this.currpage = val
     }
   }
 }

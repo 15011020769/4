@@ -8,10 +8,10 @@
       >
         <div class="newClear">
           <p class="tip">
-            範本选择（如需添加新範本，請前往 【<router-link
+           {{$t('CSS.detailPlay.mbxz')}} 【<router-link
               to="/screenshot"
-              >功能範本</router-link
-            >】 <i class="el-icon-share"></i>中進行設置）
+              >{{$t('CSS.leftSide.3')}}</router-link
+            >】 <i class="el-icon-share"></i>{{$t('CSS.detailPlay.zjxsz')}}）
           </p>
           <div class="tableCon">
             <el-table
@@ -22,17 +22,17 @@
               <el-table-column type="selection" width="55"></el-table-column>
               <el-table-column
                 prop="TemplateName"
-                label="範本名稱"
+                :label="$t('CSS.domainManagement.14')"
               ></el-table-column>
               <el-table-column
                 prop="TemplateId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column
                 prop="SnapshotInterval"
                 label="截圖間隔(秒)"
               ></el-table-column>
-              <el-table-column prop="selec" label="智慧鉴黄">
+              <el-table-column prop="selec" :label="$t('CSS.domainManagement.16')">
                 <template slot-scope="scope">{{
                   scope.row.PornFlag === 0 ? "不開啟" : "開啟"
                 }}</template>
@@ -53,7 +53,7 @@ import {
   LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATES,
   LIVE_DELETELIVESNAPSHOTRULE,
   LIVE_CREATELIVESNAPSHOTRULE
-} from "@/constants";
+} from '@/constants'
 export default {
   props: {
     isShow: {
@@ -64,76 +64,76 @@ export default {
       required: false
     }
   },
-  data() {
+  data () {
     return {
-      ScreenshotData: [], //表格
+      ScreenshotData: [], // 表格
       selection: []
-    };
+    }
   },
   watch: {
-    isShow(newVal) {
+    isShow (newVal) {
       if (newVal === true) {
         if (this.checkedTemplateId) {
           this.$nextTick(() => {
             this.ScreenshotData.forEach(template => {
               if (template.TemplateId === this.checkedTemplateId) {
-                this.$refs.multipleTable.toggleRowSelection(template, true);
+                this.$refs.multipleTable.toggleRowSelection(template, true)
               }
-            });
-          });
+            })
+          })
         }
       }
     }
   },
-  mounted() {
+  mounted () {
     this.axios
       .post(LIVE_DESCRIBE_LIVESNAPSHOTTEMPLATES, {
-        Version: "2018-08-01"
+        Version: '2018-08-01'
       })
       .then(({ Response }) => {
-        this.ScreenshotData = Response.Templates;
-      });
+        this.ScreenshotData = Response.Templates
+      })
   },
   methods: {
-    //checkbox
-    handleSelectionChange(val) {
-      this.selection = val;
+    // checkbox
+    handleSelectionChange (val) {
+      this.selection = val
       if (val.length > 1) {
-        this.$refs.multipleTable.clearSelection();
-        this.$refs.multipleTable.toggleRowSelection(val.pop());
+        this.$refs.multipleTable.clearSelection()
+        this.$refs.multipleTable.toggleRowSelection(val.pop())
       }
     },
-    //关闭弹框
-    handleClose() {
-      this.$emit("closeScreenshotModel", false);
+    // 关闭弹框
+    handleClose () {
+      this.$emit('closeScreenshotModel', false)
     },
-    //保存
-    saveScreenEdit() {
+    // 保存
+    saveScreenEdit () {
       this.axios
         .post(LIVE_DELETELIVESNAPSHOTRULE, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           DomainName: this.$route.query.Name,
-          AppName: ""
+          AppName: ''
         })
         .then(res => {
           if (this.selection.length > 0) {
             this.axios
               .post(LIVE_CREATELIVESNAPSHOTRULE, {
-                Version: "2018-08-01",
+                Version: '2018-08-01',
                 DomainName: this.$route.query.Name,
-                AppName: "",
+                AppName: '',
                 TemplateId: this.selection[0].TemplateId
               })
               .then(() => {
-                this.$emit("closeScreenshotModel", false);
-              });
+                this.$emit('closeScreenshotModel', false)
+              })
           } else {
-            this.$emit("closeScreenshotModel", false);
+            this.$emit('closeScreenshotModel', false)
           }
-        });
+        })
     }
   }
-};
+}
 </script>
 <style lang="scss" scoped>
 .newClear:after {

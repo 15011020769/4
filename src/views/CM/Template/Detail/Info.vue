@@ -41,7 +41,11 @@
     <el-card class="card3">
       <h4 class="title-text">关联告警策略</h4>
       <el-table :data="infoData.PolicyGroups">
-        <el-table-column label="策略名称" prop="GroupName"></el-table-column>
+        <el-table-column label="策略名称" prop="GroupName">
+          <template slot-scope="scope">
+            <a :href="`#/strategy/createdetail?groupId=${scope.row.GroupID}`" class="gpn">{{scope.row.GroupName}}</a>
+          </template>
+        </el-table-column>
         <el-table-column label="所属项目">
           <template slot-scope="scope">
             {{ scope.row.ProjectID | ProjectName }}
@@ -57,10 +61,10 @@
           <template slot-scope="scope">
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
-              <p>接收组:{{item.ReceiverGroupList?item.ReceiverGroupList.length+'个':'0个'}}</p>
-              <p>{{'有效期:00:00:00 - 23:59:59'}}</p>
+              <p>接收组:&nbsp{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'个':'0个'}}</p>
+              <p>{{'有效期:&nbsp00:00:00 - 23:59:59'}}</p>
               <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
-              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">{{key+' '|notifyChannel}}</span></p>
+              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp {{key|notifyChannel}}</span></p>
             </div>
           </template>
           <!-- <span v-else>{{'-'}}</span> -->
@@ -777,6 +781,12 @@ export default {
   }
 }
 .card3{
+  .gpn{
+    color: #006eff;
+    &:hover{
+      text-decoration:underline;
+    }
+  }
   .number {
     padding: 10px 10px 14px 10px;
     line-height: 27px;

@@ -47,7 +47,7 @@
           <dl>
             <dt>
               <span>{{ fluxPackageCount }}</span
-              >個
+              >{{ $t("CSS.overview.13")}}
             </dt>
             <dd>
               <p>流量包</p>
@@ -146,7 +146,7 @@
         >
       </div>
       <el-tabs v-model="activeName" style="margin-top:10px;">
-        <el-tab-pane :label="$t('CSS.overview.10')" name="帶寬"></el-tab-pane>
+        <el-tab-pane :label="$t('CSS.overview.10')" name="頻寬"></el-tab-pane>
         <el-tab-pane :label="$t('CSS.overview.11')" name="流量"></el-tab-pane>
       </el-tabs>
       <el-card>
@@ -159,7 +159,7 @@
           :legendText="activeName"
           :tooltip="{
             trigger: 'axis',
-            formatter: `{b}<br/>{a} {c}${activeName === '帶寬' ? 'Mpbs' : 'MB'}`
+            formatter: `{b}<br/>{a} {c}${activeName === '頻寬' ? 'Mpbs' : 'MB'}`
           }"
         />
       </el-card>
@@ -168,11 +168,11 @@
 </template>
 
 <script>
-import moment from "moment";
-import XLSX from 'xlsx';
-import HeaderCom from "@/components/public/Head";
-import TimeX from "@/components/public/TimeY";
-import ELine from "../components/line";
+import moment from 'moment'
+import XLSX from 'xlsx'
+import HeaderCom from '@/components/public/Head'
+import TimeX from '@/components/public/TimeY'
+import ELine from '../components/line'
 import {
   ALL_CITY,
   CSS_MBPS,
@@ -180,14 +180,14 @@ import {
   DOMAIN_LIST,
   LIVE_DESCRIBE_LIVEPACKAGEINFO,
   DESCRIBE_PLAY_STAT_INFOLIST
-} from "@/constants";
+} from '@/constants'
 
 let defaultParams = {
-  Version: "2018-08-01"
-};
+  Version: '2018-08-01'
+}
 export default {
-  name: "overview",
-  data() {
+  name: 'overview',
+  data () {
     return {
       createTimeType: '0d',
       options: [
@@ -199,7 +199,7 @@ export default {
         {
           value: 3600,
           label: '1小時'
-        },
+        }
       ],
       timeValue: [moment().startOf('d'), moment()],
       domainData: [],
@@ -213,10 +213,10 @@ export default {
       fluxPackageCount: 0,
       value: 1,
       granularity: 300,
-      activeName: "帶寬",
-      region: "",
-      StartTime: "",
-      EndTime: "",
+      activeName: '頻寬',
+      region: '',
+      StartTime: '',
+      EndTime: '',
       timeData: [],
       bandwidthData: [],
       series: [],
@@ -226,18 +226,19 @@ export default {
       bandwidth_json: [],
       selectDate: '',
       pickerOptions: {
-        onPick: ({maxDate, minDate}) => {
-          this.selectDate= minDate.getTime();
+        onPick: ({ maxDate, minDate }) => {
+          this.selectDate = minDate.getTime()
           if (maxDate) {
-            this.selectDate= ''
+            this.selectDate = ''
           }
-        }, disabledDate: (date) => {
-          if (this.selectDate!== '') {
+        },
+        disabledDate: (date) => {
+          if (this.selectDate !== '') {
             const minTime = moment(this.selectDate).subtract(1, 'month')
             const maxTime = moment(this.selectDate).add(1, 'month')
             return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || date.getTime() > Date.now()
           }
-          return date.getTime() > Date.now();
+          return date.getTime() > Date.now()
         }
       }
     }
@@ -247,22 +248,22 @@ export default {
     TimeX,
     ELine
   },
-  created() {
-    this._region();
-    this.init();
+  created () {
+    this._region()
+    this.init()
   },
   watch: {
-    activeName() {
-      if (this.activeName === "帶寬") {
-        this.series = [...this.bandwidthData];
+    activeName () {
+      if (this.activeName === '頻寬') {
+        this.series = [...this.bandwidthData]
       } else {
-        this.series = [...this.fluxData];
+        this.series = [...this.fluxData]
       }
     },
     timeValue: {
-      handler() {
+      handler () {
         this.getTrend()
-        if(moment(this.timeValue[1]).diff(this.timeValue[0], 'days') > 0) {
+        if (moment(this.timeValue[1]).diff(this.timeValue[0], 'days') > 0) {
           this.options = [
             {
               value: 300,
@@ -275,29 +276,29 @@ export default {
             {
               value: 86400,
               label: '1天'
-            },
+            }
           ]
         } else {
           this.options = [
-             {
+            {
               value: 300,
               label: '5分鐘'
             },
             {
               value: 3600,
               label: '1小時'
-            },
+            }
           ]
         }
       },
       immediate: true
     },
-    granularity() {
+    granularity () {
       this.getTrend()
     }
   },
   methods: {
-    onTimeClick(t, u) {
+    onTimeClick (t, u) {
       this.createTimeType = `${t}${u}`
       let start = moment().subtract(t, u).startOf('d')
       let end = moment().endOf('d')
@@ -313,109 +314,108 @@ export default {
       }
       this.timeValue = [start, end]
     },
-    exportEchart() {
+    exportEchart () {
       let json
-      if (this.activeName === "帶寬") {
-        json = this.bandwidth_json;
+      if (this.activeName === '頻寬') {
+        json = this.bandwidth_json
       } else {
-        json = this.flux_json;
+        json = this.flux_json
       }
-      const ws = XLSX.utils.json_to_sheet(json);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "統計數據");
-      XLSX.writeFile(wb, "統計數據.csv");
+      const ws = XLSX.utils.json_to_sheet(json)
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, '統計數據')
+      XLSX.writeFile(wb, '統計數據.csv')
     },
-    doaminChange(checked, domain) {
+    doaminChange (checked, domain) {
       if (checked) {
-        this.domainCheckedList.push(domain);
+        this.domainCheckedList.push(domain)
       } else {
         this.domainCheckedList = this.domainCheckedList.filter(
           item => item !== domain
-        );
+        )
       }
     },
-    checkDomainAll(checked) {
+    checkDomainAll (checked) {
       if (checked) {
-        this.domainCheckedList = [...this.domainData];
+        this.domainCheckedList = [...this.domainData]
       } else {
-        this.domainCheckedList = [];
+        this.domainCheckedList = []
       }
     },
-    comfirmDomain() {
+    comfirmDomain () {
       if (this.domainCheckedList.length === 0) {
         this.$message({
-          type: "warning",
-          message: "請選擇域名"
-        });
+          type: 'warning',
+          message: '請選擇域名'
+        })
       } else {
-        this.$refs.doaminRef.visible = false;
-        this.domainCheckedListCopy = [...this.domainCheckedList];
+        this.$refs.doaminRef.visible = false
+        this.domainCheckedListCopy = [...this.domainCheckedList]
       }
     },
-    cancelDomain() {
-      this.domainCheckedList = [...this.domainCheckedListCopy];
-      this.$refs.doaminRef.visible = false;
+    cancelDomain () {
+      this.domainCheckedList = [...this.domainCheckedListCopy]
+      this.$refs.doaminRef.visible = false
     },
-    //获取地域
-    _region() {
+    // 获取地域
+    _region () {
       this.axios.post(ALL_CITY).then(res => {
-        this.region = res.data[0].zone;
-        this.btnload = false;
-      });
+        this.region = res.data[0].zone
+        this.btnload = false
+      })
     },
-    init() {
-      this.getDomain();
-      this.getHeadData();
+    init () {
+      this.getDomain()
+      this.getHeadData()
     },
-    getDomain() {
+    getDomain () {
       this.axios
         .post(DOMAIN_LIST, defaultParams)
         .then(({ Response: { DomainList } }) => {
-          const domains = [];
+          const domains = []
           if (Array.isArray(DomainList)) {
             DomainList.forEach(domain => {
               if (domain.Type === 1) {
-                domains.push(domain.Name);
+                domains.push(domain.Name)
               }
-            });
+            })
           }
-          this.domainCheckedList = domains;
-          this.domainData = domains;
-          this.domainCheckedListCopy = domains;
-        });
+          this.domainCheckedList = domains
+          this.domainData = domains
+          this.domainCheckedListCopy = domains
+        })
     },
-    // 实时下行帶寬 今日下行流量 直播在线数
-    getHeadData() {
+    // 实时下行頻寬 今日下行流量 直播在线数
+    getHeadData () {
       const params = {
         ...defaultParams,
         StartTime: moment()
-          .startOf("d")
-          .format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment().format("YYYY-MM-DD HH:mm:ss"),
+          .startOf('d')
+          .format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment().format('YYYY-MM-DD HH:mm:ss'),
         Granularity: 60
-      };
+      }
 
       // 查询今日总流量
       this.axios.post(CSS_MBPS, params).then(({ Response }) => {
-        this.todayFlux = Response.SumFlux;
+        this.todayFlux = Response.SumFlux
         const list = Response.DataInfoList
         if (list) {
           const bandwidth = list[list.length - 1].Bandwidth
           this.totalBandwidth = `${bandwidth} Mbps`
-
         }
-      });
-      // 查询实时总帶寬 实时总连接数
+      })
+      // 查询实时总頻寬 实时总连接数
       this.axios
         .post(DESCRIBE_PLAY_STAT_INFOLIST, params)
         .then(({ Response }) => {
           if (Response.Error === undefined) {
             const last = Response.DataInfoList.pop()
             if (last !== undefined) {
-              this.online = last.Online;
+              this.online = last.Online
             }
           }
-        });
+        })
       // 查询流量包
       this.axios
         .post(LIVE_DESCRIBE_LIVEPACKAGEINFO, {
@@ -424,62 +424,62 @@ export default {
         })
         .then(({ Response: { LivePackageInfoList } }) => {
           if (Array.isArray(LivePackageInfoList)) {
-            this.fluxPackageCount = LivePackageInfoList.length;
-            let usedFlux = 0;
-            let totalFlux = 0;
+            this.fluxPackageCount = LivePackageInfoList.length
+            let usedFlux = 0
+            let totalFlux = 0
             LivePackageInfoList.forEach(item => {
-              usedFlux += item.Used;
-              totalFlux += item.Total;
-            });
-            this.totalFlux = (totalFlux / 1000 / 1000 / 1000).toFixed(2);
-            this.usedFlux = (usedFlux / 1000 / 1000 / 1000).toFixed(2);
+              usedFlux += item.Used
+              totalFlux += item.Total
+            })
+            this.totalFlux = (totalFlux / 1000 / 1000 / 1000).toFixed(2)
+            this.usedFlux = (usedFlux / 1000 / 1000 / 1000).toFixed(2)
           }
-        });
+        })
     },
     // 统计趋势数据
-    getTrend() {
+    getTrend () {
       let params = {
         ...defaultParams,
         StartTime: moment(this.timeValue[0]).format('YYYY-MM-DD HH:mm:ss'),
         EndTime: moment(this.timeValue[1]).format('YYYY-MM-DD HH:mm:ss'),
         Granularity: Number(this.granularity) / 60,
-        MainlandOrOversea: "Oversea",
-      };
+        MainlandOrOversea: 'Oversea'
+      }
 
       if (this.domainCheckedListCopy.length !== this.domainData.length) {
         this.domainCheckedListCopy.forEach((domain, index) => {
-          params[`PlayDomains.${index}`] = domain;
-        });
+          params[`PlayDomains.${index}`] = domain
+        })
       }
       this.axios
         .post(CSS_MBPS, params)
         .then(({ Response: { DataInfoList } }) => {
-          const times = [];
-          const bandwidthData = [];
-          const fluxData = [];
-          const bandwidthArr = [];
-          const fluxArr = [];
+          const times = []
+          const bandwidthData = []
+          const fluxData = []
+          const bandwidthArr = []
+          const fluxArr = []
           DataInfoList.forEach(item => {
-            times.push(item.Time);
-            bandwidthData.push(item.Bandwidth);
-            fluxData.push(item.Flux);
-            bandwidthArr.push({Time: item.Time, 'Bandwidth (Mbps)': item.Bandwidth})
-            fluxArr.push({Time: item.Time, 'Flux (MB)': item.Flux})
-          });
-          this.timeData = times;
-          this.bandwidthData = bandwidthData;
-          this.fluxData = fluxData;
+            times.push(item.Time)
+            bandwidthData.push(item.Bandwidth)
+            fluxData.push(item.Flux)
+            bandwidthArr.push({ Time: item.Time, 'Bandwidth (Mbps)': item.Bandwidth })
+            fluxArr.push({ Time: item.Time, 'Flux (MB)': item.Flux })
+          })
+          this.timeData = times
+          this.bandwidthData = bandwidthData
+          this.fluxData = fluxData
           this.bandwidth_json = bandwidthArr
           this.flux_json = fluxArr
-          if (this.activeName === "帶寬") {
-            this.series = bandwidthData;
+          if (this.activeName === '頻寬') {
+            this.series = bandwidthData
           } else {
-            this.series = fluxData;
+            this.series = fluxData
           }
-        });
+        })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

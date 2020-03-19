@@ -7,7 +7,7 @@
     >
       <P>{{ `確定刪除配置  ${domainName}` }}</P>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="$parent._delete()">確 定</el-button>
+        <el-button type="primary" @click="$parent._delete()">{{$t('CSS.domainManagement.43')}}</el-button>
         <el-button @click="$emit('update:modalVisible', false)"
           >取 消</el-button
         >

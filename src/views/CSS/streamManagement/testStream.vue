@@ -10,6 +10,7 @@ export default {
   props: {
     stream: Object,
     visible: Boolean,
+    domain: Object,
   },
   data() {
     return {
@@ -19,7 +20,6 @@ export default {
   },
   watch: {
     visible(n) {
-      console.log(n)
       if (n) {
         this.loading = true
         this.init()
@@ -33,42 +33,24 @@ export default {
   },
   methods: {
     init() {
-      this.axios.post(DOMAIN_LIST, {
-        Version: "2018-08-01",
-        PageSize: 100, //分页大小，范围：10~100。默认10
-        PageNum: 1
-      })
-      .then(({ Response }) => {
-        const domain = Response.DomainList.find(domain => !domain.Name.endsWith('livepush.myqcloud.com') && domain.Status !== 0 && domain.BCName === 1)
-        let domainName = ''
-        if (!domain) {
-          const defaultDomain = Response.DomainList.find(domain => domain.Name.endsWith('livepush.myqcloud.com'))
-          domainName = defaultDomain.Name.replace('livepush', 'liveplay')
-          const url = `http://${domainName}/live/${this.stream.StreamName}.flv`
+      this.loading = true
+      let url = `http://${this.domain.Name}/live/${this.stream.StreamName}.flv`
+      this.axios
+        .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
+          Version: "2018-08-01",
+          DomainName: this.domain.Name
+        })
+        .then(res => {
+          const playKey = res.Response.PlayAuthKeyInfo
+          if (playKey.Enable === 1) {
+            var r = (new Date).getTime() / 1e3
+            var a = parseInt(r.toString()).toString(16).toUpperCase()
+            var t = md5(playKey.AuthKey + this.stream.StreamName + a)
+            url += `?txSecret=${t}&txTime=${a}`
+          } 
           this.play(url)
           this.loading = false
-        } else {
-          domainName = domain.Name
-          let url = `http://${domainName}/live/${this.stream.StreamName}.flv`
-          this.axios
-            .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
-              Version: "2018-08-01",
-              DomainName: domainName
-            })
-            .then(res => {
-              const playKey = res.Response.PlayAuthKeyInfo
-              if (playKey.Enable === 1) {
-                var r = (new Date).getTime() / 1e3
-                var a = parseInt(r.toString()).toString(16).toUpperCase()
-                var t = md5(playKey.AuthKey + this.stream.StreamName + a)
-                url += `?txSecret=${t}&txTime=${a}`
-              } 
-              this.play(url)
-              this.loading = false
-            })
-        }
-        
-      })
+        })
     },
     play(url) {
       this.$emit('update:url', url)

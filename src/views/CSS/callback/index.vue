@@ -10,11 +10,12 @@
       </div>-->
       <div class="explain">
         <p>
-          範本設置完成，需關聯推流域名方可生效，請點擊
-          <router-link to="/domainManagement">域名管理</router-link
-          >進行關聯設置。
-          <!-- <a href="#">参考文档</a> -->
-          範本配置完後續大約5分鐘生效
+          {{$t('CSS.watermark.3')}}
+          <router-link to="/domainManagement">域名管理</router-link>
+          {{$t('CSS.watermark.4')}}
+          <!-- <a href="#">{{$t('CSS.watermark.2')}}</a> -->
+          {{$t('CSS.watermark.5')}}
+
         </p>
       </div>
       <div class="main-box" v-loading="loading">
@@ -115,7 +116,7 @@ export default {
         this.configList.length === 0 ||
         Object.keys(this.selectItem).length === 0
       ) {
-        return;
+        return
       }
 
       this.modalVisible = true

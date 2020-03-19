@@ -58,7 +58,7 @@
 
             <template v-if="type === $t('CSS.domainManagement.33')">
               <el-table-column :label="$t('CSS.domainManagement.37')" width="180">
-                <template slot-scope="scope">{{format(scope.row.PublishTimeList[0].PublishTime)}}</template>
+                <template slot-scope="scope">{{format(scope.row.PublishTimeList && scope.row.PublishTimeList[0].PublishTime)}}</template>
               </el-table-column>
             </template>
 
@@ -116,7 +116,7 @@
       @close="playUrl=''"
       width="840px"
     >
-      <test-stream :stream="stream" :visible="visible" :url.sync="playUrl" />
+      <test-stream :stream="stream" :domain="domain" :visible="visible" :url.sync="playUrl" />
     </el-dialog>
   </div>
 </template>
@@ -149,6 +149,7 @@ export default {
       loading: true,
       stream: {},
       visible: false,
+      domain: {},
     };
   },
   components: {
@@ -160,8 +161,30 @@ export default {
   },
   methods: {
     test(row) {
+      this.loading = true
       this.stream = row
-      this.visible = true
+      this.axios.post(DOMAIN_LIST, {
+        Version: "2018-08-01",
+        DomainType: 1, // 播放域名
+        DomainStatus: 1, // 启用
+        PageSize: 100, //分页大小，范围：10~100。默认10
+        PageNum: 1
+      })
+      .then(({ Response }) => {
+        const domain = Response.DomainList.find(domain => !domain.Name.endsWith('livepush.myqcloud.com') && domain.Status !== 0 && domain.BCName === 1)
+        if (!domain) {
+          this.$message({
+            message: '暫無可用域名，請先添加播放域名，并且正确配置了CNAME！',
+            type: 'warning',
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.domain = domain
+          this.visible = true
+        }
+        this.loading = false
+      })
     },
     format(utcDate) {
       return moment(utcDate).format("YYYY-MM-DD HH:mm:ss");

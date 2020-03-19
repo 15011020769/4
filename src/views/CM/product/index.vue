@@ -477,12 +477,15 @@ export default {
       }
       .error:hover {
          background: rgb(242, 242, 242);
+         cursor: pointer;
       }
       .noerror:hover {
          background: rgb(242, 242, 242);
+         cursor: pointer;
       }
       .nopageerror:hover {
          background: rgb(242, 242, 242);
+         cursor: pointer;
       }
     }
     .table_head_right {
@@ -495,6 +498,7 @@ export default {
       }
       .pages:hover {
          background: rgb(242, 242, 242);
+         cursor: pointer;
       }
     }
     

@@ -19,19 +19,7 @@
             <br />
           </p>
         </div>
-        <Transfer style="margin-left:80px;" :multipleSelection="multipleSelection"></Transfer>
-        <div class="qudao">
-          <span>告警渠道</span>
-          <div class="qudaoContent">
-            <p>
-              <el-checkbox v-model="checked1">邮件</el-checkbox>
-            </p>
-            <p>
-              <el-checkbox v-model="checked2">短信</el-checkbox>
-            </p>
-          </div>
-        </div>
-
+        <Cam v-on:camClick="camFun"></Cam>
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
         </div>
@@ -41,21 +29,25 @@
 </template>
 <script>
 import Header from "./Header";
-import Transfer from "./transfer";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import { ADD_CUSTON_MESSAGE } from "@/constants/CM-lxx.js"; /////////
+import Cam from "./Cam";
+import {
+  ADD_CUSTON_MESSAGE,
+  RECEIVING_GROUP_DETAILE
+} from "@/constants/CM-lxx.js"; /////////
 
 export default {
   data() {
     return {
       multipleSelection: [], //穿梭框数据
-      checked1: "", //邮件
-      checked2: "", //短信
+      // checked1: "", //邮件
+      // checked2: "", //短信
       input: "",
       input1: "",
       tableData: [],
       options: [],
       values: "",
+      cam: {}, // cam组件的值
       formInline: {
         strategy_name: "", //策略名称
         textarea: "", //备注
@@ -79,11 +71,75 @@ export default {
   },
   components: {
     Header,
-    Transfer
+    Cam
   },
   methods: {
+    // 获取cam组件的值
+    camFun(data) {
+      this.cam = data;
+      console.log(this.cam);
+    },
+    //选择告警接收组
+    // getList() {
+    //   var params = {
+    //     Version: "2018-07-24"
+    //     // GroupId: item
+    //   };
+    //   this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
+    //     console.log(res);
+    //     this.lists.push();
+    //     if (res.codeDesc === "Success") {
+    //       // this.deleteDialogVisible1 = false;
+    //     } else {
+    //       let ErrTips = {};
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     //确定
     save() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        // PolicyName:     //策略名
+      };
+      this.axios.post(ADD_CUSTON_MESSAGE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response);
+
+          this.deleteDialogVisible = false;
+          this.loadShow = false;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
       this.$router.push({
         path: "/message"
       });

@@ -39,29 +39,29 @@
 </template>
 
 <script>
-import moment from "moment";
+import moment from 'moment'
 import XLSX from 'xlsx'
-import Echart from "../../components/line";
-import { CSS_STREAMPLAY } from "@/constants";
+import Echart from '../../components/line'
+import { CSS_STREAMPLAY } from '@/constants'
 export default {
-  name:'stream',
-  data(){
-    return{
-      loading: true, //加载状态
+  name: 'stream',
+  data () {
+    return {
+      loading: true, // 加载状态
       showEchart: true,
       value: 1,
       xAxis1: [],
       series1: [],
       series2: [],
       series3: [],
-      legendText1: "",
-      legendText2: "",
-      legendText3: "",
-      line_json: [],
+      legendText1: '',
+      legendText2: '',
+      legendText3: '',
+      line_json: []
     }
   },
   components: {
-    Echart,
+    Echart
   },
   props: {
     StartTime: {
@@ -74,44 +74,44 @@ export default {
       type: String
     }
   },
-  created() {
-    this.init();
+  created () {
+    this.init()
   },
   methods: {
-    exportEchart() {
-      const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
-      const wb = XLSX.utils.book_new();/*新建book*/
-      XLSX.utils.book_append_sheet(wb, ws, "播放數據");/* 生成xlsx文件(book,sheet数据,sheet命名) */
-      XLSX.writeFile(wb, "播放數據.csv");/*写文件(book,xlsx文件名称)*/
+    exportEchart () {
+      const ws = XLSX.utils.json_to_sheet(this.line_json)/* 新建空workbook，然后加入worksheet */
+      const wb = XLSX.utils.book_new()/* 新建book */
+      XLSX.utils.book_append_sheet(wb, ws, '播放數據')/* 生成xlsx文件(book,sheet数据,sheet命名) */
+      XLSX.writeFile(wb, '播放數據.csv')/* 写文件(book,xlsx文件名称) */
     },
-    init() {
-      this.loading = true;
+    init () {
+      this.loading = true
       const axix1 = []
       const series1 = []
       const series2 = []
       const series3 = []
       const params = {
-        Version: "2018-08-01",
+        Version: '2018-08-01',
         StreamName: this.StreamName,
-        StartTime: moment(this.StartTime).format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment(this.EndTime).format("YYYY-MM-DD HH:mm:ss"),
-      };
+        StartTime: moment(this.StartTime).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(this.EndTime).format('YYYY-MM-DD HH:mm:ss')
+      }
       let tempArr = []
       this.axios.post(CSS_STREAMPLAY, params).then(res => {
         if (res.Response.Error) {
           this.showEchart = false
-           if (
-              res.Response.Error.Message ==
-              "param=StreamName,value=, length is zero."
-            ) {
-              this.$message.error("請輸入流id");
-            } else {
-              this.$message.error(res.Response.Error.Message);
-            }
+          if (
+            res.Response.Error.Message ==
+              'param=StreamName,value=, length is zero.'
+          ) {
+            this.$message.error('請輸入流id')
+          } else {
+            this.$message.error(res.Response.Error.Message)
+          }
         } else {
           if (res.Response.DataInfoList.length != 0) {
             this.showEchart = true
-            this.legendText1 = '帶寬'
+            this.legendText1 = '頻寬'
             this.legendText2 = '流量'
             this.legendText3 = '併發連接數'
             res.Response.DataInfoList.map(v => {
@@ -119,7 +119,7 @@ export default {
               series1.push(v.Bandwidth)
               series2.push(v.Flux)
               series3.push(v.Online)
-              tempArr.push({"时间": v.Time, "带宽": v.Bandwidth, "流量": v.Flux, "在线人数": v.Online})
+              tempArr.push({ '时间': v.Time, '带宽': v.Bandwidth, '流量': v.Flux, '在线人数': v.Online })
             })
             this.xAxis1 = axix1
             this.series1 = series1
@@ -128,12 +128,12 @@ export default {
             this.line_json = tempArr
           } else {
             this.showEchart = false
-            this.line_json = [{"时间": "", "带宽": "", "流量": "", "在线人数": ""}]
+            this.line_json = [{ '时间': '', '带宽': '', '流量': '', '在线人数': '' }]
           }
         }
-        this.loading = false;
+        this.loading = false
       })
-    },
+    }
   }
 }
 </script>

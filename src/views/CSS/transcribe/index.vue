@@ -41,16 +41,16 @@
 </template>
 
 <script>
-import HeaderCom from "@/components/public/Head";
-import OptionForm from "./tab/optionForm";
-import ConfigDetail from "./tab/configDetail";
-import DeleteModal from "./modal/modal";
-import { RECORDING_DELTILS, DELETE_RECORDING_CONFIG } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../components/CSSErrorTips";
+import HeaderCom from '@/components/public/Head'
+import OptionForm from './tab/optionForm'
+import ConfigDetail from './tab/configDetail'
+import DeleteModal from './modal/modal'
+import { RECORDING_DELTILS, DELETE_RECORDING_CONFIG } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../components/CSSErrorTips'
 export default {
-  name: "transcribe",
-  data() {
+  name: 'transcribe',
+  data () {
     return {
       formShow: false,
       configList: [],
@@ -58,11 +58,11 @@ export default {
       modalVisible: false,
       selectIndex: 0,
       loading: true
-    };
+    }
   },
   computed: {
     showRight: function () {
-      return this.configList.length > 0 || this.formShow === true;
+      return this.configList.length > 0 || this.formShow === true
     }
   },
   components: {
@@ -72,97 +72,96 @@ export default {
     DeleteModal
   },
 
-  mounted() {
-    this.fetchRecordingList();
+  mounted () {
+    this.fetchRecordingList()
   },
 
   methods: {
-    _add() {
-      this.selectItem = {};
-      this.formShow = true;
+    _add () {
+      this.selectItem = {}
+      this.formShow = true
     },
 
-    _close() {
-      this.formShow = false;
+    _close () {
+      this.formShow = false
     },
 
-    _cancel() {
-
-      this.formShow = false;
+    _cancel () {
+      this.formShow = false
 
       if (this.configList.length === 0) {
-        return;
+        return
       }
 
-      this.selectItem = this.configList[this.selectIndex];
+      this.selectItem = this.configList[this.selectIndex]
     },
-    handleDelete() {
+    handleDelete () {
       if (
         this.configList.length === 0 ||
         Object.keys(this.selectItem).length === 0
       ) {
-        return;
+        return
       }
 
-      this.modalVisible = true;
+      this.modalVisible = true
     },
-    _delete() {
+    _delete () {
       this.axios
         .post(DELETE_RECORDING_CONFIG, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           TemplateId: this.selectItem.TemplateId
         })
         .then(data => {
           if (data.Response.Error == undefined) {
-            this.modalVisible = false;
+            this.modalVisible = false
             this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.fetchRecordingList();
-            return;
+              message: '删除成功',
+              type: 'success'
+            })
+            this.fetchRecordingList()
+            return
           }
-          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-          this.$message.error(ErrOr[data.Response.Error.Code]);
-        });
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+          this.$message.error(ErrOr[data.Response.Error.Code])
+        })
     },
 
-    fetchRecordingList() {
-      this.loading = true;
+    fetchRecordingList () {
+      this.loading = true
       this.axios
         .post(RECORDING_DELTILS, {
-          Version: "2018-08-01"
+          Version: '2018-08-01'
         })
         .then(data => {
           if (data.Response.Error == undefined) {
-            const result = data.Response.Templates;
+            const result = data.Response.Templates
             if (result.length > 0) {
-              this.configList = result;
-              this.selectItem = this.configList[0];
+              this.configList = result
+              this.selectItem = this.configList[0]
             } else {
-              this.configList = [];
-              this.selectItem = {};
+              this.configList = []
+              this.selectItem = {}
             }
-            return;
+            return
           }
-          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-          this.$message.error(ErrOr[data.Response.Error.Code]);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+          this.$message.error(ErrOr[data.Response.Error.Code])
         })
         .then(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
 
     // 选中模板
-    onSelectRecording(item) {
-      this.formShow = false;
-      this.selectItem = item;
+    onSelectRecording (item) {
+      this.formShow = false
+      this.selectItem = item
       this.selectIndex = this.configList.findIndex(
         tempItem => item.TemplateId === tempItem.TemplateId
-      );
+      )
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -951,7 +951,7 @@ export default {
             "FailedOperation": "操作失敗",
             "InternalError": "内部錯誤",
             "InternalError.AccountUserNotAuthenticated	": "帳戶未通過認證",
-            "InternalError.AsCommon": "伸縮組資源創建報錯",
+            "InternalError.AsCommon": "配額不足,請釋放部分資源後再創建",
             "InternalError.CvmCommon": "cvm創建節點報錯。",
             "InternalError.CvmNotFound": "cvm不存在。",
             "InternalError.Db": "db錯誤。",

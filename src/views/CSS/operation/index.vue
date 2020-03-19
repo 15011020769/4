@@ -7,12 +7,27 @@
         <a href="#">設置告警</a>
       </p>
     </div>
-    <div class="seek">
-      <XTimeX v-on:switchData="GetDat" :classsvalue="value"></XTimeX>
-    </div>
-    <div class="seek seek-box">
+    <el-row class="topSelect">
+      <el-button-group>
+        <el-button @click="checkTime(1)" :class="selBtn=='1'?'addStyleBtn':''">今天</el-button>
+        <el-button @click="checkTime(2)" :class="selBtn=='2'?'addStyleBtn':''">昨天</el-button>
+        <el-button @click="checkTime(3)" :class="selBtn=='3'?'addStyleBtn':''">近7天</el-button>
+        <el-button @click="checkTime(4)" :class="selBtn=='4'?'addStyleBtn':''">近30天</el-button>
+      </el-button-group>
+      <el-date-picker
+        ref="mypicker"
+        v-model="dateTimeValue"
+        type="datetimerange"
+        class="timeValue"
+        range-separator="至"
+        start-placeholder="開始日期"
+        end-placeholder="結束日期"
+        @change="changeTimeValue"
+        :picker-options="pickerOptions"
+        :clearable= false
+      ></el-date-picker>
       <p style="margin-left:20px;">
-        <span>選擇域名</span>
+        <span>{{$t('CSS.builder.20')}}</span>
         <el-dropdown
           :hide-on-click="false"
           trigger="click"
@@ -58,20 +73,9 @@
           </el-dropdown-menu>
         </el-dropdown>
       </p>
-      <p style="margin-left:20px;">
-        <span>選擇運營商</span>
-        <el-select v-model="operator" placeholder="请选择" style="margin-left:10px;">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </p>
       <el-button type="primary" style="margin-left:20px;">{{region}}</el-button>
-      <el-button style="margin-left:20px;" type="primary" @click="search">查詢</el-button>
-    </div>
+      <el-button style="margin-left:20px;" type="primary" @click="search">{{$t('CSS.cutout.1')}}</el-button>
+    </el-row>
     <div class="operation-main">
       <div class="tab-box">
         <dl
@@ -100,7 +104,6 @@
         <Tab1
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 0"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -109,7 +112,6 @@
         <Tab2
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 1"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -118,7 +120,6 @@
         <Tab3
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 2"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -127,7 +128,6 @@
         <Tab4
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 3"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -139,233 +139,248 @@
 </template>
 
 <script>
-import moment from "moment";
-import Header from "@/components/public/Head";
-import XTimeX from "@/components/public/TimeN";
-import { ALL_CITY, DOMAIN_LIST, CSS_MBPS, DESCRIBE_PLAY_STAT_INFOLIST } from "@/constants";
-import Tab1 from "./tab/tab1";
-import Tab2 from "./tab/tab2";
-import Tab3 from "./tab/tab3";
-import Tab4 from "./tab/tab4";
+import moment from 'moment'
+import Header from '@/components/public/Head'
+import { ALL_CITY, DOMAIN_LIST, CSS_MBPS, DESCRIBE_PLAY_STAT_INFOLIST } from '@/constants'
+import Tab1 from './tab/tab1'
+import Tab2 from './tab/tab2'
+import Tab3 from './tab/tab3'
+import Tab4 from './tab/tab4'
 export default {
   name: "operation",
   data() {
+    let vue = this
     return {
-      operator: "",
       domainsData: [],
       domainCheckedList: [],
       domainCheckedListCopy: [],
       options: [
         {
-          value: "",
-          label: "全部運營商"
+          value: '',
+          label: '全部運營商'
         },
         {
-          value: "China Telecom",
-          label: "中國電信"
+          value: 'China Telecom',
+          label: '中國電信'
         },
         {
-          value: "China Unicom",
-          label: "中國聯通"
+          value: 'China Unicom',
+          label: '中國聯通'
         },
         {
-          value: "China Mobile",
-          label: "中國移動"
-        },
+          value: 'China Mobile',
+          label: '中國移動'
+        }
       ],
-      // options: [
-      //   {
-      //     value: "",
-      //     label: "全部運營商"
-      //   },
-      //   {
-      //     value: "Chunghwa Telecom",
-      //     label: "中华电信"
-      //   },
-      //   {
-      //     value: "Taiwan Mobile",
-      //     label: "台湾大哥大"
-      //   },
-      //   {
-      //     value: "Far EasTone",
-      //     label: "远传电信"
-      //   },
-      // ],
       domain: [],
-      value: 1, //时间组件默认选中值
-      region: "台灣台北", //地域
-      tabIndex: 0, //tab默认选中值
-      //tab内容
+      value: 1, // 时间组件默认选中值
+      region: '台灣台北', // 地域
+      tabIndex: 0, // tab默认选中值
+      // tab内容
       tab: [
         {
-          name: "帶寬峰值",
-          code: "Mbps",
+          name: '頻寬峰值',
+          code: 'Mbps',
           value: 0
         },
         {
-          name: "總流量",
-          code: "MB",
+          name: '總流量',
+          code: 'MB',
           value: 0
         },
         {
-          name: "總請求數",
-          code: "次",
+          name: '總請求數',
+          code: '次',
           value: 0
         },
         {
-          name: "併發連接數峰值",
-          code: "次",
+          name: '並發連接數峰值',
+          code: '次',
           value: 0
         }
       ],
-      StartTIme: moment(new Date()).format("YYYY-MM-DD 00:00:00"),
-      EndTIme: moment(new Date()).format("YYYY-MM-DD HH:mm:ss")
-    };
+      StartTIme: moment(new Date()).format('YYYY-MM-DD 00:00:00'),
+      EndTIme: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+      dateTimeValue: [moment().startOf('day'), moment()], // 日期绑定
+      selBtn: 1, // 默认选中今天按钮
+      pickerOptions: {
+        disabledDate(time) {
+          let timeOptionRange = vue.timeOptionRange;
+          if(timeOptionRange){
+            return moment(timeOptionRange).diff(time, 'days') > 30 || moment(time).diff(timeOptionRange, 'days') > 30 || time > moment()
+          }
+          return time > moment()
+        },
+        onPick(time){
+          if(time.minDate && !time.maxDate){
+              vue.timeOptionRange = time.minDate;
+          }
+          if(time.maxDate){
+              vue.timeOptionRange = null;
+          }
+        }
+      }
+    }
   },
   components: {
     Header,
-    XTimeX,
     Tab1,
     Tab2,
     Tab3,
     Tab4
   },
-  created() {
-    this.getCity();
-    this.getDomains();
+  created () {
+    this.getCity()
+    this.getDomains()
     this.getTotal()
   },
   watch: {
-    tabIndex() {
-      this.search();
+    tabIndex () {
+      this.search()
     }
   },
   methods: {
-    doHandleMonth(month) {
-      var m = month;
+    doHandleMonth (month) {
+      var m = month
       if (month.toString().length == 1) {
-        m = "0" + month;
+        m = '0' + month
       }
-      return m;
+      return m
     },
-    //域名列表
-    getDomains() {
+    // 域名列表
+    getDomains () {
       const params = {
-        Version: "2018-08-01"
-      };
+        Version: '2018-08-01'
+      }
       this.axios.post(DOMAIN_LIST, params).then(({ Response: { DomainList } }) => {
-        const domainArr = [];
+        const domainArr = []
         if (Array.isArray(DomainList)) {
           DomainList.forEach(domain => {
             if (domain.Type === 1) {
-              domainArr.push(domain.Name);
+              domainArr.push(domain.Name)
             }
-          });
+          })
         }
-        this.domainsData = domainArr;
+        this.domainsData = domainArr
         this.domainCheckedList = domainArr
         this.domainCheckedListCopy = domainArr
-      });
+      })
     },
-    //查询
-    search() {
-      this.StartTIme = this.timeData[0].StartTIme;
-      this.EndTIme = this.timeData[0].EndTIme;
+    // 查询
+    search () {
       this.getTotal()
       if (this.tabIndex == 0) {
         this.$nextTick(() => {
-          this.$refs.tab1.init();
+          this.$refs.tab1.init()
         })
       } else if (this.tabIndex == 1) {
         this.$nextTick(() => {
-          this.$refs.tab2.init();
+          this.$refs.tab2.init()
         })
       } else if (this.tabIndex == 2) {
         this.$nextTick(() => {
-          this.$refs.tab3.init();
+          this.$refs.tab3.init()
         })
       } else if (this.tabIndex == 3) {
         this.$nextTick(() => {
-          this.$refs.tab4.init();
+          this.$refs.tab4.init()
         })
       }
     },
-    //时间组件返回的数据
-    GetDat(val) {
-      val[0].StartTIme = moment(val[0].StartTIme).format("YYYY-MM-DD HH:mm:ss");
-      this.value = val[1];
-      this.timeData = val;
+    // 时间点击事件
+    checkTime (val) {
+      let times = [moment().startOf('day'), moment()] // 默认今天
+      this.selBtn = val
+      switch (val) {
+        case 2:
+          times = [moment().subtract(24, 'hours'), moment().subtract(24, 'hours').endOf('day')]
+          break
+        case 3:
+          times = [moment().subtract(6, 'days'), moment().endOf('day')]
+          break
+        case 4:
+          times = [moment().subtract(28, 'days'), moment().endOf('day')]
+          break
+        default:
+          break
+      }
+      times[0] = times[0].startOf('day')
+      this.$refs.mypicker.userInput = null
+      this.dateTimeValue = times
+      this.StartTIme = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
+      this.EndTIme = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')
     },
-    //获取城市
-    getCity() {
+    changeTimeValue () {
+      this.selBtn = 0
+      this.StartTIme = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
+      this.EndTIme = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
+    },
+    // 获取城市
+    getCity () {
       this.axios.post(ALL_CITY).then(res => {
-        this.region = res.data[0].zone;
-      });
+        this.region = res.data[0].zone
+      })
     },
-    //tab切换
-    tabClick(index) {
-      this.tabIndex = index;
+    // tab切换
+    tabClick (index) {
+      this.tabIndex = index
     },
-    getTotal() {
+    getTotal () {
+      // 因为默认是台湾所以用接口DESCRIBE_PLAY_STAT_INFOLIST
       const params = {
-        Version: "2018-08-01",
-        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
-        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        Version: '2018-08-01',
+        StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
+        EndTime: moment(this.EndTIme).format('YYYY-MM-DD HH:mm:ss'),
         Granularity: 60,
-        "CountryOrAreaNames.0": "Taiwan"
-      };
+        'CountryOrAreaNames.0': 'Taiwan'
+      }
+      // const params2 = {
+      //   Version: "2018-08-01",
+      //   StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+      //   EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+      //   Granularity: 60,
+      //   MainlandOrOversea: "Oversea",
+      // };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
-          params["PlayDomains." + index] = item;
-        });
+          params['PlayDomains.' + index] = item
+        })
       }
-      //  if (this.operator) {
-        // params["IspNames.0"] = this.operator // 运营商暂不做
-        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
-          if (res.Response.Error) {
-            this.$message.error(res.Response.Error.Message);
-          } else {
-            this.tab[0].value = res.Response.MaxBandwidth
-            this.tab[1].value = res.Response.TotalFlux
-            this.tab[2].value = res.Response.TotalRequest
-            this.tab[3].value = res.Response.MaxOnline
-          }
-        });
-      // }
-      // else {
-      //   this.axios.post(CSS_MBPS, params).then(res => {
-      //     if (res.Response.Error) {
-      //       this.$message.error(res.Response.Error.Message);
-      //     } else {
-      //       this.tab[0].value = res.Response.PeakBandwidth
-      //       this.tab[1].value = res.Response.SumFlux
-      //     }
-      //   });
-      //   this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
-      //     if (res.Response.Error) {
-      //       this.$message.error(res.Response.Error.Message);
-      //     } else {
-      //       this.tab[2].value = res.Response.TotalRequest
-      //       this.tab[3].value = res.Response.MaxOnline
-      //     }
-      //   });
-      // }
+      // 不查运营商 看腾讯页面0和1的数据请求CSS_MBPS，2和3的数据请求DESCRIBE_PLAY_STAT_INFOLIST
+      // this.axios.post(CSS_MBPS, params2).then(res => {
+      //   if (res.Response.Error) {
+      //     this.$message.error(res.Response.Error.Message);
+      //   } else {
+      //     this.tab[0].value = res.Response.PeakBandwidth
+      //     this.tab[1].value = res.Response.SumFlux
+      //   }
+      // });
+      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message)
+        } else {
+          this.tab[0].value = res.Response.MaxBandwidth // 带宽峰值
+          this.tab[1].value = res.Response.TotalFlux // 总流量
+          this.tab[2].value = res.Response.TotalRequest // 总请求数
+          this.tab[3].value = res.Response.MaxOnline // 并发连接数
+        }
+      })
     },
-    checkDomainAll(checked) {
+    checkDomainAll (checked) {
       if (checked) {
         this.domainCheckedList = [...this.domainsData]
       } else {
         this.domainCheckedList = []
       }
     },
-    doaminChange(checked, domain) {
+    doaminChange (checked, domain) {
       if (checked) {
-        this.domainCheckedList.push(domain);
+        this.domainCheckedList.push(domain)
       } else {
         this.domainCheckedList = this.domainCheckedList.filter(item => item !== domain)
       }
     },
-    comfirmDomain() {
+    comfirmDomain () {
       if (this.domainCheckedList.length === 0) {
         this.$message({
           type: 'warning',
@@ -378,12 +393,12 @@ export default {
         this.domainCheckedListCopy = [...this.domainCheckedList]
       }
     },
-    cancelDomain() {
+    cancelDomain () {
       this.domainCheckedList = [...this.domainCheckedListCopy]
       this.$refs.doaminRef.visible = false
-    },
+    }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -503,4 +518,59 @@ export default {
 .el-icon-info {
   color: #888;
 }
+
+.topSelect {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20px;
+  box-sizing: border-box;
+    & > * {
+      float: left;
+    }
+    .selectDomin {
+      width: 230px;
+    }
+    ::v-deep .el-input__inner {
+      height: 30px;
+      line-height: 30px;
+      border-radius: 0;
+    }
+    ::v-deep {
+
+      flex-wrap: wrap !important;
+    }
+    ::v-deep .el-button{
+      font-size: 12px !important;
+    }
+    ::v-deep .el-range__icon {
+        line-height: 22px;
+    }
+    ::v-deep .el-range-separator {
+      line-height: 22px;
+      width: 7%;
+    }
+    ::v-deep .el-select {
+      margin-right: 10px;
+    }
+    ::v-deep .el-input {
+      width: 250px;
+    }
+    button {
+      padding: 0 20px;
+    }
+    .addStyleBtn {
+      background-color: #006eff !important;
+      color: #fff;
+    }
+  }
+  button {
+    height: 30px;
+    line-height: 6px;
+    border-radius: 0;
+  }
+  .timeValue {
+    border-left: none;
+    width: 380px;
+    font-size: 12px !important;
+  }
 </style>

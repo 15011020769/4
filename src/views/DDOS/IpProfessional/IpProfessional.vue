@@ -41,17 +41,22 @@ export default {
     business: business,
     HeaderCom: HeaderCom
   },
+  destroyed () {
+    sessionStorage.removeItem('selectId')
+  },
   methods: {
     // tab页面切换
     handleClick(tab, event) {
       if (tab.name == "ddos") {
         //DDOS攻击防护
-        // this.$refs.ddosAttack.choiceTime(1);
+        this.$refs.ddosAttack.tabchangeId()
       } else if (tab.name == "cc") {
         //CC攻击防护
+        this.$refs.ccAttack.tabchangeId()
         this.$refs.ccAttack.getDataCC()
       } else if (tab.name == "service") {
         //业务
+        this.$refs.servers.tabchangeId()
         this.$refs.servers.getDataService();
       }
     },

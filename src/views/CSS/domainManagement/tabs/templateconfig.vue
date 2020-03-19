@@ -15,7 +15,7 @@
               ></el-table-column>
               <el-table-column
                 prop="TemplateId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column
                 prop="StreamBeginNotifyUrl"
@@ -37,7 +37,7 @@
               ></el-table-column>
               <el-table-column
                 prop="TemplateId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column
                 prop="SnapshotInterval"
@@ -71,7 +71,7 @@
               ></el-table-column>
               <el-table-column
                 prop="TemplateId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column
                 prop="address"
@@ -95,7 +95,7 @@
               ></el-table-column>
               <el-table-column
                 prop="WatermarkId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column prop="address" label="水印位置">
                 <template slot-scope="scope">{{

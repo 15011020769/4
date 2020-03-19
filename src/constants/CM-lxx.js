@@ -20,7 +20,7 @@ export const RECEIVING_GROUP_DETAILE = 'cam/GetGroup'//ok
 export const EDIT_CUSTON_MESSAGE = 'monitor2/DescribeDBInstances' 
 
 //删除自定义消息
-export const DETELE_CUSTON_MESSAGE = 'monitor2/DescribeDBInstances'
+export const DETELE_CUSTON_MESSAGE = 'monitor2/DeleteMsgPolicy'//ok
 
 //新增自定义消息
-export const ADD_CUSTON_MESSAGE = 'monitor2/DescribeDBInstances'
+export const ADD_CUSTON_MESSAGE = 'monitor2/CreateMsgPolicy'

@@ -106,148 +106,148 @@
 </template>
 
 <script>
-import Header from "@/components/public/Head";
+import Header from '@/components/public/Head'
 import {
   LIVE_DESCRIBELIVE_PUSHAUTHKEY,
   LIVE_DESCRIBE_LIVEPLAYAUTHKEY,
   DOMAIN_LIST
-} from "@/constants";
-import { toUTF8Array } from "@/utils";
-import md5 from "js-md5";
-import moment from "moment";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../components/CSSErrorTips";
+} from '@/constants'
+import { toUTF8Array } from '@/utils'
+import md5 from 'js-md5'
+import moment from 'moment'
+import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../components/CSSErrorTips'
 import { generatePlayAddress } from '../utils'
 export default {
-  name: "builder",
-  data() {
+  name: 'builder',
+  data () {
     return {
       playUrls: [],
       keyInfo: {},
       generated: false,
       suffix: '',
       ruleForm: {
-        domainType: "0",
-        domain: "",
-        AppName: "live",
-        StreamName: "",
+        domainType: '0',
+        domain: '',
+        AppName: 'live',
+        StreamName: '',
         date: new Date(moment().endOf('d'))
       },
       loading: false,
-      dialogVisible: false, //模态框
-      domainArr: [], //域名列表
+      dialogVisible: false, // 模态框
+      domainArr: [], // 域名列表
       rules: {
         domain: [
           {
             required: true,
-            message: "請選擇域名"
+            message: '請選擇域名'
             // trigger: 'change'
           }
         ],
         AppName: [
           {
             required: true,
-            message: "請输入AppName",
-            trigger: "blur"
+            message: '請输入AppName',
+            trigger: 'blur'
           },
           {
             pattern: /^[\u0000-\u00FF]*$/g,
-            message: "僅支持英文字母、數字和符號"
+            message: '僅支持英文字母、數字和符號'
           }
         ],
         StreamName: [
           {
             required: true,
-            message: "請输入StreamName",
-            trigger: "blur"
+            message: '請输入StreamName',
+            trigger: 'blur'
           },
           {
             pattern: /^[\u0000-\u00FF]*$/g,
-            message: "僅支持英文字母、數字和符號"
+            message: '僅支持英文字母、數字和符號'
           }
         ],
         date: [
           {
-            type: "date",
+            type: 'date',
             required: true,
-            message: "請選擇過期時間",
-            trigger: "change"
+            message: '請選擇過期時間',
+            trigger: 'change'
           }
         ]
       }
-    };
+    }
   },
   components: {
     Header
   },
   computed: {
-    datestring: function() {
-      return moment(this.ruleForm.date).format("YYYY-MM-DD HH:mm:ss");
+    datestring: function () {
+      return moment(this.ruleForm.date).format('YYYY-MM-DD HH:mm:ss')
     }
   },
-  created() {
-    this.Getdomain();
+  created () {
+    this.Getdomain()
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     this.generated = false
     next()
   },
   methods: {
-    Getdomain() {
-      this.txSecret = "";
-      this.timeHex = "";
-      this.ruleForm.domain = "";
+    Getdomain () {
+      this.txSecret = ''
+      this.timeHex = ''
+      this.ruleForm.domain = ''
       const param = {
-        Version: "2018-08-01",
-        DomainStatus: "1",
+        Version: '2018-08-01',
+        DomainStatus: '1',
         DomainType: this.ruleForm.domainType
-      };
+      }
       // 获取表格数据
       this.axios.post(DOMAIN_LIST, param).then(data => {
         if (data.Response.Error == undefined) {
-          this.domainArr = data.Response.DomainList;
+          this.domainArr = data.Response.DomainList
         } else {
-          this.$message.error(data.Response.Error.Message);
+          this.$message.error(data.Response.Error.Message)
         }
-      });
+      })
     },
 
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.loading = true;
-          let url = LIVE_DESCRIBE_LIVEPLAYAUTHKEY;
-          let key = "PlayAuthKeyInfo";
-          let key1 = "AuthKey";
-          let timeHex;
-          if (this.ruleForm.domainType === "0") {
-            url = LIVE_DESCRIBELIVE_PUSHAUTHKEY;
-            key = "PushAuthKeyInfo";
-            key1 = "MasterAuthKey";
+          this.loading = true
+          let url = LIVE_DESCRIBE_LIVEPLAYAUTHKEY
+          let key = 'PlayAuthKeyInfo'
+          let key1 = 'AuthKey'
+          let timeHex
+          if (this.ruleForm.domainType === '0') {
+            url = LIVE_DESCRIBELIVE_PUSHAUTHKEY
+            key = 'PushAuthKeyInfo'
+            key1 = 'MasterAuthKey'
           }
           this.axios
             .post(url, {
-              Version: "2018-08-01",
+              Version: '2018-08-01',
               DomainName: this.ruleForm.domain
             })
             .then(res => {
               if (res.Response.Error !== undefined) {
-                let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
+                let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
                 this.$message({
                   message: ErrOr[res.Response.Error.Code],
-                  type: "error",
+                  type: 'error',
                   showClose: true,
                   duration: 0
-                });
-                return;
+                })
+                return
               }
 
               let Response = res.Response[key]
               this.keyInfo = Response
               this.generated = true
-              this.loading = false;
+              this.loading = false
               this.suffix = ''
-              if (this.ruleForm.domainType === "0") {
+              if (this.ruleForm.domainType === '0') {
                 if (Response.Enable === 1) {
                   const timeHex = moment(this.ruleForm.date)
                     .unix()
@@ -262,21 +262,21 @@ export default {
                 const urls = generatePlayAddress(this.ruleForm.domain, this.ruleForm.AppName, this.ruleForm.StreamName, new Date(moment(this.ruleForm.date).format('YYYY/MM/DD HH:mm:ss')), Response)
                 this.playUrls = urls
               }
-            });
+            })
         }
-      });
+      })
     },
-    
-    _aExplain() {
-      this.dialogVisible = true;
+
+    _aExplain () {
+      this.dialogVisible = true
     },
-    _adddomain() {
+    _adddomain () {
       this.$router.push({
-        name: "domainManagement"
-      });
+        name: 'domainManagement'
+      })
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

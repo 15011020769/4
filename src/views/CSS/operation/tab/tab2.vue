@@ -89,6 +89,7 @@ export default {
     },
     //获取表格数据
     init() {
+      // 腾讯页面中默认选择地区查的是CSS_MBPS，选择地区为台湾后查的DESCRIBE_PLAY_STAT_INFOLIST
       this.loading = true;
       const params1 = {
         Version: "2018-08-01",
@@ -108,10 +109,6 @@ export default {
           params2["PlayDomains." + index] = item;
         });
       }
-      //   if (this.operator) {
-      //   params1["IspNames.0"] = this.operator
-      //   params2["IspNames.0"] = this.operator
-      // }
       const Granularity = moment(this.EndTIme).diff(this.StartTIme, 'days')
       if (Granularity < 3) {
         params1["Granularity"] = 60
@@ -121,8 +118,8 @@ export default {
         params2["Granularity"] = 60
       }
       // if (this.operator) {
-        params1["IspNames.0"] = this.operator
-        params2["IspNames.0"] = this.operator
+      //   params1["IspNames.0"] = this.operator
+      //   params2["IspNames.0"] = this.operator
         this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
           if (res.Response.Error) {
             this.$message({

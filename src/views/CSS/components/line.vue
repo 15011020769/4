@@ -15,29 +15,29 @@
 </template>
 
 <script>
-import "echarts/lib/component/legend";
-import "echarts/lib/component/tooltip";
-import "echarts/lib/component/toolbox";
+import 'echarts/lib/component/legend'
+import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/toolbox'
 export default {
-  name: "myChart",
-  data() {
+  name: 'myChart',
+  data () {
     return {
-      toogle: false,
-    };
+      toogle: false
+    }
   },
-  mounted() {
-    this.echart();
-    window.onresize = this.$echarts.init(this.$refs.line_dv).resize;
+  mounted () {
+    this.echart()
+    window.onresize = this.$echarts.init(this.$refs.line_dv).resize
   },
   props: {
     color: {
       type: String,
-      default: "#2d70f6"
+      default: '#2d70f6'
     },
     tooltip: {
       type: Object,
-      default: function() {
-        return { trigger: "axis" };
+      default: function () {
+        return { trigger: 'axis' }
       }
     },
     xAxis: {
@@ -53,71 +53,71 @@ export default {
     }
   },
   watch: {
-    xAxis(val) {
-      this.xAxis = val;
-      this.echart();
+    xAxis (val) {
+      this.xAxis = val
+      this.echart()
     },
-    series(val) {
-      this.series = val;
-      this.echart();
+    series (val) {
+      this.series = val
+      this.echart()
     },
-    legendText(val) {
-      this.legendText = val;
-      this.echart();
+    legendText (val) {
+      this.legendText = val
+      this.echart()
     }
   },
   methods: {
-    datazoom() {
-      var myChart = this.$echarts.init(this.$refs.line_dv);
+    datazoom () {
+      var myChart = this.$echarts.init(this.$refs.line_dv)
       myChart.dispatchAction({
-        type: "takeGlobalCursor",
-        key: "dataZoomSelect",
+        type: 'takeGlobalCursor',
+        key: 'dataZoomSelect',
         dataZoomSelectActive: this.toogle
       })
     },
-    reset() {
-      var myChart = this.$echarts.init(this.$refs.line_dv);
+    reset () {
+      var myChart = this.$echarts.init(this.$refs.line_dv)
       myChart.dispatchAction({
-          type: 'restore'
+        type: 'restore'
       })
     },
-    doHandleMonth(month) {
-      var m = month;
+    doHandleMonth (month) {
+      var m = month
       if (month.toString().length == 1) {
-        m = "0" + month;
+        m = '0' + month
       }
-      return m;
+      return m
     },
-    getDay(day) {
-      var today = new Date();
-      var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
-      today.setTime(targetday_milliseconds); // 注意，这行是关键代码
-      var tYear = today.getFullYear();
-      var tMonth = today.getMonth();
-      var tDate = today.getDate();
-      tMonth = this.doHandleMonth(tMonth + 1);
-      tDate = this.doHandleMonth(tDate);
-      return tYear + "-" + tMonth + "-" + tDate;
+    getDay (day) {
+      var today = new Date()
+      var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day
+      today.setTime(targetday_milliseconds) // 注意，这行是关键代码
+      var tYear = today.getFullYear()
+      var tMonth = today.getMonth()
+      var tDate = today.getDate()
+      tMonth = this.doHandleMonth(tMonth + 1)
+      tDate = this.doHandleMonth(tDate)
+      return tYear + '-' + tMonth + '-' + tDate
     },
-    echart() {
+    echart () {
       // var myChart = this.$echarts.init(document.getElementById("myChart"));
-      var myChart = this.$echarts.init(this.$refs.line_dv);
+      var myChart = this.$echarts.init(this.$refs.line_dv)
       myChart.setOption({
         color: this.color,
         toolbox: {
           left: 26,
           itemGap: 24,
           itemSize: 0,
-          iconStyle:{
-            normal:{
+          iconStyle: {
+            normal: {
               // color:'white',//设置颜色
             }
           },
-           emphasis:{//触发时
-              iconStyle:{
-                borderColor:"#006eff"//图形的描边颜色
-              }
-            },
+          emphasis: {// 触发时
+            iconStyle: {
+              borderColor: '#006eff'// 图形的描边颜色
+            }
+          },
           feature: {
             dataZoom: {
               show: true,
@@ -125,52 +125,52 @@ export default {
             },
             restore: {
               show: true,
-              title: '重置',
-            },
+              title: '重置'
+            }
           }
         },
         tooltip: this.tooltip,
         grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "6%",
-          top: "6%",
+          left: '3%',
+          right: '4%',
+          bottom: '6%',
+          top: '6%',
           containLabel: true
         },
         legend: {
           data: [this.legendText],
           bottom: 0,
-          icon: "rect"
+          icon: 'rect'
         },
         xAxis: {
-          type: "category",
+          type: 'category',
           axisLabel: {
-            color: "#B0B0B0",
+            color: '#B0B0B0',
             fontSize: 10
           },
           axisTick: {
             lineStyle: {
-              color: "#B0B0B0"
+              color: '#B0B0B0'
             }
           },
           axisLine: {
             lineStyle: {
-              color: "#B0B0B0"
+              color: '#B0B0B0'
             }
           },
           data:
             this.xAxis.length != 0
               ? this.xAxis
               : [
-                  this.getDay(4),
-                  this.getDay(3),
-                  this.getDay(2),
-                  this.getDay(1),
-                  this.getDay(0)
-                ]
+                this.getDay(4),
+                this.getDay(3),
+                this.getDay(2),
+                this.getDay(1),
+                this.getDay(0)
+              ]
         },
         yAxis: {
-          type: "value",
+          type: 'value',
           axisLine: {
             show: false
           },
@@ -178,18 +178,18 @@ export default {
             show: false
           },
           axisLabel: {
-            color: "#B0B0B0",
+            color: '#B0B0B0',
             fontSize: 10,
-            verticalAlign: "top"
+            verticalAlign: 'top'
           }
         },
         series: [
           {
             name: this.legendText,
             data: this.series.length != 0 ? this.series : [0, 0, 0, 0, 0],
-            type: "line",
+            type: 'line',
             smooth: true,
-            symbol: "none",
+            symbol: 'none',
             itemStyle: {
               normal: {
                 color: this.color,
@@ -200,10 +200,10 @@ export default {
             }
           }
         ]
-      });
+      })
     }
   }
-};
+}
 </script>
 <style lang='scss' scoped>
 ::v-deep button {

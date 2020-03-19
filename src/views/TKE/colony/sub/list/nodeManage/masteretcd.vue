@@ -28,7 +28,8 @@
             :label="$t('TKE.colony.idjdm')"
             >
             <template slot-scope="scope">
-              <span @click="goMasteretcdDetail(scope.row)" class="tke-text-link" >{{scope.row.InstanceId}}</span>
+              <!-- <span @click="goMasteretcdDetail(scope.row)" class="tke-text-link" >{{scope.row.InstanceId}}</span> -->
+              <span>{{scope.row.InstanceId}}</span>
               <p>{{scope.row.InstanceName}}</p>
             </template>
           </el-table-column>
@@ -88,8 +89,8 @@
             prop="address"
             :label="$t('TKE.subList.yfpzzy')">
             <template slot-scope="scope">
-              <p>CPU: -/{{scope.row.cpuTotal}}</p>
-              <p>{{$t('TKE.overview.ncun')}}: -/{{scope.row.memoyTotal}}</p>
+              <p>CPU: {{scope.row.cpu || '0.00'}}/{{scope.row.cpuTotal}}</p>
+              <p>{{$t('TKE.overview.ncun')}}: {{scope.row.memory || '0.00'}}/{{scope.row.memoyTotal}}</p>
             </template>
           </el-table-column>
           <el-table-column
@@ -133,7 +134,18 @@ import subTitle from "@/views/TKE/components/subTitle";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips";
 import moment from 'moment';
-import { NODE_INFO, NODE_LIST, ALL_CITY, POINT_REQUEST  } from "@/constants";
+import {
+  ALL_CITY,
+  NODE_INFO,
+  NODE_LIST,
+  POINT_REQUEST,
+  OBJ_LIST,
+  DELETE_NODE,
+  BLOCK_NODE,
+  NODE_ID_LIST,
+  NODE_POD_LIST,
+  JOB_ID,
+  MOMITOR_TKE  } from "@/constants";
 export default {
   name: "colonyNodeManageMasteretcd",
   data() {
@@ -197,6 +209,12 @@ export default {
           for(let i = 0; i < ids.length; i++) {
             param['InstanceIds.'+i] = ids[i];
           }
+          let param1 = {
+            Method: "GET",
+            Path: "/api/v1/nodes",
+            Version: "2018-05-25",
+            ClusterName: this.clusterId
+          };
           let k8sNodeList = [];
           // this.loadShow = true;
           let k8sRes = await this.axios.post(POINT_REQUEST, param1);
@@ -215,6 +233,77 @@ export default {
               duration: 0
             });
           }
+          let dataResult = {};
+          var now = new Date;
+          now.setMinutes (now.getMinutes () - 10);
+          let paramJob = {
+            EndTime: new Date().getTime(),
+            Limit: 65535,
+            Module: "/front/v1",
+            NamespaceName: "k8s_node",
+            Offset: 0,
+            Order: "desc",
+            OrderBy: "timestamp",
+            StartTime: new Date(now).getTime(),
+            Version: "2019-06-06"
+          };
+          paramJob["Conditions.0"] = JSON.stringify([
+            "tke_cluster_instance_id",
+            "=",
+            this.clusterId
+          ]);
+          paramJob["Conditions.1"] = JSON.stringify(["node_role", "!=", "Node"]);
+          paramJob["Fields.0"] = "avg(k8s_node_cpu_core_request_total)";
+          paramJob["Fields.1"] = "avg(k8s_node_memory_request_bytes_total)";
+          paramJob["GroupBys.0"] = "timestamp(60s)";
+          paramJob["GroupBys.1"] = "unInstanceId";
+          let jobRes = await this.axios.post(JOB_ID, paramJob);
+          if(jobRes.Response.Error === undefined) {
+            let param3 = {
+              Version: "2019-06-06",
+              JobId: jobRes.Response.JobId,
+              Module: "/front/v1"
+            };
+            let resultRes = await this.axios.post(MOMITOR_TKE, param3);
+            if(resultRes.Response.Error === undefined) {
+              let result = JSON.parse(resultRes.Response.Data);
+              if(result.length > 0) {
+                for(let i = 0; i < result.length; i++) {
+                  let item = result[i];
+                  let key = item[1];
+                  let value = dataResult[key];
+                  if(value) {
+                    value.push(result[i]);
+                  } else {
+                    value = [];
+                    value.push(result[i]);
+                  }
+                  dataResult[key] = value;
+                }
+              }
+              console.log(dataResult);
+            } else {
+              this.loadShow = false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[resultRes.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          } else {
+            this.loadShow = false;
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[jobRes.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
           // this.loadShow = true;
           this.loadShow = true;
           let nodeRes = await this.axios.post(NODE_LIST, param);
@@ -222,6 +311,17 @@ export default {
             this.loadShow = false;
             if(nodeRes.Response.InstanceSet.length > 0) {
               nodeRes.Response.InstanceSet.map(node => {
+                let resultList = dataResult[node.InstanceId];
+                if(resultList) {
+                  if(resultList.length > 0) {
+                    if(resultList[resultList.length - 1][2]) {
+                      node.cpu = resultList[resultList.length - 1][2].toFixed(2);
+                    }
+                    if(resultList[resultList.length - 1][3]) {
+                      node.memory = (resultList[resultList.length - 1][3]/(1024*1024*1024)).toFixed(2);
+                    }
+                  }
+                }
                 node.addTime = moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss");
                 nodeInfoList.map(info => {
                   if(node.InstanceId === info.InstanceId) {

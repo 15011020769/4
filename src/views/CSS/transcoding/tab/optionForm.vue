@@ -1,6 +1,6 @@
 <template>
   <div class="form-wrap">
-    <h4>轉碼配置</h4>
+    <h4>{{$t('CSS.detailPlay.TranscodingConfiguration')}}</h4>
     <el-form
       :model="ruleForm"
       ref="ruleForm"
@@ -18,7 +18,7 @@
           <el-option label="極速高清" value="1" key="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="可用範本">
+      <el-form-item :label="$t('CSS.transcribe.18')">
         <el-radio-group v-model="selectType" @change="radioChange">
           <el-radio
             v-for="item in tableData"
@@ -28,11 +28,11 @@
           <el-radio
             v-show="ruleForm.AiTransCode !== '1'"
             key="voice"
-            label="純音頻"
+          :label="$t('CSS.transcribe.19')"
           />
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="範本名稱" prop="TemplateName" :show-message="false">
+      <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName" :show-message="false">
         <el-input
           v-model="ruleForm.TemplateName"
           style="width:330px;"
@@ -41,7 +41,7 @@
         <br />
         <span>僅支持字母、數字組合，請輸入3-10字符</span>
       </el-form-item>
-      <el-form-item label="範本描述" prop="Description">
+      <el-form-item :label="$t('CSS.transcribe.8') " prop="Description">
         <el-input
           type="textarea"
           v-model="ruleForm.Description"
@@ -99,13 +99,13 @@
 </template>
 
 <script>
-import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from "../constance";
-import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../../components/CSSErrorTips";
+import { TEMPLATE_TYPE, TEMPLATE_TYPE_PARAMS } from '../constance'
+import { ADD_TRANSCODE_TEMPLATE, UPDATE_TRANSCODE_TEMPLATE } from '@/constants'
+import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../../components/CSSErrorTips'
 
 export default {
-  name: "optionForm",
+  name: 'optionForm',
 
   props: {
     selectItem: {
@@ -113,36 +113,36 @@ export default {
     }
   },
   computed: {
-    actualItem() {
-      return this.selectItem;
+    actualItem () {
+      return this.selectItem
     }
   },
   watch: {
-    actualItem(newValue, oldValue) {
+    actualItem (newValue, oldValue) {
       // 从编辑页面直接点击添加，需要刷新为空表单的状态
       if (Object.keys(newValue).length === 0) {
-        this.$refs.ruleForm.resetFields();
-        this.ruleForm.AiTransCode = "0";
+        this.$refs.ruleForm.resetFields()
+        this.ruleForm.AiTransCode = '0'
         // 默认选择普通
-        this.selectCommonType();
+        this.selectCommonType()
       }
     }
   },
-  data() {
+  data () {
     return {
       form: {
-        desc: "", //範本描述
-        template: "", //可用範本
-        name: "" //範本名称
+        desc: '', // 範本描述
+        template: '', // 可用範本
+        name: '' // 範本名称
       },
 
       ruleForm: {
-        TemplateName: "",
-        Description: "",
-        AiTransCode: "0",
-        Height: "",
-        VideoBitrate: "",
-        AdaptBitratePercent: ""
+        TemplateName: '',
+        Description: '',
+        AiTransCode: '0',
+        Height: '',
+        VideoBitrate: '',
+        AdaptBitratePercent: ''
       },
 
       rules: {
@@ -155,273 +155,272 @@ export default {
 
       tableData: JSON.parse(JSON.stringify(TEMPLATE_TYPE)),
 
-      selectType: ""
-    };
+      selectType: ''
+    }
   },
 
-  mounted() {
-    this.initTableParams();
+  mounted () {
+    this.initTableParams()
     // this.initInfo()
   },
 
   methods: {
-    validateForm() {
-      const TemplateNameRegex = /^[a-zA-Z0-9]{3,10}$/;
+    validateForm () {
+      const TemplateNameRegex = /^[a-zA-Z0-9]{3,10}$/
 
       if (!TemplateNameRegex.test(this.ruleForm.TemplateName)) {
         this.$message({
-          message: "範本名稱不符合要求",
-          type: "error",
+          message: '範本名稱不符合要求',
+          type: 'error',
           showClose: true,
           duration: 0
-        });
-        return false;
+        })
+        return false
       }
 
-      const descRegex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/;
-      console.log(this.ruleForm.Description);
+      const descRegex = /^[u4e00-\u9fff_a-zA-Z0-9_-]*$/
+      console.log(this.ruleForm.Description)
 
       if (!descRegex.test(this.ruleForm.Description)) {
         this.$message({
-          message: "範本描述不符合要求",
-          type: "error",
+          message: '範本描述不符合要求',
+          type: 'error',
           showClose: true,
           duration: 0
-        });
-        return false;
+        })
+        return false
       }
 
       // 音频就到这里了
-      if (this.selectType !== "純音頻") {
-        const VideoBitrate = this.ruleForm.VideoBitrate;
+      if (this.selectType !== '純音頻') {
+        const VideoBitrate = this.ruleForm.VideoBitrate
 
         if (VideoBitrate.length === 0) {
           this.$message({
-            message: "請輸入影音碼率",
-            type: "error",
+            message: '請輸入影音碼率',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (VideoBitrate < 100 || VideoBitrate > 8000) {
           this.$message({
-            message: "編碼範圍為100K-8000K",
-            type: "error",
+            message: '編碼範圍為100K-8000K',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (VideoBitrate >= 100 && VideoBitrate <= 1000) {
           if (VideoBitrate % 100 !== 0) {
             this.$message({
-              message: "編碼範圍1000K以內僅支持整百填寫",
-              type: "error",
+              message: '編碼範圍1000K以內僅支持整百填寫',
+              type: 'error',
               showClose: true,
               duration: 0
-            });
-            return false;
+            })
+            return false
           }
         } else if (VideoBitrate > 1000 && VideoBitrate <= 8000) {
           if (VideoBitrate % 500 !== 0) {
             this.$message({
-              message: "編碼範圍1000Kbps以上僅支持整500填寫",
-              type: "error",
+              message: '編碼範圍1000Kbps以上僅支持整500填寫',
+              type: 'error',
               showClose: true,
               duration: 0
-            });
-            return false;
+            })
+            return false
           }
         }
 
-        const Height = this.ruleForm.Height;
+        const Height = this.ruleForm.Height
 
         if (Height.length === 0) {
           this.$message({
-            message: "請輸入影音高度",
-            type: "error",
+            message: '請輸入影音高度',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (Height < 0 || Height > 3000) {
           this.$message({
-            message: "影音高度範圍為0-3000",
-            type: "error",
+            message: '影音高度範圍為0-3000',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (Height % 4 !== 0) {
           this.$message({
-            message: "視頻高度要求為4的倍數，寬度按等比例縮放",
-            type: "error",
+            message: '視頻高度要求為4的倍數，寬度按等比例縮放',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
       }
-      let AdaptBitratePercent = this.ruleForm.AdaptBitratePercent;
-      let AiTransCode = this.ruleForm.AiTransCode;
+      let AdaptBitratePercent = this.ruleForm.AdaptBitratePercent
+      let AiTransCode = this.ruleForm.AiTransCode
 
-      if (AiTransCode === "1") {
+      if (AiTransCode === '1') {
         if (AdaptBitratePercent.length === 0) {
           this.$message({
-            message: "請輸入碼率壓縮比",
-            type: "error",
+            message: '請輸入碼率壓縮比',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (AdaptBitratePercent < 10 || AdaptBitratePercent > 50) {
           this.$message({
-            message: "碼率壓縮比為10-50之間的整數",
-            type: "error",
+            message: '碼率壓縮比為10-50之間的整數',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
 
         if (!/^\d+$/.test(AdaptBitratePercent)) {
           this.$message({
-            message: "碼率壓縮比為10-50之間的整數",
-            type: "error",
+            message: '碼率壓縮比為10-50之間的整數',
+            type: 'error',
             showClose: true,
             duration: 0
-          });
-          return false;
+          })
+          return false
         }
       }
 
-      return true;
+      return true
     },
 
-    submitForm(formName) {
-
+    submitForm (formName) {
       const params = JSON.parse(JSON.stringify(this.ruleForm))
-      params.Version = "2018-08-01"
+      params.Version = '2018-08-01'
 
-      if (this.selectType === "純音頻") {
-        params.Height = 0;
-        params.VideoBitrate = 100;
-        params.NeedVideo = 0;
-        params.NeedAudio = 1;
+      if (this.selectType === '純音頻') {
+        params.Height = 0
+        params.VideoBitrate = 100
+        params.NeedVideo = 0
+        params.NeedAudio = 1
       } else {
-        params.NeedVideo = 1;
-        params.NeedAudio = 1;
+        params.NeedVideo = 1
+        params.NeedAudio = 1
       }
 
       params.AiTransCode = parseInt(params.AiTransCode)
 
       if (!this.validateForm()) {
-        return;
+        return
       }
 
-      let AiTransCode = params.AiTransCode;
+      let AiTransCode = params.AiTransCode
       if (AiTransCode === 0) {
-        delete params.AdaptBitratePercent;
+        delete params.AdaptBitratePercent
       } else {
-        params.AdaptBitratePercent = params.AdaptBitratePercent * 0.01;
+        params.AdaptBitratePercent = params.AdaptBitratePercent * 0.01
       }
 
       if (Object.keys(this.selectItem).length) {
-        params.TemplateId = this.selectItem.TemplateId;
-        delete params.AiTransCode;
-        delete params.TemplateName;
-        this.handleUpdate(params);
-        return;
+        params.TemplateId = this.selectItem.TemplateId
+        delete params.AiTransCode
+        delete params.TemplateName
+        this.handleUpdate(params)
+        return
       }
 
-      this.handleAdd(params);
+      this.handleAdd(params)
     },
 
-    handleAdd(params) {
+    handleAdd (params) {
       this.axios.post(ADD_TRANSCODE_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "添加成功",
-            type: "success",
+            message: '添加成功',
+            type: 'success',
             showClose: true,
             duration: 0
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    handleUpdate(params) {
+    handleUpdate (params) {
       this.axios.post(UPDATE_TRANSCODE_TEMPLATE, params).then(data => {
         if (data.Response.Error == undefined) {
           this.$message({
-            message: "修改成功",
-            type: "success",
+            message: '修改成功',
+            type: 'success',
             showClose: true,
             duration: 0
-          });
-          this.$parent.fetchRecordingList();
-          this.$emit("update:formShow", false);
-          return;
+          })
+          this.$parent.fetchRecordingList()
+          this.$emit('update:formShow', false)
+          return
         }
-        let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-        this.$message.error(ErrOr[data.Response.Error.Code]);
-      });
+        let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+        this.$message.error(ErrOr[data.Response.Error.Code])
+      })
     },
 
-    handleSelectionChange(e) {
+    handleSelectionChange (e) {
       this.tableData.forEach(item => {
-        this.tableParams[item.paramName].Enable = 0;
-      });
+        this.tableParams[item.paramName].Enable = 0
+      })
       e.forEach(item => {
-        this.tableParams[item.paramName].Enable = 1;
-      });
+        this.tableParams[item.paramName].Enable = 1
+      })
     },
 
-    radioChange(rows) {
-      const currentItem = TEMPLATE_TYPE.find(item => item.value === rows);
-      if (this.selectType !== "純音頻") {
-        this.ruleForm.Height = currentItem.Height;
-        this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
+    radioChange (rows) {
+      const currentItem = TEMPLATE_TYPE.find(item => item.value === rows)
+      if (this.selectType !== '純音頻') {
+        this.ruleForm.Height = currentItem.Height
+        this.ruleForm.VideoBitrate = currentItem.VideoBitrate
       }
 
-      this.selectType = rows;
+      this.selectType = rows
     },
 
-    initTableParams() {
+    initTableParams () {
       if (Object.keys(this.selectItem).length) {
         Object.keys(this.ruleForm).forEach(key => {
-          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]));
-          this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString();
-          this.ruleForm.AdaptBitratePercent = 
+          this.ruleForm[key] = JSON.parse(JSON.stringify(this.selectItem[key]))
+          this.ruleForm.AiTransCode = this.ruleForm.AiTransCode.toString()
+          this.ruleForm.AdaptBitratePercent =
             Math.floor(this.ruleForm.AdaptBitratePercent * 100)
-        });
+        })
       } else {
         // 默认选择普通
-        this.selectCommonType();
+        this.selectCommonType()
       }
     },
-    selectCommonType() {
-      const currentItem = TEMPLATE_TYPE.find(item => item.key === "common");
-      this.ruleForm.Height = currentItem.Height;
-      this.ruleForm.VideoBitrate = currentItem.VideoBitrate;
-      this.selectType = currentItem.value;
+    selectCommonType () {
+      const currentItem = TEMPLATE_TYPE.find(item => item.key === 'common')
+      this.ruleForm.Height = currentItem.Height
+      this.ruleForm.VideoBitrate = currentItem.VideoBitrate
+      this.selectType = currentItem.value
     }
   }
-};
+}
 </script>
 
 <style scoped lang='scss'>

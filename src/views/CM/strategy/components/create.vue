@@ -446,7 +446,7 @@
         <div class="alarm-channel">
           <span>告警渠道</span>
           <div class="cam-component">
-            <Cam></Cam>
+            <Cam v-on:camClick="camFun"></Cam>
           </div>
         </div>
         <div class>
@@ -567,7 +567,8 @@ export default {
           }
         ]
       },
-      allFlag: true
+      allFlag: true,
+      cam: {},        // cam组件的值
     };
   },
   components: {
@@ -654,6 +655,11 @@ export default {
     // 策略类型
     showMsgfromChild(val) {
       console.log("val", val);
+    },
+    // 获取cam组件的值
+    camFun(data){
+      this.cam = data
+      console.log(this.cam)
     }
   },
   destroyed() {}

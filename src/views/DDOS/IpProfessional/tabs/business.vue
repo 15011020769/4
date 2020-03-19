@@ -115,11 +115,12 @@ export default {
         {
           selected: false,
           title: "Halfamonth"
-        },
-        {
-          selected: false,
-          title: "Halfayear"
         }
+        // ,
+        // {
+        //   selected: false,
+        //   title: "Halfayear"
+        // }
       ],
       chartDes1: '入流量頻寬峰值',
       chartDes2: '出流量頻寬峰值',
@@ -185,27 +186,27 @@ export default {
         let arr = []
         arr.push(dateValue.format('YYYY-MM-DD HH:mm:ss'))
         while (!dateValue.isSameOrAfter(maxDate)) {
-          if (num > 0 && num < 2) {
-            this.period = 300
+          if (num < 2) {
+            this.periodService = 300
             arr.push(dateValue.add(5, 'm').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 6) {
-            this.period = 1800
+            this.periodService = 1800
             arr.push(dateValue.add(30, 'm').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 16) {
-            this.period = 3600
+            this.periodService = 3600
             arr.push(dateValue.add(1, 'h').format('YYYY-MM-DD HH:mm:ss'))
           } else if (num < 31) {
-            this.period = 21600
+            this.periodService = 21600
             arr.push(dateValue.add(6, 'h').format('YYYY-MM-DD HH:mm:ss'))
           } else {
-            this.period = 86400
+            this.periodService = 86400
             arr.push(dateValue.add(1, 'd').format('YYYY-MM-DD HH:mm:ss'))
           }
         }
         this.timey = arr
         this.startTimeService = moment(value[0]).format("YYYY-MM-DD 00:00:00"); //格式处理
         this.endTimeService = moment(value[1]).format("YYYY-MM-DD 23:59:59"); //格式处理
-        this.describeTransmitStatis();
+        this.describeTransmitStatis()
         for (let i = 0; i < this.btnData.length; i++) {
           this.btnData[i]['selected'] = false;
         }
@@ -257,16 +258,16 @@ export default {
           this.ResIpList = res.Response.Resource
           this.inputIdService = res.Response.Resource[0].Id;
           this.thisTime(1)
-				} else {
-					let ErrTips = {};
-					let ErrOr = Object.assign(ErrorTips, ErrTips);
-					this.$message({
-						message: ErrOr[res.Response.Error.Code],
-						type: "error",
-						showClose: true,
-						duration: 0
-					});
-				}
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 3.1.获取L4转发规则
@@ -317,6 +318,7 @@ export default {
       this.thisTime(1)
       // this.describeResourceList();
       this.getDataService();
+      sessionStorage.setItem("selectId", this.inputIdService)
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {
@@ -375,15 +377,15 @@ export default {
         this.InDataList = res.Response.InDataList;
         this.OutDataList = res.Response.OutDataList;
         if (this.metricNameService == "traffic") {
-          this.drawLine4(this.timey, this.InDataList, this.OutDataList)
           this.chartValue1 = Math.max.apply(Math, this.InDataList) + 'bps'
           this.chartValue2 = Math.max.apply(Math, this.OutDataList) + 'bps'
+          this.drawLine4(this.timey, this.InDataList, this.OutDataList)
         } else if (this.metricNameService == "pkg") {
-          this.drawLine5(this.timey, this.InDataList, this.OutDataList)
           this.chartValue1 = Math.max.apply(Math, this.InDataList) + 'pps'
           this.chartValue2 = Math.max.apply(Math, this.OutDataList) + 'pps'
+          this.drawLine5(this.timey, this.InDataList, this.OutDataList)
         }
-        this.loading = false;
+        this.loading = false
         
       });
     },
@@ -592,7 +594,9 @@ export default {
       // }
       // arr.splice(arr.length - 1, 1);
       // 基于准备好的dom，初始化echarts实例
+     
       let myChart4 = this.$echarts.init(document.getElementById("myChart4"));
+      // myChart4.removeAttribute("_echarts_instance_").empty()
       // 绘制图表
       myChart4.setOption({
         color: ['rgb(124, 181, 236)','rgb(50, 205, 50)'],
@@ -677,10 +681,10 @@ export default {
             fontWeight: "bold"
           },
           lineStyle: {
-             color: ['rgb(124, 181, 236)','rgb(50, 205, 50)']
+            color: ['rgb(124, 181, 236)','rgb(50, 205, 50)']
           }
         }
-      });
+      })
       myChart4.resize();
       window.addEventListener("resize", function() {
         myChart4.resize();
@@ -787,6 +791,12 @@ export default {
       window.addEventListener("resize", function() {
         myChart5.resize();
       });
+    },
+    tabchangeId () {
+      let jsonIp = sessionStorage.getItem('selectId')
+      if (jsonIp !== null) {
+        this.inputIdService = jsonIp
+      }
     }
   }
 };

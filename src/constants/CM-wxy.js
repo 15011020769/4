@@ -57,8 +57,11 @@ export const CM_ALARM_MODIFY_NOTIFY = 'monitor2/ModifyNotifyBatch'
 // 告警策略 详情
 export const CM_ALARM_STRATEGY_DETAILS = 'monitor2/DescribePolicyGroupInfo'
 
-// 告警策略 详情 告警触发条件
+// 告警策略 详情 告警触发条件 回显
 export const CM_ALARM_TRIGGER_CONDITION = 'monitor2/DescribeConditionsTemplateList'
+
+// 告警策略 详情 告警触发条件 保存
+export const CM_ALARM_TRIGGER_MODIFY = 'monitor2/ModifyPolicyGroup'
 
 // 告警策略 详情 告警对象 列表
 export const CM_ALARM_OBJECT_LIST = 'monitor2/DescribeBindingPolicyObjectList'
@@ -77,3 +80,6 @@ export const CM_ALARM_RECEIVE_OBJECT_RELIEVE = 'monitor2/ModifyAlarmReceivers'
 
 // 告警策略 详情 回调接口
 export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'
+
+//
+export const MYSQL_LIST_CMD = 'cmd2/DescribeDBInstances'

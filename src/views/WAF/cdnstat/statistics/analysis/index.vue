@@ -128,7 +128,7 @@ export default {
         return
       }
       this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === project.ProjectId)
-    },
+    }
 
   },
   mounted () {
@@ -159,17 +159,6 @@ export default {
         })
     },
     onTimeClick (n, u) {
-      // var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
-      // var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
-      // let startTime = moment().subtract(num, unit)
-      // if (unit === 'd') {
-      //   startTime = moment().subtract(num, unit).startOf('d')
-      // }
-      // ipt1.value = startTime.format('YYYY-MM-DD HH:mm:ss')
-      // ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
-      // this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
-      // this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
-
       this.createTimeType = `${n}${u}`
 
       let start = moment().subtract(n, u)
@@ -178,7 +167,6 @@ export default {
         end = moment().subtract(1, 'd')
       }
       this.time = [start, end]
-      // console.log(start, 'this.time')
     }
   }
 }

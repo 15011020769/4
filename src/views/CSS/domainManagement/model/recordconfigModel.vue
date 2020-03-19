@@ -8,10 +8,10 @@
       >
         <div class="newClear">
           <p class="tip">
-            範本选择（如需添加新範本，請前往 【<router-link
+           {{$t('CSS.detailPlay.mbxz')}} 【<router-link
               to="/transcribe"
-              >功能範本</router-link
-            >】 <i class="el-icon-share"></i>中進行設置）
+              >{{$t('CSS.leftSide.3')}}</router-link
+            >】 <i class="el-icon-share"></i>{{$t('CSS.detailPlay.zjxsz')}}）
           </p>
           <div class="tableCon">
             <el-table
@@ -22,11 +22,11 @@
               <el-table-column type="selection" width="55"> </el-table-column>
               <el-table-column
                 prop="TemplateName"
-                label="範本名稱"
+                 :label="$t('CSS.domainManagement.14')"
               ></el-table-column>
               <el-table-column
                 prop="TemplateId"
-                label="範本ID"
+                :label="$t('CSS.domainManagement.49')"
               ></el-table-column>
               <el-table-column prop="TemplateName" label="錄製格式">
                 <template slot-scope="scope">

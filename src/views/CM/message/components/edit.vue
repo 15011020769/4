@@ -23,7 +23,6 @@
             <br />
           </p>
         </div>
-        <Transfer style="margin-left:80px;" :multipleSelection="multipleSelection"></Transfer>
         <div class="qudao">
           <span>告警渠道</span>
           <div class="qudaoContent">
@@ -45,7 +44,6 @@
 </template>
 <script>
 import Header from "./Header";
-import Transfer from "./transfer";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
 import {
   EDIT_CUSTON_MESSAGE
@@ -84,7 +82,6 @@ export default {
   },
   components: {
     Header,
-    Transfer
   },
   methods: {
     //确定

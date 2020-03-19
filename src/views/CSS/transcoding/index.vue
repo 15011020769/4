@@ -1,6 +1,6 @@
 <template>
   <div class="transcribe-wrap">
-    <HeaderCom title="轉碼配置" />
+    <HeaderCom :title="$t('CSS.detailPlay.TranscodingConfiguration')" />
     <div class="transcribe-main">
       <!-- <div class="explain">
         <p>
@@ -10,11 +10,11 @@
       </div>-->
       <div class="explain">
         <p>
-          範本設置完成，需關聯推流域名方可生效，請點擊
+          {{$t('CSS.watermark.3')}}
           <router-link to="/domainManagement">域名管理</router-link
-          >進行關聯設置。
+          >{{$t('CSS.watermark.4')}}
           <!-- <a href="#">参考文档</a> -->
-          範本配置完後續大約5分鐘生效
+          {{$t('CSS.watermark.5')}}
         </p>
       </div>
       <div class="main-box" v-loading="loading">
@@ -56,20 +56,20 @@
 </template>
 
 <script>
-import HeaderCom from "@/components/public/Head";
-import OptionForm from "./tab/optionForm";
-import ConfigDetail from "./tab/configDetail";
-import DeleteModal from "./modal/modal";
-import { ErrorTips } from "@/components/ErrorTips";
-import { CSSErrorTips } from "../components/CSSErrorTips";
+import HeaderCom from '@/components/public/Head'
+import OptionForm from './tab/optionForm'
+import ConfigDetail from './tab/configDetail'
+import DeleteModal from './modal/modal'
+import { ErrorTips } from '@/components/ErrorTips'
+import { CSSErrorTips } from '../components/CSSErrorTips'
 import {
   RECORDING_DELTILS,
   DELETE_TRANSCODE_TEMPLATE,
   GET_TRANSCODE_TEMPLATE
-} from "@/constants";
+} from '@/constants'
 export default {
-  name: "transcribe",
-  data() {
+  name: 'transcribe',
+  data () {
     return {
       formShow: false,
       configList: [],
@@ -77,11 +77,11 @@ export default {
       selectIndex: 0,
       modalVisible: false,
       loading: true
-    };
+    }
   },
   computed: {
-    showRight: function() {
-      return this.configList.length > 0 || this.formShow === true;
+    showRight: function () {
+      return this.configList.length > 0 || this.formShow === true
     }
   },
   components: {
@@ -91,100 +91,100 @@ export default {
     DeleteModal
   },
 
-  mounted() {
-    this.fetchRecordingList();
+  mounted () {
+    this.fetchRecordingList()
   },
 
   methods: {
-    _add() {
-      this.selectItem = {};
-      this.formShow = true;
+    _add () {
+      this.selectItem = {}
+      this.formShow = true
     },
 
-    _close() {
-      this.formShow = false;
+    _close () {
+      this.formShow = false
     },
 
-    _cancel() {
-      this.formShow = false;
+    _cancel () {
+      this.formShow = false
 
       if (this.configList.length === 0) {
-        return;
+        return
       }
 
-      this.selectItem = this.configList[this.selectIndex];
+      this.selectItem = this.configList[this.selectIndex]
     },
 
-    handleDelete() {
+    handleDelete () {
       if (
         this.configList.length === 0 ||
         Object.keys(this.selectItem).length === 0
       ) {
-        return;
+        return
       }
 
-      this.modalVisible = true;
+      this.modalVisible = true
     },
 
-    _delete() {
+    _delete () {
       this.axios
         .post(DELETE_TRANSCODE_TEMPLATE, {
-          Version: "2018-08-01",
+          Version: '2018-08-01',
           TemplateId: this.selectItem.TemplateId
         })
         .then(data => {
           if (data.Response.Error == undefined) {
-            this.modalVisible = false;
+            this.modalVisible = false
             this.$message({
-              message: "删除成功",
-              type: "success",
+              message: '删除成功',
+              type: 'success',
               showClose: true,
               duration: 0
-            });
-            this.fetchRecordingList();
-            return;
+            })
+            this.fetchRecordingList()
+            return
           }
-          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-          this.$message.error(ErrOr[data.Response.Error.Code]);
-        });
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+          this.$message.error(ErrOr[data.Response.Error.Code])
+        })
     },
 
-    fetchRecordingList() {
-      this.loading = true;
+    fetchRecordingList () {
+      this.loading = true
       this.axios
         .post(GET_TRANSCODE_TEMPLATE, {
-          Version: "2018-08-01"
+          Version: '2018-08-01'
         })
         .then(data => {
           if (data.Response.Error === undefined) {
-            const result = data.Response.Templates;
+            const result = data.Response.Templates
             if (result.length > 0) {
-              this.configList = result;
-              this.selectItem = this.configList[0];
+              this.configList = result
+              this.selectItem = this.configList[0]
             } else {
-              this.configList = [];
-              this.selectItem = {};
+              this.configList = []
+              this.selectItem = {}
             }
-            return;
+            return
           }
-          let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-          this.$message.error(ErrOr[data.Response.Error.Code]);
+          let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
+          this.$message.error(ErrOr[data.Response.Error.Code])
         })
         .then(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
 
     // 选中模板
-    onSelectRecording(item) {
-      this.formShow = false;
-      this.selectItem = item;
+    onSelectRecording (item) {
+      this.formShow = false
+      this.selectItem = item
       this.selectIndex = this.configList.findIndex(
         tempItem => item.TemplateId === tempItem.TemplateId
-      );
+      )
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
