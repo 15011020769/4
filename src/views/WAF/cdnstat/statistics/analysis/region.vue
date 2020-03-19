@@ -196,6 +196,7 @@ export default {
         })
         .then(resp => {
           let res = resp.Response.Data[0].DetailData
+          console.log(res, 'res')
           this.$nextTick(function () {
             this.domainsList = resp.Response.Data[0].DetailData
             if (resp.Response.Data[0].DetailData.length != 0) {
