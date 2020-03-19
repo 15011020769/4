@@ -494,23 +494,24 @@
         }
         // console.log(params)
         this.axios.post(TKE_OPENLOGJUDGE, params).then(res=>{
-          // console.log(res)
           if(res.codeDesc=='Success'){
-            if(!res.data.enabled){
+            if(res.data.enabled){
               this.xjF=false
             }else{
                this.xjF=true
             }
           }else{
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+            let ErrTips = {};
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
+          console.log(res,'respanduna',this.xjF,'xjf')
+
         })
       },
 

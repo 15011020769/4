@@ -79,7 +79,6 @@
                 <el-form-item :label="$t('TKE.overview.ssnmkj')" label-width="150px">
                   <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" v-model="item.value1" @change="clearSelect(index)">
                     <el-option v-for="item in namespaceOptions1" :key="item" :value="item">
-                      <!-- <el-option v-for="item in namespaceOptions" :key="item.value" :label="item.label" :value="item.value"> -->
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -97,6 +96,7 @@
                     </div>
                    <!-- 传入相应工作负载选项 -->
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
+                    
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
                         <div v-show="workload1" style="overflow:auto">
@@ -468,21 +468,6 @@
         checked: true,
         instanceList: [],
         workload1: [],
-       
-        Checkbox: {//指定容器
-          checkbox0: [],
-          checkbox1: [],
-          checkbox2: [],
-          checkbox3: [],
-          checkbox4: [],
-        },
-        Checkbox2: {//往后台要发送的数据，此处逻辑为
-          checkbox0: [],
-          checkbox1: [],
-          checkbox2: [],
-          checkbox3: [],
-          checkbox4: [],
-        },
         resourceVersion: '',
       };
     },
@@ -595,63 +580,31 @@
       },
       formFour: {
         handler(val){
-          console.log(val,'fourval')
-          let that=this;
           val.forEach((item,index )=> {
-
+            console.log('this.namespaceOptions.length',this.namespaceOptions.length)
+            console.log('formFour.length',val.length)
             if (val.length == this.namespaceOptions.length) {
               this.newroomFlag = true
               return false
             }
             if (item.radio == '2') {
               //请求接口，重新获得workload数据
-              this.workLoadTab(item.activeName, index)
-                // var params = {
-                //   ClusterName: this.$route.query.clusterId.split("(")[0],
-                //   Method: "GET",
-                //   Path: "/apis/apps/v1beta2/namespaces/" + item.value1 + "/" + item.activeName
-                //     .toLocaleLowerCase() + 's',
-                //   Version: "2018-05-25"
-                // }
-                // console.log(params,'params')
-                // this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-                //   if (res.Response.Error === undefined) {
-                //     var data = JSON.parse(res.Response.ResponseBody);
-                //     if(data.items){
-                //       that.workload1=data.items;
-                //     }
-                //     console.log(data,'dataworkload')
-                //     console.log(this.workload1,'workload1')
-                //   }
-                // });
+              this.workload1=[];
+
+                this.workLoadTab(item.activeName, index)
             }
-              console.log('item.value1',item.value1)
-              // this.workLoadTab(item.activeName, 0)
             //新建禁用判断
-            // if (item.radio == '1') {
-            //   this.newroomFlag = false
-            // } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
-            //   this.newroomFlag = false
-            // } else {
-            //   this.newroomFlag = true
-            // }
+            if (item.radio == '1') {
+              this.newroomFlag = false
+            } else if (item.radio == '2' && val.length != this.namespaceOptions.length) {
+              this.newroomFlag = false
+            } else {
+              this.newroomFlag = true
+            }
           })
         },
         deep: true
       },
-      Checkbox: {
-        handler(val) {
-          // for (let key in val) {
-          //   if (val[key].length == '0') {
-          //     // this.newroomFlag = true
-          //   } else {
-          //     this.newroomFlag = false
-          //   }
-          // }
-        },
-        deep: true
-      },
-
     },
     created() {
       //判断是否是编辑状态
@@ -1327,7 +1280,6 @@
           }
       },
       workLoadTab(workLoad, index) {
-        this.workload1 = [];
         let that=this;
         if (this.$route.query.clusterId) {
           var namespace = this.formFour[index].value1;
@@ -1338,11 +1290,12 @@
             Version: "2018-05-25"
           };
           console.log(params)
+          this.workload1 = [];
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             console.log(res)
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
-              if( data.items){
+              if( data.items&&data.items.length!=0){
                 console.log(data.items,'worklods++++++++++++++++++++++++++++++++')
                 this.workload1 = data.items;
               }
@@ -1491,15 +1444,12 @@
 
       },
       addNewRoom() { //
-       
-        var arr = [],
-          arr2, arr3 = [];
+      
+        //实现数组内容递减
+        var arr = [],arr2, arr3 = [];
         this.formFour.forEach(v => {
           arr.push(v.value1)
         })
-        for (let i in this.Checkbox2) {
-          this.Checkbox2[i].length = 0;
-        }
         arr2 = Array.from(new Set(arr));
         arr2.forEach(v => {
           let i = this.namespaceOptions1.indexOf(v)
@@ -1513,6 +1463,11 @@
           flag: true,
           activeName: "Deployment",
           workload:'',
+          check0:[],
+          check1:[],
+          check2:[],
+          check3:[],
+          check4:[],
           checkObj:{
             check1:{},
             check2:{},
