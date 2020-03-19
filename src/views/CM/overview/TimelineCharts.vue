@@ -1,6 +1,12 @@
 <template>
   <div class="wrap">
-    <div id="id" ref="chart" :style="{ height: chartHeight }"></div>
+    <div
+      id="id"
+      ref="chart"
+      :style="{ height: chartHeight }"
+      v-loading="loading"
+    >
+    </div>
   </div>
 </template>
 
@@ -18,7 +24,8 @@ export default {
       default: function() {
         return [[], [], []];
       }
-    }
+    },
+    loading: Boolean
   },
   mounted() {
     window.onresize = () => {
@@ -40,12 +47,17 @@ export default {
     },
     chartHeight: function(n, o) {
       let myCharts = echarts.init(this.$refs.chart);
-      myCharts.resize({height: n});
+      myCharts.resize({ height: n });
     }
   },
   computed: {
     chartHeight: function() {
-      if (this.timelineData !== null) {
+      if (
+        this.timelineData !== null &&
+        this.timelineData.every(item => {
+          return item.length > 0;
+        })
+      ) {
         return this.timelineData[0].length * 25 + 2 * 50 + "px";
       } else {
         return "400px";
@@ -54,8 +66,6 @@ export default {
   },
   methods: {
     setupEcharts(myCharts, startTimes, endTimes, titles) {
-      console.log(startTimes);
-
       let contentData = [];
       let timeShow = "";
 
@@ -67,7 +77,6 @@ export default {
       }
 
       endTimes.forEach((tempEndTime, index) => {
-
         // 有些是今天以前的，为了和腾讯云显示一致，改为今天
         let startTimeMoment = moment(startTimes[index]);
         startTimeMoment.set("year", moment().year());
@@ -83,12 +92,12 @@ export default {
         }
 
         contentData.push([
-          startTimeMoment.format("YYYY-MM-DD HH:mm:ss"),  // 用于显示x轴的值
-          endTime,    // 用于显示y轴的值
-          index,    // 位置
-          titles[index],    // 标题
-          startTimes[index],   // 实际开始时间
-          endTimes[index]   // 实际结束时间
+          startTimeMoment.format("YYYY-MM-DD HH:mm:ss"), // 用于显示x轴的值
+          endTime, // 用于显示y轴的值
+          index, // 位置
+          titles[index], // 标题
+          startTimes[index], // 实际开始时间
+          endTimes[index] // 实际结束时间
         ]);
       });
 
