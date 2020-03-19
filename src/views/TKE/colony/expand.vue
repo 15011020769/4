@@ -1527,7 +1527,7 @@ export default {
           let ErrTips = {
             "FailedOperation":"操作失敗",
             "InternalError": "内部錯誤",
-            "InternalError.CvmCommon": "cvm創建節點報錯。",
+            "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
             "InternalError.CvmNotFound": "cvm不存在。",
             "InternalError.Db": "db錯誤。",
             "InternalError.DbAffectivedRows": "DB錯誤",

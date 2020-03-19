@@ -5622,7 +5622,7 @@ export default {
             "InternalError.CidrInvali": "CIDR無效。",
             "InternalError.CidrMaskSizeOutOfRange": "CIDR掩碼無效。",
             "InternalError.CreateMasterFailed": "創建集群失敗。",
-            "InternalError.CvmCommon": "cvm創建節點報錯。",
+            "InternalError.CvmCommon": "cvm配額不足,請釋放部分資源後再創建",
             "InternalError.Db": "db錯誤。",
             "InternalError.DbAffectivedRows": "DB錯誤",
             "InternalError.DfwGetUSGCount": "獲得當前安全組總數失敗。",
