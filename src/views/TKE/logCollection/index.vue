@@ -159,7 +159,7 @@
         this.Name.options = ['請選擇Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
-          console.log(res)
+          // console.log(res)
           if(res){
             if (res.Response.AlarmPolicySet) {
               let resData = res.Response.AlarmPolicySet;
@@ -357,7 +357,7 @@
       },
       //编辑
       editLogCollection(row){
-        console.log(row)
+        // console.log(row)
         var stashName=row.metadata.name;
         var namespace=row.metadata.namespace;
         var type=row.spec.input.type
