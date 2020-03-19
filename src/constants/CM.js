@@ -3,6 +3,9 @@ export const ALL_CITY = 'pub/zoneAll' // 区域列表
 export const All_MONITOR = 'monitor2/GetMonitorData' // 监控接口
 export const ALL_Basics = 'monitor2/DescribeBaseMetrics' // 监控基础指标
 export const ALL_PROJECT = 'account/DescribeProject' // 项目列表
+export const ALL_PROJECT_HEALTH_STATUS_LIST = 'monitor2/DescribeProductHealthStatusList'
+export const POLICY_CONDITIONS_LIST = 'monitor2/DescribePolicyConditionList'
+export const ONE_DAY_MONITOR_LIST = 'monitor2/DescribeAbnormalObjects'
 
 
 // // 雲服务器

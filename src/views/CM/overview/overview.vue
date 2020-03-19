@@ -4,20 +4,22 @@
     <div class="overview-main">
       <div class="explain">
         <p>
-          {{$t('CVM.overview.xbysx')}}
-          <a>{{$t('CVM.overview.sqncty')}}</a>
+          {{ $t("CVM.overview.xbysx") }}
+          <a>{{ $t("CVM.overview.sqncty") }}</a>
         </p>
         <p>
-          {{$t('CVM.overview.zdjk')}}
-          <a>{{$t('CVM.lljk')}}</a> {{$t('CVM.overview.pzljgd')}}
+          {{ $t("CVM.overview.zdjk") }}
+          <a>{{ $t("CVM.lljk") }}</a> {{ $t("CVM.overview.pzljgd") }}
         </p>
         <p>
-          [{{$t('CVM.overview.wgzd')}}
-          <a>dashboard</a>，{{$t('CVM.overview.hyty')}}
+          [{{ $t("CVM.overview.wgzd") }} <a>dashboard</a>，{{
+            $t("CVM.overview.hyty")
+          }}
         </p>
         <p>
-          {{$t('CVM.overview.gwlljksj')}}
-          <a>{{$t('CVM.lljk')}}</a>{{$t('CVM.overview.ymck')}}
+          {{ $t("CVM.overview.gwlljksj") }}
+          <a>{{ $t("CVM.lljk") }}</a
+          >{{ $t("CVM.overview.ymck") }}
         </p>
       </div>
       <div class="main-box">
@@ -25,9 +27,12 @@
           <!-- 近24小时服务健康状态 -->
           <div class="box">
             <div class="head">
-              <h3>{{$t('CVM.overview.fwjkzt')}}</h3>
-              <el-button v-show="region != ''">{{region}}</el-button>
-              <el-button icon="el-icon-loading" v-show="region == ''"></el-button>
+              <h3>{{ $t("CVM.overview.fwjkzt") }}</h3>
+              <el-button v-show="region != ''">{{ region }}</el-button>
+              <el-button
+                icon="el-icon-loading"
+                v-show="region == ''"
+              ></el-button>
               <el-select
                 v-model="value1"
                 :placeholder="$t('CVM.Dashboard.qxz')"
@@ -42,17 +47,35 @@
                 ></el-option>
               </el-select>
             </div>
-            <el-table :data="tableData" style="width: 100%" height="450"  :empty-text="$t('CVM.clBload.zwsj')">
-              <el-table-column prop="projectName" :label="$t('CVM.overview.fwlx')"></el-table-column>
-              <el-table-column prop="name" :label="$t('CVM.overview.dqzt')"></el-table-column>
-              <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')"></el-table-column>
+            <el-table
+              :data="tableData"
+              style="width: 100%"
+              height="450"
+              :empty-text="$t('CVM.clBload.zwsj')"
+            >
+              <el-table-column
+                prop="projectName"
+                :label="$t('CVM.overview.fwlx')"
+              ></el-table-column>
+              <el-table-column
+                prop="name"
+                :label="$t('CVM.overview.dqzt')"
+              ></el-table-column>
+              <el-table-column
+                prop="address"
+                :label="$t('CVM.overview.yxdxs')"
+              ></el-table-column>
             </el-table>
           </div>
           <!-- 近7天监控时间轴 -->
           <div class="box">
             <div class="head">
-              <h3>{{$t('CVM.overview.jksjz')}}</h3>
-              <el-select v-model="value2" :placeholder="$t('CVM.Dashboard.qxz')" style="width:140px;margin-left:-1px;">
+              <h3>{{ $t("CVM.overview.jksjz") }}</h3>
+              <el-select
+                v-model="value2"
+                :placeholder="$t('CVM.Dashboard.qxz')"
+                style="width:140px;margin-left:-1px;"
+              >
                 <el-option
                   v-for="item in options2"
                   :key="item.value"
@@ -60,7 +83,11 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-select v-model="value3" :placeholder="$t('CVM.Dashboard.qxz')" style="width:140px;margin-left:-1px;">
+              <el-select
+                v-model="value3"
+                :placeholder="$t('CVM.Dashboard.qxz')"
+                style="width:140px;margin-left:-1px;"
+              >
                 <el-option
                   v-for="item in options3"
                   :key="item.value"
@@ -69,9 +96,27 @@
                 ></el-option>
               </el-select>
               <div style="margin-left:-1px;">
-                <el-button v-show="region != ''">{{region}}</el-button>
-                <el-button icon="el-icon-loading" v-show="region == ''" style="margin:0;"></el-button>
+                <el-button v-show="region != ''">{{ region }}</el-button>
+                <el-button
+                  icon="el-icon-loading"
+                  v-show="region == ''"
+                  style="margin:0;"
+                ></el-button>
               </div>
+              <div class="trail" v-if="thresholdObjects.length > 0">
+                <a href="#" @click="exportCSV">導出CSV</a
+                ><i class="el-icon-download"></i>
+              </div>
+            </div>
+            <TimelineCharts :timelineData="timelineData"></TimelineCharts>
+            <div class="button-group">
+              <el-button
+                type="primary"
+                v-for="day in sevenDays"
+                :key="day.key"
+                @click="handleDaysButtonEvent($event, day)"
+                >{{ day.value.format("MM-DD") }}</el-button
+              >
             </div>
           </div>
         </div>
@@ -80,46 +125,63 @@
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
-                {{$t('CVM.overview.dxtj')}}
+                {{ $t("CVM.overview.dxtj") }}
                 <el-tooltip class="item" effect="light" placement="bottom">
                   <div slot="content">
-                    {{$t('CVM.overview.gjdx')}}
-                    <br />{{$t('CVM.overview.dxpe')}}
-                    <br />{{$t('CVM.overview.mfpe')}}
+                    {{ $t("CVM.overview.gjdx") }}
+                    <br />{{ $t("CVM.overview.dxpe") }} <br />{{
+                      $t("CVM.overview.mfpe")
+                    }}
                   </div>
                   <i class="el-icon-info cursor"></i>
                 </el-tooltip>
               </h3>
-              <a @click="buyMessgae">{{$t('CVM.overview.gmdx')}}</a>
+              <a @click="buyMessgae">{{ $t("CVM.overview.gmdx") }}</a>
             </div>
             <div class="box-main" style="margin-top:10px;">
               <div class="progress">
                 <p>
-                  {{$t('CVM.overview.jcgj')}}
-                  <span>{{$t('CVM.overview.syysy')}}</span>
+                  {{ $t("CVM.overview.jcgj") }}
+                  <span>{{ $t("CVM.overview.syysy") }}</span>
                 </p>
-                <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
+                <el-progress
+                  :percentage="100"
+                  :stroke-width="20"
+                  :show-text="false"
+                ></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  {{$t('CVM.overview.ybcgj')}}
-                  <span>{{$t('CVM.overview.syysy')}}</span>
+                  {{ $t("CVM.overview.ybcgj") }}
+                  <span>{{ $t("CVM.overview.syysy") }}</span>
                 </p>
-                <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
+                <el-progress
+                  :percentage="100"
+                  :stroke-width="20"
+                  :show-text="false"
+                ></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  {{$t('CVM.overview.zdyjkgj')}}
-                  <span>{{$t('CVM.overview.syysy')}}</span>
+                  {{ $t("CVM.overview.zdyjkgj") }}
+                  <span>{{ $t("CVM.overview.syysy") }}</span>
                 </p>
-                <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
+                <el-progress
+                  :percentage="100"
+                  :stroke-width="20"
+                  :show-text="false"
+                ></el-progress>
               </div>
               <div class="progress">
                 <p>
-                  {{$t('CVM.overview.zdyxx')}}
-                  <span>{{$t('CVM.overview.syysy')}}</span>
+                  {{ $t("CVM.overview.zdyxx") }}
+                  <span>{{ $t("CVM.overview.syysy") }}</span>
                 </p>
-                <el-progress :percentage="100" :stroke-width="20" :show-text="false"></el-progress>
+                <el-progress
+                  :percentage="100"
+                  :stroke-width="20"
+                  :show-text="false"
+                ></el-progress>
               </div>
             </div>
           </div>
@@ -132,10 +194,19 @@
 </template>
 
 <script>
+import TimelineCharts from "./TimelineCharts";
 import Header from "@/components/public/Head";
-import { ALL_CITY, ALL_PROJECT } from "@/constants";
+import XLSX from "xlsx";
+import {
+  ALL_CITY,
+  ALL_PROJECT,
+  ALL_PROJECT_HEALTH_STATUS_LIST,
+  POLICY_CONDITIONS_LIST,
+  ONE_DAY_MONITOR_LIST
+} from "@/constants";
 import bugmsg from "../components/buymsg";
 import { ErrorTips } from "@/components/ErrorTips.js";
+import moment from "moment";
 export default {
   name: "overview",
   data() {
@@ -160,18 +231,50 @@ export default {
       //下拉框选中的值
       value1: "所有專案",
       value2: "所有專案",
-      value3: ""
+      value3: "",
+      time: [1, 2, 3, 4, 5, 6, 7],
+      series: [
+        {
+          type: "line",
+          stack: "总量",
+          data: [220, 182, 191, 234, 290, 330, 310]
+        },
+        {
+          type: "line",
+          stack: "总量",
+          data: [150, 232, 201, 154, 190, 330, 410]
+        }
+      ],
+      period: "10",
+      timelineData: null,
+      thresholdObjects: []
     };
   },
   components: {
     Header,
-    bugmsg
+    bugmsg,
+    TimelineCharts
+  },
+  computed: {
+    sevenDays: function() {
+      let days = [];
+      for (let index = 6; index >= 0; index--) {
+        days.push({
+          key: index,
+          value: moment().subtract(index, "days")
+        });
+      }
+      return days;
+    }
   },
   created() {
     this.GetCity();
     this.getProject();
+    this.getServiceType();
     // this.getProjectList();
+    this.MonitorList(moment().format("YYYY-MM-DD"));
   },
+
   methods: {
     //购买短信
     buyMessgae() {
@@ -194,8 +297,9 @@ export default {
     //获取项目列表
     getProject() {
       this.axios.get(ALL_PROJECT).then(res => {
+        console.info(res);
         if (res.codeDesc === "Success") {
-          this.tableData=res.data;//lxx
+          // this.tableData=res.data;//lxx
           res.data.forEach((item, index) => {
             const obj = {
               value: index + 1,
@@ -219,79 +323,157 @@ export default {
         }
       });
     },
-    getProjectList() {
-      console.log(this.value1);
-      //获取项目列表数据
-      console.log();
+    getServiceType() {
       let params = {
-        regionId: 39,
-        projectIds:['1163520'],
-        offset: 0,
-        limit: 100,
-        viewName: "cvm_device",
-        startTime: "2020-02-11",
-        lang: "zh"
+        Version: "2018-07-24",
+        Module: "monitor"
       };
-      this.axios
-        .post("/monitor/DescribeProductHealthStatusList", params)
-        .then(res => {
-          console.info(res);
-          // if (res.codeDesc === "Success") {
-              // this.tableData=res.data;//lxx
-          // } else {
-          //   let ErrTips = {
-          //     InternalError: "内部错误",
-          //     UnauthorizedOperation: "未授权操作"
-          //   };
-          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-          //   this.$message({
-          //     message: ErrOr[res.Response.Error.Code],
-          //     type: "error",
-          //     showClose: true,
-          //     duration: 0
-          //   });
-          // }
-        });
+      this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          let result = res.Response.Conditions.filter(item => {
+            if (!item.SupportRegions.includes("tpe")) {
+              return false;
+            }
+
+            // if (item.PolicyViewName !== "cvm_device") {
+            //   return false;
+            // }
+
+            return true;
+          });
+
+          console.log(result);
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
-    MonitorList(){
-       console.log(this.value3);
-      //近7天监控时间轴项目列表数据
-      console.log();
+    getProjectList() {
+      //获取项目列表数据
       let params = {
-        regionId: 0,
-        projectIds:['1163520'],
-        // offset: 0,
-        // limit: 100,
-        // viewName: "cvm_device",
-        // startTime: "2020-02-11",
-        // lang: "zh"
+        Version: "2018-07-24",
+        Module: "monitor"
       };
-      this.axios
-        .post("/monitor/DescribeAbnormalObjects", params)
-        .then(res => {
-          console.info(res);
-          // if (res.codeDesc === "Success") {
-              // this.tableData=res.data;//lxx
-          // } else {
-          //   let ErrTips = {
-          //     InternalError: "内部错误",
-          //     UnauthorizedOperation: "未授权操作"
-          //   };
-          //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-          //   this.$message({
-          //     message: ErrOr[res.Response.Error.Code],
-          //     type: "error",
-          //     showClose: true,
-          //     duration: 0
-          //   });
-          // }
+      this.axios.post(ALL_PROJECT_HEALTH_STATUS_LIST, params).then(res => {
+        // if (res.codeDesc === "Success") {
+        //     this.tableData=res.data;//lxx
+        // } else {
+        //   let ErrTips = {
+        //     InternalError: "内部错误",
+        //     UnauthorizedOperation: "未授权操作"
+        //   };
+        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
+        //   this.$message({
+        //     message: ErrOr[res.Response.Error.Code],
+        //     type: "error",
+        //     showClose: true,
+        //     duration: 0
+        //   });
+        // }
+      });
+    },
+    handleDaysButtonEvent(e, day) {
+      this.MonitorList(day.value.format("YYYY-MM-DD"));
+    },
+    MonitorList(startTime) {
+      //近7天监控时间轴项目列表数据
+      let params = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        ViewName: "cvm_device",
+        StartTime: startTime
+      };
+      this.axios.post(ONE_DAY_MONITOR_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          const startTimes = [];
+          const endTimes = [];
+          const titles = [];
+
+          this.thresholdObjects = res.Response.ThresholdObjects;
+
+          res.Response.ThresholdObjects.forEach(item => {
+            startTimes.push(item.FirstOccurTime);
+            endTimes.push(item.LastOccurTime);
+            titles.push(item.Content);
+          });
+
+          this.timelineData = [
+            startTimes.reverse(),
+            endTimes.reverse(),
+            titles.reverse()
+          ];
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    exportCSV() {
+      let json = [];
+
+      let project = null;
+      if (typeof this.value2 === "number") {
+        project = this.options2[this.value2].label;
+      } else {
+        project = this.value2;
+      }
+
+      this.thresholdObjects.forEach(item => {
+        json.push({
+          "監控事件": item.Content,
+          "項目": project,
+          "地域": "中國臺北",
+          "產品類型": "雲伺服器-基礎監控",
+          // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
+          "對象": item.Dimensions === undefined ? "" : item.Dimensions,
+          "狀態": item.Status === 0 ? "未恢復" : "已恢復",
+          "告警策略": item.GroupName,
+          "開始時間": item.FirstOccurTime,
+          "結束時間": item.LastOccurTime
         });
+      });
+
+      const ws = XLSX.utils.json_to_sheet(json);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "統計數據");
+      XLSX.writeFile(wb, "統計數據.csv");
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.button-group {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.button-group >>> .el-button {
+  flex-basis: 0;
+  flex-grow: 1;
+}
+
 .overview-wrap >>> .el-progress-bar__outer,
 .overview-wrap >>> .el-progress-bar__inner {
   border-radius: 0;
@@ -383,6 +565,12 @@ export default {
       padding: 20px;
       box-sizing: border-box;
       margin-top: 20px;
+      .trail {
+        margin-left: 20px;
+        a:hover {
+          text-decoration: underline;
+        }
+      }
     }
 
     .explain {
