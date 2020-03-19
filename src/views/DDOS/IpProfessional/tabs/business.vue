@@ -115,11 +115,12 @@ export default {
         {
           selected: false,
           title: "Halfamonth"
-        },
-        {
-          selected: false,
-          title: "Halfayear"
         }
+        // ,
+        // {
+        //   selected: false,
+        //   title: "Halfayear"
+        // }
       ],
       chartDes1: '入流量頻寬峰值',
       chartDes2: '出流量頻寬峰值',

@@ -169,11 +169,12 @@ export default {
         {
           selected: false,
           title: "Halfamonth"
-        },
-        {
-          selected: false,
-          title: "Halfayear"
         }
+        // ,
+        // {
+        //   selected: false,
+        //   title: "Halfayear"
+        // }
       ],
       inqpsdata: [],
       // 一次最大只能查询30天，通过选择日期，可查询最大时间范围到半年，但是一次也只能查询30天

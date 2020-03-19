@@ -208,11 +208,12 @@ export default {
         {
           selected: false,
           title: "Halfamonth"
-        },
-        {
-          selected: false,
-          title: "Halfayear"
         }
+        // ,
+        // {
+        //   selected: false,
+        //   title: "Halfayear"
+        // }
       ],
       dateChoice: [], //选择日期
       ResIpList: [], //下拉框数据
