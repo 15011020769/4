@@ -27,7 +27,7 @@
     props: {
       projectId: {
         required: true,
-        type: String
+        type: Number
       },
       searchParam: {
         required: true,
@@ -138,7 +138,7 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
-        if (this.projectId !== "") {
+        if (this.projectId) {
           if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
             console.log(this.searchParam.label)
             parms["Filters.0.Name"] = this.searchParam.label;
@@ -152,7 +152,7 @@
         }
 
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
-          if (this.projectId !== "") {
+          if (this.projectId) {
             parms["Filters.0.Name"] = this.searchParam.label;
             parms["Filters.0.Values.0"] = this.searchParam.value;
             parms["Filters.1.Name"] = 'project-id';
@@ -454,8 +454,8 @@
           this.HeadConfig = {
             title1: 'ID/名称',
             title2: '内网IP/端口',
-            title2: '网络类型',
-            title3: '类型',
+            // title3: '网络类型',
+            // title4: '类型',
           }
           this.MetricName = [
 

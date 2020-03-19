@@ -77,7 +77,11 @@ export default {
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
       productListData: {},
+<<<<<<< Updated upstream
       projectId: "",
+=======
+      projectId: 0,
+>>>>>>> Stashed changes
       searchParam: {},
       productData: {},
       isShow: false,
@@ -95,6 +99,7 @@ export default {
       default: () => []
     }
   },
+<<<<<<< Updated upstream
   watch: {
     productData: {
       hander(val) {
@@ -102,6 +107,20 @@ export default {
       },
       deep: true
     }
+=======
+  watch:{
+    // productData:{
+    //   hander(val) {
+    //     debugger
+    //     this.productListData = val
+    //     console.log("productListDataasdasdsadasdasdasdasd",productListData)
+    //   },
+    //   deep: true
+    // }
+    
+  },
+  mounted() {
+>>>>>>> Stashed changes
   },
   mounted() {},
   methods: {
@@ -111,6 +130,7 @@ export default {
     passData(data) {
       this.isShow = false;
       this.productListData = data;
+      this.productValue = data.productValue
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -124,6 +144,10 @@ export default {
       this.projectId = data;
     },
     searchParams(data) {
+<<<<<<< Updated upstream
+=======
+      console.log("data1312312312",data);
+>>>>>>> Stashed changes
       this.searchParam = data;
     },
     // 分组名
