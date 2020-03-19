@@ -58,6 +58,7 @@
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
                 <b v-if="v=='EMAIL'">邮件、</b>
                 <b v-if="v=='SMS'">短信</b>
+                <b v-if="v=='CALL'">站内信</b>
               </span>
             </p>
             <p v-if="scope.row.NotifyWay==''">-</p>
@@ -84,6 +85,51 @@
     </div>
     <!-- 点击设置 -->
     <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
+
+    <!-- 近24小时触发告警 -->
+    <el-dialog
+      title="告警记录详情"
+      :visible.sync="deleteDialogVisible2"
+      width="900px"
+      style="height:100%"
+      custom-class="tke-dialog"
+    >
+      <div style="height:440px">
+        <div style="display:flex;align-items:center;margin-bottom:20px">
+          <div style="flex:1;">
+            <XTimeX v-on:switchData="getAlarmList" :classsvalue="valueT"></XTimeX>
+          </div>
+          <div class="seek">
+            <el-input v-model="input" placeholder="请输入消息内容关键字或监控组件主机IP" @input="searchZIID"></el-input>
+            <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchZIIDBtn"></el-button>
+          </div>
+        </div>
+        <div style="margin-bottom:20px">
+          <span>
+            <b>策略名ID：</b>
+            <!-- {{PolicyID}} -->
+          </span>
+          <span>
+            <b>策略名：</b>
+            <!-- {{PolicyName}} -->
+          </span>
+        </div>
+        <div>
+          <el-table :data="lists" style="width: 100%" height="330">
+            <el-table-column prop label="发生时间">
+              <template slot-scope="scope">111</template>
+            </el-table-column>
+            <el-table-column prop label="消息内容">
+              <template slot-scope="scope">22222</template>
+            </el-table-column>
+            <el-table-column prop label="消息来源">
+              <template slot-scope="scope">3333</template>
+            </el-table-column>
+          </el-table>
+          <span>共 {{nums}} 项</span>
+        </div>
+      </div>
+    </el-dialog>
 
     <!-- 删除 -->
     <el-dialog
@@ -112,9 +158,7 @@
           接收组：
           <el-table :data="lists" style="width: 490px" height="100">
             <el-table-column prop="index" label="序号">
-              <template slot-scope="scope">
-                111
-              </template>
+              <template slot-scope="scope">111</template>
             </el-table-column>
             <el-table-column prop="chufa" label="接收人">
               <template slot-scope="scope">22222</template>
@@ -135,6 +179,7 @@
 <script>
 import Header from "@/components/public/Head";
 import Dialog from "./components/dialog";
+import XTimeX from "./components/TimeN";
 
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
@@ -148,6 +193,8 @@ export default {
   name: "message",
   data() {
     return {
+      input: "", //近24小时告警搜索值
+      nums: 0,
       tableData: [], //表格数据
       //分页
       loadShow: true, // 加载是否显示
@@ -156,23 +203,32 @@ export default {
       currpage: 1, // 当前页码
       operationFlag: -1, //按钮禁用开关
       searchName: "",
+      valueT: "",
       dialogVisible: false, //设置弹出框
       triggerInput: "", //搜索
       deleteDialogVisible: false,
       deleteDialogVisible1: false,
+      deleteDialogVisible2: false,
       groups: {},
-      lists: [] 
+      lists: []
     };
   },
   components: {
     Header,
-    Dialog
+    Dialog,
+    XTimeX
     // Search  //搜索框组件
   },
   created() {
     this.getCustomMessage();
   },
   methods: {
+    searchZIIDBtn() {
+      //搜索24小时告警列表按钮
+    },
+    searchZIID() {
+      //搜索24小时告警列表
+    },
     //获取数据
     getCustomMessage() {
       this.loadShow = true; //加载
@@ -181,7 +237,7 @@ export default {
         Version: "2018-07-24",
         Module: "monitor"
       };
-
+      // params.
       this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
         // console.log(res.Response.PolicyList, "数据");
         if (res.Response.Error === undefined) {
@@ -211,9 +267,9 @@ export default {
           GroupId: item
         };
         this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
-          if (res.Response.Error === undefined) {
-            console.log(res);
-            this.lists.push();
+          console.log(res);
+          this.lists.push();
+          if (res.codeDesc === "Success") {
             // this.deleteDialogVisible1 = false;
           } else {
             let ErrTips = {};
@@ -235,7 +291,9 @@ export default {
     },
     alarmDialog() {
       //触发告警
+      this.deleteDialogVisible2 = true;
     },
+    getAlarmList() {},
     // 删除
     Delete(row) {
       this.deleteDialogVisible = true;
