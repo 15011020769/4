@@ -174,7 +174,7 @@ export default {
               min: 1
             },
             label: {
-              show: true // 是否显示对应地名
+              show: false // 是否显示对应地名
             },
             // 地图区域的多边形 图形样式
             itemStyle: {
