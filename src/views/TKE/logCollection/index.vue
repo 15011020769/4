@@ -108,10 +108,12 @@
     CreateListGroups,
     WARNING_GetCOLONY,
     TKE_COLONY_LIST,
-    TKE_COLONY_QUERY
+    TKE_COLONY_QUERY,
+    TKE_OPENLOGJUDGE
   } from "@/constants";
   import XLSX from "xlsx";
   import FileSaver from "file-saver";
+  import { ErrorTips } from "@/components/ErrorTips";
   export default {
     name: 'logCollection',
     data() {
@@ -156,6 +158,7 @@
         }
         this.value2 = (val.split('('))[0];
         this.findList();
+        this.openYesOrNo();
         this.Name.options = ['請選擇Namespace'];
         this.nameSpaceList();
         const res = this.axios.post(WARNING_GetCOLONY, params).then(res => {
@@ -381,7 +384,7 @@
             Version: "2018-05-25",
           };
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(res)
+            // console.log(res)
             if (res.Response.Error==undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               data.items.forEach(item => {
@@ -418,7 +421,7 @@
       },
       //删除日志
       delLog(item) {
-        console.log(item)
+        // console.log(item)
         this.delLogFlag = true;
         this.delLogName = item.metadata.name;
         this.delLogNameSpace = item.metadata.namespace
@@ -436,7 +439,7 @@
         }
         this.axios.post(TKE_COLONY_QUERY, params).then(res => {
 
-          console.log(res)
+          // console.log(res)
           if (res.Response.Error === undefined) {
             this.xjF=false;
             this.$message({
@@ -485,6 +488,33 @@
 
         return n + '-' + y + '-' + r + ' ' + h + ':' + m + ':' + s
       },
+      openYesOrNo(){//判断是否需要开通日志采集功能
+        let params={
+          clusterId: this.value2
+        }
+        // console.log(params)
+        this.axios.post(TKE_OPENLOGJUDGE, params).then(res=>{
+          // console.log(res)
+          if(res.codeDesc=='Success'){
+            if(!res.data.enabled){
+              this.xjF=false
+            }else{
+               this.xjF=true
+            }
+          }else{
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          }
+        })
+      },
+
+
       //列表数据
       findList() {
         if (this.value2) {
@@ -500,18 +530,16 @@
               this.tableFlag=false;
               var data = JSON.parse(res.Response.ResponseBody);
               this.tableData = data.items;
-            }else if(res.Response.Error.Code=='ResourceNotFound'){
-              console.log(res.Response.Error)
-              this.xjF=true;
-              this.tableFlag=false;
-              this.tableData=[]
-              // this.$message({
-              // message:res.Response.Error.Message,
-              // type: "error",
-              // });
             }else{
-              this.tableFlag=true;
-              this.xjF=false;
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+              this.tableFlag=false;
               this.tableData=[]
             }
           })
