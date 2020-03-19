@@ -19,11 +19,11 @@
       <div v-show="active==1" class="table">
         <div class="container">
        <div class="container-right">
-          <span>用戶組清單({{userGroupTotalNum}})</span>
+          <span>{{$t('CAM.userList.xzyhz')}}({{userGroupTotalNum}})</span>
           <div>
             <el-input
               v-model="searchGroupValue"
-              :placeholder="$t('CAM.userList.search')"
+              :placeholder="$t('CAM.userGroup.placeholder')"
               size="small"
               class="inputSearchCl"
               clearable

@@ -60,9 +60,14 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="策略类型">
+        <el-table-column prop="type" label="策略类型"
+        :filter-method="filterName"
+        :filters="PolicyType"
+        :filter-multiple="false"
+        filter-placement="top-start">
           <template slot-scope="scope">
             <span>{{scope.row.Name}}</span>
+            <!-- <i class="el-icon-caret-bottom"></i> -->
           </template>
         </el-table-column>
         <el-table-column prop label="备注">
@@ -172,6 +177,7 @@ export default {
       editGroupId: '', // 编辑的模板id
       // templateObj: {}, // 当前模板数据对象
       Conditions: [], // 策略类型
+      PolicyType: [],
       formInline: {
         product_kind: [
           {
@@ -345,6 +351,9 @@ export default {
     this.getDataInit()
   },
   methods: {
+    filterName (value, row) {      
+      return row.Name === value
+    },
     async getDataInit () {
       await this.getPolicyType()
       await this.getTemplateList()
@@ -365,6 +374,9 @@ export default {
         if (res.Response.Error === undefined) {
           this.Conditions = res.Response.Conditions
           // console.log(this.Conditions)
+          this.Conditions.forEach(ele => {
+            this.PolicyType.push({ text: ele.Name, value: ele.Name })
+          })
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -638,7 +650,12 @@ export default {
   }
 }
 </script>
-
+<style lang="scss">
+.el-table-filter .el-table-filter__list{
+  height: 300px;
+  overflow-y: scroll;
+}
+</style>
 <style lang="scss" scoped>
 .Template-wrap >>> .el-button,
 .Template-wrap >>> .el-input__inner {
@@ -825,4 +842,5 @@ a:hover {
   font-size: 12px;
   margin-top:10px;
 }
+
 </style>

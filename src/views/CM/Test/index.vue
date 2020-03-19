@@ -4,13 +4,18 @@
       v-on:switchData="GetDat" />
 
     <EcharS :time='time' :series='series' :period='period' />
-    <type v-on:PassData="PassData" />
+    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' />
     <div style="width: 600px">
       <Cam></Cam>
     </div>
+
+    <el-button @click="ceshi">dss</el-button>
   </div>
 </template>
 <script>
+  import {
+    CREATDASHBORD
+  } from "@/constants";
   import TimeDropDown from '@/components/public/TimeDropDown'
   import EcharS from '@/components/public/EcharS'
   import Cam from '@/views/CM/CM_assembly/Cam'
@@ -139,8 +144,9 @@
           id: 'podid',
           danwei: '(次)',
           y: [2, 244, 52, 52]
-        }]
-
+        }],
+        projectId: '',
+        searchParam: {}
       }
     },
     components: {
@@ -148,6 +154,9 @@
       EcharS,
       Cam,
       type
+    },
+    created() {
+      this.TEST()
     },
     methods: {
       GetDat(data) {
@@ -164,6 +173,47 @@
       },
       PassData(data) {
         console.log(data)
+      },
+      TEST() {
+        const param = {
+          Version: '2018-07-24',
+          Region: 'ap-taipei',
+          Module: 'monitor',
+          DescName: 'bobin9999',
+          Namespace: 'qce/cvm',
+          DashboardID: '80429',
+          Instances: JSON.stringify(["{'regionId':'1','unInstanceId':'ins-ins-6oz38wnu'}"]),
+          Meta: {
+            "aggregateType": "detail",
+            "aggregations": ["Avg", "Max", "Min"],
+            "chartTypes": ["column"],
+            "configId": "cvm",
+            "layout": {
+              "h": "5",
+              "h2": "0",
+              "w": "4",
+              "x": "0",
+              "y": "0"
+            },
+            "timeAggregate": "last"
+          },
+        };
+
+        this.axios.post(CREATDASHBORD, param).then(data => {
+          console.log(data)
+          if (data.Response.Error == undefined) {
+
+          } else {
+
+          }
+        });
+      },
+      ceshi() {
+        this.projectId = '0'
+        // this.searchParam = {
+        //   value: "ins-6oz38wnu",
+        //   label: "instance-id"
+        // }
       }
     },
   }

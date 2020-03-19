@@ -52,7 +52,9 @@
         <a @click="editGaoJing">编辑</a>
       </div>
       <div class="box-content">
-        <span class="textColor">指标告警（任意）</span>
+        <span class="textColor"
+          >指标告警（{{ basicNews.IsUnionRule === 0 ? "任意" : "所有" }}）</span
+        >
         <div
           v-for="(i, x) in basicNews.ConditionsConfig"
           class="trigger-condition"
@@ -66,7 +68,7 @@
             }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
           </p>
         </div>
-        <span class="textColor">事件告警</span>
+        <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
         <div
           v-for="(j, q) in basicNews.EventConfig"
           class="trigger-condition"
@@ -173,6 +175,7 @@
       <div class="box-content" style="margin-top:20px;">
         <el-row>
           <el-button type="primary">编辑</el-button>
+          <el-button @click="Remove('', 2)">解除</el-button>
           <el-button disabled>解除</el-button>
         </el-row>
       </div>
@@ -180,16 +183,25 @@
         <el-table
           ref="multipleTable"
           :data="receivingObjectData"
-          tooltip-effect="dark"
           style="width: 100%"
+          height="300px"
+          v-loading="receivingObjectLoad"
           @selection-change="handleSelectionChange"
         >
           <el-table-column type="selection"> </el-table-column>
-          <el-table-column label="ID/主机名"> </el-table-column>
-          <el-table-column label="状态"> </el-table-column>
+          <el-table-column label="接收人">
+            <template slot-scope="scope">
+              {{ scope.row.Name }}
+            </template>
+          </el-table-column>
+          <el-table-column label="有效时段"> </el-table-column>
           <el-table-column label="网络类型"> </el-table-column>
           <el-table-column label="IP地址"> </el-table-column>
-          <el-table-column label="操作"> </el-table-column>
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <a href="javascript:;" @click="Remove(scope.row, 1)">移除</a>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </el-card>
@@ -271,7 +283,12 @@
               <a style="margin-left:15px;">新增触发条件模板</a>
               <div class="content" v-show="showChufa1 == true ? true : false">
                 <p>
-                  <el-select v-model="nameVal" style="width:150px;">
+                  <el-select
+                    v-model="nameVal"
+                    style="width:150px;"
+                    @change="TriggerChange"
+                    :disabled="nameVal === '当前策略下没有触发条件模板'"
+                  >
                     <el-option
                       v-for="item in triggerCondition"
                       :key="item.GroupID"
@@ -280,161 +297,158 @@
                       label-width="40px"
                     ></el-option>
                   </el-select>
-                  <a>刷新</a>
+                  <a href="javascript:;" @click="AlarmTriggerCondition">刷新</a>
                 </p>
-                <div>
+                <div v-if="nameVal !== '当前策略下没有触发条件模板'">
                   <p>
-                    <el-checkbox v-model="checkedZhibiao" disabled
-                      >指标告警</el-checkbox
-                    >
+                    <el-checkbox disabled>指标告警</el-checkbox>
                   </p>
                   <p>
                     <span>满足</span>
                     <el-select
                       disabled
-                      v-model="formInline_one.satisfyVal"
+                      v-model="Conditions.IsUnionRule"
                       style="width:90px;margin:0 5px;"
                     >
                       <el-option
-                        v-for="(item, index) in formInline.satisfy"
-                        :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        v-for="x in satisfy"
+                        :key="x.value"
+                        :label="x.label"
+                        :value="x.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>
                     <span>条件时，触发告警</span>
                   </p>
                   <!-- 在这里进行便利，添加 -->
-                  <ul>
+                  <ul class="ul-one">
                     <li
-                      style="display:flex;align-items: center;cursor: pointer;"
+                      v-for="(item, index) in Conditions.Conditions"
+                      :key="index"
                     >
-                      <p>
+                      <div>
                         if&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:150px;"
-                        >
-                          <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
-                            label-width="40px"
-                          ></el-option> </el-select
-                        >&nbsp;
-                        <el-select
-                          v-model="formInline.projectName"
+                          v-model="item.MetricDisplayName"
                           style="width:130px;"
+                          disabled
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            label
+                            value
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:60px;"
+                          v-model="item.Period"
+                          style="width:140px;"
+                          disabled
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="i in cycle"
+                            :key="i.value"
+                            :label="i.label"
+                            :value="i.value"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
-                        <input
-                          placeholder="指标"
-                          style="height: 30px;line-height: 30px;padding-left:10px;width:85px;border: 1px solid #dcdfe6;"
-                          value="0"
-                          min="0"
-                          max="100"
-                          type="number"
-                        />
-                        <b
-                          style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                          >%</b
+                        <el-select
+                          v-model="item.CalcType"
+                          style="width:70px;"
+                          disabled
                         >
+                          <el-option
+                            v-for="i in CalcType"
+                            :key="i.value"
+                            :label="i.label"
+                            :value="i.value"
+                            label-width="40px"
+                          ></el-option> </el-select
+                        >&nbsp;
+                        <div class="input-style-dis-box">
+                          <el-input
+                            class="input-style-dis"
+                            :value="item.CalcValue"
+                            disabled
+                          />
+                          <span class="input-p">{{ item.Unit }}</span>
+                        </div>
                         &nbsp;
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:110px;"
+                          v-model="item.ContinueTime"
+                          style="width:130px;"
+                          disabled
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="i in ContinueTime"
+                            :key="i.value"
+                            :label="i.label"
+                            :value="i.value"
                             label-width="40px"
                           ></el-option> </el-select
-                        >&nbsp; then&nbsp;
+                        >&nbsp; <span>then</span>&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:150px;"
+                          v-model="item.AlarmNotifyPeriod"
+                          style="width:180px;"
+                          disabled
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="x in AlarmNotifyPeriod"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
                             label-width="40px"
                           ></el-option>
                         </el-select>
-                        <i
-                          class="el-icon-info"
-                          style="color:#888; margin:0 5px;"
-                        ></i>
-                      </p>
-                      <i
-                        class="el-icon-error"
-                        style="color:#888; margin:0 5px;"
-                        @click="delZhibiao"
-                      ></i>
+                        <el-popover placement="top" width="360" trigger="hover">
+                          <div>
+                            <p>
+                              重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                            </p>
+                            <p style="margin-top:5px;">
+                              周期指数递增通知:
+                              告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                            </p>
+                          </div>
+                          <i
+                            class="el-icon-info"
+                            style="color:#888; margin:0 5px;"
+                            slot="reference"
+                          ></i>
+                        </el-popover>
+                      </div>
                     </li>
-                    <a @click="addZhibiao">添加</a>
                   </ul>
                 </div>
-                <div>
+                <div v-if="nameVal !== '当前策略下没有触发条件模板'">
                   <p>
-                    <el-checkbox v-model="checkedGaojing" disabled>
+                    <el-checkbox disabled>
                       事件告警
+                    </el-checkbox>
+                    <el-popover placement="right" trigger="hover">
+                      <div>
+                        <p>各事件规则<a href="javascript:;">详情</a></p>
+                      </div>
                       <i
                         class="el-icon-info"
                         style="color:#888; margin:0 5px;"
+                        slot="reference"
                       ></i>
-                    </el-checkbox>
+                    </el-popover>
                   </p>
                   <!-- 在这里进行便利，添加 -->
                   <ul>
-                    <li
-                      style="display:flex;align-items: center;cursor: pointer;"
-                    >
-                      <p>
+                    <li v-for="(x, i) in Conditions.EventConditions" :key="i">
+                      <div style="margin-left:15px;">
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:180px;margin:0 5px;"
+                          v-model="x.EventDisplayName"
+                          style="width:180px;margin-top: 6px;"
+                          disabled
                         >
-                          <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
-                            label-width="40px"
-                          ></el-option>
+                          <el-option label value label-width="40px"></el-option>
                         </el-select>
-                      </p>
-                      <i
-                        class="el-icon-error"
-                        style="color:#888; margin:0 5px;"
-                        @click="delShijian"
-                      ></i>
+                      </div>
                     </li>
-                    <a @click="addShijian">添加</a>
                   </ul>
                 </div>
               </div>
@@ -443,160 +457,265 @@
               <el-radio v-model="radioChufa" label="2" @change="config"
                 >配置触发条件</el-radio
               >
-              <div class="content" v-show="showChufa2 == true ? true : false">
-                <p>
-                  <el-select
-                    v-model="formInline.projectName"
-                    style="width:150px;"
-                  >
-                    <el-option
-                      v-for="(item, index) in formInline.project"
-                      :key="index"
-                      :label="item.name"
-                      :value="item.value"
-                      label-width="40px"
-                    ></el-option>
-                  </el-select>
-                  <a>刷新</a>
-                </p>
+              <div
+                class="content content-pz"
+                v-show="showChufa2 == true ? true : false"
+              >
                 <div>
-                  <p>
-                    <el-checkbox v-model="checkedZhibiao">指标告警</el-checkbox>
+                  <p style="line-height:30px;">
+                    <el-checkbox
+                      v-model="formWrite.checkedZhibiao"
+                      style="height:30px;"
+                      >指标告警</el-checkbox
+                    >
                   </p>
                   <p>
                     <span>满足</span>
                     <el-select
-                      v-model="formInline.projectName"
+                      v-model="formWrite.satisfyVal"
                       style="width:90px;margin:0 5px;"
                     >
                       <el-option
-                        v-for="(item, index) in formInline.project"
-                        :key="index"
-                        :label="item.name"
-                        :value="item.value"
+                        v-for="x in satisfy"
+                        :key="x.value"
+                        :label="x.name"
+                        :value="x.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>
                     <span>条件时，触发告警</span>
                   </p>
                   <!-- 在这里进行便利，添加 -->
-                  <ul>
-                    <li
-                      style="display:flex;align-items: center;cursor: pointer;"
-                    >
-                      <p>
+                  <ul class="ul-one ul-two" v-if="formWrite.satisfyVal === 0">
+                    <li v-for="(item, index) in formWrite.arr" :key="index">
+                      <div>
                         if&nbsp;
-                        <el-select
-                          v-model="formInline.projectName"
-                          style="width:150px;"
-                        >
+                        <el-select v-model="item.typeVal" style="width:150px;">
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="x in typeOpt"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
-                          style="width:130px;"
+                          v-model="item.censusVal"
+                          style="width:140px;"
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="x in cycle"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
+                          v-model="item.calcTypeVal"
                           style="width:60px;"
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="x in CalcType"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
-                        <input
-                          placeholder="指标"
-                          style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"
-                          value="0"
-                          min="0"
-                          max="100"
-                          type="number"
-                        />
-                        <b
-                          style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                          >%</b
-                        >
+                        <div class="input-style-dis-box">
+                          <input
+                            class="input-style-dis"
+                            placeholder="指标"
+                            :value="item.number"
+                            min="0"
+                            max="100"
+                            type="number"
+                          />
+                          <span class="input-p">{{ item.unit }}</span>
+                        </div>
                         &nbsp;
                         <el-select
-                          v-model="formInline.projectName"
+                          v-model="item.continuousCycleVal"
                           style="width:110px;"
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
-                            :value="item.value"
+                            v-for="x in continuousCycleOpt"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
                             label-width="40px"
                           ></el-option> </el-select
-                        >&nbsp; then&nbsp;
+                        >&nbsp; <span>then</span>&nbsp;
                         <el-select
-                          v-model="formInline.projectName"
+                          v-model="item.warningVal"
                           style="width:150px;"
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
+                            v-for="item in warningOpt"
+                            :key="item.value"
+                            :label="item.label"
                             :value="item.value"
                             label-width="40px"
                           ></el-option>
                         </el-select>
-                        <i
-                          class="el-icon-info"
-                          style="color:#888; margin:0 5px;"
-                        ></i>
-                      </p>
+                        <el-popover placement="top" width="360" trigger="hover">
+                          <div>
+                            <p>
+                              重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                            </p>
+                            <p style="margin-top:5px;">
+                              周期指数递增通知:
+                              告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                            </p>
+                          </div>
+                          <i
+                            class="el-icon-info"
+                            style="color:#888; margin:0 5px;"
+                            slot="reference"
+                          ></i>
+                        </el-popover>
+                      </div>
                       <i
+                        v-if="formWrite.arr.length > 0"
                         class="el-icon-error"
-                        style="color:#888; margin:0 5px;"
+                        style="color:#888; margin:10px 5px;"
                         @click="delZhibiao"
                       ></i>
                     </li>
-                    <a @click="addZhibiao">添加</a>
+                    <a @click="addZhibiao('deploy')">添加</a>
+                  </ul>
+                  <ul class="ul-one ul-two" v-if="formWrite.satisfyVal === 1">
+                    <li v-for="(item, index) in formWrite.arrAll" :key="index">
+                      <div>
+                        if&nbsp;
+                        <el-select v-model="item.typeVal" style="width:150px;">
+                          <el-option
+                            v-for="x in typeOpt"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
+                            label-width="40px"
+                          ></el-option> </el-select
+                        >&nbsp;
+                        <el-select
+                          v-model="item.censusVal"
+                          style="width:140px;"
+                        >
+                          <el-option
+                            v-for="x in cycle"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
+                            label-width="40px"
+                          ></el-option> </el-select
+                        >&nbsp;
+                        <el-select
+                          v-model="item.calcTypeVal"
+                          style="width:60px;"
+                        >
+                          <el-option
+                            v-for="x in CalcType"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
+                            label-width="40px"
+                          ></el-option> </el-select
+                        >&nbsp;
+                        <div class="input-style-dis-box">
+                          <input
+                            class="input-style-dis"
+                            placeholder="指标"
+                            :value="item.number"
+                            min="0"
+                            max="100"
+                            type="number"
+                          />
+                          <span class="input-p">{{ item.unit }}</span>
+                        </div>
+                        &nbsp;
+                        <el-select
+                          v-model="item.continuousCycleVal"
+                          style="width:110px;"
+                        >
+                          <el-option
+                            v-for="x in continuousCycleOpt"
+                            :key="x.value"
+                            :label="x.label"
+                            :value="x.value"
+                            label-width="40px"
+                          ></el-option> </el-select
+                        >&nbsp;
+                      </div>
+                    </li>
+                    <a @click="addZhibiao("all")">添加</a>
+                    <div>
+                      <span>then</span>&nbsp;
+                      <el-select
+                        v-model="formWrite.warningVal"
+                        style="width:150px;"
+                      >
+                        <el-option
+                          v-for="item in warningOpt"
+                          :key="item.value"
+                          :label="item.label"
+                          :value="item.value"
+                          label-width="40px"
+                        ></el-option>
+                      </el-select>
+                      <el-popover placement="top" width="360" trigger="hover">
+                        <div>
+                          <p>
+                            重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                          </p>
+                          <p style="margin-top:5px;">
+                            周期指数递增通知:
+                            告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                          </p>
+                        </div>
+                        <i
+                          class="el-icon-info"
+                          style="color:#888; margin:0 5px;"
+                          slot="reference"
+                        ></i>
+                      </el-popover>
+                    </div>
+                    <i
+                      v-if="formWrite.arr.length === 0"
+                      class="el-icon-error"
+                      style="color:#888; margin:10px 5px;"
+                      @click="delZhibiao"
+                    ></i>
                   </ul>
                 </div>
                 <div>
                   <p>
-                    <el-checkbox v-model="checkedGaojing">
+                    <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
-                      <i
-                        class="el-icon-info"
-                        style="color:#888; margin:0 5px;"
-                      ></i>
+                      <el-popover placement="right" trigger="hover">
+                        <div>
+                          <p>各事件规则<a href="javascript:;">详情</a></p>
+                        </div>
+                        <i
+                          class="el-icon-info"
+                          style="color:#888; margin:0 5px;"
+                          slot="reference"
+                        ></i>
+                      </el-popover>
                     </el-checkbox>
                   </p>
                   <!-- 在这里进行便利，添加 -->
                   <ul>
-                    <li
-                      style="display:flex;align-items: center;cursor: pointer;"
-                    >
+                    <li v-for="(i, x) in formWrite.gaoArr" :key="x">
                       <p>
                         <el-select
-                          v-model="formInline.projectName"
+                          v-model="i.eventVal"
                           style="width:180px;margin:0 5px;"
                         >
                           <el-option
-                            v-for="(item, index) in formInline.project"
-                            :key="index"
-                            :label="item.name"
+                            v-for="item in eventOpt"
+                            :key="item.value"
+                            :label="item.label"
                             :value="item.value"
                             label-width="40px"
                           ></el-option>
@@ -720,6 +839,21 @@
         <el-button @click="callbackInterface = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 告警接收对象 解除 -->
+    <el-dialog
+      :title="relieveTitle"
+      :visible.sync="relieveDialogVisible"
+      width="600px"
+      custom-class="tke-dialog"
+    >
+      <div>
+        确认解除告警接收人关联
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary">确定</el-button>
+        <el-button @click="relieveDialogVisible = false">取消</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -736,9 +870,11 @@ import {
   CM_ALARM_OBJECT_LIST_ALLOUT,
   CM_ALARM_RECEIVE_OBJECT_LIST,
   CM_CALLBACK,
-  CM_ALARM_TRIGGER_CONDITION
+  CM_ALARM_TRIGGER_CONDITION,
+  CM_ALARM_RECEIVE_OBJECT_RELIEVE
 } from "@/constants";
 var project = [];
+var _ReceiverUserList = [];
 export default {
   data() {
     return {
@@ -748,6 +884,7 @@ export default {
       GroupName: "",
       Remark: "",
       project,
+      _ReceiverUserList,
       editBeizhuFlag: false,
       dialogFormVisible: false, //基本信息组件弹框
       dialogEditGaojing: false, //编辑告警弹框组件
@@ -797,20 +934,7 @@ export default {
           }
         ], //策略类型
         alarm: "", //策略类型
-        projectName: "默认项目",
-        satisfy: [
-          {
-            value: 0,
-            name: "任意"
-          },
-          {
-            value: 1,
-            name: "所有"
-          }
-        ]
-      },
-      formInline_one: {
-        satisfyVal: 0
+        projectName: "默认项目"
       },
       showChufa1: false, //触发条件1显示开关
       showChufa2: true, //触发条件2显示开关
@@ -818,8 +942,6 @@ export default {
       showQudao2: false, //渠道选择2显示开关
       errorTip1: false, //触发条件模板错误提示
       errorTip2: true, //配置触发条件错误提示
-      checkedZhibiao: false, //指示告警
-      checkedGaojing: "", //告警
       triggerInput: "", //新增接收
       radio: "1", //选择告警对象类型
       radioChufa: "2", //触发条件单选
@@ -840,7 +962,292 @@ export default {
       alarmObjectRemovalAllVisible: false,
       // 修改触发条件
       nameVal: "",
-      triggerCondition: []
+      triggerCondition: [],
+      Offset: 0,
+      describeContactList: [],
+      describeContactListLength: "",
+      // 告警接收对象
+      relieveDialogVisible: false,
+      relieveTitle: "",
+      remove: "",
+      receivingObjectLoad: true,
+      // 编辑告警触发条件
+      Conditions: [],
+      ViewName: "",
+      cycle: [
+        {
+          value: "60",
+          label: "统计周期1分钟"
+        },
+        {
+          value: "300",
+          label: "统计周期5分钟"
+        }
+      ],
+      satisfy: [
+        {
+          value: 0,
+          name: "任意"
+        },
+        {
+          value: 1,
+          name: "所有"
+        }
+      ],
+      satisfyVal: 0,
+      CalcType: [
+        {
+          value: "1",
+          label: ">"
+        },
+        {
+          value: "2",
+          label: ">="
+        },
+        {
+          value: "3",
+          label: "<"
+        },
+        {
+          value: "4",
+          label: "<="
+        },
+        {
+          value: "5",
+          label: "="
+        },
+        {
+          value: "6",
+          label: "!="
+        }
+      ],
+      ContinueTime: [],
+      AlarmNotifyPeriod: [],
+      formWrite: {
+        checkedZhibiao: true,
+        satisfyVal: 0,
+        checkedGaojing: true,
+        warningVal: 0,
+        index:0,
+        arr: [
+          {
+            typeVal: "1",
+            censusVal: "300",
+            calcTypeVal: "1",
+            number: "0",
+            unit: "%",
+            continuousCycleVal: "1",
+            warningVal: "0"
+          }
+        ],
+        arrAll: [
+          {
+            typeVal: "1",
+            censusVal: "300",
+            calcTypeVal: "1",
+            number: "0",
+            unit: "%",
+            continuousCycleVal: "1"
+          }
+        ],
+        gaoArr: [
+          {
+            eventVal: "1"
+          }
+        ]
+      },
+      typeOpt: [
+        {
+          value: "CPU利用率",
+          label: "CPU利用率"
+        },
+        {
+          value: "内存利用率",
+          label: "内存利用率"
+        },
+        {
+          value: "内存使用量",
+          label: "内存使用量"
+        },
+        {
+          value: "磁盘利用率",
+          label: "磁盘利用率"
+        },
+        {
+          value: "磁盘读流量",
+          label: "磁盘读流量"
+        },
+        {
+          value: "磁盘写流量",
+          label: "磁盘写流量"
+        },
+        {
+          value: "磁盘IO等待",
+          label: "磁盘IO等待"
+        },
+        {
+          value: "内网入包量",
+          label: "内网入包量"
+        },
+        {
+          value: "内网出包量",
+          label: "内网出包量"
+        },
+        {
+          value: "外网入带宽",
+          label: "外网入带宽"
+        },
+        {
+          value: "外网出带宽",
+          label: "外网出带宽"
+        },
+        {
+          value: "外网入包量",
+          label: "外网入包量"
+        },
+        {
+          value: "外网出包量",
+          label: "外网出包量"
+        },
+        {
+          value: "外网带宽使用率",
+          label: "外网带宽使用率"
+        },
+        {
+          value: "TCP连接数",
+          label: "TCP连接数"
+        },
+        {
+          value: "CPU一分钟平均负载",
+          label: "CPU一分钟平均负载"
+        },
+        {
+          value: "CPU五分钟平均负载",
+          label: "CPU五分钟平均负载"
+        },
+        {
+          value: "CPU十五分钟平均负载",
+          label: "CPU十五分钟平均负载"
+        },
+        {
+          value: "基础CPU利用率",
+          label: "基础CPU利用率"
+        },
+        {
+          value: "内网入带宽",
+          label: "内网入带宽"
+        },
+        {
+          value: "内网出带宽",
+          label: "内网出带宽"
+        }
+      ],
+      continuousCycleOpt: [
+        {
+          value: "1",
+          label: "持续1个周期"
+        },
+        {
+          value: "2",
+          label: "持续2个周期"
+        },
+        {
+          value: "3",
+          label: "持续3个周期"
+        },
+        {
+          value: "4",
+          label: "持续4个周期"
+        },
+        {
+          value: "5",
+          label: "持续5个周期"
+        }
+      ],
+      warningOpt: [
+        {
+          value: "0",
+          label: "不重复"
+        },
+        {
+          value: "300",
+          label: "每5分钟警告一次"
+        },
+        {
+          value: "600",
+          label: "每10分钟警告一次"
+        },
+        {
+          value: "900",
+          label: "每15分钟警告一次"
+        },
+        {
+          value: "1800",
+          label: "每30分钟警告一次"
+        },
+        {
+          value: "3600",
+          label: "每1小时警告一次"
+        },
+        {
+          value: "7200",
+          label: "每2小时警告一次"
+        },
+        {
+          value: "10800",
+          label: "每3小时警告一次"
+        },
+        {
+          value: "21600",
+          label: "每6小时警告一次"
+        },
+        {
+          value: "43200",
+          label: "每12小时警告一次"
+        },
+        {
+          value: "86400",
+          label: "每1天警告一次"
+        },
+        {
+          value: "1",
+          label: "周期指数递增"
+        }
+      ],
+      eventOpt: [
+        {
+          value: "1",
+          label: "磁盘只读"
+        },
+        {
+          value: "2",
+          label: "内核故障"
+        },
+        {
+          value: "3",
+          label: "内存oom"
+        },
+        {
+          value: "4",
+          label: "ping不可达"
+        },
+        {
+          value: "5",
+          label: "机器重启"
+        },
+        {
+          value: "6",
+          label: "外网出带宽超限导致丢包"
+        },
+        {
+          value: "7",
+          label: "agent上报超时"
+        },
+        {
+          value: "8",
+          label: "子机nvme设备error"
+        }
+      ]
     };
   },
   components: { Header },
@@ -860,29 +1267,84 @@ export default {
       await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.basicNews = res.Response;
-          console.log(this.basicNews.ReceiverInfos[0].ReceiverUserList);
-          let params = {
-            Version: "2018-07-24",
-            Module: "monitor",
-            // Page: 1,
-            // PageSize: 100
-            Limit: 100,
-            Offset: 0
-          };
-          this.$axios.post(CM_ALARM_RECEIVE_OBJECT_LIST, params).then(res => {
-            if (res.Response.Error === undefined) {
-              console.log(res);
-            } else {
-              let ErrTips = {};
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
-            }
-          });
+          this.ViewName = this.basicNews.ViewName;
+          if (this.basicNews.ReceiverInfos !== undefined) {
+            _ReceiverUserList = this.basicNews.ReceiverInfos[0]
+              .ReceiverUserList;
+
+            this.describeContactList = [];
+            this.receivingObjectLoad = true;
+            var setTime = setInterval(() => {
+              this.receivingObjectData = [];
+              this.Offset++;
+              let params = {
+                // Region: "ap-taipei",
+                Version: "2018-07-24",
+                Module: "monitor",
+                Limit: 100,
+                Offset: this.Offset
+              };
+              this.axios
+                .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
+                .then(res => {
+                  if (res.Response.Error === undefined) {
+                    var arr = res.Response.List;
+                    this.describeContactListLength = res.Response.TotalNum;
+                    for (let i = 0; i < arr.length; i++) {
+                      this.describeContactList.push(arr[i]);
+                    }
+
+                    for (let i in _ReceiverUserList) {
+                      for (let j in this.describeContactList) {
+                        if (
+                          _ReceiverUserList[i] ==
+                          this.describeContactList[j].Uid
+                        ) {
+                          this.receivingObjectData.push(
+                            this.describeContactList[j]
+                          );
+                        }
+                      }
+                    }
+
+                    console.log(
+                      "this.receivingObjectData",
+                      this.receivingObjectData
+                    );
+                  } else {
+                    let ErrTips = {
+                      FailedOperation: "操作失败。",
+                      InternalError: "内部错误。",
+                      InvalidParameter: "参数错误。",
+                      LimitExceeded: "超过配额限制。",
+                      MissingParameter: "缺少参数错误。",
+                      ResourceInUse: "资源被占用。",
+                      ResourceInsufficient: "资源不足。",
+                      ResourceNotFound: "资源不存在。",
+                      ResourceUnavailable: "资源不可用。",
+                      UnauthorizedOperation: "未授权操作。",
+                      UnknownParameter: "未知参数错误。",
+                      UnsupportedOperation: "操作不支持。"
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+
+                  if (
+                    this.Offset ==
+                    Math.ceil(Number(this.describeContactListLength) / 100)
+                  ) {
+                    clearInterval(setTime);
+                    this.receivingObjectLoad = false;
+                  }
+                });
+            }, 1000);
+          }
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
@@ -977,18 +1439,44 @@ export default {
       // 编辑告警触发条件
       this.dialogEditGaojing = true;
       this.AlarmTriggerCondition();
+      console.log(this.basicNews);
+      this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
+      if (this.basicNews.ConditionsConfig) {
+        var _ConditionsConfig = this.basicNews.ConditionsConfig;
+        this.formWrite.arr = [];
+        for (let i in _ConditionsConfig) {
+          this.formWrite.arr.push({
+            typeVal: _ConditionsConfig[i].MetricShowName,
+            censusVal: _ConditionsConfig[i].Period.toString(),
+            calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
+            number: _ConditionsConfig[i].CalcValue.toString(),
+            unit: _ConditionsConfig[i].Unit,
+            continuousCycleVal: (
+              Number(_ConditionsConfig[i].ContinueTime) /
+              Number(_ConditionsConfig[i].Period)
+            ).toString(),
+            warningVal: _ConditionsConfig[i].AlarmNotifyPeriod.toString()
+          });
+        }
+      }
     },
     // 告警触发条件
     AlarmTriggerCondition() {
       let param = {
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        ViewName: this.ViewName
       };
       this.axios.post(CM_ALARM_TRIGGER_CONDITION, param).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(res.Response);
           this.triggerCondition = res.Response.TemplateGroupList;
           console.log(this.triggerCondition);
+          this.nameVal =
+            this.triggerCondition.length === 0
+              ? "当前策略下没有触发条件模板"
+              : this.triggerCondition[0].GroupID;
+          this.TriggerChange();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1000,6 +1488,64 @@ export default {
           });
         }
       });
+    },
+    TriggerChange() {
+      console.log(this.nameVal);
+
+      for (let i in this.triggerCondition) {
+        if (this.triggerCondition[i].GroupID == this.nameVal) {
+          this.Conditions = this.triggerCondition[i];
+        }
+      }
+
+      for (let j in this.Conditions.Conditions) {
+        this.ContinueTime.push({
+          value: this.Conditions.Conditions[j].ContinueTime,
+          label:
+            "持续" +
+            Number(this.Conditions.Conditions[j].ContinueTime) /
+              Number(this.Conditions.Conditions[j].Period) +
+            "个周期"
+        });
+        if (
+          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
+          0
+        ) {
+          if (
+            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24) %
+              1 ==
+            0
+          ) {
+            this.AlarmNotifyPeriod.push({
+              value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+              label:
+                "每" +
+                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24 +
+                "天警告一次"
+            });
+          } else {
+            this.AlarmNotifyPeriod.push({
+              value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+              label:
+                "每" +
+                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 +
+                "小时警告一次"
+            });
+          }
+        } else if (
+          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60) % 1 ==
+          0
+        ) {
+          this.AlarmNotifyPeriod.push({
+            value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+            label:
+              "每" +
+              this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
+              "分钟警告一次"
+          });
+        }
+      }
+      console.log(" this.Conditions ", this.Conditions);
     },
     editInfo(name) {
       //编辑备注
@@ -1219,7 +1765,6 @@ export default {
         Module: "monitor",
         GroupId: this.$route.query.groupId
       };
-
       if (!Array.isArray(this.UniqueId)) {
         param["UniqueId.0"] = this.UniqueId;
       } else {
@@ -1374,6 +1919,86 @@ export default {
       this.pageSize = val;
       this.ListInit();
     },
+    // 告警接收对象 解除
+    Remove(row, index) {
+      console.log(row);
+      if (index == 1) {
+        this.remove = row;
+        this.relieveTitle = "确定解除与该$接收人的关联？";
+      } else {
+        this.relieveTitle = "已选择" + 1 + "个告警接收人，确定要解除关联？";
+      }
+      this.relieveDialogVisible = true;
+    },
+    Receive() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            message: "告警接收对象解除成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed":
+              "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled":
+              "服务未启用，开通服务后方可使用。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded":
+              "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
     chufaTemplate() {
       //触发条件模板
       this.showChufa1 = true;
@@ -1384,9 +2009,26 @@ export default {
       this.showChufa1 = false;
       this.showChufa2 = true;
     },
-    addZhibiao() {
+    addZhibiao(val) {
       //添加触发条件的指标告警
       alert("你要添加此项触发条件的指标告警");
+      if(val === 'deploy'){
+        this.formWrite.index++;
+        if(this.formWrite.index+1 === this.formWrite.arr.length){
+          this.formWrite.index = 0
+        }
+this.formWrite.arr.push({
+  typeVal: this.typeOpt[this.formWrite.index].value,
+            censusVal: "60",
+            calcTypeVal: "1",
+            number: "0",
+            unit: "",
+            continuousCycleVal: "1",
+            warningVal: "0"
+})
+      }else{
+
+      }
     },
     delZhibiao() {
       //删除触发条件的指标告警
@@ -1656,7 +2298,6 @@ a:hover {
     background-color: #f2f2f2;
     line-height: 30px;
     .content {
-      margin-top: 10px;
       padding: 10px;
       p {
       }
@@ -1740,5 +2381,60 @@ input {
 }
 .out-color-text {
   color: #888;
+}
+.chufaContent {
+  .ul-one {
+    li {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      & > div {
+        display: flex;
+        align-items: center;
+        & > span {
+          width: 40px;
+          line-height: 30px;
+          margin-top: 0px;
+        }
+      }
+    }
+    .input-style-dis-box {
+      height: 30px;
+      line-height: 30px;
+      display: flex;
+      align-items: center;
+      .input-style-dis {
+        height: 30px;
+        line-height: 30px;
+        padding-left: 10px;
+        width: 85px;
+      }
+      .input-p {
+        cursor: not-allowed;
+        background: #f5f7fa;
+        padding: 0 10px;
+        display: inline-block;
+        height: 30px;
+        line-height: 30px;
+        width: 52px;
+        border: 1px solid #dcdfe6;
+        margin-top: 0px;
+      }
+    }
+  }
+}
+.content-pz {
+  padding-top: 0 !important;
+}
+.chufaContent {
+  .ul-two {
+    li {
+      & > div {
+        width: 98%;
+        flex-wrap: wrap;
+      }
+    }
+  }
 }
 </style>

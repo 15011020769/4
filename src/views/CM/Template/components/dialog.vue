@@ -43,12 +43,12 @@
             label-width="40px"
           ></el-option>
         </el-select> -->
-        <el-checkbox v-model="checkedUse" style="margin-left:20px;">
+        <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
           <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
             <i class="el-icon-info" slot="reference"></i>
           </el-popover>
-        </el-checkbox>
+        </el-checkbox> -->
       </p>
       <div class="rowCont cont">
         <span>触发条件</span>
@@ -62,10 +62,10 @@
                 <span style="display:inline">满足</span>
                 <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;">
                   <el-option
-                    v-for="(item,index) in conditionList"
+                    v-for="(item,index) in meetConditions"
                     :key="index"
-                    :label="item"
-                    :value="item"
+                    :label="item.label"
+                    :value="item.value"
                     label-width="40px"
                   ></el-option>
                 </el-select>
@@ -88,17 +88,17 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:130px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:130px;">
+                    <el-select :disabled="isDisabled" v-model="it.Period" style="width:130px;">
                       <el-option
                         v-for="(item,index) in tongjiZQ"
                         :key="index"
-                        :label="item"
-                        :value="item"
+                        :label="item.label"
+                        :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:60px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:60px;">
+                    <el-select :disabled="isDisabled" v-model="it.CalcType" style="width:60px;">
                       <el-option
                         v-for="(item,index) in SymbolList"
                         :key="index"
@@ -107,34 +107,42 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <input :disabled="isDisabled" placeholder="指标" value="0" min="0" max="100" type="number"
+                     <!-- placeholder="指标" -->
+                    <input :disabled="isDisabled" v-model="it.CalcValue" value="0" min="0" max="100" type="number"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >%</b>
                     &nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:110px;">
+                    <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;">
                       <el-option
-                        v-for="(item,index) in chixuZQ"
+                        v-for="(item,index) in continuePeriod"
                         :key="index"
-                        :label="item"
-                        :value="item"
+                        :label="item.label"
+                        :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
                     then&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
+                    <el-select :disabled="isDisabled" v-model="it.alarm" style="width:150px;">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
                         :key="index"
-                        :label="item"
-                        :value="item"
+                        :label="item.label"
+                        :value="item.value"
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
+                      <div>
+                        <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
+                        <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                      </div>
+                      <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                    </el-popover>
+                    <!-- <i class="el-icon-info" style="color:#888; margin:0 5px;"></i> -->
                   </p>
                   <i class="el-icon-error" style="color:#888; margin:0 5px;"
                   @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
@@ -184,7 +192,7 @@
 <script>
 import GroupingType from '@/components/GroupingType'
 import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
-import { UPDATE_TEMPLATE } from '@/constants/CM-yhs.js'
+import { NEWBUILD_TEMPLATE } from '@/constants/CM-yhs.js'
 export default {
   data () {
     return {
@@ -249,42 +257,11 @@ export default {
       },
       indexAry: [ // 指标告警数组
         {
-          jieshou: '接收组',
-          jieshouArr: [
-            { value: '0', name: '接收组' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回调
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '云服务器-基础监控'
-            }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
-          project: [
-            {
-              value: 0,
-              name: '默认项目'
-            }
-          ]
+          Period: '统计周期1分钟',
+          CalcType: '>',
+          CalcValue: '0',
+          ContinuePeriod: '持续1个周期',
+          alarm: '每1天警告一次'
         }
       ],
       eventAry: [// 事件告警数组
@@ -327,22 +304,45 @@ export default {
           ]
         }
       ],
-      conditionList: ['任意', '所有'],
-      tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
-      chixuZQ: ['持续1个周期', '持续2个周期', '持续3个周期', '持续4个周期', '持续5个周期'],
+      // conditionList: ['任意', '所有'],
+      meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
+      // tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
+      tongjiZQ: [{ label: '统计周期1分钟', value: 60 }, { label: '统计周期5分钟', value: 300 }],
+      // chixuZQ: ['持续1个周期', '持续2个周期', '持续3个周期', '持续4个周期', '持续5个周期'],
+      continuePeriod: [// 持续周期
+        { label: '持续1个周期', value: 1 },
+        { label: '持续2个周期', value: 2 },
+        { label: '持续3个周期', value: 3 },
+        { label: '持续4个周期', value: 4 },
+        { label: '持续5个周期', value: 5 }
+      ],
+      // jinggaoZQ1: [// 警告周期
+        // '不重复',
+        // '每5分钟警告一次',
+        // '每10分钟警告一次',
+        // '每15分钟警告一次',
+        // '每30分钟警告一次',
+        // '每1小时警告一次',
+        // '每2小时警告一次',
+        // '每3小时警告一次',
+        // '每6小时警告一次',
+        // '每12小时警告一次',
+        // '每1天警告一次',
+        // '周期指数递增'
+      // ],
       jinggaoZQ: [// 警告周期
-        '不重复',
-        '每5分钟警告一次',
-        '每10分钟警告一次',
-        '每15分钟警告一次',
-        '每30分钟警告一次',
-        '每1小时警告一次',
-        '每2小时警告一次',
-        '每3小时警告一次',
-        '每6小时警告一次',
-        '每12小时警告一次',
-        '每1天警告一次',
-        '周期指数递增'
+        { label: '不重复', value: 0 },
+        { label: '每5分钟警告一次', value: 300 },
+        { label: '每10分钟警告一次', value: 600 },
+        { label: '每15分钟警告一次', value: 900 },
+        { label: '每30分钟警告一次', value: 1800 },
+        { label: '每1小时警告一次', value: 3600 },
+        { label: '每2小时警告一次', value: 7200 },
+        { label: '每3小时警告一次', value: 10800 },
+        { label: '每6小时警告一次', value: 21600 },
+        { label: '每12小时警告一次', value: 43200 },
+        { label: '每1天警告一次', value: 86400 },
+        { label: '周期指数递增', value: 1 }
       ],
       zhibiaoType: [// 指标告警类型
         'CPU利用率',
@@ -393,7 +393,7 @@ export default {
         strategy_name: [
           {
             validator: (rule, value, callback) => {
-              if (value.length === 0) {
+              if (!value) {
                 callback(new Error('模板名称不能为空'))
               } else if (value.length === 20) {
                 callback(new Error('模板名称不能超过 20 字'))
@@ -454,18 +454,16 @@ export default {
     },
     // 新建完成保存
     // newBuild () {
-    //   // let zbAry = []
-    //   // let sjAry = []
     //   let params = {
-    //     conditions: this.indexAry, // 指标告警
-    //     eventConditions: this.eventAry, // 事件告警
-    //     groupName: this.strategy_name,
-    //     isUnionRule: 0,
-    //     lang: 'zh',
-    //     remark: this.remark,
-    //     viewName: 'cvm_device'
+    //   Version:'2018-07-24',
+    //   GroupName:this.formInline.strategy_name,
+    //   ViewName:'',
+    //   GroupID:'',
+    //   Module:'monitor',
+    //   IsUnionRule:'',
+    //   Remark:''
     //   }
-    //   this.axios.post(UPDATE_TEMPLATE, params).then(res => {
+    //   this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
     //     console.log(res)
     //   })
     // },
@@ -480,42 +478,11 @@ export default {
     addZhibiao () { // 添加触发条件的指标告警
       this.indexAry.push(
         {
-          jieshou: '接收组',
-          jieshouArr: [
-            { value: '0', name: '接收组' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回调
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '云服务器-基础监控'
-            }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
-          project: [
-            {
-              value: 0,
-              name: '默认项目'
-            }
-          ]
+          Period: '统计周期1分钟',
+          CalcType: '>',
+          CalcValue: '0',
+          ContinuePeriod: '持续1个周期',
+          alarm: '按1天警告一次'
         }
       )
     },
@@ -623,6 +590,7 @@ export default {
   }
 }
 .dialog {
+  display: flex;
   width: 100%;
   height: 100%;
   color: #888;

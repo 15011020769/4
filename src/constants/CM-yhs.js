@@ -6,11 +6,9 @@ export const GET_CONDITIONSTEMPLATELIST = 'monitor2/DescribeConditionsTemplateLi
 export const GET_POLICY_GROUP_TYPE = 'monitor2/DescribePolicyConditionList'
 
 // 复制模板
-// export const COPY_TEMPLATE = 'monitor/CopyConditionsTemplate'
 export const COPY_TEMPLATE = 'monitor2/CopyConditionsTemplate'
 
 // 删除模板
-// export const DELETE_TEMPLATE = 'monitor/DeleteConditionsTemplate'
 export const DELETE_TEMPLATE = 'monitor2/DeleteConditionsTemplate'
 
 // 获取告警策略组列表
@@ -39,3 +37,6 @@ export const NEWBUILD_TEMPLATE = 'monitor2/ModifyConditionsTemplate'
 
 // 变更日志获取模板详情
 export const GET_DESCRIBETRANSLOG = 'monitor2/DescribeTransLog'
+
+//获取项目名称
+export const GET_PROJECTNAME = 'account/DescribeProject'
