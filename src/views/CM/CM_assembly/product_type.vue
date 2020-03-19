@@ -18,6 +18,7 @@
     Physics_LIST, //物理专线列表
     Private_LIST, //专线通道列表
     OBJ_LIST, //对象存储列表
+    CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
   import {
@@ -42,40 +43,44 @@
 
     data() {
       return {
-        productOptions: [{
-          label: '云服务器',
-          viewName: 'cvm_device',
-        }, {
-          label: 'VPN网关',
-          viewName: 'VPN_GW',
-        }, {
-          label: 'VPN通道',
-          viewName: 'vpn_tunnel',
-        }, {
-          label: 'NAT网关',
-          viewName: 'nat_tc_stat',
-        }, {
-          label: '专线网关',
-          viewName: 'DC_GW',
-        }, {
-          label: '弹性公网IP',
-          viewName: 'EIP',
-        }, {
-          label: 'MYSQL',
-          viewName: 'cdb_detail',
-        }, {
-          label: 'Redis',
-          viewName: 'REDIS-CLUSTER',
-        }, {
-          label: '专用通道',
-          viewName: 'dcchannel',
-        }, {
-          label: '物理专线',
-          viewName: 'dcline',
-        }, {
-          label: '对象存储',
-          viewName: 'COS',
-        }],
+        productOptions: [
+
+
+          {
+            label: '云服务器',
+            viewName: 'cvm_device',
+          }, {
+            label: 'VPN网关',
+            viewName: 'VPN_GW',
+          }, {
+            label: 'VPN通道',
+            viewName: 'vpn_tunnel',
+          }, {
+            label: 'NAT网关',
+            viewName: 'nat_tc_stat',
+          }, {
+            label: '专线网关',
+            viewName: 'DC_GW',
+          }, {
+            label: '弹性公网IP',
+            viewName: 'EIP',
+          }, {
+            label: 'MYSQL',
+            viewName: 'cdb_detail',
+          }, {
+            label: 'Redis',
+            viewName: 'REDIS-CLUSTER',
+          }, {
+            label: '专用通道',
+            viewName: 'dcchannel',
+          }, {
+            label: '物理专线',
+            viewName: 'dcline',
+          }, {
+            label: '对象存储',
+            viewName: 'COS',
+          }
+        ],
         Date: [], //各个产品数组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置
@@ -83,25 +88,43 @@
         MetricName: [],
         id: '',
         Pass: {},
-        productValue1: this.productValue
+        Conditions: '',
+        productValue1: this.productValue,
+        Metrics: null,
       }
     },
     watch: {
       productValue1() {
-        this._switchType()
+        this._Metrics()
       },
       projectId() {
-        this._switchType()
+        this._Metrics()
       },
       searchParam() {
-        this._switchType()
+        this._Metrics()
       }
-
     },
     created() {
-      this._switchType()
+
+      this._Metrics()
     },
     methods: {
+      _Metrics() {
+        let params = {
+          Version: "2018-07-24",
+          Module: "monitor",
+        };
+        this.axios.post(CM_GROUPING_LIST_TYPE, params).then(res => {
+          this.Conditions = res.Response.Conditions
+          this.Conditions.forEach(item => {
+            if (item.PolicyViewName === this.productValue1) {
+              this.Metrics = item.Metrics
+            }
+          });
+        }).then(() => {
+          this._switchType()
+        })
+      },
       _PassValue() {
         this.Pass.productValue = this.productValue1
         this.Pass.Date = this.Date
@@ -110,6 +133,7 @@
         this.Pass.Namespace = this.Namespace
         this.Pass.MetricName = this.MetricName
         this.Pass.id = this.id
+        this.Pass.Metrics = this.Metrics
         this.$emit("PassData", this.Pass);
       },
       _switchType() {
