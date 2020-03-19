@@ -1,6 +1,11 @@
 <template>
   <div class="defaultDetail">
     <Header title="管理告警策略" :backShow="backShow" />
+    <product-type
+      v-on:PassData="passData"
+      :searchParam="searchParam"
+      :projectId="projectId"
+    />
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%">
         <h3>基本信息</h3>
@@ -395,8 +400,11 @@
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
-                        <div v-if="!basicNews.ConditionsTemp">
-                          <span>then</span>&nbsp;
+                        <div
+                          v-if="!basicNews.ConditionsTemp"
+                          style="display:flex;aline-items:center;"
+                        >
+                          <span style="width:40px;margin:0px;">then</span>&nbsp;
                           <el-select
                             v-model="item.AlarmNotifyPeriod"
                             style="width:180px;"
@@ -410,27 +418,23 @@
                               label-width="40px"
                             ></el-option>
                           </el-select>
-                          <el-popover
-                            placement="top"
-                            width="360"
-                            trigger="hover"
-                          >
-                            <div>
-                              <p>
-                                重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
-                              </p>
-                              <p style="margin-top:5px;">
-                                周期指数递增通知:
-                                告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
-                              </p>
-                            </div>
-                            <i
-                              class="el-icon-info"
-                              style="color:#888; margin:0 5px;"
-                              slot="reference"
-                            ></i>
-                          </el-popover>
                         </div>
+                        <el-popover placement="top" width="360" trigger="hover">
+                          <div>
+                            <p>
+                              重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                            </p>
+                            <p style="margin-top:5px;">
+                              周期指数递增通知:
+                              告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                            </p>
+                          </div>
+                          <i
+                            class="el-icon-info"
+                            style="color:#888; margin:0 5px;"
+                            slot="reference"
+                          ></i>
+                        </el-popover>
                       </div>
                     </li>
                   </ul>
@@ -449,27 +453,28 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
+
+                    <el-popover placement="top" width="360" trigger="hover">
+                      <div>
+                        <p>
+                          重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                        </p>
+                        <p style="margin-top:5px;">
+                          周期指数递增通知:
+                          告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                        </p>
+                      </div>
+                      <i
+                        class="el-icon-info"
+                        style="color:#888; margin:0 5px;"
+                        slot="reference"
+                      ></i>
+                    </el-popover>
                   </div>
-                  <el-popover placement="top" width="360" trigger="hover">
-                    <div>
-                      <p>
-                        重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
-                      </p>
-                      <p style="margin-top:5px;">
-                        周期指数递增通知:
-                        告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
-                      </p>
-                    </div>
-                    <i
-                      class="el-icon-info"
-                      style="color:#888; margin:0 5px;"
-                      slot="reference"
-                    ></i>
-                  </el-popover>
                 </div>
                 <div v-if="nameVal !== '当前策略下没有触发条件模板'">
-                  <p>
-                    <el-checkbox disabled>
+                  <p v-if="basicNews.EventConfig">
+                    <el-checkbox disabled v-if="Conditions.EventConditions">
                       事件告警
                     </el-checkbox>
                     <el-popover placement="right" trigger="hover">
@@ -732,7 +737,7 @@
                     ></i>
                   </ul>
                 </div>
-                <div v-if="basicNews.EventConfig">
+                <!-- <div v-if="basicNews.EventConfig">
                   <p>
                     <el-checkbox v-model="formWrite.checkedGaojing">
                       事件告警
@@ -748,7 +753,6 @@
                       </el-popover>
                     </el-checkbox>
                   </p>
-                  <!-- 在这里进行便利，添加 -->
                   <ul class="ul-one">
                     <li v-for="(i, x) in formWrite.gaoArr" :key="x">
                       <p>
@@ -774,7 +778,7 @@
                     </li>
                     <a @click="addShijian">添加</a>
                   </ul>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -917,6 +921,7 @@ import {
   CM_ALARM_RECEIVE_OBJECT_RELIEVE,
   CM_ALARM_TRIGGER_MODIFY
 } from "@/constants";
+import ProductType from "@/views/CM/CM_assembly/product_type";
 var project = [];
 var _ReceiverUserList = [];
 export default {
@@ -1254,7 +1259,7 @@ export default {
           label: "每1天警告一次"
         },
         {
-          value: 1,
+          value: 60,
           label: "周期指数递增"
         }
       ],
@@ -1291,10 +1296,12 @@ export default {
           value: "8",
           label: "子机nvme设备error"
         }
-      ]
+      ],
+      projectId: "",
+      searchParam: {}
     };
   },
-  components: { Header },
+  components: { Header, ProductType },
   mounted() {
     this.DetailsInit();
     this.Project();
@@ -1302,6 +1309,12 @@ export default {
     this.AlarmObjectList();
   },
   methods: {
+    passData(item) {
+      console.log(item);
+    },
+    searchParams(data) {
+      console.log("data1312312312", data);
+    },
     async DetailsInit() {
       let params = {
         Version: "2018-07-24",
@@ -1314,6 +1327,7 @@ export default {
           console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
           this.GroupName = this.basicNews.GroupName;
+          this.projectId = this.basicNews.ProjectId.toString();
           if (
             this.basicNews.ReceiverInfos !== undefined &&
             this.basicNews.ReceiverInfos[0].ReceiverUserList.length != 0
@@ -1659,34 +1673,102 @@ export default {
     },
     // 告警触发条件保存
     GaoJingKeepBtn() {
-      console.log(this.Conditions);
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
         GroupId: this.$route.query.groupId,
         ViewName: this.ViewName,
-        GroupName: this.GroupName,
-        IsUnionRule: this.basicNews.IsUnionRule
+        GroupName: this.GroupName
       };
       let _Conditions = this.Conditions.Conditions;
+      console.log(_Conditions);
+      let _EventConfig = this.Conditions.EventConditions;
+      let _arr = this.formWrite.arr;
+      let _arrAll = this.formWrite.arrAll;
+      let _gaoArr = this.formWrite.gaoArr;
       if (this.radioChufa == 1) {
+        param["IsUnionRule"] = this.Conditions.IsUnionRule;
         for (let i in _Conditions) {
-          param["Conditions." + i + ".MetricId"] = _Conditions[0].MetricID;
-          param["Conditions." + i + ".CalcType"] = _Conditions[0].CalcType;
-          param["Conditions." + i + ".CalcValue"] = _Conditions[0].CalcValue;
-          param["Conditions." + i + ".CalcPeriod"] = _Conditions[0].Period;
-          // param['Conditions.'+i+'.CalcPeriod'] =_Conditions[0].Period
+          param["Conditions." + i + ".MetricId"] = _Conditions[i].MetricID;
+          param["Conditions." + i + ".CalcType"] = _Conditions[i].CalcType;
+          param["Conditions." + i + ".CalcValue"] = Number(
+            _Conditions[i].CalcValue
+          );
+          param["Conditions." + i + ".CalcPeriod"] = _Conditions[i].Period;
+          param["Conditions." + i + ".ContinuePeriod"] =
+            Number(_Conditions[i].ContinueTime) / Number(_Conditions[i].Period);
+          param["Conditions." + i + ".AlarmNotifyType"] =
+            _Conditions[i].AlarmNotifyType;
+          param["Conditions." + i + ".AlarmNotifyPeriod"] =
+            _Conditions[i].AlarmNotifyPeriod;
+          param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
         }
-      }
+        for (let j in _EventConfig) {
+          param["EventConditions." + j + ".EventId"] = Number(
+            _EventConfig[j].EventID
+          );
+          param["EventConditions." + j + ".AlarmNotifyType"] =
+            _EventConfig[j].AlarmNotifyType;
+          param["EventConditions." + j + ".AlarmNotifyPeriod"] =
+            _EventConfig[j].AlarmNotifyPeriod;
+          param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
+        }
+      } else {
+        console.log(_gaoArr);
+        param["IsUnionRule"] = this.formWrite.satisfyVal;
 
-      // CalcPeriod
-      // ContinuePeriod
-      // AlarmNotifyType
-      // AlarmNotifyPeriod
+        if (this.formWrite.satisfyVal == 0) {
+          for (let i in _arr) {
+            param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
+            param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
+            param["Conditions." + i + ".CalcValue"] = _arr[i].number;
+            param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
+            param["Conditions." + i + ".ContinuePeriod"] =
+              _arr[i].continuousCycleVal;
+            if (_arr[i].warningVal == 60) {
+              param["Conditions." + i + ".AlarmNotifyType"] = 1;
+            } else {
+              param["Conditions." + i + ".AlarmNotifyType"] = 0;
+            }
+
+            param["Conditions." + i + ".AlarmNotifyPeriod"] =
+              _arr[i].warningVal;
+          }
+        } else {
+          for (let i in _arrAll) {
+            param["Conditions." + i + ".MetricId"] = _arrAll[i].typeVal;
+            param["Conditions." + i + ".CalcType"] = _arrAll[i].calcTypeVal;
+            param["Conditions." + i + ".CalcValue"] = _arrAll[i].number;
+            param["Conditions." + i + ".CalcPeriod"] = _arrAll[i].censusVal;
+            param["Conditions." + i + ".ContinuePeriod"] =
+              _arrAll[i].continuousCycleVal;
+            if (_arrAll[i].warningVal == 60) {
+              param["Conditions." + i + ".AlarmNotifyType"] = 1;
+            } else {
+              param["Conditions." + i + ".AlarmNotifyType"] = 0;
+            }
+
+            param[
+              "Conditions." + i + ".AlarmNotifyPeriod"
+            ] = this.formWrite.warningVal;
+          }
+        }
+        // for (let j in _gaoArr) {
+        //   param["EventConditions." + j + ".EventId"] = Number(
+        //     _gaoArr[j].EventID
+        //   );
+        //   param["EventConditions." + j + ".AlarmNotifyType"] =
+        //     _gaoArr[j].AlarmNotifyType;
+        //   param["EventConditions." + j + ".AlarmNotifyPeriod"] =
+        //     _gaoArr[j].AlarmNotifyPeriod;
+        //   param["EventConditions." + j + ".RuleId"] = _gaoArr[j].RuleID;
+        // }
+      }
       this.axios.post(CM_ALARM_TRIGGER_MODIFY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.dialogEditGaojing = false;
           console.log(res);
+          this.DetailsInit();
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":

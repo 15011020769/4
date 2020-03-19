@@ -80,3 +80,6 @@ export const CM_ALARM_RECEIVE_OBJECT_RELIEVE = 'monitor2/ModifyAlarmReceivers'
 
 // 告警策略 详情 回调接口
 export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'
+
+//
+export const MYSQL_LIST_CMD = 'cmd2/DescribeDBInstances'

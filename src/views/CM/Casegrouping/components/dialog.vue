@@ -35,11 +35,20 @@
         </div>
         <div class="p">
           <span>分组类型</span>
-          <product-type-cpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId" :productValue='productValue' /> 
+          <product-type-cpt
+            v-on:PassData="passData"
+            :searchParam="searchParam"
+            :projectId="projectId"
+            :productValue="productValue"
+          />
         </div>
         <div class="p">
           <span>添加至组</span>
-          <CamTransferCpt :productData="productListData" v-on:projectId="projectIds" v-on:searchParam="searchParams"></CamTransferCpt>
+          <CamTransferCpt
+            :productData="productListData"
+            v-on:projectId="projectIds"
+            v-on:searchParam="searchParams"
+          ></CamTransferCpt>
         </div>
       </div>
       <p slot="footer" class="dialog-footer" style="text-align:center">
@@ -52,12 +61,10 @@
 
 <script>
 // import GroupingType from "@/components/GroupingType";
-import ProductTypeCpt from '@/views/CM/CM_assembly/product_type';
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import { ErrorTips } from "@/components/ErrorTips";
-import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt';
-import {
-  CM_GROUPING_NEWLY_BUILD
-} from "@/constants";
+import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
+import { CM_GROUPING_NEWLY_BUILD } from "@/constants";
 export default {
   name: "msg",
   data() {
@@ -70,11 +77,11 @@ export default {
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
       productListData: {},
-      projectId: '',
+      projectId: "",
       searchParam: {},
       productData: {},
       isShow: false,
-      productValue: 'cvm_device'
+      productValue: "cvm_device"
     };
   },
   components: {
@@ -88,19 +95,15 @@ export default {
       default: () => []
     }
   },
-  watch:{
-    productData:{
+  watch: {
+    productData: {
       hander(val) {
-        debugger
-        this.productListData = val
-        console.log("productListDataasdasdsadasdasdasdasd",productListData)
+        this.productListData = val;
       },
       deep: true
     }
-    
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     cancel() {
       this.$emit("close", false);
@@ -121,8 +124,6 @@ export default {
       this.projectId = data;
     },
     searchParams(data) {
-      console.log("data1312312312",data);
-      debugger
       this.searchParam = data;
     },
     // 分组名
@@ -139,6 +140,9 @@ export default {
     },
     // 保存
     save() {
+      if (!this.groupingNameTips) {
+        return false;
+      }
       var _ViewName = "";
       if (this.groupingType.length > 0) {
         _ViewName = this.groupingType[this.groupingType.length - 1];
@@ -206,8 +210,8 @@ export default {
         this.loadSign = false;
         this.pageIndex++;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
