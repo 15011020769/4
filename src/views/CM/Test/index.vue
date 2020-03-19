@@ -4,7 +4,7 @@
       v-on:switchData="GetDat" />
 
     <EcharS :time='time' :series='series' :period='period' />
-    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' />
+    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue' />
     <div style="width: 600px">
       <Cam></Cam>
     </div>
@@ -148,6 +148,7 @@
         projectId: '',
         searchParam: {},
         ceshi999: '',
+        productValue: 'nat_tc_stat'
       }
     },
     components: {
@@ -213,10 +214,10 @@
       },
       ceshi() {
         this.projectId = '0'
-        // this.searchParam = {
-        //   value: "ins-6oz38wnu",
-        //   label: "instance-id"
-        // }
+        this.searchParam = {
+          value: "ins-6oz38wnu",
+          label: "instance-id"
+        }
       }
     },
   }
