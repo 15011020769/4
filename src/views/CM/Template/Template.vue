@@ -143,7 +143,7 @@
         </span>
       </el-dialog>
     <!-- 新建对话框 -->
-    <Dialog @open="openDialogEvent" :dialogVisible.sync="panelFlag" @save="save" style="margin:0;" />
+    <Dialog @open="openDialogEvent" @close="closeDialogEvent"  :dialogVisible.sync="panelFlag" :Conditions="Conditions" @save="save" style="margin:0;" />
   </div>
 </template>
 
@@ -177,7 +177,7 @@ export default {
       editGroupId: '', // 编辑的模板id
       // templateObj: {}, // 当前模板数据对象
       Conditions: [], // 策略类型
-      PolicyType: [],
+      PolicyType: [],//策略类型下拉框的策略名称
       formInline: {
         product_kind: [
           {
@@ -347,19 +347,19 @@ export default {
     Loading
   },
   created () {
-    // this.getReportUserLastVisit()
     this.getDataInit()
   },
   methods: {
-    filterName (value, row) {      
-      return row.Name === value
-    },
     async getDataInit () {
       await this.getPolicyType()
       await this.getTemplateList()
     },
-    // 打开弹窗时的回调
+    // 打开新建弹窗时的回调
     openDialogEvent () {
+      // this.getPolicyType()
+    },
+    // 关闭新建弹窗时的回调
+    closeDialogEvent(){
       this.getTemplateList()
     },
     // 获取策略类型
@@ -435,7 +435,7 @@ export default {
           this.loadShow = false
         } else {
           this.loadShow = false
-          this.submitDelete(res)
+          this.errorPrompt(res)
         }
       })
     },
@@ -620,6 +620,10 @@ export default {
     },
     onSubmit () {
       console.log('submit!')
+    },
+    //策略类型下拉框回调
+    filterName (value, row) {      
+      return row.Name === value
     },
     // 分页
     handleCurrentChange (val) {

@@ -33,7 +33,7 @@ export const DESCRIBE_METRICS = 'monitor/DescribeBaseMetrics'
 export const UPDATE_TEMPLATE = 'monitor/UpdateConditionsTemplate'
 
 // 新建
-export const NEWBUILD_TEMPLATE = 'monitor2/ModifyConditionsTemplate'
+export const NEWBUILD_TEMPLATE = 'monitor2/CreateConditionsTemplate'
 
 // 变更日志获取模板详情
 export const GET_DESCRIBETRANSLOG = 'monitor2/DescribeTransLog'

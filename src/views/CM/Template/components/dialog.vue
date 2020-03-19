@@ -1,6 +1,7 @@
 <template>
   <div class="dialog">
-    <el-dialog title="新建" :visible.sync="show" @open="$emit('open')">
+     <!-- @open="$emit('open')" -->
+    <el-dialog title="新建" :visible.sync="show" @open="$emit('open')" @close="$emit('close')">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名称</span>
@@ -23,7 +24,7 @@
               :autosize="{ minRows: 5, maxRows: 2}"
               type="textarea"
               placeholder="1-100个中英文字符或下划线"
-              v-model="remark"
+              v-model="formInline.textareas"
               maxlength="100"
               show-word-limit
             ></el-input>
@@ -32,7 +33,8 @@
       </el-form>
       <p class="rowCont" style="display: flex">
         <span>策略类型</span>
-        <product-type-cpt v-on:PassData="passData" />
+        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam' />
+        <!-- :productValue='productValue' -->
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-select v-model="formInline.strategy" style="width:200px;">
           <el-option
@@ -60,7 +62,7 @@
             <div class="color">
               <p>
                 <span style="display:inline">满足</span>
-                <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;">
+                <el-select :disabled="isDisabled" v-model="metting" style="width:90px;margin:0 5px;">
                   <el-option
                     v-for="(item,index) in meetConditions"
                     :key="index"
@@ -108,7 +110,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                      <!-- placeholder="指标" -->
-                    <input :disabled="isDisabled" v-model="it.CalcValue" value="0" min="0" max="100" type="number"
+                    <input :disabled="isDisabled" v-model="it.CalcValue" min="0" max="100" type="number"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
@@ -190,9 +192,11 @@
   </div>
 </template>
 <script>
-import GroupingType from '@/components/GroupingType'
+// import GroupingType from '@/components/GroupingType'
 import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
+// import type from '@/views/CM/CM_assembly/product_type'
 import { NEWBUILD_TEMPLATE } from '@/constants/CM-yhs.js'
+import { ErrorTips } from '@/components/ErrorTips'
 export default {
   data () {
     return {
@@ -215,7 +219,7 @@ export default {
       errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
-      productData: {}, // 策略类型
+      productData: [], // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
         jieshou: '接收组',
@@ -304,6 +308,7 @@ export default {
           ]
         }
       ],
+      metting: '任意 ', // 满足条件
       // conditionList: ['任意', '所有'],
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
       // tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
@@ -317,18 +322,18 @@ export default {
         { label: '持续5个周期', value: 5 }
       ],
       // jinggaoZQ1: [// 警告周期
-        // '不重复',
-        // '每5分钟警告一次',
-        // '每10分钟警告一次',
-        // '每15分钟警告一次',
-        // '每30分钟警告一次',
-        // '每1小时警告一次',
-        // '每2小时警告一次',
-        // '每3小时警告一次',
-        // '每6小时警告一次',
-        // '每12小时警告一次',
-        // '每1天警告一次',
-        // '周期指数递增'
+      // '不重复',
+      // '每5分钟警告一次',
+      // '每10分钟警告一次',
+      // '每15分钟警告一次',
+      // '每30分钟警告一次',
+      // '每1小时警告一次',
+      // '每2小时警告一次',
+      // '每3小时警告一次',
+      // '每6小时警告一次',
+      // '每12小时警告一次',
+      // '每1天警告一次',
+      // '周期指数递增'
       // ],
       jinggaoZQ: [// 警告周期
         { label: '不重复', value: 0 },
@@ -419,7 +424,11 @@ export default {
           }
         ]
       }, // 名称和备注的验证
-      show: this.dialogVisible
+      show: this.dialogVisible,
+      view_name: '',// 策略视图名称
+      projectId:'0',
+      searchParam:{value: "ins-6oz38wnu", label: "instance-id"},
+      productValue:'cvm_device'
     }
   },
   watch: {
@@ -429,6 +438,12 @@ export default {
     show: function (val) {
       this.$emit('update:dialogVisible', val)
     }
+    // Conditions: function (val) {
+    //   this.productData = val
+    // },
+    // productData: function (val) {
+    //   this.$emit('update.Conditions', val)
+    // }
   },
   components: {
     // GroupingType,
@@ -438,14 +453,20 @@ export default {
     dialogVisible: {
       default: false,
       type: Boolean
+    },
+    Conditions: {
+      type: Array
     }
+  },
+  created () {
+    // console.log(this.productData)
   },
   methods: {
     save (form) {
       // this.$emit('save')
       this.$refs[form].validate((valid) => {
         if (valid) {
-          // this.submitFound()
+          this.newBuild()
           console.log('完成', form)
         } else {
           return false
@@ -453,23 +474,71 @@ export default {
       })
     },
     // 新建完成保存
-    // newBuild () {
-    //   let params = {
-    //   Version:'2018-07-24',
-    //   GroupName:this.formInline.strategy_name,
-    //   ViewName:'',
-    //   GroupID:'',
-    //   Module:'monitor',
-    //   IsUnionRule:'',
-    //   Remark:''
-    //   }
-    //   this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
-    //     console.log(res)
-    //   })
-    // },
+    async newBuild () {
+      // this.meetConditions.forEach(ele => {
+      //   if (ele.label == this.metting) {
+      //     this.metting = Number(ele.value)
+      //   }
+      // })
+      // this.Conditions.forEach(item=>{
+      //   if(item.Name==策略类型变量){
+      //   this.view_name = item.PolicyViewName
+      // }
+      // })
+      let params = {
+        Version: '2018-07-24',
+        GroupName: this.formInline.strategy_name,
+        ViewName: this.productValue,
+        Module: 'monitor',
+        // IsUnionRule: this.metting,
+        Remark: this.formInline.textareas
+      }
+      this.indexAry.forEach((ele, i) => {
+        params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
+        params[`Conditions.${i}.MetricID`] = 33
+        this.tongjiZQ.forEach((item1) => {
+          if (ele.Period == item1.label) {
+            ele.Period = item1.value
+            params[`Conditions.${i}.CalcPeriod`] = ele.Period// 统计周期
+          }
+        })
+        this.continuePeriod.forEach((item2) => {
+          if (ele.ContinuePeriod == item2.label) {
+            ele.ContinuePeriod = item2.value
+            params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持续周期
+          }
+        })
+        this.SymbolList.forEach((item3, index) => {
+          if (ele.CalcType == item3) {
+            ele.CalcType = index + 1
+            params[`Conditions.${i}.CalcType`] = ele.CalcType// 符号
+          }
+        })
+        this.jinggaoZQ.forEach(item4 => {
+          if (ele.alarm == item4.label && ele.alarm !== '周期指数递增') {
+            ele.alarm = item4.value
+            params[`Conditions.${i}.AlarmNotifyPeriod`] = ele.alarm
+            params[`Conditions.${i}.AlarmNotifyType`] = 0
+          }
+          if (ele.alarm == '周期指数递增') {
+            params[`Conditions.${i}.AlarmNotifyPeriod`] = 0
+            params[`Conditions.${i}.AlarmNotifyType`] = 1
+          }
+        })
+      })
+      await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
+        if(res.Response.Error===undefined){
+          console.log(res)
+          this.show = false
+        }else{
+          this.errorPrompt(res)
+        }
+      })
+    },
     passData (item) {
       this.productData = item
       this.zhibiaoType = item.MetricName
+      this.productValue = item.productValue
     },
     // 类型
     msgBtn (index) {
@@ -482,7 +551,8 @@ export default {
           CalcType: '>',
           CalcValue: '0',
           ContinuePeriod: '持续1个周期',
-          alarm: '按1天警告一次'
+          // MetricID:33,
+          alarm: '每1天警告一次'
         }
       )
     },
@@ -555,6 +625,54 @@ export default {
       } else {
         this.isDisGJ = true
       }
+    },
+    // 错误提示
+    errorPrompt (res) {
+      let ErrTips = {
+        'AuthFailure.UnauthorizedOperation': '请求未授权。请参考 CAM 文档对鉴权的说明。',
+        'DryRunOperation': 'DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。',
+        'FailedOperation':'操作失败。',
+        'FailedOperation.AlertFilterRuleDeleteFailed': '删除过滤条件失败。',
+        'FailedOperation.AlertPolicyCreateFailed': '创建告警策略失败。',
+        'FailedOperation.AlertPolicyDeleteFailed': '告警策略删除失败。',
+        'FailedOperation.AlertPolicyDescribeFailed': '告警策略查询失败。',
+        'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失败。',
+        'FailedOperation.AlertTriggerRuleDeleteFailed': '删除触发条件失败。',
+        'FailedOperation.DbQueryFailed': '数据库查询失败。',
+        'FailedOperation.DbRecordCreateFailed': '创建数据库记录失败。',
+        'FailedOperation.DbRecordDeleteFailed': '数据库记录删除失败。',
+        'FailedOperation.DbRecordUpdateFailed': '数据库记录更新失败。',
+        'FailedOperation.DbTransactionBeginFailed': '数据库事务开始失败。',
+        'FailedOperation.DbTransactionCommitFailed': '数据库事务提交失败。',
+        'FailedOperation.DimQueryRequestFailed': '请求维度查询服务失败。',
+        'FailedOperation.DruidQueryFailed': '查询分析数据失败。',
+        'FailedOperation.DuplicateName': '名字重复。',
+        'FailedOperation.ServiceNotEnabled': '服务未启用，开通服务后方可使用。',
+        'InternalError': '内部错误。',
+        'InternalError.ExeTimeout': '执行超时。',
+        'InvalidParameter': '参数错误。',
+        'InvalidParameter.InvalidParameter': '参数错误。',
+        'InvalidParameter.InvalidParameterParam': '参数错误。',
+        'InvalidParameterValue': '无效的参数值。',
+        'LimitExceeded': '超过配额限制。',
+        'LimitExceeded.MetricQuotaExceeded': '指标数量达到配额限制，禁止含有未注册指标的请求。',
+        'MissingParameter': '缺少参数错误。',
+        'ResourceInUse': '资源被占用。',
+        'ResourceInsufficient': '资源不足。',
+        'ResourceNotFound': '资源不存在。',
+        'ResourceUnavailable': '资源不可用。',
+        'ResourcesSoldOut': '资源售罄。',
+        'UnauthorizedOperation': '未授权操作。',
+        'UnknownParameter': '未知参数错误。',
+        'UnsupportedOperation': '操作不支持。'
+      }
+      let ErrOr = Object.assign(ErrorTips, ErrTips)
+      this.$message({
+        message: ErrOr[res.Response.Error.Code],
+        type: 'error',
+        showClose: true,
+        duration: 0
+      })
     },
     // 新建策略类型
     showMsgfromChild (val) {
