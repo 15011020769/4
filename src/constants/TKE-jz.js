@@ -11,6 +11,8 @@ export const TKE_COLONY_STATUS_JZ='ccs/GetClustersResourceStatus'
 //集群状态展示2
 export const TKE_COLONY_STATUS_JZ2='tke2/DescribeClustersResourceStatus'
 
+export const TKE_OPENLOGJUDGE='ccs/GetLogDaemonStatus'
+
 //获得概览cpu 内存利用率
 export const TKE_GETCPUUSE='monitor2/ArgusFrontTunnel'
 

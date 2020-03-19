@@ -52,6 +52,7 @@
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"
             :end-placeholder="t('结束日期', 'WAF.jsrq')"
+            value-format="yyyy-MM-dd HH:mm:ss"
           >
           </el-date-picker>
         </div>
@@ -349,8 +350,6 @@ export default {
       total: 0,
       loading: false,
       loadmoreloading: false,
-      startTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
-      endTime: moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
     }
   },
   components: {
@@ -410,7 +409,7 @@ export default {
       this.queryLogCount()
     },
     queryLogCount () {
-      const { Context, startTime, endTime, dominList } = this
+      const { Context, timeValue, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
         domain = 'all'
@@ -418,8 +417,8 @@ export default {
       const params = {
         Version: '2018-01-25',
         Domain: domain,
-        FromTime: startTime,
-        ToTime: endTime
+        FromTime: timeValue[0],
+        ToTime: timeValue[1],
       }
       // 风险等级
       if (this.riskLevelVlaue !== '-1') {
@@ -446,7 +445,7 @@ export default {
       })
     },
     queryLogs () {
-      const { Context, startTime, endTime, dominList } = this
+      const { Context, timeValue, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
         domain = 'all'
@@ -454,8 +453,8 @@ export default {
       const params = {
         Version: '2018-01-25',
         Domain: domain,
-        FromTime: startTime,
-        ToTime: endTime
+        FromTime: timeValue[0],
+        ToTime: timeValue[1]
       }
       // 风险等级
       if (this.riskLevelVlaue !== '-1') {
@@ -492,29 +491,29 @@ export default {
     // 时间选择按钮
     choseDate (num, unit) {
       this.thisType = `${num}${unit}`
-      var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
-      var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
+      // var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
+      // var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
       let startTime = moment().subtract(num, unit)
-
+      let endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
       if (unit === 'd') {
-        startTime = moment().subtract(num, unit).startOf('d')
+        startTime = moment().subtract(num, unit).startOf('d').format('YYYY-MM-DD HH:mm:ss')
       }
-      console.log(startTime.format('YYYY-MM-DD HH:mm:ss'), 'this.startTime')
-      ipt1.value = startTime.format('YYYY-MM-DD HH:mm:ss')
-      ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
-      this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
-      this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      // ipt1.value = startTime.format('YYYY-MM-DD HH:mm:ss')
+      // ipt2.value = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
+      // this.startTime = startTime.format('YYYY-MM-DD HH:mm:ss')
+      // this.endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
       if (num === 1 && unit === 'd') {
-        this.endTime = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
-        ipt2.value = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
+        endTime = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
+        // ipt2.value = moment().subtract(1, 'd').endOf('d').format('YYYY-MM-DD HH:mm:ss')
       }
+      this.timeValue = [startTime, endTime]
     },
     // 创建下载任务
     createDownTask () {
       this.createDownTaskModel = true
     },
     createDownloadTask (name) {
-      const { Context, startTime, endTime, dominList } = this
+      const { Context, timeValue, dominList } = this
       let domain = dominList
       if (domain === 'ALL') {
         domain = 'all'
@@ -522,8 +521,8 @@ export default {
       const params = {
         Version: '2018-01-25',
         Domain: domain,
-        FromTime: startTime,
-        ToTime: endTime,
+        FromTime: timeValue[0],
+        ToTime: timeValue[1],
         Name: name,
         AttackIp: this.attackIP
       }

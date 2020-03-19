@@ -66,7 +66,6 @@ export default {
   props: {
     StartTIme: String,
     EndTIme: String,
-    operator: String,
     domainsData: Array,
     domainCheckedListCopy: Array,
   },
@@ -104,10 +103,6 @@ export default {
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
         "CountryOrAreaNames.0": "Taiwan",
       };
-      if (this.operator) {
-        params1["IspNames.0"] = this.operator
-        params2["IspNames.0"] = this.operator
-      }
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
           params1["PlayDomains." + index] = item;

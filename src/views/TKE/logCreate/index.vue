@@ -62,7 +62,7 @@
               <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == false
                 ">
-                <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index)"></i>
+                <i class="el-icon-edit-outline icon-edit-outline" @click="roomShow(index,item.value1)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <div>
                   <span>Namespace:</span><span>{{item.value1}}</span>|<span>{{$t('TKE.overview.cjdx')}}</span>
@@ -74,12 +74,11 @@
               <div class="form-form position-form" v-show="
                   vlog == 'two' && tabPosition == 'one' && item.flag == true 
                 ">
-                <i class="el-icon-check icon-check" @click="roomShow(index)"></i>
+                <i class="el-icon-check icon-check" @click="roomShow(index,item.value1)"></i>
                 <i class="el-icon-close icon-close" @click="removeNewRoom(formFour, index)"></i>
                 <el-form-item :label="$t('TKE.overview.ssnmkj')" label-width="150px">
-                  <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" v-model="item.value1">
+                  <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" v-model="item.value1" @change="clearSelect(index)">
                     <el-option v-for="item in namespaceOptions1" :key="item" :value="item">
-                      <!-- <el-option v-for="item in namespaceOptions" :key="item.value" :label="item.label" :value="item.value"> -->
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -95,59 +94,60 @@
                       <div class="border-left">{{$t('TKE.overview.gzfzlx')}}</div>
                       <div class="border-right">{{$t('TKE.overview.lb')}}</div>
                     </div>
-                    <!-- <el-tabs tab-position="left" style="height: 200px;" v-model="item.activeName" -->
+                   <!-- 传入相应工作负载选项 -->
                     <el-tabs tab-position="left" class="tab-set" style="height: 200px;" v-model="item.activeName"
+                    
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
-                        <div v-show="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox0" @change="checkboxChange0(Checkbox.checkbox0,item.value1)">
-                            <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item.metadata.name" >{{item.metadata.name}}</el-checkbox>
+                        <div v-show="workload1" style="overflow:auto">
+                          <el-checkbox-group v-model="item.checkbox0" @change="checkboxChange0(item.checkbox0,item.value1,item.activeName,index)">
+                            <p v-for="(item0,index0) in workload1" :key="index0">
+                              <el-checkbox :label="item0.metadata.name">{{item0.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
 
                         </div>
-                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
-                        <div v-show="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox1" @change="checkboxChange1(Checkbox.checkbox1,item.value1)">
-                            <p v-for="(item,index) in workload1" :key="index">
-                              <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
+                        <div v-show="workload1" style="overflow:auto">
+                          <el-checkbox-group v-model="item.checkbox1" @change="checkboxChange1(item.checkbox1,item.value1,item.activeName,index)">
+                            <p v-for="(item1,index1) in workload1" :key="index1">
+                              <el-checkbox :label="item1.metadata.name">{{item1.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
-                        <div v-show="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox2" @change="checkboxChange2(Checkbox.checkbox2,item.value1)">
+                        <div v-show="workload1" style="overflow:auto">
+                          <el-checkbox-group v-model="item.checkbox2" @change="checkboxChange2(item.checkbox2,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
-                        <div v-show="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox3" @change="checkboxChange3(Checkbox.checkbox3,item.value1)">
+                        <div v-show="workload1" style="overflow:auto">
+                          <el-checkbox-group v-model="item.checkbox3" @change="checkboxChange3(item.checkbox3,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
-                        <div v-show="workload1.length!='0'" style="overflow:auto">
-                          <el-checkbox-group v-model="Checkbox.checkbox4" @change="checkboxChange4(Checkbox.checkbox4,item.value1)">
+                        <div v-show="workload1" style="overflow:auto">
+                          <el-checkbox-group v-model="item.checkbox4" @change="checkboxChange4(item.checkbox4,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length=='0'">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                     </el-tabs>
                   </div>
@@ -267,7 +267,6 @@
                       </el-col>
                       <el-col :span="10">
                         <el-form-item prop="Topic">
-                          <!-- <el-select placeholder="请选择" :disabled='Topic.options.length=="1"' v-model="form.Topic"> -->
                           <el-select :placeholder="$t('TKE.overview.qxz')" class="setwidth" :disabled="Topic.options.length == '1'"
                             v-model="Topic.value">
                             <el-option v-for="item in Topic.options" :key="item" :value="item">
@@ -348,7 +347,6 @@
     data() {
       //验证名称
       var validateName = (rule, value, callback) => {
-        console.log(value);
         if (value === "") {
           this.fontColor = true;
           callback();
@@ -416,11 +414,23 @@
           domains: []
         },
         formFour: [{
-          value1: "",
+          value1: "",//命名空间
           radio: "1",
           flag: true,
           activeName: "Deployment",
           workload: '',
+          check0:[],
+          check1:[],
+          check2:[],
+          check3:[],
+          check4:[],
+          checkObj:{
+            check1:{},
+            check2:{},
+            check3:{},
+            check4:{},
+            check5:{},
+          },
         }],
         namespaceOptions: [],
         namespaceOptions1: [],
@@ -458,24 +468,6 @@
         checked: true,
         instanceList: [],
         workload1: [],
-        Checkbox: {
-          checkbox0: [],
-          checkbox1: [],
-          checkbox2: [],
-          checkbox3: [],
-          checkbox4: [],
-        },
-        Checkbox2: {//往后台要发送的数据
-          checkbox0: [],
-          checkbox1: [],
-          checkbox2: [],
-          checkbox3: [],
-          checkbox4: [],
-        },
-        workload2: [],
-        workload3: [],
-        workload4: [],
-        workload5: [],
         resourceVersion: '',
       };
     },
@@ -532,7 +524,7 @@
             if (res.Response.Error === undefined) {
               this.formTwo.option3 = ['請選擇workload'];
               var data = JSON.parse(res.Response.ResponseBody);
-              if (data.items.length != 0) {
+              if (data.items) {
                 data.items.forEach(item => {
                   //workload选项
                   this.formTwo.option3.push(item.metadata.name)
@@ -587,31 +579,19 @@
         deep: true
       },
       formFour: {
-        handler(val) {
-          val.forEach(item => {
-
+        handler(val){
+          val.forEach((item,index )=> {
+            console.log('this.namespaceOptions.length',this.namespaceOptions.length)
+            console.log('formFour.length',val.length)
             if (val.length == this.namespaceOptions.length) {
               this.newroomFlag = true
               return false
             }
             if (item.radio == '2') {
               //请求接口，重新获得workload数据
-              if (this.$route.query.clusterId) {
-                var params = {
-                  ClusterName: this.$route.query.clusterId.split("(")[0],
-                  Method: "GET",
-                  Path: "/apis/apps/v1beta2/namespaces/" + item.value1 + "/" + item.activeName
-                    .toLocaleLowerCase() + 's',
-                  Version: "2018-05-25"
-                };
-                this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-                  if (res.Response.Error === undefined) {
-                    var data = JSON.parse(res.Response.ResponseBody);
-                    this.workload1 = data.items;
-                  }
-                });
-              }
-              this.workLoadTab(item.value1, 0)
+              this.workload1=[];
+
+                this.workLoadTab(item.activeName, index)
             }
             //新建禁用判断
             if (item.radio == '1') {
@@ -622,23 +602,9 @@
               this.newroomFlag = true
             }
           })
-
         },
         deep: true
       },
-      Checkbox: {
-        handler(val) {
-          for (let key in val) {
-            if (val[key].length == '0') {
-              // this.newroomFlag = true
-            } else {
-              this.newroomFlag = false
-            }
-          }
-        },
-        deep: true
-      },
-
     },
     created() {
       //判断是否是编辑状态
@@ -648,14 +614,15 @@
         this.reflowData()
       } else {
         this.editStatus = false;
+        this.nameSpaceList();
       }
       this.checkCluster(); //检查是否可以创建日志
       this.kafkaList();
-      // this.nameSpaceList();
     },
     mounted() {},
     methods: {
-       async reflowData(){
+     
+      async reflowData(){
          await this.nameSpaceList()
          await this.findEditData();
       },
@@ -725,27 +692,54 @@
             };
           } else { //指定容器
 
-            var arr = [];
-            //往后台发送的数据
-            var needData = [...this.Checkbox2.checkbox0, ...this.Checkbox2.checkbox1, ...this.Checkbox2.checkbox2,
-              ...this.Checkbox2.checkbox3, ...this.Checkbox2.checkbox4
-            ];
+            var arr1=[] ;
+            var map = {}, result = [];
             this.formFour.forEach(item => {
               var obj = new Object();
               obj['namespace'] = item.value1;
               if (item.radio == '1') {
                 obj['all_containers'] = true;
                 obj['workloads'] = [];
-              } else {
-                obj['all_containers'] = false;
-                obj['workloads'] = needData;
+              }else {
+                // let
+               for(let i in  item.checkObj){
+                  if(item.checkObj[i].val&&item.checkObj[i].val.length){
+                        console.log(item.checkObj[i],'zhi')
+                      let obj2={};
+                      obj2.namespace=item.checkObj[i].acname;
+                      obj2.all_containers= false;
+                      obj2.workloads=item.checkObj[i].val.map(v=>{
+                        return {type:item.checkObj[i].type,name:v}
+                      })
+                  arr1.push(obj2)
+                  }
+                }
               }
-              arr.push(obj);
             })
+            for(var i = 0; i < arr1.length; i++){
+                  var ai = arr1[i];
+                  if(!map[ai.namespace]){
+                      result.push({
+                          namespace: ai.namespace,
+                          all_containers: false,
+                          workloads: ai.workloads
+                      });
+                      map[ai.namespace] = ai;
+                  }else{
+                      for(var j = 0; j < result.length; j++){
+                          var dj = result[j];
+                          if(dj.namespace == ai.namespace){
+                              dj.workloads.push(...ai.workloads);
+                              break;
+                          }
+                      }
+                  }
+            }
+              console.log(result,'result')
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
-                namespaces: arr
+                namespaces: result
               },
               type: "container-log"
             };
@@ -834,6 +828,9 @@
             }
           });
       },
+
+
+
       //编辑数据回显
      async   findEditData() {
         var stashName = this.$route.query.stashName;
@@ -853,7 +850,6 @@
      await   this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
-            console.log(data)
             this.resourceVersion = data.metadata.resourceVersion
             //节点文件路径
             if (data.spec.input.type == 'host-log') {
@@ -898,16 +894,28 @@
                 this.vlog = 'two';
                
               }
-              let namespace=data.spec.input.container_log_input.namespaces;
-              var arr=[],arr2=[],arr3=[],arr4=[],arr5=[],arr6=[],arr21=[],arr31=[],arr41=[],arr51=[],arr61=[];
+              let namespace=data.spec.input.container_log_input.namespaces,arr=[];
+              console.log(namespace)
               namespace.forEach(item=>{
                 if(item.all_containers){
                   let obj={}
                   obj.value1=item.namespace
-                    obj.radio='1';
-                    obj.flag=false;
-                    obj.activeName='Deployment';
-                    obj.workload= ''
+                  obj.radio='1';
+                  obj.flag=false;
+                  obj.activeName='Deployment';
+                  obj.workload= '';
+                  obj.check0=[],
+                  obj.check1=[],
+                  obj.check2=[],
+                  obj.check3=[],
+                  obj.check4=[],
+                  obj.checkObj={
+                    check1:{},
+                    check2:{},
+                    check3:{},
+                    check4:{},
+                    check5:{},
+                  }
                      arr.push(obj)
                 }
                 
@@ -918,52 +926,75 @@
                    obj2.flag=false;
                    obj2.activeName='Deployment';
                    obj2.workload= item.workloads.length;
-
+                   obj2.check0=[],
+                   obj2.check1=[],
+                   obj2.check2=[],
+                   obj2.check3=[],
+                   obj2.check4=[],
+                   obj2.checkObj={
+                      check1:{},
+                      check2:{},
+                      check3:{},
+                      check4:{},
+                      check5:{},
+                    }
+                  let arr1=[],arr2=[],arr3=[],arr4=[],arr5=[];
                   item.workloads.forEach(v=>{
-                    console.log('v',v)
                     if(v.type=='deployment'){
-                        arr2.push(v.name)
-                        arr21.push({name:v.name,type:item.namespace})
+                        obj2.check0.push(v.name)
+                        arr1.push(v.name)
+                        obj2.checkObj.check1={
+                           type:'deployment',
+                           acname:item.namespace,
+                           val:arr1,
+                        }
                     }else if(v.type=='daemonset'){
-                        arr3.push(v.name)
-                        arr31.push({name:v.name,type:item.namespace})
+                        obj2.check1.push(v.name)
+                         arr2.push(v.name)
+                        obj2.checkObj.check2={
+                           type:'daemonset',
+                           acname:item.namespace,
+                           val:arr2,
+                        }
                     }else if(v.type=='statefulset'){
-                        arr4.push(v.name)
-                        arr41.push({name:v.name,type:item.namespace})
+                         obj2.check2.push(v.name)
+                           arr3.push(v.name)
+                        obj2.checkObj.check3={
+                           type:'statefulset',
+                           acname:item.namespace,
+                           val:arr3,
+                        }
                     }else if(v.type=='cronjob'){
-                       arr5.push(v.name)
-                       arr51.push({name:v.name,type:item.namespace})
+                       obj2.check3.push(v.name)
+                         arr4.push(v.name)
+                        obj2.checkObj.check4={
+                           type:'cronjob',
+                           acname:item.namespace,
+                           val:arr4,
+                        }
                     }else if(v.type=='job'){
-                       arr6.push(v.name)
-                       arr61.push({name:v.name,type:item.namespace})
+                       obj2.check4.push(v.name)
+                         arr5.push(v.name)
+                        obj2.checkObj.check5={
+                           type:'job',
+                           acname:item.namespace,
+                           val:arr5,
+                        }
                     }
                   })
+                  console.log(obj2,'obj2')
                    arr.push(obj2)
                 }
-               
               })
 
               if(arr.length!=0){
                 this.formFour=arr;
               }
-              console.log(this.formFour.length)
-              console.log(this.namespaceOptions.length)
               if(this.formFour.length!=this.namespaceOptions.length){
                 this.newroomFlag=false
               }else{
                   this.newroomFlag=true 
               }
-              this.Checkbox.checkbox0=arr2
-              this.Checkbox.checkbox1=arr3
-              this.Checkbox.checkbox2=arr4
-              this.Checkbox.checkbox3=arr5
-              this.Checkbox.checkbox4=arr6
-              // 
-              this.Checkbox2.checkbox0=arr21
-              this.Checkbox2.checkbox1=arr31
-              this.Checkbox2.checkbox2=arr41
-              this.Checkbox2.checkbox3=arr51
-              this.Checkbox2.checkbox4=arr61
             }
             if (data.spec.output.ckafka_output) {
               this.axios.post(TKE_KAFKA_LIST, {}).then(val => {
@@ -1002,6 +1033,8 @@
           }
         });
       },
+
+
       //确认编辑
       editSure() {
 
@@ -1058,27 +1091,54 @@
             };
           } else { //指定容器
 
-            var arr = [];
-            //往后台发送的数据
-            var needData = [...this.Checkbox2.checkbox0, ...this.Checkbox2.checkbox1, ...this.Checkbox2.checkbox2,
-              ...this.Checkbox2.checkbox3, ...this.Checkbox2.checkbox4
-            ];
+             var arr1=[] ;
+            var map = {}, result = [];
             this.formFour.forEach(item => {
               var obj = new Object();
               obj['namespace'] = item.value1;
               if (item.radio == '1') {
                 obj['all_containers'] = true;
                 obj['workloads'] = [];
-              } else {
-                obj['all_containers'] = false;
-                obj['workloads'] = needData;
+              }else {
+                // let
+               for(let i in  item.checkObj){
+                  if(item.checkObj[i].val&&item.checkObj[i].val.length){
+                        console.log(item.checkObj[i],'zhi')
+                      let obj2={};
+                      obj2.namespace=item.checkObj[i].acname;
+                      obj2.all_containers= false;
+                      obj2.workloads=item.checkObj[i].val.map(v=>{
+                        return {type:item.checkObj[i].type,name:v}
+                      })
+                  arr1.push(obj2)
+                  }
+                }
               }
-              arr.push(obj);
             })
+            for(var i = 0; i < arr1.length; i++){
+                  var ai = arr1[i];
+                  if(!map[ai.namespace]){
+                      result.push({
+                          namespace: ai.namespace,
+                          all_containers: false,
+                          workloads: ai.workloads
+                      });
+                      map[ai.namespace] = ai;
+                  }else{
+                      for(var j = 0; j < result.length; j++){
+                          var dj = result[j];
+                          if(dj.namespace == ai.namespace){
+                              dj.workloads.push(...ai.workloads);
+                              break;
+                          }
+                      }
+                  }
+            }
+           
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
-                namespaces: arr
+                namespaces: result
               },
               type: "container-log"
             };
@@ -1152,8 +1212,8 @@
             type: "host-log"
           };
         }
+        console.log('qrbjallcanshu',params)
         if(!this.pathFlag ){
-
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
                this.$message({
@@ -1167,95 +1227,60 @@
           });
         }
       },
-      checkboxChange0(val,np) {
-        if (val.length != '0') {
-          var filterData = [],
-            filterDatac = [];
-          val.forEach(item => {
-            filterDatac.push({
-              name: item.name,
-              type:np
-            })
-          })
-          this.newroomFlag = false;
-          this.Checkbox2.checkbox0 = filterDatac;
-        } else {
-          this.newroomFlag = true;
-           this.Checkbox2.checkbox0=[];
-        }
-        console.log(this.Checkbox2)
+      clearSelect(index){
+        this.formFour[index].checkObj.check1={};
+        this.formFour[index].checkObj.check2={};
+        this.formFour[index].checkObj.check3={};
+        this.formFour[index].checkObj.check4={};
+        this.formFour[index].checkObj.check5={};
+        this.formFour[index].checkbox0=[];
+        this.formFour[index].checkbox1=[];
+        this.formFour[index].checkbox2=[];
+        this.formFour[index].checkbox3=[];
+        this.formFour[index].checkbox4=[];
       },
-      checkboxChange1(val,np) {
-        if (val.length != '0') {
-          var filterData = [],
-            filterDatac = [];
-          val.forEach(item => {
-            filterDatac.push({
-              name: item.name,
-              type: item.np
-            })
-          })
-          this.newroomFlag = false;
-          this.Checkbox2.checkbox1 = filterDatac;
-        } else {
-          this.newroomFlag = true;
-           this.Checkbox2.checkbox1=[];
+      checkboxChange0(val,np,clickname,index) {
+        let cname=clickname.toLocaleLowerCase(),arr=[];
+        this.formFour[index].checkObj.check1={
+              type:cname,
+              acname:np,
+              val:val,
         }
       },
-      checkboxChange2(val,np) {
-        if (val.length != '0') {
-          var filterData = [],
-            filterDatac = [];
-          val.forEach(item => {
-            filterDatac.push({
-              name: item.name,
-              type:np
-            })
-          })
-          this.newroomFlag = false;
-          this.Checkbox2.checkbox2 = filterDatac;
-        } else {
-          this.newroomFlag = true;
-          this.Checkbox2.checkbox2=[];
-        }
+      checkboxChange1(val,np,clickname,index) {
+         let cname=clickname.toLocaleLowerCase(),arr=[];
+        this.formFour[index].checkObj.check2={
+            type:cname,
+            acname:np,
+            val:val,
+          }
       },
-      checkboxChange3(val,np) {
-        if (val.length != '0') {
-          var filterData = [],
-            filterDatac = [];
-          val.forEach(item => {
-            filterDatac.push({
-              name: item.name,
-              type: np
-            })
-          })
-          this.newroomFlag = false;
-          this.Checkbox2.checkbox3 = filterDatac;
-        } else {
-          this.newroomFlag = true;
-           this.Checkbox2.checkbox3=[];
-        }
+      checkboxChange2(val,np,clickname,index) {
+          let cname=clickname.toLocaleLowerCase(),arr=[];
+          this.formFour[index].checkObj.check3={
+            type:cname,
+            acname:np,
+            val:val,
+          }
       },
-      checkboxChange4(val,np) {
-        if (val.length != '0') {
-          var filterData = [],
-            filterDatac = [];
-          val.forEach(item => {
-            filterDatac.push({
-              name: item.name,
-              type: np
-            })
-          })
-          this.newroomFlag = false;
-          this.Checkbox2.checkbox4 = filterDatac;
-        } else {
-          this.newroomFlag = true;
-           this.Checkbox2.checkbox4=[];
-        }
+      checkboxChange3(val,np,clickname,index) {
+          let cname=clickname.toLocaleLowerCase(),arr=[];
+        this.formFour[index].checkObj.check4={
+            type:cname,
+            acname:np,
+            val:val,
+          }
       },
-
+      checkboxChange4(val,np,clickname,index) {
+          let cname=clickname.toLocaleLowerCase(),arr=[];
+          this.formFour[index].checkObj.check5={
+            type:cname,
+            acname:np,
+            val:val,
+          }
+      },
       workLoadTab(workLoad, index) {
-        this.workload1 = [];
+        let that=this;
         if (this.$route.query.clusterId) {
           var namespace = this.formFour[index].value1;
           var params = {
@@ -1264,10 +1289,16 @@
             Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase() + 's',
             Version: "2018-05-25"
           };
+          console.log(params)
+          this.workload1 = [];
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+            console.log(res)
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
-              this.workload1 = data.items;
+              if( data.items&&data.items.length!=0){
+                console.log(data.items,'worklods++++++++++++++++++++++++++++++++')
+                this.workload1 = data.items;
+              }
             }
           });
         }
@@ -1313,6 +1344,7 @@
                 this.namespaceOptions.push(item.metadata.name);
                 this.namespaceOptions1.push(item.metadata.name);
               });
+              console.log(this.namespaceOptions,'命名空间选项')
               this.formFour[0].value1 = this.namespaceOptions[0];
             }
           });
@@ -1372,42 +1404,52 @@
           this.formFour.splice(index, 1);
         }
       },
-      roomShow(index) {
-
+      roomShow(index,np) {
+        console.log(np,'np')
         if (this.namespaceOptions1.length == '1') {
           this.namespaceOptions1 = []
         }
         if(this.formFour[index].radio=='2'){
           var s = 0;
-          for (let i in this.Checkbox2) {
-            s += this.Checkbox2[i].length
+          console.log(this.formFour)
+          for(let i in this.formFour[index].checkObj){
+            if(JSON.stringify(this.formFour[index].checkObj[i])!='{}'){
+
+              // for(let j in this.formFour[index].checkObj[i]){
+              
+              //   if( this.formFour[index].checkObj[i].acname==np){
+              //     console.log(this.checkObj[i][j],'zhi')
+              //     s+=this.formFour[index].checkObj[i].val.length
+              //   }
+              // }
+            }
           }
+          console.log('ss',s)
           if(s==0){
-             this.$message({
-                  message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
-                  type: "warning",
-                  showClose: true,
-                  duration: 0
-                });
+            //  this.$message({
+            //       message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
+            //       type: "warning",
+            //       showClose: true,
+            //       duration: 0
+            //     });
+         
           }else{
             this.formFour[index].workload = s;
-            this.formFour[index].flag = !this.formFour[index].flag;
           }
+            this.formFour[index].flag = !this.formFour[index].flag;
         }else{
-           this.formFour[index].workload = '';
+            this.formFour[index].workload = '';
             this.formFour[index].flag = !this.formFour[index].flag;
         }
 
       },
       addNewRoom() { //
-        var arr = [],
-          arr2, arr3 = [];
+      
+        //实现数组内容递减
+        var arr = [],arr2, arr3 = [];
         this.formFour.forEach(v => {
           arr.push(v.value1)
         })
-        for (let i in this.Checkbox2) {
-          this.Checkbox2[i].length = 0;
-        }
         arr2 = Array.from(new Set(arr));
         arr2.forEach(v => {
           let i = this.namespaceOptions1.indexOf(v)
@@ -1419,7 +1461,20 @@
           value1: this.namespaceOptions1[0],
           radio: "1",
           flag: true,
-          activeName: "Deployment"
+          activeName: "Deployment",
+          workload:'',
+          check0:[],
+          check1:[],
+          check2:[],
+          check3:[],
+          check4:[],
+          checkObj:{
+            check1:{},
+            check2:{},
+            check3:{},
+            check4:{},
+            check5:{},
+          },
         });
       },
       IsRule1(str) {
@@ -1430,7 +1485,8 @@
         let reg =
           /^(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])$/;
         return reg.test(str)
-      }
+      },
+   
     },
     components: {
       HeadCom

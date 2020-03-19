@@ -4,7 +4,7 @@
       v-on:switchData="GetDat" />
 
     <EcharS :time='time' :series='series' :period='period' />
-    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' />
+    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue' />
     <div style="width: 600px">
       <Cam></Cam>
     </div>
@@ -146,7 +146,9 @@
           y: [2, 244, 52, 52]
         }],
         projectId: '',
-        searchParam: {}
+        searchParam: {},
+        ceshi999: '',
+        productValue: 'nat_tc_stat'
       }
     },
     components: {
@@ -173,6 +175,8 @@
       },
       PassData(data) {
         console.log(data)
+        this.ceshi999 = data.productValue
+        console.log(this.ceshi999)
       },
       TEST() {
         const param = {
@@ -210,10 +214,10 @@
       },
       ceshi() {
         this.projectId = '0'
-        // this.searchParam = {
-        //   value: "ins-6oz38wnu",
-        //   label: "instance-id"
-        // }
+        this.searchParam = {
+          value: "ins-6oz38wnu",
+          label: "instance-id"
+        }
       }
     },
   }

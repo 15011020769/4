@@ -171,7 +171,9 @@ module.exports = {
       fzhong: '分鐘',
       cjjkmb: '創建監控面板',
       mcheng: '名稱',
-      qd: '確 定'
+      qd: '確 定',
+      cmmjkmb: '重命名監控面板',
+      zjklbz: '在監控面板中添加監控圖表，讓您更便捷查看指標監控！'
     },
     overview: {
       syysy: '剩餘1000條/已使用0條',

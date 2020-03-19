@@ -93,9 +93,10 @@ export default {
       this.pagesize = val
       this.init()
     },
-    // 获取表格数据
-    init () {
-      this.loading = true
+    //获取表格数据
+    init() {
+      // 腾讯页面中默认选择地区查的是CSS_MBPS，选择地区为台湾后查的DESCRIBE_PLAY_STAT_INFOLIST
+      this.loading = true;
       const params1 = { // 表格
         Version: '2018-08-01',
         StartTime: moment(this.StartTIme).format('YYYY-MM-DD HH:mm:ss'),
@@ -114,10 +115,7 @@ export default {
           params2['PlayDomains.' + index] = item
         })
       }
-      // if (this.operator) {
-      //   params1["IspNames.0"] = this.operator
-      //   params2["IspNames.0"] = this.operator
-      // }
+      
       const Granularity = moment(this.EndTIme).diff(this.StartTIme, 'days')
       if (Granularity < 3) {
         params1['Granularity'] = 60
@@ -127,48 +125,48 @@ export default {
         params2['Granularity'] = 60
       }
       // if (this.operator) {
-      // params1["IspNames.0"] = this.operator // 运营商暂不做
-      // params2["IspNames.0"] = this.operator // 运营商暂不做
-      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
-        if (res.Response.Error) {
-          this.$message({
-            message: res.Response.Error.Message,
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          // 表格数据
-          this.tableData = res.Response.DataInfoList
-          this.totalItems = res.Response.DataInfoList.length
-        }
-        this.loading = false
-      })
-      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params2).then(res => {
-        if (res.Response.Error) {
-          this.$message({
-            message: res.Response.Error.Message,
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        } else {
-          // 图表数据
-          var xAxis = []
-          var series = []
-          let _json = []
-          res.Response.DataInfoList.forEach(item => {
-            xAxis.push(item.Time)
-            series.push(item.Bandwidth)
-            _json.push({ Time: item.Time, 'Bandwidth (Mbps)': item.Bandwidth })
-          })
-          this.xAxis = xAxis
-          this.series = series
-          this.json = _json
-        }
-        this.loading = false
-      })
-      // }
+      //   params1["IspNames.0"] = this.operator // 运营商暂不做
+      //   params2["IspNames.0"] = this.operator // 运营商暂不做
+        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
+          if (res.Response.Error) {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          } else {
+            // 表格数据
+            this.tableData = res.Response.DataInfoList;
+            this.totalItems = res.Response.DataInfoList.length;
+          }
+          this.loading = false;
+        });
+        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params2).then(res => {
+          if (res.Response.Error) {
+            this.$message({
+              message: res.Response.Error.Message,
+              type: "error",
+              showClose: true,
+              duration: 0
+            })
+          } else {
+            // 图表数据
+            var xAxis = [];
+            var series = [];
+            let _json = []
+            res.Response.DataInfoList.forEach(item => {
+              xAxis.push(item.Time);
+              series.push(item.Bandwidth);
+              _json.push({Time: item.Time, "Bandwidth (Mbps)": item.Bandwidth})
+            });
+            this.xAxis = xAxis;
+            this.series = series;
+            this.json = _json
+          }
+          this.loading = false;
+        });
+      // } 
       // else {
       //   this.axios.post(CSS_MBPS, params1).then(res => {
       //     if (res.Response.Error) {

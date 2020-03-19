@@ -71,9 +71,8 @@
       @open="handleOpen"
     >
       <div style="position: relative;" v-if="selectItem">
-        <img
-          src="https://imgcache.qq.com/open_proj/proj_qcloud_v2/mc_2014/video/css/img/video-img.png"
-        />
+
+        <img src="../img/bg.png"/>
         <img
           :src="selectItem.PictureUrl"
           :style="

@@ -22,13 +22,6 @@ Vue.use(ElementUI, {
   i18n: (key, value) => i18n.t(key, value)
 })
 
-// 引入基本模板
-// const echarts = require('echarts/lib/echarts')
-// require("echarts/lib/component/legend")
-    // 引入折线图组件
-// require('echarts/lib/chart/line')
-    // 引入提示框和title组件，图例
-// require('echarts/lib/component/tooltip')
 Vue.prototype.$echarts = echarts
 /**
  * 通用响应处理函数

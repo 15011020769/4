@@ -33,6 +33,10 @@
         required: true,
         type: Object
       },
+      productValue: {
+        required: true,
+        type: String
+      },
     },
     data() {
       return {
@@ -70,7 +74,6 @@
           label: '对象存储',
           viewName: 'COS',
         }],
-        productValue: 'cvm_device',
         Date: [], //各个产品数组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置

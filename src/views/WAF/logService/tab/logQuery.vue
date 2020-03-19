@@ -29,7 +29,9 @@
             class="dataTime"
             range-separator="至"
             :start-placeholder="t('开始日期', 'WAF.ksrq')"
-            :end-placeholder="t('结束日期', 'WAF.jsrq')">
+            :end-placeholder="t('结束日期', 'WAF.jsrq')"
+            value-format="yyyy-MM-dd HH:mm:ss"
+          >
           </el-date-picker>
         </div>
         <div>
@@ -174,8 +176,6 @@ export default {
       Context: '',
       loadmoreloading: false,
       loading: false,
-      startTime: moment().subtract(1, 'h').format('YYYY-MM-DD HH:mm:ss'),
-      endTime: moment().endOf('d').format("YYYY-MM-DD HH:mm:ss"),
       columnsCopy: [],
       columns: ['request', 'index', 'action', 'time', 'client', 'header', 'upstream', 'response'],
       total: 0,
@@ -342,12 +342,14 @@ export default {
     choseDate(n, unit){
       this.thisType = `${n}${unit}`;
       let start = moment().subtract(n, unit)
+      let end = moment().endOf('d')
       if (unit === 'd') {
         start.startOf('d')
       }
-      this.timeValue = [start.format("YYYY-MM-DD HH:mm:ss"), moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")]
-      this.startTime = start.format("YYYY-MM-DD HH:mm:ss");
-      this.endTime = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss");
+      if (n === 1 && unit === 'd') {
+        end = moment().subtract(1, 'd').endOf('d')
+      }
+      this.timeValue = [start.format("YYYY-MM-DD HH:mm:ss"), end.format("YYYY-MM-DD HH:mm:ss")]
     },
     //创建下载任务
     createDownTask(){

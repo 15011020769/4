@@ -305,8 +305,6 @@ export default {
           Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
-        // params.StartTime = Date.parse(this.timeObjs[0].StartTIme) / 1000; //开始时间戳
-        // params.EndTime = Date.parse(this.timeObjs[0].EndTIme) / 1000; //结束时间戳
       }
       this.axios.post(BASICS_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {

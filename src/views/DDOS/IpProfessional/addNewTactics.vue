@@ -547,7 +547,7 @@
               </tr>
             </table>
             <a v-on:click="addRow(5)" class="addNewRow">添加</a>
-            <p>{{ $t("DDOS.Proteccon_figura.Start_portnumber") }}</p>
+            <p>{{ $t("DDOS.Proteccon_figura.UDP_protection") }}</p>
           </div>
           <div class="childContTit childContTitModel">
             <h2>
@@ -1035,14 +1035,44 @@ export default {
           params["DropOptions.0.ConnTimeout"] = this.input10; //连接超时
         }
         // PortLimits.N 端口禁用，当没有禁用端口时填空数组
+        let regNUM = /(^[0-9]\d*$)/;
         for (let i in this.tags) {
-          if (this.tags[i].portNum.length > 1) {//此处需要对输入的端口区间进行校验（暂时未做）
-            params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
-            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
-            let portArr = this.tags[i].portNum.split('-')
+          if (this.tags[i].portNum.length != "") {//此处对输入的端口区间进行校验
+            let portArr = (this.tags[i].portNum+"").split('-');
+            for (let i in portArr) {
+              if (!regNUM.test(portArr[i])) {
+                this.$message({
+                  message: "端口號錯誤，未輸入有效值",
+                  type: "warning",
+                  showClose: true,
+                  duration: 0
+                });
+                return
+              }
+            }
             if (portArr.length === 1) {
               portArr[1] = portArr[0]
             }
+            if (portArr[0] < 0 || portArr[0] > 65535 || portArr[1] < 0 || portArr[1] > 65535) {
+              this.$message({
+                message: "端口號錯誤，限制範圍[0-65535]",
+                type: "warning",
+                showClose: true,
+                duration: 0
+              });
+              return
+            }
+            if (portArr[0] > portArr[1]) {
+              this.$message({
+                message: "端口號錯誤，要求結束端口大於等於開始端口",
+                type: "warning",
+                showClose: true,
+                duration: 0
+              });
+              return
+            }
+            params["PortLimits." + i + ".Protocol"] = this.tags[i].Protocol; //协议，取值范围[tcp,udp,icmp,all]
+            params["PortLimits." + i + ".Kind"] = this.tags[i].Kind; //取值[0（目的端口范围禁用）， 1（源端口范围禁用）， 2（目的和源端口范围同时禁用）]
             params["PortLimits." + i + ".DPortStart"] = portArr[0]; //开始目的端口，取值范围[0,65535]
             params["PortLimits." + i + ".DPortEnd"] = portArr[1]; //结束目的端口，取值范围[0,65535]，要求大于等于开始目的端口
             if (this.tags[i].Kind != 0) {
@@ -1050,6 +1080,14 @@ export default {
               params["PortLimits." + i + ".SPortEnd"] = portArr[1]; //结束源端口，取值范围[0,65535]，要求大于等于开始源端口
             }
             params["PortLimits." + i + ".Action"] = this.tags[i].Action; //执行动作，取值[drop(丢弃) ，transmit(转发)]
+          } else {
+            this.$message({
+              message: "端口號錯誤，未輸入有效值",
+              type: "warning",
+              showClose: true,
+              duration: 0
+            });
+            return
           }
         }
         // PacketFilters.N 报文过滤特征，当没有报文过滤时填空数组
@@ -1507,7 +1545,7 @@ export default {
     },
     // 端口再次輸入失敗修復
     updateView(e) {
-    this.$forceUpdate()
+      this.$forceUpdate()
     } 
   }
 };

@@ -3,7 +3,7 @@
   <div class="left">
     <div class="left-main border">
       <div class="seek" style="">
-        <el-select v-model="projectSelectedOption">
+        <el-select v-model="projectSelectedOption" @change="changeProject">
           <el-option
             v-for="item in projectOptions"
             :key="item.projectId"
@@ -29,7 +29,7 @@
           <el-button
             slot="append"
             icon="el-icon-search"
-            @click=""
+            @click="changeSearch"
           ></el-button>
         </el-input>
       </div>
@@ -46,23 +46,156 @@
           width="55"
         ></el-table-column>
         <el-table-column :label="headConfig.title1" width="120">
-          <template slot-scope="scope">
+          <template v-if="productValue == 'cvm_device'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+              {{ scope.row.InstanceId }}
             </p>
             <p>{{ scope.row.InstanceName }}</p>
+            <p>sadsadas</p>
           </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>
+							{{scope.row.VpnGatewayId}}
+						</p>
+						<p>{{scope.row.VpnGatewayName}}</p>
+					</template>
+					<template v-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.VpnConnectionId}}
+            </p>
+            <p>{{scope.row.VpnConnectionName}}</p>
+					</template>
+					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						<p>
+						  {{scope.row.natId}}
+						</p>
+						<p>{{scope.row.natName}}</p>
+					</template>
+					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+            <p>
+							{{scope.row.directConnectGatewayId}}
+						</p>
+						<p>{{scope.row.directConnectGatewayName}}</p>
+					</template>
+					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
+            <p>
+              {{scope.row.AddressId}}
+            </p>
+					</template>
+					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>
+              {{scope.row.instanceId}}
+            </p>
+            <p>{{scope.row.instanceName}}</p>
+					</template>
+					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.Name}}</p>
+					</template>
         </el-table-column>
-        <el-table-column :label="headConfig.title2" width="120"
-          >VPC 网络</el-table-column
-        >
+        <el-table-column :label="headConfig.title2" width="120">
+          <template v-if="productValue === 'cvm_device'">
+						VPC 网络
+          </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>运行</p>
+					</template>
+					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.unVpcId}}
+            </p>
+            <p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						运行中
+					</template>
+					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+            不支持
+					</template>
+					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
+            <p>{{scope.row.AddressIp}}</p>
+					</template>
+					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>
+              {{scope.row.vip}}
+            </p>
+            <p>{{scope.row.vport}}</p>
+					</template>
+					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.LocationName}}</p>
+					</template>
+        </el-table-column>
         <el-table-column :label="headConfig.title3" width="120">
-          <template slot-scope="scope">
-            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+          <template v-if="productValue === 'cvm_device'" slot-scope="scope">
+            <!-- <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
             <p class="out">
               {{ scope.row.PublicIpAddresses[0] }}(外网)
-            </p>
+            </p> -->
           </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.unVpnGwId}}
+            </p>
+            <p>{{scope.row.vpnGwName}}</p>
+					</template>
+					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						<p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+            <p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>VPC</p>
+					</template>
+					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.CreateDate | CreateDate}}</p>
+					</template>
+        </el-table-column>
+        <el-table-column v-if="productValue === 'nat_tc_stat' || productValue === 'cdb_detail'">
+          <template v-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+            最大并发连接数{{scope.row.maxConcurrent}}
+					</template>
+          <template v-if="productValue === 'cdb_detail'" slot-scope="scope">
+            主实例
+					</template>
         </el-table-column>
       </el-table>
     </div>
@@ -78,38 +211,160 @@
         height="450"
         class="table-left"
       >
+        <el-table-column
+          type="selection"
+          width="55"
+        ></el-table-column>
         <el-table-column :label="headConfig.title1" width="120">
-          <template slot-scope="scope">
+          <template v-if="productValue === 'cvm_device'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+              {{ scope.row.InstanceId }}
             </p>
             <p>{{ scope.row.InstanceName }}</p>
           </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>
+							{{scope.row.unVpnGwId}}
+						</p>
+						<p>{{scope.row.vpnGwName}}</p>
+					</template>
+					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.unVpnConnId}}
+            </p>
+            <p>{{scope.row.vpnConnName}}</p>
+					</template>
+					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						<p>
+							{{scope.row.natId}}
+						</p>
+						<p>{{scope.row.natName}}</p>
+					</template>
+					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+            <p>
+							{{scope.row.directConnectGatewayId}}
+						</p>
+						<p>{{scope.row.directConnectGatewayName}}</p>
+					</template>
+					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
+            <p>
+              {{scope.row.AddressId}}
+            </p>
+					</template>
+					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>
+              {{scope.row.instanceId}}
+            </p>
+            <p>{{scope.row.instanceName}}</p>
+					</template>
+					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.Name}}</p>
+					</template>
         </el-table-column>
-        <el-table-column :label="headConfig.title2" width="100"
-          >VPC 网络</el-table-column
-        >
-        <el-table-column :label="headConfig.title3" width="170">
-          <template slot-scope="scope">
-            <div class="resses">
-              <div>
-                <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                <p class="out">
-                  {{ scope.row.PublicIpAddresses[0] }}(外网)
-                </p>
-              </div>
-            </div>
+        <el-table-column :label="headConfig.title2" width="120">
+          <template v-if="productValue == 'cvm_device'">
+						VPC 网络
           </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>运行</p>
+					</template>
+					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.unVpcId}}
+            </p>
+            <p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						运行中
+					</template>
+					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+            不支持
+					</template>
+					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
+            <p>{{scope.row.AddressIp}}</p>
+					</template>
+					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>
+              {{scope.row.vip}}
+            </p>
+            <p>{{scope.row.vport}}</p>
+					</template>
+					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.LocationName}}</p>
+					</template>
         </el-table-column>
-        <el-table-column width="50">
-          <template slot-scope="scope">
-            <div class="resses">
-              <i
-                class="el-icon-error ml5"
-                @click="DeleteList(scope.row)"
-              ></i>
-            </div>
+        <el-table-column :label="headConfig.title3" width="120">
+          <template v-if="productValue === 'cvm_device'" slot-scope="scope">
+            <!-- <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+            <p class="out">
+              {{ scope.row.PublicIpAddresses[0] }}(外网)
+            </p> -->
           </template>
+					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
+						<p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+            <p>
+              {{scope.row.unVpnGwId}}
+            </p>
+            <p>{{scope.row.vpnGwName}}</p>
+					</template>
+					<template v-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+						<p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-if="productValue === 'DC_GW'" slot-scope="scope">
+            <p>
+							{{scope.row.unVpcId}}
+						</p>
+						<p>{{scope.row.vpcName}}</p>
+					</template>
+					<template v-if="productValue === 'cdb_detail'" slot-scope="scope">
+            <p>VPC</p>
+					</template>
+					<template v-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+
+					</template>
+					<template v-if="productValue === 'dcchannel'" slot-scope="scope">
+
+					</template>
+					<template v-if="productValue === 'dcline'" slot-scope="scope">
+
+					</template>
+					<template v-if="productValue === 'COS'" slot-scope="scope">
+            <p>{{scope.row.CreateDate | CreateDate}}</p>
+					</template>
+        </el-table-column>
+        <el-table-column v-if="productValue === 'nat_tc_stat' || productValue === 'cdb_detail'">
+          <template v-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+            最大并发连接数{{scope.row.maxConcurrent}}
+					</template>
+          <template v-if="productValue === 'cdb_detail'" slot-scope="scope">
+            主实例
+					</template>
         </el-table-column>
       </el-table>
     </div>
@@ -123,6 +378,7 @@ import {
   CM_GROUPING_NEWLY_BUILD
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
+import moment from 'moment'
 export default {
   name: 'CamTransferCpt',
   data() {
@@ -140,6 +396,7 @@ export default {
       searchInput: '', //搜索内容
       loadSign: true,
       tableData: [],
+      productValue: '',//产品类型
       searchItemOptions: [],
       headConfig: {
         title1: '',
@@ -148,19 +405,57 @@ export default {
       }
     }
   },
-  props: ['productListData'],
-  watch: {
-    productListData() {
-      console.log(this.productListData)
-      this.tableData = this.productListData.Date;
-      this.searchItemOptions = this.productListData.SearchConfig;
-      this.headConfig = this.productListData.HeadConfig;
+	props: {
+    productData: {
+      required: true,
+      type: Object
     }
+  },
+  watch: {
+    // productData() {
+    //   console.log(value);
+    //   // console.log(value)
+    //   // this.tableData = this.productData.Date;
+    //   // this.searchItemOptions = this.productData.SearchConfig;
+    //   // this.headConfig = this.productData.HeadConfig;
+    //   // this.productValue = this.productData.productValue;
+		// },
+		productData: {
+			handler(value, oldValue){
+        if(JSON.stringify(value) !== '{}') {
+          this.tableData = value.Date;
+          this.searchItemOptions = value.SearchConfig;
+          this.headConfig = value.HeadConfig;
+          this.productValue = value.productValue;
+          console.log('this.tableData', this.tableData)
+          console.log('this.searchItemOptions',this.searchItemOptions)
+          console.log('this.headConfig',this.headConfig)
+          console.log('this.productValue',this.productValue)
+        }
+				// console.log(value)
+				
+			},
+      deep: true,
+      immediate: true
+    }
+    
+  },
+  computed: {
   },
   mounted() {
     this.getProjectList();
   },
   methods: {
+    //选择项目
+    changeProject() {
+      this.$emit("projectId", this.projectSelectedOption);
+    },
+    changeSearch() {
+      let searchParam = {};
+      searchParam.value = this.searchInput;
+      searchParam.label = this.searchItem;
+      this.$emit("searchParam", searchParam);
+    },
     /* async getListData() {
       let param = {
         Version: "2017-03-12",
@@ -262,6 +557,13 @@ export default {
       }
     }
   },
+  filters: {
+    CreateDate(val) {
+      if(val) {
+        return moment(val).format('YYYY-MM-DD HH :mm:ss');
+      }
+    }
+  },
   directives: {
     loadmore: {
       bind(el, binding) {
@@ -278,6 +580,7 @@ export default {
     }
   }
 }
+
 </script>
 <style lang="scss" scoped>
 .main {
