@@ -2,10 +2,18 @@
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
       <el-select v-model="panelValue" :placeholder="$t('CVM.Dashboard.qxz')" style="margin:0 20px 0 40px;width:260px">
-        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" @mouseover.native="mouseoverSelect(item.value)">
+            <span style="float: left">{{ item.label }}</span>
+            <div class="slot-button-div" style="float: right" v-if="item.value == selectButtonShow">
+               <el-button type="text" style="padding: 0" @click="handleRenameControl(item.value)">重命名</el-button>  
+               <el-button type="text" style="padding: 0">删除</el-button>  
+            </div>
+        </el-option>
       </el-select>
       <a class="addPanel" style="font-size:12px;font-weight:20" @click="addPanel">{{$t('CVM.Dashboard.tjjkmb')}}</a>
       <AddPanel :dialogVisible.sync="panelFlag" @cancel="cancel" @save="save" />
+      <!-- 重名名监控面板弹框 -->
+      <RenameControlPanel ref="renameControlPanel" :name="this.renameControlName" />
     </Header>
     <div class="Dashboard-main">
       <div class="explain">
@@ -76,6 +84,7 @@
 import Header from "@/components/public/Head";
 import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
 import AddPanel from "./components/AddPaneldialog";
+import RenameControlPanel from "./components/renameControlPanel";
 import {
   GET_DASHBOARD_LIST
 } from "@/constants";
@@ -153,14 +162,17 @@ export default {
       value1: "所有專案",
       value2: "所有專案",
       value3: "",
-      showChartEdit: false // 添加图表的弹窗
+      showChartEdit: false, // 添加图表的弹窗
+      selectButtonShow: '', // 下拉框按钮是否展示
+      renameControlName: '', // 重命名监控面板名称
     };
   },
   components: {
     ChartEdit,
     Header,
     TimeDropDown,
-    AddPanel
+    AddPanel,
+    RenameControlPanel
   },
   created() {
     this.getDashboardList(); // 获取Dashboard列表数据
@@ -282,6 +294,16 @@ export default {
           });
         }
       })
+    },
+    // 下拉框显示按钮
+    mouseoverSelect(itemVal) {
+       this.selectButtonShow = itemVal;
+       console.log(this.selectButtonShow, 'this.selectButtonShow', itemVal);
+    },
+    // 重命名
+    handleRenameControl(name) {
+        this.$refs.renameControlPanel.show = true;
+        this.renameControlName = name;
     }
 
     // //取消
@@ -436,6 +458,12 @@ export default {
           }
         }
       }
+    }
+  }
+
+  .Dashboard-wrap {
+    .slot-button-div {
+      background-color: #bfa;
     }
   }
 

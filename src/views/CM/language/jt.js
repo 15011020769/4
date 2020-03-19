@@ -171,7 +171,8 @@ module.exports = {
       fzhong: '分钟',
       cjjkmb: '创建监控面板',
       mcheng: '名称',
-      qd: '确 定'
+      qd: '确 定',
+      cmmjkmb: '重命名监控面板'
     },
     overview: {
       syysy: '剩余1000条/已使用0条',
