@@ -11,7 +11,6 @@
     <Echart :xAxis="xAxis" :series="series" :legendText="legendText" v-loading="loading"/>
     <div class="table">
       <h3>月度消費量</h3>
-      <!-- <el-button @click="exportExcel">导出表格</el-button> -->
       <el-table
         :data="tableData"
         style="width: 100%;margin-top:20px;"
@@ -70,27 +69,6 @@ export default {
     this.getCharts();
   },
   methods: {
-    // exportExcel() {
-    //     /* generate workbook object from table */
-    //     var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"));
-    //     /* get binary string as output */
-    //     var wbout = XLSX.write(wb, {
-    //       bookType: "xlsx",
-    //       bookSST: true,
-    //       type: "array"
-    //     });
-    //     try {
-    //       FileSaver.saveAs(
-    //         new Blob([wbout], {
-    //           type: "application/octet-stream"
-    //         }),
-    //         this.$t("CVM.cloudDisk.yyp") + ".xlsx"
-    //       );
-    //     } catch (e) {
-    //       if (typeof console !== "undefined") console.log(e, wbout);
-    //     }
-    //     return wbout;
-    //   },
     exportEchart() {
       const ws = XLSX.utils.json_to_sheet(this.line_json);/* 新建空workbook，然后加入worksheet */
       const wb = XLSX.utils.book_new();/*新建book*/

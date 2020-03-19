@@ -58,17 +58,6 @@
           </el-dropdown-menu>
         </el-dropdown>
       </p>
-      <p style="margin-left:20px;">
-        <span>選擇運營商</span>
-        <el-select v-model="operator" placeholder="请选择" style="margin-left:10px;">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>
-      </p>
       <el-button type="primary" style="margin-left:20px;">{{region}}</el-button>
       <el-button style="margin-left:20px;" type="primary" @click="search">查詢</el-button>
     </div>
@@ -100,7 +89,6 @@
         <Tab1
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 0"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -109,7 +97,6 @@
         <Tab2
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 1"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -118,7 +105,6 @@
         <Tab3
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 2"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -127,7 +113,6 @@
         <Tab4
           :StartTIme="StartTIme"
           :EndTIme="EndTIme"
-          :operator="operator"
           v-if="tabIndex == 3"
           :domainsData="domainsData"
           :domainCheckedListCopy="domainCheckedListCopy"
@@ -151,7 +136,6 @@ export default {
   name: "operation",
   data() {
     return {
-      operator: "",
       domainsData: [],
       domainCheckedList: [],
       domainCheckedListCopy: [],
@@ -173,24 +157,6 @@ export default {
           label: "中國移動"
         },
       ],
-      // options: [
-      //   {
-      //     value: "",
-      //     label: "全部運營商"
-      //   },
-      //   {
-      //     value: "Chunghwa Telecom",
-      //     label: "中华电信"
-      //   },
-      //   {
-      //     value: "Taiwan Mobile",
-      //     label: "台湾大哥大"
-      //   },
-      //   {
-      //     value: "Far EasTone",
-      //     label: "远传电信"
-      //   },
-      // ],
       domain: [],
       value: 1, //时间组件默认选中值
       region: "台灣台北", //地域
@@ -307,49 +273,43 @@ export default {
       this.tabIndex = index;
     },
     getTotal() {
-      const params = {
+      const params1 = {
         Version: "2018-08-01",
         StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
         EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
         Granularity: 60,
         "CountryOrAreaNames.0": "Taiwan"
       };
+      const params2 = {
+        Version: "2018-08-01",
+        StartTime: moment(this.StartTIme).format("YYYY-MM-DD HH:mm:ss"),
+        EndTime: moment(this.EndTIme).format("YYYY-MM-DD HH:mm:ss"),
+        Granularity: 60,
+        MainlandOrOversea: "Oversea",
+      };
       if (this.domainCheckedListCopy.length !== this.domainsData.length) {
         this.domainCheckedListCopy.forEach((item, index) => {
-          params["PlayDomains." + index] = item;
+          params1["PlayDomains." + index] = item;
+          params2["PlayDomains." + index] = item;
         });
       }
-      //  if (this.operator) {
-        // params["IspNames.0"] = this.operator // 运营商暂不做
-        this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
-          if (res.Response.Error) {
-            this.$message.error(res.Response.Error.Message);
-          } else {
-            this.tab[0].value = res.Response.MaxBandwidth
-            this.tab[1].value = res.Response.TotalFlux
-            this.tab[2].value = res.Response.TotalRequest
-            this.tab[3].value = res.Response.MaxOnline
-          }
-        });
-      // }
-      // else {
-      //   this.axios.post(CSS_MBPS, params).then(res => {
-      //     if (res.Response.Error) {
-      //       this.$message.error(res.Response.Error.Message);
-      //     } else {
-      //       this.tab[0].value = res.Response.PeakBandwidth
-      //       this.tab[1].value = res.Response.SumFlux
-      //     }
-      //   });
-      //   this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params).then(res => {
-      //     if (res.Response.Error) {
-      //       this.$message.error(res.Response.Error.Message);
-      //     } else {
-      //       this.tab[2].value = res.Response.TotalRequest
-      //       this.tab[3].value = res.Response.MaxOnline
-      //     }
-      //   });
-      // }
+      // 不查运营商 看腾讯页面0和1的数据请求CSS_MBPS，2和3的数据请求DESCRIBE_PLAY_STAT_INFOLIST
+      this.axios.post(CSS_MBPS, params2).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          this.tab[0].value = res.Response.PeakBandwidth
+          this.tab[1].value = res.Response.SumFlux
+        }
+      });
+      this.axios.post(DESCRIBE_PLAY_STAT_INFOLIST, params1).then(res => {
+        if (res.Response.Error) {
+          this.$message.error(res.Response.Error.Message);
+        } else {
+          this.tab[2].value = res.Response.TotalRequest
+          this.tab[3].value = res.Response.MaxOnline
+        }
+      });
     },
     checkDomainAll(checked) {
       if (checked) {
