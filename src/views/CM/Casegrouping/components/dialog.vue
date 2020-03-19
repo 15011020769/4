@@ -73,6 +73,7 @@ export default {
       projectId: '',
       searchParam: {},
       productData: {},
+      isShow: false,
     };
   },
   components: {
@@ -104,7 +105,16 @@ export default {
       this.$emit("close", false);
     },
     passData(data) {
+      this.isShow = false;
       this.productListData = data;
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
     },
     projectIds(data) {
       this.projectId = data;

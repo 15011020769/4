@@ -34,7 +34,7 @@
         </el-input>
       </div>
       <el-table
-        :data="productData.Date"
+        :data="tableData"
         height="420"
         ref="multipleTable"
         @selection-change="handleSelectionChange"
@@ -46,44 +46,45 @@
           width="55"
         ></el-table-column>
         <el-table-column :label="headConfig.title1" width="120">
-          <template v-if="productValue === 'cvm_device'" slot-scope="scope">
+          <template v-if="productValue == 'cvm_device'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+              {{ scope.row.InstanceId }}
             </p>
             <p>{{ scope.row.InstanceName }}</p>
+            <p>sadsadas</p>
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpnGwId}}</a>
+							{{scope.row.VpnGatewayId}}
 						</p>
-						<p>{{scope.row.vpnGwName}}</p>
+						<p>{{scope.row.VpnGatewayName}}</p>
 					</template>
-					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+					<template v-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpnConnId}}</a>
+              {{scope.row.VpnConnectionId}}
             </p>
-            <p>{{scope.row.vpnConnName}}</p>
+            <p>{{scope.row.VpnConnectionName}}</p>
 					</template>
 					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.natId}}</a>
+						  {{scope.row.natId}}
 						</p>
 						<p>{{scope.row.natName}}</p>
 					</template>
 					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
             <p>
-							<a href="javascript:;">{{scope.row.directConnectGatewayId}}</a>
+							{{scope.row.directConnectGatewayId}}
 						</p>
 						<p>{{scope.row.directConnectGatewayName}}</p>
 					</template>
 					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{scope.row.AddressId}}</a>
+              {{scope.row.AddressId}}
             </p>
 					</template>
 					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{scope.row.instanceId}}</a>
+              {{scope.row.instanceId}}
             </p>
             <p>{{scope.row.instanceName}}</p>
 					</template>
@@ -97,11 +98,11 @@
 
 					</template>
 					<template v-else-if="productValue === 'COS'" slot-scope="scope">
-            <p><a href="javascript:;">{{scope.row.Name}}</a></p>
+            <p>{{scope.row.Name}}</p>
 					</template>
         </el-table-column>
         <el-table-column :label="headConfig.title2" width="120">
-          <template v-if="productValue = 'cvm_device'">
+          <template v-if="productValue === 'cvm_device'">
 						VPC 网络
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
@@ -109,7 +110,7 @@
 					</template>
 					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpcId}}</a>
+              {{scope.row.unVpcId}}
             </p>
             <p>{{scope.row.vpcName}}</p>
 					</template>
@@ -143,32 +144,32 @@
         </el-table-column>
         <el-table-column :label="headConfig.title3" width="120">
           <template v-if="productValue === 'cvm_device'" slot-scope="scope">
-            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+            <!-- <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
             <p class="out">
               {{ scope.row.PublicIpAddresses[0] }}(外网)
-            </p>
+            </p> -->
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
 					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpnGwId}}</a>
+              {{scope.row.unVpnGwId}}
             </p>
             <p>{{scope.row.vpnGwName}}</p>
 					</template>
 					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
 					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
             <p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
@@ -217,42 +218,42 @@
         <el-table-column :label="headConfig.title1" width="120">
           <template v-if="productValue === 'cvm_device'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+              {{ scope.row.InstanceId }}
             </p>
             <p>{{ scope.row.InstanceName }}</p>
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpnGwId}}</a>
+							{{scope.row.unVpnGwId}}
 						</p>
 						<p>{{scope.row.vpnGwName}}</p>
 					</template>
 					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpnConnId}}</a>
+              {{scope.row.unVpnConnId}}
             </p>
             <p>{{scope.row.vpnConnName}}</p>
 					</template>
 					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.natId}}</a>
+							{{scope.row.natId}}
 						</p>
 						<p>{{scope.row.natName}}</p>
 					</template>
 					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
             <p>
-							<a href="javascript:;">{{scope.row.directConnectGatewayId}}</a>
+							{{scope.row.directConnectGatewayId}}
 						</p>
 						<p>{{scope.row.directConnectGatewayName}}</p>
 					</template>
 					<template v-else-if="productValue === 'EIP'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{scope.row.AddressId}}</a>
+              {{scope.row.AddressId}}
             </p>
 					</template>
 					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
             <p>
-              <a href="javascript:;">{{scope.row.instanceId}}</a>
+              {{scope.row.instanceId}}
             </p>
             <p>{{scope.row.instanceName}}</p>
 					</template>
@@ -266,11 +267,11 @@
 
 					</template>
 					<template v-else-if="productValue === 'COS'" slot-scope="scope">
-            <p><a href="javascript:;">{{scope.row.Name}}</a></p>
+            <p>{{scope.row.Name}}</p>
 					</template>
         </el-table-column>
         <el-table-column :label="headConfig.title2" width="120">
-          <template v-if="productValue = 'cvm_device'">
+          <template v-if="productValue == 'cvm_device'">
 						VPC 网络
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
@@ -278,7 +279,7 @@
 					</template>
 					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpcId}}</a>
+              {{scope.row.unVpcId}}
             </p>
             <p>{{scope.row.vpcName}}</p>
 					</template>
@@ -312,48 +313,48 @@
         </el-table-column>
         <el-table-column :label="headConfig.title3" width="120">
           <template v-if="productValue === 'cvm_device'" slot-scope="scope">
-            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+            <!-- <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
             <p class="out">
               {{ scope.row.PublicIpAddresses[0] }}(外网)
-            </p>
+            </p> -->
           </template>
 					<template v-else-if="productValue === 'VPN_GW'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
-					<template v-else-if="productValue === 'vpn_tunnel'" slot-scope="scope">
+					<template v-if="productValue === 'vpn_tunnel'" slot-scope="scope">
             <p>
-              <a href="">{{scope.row.unVpnGwId}}</a>
+              {{scope.row.unVpnGwId}}
             </p>
             <p>{{scope.row.vpnGwName}}</p>
 					</template>
-					<template v-else-if="productValue === 'nat_tc_stat'" slot-scope="scope">
+					<template v-if="productValue === 'nat_tc_stat'" slot-scope="scope">
 						<p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
-					<template v-else-if="productValue === 'DC_GW'" slot-scope="scope">
+					<template v-if="productValue === 'DC_GW'" slot-scope="scope">
             <p>
-							<a href="javascript:;">{{scope.row.unVpcId}}</a>
+							{{scope.row.unVpcId}}
 						</p>
 						<p>{{scope.row.vpcName}}</p>
 					</template>
-					<template v-else-if="productValue === 'cdb_detail'" slot-scope="scope">
+					<template v-if="productValue === 'cdb_detail'" slot-scope="scope">
             <p>VPC</p>
 					</template>
-					<template v-else-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
+					<template v-if="productValue === 'REDIS-CLUSTER'" slot-scope="scope">
 
 					</template>
-					<template v-else-if="productValue === 'dcchannel'" slot-scope="scope">
+					<template v-if="productValue === 'dcchannel'" slot-scope="scope">
 
 					</template>
-					<template v-else-if="productValue === 'dcline'" slot-scope="scope">
+					<template v-if="productValue === 'dcline'" slot-scope="scope">
 
 					</template>
-					<template v-else-if="productValue === 'COS'" slot-scope="scope">
+					<template v-if="productValue === 'COS'" slot-scope="scope">
             <p>{{scope.row.CreateDate | CreateDate}}</p>
 					</template>
         </el-table-column>
@@ -421,11 +422,18 @@ export default {
 		// },
 		productData: {
 			handler(value, oldValue){
-				console.log(value)
-				this.tableData = this.productData.Date;
-				this.searchItemOptions = this.productData.SearchConfig;
-				this.headConfig = this.productData.HeadConfig;
-				this.productValue = this.productData.productValue;
+        if(JSON.stringify(value) !== '{}') {
+          this.tableData = value.Date;
+          this.searchItemOptions = value.SearchConfig;
+          this.headConfig = value.HeadConfig;
+          this.productValue = value.productValue;
+          console.log('this.tableData', this.tableData)
+          console.log('this.searchItemOptions',this.searchItemOptions)
+          console.log('this.headConfig',this.headConfig)
+          console.log('this.productValue',this.productValue)
+        }
+				// console.log(value)
+				
 			},
       deep: true,
       immediate: true
@@ -443,7 +451,6 @@ export default {
       this.$emit("projectId", this.projectSelectedOption);
     },
     changeSearch() {
-      debugger
       let searchParam = {};
       searchParam.value = this.searchInput;
       searchParam.label = this.searchItem;
