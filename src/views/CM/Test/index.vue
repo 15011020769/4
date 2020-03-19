@@ -4,10 +4,12 @@
       v-on:switchData="GetDat" />
 
     <EcharS :time='time' :series='series' :period='period' />
-    <type v-on:PassData="PassData" />
+    <type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' />
     <div style="width: 600px">
       <Cam></Cam>
     </div>
+
+    <el-button @click="ceshi">dss</el-button>
   </div>
 </template>
 <script>
@@ -142,8 +144,9 @@
           id: 'podid',
           danwei: '(次)',
           y: [2, 244, 52, 52]
-        }]
-
+        }],
+        projectId: '',
+        searchParam: {}
       }
     },
     components: {
@@ -204,6 +207,13 @@
 
           }
         });
+      },
+      ceshi() {
+        this.projectId = '0'
+        // this.searchParam = {
+        //   value: "ins-6oz38wnu",
+        //   label: "instance-id"
+        // }
       }
     },
   }

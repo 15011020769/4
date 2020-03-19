@@ -40,25 +40,33 @@
     </el-card>
     <el-card class="card3">
       <h4 class="title-text">关联告警策略</h4>
-      <el-table border :data="groupList">
-        <el-table-column label="策略名称" prop="groupName"></el-table-column>
-        <el-table-column label="所属项目"></el-table-column>
+      <el-table :data="infoData.PolicyGroups">
+        <el-table-column label="策略名称" prop="GroupName"></el-table-column>
+        <el-table-column label="所属项目">
+          <template slot-scope="scope">
+            {{ scope.row.ProjectID | ProjectName }}
+          </template>
+        </el-table-column>
         <el-table-column label="已启用/实例数">
            <template slot-scope="scope">
-              <p>{{scope.row.useSum+' / '+scope.row.noShieldedSum}}</p>
-              <p>{{'组: '+scope.row.instanceGroup.groupName}}</p>
+              <p>{{scope.row.TotalInstanceCount+' / '+scope.row.NoShieldedInstanceCount}}</p>
+              <!-- <p>{{'组: '+scope.row.instanceGroup.groupName}}</p> -->
            </template>
         </el-table-column>
         <el-table-column label="告警渠道">
-          <template slot-scope="scope" v-if="groupList.receiverInfos.length>0">
-            <p>{{'接收组: '+scope.row.receiverGroup}}</p>
-            <p>{{'有效期:00:00:00 - 23:59:59'}}</p>
-            <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it}}</span></p>
+          <template slot-scope="scope">
+            <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
+              <!-- +item.ReceiverGroupList.length||0 -->
+              <p>接收组:{{item.ReceiverGroupList?item.ReceiverGroupList.length+'个':'0个'}}</p>
+              <p>{{'有效期:00:00:00 - 23:59:59'}}</p>
+              <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
+              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">{{key+' '|notifyChannel}}</span></p>
+            </div>
           </template>
-          <span v-else>{{'-'}}</span>
+          <!-- <span v-else>{{'-'}}</span> -->
         </el-table-column>
       </el-table>
-      <div class="number">共 {{total}} 项</div>
+      <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 项</div>
     </el-card>
     <!-- 修改名称弹框 -->
     <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改条件模板名称">
@@ -104,7 +112,7 @@
             <div class="color">
               <p>
                 <span>满足</span>
-                <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:90px;margin:0 5px;" size="small">
+                <el-select :disabled="isDisabled" v-model="UnionRule" style="width:90px;margin:0 5px;" size="small">
                   <el-option
                     v-for="(item,index) in meetConditions"
                     :key="index"
@@ -150,8 +158,8 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
+                      <!-- placeholder="指标" -->
                     <input :disabled="isDisabled"
-                      placeholder="指标"
                       style="height: 30px;line-height: 30px;padding:0 10px;width:60px;border: 1px solid #dcdfe6;"
                       value="0"
                       v-model="it.CalcValue"
@@ -225,7 +233,7 @@
                 <i class="rubbish-icon"></i>
               </ul>
             </div>
-            <p class="red-text">该告警触发条件模板已经关联了0个策略，若修改，修改内容将应用到所有已关联的告警策略上</p>
+            <p class="red-text">{{`该告警触发条件模板已经关联了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}个策略，若修改，修改内容将应用到所有已关联的告警策略上`}}</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
@@ -243,7 +251,8 @@ import {
   GET_POLICY_GROUP_TYPE,
   DESCRIBE_METRICS,
   GET_CONDITIONSTEMPLATELIST,
-  MODIFYPOLICYGROUPINFO
+  MODIFYPOLICYGROUPINFO,
+  GET_PROJECTNAME
 } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
@@ -331,8 +340,11 @@ export default {
       eventAry: [], // 事件告警数组
       conditionsData: [], // 触发条件数据
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
+      UnionRule: '任意', // 双向绑定的满足条件
       groupList: [], // 策略组列表
-      channelList: [] // 渠道列表
+      channelList: [], // 渠道列表
+      PolicyGrouplist: [], // 关联政策组列表
+      allProjectName: []// 项目名称列表
     }
   },
   components: {
@@ -345,6 +357,7 @@ export default {
   methods: {
     async getInfo () {
       await this.getPolicyType()
+      await this.getProjectName()
       await this.getDetailInfo()
       // await this.getPolicyGroupList()
     },
@@ -375,6 +388,27 @@ export default {
         }
       })
     },
+    // 获取项目名称
+    async getProjectName () {
+      this.axios.get(GET_PROJECTNAME).then(res => {
+        if (res.codeDesc === 'Success') {
+          // console.log(res)
+          this.allProjectName = res.data
+        } else {
+          let ErrTips = {
+            InternalError: '内部错误',
+            UnauthorizedOperation: '未授权操作'
+          }
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+        }
+      })
+    },
     // 获取详情数据
     async getDetailInfo () {
       this.loadShow = true
@@ -389,14 +423,13 @@ export default {
           var msg = res.Response.TemplateGroupList
           // this.conditionsData = msg[0]
           let ct = this.Conditions
-          for (let i in msg) {
-            for (let j in ct) {
-              if (msg[i].ViewName === ct[j].PolicyViewName) {
-                msg[i]['Name'] = ct[j].Name
+          msg.forEach((ele, i) => {
+            ct.forEach((k, j) => {
+              if (ele.ViewName === k.PolicyViewName) {
+                ele['Name'] = k.Name
               }
-            }
-          }
-          msg.forEach(ele => {
+            })
+            this.indexAry = ele.Conditions// 编辑触发条件
             ele.Conditions.forEach((item, i) => {
               let ct = Number(item.CalcType)
               item.CalcType = this.SymbolList[ct - 1]
@@ -408,21 +441,27 @@ export default {
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重复告警'
+                this.indexAry[i].alarm = '不重复'// 编辑触发条件
               } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指数递增重复告警'
+                this.indexAry[i].alarm = '周期指数递增'// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
                 item.alarm = `按${time1}分钟重复告警`
+                this.indexAry[i].alarm = `每${time1}分钟警告一次`// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小时重复告警`
+                this.indexAry[i].alarm = `每${time2}小时警告一次`// 编辑触发条件
               } else {
                 item.alarm = '按1天重复告警'
+                this.indexAry[i].alarm = '每1天重复告警'// 编辑触发条件
               }
             })
-            // if(ele.IsUnionRule===0){
-
-            // }
+            if (ele.IsUnionRule === 0) { // 编辑触发条件
+              this.UnionRule = '任意'
+            } else if (ele.IsUnionRule === 1) {
+              this.UnionRule = '所有'
+            }
             this.infoData = ele
-            this.indexAry = ele.Conditions// 编辑触发条件
             this.eventAry = ele.EventConditions// 编辑触发条件
           })
           // this.infoData = msg[0]
@@ -555,7 +594,8 @@ export default {
     },
     // 格式化时间
     upTime (value) {
-      return moment(value).format('YYYY/MM/DD HH :mm:ss')
+      // return moment(value).format('YYYY/MM/DD HH :mm:ss')
+      return moment(value).format('HH :mm:ss')
     },
     // 告警触发条件弹框(未完成)
     openEdit () {
@@ -565,48 +605,17 @@ export default {
         namespace: 'qce/cvm'
       }
       this.axios.post(DESCRIBE_METRICS, params).then(res => {
-        console.log(res)
+        // console.log(res)
       })
     },
     addZhibiao () { // 添加触发条件的指标告警
       this.indexAry.push(
         {
-          jieshou: '接收组',
-          jieshouArr: [
-            { value: '0', name: '接收组' },
-            {
-              value: '1',
-              name: '接收人'
-            }
-          ],
-          apiStr: 'http', // 接口回调
-          apiArr: [
-            {
-              value: 0,
-              name: 'http'
-            },
-            {
-              value: 1,
-              name: 'https'
-            }
-          ], // 接口回调数据
-          strategy_name: '', // 策略名称
-          textareas: '', // 备注
-          strategy: '云服务器-基础监控',
-          strategy_kind: [
-            {
-              value: 0,
-              name: '云服务器-基础监控'
-            }
-          ], // 策略类型
-          alarm: '', // 策略类型
-          projectName: '默认项目',
-          project: [
-            {
-              value: 0,
-              name: '默认项目'
-            }
-          ]
+          Period: '统计周期1分钟',
+          CalcType: '>',
+          CalcValue: '0',
+          ContinuePeriod: '持续1个周期',
+          alarm: '每1天警告一次'
         }
       )
     },
@@ -680,6 +689,29 @@ export default {
       let s = date.getSeconds()
       s = s < 10 ? '0' + s : s
       return y + '/' + MM + '/' + d + ' ' + h + ':' + m + ':' + s
+    },
+    ProjectName (val) {
+      if (val == 0) {
+        return '默认项目'
+      }
+      if (this.allProjectName) {
+        for (let i in this.allProjectName) {
+          if (val == this.allProjectName[i].projectId) {
+            return this.allProjectName[i].projectName
+          }
+        }
+      }
+    },
+    notifyChannel (val) {
+      if (val === 'EMAIL') {
+        return '邮件'
+      } else if (val === 'SMS') {
+        return '短信'
+      } else if (val === 'WECHAT') {
+        return '微信'
+      } else if (val === 'CALL') {
+        return '电话'
+      }
     }
   }
 }

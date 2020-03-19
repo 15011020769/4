@@ -214,6 +214,7 @@
   export default {
     data() {
       return {
+        WEiY: false,
         placeholder: "請輸入內容",
         value1: "", // 日历
         startTime: "", //  搜索 --> 默认开始时间
@@ -227,6 +228,7 @@
         DownShow: true,
         MaxResults: 10,
         NextToken: false,
+        NextToken1: '',
         vloading: true,
         pickerOptions: {
           disabledDate(time) {
@@ -346,7 +348,7 @@
           MaxResults: this.MaxResults
         };
         if (this.NextToken === true) {
-          params['NextToken'] = '8610fb545ee4a8581f463897af02375a'
+          params['NextToken'] = this.NextToken1
         }
         if (this.input3 !== '') {
           if (
@@ -371,9 +373,14 @@
           if (res.Response.Error === undefined) {
             this.NextToken = false
             this.tableData = this.tableData.concat(res.Response.Events);
-            console.log(this.tableData)
+            this.NextToken1 = res.Response.NextToken
             this.loading = false;
             this.vloading = false;
+            if (this.tableData.length === 1) {
+              this.Show = false
+            } else {
+              this.Show = true
+            }
           } else {
             let ErrTips = {
               "InternalError.SearchError": "內部錯誤，請聯繫開發人員",

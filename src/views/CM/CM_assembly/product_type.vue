@@ -24,59 +24,73 @@
     ErrorTips
   } from '@/components/ErrorTips'
   export default {
+    props: {
+      projectId: {
+        required: true,
+        type: String
+      },
+      searchParam: {
+        required: true,
+        type: Object
+      },
+    },
     data() {
       return {
-        productOptions: [
-
-          {
-            label: '云服务器',
-            viewName: 'cvm_device',
-          }, {
-            label: 'VPN网关',
-            viewName: 'VPN_GW',
-          }, {
-            label: 'VPN通道',
-            viewName: 'vpn_tunnel',
-          }, {
-            label: 'NAT网关',
-            viewName: 'nat_tc_stat',
-          }, {
-            label: '专线网关',
-            viewName: 'DC_GW',
-          }, {
-            label: '弹性公网IP',
-            viewName: 'EIP',
-          }, {
-            label: 'MYSQL',
-            viewName: 'cdb_detail',
-          }, {
-            label: 'Redis',
-            viewName: 'REDIS-CLUSTER',
-          }, {
-            label: '专用通道',
-            viewName: 'dcchannel',
-          }, {
-            label: '物理专线',
-            viewName: 'dcline',
-          }, {
-            label: '对象存储',
-            viewName: 'COS',
-          }
-        ],
+        productOptions: [{
+          label: '云服务器',
+          viewName: 'cvm_device',
+        }, {
+          label: 'VPN网关',
+          viewName: 'VPN_GW',
+        }, {
+          label: 'VPN通道',
+          viewName: 'vpn_tunnel',
+        }, {
+          label: 'NAT网关',
+          viewName: 'nat_tc_stat',
+        }, {
+          label: '专线网关',
+          viewName: 'DC_GW',
+        }, {
+          label: '弹性公网IP',
+          viewName: 'EIP',
+        }, {
+          label: 'MYSQL',
+          viewName: 'cdb_detail',
+        }, {
+          label: 'Redis',
+          viewName: 'REDIS-CLUSTER',
+        }, {
+          label: '专用通道',
+          viewName: 'dcchannel',
+        }, {
+          label: '物理专线',
+          viewName: 'dcline',
+        }, {
+          label: '对象存储',
+          viewName: 'COS',
+        }],
         productValue: 'cvm_device',
         Date: [], //各个产品数组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置
         Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
         MetricName: [],
-
+        id: '',
         Pass: {}
       }
     },
     watch: {
       productValue() {
         this._switchType()
+      },
+      projectId() {
+        this._switchType()
+      },
+      searchParam() {
+        this._switchType()
       }
+
     },
     created() {
       this._switchType()
@@ -89,6 +103,7 @@
         this.Pass.SearchConfig = this.SearchConfig
         this.Pass.Namespace = this.Namespace
         this.Pass.MetricName = this.MetricName
+        this.Pass.id = this.id
         this.$emit("PassData", this.Pass);
       },
       _switchType() {
@@ -120,9 +135,35 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.projectId !== "") {
+          if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+            console.log(this.searchParam.label)
+            parms["Filters.0.Name"] = this.searchParam.label;
+            parms["Filters.0.Values.0"] = this.searchParam.value;
+            parms["Filters.1.Name"] = 'project-id';
+            parms["Filters.1.Values.0"] = this.projectId;
+          } else {
+            parms["Filters.0.Name"] = 'project-id';
+            parms["Filters.0.Values.0"] = this.projectId;
+          }
+        }
+
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          if (this.projectId !== "") {
+            parms["Filters.0.Name"] = this.searchParam.label;
+            parms["Filters.0.Values.0"] = this.searchParam.value;
+            parms["Filters.1.Name"] = 'project-id';
+            parms["Filters.1.Values.0"] = this.projectId;
+          } else {
+            parms["Filters.0.Name"] = this.searchParam.label;
+            parms["Filters.0.Values.0"] = this.searchParam.value;
+          }
+        }
+
         this.axios.post(CVM_LIST, parms).then(data => {
+          this.id = 'cvm'
           this.Date = data.Response.InstanceSet
-          this.Namespace = 'QCE/CVM'
+          this.Namespace = 'qce/cvm'
           this.SearchConfig = [{
               value: "instance-id",
               label: "實例ID"
@@ -146,88 +187,59 @@
             title3: 'IP地址'
           }
           this.MetricName = [{
-              label: '内网出带宽',
-              value: 'LanOuttraffic'
-            }, {
-              label: '内网入带宽',
-              value: 'LanIntraffic'
-            },
-            {
-              label: '内网出包量',
-              value: 'LanOutpkg'
-            },
-            {
-              label: '内网入包量',
-              value: 'LanInpkg'
-            },
-            {
-              label: '外网出带宽',
-              value: 'WanOuttraffic'
-            },
-            {
-              label: '外网入带宽',
-              value: 'WanIntraffic'
-            }, {
-              label: '外网出流量',
-              value: 'AccOuttraffic'
-            },
-            {
-              label: '外网出包量',
-              value: 'WanOutpkg'
-            },
-            {
-              label: '外网入包量',
-              value: 'WanInpkg'
-            },
-            {
-              label: 'CPU使用率',
-              value: 'CpuUsage'
+              label: 'CPU使用率%',
+              value: 'cpu_usage'
             }, {
               label: 'CPU平均负载',
-              value: 'CpuLoadavg'
+              value: 'cpu_loadavg'
+            }, {
+              label: '基础CPU使用率%',
+              value: 'base_cpu_usage'
             },
             {
-              label: '内存使用量',
-              value: 'MemUsed'
+              label: '内存使用量(MB)',
+              value: 'mem_used'
             }, {
-              label: '内存利用率',
-              value: 'MemUsage'
+              label: '内存利用率%',
+              value: 'mem_usage'
             },
             {
-              label: 'TCP连接数',
-              value: 'TcpCurrEstab'
+              label: '内网出带宽(Mbps)',
+              value: 'lan_outtraffic'
             }, {
-              label: '基础CPU使用率',
-              value: 'BaseCpuUsage'
+              label: '内网入带宽(Mbps)',
+              value: 'lan_intraffic'
             },
             {
-              label: 'CPU平均负载',
-              value: 'Cpuloadavg15m'
-            }, {
-              label: 'CPU平均负载',
-              value: 'Cpuloadavg5m'
+              label: '内网出包量(个/s)',
+              value: 'lan_outpkg'
             },
             {
-              label: 'IO Await',
-              value: 'DiskIoAwait'
+              label: '内网入包量(个/s)',
+              value: 'lan_inpkg'
             }, {
-              label: '读IOPS',
-              value: 'DiskReadIops'
+              label: 'TCP连接数(个)',
+              value: 'tcp_curr_estab'
             },
             {
-              label: '读流量',
-              value: 'DiskReadTrafficNew'
-            }, {
-              label: 'IO Svctm',
-              value: 'DiskSvctm'
+              label: '外网出带宽(Mbps)',
+              value: 'wan_outtraffic'
             },
             {
-              label: 'IO %util',
-              value: 'DiskUtil'
+              label: '外网入带宽(Mbps)',
+              value: 'wan_intraffic'
             }, {
-              label: '写流量',
-              value: 'DiskWriteTrafficNew'
+              label: '外网出包量(个/s)',
+              value: 'wan_outpkg(个/s)'
             },
+            {
+              label: '外网入包量(个/s)',
+              value: 'wan_inpkg'
+            },
+            {
+              label: '外网出流量(MB)',
+              value: 'acc_outtraffic'
+            }
           ]
           this._PassValue()
         });
@@ -239,8 +251,9 @@
           Version: "2017-03-12",
         }
         this.axios.post(NAT_LIST, parms).then(data => {
+          this.id = "nat_tc_stat"
           this.Date = data.Response.NatGatewaySet
-          this.Namespace = 'NAT_GATEWAY'
+          this.Namespace = 'qce/nat_gateway'
           this.SearchConfig = [{
               value: "nat-gateway-id",
               label: "ID"
@@ -257,24 +270,24 @@
             title4: '类型',
           }
           this.MetricName = [{
-              label: '外網出頻寬',
-              value: 'OutBandwidth'
+              label: '外网出带宽(Mbps)',
+              value: 'outbandwidth'
             },
             {
-              label: '外網入頻寬',
-              value: 'InBandwidth'
+              label: '外网入带宽(Mbps)',
+              value: 'inbandwidth'
             },
             {
-              label: '出包量',
-              value: 'OutPkg'
+              label: '出包量(个/s)',
+              value: 'outpkg'
             },
             {
-              label: '入包量',
-              value: 'InPkg'
+              label: '入包量(个/s)',
+              value: 'inpkg'
             },
             {
-              label: '連接數',
-              value: 'Conns'
+              label: '連接數(个/s)',
+              value: 'conns'
             }
           ]
           this._PassValue()
@@ -287,6 +300,7 @@
           Version: "2017-03-12",
         }
         this.axios.post(VPN_LIST, parms).then(data => {
+          this.id = 'vpcgw'
           this.Date = data.Response.VpnGatewaySet
           this.Namespace = 'QCE/VPNGW'
           this.SearchConfig = [{
@@ -304,24 +318,20 @@
             title3: '所属网络',
           }
           this.MetricName = [{
-              label: '外网入带宽',
-              value: 'InBandwidth'
+              label: '外网出带宽(Mbps)',
+              value: 'outbandwidth'
             },
             {
-              label: '出包量',
-              value: 'OutPkg'
+              label: '外网入带宽(Mbps)',
+              value: 'inbandwidth'
             },
             {
-              label: '外网出带宽',
-              value: 'OutBandwidth'
+              label: '出包量(个/s)',
+              value: 'outpkg'
             },
             {
-              label: '入包量',
-              value: 'InPkg'
-            },
-            {
-              label: '連接數',
-              value: 'Conns'
+              label: '入包量(个/s)',
+              value: 'inpkg'
             }
           ]
           this._PassValue()
@@ -334,8 +344,9 @@
           Version: "2017-03-12",
         }
         this.axios.post(VPNTD_LIST, parms).then(data => {
+          this.id = "vpn_tunnel"
           this.Date = data.Response.VpnConnectionSet
-          this.Namespace = 'QCE/VPNX'
+          this.Namespace = 'qce/vpnx'
           this.SearchConfig = [{
               value: "vpn-connection-id",
               label: "ID"
@@ -351,32 +362,28 @@
             title3: 'VPN网关',
           }
           this.MetricName = [{
-              label: '外網入頻寬',
-              value: 'InBandwidth'
+              label: '网络出带宽(Mbps)',
+              value: 'outbandwidth'
             },
             {
-              label: '外網入頻寬',
-              value: 'InBandwidth'
+              label: '网络入带宽(Mbps)',
+              value: 'inbandwidth'
             },
             {
-              label: '出包量',
-              value: 'OutPkg'
+              label: '出包量(个/s)',
+              value: 'outpkg'
             },
             {
-              label: '外網出頻寬',
-              value: 'OutBandwidth'
+              label: '入包量(个/s)',
+              value: 'inpkg'
             },
             {
-              label: '入包量',
-              value: 'InPkg'
+              label: '丢包率(%)',
+              value: 'pkgdrop'
             }, {
-              label: '丢包率',
-              value: 'Pkgdrop'
-            },
-            {
-              label: '時延',
-              value: 'Delay'
-            },
+              label: '時延(ms)',
+              value: 'delay'
+            }
 
           ]
           this._PassValue()
@@ -389,8 +396,9 @@
           Version: "2017-03-12",
         }
         this.axios.post(DCG_LIST, parms).then(data => {
+          this.id = 'dclinegw'
           this.Date = data.Response.DirectConnectGatewaySet
-          this.Namespace = 'QCE/DCG'
+          this.Namespace = 'qce/dcg'
           this.SearchConfig = [{
               value: "direct-connect-gateway-id",
               label: "ID"
@@ -406,20 +414,20 @@
             title3: '所属网络',
           }
           this.MetricName = [{
-              label: '外網入頻寬',
-              value: 'InBandwidth'
+              label: '网络出带宽(Mbps)',
+              value: 'outbandwidth'
             },
             {
-              label: '出包量',
-              value: 'OutPkg'
+              label: '网络入带宽(Mbps)',
+              value: 'inbandwidth'
             },
             {
-              label: '外網出頻寬',
-              value: 'OutBandwidth'
+              label: '出包量(个/s)',
+              value: 'outpkg'
             },
             {
-              label: '入包量',
-              value: 'InPkg'
+              label: '入包量(个/s)',
+              value: 'inpkg'
             }
 
           ]
@@ -433,8 +441,9 @@
           Version: "2017-03-20",
         }
         this.axios.post(MYSQL_LIST, parms).then(data => {
+          this.id = 'cdb'
           this.Date = data.Response.Items
-          this.Namespace = 'QCE/CDB'
+          this.Namespace = 'qce/cdb'
           this.SearchConfig = [{
             value: "InstanceIds.0",
             label: "實例 ID"
@@ -445,341 +454,136 @@
             title2: '网络类型',
             title3: '类型',
           }
-          this.MetricName = [{
-              label: 'BytesReceived',
-              value: '内网入流量'
-            },
-            {
-              label: 'BytesSent',
-              value: '内网出流量'
-            },
-            {
-              label: 'Capacity',
-              value: '磁盘占用空间'
-            },
-            {
-              label: 'ComCommit',
-              value: '提交数'
-            },
-            {
-              label: 'ComDelete',
-              value: '删除数'
-            },
-            {
-              label: 'ComInsert',
-              value: '插入数'
-            },
-            {
-              label: 'ComReplace',
-              value: '回滚数'
-            },
-            {
-              label: 'ComUpdate',
-              value: '更新数'
-            },
-            {
-              label: 'ConnectionUseRate',
-              value: '连接数利用率'
-            },
-            {
-              label: 'CpuUseRate',
-              value: 'CPU利用率',
-            },
-            {
-              label: 'CreatedTmpDiskTables',
-              value: '磁盘临时表数量'
-            },
-            {
-              label: 'CreatedTmpFiles',
-              value: '临时文件数量'
-            },
-            {
-              label: 'CreatedTmpTables',
-              value: '临时表数量'
-            },
-            {
-              label: 'HandlerCommit',
-              value: '内部提交数'
-            },
-            {
-              label: 'HandlerReadRndNext',
-              value: '读下一行请求数'
-            },
-            {
-              label: 'HandlerRollback',
-              value: '内部回滚数',
-            },
-            {
-              label: 'InnodbBufferPoolPagesFree',
-              value: 'InnoDB空页数'
-            },
-            {
-              label: 'InnodbBufferPoolPagesTotal',
-              value: 'InnoDB总页数'
-            },
-            {
-              label: 'InnodbBufferPoolReads',
-              value: 'InnoDB物理读'
-            },
-            {
-              label: 'InnodbBufferPoolReadRequests',
-              value: 'InnoDB逻辑读'
-            },
-            {
-              label: 'InnodbCacheHitRate',
-              value: 'innodb缓存命中率'
-            },
-            {
-              label: 'InnodbCacheUseRate',
-              value: 'innodb缓存使用率'
-            },
-            {
-              label: 'InnodbDataRead',
-              value: 'InnoDB读取量'
-            },
-            {
-              label: 'InnodbDataReads',
-              value: 'InnoDB总读取量'
-            },
-            {
-              label: 'InnodbDataWrites',
-              value: 'InnoDB总写入量'
-            },
-            {
-              label: 'InnodbDataWritten',
-              value: 'InnoDB写入量'
-            },
-            {
-              label: 'InnodbNumOpenFiles',
-              value: '当前InnoDB打开表的数量'
-            },
-            {
-              label: 'InnodbOsFileReads',
-              value: 'innodb读磁盘数量'
-            },
-            {
-              label: 'InnodbOsFileWrites',
-              value: 'innodb写磁盘数量'
-            },
-            {
-              label: 'InnodbOsFsyncs',
-              value: 'innodb fsync数量'
-            },
-            {
-              label: 'InnodbRowsDeleted',
-              value: 'InnoDB行删除量'
-            },
-            {
-              label: 'InnodbRowsInserted',
-              value: 'InnoDB行插入量'
-            },
-            {
-              label: 'InnodbRowsRead',
-              value: 'InnoDB行读取量'
-            },
-            {
-              label: 'InnodbRowsUpdated',
-              value: 'InnoDB行更新量'
-            },
-            {
-              label: 'InnodbRowLockTimeAvg',
-              value: 'InnoDB平均获取行锁时间'
-            },
-            {
-              label: 'InnodbRowLockWaits',
-              value: 'InnoDB等待行锁次数'
-            },
-            {
-              label: 'KeyBlocksUnused',
-              value: '键缓存内未使用的块数量'
-            },
-            {
-              label: 'KeyBlocksUsed',
-              value: '键缓存内使用的块数量'
-            },
-            {
-              label: 'KeyCacheHitRate',
-              value: 'myisam缓存命中率'
-            },
-            {
-              label: 'KeyCacheUseRate',
-              value: 'myisam缓存使用率'
-            },
-            {
-              label: 'KeyReads',
-              value: '硬盘读取数据块次数'
-            },
-            {
-              label: 'KeyReadRequests',
-              value: '键缓存读取数据块次数'
-            },
-            {
-              label: 'KeyWrites',
-              value: '数据块写入磁盘次数'
-            },
-            {
-              label: 'KeyWriteRequests',
-              value: '数据块写入键缓冲次数'
-            },
-            {
-              label: 'LogCapacity',
-              value: '日志使用量'
-            },
-            {
-              label: 'MasterSlaveSyncDistance',
-              value: '主从延迟距离'
-            },
+          this.MetricName = [
+
             {
-              label: 'MaxConnections',
-              value: '最大连接数'
+              label: '慢查询数(次/分钟)',
+              value: 'slow_queries'
             },
             {
-              label: 'MemoryUse',
-              value: '内存占用'
+              label: '连接数利用率(%)',
+              value: 'connection_use_rate'
             },
             {
-              label: 'MemoryUseRate',
-              value: '内存利用率'
+              label: '最大连接数(个)',
+              value: 'max_connections'
             },
             {
-              label: 'OpenedTables',
-              value: '已经打开的表数'
+              label: '全表扫描数(次/秒)',
+              value: 'select_scan'
             },
             {
-              label: 'OpenFiles',
-              value: '打开文件总数'
+              label: '查询数(次/秒)',
+              value: 'select_count'
             },
             {
-              label: 'QcacheFreeBlocks',
-              value: '查询缓存空闲块'
+              label: '更新数(次/秒)',
+              value: 'com_update'
             },
             {
-              label: 'QcacheFreeMemory',
-              value: '缓存中空闲内存量'
+              label: '删除数(次/秒)',
+              value: 'com_delete'
             },
             {
-              label: 'QcacheHits',
-              value: '缓存命中次数'
+              label: '插入数(次/秒)',
+              value: 'com_insert'
             },
             {
-              label: 'QcacheHitRate',
-              value: '查询缓存命中率'
+              label: '覆盖数(次/秒)',
+              value: 'com_replace'
             },
             {
-              label: 'QcacheInserts',
-              value: '缓存写入次数'
+              label: '总请求数(次/秒)',
+              value: 'queries',
             },
             {
-              label: 'QcacheLowmemPrunes',
-              value: '因内存不足删除缓存次数'
+              label: '当前打开连接数(个)',
+              value: 'threads_connected'
             },
             {
-              label: 'QcacheNotCached',
-              value: '查询未被缓存次数'
+              label: '磁盘使用空间(MB)',
+              value: 'real_capacity'
             },
             {
-              label: 'QcacheQueriesInCache',
-              value: '以注册到缓存内的查询数'
+              label: '磁盘占用空间(MB)',
+              value: 'capacity'
             },
             {
-              label: 'QcacheTotalBlocks',
-              value: '查询缓存内的总块数'
+              label: '内网出流量(Byte/秒)',
+              value: 'bytes_sent'
             },
             {
-              label: 'QcacheUseRate',
-              value: '查询缓存使用率'
+              label: '内网入流量(Byte/秒)',
+              value: 'bytes_received'
             },
             {
-              label: 'Qps',
-              value: '每秒执行操作数'
+              label: '缓存使用率(%)',
+              value: 'qcache_use_rate',
             },
             {
-              label: 'Queries',
-              value: '总请求数'
+              label: '缓存命中率(%)',
+              value: 'qcache_hit_rate'
             },
             {
-              label: 'QueryRate',
-              value: '查询使用率'
+              label: '等待表锁次数(次/秒)',
+              value: 'table_locks_waited'
             },
             {
-              label: 'RealCapacity',
-              value: '磁盘使用空间'
+              label: '临时表数量(次/秒)',
+              value: 'created_tmp_tables'
             },
             {
-              label: 'SecondsBehindMaster',
-              value: '主从延迟时间'
+              label: 'innodb缓存使用率(%)',
+              value: 'innodb_cache_use_rate'
             },
             {
-              label: 'SelectCount',
-              value: '查询数'
+              label: 'innodb缓存命中率(%)',
+              value: 'innodb_cache_hit_rate'
             },
             {
-              label: 'SelectScan',
-              value: '全表扫描数'
+              label: 'innodb读磁盘数量(次/秒)',
+              value: 'innodb_os_file_reads'
             },
             {
-              label: 'SlaveIoRunning',
-              value: 'IO线程状态'
+              label: 'innodb写磁盘数量(次/秒)',
+              value: 'innodb_os_file_writes'
             },
             {
-              label: 'SlaveSqlRunning',
-              value: 'SQL线程状态'
+              label: 'innodb fsync数量(次/秒)',
+              value: 'innodb_os_fsyncs'
             },
             {
-              label: 'SlowQueries',
-              value: '慢查询数'
+              label: 'myisam缓存使用率(%)',
+              value: 'key_cache_use_rate'
             },
             {
-              label: 'TableLocksImmediate',
-              value: '立即释放的表锁数'
+              label: 'myisam缓存命中率(%)',
+              value: 'key_cache_hit_rate'
             },
             {
-              label: 'TableLocksWaited',
-              value: '等待表锁次数'
+              label: '磁盘利用率(%)',
+              value: 'volume_rate'
             },
             {
-              label: 'ThreadsConnected',
-              value: '当前打开连接数'
+              label: '查询使用率(%)',
+              value: 'query_rate'
             },
             {
-              label: 'ThreadsCreated',
-              value: '已创建的线程数'
+              label: '每秒执行操作数(次/秒)',
+              value: 'qps'
             },
             {
-              label: 'ThreadsRunning',
-              value: '运行的线程数'
+              label: '每秒执行事务数(次/秒)',
+              value: 'tps'
             },
             {
-              label: 'Tps',
-              value: '每秒执行事务数'
+              label: 'CPU利用率(%)',
+              value: 'cpu_use_rate'
             },
             {
-              label: 'VolumeRate',
-              value: '磁盘使用率',
+              label: '内存利用率(%)',
+              value: 'memory_use_rate'
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
           ]
           this._PassValue()
         });
@@ -791,8 +595,9 @@
           Version: "2018-04-12",
         }
         this.axios.post(REDIS_LIST, parms).then(data => {
+          this.redis = 'redis'
           this.Date = data.Response.InstanceSet
-          this.Namespace = 'QCE/REDIS'
+          this.Namespace = 'qce/redis'
           this.SearchConfig = [{
             value: "InstanceId",
             label: "ID"
@@ -803,269 +608,113 @@
             title3: '内网地址',
           }
           this.MetricName = [{
-              value: 'BigValueMin',
-              label: '执行次数'
+              value: 'cpu_us_min',
+              label: 'CPU使用率(%)'
             },
             {
-              value: 'BigValueNodeMin',
-              label: '大value'
+              value: 'cmdstat_get_min',
+              label: 'get请求数(次)'
             },
             {
-              value: 'CacheHitRatioMin',
-              label: ' Key命中'
+              value: 'cmdstat_getbit_min',
+              label: 'getbit请求数(次)'
             },
             {
-              value: 'CacheHitRatioNodeMin',
-              label: 'cache命中率'
+              value: 'cmdstat_getrange_min',
+              label: 'getrange请求数(次)'
             },
             {
-              value: 'CmdstatDelNodeMin',
-              label: 'DEL命令执行次数'
+              value: 'cmdstat_hget_min',
+              label: 'hget请求数(次)'
             },
             {
-              value: 'CmdstatFlushallNodeMin',
-              label: 'Flushall执行次数'
+              value: 'cmdstat_hgetall_min',
+              label: 'hgetall请求数(次)'
             },
             {
-              value: 'CmdstatFlushdbNodeMin',
-              label: 'Flushdb执行次数'
+              value: 'cmdstat_hmget_min',
+              label: 'hmget请求数(次)'
             },
             {
-              value: 'CmdstatGetbitNodeMin',
-              label: 'Getbit执行次数'
+              value: 'cmdstat_hmset_min',
+              label: 'hmset请求数(次)'
             },
             {
-              value: 'CmdstatGetrangeNodeMin',
-              label: 'Getrange执行次数'
+              value: 'cmdstat_hset_min',
+              label: 'hset请求数(次)'
             },
             {
-              value: 'CmdstatGetNodeMin',
-              label: 'Get执行次数'
+              value: 'cmdstat_hsetnx_min',
+              label: 'hsetnx请求数(次)'
             },
             {
-              value: 'CmdstatHgetallNodeMin',
-              label: 'Hgetall执行次数'
+              value: 'cmdstat_lset_min',
+              label: 'lset请求数(次)'
             },
             {
-              value: 'CmdstatHgetNodeMin',
-              label: 'Hget执行次数'
+              value: 'cmdstat_mget_min',
+              label: 'mget请求数(次)'
             },
             {
-              value: 'CmdstatHmget',
-              label: 'hmget数量'
+              value: 'cmdstat_mset_min',
+              label: 'mset请求数(次)'
             },
             {
-              value: 'CmdstatHmgetNodeMin',
-              label: 'Hmget执行次数'
+              value: 'cmdstat_msetnx_min',
+              label: 'msetnx请求数(次)'
             },
             {
-              value: 'CmdstatHmsetNodeMin',
-              label: 'Hmset执行次数'
+              value: 'cmdstat_set_min',
+              label: 'set请求数(次)'
             },
             {
-              value: 'CmdstatHsetnxNodeMin',
-              label: 'Hsetnx执行次数'
+              value: 'cmdstat_setbit_min',
+              label: 'setbit请求数(次)'
             },
             {
-              value: 'CmdstatHsetNodeMin',
-              label: 'Hset执行次数'
+              value: 'cmdstat_setex_min',
+              label: 'setex请求数(次)'
             },
             {
-              value: 'CmdstatMgetNodeMin',
-              label: 'Mget执行次数'
+              value: 'cmdstat_setnx_min',
+              label: 'setnx请求数(次)'
             },
             {
-              value: 'CmdstatMsetnxNodeMin',
-              label: 'Msetnx执行次数'
+              value: 'cmdstat_setrange_min',
+              label: 'setrange请求数(次)'
             },
             {
-              value: 'CmdstatMsetNodeMin',
-              label: 'Mset执行次数'
+              value: 'connections_min',
+              label: '连接数量(个)'
             },
             {
-              value: 'CmdstatSetbitNodeMin',
-              label: 'Setbit执行次数'
+              value: 'in_flow_min',
+              label: '入流量(Mb)'
             },
             {
-              value: 'CmdstatSetexNodeMin',
-              label: 'Setex执行次数'
+              value: 'keys_min',
+              label: 'Key总数(个)'
             },
             {
-              value: 'CmdstatSetnxNodeMin',
-              label: 'Setnx执行次数'
+              value: 'out_flow_min',
+              label: '出流量(Mb)'
             },
             {
-              value: 'CmdstatSetrangeNodeMin',
-              label: 'Setrange执行次数'
+              value: 'stat_get_min',
+              label: '读请求数(次)'
             },
             {
-              value: 'CmdstatSetNodeMin',
-              label: 'Set执行次数'
+              value: 'stat_set_min',
+              label: '写请求数(次)'
             },
             {
-              value: 'CmdErrMin',
-              label: '命令执行错误的次数'
+              value: 'storage_min',
+              label: '内存使用量(Mb)'
             },
             {
-              value: 'CmdErrNodeMin',
-              label: '错误命令数量'
-            },
-            {
-              value: 'ConnectionsMin',
-              label: 'TCP连接数量'
-            },
-            {
-              value: 'ConnectionsUsMin',
-              label: '连接数使用率'
-            },
-            {
-              value: 'CpuMaxUsMin',
-              label: '单分片最大cpu使用率'
-            },
-            {
-              value: 'CpuUsNodeMin',
-              label: 'CPU使用率'
-            },
-            {
-              value: 'EvictedKeysMin',
-              label: '驱逐的Key'
-            },
-            {
-              value: 'EvictedKeysNodeMin',
-              label: 'keys驱逐数量'
-            },
-            {
-              value: 'ExpiredKeysMin',
-              label: '淘汰的Key'
-            },
-            {
-              value: 'ExpiredKeysNodeMin',
-              label: 'keys过期数量'
-            },
-            {
-              value: 'GossipInFlowNodeMin',
-              label: 'gossip入流'
-            },
-            {
-              value: 'GossipOutFlowNodeMin',
-              label: 'gossip出流'
-            },
-            {
-              value: 'InFlowMin',
-              label: '内网入流量'
-            },
-            {
-              value: 'InFlowUsMin',
-              label: '入流使用率'
-            },
-            {
-              value: 'KeysMin',
-              label: '总Key'
-            },
-            {
-              value: 'KeysNodeMin',
-              label: 'Key数量'
-            },
-            {
-              value: 'LatencyGetMin',
-              label: '读命令平均执行时延'
-            },
-            {
-              value: 'LatencyGetNodeMin',
-              label: '读请求平均延迟'
-            },
-            {
-              value: 'LatencyMin',
-              label: '执行时延平均值'
-            },
-            {
-              value: 'LatencyNodeMin',
-              label: '请求平均延迟'
-            },
-            {
-              value: 'LatencyOtherMin',
-              label: '命令平均执行时延'
-            },
-            {
-              value: 'LatencyOtherNodeMin',
-              label: '平均延迟'
-            },
-            {
-              value: 'LatencySetNodeMin',
-              label: '写命令平均执行时延'
-            },
-            {
-              value: 'MemsizeDatasetNodeMin',
-              label: '数据内存'
-            },
-            {
-              value: 'MemsizeOverheadNodeMin',
-              label: '其他内存'
-            },
-            {
-              value: 'OutFlowMin',
-              label: '内网出流量'
-            },
-            {
-              value: 'OutFlowNodeMin',
-              label: '指标'
-            },
-            {
-              value: 'OutFlowUsMin',
-              label: '出流使用率'
-            },
-            {
-              value: 'QpsNodeMin',
-              label: 'QPS命令执行次数'
-            },
-            {
-              value: 'SlowQuery',
-              label: '命令次数'
-            },
-            {
-              value: 'SlowQueryNodeMin',
-              label: '配置命令次数'
-            },
-            {
-              value: 'StatGetNodeMin',
-              label: '读命令执行次数'
-            },
-            {
-              value: 'StatMissedNodeMin',
-              label: '读请求Key不存在的个数'
-            },
-            {
-              value: 'StatOtherNodeMin',
-              label: '读写命令之外的命令执行次数'
-            },
-            {
-              value: 'StatSetNodeMin',
-              label: '写命令执行次数'
-            },
-            {
-              value: 'StatSuccessNodeMin',
-              label: '读请求Key存在的个数'
-            },
-            {
-              value: 'Storage',
-              label: '内存容量'
-            },
-            {
-              value: 'StorageMaxUsMin',
-              label: '单分片最大使用率'
-            },
-            {
-              value: 'StorageNodeMin',
-              label: '使用内存容量'
-            },
-            {
-              value: 'StorageSlopeNodeMin',
-              label: '分片内存使用率'
-            },
-            {
-              value: 'StorageUsNodeMin',
-              label: '实际使用内存和申请总内存之比'
-            },
+              value: 'storage_us_min',
+              label: '内存使用率(%)'
+            }
           ]
           this._PassValue()
         });
@@ -1077,8 +726,9 @@
           Version: '2018-04-10',
         }
         this.axios.post(Physics_LIST, parms).then(data => {
+          this.id = "dcline"
           this.Date = data.Response.DirectConnectSet
-          this.Namespace = 'QCE/DC'
+          this.Namespace = 'qce/dc'
           this.SearchConfig = [{
             value: 'DirectConnectId',
             label: '專線ID'
@@ -1089,12 +739,12 @@
             title3: '带宽',
           }
           this.MetricName = [{
-              label: '物理专线平均每秒出流量',
-              value: 'InBandwidth'
+              label: '网络出带宽(Mbps)',
+              value: 'outbandwidth'
             },
             {
-              label: '出带宽',
-              value: 'OutBandwidth'
+              label: '网络入带宽(Mbps)',
+              value: 'inbandwidth'
             }
           ]
           this._PassValue()
@@ -1107,8 +757,9 @@
           Version: '2018-04-10',
         }
         this.axios.post(Private_LIST, parms).then(data => {
+          this.id = 'dcchannel'
           this.Date = data.Response.DirectConnectTunnelSet
-          this.Namespace = 'QCE/DCX'
+          this.Namespace = 'qce/dcx'
           this.SearchConfig = [{
             value: "DirectConnectIds",
             label: "通道ID"
@@ -1117,30 +768,22 @@
             title1: '名称/ID',
             title2: '私有网络',
           }
-          this.MetricName = [
+          this.MetricName = [{
+              label: '网络入带宽(Mbps)',
+              value: 'inbandwidth'
+            },
+            {
+              label: '网络出带宽(Mbps)',
+              value: 'outbandwidth'
+            },
+            {
+              label: '入包量(个/s)',
+              value: 'inpkg'
+            },
 
             {
-              label: '入包量',
-              value: 'Inpkg'
-            },
-            {
-              label: '出包量',
-              value: 'Outpkg'
-            },
-            {
-              label: '出带宽',
-              value: 'Outbandwidth'
-            },
-            {
-              label: '丢包',
-              value: 'Pkgdrop'
-            }, {
-              label: '延时',
-              value: 'Delay'
-            },
-            {
-              label: '入带宽',
-              value: 'Inbandwidth'
+              label: '出包量(个/s)',
+              value: 'outpkg'
             }
           ]
           this._PassValue()
@@ -1153,8 +796,9 @@
           Version: '2018-04-10',
         }
         this.axios.post(OBJ_LIST, parms).then(data => {
+          this.id = 'COS'
           this.Date = data.Buckets
-          this.Namespace = 'QCE/COS'
+          this.Namespace = 'qce/cos'
           this.SearchConfig = [{
             value: "bucket",
             label: "儲存桶名稱"
@@ -1165,90 +809,74 @@
             title3: '创建时间'
           }
           this.MetricName = [{
-              value: 'NelStorage',
-              label: '近线存储存储空间'
+              value: 'std_read_requests',
+              label: '标准存储读请求(次)'
             },
             {
-              value: 'SiaStorage',
-              label: '低频存储存储空间',
+              value: 'std_write_requests',
+              label: '标准存储写请求(次)',
             },
             {
-              value: 'ArcStorage',
-              label: '归档存储存储空间',
+              value: 'ia_read_requests',
+              label: '低频存储读请求(次)',
             },
             {
-              value: 'StdStorage',
-              label: '标准存储存储空间',
+              value: 'outbandwidth',
+              label: '低频存储写请求(次)',
             },
             {
-              value: '2xxResponse',
-              label: '2xx状态码',
+              value: 'nl_read_request',
+              label: '近线存储读请求(次)',
             },
             {
-              value: '3xxResponse',
-              label: '3xx状态码',
+              value: 'nl_write_requests',
+              label: '近线存储写请求(次)',
             },
             {
-              value: '4xxResponse',
-              label: '4xx状态码',
+              value: 'inbound_traffic',
+              label: '上传流量(B)',
             },
             {
-              value: '5xxResponse',
-              label: '5xx状态码',
+              value: 'internal_traffic',
+              label: '内网流量(B)',
             },
             {
-              value: 'CdnOriginTraffic',
-              label: 'CDN回源流量',
+              value: 'internet_traffic',
+              label: '外网流量(B)',
             },
             {
-              value: 'IaReadRequests',
-              label: '低频存储读请求',
+              value: 'cdn_origin_traffic',
+              label: 'CDN回源流量(B)',
             },
             {
-              value: 'IaRetrieval',
-              label: '低频数据取回',
+              value: '2xx_response',
+              label: '2xx状态码(次)',
             },
             {
-              value: 'IaWriteRequests',
-              label: '低频存储写请求',
+              value: '3xx_response',
+              label: '3xx状态码(次)',
             },
-            {
-              value: 'InboundTraffic',
-              label: '上传流量',
-            },
-            {
-              value: 'InternalTraffic',
-              label: '内网流量',
-            },
-            {
-              value: 'InternetTraffic',
-              label: '外网流量',
-            },
-            {
-              value: 'NlReadRequests',
-              label: '近线存储读请求',
-            },
-            {
-              value: 'NlRetrieval',
-              label: '近线数据取回',
-            },
-            {
-              value: 'NlWriteRequests',
-              label: '近线存储写请求',
-            },
-            {
-              value: 'StdReadRequests',
-              label: '标准存储读请求',
-            },
-            {
-              value: 'StdRetrieval',
-              label: '标准数据读取',
-            },
-            {
-              value: 'StdWriteRequests',
-              label: '标准存储写请求',
-            }
 
+            {
+              value: '4xx_response',
+              label: '4xx状态码(次)',
+            },
+            {
+              value: '5xx_response',
+              label: '5xx状态码(次)',
+            },
+            {
+              value: 'std_retrieval',
+              label: '标准数据读取(B)',
+            },
+
+            {
+              value: 'ia_retrieval',
+              label: '低频数据取回(B)',
+            }, {
+              value: 'nl_retrieval',
+              label: '近线数据取回(B)',
+            }
           ]
           this._PassValue()
         });
