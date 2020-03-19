@@ -1,12 +1,12 @@
 <template>
-  <div class='detail-container' v-loading="loadShow">
+  <div class='detail-container'>
     <div class="header">
       <div class="header1">
         <div class="header2">
           <span class="goback" @click="goBack()">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">{{groupName}}</h2>
+          <h2 class="header-title" v-loading="loadShow">{{groupName}}</h2>
         </div>
       </div>
     </div>
@@ -61,6 +61,7 @@ export default {
           let msg = res.Response.TemplateGroupList
           msg.forEach(ele => {
             this.groupName = ele.GroupName
+            this.groupId = ele.GroupID
           })
           this.loadShow = false
         } else {
