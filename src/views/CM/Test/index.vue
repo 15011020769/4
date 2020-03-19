@@ -146,7 +146,8 @@
           y: [2, 244, 52, 52]
         }],
         projectId: '',
-        searchParam: {}
+        searchParam: {},
+        ceshi999: '',
       }
     },
     components: {
@@ -173,6 +174,8 @@
       },
       PassData(data) {
         console.log(data)
+        this.ceshi999 = data.productValue
+        console.log(this.ceshi999)
       },
       TEST() {
         const param = {
