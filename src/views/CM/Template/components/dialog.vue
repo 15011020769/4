@@ -31,20 +31,11 @@
           </el-form-item>
         </p>
       </el-form>
-      <p class="rowCont" style="display: flex">
+      <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
-        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam' />
-        <!-- :productValue='productValue' -->
+        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
+        :productValue='productValue'/>
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
-        <!-- <el-select v-model="formInline.strategy" style="width:200px;">
-          <el-option
-            v-for="(item,index) in formInline.strategy_kind"
-            :key="index"
-            :label="item.name"
-            :value="item.value"
-            label-width="40px"
-          ></el-option>
-        </el-select> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
           <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
@@ -153,19 +144,16 @@
               </ul>
             </div>
           </div>
-          <div>
+          <!-- <div>
             <p>
               <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
                 事件告警
                 <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
               </el-checkbox>
             </p>
-            <!-- 在这里进行便利，添加 -->
             <ul class="color">
-              <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
               <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                 <p>
-                  <!-- <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;"> -->
                   <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
                     <el-option
                       v-for="(item,index) in eventType"
@@ -181,7 +169,7 @@
               </li>
               <a @click="addShijian" style="cursor:pointer">添加</a>
             </ul>
-          </div>
+          </div> -->
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -261,11 +249,11 @@ export default {
       },
       indexAry: [ // 指标告警数组
         {
-          Period: '统计周期1分钟',
+          Period: 60,
           CalcType: '>',
           CalcValue: '0',
-          ContinuePeriod: '持续1个周期',
-          alarm: '每1天警告一次'
+          ContinuePeriod: 1,
+          alarm: 86400
         }
       ],
       eventAry: [// 事件告警数组
@@ -309,11 +297,8 @@ export default {
         }
       ],
       metting: '任意 ', // 满足条件
-      // conditionList: ['任意', '所有'],
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
-      // tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
       tongjiZQ: [{ label: '统计周期1分钟', value: 60 }, { label: '统计周期5分钟', value: 300 }],
-      // chixuZQ: ['持续1个周期', '持续2个周期', '持续3个周期', '持续4个周期', '持续5个周期'],
       continuePeriod: [// 持续周期
         { label: '持续1个周期', value: 1 },
         { label: '持续2个周期', value: 2 },
@@ -321,20 +306,6 @@ export default {
         { label: '持续4个周期', value: 4 },
         { label: '持续5个周期', value: 5 }
       ],
-      // jinggaoZQ1: [// 警告周期
-      // '不重复',
-      // '每5分钟警告一次',
-      // '每10分钟警告一次',
-      // '每15分钟警告一次',
-      // '每30分钟警告一次',
-      // '每1小时警告一次',
-      // '每2小时警告一次',
-      // '每3小时警告一次',
-      // '每6小时警告一次',
-      // '每12小时警告一次',
-      // '每1天警告一次',
-      // '周期指数递增'
-      // ],
       jinggaoZQ: [// 警告周期
         { label: '不重复', value: 0 },
         { label: '每5分钟警告一次', value: 300 },
@@ -425,10 +396,10 @@ export default {
         ]
       }, // 名称和备注的验证
       show: this.dialogVisible,
-      view_name: '',// 策略视图名称
-      projectId:'0',
-      searchParam:{value: "ins-6oz38wnu", label: "instance-id"},
-      productValue:'cvm_device'
+      view_name: '', // 策略视图名称
+      projectId: '0',
+      searchParam: { value: 'ins-6oz38wnu', label: 'instance-id' },
+      productValue: 'cvm_device'
     }
   },
   watch: {
@@ -438,12 +409,6 @@ export default {
     show: function (val) {
       this.$emit('update:dialogVisible', val)
     }
-    // Conditions: function (val) {
-    //   this.productData = val
-    // },
-    // productData: function (val) {
-    //   this.$emit('update.Conditions', val)
-    // }
   },
   components: {
     // GroupingType,
@@ -455,6 +420,7 @@ export default {
       type: Boolean
     },
     Conditions: {
+      required: true,
       type: Array
     }
   },
@@ -467,7 +433,6 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           this.newBuild()
-          console.log('完成', form)
         } else {
           return false
         }
@@ -481,8 +446,8 @@ export default {
       //   }
       // })
       // this.Conditions.forEach(item=>{
-      //   if(item.Name==策略类型变量){
-      //   this.view_name = item.PolicyViewName
+      //   if(this.productValue = item.PolicyViewName){
+      //   this.productValue = item.PolicyViewName
       // }
       // })
       let params = {
@@ -495,47 +460,54 @@ export default {
       }
       this.indexAry.forEach((ele, i) => {
         params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
-        params[`Conditions.${i}.MetricID`] = 33
+        params[`Conditions.${i}.MetricID`] = 929
         this.tongjiZQ.forEach((item1) => {
-          if (ele.Period == item1.label) {
-            ele.Period = item1.value
-            params[`Conditions.${i}.CalcPeriod`] = ele.Period// 统计周期
+          var PD
+          if (ele.Period == item1.value) {
+            PD = item1.value
+            params[`Conditions.${i}.CalcPeriod`] = PD// 统计周期
           }
         })
         this.continuePeriod.forEach((item2) => {
-          if (ele.ContinuePeriod == item2.label) {
-            ele.ContinuePeriod = item2.value
-            params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持续周期
+          var CP
+          if (ele.ContinuePeriod == item2.value) {
+            CP = item2.value
+            params[`Conditions.${i}.ContinuePeriod`] = CP// 持续周期
           }
         })
         this.SymbolList.forEach((item3, index) => {
+          var CT
           if (ele.CalcType == item3) {
-            ele.CalcType = index + 1
-            params[`Conditions.${i}.CalcType`] = ele.CalcType// 符号
+            CT = index + 1
+            params[`Conditions.${i}.CalcType`] = CT// 符号
           }
         })
         this.jinggaoZQ.forEach(item4 => {
-          if (ele.alarm == item4.label && ele.alarm !== '周期指数递增') {
-            ele.alarm = item4.value
-            params[`Conditions.${i}.AlarmNotifyPeriod`] = ele.alarm
+          var AM
+          if (ele.alarm == item4.value && ele.alarm !== 1) {
+            AM = item4.value
+            params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
             params[`Conditions.${i}.AlarmNotifyType`] = 0
           }
-          if (ele.alarm == '周期指数递增') {
-            params[`Conditions.${i}.AlarmNotifyPeriod`] = 0
+          if (ele.alarm == 1) {
+            // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
             params[`Conditions.${i}.AlarmNotifyType`] = 1
           }
         })
       })
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
-        if(res.Response.Error===undefined){
-          console.log(res)
+        if (res.Response.Error === undefined) {
+          // console.log(res)
           this.show = false
-        }else{
+          this.formInline.strategy_name = ''
+          this.this.formInline.textareas = ''
+        } else {
           this.errorPrompt(res)
         }
       })
     },
     passData (item) {
+      console.log(item)
       this.productData = item
       this.zhibiaoType = item.MetricName
       this.productValue = item.productValue
@@ -547,12 +519,12 @@ export default {
     addZhibiao () { // 添加触发条件的指标告警
       this.indexAry.push(
         {
-          Period: '统计周期1分钟',
+          Period: 60,
           CalcType: '>',
           CalcValue: '0',
-          ContinuePeriod: '持续1个周期',
+          ContinuePeriod: 1,
           // MetricID:33,
-          alarm: '每1天警告一次'
+          alarm: 86400
         }
       )
     },
@@ -631,7 +603,7 @@ export default {
       let ErrTips = {
         'AuthFailure.UnauthorizedOperation': '请求未授权。请参考 CAM 文档对鉴权的说明。',
         'DryRunOperation': 'DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。',
-        'FailedOperation':'操作失败。',
+        'FailedOperation': '操作失败。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '删除过滤条件失败。',
         'FailedOperation.AlertPolicyCreateFailed': '创建告警策略失败。',
         'FailedOperation.AlertPolicyDeleteFailed': '告警策略删除失败。',
@@ -744,6 +716,9 @@ export default {
   .foot {
     padding-top: 20px;
     border-top: 1px solid #ccc;
+  }
+  .dialog-footer{
+    margin-top: 20px;
   }
 }
 </style>

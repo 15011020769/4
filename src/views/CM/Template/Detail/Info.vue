@@ -33,7 +33,7 @@
         <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
         {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
       </p>
-      <p class="text-color1">事件告警</p>
+      <p class="text-color1" v-if="infoData.EventConditions&&infoData.EventConditions.length>0">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
         {{ `${it.EventDisplayName},不重复告警` }}
       </p>
