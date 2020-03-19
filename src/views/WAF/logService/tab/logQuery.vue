@@ -342,12 +342,16 @@ export default {
     choseDate(n, unit){
       this.thisType = `${n}${unit}`;
       let start = moment().subtract(n, unit)
+      let end = moment().endOf('d')
       if (unit === 'd') {
         start.startOf('d')
       }
-      this.timeValue = [start.format("YYYY-MM-DD HH:mm:ss"), moment().endOf('d').format("YYYY-MM-DD HH:mm:ss")]
+      if (n === 1 && unit === 'd') {
+        end = moment().subtract(1, 'd').endOf('d')
+      }
+      this.timeValue = [start.format("YYYY-MM-DD HH:mm:ss"), end.format("YYYY-MM-DD HH:mm:ss")]
       this.startTime = start.format("YYYY-MM-DD HH:mm:ss");
-      this.endTime = moment().endOf('d').format("YYYY-MM-DD HH:mm:ss");
+      this.endTime = end.format("YYYY-MM-DD HH:mm:ss");
     },
     //创建下载任务
     createDownTask(){
