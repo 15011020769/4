@@ -77,7 +77,7 @@ import Header from "@/components/public/Head";
 import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
 import AddPanel from "./components/AddPaneldialog";
 import {
-  GET_DASHBOARD
+  GET_DASHBOARD_LIST
 } from "@/constants";
 import {
   ErrorTips
@@ -231,6 +231,7 @@ export default {
             });
             this.panelValue = this.options[0].label;
           });
+          console.log(this.options, 'options');
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
