@@ -15,7 +15,7 @@
     </p>
     <div>
       <!-- 接收组table -->
-      <el-table v-if="formInline.jieshou === '0'" :data="tableData2" v-loading="loadingShow" style="width: 100%" height="430" :default-sort="{ prop: 'changeData', order: 'descending' }">
+      <el-table v-if="formInline.jieshou === '0'" :data="tableData2" v-loading="loadingShow" @selection-change="handleSelectionChange" style="width: 100%" height="430" :default-sort="{ prop: 'changeData', order: 'descending' }">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="GroupName" label="用户组名"></el-table-column>
         <el-table-column label="用户名">
@@ -30,7 +30,7 @@
       </el-table>
 
       <!-- 接收人table -->
-      <el-table v-if="formInline.jieshou === '1'" :data="userListArr" v-loading="userListLoading" style="width: 100%" height="430" :default-sort="{ prop: 'changeData', order: 'descending' }">
+      <el-table v-if="formInline.jieshou === '1'" :data="userListArr" v-loading="userListLoading" @selection-change="handleSelectionChange2" style="width: 100%" height="430" :default-sort="{ prop: 'changeData', order: 'descending' }">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="Name" label="用户名"></el-table-column>
         <el-table-column label="手机号">
@@ -50,17 +50,14 @@
 
     <p class="effective-period">
       <span>有效时段&nbsp;&nbsp;</span>
-      <el-time-picker style="width:150px" v-model="value1" :picker-options="{selectableRange: '18:30:00 - 20:30:00'}" placeholder="任意时间点">
-      </el-time-picker>
-      <span>&nbsp;至&nbsp;</span>
-      <el-time-picker style="width:150px" arrow-control v-model="value2" :picker-options="{selectableRange: '18:30:00 - 20:30:00'}" placeholder="任意时间点">
+      <el-time-picker is-range v-model="value1" @change="selectTime" range-separator="至" start-placeholder="開始時間" end-placeholder="結束時間" placeholder="選擇時間範圍">
       </el-time-picker>
     </p>
     <p style="display:flex">
       <span>接收渠道&nbsp;&nbsp;</span>
-      <el-checkbox-group v-model="qudaoCheckList">
-        <el-checkbox label="邮件"></el-checkbox>
-        <el-checkbox label="短信"></el-checkbox>
+      <el-checkbox-group v-model="qudaoCheckList" @change="selectChannel">
+        <el-checkbox label="郵件"></el-checkbox>
+        <el-checkbox label="簡訊"></el-checkbox>
       </el-checkbox-group>
     </p>
   </div>
@@ -76,15 +73,13 @@ export default {
   data() {
     return {
       triggerInput: "",       // 查询关键字
-      value1: '',
-      value2: '',
+      value1: '',             // 时间组件选中的值
       tableData: [],
       tableData2: [],         // 接收组数据
       loadingShow: true,      // 接收组动画
-
       userListArr: [],        // 接收人列表数组
       userListLoading: 'true',    // 接收人加载动画
-      qudaoCheckList: ["邮件", "短信"], //渠道选择
+      qudaoCheckList: ["郵件", "簡訊"], //渠道选择
       formInline: {
         jieshou: "0",
         jieshouArr: [{
@@ -95,24 +90,32 @@ export default {
           name: "接收人"
         }]
       },
-      groupData: []
+      groupData: [],
+      cam: {                    // 此组件向外暴露的值
+        selectUserGroup: [],    // 接收组 --> table表格选中
+        selectUserList: [],     // 接收人 --> table表格选中
+        time: [],               // 选中的时间
+        channel: [],            // 选中的渠道
+      }
+
     };
   },
   mounted() {
     this.userGroup() // 查询接收组
   },
   methods: {
+    // 选中接受组还是接收人
     selectChange() {
       this.triggerInput = ''
       if (this.formInline.jieshou === '0') {
-        this.userGroup() // 查询用户组
+        this.userGroup() // 查询接受组
       } else {
         this.userList()  // 查询接收人
       }
     },
 
     // 搜索关键字
-    searchKey(){
+    searchKey() {
       if (this.formInline.jieshou === '0') {
         this.userGroup() // 查询用户组
       } else {
@@ -120,7 +123,7 @@ export default {
       }
     },
 
-    // 查询用户组
+    // 查询接收组
     userGroup() {
       this.loadingShow = true
       let params = {
@@ -154,7 +157,7 @@ export default {
         })
     },
 
-    // 查询用户组详情
+    // 查询接收组详情
     userGroupDetail(GroupId) {
       let params = {
         Version: "2019-01-16"
@@ -197,7 +200,7 @@ export default {
         });
     },
 
-    // 查询用户列表数据
+    // 查询接收人数据
     userList() {
       this.userListLoading = true;
       let userList = {
@@ -249,6 +252,32 @@ export default {
           console.log(error);
         });
     },
+
+    // 接收组 table表格选中触发的事件
+    handleSelectionChange(val) {
+      this.cam.selectUserGroup = val;
+      this.cam.selectUserList = [];
+      this.$emit('camClick', this.cam)
+    },
+
+    // 接收人 table表格选中触发的事件
+    handleSelectionChange2(val) {
+      this.cam.selectUserGroup = [];
+      this.cam.selectUserList = val;
+      this.$emit('camClick', this.cam)
+    },
+
+    // 选中时间
+    selectTime() {
+      this.cam.time = this.value1
+      this.$emit('camClick', this.cam)
+    },
+
+    // 选中渠道
+    selectChannel() {
+      this.cam.channel = this.qudaoCheckList
+      this.$emit('camClick', this.cam)
+    },
   },
 };
 
@@ -286,6 +315,14 @@ export default {
   .receiving-objects {
     display: flex;
     align-items: center;
+  }
+}
+.effective-period {
+  ::v-deep .el-range-input {
+    margin-top: 5px;
+  }
+  ::v-deep .el-range-separator {
+    width: 7% !important;
   }
 }
 </style>

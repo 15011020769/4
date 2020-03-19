@@ -547,7 +547,7 @@
               </tr>
             </table>
             <a v-on:click="addRow(5)" class="addNewRow">添加</a>
-            <p>{{ $t("DDOS.Proteccon_figura.Start_portnumber") }}</p>
+            <p>{{ $t("DDOS.Proteccon_figura.UDP_protection") }}</p>
           </div>
           <div class="childContTit childContTitModel">
             <h2>

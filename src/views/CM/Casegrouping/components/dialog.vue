@@ -35,11 +35,11 @@
         </div>
         <div class="p">
           <span>分组类型</span>
-          <product-type-cpt v-on:PassData="passData" /> 
+          <product-type-cpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId" /> 
         </div>
         <div class="p">
           <span>添加至组</span>
-          <cam-transfer-cpt :productListData="productListData"></cam-transfer-cpt>
+          <CamTransferCpt :productData="productListData" v-on:projectId="projectIds" v-on:searchParam="searchParams"></CamTransferCpt>
         </div>
       </div>
       <p slot="footer" class="dialog-footer" style="text-align:center">
@@ -69,7 +69,10 @@ export default {
       loadSign: true,
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
-      productListData: {}
+      productListData: {},
+      projectId: '',
+      searchParam: {},
+      productData: {},
     };
   },
   components: {
@@ -83,6 +86,17 @@ export default {
       default: () => []
     }
   },
+  watch:{
+    productData:{
+      hander(val) {
+        debugger
+        this.productListData = val
+        console.log("productListDataasdasdsadasdasdasdasd",productListData)
+      },
+      deep: true
+    }
+    
+  },
   mounted() {
   },
   methods: {
@@ -90,7 +104,15 @@ export default {
       this.$emit("close", false);
     },
     passData(data) {
-        this.productListData = data;
+      this.productListData = data;
+    },
+    projectIds(data) {
+      this.projectId = data;
+    },
+    searchParams(data) {
+      console.log("data1312312312",data);
+      debugger
+      this.searchParam = data;
     },
     // 分组名
     GroupingNameInput() {
