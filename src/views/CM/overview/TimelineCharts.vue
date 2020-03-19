@@ -3,10 +3,8 @@
     <div
       id="id"
       ref="chart"
-      :style="{ height: chartHeight }"
       v-loading="loading"
-    >
-    </div>
+    ></div>
   </div>
 </template>
 
@@ -44,24 +42,6 @@ export default {
         this.timelineData[1],
         this.timelineData[2]
       );
-    },
-    chartHeight: function(n, o) {
-      let myCharts = echarts.init(this.$refs.chart);
-      myCharts.resize({ height: n });
-    }
-  },
-  computed: {
-    chartHeight: function() {
-      if (
-        this.timelineData !== null &&
-        this.timelineData.every(item => {
-          return item.length > 0;
-        })
-      ) {
-        return this.timelineData[0].length * 25 + 2 * 50 + "px";
-      } else {
-        return "400px";
-      }
     }
   },
   methods: {
@@ -73,7 +53,7 @@ export default {
 
       for (var ii = 0; ii < 27; ii++) {
         timeShow = `${today} ${ii > 10 ? ii : "0" + ii}:00:00`;
-        contentData.push([timeShow, "", ""]);
+        contentData.push([timeShow, "", "", "", "", "", ""]);
       }
 
       endTimes.forEach((tempEndTime, index) => {
@@ -97,7 +77,8 @@ export default {
           index, // 位置
           titles[index], // 标题
           startTimes[index], // 实际开始时间
-          endTimes[index] // 实际结束时间
+          endTimes[index], // 实际结束时间
+          index * 25
         ]);
       });
 
@@ -123,16 +104,6 @@ export default {
             align: "center"
           }
         },
-        // dataZoom: [
-        //   {
-        //     type: 'slider',
-        //     orient: 'vertical',
-        //     yAxisIndex: [0],
-        //     filterMode: 'weakFilter',
-        //     start: 0,
-        //     end: 100
-        //   }
-        // ],
         grid: {
           left: "3%",
           right: "10%",
@@ -142,6 +113,14 @@ export default {
           backgroundColor: "#eee",
           borderColor: "#ccc"
         },
+        dataZoom: [
+          {
+            id: "dataZoomY",
+            type: "slider",
+            yAxisIndex: 0,
+            filterMode: "weakFilter"
+          }
+        ],
         xAxis: {
           type: "time",
           boundaryGap: false,
@@ -155,7 +134,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          show: false
+          show: false,
         },
         series: [
           {
@@ -172,15 +151,21 @@ export default {
               let value0 = api.value(0);
               let value1 = api.value(1);
               let value2 = api.value(2);
+              let value6 = api.value(6);
 
-              if (!isNaN(value0) && !isNaN(value1) && !isNaN(value2)) {
-                let start = api.coord([value0, value2]);
-                let end = api.coord([value1, value2]);
-                let height = 15;
+              if (
+                !isNaN(value0) &&
+                !isNaN(value1) &&
+                !isNaN(value2) &&
+                !isNaN(value6)
+              ) {
+                let start = api.coord([value0, value6]);
+                let end = api.coord([value1, value6]);
+                let height = api.size([5, 10])[1];
 
                 let rect = {
                   x: start[0],
-                  y: 100 + value2 * (height + 10),
+                  y: start[1] - height,
                   width: end[0] - start[0],
                   height: height
                 };
@@ -205,9 +190,8 @@ export default {
               color: "#409EFF"
             },
             encode: {
-              // data 中『维度1』和『维度2』对应到 X 轴
               x: [0, 1],
-              y: 2
+              y: 6
             },
             data: contentData
           }
@@ -221,5 +205,6 @@ export default {
 <style lang="scss" scoped>
 #id {
   width: 100%;
+  height: 600px;
 }
 </style>

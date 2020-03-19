@@ -103,16 +103,16 @@
                         {{ tip.content }}
                       </el-timeline-item>
                     </el-timeline> -->
-                    <i
-                      v-if="scope.row.status"
-                      class="el-icon-success"
-                      style="color: green;font-size: 15px;"
-                    ></i>
-                    <i
-                      v-else
-                      class="el-icon-warning"
-                      style="color: red;font-size: 15px;"
-                    ></i>
+                  <i
+                    v-if="scope.row.status"
+                    class="el-icon-success"
+                    style="color: green;font-size: 15px;"
+                  ></i>
+                  <i
+                    v-else
+                    class="el-icon-warning"
+                    style="color: red;font-size: 15px;"
+                  ></i>
                   <!-- </el-tooltip> -->
                   <label v-if="scope.row.status">正常</label>
                   <label v-else>異常</label>
@@ -133,6 +133,7 @@
                 v-model="value2"
                 :placeholder="$t('CVM.Dashboard.qxz')"
                 style="width:140px;margin-left:-1px;"
+                @change="handleProjectEvent"
               >
                 <el-option
                   v-for="item in options2"
@@ -145,6 +146,7 @@
                 @PassData="PassData"
                 :projectId="projectId"
                 :searchParam="searchParam"
+                :productValue="productValue"
               />
               <div style="margin-left:-1px;">
                 <el-button type="primary" v-show="region != ''">{{
@@ -170,6 +172,7 @@
                 type="primary"
                 v-for="day in sevenDays"
                 :key="day.key"
+                :plain="day.isSelected"
                 @click="handleDaysButtonEvent($event, day)"
                 >{{ day.value.format("MM-DD") }}</el-button
               >
@@ -274,7 +277,9 @@ export default {
       timelineData: null,
       thresholdObjects: [],
       quotaList: [],
-      projectId: "cvm_device",
+      projectId: "",
+      productValue: "cvm_device",
+      monitorStartTime: moment().format("YYYY-MM-DD"),
       searchParam: {},
       chartLoading: false,
       tableLoading: false,
@@ -347,9 +352,12 @@ export default {
     sevenDays: function() {
       let days = [];
       for (let index = 6; index >= 0; index--) {
+        let day = moment().subtract(index, "days");
+
         days.push({
           key: index,
-          value: moment().subtract(index, "days")
+          value: day,
+          isSelected: day.format("YYYY-MM-DD") !== this.monitorStartTime
         });
       }
       return days;
@@ -360,7 +368,7 @@ export default {
     this.getProject();
     // this.getServiceType();
     this.getProjectList();
-    this.MonitorList(moment().format("YYYY-MM-DD"));
+    this.MonitorList();
     // this.getSMS();
 
     this.productOptions.forEach(item => {
@@ -646,14 +654,18 @@ export default {
       });
     },
     handleDaysButtonEvent(e, day) {
-      this.MonitorList(day.value.format("YYYY-MM-DD"));
+      this.monitorStartTime = day.value.format("YYYY-MM-DD");
+      this.MonitorList();
     },
-    MonitorList(startTime) {
+    handleProjectEvent() {
+      this.MonitorList();
+    },
+    MonitorList() {
       const params = {
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: this.projectId,
-        StartTime: startTime
+        ViewName: this.productValue,
+        StartTime: this.monitorStartTime
       };
 
       let project = null;
@@ -675,18 +687,29 @@ export default {
             this.thresholdObjects = [];
             this.timelineData = [[], [], []];
           } else {
-            this.thresholdObjects = res.Response.ThresholdObjects;
+            thresholdObjects.sort((value1, value2) => {
+              if (
+                moment(value1.FirstOccurTime).hour() <
+                moment(value2.FirstOccurTime).hour()
+              ) {
+                return 1;
+              } else {
+                return -1;
+              }
+            });
 
-            res.Response.ThresholdObjects.forEach(item => {
+            this.thresholdObjects = thresholdObjects;
+
+            thresholdObjects.forEach(item => {
               startTimes.push(item.FirstOccurTime);
               endTimes.push(item.LastOccurTime);
               titles.push(item.Content);
             });
 
             this.timelineData = [
-              startTimes.reverse(),
-              endTimes.reverse(),
-              titles.reverse()
+              startTimes,
+              endTimes,
+              titles
             ];
           }
         } else {
@@ -717,12 +740,16 @@ export default {
         project = this.value2;
       }
 
+      const product = this.productOptions.find(item => {
+        return item.viewName === this.productValue;
+      });
+
       this.thresholdObjects.forEach(item => {
         json.push({
           監控事件: item.Content,
           項目: project,
           地域: "中國臺北",
-          產品類型: "雲伺服器-基礎監控",
+          產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
           對象: item.Dimensions === undefined ? "" : item.Dimensions,
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
@@ -738,8 +765,8 @@ export default {
       XLSX.writeFile(wb, "統計數據.csv");
     },
     PassData(data) {
-      this.projectId = data.productValue;
-      this.MonitorList(moment().format("YYYY-MM-DD"));
+      this.productValue = data.productValue;
+      this.MonitorList();
     }
   }
 };
