@@ -3,9 +3,10 @@ export const ALL_CITY = 'pub/zoneAll' // 区域列表
 export const All_MONITOR = 'monitor2/GetMonitorData' // 监控接口
 export const ALL_Basics = 'monitor2/DescribeBaseMetrics' // 监控基础指标
 export const ALL_PROJECT = 'account/DescribeProject' // 项目列表
-export const ALL_PROJECT_HEALTH_STATUS_LIST = 'monitor2/DescribeProductHealthStatusList'
-export const POLICY_CONDITIONS_LIST = 'monitor2/DescribePolicyConditionList'
-export const ONE_DAY_MONITOR_LIST = 'monitor2/DescribeAbnormalObjects'
+export const ALL_PROJECT_HEALTH_STATUS_LIST = 'monitor2/DescribeProductHealthStatusList' // 近24小时服务健康状态
+export const POLICY_CONDITIONS_LIST = 'monitor2/DescribePolicyConditionList' // 获取基础告警策略条件
+export const ONE_DAY_MONITOR_LIST = 'monitor2/DescribeAbnormalObjects' // 近7天监控时间轴
+export const OVERVIEW_SMS_LIST = 'monitor2/DescribeAlarmSmsQuota' // 当月已使用短信统计
 
 
 // // 雲服务器

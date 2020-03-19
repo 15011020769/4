@@ -139,46 +139,13 @@
               <a @click="buyMessgae">{{ $t("CVM.overview.gmdx") }}</a>
             </div>
             <div class="box-main" style="margin-top:10px;">
-              <div class="progress">
+              <div class="progress" v-for="item in quotaList" :key="item.Type">
                 <p>
-                  {{ $t("CVM.overview.jcgj") }}
-                  <span>{{ $t("CVM.overview.syysy") }}</span>
+                  {{ item.Name }}
+                  <span>剩餘{{ item.FreeLeft }}條/已使用{{ item.Used }}條</span>
                 </p>
                 <el-progress
-                  :percentage="100"
-                  :stroke-width="20"
-                  :show-text="false"
-                ></el-progress>
-              </div>
-              <div class="progress">
-                <p>
-                  {{ $t("CVM.overview.ybcgj") }}
-                  <span>{{ $t("CVM.overview.syysy") }}</span>
-                </p>
-                <el-progress
-                  :percentage="100"
-                  :stroke-width="20"
-                  :show-text="false"
-                ></el-progress>
-              </div>
-              <div class="progress">
-                <p>
-                  {{ $t("CVM.overview.zdyjkgj") }}
-                  <span>{{ $t("CVM.overview.syysy") }}</span>
-                </p>
-                <el-progress
-                  :percentage="100"
-                  :stroke-width="20"
-                  :show-text="false"
-                ></el-progress>
-              </div>
-              <div class="progress">
-                <p>
-                  {{ $t("CVM.overview.zdyxx") }}
-                  <span>{{ $t("CVM.overview.syysy") }}</span>
-                </p>
-                <el-progress
-                  :percentage="100"
+                  :percentage="100*(item.Used/(item.Used + item.FreeLeft))"
                   :stroke-width="20"
                   :show-text="false"
                 ></el-progress>
@@ -202,7 +169,8 @@ import {
   ALL_PROJECT,
   ALL_PROJECT_HEALTH_STATUS_LIST,
   POLICY_CONDITIONS_LIST,
-  ONE_DAY_MONITOR_LIST
+  ONE_DAY_MONITOR_LIST,
+  OVERVIEW_SMS_LIST
 } from "@/constants";
 import bugmsg from "../components/buymsg";
 import { ErrorTips } from "@/components/ErrorTips.js";
@@ -247,7 +215,8 @@ export default {
       ],
       period: "10",
       timelineData: null,
-      thresholdObjects: []
+      thresholdObjects: [],
+      quotaList: []
     };
   },
   components: {
@@ -273,6 +242,7 @@ export default {
     this.getServiceType();
     // this.getProjectList();
     this.MonitorList(moment().format("YYYY-MM-DD"));
+    this.getSMS();
   },
 
   methods: {
@@ -294,10 +264,35 @@ export default {
         this.region = res.data[0].zone;
       });
     },
+    // 当月已使用短信统计
+    getSMS() {
+      let params = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(OVERVIEW_SMS_LIST, params).then(res => {
+        console.info(res);
+        if (res.Response.Error === undefined) {
+          // this.tableData=res.data;//lxx
+          this.quotaList = res.Response.QuotaList;
+        } else {
+          let ErrTips = {
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     //获取项目列表
     getProject() {
       this.axios.get(ALL_PROJECT).then(res => {
-        console.info(res);
         if (res.codeDesc === "Success") {
           // this.tableData=res.data;//lxx
           res.data.forEach((item, index) => {
@@ -342,7 +337,7 @@ export default {
             return true;
           });
 
-          console.log(result);
+          // console.log(result);
         } else {
           let ErrTips = {
             InternalError: "内部错误",
@@ -439,16 +434,16 @@ export default {
 
       this.thresholdObjects.forEach(item => {
         json.push({
-          "監控事件": item.Content,
-          "項目": project,
-          "地域": "中國臺北",
-          "產品類型": "雲伺服器-基礎監控",
+          監控事件: item.Content,
+          項目: project,
+          地域: "中國臺北",
+          產品類型: "雲伺服器-基礎監控",
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
-          "對象": item.Dimensions === undefined ? "" : item.Dimensions,
-          "狀態": item.Status === 0 ? "未恢復" : "已恢復",
-          "告警策略": item.GroupName,
-          "開始時間": item.FirstOccurTime,
-          "結束時間": item.LastOccurTime
+          對象: item.Dimensions === undefined ? "" : item.Dimensions,
+          狀態: item.Status === 0 ? "未恢復" : "已恢復",
+          告警策略: item.GroupName,
+          開始時間: item.FirstOccurTime,
+          結束時間: item.LastOccurTime
         });
       });
 
