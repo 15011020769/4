@@ -47,6 +47,9 @@
                 <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
               </template>
             </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cvm_device'">
+              台湾台北
+            </el-table-column>
             <!-- VPN_GW -->
             <el-table-column label="ID/名称" v-if="viewName === 'VPN_GW'">
               <template slot-scope="scope">
@@ -65,7 +68,9 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'VPN_GW'">
+              台湾台北
+            </el-table-column>
             <!-- vpn_tunnel -->
             <el-table-column label="ID/名称" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
@@ -96,7 +101,9 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">
+              台湾台北
+            </el-table-column>
             <!-- nat_tc_stat -->
             <el-table-column label="ID/名称" v-if="viewName === 'nat_tc_stat'">
               <template slot-scope="scope">
@@ -121,7 +128,9 @@
                 <p>最大并发连接数{{ scope.row.maxConcurrent / 100 }}万</p>
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">
+              台湾台北
+            </el-table-column>
             <!-- DC_GW -->
             <el-table-column label="ID/名称" v-if="viewName === 'DC_GW'">
               <template slot-scope="scope">
@@ -140,7 +149,9 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'DC_GW'">
+              台湾台北
+            </el-table-column>
             <!-- EIP -->
             <el-table-column label="ID/名称" v-if="viewName === 'EIP'">
               <template slot-scope="scope">
@@ -152,7 +163,9 @@
                 <span>{{ scope.row.AddressIp }}</span>
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'EIP'">
+              台湾台北
+            </el-table-column>
             <!-- cdb_detail -->
             <el-table-column label="ID/名称" v-if="viewName === 'cdb_detail'">
               <template slot-scope="scope">
@@ -184,7 +197,9 @@
                 {{ CDB_InstanceType(scope.row.InstanceType) }}
               </template>
             </el-table-column>
-
+            <el-table-column label="地域" v-if="viewName === 'cdb_detail'">
+              台湾台北
+            </el-table-column>
             <!-- REDIS-CLUSTER -->
             <el-table-column
               label="ID/名称"
@@ -213,6 +228,9 @@
                 {{ scope.row.WanIp }}
               </template>
             </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">
+              台湾台北
+            </el-table-column>
             <!-- dcchannel -->
             <el-table-column label="ID/名称" v-if="viewName === 'dcchannel'">
               <template slot-scope="scope">
@@ -236,25 +254,20 @@
               </template>
             </el-table-column>
             <!-- dcline -->
-            <el-table-column label="ID/名称" v-if="viewName === 'dcline'">
+            <el-table-column label="名称/ID" v-if="viewName === 'dcline'">
               <template slot-scope="scope">
-                <p>{{ scope.row.DirectConnectId }}</p>
                 <p>{{ scope.row.DirectConnectName }}</p>
+                <p>{{ scope.row.DirectConnectId }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态" v-if="viewName === 'dcline'">
+            <el-table-column label="所在地" v-if="viewName === 'dcline'">
               <template slot-scope="scope">
-                <p>{{ dcline_Status(scope.row.State) }}</p>
+                <p>{{ scope.row.Location }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="规格" v-if="viewName === 'dcline'">
+            <el-table-column label="带宽" v-if="viewName === 'dcline'">
               <template slot-scope="scope">
-                master-slave
-              </template>
-            </el-table-column>
-            <el-table-column label="内网地址" v-if="viewName === 'dcline'">
-              <template slot-scope="scope">
-                {{ scope.row.WanIp }}
+                <p>{{ scope.row.Bandwidth }}Mbps</p>
               </template>
             </el-table-column>
             <!-- COS -->
@@ -274,9 +287,6 @@
               </template>
             </el-table-column>
 
-            <el-table-column label="地域" v-if="viewName !== 'COS'">
-              台湾台北
-            </el-table-column>
             <el-table-column prop="address" label="操作">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="MoveOut(scope.row)">移出</a>
@@ -1006,7 +1016,7 @@ export default {
               for (let i in _enterList) {
                 params["DirectConnectIds." + i] = JSON.parse(
                   _enterList[i].Dimensions
-                ).directConnectIds;
+                ).directconnectid;
               }
               this.axios.post(Physics_LIST, params).then(res => {
                 if (res.Response.Error === undefined) {
@@ -1016,8 +1026,7 @@ export default {
                   for (let i in _enterList) {
                     for (let j in this.enterList) {
                       if (
-                        JSON.parse(_enterList[i].Dimensions)
-                          .directConnectIds ===
+                        JSON.parse(_enterList[i].Dimensions).directconnectid ===
                         this.enterList[j].DirectConnectId
                       ) {
                         this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
@@ -1028,11 +1037,16 @@ export default {
                   this.loadShow = false;
                 } else {
                   let ErrTips = {
-                    InternalError: "内部错误",
+                    FailedOperation: "操作失败。",
+                    InternalError: "内部错误。",
+                    "InternalError.ExeTimeout": "执行超时。",
                     InvalidParameter: "参数错误。",
-                    InvalidParameterValue: "参数取值错误",
-                    ResourceNotFound: "资源不存在",
-                    UnauthorizedOperation: "未授权操作",
+                    "InvalidParameter.InvalidParameter": "参数错误。",
+                    "InvalidParameter.InvalidParameterParam": "参数错误。",
+                    InvalidParameterValue: "无效的参数值。",
+                    LimitExceeded: "超过配额限制。",
+                    MissingParameter: "缺少参数错误。",
+                    UnknownParameter: "未知参数错误。",
                     UnsupportedOperation: "操作不支持。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1201,8 +1215,8 @@ export default {
         return "已删除";
       }
     },
-    CreationDate(val){
-return val.replace("T"," ").substring(0, val.length - 1)
+    CreationDate(val) {
+      return val.replace("T", " ").substring(0, val.length - 1);
     },
     // 新增
     AddBtn() {
