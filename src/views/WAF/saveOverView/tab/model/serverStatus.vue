@@ -51,7 +51,7 @@ export default {
       legendTextPieServer: [], // 服务器响应状态
       seriesPieBrowser: [], // 浏览器类型
       legendTextPieBrowser: [], // 浏览器类型
-      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C", "#8D62AE"],
+      colorPie: ['#006eff', '#434348', '#74BD48', "#F7A35C", "#8D62AE", '#E26B5E', '#2AADB8', "#51b1ce", "#6296c6"],
       loading: true
     }
   },
