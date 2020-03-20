@@ -22,8 +22,10 @@
         <p>{{$t('CVM.Dashboard.zcbbdc')}}</p>
       </div>
       <div class="headBtn">
-        <el-button type="primary"   @click="openCreate()">{{$t('CVM.Dashboard.tjjktb')}}</el-button>
-        <div>
+        <el-button v-show="!this.showEmptyControlPanel" type="primary" @click="openCreate()">
+          {{$t('CVM.Dashboard.tjjktb')}}
+        </el-button>
+        <div style="float: right">
           <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
             v-on:switchData="GetDat" style="float: left" />
           <el-button type="text" style="float: left"><i class="el-icon-refresh"></i></el-button>
@@ -86,12 +88,12 @@
       <!-- 新增控制面板页面 -->
       <div class="emptyControlPanelPage" v-if="this.showEmptyControlPanel">
         <p>{{$t('CVM.Dashboard.zjklbz')}}</p>
-        <el-button v-if="this.showEmptyControlPanel" type="primary" @click="showChartEdit = true">
+        <el-button v-if="this.showEmptyControlPanel" type="primary"  @click="openCreate()">
           {{$t('CVM.Dashboard.tjjktb')}}
         </el-button>
       </div>
     </div>
-    <!-- <chart-edit :dialogVisible.sync="showChartEdit"></chart-edit> -->
+    <chart-edit :dialogVisible.sync="showChartEdit"></chart-edit>
   </div>
 </template>
 
@@ -101,7 +103,7 @@ import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
 import AddPanel from "./components/AddPaneldialog";
 import RenameControlPanel from "./components/renameControlPanel";
 import {
-  GET_DASHBOARD_LIST
+  GET_DASHBOARD_LIST, DESCRIBE_DASHBOARD_VIEWS
 } from "@/constants";
 import {
   ErrorTips
@@ -216,6 +218,11 @@ export default {
       // this.dialogVisible = false;
       this.panelFlag = false;
     },
+    openCreate(){
+      this.$router.push({
+        name:'DashboardCreate'
+      })
+    },
     // panelStatus(flag) {
     //   //父组件事件
     //   this.panelFlag = flag;
@@ -244,13 +251,7 @@ export default {
     GetData(data) {
       // console.log(data);
     },
-    // 跳转路由
-    openCreate(){
-      this.$router.push({
-        name:"DashboardCreate"
-      })
-    },
-    // 获取Dashboard列表数据
+    // 获取Dashboard 下拉选框数据
     async getDashboardList() {
       let params = {
         Version: '2018-07-24',
@@ -331,6 +332,18 @@ export default {
         this.$refs.renameControlPanel.show = true;
         this.renameControlName = name;
     },
+    // 获取监控面板视图
+    async getDescribeDashboardView() {
+        let params = {
+            Version: '2018-07-24', Module: 'monitor', DashboardID: 135
+        }
+        await this.axios.get(GET_DASHBOARD_LIST, {
+          params: params
+        }).then(res => {
+            
+        })
+    }
+
 
     // //取消
     // cancel() {
