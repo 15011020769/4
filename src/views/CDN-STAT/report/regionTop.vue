@@ -180,7 +180,7 @@ export default {
       this.loading = true;
       const regionsArr = [];
       const tableArr = [];
-      let total = 0;
+      let total = 1;
       this.axios
         .post("cdn2/ListTopData", {
           ...params,
