@@ -88,21 +88,16 @@
                   </el-tooltip>
                 </template>
                 <template slot-scope="scope">
-                  <!-- <el-tooltip
+                  <el-tooltip
                     placement="right"
                     effect="light"
                     :disabled="scope.row.tips.length === 0"
                     popper-class="cm-overview-tooltip"
                   >
-                    <el-timeline :reverse="false" slot="content">
-                      <el-timeline-item
-                        v-for="(tip, index) in scope.row.tips"
-                        :key="index"
-                        :timestamp="tip.timestamp"
-                      >
-                        {{ tip.content }}
-                      </el-timeline-item>
-                    </el-timeline> -->
+                    <timelineview
+                      slot="content"
+                      :data="scope.row.tips"
+                    ></timelineview>
                     <i
                       v-if="scope.row.status"
                       class="el-icon-success"
@@ -113,7 +108,7 @@
                       class="el-icon-warning"
                       style="color: red;font-size: 15px;margin-right:3px;"
                     ></i>
-                  <!-- </el-tooltip> -->
+                  </el-tooltip>
                   <label v-if="scope.row.status">正常</label>
                   <label v-else>異常</label>
                 </template>
@@ -235,6 +230,7 @@ import bugmsg from "../components/buymsg";
 import { ErrorTips } from "@/components/ErrorTips.js";
 import moment from "moment";
 import type from "@/views/CM/CM_assembly/product_type";
+import timelineview from "./timelineview";
 export default {
   name: "overview",
   data() {
@@ -346,7 +342,8 @@ export default {
     Header,
     bugmsg,
     TimelineCharts,
-    type
+    type,
+    timelineview
   },
   computed: {
     sevenDays: function() {
@@ -503,92 +500,14 @@ export default {
         if (res.Response.Error === undefined) {
           const data = res.Response.List;
 
-          this.productOptions = this.productOptions.map(item => {
+          this.productOptions = this.productOptions.map((item, index) => {
             const viewNameObj = data.find(view => {
               return view.ViewName === item.viewName;
             });
 
             if (viewNameObj !== undefined && viewNameObj.HealthStatus === 1) {
               item.status = false;
-              item.tips = [
-                {
-                  timestamp: "2020-03-18",
-                  content: "982374982"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                },
-                {
-                  timestamp: "2020-03-19",
-                  content: "123123"
-                }
-              ];
-              this.getAbnormalList(viewNameObj.ViewName);
+              this.getAbnormalList(viewNameObj.ViewName, index);
             } else {
               item.status = true;
               item.tips = [];
@@ -620,7 +539,7 @@ export default {
         }
       });
     },
-    getAbnormalList(viewName) {
+    getAbnormalList(viewName, index) {
       const params = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -629,6 +548,12 @@ export default {
 
       this.axios.post(ONE_DAY_MONITOR_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
+          const item = this.productOptions[index];
+
+          item.tips = res.Response.ThresholdObjects;
+
+          this.$set(this.productOptions, index, item);
+
         } else {
           let ErrTips = {
             InternalError: "内部错误",
@@ -762,8 +687,8 @@ export default {
 <style lang="css">
 .cm-overview-tooltip {
   max-width: 300px;
-  max-height: 200px;
-  overflow-y: scroll;
+  max-height: 300px;
+  overflow-y: auto;
 }
 </style>
 
