@@ -83,7 +83,7 @@ export default {
           trigger: "item",
           formatter: val => {
             let text = "";
-            text = `${val.data[3]}<br/>正在告警<br/>发生/结束时间<br/>`;
+            text = `${val.data[3]}<br/>正在告警<br/>發生/結束時間<br/>`;
             if (val.data[4] && val.data[5]) {
               let startTime = moment(val.data[4]).format("YYYY-MM-DD HH:mm:ss");
               let endTime = "";
