@@ -215,7 +215,7 @@ module.exports = {
       qsrzgmcpptj: '請輸入規則名稱或匹配條件',
       zdyclzcch: '自定義策略支持從 HTTP 報文的請求路徑、GET 參數、 POST 參數、 Referer 和 User-Agent 等多個特徵進行組合，進行特徵匹配來對公網用戶的訪問進行管控',
       xh: '序號',
-      dbztgz: '1~100的整數，數字越小，代表這條規則的執行優先順序越高',
+      dbztgz: '1~100的整數，數位越小，代表這條規則的執行優先順序越高',
       gqsj: '過期時間',
       kzymb: '擴展域名包',
       gmsl: '購買數量',
