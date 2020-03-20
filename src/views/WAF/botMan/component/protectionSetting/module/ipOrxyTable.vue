@@ -241,7 +241,7 @@ export default {
             if (this.tabsFlag === 'ip') {
               key = 'ipData'
             }
-            Data.Res.forEach(data => {
+            Data && Data.Res.forEach(data => {
               this[key].forEach((row, parantIndex) => {
                 this.$set(this[key], parantIndex, {
                   ...row,
