@@ -227,7 +227,8 @@ export default {
       abnormalNodeNum: 0,
       workLoad: 0,
       abWorkLoad: 0,
-      clusters: [] //集群
+      clusters: [], //集群
+      clustersIdArr: [] //集群
     };
   },
   components: {
@@ -236,16 +237,20 @@ export default {
   created() {
     this.resourceList();
     this.resourceStatusData();
-    this.statusData();
+    this.getData();
   },
   methods: {
+    async getData(){
+      await this.statusData();
+      await this.getCpuInfo()
+    },
     // 查看详情跳转
     goColonySub(id) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({
         name: "colonySub",
         query: {
-          clusterId: id
+          clusterId: id,
         }
       });
     
@@ -292,7 +297,6 @@ export default {
       if (res.Response.Error === undefined) {
         this.TotalCount = res.Response.TotalCount;
 
-        // this.clusters = res.Response.Clusters;
         console.log(this.clusters);
       } else {
         let ErrTips = {
@@ -354,7 +358,7 @@ export default {
       });
     },
      
-    statusData(){
+    async  statusData(){
       var params={
         "Dimensions.0": "workload",
         "Dimensions.1": "node",
@@ -362,7 +366,7 @@ export default {
         ResourceType: "nodeWorkloadStaticNum",
         Version: "2018-05-25",
       }
-      this.axios.post(TKE_COLONY_STATUS_JZ2, params).then(res=>{
+      await this.axios.post(TKE_COLONY_STATUS_JZ2, params).then(res=>{
           console.log(res)   
           if (res.Response.Error === undefined){
            let  d1=res.Response.ResourceStatusSet
@@ -385,29 +389,50 @@ export default {
              arr.push(obj)
            })
            this.clusters = arr;
-           this.getCpuInfo();
-
-           console.log(arr)
+          this.clustersIdArr=arr.map(v=>{
+            return v.name
+          })
+           console.log(arr,'arr')
+           console.log( this.clustersIdArr,' this.clustersIdArr')
           } 
       })
     },
 
-    getCpuInfo(){
+   async  getCpuInfo(){
+      let currentTime=new Date().getTime();
+      const requestBody = {
+          table:'k8s_cluster',
+          startTime:currentTime - 5 * 60 * 1000,
+          endTime:currentTime,
+          fields: [
+          'mean(k8s_cluster_cpu_core_total)',
+          'mean(k8s_cluster_rate_cpu_core_request_cluster)',
+          'mean(k8s_cluster_rate_cpu_core_used_cluster)',
+          'mean(k8s_cluster_memory_total)',
+          'mean(k8s_cluster_rate_mem_request_bytes_cluster)',
+          'mean(k8s_cluster_rate_mem_usage_bytes_cluster)'
+              ],
+          conditions: [['tke_cluster_instance_id', 'in', this.clustersIdArr]],
+          orderBy:'timestamp',
+          groupBy: ['timestamp(60s)', 'tke_cluster_instance_id'],
+          order:'desc',
+          limit:65535
+      };
+      console.log('requestBody',requestBody)
         var params={
          Method: "POST",
          Path: "/front/v1/get/query",
-         RequestBody: "eyJ0YWJsZSI6Ims4c19jbHVzdGVyIiwic3RhcnRUaW1lIjoxNTgzMTM4MzAyODA3LCJlbmRUaW1lIjoxNTgzMTM4NjAyODA3LCJmaWVsZHMiOlsibWVhbihrOHNfY2x1c3Rlcl9jcHVfY29yZV90b3RhbCkiLCJtZWFuKGs4c19jbHVzdGVyX3JhdGVfY3B1X2NvcmVfcmVxdWVzdF9jbHVzdGVyKSIsIm1lYW4oazhzX2NsdXN0ZXJfcmF0ZV9jcHVfY29yZV91c2VkX2NsdXN0ZXIpIiwibWVhbihrOHNfY2x1c3Rlcl9tZW1vcnlfdG90YWwpIiwibWVhbihrOHNfY2x1c3Rlcl9yYXRlX21lbV9yZXF1ZXN0X2J5dGVzX2NsdXN0ZXIpIiwibWVhbihrOHNfY2x1c3Rlcl9yYXRlX21lbV91c2FnZV9ieXRlc19jbHVzdGVyKSJdLCJjb25kaXRpb25zIjpbWyJ0a2VfY2x1c3Rlcl9pbnN0YW5jZV9pZCIsImluIixbImNscy03NHUwOGRjYyIsImNscy1uZDF5NWlvMiIsImNscy1oZnpveGI4bSJdXV0sIm9yZGVyQnkiOiJ0aW1lc3RhbXAiLCJncm91cEJ5IjpbInRpbWVzdGFtcCg2MHMpIiwidGtlX2NsdXN0ZXJfaW5zdGFuY2VfaWQiXSwib3JkZXIiOiJkZXNjIiwibGltaXQiOjY1NTM1fQ==",
+         RequestBody: btoa(JSON.stringify( requestBody) ),
          Version: "2018-07-24",
         }
+        console.log(params,'paramsbtoa')
         this.axios.post(TKE_GETCPUUSE, params).then(res=>{
           if (res.Response.Error === undefined){
             let response = JSON.parse(res.Response.ResponseBody);
-            console.log(response)
-            console.log( this.clusters)
+          console.log('rresponse',response)
             this.clusters.forEach(val=>{
 
               response.data.forEach(item=>{
-                  
                   if(item.indexOf(val.name)!=-1){
                         val.c1=item[4]==null?'--':item[4].toFixed('2')+'%'
                         val.c2=item[2]==null?'--':item[2].toFixed('2')
@@ -419,14 +444,14 @@ export default {
               })
             })
            }else{
-              //  let ErrTips = {};
-              // let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
-              // this.$message({
-              //   message: ErrOr[res.Response.Error.Code],
-              //   type: "error",
-              //   showClose: true,
-              //   duration: 0
-              // });
+               let ErrTips = {};
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
            }
         })
 
