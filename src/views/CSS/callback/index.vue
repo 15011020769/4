@@ -132,13 +132,20 @@ export default {
             this.modalVisible = false
             this.$message({
               message: '删除成功',
-              type: 'success'
+              type: 'success',
+              showClose: true,
+              duration: 0,
             })
             this.fetchRecordingList()
             return
           }
           let ErrOr = Object.assign(ErrorTips, CSSErrorTips)
-          this.$message.error(ErrOr[data.Response.Error.Code])
+          this.$message({
+            message: ErrOr[data.Response.Error.Code] || '删除失败',
+            type: 'error',
+            duration: 0,
+            showClose: true,
+          })
         })
     },
 

@@ -59,7 +59,8 @@ let CSSErrorTips = {
   'UnsupportedProtocol': 'HTTPS請求方法錯誤，只支持GET和POST請求',
   'UnsupportedRegion': '接口不支持所傳传地域',
   'InvalidParameterValue.Malformed': '參數值是無效的,请输入正确的参数值',
-  'InvalidIpFormat': '格式無效'
+  'InvalidIpFormat': '格式無效',
+  'FailedOperation.ConfInUsed': '模板正在使用中！',
 }
 export {
   CSSErrorTips

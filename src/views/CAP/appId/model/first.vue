@@ -95,8 +95,8 @@ export default {
         if(res.Response.Error === undefined){
           if(res != ""){
                 this.loading = false
-                this.tableData = res.Response.Data;
-                this.TotalCount = res.Response.Data.length
+                this.tableData = res.Response.Data || [];
+                this.TotalCount = this.tableData.length
           }else{
             this.loading = false
               this.$message({

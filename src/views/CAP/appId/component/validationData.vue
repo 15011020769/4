@@ -470,7 +470,7 @@ export default {
           type: "line",
           data: data0
         });
-        params.Type = 1;
+        params.Type = 2;
         this.getEachrtsData(params).then(res => {
           // console.log(res);
           const data1 = [];
@@ -482,7 +482,7 @@ export default {
             type: "line",
             data: data1
           });
-          params.Type = 2;
+          params.Type = 1;
           this.getEachrtsData(params).then(res => {
             // console.log(res);
             const data2 = [];
