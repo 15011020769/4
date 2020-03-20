@@ -10,7 +10,15 @@
         :before-close="handleClose"
       >
         <div class="createRulesForm">
-          <p class="tc-15-msg error" v-if="checkflg == false">{{$t('DDOS.accessCopy.editWarning')}}</p>
+          <p class="tc-15-msg error" v-if="checkIpFlg == false">
+            {{$t('DDOS.accessCopy.editWarning')}}
+          </p>
+          <p class="tc-15-msg error" v-if="checkNetFlg == false">
+            {{$t('DDOS.accessCopy.netWarning')}}
+          </p>
+          <p class="tc-15-msg error" v-if="checkNumFlg == false">
+            {{$t('DDOS.accessCopy.numWarning')}}
+          </p>
           <div class="ruleList newClear">
             <span class="ruleListLabel">{{$t('DDOS.AccesstoCon.businessDoma')}}</span>
             <span class="ruleListIpt">
@@ -107,7 +115,9 @@ export default {
       protocolList: [{ pro: "TCP" }, { pro: "UDP" }],
       EnidData: "", //获取某一条数据
       textData: "",
-      checkflg: true //textData是否通过校验
+      checkIpFlg: true, //textData是否通过IP校验
+      checkNetFlg: true, //textData是否通过域名校验
+      checkNumFlg: true //textData是否通过数量校验
     };
   },
   computed: {
@@ -151,7 +161,7 @@ export default {
     },
     //编辑确定按钮
     editSure() {
-      if (!this.checkflg) {
+      if (!this.checkflg || !this.checkNetFlg || !this.checkNumFlg) {
         return;
       }
       let params = {
@@ -214,25 +224,42 @@ export default {
         type: "warning"
       });
     },
-    //值改变调用校验方法
+    //值改变调用校验方法（先校验是否正确，再检查数量）
     textDataChange() {
+      this.checkIpFlg = true;
+      this.checkNetFlg = true;
+      this.checkNumFlg = true;
+      if (this.textData == "") {
+        return
+      }
       let arr = this.textData.split(/[\s\n]/);
       var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      var regNet = new RegExp("^(?=^.{3,255}$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+$");
       var regNUM = /(^[0-9]\d*$)/;
-      this.checkflg = true;
       if (this.EnidData.SourceType == "2") {
         //IP回源
         for (let i = 0; i < arr.length / 2; i++) {
           if (!regIP.test(arr[i * 2]) || !regNUM.test(arr[i * 2 + 1])) {
-            this.checkflg = false;
-            // return
+            this.checkIpFlg = false;
+            return
           }
+        }
+        if (arr.length/2 > 20) {
+          this.checkNumFlg = false;
+          return
         }
       } else if (this.EnidData.SourceType == "1") {
         //域名回源
-        // for(let i=0; i<arr.length; i++) {
-        //   params['Rules.0.SourceList.'+i+'.Source'] = arr[i]
-        // }
+        for(let i=0; i<arr.length; i++) {
+          if (!regNet.test(arr[i]) || arr[i].indexOf(".") == -1) {
+            this.checkNetFlg = false;
+            return
+          }
+        }
+        if (arr.length > 20) {
+          this.checkNumFlg = false;
+          return
+        }
       }
     }
   }
