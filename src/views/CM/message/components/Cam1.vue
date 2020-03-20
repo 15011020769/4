@@ -138,7 +138,24 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    var data = this.$route.params;
+    if (data.NotifyWay) {
+      data.NotifyWay.forEach((v, i) => {
+        if (v == "EMAIL") {
+          v = "郵件";
+        } else if (v == "SMS") {
+          v = "簡訊";
+        }
+        this.qudaoCheckList.push(v);
+      });
+    }
+    if (data.ReceiverGroupIds) {
+      data.ReceiverGroupIds.forEach((v, i) => {
+        this.cam.selectUserGroup.push(v);
+      });
+    }
+  },
   mounted() {
     this.userGroup(); // 查询接收组
   },
@@ -152,7 +169,6 @@ export default {
         this.userList(); // 查询接收人
       }
     },
-
     // 搜索关键字
     searchKey() {
       if (this.formInline.jieshou === "0") {
@@ -161,7 +177,6 @@ export default {
         this.userList(); // 查询接收人
       }
     },
-
     // 查询接收组
     userGroup() {
       this.loadingShow = true;
@@ -196,7 +211,6 @@ export default {
           });
         });
     },
-
     // 查询接收组详情
     userGroupDetail(GroupId) {
       let params = {
@@ -239,7 +253,6 @@ export default {
           console.log(error);
         });
     },
-
     // 查询接收人数据
     userList() {
       this.userListLoading = true;
@@ -292,24 +305,34 @@ export default {
           console.log(error);
         });
     },
-
     // 接收组 table表格选中触发的事件
     handleSelectionChange(val) {
+      console.log(this.cam.selectUserList);
       this.cam.selectUserGroup = val;
-      this.cam.selectUserList = [];
+      //   this.cam.selectUserList = [];
       this.$emit("camClick", this.cam);
     },
-
     // 接收人 table表格选中触发的事件
     handleSelectionChange2(val) {
       this.cam.selectUserGroup = [];
       this.cam.selectUserList = val;
       this.$emit("camClick", this.cam);
     },
-
     // 选中渠道
     selectChannel() {
+      var data = this.$route.params;
+      if (data.NotifyWay) {
+        data.NotifyWay.forEach((v, i) => {
+          if (v == "EMAIL") {
+            v = "郵件";
+          } else if (v == "SMS") {
+            v = "簡訊";
+          }
+          this.qudaoCheckList.push(v);
+        });
+      }
       this.cam.channel = this.qudaoCheckList;
+      console.log(this.cam.channel)
       this.$emit("camClick", this.cam);
     }
   }
