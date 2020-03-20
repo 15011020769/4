@@ -209,43 +209,9 @@ export default {
       checkedUse: false, // 使用预置触发条件
       productData: [], // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
-      formInline: {
-        jieshou: '接收组',
-        jieshouArr: [
-          { value: '0', name: '接收组' },
-          {
-            value: '1',
-            name: '接收人'
-          }
-        ],
-        apiStr: 'http', // 接口回调
-        apiArr: [
-          {
-            value: 0,
-            name: 'http'
-          },
-          {
-            value: 1,
-            name: 'https'
-          }
-        ], // 接口回调数据
+      formInline: {       
         strategy_name: '', // 策略名称
         textareas: '', // 备注
-        strategy: '云服务器-基础监控',
-        strategy_kind: [
-          {
-            value: 0,
-            name: '云服务器-基础监控'
-          }
-        ], // 策略类型
-        alarm: '', // 策略类型
-        projectName: '默认项目',
-        project: [
-          {
-            value: 0,
-            name: '默认项目'
-          }
-        ]
       },
       indexAry: [ // 指标告警数组
         {
@@ -397,7 +363,7 @@ export default {
       }, // 名称和备注的验证
       show: this.dialogVisible,
       view_name: '', // 策略视图名称
-      projectId: '0',
+      projectId: 0,
       searchParam: { value: 'ins-6oz38wnu', label: 'instance-id' },
       productValue: 'cvm_device'
     }
