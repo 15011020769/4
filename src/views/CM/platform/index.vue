@@ -183,7 +183,7 @@ export default {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-07-24",
         Limit: this.pageSize,
-        Offset: pageIndex,
+        Offset: this.pageIndex,
         Module: "monitor",
         StartTime: this.StartTime,
         EndTime: this.EndTime
