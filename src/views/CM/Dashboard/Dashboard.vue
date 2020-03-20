@@ -28,6 +28,8 @@
         <div style="float: right">
           <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
             v-on:switchData="GetDat" style="float: left" />
+          <!-- <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'D'"
+            v-on:switchData="GetDat" /> -->
           <el-button type="text" style="float: left"><i class="el-icon-refresh"></i></el-button>
           <el-dropdown>
             <el-button type="text" style="float: left;margin-left: 0px;"><i class="el-icon-more"></i></el-button>
@@ -63,11 +65,12 @@
                 </el-dropdown>
               </el-row>
             </p>
-            <div class="line">
-              <p>--------------------------------------------------------------------------</p>
-              <p>--------------------------------------------------------------------------</p>
-              <p>--------------------------------------------------------------------------</p>
-            </div>
+            <!-- <div class="line" :ref="'echart' + item.ViewID" :id="'echart'+item.ViewID">
+
+            </div> -->
+            <div  v-for="(item,i) in seriesArr" :key='i'>
+              <EcharS class="line" :time="time" :series='item.series' :period='period' />
+            </div> 
           </div>
           <div class="open">
             <p>
@@ -114,6 +117,7 @@ import Header from "@/components/public/Head";
 import TimeDropDown from '@/components/public/TimeDropDown' //引入时间组件
 import AddPanel from "./components/AddPaneldialog";
 import RenameControlPanel from "./components/renameControlPanel";
+import EcharS from '@/components/public/EcharS'
 import {
   GET_DASHBOARD_LIST, DESCRIBE_DASHBOARD_VIEWS
 } from "@/constants";
@@ -126,10 +130,10 @@ export default {
   data() {
     return {
       TimeArr: [{
-          name: '实时',
+          name: '近1小时',
           Time: 'realTime',
           TimeGranularity: [{
-            value: "10",
+            value: "10000",
             label: "10秒"
           }, ]
         },
@@ -137,32 +141,32 @@ export default {
           name: '近24小时',
           Time: 'Nearly_24_hours',
           TimeGranularity: [{
-            value: "10",
-            label: "10秒"
+            value: "60000",
+            label: "1分鐘"
           }, ]
         },
         {
           name: '近7天',
           Time: 'Nearly_7_days',
           TimeGranularity: [{
-            value: "10",
-            label: "10秒"
+            value: "3600000",
+            label: "1小時"
           }, ]
         },
         {
           name: '近15天',
           Time: 'Nearly_15_days',
           TimeGranularity: [{
-            value: "10",
-            label: "10秒"
+            value: "3600000",
+            label: "1小時"
           }, ]
         },
         {
           name: '近30天',
           Time: 'Nearly_30_days',
           TimeGranularity: [{
-            value: "10",
-            label: "10秒"
+            value: "3600000",
+            label: "1小時"
           }, ]
         },
       ],
@@ -200,7 +204,18 @@ export default {
       ],
       showEmptyControlPanel: false, // 是否展示空的监控面板
       ViewList: [], // 监控面板数组
-      DashboardID: '' // 展示面板的ID
+      DashboardID: '', // 展示面板的ID
+      period: '10000', // echarts展示粒度
+      time: [], // 横坐标时间
+      seriesArr: [ // 纵坐标
+        {series: [{
+            type: 'line',
+            stack: '总量',
+            data: []
+          }],
+        },
+      ]
+      ,
     };
   },
   components: {
@@ -208,7 +223,8 @@ export default {
     Header,
     TimeDropDown,
     AddPanel,
-    RenameControlPanel
+    RenameControlPanel,
+    EcharS
   },
   created() {
     this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
@@ -222,7 +238,15 @@ export default {
   },
   methods: {
     GetDat(data) {
-      console.log(data)
+      console.log(data, 'data')
+      this.time = data[1].XAxis; // 横坐标时间
+      this.seriesArr.forEach(item => {
+        item.series[0].data = [];
+        this.time.forEach(ele => {
+          item.series[0].data.push(parseInt(Math.random() * 100));
+        })
+      })
+      
     },
     //设置弹框//新建实例分组
     buyMessgae() {
@@ -444,6 +468,26 @@ export default {
                   newInstances.push(JSON.parse(el));
                 });
                 ele.Instances = newInstances;
+                ele.Meta = JSON.parse(ele.Meta);
+                // this.$nextTick(() => {
+                  // const chartView = this.$refs['echart' + ele.ViewID];
+                  // const chartView = document.getElementById['echart' + ele.ViewID];
+                  // const myChart = this.$echarts.init(chartView);
+                  // myChart.setOption({
+                  //   xAxis: {
+                  //       type: 'category',
+                  //       data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                  //   },
+                  //   yAxis: {
+                  //       type: 'value'
+                  //   },
+                  //   series: [{
+                  //       data: [820, 932, 901, 934, 1290, 1330, 1320],
+                  //       type: 'line',
+                  //       smooth: true
+                  //   }]
+                  // });
+                // });
               });
               console.log( this.ViewList, 'Response');
             } else {

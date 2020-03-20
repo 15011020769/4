@@ -138,7 +138,7 @@
             data: [150, 232, 201, 154, 190, 330, 410]
           },
         ],
-        period: '10',
+        period: '10000',
         shuian: [{
           name: 'Pod重启次数',
           id: 'podid',
