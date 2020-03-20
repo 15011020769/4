@@ -1011,7 +1011,8 @@ export default {
       this.$router.push({
         name: "strategyCreateDetail",
         query: {
-          groupId: row.GroupId
+          groupId: row.GroupId,
+          viewName: row.ViewName
         }
       });
     },

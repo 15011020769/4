@@ -73,7 +73,7 @@
       </div>
       <div class="newClear">
         <span class="leftCon">推流地址</span>
-        <span v-if="pushUrl">{{ pushUrl }}</span>
+        <span v-if="pushUrl">{{ pushUrl }} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="pushUrl" /></span>
         <span class="rightCon" v-else>{{ $t("CSS.domainManagement.29") }}</span>
       </div>
     </div>
@@ -231,6 +231,14 @@ export default {
     })
   },
   methods: {
+    onCopy() {
+      this.$message({
+        message: '複製成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    },
     // getLiveConfig() {
     //   const param = {
     //     g_tk: "2033061200",
@@ -433,5 +441,8 @@ export default {
   overflow-y: auto;
   background-color: #f5f2f0;
   border-radius: 4px;
+}
+.el-icon-copy-document {
+  cursor: pointer;
 }
 </style>

@@ -256,7 +256,12 @@ export default {
             return
           }
           this.ResIpList = res.Response.Resource
-          this.inputIdService = res.Response.Resource[0].Id;
+          let jsonIp = sessionStorage.getItem('selectId')
+          if (jsonIp !== null) {
+              this.inputIdService = jsonIp
+          } else {
+              this.inputIdService = res.Response.Resource[0].Id;
+          }
           this.thisTime(1)
         } else {
           let ErrTips = {};
@@ -318,7 +323,7 @@ export default {
       this.thisTime(1)
       // this.describeResourceList();
       this.getDataService();
-      sessionStorage.setItem("selectId", this.inputIdService)
+      sessionStorage.setItem('selectId', this.inputIdService)
     },
     // 时间格式化'yyyy-MM-dd hh:mm:ss'
     getDateString(date) {

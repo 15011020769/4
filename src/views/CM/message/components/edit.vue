@@ -5,7 +5,7 @@
       <div class="box">
         <p>
           <span>策略ID</span>
-          <span>{{}}</span>
+          <span style="margin-left:45px">{{dataObj.PolicyID}}</span>
         </p>
         <p class="rowCont">
           <span>策略名称</span>
@@ -23,18 +23,7 @@
             <br />
           </p>
         </div>
-        <div class="qudao">
-          <span>告警渠道</span>
-          <div class="qudaoContent">
-            <p>
-              <el-checkbox v-model="checked1">邮件</el-checkbox>
-            </p>
-            <p>
-              <el-checkbox v-model="checked2">短信</el-checkbox>
-            </p>
-          </div>
-        </div>
-
+        <Cam v-on:camClick="camFun"></Cam>
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
         </div>
@@ -45,9 +34,9 @@
 <script>
 import Header from "./Header";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import {
-  EDIT_CUSTON_MESSAGE
-} from "@/constants/CM-lxx.js";
+import Cam from "./Cam1";
+
+import { EDIT_CUSTON_MESSAGE } from "@/constants/CM-lxx.js";
 export default {
   data() {
     return {
@@ -59,6 +48,8 @@ export default {
       tableData: [],
       options: [],
       values: "",
+      cam: {},
+      dataObj: {}, //编辑传的对象
       formInline: {
         strategy_name: "", //策略名称
         textarea: "", //备注
@@ -82,12 +73,83 @@ export default {
   },
   components: {
     Header,
+    Cam
+  },
+  created() {
+    console.log(this.$route.params);
+    this.dataObj = this.$route.params;
+    this.formInline.strategy_name = this.dataObj.PolicyName;
   },
   methods: {
+    // 获取cam组件的值
+    camFun(data) {
+      this.cam = data;
+      console.log(this.cam)
+    },
     //确定
     save() {
-      this.$router.push({
-        path: "/message"
+      if (this.cam.selectUserGroup.length == 0) {
+        this.$message({
+          message: "请选择告警接收组",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return;
+      }
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        PolicyName: this.formInline.strategy_name, //策略名
+        PolicyId:this.dataObj.PolicyID
+      };
+      this.cam.selectUserGroup.forEach((v, i) => {
+        param["ReceiverGroupIds." + i] = v.GroupId;
+      });
+
+      this.cam.channel.forEach((v, i) => {
+        if (v == "郵件") {
+          v = "EMAIL";
+        } else if (v == "簡訊") {
+          v = "SMS";
+        }
+        param["NotifyWays." + i] = v;
+      });
+      console.log(this.cam.channel,param)
+      this.axios.post(EDIT_CUSTON_MESSAGE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            message: "编辑成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.$router.push({
+            path: "/message"
+          });
+          this.loadShow = false;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            ResourcesSoldOut: "资源售罄。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。"
+          };
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     }
   },

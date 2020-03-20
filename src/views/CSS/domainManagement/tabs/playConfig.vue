@@ -78,7 +78,7 @@
         <div class="newClear" v-for="(url, index) in playUrls" :key="url.name">
           <div class="newList">
             <p>{{ url.name }}</p>
-            <p>{{ url.value }}</p>
+            <p>{{ url.value }} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="url.value" /></p>
           </div>
           <p class="tip">{{ url.tip }}</p>
         </div>
@@ -120,6 +120,14 @@ export default {
     }
   },
   methods: {
+    onCopy() {
+      this.$message({
+        message: '複製成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    },
     getAuthConf () {
       this.axios
         .post(LIVE_DESCRIBE_LIVEPLAYAUTHKEY, {
@@ -331,5 +339,8 @@ export default {
 }
 .tip {
   color: #888;
+}
+.el-icon-copy-document {
+  cursor: pointer;
 }
 </style>

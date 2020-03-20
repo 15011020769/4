@@ -114,7 +114,7 @@ export default {
       loadingShow: true, // 接收组动画
       userListArr: [], // 接收人列表数组
       userListLoading: "true", // 接收人加载动画
-      qudaoCheckList: ["郵件", "簡訊"], //渠道选择
+      qudaoCheckList: [], //渠道选择
       formInline: {
         jieshou: "0",
         jieshouArr: [
@@ -138,6 +138,7 @@ export default {
       }
     };
   },
+  created() {},
   mounted() {
     this.userGroup(); // 查询接收组
   },
@@ -323,8 +324,8 @@ export default {
   width: 100%;
 
   .receiving-objects {
-      margin-top:30px;
-      margin-left: 60px;
+    margin-top: 30px;
+    margin-left: 60px;
     a {
       line-height: 30px;
     }
@@ -347,8 +348,6 @@ export default {
 }
 
 .qudaoContent {
-
-
   .receiving-objects {
     display: flex;
     align-items: center;

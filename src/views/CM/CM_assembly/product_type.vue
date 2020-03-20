@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-select v-model="productValue">
+    <el-select v-model="productValue1">
       <el-option v-for="item in productOptions" :key="item.viewName" :label="item.label" :value="item.viewName">
       </el-option>
     </el-select>
@@ -18,6 +18,7 @@
     Physics_LIST, //物理专线列表
     Private_LIST, //专线通道列表
     OBJ_LIST, //对象存储列表
+    CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
   import {
@@ -27,7 +28,7 @@
     props: {
       projectId: {
         required: true,
-        type: String
+        type: Number
       },
       searchParam: {
         required: true,
@@ -38,97 +39,123 @@
         type: String
       },
     },
+
+
     data() {
       return {
-        productOptions: [{
-          label: '云服务器',
-          viewName: 'cvm_device',
-        }, {
-          label: 'VPN网关',
-          viewName: 'VPN_GW',
-        }, {
-          label: 'VPN通道',
-          viewName: 'vpn_tunnel',
-        }, {
-          label: 'NAT网关',
-          viewName: 'nat_tc_stat',
-        }, {
-          label: '专线网关',
-          viewName: 'DC_GW',
-        }, {
-          label: '弹性公网IP',
-          viewName: 'EIP',
-        }, {
-          label: 'MYSQL',
-          viewName: 'cdb_detail',
-        }, {
-          label: 'Redis',
-          viewName: 'REDIS-CLUSTER',
-        }, {
-          label: '专用通道',
-          viewName: 'dcchannel',
-        }, {
-          label: '物理专线',
-          viewName: 'dcline',
-        }, {
-          label: '对象存储',
-          viewName: 'COS',
-        }],
+        productOptions: [
+
+
+          {
+            label: '云服务器',
+            viewName: 'cvm_device',
+          }, {
+            label: 'VPN网关',
+            viewName: 'VPN_GW',
+          }, {
+            label: 'VPN通道',
+            viewName: 'vpn_tunnel',
+          }, {
+            label: 'NAT网关',
+            viewName: 'nat_tc_stat',
+          }, {
+            label: '专线网关',
+            viewName: 'DC_GW',
+          }, {
+            label: '弹性公网IP',
+            viewName: 'EIP',
+          }, {
+            label: 'MYSQL',
+            viewName: 'cdb_detail',
+          }, {
+            label: 'Redis',
+            viewName: 'REDIS-CLUSTER',
+          }, {
+            label: '专用通道',
+            viewName: 'dcchannel',
+          }, {
+            label: '物理专线',
+            viewName: 'dcline',
+          }, {
+            label: '对象存储',
+            viewName: 'COS',
+          }
+        ],
         Date: [], //各个产品数组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置
         Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
         MetricName: [],
         id: '',
-        Pass: {}
+        Pass: {},
+        Conditions: '',
+        productValue1: this.productValue,
+        Metrics: null,
       }
     },
     watch: {
-      productValue() {
-        this._switchType()
+      productValue1() {
+        this._Metrics()
       },
       projectId() {
-        this._switchType()
+        this._Metrics()
       },
       searchParam() {
-        this._switchType()
+        this._Metrics()
       }
-
     },
     created() {
-      this._switchType()
+
+      this._Metrics()
     },
     methods: {
+      _Metrics() {
+        let params = {
+          Version: "2018-07-24",
+          Module: "monitor",
+        };
+        this.axios.post(CM_GROUPING_LIST_TYPE, params).then(res => {
+          this.Conditions = res.Response.Conditions
+          this.Conditions.forEach(item => {
+            if (item.PolicyViewName === this.productValue1) {
+              this.Metrics = item.Metrics
+            }
+          });
+        }).then(() => {
+          this._switchType()
+        })
+      },
       _PassValue() {
-        this.Pass.productValue = this.productValue
+        this.Pass.productValue = this.productValue1
         this.Pass.Date = this.Date
         this.Pass.HeadConfig = this.HeadConfig
         this.Pass.SearchConfig = this.SearchConfig
         this.Pass.Namespace = this.Namespace
         this.Pass.MetricName = this.MetricName
         this.Pass.id = this.id
+        this.Pass.Metrics = this.Metrics
         this.$emit("PassData", this.Pass);
       },
       _switchType() {
-        if (this.productValue === 'cvm_device') {
+        if (this.productValue1 === 'cvm_device') {
           this._GetCVM()
-        } else if (this.productValue === 'nat_tc_stat') {
+        } else if (this.productValue1 === 'nat_tc_stat') {
           this._GetNat()
-        } else if (this.productValue === 'VPN_GW') {
+        } else if (this.productValue1 === 'VPN_GW') {
           this._GetVPNG()
-        } else if (this.productValue === 'vpn_tunnel') {
+        } else if (this.productValue1 === 'vpn_tunnel') {
           this._GetVPNX()
-        } else if (this.productValue === 'DC_GW') {
+        } else if (this.productValue1 === 'DC_GW') {
           this._GetPRI()
-        } else if (this.productValue === 'cdb_detail') {
+        } else if (this.productValue1 === 'cdb_detail') {
           this._GetMYSQL()
-        } else if (this.productValue === 'REDIS-CLUSTER') {
+        } else if (this.productValue1 === 'REDIS-CLUSTER') {
           this._GetREDIS()
-        } else if (this.productValue === 'dcline') {
+        } else if (this.productValue1 === 'dcline') {
           this._GetDCLINE()
-        } else if (this.productValue === 'dcchannel') {
+        } else if (this.productValue1 === 'dcchannel') {
           this._GetDcPri()
-        } else if (this.productValue === 'COS') {
+        } else if (this.productValue1 === 'COS') {
           this._GetOBJ()
         }
       },
@@ -138,31 +165,15 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
-        if (this.projectId !== "") {
-          if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
-            console.log(this.searchParam.label)
-            parms["Filters.0.Name"] = this.searchParam.label;
-            parms["Filters.0.Values.0"] = this.searchParam.value;
-            parms["Filters.1.Name"] = 'project-id';
-            parms["Filters.1.Values.0"] = this.projectId;
-          } else {
-            parms["Filters.0.Name"] = 'project-id';
-            parms["Filters.0.Values.0"] = this.projectId;
-          }
-        }
-
         if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
-          if (this.projectId !== "") {
-            parms["Filters.0.Name"] = this.searchParam.label;
-            parms["Filters.0.Values.0"] = this.searchParam.value;
-            parms["Filters.1.Name"] = 'project-id';
-            parms["Filters.1.Values.0"] = this.projectId;
-          } else {
-            parms["Filters.0.Name"] = this.searchParam.label;
-            parms["Filters.0.Values.0"] = this.searchParam.value;
-          }
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+          parms["Filters.1.Name"] = 'project-id';
+          parms["Filters.1.Values.0"] = this.projectId;
+        } else {
+          parms["Filters.0.Name"] = 'project-id';
+          parms["Filters.0.Values.0"] = this.projectId;
         }
-
         this.axios.post(CVM_LIST, parms).then(data => {
           this.id = 'cvm'
           this.Date = data.Response.InstanceSet
@@ -454,8 +465,8 @@
           this.HeadConfig = {
             title1: 'ID/名称',
             title2: '内网IP/端口',
-            title2: '网络类型',
-            title3: '类型',
+            // title3: '网络类型',
+            // title4: '类型',
           }
           this.MetricName = [
 

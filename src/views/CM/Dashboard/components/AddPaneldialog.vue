@@ -71,19 +71,25 @@ export default {
     },
     //添加监控面板按钮
     async handlereateDashboardView() {
-      let params = {
+      let params = 
+      {
         Version: '2018-07-24',
         Module: 'monitor',
         DescName: this.form.name,
-        Meta: '{index: 3}', // 元数据，json串
+        Meta: '{"index": 18}', // 元数据，json串
       }
-      await this.axios.get(CREATE_DASHBOARD, {
-        params: params
-      }).then(res => {
+      // {
+      //   "serviceType":"monitor","cmd":"CreateDashboard","regionId":1,
+      //   "data":{"Version":"2018-07-24","Module":"monitor","DescName":"监控面板21","Meta":"{\"Index\":19}"},
+      //   "action":"CreateDashboard"
+      // }
+      await this.axios.post(CREATE_DASHBOARD, params).then(res => {
         if (res.Response.Error === undefined) {
           // res.Response.DashboardID
           // res.Response.RequestId
           console.log(res.Response, 'res.Response');
+          this.$parent.$parent.showEmptyControlPanel = true; // 跳转新的监控面板页面
+          this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
@@ -133,7 +139,7 @@ export default {
           });
         }
       }).finally(() => {
-        this.$parent.$parent.showEmptyControlPanel = true;
+        
       })
     }
   }

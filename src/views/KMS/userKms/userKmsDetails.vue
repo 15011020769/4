@@ -245,10 +245,10 @@
             （工具仅密钥启用状态时可用）">
           </el-popover>
           <div class="btnBottom">
-            <button @click="changeBtnEncrypt(1)" :class="thisType=='1'?'bthBorderColor':''"
-              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.encryption')}}</button>
-            <button @click="changeBtnEncrypt(2)" :class="thisType=='2'?'bthBorderColor':''"
-              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'>{{$t('KMS.total.Decrypt')}}</button>
+            <el-button @click="changeBtnEncrypt(1)" :class="thisType=='1'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
+              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"||keyList.KeyState=="PendingImport"?true:false'>{{$t('KMS.total.encryption')}}</el-button>
+            <el-button style="margin-left:4px" @click="changeBtnEncrypt(2)" :class="thisType=='2'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
+              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"||keyList.KeyState=="PendingImport"?true:false'>{{$t('KMS.total.Decrypt')}}</el-button>
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
@@ -370,7 +370,7 @@
           if (res.Response.Error === undefined) {
 
             this.keyList = res.Response.KeyMetadata;
-            console.log(this.keyList)
+            console.log(this.keyList,'this.keyList')
             this.loading = false;
           } else {
             let ErrTips = {

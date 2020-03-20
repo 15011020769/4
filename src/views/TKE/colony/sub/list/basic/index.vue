@@ -172,7 +172,8 @@
               :value="item.projectId"
             ></el-option>
           </el-select>
-          <p>{{$t('TKE.subList.jqxzfwq')}}<a href="#">使用指引</a><i class="el-icon-edit-outline"></i></p>
+          <!-- <p>{{$t('TKE.subList.jqxzfwq')}}<a href="#">使用指引</a><i class="el-icon-edit-outline"></i></p> -->
+          <p>{{$t('TKE.subList.jqxzfwq')}}</p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -199,7 +200,8 @@
               :value="item"
             ></el-option>
           </el-select>
-          <p>{{$t('TKE.subList.ggczxt')}}<a href="#">{{$t('TKE.overview.ckxq')}}</a><i class="el-icon-edit-outline"></i></p>
+          <!-- <p>{{$t('TKE.subList.ggczxt')}}<a href="#">{{$t('TKE.overview.ckxq')}}</a><i class="el-icon-edit-outline"></i></p> -->
+          <p>{{$t('TKE.subList.ggczxt')}}</p>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -319,8 +321,9 @@ export default {
             validator: (rule, value, callback) => {
               if (value === '') {
                 callback(new Error('集群名稱不能為空'))
-              } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('集群名稱格式不正確'))
+              } else if (value.length >60) { 
+              // else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
+                callback(new Error('集群名稱不能大於60個字符'))
               } else {
                 callback()
               }

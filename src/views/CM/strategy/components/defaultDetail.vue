@@ -1,11 +1,14 @@
 <template>
   <div class="defaultDetail">
     <Header title="管理告警策略" :backShow="backShow" />
-    <product-type
+    <product-type-cpt
       v-on:PassData="passData"
       :searchParam="searchParam"
       :projectId="projectId"
+      :productValue="ViewName"
+      style="display:none;"
     />
+
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%">
         <h3>基本信息</h3>
@@ -24,7 +27,7 @@
             <span>{{ basicNews.ShowName }}</span>
           </p>
         </li>
-        <li>
+        <li v-if="basicNews.ProjectId != -1">
           <span class="textColor">所属项目</span>
           <p>
             <span>{{ basicNews.ProjectId | ProjectName }}</span>
@@ -54,7 +57,12 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
         <h3>告警触发条件</h3>
-        <a @click="editGaoJing">编辑</a>
+        <a
+          @click="editGaoJing"
+          v-loading="gaoJingLoading"
+          class="gao-jing-loading"
+          >编辑</a
+        >
       </div>
       <div class="box-content">
         <p v-if="basicNews.ConditionsTemp">
@@ -100,7 +108,9 @@
       </div>
       <div class="box-content">
         <el-row style="margin:10px 5px;padding-top:10px">
-          <el-button type="primary">新增对象</el-button>
+          <el-button type="primary" @click="AlarmObjectNews"
+            >新增对象</el-button
+          >
           <el-button
             v-if="UniqueId.length > 0"
             @click="AlarmObjectRemoval('', 2)"
@@ -112,7 +122,7 @@
           >
         </el-row>
       </div>
-      <div class="alarm-object-table">
+      <div class="alarm-object-table" v-if="!InstanceGroupShow">
         <el-table
           ref="multipleTable"
           :data="alarmObjectData"
@@ -120,45 +130,245 @@
           v-loading="alarmObjecLoad"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection"></el-table-column>
-          <el-table-column label="ID/主机名">
+          <el-table-column type="selection" width="40"></el-table-column>
+          <el-table-column label="ID/主机名" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
-              <p>
-                {{ scope.row.InstanceId }}
-                <!-- <a href="javascript:;">{{ scope.row.InstanceId }}</a> -->
-              </p>
+              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
               <p>{{ scope.row.InstanceName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态">
+          <el-table-column label="状态" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
-              <p
-                :class="{
-                  green: scope.row.InstanceState === 'RUNNING',
-                  red:
-                    scope.row.InstanceState === 'STARTING' ||
-                    scope.row.InstanceState === 'STOPPED'
-                }"
-              >
-                {{ scope.row.InstanceState | InstanceState }}
-              </p>
+              <span>{{ InstanceState(scope.row.InstanceState) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="网络类型">
+          <el-table-column label="网络类型" v-if="ViewName === 'cvm_device'">
             VPC 网络
           </el-table-column>
-          <el-table-column label="IP地址">
+          <el-table-column label="IP地址" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
               <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-              <p class="out-color-text">
-                {{ scope.row.PublicIpAddresses[0] }}(外网)
-              </p>
+              <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作">
+
+          <!-- VPN_GW -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'VPN_GW'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpnGatewayId }}</p>
+              <p>{{ scope.row.VpnGatewayName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'VPN_GW'">
+            <template slot-scope="scope">
+              <span>{{ VPN_GW_State(scope.row.State) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属网络" v-if="ViewName === 'VPN_GW'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpcId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+
+          <!-- vpn_tunnel -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'vpn_tunnel'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpnGatewayId }}</p>
+              <p>{{ scope.row.VpnConnectionName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'vpn_tunnel'">
+            <template slot-scope="scope">
+              <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属网络" v-if="ViewName === 'vpn_tunnel'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpcId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="VPN网关" v-if="ViewName === 'vpn_tunnel'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpnGatewayId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="对端网关" v-if="ViewName === 'vpn_tunnel'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.CustomerGatewayId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+
+          <!-- nat_tc_stat -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'nat_tc_stat'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.NatGatewayId }}</p>
+              <p>{{ scope.row.NatGatewayName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'nat_tc_stat'">
+            <template slot-scope="scope">
+              <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="私有网络" v-if="ViewName === 'nat_tc_stat'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpcId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+          <el-table-column label="类型" v-if="ViewName === 'nat_tc_stat'">
+            <template slot-scope="scope">
+              <p>小型</p>
+              <p>最大并发连接数{{ scope.row.maxConcurrent / 100 }}万</p>
+            </template>
+          </el-table-column>
+
+          <!-- DC_GW -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'DC_GW'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.DirectConnectGatewayId }}</p>
+              <p>{{ scope.row.DirectConnectGatewayName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="NAT配置状态" v-if="ViewName === 'DC_GW'">
+            <template slot-scope="scope">
+              <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="所属网络" v-if="ViewName === 'DC_GW'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.VpcId }}</p>
+              <!-- <p>{{scope.row.}}</p> -->
+            </template>
+          </el-table-column>
+
+          <!-- EIP -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'EIP'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.AddressId }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="弹性IP地址" v-if="ViewName === 'EIP'">
+            <template slot-scope="scope">
+              <span>{{ scope.row.AddressIp }}</span>
+            </template>
+          </el-table-column>
+
+          <!-- cdb_detail -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'cdb_detail'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.InstanceId }}</p>
+              <p>{{ scope.row.InstanceName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'cdb_detail'">
+            <template slot-scope="scope">
+              <p>{{ CDB_Status(scope.row.Status) }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="内网IP/端口" v-if="ViewName === 'cdb_detail'">
+            <template slot-scope="scope">
+              <span>{{ scope.row.Vip }}</span>
+              <p>{{ scope.row.Vport }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="网络类型" v-if="ViewName === 'cdb_detail'">
+            <template slot-scope="scope">
+              VPC
+            </template>
+          </el-table-column>
+          <el-table-column label="类型" v-if="ViewName === 'cdb_detail'">
+            <template slot-scope="scope">
+              {{ CDB_InstanceType(scope.row.InstanceType) }}
+            </template>
+          </el-table-column>
+
+          <!-- REDIS-CLUSTER -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'REDIS-CLUSTER'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.InstanceId }}</p>
+              <p>{{ scope.row.InstanceName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'REDIS-CLUSTER'">
+            <template slot-scope="scope">
+              <p>{{ REDIS_Status(scope.row.Status) }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="规格" v-if="ViewName === 'REDIS-CLUSTER'">
+            <template slot-scope="scope">
+              master-slave
+            </template>
+          </el-table-column>
+          <el-table-column label="内网地址" v-if="ViewName === 'REDIS-CLUSTER'">
+            <template slot-scope="scope">
+              {{ scope.row.WanIp }}
+            </template>
+          </el-table-column>
+          <!-- dcchannel -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'dcchannel'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.DirectConnectTunnelId }}</p>
+              <p>{{ scope.row.DirectConnectTunnelName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" v-if="ViewName === 'dcchannel'">
+            <template slot-scope="scope">
+              <p>{{ dcchannel_Status(scope.row.State) }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="规格" v-if="ViewName === 'dcchannel'">
+            <template slot-scope="scope">
+              master-slave
+            </template>
+          </el-table-column>
+          <el-table-column label="内网地址" v-if="ViewName === 'dcchannel'">
+            <template slot-scope="scope">
+              {{ scope.row.WanIp }}
+            </template>
+          </el-table-column>
+          <!-- dcline -->
+          <el-table-column label="名称/ID" v-if="ViewName === 'dcline'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.DirectConnectName }}</p>
+              <p>{{ scope.row.DirectConnectId }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="所在地" v-if="ViewName === 'dcline'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.Location }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="带宽" v-if="ViewName === 'dcline'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.Bandwidth }}Mbps</p>
+            </template>
+          </el-table-column>
+          <!-- COS -->
+          <el-table-column label="Bucket名称" v-if="ViewName === 'COS'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.Name }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="地域" v-if="ViewName === 'COS'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.zone.zone }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" v-if="ViewName === 'COS'">
+            <template slot-scope="scope">
+              {{ CreationDate(scope.row.CreationDate) }}
+            </template>
+          </el-table-column>
+
+          <el-table-column prop="address" label="操作">
             <template slot-scope="scope">
               <a href="javascript:;" @click="AlarmObjectRemoval(scope.row, 1)"
-                >移除</a
+                >移出</a
               >
             </template>
           </el-table-column>
@@ -177,6 +387,16 @@
             ></el-pagination>
           </div>
         </div>
+      </div>
+      <div class="" v-if="InstanceGroupShow">
+        <ul>
+          <li>
+            <span>实例组</span>
+          </li>
+          <li>
+            <span>实例数</span>
+          </li>
+        </ul>
       </div>
     </el-card>
     <el-card class="box-card alarm-object alarm-receiving-object">
@@ -346,9 +566,9 @@
                         >
                           <el-option
                             v-for="i in typeOpt"
-                            :key="i.value"
-                            :label="i.label"
-                            :value="i.value"
+                            :key="i.MetricId"
+                            :label="i.MetricShowName"
+                            :value="i.MetricId"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
@@ -535,16 +755,20 @@
                     <span>条件时，触发告警</span>
                   </p>
                   <!-- 在这里进行便利，添加 -->
-                  <ul class="ul-one ul-two" v-if="formWrite.satisfyVal === 0">
+                  <ul class="ul-one ul-two">
                     <li v-for="(item, index) in formWrite.arr" :key="index">
                       <div>
                         if&nbsp;
-                        <el-select v-model="item.typeVal" style="width:150px;">
+                        <el-select
+                          v-model="item.typeVal"
+                          style="width:150px;"
+                          @change="TypeChange(index)"
+                        >
                           <el-option
                             v-for="x in typeOpt"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
+                            :key="x.MetricId"
+                            :label="x.MetricShowName"
+                            :value="x.MetricId"
                             label-width="40px"
                           ></el-option> </el-select
                         >&nbsp;
@@ -573,14 +797,13 @@
                           ></el-option> </el-select
                         >&nbsp;
                         <div class="input-style-dis-box">
-                          <input
+                          <el-input-number
                             class="input-style-dis"
-                            placeholder="指标"
-                            :value="item.number"
-                            min="0"
-                            max="100"
-                            type="number"
-                          />
+                            v-model="item.number"
+                            controls-position="right"
+                            :min="0"
+                            :max="item.max"
+                          ></el-input-number>
                           <span class="input-p">{{ item.unit }}</span>
                         </div>
                         &nbsp;
@@ -595,110 +818,52 @@
                             :value="x.value"
                             label-width="40px"
                           ></el-option> </el-select
-                        >&nbsp; <span>then</span>&nbsp;
-                        <el-select
-                          v-model="item.warningVal"
-                          style="width:150px;"
-                        >
-                          <el-option
-                            v-for="item in warningOpt"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value"
-                            label-width="40px"
-                          ></el-option>
-                        </el-select>
-                        <el-popover placement="top" width="360" trigger="hover">
-                          <div>
-                            <p>
-                              重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
-                            </p>
-                            <p style="margin-top:5px;">
-                              周期指数递增通知:
-                              告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
-                            </p>
-                          </div>
-                          <i
-                            class="el-icon-info"
-                            style="color:#888; margin:0 5px;"
-                            slot="reference"
-                          ></i>
-                        </el-popover>
+                        >&nbsp;
+                        <div v-if="formWrite.satisfyVal === 0">
+                          <span>then</span>&nbsp;
+                          <el-select
+                            v-model="item.warningVal"
+                            style="width:150px;"
+                          >
+                            <el-option
+                              v-for="item in warningOpt"
+                              :key="item.value"
+                              :label="item.label"
+                              :value="item.value"
+                              label-width="40px"
+                            ></el-option>
+                          </el-select>
+                          <el-popover
+                            placement="top"
+                            width="360"
+                            trigger="hover"
+                          >
+                            <div>
+                              <p>
+                                重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。
+                              </p>
+                              <p style="margin-top:5px;">
+                                周期指数递增通知:
+                                告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知
+                              </p>
+                            </div>
+                            <i
+                              class="el-icon-info"
+                              style="color:#888; margin:0 5px;"
+                              slot="reference"
+                            ></i>
+                          </el-popover>
+                        </div>
                       </div>
                       <i
                         v-if="formWrite.arr.length !== 1"
                         class="el-icon-error"
                         style="color:#888; margin:10px 5px;"
-                        @click="delZhibiao('deploy', index)"
+                        @click="delZhibiao(index)"
                       ></i>
                     </li>
-                    <a @click="addZhibiao('deploy')">添加</a>
-                  </ul>
-                  <ul class="ul-one ul-two" v-if="formWrite.satisfyVal === 1">
-                    <li v-for="(item, index) in formWrite.arrAll" :key="index">
-                      <div>
-                        if&nbsp;
-                        <el-select v-model="item.typeVal" style="width:150px;">
-                          <el-option
-                            v-for="x in typeOpt"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
-                            label-width="40px"
-                          ></el-option> </el-select
-                        >&nbsp;
-                        <el-select
-                          v-model="item.censusVal"
-                          style="width:140px;"
-                        >
-                          <el-option
-                            v-for="x in cycle"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
-                            label-width="40px"
-                          ></el-option> </el-select
-                        >&nbsp;
-                        <el-select
-                          v-model="item.calcTypeVal"
-                          style="width:60px;"
-                        >
-                          <el-option
-                            v-for="x in CalcType"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
-                            label-width="40px"
-                          ></el-option> </el-select
-                        >&nbsp;
-                        <div class="input-style-dis-box">
-                          <input
-                            class="input-style-dis"
-                            placeholder="指标"
-                            :value="item.number"
-                            min="0"
-                            max="100"
-                            type="number"
-                          />
-                          <span class="input-p">{{ item.unit }}</span>
-                        </div>
-                        &nbsp;
-                        <el-select
-                          v-model="item.continuousCycleVal"
-                          style="width:110px;"
-                        >
-                          <el-option
-                            v-for="x in continuousCycleOpt"
-                            :key="x.value"
-                            :label="x.label"
-                            :value="x.value"
-                            label-width="40px"
-                          ></el-option> </el-select
-                        >&nbsp;
-                      </div>
-                    </li>
-                    <a @click="addZhibiao('all')">添加</a>
-                    <div>
+                    <a @click="addZhibiao()">添加</a>
+                    <div v-if="formWrite.satisfyVal === 1">
                       <span>then</span>&nbsp;
                       <el-select
                         v-model="formWrite.warningVal"
@@ -729,12 +894,6 @@
                         ></i>
                       </el-popover>
                     </div>
-                    <i
-                      v-if="formWrite.arr.length === 0"
-                      class="el-icon-error"
-                      style="color:#888; margin:10px 5px;"
-                      @click="delZhibiao('all', index)"
-                    ></i>
                   </ul>
                 </div>
                 <!-- <div v-if="basicNews.EventConfig">
@@ -790,12 +949,64 @@
       </div>
     </el-dialog>
     <!-- 告警对象编辑 -->
-    <el-dialog title="修改告警对象" :visible.sync="dialogEditObject">
+    <el-dialog
+      title="编辑告警对象"
+      :visible.sync="dialogEditObject"
+      width="1024px"
+    >
+      <div class="edit-alarm-object">
+        <el-radio-group v-model="editAlarmObjectRadio">
+          <p><el-radio label="1">全部对象</el-radio></p>
+          <p><el-radio label="2">选择部分对象(已选0个)</el-radio></p>
+          <p><el-radio label="3">选择实例组</el-radio></p>
+        </el-radio-group>
+        <div class="table" v-if="editAlarmObjectRadio == 2">
+          <CamTransferCpt
+            :productData="productListData"
+            v-on:projectId="projectIds"
+            v-on:searchParam="searchParams"
+            v-on:multipleSelection="selectDatas"
+            :isShowRight="isShowRight"
+          ></CamTransferCpt>
+        </div>
+        <div class="table" v-if="editAlarmObjectRadio == 3">
+          <el-select v-model="InstanceGroup" style="width:100px;">
+            <el-option
+              v-for="item in InstanceGroupOpt"
+              :key="item.InstanceGroupId"
+              :label="item.GroupName"
+              :value="item.InstanceGroupId"
+              label-width="40px"
+            ></el-option>
+          </el-select>
+        </div>
+      </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogEditObject = false"
-          >保 存</el-button
-        >
+        <el-button type="primary" @click="EditObjectSave()">保 存</el-button>
         <el-button @click="dialogEditObject = false">取 消</el-button>
+      </div>
+    </el-dialog>
+    <!-- 告警对象-新增对象 -->
+    <el-dialog
+      title="关联告警对象"
+      :visible.sync="alarmObjectNews"
+      width="1024px"
+    >
+      <div class="edit-alarm-object-news">
+        <p>选择部分对象</p>
+        <div class="table">
+          <CamTransferCpt
+            :productData="productListData"
+            v-on:projectId="projectIds"
+            v-on:searchParam="searchParams"
+            v-on:multipleSelection="selectDatas"
+            :isShowRight="isShowRight"
+          ></CamTransferCpt>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="EditObjectSave()">保 存</el-button>
+        <el-button @click="alarmObjectNews = false">取 消</el-button>
       </div>
     </el-dialog>
     <!-- 告警对象移出 -->
@@ -919,9 +1130,24 @@ import {
   CM_CALLBACK,
   CM_ALARM_TRIGGER_CONDITION,
   CM_ALARM_RECEIVE_OBJECT_RELIEVE,
-  CM_ALARM_TRIGGER_MODIFY
+  CM_ALARM_TRIGGER_MODIFY,
+  TKE_EXIST_NODES,
+  CM_GROUPING_NEWLY_BUILD,
+  VPN_LIST,
+  VPNTD_LIST,
+  NAT_LIST,
+  DCG_LIST,
+  NETIP_LIST,
+  MYSQL_LIST,
+  REDIS_LIST,
+  Private_LIST,
+  Physics_LIST,
+  OBJ_LIST,
+  CM_ALARM_OBJECT_LIST_EDIT,
+  CM_GROUPING_LIST
 } from "@/constants";
-import ProductType from "@/views/CM/CM_assembly/product_type";
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 var project = [];
 var _ReceiverUserList = [];
 export default {
@@ -1003,6 +1229,7 @@ export default {
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
       // 告警对象
+      alarmObjectNews: false,
       alarmObjectRemovalVisible: false,
       alarmObjecTitle: "确定解除与该告警对象的关联？",
       UniqueId: "",
@@ -1019,8 +1246,9 @@ export default {
       remove: "",
       receivingObjectLoad: true,
       // 编辑告警触发条件
+      gaoJingLoading: true,
       Conditions: [],
-      ViewName: "",
+      ViewName: this.$route.query.viewName,
       cycle: [
         {
           value: 60,
@@ -1071,32 +1299,24 @@ export default {
       ContinueTime: [],
       alarmNotifyPeriodVal: "",
       AlarmNotifyPeriod: [],
+
       formWrite: {
         checkedZhibiao: true,
         satisfyVal: 0,
         checkedGaojing: true,
-        warningVal: 0,
+        warningVal: 86400,
         index: 0,
         gaoIndex: 0,
         arr: [
           {
-            typeVal: "1",
+            max: 100,
+            typeVal: "",
             censusVal: 60,
             calcTypeVal: "1",
-            number: "0",
+            number: 0,
             unit: "%",
             continuousCycleVal: 1,
             warningVal: 0
-          }
-        ],
-        arrAll: [
-          {
-            typeVal: "1",
-            censusVal: 300,
-            calcTypeVal: "1",
-            number: "0",
-            unit: "%",
-            continuousCycleVal: 1
           }
         ],
         gaoArr: [
@@ -1105,92 +1325,7 @@ export default {
           }
         ]
       },
-      typeOpt: [
-        {
-          value: "CPU利用率",
-          label: "CPU利用率"
-        },
-        {
-          value: "内存利用率",
-          label: "内存利用率"
-        },
-        {
-          value: "内存使用量",
-          label: "内存使用量"
-        },
-        {
-          value: "磁盘利用率",
-          label: "磁盘利用率"
-        },
-        {
-          value: "磁盘读流量",
-          label: "磁盘读流量"
-        },
-        {
-          value: "磁盘写流量",
-          label: "磁盘写流量"
-        },
-        {
-          value: "磁盘IO等待",
-          label: "磁盘IO等待"
-        },
-        {
-          value: "内网入包量",
-          label: "内网入包量"
-        },
-        {
-          value: "内网出包量",
-          label: "内网出包量"
-        },
-        {
-          value: "外网入带宽",
-          label: "外网入带宽"
-        },
-        {
-          value: "外网出带宽",
-          label: "外网出带宽"
-        },
-        {
-          value: "外网入包量",
-          label: "外网入包量"
-        },
-        {
-          value: "外网出包量",
-          label: "外网出包量"
-        },
-        {
-          value: "外网带宽使用率",
-          label: "外网带宽使用率"
-        },
-        {
-          value: "TCP连接数",
-          label: "TCP连接数"
-        },
-        {
-          value: "CPU一分钟平均负载",
-          label: "CPU一分钟平均负载"
-        },
-        {
-          value: "CPU五分钟平均负载",
-          label: "CPU五分钟平均负载"
-        },
-        {
-          value: "CPU十五分钟平均负载",
-          label: "CPU十五分钟平均负载"
-        },
-        {
-          value: "基础CPU利用率",
-          label: "基础CPU利用率"
-        },
-        {
-          value: "内网入带宽",
-          label: "内网入带宽"
-        },
-        {
-          value: "内网出带宽",
-          label: "内网出带宽"
-        }
-      ],
+      typeOpt: [],
       continuousCycleOpt: [
         {
           value: 1,
@@ -1297,23 +1432,55 @@ export default {
           label: "子机nvme设备error"
         }
       ],
-      projectId: "",
-      searchParam: {}
+      productListData: {},
+      projectId: 0,
+      searchParam: {},
+      productData: {},
+      isShow: false,
+      loadShow: true,
+      isShowRight: true,
+      editAlarmObjectRadio: "2",
+      InstanceGroup: "",
+      InstanceGroupShow: "",
+      InstanceGroupOpt: []
     };
   },
-  components: { Header, ProductType },
+  components: { Header, CamTransferCpt, ProductTypeCpt },
   mounted() {
     this.DetailsInit();
     this.Project();
     // 告警对象列表
     this.AlarmObjectList();
+    this.AlarmTriggerCondition();
+    this.GaoJingGrouping();
   },
   methods: {
-    passData(item) {
-      console.log(item);
+    passData(data) {
+      console.log("data", data);
+      this.isShow = false;
+      this.productListData = data;
+      this.typeOpt = data.Metrics;
+      console.log("typeOpt", this.typeOpt);
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
+      this.gaoJingLoading = false;
+    },
+    projectIds(data) {
+      this.projectId = data;
     },
     searchParams(data) {
-      console.log("data1312312312", data);
+      this.searchParam = data;
+    },
+    //选择右侧表格数据
+    selectDatas(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
     },
     async DetailsInit() {
       let params = {
@@ -1327,7 +1494,7 @@ export default {
           console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
           this.GroupName = this.basicNews.GroupName;
-          this.projectId = this.basicNews.ProjectId.toString();
+          this.projectId = this.basicNews.ProjectId;
           if (
             this.basicNews.ReceiverInfos !== undefined &&
             this.basicNews.ReceiverInfos[0].ReceiverUserList.length != 0
@@ -1493,14 +1660,168 @@ export default {
         this.tipsShow = false;
       }
     },
+    // 编辑告警对象
     editObject() {
-      //编辑告警对象
       this.dialogEditObject = true;
+    },
+    AlarmObjectNews() {
+      this.alarmObjectNews = true;
+      this.editAlarmObjectRadio = "2";
+    },
+    // 选择实例组
+    GaoJingGrouping() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        Limit: 100,
+        Offset: 0,
+        ViewName: this.ViewName
+      };
+      this.axios.post(CM_GROUPING_LIST, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.InstanceGroupOpt = res.Response.InstanceGroupList;
+          this.InstanceGroup =
+            res.Response.InstanceGroupList[0].InstanceGroupId;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    EditObjectSave() {
+      let param = {
+        GroupId: this.$route.query.groupId,
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      if (this.editAlarmObjectRadio != 3) {
+        if (this.editAlarmObjectRadio == 1) {
+          this.multipleSelection = this.productListData.Date;
+        }
+        for (let i in this.multipleSelection) {
+          param["Dimensions." + i + ".Region"] = "tpe";
+          if (this.ViewName === "cvm_device") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              unInstanceId: this.multipleSelection[i].InstanceId
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              uuid: this.multipleSelection[i].Uuid
+            };
+          } else if (this.ViewName === "VPN_GW") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              vip: this.multipleSelection[i].PublicIpAddress
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              VpnGatewayId: this.multipleSelection[i].VpnGatewayId
+            };
+          } else if (this.ViewName === "vpn_tunnel") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
+            };
+          } else if (this.ViewName === "nat_tc_stat") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              uniq_nat_id: this.multipleSelection[i].NatGatewayId
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              instanceId: this.multipleSelection[i].NatGatewayId
+            };
+          } else if (this.ViewName === "DC_GW") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              directconnectgatewayid: this.multipleSelection[i]
+                .DirectConnectGatewayId
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              instanceId: this.multipleSelection[i].DirectConnectGatewayId
+            };
+          } else if (this.ViewName === "EIP") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              vip: this.multipleSelection[i].AddressIp
+            };
+          } else if (this.ViewName === "cdb_detail") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              uInstanceId: this.multipleSelection[i].InstanceId
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              InstanceId: this.multipleSelection[i].InstanceId
+            };
+          } else if (this.ViewName === "REDIS-CLUSTER") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              instanceid: this.multipleSelection[i].InstanceId
+            };
+            param["Dimensions." + i + ".EventDimensions"] = {
+              instanceid: this.multipleSelection[i].InstanceId
+            };
+          } else if (this.ViewName === "dcchannel") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              directconnecttunnelid: this.multipleSelection[i]
+                .DirectConnectTunnelId
+            };
+          } else if (this.ViewName === "dcline") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              directconnectid: this.multipleSelection[i].DirectConnectId
+            };
+          } else if (this.ViewName === "COS") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              bucket: this.multipleSelection[i].Name
+            };
+          }
+        }
+      } else {
+        param["InstanceGroupId"] = this.InstanceGroup;
+      }
+      this.axios.post(CM_ALARM_OBJECT_LIST_EDIT, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.dialogEditObject = false;
+          this.alarmObjectNews = false;
+          this.AlarmObjectList();
+          // if (this.editAlarmObjectRadio == 3) {
+          //   this.AlarmObjectRemovalAllSure();
+          // }
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     editGaoJing() {
       // 编辑告警触发条件
       this.dialogEditGaojing = true;
-      this.AlarmTriggerCondition();
       console.log(this.basicNews);
       if (this.basicNews.ConditionsTemp) {
         this.radioChufa = "1";
@@ -1508,13 +1829,26 @@ export default {
         this.formWrite.satisfyVal = this.basicNews.IsUnionRule;
         if (this.basicNews.ConditionsConfig) {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
+          var _typeVal = "";
+          var _max = "";
           this.formWrite.arr = [];
           for (let i in _ConditionsConfig) {
+            for (let j in this.typeOpt) {
+              if (
+                _ConditionsConfig[i].MetricShowName ===
+                this.typeOpt[j].MetricShowName
+              ) {
+                _typeVal = this.typeOpt[j].MetricId;
+                _max = Math.floor(this.typeOpt[j].ConfigManual.CalcValue.Max);
+              }
+            }
+
             this.formWrite.arr.push({
-              typeVal: _ConditionsConfig[i].MetricShowName,
+              max: _max,
+              typeVal: _typeVal,
               censusVal: _ConditionsConfig[i].Period,
               calcTypeVal: _ConditionsConfig[i].CalcType.toString(),
-              number: _ConditionsConfig[i].CalcValue.toString(),
+              number: _ConditionsConfig[i].CalcValue,
               unit: _ConditionsConfig[i].Unit,
               continuousCycleVal:
                 Number(_ConditionsConfig[i].ContinueTime) /
@@ -1684,7 +2018,6 @@ export default {
       console.log(_Conditions);
       let _EventConfig = this.Conditions.EventConditions;
       let _arr = this.formWrite.arr;
-      let _arrAll = this.formWrite.arrAll;
       let _gaoArr = this.formWrite.gaoArr;
       if (this.radioChufa == 1) {
         param["IsUnionRule"] = this.Conditions.IsUnionRule;
@@ -1714,56 +2047,41 @@ export default {
           param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
         }
       } else {
-        console.log(_gaoArr);
         param["IsUnionRule"] = this.formWrite.satisfyVal;
 
-        if (this.formWrite.satisfyVal == 0) {
-          for (let i in _arr) {
-            param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
-            param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
-            param["Conditions." + i + ".CalcValue"] = _arr[i].number;
-            param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
-            param["Conditions." + i + ".ContinuePeriod"] =
-              _arr[i].continuousCycleVal;
-            if (_arr[i].warningVal == 60) {
-              param["Conditions." + i + ".AlarmNotifyType"] = 1;
-            } else {
-              param["Conditions." + i + ".AlarmNotifyType"] = 0;
-            }
-
+        for (let i in _arr) {
+          param["Conditions." + i + ".MetricId"] = _arr[i].typeVal;
+          param["Conditions." + i + ".CalcType"] = _arr[i].calcTypeVal;
+          param["Conditions." + i + ".CalcValue"] = _arr[i].number;
+          param["Conditions." + i + ".CalcPeriod"] = _arr[i].censusVal;
+          param["Conditions." + i + ".ContinuePeriod"] =
+            _arr[i].continuousCycleVal;
+          if (_arr[i].warningVal == 60) {
+            param["Conditions." + i + ".AlarmNotifyType"] = 1;
+          } else {
+            param["Conditions." + i + ".AlarmNotifyType"] = 0;
+          }
+          if (this.formWrite.satisfyVal == 0) {
             param["Conditions." + i + ".AlarmNotifyPeriod"] =
               _arr[i].warningVal;
-          }
-        } else {
-          for (let i in _arrAll) {
-            param["Conditions." + i + ".MetricId"] = _arrAll[i].typeVal;
-            param["Conditions." + i + ".CalcType"] = _arrAll[i].calcTypeVal;
-            param["Conditions." + i + ".CalcValue"] = _arrAll[i].number;
-            param["Conditions." + i + ".CalcPeriod"] = _arrAll[i].censusVal;
-            param["Conditions." + i + ".ContinuePeriod"] =
-              _arrAll[i].continuousCycleVal;
-            if (_arrAll[i].warningVal == 60) {
-              param["Conditions." + i + ".AlarmNotifyType"] = 1;
-            } else {
-              param["Conditions." + i + ".AlarmNotifyType"] = 0;
-            }
-
+          } else {
             param[
               "Conditions." + i + ".AlarmNotifyPeriod"
             ] = this.formWrite.warningVal;
           }
         }
-        // for (let j in _gaoArr) {
-        //   param["EventConditions." + j + ".EventId"] = Number(
-        //     _gaoArr[j].EventID
-        //   );
-        //   param["EventConditions." + j + ".AlarmNotifyType"] =
-        //     _gaoArr[j].AlarmNotifyType;
-        //   param["EventConditions." + j + ".AlarmNotifyPeriod"] =
-        //     _gaoArr[j].AlarmNotifyPeriod;
-        //   param["EventConditions." + j + ".RuleId"] = _gaoArr[j].RuleID;
-        // }
       }
+      // for (let j in _gaoArr) {
+      //   param["EventConditions." + j + ".EventId"] = Number(
+      //     _gaoArr[j].EventID
+      //   );
+      //   param["EventConditions." + j + ".AlarmNotifyType"] =
+      //     _gaoArr[j].AlarmNotifyType;
+      //   param["EventConditions." + j + ".AlarmNotifyPeriod"] =
+      //     _gaoArr[j].AlarmNotifyPeriod;
+      //   param["EventConditions." + j + ".RuleId"] = _gaoArr[j].RuleID;
+      // }
+
       this.axios.post(CM_ALARM_TRIGGER_MODIFY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.dialogEditGaojing = false;
@@ -1907,59 +2225,480 @@ export default {
       };
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
-          // console.log(res.Response);
+          console.log(res.Response);
+          this.InstanceGroupShow = res.Response;
           var _enterList = res.Response.List;
-          console.log(_enterList);
+          console.log("_enterList", _enterList);
           this.total = res.Response.Total;
           if (this.total > 0) {
-            let params = {
-              Version: "2017-03-12",
-              Limit: this.pageSize,
-              Offset: this.pageIndex
-            };
+            if (this.ViewName === "cvm_device") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["InstanceIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).unInstanceId;
+              }
+              this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.InstanceSet;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).unInstanceId ===
+                        this.alarmObjectData[j].InstanceId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    FailedOperation: "操作失败",
+                    InternalError: "内部错误",
+                    "InternalError.Param": "Param。",
+                    "InternalError.PublicClusterOpNotSupport":
+                      "集群不支持当前操作。",
+                    InvalidParameter: "参数错误",
+                    ResourceNotFound: "资源不存在",
+                    ResourceUnavailable: "资源不可用"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "VPN_GW") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "public-ip-address";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).vip;
+              }
+              this.axios.post(VPN_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.VpnGatewaySet;
+                  console.log("this.alarmObjectData", this.alarmObjectData);
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).vip ===
+                        this.alarmObjectData[j].PublicIpAddress
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidVpnGatewayId.Malformed":
+                      "无效的VPN网关,VPN实例ID不合法。",
+                    "InvalidVpnGatewayId.NotFound":
+                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "vpn_tunnel") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "vpn-connection-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uniqVpnconnId;
+              }
+              this.axios.post(VPNTD_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.VpnConnectionSet;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uniqVpnconnId ===
+                        this.alarmObjectData[j].VpnConnectionId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidParameter.Coexist": "参数不支持同时指定。",
+                    "InvalidParameterValue.Malformed": "入参格式不合法。",
+                    ResourceNotFound: "	资源不存在。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "nat_tc_stat") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "nat-gateway-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uniq_nat_id;
+              }
+              this.axios.post(NAT_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.NatGatewaySet;
 
-            for (let i in _enterList) {
-              params["InstanceIds." + i] = JSON.parse(
-                _enterList[i].Dimensions
-              ).unInstanceId;
-            }
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uniq_nat_id ===
+                        this.alarmObjectData[j].VpnConnectionId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "DC_GW") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "direct-connect-gateway-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnectgatewayid;
+              }
+              this.axios.post(DCG_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.DirectConnectGatewaySet;
 
-            this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
-              if (res.Response.Error === undefined) {
-                this.alarmObjectData = res.Response.InstanceSet;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions)
+                          .directconnectgatewayid ===
+                        this.alarmObjectData[j].DirectConnectGatewayId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidParameter.Coexist": "参数不支持同时指定。",
+                    InvalidParameterValue: "参数值不合法。",
+                    "InvalidParameterValue.Malformed": "入参格式不合法。",
+                    "InvalidParameterValue.TooLong": "无效参数值。参数值太长。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "EIP") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "address-ip";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).vip;
+              }
+              this.axios.post(NETIP_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.AddressSet;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).vip ===
+                        this.alarmObjectData[j].AddressIp
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    InvalidParameter: "入参不合法。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "cdb_detail") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["InstanceIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uInstanceId;
+              }
+              this.axios.post(MYSQL_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.Items;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uInstanceId ===
+                        this.alarmObjectData[j].InstanceId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    CdbError: "后端错误或者流程错误。",
+                    "InternalError.DatabaseAccessError": "数据库内部错误。",
+                    "InternalError.DesError": "系统内部错误。",
+                    InvalidParameter: "参数错误。",
+                    "InvalidParameter.InstanceNotFound": "实例不存在。",
+                    "OperationDenied.WrongStatus": "后端任务状态非法。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "REDIS-CLUSTER") {
+              let params = {
+                Version: "2018-04-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["SearchKeys." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).instanceid;
+              }
+              this.axios.post(REDIS_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.InstanceSet;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).instanceid ===
+                        this.alarmObjectData[j].InstanceId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    "InternalError.DbOperationFailed":
+                      "统一的 DB 操作错误，可以是 update insert select..。",
+                    InvalidParameter: "参数错误",
+                    "InvalidParameter.EmptyParam": "参数为空。",
+                    "InvalidParameter.InvalidParameter": "业务参数错误。",
+                    "InvalidParameter.PermissionDenied": "接口没有cam权限。",
+                    "UnauthorizedOperation.NoCAMAuthed": "无cam 权限。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "dcchannel") {
+              let params = {
+                Version: "2018-04-10",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "direct-connect-tunnel-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnecttunnelid;
+              }
+              this.axios.post(Private_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.DirectConnectTunnelSet;
+                  this.total = res.Response.TotalCount;
+                  console.log(this.alarmObjectData);
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions)
+                          .directconnecttunnelid ===
+                        this.alarmObjectData[j].DirectConnectTunnelId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.alarmObjectData);
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    InternalError: "内部错误",
+                    ResourceNotFound: "资源不存在",
+                    "ResourceNotFound.DirectConnectTunnelIdIsNotExist":
+                      "专用通道不存在。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "dcline") {
+              let params = {
+                Version: "2018-04-10",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["DirectConnectIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnectid;
+              }
+              this.axios.post(Physics_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.DirectConnectSet;
+                  this.total = res.Response.TotalCount;
+                  console.log(this.alarmObjectData);
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).directconnectid ===
+                        this.alarmObjectData[j].DirectConnectId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.alarmObjectData);
+                  this.alarmObjecLoad = false;
+                } else {
+                  let ErrTips = {
+                    FailedOperation: "操作失败。",
+                    InternalError: "内部错误。",
+                    "InternalError.ExeTimeout": "执行超时。",
+                    InvalidParameter: "参数错误。",
+                    "InvalidParameter.InvalidParameter": "参数错误。",
+                    "InvalidParameter.InvalidParameterParam": "参数错误。",
+                    InvalidParameterValue: "无效的参数值。",
+                    LimitExceeded: "超过配额限制。",
+                    MissingParameter: "缺少参数错误。",
+                    UnknownParameter: "未知参数错误。",
+                    UnsupportedOperation: "操作不支持。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "COS") {
+              this.axios.get(OBJ_LIST).then(res => {
+                var _arr = res.Buckets.Bucket;
+                console.log(_arr);
                 for (let i in _enterList) {
-                  for (let j in this.alarmObjectData) {
+                  for (let j in _arr) {
                     if (
-                      JSON.parse(_enterList[i].Dimensions).unInstanceId ===
-                      this.alarmObjectData[j].InstanceId
+                      JSON.parse(_enterList[i].Dimensions).bucket ===
+                      _arr[j].Name
                     ) {
-                      this.alarmObjectData[j]["UniqueId"] =
+                      this.alarmObjectData.push(_arr[j]);
+                      this.alarmObjectData[i]["UniqueId"] =
                         _enterList[i].UniqueId;
                     }
                   }
                 }
                 console.log(this.alarmObjectData);
                 this.alarmObjecLoad = false;
-              } else {
-                let ErrTips = {
-                  FailedOperation: "操作失败",
-                  InternalError: "内部错误",
-                  "InternalError.Param": "Param。",
-                  "InternalError.PublicClusterOpNotSupport":
-                    "集群不支持当前操作。",
-                  InvalidParameter: "参数错误",
-                  ResourceNotFound: "资源不存在",
-                  ResourceUnavailable: "资源不可用"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            });
+              });
+            }
+            console.log(this.alarmObjectData);
           } else {
             this.alarmObjectData = [];
             this.alarmObjecLoad = false;
@@ -2022,7 +2761,6 @@ export default {
     },
     // 告警对象移除
     AlarmObjectRemoval(row, index) {
-      console.log(row, index);
       if (index == 1) {
         this.alarmObjecTitle = "确定解除与该告警对象的关联？";
         this.UniqueId = row.UniqueId;
@@ -2283,32 +3021,27 @@ export default {
       this.showChufa1 = false;
       this.showChufa2 = true;
     },
-    addZhibiao(val) {
+    addZhibiao() {
       //添加触发条件的指标告警
-      if (val === "deploy") {
-        this.formWrite.index++;
-        if (this.formWrite.index + 1 === this.formWrite.arr.length) {
-          this.formWrite.index = 0;
-        }
-        this.formWrite.arr.push({
-          typeVal: this.typeOpt[this.formWrite.index].value,
-          censusVal: "60",
-          calcTypeVal: "1",
-          number: "0",
-          unit: "",
-          continuousCycleVal: "1",
-          warningVal: 0
-        });
-      } else {
+      this.formWrite.index++;
+      if (this.formWrite.index + 1 === this.formWrite.arr.length) {
+        this.formWrite.index = 0;
       }
+      this.formWrite.arr.push({
+        max: Math.floor(
+          this.typeOpt[this.formWrite.index].ConfigManual.CalcValue.Max
+        ),
+        typeVal: this.typeOpt[this.formWrite.index].MetricId,
+        censusVal: 60,
+        calcTypeVal: "1",
+        number: 0,
+        unit: "",
+        continuousCycleVal: 1,
+        warningVal: 86400
+      });
     },
-    delZhibiao(val, index) {
-      //删除触发条件的指标告警
-      if (val === "deploy") {
-        this.formWrite.arr.splice(index, 1);
-      } else {
-        this.formWrite.arrAll.splice(index, 1);
-      }
+    delZhibiao(index) {
+      this.formWrite.arr.splice(index, 1);
     },
     addShijian() {
       //添加触发条件的事件告警
@@ -2322,6 +3055,139 @@ export default {
     },
     delShijian(index) {
       this.formWrite.gaoArr.splice(index, 1);
+    },
+    TypeChange(index) {
+      for (let i in this.typeOpt) {
+        if (this.typeOpt[i].MetricId === this.formWrite.arr[index].typeVal) {
+          this.formWrite.arr[index].unit = this.typeOpt[i].MetricUnit;
+          this.formWrite.arr[index].number = 0;
+          this.formWrite.arr[index].max = Math.floor(
+            this.typeOpt[i].ConfigManual.CalcValue.Max
+          );
+        }
+      }
+    },
+    // 状态
+    InstanceState(val) {
+      if (val === "PENDING") {
+        return "创建中";
+      } else if (val === "LAUNCH_FAILED") {
+        return "创建失败";
+      } else if (val === "RUNNING") {
+        return "运行中";
+      } else if (val === "STOPPED") {
+        return "关机";
+      } else if (val === "STARTING") {
+        return "关机中";
+      } else if (val === "REBOOTING") {
+        return "重启中";
+      } else if (val === "SHUTDOWN") {
+        return "停止待销毁";
+      } else if (val === "TERMINATING") {
+        return "销毁中";
+      }
+    },
+    VPN_GW_State(val) {
+      if (val === "PENDING") {
+        return "生产中";
+      } else if (val === "DELETING") {
+        return "删除中";
+      } else if (val === "AVAILABLE") {
+        return "运行中";
+      }
+    },
+    VPN_Tunnel_State(val) {
+      if (val === "PENDING") {
+        return "生产中";
+      } else if (val === "DELETING") {
+        return "删除中";
+      } else if (val === "AVAILABLE") {
+        return "运行中";
+      } else if (val === "UPDATING") {
+        return "升级中";
+      } else if (val === "FAILE") {
+        return "失败";
+      }
+    },
+    NAT_Status(val) {
+      if (val === "NAT") {
+        return "支持";
+      } else {
+        return "不支持";
+      }
+    },
+    CDB_Status(val) {
+      if (val == 0) {
+        return "创建中";
+      } else if (val == 1) {
+        return "运行中";
+      } else if (val == 4) {
+        return "隔离中";
+      } else if (val == 5) {
+        return "已隔离";
+      }
+    },
+    REDIS_Status(val) {
+      if (val == 0) {
+        return "待初始化";
+      } else if (val == 1) {
+        return "流程中";
+      } else if (val == 2) {
+        return "运行中";
+      } else if (val == -2) {
+        return "已隔离";
+      } else if (val == -3) {
+        return "待删除";
+      }
+    },
+    CDB_InstanceType(val) {
+      if (val == 1) {
+        return "主实例";
+      } else if (val == 2) {
+        return "灾备实例";
+      } else if (val == 3) {
+        return "只读实例";
+      }
+    },
+    dcchannel_Status(val) {
+      if (val == "AVAILABLE") {
+        return "就绪或者已连接";
+      } else if (val == "PENDING") {
+        return "申请中";
+      } else if (val == "ALLOCATING") {
+        return "配置中";
+      } else if (val == "ALLOCATED") {
+        return "配置完成";
+      } else if (val == "ALTERING") {
+        return "修改中";
+      } else if (val == "DELETING") {
+        return "删除中";
+      } else if (val == "DELETED") {
+        return "删除完成";
+      } else if (val == "COMFIRMING") {
+        return "待接受";
+      } else if (val == "REJECTED") {
+        return "拒绝";
+      }
+    },
+    dcline_Status(val) {
+      if (val == "PENDING") {
+        return "申请中";
+      } else if (val == "REJECTED") {
+        return "申请驳回";
+      } else if (val == "TOPAY") {
+        return "待付款";
+      } else if (val == "PAID") {
+        return "已付款";
+      } else if (val == "ALLOCATED") {
+        return "建设中";
+      } else if (val == "AVAILABLE") {
+        return "已开通";
+      } else if (val == "DELETING") {
+        return "删除中";
+      } else if (val == "DELETED") {
+        return "已删除";
+      }
     }
   },
   filters: {
@@ -2685,11 +3551,23 @@ input {
       line-height: 30px;
       display: flex;
       align-items: center;
+      ::v-deep .el-input-number__decrease {
+        height: 15px !important;
+        width: auto;
+      }
+      ::v-deep .el-input-number__increase {
+        width: auto;
+        height: 15px !important;
+      }
+      ::v-deep .el-input-number.is-controls-right .el-input__inner {
+        padding-left: 10px;
+        padding-right: 20px;
+      }
       .input-style-dis {
         height: 30px;
         line-height: 30px;
         padding-left: 10px;
-        width: 85px;
+        width: 90px;
       }
       .input-p {
         cursor: not-allowed;
@@ -2698,7 +3576,7 @@ input {
         display: inline-block;
         height: 30px;
         line-height: 30px;
-        width: 52px;
+        min-width: 52px;
         border: 1px solid #dcdfe6;
         margin-top: 0px;
       }
@@ -2716,6 +3594,30 @@ input {
         flex-wrap: wrap;
       }
     }
+  }
+}
+.edit-alarm-object {
+  p {
+    margin-bottom: 10px;
+  }
+}
+.edit-alarm-object-news {
+  p {
+    font-size: 12px;
+    color: #444;
+    background-color: #f0f4f7;
+    padding: 10px 12px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+.gao-jing-loading {
+  display: flex;
+  align-items: center;
+  ::v-deep .el-loading-spinner .circular {
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
   }
 }
 </style>

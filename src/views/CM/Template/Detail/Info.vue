@@ -33,7 +33,7 @@
         <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
         {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
       </p>
-      <p class="text-color1">事件告警</p>
+      <p class="text-color1" v-if="infoData.EventConditions&&infoData.EventConditions.length>0">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
         {{ `${it.EventDisplayName},不重复告警` }}
       </p>
@@ -61,10 +61,10 @@
           <template slot-scope="scope">
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
-              <p>接收组:&nbsp{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'个':'0个'}}</p>
-              <p>{{'有效期:&nbsp00:00:00 - 23:59:59'}}</p>
+              <p>接收组:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'个':'0个'}}</p>
+              <p>有效期:&nbsp;{{'00:00:00 - 23:59:59'}}</p>
               <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
-              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp {{key|notifyChannel}}</span></p>
+              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
             </div>
           </template>
           <!-- <span v-else>{{'-'}}</span> -->
@@ -173,7 +173,7 @@
                     />
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                    >%</b>
+                    >{{it.Unit}}</b>
                     &nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:110px;" size="small"> -->
                       <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">

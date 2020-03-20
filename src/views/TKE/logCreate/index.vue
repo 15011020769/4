@@ -100,7 +100,7 @@
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
                         <div v-show="workload1" style="overflow:auto">
-                          <el-checkbox-group v-model="item.checkbox0" @change="checkboxChange0(item.checkbox0,item.value1,item.activeName,index)">
+                          <el-checkbox-group v-model="item.check0" @change="checkboxChange0(item.check0,item.value1,item.activeName,index)">
                             <p v-for="(item0,index0) in workload1" :key="index0">
                               <el-checkbox :label="item0.metadata.name">{{item0.metadata.name}}</el-checkbox>
                             </p>
@@ -111,7 +111,7 @@
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
                         <div v-show="workload1" style="overflow:auto">
-                          <el-checkbox-group v-model="item.checkbox1" @change="checkboxChange1(item.checkbox1,item.value1,item.activeName,index)">
+                          <el-checkbox-group v-model="item.check1" @change="checkboxChange1(item.check1,item.value1,item.activeName,index)">
                             <p v-for="(item1,index1) in workload1" :key="index1">
                               <el-checkbox :label="item1.metadata.name">{{item1.metadata.name}}</el-checkbox>
                             </p>
@@ -121,7 +121,7 @@
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
                         <div v-show="workload1" style="overflow:auto">
-                          <el-checkbox-group v-model="item.checkbox2" @change="checkboxChange2(item.checkbox2,item.value1,item.activeName,index)">
+                          <el-checkbox-group v-model="item.check2" @change="checkboxChange2(item.check2,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
@@ -131,7 +131,7 @@
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
                         <div v-show="workload1" style="overflow:auto">
-                          <el-checkbox-group v-model="item.checkbox3" @change="checkboxChange3(item.checkbox3,item.value1,item.activeName,index)">
+                          <el-checkbox-group v-model="item.check3" @change="checkboxChange3(item.check3,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
@@ -141,7 +141,7 @@
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
                         <div v-show="workload1" style="overflow:auto">
-                          <el-checkbox-group v-model="item.checkbox4" @change="checkboxChange4(item.checkbox4,item.value1,item.activeName,index)">
+                          <el-checkbox-group v-model="item.check4" @change="checkboxChange4(item.check4,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
@@ -692,14 +692,16 @@
             };
           } else { //指定容器
 
-            var arr1=[] ;
+            var arr1=[],arr2=[] ;
             var map = {}, result = [];
+            console.log(this.formFour,'this.formFour')
             this.formFour.forEach(item => {
               var obj = new Object();
               obj['namespace'] = item.value1;
               if (item.radio == '1') {
                 obj['all_containers'] = true;
                 obj['workloads'] = [];
+                arr2.push(obj)
               }else {
                 // let
                for(let i in  item.checkObj){
@@ -739,7 +741,7 @@
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
-                namespaces: result
+                namespaces: [...result,...arr2],
               },
               type: "container-log"
             };
@@ -816,6 +818,7 @@
             type: "host-log"
           };
         }
+        // console.log(params)
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             if (res.Response.Error === undefined) {
                this.$message({
@@ -1054,7 +1057,6 @@
               name: this.$route.query.stashName,
               namespace: this.$route.query.namespace,
               resourceVersion: this.resourceVersion
-              // resourceVersion: "1731610"
             },
             spec: {
               description: "tempory nothing",
@@ -1091,7 +1093,7 @@
             };
           } else { //指定容器
 
-             var arr1=[] ;
+             var arr1=[],arr2=[] ;
             var map = {}, result = [];
             this.formFour.forEach(item => {
               var obj = new Object();
@@ -1099,11 +1101,11 @@
               if (item.radio == '1') {
                 obj['all_containers'] = true;
                 obj['workloads'] = [];
+                arr2.push(obj);
               }else {
                 // let
                for(let i in  item.checkObj){
                   if(item.checkObj[i].val&&item.checkObj[i].val.length){
-                        console.log(item.checkObj[i],'zhi')
                       let obj2={};
                       obj2.namespace=item.checkObj[i].acname;
                       obj2.all_containers= false;
@@ -1138,7 +1140,7 @@
             params.RequestBody.spec.input = {
               container_log_input: {
                 all_namespaces: false,
-                namespaces: result
+                namespaces: [...result,...arr2]
               },
               type: "container-log"
             };
@@ -1233,11 +1235,11 @@
         this.formFour[index].checkObj.check3={};
         this.formFour[index].checkObj.check4={};
         this.formFour[index].checkObj.check5={};
-        this.formFour[index].checkbox0=[];
-        this.formFour[index].checkbox1=[];
-        this.formFour[index].checkbox2=[];
-        this.formFour[index].checkbox3=[];
-        this.formFour[index].checkbox4=[];
+        this.formFour[index].check0=[];
+        this.formFour[index].check1=[];
+        this.formFour[index].check2=[];
+        this.formFour[index].check3=[];
+        this.formFour[index].check4=[];
       },
       checkboxChange0(val,np,clickname,index) {
         let cname=clickname.toLocaleLowerCase(),arr=[];
@@ -1415,28 +1417,28 @@
           for(let i in this.formFour[index].checkObj){
             if(JSON.stringify(this.formFour[index].checkObj[i])!='{}'){
 
-              // for(let j in this.formFour[index].checkObj[i]){
+              for(let j in this.formFour[index].checkObj[i]){
               
-              //   if( this.formFour[index].checkObj[i].acname==np){
-              //     console.log(this.checkObj[i][j],'zhi')
-              //     s+=this.formFour[index].checkObj[i].val.length
-              //   }
-              // }
+                if( this.formFour[index].checkObj[i].acname==np){
+                
+                  s=this.formFour[index].checkObj[i].val.length
+                }
+              }
             }
           }
-          console.log('ss',s)
+          console.log('长度',s)
           if(s==0){
-            //  this.$message({
-            //       message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
-            //       type: "warning",
-            //       showClose: true,
-            //       duration: 0
-            //     });
+             this.$message({
+                  message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
+                  type: "warning",
+                  showClose: true,
+                  duration: 0
+                });
          
           }else{
             this.formFour[index].workload = s;
-          }
             this.formFour[index].flag = !this.formFour[index].flag;
+          }
         }else{
             this.formFour[index].workload = '';
             this.formFour[index].flag = !this.formFour[index].flag;

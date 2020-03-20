@@ -20,11 +20,11 @@ let product = {
     title: '台富雲-雲函数',
     chunks: ['chunk-vendors', 'chunk-common', 'CM']
   },
-  'CDN-STAT': {
-    entry: 'src/views/CDN-STAT/main.js',
+  'CDNT': {
+    entry: 'src/views/CDNT/main.js',
     template: 'src/public/index.html',
     filename: 'index.html',
-    chunks: ['chunk-vendors', 'chunk-common', 'CDN-STAT']
+    chunks: ['chunk-vendors', 'chunk-common', 'CDNT']
   },
   CAM: {
     entry: 'src/views/CAM/main.js', // page 的入口

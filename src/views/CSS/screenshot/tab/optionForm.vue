@@ -9,13 +9,15 @@
       class="demo-ruleForm"
     >
       <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
-        <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
+        <el-input v-model="ruleForm.TemplateName" style="width:330px;" /> <span class="sub-text">僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
+        <span class="sub-text">僅支持中文、英文、數字、_、-，不超過100個字元</span>
       </el-form-item>
       <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
+        <span class="sub-text">默認為10秒，取值範圍為5秒-300秒，必須為5的倍數</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.domainManagement.7')+$t('CSS.domainManagement.16')" prop="PornFlag">
         <el-switch v-model="ruleForm.PornFlag" />
@@ -110,9 +112,13 @@ export default {
       rules: {
         TemplateName: [
           { required: true, message: '請輸入範本名稱', trigger: 'blur' },
-          { validator: checkTemplateName, trigger: 'blur' }
+          { pattern: /^[\w\-\u4e00-\u9fa5]{1,30}$/, message: '範本名稱不符要求', trigger: 'blur' }
+          // { validator: checkTemplateName, trigger: 'blur' }
         ],
-        desc: [{ required: false }, { validator: checkDesc, trigger: 'blur' }],
+        Description: [
+          { required: false },
+          { pattern: /^[\w\-\u4e00-\u9fa5]{0,100}$/, message: '描述不符要求', trigger: 'blur' }
+        ],
         SnapshotInterval: [
           { required: true, message: '請輸入截圖間隔', trigger: 'blur' },
           { validator: checkSnapshotInterval, trigger: 'blur' }
@@ -203,6 +209,11 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.sub-text {
+  color: #888;
+  margin-left: 15px;
+  font-size: 12px;
+}
 .form-wrap >>> .el-input__inner,
 .form-wrap >>> .el-button {
   height: 30px;
@@ -230,6 +241,10 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  span {
+    font-size: 12px;
+    color: #888;
   }
   .explain {
     display: inline-block;

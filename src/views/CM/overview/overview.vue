@@ -2,7 +2,7 @@
   <div class="overview-wrap">
     <Header :title="$t('CVM.jkgl')" />
     <div class="overview-main">
-      <div class="explain">
+      <!-- <div class="explain">
         <p>
           {{ $t("CVM.overview.xbysx") }}
           <a>{{ $t("CVM.overview.sqncty") }}</a>
@@ -21,14 +21,16 @@
           <a>{{ $t("CVM.lljk") }}</a
           >{{ $t("CVM.overview.ymck") }}
         </p>
-      </div>
+      </div> -->
       <div class="main-box">
         <div class="left">
           <!-- 近24小时服务健康状态 -->
           <div class="box">
             <div class="head">
               <h3>{{ $t("CVM.overview.fwjkzt") }}</h3>
-              <el-button v-show="region != ''">{{ region }}</el-button>
+              <el-button type="primary" v-show="region != ''">{{
+                region
+              }}</el-button>
               <el-button
                 icon="el-icon-loading"
                 v-show="region == ''"
@@ -48,23 +50,74 @@
               </el-select>
             </div>
             <el-table
-              :data="tableData"
+              v-loading="tableLoading"
+              :data="productOptions"
               style="width: 100%"
               height="450"
               :empty-text="$t('CVM.clBload.zwsj')"
             >
               <el-table-column
-                prop="projectName"
+                prop="label"
                 :label="$t('CVM.overview.fwlx')"
               ></el-table-column>
-              <el-table-column
-                prop="name"
-                :label="$t('CVM.overview.dqzt')"
-              ></el-table-column>
-              <el-table-column
-                prop="address"
-                :label="$t('CVM.overview.yxdxs')"
-              ></el-table-column>
+              <el-table-column prop="status">
+                <template slot="header">
+                  <label>{{ $t("CVM.overview.dqzt") }}</label>
+                  <el-tooltip placement="right" effect="light">
+                    <div slot="content" style="line-height: 20px">
+                      <i
+                        class="el-icon-success"
+                        style="color: green;font-size: 10px;"
+                      ></i>
+                      正常 無資源異常<br />
+                      <i
+                        class="el-icon-question"
+                        style="color: red;font-size: 14px;"
+                      ></i>
+                      提醒 近24小時內有資源發生過異常<br />
+                      <i
+                        class="el-icon-warning"
+                        style="color: red;font-size: 10px;"
+                      ></i>
+                      異常 當前有資源正處於異常狀態未修復
+                    </div>
+                    <i
+                      class="el-icon-info"
+                      style="font-size:15px;vertical-align: middle;"
+                    ></i>
+                  </el-tooltip>
+                </template>
+                <template slot-scope="scope">
+                  <el-tooltip
+                    placement="right"
+                    effect="light"
+                    :disabled="scope.row.tips.length === 0"
+                    popper-class="cm-overview-tooltip"
+                  >
+                    <timelineview
+                      slot="content"
+                      :data="scope.row.tips"
+                    ></timelineview>
+                    <i
+                      v-if="scope.row.status"
+                      class="el-icon-success"
+                      style="color: green;font-size: 15px;margin-right:3px;"
+                    ></i>
+                    <i
+                      v-else
+                      class="el-icon-warning"
+                      style="color: red;font-size: 15px;margin-right:3px;"
+                    ></i>
+                  </el-tooltip>
+                  <label v-if="scope.row.status">正常</label>
+                  <label v-else>異常</label>
+                </template>
+              </el-table-column>
+              <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
+                <template slot-scope="scope">
+                  <span v-html="scope.row.desc"></span>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
           <!-- 近7天监控时间轴 -->
@@ -75,6 +128,7 @@
                 v-model="value2"
                 :placeholder="$t('CVM.Dashboard.qxz')"
                 style="width:140px;margin-left:-1px;"
+                @change="handleProjectEvent"
               >
                 <el-option
                   v-for="item in options2"
@@ -83,20 +137,16 @@
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-select
-                v-model="value3"
-                :placeholder="$t('CVM.Dashboard.qxz')"
-                style="width:140px;margin-left:-1px;"
-              >
-                <el-option
-                  v-for="item in options3"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
+              <type
+                @PassData="PassData"
+                :projectId="projectId"
+                :searchParam="searchParam"
+                :productValue="productValue"
+              />
               <div style="margin-left:-1px;">
-                <el-button v-show="region != ''">{{ region }}</el-button>
+                <el-button type="primary" v-show="region != ''">{{
+                  region
+                }}</el-button>
                 <el-button
                   icon="el-icon-loading"
                   v-show="region == ''"
@@ -108,20 +158,24 @@
                 ><i class="el-icon-download"></i>
               </div>
             </div>
-            <TimelineCharts :timelineData="timelineData"></TimelineCharts>
+            <TimelineCharts
+              :timelineData="timelineData"
+              :loading="chartLoading"
+            ></TimelineCharts>
             <div class="button-group">
               <el-button
                 type="primary"
                 v-for="day in sevenDays"
                 :key="day.key"
+                :plain="day.isSelected"
                 @click="handleDaysButtonEvent($event, day)"
                 >{{ day.value.format("MM-DD") }}</el-button
               >
             </div>
           </div>
         </div>
-        <div class="right">
-          <!-- 当月已使用短信统计 -->
+        <!-- <div class="right">
+           当月已使用短信统计
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
@@ -145,18 +199,18 @@
                   <span>剩餘{{ item.FreeLeft }}條/已使用{{ item.Used }}條</span>
                 </p>
                 <el-progress
-                  :percentage="100*(item.Used/(item.Used + item.FreeLeft))"
+                  :percentage="100 * (item.Used / (item.Used + item.FreeLeft))"
                   :stroke-width="20"
                   :show-text="false"
                 ></el-progress>
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- 购买短信 -->
-    <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
+    <!-- <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" /> -->
   </div>
 </template>
 
@@ -175,6 +229,8 @@ import {
 import bugmsg from "../components/buymsg";
 import { ErrorTips } from "@/components/ErrorTips.js";
 import moment from "moment";
+import type from "@/views/CM/CM_assembly/product_type";
+import timelineview from "./timelineview";
 export default {
   name: "overview",
   data() {
@@ -216,21 +272,89 @@ export default {
       period: "10",
       timelineData: null,
       thresholdObjects: [],
-      quotaList: []
+      quotaList: [],
+      projectId: 0,
+      productValue: "cvm_device",
+      monitorStartTime: moment().format("YYYY-MM-DD"),
+      searchParam: {},
+      chartLoading: false,
+      tableLoading: false,
+      productOptions: [
+        {
+          label: "云伺服器",
+          viewName: "cvm_device",
+          subtitle: "基礎監控"
+        },
+        {
+          label: "VPN網關",
+          viewName: "VPN_GW",
+          subtitle: "VPN網關"
+        },
+        {
+          label: "VPN通道",
+          viewName: "vpn_tunnel",
+          subtitle: "VPN通道"
+        },
+        {
+          label: "NAT网網關",
+          viewName: "nat_tc_stat",
+          subtitle: "NAT網關"
+        },
+        {
+          label: "專線網關",
+          viewName: "DC_GW",
+          subtitle: "專線網關"
+        },
+        {
+          label: "彈性公網IP",
+          viewName: "EIP",
+          subtitle: "彈性公網IP"
+        },
+        {
+          label: "MYSQL",
+          viewName: "cdb_detail",
+          subtitle: "主機監控"
+        },
+        {
+          label: "Redis",
+          viewName: "REDIS-CLUSTER",
+          subtitle: "Redis"
+        },
+        {
+          label: "專用通道",
+          viewName: "dcchannel",
+          subtitle: "專用通道"
+        },
+        {
+          label: "物理专线",
+          viewName: "dcline",
+          subtitle: "物理專線"
+        },
+        {
+          label: "對象存儲",
+          viewName: "COS",
+          subtitle: "對象存儲"
+        }
+      ]
     };
   },
   components: {
     Header,
     bugmsg,
-    TimelineCharts
+    TimelineCharts,
+    type,
+    timelineview
   },
   computed: {
     sevenDays: function() {
       let days = [];
       for (let index = 6; index >= 0; index--) {
+        let day = moment().subtract(index, "days");
+
         days.push({
           key: index,
-          value: moment().subtract(index, "days")
+          value: day,
+          isSelected: day.format("YYYY-MM-DD") !== this.monitorStartTime
         });
       }
       return days;
@@ -239,10 +363,16 @@ export default {
   created() {
     this.GetCity();
     this.getProject();
-    this.getServiceType();
-    // this.getProjectList();
-    this.MonitorList(moment().format("YYYY-MM-DD"));
-    this.getSMS();
+    // this.getServiceType();
+    this.getProjectList();
+    this.MonitorList();
+    // this.getSMS();
+
+    this.productOptions.forEach(item => {
+      item.status = true;
+      item.desc = "";
+      item.tips = [];
+    });
   },
 
   methods: {
@@ -265,31 +395,30 @@ export default {
       });
     },
     // 当月已使用短信统计
-    getSMS() {
-      let params = {
-        Version: "2018-07-24",
-        Module: "monitor"
-      };
-      this.axios.post(OVERVIEW_SMS_LIST, params).then(res => {
-        console.info(res);
-        if (res.Response.Error === undefined) {
-          // this.tableData=res.data;//lxx
-          this.quotaList = res.Response.QuotaList;
-        } else {
-          let ErrTips = {
-            InternalError: "內部錯誤",
-            UnauthorizedOperation: "未授權操作"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
+    // getSMS() {
+    //   let params = {
+    //     Version: "2018-07-24",
+    //     Module: "monitor"
+    //   };
+    //   this.axios.post(OVERVIEW_SMS_LIST, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       // this.tableData=res.data;//lxx
+    //       this.quotaList = res.Response.QuotaList;
+    //     } else {
+    //       let ErrTips = {
+    //         InternalError: "內部錯誤",
+    //         UnauthorizedOperation: "未授權操作"
+    //       };
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     //获取项目列表
     getProject() {
       this.axios.get(ALL_PROJECT).then(res => {
@@ -298,7 +427,8 @@ export default {
           res.data.forEach((item, index) => {
             const obj = {
               value: index + 1,
-              label: item.projectName
+              label: item.projectName,
+              projectId: item.projectId
             };
             this.options1.push(obj);
             this.options2.push(obj);
@@ -318,26 +448,82 @@ export default {
         }
       });
     },
-    getServiceType() {
+    // getServiceType() {
+    //   let params = {
+    //     Version: "2018-07-24",
+    //     Module: "monitor"
+    //   };
+    //   this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       let result = res.Response.Conditions.filter(item => {
+    //         if (!item.SupportRegions.includes("tpe")) {
+    //           return false;
+    //         }
+
+    //         // if (item.PolicyViewName !== "cvm_device") {
+    //         //   return false;
+    //         // }
+
+    //         return true;
+    //       });
+
+    //       // console.log(result);
+    //     } else {
+    //       let ErrTips = {
+    //         InternalError: "内部错误",
+    //         UnauthorizedOperation: "未授权操作"
+    //       };
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
+    getProjectList() {
+      //获取项目列表数据
       let params = {
         Version: "2018-07-24",
         Module: "monitor"
       };
-      this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
+
+      if (typeof this.value1 === "number") {
+        params["ProjectIds.0"] = this.options1[this.value1].projectId;
+      }
+
+      this.tableLoading = true;
+      this.axios.post(ALL_PROJECT_HEALTH_STATUS_LIST, params).then(res => {
+        this.tableLoading = false;
         if (res.Response.Error === undefined) {
-          let result = res.Response.Conditions.filter(item => {
-            if (!item.SupportRegions.includes("tpe")) {
-              return false;
+          const data = res.Response.List;
+
+          this.productOptions = this.productOptions.map((item, index) => {
+            const viewNameObj = data.find(view => {
+              return view.ViewName === item.viewName;
+            });
+
+            if (viewNameObj !== undefined && viewNameObj.HealthStatus === 1) {
+              item.status = false;
+              this.getAbnormalList(viewNameObj.ViewName, index);
+            } else {
+              item.status = true;
+              item.tips = [];
             }
 
-            // if (item.PolicyViewName !== "cvm_device") {
-            //   return false;
-            // }
+            if (viewNameObj !== undefined) {
+              item.desc =
+                item.subtitle +
+                "：" +
+                `<a href="/CVM">${viewNameObj.AbnormalCount}</a>`;
+            } else {
+              item.desc = "-";
+            }
 
-            return true;
+            return item;
           });
-
-          // console.log(result);
         } else {
           let ErrTips = {
             InternalError: "内部错误",
@@ -353,61 +539,104 @@ export default {
         }
       });
     },
-    getProjectList() {
-      //获取项目列表数据
-      let params = {
+    getAbnormalList(viewName, index) {
+      const params = {
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        ViewName: viewName
       };
-      this.axios.post(ALL_PROJECT_HEALTH_STATUS_LIST, params).then(res => {
-        // if (res.codeDesc === "Success") {
-        //     this.tableData=res.data;//lxx
-        // } else {
-        //   let ErrTips = {
-        //     InternalError: "内部错误",
-        //     UnauthorizedOperation: "未授权操作"
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+
+      this.axios.post(ONE_DAY_MONITOR_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          const item = this.productOptions[index];
+
+          item.tips = res.Response.ThresholdObjects;
+
+          this.$set(this.productOptions, index, item);
+        } else {
+          let ErrTips = {
+            InternalError: "内部错误",
+            UnauthorizedOperation: "未授权操作"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     handleDaysButtonEvent(e, day) {
-      this.MonitorList(day.value.format("YYYY-MM-DD"));
+      this.monitorStartTime = day.value.format("YYYY-MM-DD");
+      this.MonitorList();
     },
-    MonitorList(startTime) {
-      //近7天监控时间轴项目列表数据
-      let params = {
+    handleProjectEvent() {
+      this.MonitorList();
+    },
+    MonitorList() {
+      const params = {
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: "cvm_device",
-        StartTime: startTime
+        ViewName: this.productValue,
+        StartTime: this.monitorStartTime
       };
+
+      let project = null;
+      if (typeof this.value2 === "number") {
+        params["ProjectIds.0"] = this.options2[this.value2].projectId;
+      }
+
+      this.chartLoading = true;
       this.axios.post(ONE_DAY_MONITOR_LIST, params).then(res => {
+        this.chartLoading = false;
         if (res.Response.Error === undefined) {
           const startTimes = [];
           const endTimes = [];
           const titles = [];
 
-          this.thresholdObjects = res.Response.ThresholdObjects;
+          const thresholdObjects = res.Response.ThresholdObjects;
 
-          res.Response.ThresholdObjects.forEach(item => {
-            startTimes.push(item.FirstOccurTime);
-            endTimes.push(item.LastOccurTime);
-            titles.push(item.Content);
-          });
+          if (thresholdObjects === undefined) {
+            this.thresholdObjects = [];
+            this.timelineData = [[], [], []];
+          } else {
+            thresholdObjects.sort((value1, value2) => {
+              const firstTime = moment(value1.FirstOccurTime);
+              const secondTime = moment(value2.FirstOccurTime);
 
-          this.timelineData = [
-            startTimes.reverse(),
-            endTimes.reverse(),
-            titles.reverse()
-          ];
+              var i =
+                firstTime.hour() * 60 * 60 +
+                firstTime.minute() * 60 +
+                firstTime.second();
+              var n =
+                secondTime.hour() * 60 * 60 +
+                secondTime.minute() * 60 +
+                secondTime.second();
+              if (i > n) {
+                return -1;
+              } else if (i < n) {
+                return 1;
+              } else {
+                return 0;
+              }
+            });
+
+            this.thresholdObjects = thresholdObjects;
+
+            thresholdObjects.forEach(item => {
+              startTimes.push(item.FirstOccurTime);
+              endTimes.push(item.LastOccurTime);
+              titles.push(item.Content);
+            });
+
+            this.timelineData = [startTimes, endTimes, titles];
+          }
         } else {
+          this.chartLoading = false;
+          this.thresholdObjects = [];
+          this.timelineData = [[], [], []];
           let ErrTips = {
             InternalError: "内部错误",
             UnauthorizedOperation: "未授权操作"
@@ -432,12 +661,16 @@ export default {
         project = this.value2;
       }
 
+      const product = this.productOptions.find(item => {
+        return item.viewName === this.productValue;
+      });
+
       this.thresholdObjects.forEach(item => {
         json.push({
           監控事件: item.Content,
           項目: project,
           地域: "中國臺北",
-          產品類型: "雲伺服器-基礎監控",
+          產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
           對象: item.Dimensions === undefined ? "" : item.Dimensions,
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
@@ -451,10 +684,22 @@ export default {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "統計數據");
       XLSX.writeFile(wb, "統計數據.csv");
+    },
+    PassData(data) {
+      this.productValue = data.productValue;
+      this.MonitorList();
     }
   }
 };
 </script>
+
+<style lang="css">
+.cm-overview-tooltip {
+  max-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+</style>
 
 <style lang="scss" scoped>
 .button-group {
@@ -463,7 +708,6 @@ export default {
   flex-direction: row;
   justify-content: flex-start;
 }
-
 .button-group >>> .el-button {
   flex-basis: 0;
   flex-grow: 1;

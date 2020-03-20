@@ -34,12 +34,12 @@
     methods: {
       init() {
         const TimeGranularity = {
-          '5': '5秒',
-          '10': '10秒',
-          '60': '1分鐘',
-          '300': '5分鐘',
-          '3600': '1小時',
-          '86400': '1天',
+          // '5000': '5秒',
+          '10000': '10秒',
+          '60000': '1分鐘',
+          '300000': '5分鐘',
+          '3600000': '1小時',
+          '86400000': '1天',
         }
         const period = this.period;
         const chartView = this.$refs.chart;
@@ -113,7 +113,7 @@
             y: "bottom"
           },
           grid: {
-            x: 100,
+            x: 45,
             y: 45,
             x2: 5,
             y2: 20,
@@ -162,7 +162,7 @@
   }
 
   #id {
-    min-width: 500px;
+    // min-width: 500px;
     min-height: 300px;
     height: 100%;
   }

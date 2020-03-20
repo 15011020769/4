@@ -191,7 +191,8 @@ export default {
           const curBillArr = []
           const xAxisArr = []
           if (Data && Data.length) {
-            this.curBillMax = Data[0].BillingData[0].SummarizedData.Value
+            const curMax = Data[0].BillingData[0].SummarizedData.Value
+            this.curBillMax = (curMax / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2)
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)
@@ -229,7 +230,8 @@ export default {
           const curOriginArr = []
           const xAxisArr = []
           if (Data && Data.length) {
-            this.curOriginMax = Data[0].OriginData[0].SummarizedData.Value
+            const curMax = Data[0].OriginData[0].SummarizedData.Value
+            this.curOriginMax = (curMax / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2)
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)

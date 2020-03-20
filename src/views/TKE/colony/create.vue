@@ -364,7 +364,7 @@
                   <li>{{$t('TKE.colony.xzxt')}} OOM</li>
                 </div>
                 <!-- <a href="javascript:;" class="ml5">如何选择</a> -->
-                <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a>
+                <!-- <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a> -->
               </el-popover>
               <!-- <a href="#" class="ml5">如何选择</a> -->
             </el-form-item>
@@ -1418,11 +1418,11 @@
                           }}{{$t('TKE.overview.ge')}}可用</span
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
-                        <p>
+                        <!-- <p>
                           {{$t('TKE.colony.wlbhs')}}<a href="#"
                             >{{$t('TKE.colony.xjsywl')}}</a
                           >或<a href="#">{{$t('TKE.colony.xjzw')}}</a>
-                        </p>
+                        </p> -->
                       </div>
                     </li>
                     <li>
@@ -2375,8 +2375,7 @@
             class="tke-fourth-node-text"
           >
             <p v-for="(item, index) in rightListMaster" :key="index">
-              <a href="javascript:;">{{ item.InstanceId }}</a
-              ><span v-if="rightListMaster.length > 1">,</span>
+              {{ item.InstanceId }}<span v-if="rightListMaster.length > 1">,</span>
             </p>
           </el-form-item>
           <el-form-item
@@ -2385,8 +2384,7 @@
             class="tke-fourth-node-text"
           >
             <p v-for="(item, index) in rightList" :key="index">
-              <a href="javascript:;">{{ item.InstanceId }}</a
-              ><span v-if="rightList.length > 1">,</span>
+             {{ item.InstanceId }}<span v-if="rightList.length > 1">,</span>
             </p>
           </el-form-item>
           <el-form-item

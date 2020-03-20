@@ -200,7 +200,7 @@ export default {
       }
       let regionsArr = [];
       const tableArr = [];
-      let total = 0;
+      let total = 1;
       this.axios.post(LIST_TOP_DATA,
         { ...params,
           Area: 'overseas',

@@ -1,6 +1,8 @@
 import Vue from "vue";
 import VueCookie from "vue-cookie";
-import { Loading } from "element-ui";
+import {
+  Loading
+} from "element-ui";
 import axios from "axios";
 
 const conf = {
@@ -63,4 +65,6 @@ Plugin.install = function (vue) {
 Vue.use(Plugin);
 
 export default Plugin;
-export { instance as axios };
+export {
+  instance as axios
+};

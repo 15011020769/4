@@ -91,7 +91,7 @@
         </el-table-column>
       </el-table>
       <el-row class="strategies-table-footer" type="flex" align="middle" justify="center">
-        <el-button type="text" size="small" @click="addStrategy" :disabled="selectedMatchKeys.length > 4">添加</el-button> <span class="sub-text">还可以添加{{5 - selectedMatchKeys.length}}条，最多5条</span>
+        <el-button type="text" size="small" @click="addStrategy" :disabled="selectedMatchKeys.length > 4">添加</el-button> <span class="sub-text">还可以添加{{5 - selectedMatchKeys.length}}{{t('条', 'WAF.t')}}，最多5{{t('条', 'WAF.t')}}</span>
       </el-row>
     </el-form-item>
     <el-form-item

@@ -96,7 +96,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="回源信息" v-if="columnsCopy.includes('upstream')">
+            <el-table-column :label="t('回源信息', 'WAF.hyxx')" v-if="columnsCopy.includes('upstream')">
               <template slot-scope="scope">
                 <div>
                   <p><strong>回源地址:</strong>{{scope.row.upstream}}</p>
@@ -142,7 +142,7 @@
           <el-checkbox label="request">{{t('请求详情', 'WAF.qqxq')}}</el-checkbox>
           <el-checkbox label="body">Body</el-checkbox>
           <el-checkbox label="header">{{t('请求头', 'WAF.qqt')}}</el-checkbox>
-          <el-checkbox label="upstream">回源信息</el-checkbox>
+          <el-checkbox label="upstream">{{t('回源信息', 'WAF.hyxx')}}</el-checkbox>
           <el-checkbox label="response">{{t('响应详情', 'WAF.xyxq')}}</el-checkbox>
           <el-checkbox label="action" disabled>操作</el-checkbox>
         </el-checkbox-group>
@@ -182,10 +182,10 @@ export default {
       visible: false,
       queryCopy: [{
         label: 'client',
-        value: '访问源IP',
+        value: this.t('访问', 'WAF.fw') + '源IP',
       }, {
         label: 'url',
-        value: '访问URI',
+        value: this.t('访问', 'WAF.fw') + 'URI',
       }, {
         label: 'query',
         value: 'Query',

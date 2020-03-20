@@ -227,7 +227,7 @@ export default {
               const botArr = Data.Res
               this.tableDataBegin.forEach(item => {
                 let temp = botArr.find(_item => _item.Domain === item.Domain)
-                this.$set(item, 'botStatus', temp.Status)
+                this.$set(item, 'botStatus', temp && temp.Status || 0)
               })
               localStorage.setItem('tableList', JSON.stringify(this.tableDataBegin))
             }

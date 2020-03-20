@@ -14,7 +14,7 @@ const router = new Router({
         import(/* webpackChunkName: "ipMan" */ "./editor.vue"),
     },
     {
-      path: "/cdn/report", // 安全概览
+      path: "/report",                // 运营月报
       name: "cdnreport",
       component: () =>
         import(/* webpackChunkName: "ipMan" */ "./report/index.vue"),
@@ -24,7 +24,7 @@ const router = new Router({
       }
     },
     {
-      path: "/cdn/statistics/analysis", // 安全概览
+      path: "/statistics/analysis",   // 数据分析
       name: "cdnstatisticsanalysis",
       component: () =>
         import(
@@ -36,7 +36,7 @@ const router = new Router({
       }
     },
     {
-      path: "/cdn/global", // 安全概览
+      path: "/global",                // 全网状态监控
       name: "cdnglobal",
       component: () =>
         import(/* webpackChunkName: "ipMan" */ "./global/index.vue"),

@@ -9,6 +9,7 @@
             style="width:330px;margin:0"
             v-model="formInline.strategy_name"
             placeholder="请输入策略名称，20字以内"
+            @blur="reg"
           ></el-input>
         </p>
         <div class="rowGaojing">
@@ -74,10 +75,20 @@ export default {
     Cam
   },
   methods: {
+    reg() {
+      //策略名
+      if (this.formInline.strategy_name == "") {
+        this.$message({
+          message: "策略名不能为空",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
     // 获取cam组件的值
     camFun(data) {
       this.cam = data;
-      console.log(this.cam);
     },
     //选择告警接收组
     // getList() {
@@ -104,16 +115,43 @@ export default {
     // },
     //确定
     save() {
+      if (this.cam.selectUserGroup.length == 0) {
+        this.$message({
+          message: "请选择告警接收组",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return;
+      }
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
-        // PolicyName:     //策略名
+        PolicyName: this.formInline.strategy_name //策略名
       };
+      this.cam.selectUserGroup.forEach((v, i) => {
+        param["ReceiverGroupIds." + i] = v.GroupId;
+      });
+
+      this.cam.channel.forEach((v, i) => {
+        if (v == "郵件") {
+          v = "EMAIL";
+        } else if (v == "簡訊") {
+          v = "SMS";
+        }
+        param["NotifyWays." + i] = v;
+      });
       this.axios.post(ADD_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response);
-
-          this.deleteDialogVisible = false;
+          this.$message({
+            message: "添加成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.$router.push({
+            path: "/message"
+          });
           this.loadShow = false;
         } else {
           let ErrTips = {
@@ -139,9 +177,6 @@ export default {
             duration: 0
           });
         }
-      });
-      this.$router.push({
-        path: "/message"
       });
     }
   },

@@ -789,13 +789,20 @@ export default {
         this.policyTemp.DropOptions.DropOther == 0 ? "" : "其他協議"
       );
       this.tags = JSON.parse(JSON.stringify(this.policyTemp.PortLimits)); //禁用协议
-      console.log(this.tags)
       for (let i in this.tags) {
-        if (this.tags[i].DPortStart == this.tags[i].DPortEnd) {
-          this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart;
+        if (this.policyTemp.PortLimits[i].Kind == 1) { //源端口
+          if (this.tags[i].SPortStart == this.tags[i].SPortEnd) {
+            this.tags[i].portNum = this.policyTemp.PortLimits[i].SPortStart;
+          } else {
+            this.tags[i].portNum = this.policyTemp.PortLimits[i].SPortStart + "-" + this.policyTemp.PortLimits[i].SPortEnd;
+          }
         } else {
-          this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart + "-" + this.policyTemp.PortLimits[i].DPortEnd;
-      }
+          if (this.tags[i].DPortStart == this.tags[i].DPortEnd) {
+            this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart;
+          } else {
+            this.tags[i].portNum = this.policyTemp.PortLimits[i].DPortStart + "-" + this.policyTemp.PortLimits[i].DPortEnd;
+          }
+        }
       }
       console.log(this.tags)
       this.tags1 = this.policyTemp.PacketFilters; //报文

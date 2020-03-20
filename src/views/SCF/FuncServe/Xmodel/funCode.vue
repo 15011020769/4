@@ -5,7 +5,8 @@
         <div class="CodeTool-frist">
           <P>
             <span>
-              提交方法<i class="el-icon-question"></i>
+              提交方法
+              <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-select v-model="SubmissionValue" placeholder="请选择" class="select" @change="changSubmit()">
               <el-option v-for="item in SubmissionArr" :key="item.value" :label="item.label" :value="item.value">
@@ -14,7 +15,8 @@
           </P>
           <P>
             <span>
-              执行方法<i class="el-icon-question"></i>
+              执行方法
+              <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-input v-model="implementInput"></el-input>
           </P>
@@ -34,13 +36,12 @@
         </div>
       </div>
 
-      <div v-if="SubmissionValue==='Inline'" class="content">
-        <!-- <el-input type="textarea" :rows="10" placeholder="请输入内容" v-model="textarea">
-        </el-input> -->
-        <div id="roota" style="width: 100%; height: 500px;"></div>
+      <div v-if="SubmissionValue === 'Inline'" class="content">
+        <!-- 编辑器的容器 -->
+        <div id="container" style="width: 100%; height: 500px;"></div>
       </div>
 
-      <div v-if="SubmissionValue==='ZipFile'" class="content">
+      <div v-if="SubmissionValue === 'ZipFile'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">函数代码</p>
           <div class="ZipFilecontent">
@@ -60,7 +61,7 @@
         <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
       </div>
 
-      <div v-if="SubmissionValue==='TempCos'" class="content">
+      <div v-if="SubmissionValue === 'TempCos'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">函数代码</p>
           <div class="ZipFilecontent">
@@ -80,7 +81,7 @@
         <p>请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M</p>
       </div>
 
-      <div v-if="SubmissionValue==='Cos'" class="content">
+      <div v-if="SubmissionValue === 'Cos'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">COS Bucket</p>
           <div class="ZipFilecontent">
@@ -101,10 +102,6 @@
         </div>
 
       </div>
-      <!-- <div>
-        <el-input type="file" id="fileID"></el-input>
-      </div>
-      <div id="sdk-root" style="width: 100%; height: 100%"></div> -->
       <div class="functest">
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
         <el-button size="small" @click="_testModal">测试</el-button>
@@ -193,12 +190,12 @@ import {
   TESTMODELS_LIST,
   DELETE_MODAL,
   TEST_MODAL,
-  INVOKE
+  INVOKE,
+  UPD_FUN_CODE
 } from "@/constants";
 import {
   ErrorTips
 } from "@/components/ErrorTips";
-
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -272,74 +269,20 @@ export default {
     this.GetListFunctionTestModels();
   },
   mounted() {
-    const CSLite = new this.$cloudstudio .CloudStudioLiteSDK({
-      rootNode: document.querySelector('#roota'),
-      funcName: 'workspace',
-      helpDocLink: 'https://studio.dev.tencent.com/',
-      applyStatistics: {
-        appId: 'appId-1',
-        appKey: 'appKey-1',
-        channel: 'channel-1',
-        uid: {}
-      }
-    });
-    // const CSLite = new CloudStudioLiteSDK({
-    //   rootNode: document.querySelector('#roota'),
-    //   funcName: 'workspace',
-    //   helpDocLink: 'https://studio.dev.tencent.com/',
-    //   applyStatistics: {
-    //     appId: 'appId-1',
-    //     appKey: 'appKey-1',
-    //     channel: 'channel-1',
-    //     uid: 'uid-1'
-    //   } 
+    // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
+    //   rootNode: document.querySelector('#container'),
+    //   funcName: this.functionName,
+    //   FileTreeModel: {
+    //     isFile: true,
+    //     path: 'https://lambdagz-1253665819.cos.ap-guangzhou.myqcloud.com/1300560919/dasd/dasd_LATEST.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDqbBtfGe4eSSK8CExGjmC0e8Qcnswv6yj%26q-sign-time%3D1584677337%3B1584687397%26q-key-time%3D1584677337%3B1584687397%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dab20ce68cbb4108a6b76c9f5101773ea73a32d5c&response-content-type=application/octet-stream',
+    //     fileName: 'channel-1',
+    //     parentPath: ''
+    //   }
     // });
-    // document.querySelector('#fileID').onchange = e => {
-    //   const reader = new FileReader();
-    //   reader.onload = () => {
-    //     const initConfig = {
-    //       rootNode: document.querySelector('#sdk-root'),
-    //       funcName: "",
-    //       modeType: window.ModeTypeEnum.ZIP,
-    //       helpDocLink: "",
-    //       blobData: new Blob(),
-    //       i18nType: "zh-cn",
-    //       // entryPath: 'index.html', // 如果需要默认打开文件，则指定entryPath
-    //     }
-    //     execLiteServiceConstructor(initConfig, 2, reader.result);
-    //   };
-    //   reader.readAsBinaryString(e.target.files[0]);
-    // }
-    // const formatWorkerUrl = function (name) {
-    //   return window.location.origin + "/worker/" + name;
-    // };
-    // CloudStudioLiteFilesServiceSDK.MonacoWorkerUrl([
-    //   { label: "typescript", url: formatWorkerUrl("typescript.worker.js") },
-    //   { label: "editor", url: formatWorkerUrl("editor.worker.js") },
-    //   { label: "json", url: formatWorkerUrl("json.worker.js") },
-    // ]);
-
-    // const liteSDK = new CloudStudioLiteFilesServiceSDK();
-    // // // 构造 litesdk
-    // const execLiteServiceConstructor = function (config, permissionModeType, blobData) {
-    //   if (!config & !permissionModeType & !blobData) return;
-    //   liteSDK.init(config);
-    //   console.log("init done");
-    //   liteSDK.setPermission(permissionModeType);
-    //   liteSDK.refreshRenderDOM();
-    //   liteSDK.addListener({
-    //     onRead: function () {
-    //       return new Promise(function (res) {
-    //         res({ content: blobData });
-    //       });
-    //     },
-    //   });
-    // };
-
-    // window.liteSDK = liteSDK;
   },
   methods: {
-    //获取详情数据
+
+    //获取函数详情数据
     GetDate() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -376,6 +319,7 @@ export default {
         }
       });
     },
+
     //下载
     _Clone() {
       let param = {
@@ -411,6 +355,7 @@ export default {
         }
       });
     },
+
     //转base64
     getBase64(file) {
       return new Promise((resolve, reject) => {
@@ -431,6 +376,7 @@ export default {
         };
       });
     },
+
     //上传zip
     filezip(file) {
       let fileName = file.name
@@ -449,11 +395,11 @@ export default {
       this.getBase64(file.raw).then(resBase64 => {
         this.fileBase64zip = resBase64.split(',')[1] //直接拿到base64信息
       })
-      return isLt
     },
     _fileClip() {
       document.getElementById('webk').click()
     },
+
     //上传文件夹
     fileClip(file) {
       const that = this
@@ -527,11 +473,41 @@ export default {
         }
       });
     },
+
     //保存
     _Preservation() {
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2018-04-16",
+        FunctionName: this.functionName,
+        Handler: this.implementInput,
+      };
 
+      if(this.SubmissionValue === 'ZipFile'){      // 上传的是zip
+        param.ZipFile = this.fileBase64zip
+      }else if(this.SubmissionValue === 'TempCos'){      // 上传的是文件夹
+        param.ZipFile = this.fileBase64clip1
+      }
 
+      this.axios.post(UPD_FUN_CODE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            message: '保存成功',
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+        } else {
+          this.$message({
+            message: '保存失败',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
+
     //获取函数测试模板列表
     GetListFunctionTestModels() {
       let param = {
@@ -563,17 +539,20 @@ export default {
         }
       });
     },
+
     //是否删除模板
     _deleteModal(name) {
       this.deleteModal = true;
       this.modalName = name;
     },
+
     //是否修改模板
     _editModal(name) {
       this.editModal = true;
       this.modalName = name;
       this.GetFunctionTestModel();
     },
+
     //删除测试模板
     async _deleteTestModal() {
       let param = {
@@ -648,6 +627,7 @@ export default {
         }
       });
     },
+
     //测试模板
     _testModal() {
       let param = {
@@ -688,6 +668,11 @@ export default {
           });
         }
       });
+    },
+
+    // 提交方法 切换
+    changSubmit(){
+
     }
   }
 }

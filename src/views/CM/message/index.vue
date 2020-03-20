@@ -59,11 +59,11 @@
             <p v-if="scope.row.NotifyWay">
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
                 <b v-if="v=='EMAIL'">邮件、</b>
-                <b v-if="v=='SMS'">短信</b>
-                <b v-if="v=='CALL'">站内信</b>
+                <b v-if="v=='SMS'">短信、</b>
+                <b v-if="v=='CALL'">站内信、</b>
               </span>
             </p>
-            <p v-if="scope.row.NotifyWay==''">-</p>
+            <p v-if="scope.row.NotifyWay.length==0">-</p>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -409,9 +409,13 @@ export default {
       this.dialogVisible = false;
     },
     // 编辑
-    Edit() {
+    Edit(data) {
+      // if(data.NotifyWay==""){
+      //    delete data.NotifyWay;
+      // }
       this.$router.push({
-        name: "messageEdit"
+        name: "messageEdit",
+        params:data
       });
     }
   }

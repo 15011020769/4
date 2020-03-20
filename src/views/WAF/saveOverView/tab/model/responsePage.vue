@@ -106,7 +106,9 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               artArrCount.push(JSON.parse(v).count)
-              artArr.push(JSON.parse(v).url)
+              artArr.push(JSON.parse(v).url.length > 20 ?
+              JSON.parse(v).url.slice(0, 20) + '...' : JSON.parse(v).url
+              )
             })
             this.xAxisBarArt = artArr
             this.seriesBarArt = artArrCount
@@ -115,7 +117,8 @@ export default {
           this.generalRespHandler(resp, ({Histogram}) => {
             Histogram && Histogram.map(v => {
               urlArrCount.push(JSON.parse(v).count)
-              urlArr.push(JSON.parse(v).url)
+              urlArr.push(JSON.parse(v).url.length > 20 ?
+              (JSON.parse(v).url).slice(0, 20) + '...' : JSON.parse(v).url)
             })
             this.xAxisBarUrl = urlArr
             this.seriesBarUrl = urlArrCount

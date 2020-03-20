@@ -82,6 +82,7 @@ export default {
   methods: {
     echart() {
       var myChart = this.$echarts.init(this.$refs.line_dv)
+      let that = this
       myChart.setOption({
         grid: {
           left: '3%',
@@ -143,7 +144,18 @@ export default {
               data: this.isShowPeak ? [{
                 yAxis: this.peak,
                 lineStyle: {color: 'red'}
-              }] : ''
+              }] : '',
+              label: {
+                normal: {
+                  show: true,
+                  position: 'middle',
+                  color: '#000',
+                  formatter: function (params) {
+                    let  str = "峰值带宽:" + that.peak + "Mbps";                                            
+                      return str
+                  },
+                }
+              },     
             },
             itemStyle: {
               normal: {

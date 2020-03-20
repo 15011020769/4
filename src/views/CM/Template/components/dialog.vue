@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-     <!-- @open="$emit('open')" -->
-    <el-dialog title="新建" :visible.sync="show" @open="$emit('open')" @close="$emit('close')">
+     <!--  @open="$emit('open')" @close="$emit('close')" -->
+    <el-dialog title="新建" :visible.sync="show" @open="loadShow=true">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名称</span>
@@ -31,20 +31,11 @@
           </el-form-item>
         </p>
       </el-form>
-      <p class="rowCont" style="display: flex">
+      <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
-        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam' />
-        <!-- :productValue='productValue' -->
+        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
+        :productValue='productValue' v-loading="loadShow"/>
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
-        <!-- <el-select v-model="formInline.strategy" style="width:200px;">
-          <el-option
-            v-for="(item,index) in formInline.strategy_kind"
-            :key="index"
-            :label="item.name"
-            :value="item.value"
-            label-width="40px"
-          ></el-option>
-        </el-select> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
           <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
@@ -74,18 +65,25 @@
                 <span style="display:inline">条件时，触发告警</span>
               </p>
               <!-- 在这里进行便利，添加 -->
-              <ul>
+              <ul v-loading="loadShow">
                   <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
-                  <p>
+                  <p :class="{mp:metting==1}">
                     if&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.projectName" style="width:150px;">
-                      <el-option
+                      <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
+                      <!-- <el-option
                         v-for="(item,index) in zhibiaoType"
                         :key="index"
                         :label="item.label"
                         :value="item.value"
+                        label-width="40px"
+                      ></el-option> -->
+                      <el-option
+                        v-for="(item,index) in zhibiaoType"
+                        :key="index"
+                        :label="item.MetricShowName"
+                        :value="item.MetricId"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -114,7 +112,7 @@
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                    >%</b>
+                    >{{it.Unit||'%'}}</b>
                     &nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;">
@@ -126,9 +124,9 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    then&nbsp;
+                    <span style="width:30px" v-if="metting!==1" >then</span>&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.alarm" style="width:150px;">
+                    <el-select :disabled="isDisabled" v-model="it.alarm" v-if="metting!==1" style="width:150px;">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
                         :key="index"
@@ -137,7 +135,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
+                    <el-popover placement="top" trigger="hover" width="300" v-if="metting!==1" style="width:22px;height:22px">
                       <div>
                         <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
                         <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
@@ -146,26 +144,43 @@
                     </el-popover>
                     <!-- <i class="el-icon-info" style="color:#888; margin:0 5px;"></i> -->
                   </p>
-                  <i class="el-icon-error" style="color:#888; margin:0 5px;"
+                  <i class="el-icon-error" style="color:#888; margin:0 5px;line-height:30px;"
                   @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
               </ul>
+              <p v-if="metting==1">
+                <span style="width:30px">then</span>&nbsp;
+                <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
+                <el-select :disabled="isDisabled" v-model="all_alarm" style="width:150px;">
+                  <el-option
+                    v-for="(item,index) in jinggaoZQ"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+                <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
+                  <div>
+                    <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
+                    <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                  </div>
+                  <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                </el-popover>
+              </p>
             </div>
           </div>
-          <div>
+          <!-- <div>
             <p>
               <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
                 事件告警
                 <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
               </el-checkbox>
             </p>
-            <!-- 在这里进行便利，添加 -->
             <ul class="color">
-              <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
               <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                 <p>
-                  <!-- <el-select v-model="formInline.projectName" style="width:180px;margin:0 5px;"> -->
                   <el-select :disabled="isDisGJ" v-model="item.projectName" style="width:180px;margin:0 5px;">
                     <el-option
                       v-for="(item,index) in eventType"
@@ -181,7 +196,7 @@
               </li>
               <a @click="addShijian" style="cursor:pointer">添加</a>
             </ul>
-          </div>
+          </div> -->
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -197,9 +212,11 @@ import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
 // import type from '@/views/CM/CM_assembly/product_type'
 import { NEWBUILD_TEMPLATE } from '@/constants/CM-yhs.js'
 import { ErrorTips } from '@/components/ErrorTips'
+import Loading from '@/components/public/Loading'
 export default {
   data () {
     return {
+      loadShow: false, // 加载是否显示
       isChected: true, // 多选框是否选中
       isDisabled: false, // 指标告警是否禁用
       isDisGJ: false, // 事件告警是否禁用
@@ -222,50 +239,18 @@ export default {
       productData: [], // 策略类型
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
-        jieshou: '接收组',
-        jieshouArr: [
-          { value: '0', name: '接收组' },
-          {
-            value: '1',
-            name: '接收人'
-          }
-        ],
-        apiStr: 'http', // 接口回调
-        apiArr: [
-          {
-            value: 0,
-            name: 'http'
-          },
-          {
-            value: 1,
-            name: 'https'
-          }
-        ], // 接口回调数据
         strategy_name: '', // 策略名称
-        textareas: '', // 备注
-        strategy: '云服务器-基础监控',
-        strategy_kind: [
-          {
-            value: 0,
-            name: '云服务器-基础监控'
-          }
-        ], // 策略类型
-        alarm: '', // 策略类型
-        projectName: '默认项目',
-        project: [
-          {
-            value: 0,
-            name: '默认项目'
-          }
-        ]
+        textareas: '' // 备注
       },
       indexAry: [ // 指标告警数组
         {
-          Period: '统计周期1分钟',
+          Period: 60,
           CalcType: '>',
           CalcValue: '0',
-          ContinuePeriod: '持续1个周期',
-          alarm: '每1天警告一次'
+          MetricId: 33,
+          Unit: '%',
+          ContinuePeriod: 1,
+          alarm: 86400
         }
       ],
       eventAry: [// 事件告警数组
@@ -308,12 +293,9 @@ export default {
           ]
         }
       ],
-      metting: '任意 ', // 满足条件
-      // conditionList: ['任意', '所有'],
+      metting: 0, // 满足条件
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
-      // tongjiZQ: ['统计周期1分钟', '统计周期5分钟'],
       tongjiZQ: [{ label: '统计周期1分钟', value: 60 }, { label: '统计周期5分钟', value: 300 }],
-      // chixuZQ: ['持续1个周期', '持续2个周期', '持续3个周期', '持续4个周期', '持续5个周期'],
       continuePeriod: [// 持续周期
         { label: '持续1个周期', value: 1 },
         { label: '持续2个周期', value: 2 },
@@ -321,20 +303,6 @@ export default {
         { label: '持续4个周期', value: 4 },
         { label: '持续5个周期', value: 5 }
       ],
-      // jinggaoZQ1: [// 警告周期
-      // '不重复',
-      // '每5分钟警告一次',
-      // '每10分钟警告一次',
-      // '每15分钟警告一次',
-      // '每30分钟警告一次',
-      // '每1小时警告一次',
-      // '每2小时警告一次',
-      // '每3小时警告一次',
-      // '每6小时警告一次',
-      // '每12小时警告一次',
-      // '每1天警告一次',
-      // '周期指数递增'
-      // ],
       jinggaoZQ: [// 警告周期
         { label: '不重复', value: 0 },
         { label: '每5分钟警告一次', value: 300 },
@@ -424,11 +392,14 @@ export default {
           }
         ]
       }, // 名称和备注的验证
-      show: this.dialogVisible,
-      view_name: '',// 策略视图名称
-      projectId:'0',
-      searchParam:{value: "ins-6oz38wnu", label: "instance-id"},
-      productValue:'cvm_device'
+      show: this.dialogVisible, // 控制弹框显示隐藏
+      all_alarm: 86400, // 满足条件为 所有 时告警值
+      view_name: '', // 策略视图名称
+      projectId: 0,
+      searchParam: {},
+      //  value: 'ins-6oz38wnu', label: 'instance-id'
+      productValue: 'cvm_device'
+      // aa: [{33: '%'},{},{}]
     }
   },
   watch: {
@@ -438,16 +409,11 @@ export default {
     show: function (val) {
       this.$emit('update:dialogVisible', val)
     }
-    // Conditions: function (val) {
-    //   this.productData = val
-    // },
-    // productData: function (val) {
-    //   this.$emit('update.Conditions', val)
-    // }
   },
   components: {
     // GroupingType,
-    ProductTypeCpt
+    ProductTypeCpt,
+    Loading
   },
   props: {
     dialogVisible: {
@@ -455,7 +421,12 @@ export default {
       type: Boolean
     },
     Conditions: {
+      required: true,
       type: Array
+    },
+    createSuccess: {
+      type: Function,
+      default: () => {}
     }
   },
   created () {
@@ -467,7 +438,6 @@ export default {
       this.$refs[form].validate((valid) => {
         if (valid) {
           this.newBuild()
-          console.log('完成', form)
         } else {
           return false
         }
@@ -475,16 +445,6 @@ export default {
     },
     // 新建完成保存
     async newBuild () {
-      // this.meetConditions.forEach(ele => {
-      //   if (ele.label == this.metting) {
-      //     this.metting = Number(ele.value)
-      //   }
-      // })
-      // this.Conditions.forEach(item=>{
-      //   if(item.Name==策略类型变量){
-      //   this.view_name = item.PolicyViewName
-      // }
-      // })
       let params = {
         Version: '2018-07-24',
         GroupName: this.formInline.strategy_name,
@@ -495,66 +455,103 @@ export default {
       }
       this.indexAry.forEach((ele, i) => {
         params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
-        params[`Conditions.${i}.MetricID`] = 33
+        params[`Conditions.${i}.MetricID`] = ele.MetricId
         this.tongjiZQ.forEach((item1) => {
-          if (ele.Period == item1.label) {
-            ele.Period = item1.value
-            params[`Conditions.${i}.CalcPeriod`] = ele.Period// 统计周期
+          var PD
+          if (ele.Period == item1.value) {
+            PD = item1.value
+            params[`Conditions.${i}.CalcPeriod`] = PD// 统计周期
           }
         })
         this.continuePeriod.forEach((item2) => {
-          if (ele.ContinuePeriod == item2.label) {
-            ele.ContinuePeriod = item2.value
-            params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持续周期
+          var CP
+          if (ele.ContinuePeriod == item2.value) {
+            CP = item2.value
+            params[`Conditions.${i}.ContinuePeriod`] = CP// 持续周期
           }
         })
         this.SymbolList.forEach((item3, index) => {
+          var CT
           if (ele.CalcType == item3) {
-            ele.CalcType = index + 1
-            params[`Conditions.${i}.CalcType`] = ele.CalcType// 符号
+            CT = index + 1
+            params[`Conditions.${i}.CalcType`] = CT// 符号
           }
         })
         this.jinggaoZQ.forEach(item4 => {
-          if (ele.alarm == item4.label && ele.alarm !== '周期指数递增') {
-            ele.alarm = item4.value
-            params[`Conditions.${i}.AlarmNotifyPeriod`] = ele.alarm
+          var AM
+          if (ele.alarm == item4.value && ele.alarm !== 1) {
+            AM = item4.value
+            params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
             params[`Conditions.${i}.AlarmNotifyType`] = 0
           }
-          if (ele.alarm == '周期指数递增') {
-            params[`Conditions.${i}.AlarmNotifyPeriod`] = 0
+          if (ele.alarm == 1) {
+            // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
             params[`Conditions.${i}.AlarmNotifyType`] = 1
           }
         })
+        if (this.metting == 1 && this.all_alarm !== 1) {
+          params[`Conditions.${i}.AlarmNotifyPeriod`] = this.all_alarm
+          params[`Conditions.${i}.AlarmNotifyType`] = 0
+        } else if (this.metting == 1 && this.all_alarm == 1) {
+          params[`Conditions.${i}.AlarmNotifyType`] = 1
+        }
       })
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
-        if(res.Response.Error===undefined){
-          console.log(res)
-          this.show = false
-        }else{
+        if (res.Response.Error === undefined) {
+          // console.log(res)
+          this.show = false// 关闭弹框
+          this.formInline.strategy_name = ' '
+          this.formInline.textareas = ''
+          this.createSuccess()// 更新列表
+        } else {
           this.errorPrompt(res)
         }
       })
     },
     passData (item) {
+      // this.loadShow = true
+      // console.log(item.Metrics)
       this.productData = item
-      this.zhibiaoType = item.MetricName
+      // this.zhibiaoType = item.MetricName
+      this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
+      this.$nextTick(() => {
+        this.loadShow = false
+      })
     },
     // 类型
     msgBtn (index) {
       this.liIndex = index
     },
     addZhibiao () { // 添加触发条件的指标告警
-      this.indexAry.push(
-        {
-          Period: '统计周期1分钟',
-          CalcType: '>',
-          CalcValue: '0',
-          ContinuePeriod: '持续1个周期',
-          // MetricID:33,
-          alarm: '每1天警告一次'
+      let { zhibiaoType } = this
+      for (let i = 0; i < zhibiaoType.length; i++) {
+        let aa = this.indexAry.some(item => {
+          return item.MetricId === zhibiaoType[i].MetricId
+        })
+        if (!aa) {
+          this.indexAry.push({
+            Period: 60,
+            CalcType: '>',
+            CalcValue: '0',
+            ContinuePeriod: 1,
+            MetricId: zhibiaoType[i].MetricId,
+            Unit: zhibiaoType[i].MetricUnit,
+            alarm: 86400
+          })
+          return
         }
-      )
+      }
+      // 如果不 return 就把数组第一个push进来
+      this.indexAry.push({
+        Period: 60,
+        CalcType: '>',
+        CalcValue: '0',
+        ContinuePeriod: 1,
+        MetricId: zhibiaoType[0].MetricId,
+        Unit: zhibiaoType[0].MetricUnit,
+        alarm: 86400
+      })
     },
     delZhibiao (it) { // 删除触发条件的指标告警
       var index = this.indexAry.indexOf(it)
@@ -631,7 +628,7 @@ export default {
       let ErrTips = {
         'AuthFailure.UnauthorizedOperation': '请求未授权。请参考 CAM 文档对鉴权的说明。',
         'DryRunOperation': 'DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。',
-        'FailedOperation':'操作失败。',
+        'FailedOperation': '操作失败。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '删除过滤条件失败。',
         'FailedOperation.AlertPolicyCreateFailed': '创建告警策略失败。',
         'FailedOperation.AlertPolicyDeleteFailed': '告警策略删除失败。',
@@ -745,5 +742,11 @@ export default {
     padding-top: 20px;
     border-top: 1px solid #ccc;
   }
+  .dialog-footer{
+    margin-top: 20px;
+  }
+}
+.mp{
+  height: 28px;
 }
 </style>

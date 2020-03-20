@@ -444,15 +444,17 @@
            <a @click="highLevelSetShow2=!highLevelSetShow2" v-show="!highLevelSetShow2">{{$t('TKE.subList.xsgjsz')}}</a>
            <div v-show="highLevelSetShow2">
             <el-form-item label="imagePullSecrets">
-              <el-select   v-model='upn.type1' disabled style="margin-top:10px" >
-                <el-option value='1'>
-                </el-option>
-              </el-select><br>
-              <el-select  v-model='upn.type2' disabled style="margin-top:10px">
-                <el-option value='1'>
-                </el-option>
-              </el-select>
-              <p style="cursor:pointer">添加</p>
+                <el-select  style="margin-top:10px" v-model="wl.imagePullSecrets.value1"
+                             :disabled="wl.imagePullSecrets.option1.length == 0"
+                             :placeholder="wl.imagePullSecrets.option1.length == 0 ? '暫無數據' : '請選擇'">
+                    <el-option v-for="item in wl.imagePullSecrets.option1" :key="item" :label="item" :value="item"></el-option>
+                </el-select><br/>
+                <el-select  style="margin-top:10px" v-model="wl.imagePullSecrets.value2"
+                             :disabled="wl.imagePullSecrets.option2.length == 0"
+                             :placeholder="wl.imagePullSecrets.option2.length == 0 ? '暫無數據' : '請選擇'">
+                    <el-option v-for="item in wl.imagePullSecrets.option2" :key="item" :label="item" :value="item"></el-option>
+                  </el-select><br/>
+              <el-button type="text" size="mini" :disabled="true">添加</el-button>
             </el-form-item>
             <a @click="highLevelSetShow2=!highLevelSetShow2">{{$t('TKE.subList.yczgsz')}}</a>
          </div>
@@ -696,9 +698,9 @@ export default {
         caseScope2: '',
         imagePullSecrets: {
           option1: [],
-          value1: '',
+          value1: 'qcloudregistrykey',
           option2: [],
-          value2: ''
+          value2: 'tencenthubkey'
         },
         updateWay: '滾動更新（推薦）',
         updateTactics: 1, // 更新策略 单选
@@ -1079,7 +1081,7 @@ export default {
         this.axiosUtils(res, () => {
           let ResponseBody = res.Response.ResponseBody
           this.secrets = JSON.parse(ResponseBody)
-          console.log(this.secrets)
+          console.log(this.secrets.items,'this.secrets')
         })
       })
     },

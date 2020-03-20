@@ -445,6 +445,7 @@ export default {
       this.axios.post(CM_GROUPING_LIST_COPY, param).then(res => {
         if (res.Response.Error === undefined) {
           this.copyDialogVisible = false;
+          this.ListInit();
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
@@ -483,6 +484,7 @@ export default {
       this.axios.post(CM_GROUPING_LIST_DELETE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.deleteDialogVisible = false;
+          this.ListInit();
         } else {
           let ErrTips = {
             DryRunOperation:

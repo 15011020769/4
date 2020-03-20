@@ -74,24 +74,24 @@
           </div>
           <template v-if="ruleForm.domainType === '0'">
             <div>
-              <span>推流dsd地址</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}{{suffix}}
+              <span>推流地址</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/{{ruleForm.StreamName}}{{suffix}} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="`rtmp://${ruleForm.domain}/${ruleForm.AppName}/${ruleForm.StreamName}${suffix}`" />
                 </span>
             </div>
             <div>
               <span>OBS推流地址</span>
-              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/</span>
+              <span>rtmp://{{ruleForm.domain}}/{{ruleForm.AppName}}/ <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="`rtmp://${ruleForm.domain}/${ruleForm.AppName}/`" /></span>
             </div>
             <div>
               <span>{{$t('CSS.builder.12')}}</span>
-              <span>{{ruleForm.StreamName}}{{suffix}}
+              <span>{{ruleForm.StreamName}}{{suffix}} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="`${ruleForm.StreamName}${suffix}`" />
                 </span>
             </div>
           </template>
           <template v-else>
             <div v-for="(url, index) in playUrls" :key="url.name">
               <span>{{ url.name }}</span>
-              <span>{{ url.value }}</span>
+              <span>{{ url.value }} <i class="el-icon-copy-document" v-clipboard:success="onCopy" v-clipboard:copy="url.value" /></span>
               <p class="tip">{{ url.tip }}</p>
             </div>
             <!-- <div> -->
@@ -193,6 +193,14 @@ export default {
     next()
   },
   methods: {
+    onCopy() {
+      this.$message({
+        message: '複製成功',
+        type: 'success',
+        showClose: true,
+        duration: 0
+      })
+    },
     Getdomain () {
       this.txSecret = ''
       this.timeHex = ''
@@ -326,5 +334,8 @@ export default {
 }
 .tip {
   color: #888;
+}
+.el-icon-copy-document {
+  cursor: pointer;
 }
 </style>

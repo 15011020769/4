@@ -138,14 +138,14 @@
             data: [150, 232, 201, 154, 190, 330, 410]
           },
         ],
-        period: '10',
+        period: '10000',
         shuian: [{
           name: 'Pod重启次数',
           id: 'podid',
           danwei: '(次)',
           y: [2, 244, 52, 52]
         }],
-        projectId: '',
+        projectId: 0,
         searchParam: {},
         ceshi999: '',
         productValue: 'nat_tc_stat'
@@ -186,7 +186,7 @@
           DescName: 'bobin9999',
           Namespace: 'qce/cvm',
           DashboardID: '80429',
-          Instances: JSON.stringify(["{'regionId':'1','unInstanceId':'ins-ins-6oz38wnu'}"]),
+          'Instances.0': 'ins-kfkzimbi',
           Meta: {
             "aggregateType": "detail",
             "aggregations": ["Avg", "Max", "Min"],
@@ -201,6 +201,7 @@
             },
             "timeAggregate": "last"
           },
+          'MetricNames.0': "cpu_usage"
         };
 
         this.axios.post(CREATDASHBORD, param).then(data => {
