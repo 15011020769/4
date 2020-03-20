@@ -36,7 +36,11 @@
 import Header from "@/components/public/Head";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import { ALARM_STRATEGY_LIST, LIFTING_OPERATION_EVENT } from "@/constants"; // 接口：告警策略列表，解除操作
+import { 
+  ALARM_STRATEGY_LIST,
+  LIFTING_OPERATION_EVENT,
+  QUERY_PRODUCT_LIST 
+  } from "@/constants"; // 接口：告警策略列表，解除操作 ,按照Id查询产品列表
 export default {
   name: "strategy",
   data() {
@@ -60,11 +64,14 @@ export default {
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: "cvm_device",
-        // Dimensions: [{name:"unInstanceId",value:this.$router.currentRoute.query.id}]
-        'Dimensions.0.name': "unInstanceId",
-        'Dimensions.0.value': this.$router.currentRoute.query.id,
+        ViewName: "dcchannel",
+        // Dimensions: ["{\"name\": \"directconnectconnid\",\"value\" : \"dcx-l1zv1sxs\"}"],
+        'Dimensions.0.Name': "directconnectconnid",
+        'Dimensions.0.Value': this.$router.currentRoute.query.id,
+        Offset:0,
+        Limit:20
       };
+      // directConnectConnId
       this.axios.post(ALARM_STRATEGY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.Events; //列表数据
