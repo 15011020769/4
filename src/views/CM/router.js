@@ -378,6 +378,15 @@ export default new Router({
         keepAlive: true
       }
     },
+    {
+      path: '/DashboardCreate', //       新建Dashboard
+      name: 'DashboardCreate',
+      component: () =>
+        import( /* webpackChunkName: "Dashboard" */ './Dashboard/DashboardCreate.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
     // -----------------------------------------------------
     {
       path: '/Custom', //       自定义监控

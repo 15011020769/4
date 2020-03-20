@@ -525,7 +525,9 @@ export default {
     // 重置密码
     ChangePassword(word){
       const param = {
-        password: word
+        // password: word
+        Version: "2019-09-24",
+        Password: word
       }
       this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
         // console.log(res)

@@ -22,10 +22,8 @@
         <p>{{$t('CVM.Dashboard.zcbbdc')}}</p>
       </div>
       <div class="headBtn">
-        <el-button v-show="!this.showEmptyControlPanel" type="primary" @click="showChartEdit = true">
-          {{$t('CVM.Dashboard.tjjktb')}}
-        </el-button>
-        <div style="float: right">
+        <el-button type="primary"   @click="openCreate()">{{$t('CVM.Dashboard.tjjktb')}}</el-button>
+        <div>
           <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='false' :Difference="'H'"
             v-on:switchData="GetDat" style="float: left" />
           <el-button type="text" style="float: left"><i class="el-icon-refresh"></i></el-button>
@@ -93,7 +91,7 @@
         </el-button>
       </div>
     </div>
-    <chart-edit :dialogVisible.sync="showChartEdit"></chart-edit>
+    <!-- <chart-edit :dialogVisible.sync="showChartEdit"></chart-edit> -->
   </div>
 </template>
 
@@ -245,6 +243,12 @@ export default {
     //获取数据
     GetData(data) {
       // console.log(data);
+    },
+    // 跳转路由
+    openCreate(){
+      this.$router.push({
+        name:"DashboardCreate"
+      })
     },
     // 获取Dashboard列表数据
     async getDashboardList() {
