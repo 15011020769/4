@@ -503,10 +503,10 @@ export default {
     ActionTypeFilter(action) {
       switch (action) {
         case 40:
-          return '白名单'
+          return '白名單'
           break;
         case 42:
-          return '黑名单'
+          return '黑名單'
         default: return '未知'
           break;
       }
@@ -523,7 +523,7 @@ export default {
       const map = {
         bot: 'BOT',
         cc: 'CC',
-        custom: '自定义'
+        custom: '自定義'
       }
       return map[text] || '未知'
     }
