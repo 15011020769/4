@@ -21,7 +21,7 @@
                 content="云服务器基础设施存储模块; 影响：导致IO性能下降 ，数据读写异常"
                 placement="bottom-start"
               >
-                <i class="el-icon-info" style="margin:0 5px;"></i>
+                <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
               </el-tooltip>
             </div>
 
@@ -37,7 +37,7 @@
                 content="云服务器基础设施网络模块导致; 影响：网速下降或网络连接中断"
                 placement="bottom-start"
               >
-                <i class="el-icon-info" style="margin:0 5px;"></i>
+                <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
               </el-tooltip>
             </div>
 
@@ -53,7 +53,7 @@
                 content="云服务器基础设施导致; 影响：云服务器高负载或宕机，服务不可用"
                 placement="bottom-start"
               >
-                <i class="el-icon-info" style="margin:0 5px;"></i>
+                <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
               </el-tooltip>
             </div>
           </template>
@@ -88,17 +88,12 @@
             <i v-else class="el-icon-circle-close" style="color:#e1504a"></i>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="receive" label="接收人"></el-table-column> -->
         <el-table-column prop="receive" label="接收人">
           <template slot-scope="scope">
             <div style="width: 200px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">
-              <span
-              v-for="(v,i) in scope.row.Receivers"
-              :key="i"
-             
-            >{{v.Username}},</span>
+              <span v-for="(v,i) in scope.row.Receivers" :key="i">{{v.Username}},</span>
             </div>
-            
+
             <p v-if="scope.row.Receivers.length==0">-</p>
             <p v-else>共{{scope.row.Receivers.length}}人</p>
           </template>
@@ -106,7 +101,12 @@
         <el-table-column label>
           <template slot-scope="scope">
             <el-button type="text" class="btn subBtn" @click="ok(scope.row)">订阅管理</el-button>
-            <el-button type="text" class="btn unSubBtn" @click="cancel(scope.row)">取消订阅</el-button>
+            <el-button
+              type="text"
+              class="btn unSubBtn"
+              @click="cancel(scope.row)"
+              v-show="hide"
+            >取消订阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -114,14 +114,26 @@
     <!-- 订阅管理 -->
     <el-dialog title="订阅管理" :visible.sync="dialogSubscribe" width="640px">
       <div class="list">
-        <p>
+        <p style="display:flex;">
           <span>接收方式</span>
-          <el-checkbox
+          <el-checkbox-group v-model="qudaoCheckList" @change="selectChannel">
+            <span style="margin:0 0 20px 30px;">
+              <el-checkbox label="郵件"></el-checkbox>
+            </span>
+            <span style="margin-left:30px">
+              <el-checkbox label="簡訊"></el-checkbox>
+            </span>
+            <span style="margin-left:30px">
+              <el-checkbox label="站內信"></el-checkbox>
+            </span>
+          </el-checkbox-group>
+
+          <!-- <el-checkbox
             v-for="city in cities"
             :label="city"
             :key="city"
             style="margin:0 10px;"
-          >{{ city }}</el-checkbox>
+          >{{ city }}</el-checkbox>-->
         </p>
         <p class="search">
           <span>
@@ -129,24 +141,34 @@
             <b>{{ num }}</b>人)
           </span>
           <el-row class="seek" style="display:flex;">
-            <el-input v-model="triggerSearch" placeholder="搜索"></el-input>
-            <el-button icon="el-icon-search" style="margin-left:-1px;"></el-button>
+            <el-input v-model="triggerInput" placeholder="搜索"></el-input>
+            <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchKey"></el-button>
           </el-row>
         </p>
+
         <el-table
-          ref="multipleTable"
-          :data="tableData"
+          :data="userListArr"
           tooltip-effect="dark"
-          style="width: 100%"
-          @selection-change="handleSelectionChange"
-          class="receiver"
+          v-loading="loadingShow1"
+          @selection-change="handleSelectionChange2"
+          style="width: 100%;"
+          height="430"
+          :default-sort="{ prop: 'changeData', order: 'descending' }"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column label="用户名">
-            <template slot-scope="scope">{{ scope.row.date }}</template>
+          <el-table-column prop="Name" label="用户名"></el-table-column>
+          <el-table-column label="手机号">
+            <template slot-scope="scope">
+              <span v-if="scope.row.PhoneNum !== ''">{{scope.row.PhoneNum}}</span>
+              <span v-else>未设置手机号</span>
+            </template>
           </el-table-column>
-          <el-table-column prop="name" label="手机号"></el-table-column>
-          <el-table-column prop="address" label="邮箱"></el-table-column>
+          <el-table-column label="邮箱">
+            <template slot-scope="scope">
+              <span v-if="scope.row.Email !== ''">{{scope.row.Email}}</span>
+              <span v-else>未设置邮箱</span>
+            </template>
+          </el-table-column>
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer center">
@@ -173,6 +195,7 @@ import {
   SUBSCRIPTION_ADMINISTRATION,
   CANCEL_SUBSCRIPTION
 } from "@/constants/CM-lxx.js"; /////////
+import { LIST_SUBACCOUNTS } from "@/constants";
 
 import Header from "@/components/public/Head";
 const cityOptions = ["短信", "邮件", "站内信"];
@@ -180,16 +203,21 @@ export default {
   name: "subscription",
   data() {
     return {
-      loadShow: true, // 加载是否显示
-      triggerSearch: "", //选择触发条件名搜索
-      num: 1, //已选择几人
+      qudaoCheckList:[],//接收方式
+      loadingShow1: false, // 加载是否显示
+      loadShow: false, // 加载是否显示
+      triggerInput: "", //选择触发条件名搜索
+      num: 0, //已选择几人
       cities: cityOptions,
       dialogcancel: false, //取消订阅确认框
       dialogSubscribe: false, //订阅管理确认框
       tableData: [],
+      userListArr: [], // 接收人列表数组
       multipleSelection: [],
       okObj: {},
-      cancelObj: {}
+      cancelObj: {},
+      hide: true,
+      selectUserList: []
     };
   },
   components: {
@@ -199,6 +227,89 @@ export default {
     this.getEventList();
   },
   methods: {
+     // 选中渠道
+    selectChannel() {
+      // var data = this.$route.params;
+      // if (data.NotifyWay) {
+      //   data.NotifyWay.forEach((v, i) => {
+      //     if (v == "EMAIL") {
+      //       v = "郵件";
+      //     } else if (v == "SMS") {
+      //       v = "簡訊";
+      //     }
+      //     this.qudaoCheckList.push(v);
+      //   });
+      // }
+      // this.cam.channel = this.qudaoCheckList;
+      // console.log(this.cam.channel)
+      // this.$emit("camClick", this.cam);
+    },
+    // 搜索关键字
+    searchKey() {
+      if (this.triggerInput == "") {
+        this.userList(); // 查询接收人
+      }
+      this.userList(); // 查询接收人
+    },
+    // 接收人 table表格选中触发的事件
+    handleSelectionChange2(val) {
+      this.selectUserList = val;
+      console.log(this.selectUserList);
+      // this.$emit("camClick", this.cam);
+    },
+    // 查询接收人数据
+    userList() {
+      this.loadingShow1 = true;
+      let userList = {
+        Type: "SubAccount",
+        Version: "2019-01-16",
+        Offset: 0,
+        Limit: 1000
+      };
+      if (this.triggerInput != null && this.triggerInput != "") {
+        userList["Keyword"] = this.triggerInput;
+      }
+      this.axios
+        .post(LIST_SUBACCOUNTS, userList)
+        .then(data => {
+          this.loadingShow1 = false;
+          // 如果返回的data是String类型的，说明接口返回信息有误
+          if (typeof data !== "string") {
+            if (data.Response.Error === undefined) {
+              if (data != "") {
+                var arr = data.Response.UserInfo;
+                //获取用户关联的用户组
+                arr.forEach((item, index) => {
+                  item.group = [];
+                  item.index = index;
+                  item.subscription = undefined;
+                });
+                this.userListArr = arr;
+              } else {
+                this.$message({
+                  type: "info",
+                  message: "無響應數據！",
+                  showClose: true,
+                  duration: 0
+                });
+              }
+            } else {
+              let ErrTips = {};
+              this.loadingShow1 = false;
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[data.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     cancel(data) {
       this.cancelObj = data;
       this.dialogcancel = true;
@@ -208,12 +319,12 @@ export default {
       var params = {
         Version: "2018-07-24",
         Module: "monitor",
-        BusinessId: this.cancelObj, //业务id
-        AccidentId: this.cancelObj //事件id
+        BusinessId: this.cancelObj.BusinessId, //业务id
+        AccidentId: this.cancelObj.AccidentId //事件id
       };
+      console.log(this.cancelObj);
       this.axios.post(CANCEL_SUBSCRIPTION, params).then(res => {
         console.log(res);
-        this.lists.push();
         if (res.codeDesc === "Success") {
           this.$message({
             message: "取消订阅成功",
@@ -247,6 +358,7 @@ export default {
       });
     },
     ok(data) {
+      this.userList();
       this.okObj = data;
       //订阅
       this.dialogSubscribe = true;
@@ -364,6 +476,9 @@ export default {
 .subscription-wrap >>> .el-table__body {
   margin-top: 55px;
 }
+.subscription-wrap >>> .list .el-table__body {
+  margin-top: 0;
+}
 .subscription-wrap >>> .btn > span:hover {
   border-bottom: 1px solid #006eff;
 }
@@ -375,6 +490,12 @@ export default {
 }
 .subscription-wrap >>> .el-table__body div.cell {
   padding-left: 74px;
+}
+.subscription-wrap >>> .list div.cell {
+  padding: 10px;
+}
+.subscription-wrap >>> .list .el-table__header-wrapper {
+  padding: 0;
 }
 .subscription-wrap >>> .table i {
   font-size: 16px;
