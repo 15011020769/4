@@ -106,7 +106,7 @@
         <h3>告警对象</h3>
         <a @click="editObject">编辑</a>
       </div>
-      <div class="box-content">
+      <div class="box-content" v-if="!InstanceGroupShow.InstanceGroup">
         <el-row style="margin:10px 5px;padding-top:10px">
           <el-button type="primary" @click="AlarmObjectNews"
             >新增对象</el-button
@@ -122,7 +122,7 @@
           >
         </el-row>
       </div>
-      <div class="alarm-object-table" v-if="!InstanceGroupShow">
+      <div class="alarm-object-table" v-if="!InstanceGroupShow.InstanceGroup">
         <el-table
           ref="multipleTable"
           :data="alarmObjectData"
@@ -133,7 +133,7 @@
           <el-table-column type="selection" width="40"></el-table-column>
           <el-table-column label="ID/主机名" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
-              <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+              <p>{{ scope.row.InstanceId }}</p>
               <p>{{ scope.row.InstanceName }}</p>
             </template>
           </el-table-column>
@@ -388,13 +388,417 @@
           </div>
         </div>
       </div>
-      <div class="" v-if="InstanceGroupShow">
+      <div
+        class="alarm-object-table-instance"
+        v-if="InstanceGroupShow.InstanceGroup"
+      >
         <ul>
           <li>
             <span>实例组</span>
+            <span>{{ InstanceGroupShow.InstanceGroup.GroupName }}</span>
+            <a href="javascript:;">解除绑定</a>
           </li>
           <li>
             <span>实例数</span>
+            <span
+              >{{
+                InstanceGroupShow.InstanceGroup.InstanceSum
+              }}个(启用告警：2个)</span
+            >
+            <a href="javascript:;" @click="retract = !retract">{{
+              retract ? "收起" : "展开"
+            }}</a>
+          </li>
+          <li v-if="retract">
+            <span></span>
+            <div>
+              <div class="left">
+                <div class="left-main border">
+                  <!-- <div class="seek" style="">
+                    <el-select v-model="searchItem" placeholder="请选择">
+                      <el-option
+                        v-for="item in searchItemOptions"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value"
+                      >
+                      </el-option>
+                    </el-select>
+                    <el-input
+                      placeholder="请输入内容"
+                      v-model="searchInput"
+                      class="input-with-select"
+                    >
+                      <el-button
+                        slot="append"
+                        icon="el-icon-search"
+                        @click="changeSearch"
+                      ></el-button>
+                    </el-input>
+                  </div> -->
+                  <el-table
+                    :data="alarmObjectData"
+                    height="400"
+                    ref="multipleTable"
+                    class="table-left"
+                  >
+                    <el-table-column
+                      label="ID/主机名"
+                      v-if="ViewName === 'cvm_device'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.InstanceId }}</p>
+                        <p>{{ scope.row.InstanceName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'cvm_device'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{
+                          InstanceState(scope.row.InstanceState)
+                        }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="网络类型"
+                      v-if="ViewName === 'cvm_device'"
+                    >
+                      VPC 网络
+                    </el-table-column>
+                    <el-table-column
+                      label="IP地址"
+                      v-if="ViewName === 'cvm_device'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
+                        <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+                      </template>
+                    </el-table-column>
+
+                    <!-- VPN_GW -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'VPN_GW'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpnGatewayId }}</p>
+                        <p>{{ scope.row.VpnGatewayName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="状态" v-if="ViewName === 'VPN_GW'">
+                      <template slot-scope="scope">
+                        <span>{{ VPN_GW_State(scope.row.State) }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="所属网络"
+                      v-if="ViewName === 'VPN_GW'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpcId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+
+                    <!-- vpn_tunnel -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'vpn_tunnel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpnGatewayId }}</p>
+                        <p>{{ scope.row.VpnConnectionName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'vpn_tunnel'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="所属网络"
+                      v-if="ViewName === 'vpn_tunnel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpcId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="VPN网关"
+                      v-if="ViewName === 'vpn_tunnel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpnGatewayId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="对端网关"
+                      v-if="ViewName === 'vpn_tunnel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.CustomerGatewayId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+
+                    <!-- nat_tc_stat -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'nat_tc_stat'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.NatGatewayId }}</p>
+                        <p>{{ scope.row.NatGatewayName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'nat_tc_stat'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="私有网络"
+                      v-if="ViewName === 'nat_tc_stat'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpcId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="类型"
+                      v-if="ViewName === 'nat_tc_stat'"
+                    >
+                      <template slot-scope="scope">
+                        <p>小型</p>
+                        <p>
+                          最大并发连接数{{ scope.row.maxConcurrent / 100 }}万
+                        </p>
+                      </template>
+                    </el-table-column>
+
+                    <!-- DC_GW -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'DC_GW'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.DirectConnectGatewayId }}</p>
+                        <p>{{ scope.row.DirectConnectGatewayName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="NAT配置状态"
+                      v-if="ViewName === 'DC_GW'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="所属网络"
+                      v-if="ViewName === 'DC_GW'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.VpcId }}</p>
+                        <!-- <p>{{scope.row.}}</p> -->
+                      </template>
+                    </el-table-column>
+
+                    <!-- EIP -->
+                    <el-table-column label="ID/名称" v-if="ViewName === 'EIP'">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.AddressId }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="弹性IP地址"
+                      v-if="ViewName === 'EIP'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.AddressIp }}</span>
+                      </template>
+                    </el-table-column>
+
+                    <!-- cdb_detail -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'cdb_detail'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.InstanceId }}</p>
+                        <p>{{ scope.row.InstanceName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'cdb_detail'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ CDB_Status(scope.row.Status) }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="内网IP/端口"
+                      v-if="ViewName === 'cdb_detail'"
+                    >
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.Vip }}</span>
+                        <p>{{ scope.row.Vport }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="网络类型"
+                      v-if="ViewName === 'cdb_detail'"
+                    >
+                      <template slot-scope="scope">
+                        VPC
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="类型"
+                      v-if="ViewName === 'cdb_detail'"
+                    >
+                      <template slot-scope="scope">
+                        {{ CDB_InstanceType(scope.row.InstanceType) }}
+                      </template>
+                    </el-table-column>
+
+                    <!-- REDIS-CLUSTER -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'REDIS-CLUSTER'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.InstanceId }}</p>
+                        <p>{{ scope.row.InstanceName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'REDIS-CLUSTER'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ REDIS_Status(scope.row.Status) }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="规格"
+                      v-if="ViewName === 'REDIS-CLUSTER'"
+                    >
+                      <template slot-scope="scope">
+                        master-slave
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="内网地址"
+                      v-if="ViewName === 'REDIS-CLUSTER'"
+                    >
+                      <template slot-scope="scope">
+                        {{ scope.row.WanIp }}
+                      </template>
+                    </el-table-column>
+                    <!-- dcchannel -->
+                    <el-table-column
+                      label="ID/名称"
+                      v-if="ViewName === 'dcchannel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.DirectConnectTunnelId }}</p>
+                        <p>{{ scope.row.DirectConnectTunnelName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="状态"
+                      v-if="ViewName === 'dcchannel'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ dcchannel_Status(scope.row.State) }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="规格"
+                      v-if="ViewName === 'dcchannel'"
+                    >
+                      <template slot-scope="scope">
+                        master-slave
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="内网地址"
+                      v-if="ViewName === 'dcchannel'"
+                    >
+                      <template slot-scope="scope">
+                        {{ scope.row.WanIp }}
+                      </template>
+                    </el-table-column>
+                    <!-- dcline -->
+                    <el-table-column
+                      label="名称/ID"
+                      v-if="ViewName === 'dcline'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.DirectConnectName }}</p>
+                        <p>{{ scope.row.DirectConnectId }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="所在地"
+                      v-if="ViewName === 'dcline'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.Location }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="带宽" v-if="ViewName === 'dcline'">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.Bandwidth }}Mbps</p>
+                      </template>
+                    </el-table-column>
+                    <!-- COS -->
+                    <el-table-column
+                      label="Bucket名称"
+                      v-if="ViewName === 'COS'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.Name }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="地域" v-if="ViewName === 'COS'">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.zone.zone }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="创建时间" v-if="ViewName === 'COS'">
+                      <template slot-scope="scope">
+                        {{ CreationDate(scope.row.CreationDate) }}
+                      </template>
+                    </el-table-column>
+
+                    <el-table-column label="启用告警">
+                      <template slot-scope="scope">
+                        <el-switch
+                          v-model="scope.row.IsOpen"
+                          active-color="#006eff"
+                          inactive-color="#888"
+                        >
+                        </el-switch>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+                </div>
+              </div>
+            </div>
           </li>
         </ul>
       </div>
@@ -1144,7 +1548,8 @@ import {
   Physics_LIST,
   OBJ_LIST,
   CM_ALARM_OBJECT_LIST_EDIT,
-  CM_GROUPING_LIST
+  CM_GROUPING_LIST,
+  CM_ALARM_OBJECT_STATUS
 } from "@/constants";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
@@ -1442,7 +1847,8 @@ export default {
       editAlarmObjectRadio: "2",
       InstanceGroup: "",
       InstanceGroupShow: "",
-      InstanceGroupOpt: []
+      InstanceGroupOpt: [],
+      retract: true
     };
   },
   components: { Header, CamTransferCpt, ProductTypeCpt },
@@ -2256,6 +2662,7 @@ export default {
                       }
                     }
                   }
+                  console.log("alarmObjectData", this.alarmObjectData);
                   this.alarmObjecLoad = false;
                 } else {
                   let ErrTips = {
@@ -3327,7 +3734,7 @@ a {
 a:hover {
   color: #006eff;
   cursor: pointer;
-  border-bottom: 1px solid #006eff;
+  text-decoration: underline;
 }
 .text {
   font-size: 14px;
@@ -3618,6 +4025,57 @@ input {
     width: 20px;
     height: 20px;
     margin-top: 10px;
+  }
+}
+.left {
+  // flex: 1;
+  ::v-deep .el-table {
+    width: 650px;
+  }
+  .border {
+    border: 1px solid #dcdfe6;
+    border-bottom: 0px;
+  }
+  .seek {
+    display: flex;
+    align-items: center;
+    width: 500px;
+    margin-top: -6px;
+    ::v-deep .el-select {
+      width: 100px;
+      font-size: 12px;
+    }
+    ::v-deep .el-input-group {
+      width: 80%;
+    }
+    ::v-deep .el-input__inner {
+      border-radius: 0;
+      height: 30px;
+      font-size: 12px;
+      padding: 0px 10px;
+    }
+    ::v-deep .el-input-group__append {
+      border-radius: 0;
+    }
+  }
+}
+.alarm-object-table-instance {
+  ul {
+    li {
+      display: flex;
+      align-content: center;
+      span {
+        &:nth-of-type(1) {
+          display: inline-block;
+          width: 56px;
+          color: #888;
+        }
+        &:nth-of-type(2) {
+          color: #000;
+          margin-right: 18px;
+        }
+      }
+    }
   }
 }
 </style>

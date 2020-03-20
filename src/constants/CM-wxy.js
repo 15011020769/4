@@ -69,6 +69,9 @@ export const CM_ALARM_OBJECT_LIST = 'monitor2/DescribeBindingPolicyObjectList'
 // 告警策略 详情 告警对象 编辑
 export const CM_ALARM_OBJECT_LIST_EDIT = 'monitor2/BindingPolicyObject'
 
+// 告警策略 详情 告警对象 启用告警
+export const CM_ALARM_OBJECT_STATUS = 'monitor2/DescribeCvmAgentStatus'
+
 // 告警策略 详情 告警对象 列表 移除
 export const CM_ALARM_OBJECT_LIST_OUT = 'monitor2/UnBindingPolicyObject'
 
