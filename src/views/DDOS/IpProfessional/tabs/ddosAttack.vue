@@ -308,7 +308,6 @@ export default {
       // }
       if (!this.choiceClick && value !== null) {
         let num = (value[1].getTime() - value[0].getTime()) / 86400000
-        console.log('num =' + num)
         let dateValue = moment(value[0])
         let maxDate = moment(value[1])
         let arr = []
@@ -412,7 +411,7 @@ export default {
             this.choiceTime(1);
           }
           if (this.selectId !== '') {
-            sessionStorage.setItem("selectId", this.selectId)
+            sessionStorage.setItem('selectId', this.selectId)
           }
         } else {
           let ErrTips = {};
@@ -712,7 +711,6 @@ export default {
       };
       await this.axios.post(DESCRIBE_DDOSATTACKSOURCE, params).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response)
           this.attackSourceList = res.Response.AttackSourceList;
           this.attackSourceTotal = res.Response.Total;
         } else {

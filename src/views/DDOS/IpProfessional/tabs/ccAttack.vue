@@ -304,7 +304,11 @@ export default {
             return
           }
           this.ResIpList = res.Response.Resource
-          this.inputIdCC = res.Response.Resource[0].Id
+          if (jsonIp !== null) {
+              this.inputIdCC = jsonIp
+          } else {
+              this.inputIdCC = res.Response.Resource[0].Id
+          }
           for (const i in this.ResIpList) {
             if (this.ResIpList.hasOwnProperty(i)) {
               const element = this.ResIpList[i]
@@ -341,7 +345,7 @@ export default {
       this.ccTimeBtnSelect2 = this.IpList[0]
       this.thisTime(1)
       this.getDataCC()
-      sessionStorage.setItem("selectId", this.inputIdCC)
+      sessionStorage.setItem('selectId', this.inputIdCC)
     },
     // DDOS资源Ip变化时，重新获取数据
     changeIp() {
