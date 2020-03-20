@@ -14,14 +14,8 @@
             <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type>
           </el-form-item>
           <el-form-item label="所属项目" prop="projectName">
-            <el-select class="w200" v-model="formInline.projectName">
-              <el-option
-                v-for="(item, index) in formInline.project"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-                label-width="40px"
-              ></el-option>
+            <el-select class="w200" v-model="formInline.projectId">
+              <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.projectName" :value="item.projectId" label-width="40px"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="告警对象">
@@ -46,8 +40,8 @@
           <div style="margin-bottom: 18px" v-show="radio==='3'">
             <div style="margin-left: 70px">
               <el-form-item label-width="0px">
-                <el-select v-model="formInline.projectName" style="width:150px;">
-                  <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>
+                <el-select v-model="formInline.instanceGroupName" style="width:150px;">
+                  <el-option v-for="(item, index) in formInline.instanceGroup" :key="index" :label="item.GroupName" :value="item.GroupName" label-width="40px"></el-option>
                 </el-select>
                 <el-button type="text" size="mini" style="width: 50px">刷新</el-button>
               </el-form-item>
@@ -63,10 +57,10 @@
                 <el-button type="text" size="mini" style="margin-left: 20px">新增触发条件模板</el-button>
                 <div v-show="radioChufa === '1'" style="padding: 10px">
                   <el-form-item label-width="0px" style="margin-bottom: 0px">
-                    <el-select v-model="formInline.projectName" style="width:150px;">
-                      <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>
+                    <el-select v-model="formInline.conditionsTemplateName" style="width:150px;">
+                      <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupName" label-width="40px"></el-option>
                     </el-select>
-                    <el-button type="text" size="mini" style="margin-left: 20px">刷新</el-button>
+                    <el-button type="text" size="mini" style="margin-left: 20px" @click="describeInstanceGroupList">刷新</el-button>
                   </el-form-item>
                   <p style="line-height: 28px"><el-checkbox disabled>指标告警</el-checkbox></p>
                   <div style="padding-left: 21px">
@@ -252,7 +246,11 @@ import Transfer from './transfer'
 import GroupingType from '@/components/GroupingType'
 import Cam from '@/views/CM/CM_assembly/Cam'
 import { ErrorTips } from '@/components/ErrorTips'
-import { CM_ALARM_STRATEGY_DETAILS } from '@/constants'
+import {
+  CM_ALARM_STRATEGY_DETAILS,
+  ALL_PROJECT, CM_GROUPING_LIST
+} from '@/constants'
+import { GET_CONDITIONSTEMPLATELIST } from '@/constants/CM-yhs.js'
 
 export default {
   components: {
@@ -263,7 +261,7 @@ export default {
   },
   data: function () {
     return {
-      radio: '1', // 选择告警对象类型
+      radio: '2', // 选择告警对象类型
       radioChufa: '1', // 触发条件单选
       options: [],
       formInline: {
@@ -283,16 +281,25 @@ export default {
           name: '云服务器-基础监控'
         }], // 策略类型
         alarm: '', // 策略类型
-        projectName: '默认项目',
-        project: [{
-          value: 0,
-          name: '默认项目'
-        }]
+        project: [],
+        projectId: '',
+        instanceGroup: [],
+        instanceGroupName: '',
+        conditionsTemplate: [],
+        conditionsTemplateName: ''
       },
+      condition: ['任意', '所有'],
+      policyType: ['云服务器', 'cvm_device'],
       cam: {} // cam组件的值
     }
   },
   methods: {
+    initRequest: async function () {
+      // this.detailsInit()
+      this.getProjectsList()
+      this.describeInstanceGroupList()
+      this.describeConditionsTemplateList()
+    },
     detailsInit: async function () {
       let params = {
         Version: '2018-07-24',
@@ -314,9 +321,46 @@ export default {
         }
       })
     },
+    getProjectsList: async function () {
+      this.axios.get(ALL_PROJECT).then(res => {
+        this.axiosUtils(res, () => {
+          this.formInline.project = res.data
+          if (res.data.length > 0) this.formInline.projectId = res.data[0].projectId
+        })
+      })
+    },
+    describeInstanceGroupList: async function () {
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        Limit: 100,
+        Offset: 0,
+        ViewName: this.policyType[1]
+      }
+      await this.axios.post(CM_GROUPING_LIST, params).then(res => {
+        this.axiosUtils(res, () => {
+          this.formInline.instanceGroup = res.Response.InstanceGroupList
+          if (res.Response.InstanceGroupList.length > 0) this.formInline.instanceGroupName = res.Response.InstanceGroupList[0].GroupName
+        })
+      })
+    },
+    describeConditionsTemplateList: async function () {
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor'
+      }
+      await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('res.Response', res.Response)
+          this.formInline.conditionsTemplate = res.Response.TemplateGroupList
+          if (res.Response.TemplateGroupList.length > 0) this.formInline.conditionsTemplateName = res.Response.TemplateGroupList[0].GroupName
+        })
+      })
+    },
     // 策略类型
     showMsgfromChild (val) {
-      console.log('val', val)
+      this.policyType = val
+      this.describeInstanceGroupList()
     },
     // 获取cam组件的值
     camFun (data) {
@@ -327,10 +371,34 @@ export default {
       this.$router.push({
         path: '/strategy'
       })
+    },
+    axiosUtils: function (res, func) {
+      // func()
+      if (res.info !== undefined) {
+        this.$message({
+          message: res.info,
+          type: 'error',
+          showClose: true,
+          duration: 2000
+        })
+        return
+      }
+      if (res.Response === undefined || (res.Response && res.Response.Error === undefined)) {
+        func()
+      } else {
+        let ErrTips = {}
+        let ErrOr = Object.assign(ErrorTips, ErrTips)
+        this.$message({
+          message: ErrOr[res.Response.Error.Code],
+          type: 'error',
+          showClose: true,
+          duration: 2000
+        })
+      }
     }
   },
   created: function () {
-    this.detailsInit()
+    this.initRequest()
   },
   mounted: function () {
   }
