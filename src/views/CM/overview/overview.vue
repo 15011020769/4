@@ -553,7 +553,6 @@ export default {
           item.tips = res.Response.ThresholdObjects;
 
           this.$set(this.productOptions, index, item);
-
         } else {
           let ErrTips = {
             InternalError: "内部错误",
@@ -604,13 +603,23 @@ export default {
             this.timelineData = [[], [], []];
           } else {
             thresholdObjects.sort((value1, value2) => {
-              if (
-                moment(value1.FirstOccurTime).hour() <
-                moment(value2.FirstOccurTime).hour()
-              ) {
+              const firstTime = moment(value1.FirstOccurTime);
+              const secondTime = moment(value2.FirstOccurTime);
+
+              var i =
+                firstTime.hour() * 60 * 60 +
+                firstTime.minute() * 60 +
+                firstTime.second();
+              var n =
+                secondTime.hour() * 60 * 60 +
+                secondTime.minute() * 60 +
+                secondTime.second();
+              if (i > n) {
+                return -1;
+              } else if (i < n) {
                 return 1;
               } else {
-                return -1;
+                return 0;
               }
             });
 
