@@ -49,7 +49,7 @@ export default {
     padding: 0px;
     height: auto;
     li {
-      height: 75px;
+      height: 110px;
       position: relative;
       .datetime {
         color: #aaaaaa;
