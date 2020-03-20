@@ -321,8 +321,9 @@ export default {
             validator: (rule, value, callback) => {
               if (value === '') {
                 callback(new Error('集群名稱不能為空'))
-              } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('集群名稱格式不正確'))
+              } else if (value.length >60) { 
+              // else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
+                callback(new Error('集群名稱不能大於60個字符'))
               } else {
                 callback()
               }
