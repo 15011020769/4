@@ -60,8 +60,15 @@
               <div class="tke-form-item_text"><span>{{$t('TKE.subList.ggjx')}} - {{changeOsCustomizeType(clusterInfo.OsCustomizeType)}}</span></div>
             </el-form-item>
             <el-form-item :label="$t('TKE.subList.wljd')">
-              <div class="tke-form-item_text"><span>
-                <a :href="'../priNetwork/priNetworkDetial/' + clusterInfo.ClusterNetworkSettings.VpcId">{{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}<i class="el-icon-edit-outline"></i></a></span>
+              <div class="tke-form-item_text">
+                <!-- <span>
+                  <a :href="'../priNetwork/priNetworkDetial/' + clusterInfo.ClusterNetworkSettings.VpcId">
+                    {{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}<i class="el-icon-edit-outline"></i>
+                  </a>
+                </span> -->
+                <span>
+                    {{clusterInfo.ClusterNetworkSettings && clusterInfo.ClusterNetworkSettings.VpcId}}
+                </span>
               </div>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.rqwl')">
@@ -643,6 +650,7 @@ export default {
 
     async getOsList() {
       let osString = this.clusterInfo.ClusterOs;
+      let osList = [];
       await this.axios.post(CLUSTER_OS).then(res => {
         if(res && res.code === 0 && res.data) {
           if(res.data.images.length > 0) {
@@ -650,12 +658,13 @@ export default {
               let currOs = res.data.images[i].OsName;
               if(currOs === osString) {
                 this.os = res.data.images[i];
+                osList.push(res.data.images[i]);
               }
             }
           }
-          this.osList = res.data.images;
         }
       });
+      this.osList = osList;
     },
 
     //打开操作系统modal

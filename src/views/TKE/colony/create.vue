@@ -189,7 +189,8 @@
               <i class="el-icon-refresh ml5" @click="NetworkRefresh()"></i>
               <span class="ml5 text-gray">CIDR: {{ colony.CidrBlock }}</span>
               <p>
-                {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>
+                <!-- {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a> -->
+                {{$t('TKE.colony.wlbhs')}}{{$t('TKE.colony.xjsywl')}}
               </p>
             </el-form-item>
             <el-form-item>
@@ -664,8 +665,10 @@
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <p>
-                          {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>或
-                          <a href="../subnet">{{$t('TKE.colony.xjzw')}}</a>
+                          <!-- {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>或
+                          <a href="../subnet">{{$t('TKE.colony.xjzw')}}</a> -->
+                          {{$t('TKE.colony.wlbhs')}}{{$t('TKE.colony.xjsywl')}}或
+                          {{$t('TKE.colony.xjzw')}}
                         </p>
                       </div>
                     </li>
@@ -2269,7 +2272,8 @@
                 </el-option>
               </el-select>
               <i class="el-icon-refresh ml5"></i>
-              <p>{{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a></p>
+              <!-- <p>{{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a></p> -->
+              <p>{{$t('TKE.colony.mybhs')}}{{$t('TKE.colony.xzcj')}}</p>
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-if="colonyThird.three" class="password">
