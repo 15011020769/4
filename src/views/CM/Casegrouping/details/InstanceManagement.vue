@@ -485,6 +485,7 @@ export default {
   },
   methods: {
     passData(data) {
+      console.log("data", data);
       this.isShow = false;
       this.productListData = data;
       setTimeout(() => {
