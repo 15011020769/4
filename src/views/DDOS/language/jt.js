@@ -194,6 +194,8 @@ module.exports = {
       AddAskTitle: '请添加需要访问控制策略，添加完成后默认开启该策略',
       strageName: '策略名称',
       searchStarge: '请输入策略名称，最长20个字',
+      nameWarning: '访问控制策略名称长度不能超过20个字符',
+      nameNullWarning: '访问控制策略名称不能为空',
       agreement: '协议',
       speedModelTitle: '请慎用限速模式，该模式访问控制策略只能添加一条',
       ipAsk: '每个源IP的访问速率',

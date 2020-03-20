@@ -194,6 +194,8 @@ module.exports = {
       AddAskTitle: '請添加需要訪問控制策略，添加完成後預設開啟該策略',
       strageName: '策略名稱',
       searchStarge: '請輸入策略名稱，最長20個字',
+      nameWarning: '訪問控制策略名稱長度不能超過20個字元',
+      nameNullWarning: '訪問控制策略名稱不能為空',
       agreement: '協議',
       speedModelTitle: '請慎用限速模式，該模式訪問控制策略只能添加一條',
       ipAsk: '每個源IP的訪問速率',
