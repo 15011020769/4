@@ -75,7 +75,7 @@ export default {
         Version: '2018-07-24',
         Module: 'monitor',
         DescName: this.form.name,
-        Meta: '{index: 3}', // 元数据，json串
+        Meta: '{index: 3, num: 1}', // 元数据，json串
       }
       await this.axios.get(CREATE_DASHBOARD, {
         params: params
