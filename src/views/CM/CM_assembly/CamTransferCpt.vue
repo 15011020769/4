@@ -40,6 +40,7 @@
         @selection-change="handleSelectionChange"
         v-loadmore="loadMore"
         class="table-left"
+        v-loading="loading"
       >
         <el-table-column
           type="selection"
@@ -388,6 +389,11 @@ export default {
       required: true,
       type: Boolean
     }
+    ,
+    loading: {
+      required: false,
+      type: Boolean
+    }
   },
   watch: {
 		productData: {
@@ -402,15 +408,11 @@ export default {
           this.headConfig = value.HeadConfig;
           this.productValue = value.productValue;
         }
-				// console.log(value)
-				
 			},
       deep: true,
       immediate: true
     }
     
-  },
-  computed: {
   },
   mounted() {
     this.getProjectList();

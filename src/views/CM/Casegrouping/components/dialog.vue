@@ -40,6 +40,7 @@
             :searchParam="searchParam"
             :projectId="projectId"
             :productValue="productValue"
+            v-on:loading="test"
           />
         </div>
         <div class="p">
@@ -50,6 +51,7 @@
             v-on:searchParam="searchParams"
             v-on:multipleSelection="selectDatas"
             :isShowRight="isShowRight"
+            :loading="loading"
           ></CamTransferCpt>
         </div>
         <!-- v-loading="loadShow" -->
@@ -85,7 +87,8 @@ export default {
       isShow: false,
       productValue: "cvm_device",
       loadShow: true,
-      isShowRight: true
+      isShowRight: true,
+      loading: true,
     };
   },
   components: {
@@ -105,7 +108,6 @@ export default {
       this.$emit("close", false);
     },
     passData(data) {
-      console.log(data);
       this.isShow = false;
       this.productListData = data;
       this.productValue = data.productValue;
@@ -117,6 +119,10 @@ export default {
         this.productListData = data;
         // this.isShow = true;
       }, 600);
+    },
+    test(val) {
+      this.loading = val
+      console.log("ssss");
     },
     projectIds(data) {
       this.projectId = data;

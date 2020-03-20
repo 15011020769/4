@@ -109,7 +109,7 @@
     },
     methods: {
       _Metrics() {
-        this.$emit("loading");
+        this.$emit("loading",true);
         let params = {
           Version: "2018-07-24",
           Module: "monitor",
@@ -264,6 +264,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(NAT_LIST, parms).then(data => {
           this.id = "nat_tc_stat"
           this.Date = data.Response.NatGatewaySet
@@ -313,6 +317,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(VPN_LIST, parms).then(data => {
           this.id = 'vpcgw'
           this.Date = data.Response.VpnGatewaySet
@@ -356,6 +364,10 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+        }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
         }
         this.axios.post(VPNTD_LIST, parms).then(data => {
           this.id = "vpn_tunnel"
@@ -409,6 +421,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(DCG_LIST, parms).then(data => {
           this.id = 'dclinegw'
           this.Date = data.Response.DirectConnectGatewaySet
@@ -453,6 +469,9 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-20",
+        }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["InstanceIds.0"] = this.searchParam.value;
         }
         this.axios.post(MYSQL_LIST, parms).then(data => {
           this.id = 'cdb'
@@ -608,6 +627,9 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2018-04-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["InstanceId"] = this.searchParam.value;
+        }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
           this.Date = data.Response.InstanceSet
@@ -739,6 +761,9 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["DirectConnectIds.0"] = this.searchParam.value;
+        }
         this.axios.post(Physics_LIST, parms).then(data => {
           this.id = "dcline"
           this.Date = data.Response.DirectConnectSet
@@ -770,12 +795,16 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(Private_LIST, parms).then(data => {
           this.id = 'dcchannel'
           this.Date = data.Response.DirectConnectTunnelSet
           this.Namespace = 'qce/dcx'
           this.SearchConfig = [{
-            value: "DirectConnectIds",
+            value: "direct-connect-tunnel-id",
             label: "通道ID"
           }]
           this.HeadConfig = {
@@ -809,6 +838,10 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        // if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+        //   parms["Filters.0.Name"] = this.searchParam.label;
+        //   parms["Filters.0.Values.0"] = this.searchParam.value;
+        // } 
         this.axios.post(OBJ_LIST, parms).then(data => {
           this.id = 'COS'
           this.Date = data.Buckets
