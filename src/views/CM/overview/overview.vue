@@ -69,17 +69,17 @@
                         class="el-icon-success"
                         style="color: green;font-size: 10px;"
                       ></i>
-                      正常 无资源异常<br />
+                      正常 無資源異常<br />
                       <i
                         class="el-icon-question"
                         style="color: red;font-size: 14px;"
                       ></i>
-                      提醒 近24小时内有资源发生过异常<br />
+                      提醒 近24小時內有資源發生過異常<br />
                       <i
                         class="el-icon-warning"
                         style="color: red;font-size: 10px;"
                       ></i>
-                      异常 当前有资源正处于异常状态未恢复
+                      異常 當前有資源正處於異常狀態未修復
                     </div>
                     <i
                       class="el-icon-info"
@@ -103,16 +103,16 @@
                         {{ tip.content }}
                       </el-timeline-item>
                     </el-timeline> -->
-                  <i
-                    v-if="scope.row.status"
-                    class="el-icon-success"
-                    style="color: green;font-size: 15px;"
-                  ></i>
-                  <i
-                    v-else
-                    class="el-icon-warning"
-                    style="color: red;font-size: 15px;"
-                  ></i>
+                    <i
+                      v-if="scope.row.status"
+                      class="el-icon-success"
+                      style="color: green;font-size: 15px;margin-right:3px;"
+                    ></i>
+                    <i
+                      v-else
+                      class="el-icon-warning"
+                      style="color: red;font-size: 15px;margin-right:3px;"
+                    ></i>
                   <!-- </el-tooltip> -->
                   <label v-if="scope.row.status">正常</label>
                   <label v-else>異常</label>
@@ -277,7 +277,7 @@ export default {
       timelineData: null,
       thresholdObjects: [],
       quotaList: [],
-      projectId: "",
+      projectId: 0,
       productValue: "cvm_device",
       monitorStartTime: moment().format("YYYY-MM-DD"),
       searchParam: {},
@@ -374,16 +374,7 @@ export default {
     this.productOptions.forEach(item => {
       item.status = true;
       item.desc = "";
-      item.tips = [
-        {
-          timestamp: "2020-03-18",
-          content: "982374982"
-        },
-        {
-          timestamp: "2020-03-19",
-          content: "123123"
-        }
-      ];
+      item.tips = [];
     });
   },
 
@@ -460,41 +451,41 @@ export default {
         }
       });
     },
-    getServiceType() {
-      let params = {
-        Version: "2018-07-24",
-        Module: "monitor"
-      };
-      this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          let result = res.Response.Conditions.filter(item => {
-            if (!item.SupportRegions.includes("tpe")) {
-              return false;
-            }
+    // getServiceType() {
+    //   let params = {
+    //     Version: "2018-07-24",
+    //     Module: "monitor"
+    //   };
+    //   this.axios.post(POLICY_CONDITIONS_LIST, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       let result = res.Response.Conditions.filter(item => {
+    //         if (!item.SupportRegions.includes("tpe")) {
+    //           return false;
+    //         }
 
-            // if (item.PolicyViewName !== "cvm_device") {
-            //   return false;
-            // }
+    //         // if (item.PolicyViewName !== "cvm_device") {
+    //         //   return false;
+    //         // }
 
-            return true;
-          });
+    //         return true;
+    //       });
 
-          // console.log(result);
-        } else {
-          let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
+    //       // console.log(result);
+    //     } else {
+    //       let ErrTips = {
+    //         InternalError: "内部错误",
+    //         UnauthorizedOperation: "未授权操作"
+    //       };
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     getProjectList() {
       //获取项目列表数据
       let params = {
@@ -706,11 +697,7 @@ export default {
               titles.push(item.Content);
             });
 
-            this.timelineData = [
-              startTimes,
-              endTimes,
-              titles
-            ];
+            this.timelineData = [startTimes, endTimes, titles];
           }
         } else {
           this.chartLoading = false;

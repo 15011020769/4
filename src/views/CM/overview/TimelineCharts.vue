@@ -1,10 +1,6 @@
 <template>
   <div class="wrap">
-    <div
-      id="id"
-      ref="chart"
-      v-loading="loading"
-    ></div>
+    <div id="id" ref="chart" v-loading="loading"></div>
   </div>
 </template>
 
@@ -73,12 +69,12 @@ export default {
 
         contentData.push([
           startTimeMoment.format("YYYY-MM-DD HH:mm:ss"), // 用于显示x轴的值
-          endTime, // 用于显示y轴的值
+          endTime, // 結束時間用於渲染bar
           index, // 位置
           titles[index], // 标题
           startTimes[index], // 实际开始时间
           endTimes[index], // 实际结束时间
-          index * 25
+          (index + 1) * 25 // 用于显示y轴的值
         ]);
       });
 
@@ -118,7 +114,9 @@ export default {
             id: "dataZoomY",
             type: "slider",
             yAxisIndex: 0,
-            filterMode: "weakFilter"
+            filterMode: "filter",
+            start: 60,
+            end: 100
           }
         ],
         xAxis: {
@@ -134,7 +132,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          show: false,
+          show: true
         },
         series: [
           {
@@ -165,17 +163,19 @@ export default {
 
                 let rect = {
                   x: start[0],
-                  y: start[1] - height,
+                  y: start[1] + height,
                   width: end[0] - start[0],
                   height: height
                 };
 
-                let rectShape = echarts.graphic.clipRectByRect(rect, {
+                let coordRect = {
                   x: params.coordSys.x,
                   y: params.coordSys.y,
                   width: params.coordSys.width,
                   height: params.coordSys.height
-                });
+                };
+
+                let rectShape = echarts.graphic.clipRectByRect(rect, coordRect);
 
                 return (
                   rectShape && {
