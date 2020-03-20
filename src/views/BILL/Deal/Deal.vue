@@ -85,6 +85,7 @@
             align="center"
             width="120"
             :label="$t('BILL.Deal.status')"
+            :formatter="formatterStatus"
           ></el-table-column>
           <el-table-column
             prop="projectName"
@@ -379,9 +380,7 @@ export default {
       var params = {
         projectId: this.dataForm.projectId,
         orderId: this.dataForm.orderId,
-        orderOwner: this.$cookie.get('uin'),
-        beginDate: this.dataForm.date[0],
-        endDate: this.dataForm.date[1]
+        orderOwner: this.$cookie.get('uin')
       }
       this.downloadLoading = true
       this.axios
