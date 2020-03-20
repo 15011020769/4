@@ -132,7 +132,7 @@ export default {
         },
         yAxis: {
           type: "value",
-          show: true
+          show: false
         },
         series: [
           {
