@@ -39,11 +39,12 @@
         </div>
       </div>
       <div class="chart" v-if="!this.showEmptyControlPanel">
-        <div class="chartList">
+        <div class="chartList" v-for="item in ViewList" :key="item.ViewID" >
           <div class="chartItem">
             <p>
               <b>
-                {{$t('CVM.Dashboard.mx')}}-CPU利用率
+                <!-- {{$t('CVM.Dashboard.mx')}}-CPU利用率 -->
+                {{item.DescName}}
                 <span style="color:#888">（%）</span>
               </b>
               <el-row>
@@ -70,7 +71,7 @@
           </div>
           <div class="open">
             <p>
-              <span>{{$t('CVM.Dashboard.ygsl')}}</span>
+              <span>共 {{item.Instances.length}} {{$t('CVM.Dashboard.ygsl')}}</span>
               <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
             </p>
             <p>
@@ -82,7 +83,18 @@
               <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
             </p>
           </div>
-          <div class="chartContent" v-show="retractChartFlag">content</div>
+          <div class="chartContent" v-show="retractChartFlag">
+            <el-table :data="item.Instances">
+              <el-table-column type="index" width="50"></el-table-column>
+              <el-table-column prop="unInstanceId" label="ID/主机名" width="120">
+                <template scope="scope">
+                  <span style="color: #006eff">{{scope.row.unInstanceId}}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="" label="IP地址" width="120"></el-table-column>
+              <el-table-column prop="" label="CPU利用率" width=""></el-table-column>
+            </el-table>
+          </div>
         </div>
       </div>
       <!-- 新增控制面板页面 -->
@@ -187,6 +199,8 @@ export default {
         { label: '2分钟', value: 120}, { label: '5分钟', value: 300}, { label: '10分钟', value: 600},
       ],
       showEmptyControlPanel: false, // 是否展示空的监控面板
+      ViewList: [], // 监控面板数组
+      DashboardID: '' // 展示面板的ID
     };
   },
   components: {
@@ -197,7 +211,14 @@ export default {
     RenameControlPanel
   },
   created() {
-    this.getDashboardList(); // 获取Dashboard列表数据
+    this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
+  },
+  watch: {
+    panelValue(newVal) {
+      // this.selectShowControlPanel(newVal);
+      this.DashboardID = newVal;
+      this.getDescribeDashboardView(); // 监控面板展示
+    }
   },
   methods: {
     GetDat(data) {
@@ -251,6 +272,80 @@ export default {
     GetData(data) {
       // console.log(data);
     },
+    selectShowControlPanel(value) { // 选择展示那个ID的监控面板
+      
+    },
+    // 初始获取下拉列表，获取首个监控面板id
+    async createGetDashboardList() {
+      let params = {
+        Version: '2018-07-24', Module: 'monitor',
+      }
+      await this.axios.get(GET_DASHBOARD_LIST, {
+        params: params
+      }).then(res => {
+        if (res.Response.Error === undefined) {
+          this.options = [];
+          res.Response.DashboardList.forEach(ele => {
+            this.options.push({
+              value: ele.DashboardID,
+              label: ele.DescName
+            });
+            this.panelValue = this.options[0].value; // 监控面板默认值
+            this.DashboardID = this.options[0].value; // 展示面板的ID
+            this.getDescribeDashboardView(); // 获取监控面板视图
+          });
+          console.log(this.options, 'options');
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            "DryRunOperation": "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            "FailedOperation": "操作失败。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+            "FailedOperation.AlertTriggerRuleDeleteFailed": "删除触发条件失败。",
+            "FailedOperation.DbQueryFailed": "数据库查询失败。",
+            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+            "FailedOperation.DivisionByZero": "被除数为0。",
+            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+            "FailedOperation.DruidTableNotFound": "druid表不存在。",
+            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.ServiceNotEnabled": "服务未启用，开通服务后方可使用。",
+            "InternalError": "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            "InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            "InvalidParameterValue": "无效的参数值。",
+            "LimitExceeded": "超过配额限制。",
+            "LimitExceeded.MetricQuotaExceeded": "指标数量达到配额限制，禁止含有未注册指标的请求。",
+            "MissingParameter": "缺少参数错误。",
+            "ResourceInUse": "资源被占用。",
+            "ResourceInsufficient": "资源不足。",
+            "ResourceNotFound": "资源不存在。",
+            "ResourceUnavailable": "资源不可用。",
+            "ResourcesSoldOut": "资源售罄。",
+            "UnauthorizedOperation": "未授权操作。",
+            "UnknownParameter": "未知参数错误。",
+            "UnsupportedOperation": "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
     // 获取Dashboard 下拉选框数据
     async getDashboardList() {
       let params = {
@@ -263,6 +358,7 @@ export default {
         params: params
       }).then(res => {
         if (res.Response.Error === undefined) {
+          this.options = [];
           res.Response.DashboardList.forEach(ele => {
             this.options.push({
               value: ele.DashboardID,
@@ -335,12 +431,62 @@ export default {
     // 获取监控面板视图
     async getDescribeDashboardView() {
         let params = {
-            Version: '2018-07-24', Module: 'monitor', DashboardID: 135
+          Version: '2018-07-24', Module: 'monitor', DashboardID: this.DashboardID
         }
-        await this.axios.get(GET_DASHBOARD_LIST, {
+        await this.axios.get(DESCRIBE_DASHBOARD_VIEWS, {
           params: params
         }).then(res => {
-            
+            if (res.Response.Error === undefined) {
+              this.ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
+              this.ViewList.forEach(ele => {
+                let newInstances = [];
+                ele.Instances.forEach(el => {
+                  newInstances.push(JSON.parse(el));
+                });
+                ele.Instances = newInstances;
+              });
+              console.log( this.ViewList, 'Response');
+            } else {
+              let ErrTips = {
+                "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
+                "DryRunOperation": "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+                "FailedOperation": "操作失败。",
+                "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
+                "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+                "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+                "FailedOperation.AlertTriggerRuleDeleteFailed": "删除触发条件失败。",
+                "FailedOperation.DbQueryFailed": "数据库查询失败。",
+                "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
+                "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
+                "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+                "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
+                "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
+                "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
+                "FailedOperation.DivisionByZero": "被除数为0。",
+                "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+                "FailedOperation.DruidTableNotFound": "druid表不存在。",
+                "FailedOperation.DuplicateName": "名字重复。",
+                "FailedOperation.ServiceNotEnabled": "服务未启用，开通服务后方可使用。",
+                "InternalError": "内部错误。",
+                "InternalError.ExeTimeout": "执行超时。",
+                "InvalidParameter": "参数错误。",
+                "InvalidParameter.InvalidParameter": "参数错误。",
+                "InvalidParameter.InvalidParameterParam": "参数错误。",
+                "InvalidParameterValue": "无效的参数值。",
+                "LimitExceeded.MetricQuotaExceeded": "指标数量达到配额限制，禁止含有未注册指标的请求。",
+                "MissingParameter": "缺少参数错误。",
+                "ResourceInUse": "资源被占用。",
+                "ResourceInsufficient": "资源不足。",
+                "ResourceNotFound": "资源不存在。",
+                "ResourceUnavailable": "资源不可用。",
+                "ResourcesSoldOut": "资源售罄。",
+                "UnauthorizedOperation": "未授权操作。",
+                "UnknownParameter": "未知参数错误。",
+                "UnsupportedOperation": "操作不支持。",
+              }
+            }
         })
     }
 

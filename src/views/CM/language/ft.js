@@ -163,7 +163,7 @@ module.exports = {
       zting: '暫停',
       zk: '展開',
       dc: '導出',
-      ygsl: '共2個實例',
+      ygsl: '個實例', // 共x个实例
       dctp: '導出圖片',
       bj: '編輯',
       fztb: '複製圖表',
