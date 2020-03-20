@@ -88,7 +88,7 @@ export default {
           // res.Response.DashboardID
           // res.Response.RequestId
           console.log(res.Response, 'res.Response');
-          this.$parent.$parent.showEmptyControlPanel = true; // 跳转新的监控面板页面
+          // this.$parent.$parent.showEmptyControlPanel = true; // 跳转新的监控面板页面
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
         } else {
           let ErrTips = {

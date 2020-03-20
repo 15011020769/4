@@ -17,12 +17,12 @@
       <RenameControlPanel ref="renameControlPanel" :name="this.renameControlName" />
     </Header>
     <div class="Dashboard-main">
-      <div class="explain">
+      <div class="explain" v-show="this.ViewList.length">
         <p>{{$t('CVM.Dashboard.jhtjsj')}}</p>
         <p>{{$t('CVM.Dashboard.zcbbdc')}}</p>
       </div>
       <div class="headBtn">
-        <el-button v-show="!this.showEmptyControlPanel" type="primary" @click="openCreate()">
+        <el-button v-show="this.ViewList.length" type="primary" @click="openCreate()">
           {{$t('CVM.Dashboard.tjjktb')}}
         </el-button>
         <div style="float: right">
@@ -40,7 +40,7 @@
           </el-dropdown>
         </div>
       </div>
-      <div class="chart" v-if="!this.showEmptyControlPanel">
+      <div class="chart" v-if="this.ViewList.length">
         <div class="chartList" v-for="item in ViewList" :key="item.ViewID" >
           <div class="chartItem">
             <p>
@@ -101,9 +101,9 @@
         </div>
       </div>
       <!-- 新增控制面板页面 -->
-      <div class="emptyControlPanelPage" v-if="this.showEmptyControlPanel">
+      <div class="emptyControlPanelPage" v-if="this.ViewList.length == 0">
         <p>{{$t('CVM.Dashboard.zjklbz')}}</p>
-        <el-button v-if="this.showEmptyControlPanel" type="primary"  @click="openCreate()">
+        <el-button type="primary"  @click="openCreate()">
           {{$t('CVM.Dashboard.tjjktb')}}
         </el-button>
       </div>
