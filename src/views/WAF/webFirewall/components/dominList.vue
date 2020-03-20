@@ -4,7 +4,7 @@
       <div class="dominListTitle">
         域名{{t('列表', 'WAF.qingdan')}}
       </div>
-      <!-- <el-row type="flex" justify="space-between">
+      <el-row type="flex" justify="space-between">
         <el-col :span="12">
           <el-row type="flex" align="middle">
             <el-button
@@ -64,7 +64,7 @@
             @click="getData"
           />
         </el-input>
-      </el-row> -->
+      </el-row>
       <div class="tableList">
         <el-table
           :data="domains"

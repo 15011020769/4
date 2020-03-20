@@ -493,7 +493,7 @@ export default {
       this.thisType = `${num}${unit}`
       // var ipt1 = document.querySelector('.dataTime input:nth-child(2)')
       // var ipt2 = document.querySelector('.dataTime input:nth-child(4)')
-      let startTime = moment().subtract(num, unit)
+      let startTime = moment().subtract(num, unit).format('YYYY-MM-DD HH:mm:ss')
       let endTime = moment().endOf('d').format('YYYY-MM-DD HH:mm:ss')
       if (unit === 'd') {
         startTime = moment().subtract(num, unit).startOf('d').format('YYYY-MM-DD HH:mm:ss')
