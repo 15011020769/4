@@ -34,6 +34,9 @@
                 </div>
                 <div class="footer-left-right">
                    <h2>{{picName}}</h2>
+                   <div>
+                       
+                   </div>
                 </div>
             </div>
             <div class="footer-right">
@@ -52,7 +55,8 @@
 </template>
 <script>
 import Type from '@/views/CM/CM_assembly/product_type'
- import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
+import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
+import {CREATDASHBORD} from '@/constants'
 export default {
     name:"DashboardCreate",
     components:{
@@ -73,16 +77,15 @@ export default {
     },
     methods:{
         PassData(data) {
-            // console.log(data)
             this.productListData = data
-            // setTimeout(() => {
-            //     this.productListData = {};
-            //     // this.isShow = true;
-            // }, 500);
-            // setTimeout(() => {
-            //     this.productListData = data;
-            //     // this.isShow = true;
-            // }, 600);
+            setTimeout(() => {
+                this.productListData = {};
+                // this.isShow = true;
+            }, 500);
+            setTimeout(() => {
+                this.productListData = data;
+                // this.isShow = true;
+            }, 600);
             console.log(this.productListData)
             this.optionTarget=data.MetricName
             this.target = data.MetricName[0]
@@ -92,18 +95,33 @@ export default {
             this.picName = "明细-"+ val.label
         },
         projectIds(data) {
+            console.log(data)
             this.projectId = data;
         },
-         searchParams(data) {
+        searchParams(data) {
+            console.log(data)
             this.searchParam = data;
         },
         selectDatas(val) {
+            console.log(val)
             this.rightData  = val;
         },
         // 跳转
         jump(){
             this.$router.go(-1)
-        }
+        },
+        // 创建Dashboard
+        // createDashboard(){
+        //     const param = {
+        //         Module :'monitor',
+        //         Namespace:'qce/cvm',
+        //         DescName:this.picName,
+        //         DashboardID:76484,
+        //     }   
+        //     this.axios.post(CREATDASHBORD, param).then(res => {
+        //         console.log(res)
+        //     })
+        // }
     }
 }
 </script>
@@ -149,25 +167,25 @@ export default {
         justify-content: space-between;
         align-items: center;
         .footer-left{
-            width: 70%;
+            width: 55%;
             height: 450px;
             border:1px solid #ddd;
             display: flex;
             justify-content: space-between;
             .footer-left-left{
-                width: 30%;
+                width: 25%;
                 height: 448px;
                 background: #f2f2f2;
                 padding:10px;
             }
             .footer-left-right{
-                width: 70%;
+                width: 75%;
                 height: 450px;
                 padding:10px;
             }
         }
         .footer-right{
-            width: 25%;
+            width: 42%;
             height: 450px;
             border:1px solid #ccc;
         }
