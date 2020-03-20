@@ -105,11 +105,11 @@
       }
     },
     created() {
-
       this._Metrics()
     },
     methods: {
       _Metrics() {
+        this.$emit("loading");
         let params = {
           Version: "2018-07-24",
           Module: "monitor",
