@@ -146,7 +146,7 @@ export default {
       this.axios.post(DESCRIBE_ACTIONED, params).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           this.ipInfo = Data.Res
-          this.textTips = `没有在域名${this.ipSearch === 'global' ? 'ALL' : this.ipSearch}下，查到${this.searchIp} 的${this.t('相关', 'WAF.xg')}信息。`
+          this.textTips = `没有在域名${this.ipSearch === 'global' ? 'ALL' : this.ipSearch}下，查到${this.searchIp} 的${this.t('相关', 'WAF.xg')}${this.t('信息', 'WAF.info')}。`
         })
       })
     },

@@ -27,29 +27,266 @@
             height="500px"
           >
             <el-table-column type="selection" width="40"></el-table-column>
-            <el-table-column label="ID/主机名">
+            <el-table-column label="ID/主机名" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <a href="javascript:;">{{ scope.row.InstanceId }}</a>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column label="状态">
+            <el-table-column label="状态" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <span>{{ InstanceState(scope.row.InstanceState) }}</span>
               </template>
             </el-table-column>
-            <el-table-column label="网络类型">
+            <el-table-column label="网络类型" v-if="viewName === 'cvm_device'">
               VPC 网络
             </el-table-column>
-            <el-table-column label="IP地址">
+            <el-table-column label="IP地址" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
                 <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
               </template>
             </el-table-column>
-            <el-table-column label="地域">
-              中国台北
+            <el-table-column label="地域" v-if="viewName === 'cvm_device'">
+              台湾台北
             </el-table-column>
+            <!-- VPN_GW -->
+            <el-table-column label="ID/名称" v-if="viewName === 'VPN_GW'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpnGatewayId }}</p>
+                <p>{{ scope.row.VpnGatewayName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'VPN_GW'">
+              <template slot-scope="scope">
+                <span>{{ VPN_GW_State(scope.row.State) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="所属网络" v-if="viewName === 'VPN_GW'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpcId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'VPN_GW'">
+              台湾台北
+            </el-table-column>
+            <!-- vpn_tunnel -->
+            <el-table-column label="ID/名称" v-if="viewName === 'vpn_tunnel'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpnGatewayId }}</p>
+                <p>{{ scope.row.VpnConnectionName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'vpn_tunnel'">
+              <template slot-scope="scope">
+                <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="所属网络" v-if="viewName === 'vpn_tunnel'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpcId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="VPN网关" v-if="viewName === 'vpn_tunnel'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpnGatewayId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="对端网关" v-if="viewName === 'vpn_tunnel'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.CustomerGatewayId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'vpn_tunnel'">
+              台湾台北
+            </el-table-column>
+            <!-- nat_tc_stat -->
+            <el-table-column label="ID/名称" v-if="viewName === 'nat_tc_stat'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.NatGatewayId }}</p>
+                <p>{{ scope.row.NatGatewayName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'nat_tc_stat'">
+              <template slot-scope="scope">
+                <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="私有网络" v-if="viewName === 'nat_tc_stat'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpcId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="类型" v-if="viewName === 'nat_tc_stat'">
+              <template slot-scope="scope">
+                <p>小型</p>
+                <p>最大并发连接数{{ scope.row.maxConcurrent / 100 }}万</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'nat_tc_stat'">
+              台湾台北
+            </el-table-column>
+            <!-- DC_GW -->
+            <el-table-column label="ID/名称" v-if="viewName === 'DC_GW'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.DirectConnectGatewayId }}</p>
+                <p>{{ scope.row.DirectConnectGatewayName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="NAT配置状态" v-if="viewName === 'DC_GW'">
+              <template slot-scope="scope">
+                <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="所属网络" v-if="viewName === 'DC_GW'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.VpcId }}</p>
+                <!-- <p>{{scope.row.}}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'DC_GW'">
+              台湾台北
+            </el-table-column>
+            <!-- EIP -->
+            <el-table-column label="ID/名称" v-if="viewName === 'EIP'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.AddressId }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="弹性IP地址" v-if="viewName === 'EIP'">
+              <template slot-scope="scope">
+                <span>{{ scope.row.AddressIp }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'EIP'">
+              台湾台北
+            </el-table-column>
+            <!-- cdb_detail -->
+            <el-table-column label="ID/名称" v-if="viewName === 'cdb_detail'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.InstanceId }}</p>
+                <p>{{ scope.row.InstanceName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'cdb_detail'">
+              <template slot-scope="scope">
+                <p>{{ CDB_Status(scope.row.Status) }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="内网IP/端口"
+              v-if="viewName === 'cdb_detail'"
+            >
+              <template slot-scope="scope">
+                <span>{{ scope.row.Vip }}</span>
+                <p>{{ scope.row.Vport }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="网络类型" v-if="viewName === 'cdb_detail'">
+              <template slot-scope="scope">
+                VPC
+              </template>
+            </el-table-column>
+            <el-table-column label="类型" v-if="viewName === 'cdb_detail'">
+              <template slot-scope="scope">
+                {{ CDB_InstanceType(scope.row.InstanceType) }}
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'cdb_detail'">
+              台湾台北
+            </el-table-column>
+            <!-- REDIS-CLUSTER -->
+            <el-table-column
+              label="ID/名称"
+              v-if="viewName === 'REDIS-CLUSTER'"
+            >
+              <template slot-scope="scope">
+                <p>{{ scope.row.InstanceId }}</p>
+                <p>{{ scope.row.InstanceName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'REDIS-CLUSTER'">
+              <template slot-scope="scope">
+                <p>{{ REDIS_Status(scope.row.Status) }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="规格" v-if="viewName === 'REDIS-CLUSTER'">
+              <template slot-scope="scope">
+                master-slave
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="内网地址"
+              v-if="viewName === 'REDIS-CLUSTER'"
+            >
+              <template slot-scope="scope">
+                {{ scope.row.WanIp }}
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'REDIS-CLUSTER'">
+              台湾台北
+            </el-table-column>
+            <!-- dcchannel -->
+            <el-table-column label="ID/名称" v-if="viewName === 'dcchannel'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.DirectConnectTunnelId }}</p>
+                <p>{{ scope.row.DirectConnectTunnelName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="状态" v-if="viewName === 'dcchannel'">
+              <template slot-scope="scope">
+                <p>{{ dcchannel_Status(scope.row.State) }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="规格" v-if="viewName === 'dcchannel'">
+              <template slot-scope="scope">
+                master-slave
+              </template>
+            </el-table-column>
+            <el-table-column label="内网地址" v-if="viewName === 'dcchannel'">
+              <template slot-scope="scope">
+                {{ scope.row.WanIp }}
+              </template>
+            </el-table-column>
+            <!-- dcline -->
+            <el-table-column label="名称/ID" v-if="viewName === 'dcline'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.DirectConnectName }}</p>
+                <p>{{ scope.row.DirectConnectId }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="所在地" v-if="viewName === 'dcline'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.Location }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="带宽" v-if="viewName === 'dcline'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.Bandwidth }}Mbps</p>
+              </template>
+            </el-table-column>
+            <!-- COS -->
+            <el-table-column label="Bucket名称" v-if="viewName === 'COS'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.Name }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'COS'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.zone.zone }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="创建时间" v-if="viewName === 'COS'">
+              <template slot-scope="scope">
+                {{ CreationDate(scope.row.CreationDate) }}
+              </template>
+            </el-table-column>
+
             <el-table-column prop="address" label="操作">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="MoveOut(scope.row)">移出</a>
@@ -89,134 +326,29 @@
           </a>
         </div>
         <div class="dialog">
-          <div class="p">
-            <div class="main" style="background:white;">
-              <div class="left">
-                <div class="left-main border">
-                  <div class="seek" style="">
-                    <el-select
-                      v-model="searchSelectProject"
-                      placeholder="请选择"
-                    >
-                      <el-option
-                        v-for="item in projectOptions"
-                        :key="item.projectId"
-                        :label="item.projectName"
-                        :value="item.projectId"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-select v-model="searchSelect" placeholder="请选择">
-                      <el-option
-                        v-for="item in selectOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-input
-                      placeholder="请输入内容"
-                      v-model="searchInput"
-                      class="input-with-select"
-                    >
-                      <el-button
-                        slot="append"
-                        icon="el-icon-search"
-                        @click="AddDataList"
-                      ></el-button>
-                    </el-input>
-                  </div>
-                  <el-table
-                    :data="tableData"
-                    height="420"
-                    ref="multipleTable"
-                    @selection-change="AddHandleSelectionChange"
-                    class="table-left"
-                  >
-                    <el-table-column
-                      type="selection"
-                      width="55"
-                      :selectable="selectInit"
-                    ></el-table-column>
-                    <el-table-column label="ID/主机名" width="120">
-                      <template slot-scope="scope">
-                        <p>
-                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
-                        </p>
-                        <p>{{ scope.row.InstanceName }}</p>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="网络类型" width="120"
-                      >VPC 网络</el-table-column
-                    >
-                    <el-table-column label="IP地址" width="120">
-                      <template slot-scope="scope">
-                        <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                        <p class="out">
-                          {{ scope.row.PublicIpAddresses[0] }}(外网)
-                        </p>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-              <div class="mid">
-                <i class="el-icon-connection"></i>
-              </div>
-              <div class="right">
-                <div class="right-main border">
-                  <el-table
-                    :data="multipleSelection"
-                    style=""
-                    height="450"
-                    class="table-left"
-                  >
-                    <el-table-column label="ID/主机名" width="120">
-                      <template slot-scope="scope">
-                        <p>
-                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
-                        </p>
-                        <p>{{ scope.row.InstanceName }}</p>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="网络类型" width="100"
-                      >VPC 网络</el-table-column
-                    >
-                    <el-table-column label="IP地址" width="170">
-                      <template slot-scope="scope">
-                        <div class="resses">
-                          <div>
-                            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                            <p class="out">
-                              {{ scope.row.PublicIpAddresses[0] }}(外网)
-                            </p>
-                          </div>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column width="50">
-                      <template slot-scope="scope">
-                        <div class="resses">
-                          <i
-                            class="el-icon-error ml5"
-                            @click="DeleteListAdd(scope.row)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-            </div>
+          <div>
+            <product-type-cpt
+              v-on:PassData="passData"
+              :searchParam="searchParam"
+              :projectId="projectId"
+              :productValue="viewName"
+              style="display:none;"
+            />
+            <CamTransferCpt
+              :productData="productListData"
+              v-on:projectId="projectIds"
+              v-on:searchParam="searchParams"
+              v-on:multipleSelection="selectDatas"
+              :isShowRight="isShowRight"
+            ></CamTransferCpt>
           </div>
         </div>
-        <p slot="footer" class="dialog-footer" style="text-align:center">
+        <div slot="footer" class="dialog-footer" style="text-align:center">
           <el-button type="primary" @click="save">保 存</el-button>
           <el-button @click="newBuildByVal.newBuildState = false"
             >取 消</el-button
           >
-        </p>
+        </div>
       </el-dialog>
       <!-- 移出 -->
       <el-dialog
@@ -258,6 +390,8 @@
   </div>
 </template>
 <script>
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_GROUPING_MANAGE,
@@ -266,7 +400,17 @@ import {
   CM_GROUPING_MANAGELIST_ADD,
   ALL_PROJECT,
   TKE_EXIST_NODES,
-  CM_GROUPING_NEWLY_BUILD
+  CM_GROUPING_NEWLY_BUILD,
+  VPN_LIST,
+  VPNTD_LIST,
+  NAT_LIST,
+  DCG_LIST,
+  NETIP_LIST,
+  MYSQL_LIST,
+  REDIS_LIST,
+  Private_LIST,
+  Physics_LIST,
+  OBJ_LIST
 } from "@/constants";
 export default {
   data() {
@@ -314,8 +458,20 @@ export default {
           value: "3",
           label: "主机名"
         }
-      ]
+      ],
+      viewName: this.Rules.viewName,
+      productListData: {},
+      projectId: 0,
+      searchParam: {},
+      productData: {},
+      isShow: false,
+      loadShow: true,
+      isShowRight: true
     };
+  },
+  components: {
+    CamTransferCpt,
+    ProductTypeCpt
   },
   props: {
     Rules: {
@@ -323,12 +479,34 @@ export default {
       default: () => []
     }
   },
-  components: {},
   created() {
     this.NewProject();
     this.ListInit();
   },
   methods: {
+    passData(data) {
+      this.isShow = false;
+      this.productListData = data;
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
+    },
+    projectIds(data) {
+      this.projectId = data;
+    },
+    searchParams(data) {
+      this.searchParam = data;
+    },
+    //选择右侧表格数据
+    selectDatas(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
+    },
     // 项目
     NewProject() {
       this.axios.get(ALL_PROJECT).then(res => {
@@ -367,53 +545,467 @@ export default {
           var _enterList = res.Response.InstanceList;
           this.total = res.Response.Total;
           if (_enterList.length > 0) {
-            let params = {
-              Version: "2017-03-12",
-              Limit: this.pageSize,
-              Offset: this.pageIndex
-            };
+            if (this.viewName === "cvm_device") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["InstanceIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).unInstanceId;
+              }
+              this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.InstanceSet;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).unInstanceId ===
+                        this.enterList[j].InstanceId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.enterList);
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    FailedOperation: "操作失败",
+                    InternalError: "内部错误",
+                    "InternalError.Param": "Param。",
+                    "InternalError.PublicClusterOpNotSupport":
+                      "集群不支持当前操作。",
+                    InvalidParameter: "参数错误",
+                    ResourceNotFound: "资源不存在",
+                    ResourceUnavailable: "资源不可用"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "VPN_GW") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              console.log(_enterList);
+              params["Filters.0.Name"] = "public-ip-address";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).vip;
+              }
+              this.axios.post(VPN_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.VpnGatewaySet;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).vip ===
+                        this.enterList[j].PublicIpAddress
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.enterList);
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidVpnGatewayId.Malformed":
+                      "无效的VPN网关,VPN实例ID不合法。",
+                    "InvalidVpnGatewayId.NotFound":
+                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "vpn_tunnel") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "vpn-connection-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uniqVpnconnId;
+              }
+              this.axios.post(VPNTD_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.VpnConnectionSet;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uniqVpnconnId ===
+                        this.enterList[j].VpnConnectionId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidParameter.Coexist": "参数不支持同时指定。",
+                    "InvalidParameterValue.Malformed": "入参格式不合法。",
+                    ResourceNotFound: "	资源不存在。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "nat_tc_stat") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "nat-gateway-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uniq_nat_id;
+              }
+              this.axios.post(NAT_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.NatGatewaySet;
 
-            for (let i in _enterList) {
-              params["InstanceIds." + i] = JSON.parse(
-                _enterList[i].Dimensions
-              ).unInstanceId;
-            }
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uniq_nat_id ===
+                        this.enterList[j].VpnConnectionId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {};
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "DC_GW") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "direct-connect-gateway-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnectgatewayid;
+              }
+              this.axios.post(DCG_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.DirectConnectGatewaySet;
 
-            this.axios.post(CM_GROUPING_MANAGELIST, params).then(res => {
-              if (res.Response.Error === undefined) {
-                this.enterList = res.Response.InstanceSet;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions)
+                          .directconnectgatewayid ===
+                        this.enterList[j].DirectConnectGatewayId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidParameter.Coexist": "参数不支持同时指定。",
+                    InvalidParameterValue: "参数值不合法。",
+                    "InvalidParameterValue.Malformed": "入参格式不合法。",
+                    "InvalidParameterValue.TooLong": "无效参数值。参数值太长。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "EIP") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "address-ip";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).vip;
+              }
+              this.axios.post(NETIP_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.AddressSet;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).vip ===
+                        this.enterList[j].AddressIp
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    InvalidParameter: "入参不合法。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "cdb_detail") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["InstanceIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).uInstanceId;
+              }
+              this.axios.post(MYSQL_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.Items;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).uInstanceId ===
+                        this.enterList[j].InstanceId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    CdbError: "后端错误或者流程错误。",
+                    "InternalError.DatabaseAccessError": "数据库内部错误。",
+                    "InternalError.DesError": "系统内部错误。",
+                    InvalidParameter: "参数错误。",
+                    "InvalidParameter.InstanceNotFound": "实例不存在。",
+                    "OperationDenied.WrongStatus": "后端任务状态非法。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "REDIS-CLUSTER") {
+              let params = {
+                Version: "2018-04-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              for (let i in _enterList) {
+                params["SearchKeys." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).instanceid;
+              }
+              this.axios.post(REDIS_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.InstanceSet;
+                  this.total = res.Response.TotalCount;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).instanceid ===
+                        this.enterList[j].InstanceId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    "InternalError.DbOperationFailed":
+                      "统一的 DB 操作错误，可以是 update insert select..。",
+                    InvalidParameter: "参数错误",
+                    "InvalidParameter.EmptyParam": "参数为空。",
+                    "InvalidParameter.InvalidParameter": "业务参数错误。",
+                    "InvalidParameter.PermissionDenied": "接口没有cam权限。",
+                    "UnauthorizedOperation.NoCAMAuthed": "无cam 权限。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "dcchannel") {
+              let params = {
+                Version: "2018-04-10",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              console.log(_enterList);
+              params["Filters.0.Name"] = "direct-connect-tunnel-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnecttunnelid;
+              }
+              this.axios.post(Private_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.DirectConnectTunnelSet;
+                  this.total = res.Response.TotalCount;
+                  console.log(this.enterList);
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions)
+                          .directconnecttunnelid ===
+                        this.enterList[j].DirectConnectTunnelId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.enterList);
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    InternalError: "内部错误",
+                    ResourceNotFound: "资源不存在",
+                    "ResourceNotFound.DirectConnectTunnelIdIsNotExist":
+                      "专用通道不存在。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "dcline") {
+              let params = {
+                Version: "2018-04-10",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              console.log(_enterList);
+
+              for (let i in _enterList) {
+                params["DirectConnectIds." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).directconnectid;
+              }
+              this.axios.post(Physics_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.DirectConnectSet;
+                  this.total = res.Response.TotalCount;
+                  console.log(this.enterList);
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).directconnectid ===
+                        this.enterList[j].DirectConnectId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.enterList);
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    FailedOperation: "操作失败。",
+                    InternalError: "内部错误。",
+                    "InternalError.ExeTimeout": "执行超时。",
+                    InvalidParameter: "参数错误。",
+                    "InvalidParameter.InvalidParameter": "参数错误。",
+                    "InvalidParameter.InvalidParameterParam": "参数错误。",
+                    InvalidParameterValue: "无效的参数值。",
+                    LimitExceeded: "超过配额限制。",
+                    MissingParameter: "缺少参数错误。",
+                    UnknownParameter: "未知参数错误。",
+                    UnsupportedOperation: "操作不支持。"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "COS") {
+              this.axios.get(OBJ_LIST).then(res => {
+                var _arr = res.Buckets.Bucket;
+                console.log(_arr);
                 for (let i in _enterList) {
-                  for (let j in this.enterList) {
+                  for (let j in _arr) {
                     if (
-                      JSON.parse(_enterList[i].Dimensions).unInstanceId ===
-                      this.enterList[j].InstanceId
+                      JSON.parse(_enterList[i].Dimensions).bucket ===
+                      _arr[j].Name
                     ) {
-                      this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      this.enterList.push(_arr[j]);
+                      this.enterList[i]["UniqueId"] = _enterList[i].UniqueId;
                     }
                   }
                 }
                 console.log(this.enterList);
                 this.loadShow = false;
-              } else {
-                let ErrTips = {
-                  FailedOperation: "操作失败",
-                  InternalError: "内部错误",
-                  "InternalError.Param": "Param。",
-                  "InternalError.PublicClusterOpNotSupport":
-                    "集群不支持当前操作。",
-                  InvalidParameter: "参数错误",
-                  ResourceNotFound: "资源不存在",
-                  ResourceUnavailable: "资源不可用"
-                };
-                let ErrOr = Object.assign(ErrorTips, ErrTips);
-                this.$message({
-                  message: ErrOr[res.Response.Error.Code],
-                  type: "error",
-                  showClose: true,
-                  duration: 0
-                });
-              }
-            });
+              });
+            }
           } else {
             this.enterList = [];
             this.loadShow = false;
@@ -450,6 +1042,111 @@ export default {
         return "销毁中";
       }
     },
+    VPN_GW_State(val) {
+      if (val === "PENDING") {
+        return "生产中";
+      } else if (val === "DELETING") {
+        return "删除中";
+      } else if (val === "AVAILABLE") {
+        return "运行中";
+      }
+    },
+    VPN_Tunnel_State(val) {
+      if (val === "PENDING") {
+        return "生产中";
+      } else if (val === "DELETING") {
+        return "删除中";
+      } else if (val === "AVAILABLE") {
+        return "运行中";
+      } else if (val === "UPDATING") {
+        return "升级中";
+      } else if (val === "FAILE") {
+        return "失败";
+      }
+    },
+    NAT_Status(val) {
+      if (val === "NAT") {
+        return "支持";
+      } else {
+        return "不支持";
+      }
+    },
+    CDB_Status(val) {
+      if (val == 0) {
+        return "创建中";
+      } else if (val == 1) {
+        return "运行中";
+      } else if (val == 4) {
+        return "隔离中";
+      } else if (val == 5) {
+        return "已隔离";
+      }
+    },
+    REDIS_Status(val) {
+      if (val == 0) {
+        return "待初始化";
+      } else if (val == 1) {
+        return "流程中";
+      } else if (val == 2) {
+        return "运行中";
+      } else if (val == -2) {
+        return "已隔离";
+      } else if (val == -3) {
+        return "待删除";
+      }
+    },
+    CDB_InstanceType(val) {
+      if (val == 1) {
+        return "主实例";
+      } else if (val == 2) {
+        return "灾备实例";
+      } else if (val == 3) {
+        return "只读实例";
+      }
+    },
+    dcchannel_Status(val) {
+      if (val == "AVAILABLE") {
+        return "就绪或者已连接";
+      } else if (val == "PENDING") {
+        return "申请中";
+      } else if (val == "ALLOCATING") {
+        return "配置中";
+      } else if (val == "ALLOCATED") {
+        return "配置完成";
+      } else if (val == "ALTERING") {
+        return "修改中";
+      } else if (val == "DELETING") {
+        return "删除中";
+      } else if (val == "DELETED") {
+        return "删除完成";
+      } else if (val == "COMFIRMING") {
+        return "待接受";
+      } else if (val == "REJECTED") {
+        return "拒绝";
+      }
+    },
+    dcline_Status(val) {
+      if (val == "PENDING") {
+        return "申请中";
+      } else if (val == "REJECTED") {
+        return "申请驳回";
+      } else if (val == "TOPAY") {
+        return "待付款";
+      } else if (val == "PAID") {
+        return "已付款";
+      } else if (val == "ALLOCATED") {
+        return "建设中";
+      } else if (val == "AVAILABLE") {
+        return "已开通";
+      } else if (val == "DELETING") {
+        return "删除中";
+      } else if (val == "DELETED") {
+        return "已删除";
+      }
+    },
+    CreationDate(val) {
+      return val.replace("T", " ").substring(0, val.length - 1);
+    },
     // 新增
     AddBtn() {
       this.newBuildByVal.newBuildState = true;
@@ -469,27 +1166,81 @@ export default {
         GroupName: this.Rules.groupName,
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: this.Rules.viewName
+        ViewName: this.Rules.viewName,
+        InstanceGroupId: this.Rules.instanceGroupId
       };
       console.log(this.multipleSelection);
       for (let i in this.multipleSelection) {
-        param["InstanceList." + i + ".Region"] = "ap-taipei";
-        // param["InstanceList." + i + ".Dimensions"] = JSON.stringify({
-        //   unInstanceId: this.multipleSelection[i].InstanceId
-        // });
-        // param["InstanceList." + i + ".EventDimensions"] = JSON.stringify({
-        //   uuid: this.multipleSelection[i].Uuid
-        // });
-        param["InstanceList." + i + ".Dimensions"] = {
-          unInstanceId: this.multipleSelection[i].InstanceId
-        };
-        param["InstanceList." + i + ".EventDimensions"] = {
-          uuid: this.multipleSelection[i].Uuid
-        };
+        if (this.viewName === "cvm_device") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            unInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            uuid: this.multipleSelection[i].Uuid
+          };
+        } else if (this.viewName === "VPN_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].PublicIpAddress
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            VpnGatewayId: this.multipleSelection[i].VpnGatewayId
+          };
+        } else if (this.viewName === "vpn_tunnel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
+          };
+        } else if (this.viewName === "nat_tc_stat") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniq_nat_id: this.multipleSelection[i].NatGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].NatGatewayId
+          };
+        } else if (this.viewName === "DC_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectgatewayid: this.multipleSelection[i]
+              .DirectConnectGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].DirectConnectGatewayId
+          };
+        } else if (this.viewName === "EIP") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].AddressIp
+          };
+        } else if (this.viewName === "cdb_detail") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            InstanceId: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.viewName === "REDIS-CLUSTER") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.viewName === "dcchannel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnecttunnelid: this.multipleSelection[i]
+              .DirectConnectTunnelId
+          };
+        } else if (this.viewName === "dcline") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectid: this.multipleSelection[i].DirectConnectId
+          };
+        } else if (this.viewName === "COS") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            bucket: this.multipleSelection[i].Name
+          };
+        }
       }
       this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
+          this.newBuildByVal.newBuildState = false;
+          this.ListInit();
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
@@ -522,6 +1273,7 @@ export default {
     },
     // 确定移出
     DeleteList() {
+      console.log(this.multipleSelection1);
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -614,21 +1366,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection1 = val;
-    },
-    AddHandleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    // 复选框操作
-    selectInit(row, index) {
-      if (
-        this.enterList.some(el => {
-          return el.InstanceId === row.InstanceId;
-        })
-      ) {
-        return false;
-      } else {
-        return true;
-      }
     },
     // 分页
     handleCurrentChange(val) {

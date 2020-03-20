@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <div id="id" ref="chart" :style="{ height: chartHeight }"></div>
+    <div id="id" ref="chart" v-loading="loading"></div>
   </div>
 </template>
 
@@ -18,7 +18,8 @@ export default {
       default: function() {
         return [[], [], []];
       }
-    }
+    },
+    loading: Boolean
   },
   mounted() {
     window.onresize = () => {
@@ -37,25 +38,10 @@ export default {
         this.timelineData[1],
         this.timelineData[2]
       );
-    },
-    chartHeight: function(n, o) {
-      let myCharts = echarts.init(this.$refs.chart);
-      myCharts.resize({height: n});
-    }
-  },
-  computed: {
-    chartHeight: function() {
-      if (this.timelineData !== null) {
-        return this.timelineData[0].length * 25 + 2 * 50 + "px";
-      } else {
-        return "400px";
-      }
     }
   },
   methods: {
     setupEcharts(myCharts, startTimes, endTimes, titles) {
-      console.log(startTimes);
-
       let contentData = [];
       let timeShow = "";
 
@@ -63,11 +49,10 @@ export default {
 
       for (var ii = 0; ii < 27; ii++) {
         timeShow = `${today} ${ii > 10 ? ii : "0" + ii}:00:00`;
-        contentData.push([timeShow, "", ""]);
+        contentData.push([timeShow, "", "", "", "", "", ""]);
       }
 
       endTimes.forEach((tempEndTime, index) => {
-
         // 有些是今天以前的，为了和腾讯云显示一致，改为今天
         let startTimeMoment = moment(startTimes[index]);
         startTimeMoment.set("year", moment().year());
@@ -83,12 +68,13 @@ export default {
         }
 
         contentData.push([
-          startTimeMoment.format("YYYY-MM-DD HH:mm:ss"),  // 用于显示x轴的值
-          endTime,    // 用于显示y轴的值
-          index,    // 位置
-          titles[index],    // 标题
-          startTimes[index],   // 实际开始时间
-          endTimes[index]   // 实际结束时间
+          startTimeMoment.format("YYYY-MM-DD HH:mm:ss"), // 用于显示x轴的值
+          endTime, // 結束時間用於渲染bar
+          index, // 位置
+          titles[index], // 标题
+          startTimes[index], // 实际开始时间
+          endTimes[index], // 实际结束时间
+          (index + 1) * 25 // 用于显示y轴的值
         ]);
       });
 
@@ -97,7 +83,7 @@ export default {
           trigger: "item",
           formatter: val => {
             let text = "";
-            text = `${val.data[3]}<br/>正在告警<br/>发生/结束时间<br/>`;
+            text = `${val.data[3]}<br/>正在告警<br/>發生/結束時間<br/>`;
             if (val.data[4] && val.data[5]) {
               let startTime = moment(val.data[4]).format("YYYY-MM-DD HH:mm:ss");
               let endTime = "";
@@ -114,16 +100,6 @@ export default {
             align: "center"
           }
         },
-        // dataZoom: [
-        //   {
-        //     type: 'slider',
-        //     orient: 'vertical',
-        //     yAxisIndex: [0],
-        //     filterMode: 'weakFilter',
-        //     start: 0,
-        //     end: 100
-        //   }
-        // ],
         grid: {
           left: "3%",
           right: "10%",
@@ -133,6 +109,16 @@ export default {
           backgroundColor: "#eee",
           borderColor: "#ccc"
         },
+        dataZoom: [
+          {
+            id: "dataZoomY",
+            type: "slider",
+            yAxisIndex: 0,
+            filterMode: "filter",
+            start: 60,
+            end: 100
+          }
+        ],
         xAxis: {
           type: "time",
           boundaryGap: false,
@@ -163,25 +149,33 @@ export default {
               let value0 = api.value(0);
               let value1 = api.value(1);
               let value2 = api.value(2);
+              let value6 = api.value(6);
 
-              if (!isNaN(value0) && !isNaN(value1) && !isNaN(value2)) {
-                let start = api.coord([value0, value2]);
-                let end = api.coord([value1, value2]);
-                let height = 15;
+              if (
+                !isNaN(value0) &&
+                !isNaN(value1) &&
+                !isNaN(value2) &&
+                !isNaN(value6)
+              ) {
+                let start = api.coord([value0, value6]);
+                let end = api.coord([value1, value6]);
+                let height = api.size([5, 10])[1];
 
                 let rect = {
                   x: start[0],
-                  y: 100 + value2 * (height + 10),
+                  y: start[1] + height,
                   width: end[0] - start[0],
                   height: height
                 };
 
-                let rectShape = echarts.graphic.clipRectByRect(rect, {
+                let coordRect = {
                   x: params.coordSys.x,
                   y: params.coordSys.y,
                   width: params.coordSys.width,
                   height: params.coordSys.height
-                });
+                };
+
+                let rectShape = echarts.graphic.clipRectByRect(rect, coordRect);
 
                 return (
                   rectShape && {
@@ -196,9 +190,8 @@ export default {
               color: "#409EFF"
             },
             encode: {
-              // data 中『维度1』和『维度2』对应到 X 轴
               x: [0, 1],
-              y: 2
+              y: 6
             },
             data: contentData
           }
@@ -212,5 +205,6 @@ export default {
 <style lang="scss" scoped>
 #id {
   width: 100%;
+  height: 600px;
 }
 </style>

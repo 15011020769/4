@@ -38,7 +38,7 @@
                 <p v-for="(it,i) in scope.row.Conditions" :key="i" style="font-size:12px">
                   {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}</p>
               </div>
-              <div>
+              <div v-if="scope.row.EventConditions.length">
                 <p style="color:#999;font-size:12px">事件告警:</p>
                 <p v-for="(it,i) in scope.row.EventConditions" :key="i" style="font-size:12px">
                   {{ `${it.EventDisplayName},不重复告警` }}</p>
@@ -402,6 +402,7 @@ export default {
       await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(res)
+          this.TotalCount = res.Response.Total
           let msg = res.Response.TemplateGroupList
           let ct = this.Conditions
           for (let i in msg) {

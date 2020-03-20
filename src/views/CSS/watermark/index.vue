@@ -133,7 +133,12 @@ export default {
               return;
             }
             let ErrOr = Object.assign(ErrorTips, CSSErrorTips);
-            this.$message.error(ErrOr[data.Response.Error.Code]);
+            this.$message({
+              message: ErrOr[data.Response.Error.Code] || '删除失败',
+              type: 'error',
+              duration: 0,
+              showClose: true,
+            })
           });
       });
     },

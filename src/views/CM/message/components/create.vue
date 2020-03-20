@@ -9,6 +9,7 @@
             style="width:330px;margin:0"
             v-model="formInline.strategy_name"
             placeholder="请输入策略名称，20字以内"
+            @blur="reg"
           ></el-input>
         </p>
         <div class="rowGaojing">
@@ -19,19 +20,7 @@
             <br />
           </p>
         </div>
-        <Transfer style="margin-left:80px;" :multipleSelection="multipleSelection"></Transfer>
-        <div class="qudao">
-          <span>告警渠道</span>
-          <div class="qudaoContent">
-            <p>
-              <el-checkbox v-model="checked1">邮件</el-checkbox>
-            </p>
-            <p>
-              <el-checkbox v-model="checked2">短信</el-checkbox>
-            </p>
-          </div>
-        </div>
-
+        <Cam v-on:camClick="camFun"></Cam>
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
         </div>
@@ -41,21 +30,25 @@
 </template>
 <script>
 import Header from "./Header";
-import Transfer from "./transfer";
 import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
-import { ADD_CUSTON_MESSAGE } from "@/constants/CM-lxx.js"; /////////
+import Cam from "./Cam";
+import {
+  ADD_CUSTON_MESSAGE,
+  RECEIVING_GROUP_DETAILE
+} from "@/constants/CM-lxx.js"; /////////
 
 export default {
   data() {
     return {
       multipleSelection: [], //穿梭框数据
-      checked1: "", //邮件
-      checked2: "", //短信
+      // checked1: "", //邮件
+      // checked2: "", //短信
       input: "",
       input1: "",
       tableData: [],
       options: [],
       values: "",
+      cam: {}, // cam组件的值
       formInline: {
         strategy_name: "", //策略名称
         textarea: "", //备注
@@ -79,13 +72,111 @@ export default {
   },
   components: {
     Header,
-    Transfer
+    Cam
   },
   methods: {
+    reg() {
+      //策略名
+      if (this.formInline.strategy_name == "") {
+        this.$message({
+          message: "策略名不能为空",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+      }
+    },
+    // 获取cam组件的值
+    camFun(data) {
+      this.cam = data;
+    },
+    //选择告警接收组
+    // getList() {
+    //   var params = {
+    //     Version: "2018-07-24"
+    //     // GroupId: item
+    //   };
+    //   this.axios.post(RECEIVING_GROUP_DETAILE, params).then(res => {
+    //     console.log(res);
+    //     this.lists.push();
+    //     if (res.codeDesc === "Success") {
+    //       // this.deleteDialogVisible1 = false;
+    //     } else {
+    //       let ErrTips = {};
+    //       let ErrOr = Object.assign(ErrorTips, ErrTips);
+    //       this.$message({
+    //         message: ErrOr[res.Response.Error.Code],
+    //         type: "error",
+    //         showClose: true,
+    //         duration: 0
+    //       });
+    //     }
+    //   });
+    // },
     //确定
     save() {
-      this.$router.push({
-        path: "/message"
+      if (this.cam.selectUserGroup.length == 0) {
+        this.$message({
+          message: "请选择告警接收组",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return;
+      }
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        PolicyName: this.formInline.strategy_name //策略名
+      };
+      this.cam.selectUserGroup.forEach((v, i) => {
+        param["ReceiverGroupIds." + i] = v.GroupId;
+      });
+
+      this.cam.channel.forEach((v, i) => {
+        if (v == "郵件") {
+          v = "EMAIL";
+        } else if (v == "簡訊") {
+          v = "SMS";
+        }
+        param["NotifyWays." + i] = v;
+      });
+      this.axios.post(ADD_CUSTON_MESSAGE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.$message({
+            message: "添加成功",
+            type: "success",
+            showClose: true,
+            duration: 0
+          });
+          this.$router.push({
+            path: "/message"
+          });
+          this.loadShow = false;
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          this.loadShow = false;
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     }
   },

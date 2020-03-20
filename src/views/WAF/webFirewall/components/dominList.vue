@@ -2,7 +2,7 @@
   <div>
     <div class="dominList">
       <div class="dominListTitle">
-        域名列表
+        域名{{t('列表', 'WAF.qingdan')}}
       </div>
       <!-- <el-row type="flex" justify="space-between">
         <el-col :span="12">

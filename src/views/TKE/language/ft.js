@@ -533,6 +533,7 @@ module.exports = {
             xgsj: '修改時間',
             jtid: '靜態ID（SHA256）',
             ye: '頁',
+            tiao:'條',
             dqzdqlcl: '當前自動清理策略為僅保留最新的',
             gjxbbnk: '個映像版本，您可',
             sczdqlcl: '刪除自動清理策略',

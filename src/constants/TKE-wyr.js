@@ -62,7 +62,14 @@ export const TKE_MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
 export const TKE_AUTOSTRATEGY = 'ccr/GetAutoDelStrategy'
 
 
+//获取镜像版本信息列表
+export const TKE_IMAGEVERSIONLIST='tcr2/DescribeImagePersonal'
 
+//查询相关联镜像版本信息
+export const TKE_RELEVANTIMAGELIST='tcr2/DescribeImageFilterPersonal'
+
+//删除镜像版本
+export const TKE_DELETEIMAGEVERSION='tcr2/DeleteImagePersonal'
 
 // export const TKE_MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
 

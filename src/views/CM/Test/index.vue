@@ -138,14 +138,14 @@
             data: [150, 232, 201, 154, 190, 330, 410]
           },
         ],
-        period: '10',
+        period: '10000',
         shuian: [{
           name: 'Pod重启次数',
           id: 'podid',
           danwei: '(次)',
           y: [2, 244, 52, 52]
         }],
-        projectId: '',
+        projectId: 0,
         searchParam: {},
         ceshi999: '',
         productValue: 'nat_tc_stat'

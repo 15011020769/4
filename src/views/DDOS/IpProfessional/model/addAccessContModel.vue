@@ -11,6 +11,12 @@
           <div class="topBlueAcc" v-show="!editFlag">
             {{$t('DDOS.accessCopy.AddAskTitle')}}
           </div>
+          <p class="tc-15-msg error" v-if="checkNameFlg == false">
+            {{$t('DDOS.accessCopy.nameWarning')}}
+          </p>
+          <p class="tc-15-msg error" v-if="checkNameNullFlg == false">
+            {{$t('DDOS.accessCopy.nameNullWarning')}}
+          </p>
           <div class="formList">
             <div class="newClear">
               <p>{{$t('DDOS.accessCopy.strageName')}}</p>
@@ -103,6 +109,8 @@ export default {
   },
   data(){
     return{
+      checkNameFlg: true, //名称长度不能超过20个字校验
+      checkNameNullFlg: true, //访问控制策略名称不能为空
       policyForm: {
         Protocol: 'http',//cc防护类型，取值[http，https]
         Smode: 'matching',//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
@@ -179,7 +187,14 @@ export default {
         }
       }
       this.axios.post(CCSELFDEFINEPOLICY_CREATE, params).then(res => {
-        if(res.Response.Success){
+        if(res.Response.Error !== undefined && res.Response.Error.Message == "speedlimit must less than 1"){
+          this.$message({
+            showClose: true,
+            message: "限速模式訪問控制策略最多添加一條",
+            type: "error"
+          });
+          return
+        } else if(res.Response.Success){
           this.$message({
             message: '添加成功',
             type: 'success'
@@ -188,9 +203,12 @@ export default {
           this.$emit("addAccessContSure",this.dialogVisible)
         } else {
           if(res.Response.Error.Code == 'LimitExceeded'){
-            this.$message.error('CC自定義策略不能超過5個');
+            this.$message.error('每個IP訪問控制策略最多5條');
+            this.dialogVisible=false;
+            this.$emit("addAccessContSure",this.dialogVisible)
+          } else {
+            this.$message.error('添加失敗');
           }
-          this.$message.error('添加失敗');
           return
         }
         this.$emit('init');
@@ -273,6 +291,15 @@ export default {
     },
     //确定按钮
     addAccessSureBtn(){
+      this.checkNameFlg = true;
+      this.checkNameNullFlg = true;
+      if (this.policyForm.Name == undefined) {
+        this.checkNameNullFlg = false;
+        return
+      } else if (this.policyForm.Name.length > 20) {
+        this.checkNameFlg = false;
+        return
+      }
       //判断是添加还是编辑
       if(this.editFlag){//编辑
         this.modifyCCSelfDefinePolicy();
@@ -304,6 +331,19 @@ export default {
 }
 </script>
 <style lang="scss">
+.tc-15-msg {
+  color: #b43537;
+  border: 1px solid #f6b5b5;
+  background-color: #fcecec;
+  background: #fcecec;
+  border-radius: 0;
+  font-size: 12px;
+  line-height: inherit;
+  padding: 10px 30px 10px 20px;
+  position: relative;
+  max-width: 1360px;
+  margin-block-end: 1em;
+}
 #addAccessModel{
   .addAccessModel{
     .el-dialog__title{

@@ -231,11 +231,10 @@ export default {
           if (maxDate) {
             this.selectDate = ''
           }
-        },
-        disabledDate: (date) => {
-          if (this.selectDate !== '') {
-            const minTime = moment(this.selectDate).subtract(1, 'month')
-            const maxTime = moment(this.selectDate).add(1, 'month')
+        }, disabledDate: (date) => {
+          if (this.selectDate!== '') {
+            const minTime = moment(this.selectDate).subtract(30, 'd')
+            const maxTime = moment(this.selectDate).add(30, 'd')
             return moment(date).isBefore(minTime) || moment(date).isAfter(maxTime) || date.getTime() > Date.now()
           }
           return date.getTime() > Date.now()

@@ -5,7 +5,7 @@
     </div>
     <div class="protectionCon">
       <div class="packageInfo">
-        <h2>套餐信息</h2>
+        <h2>套餐{{t('信息', 'WAF.info')}}</h2>
         <el-row>
           <el-col :span="12">
             <div class="informationList">
@@ -27,7 +27,7 @@
                 <span v-if="package.Level"
                   >{{ package.ValidTime
                   }}<a href="#" class="blueHref" @click="RenewModelBtn"
-                    >续费</a
+                    >{{t("续费", "WAF.xuyue")}}</a
                   ></span
                 >
               </p>

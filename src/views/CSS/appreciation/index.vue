@@ -294,51 +294,51 @@ export default {
       }
     }
   }
-}
-.topSelect {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 20px;
-  box-sizing: border-box;
-    & > * {
-      float: left;
-    }
-    .selectDomin {
-      width: 230px;
-    }
-    ::v-deep .el-input__inner {
-      height: 30px;
-      line-height: 30px;
-      border-radius: 0;
-    }
-    ::v-deep {
-      
-      flex-wrap: wrap !important;
-    }
-    ::v-deep .el-button{
-      font-size: 12px !important;
-    }
-    ::v-deep .el-range__icon {
+  .topSelect {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    box-sizing: border-box;
+      & > * {
+        float: left;
+      }
+      .selectDomin {
+        width: 230px;
+      }
+      ::v-deep .el-input__inner {
+        height: 30px;
+        line-height: 30px;
+        border-radius: 0;
+      }
+      ::v-deep {
+        
+        flex-wrap: wrap !important;
+      }
+      ::v-deep .el-button{
+        font-size: 12px !important;
+      }
+      ::v-deep .el-range__icon {
+          line-height: 22px;
+      }
+      ::v-deep .el-range-separator {
         line-height: 22px;
+        width: 7%;
+      }
+      ::v-deep .el-select {
+        margin-right: 10px;
+      }
+      ::v-deep .el-input {
+        width: 250px;
+      }
+      button {
+        padding: 0 20px;
+      }
+      .addStyleBtn {
+        background-color: #006eff !important;
+        color: #fff;
+      }
     }
-    ::v-deep .el-range-separator {
-      line-height: 22px;
-      width: 7%;
-    }
-    ::v-deep .el-select {
-      margin-right: 10px;
-    }
-    ::v-deep .el-input {
-      width: 250px;
-    }
-    button {
-      padding: 0 20px;
-    }
-    .addStyleBtn {
-      background-color: #006eff !important;
-      color: #fff;
-    }
-  }
+}
   button {
     height: 30px;
     line-height: 6px;

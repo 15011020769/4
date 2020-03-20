@@ -46,5 +46,3 @@ export const CVM_LIST_STATUS = 'dayu2/DescribeBasicDeviceStatus' // 列表 狀�
 
 
 export const CREATDASHBORD = 'monitor2/CreateDashboardView' // 列表 狀態
-
-

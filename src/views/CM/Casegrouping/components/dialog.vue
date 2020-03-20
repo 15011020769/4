@@ -35,12 +35,24 @@
         </div>
         <div class="p">
           <span>分组类型</span>
-          <product-type-cpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId" :productValue='productValue' /> 
+          <product-type-cpt
+            v-on:PassData="passData"
+            :searchParam="searchParam"
+            :projectId="projectId"
+            :productValue="productValue"
+          />
         </div>
         <div class="p">
           <span>添加至组</span>
-          <CamTransferCpt :productData="productListData" v-on:projectId="projectIds" v-on:searchParam="searchParams"></CamTransferCpt>
+          <CamTransferCpt
+            :productData="productListData"
+            v-on:projectId="projectIds"
+            v-on:searchParam="searchParams"
+            v-on:multipleSelection="selectDatas"
+            :isShowRight="isShowRight"
+          ></CamTransferCpt>
         </div>
+        <!-- v-loading="loadShow" -->
       </div>
       <p slot="footer" class="dialog-footer" style="text-align:center">
         <el-button type="primary" @click="save">保 存</el-button>
@@ -51,13 +63,10 @@
 </template>
 
 <script>
-// import GroupingType from "@/components/GroupingType";
-import ProductTypeCpt from '@/views/CM/CM_assembly/product_type';
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
-import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt';
-import {
-  CM_GROUPING_NEWLY_BUILD
-} from "@/constants";
+import { CM_GROUPING_NEWLY_BUILD } from "@/constants";
 export default {
   name: "msg",
   data() {
@@ -70,15 +79,16 @@ export default {
       pageSize: 20, // 分页条数
       pageIndex: 0, // 当前页码
       productListData: {},
-      projectId: '',
+      projectId: 0,
       searchParam: {},
       productData: {},
       isShow: false,
-      productValue: 'cvm_device'
+      productValue: "cvm_device",
+      loadShow: true,
+      isShowRight: true
     };
   },
   components: {
-    // GroupingType,
     CamTransferCpt,
     ProductTypeCpt
   },
@@ -88,26 +98,17 @@ export default {
       default: () => []
     }
   },
-  watch:{
-    productData:{
-      hander(val) {
-        debugger
-        this.productListData = val
-        console.log("productListDataasdasdsadasdasdasdasd",productListData)
-      },
-      deep: true
-    }
-    
-  },
-  mounted() {
-  },
+  mounted() {},
+  mounted() {},
   methods: {
     cancel() {
       this.$emit("close", false);
     },
     passData(data) {
+      console.log(data);
       this.isShow = false;
       this.productListData = data;
+      this.productValue = data.productValue;
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -121,9 +122,12 @@ export default {
       this.projectId = data;
     },
     searchParams(data) {
-      console.log("data1312312312",data);
-      debugger
       this.searchParam = data;
+    },
+    //选择右侧表格数据
+    selectDatas(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
     },
     // 分组名
     GroupingNameInput() {
@@ -139,58 +143,111 @@ export default {
     },
     // 保存
     save() {
-      var _ViewName = "";
-      if (this.groupingType.length > 0) {
-        _ViewName = this.groupingType[this.groupingType.length - 1];
-      }
-      let param = {
-        GroupName: this.groupingName,
-        Version: "2018-07-24",
-        Module: "monitor",
-        ViewName: _ViewName
-      };
-      console.log(this.multipleSelection);
-      for (let i in this.multipleSelection) {
-        param["InstanceList." + i + ".Region"] = "ap-taipei";
-        // param["InstanceList." + i + ".Dimensions"] = JSON.stringify({
-        //   unInstanceId: this.multipleSelection[i].InstanceId
-        // });
-        // param["InstanceList." + i + ".EventDimensions"] = JSON.stringify({
-        //   uuid: this.multipleSelection[i].Uuid
-        // });
-        param["InstanceList." + i + ".Dimensions"] = {
-          unInstanceId: this.multipleSelection[i].InstanceId
+      if (this.groupingNameTips === false || this.groupingName == "") {
+        return false;
+      } else {
+        let param = {
+          GroupName: this.groupingName,
+          Version: "2018-07-24",
+          Module: "monitor",
+          ViewName: this.productValue
         };
-        param["InstanceList." + i + ".EventDimensions"] = {
-          uuid: this.multipleSelection[i].Uuid
-        };
-      }
-      this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
-        if (res.Response.Error === undefined) {
-          console.log(res);
-        } else {
-          let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
-            UnsupportedOperation: "操作不支持。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+        console.log(this.multipleSelection);
+        for (let i in this.multipleSelection) {
+          if (this.productValue === "cvm_device") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              unInstanceId: this.multipleSelection[i].InstanceId
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              uuid: this.multipleSelection[i].Uuid
+            };
+          } else if (this.productValue === "VPN_GW") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              vip: this.multipleSelection[i].PublicIpAddress
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              VpnGatewayId: this.multipleSelection[i].VpnGatewayId
+            };
+          } else if (this.productValue === "vpn_tunnel") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
+            };
+          } else if (this.productValue === "nat_tc_stat") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              uniq_nat_id: this.multipleSelection[i].NatGatewayId
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              instanceId: this.multipleSelection[i].NatGatewayId
+            };
+          } else if (this.productValue === "DC_GW") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              directconnectgatewayid: this.multipleSelection[i]
+                .DirectConnectGatewayId
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              instanceId: this.multipleSelection[i].DirectConnectGatewayId
+            };
+          } else if (this.productValue === "EIP") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              vip: this.multipleSelection[i].AddressIp
+            };
+          } else if (this.productValue === "cdb_detail") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              uInstanceId: this.multipleSelection[i].InstanceId
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              InstanceId: this.multipleSelection[i].InstanceId
+            };
+          } else if (this.productValue === "REDIS-CLUSTER") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              instanceid: this.multipleSelection[i].InstanceId
+            };
+            param["InstanceList." + i + ".EventDimensions"] = {
+              instanceid: this.multipleSelection[i].InstanceId
+            };
+          } else if (this.productValue === "dcchannel") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              directconnecttunnelid: this.multipleSelection[i]
+                .DirectConnectTunnelId
+            };
+          } else if (this.productValue === "dcline") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              directconnectid: this.multipleSelection[i].DirectConnectId
+            };
+          } else if (this.productValue === "COS") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              bucket: this.multipleSelection[i].Name
+            };
+          }
         }
-      });
+        this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.cancel();
+            this.$parent.ListInit();
+          } else {
+            let ErrTips = {
+              FailedOperation: "操作失败。",
+              InternalError: "内部错误。",
+              "InternalError.ExeTimeout": "执行超时。",
+              InvalidParameter: "参数错误。",
+              "InvalidParameter.InvalidParameter": "参数错误。",
+              "InvalidParameter.InvalidParameterParam": "参数错误。",
+              InvalidParameterValue: "无效的参数值。",
+              LimitExceeded: "超过配额限制。",
+              MissingParameter: "缺少参数错误。",
+              UnknownParameter: "未知参数错误。",
+              UnsupportedOperation: "操作不支持。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      }
     },
     //类型
     msgBtn(index) {
@@ -206,8 +263,8 @@ export default {
         this.loadSign = false;
         this.pageIndex++;
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

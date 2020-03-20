@@ -54,7 +54,7 @@
           :placeholder="$t('CSS.transcribe.30')"
         />
       </el-form-item>
-      <el-form-item :label="$t('CSS.transcribe.30')" prop="PornCensorshipNotifyUrl">
+      <el-form-item :label="$t('CSS.transcribe.25')" prop="PornCensorshipNotifyUrl">
         <el-input
           v-model="ruleForm.PornCensorshipNotifyUrl"
           style="width:330px;"

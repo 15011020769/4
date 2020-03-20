@@ -660,7 +660,8 @@
         this.axios.post(MODIFYCCN_ATTRIBUTE, params).then(res => {
           if (res.Response.Error != undefined) {
             let ErrTips = {
-              ResourceNotFound: "資源不存在"
+              ResourceNotFound: "資源不存在",
+              "InvalidParameterValue.TooLong":'參數值長度不能大於 `60`'
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

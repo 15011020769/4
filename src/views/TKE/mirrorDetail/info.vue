@@ -18,7 +18,7 @@
           class="botton-size"
           @click="dialogFormVisible = true"
         >使用索引</el-button> -->
-        <el-button disabled size="mini" class="botton-size">{{$t('TKE.overview.sc')}}</el-button>
+        <!-- <el-button disabled size="mini" class="botton-size">{{$t('TKE.overview.sc')}}</el-button> -->
       </div>
       <div class="top-right">
           <i v-show="this.input1||this.input2?false:true" class="el-icon-setting"  @click="dialogVisible = true"></i>
@@ -28,13 +28,13 @@
       </div>
     </div>
     <div class="room-bottom">
-      <el-table :data="tableData" style="width: 100%" height="450">
+      <el-table :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)" style="width: 100%" height="450">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="address" :label="$t('TKE.overview.jxbb')"></el-table-column>
-        <el-table-column prop="address" :label="$t('TKE.overview.cjsj')"></el-table-column>
-        <el-table-column prop="address" :label="$t('TKE.mirrorDetail.xgsj')"></el-table-column>
-        <el-table-column prop="address" :label="$t('TKE.mirrorDetail.jtid')"></el-table-column>
-        <el-table-column prop="address" label="大小"></el-table-column>
+        <el-table-column prop="TagName" :label="$t('TKE.overview.jxbb')"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="PushTime" :label="$t('TKE.overview.cjsj')"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="UpdateTime" :label="$t('TKE.mirrorDetail.xgsj')"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="TagId" :label="$t('TKE.mirrorDetail.jtid')"></el-table-column>
+        <el-table-column prop="Size" label="大小"></el-table-column>
         <el-table-column prop="address" label="操作">
           <template slot-scope="scope">
             <el-button @click="handleClick(scope.row)" type="text" size="small">{{$t('TKE.overview.sc')}}</el-button>
@@ -42,16 +42,31 @@
         </el-table-column>
       </el-table>
       <div class="Right-style pagstyle">
-        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.mirrorDetail.ye')}}</span>
+        <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('TKE.mirrorDetail.tiao')}}</span>
         <el-pagination
           :page-size="pagesize"
           :pager-count="7"
-          layout="prev, pager, next"
+          layout="sizes, prev, pager, next"
+          :page-sizes="[10, 20, 50, 100]"
           @current-change="handleCurrentChange"
+          @size-change="handleSizeChange"
           :total="TotalCount"
         ></el-pagination>
       </div>
     </div>
+    <el-dialog
+      title="删除镜像版本"
+      :visible.sync="dialogVisibleDelete"
+      width="40%"
+     >
+      <p style="font-weight:bold">您确定要删除镜像版本"{{this.deleteObj.delName}}"吗？</p>
+      <p style="color:#888;font-size:14px">镜像版本删除后将不可恢复，请提前备份好数据。</p>
+      <p style="color:red">注：将同时删除与"{{this.deleteObj.delName}}"版本镜像ID相同的 <span  style="margin-left:2px" v-for="(v,i) in deleteObj.delOtherArr" :key="i">[{{v}}]</span>    版本。</p>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisibleDelete = false">取 消</el-button>
+        <el-button type="primary" @click="deleteSure()">确 定</el-button>
+      </span>
+   </el-dialog>
     <!-- 使用指引弹出框
     <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
         <ul>
@@ -122,7 +137,7 @@
 </template>
 <script>
 import { ErrorTips } from "@/components/ErrorTips";
-import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY, TKE_MIRROR_AUTODELELTE,TKE_AUTOSTRATEGY } from '@/constants'
+import { TKE_MIRROR_ROAD, TKE_MIRROR_STRATEGY,TKE_RELEVANTIMAGELIST,TKE_DELETEIMAGEVERSION, TKE_MIRROR_AUTODELELTE,TKE_AUTOSTRATEGY ,TKE_IMAGEVERSIONLIST} from '@/constants'
 export default {
   name:'MirrorInfos',
   data () {
@@ -139,6 +154,11 @@ export default {
       dialogTableVisible: false,
       dialogFormVisible: false,
       dialogVisible: false,
+      dialogVisibleDelete:false,
+      deleteObj:{
+        delName:'',
+        delOtherArr:[],
+      },
       formLabelWidth: '120px',
       reponame: '',
       server: '',
@@ -187,14 +207,16 @@ export default {
   created () {
     this.GetLink()
     this.GetImage()
+    this.getList()
+    console.log(this.$route.query.id,'this.$route.query.id,')
   },
   methods: {
-    handleClick (row) {
-      console.log(row)
-    },
     // 分页
     handleCurrentChange (val) {
       this.currpage = val
+    },
+    handleSizeChange(val) {
+      console.log(`每頁 ${val} 條`);
     },
     submitForm(formName) {
 
@@ -213,6 +235,60 @@ export default {
 
         });
       },
+       //删除
+    handleClick (row) {
+      this.dialogVisibleDelete=true;
+      this.deleteObj.delName=row.TagName;
+      let param={
+        RepoName:  this.$route.query.id,
+        Tag: row.TagName,
+        Version: "2019-09-24",
+      }
+      this.axios.post(TKE_RELEVANTIMAGELIST,param).then(res=>{
+        if (res.Response.Error == undefined) {
+            let {Data:{SameImages}}=res.Response
+           this.deleteObj.delOtherArr=SameImages;
+            }else{
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+      })
+    },
+    deleteSure(){
+      this.dialogVisibleDelete = false;
+      let param={
+        RepoName: this.$route.query.id,
+        Tag:this.deleteObj.delName,
+        Version: "2019-09-24",
+      }
+      this.axios.post(TKE_DELETEIMAGEVERSION,param).then(res=>{
+          if(res.Response.Error == undefined){
+               this.$message({
+                message: '删除成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+              this.getList();
+          }else{
+             let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+          }
+      })
+
+    },
     // submitForm (formName) {
     //   // console.log(formName)
     //   if (formName.input1 !== '' || formName.input2 !== '') {
@@ -364,6 +440,31 @@ export default {
       this.ruleForm.input1 = ''
       this.ruleForm.input2 = ''
       this.DeleteMirrorAuto()
+    },
+    getList(){
+      let param={
+         RepoName: this.$route.query.id,
+         Version: "2019-09-24"
+      }
+      this.axios.post(TKE_IMAGEVERSIONLIST,param).then(res=>{
+        console.log(res,'res')
+        if (res.Response.Error == undefined) {
+            let {Data:{TagInfo}}=res.Response
+            console.log(TagInfo,'TagInfo')
+            this.tableData=TagInfo;
+            this.TotalCount=TagInfo.length;
+            }else{
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+        }
+
+      })
     }
   }
 }

@@ -163,7 +163,7 @@ module.exports = {
       zting: '暂停',
       zk: '展开',
       dc: '导出',
-      ygsl: '共2个实例',
+      ygsl: '个实例', // 共x个实例
       dctp: '导出图片',
       bj: '编辑',
       fztb: '复制图表',
