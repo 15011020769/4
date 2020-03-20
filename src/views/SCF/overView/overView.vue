@@ -315,7 +315,7 @@
       this.GetOverView();
       this.GetUserMonthUsage();
       this.GetUserYesterdayUsage();
-      // this._GetTop()
+      this._GetTop()
     },
     methods: {
       //函数数量
@@ -450,12 +450,24 @@
       //获取top10列表
       _GetTop() {
         let parms = {
-          Version: '2018-07-24',
+          metricName: "mem_duration",
           Region: localStorage.getItem('regionv2'),
-          Namespace: 'QCE/SCF_V2',
-          MetricName: 'MemDuration',
-          Time: '2020-03-13 00:00:00',
-          period: 86400
+          namespace: "qce/scf_v2",
+          order: "desc",
+          time: "2020-03-20 00:00:00",
+          period: 86400,
+          lang: "zh",
+          dimensions: [{
+              name: "appid",
+              value: 1300560919
+            },
+            {
+              name: "function_name"
+            },
+            {
+              name: "namespace"
+            }
+          ]
         }
         this.axios.post(TOP_LIST, parms).then(data => {
           console.log(data)
