@@ -186,10 +186,10 @@
       </el-table>
     </div>
   </div>
-  <div class="mid">
+  <div class="mid" v-if="isShowRight">
     <i class="el-icon-connection"></i>
   </div>
-  <div class="right">
+  <div class="right" v-if="isShowRight">
     <div class="right-main border">
       <el-table
         :data="multipleSelection"
@@ -375,13 +375,18 @@ export default {
         title1: '',
         title2: '',
         title3: ''
-      }
+      },
+      // isShowRight: this.isShowRight,
     }
   },
 	props: {
     productData: {
       required: true,
       type: Object
+    },
+    isShowRight: {
+      required: true,
+      type: Boolean
     }
   },
   watch: {
@@ -452,6 +457,7 @@ export default {
       }
     },
     handleSelectionChange(val) {
+      this.multipleSelection = val;
       this.$emit("multipleSelection", val);
     },
     DeleteList(row) {
