@@ -182,7 +182,7 @@
               </div>
             </div>
             <!-- 左边底部内容 -->
-            <div
+            <!-- <div
               class="resource-overview twoRow-data-card-border-top"
               style="margin-top:20px;"
             >
@@ -197,12 +197,12 @@
                 <div class="data-card-img">
                   <div class="font-small" style="color:black">使用指引</div>
                   <div class="font-small">
-                    {{$t('TKE.overview.kscj')}}
+                    {{$t('TKE.overview.kscj')}} -->
                     <!-- <a href="">{{$t('TKE.overview.kssy')}}</a> -->
-                  </div>
+                  <!-- </div>
                 </div>
               </div>
-            </div>
+            </div> -->
           </el-col>
           <!-- 右边内容 -->
           
