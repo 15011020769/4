@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="header">
-      <h2>运营报表</h2>
-    </div>
     <div  class="container">
      <overview class="card" />
      <status class="card" />
@@ -24,9 +21,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.container {
-  margin: 25px 30px;
-}
 .header {
   h2 {
   padding-left: 20px;
