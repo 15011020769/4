@@ -396,14 +396,15 @@
           <li>
             <span>实例组</span>
             <span>{{ InstanceGroupShow.InstanceGroup.GroupName }}</span>
-            <a href="javascript:;">解除绑定</a>
+            <a href="javascript:;" @click="unBindingInstance = true"
+              >解除绑定</a
+            >
           </li>
           <li>
             <span>实例数</span>
             <span
-              >{{
-                InstanceGroupShow.InstanceGroup.InstanceSum
-              }}个(启用告警：2个)</span
+              >{{ InstanceGroupShow.InstanceGroup.InstanceSum }}个(启用告警：
+              {{ InstanceGroupShow.NoShieldedSum }}个)</span
             >
             <a href="javascript:;" @click="retract = !retract">{{
               retract ? "收起" : "展开"
@@ -441,6 +442,7 @@
                     height="400"
                     ref="multipleTable"
                     class="table-left"
+                    v-loading="alarmInstanceLond"
                   >
                     <el-table-column
                       label="ID/主机名"
@@ -788,9 +790,10 @@
                     <el-table-column label="启用告警">
                       <template slot-scope="scope">
                         <el-switch
-                          v-model="scope.row.IsOpen"
+                          v-model="scope.row.IsShielded"
                           active-color="#006eff"
                           inactive-color="#888"
+                          @change="AlarmStart(scope.row, scope.$index)"
                         >
                         </el-switch>
                       </template>
@@ -1501,6 +1504,23 @@
         <el-button @click="callbackInterface = false">取 消</el-button>
       </div>
     </el-dialog>
+    <!-- 告警对象 解除绑定 -->
+    <el-dialog
+      title="确定解绑告警策略"
+      :visible.sync="unBindingInstance"
+      width="600px"
+      custom-class="tke-dialog"
+    >
+      <div>
+        解绑后，策略将不再对实例分组生效
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="UnBindingInstance"
+          >确定解绑</el-button
+        >
+        <el-button @click="unBindingInstance = false">取消</el-button>
+      </div>
+    </el-dialog>
     <!-- 告警接收对象 解除 -->
     <el-dialog
       :title="relieveTitle"
@@ -1511,10 +1531,10 @@
       <div>
         确认解除告警接收人关联
       </div>
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary">确定</el-button>
         <el-button @click="relieveDialogVisible = false">取消</el-button>
-      </span>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -1549,7 +1569,8 @@ import {
   OBJ_LIST,
   CM_ALARM_OBJECT_LIST_EDIT,
   CM_GROUPING_LIST,
-  CM_ALARM_OBJECT_STATUS
+  CM_GROUPING_ALARM_START,
+  CM_GROUPING_UNBINDING
 } from "@/constants";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
@@ -1627,6 +1648,7 @@ export default {
       input1: "",
       alarmObjectData: [],
       alarmObjecLoad: true,
+      alarmInstanceLond: true,
       receivingObjectData: [],
       callbackInterface: false,
       //分页
@@ -1848,7 +1870,8 @@ export default {
       InstanceGroup: "",
       InstanceGroupShow: "",
       InstanceGroupOpt: [],
-      retract: true
+      retract: true,
+      unBindingInstance: false
     };
   },
   components: { Header, CamTransferCpt, ProductTypeCpt },
@@ -2198,9 +2221,6 @@ export default {
           this.dialogEditObject = false;
           this.alarmObjectNews = false;
           this.AlarmObjectList();
-          // if (this.editAlarmObjectRadio == 3) {
-          //   this.AlarmObjectRemovalAllSure();
-          // }
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
@@ -2622,6 +2642,7 @@ export default {
     // 告警对象列表
     async AlarmObjectList() {
       this.alarmObjecLoad = true;
+      this.alarmInstanceLond = true;
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -2659,11 +2680,17 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   console.log("alarmObjectData", this.alarmObjectData);
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     FailedOperation: "操作失败",
@@ -2699,7 +2726,6 @@ export default {
               this.axios.post(VPN_LIST, params).then(res => {
                 if (res.Response.Error === undefined) {
                   this.alarmObjectData = res.Response.VpnGatewaySet;
-                  console.log("this.alarmObjectData", this.alarmObjectData);
                   for (let i in _enterList) {
                     for (let j in this.alarmObjectData) {
                       if (
@@ -2708,10 +2734,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
@@ -2751,10 +2783,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     "InvalidParameter.Coexist": "参数不支持同时指定。",
@@ -2785,7 +2823,6 @@ export default {
               this.axios.post(NAT_LIST, params).then(res => {
                 if (res.Response.Error === undefined) {
                   this.alarmObjectData = res.Response.NatGatewaySet;
-
                   for (let i in _enterList) {
                     for (let j in this.alarmObjectData) {
                       if (
@@ -2794,10 +2831,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {};
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -2834,10 +2877,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     "InvalidParameter.Coexist": "参数不支持同时指定。",
@@ -2878,10 +2927,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     InvalidParameter: "入参不合法。"
@@ -2918,10 +2973,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     CdbError: "后端错误或者流程错误。",
@@ -2963,10 +3024,16 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     "InternalError.DbOperationFailed":
@@ -3012,11 +3079,17 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   console.log(this.alarmObjectData);
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     InternalError: "内部错误",
@@ -3057,11 +3130,17 @@ export default {
                       ) {
                         this.alarmObjectData[j]["UniqueId"] =
                           _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
                       }
                     }
                   }
                   console.log(this.alarmObjectData);
                   this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
                 } else {
                   let ErrTips = {
                     FailedOperation: "操作失败。",
@@ -3098,11 +3177,17 @@ export default {
                       this.alarmObjectData.push(_arr[j]);
                       this.alarmObjectData[i]["UniqueId"] =
                         _enterList[i].UniqueId;
+                      if (_enterList[i].IsShielded == 0) {
+                        this.alarmObjectData[j]["IsShielded"] = true;
+                      } else {
+                        this.alarmObjectData[j]["IsShielded"] = false;
+                      }
                     }
                   }
                 }
                 console.log(this.alarmObjectData);
                 this.alarmObjecLoad = false;
+                this.alarmInstanceLond = false;
               });
             }
             console.log(this.alarmObjectData);
@@ -3176,6 +3261,144 @@ export default {
           "已选择" + this.UniqueId.length + "个告警对象，确定要解除关联？";
       }
       this.alarmObjectRemovalVisible = true;
+    },
+    AlarmStart(row, index) {
+      this.alarmInstanceLond = true;
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      if (row.IsShielded === true) {
+        param["IsShielded"] = 0;
+      } else {
+        param["IsShielded"] = 1;
+      }
+      param["Dimensions.0.Region"] = "tpe";
+      if (this.ViewName === "cvm_device") {
+        param["Dimensions.0.Dimensions"] = {
+          unInstanceId: row.InstanceId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          uuid: row.Uuid
+        };
+      } else if (this.ViewName === "VPN_GW") {
+        param["Dimensions.0.Dimensions"] = {
+          vip: row.PublicIpAddress
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          VpnGatewayId: row.VpnGatewayId
+        };
+      } else if (this.ViewName === "vpn_tunnel") {
+        param["Dimensions.0.Dimensions"] = {
+          uniqVpnconnId: row.VpnConnectionId
+        };
+      } else if (this.ViewName === "nat_tc_stat") {
+        param["Dimensions.0.Dimensions"] = {
+          uniq_nat_id: row.NatGatewayId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          instanceId: row.NatGatewayId
+        };
+      } else if (this.ViewName === "DC_GW") {
+        param["Dimensions.0.Dimensions"] = {
+          directconnectgatewayid: row.DirectConnectGatewayId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          instanceId: row.DirectConnectGatewayId
+        };
+      } else if (this.ViewName === "EIP") {
+        param["Dimensions.0.Dimensions"] = {
+          vip: row.AddressIp
+        };
+      } else if (this.ViewName === "cdb_detail") {
+        param["Dimensions.0.Dimensions"] = {
+          uInstanceId: row.InstanceId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          InstanceId: row.InstanceId
+        };
+      } else if (this.ViewName === "REDIS-CLUSTER") {
+        param["Dimensions.0.Dimensions"] = {
+          instanceid: row.InstanceId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          instanceid: row.InstanceId
+        };
+      } else if (this.ViewName === "dcchannel") {
+        param["Dimensions.0.Dimensions"] = {
+          directconnecttunnelid: row.DirectConnectTunnelId
+        };
+      } else if (this.ViewName === "dcline") {
+        param["Dimensions.0.Dimensions"] = {
+          directconnectid: row.DirectConnectId
+        };
+      } else if (this.ViewName === "COS") {
+        param["Dimensions.0.Dimensions"] = {
+          bucket: row.Name
+        };
+      }
+      this.axios.post(CM_GROUPING_ALARM_START, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.AlarmObjectList();
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 解除绑定
+    UnBindingInstance() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        InstanceGroupId: this.InstanceGroupShow.InstanceGroup.InstanceGroupId,
+        PolicyGroupId: this.$route.query.groupId,
+        IsDelRelatedPolicy: 2
+      };
+      this.axios.post(CM_GROUPING_UNBINDING, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.AlarmObjectList();
+          this.unBindingInstance = false;
+        } else {
+          let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     handleSelectionChange(val) {
       this.UniqueId = val;
