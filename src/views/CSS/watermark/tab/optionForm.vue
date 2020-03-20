@@ -4,8 +4,7 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
       <el-form-item :label="$t('CSS.watermark.8')" prop="WatermarkName">
         <el-input v-model="ruleForm.WatermarkName" style="width:330px;" />
-        <br />
-        <span>僅支持中文、英文、數字、_、-，不超過30個字元</span>
+        <span class="sub-text">僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.watermark.13')" prop="PictureUrl">
         <el-row type="flex">
@@ -21,7 +20,7 @@
             :auto-upload="false"
           >
             <el-button size="small" type="primary">{{$t('CSS.watermark.16')}}</el-button>
-            <div slot="tip" class="el-upload__tip">{{$t('CSS.watermark.14')}}</div>
+            <div slot="tip" class="el-upload__tip" style="color: #888;">{{$t('CSS.watermark.14')}}</div>
             <div slot="file" slot-scope="{file}">
             </div>
           </el-upload>
@@ -109,7 +108,7 @@ export default {
           { required: true, message: '填寫水印名稱', trigger: 'blur' },
           { validator (rule, value, callback) {
             if (!/^[\u4e00-\u9fa5a-zA-Z\d_-]{1,30}$/.test(value)) {
-              callback(new Error('僅支持中文、英文、數字、_、-，不超過30個字符'))
+              callback(new Error('水印名稱不符要求'))
             } else {
               callback()
             }
@@ -259,6 +258,14 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.sub-text {
+  color: #888;
+  margin-left: 15px;
+  font-size: 12px;
+  width: 300px;
+  display: inline-block;
+  line-height: 20px;
+}
 .edit-img {
   height: 360px;
   width: 640px;

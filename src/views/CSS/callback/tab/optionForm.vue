@@ -10,8 +10,7 @@
     >
       <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" :placeholder="$t('CSS.transcribe.31')" style="width:330px;" />
-        <br />
-        <span>僅支持中文、英文、數字、_、-，不超過30個字元</span>
+        <span class="sub-text">僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input
@@ -20,8 +19,7 @@
           v-model="ruleForm.Description"
           style="width:330px;"
         />
-        <br />
-        <span>僅支持中文、英文、數字、_、-，不超過100個字元</span>
+        <span class="sub-text">僅支持中文、英文、數字、_、-，不超過100個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.20')" prop="CallbackKey">
         <el-input
@@ -165,11 +163,12 @@ export default {
       rules: {
         TemplateName: [
           { required: true, message: '請輸入範本名稱', trigger: 'blur' },
-          { min: 1, max: 30, message: '長度不能超過30個字符', trigger: 'blur' }
+          { pattern: /^[\w\-\u4e00-\u9fa5]{1,30}$/, message: '範本名稱不符要求', trigger: 'blur' }
         ],
         desc: [
           { required: false },
-          { max: 100, message: '長度不能超過100個字符', trigger: 'blur' }
+          { max: 100, message: '長度不能超過100個字符', trigger: 'blur' },
+          { pattern: /^[\w\-\u4e00-\u9fa5]{0,100}$/, message: '描述不符要求', trigger: 'blur' }
         ],
         CallbackKey: [
           { required: false },
@@ -275,6 +274,14 @@ export default {
 </script>
 
 <style scoped lang='scss'>
+.sub-text {
+  color: #888;
+  margin-left: 15px;
+  font-size: 12px;
+  width: 300px;
+  display: inline-block;
+  line-height: 20px;
+}
 .form-wrap >>> .el-input__inner,
 .form-wrap >>> .el-button {
   height: 30px;
