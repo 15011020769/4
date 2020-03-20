@@ -4,6 +4,8 @@
     <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
       <el-form-item :label="$t('CSS.watermark.8')" prop="WatermarkName">
         <el-input v-model="ruleForm.WatermarkName" style="width:330px;" />
+        <br />
+        <span>僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.watermark.13')" prop="PictureUrl">
         <el-row type="flex">
@@ -291,6 +293,10 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  span {
+    font-size: 12px;
+    color: #888;
   }
   .explain {
     display: inline-block;

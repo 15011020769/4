@@ -10,12 +10,18 @@
     >
       <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" style="width:330px;" />
+        <br />
+        <span>僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input type="textarea" v-model="ruleForm.Description" style="width:330px;" />
+        <br />
+        <span>僅支持中文、英文、數字、_、-，不超過100個字元</span>
       </el-form-item>
       <el-form-item class="input-number" label="截圖間隔" prop="SnapshotInterval">
         <el-input-number v-model="ruleForm.SnapshotInterval" :step="5" step-strictly />
+        <br />
+        <span>默認為10秒，取值範圍為5秒-300秒，必須為5的倍數</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.domainManagement.7')+$t('CSS.domainManagement.16')" prop="PornFlag">
         <el-switch v-model="ruleForm.PornFlag" />
@@ -230,6 +236,10 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  span {
+    font-size: 12px;
+    color: #888;
   }
   .explain {
     display: inline-block;

@@ -10,6 +10,8 @@
     >
       <el-form-item :label="$t('CSS.transcribe.7')" prop="TemplateName">
         <el-input v-model="ruleForm.TemplateName" :placeholder="$t('CSS.transcribe.31')" style="width:330px;" />
+        <br />
+        <span>僅支持中文、英文、數字、_、-，不超過30個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.8')" prop="Description">
         <el-input
@@ -18,6 +20,8 @@
           v-model="ruleForm.Description"
           style="width:330px;"
         />
+        <br />
+        <span>僅支持中文、英文、數字、_、-，不超過100個字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.20')" prop="CallbackKey">
         <el-input
@@ -298,6 +302,10 @@ export default {
   h4 {
     font-size: 14px;
     margin-bottom: 15px;
+  }
+  span {
+    font-size: 12px;
+    color: #888;
   }
   .explain {
     display: inline-block;
