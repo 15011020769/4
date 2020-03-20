@@ -526,8 +526,8 @@ export default {
     ChangePassword(word){
       const param = {
         // password: word
-        Version: "2019-09-24",
-        Password: word
+        // Version: "2019-09-24",
+        password: word
       }
       this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
         // console.log(res)
