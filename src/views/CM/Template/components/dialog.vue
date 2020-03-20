@@ -1,7 +1,7 @@
 <template>
   <div class="dialog">
-     <!-- @open="$emit('open')" -->
-    <el-dialog title="新建" :visible.sync="show" @open="$emit('open')" @close="$emit('close')">
+     <!--  @open="$emit('open')" @close="$emit('close')" -->
+    <el-dialog title="新建" :visible.sync="show" @open="loadShow=true">
       <el-form :model="formInline" :rules="rules" ref="form">
         <p class="rowCont">
           <span>策略名称</span>
@@ -34,7 +34,7 @@
       <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
-        :productValue='productValue'/>
+        :productValue='productValue' v-loading="loadShow"/>
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
@@ -71,7 +71,7 @@
                   <p :class="{mp:metting==1}">
                     if&nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
-                    <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
+                      <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
                       <!-- <el-option
                         v-for="(item,index) in zhibiaoType"
                         :key="index"
@@ -112,7 +112,7 @@
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                    >%</b>
+                    >{{it.Unit||'%'}}</b>
                     &nbsp;
                     <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;">
@@ -248,6 +248,7 @@ export default {
           CalcType: '>',
           CalcValue: '0',
           MetricId: 33,
+          Unit: '%',
           ContinuePeriod: 1,
           alarm: 86400
         }
@@ -398,6 +399,7 @@ export default {
       searchParam: {},
       //  value: 'ins-6oz38wnu', label: 'instance-id'
       productValue: 'cvm_device'
+      // aa: [{33: '%'},{},{}]
     }
   },
   watch: {
@@ -421,6 +423,10 @@ export default {
     Conditions: {
       required: true,
       type: Array
+    },
+    createSuccess: {
+      type: Function,
+      default: () => {}
     }
   },
   created () {
@@ -439,16 +445,6 @@ export default {
     },
     // 新建完成保存
     async newBuild () {
-      // this.meetConditions.forEach(ele => {
-      //   if (ele.label == this.metting) {
-      //     this.metting = Number(ele.value)
-      //   }
-      // })
-      // this.Conditions.forEach(item=>{
-      //   if(this.productValue = item.PolicyViewName){
-      //   this.productValue = item.PolicyViewName
-      // }
-      // })
       let params = {
         Version: '2018-07-24',
         GroupName: this.formInline.strategy_name,
@@ -503,9 +499,10 @@ export default {
       await this.axios.post(NEWBUILD_TEMPLATE, params).then(res => {
         if (res.Response.Error === undefined) {
           // console.log(res)
-          this.show = false
-          this.formInline.strategy_name = ''
+          this.show = false// 关闭弹框
+          this.formInline.strategy_name = ' '
           this.formInline.textareas = ''
+          this.createSuccess()// 更新列表
         } else {
           this.errorPrompt(res)
         }
@@ -513,35 +510,48 @@ export default {
     },
     passData (item) {
       // this.loadShow = true
-      console.log(item.Metrics)
+      // console.log(item.Metrics)
       this.productData = item
       // this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
-      // this.loadShow = false
+      this.$nextTick(() => {
+        this.loadShow = false
+      })
     },
     // 类型
     msgBtn (index) {
       this.liIndex = index
     },
     addZhibiao () { // 添加触发条件的指标告警
-      // this.indexAry.forEach(item=>{
-      //   this.zhibiaoType.forEach(ele=>{
-      //     if(item.MetricId!==ele.MetricId){
-
-      //     }
-      //   })
-      // })
-      this.indexAry.push(
-        {
-          Period: 60,
-          CalcType: '>',
-          CalcValue: '0',
-          ContinuePeriod: 1,
-          MetricId: 33,
-          alarm: 86400
+      let { zhibiaoType } = this
+      for (let i = 0; i < zhibiaoType.length; i++) {
+        let aa = this.indexAry.some(item => {
+          return item.MetricId === zhibiaoType[i].MetricId
+        })
+        if (!aa) {
+          this.indexAry.push({
+            Period: 60,
+            CalcType: '>',
+            CalcValue: '0',
+            ContinuePeriod: 1,
+            MetricId: zhibiaoType[i].MetricId,
+            Unit: zhibiaoType[i].MetricUnit,
+            alarm: 86400
+          })
+          return
         }
-      )
+      }
+      // 如果不 return 就把数组第一个push进来
+      this.indexAry.push({
+        Period: 60,
+        CalcType: '>',
+        CalcValue: '0',
+        ContinuePeriod: 1,
+        MetricId: zhibiaoType[0].MetricId,
+        Unit: zhibiaoType[0].MetricUnit,
+        alarm: 86400
+      })
     },
     delZhibiao (it) { // 删除触发条件的指标告警
       var index = this.indexAry.indexOf(it)

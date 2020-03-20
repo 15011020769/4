@@ -173,7 +173,7 @@
                     />
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                    >%</b>
+                    >{{it.Unit}}</b>
                     &nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:110px;" size="small"> -->
                       <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">

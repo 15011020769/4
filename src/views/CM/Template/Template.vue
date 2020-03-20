@@ -36,7 +36,7 @@
               <div>
                 <p style="color:#999;font-size:12px">指标告警(任意):</p>
                 <p v-for="(it,i) in scope.row.Conditions" :key="i" style="font-size:12px">
-                  {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}</p>
+                  {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持续${it.ContinueTime/60}分钟,${it.alarm}` }}</p>
               </div>
               <div v-if="scope.row.EventConditions.length">
                 <p style="color:#999;font-size:12px">事件告警:</p>
@@ -46,9 +46,9 @@
               <div slot="reference" class="name-wrapper">
                 <p class="textEps" v-for="items in scope.row.Conditions.slice(0,3)" :key="items.MetricDisplayName">
                   {{ `${items.MetricDisplayName}
-                      ${items.CalcType}
-                      ${items.CalcValue}
-                      ${items.Unit},持续
+                      ${items.CalcType||'-'}
+                      ${items.CalcValue||'-'}
+                      ${items.Unit||''},持续
                       ${items.ContinueTime/60}分钟,
                       ${items.alarm}` }}
                 </p>
@@ -143,7 +143,7 @@
         </span>
       </el-dialog>
     <!-- 新建对话框 -->
-    <Dialog @open="openDialogEvent" @close="closeDialogEvent"  :dialogVisible.sync="panelFlag" :Conditions="Conditions" @save="save" style="margin:0;" />
+    <Dialog :createSuccess='getTemplateList' :dialogVisible.sync="panelFlag" :Conditions="Conditions" @save="save" style="margin:0;" />
   </div>
 </template>
 
@@ -353,14 +353,6 @@ export default {
     async getDataInit () {
       await this.getPolicyType()
       await this.getTemplateList()
-    },
-    // 打开新建弹窗时的回调
-    openDialogEvent () {
-      // this.getPolicyType()
-    },
-    // 关闭新建弹窗时的回调
-    closeDialogEvent(){
-      this.getTemplateList()
     },
     // 获取策略类型
     async getPolicyType  () {
