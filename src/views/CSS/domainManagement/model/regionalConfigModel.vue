@@ -66,7 +66,7 @@ export default {
     }
   },
   watch: {
-    bandLimit() {
+    bandLimit () {
       this.limit = this.bandLimit
     }
   },

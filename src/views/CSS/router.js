@@ -15,6 +15,14 @@ export default new Router({
       redirect: '/overview'
     },
     {
+      path: '/live', // 申请开通腾讯云直播服务
+      name: 'live',
+      component: () => import('./live/index.vue'),
+      meta: {
+        keepAlive: true
+      }
+    },
+    {
       path: '/overview', // 概览
       name: 'overview',
       component: () => import(/* webpackChunkName: "overview" */ './overview/index.vue'),
