@@ -4,7 +4,7 @@
         <div class="top">
             <div class="top-one">
                 <span>产品类型</span>
-                <Type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue'></Type>
+                <Type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue' ></Type>
             </div>
             <div class="top-two">
                 <span>数据视图</span>
@@ -27,7 +27,8 @@
                             v-for="item in optionTarget"
                             :key="item.value"
                             :label="item.label"
-                            :value="item">
+                            :value="item"
+                            >
                             </el-option>
                          </el-select>
                     </div>
@@ -40,11 +41,15 @@
                 </div>
             </div>
             <div class="footer-right">
-                <CamTransferCpt style="width:100%" 
-                :productData='productListData'
-                v-on:projectId="projectIds"
-                v-on:searchParam="searchParams"
-                v-on:multipleSelection="selectDatas"></CamTransferCpt>
+                <div class="Cam-right">
+                    <CamTransferCpt style="width:100%" 
+                    :productData='productListData'
+                    v-on:projectId="projectIds"
+                    v-on:searchParam="searchParams"
+                    v-on:multipleSelection="selectDatas"
+                    :isShowRight="flag"
+                    ></CamTransferCpt>
+                </div>
             </div>
         </div>
         <div class="bottom">
@@ -56,12 +61,15 @@
 <script>
 import Type from '@/views/CM/CM_assembly/product_type'
 import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
-import {CREATDASHBORD} from '@/constants'
+import {CREATDASHBORD,All_MONITOR} from '@/constants'
 export default {
     name:"DashboardCreate",
     components:{
         Type,
         CamTransferCpt
+    },
+    created(){
+        this.getMonitorList()
     },
     data(){
         return{
@@ -72,7 +80,8 @@ export default {
             target:"", // 指标
             picName:"",
             productData:[],
-            productListData:{}
+            productListData:{},
+            flag:false
         }
     },
     methods:{
@@ -103,25 +112,47 @@ export default {
             this.searchParam = data;
         },
         selectDatas(val) {
-            console.log(val)
             this.rightData  = val;
+            console.log(val)
         },
         // 跳转
         jump(){
             this.$router.go(-1)
         },
-        // 创建Dashboard
-        // createDashboard(){
-        //     const param = {
-        //         Module :'monitor',
-        //         Namespace:'qce/cvm',
-        //         DescName:this.picName,
-        //         DashboardID:76484,
-        //     }   
-        //     this.axios.post(CREATDASHBORD, param).then(res => {
+        // async getMonitorList(){
+        //     let params = {
+        //         Namespace: "qce/cvm",
+        //         MetricName: "cpu_usage",
+        //         StartTime: "2020-03-20T19:31:24+08:00",
+        //         EndTime: "2020-03-20T20:31:24+08:00",
+        //         Period: 10,
+        //         // 'Instances.0.Dimensions.0.Name':'InstanceId',
+        //         // 'Instances.0.Dimensions.0.Value':'ins-kfkzimbi',
+        //         'Dimensions.0.unInstanceId': "ins-c6uthv4s",
+        //         // 'Instances.0.Dimensions.0.vpnGwId': "vpngw-jby0g51u",
+        //         // 'Instances.0.Dimensions.1.vpnGwId': "vpngw-fibqovh8",
+        //         Version: "2018-07-24",
+        //         Region: localStorage.getItem("regionv2"),
+        //     }
+        //     await this.axios.post(All_MONITOR, params).then(res=>{
         //         console.log(res)
         //     })
         // }
+        // 创建Dashboard
+        async createDashboard(){
+            const param = {
+                Module :'monitor',
+                Namespace:'qce/cvm',
+                DescName:this.picName,
+                DashboardID:76484,
+                MetricNames:["partition"],
+                Meta:{"aggregateType":"detail","aggregations":["Avg","Max","Min"],"chartTypes":["column"],"configId":"cvm","layout":{"h":"5","h2":"0","w":"4","x":"0","y":"0"},"timeAggregate":"last"},
+                Instances:["{\"regionId\":\"1\",\"unInstanceId\":\"ins-19719mfp\"}"]
+            }   
+            await this.axios.post(CREATDASHBORD, param).then(res => {
+                console.log(res)
+            })
+        }
     }
 }
 </script>
@@ -187,10 +218,12 @@ export default {
         .footer-right{
             width: 42%;
             height: 450px;
-            border:1px solid #ccc;
         }
     }
     .bottom{
         margin-top:20px;
+    }
+    .Cam-right{
+        float: right;
     }
 </style>
