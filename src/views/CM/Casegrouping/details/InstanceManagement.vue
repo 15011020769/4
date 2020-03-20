@@ -326,134 +326,29 @@
           </a>
         </div>
         <div class="dialog">
-          <div class="p">
-            <div class="main" style="background:white;">
-              <div class="left">
-                <div class="left-main border">
-                  <div class="seek" style="">
-                    <el-select
-                      v-model="searchSelectProject"
-                      placeholder="请选择"
-                    >
-                      <el-option
-                        v-for="item in projectOptions"
-                        :key="item.projectId"
-                        :label="item.projectName"
-                        :value="item.projectId"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-select v-model="searchSelect" placeholder="请选择">
-                      <el-option
-                        v-for="item in selectOptions"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
-                    <el-input
-                      placeholder="请输入内容"
-                      v-model="searchInput"
-                      class="input-with-select"
-                    >
-                      <el-button
-                        slot="append"
-                        icon="el-icon-search"
-                        @click="AddDataList"
-                      ></el-button>
-                    </el-input>
-                  </div>
-                  <el-table
-                    :data="tableData"
-                    height="420"
-                    ref="multipleTable"
-                    @selection-change="AddHandleSelectionChange"
-                    class="table-left"
-                  >
-                    <el-table-column
-                      type="selection"
-                      width="55"
-                      :selectable="selectInit"
-                    ></el-table-column>
-                    <el-table-column label="ID/主机名" width="120">
-                      <template slot-scope="scope">
-                        <p>
-                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
-                        </p>
-                        <p>{{ scope.row.InstanceName }}</p>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="网络类型" width="120"
-                      >VPC 网络</el-table-column
-                    >
-                    <el-table-column label="IP地址" width="120">
-                      <template slot-scope="scope">
-                        <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                        <p class="out">
-                          {{ scope.row.PublicIpAddresses[0] }}(外网)
-                        </p>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-              <div class="mid">
-                <i class="el-icon-connection"></i>
-              </div>
-              <div class="right">
-                <div class="right-main border">
-                  <el-table
-                    :data="multipleSelection"
-                    style=""
-                    height="450"
-                    class="table-left"
-                  >
-                    <el-table-column label="ID/主机名" width="120">
-                      <template slot-scope="scope">
-                        <p>
-                          <a href="javascript:;">{{ scope.row.InstanceId }}</a>
-                        </p>
-                        <p>{{ scope.row.InstanceName }}</p>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="网络类型" width="100"
-                      >VPC 网络</el-table-column
-                    >
-                    <el-table-column label="IP地址" width="170">
-                      <template slot-scope="scope">
-                        <div class="resses">
-                          <div>
-                            <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                            <p class="out">
-                              {{ scope.row.PublicIpAddresses[0] }}(外网)
-                            </p>
-                          </div>
-                        </div>
-                      </template>
-                    </el-table-column>
-                    <el-table-column width="50">
-                      <template slot-scope="scope">
-                        <div class="resses">
-                          <i
-                            class="el-icon-error ml5"
-                            @click="DeleteListAdd(scope.row)"
-                          ></i>
-                        </div>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-              </div>
-            </div>
+          <div>
+            <product-type-cpt
+              v-on:PassData="passData"
+              :searchParam="searchParam"
+              :projectId="projectId"
+              :productValue="viewName"
+              style="display:none;"
+            />
+            <CamTransferCpt
+              :productData="productListData"
+              v-on:projectId="projectIds"
+              v-on:searchParam="searchParams"
+              v-on:multipleSelection="selectDatas"
+              :isShowRight="isShowRight"
+            ></CamTransferCpt>
           </div>
         </div>
-        <p slot="footer" class="dialog-footer" style="text-align:center">
+        <div slot="footer" class="dialog-footer" style="text-align:center">
           <el-button type="primary" @click="save">保 存</el-button>
           <el-button @click="newBuildByVal.newBuildState = false"
             >取 消</el-button
           >
-        </p>
+        </div>
       </el-dialog>
       <!-- 移出 -->
       <el-dialog
@@ -495,6 +390,8 @@
   </div>
 </template>
 <script>
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_GROUPING_MANAGE,
@@ -562,8 +459,19 @@ export default {
           label: "主机名"
         }
       ],
-      viewName: this.Rules.viewName
+      viewName: this.Rules.viewName,
+      productListData: {},
+      projectId: 0,
+      searchParam: {},
+      productData: {},
+      isShow: false,
+      loadShow: true,
+      isShowRight: true
     };
+  },
+  components: {
+    CamTransferCpt,
+    ProductTypeCpt
   },
   props: {
     Rules: {
@@ -571,13 +479,34 @@ export default {
       default: () => []
     }
   },
-  components: {},
   created() {
     this.NewProject();
-
     this.ListInit();
   },
   methods: {
+    passData(data) {
+      this.isShow = false;
+      this.productListData = data;
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
+    },
+    projectIds(data) {
+      this.projectId = data;
+    },
+    searchParams(data) {
+      this.searchParam = data;
+    },
+    //选择右侧表格数据
+    selectDatas(val) {
+      this.multipleSelection = val;
+      console.log(this.multipleSelection);
+    },
     // 项目
     NewProject() {
       this.axios.get(ALL_PROJECT).then(res => {
@@ -1237,27 +1166,81 @@ export default {
         GroupName: this.Rules.groupName,
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: this.Rules.viewName
+        ViewName: this.Rules.viewName,
+        InstanceGroupId: this.Rules.instanceGroupId
       };
       console.log(this.multipleSelection);
       for (let i in this.multipleSelection) {
-        param["InstanceList." + i + ".Region"] = "ap-taipei";
-        // param["InstanceList." + i + ".Dimensions"] = JSON.stringify({
-        //   unInstanceId: this.multipleSelection[i].InstanceId
-        // });
-        // param["InstanceList." + i + ".EventDimensions"] = JSON.stringify({
-        //   uuid: this.multipleSelection[i].Uuid
-        // });
-        param["InstanceList." + i + ".Dimensions"] = {
-          unInstanceId: this.multipleSelection[i].InstanceId
-        };
-        param["InstanceList." + i + ".EventDimensions"] = {
-          uuid: this.multipleSelection[i].Uuid
-        };
+        if (this.viewName === "cvm_device") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            unInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            uuid: this.multipleSelection[i].Uuid
+          };
+        } else if (this.viewName === "VPN_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].PublicIpAddress
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            VpnGatewayId: this.multipleSelection[i].VpnGatewayId
+          };
+        } else if (this.viewName === "vpn_tunnel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
+          };
+        } else if (this.viewName === "nat_tc_stat") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniq_nat_id: this.multipleSelection[i].NatGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].NatGatewayId
+          };
+        } else if (this.viewName === "DC_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectgatewayid: this.multipleSelection[i]
+              .DirectConnectGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].DirectConnectGatewayId
+          };
+        } else if (this.viewName === "EIP") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].AddressIp
+          };
+        } else if (this.viewName === "cdb_detail") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            InstanceId: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.viewName === "REDIS-CLUSTER") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.viewName === "dcchannel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnecttunnelid: this.multipleSelection[i]
+              .DirectConnectTunnelId
+          };
+        } else if (this.viewName === "dcline") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectid: this.multipleSelection[i].DirectConnectId
+          };
+        } else if (this.viewName === "COS") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            bucket: this.multipleSelection[i].Name
+          };
+        }
       }
       this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
+          this.newBuildByVal.newBuildState = false;
+          this.ListInit();
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
@@ -1383,21 +1366,6 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection1 = val;
-    },
-    AddHandleSelectionChange(val) {
-      this.multipleSelection = val;
-    },
-    // 复选框操作
-    selectInit(row, index) {
-      if (
-        this.enterList.some(el => {
-          return el.InstanceId === row.InstanceId;
-        })
-      ) {
-        return false;
-      } else {
-        return true;
-      }
     },
     // 分页
     handleCurrentChange(val) {

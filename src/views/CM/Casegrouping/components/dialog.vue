@@ -63,10 +63,9 @@
 </template>
 
 <script>
-// import GroupingType from "@/components/GroupingType";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
-import { ErrorTips } from "@/components/ErrorTips";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
+import { ErrorTips } from "@/components/ErrorTips";
 import { CM_GROUPING_NEWLY_BUILD } from "@/constants";
 export default {
   name: "msg",
@@ -90,7 +89,6 @@ export default {
     };
   },
   components: {
-    // GroupingType,
     CamTransferCpt,
     ProductTypeCpt
   },
@@ -145,7 +143,6 @@ export default {
     },
     // 保存
     save() {
-      console.log(this.groupingNameTips);
       if (this.groupingNameTips === false || this.groupingName == "") {
         return false;
       } else {
