@@ -450,24 +450,13 @@
       //获取top10列表
       _GetTop() {
         let parms = {
-          metricName: "mem_duration",
-          Region: localStorage.getItem('regionv2'),
-          namespace: "qce/scf_v2",
-          order: "desc",
-          time: "2020-03-20 00:00:00",
-          period: 86400,
-          lang: "zh",
-          dimensions: [{
-              name: "appid",
-              value: 1300560919
-            },
-            {
-              name: "function_name"
-            },
-            {
-              name: "namespace"
-            }
-          ]
+          Version: '2018-07-24',
+          MetricName: "mem_duration",
+          Region: 'ap-guangzhou',
+          Namespace: "qce/scf_v2",
+          Time: "2020-03-12 00:00:00",
+          Period: 3600,
+          Module: 'monitor'
         }
         this.axios.post(TOP_LIST, parms).then(data => {
           console.log(data)

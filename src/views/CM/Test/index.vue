@@ -185,9 +185,13 @@
           Module: 'monitor',
           DescName: 'bobin9999',
           Namespace: 'qce/cvm',
-          DashboardID: '80429',
-          'Instances.0': 'ins-kfkzimbi',
-          Meta: {
+          DashboardID: '82640',
+          // 'Instances.0': 'ins-kfkzimbi',
+          'Instances.0': JSON.stringify({
+            "regionId": "1",
+            "unInstanceId": "ins-kfkzimbi"
+          }),
+          Meta: JSON.stringify({
             "aggregateType": "detail",
             "aggregations": ["Avg", "Max", "Min"],
             "chartTypes": ["column"],
@@ -200,8 +204,8 @@
               "y": "0"
             },
             "timeAggregate": "last"
-          },
-          'MetricNames.0': "cpu_usage"
+          }),
+          'MetricNames.0': "partition"
         };
 
         this.axios.post(CREATDASHBORD, param).then(data => {
