@@ -132,9 +132,9 @@ export default {
       }
 
       if (interval === '5min') { // 日报
-        fileName = `1300561189-overseas${start}_${name}.xlsx`
+        fileName = `${start}_${name}.xlsx`
       } else {
-        fileName = `1300561189-overseas${start}-${end}_${name}.xlsx`
+        fileName = `${start}-${end}_${name}.xlsx`
       }
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();

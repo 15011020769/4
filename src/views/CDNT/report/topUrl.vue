@@ -116,9 +116,9 @@ export default {
       }
       if (interval === "5min") {
         // 日报
-        fileName = `1300561189-overseas-${start}_${name}_top10_urls.xlsx`;
+        fileName = `${start}_${name}_top10_urls.xlsx`;
       } else {
-        fileName = `1300561189-overseas-${start}-${end}_${name}_top10_urls.xlsx`;
+        fileName = `${start}-${end}_${name}_top10_urls.xlsx`;
       }
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();
