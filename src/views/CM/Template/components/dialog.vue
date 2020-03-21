@@ -382,19 +382,22 @@ export default {
     },
     indexAry: {
       handler: function (val, old) {
-        // this.zhibiaoType.forEach(item => {
-        //   val.forEach(ele => {
-        //     ele.Unit = item.MetricUnit
-        //   })
-        // })
-        if (val.length > 1) {
-          for (let i = 0; i < val.length - 1; i++) {
-            if (val[val.length - 1].MetricId == val[i].MetricId) {
-              this.isRepeated = true
-            } else {
-              this.isRepeated = false
-            }
+        let temp = []
+        val.forEach((ele, index) => {
+          let tempObj = this.zhibiaoType.find(item => {
+            return item.MetricId === ele.MetricId
+          })
+          if (tempObj) {
+            this.indexAry[index].Unit = tempObj.MetricUnit
           }
+          !temp.some(item => {
+            return ele.MetricId === item.MetricId
+          }) && temp.push(ele)
+        })
+        if (val.length === temp.length) {
+          this.isRepeated = false
+        } else {
+          this.isRepeated = true
         }
       },
       deep: true
@@ -507,18 +510,7 @@ export default {
     },
     passData (item) {
       this.productData = item
-      console.log(item)
-      // let { Metrics } = item
       this.zhibiaoType = item.MetricName
-      // this.indexAry = [{
-      //   Period: 60,
-      //   CalcType: '>',
-      //   CalcValue: '0',
-      //   MetricId: Metrics[0].MetricId,
-      //   Unit: Metrics[0].MetricUnit,
-      //   ContinuePeriod: 1,
-      //   alarm: 86400
-      // }]
       this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
       this.$nextTick(() => {
