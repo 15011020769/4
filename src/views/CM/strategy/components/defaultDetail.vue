@@ -58,10 +58,8 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
         <h3>告警触发条件</h3>
-        <a
-          @click="editGaoJing"
-          v-loading="gaoJingLoading"
-          class="gao-jing-loading"
+        <a v-loading="gaoJingLoading" class="gao-jing-loading">编辑</a>
+        <a @click="editGaoJing" v-if="!gaoJingLoading" class="gao-jing-loading"
           >编辑</a
         >
       </div>
@@ -1546,6 +1544,8 @@
             v-on:searchParam="searchParams"
             v-on:multipleSelection="selectDatas"
             :isShowRight="isShowRight"
+            v-loading="loading"
+            v-on:CAM_loading="CAM_loading"
           ></CamTransferCpt>
         </div>
       </div>
