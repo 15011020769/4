@@ -90,7 +90,8 @@ export default {
           // res.Response.RequestId
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
           this.$parent.$parent.DashboardID = res.Response.DashboardID; // 跳转到新的监控面板ID
-          console.log(res.Response, this.$parent.$parent.panelValue, this.$parent.$parent, 'res.Response');
+          this.form.name = "";
+          // console.log(res.Response, this.$parent.$parent.panelValue, this.$parent.$parent, 'res.Response');
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",

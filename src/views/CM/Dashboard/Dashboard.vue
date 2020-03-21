@@ -49,7 +49,7 @@
                 {{item.DescName}}
                 <span style="color:#888">（%）</span>
               </b>
-              <el-row>
+              <!-- <el-row>
                 <i class="el-icon-zoom-in"></i>
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
@@ -63,14 +63,14 @@
                     <el-dropdown-item @click="deleteChart">{{$t('CVM.Casegrouping.sc')}}</el-dropdown-item>
                   </el-dropdown-menu>
                 </el-dropdown>
-              </el-row>
+              </el-row> -->
             </p>
             <!-- <div class="line" :ref="'echart' + item.ViewID" :id="'echart'+item.ViewID">
-
-            </div> -->
-            <div  v-for="(item,i) in seriesArr" :key='i'>
+            </div> DataPoints-->
+            <!-- <div  v-for="(item,i) in seriesArr" :key='i'>
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
-            </div> 
+            </div>  -->
+            <EcharS class="line" :time="time" :series='item.DataPoints' :period='period' />
           </div>
           <div class="open">
             <p>
@@ -213,7 +213,7 @@ export default {
       seriesArr: [ // 纵坐标
         {series: [{
             type: 'line',
-            data: []
+            data: [0.1, 0.2, 0.3, 0.1, 0.2, 0.3,0.1, 0.2, 0.3,]
           }],
         },
       ],
@@ -245,12 +245,12 @@ export default {
       this.startEnd.EndTime = data[1].EndTIme; //  结束时间
       this.period = data[0]; // 粒度
       console.log(data, 'data', this.startEnd);
-      this.seriesArr.forEach(item => {
-        item.series[0].data = [];
-        this.time.forEach(ele => {
-          item.series[0].data.push(parseInt(Math.random() * 100));
-        })
-      })
+      // this.seriesArr.forEach(item => {
+      //   item.series[0].data = [];
+      //   this.time.forEach(ele => {
+      //     item.series[0].data.push(parseInt(Math.random() * 100));
+      //   })
+      // })
     },
     //设置弹框//新建实例分组
     buyMessgae() {
@@ -466,7 +466,7 @@ export default {
         }).then(res => {
             if (res.Response.Error === undefined) {
               this.ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
-              this.ViewList.forEach(ele => {
+              this.ViewList.forEach((ele,index) => {
                 let newInstances = [];
                 ele.Instances.forEach(el => {
                   newInstances.push(JSON.parse(el));
@@ -495,10 +495,10 @@ export default {
                 // this.getMonitorData(Namespace, MetricName, Period, StartTime, EndTime, Dimensions)
                 // 获取监控面板echarts数据
                 // console.log(this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances, 'this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances')
-                var series = []; // Y轴坐标
-                series = this.getMonitorData(ele.Namespace, ele.MetricName[0], this.period, 
-                  this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances);
-                console.log(series, 'series');
+                
+                // Y轴数据
+                this.getMonitorData(ele.Namespace, ele.MetricName[0], this.period, 
+                  this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances, index);
               });
               console.log( this.ViewList, 'Response');
             } else {
@@ -545,7 +545,7 @@ export default {
         })
     },
     // 获取监控面板echarts数据
-    async getMonitorData(Namespace, MetricName, Period, StartTime, EndTime, Instances) {
+    async getMonitorData(Namespace, MetricName, Period, StartTime, EndTime, Instances, index) {
       let params = {'Version': '2017-03-12', Namespace, MetricName, Period, StartTime, EndTime};
       if (Instances.length != 0) {
         Instances.forEach((ele,i) => {
@@ -568,7 +568,8 @@ export default {
               type: 'line', data: ele.Points
             });
           });
-          return DataPoints;
+          console.log(DataPoints, 'DataPoints');
+          this.ViewList[index].DataPoints = DataPoints;
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
