@@ -70,7 +70,7 @@
           :data="domains"
           @selection-change="handleSelectionChange"
           v-loading="loading"
-          :empty-text="t('暂无数据', 'WAF.zwsj')"
+          ref="table"
         >
           <el-table-column type="selection" width="55" :selectable="checkAble">
           </el-table-column>
@@ -195,8 +195,8 @@
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
+                <!-- :disabled="abnormal.includes(scope.row.State)" -->
               <el-switch
-                :disabled="abnormal.includes(scope.row.State)"
                 v-model="scope.row.ClsStatusBool"
                 @change="status => updateClsStatus(scope.row, status)"
                 active-color="#006eff"
@@ -226,8 +226,8 @@
               </el-dropdown-menu>
             </el-dropdown>
             <template slot-scope="scope">
+                <!-- :disabled="abnormal.includes(scope.row.State)" -->
               <el-switch
-                :disabled="abnormal.includes(scope.row.State)"
                 v-model="scope.row.StatusBool"
                 @change="status => updateWafStatus(scope.row, status)"
                 active-color="#006eff"
@@ -343,13 +343,17 @@ export default {
       total: 0,
       currentPage: 1,
       pageSize: 20,
-      refresh: false,
+      refresh: 1,
       timer: undefined
     }
   },
   computed: {
+    checked() {
+      return this.checkedWafs.map(a => a.DomainId)
+    },
     domains () {
-      return this.allDomains.slice((this.currentPage - 1) * this.pageSize, (this.currentPage - 1) * this.pageSize + this.pageSize)
+      const domains = this.allDomains.slice((this.currentPage - 1) * this.pageSize, (this.currentPage - 1) * this.pageSize + this.pageSize)
+      return domains
     }
   },
   components: {
@@ -362,12 +366,10 @@ export default {
     Status () {
       this.getData()
     },
-    refresh (n) {
-      if (n === true) {
-        this.timer = setTimeout(() => {
-          this.getData()
-        }, 2000)
-      }
+    refresh () {
+      this.timer = setTimeout(() => {
+        this.getData()
+      }, 5000)
     }
   },
   beforeRouteLeave (to, from, next) {
@@ -476,6 +478,7 @@ export default {
       })
     },
     handleSelectionChange (val) {
+      console.log(val)
       this.checkedWafs = val
     },
     // 获取数据
@@ -499,17 +502,29 @@ export default {
           this.generalRespHandler(resp, ({ HostList, TotalCount }) => {
             const domains = HostList
             let refresh = false
-            domains.forEach(domain => {
-              domain.StatusBool = !!domain.Status
-              domain.ClsStatusBool = !!domain.ClsStatus
-              domain.delDialog = false
-              if (!refresh && this.abnormal.includes(domain.State)) {
-                refresh = true
-              }
-            })
-            this.total = TotalCount
-            this.allDomains = domains
-            this.refresh = true
+            if (this.allDomains.length) {
+              // 不能直接设置allDomains，会丢失选中状态
+              domains.forEach((domain, i) => {
+                this.allDomains[i].State = domain.State
+                if (!refresh && this.abnormal.includes(domain.State)) {
+                  refresh = true
+                }
+              })
+            } else {
+              domains.forEach(domain => {
+                domain.StatusBool = !!domain.Status
+                domain.ClsStatusBool = !!domain.ClsStatus
+                domain.delDialog = false
+                if (!refresh && this.abnormal.includes(domain.State)) {
+                  refresh = true
+                }
+              })
+              this.total = TotalCount
+              this.allDomains = domains
+            }
+            if (refresh) {
+              this.refresh += 1
+            }
           })
         }).then(() => {
           this.loading = false
