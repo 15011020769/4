@@ -9,7 +9,9 @@
         <!-- 左侧 -->
         <div class="grid-left">
           <h2 class="header-title">集群管理</h2>
-          <el-button size="small" type="primary">{{$t('TKE.overview.zgtb')}}</el-button>
+          <el-button size="small" type="primary">{{
+            $t("TKE.overview.zgtb")
+          }}</el-button>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -91,22 +93,23 @@
           ></el-table-column>
           <el-table-column prop="address" :label="$t('TKE.colony.lxzt')">
             <template slot-scope="scope">
-              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'"
-                >{{$t('TKE.colony.tgjq')}}</span
-              >
-              <span v-else>{{$t('TKE.colony.dlbs')}}</span>
+              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'">{{
+                $t("TKE.colony.tgjq")
+              }}</span>
+              <span v-else>{{ $t("TKE.colony.dlbs") }}</span>
               (
               <span
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="text-green"
-                >{{$t('TKE.colony.yxz')}}</span
+                >{{ $t("TKE.colony.yxz") }}</span
               >
               <span
                 v-else-if="scope.row.ClusterStatus == 'Creating'"
                 class="text-green"
-                >{{$t('TKE.colony.cjz')}}</span
+                >{{ $t("TKE.colony.cjz") }}</span
               >
-              <span v-else class="text-red">{{$t('TKE.overview.yc')}}</span>)
+              <span v-else class="text-red">{{ $t("TKE.overview.yc") }}</span
+              >)
             </template>
           </el-table-column>
           <el-table-column prop="nodeTotal" :label="$t('TKE.colony.jds')">
@@ -123,9 +126,10 @@
               <span
                 class="text-red"
                 v-else-if="scope.row.ClusterInstanceState == 'AllAbnormal'"
-                >{{$t('TKE.colony.qbyc')}}</span
+                >{{ $t("TKE.colony.qbyc") }}</span
               >
-              <span class="text-red" v-else>{{$t('TKE.colony.bfyc')}}</span>)
+              <span class="text-red" v-else>{{ $t("TKE.colony.bfyc") }}</span
+              >)
               <el-popover
                 width="50"
                 trigger="hover"
@@ -133,11 +137,31 @@
                 v-if="scope.row.ClusterInstanceState != 'AllNormal'"
               >
                 <div class="node-popover">
-                  <p>{{$t('TKE.colony.cjz')}}：{{ scope.row.ClusterInitNodeNum }}台</p>
-                  <p>{{$t('TKE.colony.yxz')}}：{{ scope.row.ClusterRunningNodeNum }}台</p>
-                  <p>{{$t('TKE.overview.yc')}}：{{ scope.row.ClusterFailedNodeNum }}台</p>
-                  <p>{{$t('TKE.colony.ygj')}}：{{ scope.row.ClusterClosedNodeNum }}台</p>
-                  <p>{{$t('TKE.colony.gjz')}}：{{ scope.row.ClusterClosingNodeNum }}台</p>
+                  <p>
+                    {{ $t("TKE.colony.cjz") }}：{{
+                      scope.row.ClusterInitNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    {{ $t("TKE.colony.yxz") }}：{{
+                      scope.row.ClusterRunningNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    {{ $t("TKE.overview.yc") }}：{{
+                      scope.row.ClusterFailedNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    {{ $t("TKE.colony.ygj") }}：{{
+                      scope.row.ClusterClosedNodeNum
+                    }}台
+                  </p>
+                  <p>
+                    {{ $t("TKE.colony.gjz") }}：{{
+                      scope.row.ClusterClosingNodeNum
+                    }}台
+                  </p>
                 </div>
                 <i class="el-icon-warning-outline" slot="reference"></i>
               </el-popover>
@@ -146,7 +170,7 @@
           <el-table-column prop="address" :label="$t('TKE.colony.yfpzpz')">
             <template slot-scope="scope">
               <p>CPU: -/{{ scope.row.root }}核</p>
-              <p>{{$t('TKE.overview.ncun')}}: -/-GB</p>
+              <p>{{ $t("TKE.overview.ncun") }}: -/-GB</p>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="220">
@@ -164,11 +188,11 @@
                 @click="goAddExist(scope.row)"
                 v-if="scope.row.ClusterStatus == 'Running'"
                 class="tke-text-link ml10"
-                >{{$t('TKE.colony.tjyyjd')}}</span
+                >{{ $t("TKE.colony.tjyyjd") }}</span
               >
-              <span v-else class="tke-text-link ml10 tke-text-link-dis"
-                >{{$t('TKE.colony.tjyyjd')}}</span
-              >
+              <span v-else class="tke-text-link ml10  tke-text-link-dis">{{
+                $t("TKE.colony.tjyyjd")
+              }}</span>
               <el-dropdown class="ml10 tke-dropdown">
                 <span class="el-dropdown-link">
                   更多
@@ -180,14 +204,15 @@
                     v-if="scope.row.ClusterStatus == 'Running'"
                   >
                     <span
-                      class="tke-text-link"
+                      class="tke-text-link tke-text-links"
                       @click="ViewCluster(scope.row.ClusterId)"
-                      >{{$t('TKE.colony.ckjqpz')}}</span
+                      >{{ $t("TKE.colony.ckjqpz") }}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item command="a" v-else>
-                    <span class="tke-text-link tke-text-link-dis"
-                      >{{$t('TKE.colony.ckjqpz')}}</span
+                    <span
+                      class="tke-text-link tke-text-link-dis tke-text-links"
+                      >{{ $t("TKE.colony.ckjqpz") }}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item
@@ -195,14 +220,15 @@
                     v-if="scope.row.ClusterStatus == 'Running'"
                   >
                     <span
-                      class="tke-text-link"
+                      class="tke-text-link tke-text-links"
                       @click="goExpand(scope.row.ClusterId)"
-                      >{{$t('TKE.colony.xjjd')}}</span
+                      >{{ $t("TKE.colony.xjjd") }}</span
                     >
                   </el-dropdown-item>
                   <el-dropdown-item command="b" v-else>
-                    <span class="tke-text-link tke-text-link-dis"
-                      >{{$t('TKE.colony.xjjd')}}</span
+                    <span
+                      class="tke-text-link tke-text-link-dis tke-text-links"
+                      >{{ $t("TKE.colony.xjjd") }}</span
                     >
                   </el-dropdown-item>
 
@@ -211,13 +237,16 @@
                     v-if="scope.row.ClusterStatus == 'Running'"
                   >
                     <span
-                      class="tke-text-link"
+                      class="tke-text-link tke-text-links"
                       href="javascript:;"
                       @click="Delete(scope.row)"
-                      >{{$t('TKE.overview.sc')}}</span
+                      >{{ $t("TKE.overview.sc") }}</span
                     > </el-dropdown-item
                   ><el-dropdown-item command="b" v-else>
-                    <span class="tke-text-link tke-text-link-dis">{{$t('TKE.overview.sc')}}</span>
+                    <span
+                      class="tke-text-link tke-text-link-dis tke-text-links"
+                      >{{ $t("TKE.overview.sc") }}</span
+                    >
                   </el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
@@ -278,11 +307,16 @@
       custom-class="tke-dialog tke-delete-dialog"
     >
       <div class="content">
-        <p>{{$t('TKE.colony.qdyscjq')}}"{{ deleteID }}（{{ deleteName }}）"嗎？</p>
         <p>
-          {{$t('TKE.colony.gjqyy')}}{{ deteleNodeNum + deteleMaterNodeNum }}{{$t('TKE.colony.qz')}}
-          <span>0台</span>{{$t('TKE.colony.bnbyjd')}}
-          <a href="javascript:;" @click="DetailsShow">{{$t('TKE.overview.ckxq')}}</a>
+          {{ $t("TKE.colony.qdyscjq") }}"{{ deleteID }}（{{ deleteName }}）"嗎？
+        </p>
+        <p>
+          {{ $t("TKE.colony.gjqyy") }}{{ deteleNodeNum + deteleMaterNodeNum
+          }}{{ $t("TKE.colony.qz") }} <span>0台</span
+          >{{ $t("TKE.colony.bnbyjd") }}
+          <a href="javascript:;" @click="DetailsShow">{{
+            $t("TKE.overview.ckxq")
+          }}</a>
           <i class="el-icon-caret-bottom" v-if="!detailsShow"></i>
           <i class="el-icon-caret-top" v-if="detailsShow"></i>
         </p>
@@ -309,14 +343,14 @@
                   v-else-if="scope.row.InstanceState === 'initializing'"
                   class="text-orange"
                 >
-                  {{$t('TKE.colony.cjz')}}
+                  {{ $t("TKE.colony.cjz") }}
                 </p>
-                <p v-else class="text-red">{{$t('TKE.overview.yc')}}</p>
+                <p v-else class="text-red">{{ $t("TKE.overview.yc") }}</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
               <template>
-                <p>Master&Etcd，{{$t('TKE.colony.bkyc')}}</p>
+                <p>Master&Etcd，{{ $t("TKE.colony.bkyc") }}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -344,14 +378,14 @@
                   v-else-if="scope.row.InstanceState === 'initializing'"
                   class="text-orange"
                 >
-                  {{$t('TKE.colony.cjz')}}
+                  {{ $t("TKE.colony.cjz") }}
                 </p>
-                <p v-else class="text-red">{{$t('TKE.overview.yc')}}</p>
+                <p v-else class="text-red">{{ $t("TKE.overview.yc") }}</p>
               </template>
             </el-table-column>
             <el-table-column label="描述">
               <template>
-                <p>{{$t('TKE.colony.kycbxh')}}</p>
+                <p>{{ $t("TKE.colony.kycbxh") }}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -359,14 +393,14 @@
 
         <div class="detele-destruction">
           <p>
-            {{$t('TKE.colony.ymyx')}}
+            {{ $t("TKE.colony.ymyx") }}
           </p>
           <p>
-            {{$t('TKE.colony.kxzsfxh')}}
+            {{ $t("TKE.colony.kxzsfxh") }}
           </p>
-          <el-checkbox v-model="deteleCheck"
-            >{{$t('TKE.colony.xhjdbbf')}}</el-checkbox
-          >
+          <el-checkbox v-model="deteleCheck">{{
+            $t("TKE.colony.xhjdbbf")
+          }}</el-checkbox>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -991,6 +1025,11 @@ export default {
 .tke-text-link-dis {
   color: #bbb;
   cursor: not-allowed;
+}
+.tke-text-links {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
 }
 </style>
 <style lang="scss">

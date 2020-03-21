@@ -115,7 +115,7 @@
               </el-table-column>
               <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
                 <template slot-scope="scope">
-                  <span v-html="scope.row.desc"></span>
+                  <span>{{ scope.row.desc }}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -514,10 +514,7 @@ export default {
             }
 
             if (viewNameObj !== undefined) {
-              item.desc =
-                item.subtitle +
-                "：" +
-                `<a href="/CVM">${viewNameObj.AbnormalCount}</a>`;
+              item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
             } else {
               item.desc = "-";
             }

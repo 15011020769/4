@@ -248,6 +248,11 @@ export default {
     ELine
   },
   created () {
+    if (this.$route.params.first) {
+      this.$alert('尊敬的客戶您好，歡迎使用台富雲直播服務。已將新註冊客戶贈送的20GB播放流量發放到您的賬戶，試用流量用完請及時購買。', '提示', {
+        confirmButtonText: '確定',
+      })
+    }
     this._region()
     this.init()
   },

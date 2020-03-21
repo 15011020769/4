@@ -1,20 +1,20 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>访问用户区域分布</h3>
+      <h3>{{$t('CDNT.report.29')}}</h3>
       <i class="el-icon-download icon" @click="_export" />
     </el-row>
     <el-row type="flex" class="header" justify="space-between">
       <el-radio-group v-model="type" size="small" @change="changeRadio">
-        <el-radio-button label="flux">流量</el-radio-button>
-        <el-radio-button label="request">访问次数</el-radio-button>
+        <el-radio-button label="flux">{{$t('CDNT.report.9')}}</el-radio-button>
+        <el-radio-button label="request">{{$t('CDNT.report.31')}}</el-radio-button>
       </el-radio-group>
     </el-row>
     <el-row>
       <el-col :span="16" style="padding-right:20px">
         <div class="box-left">
           <el-row class="empty" v-if="seriesMap.length == 0 ? true : false">
-            暂无数据
+            {{$t('CDNT.report.17')}}
           </el-row>
           <echart-map
             :series="seriesMap"
@@ -29,15 +29,15 @@
         <el-table
           :data="tableData.slice((currpage - 1) * pageSize, currpage * pageSize)"
           v-loading="loading"
-          :empty-text="t('暂无数据', 'WAF.zwsj')"
+          :empty-text="($t('CDNT.report.17'), 'WAF.zwsj')"
         >
-          <el-table-column prop="name" label="用户所在区域"></el-table-column>
-          <el-table-column v-if="type === 'flux'" prop="value" label="流量">
+          <el-table-column prop="name" :label="$t('CDNT.report.32')"></el-table-column>
+          <el-table-column v-if="type === 'flux'" prop="value" :label="$t('CDNT.report.9')">
             <template slot-scope="scope">
               {{ fluxStr(scope.row.value) }}
             </template>
           </el-table-column>
-          <el-table-column v-if="type === 'flux'" prop="ratio" label="流量占比">
+          <el-table-column v-if="type === 'flux'" prop="ratio" :label="$t('CDNT.report.30')">
             <template slot-scope="scope">
               {{ totalNumber === 0 ? 0 : fixed(((scope.row.value / totalNumber) * 100)) }}%
             </template>
@@ -45,7 +45,7 @@
           <el-table-column
             v-if="type === 'request'"
             prop="value"
-            label="访问次数"
+            :label="$t('CDNT.report.31')"
           >
             <template slot-scope="scope">
               {{ scope.row.value }}次
@@ -153,7 +153,7 @@ export default {
         ["统计域名", domainName || "全部域名"],
         ["导出时间", moment().format('YYYYMMDDHHmmss')],
         [],
-        ["地区", "流量（GB）", "访问次数"]
+        ["地区", "流量（GB）", "訪問次數"]
       ];
       const { fluxData, requestData } = this
       const result = fluxData.map((data, i) => {

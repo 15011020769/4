@@ -1,13 +1,13 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>区域流量分布</h3>
+      <h3>{{$t('CDNT.report.24')}}</h3>
       <i class="el-icon-download icon" @click="exportEchart" />
     </el-row>
     <el-row>
       <el-col :span="16">
         <el-row class="empty" v-if="seriesMap.length == 0 ? true : false">
-          暂无数据
+          {{$t('CDNT.report.17')}}
         </el-row>
         <echart-map
           :series="seriesMap"
@@ -23,7 +23,7 @@
           "
           v-loading="loading"
         >
-          <el-table-column prop="name" label="区域"></el-table-column>
+          <el-table-column prop="name" :label="$t('CDNT.report.25')"></el-table-column>
           <el-table-column prop="value" label="消耗量">
             <template slot-scope="scope">
               {{ fluxStr(scope.row.value) }}
@@ -106,7 +106,7 @@ export default {
       const { projectName, domainName, type, times, interval } = this.params;
       let fileName;
       const start = moment(times[0]).format('YYYY-MM-DD');
-      const end = tmoment(times[1]).format('YYYY-MM-DD');
+      const end = moment(times[1]).format('YYYY-MM-DD');
       if (interval === "5min") {
         // 日报
         fileName = `${start}_traffic_distribution.xlsx`;

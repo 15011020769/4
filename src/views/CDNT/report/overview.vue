@@ -2,7 +2,7 @@
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
       <el-col :span="8" v-loading="fluxLoading">
-        <p class="title">总流量</p>
+        <p class="title">{{$t('CDNT.report.22')}}</p>
         <p class="number">
           {{ Math.ceil(flux[0]) === flux[0] ? flux[0] : flux[0].toFixed(2)
           }}<span class="unit"> {{ flux[1] }}</span>
@@ -10,7 +10,7 @@
         <p class="info">
           <i class="el-icon-top" v-if="fluxChain > 0" />
           <i class="el-icon-bottom" v-if="fluxChain < 0" />
-          {{ fluxChain !== 0 ? fluxChain : "-" }}%（{{ type }}环比）
+          {{ fluxChain !== 0 ? fluxChain : "-" }}%（{{ type }}{{$t('CDNT.report.23')}}）
         </p>
       </el-col>
       <el-col :span="8" v-loading="fluxHitRateLoading">
@@ -21,7 +21,7 @@
           <i class="el-icon-bottom" v-if="fluxHitRateChain < 0" />
           {{ fluxHitRateChain !== 0 ? fluxHitRateChain : "-" }}%（{{
             type
-          }}环比）
+          }}{{$t('CDNT.report.23')}}）
         </p>
       </el-col>
       <el-col :span="8" v-loading="requestLoading">
@@ -30,7 +30,7 @@
         <p class="info">
           <i class="el-icon-top" v-if="requestChain > 0" />
           <i class="el-icon-bottom" v-if="requestChain < 0" />
-          {{ requestChain !== 0 ? requestChain : "-" }}%（{{ type }}环比）
+          {{ requestChain !== 0 ? requestChain : "-" }}%（{{ type }}{{$t('CDNT.report.23')}}）
         </p>
       </el-col>
     </el-row>

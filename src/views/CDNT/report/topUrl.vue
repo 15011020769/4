@@ -5,12 +5,12 @@
       <i class="el-icon-download icon" @click="exportTable(type)" />
     </el-row>
     <el-radio-group v-model="type" size="small">
-      <el-radio-button label="used">使用量</el-radio-button>
-      <el-radio-button label="request">请求数</el-radio-button>
+      <el-radio-button label="used">{{$t('CDNT.report.26')}}</el-radio-button>
+      <el-radio-button label="request">{{$t('CDNT.report.11')}}</el-radio-button>
     </el-radio-group>
     <el-table :data="fluxTableData" v-if="type == 'used'" v-loading="loading">
       <el-table-column prop="Name" label="URL"></el-table-column>
-      <el-table-column prop="Value" label="流量">
+      <el-table-column prop="Value" :label="$t('CDNT.report.9')">
         <template slot-scope="scope">
           {{ fluxStr(scope.row.Value) }}
         </template>
@@ -22,7 +22,7 @@
       v-loading="loading"
     >
       <el-table-column prop="Name" label="URL"></el-table-column>
-      <el-table-column prop="Value" label="请求数">
+      <el-table-column prop="Value" :label="$t('CDNT.report.11')">
         <template slot-scope="scope">
           {{ scope.row.Value }}
         </template>
@@ -92,12 +92,6 @@ export default {
       let fileName;
       const start = times[0].split(" ")[0];
       const end = times[1].split(" ")[0];
-      if (interval === "5min") {
-        // 日报
-        fileName = `${start}_top10_urls.xlsx`;
-      } else {
-        fileName = `${start}-${end}_top10_urls.xlsx`;
-      }
       let data = [
         ["统计项目", projectName || "全部项目"],
         ["统计域名", domainName || "全部域名"],
@@ -119,6 +113,12 @@ export default {
         this.RequestTableData.map(item => {
           data.push([item.Name, item.Value]);
         });
+      }
+      if (interval === "5min") {
+        // 日报
+        fileName = `${start}_${name}_top10_urls.xlsx`;
+      } else {
+        fileName = `${start}-${end}_${name}_top10_urls.xlsx`;
       }
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();

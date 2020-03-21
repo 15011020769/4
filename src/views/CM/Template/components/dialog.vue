@@ -34,7 +34,7 @@
       <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
-        :productValue='productValue' v-loading="loadShow"/>
+        :productValue='productValue'/>
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
@@ -66,19 +66,10 @@
               </p>
               <!-- 在这里进行便利，添加 -->
               <ul v-loading="loadShow">
-                  <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p :class="{mp:metting==1}">
                     if&nbsp;
-                    <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
-                      <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
-                      <!-- <el-option
-                        v-for="(item,index) in zhibiaoType"
-                        :key="index"
-                        :label="item.label"
-                        :value="item.value"
-                        label-width="40px"
-                      ></el-option> -->
+                    <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
                       <el-option
                         v-for="(item,index) in zhibiaoType"
                         :key="index"
@@ -87,7 +78,6 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <!-- <el-select v-model="formInline.projectName" style="width:130px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.Period" style="width:130px;">
                       <el-option
                         v-for="(item,index) in tongjiZQ"
@@ -97,7 +87,6 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    <!-- <el-select v-model="formInline.projectName" style="width:60px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.CalcType" style="width:60px;">
                       <el-option
                         v-for="(item,index) in SymbolList"
@@ -112,9 +101,8 @@
                       style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
-                    >{{it.Unit||'%'}}</b>
+                    >{{it.Unit||'&nbsp;'}}</b>
                     &nbsp;
-                    <!-- <el-select v-model="formInline.projectName" style="width:110px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;">
                       <el-option
                         v-for="(item,index) in continuePeriod"
@@ -125,7 +113,6 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <span style="width:30px" v-if="metting!==1" >then</span>&nbsp;
-                    <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
                     <el-select :disabled="isDisabled" v-model="it.alarm" v-if="metting!==1" style="width:150px;">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
@@ -148,10 +135,10 @@
                   @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
+                <p style="color:red" v-if="isRepeated"><i class="el-icon-info" style="color:#888; margin:0 5px;color:red"></i>请勿重复配置</p>
               </ul>
               <p v-if="metting==1">
                 <span style="width:30px">then</span>&nbsp;
-                <!-- <el-select v-model="formInline.projectName" style="width:150px;"> -->
                 <el-select :disabled="isDisabled" v-model="all_alarm" style="width:150px;">
                   <el-option
                     v-for="(item,index) in jinggaoZQ"
@@ -200,7 +187,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save('form')">保 存</el-button>
+        <el-button type="primary" :disabled="isRepeated" @click="save('form')">保 存</el-button>
         <el-button @click="show=false">取 消</el-button>
       </div>
     </el-dialog>
@@ -220,6 +207,7 @@ export default {
       isChected: true, // 多选框是否选中
       isDisabled: false, // 指标告警是否禁用
       isDisGJ: false, // 事件告警是否禁用
+      isRepeated: false, // 是否为重复的指标告警条件
       backShow: 'true',
       strategy_name: '', // 策略名称
       remark: '', // 备注信息
@@ -317,39 +305,8 @@ export default {
         { label: '每1天警告一次', value: 86400 },
         { label: '周期指数递增', value: 1 }
       ],
-      zhibiaoType: [// 指标告警类型
-        'CPU利用率',
-        '内存利用率',
-        '内存使用量',
-        '磁盘利用率',
-        '磁盘读流量',
-        '磁盘写流量',
-        '磁盘IO等待',
-        '内网入包量',
-        '内网出包量',
-        '外网入带宽',
-        '外网出带宽',
-        '外网入包量',
-        '外网出包量',
-        '外网带宽使用率',
-        'TCP连接数',
-        'CPU一分钟平均负载',
-        'CPU五分钟平均负载',
-        'CPU十五分钟平均负载',
-        '基础CPU利用率',
-        '内网入带宽',
-        '内网出带宽'
-      ],
-      eventType: [// 事件告警类型
-        '磁盘只读',
-        '内核故障',
-        '内存oom',
-        'ping不可达',
-        '机器重启',
-        '外网出带宽超限导致丢包',
-        'agent上报超时',
-        '子机nvme设备error'
-      ],
+      zhibiaoType: [], // 指标告警类型
+      eventType: [], // 事件告警类型
       form: {
         name: '',
         region: '',
@@ -399,7 +356,6 @@ export default {
       searchParam: {},
       //  value: 'ins-6oz38wnu', label: 'instance-id'
       productValue: 'cvm_device'
-      // aa: [{33: '%'},{},{}]
     }
   },
   watch: {
@@ -408,6 +364,43 @@ export default {
     },
     show: function (val) {
       this.$emit('update:dialogVisible', val)
+    },
+    productValue: function (val) {
+      this.loadShow = true
+      let { zhibiaoType } = this
+      if (zhibiaoType) {
+        this.indexAry = [{
+          Period: 60,
+          CalcType: '>',
+          CalcValue: '0',
+          MetricId: zhibiaoType[0].MetricId,
+          Unit: zhibiaoType[0].MetricUnit,
+          ContinuePeriod: 1,
+          alarm: 86400
+        }]
+      }
+    },
+    indexAry: {
+      handler: function (val, old) {
+        let temp = []
+        val.forEach((ele, index) => {
+          let tempObj = this.zhibiaoType.find(item => {
+            return item.MetricId === ele.MetricId
+          })
+          if (tempObj) {
+            this.indexAry[index].Unit = tempObj.MetricUnit
+          }
+          !temp.some(item => {
+            return ele.MetricId === item.MetricId
+          }) && temp.push(ele)
+        })
+        if (val.length === temp.length) {
+          this.isRepeated = false
+        } else {
+          this.isRepeated = true
+        }
+      },
+      deep: true
     }
   },
   components: {
@@ -428,9 +421,6 @@ export default {
       type: Function,
       default: () => {}
     }
-  },
-  created () {
-    // console.log(this.productData)
   },
   methods: {
     save (form) {
@@ -502,17 +492,25 @@ export default {
           this.show = false// 关闭弹框
           this.formInline.strategy_name = ' '
           this.formInline.textareas = ''
+          this.indexAry = [{
+            Period: 60,
+            CalcType: '>',
+            CalcValue: '0',
+            MetricId: 33,
+            Unit: '%',
+            ContinuePeriod: 1,
+            alarm: 86400
+          }]
           this.createSuccess()// 更新列表
+          this.loadShow = false
         } else {
           this.errorPrompt(res)
         }
       })
     },
     passData (item) {
-      // this.loadShow = true
-      // console.log(item.Metrics)
       this.productData = item
-      // this.zhibiaoType = item.MetricName
+      this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
       this.$nextTick(() => {
@@ -526,10 +524,11 @@ export default {
     addZhibiao () { // 添加触发条件的指标告警
       let { zhibiaoType } = this
       for (let i = 0; i < zhibiaoType.length; i++) {
-        let aa = this.indexAry.some(item => {
+        let result = this.indexAry.some(item => {
           return item.MetricId === zhibiaoType[i].MetricId
         })
-        if (!aa) {
+        this.isRepeated = result
+        if (!result) {
           this.indexAry.push({
             Period: 60,
             CalcType: '>',

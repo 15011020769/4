@@ -304,6 +304,7 @@
             type:type
           }
         })
+        sessionStorage.setItem('clusterId', this.value)
       },
       //新建
       newCread() {
@@ -313,7 +314,7 @@
             clusterId: this.value
           }
         })
-        // sessionStorage.setItem('clusterId', this.value)
+        sessionStorage.setItem('clusterId',this.value)
       },
       //新建2
       newCread2() {

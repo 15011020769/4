@@ -190,7 +190,8 @@
                 </el-table-column>
                 <el-table-column property="date" :label="$t('TKE.colony.jxing')">
                   <template slot-scope="scope">
-                    <span>{{scope.row.TypeName | ModelTypeName}}</span>
+                    <!-- <span>{{scope.row.TypeName | ModelTypeName}}</span> -->
+                    <span>{{scope.row.TypeName}}</span>
                   </template>
                 </el-table-column>
                 <el-table-column property="name" :label="$t('TKE.colony.gg')">
@@ -261,7 +262,8 @@
             </p>
           </div>
           <el-form-item :label="$t('TKE.colony.jxing')">
-            <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
+            <!-- <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p> -->
+            <p>{{nodeForm.modelType.TypeName}}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.gg')" class="norms">
             <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
@@ -486,7 +488,12 @@
                   ></i>
                 </div>
               </div>
-              <p @click="AddSafe" style="color:blue;">{{$t('TKE.colony.tjaqz')}}</p>
+              <div>
+                <el-button :disabled="nodeForm.safeArr.length > 8 ? true : false" @click="AddSafe" type="text">
+                  {{$t('TKE.colony.tjaqz')}}
+                </el-button>
+              </div>
+              <!-- <p @click="AddSafe" style="color:blue;">{{$t('TKE.colony.tjaqz')}}</p> -->
             </div>
           </div>
           <el-form-item label="安全加固">
@@ -546,7 +553,8 @@
             <p>{{nodeForm.instanceChargeType | instanceChargeType}}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.jxing')">
-            <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p>
+            <!-- <p>{{nodeForm.modelType.TypeName | ModelTypeName}}</p> -->
+            <p>{{nodeForm.modelType.TypeName}}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.gg')">
             <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
@@ -569,7 +577,7 @@
             <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="10" @change="costPrice"></el-input-number>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.yfwqsl')" class="cvm-num" v-else>
-            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="1" @change="costPrice"></el-input-number>
+            <el-input-number v-model="nodeForm.instanceCount" :min="1" :max="100" @change="costPrice"></el-input-number>
           </el-form-item>
           <el-form-item
             :label="$t('TKE.colony.gmsc')"
@@ -608,13 +616,13 @@
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.zjfy')" v-else>
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">{{nodeForm.allocationCost}}</span
-              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-              ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
+              <span class="tke-second-cost-num">NT${{nodeForm.allocationCost}} 每{{$t('TKE.colony.xs')}}</span>
+              <!-- <span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span> -->
+              <span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
               <i>|</i>
-              <span class="tke-second-cost-num">{{nodeForm.networkCost}}</span
-              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-              ><span class="tke-second-cost-w"> {{$t('TKE.colony.wlfy')}}</span>
+              <span class="tke-second-cost-num">NT${{nodeForm.networkCost}} 每GB</span>
+              <!-- <span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span> -->
+              <span class="tke-second-cost-w"> {{$t('TKE.colony.wlfy')}}</span>
             </div>
           </el-form-item>
         </el-form>
@@ -1224,6 +1232,8 @@ export default {
         zoneInfoFilters = zoneInfoList.filter( res => res.Memory === memory);
       } else if (example === 'all' && exampleType === 'all' && cpu !== 'all' && memory === 'all') {
         zoneInfoFilters = zoneInfoList.filter( res => res.Cpu === cpu);
+      } else if(example === 'all' && exampleType === 'all' && cpu !== 'all' && memory !== 'all') {
+        zoneInfoFilters = zoneInfoList.filter( res => res.Cpu === cpu && res.Memory === memory);
       }
       this.nodeForm.zoneInfoFilters = zoneInfoFilters;
       this.nodeForm.modelType = zoneInfoFilters[0];
@@ -1468,17 +1478,16 @@ export default {
         SecurityGroupIds: SecurityGroupIds,
         EnhancedService: {SecurityService: {Enabled: this.nodeForm.securityService}, MonitorService: {Enabled: this.nodeForm.monitorService}}
       };
-      if(this.nodeForm.dataDisks) {
-        let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
+      let buyDataDisks = this.nodeForm.buyDataDiskArr;
+      if(buyDataDisks.length > 0) {
+        
         let dataDisks = [];
-        if(buyDataDiskArr.length > 0) {
-          for(let i = 0; i < buyDataDiskArr.length; i++) {
-            let buyDataDisk = {
-              DiskType: buyDataDiskArr[i].dataDiskType,
-              DiskSize: buyDataDiskArr[i].dataSize
-            };
-            dataDisks.push(buyDataDisk);
-          }
+        for(let i = 0; i < buyDataDisks.length; i++) {
+          let buyDataDisk = {
+            DiskType: buyDataDisks[i].dataDiskType,
+            DiskSize: Number(buyDataDisks[i].dataSize)
+          };
+          dataDisks.push(buyDataDisk);
         }
         RunInstancePara.DataDisks = dataDisks;
       }
@@ -1497,18 +1506,19 @@ export default {
       param["InstanceAdvancedSettings.Unschedulable"] = 0;
       param["InstanceAdvancedSettings.Labels.0.Name"] = "";
       param["InstanceAdvancedSettings.Labels.0.Value"] = "";
-
-      // param["InstanceAdvancedSettings.ExtraArgs.Kubelet"] = [];
-      // param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0.Value"] = "";
+      param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0"] = "";
+      // param["InstanceAdvancedSettings.Kubelet.0"] = "";
 
       let buyDataDiskArr = this.nodeForm.buyDataDiskArr;
       if(buyDataDiskArr.length > 0) {
         for(let i = 0; i < buyDataDiskArr.length; i++) {
           param["InstanceAdvancedSettings.DataDisks." + i + ".DiskSize"] = Number(buyDataDiskArr[i].dataSize);
           param["InstanceAdvancedSettings.DataDisks." + i + ".DiskType"] = buyDataDiskArr[i].dataDiskType;
-          param["InstanceAdvancedSettings.DataDisks." + i + ".AutoFormatAndMount"] = buyDataDiskArr[i].isShowFomatMount;
-          param["InstanceAdvancedSettings.DataDisks." + i + ".FileSystem"] = buyDataDiskArr[i].fileSystem;
-          param["InstanceAdvancedSettings.DataDisks." + i + ".MountTarget"] = buyDataDiskArr[i].filePath;
+          param["InstanceAdvancedSettings.DataDisks." + i + ".AutoFormatAndMount"] = buyDataDiskArr[i].fomatAndMount;
+          if(buyDataDiskArr[i].fomatAndMount) {
+            param["InstanceAdvancedSettings.DataDisks." + i + ".FileSystem"] = buyDataDiskArr[i].fileSystem;
+            param["InstanceAdvancedSettings.DataDisks." + i + ".MountTarget"] = buyDataDiskArr[i].filePath;
+          }
         }
       }
 

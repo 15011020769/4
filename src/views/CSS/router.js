@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
   redirect: {
@@ -19,7 +19,8 @@ export default new Router({
       name: 'live',
       component: () => import('./live/index.vue'),
       meta: {
-        keepAlive: true
+        keepAlive: true,
+        interceptBuy: false,
       }
     },
     {
@@ -224,3 +225,32 @@ export default new Router({
     }
   ]
 })
+
+let open = -1; // 0 未开通 1 已开通
+router.beforeEach((to, from, next) => {
+  if (to.meta.interceptBuy === false) {
+    next();
+    return;
+  }
+  if (open === -1) {
+    Vue.prototype.axios
+      .post('live2/CheckLiveUser', {
+        Version: "2018-08-01"
+      })
+      .then(res => {
+        if (!res || res.Response.IsLiveUser !== 1) {
+          next("/live")
+        } else {
+          open = 1;
+          next();
+        }
+      });
+  } else if (open === 0 && to.params.intercept !== false) {
+    next("/live");
+  } else {
+    open = 1;
+    next();
+  }
+});
+
+export default router

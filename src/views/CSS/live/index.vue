@@ -19,7 +19,7 @@
               同意
             </el-checkbox>
             <a href="#" >《{{$t('CSS.builder.26')}}》</a>
-            <sapn :class="{ 'active': checked }">和</sapn>
+            <span :class="{ 'active': checked }">和</span>
               <a href="#">《{{$t('CSS.builder.27')}}》</a>
           </div>
           <div class="button">
@@ -42,30 +42,60 @@ export default {
   data () {
     return {
       checked: false
-
     }
   },
   components: {
     HeaderCom
-
   },
-  created () {
-
-  },
-
   methods: {
-
+    open() {
+      this.axios.post('live2/OpenLiveService', {"Version": "2018-08-01"})
+      .then(res => {
+        if (!res || res.Response.Error) {
+          this.$message({
+            message: '开通失败',
+            type: 'error',
+            showClose: true,
+            duration: 0
+          })
+          return
+        }
+        this.$alert('您已開通台富雲直播服務，新用戶專享20GB流量包已發放至您的賬號，歡迎使用直播功能。', '提示', {
+          confirmButtonText: '確定',
+          center: true,
+          callback: () => {
+            this.$router.push({
+              name: 'overview',
+              params: {first: true, intercept: false}
+            })
+          }
+        })
+      })
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-
+.overview-wrap{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgb(242, 242, 242);
+  top: 60px;
+}
 .overview-main{
+  height: calc(100% - 100px);
   background: #fff;
-  margin: 20px;
+  max-width: 1360px;
+  margin: 20px auto;
+  // margin-top: 20px;
   box-shadow: 0 2px 3px 0 rgba(0,0,0,.2);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .text-top{
   font-size: 30px;
@@ -87,5 +117,8 @@ export default {
 }
 .active{
   color: #65a5f9;
+}
+.message-box {
+  width: auto;
 }
 </style>

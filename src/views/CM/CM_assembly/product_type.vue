@@ -18,6 +18,7 @@
     Physics_LIST, //物理专线列表
     Private_LIST, //专线通道列表
     OBJ_LIST, //对象存储列表
+    DISK_LIST, //云硬盘列表
     CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
@@ -43,13 +44,14 @@
 
     data() {
       return {
-        productOptions: [
-
-
-          {
+        productOptions: [{
             label: '云服务器',
             viewName: 'cvm_device',
           }, {
+            label: '云硬盘',
+            viewName: 'BS',
+          },
+          {
             label: 'VPN网关',
             viewName: 'VPN_GW',
           }, {
@@ -61,9 +63,6 @@
           }, {
             label: '专线网关',
             viewName: 'DC_GW',
-          }, {
-            label: '弹性公网IP',
-            viewName: 'EIP',
           }, {
             label: 'MYSQL',
             viewName: 'cdb_detail',
@@ -105,11 +104,11 @@
       }
     },
     created() {
-
       this._Metrics()
     },
     methods: {
       _Metrics() {
+        this.$emit("loading", true);
         let params = {
           Version: "2018-07-24",
           Module: "monitor",
@@ -157,6 +156,8 @@
           this._GetDcPri()
         } else if (this.productValue1 === 'COS') {
           this._GetOBJ()
+        } else if (this.productValue1 === 'BS') {
+          this._GetBs()
         }
       },
       // 获取云服务器列表
@@ -264,6 +265,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(NAT_LIST, parms).then(data => {
           this.id = "nat_tc_stat"
           this.Date = data.Response.NatGatewaySet
@@ -313,6 +318,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(VPN_LIST, parms).then(data => {
           this.id = 'vpcgw'
           this.Date = data.Response.VpnGatewaySet
@@ -356,6 +365,10 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
+        }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
         }
         this.axios.post(VPNTD_LIST, parms).then(data => {
           this.id = "vpn_tunnel"
@@ -409,6 +422,10 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(DCG_LIST, parms).then(data => {
           this.id = 'dclinegw'
           this.Date = data.Response.DirectConnectGatewaySet
@@ -453,6 +470,9 @@
         let parms = {
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-20",
+        }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["InstanceIds.0"] = this.searchParam.value;
         }
         this.axios.post(MYSQL_LIST, parms).then(data => {
           this.id = 'cdb'
@@ -608,6 +628,9 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2018-04-12",
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["InstanceId"] = this.searchParam.value;
+        }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
           this.Date = data.Response.InstanceSet
@@ -739,6 +762,9 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["DirectConnectIds.0"] = this.searchParam.value;
+        }
         this.axios.post(Physics_LIST, parms).then(data => {
           this.id = "dcline"
           this.Date = data.Response.DirectConnectSet
@@ -770,16 +796,20 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+        }
         this.axios.post(Private_LIST, parms).then(data => {
           this.id = 'dcchannel'
           this.Date = data.Response.DirectConnectTunnelSet
           this.Namespace = 'qce/dcx'
           this.SearchConfig = [{
-            value: "DirectConnectIds",
+            value: "direct-connect-tunnel-id",
             label: "通道ID"
           }]
           this.HeadConfig = {
-            title1: '名称/ID',
+            title1: 'ID/名称',
             title2: '私有网络',
           }
           this.MetricName = [{
@@ -809,6 +839,10 @@
           Region: this.selectedRegion,
           Version: '2018-04-10',
         }
+        // if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+        //   parms["Filters.0.Name"] = this.searchParam.label;
+        //   parms["Filters.0.Values.0"] = this.searchParam.value;
+        // } 
         this.axios.post(OBJ_LIST, parms).then(data => {
           this.id = 'COS'
           this.Date = data.Buckets
@@ -895,6 +929,71 @@
           this._PassValue()
         });
       },
+      //获取云硬盘
+      _GetBs() {
+        let parms = {
+          Region: localStorage.getItem("regionv2"),
+          Version: "2017-03-12",
+        }
+        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+          parms["Filters.0.Name"] = this.searchParam.label;
+          parms["Filters.0.Values.0"] = this.searchParam.value;
+          parms["Filters.1.Name"] = 'project-id';
+          parms["Filters.1.Values.0"] = this.projectId;
+        } else {
+          parms["Filters.0.Name"] = 'project-id';
+          parms["Filters.0.Values.0"] = this.projectId;
+        }
+        this.axios.post(DISK_LIST, parms).then(data => {
+          this.id = 'bs'
+          this.Date = data.Response.DiskSet
+          this.Namespace = 'qce/block_storage'
+          this.SearchConfig = [{
+              value: "disk-id",
+              label: "雲硬碟ID"
+            },
+            {
+              value: "disk-name",
+              label: "雲盤名稱"
+            }
+          ]
+          this.HeadConfig = {
+            title1: 'ID/名称',
+            title2: '大小(GB)',
+            title3: '硬盘类型',
+          }
+          this.MetricName = [{
+              label: '硬盘读流量(KB/s)',
+              value: 'disk_read_traffic'
+            },
+            {
+              label: '硬盘写流量',
+              value: 'disk_write_traffic'
+            },
+            {
+              label: '硬盘读IOPS',
+              value: 'disk_read_iops'
+            },
+            {
+              label: '硬盘写IOPS',
+              value: 'disk_write_iops'
+            },
+            {
+              label: '硬盘IO Await',
+              value: 'disk_await'
+            },
+            {
+              label: '硬盘IO Svctm',
+              value: 'disk_svctm'
+            },
+            {
+              label: '硬盘IO %util',
+              value: 'disk_util'
+            }
+          ]
+          this._PassValue()
+        });
+      }
     },
 
 

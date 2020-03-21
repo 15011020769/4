@@ -15,7 +15,7 @@
 </template>
 <script>
 import {
-  CREATE_DASHBOARD
+  GET_DASHBOARD_LIST, CREATE_DASHBOARD
 } from "@/constants";
 import {
   ErrorTips
@@ -37,7 +37,8 @@ export default {
       // dialogFormVisible: false //监控面板的开关
       rules: {
         name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
-      }
+      },
+      options: [] // 暂存的下拉选框
     };
   },
    props: {
@@ -87,9 +88,9 @@ export default {
         if (res.Response.Error === undefined) {
           // res.Response.DashboardID
           // res.Response.RequestId
-          console.log(res.Response, 'res.Response');
-          this.$parent.$parent.showEmptyControlPanel = true; // 跳转新的监控面板页面
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
+          this.$parent.$parent.DashboardID = res.Response.DashboardID; // 跳转到新的监控面板ID
+          console.log(res.Response, this.$parent.$parent.panelValue, this.$parent.$parent, 'res.Response');
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
@@ -138,10 +139,8 @@ export default {
             duration: 0
           });
         }
-      }).finally(() => {
-        
       })
-    }
+    },
   }
 };
 </script>

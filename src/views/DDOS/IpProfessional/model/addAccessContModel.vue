@@ -80,11 +80,12 @@
             <div class="newClear" v-if="policyForm.Smode=='matching'?true:false">
               <p>{{$t('DDOS.accessCopy.perform')}}</p>
               <p>
-                <el-select v-model="policyForm.ExeMode">
+                <el-select v-model="policyForm.ExeMode" @change="msgFlagFun">
                   <el-option :label="$t('DDOS.accessCopy.intercept')" value='drop'></el-option>
                   <el-option :label="$t('DDOS.accessCopy.identification')" value="alg"></el-option>
                 </el-select>
                 <span class="executionSpan" v-if="policyForm.ExeMode=='alg'">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
+                <span class="executionSpan" v-if="editFlag && msgFlag == 0">{{$t('DDOS.accessCopy.identificationTitle')}}</span>
               </p>
             </div>
           </div>
@@ -111,6 +112,7 @@ export default {
     return{
       checkNameFlg: true, //名称长度不能超过20个字校验
       checkNameNullFlg: true, //访问控制策略名称不能为空
+      msgFlag: 0,
       policyForm: {
         Protocol: 'http',//cc防护类型，取值[http，https]
         Smode: 'matching',//匹配模式，取值[matching(匹配模式), speedlimit(限速模式)]
@@ -136,13 +138,28 @@ export default {
     dateFlag: function() {//监测时间戳，刷新每次进入此HTML的数据
       if(this.editFlag) {
         this.policyForm = JSON.parse(JSON.stringify(this.editCCPolicy));
-        this.ruleList = JSON.parse(JSON.stringify(this.editCCPolicy.RuleList));
+        if (this.editCCPolicy.RuleList.length != 0) {
+          this.ruleList = JSON.parse(JSON.stringify(this.editCCPolicy.RuleList));
+        } else {
+          this.ruleList = [{Skey: 'host', Operator: 'include', Value: ''}];
+        }
+        if (this.policyForm.ExeMode == "") {
+          this.policyForm.ExeMode = 'drop';
+        }
+        if (this.policyForm.Smode == 'matching') {
+          this.msgFlag = 1;
+        } else {
+          this.msgFlag = 0;
+        }
       } else {
         this.initData();
       }
     }
   },
   methods:{
+    msgFlagFun() {
+      this.msgFlag++
+    },
     initData() {
       this.policyForm = { Protocol: 'http', Smode: 'matching', ExeMode: 'drop' };
       this.ruleList = [{ Skey: 'host', Operator: 'include', Value: '' }];

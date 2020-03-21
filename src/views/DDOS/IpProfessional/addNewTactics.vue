@@ -472,7 +472,6 @@
               <el-select
                 v-model="scope.row.OpenStatus"
                 :placeholder="$t('DDOS.AccesstoCon.searchAccess')"
-                :disabled="nameFlag"
               >
                 <el-option
                   v-for="(item, index) in openStatusList"
@@ -804,7 +803,6 @@ export default {
           }
         }
       }
-      console.log(this.tags)
       this.tags1 = this.policyTemp.PacketFilters; //报文
       // var speedLimit="";
       if (this.policyTemp.DropOptions.DIcmpMbpsLimit) {
@@ -1102,22 +1100,12 @@ export default {
             params["PacketFilters." + i + ".Protocol"] = this.tags1[i].Protocol;
           params["PacketFilters." + i + ".SportStart"] = this.tags1[i].SportStart;
             params["PacketFilters." + i + ".SportEnd"] = this.tags1[i].SportEnd;
-            params["PacketFilters." + i + ".DportStart"] = this.tags1[
-              i
-            ].DportStart;
+          params["PacketFilters." + i + ".DportStart"] = this.tags1[i].DportStart;
             params["PacketFilters." + i + ".DportEnd"] = this.tags1[i].DportEnd;
-            params["PacketFilters." + i + ".PktlenMin"] = this.tags1[
-              i
-            ].PktlenMin;
-            params["PacketFilters." + i + ".PktlenMax"] = this.tags1[
-              i
-            ].PktlenMax;
-            params["PacketFilters." + i + ".MatchBegin"] = this.tags1[
-              i
-            ].MatchBegin;
-            params["PacketFilters." + i + ".MatchType"] = this.tags1[
-              i
-            ].MatchType;
+          params["PacketFilters." + i + ".PktlenMin"] = this.tags1[i].PktlenMin;
+          params["PacketFilters." + i + ".PktlenMax"] = this.tags1[i].PktlenMax;
+          params["PacketFilters." + i + ".MatchBegin"] = this.tags1[i].MatchBegin;
+          params["PacketFilters." + i + ".MatchType"] = this.tags1[i].MatchType;
             params["PacketFilters." + i + ".Str"] = this.tags1[i].Str;
             params["PacketFilters." + i + ".Depth"] = this.tags1[i].Depth;
             params["PacketFilters." + i + ".Offset"] = this.tags1[i].Offset;
@@ -1127,7 +1115,7 @@ export default {
           // WaterPrint.N 水印策略参数，当没有启用水印功能时填空数组，最多只能传一条水印策略（即数组大小不超过1）
         for (let i in this.tableDataBegin2) {
           params["WaterPrint." + i + ".Offset"] = this.tableDataBegin2[i].Offset; //	水印偏移量，取值范围[0, 100)
-          params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[i].RemoveSwitch == "關閉" ? 0 : 1; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
+          params["WaterPrint." + i + ".RemoveSwitch"] = this.tableDataBegin2[i].RemoveSwitch; //是否自动剥离，取值[0（不自动剥离），1（自动剥离）]
           params["WaterPrint." + i + ".OpenStatus"] = this.tableDataBegin2[i].OpenStatus;
 
           let arr = this.tableDataBegin2[i].tcpPort.map(t => {
@@ -1153,6 +1141,8 @@ export default {
             params["WaterPrint." + i + ".UdpPortList." + index] = item[0];
           });
         }
+        console.log(params)
+        return
         if (bl) {
           params.Name = this.tacticsName;
           // console.log(params, "tianjia");
@@ -1546,6 +1536,11 @@ export default {
         OpenStatus: 1,
         Offset: this.moveNum
       };
+      if (!this.nameFlag) {//编辑页面
+        temp.OpenStatus = (this.tableDataBegin2.length == 0 ? 1 : this.tableDataBegin2[0].OpenStatus);
+      } else {
+        temp.OpenStatus = 1;
+      }
       this.tableDataBegin2 = []; //lxx
       this.tableDataBegin2.push(temp);
       this.dialogVisible = false;
