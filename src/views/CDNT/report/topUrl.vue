@@ -94,9 +94,17 @@ export default {
       const end = times[1].split(" ")[0];
       if (interval === "5min") {
         // 日报
-        fileName = `${start}_top10_urls.xlsx`;
+        if(type1 == "used") {
+          fileName = `1300561189-overseas-${start}_flux_top10_urls.xlsx`;
+        } else {
+          fileName = `1300561189-overseas-${start}_request_top10_urls.xlsx`;
+        }
       } else {
-        fileName = `${start}-${end}_top10_urls.xlsx`;
+        if(type1 == "used") {
+          fileName = `1300561189-overseas-${start}-${end}_flux_top10_urls.xlsx`;
+        } else {
+          fileName = `1300561189-overseas-${start}-${end}_request_top10_urls.xlsx`;
+        }
       }
       let data = [
         ["统计项目", projectName || "全部项目"],
