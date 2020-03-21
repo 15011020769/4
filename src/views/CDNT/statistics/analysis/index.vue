@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="header">
+    <!-- <div class="header">
       <h2>运营报表</h2>
-    </div>
+    </div> -->
     <el-row type="flex" align="middle" justify="space-between" class="actions">
       <el-col>
         <el-button-group style="margin-top:-4px">
@@ -10,7 +10,7 @@
             size="small"
             :type="createTimeType === '0d' ? 'primary' : ''"
             @click="onTimeClick(0, 'd')"
-            >今天</el-button
+            >{{$t('el.datepicker.today')}}</el-button
           >
           <el-button
             size="small"
@@ -44,9 +44,9 @@
           v-model="project"
           value-key="ProjectId"
           size="small"
-          placeholder="全部项目"
+          :placeholder="$t('CDNT.report.1')"
         >
-          <el-option value="">全部项目</el-option>
+          <el-option value="">{{$t('CDNT.report.1')}}</el-option>
           <el-option
             v-for="p in projectList"
             :key="p.ProjectId"
@@ -54,8 +54,8 @@
             :label="p.ProjectName"
           ></el-option>
         </el-select>&nbsp;&nbsp;
-        <el-select v-model="domainName" size="small" placeholder="全部域名">
-          <el-option value="">全部域名</el-option>
+        <el-select v-model="domainName" size="small" :placeholder="$t('CDNT.report.3')">
+          <el-option value="">{{$t('CDNT.report.3')}}</el-option>
           <el-option
             v-for="p in domainList"
             :key="p.DomainName"
@@ -67,8 +67,8 @@
     </el-row>
     <el-row class="actions">
       <el-radio-group v-model="type" size="small">
-        <el-radio-button label="server">服务地区</el-radio-button>
-        <el-radio-button label="client">客户端地区</el-radio-button>
+        <el-radio-button label="server">{{$t('CDNT.report.27')}}</el-radio-button>
+        <el-radio-button label="client">{{$t('CDNT.report.28')}}</el-radio-button>
       </el-radio-group>
     </el-row>
     <div class="container">
@@ -128,7 +128,7 @@ export default {
         return
       }
       this.domainList = this.domainListCopy.filter(domain => domain.ProjectId === project.ProjectId)
-    },
+    }
 
   },
   mounted () {

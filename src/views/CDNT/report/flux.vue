@@ -1,12 +1,12 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>流量<span style="color:#bbb;fontSize:12px;">(GB)</span></span></h3>
+      <h3>{{$t('CDNT.report.9')}}<span style="color:#bbb;fontSize:12px;">(GB)</span></span></h3>
       <i class="el-icon-download icon" @click="exportEchart(type)"/>
     </el-row>
     <el-radio-group v-model="type" size="small">
-      <el-radio-button label="billing">计费流量</el-radio-button>
-      <el-radio-button label="origin">回源流量</el-radio-button>
+      <el-radio-button label="billing">{{$t('CDNT.report.20')}}</el-radio-button>
+      <el-radio-button label="origin">$t('CDNT.report.21')</el-radio-button>
     </el-radio-group>
     <echart-line
       :xAxis="xAxisCurBill"

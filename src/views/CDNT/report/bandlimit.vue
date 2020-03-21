@@ -1,15 +1,15 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>带宽<span style="color:#bbb;fontSize:12px;">(Mbps)</span></h3>
+      <h3>{{$t('CDNT.report.10')}}<span style="color:#bbb;fontSize:12px;">(Mbps)</span></h3>
       <i class="el-icon-download icon" @click="exportEchart(type)"/>
     </el-row>
     <el-row type="flex" class="header" justify="space-between">
       <el-radio-group v-model="type" size="small">
-        <el-radio-button label="billing">计费带宽</el-radio-button>
-        <el-radio-button label="origin">回源带宽</el-radio-button>
+        <el-radio-button label="billing">{{$t('CDNT.report.14')}}</el-radio-button>
+        <el-radio-button label="origin">{{$t('CDNT.report.15')}}</el-radio-button>
       </el-radio-group>
-      <el-checkbox v-model="peak">显示峰值线</el-checkbox>
+      <el-checkbox v-model="peak">{{$t('CDNT.report.16')}}</el-checkbox>
     </el-row>
     <echart-line
       :xAxis="xAxisCurBill"
@@ -43,32 +43,32 @@ export default {
   props: {
     params: Object
   },
-  data() {
+  data () {
     return {
       type: 'billing',
       peak: false,
-      xAxisCurBill: [], // 计费带宽x轴
-      serCurBill: [], // 当前计费带宽
-      serLastBill: [], // 上一周期计费带宽
-      xAxisCurOrigin: [], // 回源带宽x轴
-      serCurOrigin: [], // 当前回源带宽
-      serLastOrigin: [], // 上一周期回源带宽
-      legendBill: ['当前计费带宽', '上一周期计费带宽'],
-      legendOrigin: ['当前回源带宽', '上一周期回源带宽'],
+      xAxisCurBill: [], // $t('CDNT.report.14')x轴
+      serCurBill: [], // 当前$t('CDNT.report.14')
+      serLastBill: [], // 上一周期$t('CDNT.report.14')
+      xAxisCurOrigin: [], // 回源寬頻x轴
+      serCurOrigin: [], // 当前回源寬頻
+      serLastOrigin: [], // 上一周期回源寬頻
+      legendBill: ['当前計費寬頻', '上一周期計費寬頻'],
+      legendOrigin: ['当前回源寬頻', '上一周期回源寬頻'],
       curBillMax: 0,
       lastBillMax: 0,
       curOriginMax: 0,
-      color: ['#006eff', '#29cc85', "#FF584C"],
+      color: ['#006eff', '#29cc85', '#FF584C'],
       tooltip: {
         trigger: 'axis',
-        formatter(params) {
-          let relVal = params[0].name;
+        formatter (params) {
+          let relVal = params[0].name
           params.forEach(v => {
-            relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "Mbps";
-          })  
-          return relVal;  
+            relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + 'Mbps'
+          })
+          return relVal
         }
-      },
+      }
     }
   },
   components: {
@@ -76,18 +76,18 @@ export default {
   },
   watch: {
     params: {
-      handler() {
+      handler () {
         this.init()
       },
       immediate: true,
-      deep: true,
+      deep: true
     },
-    type() {
+    type () {
       this.init()
     }
   },
   methods: {
-    exportEchart(type1) {
+    exportEchart (type1) {
       const { projectName, domainName, type, times, interval } = this.params
       let fileName
       const start = times[0].split(' ')[0]
@@ -98,17 +98,17 @@ export default {
         ['报表类型', type],
         ['开始时间', times[0]],
         ['结束时间', times[1]],
-        [], 
+        []
       ]
-      let name=''
+      let name = ''
       if (type1 == 'billing') {
         data.push(
           ['峰值带宽', this.curBillMax + 'bps'],
           [],
           ['时间', '当前计费流量（bps）', '上一周期计费流量（bps）']
         )
-        name="billing_bandwidth"
-        this.xAxisCurBill.forEach((item,index) => {
+        name = 'billing_bandwidth'
+        this.xAxisCurBill.forEach((item, index) => {
           data.push([
             item,
             this.serCurBill[index],
@@ -121,8 +121,8 @@ export default {
           [],
           ['时间', '当前回源流量（bps）', '上一周期回源流量（bps）']
         )
-        name="bandwidth_trend"
-        this.xAxisCurOrigin.forEach((item,index) => {
+        name = 'bandwidth_trend'
+        this.xAxisCurOrigin.forEach((item, index) => {
           data.push([
             item,
             this.serCurOrigin[index],
@@ -137,32 +137,32 @@ export default {
         fileName = `${start}-${end}_${name}.xlsx`
       }
       const ws = XLSX.utils.aoa_to_sheet(data)
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, name);
-      XLSX.writeFile(wb, fileName);
+      const wb = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(wb, ws, name)
+      XLSX.writeFile(wb, fileName)
     },
-    init() {
+    init () {
       const { projectId, domainName, interval, times } = this.params
       let timeType = 'days'
-      if(interval == '5min') {
+      if (interval == '5min') {
         timeType = 'days'
-      } else if(interval == 'hour') {
+      } else if (interval == 'hour') {
         timeType = 'weeks'
       } else {
         timeType = 'months'
       }
       const params1 = {
-        Version: "2018-06-06",
+        Version: '2018-06-06',
         StartTime: times[0],
         EndTime: times[1],
-        Area: "overseas",
+        Area: 'overseas',
         Interval: interval
       }
       const params2 = {
-        Version: "2018-06-06",
+        Version: '2018-06-06',
         StartTime: moment(times[0]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
         EndTime: moment(times[1]).subtract(1, timeType).format('YYYY-MM-DD HH:mm:ss'),
-        Area: "overseas",
+        Area: 'overseas',
         Interval: interval
       }
       if (projectId) {
@@ -173,7 +173,7 @@ export default {
         params1['Domains.0'] = domainName
         params2['Domains.0'] = domainName
       }
-      if(this.type === 'billing') {
+      if (this.type === 'billing') {
         this.getCurBillData(params1)
         this.getLastBillData(params2)
       } else {
@@ -181,11 +181,11 @@ export default {
         this.getCureLastData(params2)
       }
     },
-    // 当前计费带宽
-    getCurBillData(params) {
+    // 当前$t('CDNT.report.14')
+    getCurBillData (params) {
       this.axios.post('cdn2/DescribeBillingData', {
         ...params,
-        Metric: "bandwidth"
+        Metric: 'bandwidth'
       })
         .then(({ Response: { Data } }) => {
           const curBillArr = []
@@ -203,11 +203,11 @@ export default {
           this.serCurBill = curBillArr
         })
     },
-    // 上一周期计费带宽
-    getLastBillData(params) {
+    // 上一周期$t('CDNT.report.14')
+    getLastBillData (params) {
       this.axios.post('cdn2/DescribeBillingData', {
         ...params,
-        Metric: "bandwidth"
+        Metric: 'bandwidth'
       })
         .then(({ Response: { Data } }) => {
           const lastBillArr = []
@@ -220,11 +220,11 @@ export default {
           this.serLastBill = lastBillArr
         })
     },
-    // 当前回源带宽
-    getCureOriginData(params) {
+    // 当前回源寬頻
+    getCureOriginData (params) {
       this.axios.post('cdn2/DescribeOriginData', {
         ...params,
-        Metric: "bandwidth"
+        Metric: 'bandwidth'
       })
         .then(({ Response: { Data } }) => {
           const curOriginArr = []
@@ -242,11 +242,11 @@ export default {
           this.serCurOrigin = curOriginArr
         })
     },
-    // 上一周期回源带宽
-    getCureLastData(params) {
+    // 上一周期回源寬頻
+    getCureLastData (params) {
       this.axios.post('cdn2/DescribeOriginData', {
         ...params,
-        Metric: "bandwidth"
+        Metric: 'bandwidth'
       })
         .then(({ Response: { Data } }) => {
           const lastOriginArr = []
@@ -258,7 +258,7 @@ export default {
           }
           this.serLastOrigin = lastOriginArr
         })
-    },
+    }
   }
 }
 </script>

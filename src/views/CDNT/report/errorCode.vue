@@ -1,13 +1,13 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>错误码</h3>
+      <h3>{{$t('CDNT.report.12')}}</h3>
       <i class="el-icon-download icon" @click="exportEchart"/>
     </el-row>
     <el-row>
       <el-col :span="10">
         <el-row class="empty" v-if="seriesPieErrorCode.length == 0 ? true : false">
-          暂无数据
+          {{$t('CDNT.report.17')}}
         </el-row>
         <echart-pie
           :series="seriesPieErrorCode"
@@ -22,9 +22,9 @@
           :data="tableData"
           v-loading="loading"
         >
-          <el-table-column prop="Metric" label="错误码"></el-table-column>
-          <el-table-column prop="SummarizedData.Value" label="数量(次)"></el-table-column>
-          <el-table-column prop="num" label="占比">
+          <el-table-column prop="Metric" label="$t('CDNT.report.12')"></el-table-column>
+          <el-table-column prop="SummarizedData.Value" :label="$t('CDNT.report.18')"></el-table-column>
+          <el-table-column prop="num" :label="$t('CDNT.report.19')">
             <template slot-scope="scope">
               {{(scope.row.SummarizedData.Value / totalNumber * 100).toFixed(2) + '%'}}
             </template>

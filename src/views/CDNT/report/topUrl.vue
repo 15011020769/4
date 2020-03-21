@@ -5,12 +5,12 @@
       <i class="el-icon-download icon" @click="exportTable(type)" />
     </el-row>
     <el-radio-group v-model="type" size="small">
-      <el-radio-button label="used">使用量</el-radio-button>
-      <el-radio-button label="request">请求数</el-radio-button>
+      <el-radio-button label="used">{{$t('CDNT.report.26')}}</el-radio-button>
+      <el-radio-button label="request">{{$t('CDNT.report.11')}}</el-radio-button>
     </el-radio-group>
     <el-table :data="fluxTableData" v-if="type == 'used'" v-loading="loading">
       <el-table-column prop="Name" label="URL"></el-table-column>
-      <el-table-column prop="Value" label="流量">
+      <el-table-column prop="Value" :label="$t('CDNT.report.9')">
         <template slot-scope="scope">
           {{ fluxStr(scope.row.Value) }}
         </template>
@@ -22,7 +22,7 @@
       v-loading="loading"
     >
       <el-table-column prop="Name" label="URL"></el-table-column>
-      <el-table-column prop="Value" label="请求数">
+      <el-table-column prop="Value" :label="$t('CDNT.report.11')">
         <template slot-scope="scope">
           {{ scope.row.Value }}
         </template>

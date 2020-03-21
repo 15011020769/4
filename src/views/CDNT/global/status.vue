@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>全网状态详情</h3>
+      <h3>{{$t('CDNT.report.36')}}</h3>
     </el-row>
 
     <el-row type="flex" align="center">
@@ -35,12 +35,12 @@
             >
               {{name}}
             </el-tag>
-            <div class="placeholder">点击选择地区</div>
+            <div class="placeholder">{{$t('CDNT.report.37')}}</div>
           </div>
         </span>
         <el-dropdown-menu slot="dropdown" style="width: 610px;">
           <el-dropdown-item>
-            <h3 class="title">选择地区</h3>
+            <h3 class="title">{{$t('CDNT.report.38')}}</h3>
           </el-dropdown-item>
           <el-dropdown-item>
             <el-row type="flex" :gutter="20">
@@ -74,7 +74,7 @@
           </el-dropdown-item>
           <el-dropdown-item divided>
             <el-row type="flex" justify="center">
-              <el-button size="small" @click="addTags" type="primary">确定</el-button>
+              <el-button size="small" @click="addTags" type="primary">{{$t('CDNT.report.39')}}</el-button>
               <el-button size="small">取消</el-button>
             </el-row>
           </el-dropdown-item>

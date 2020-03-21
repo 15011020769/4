@@ -1,11 +1,11 @@
 <template>
   <el-card>
     <el-row type="flex" class="header" justify="space-between">
-      <h3>全网实时状态概览</h3>
+      <h3>{{$t('CDNT.report.33')}}</h3>
     </el-row>
     <el-radio-group v-model="type" size="small">
-      <el-radio-button label="delay">时延</el-radio-button>
-      <el-radio-button label="useability">可用性</el-radio-button>
+      <el-radio-button label="delay">{{$t('CDNT.report.34')}}</el-radio-button>
+      <el-radio-button label="useability">{{$t('CDNT.report.35')}}</el-radio-button>
     </el-radio-group>
     <outside-china
       :series="outDelayData"

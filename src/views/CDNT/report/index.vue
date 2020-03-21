@@ -4,14 +4,14 @@
       <el-card class="card">
         <el-form>
           <el-row type="flex">
-            <el-form-item label="统计项目" style="width: 300px">
+            <el-form-item :label="$t('CDNT.report.0')" style="width: 300px">
               <el-select
                 v-model="project"
                 value-key="ProjectId"
                 size="small"
-                placeholder="全部项目"
+                :placeholder="$t('CDNT.report.1')"
               >
-                <el-option value="">全部项目</el-option>
+                <el-option value="">{{$t('CDNT.report.1')}}</el-option>
                 <el-option
                   v-for="p in projectList"
                   :key="p.ProjectId"
@@ -20,13 +20,13 @@
                 ></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="统计域名" style="width: 300px">
+            <el-form-item :label="$t('CDNT.report.2')" style="width: 300px">
               <el-select
                 v-model="domainName"
                 size="small"
-                placeholder="全部域名"
+                :placeholder="$t('CDNT.report.3')"
               >
-                <el-option value="">全部域名</el-option>
+                <el-option value="">{{$t('CDNT.report.3')}}</el-option>
                 <el-option
                   v-for="p in domainList"
                   :key="p.DomainName"
@@ -37,14 +37,14 @@
             </el-form-item>
           </el-row>
           <el-row type="flex">
-            <el-form-item label="报表类型" style="width: 300px">
+            <el-form-item :label="$t('CDNT.report.4')" style="width: 300px">
               <el-radio-group v-model="interval" size="small">
-                <el-radio-button label="5min">日报</el-radio-button>
-                <el-radio-button label="hour">周报</el-radio-button>
-                <el-radio-button label="day">月报</el-radio-button>
+                <el-radio-button label="5min">日{{$t('CDNT.report.5')}}</el-radio-button>
+                <el-radio-button label="hour">周{{$t('CDNT.report.5')}}</el-radio-button>
+                <el-radio-button label="day">月{{$t('CDNT.report.5')}}</el-radio-button>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="时间选择" style="width: 300px">
+            <el-form-item :label="$t('CDNT.report.6')" style="width: 300px">
               <el-date-picker
                 style="width: 230px"
                 size="small"
@@ -64,14 +64,14 @@
               </el-date-picker>
             </el-form-item>
           </el-row>
-          <el-form-item label="展示数据">
+          <el-form-item :label="$t('CDNT.report.13')">
             <el-checkbox-group v-model="showFields">
-              <el-checkbox label="overview">数据概览</el-checkbox>
-              <el-checkbox label="regionTop">区域流量分布</el-checkbox>
-              <el-checkbox label="flux">流量</el-checkbox>
-              <el-checkbox label="bandlimit">带宽</el-checkbox>
-              <el-checkbox label="request">请求数</el-checkbox>
-              <el-checkbox label="errorCode">错误码</el-checkbox>
+              <el-checkbox label="overview">{{$t('CDNT.report.7')}}</el-checkbox>
+              <el-checkbox label="regionTop">{{$t('CDNT.report.8')}}</el-checkbox>
+              <el-checkbox label="flux">{{$t('CDNT.report.9')}}</el-checkbox>
+              <el-checkbox label="bandlimit">{{$t('CDNT.report.10')}}</el-checkbox>
+              <el-checkbox label="request">{{$t('CDNT.report.11')}}</el-checkbox>
+              <el-checkbox label="errorCode">{{$t('CDNT.report.12')}}</el-checkbox>
               <el-checkbox label="topUrl">TOP10 URL</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -160,17 +160,17 @@ export default {
     params () {
       const { interval, project, domainName, time } = this
       let times = time
-      let type = '日报'
-      if (interval === '5min') { // 日报
+      let type = '日報'
+      if (interval === '5min') { // 日報
         times = [moment(time).startOf('d').format('YYYY-MM-DD 00:00:00'), moment(time).endOf('d').format('YYYY-MM-DD 23:59:59')]
-      } else if (interval === 'day') { // 月报
-        type = '月报'
+      } else if (interval === 'day') { // 月報
+        type = '月報'
         times = [moment(time).format('YYYY-MM-01 00:00:00'), moment(time).endOf('month').format('YYYY-MM-DD 23:59:59')]
-      } else { // 周报
-        type = '周报'
+      } else { // 周報
+        type = '周報'
         times = [moment(time).format('YYYY-MM-DD 00:00:00'), `${this.weekEnd} 23:59:59`]
       }
-      return {interval, type, projectId: project.ProjectId, projectName: project.ProjectName, domainName, times}
+      return { interval, type, projectId: project.ProjectId, projectName: project.ProjectName, domainName, times }
     }
   },
   watch: {
