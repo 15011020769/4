@@ -60,11 +60,11 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="策略类型"
-        :filter-method="filterName"
+        <!-- :filter-method="filterName"
         :filters="PolicyType"
         :filter-multiple="false"
-        filter-placement="top-start">
+        filter-placement="top-start" 策略类型下拉框属性和方法-->
+        <el-table-column prop="type" label="策略类型">
           <template slot-scope="scope">
             <span>{{scope.row.Name}}</span>
             <!-- <i class="el-icon-caret-bottom"></i> -->
@@ -177,7 +177,7 @@ export default {
       editGroupId: '', // 编辑的模板id
       // templateObj: {}, // 当前模板数据对象
       Conditions: [], // 策略类型
-      PolicyType: [],//策略类型下拉框的策略名称
+      PolicyType: [], // 策略类型下拉框的策略名称
       formInline: {
         product_kind: [
           {
@@ -384,12 +384,16 @@ export default {
       })
     },
     // 获取触发条件列表
-    async getTemplateList () {
+    async getTemplateList (val) {
       this.loadShow = true
       let params = {
         Version: '2018-07-24',
-        Module: 'monitor'
-
+        Module: 'monitor',
+        Limit: this.pageSize,
+        Offset: this.currpage
+      }
+      if (this.triggerInput != '') {
+        params['GroupName'] = val
       }
       await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -438,9 +442,11 @@ export default {
     },
     // 搜索按钮
     clickSerch (val) {
-      // console.log(val)
-      this.triggerInput = val
-      this.getTemplateList()
+      if (this.triggerInput == '') {
+        this.getTemplateList()
+      } else {
+        this.getTemplateList(val)
+      }
     },
     // 编辑模板名称按钮
     showEditNameDlg (obj) {
@@ -588,7 +594,6 @@ export default {
     },
     // 设置弹框//新建实例分组
     buyMessgae () {
-      // alert("11")
       this.panelFlag = true
     },
     // 取消设置弹框
@@ -614,14 +619,15 @@ export default {
     onSubmit () {
       console.log('submit!')
     },
-    //策略类型下拉框回调
-    filterName (value, row) {      
-      return row.Name === value
-    },
+    // 策略类型下拉框回调
+    // filterName (value, row) {
+    //   return row.Name === value
+    // },
     // 分页
     handleCurrentChange (val) {
-      this.currpage = val
+      this.currpage = val - 1
       this.getTemplateList()
+      this.currpage += 1
     },
     handleSizesChange (val) {
       this.pageSize = val
@@ -648,10 +654,10 @@ export default {
 }
 </script>
 <style lang="scss">
-.el-table-filter .el-table-filter__list{
-  height: 300px;
-  overflow-y: scroll;
-}
+  // .el-table-filter .el-table-filter__list{
+  //   height: 300px;
+  //   overflow-y: scroll;
+  // }
 </style>
 <style lang="scss" scoped>
 .Template-wrap >>> .el-button,
