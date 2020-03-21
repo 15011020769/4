@@ -332,23 +332,23 @@
             </template>
           </el-table-column>
           <!-- dcchannel -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="名称/ID" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ scope.row.DirectConnectTunnelId }}</p>
               <p>{{ scope.row.DirectConnectTunnelName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="物理专线" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ dcchannel_Status(scope.row.State) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="规格" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="私有网络" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="内网地址" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="关联专线网关" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
@@ -1498,7 +1498,12 @@
       <div class="edit-alarm-object">
         <el-radio-group v-model="editAlarmObjectRadio">
           <p><el-radio label="1">全部对象</el-radio></p>
-          <p><el-radio label="2">选择部分对象(已选0个)</el-radio></p>
+          <p>
+            <el-radio label="2"
+              >选择部分对象
+              <!-- (已选{{ multipleSelection.length }}个) -->
+            </el-radio>
+          </p>
           <p><el-radio label="3">选择实例组</el-radio></p>
         </el-radio-group>
         <div class="table" v-if="editAlarmObjectRadio == 2">
@@ -2078,6 +2083,7 @@ export default {
     },
     //选择右侧表格数据
     selectDatas(val) {
+      console.log(val);
       this.multipleSelection = val;
     },
     async DetailsInit() {
@@ -2303,6 +2309,7 @@ export default {
     },
     // 编辑告警对象
     editObject() {
+      this.multipleSelection = [];
       this.dialogEditObject = true;
     },
     AlarmObjectNews() {
@@ -2321,8 +2328,10 @@ export default {
       this.axios.post(CM_GROUPING_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.InstanceGroupOpt = res.Response.InstanceGroupList;
-          this.InstanceGroup =
-            res.Response.InstanceGroupList[0].InstanceGroupId;
+          if (res.Response.Total > 0) {
+            this.InstanceGroup =
+              res.Response.InstanceGroupList[0].InstanceGroupId;
+          }
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
