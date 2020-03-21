@@ -136,8 +136,10 @@ export default {
         },
         selectDatas(val) {
             this.rightData  = val;
-            // console.log(val)
+            console.log(val)
+            // if(this.rightData.length){
             this.getMonitorList()
+            // }
         },
         Type_loading(val) {
             this.loading = val
