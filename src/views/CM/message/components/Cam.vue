@@ -179,8 +179,10 @@ export default {
           if (res.Response.Error === undefined) {
             this.tableData = res.Response.GroupInfo;
             this.groupData = [];
+            this.loadingShow = false;
           } else {
             let ErrTips = {};
+            this.loadingShow = false;
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
               message: ErrOr[res.Response.Error.Code],

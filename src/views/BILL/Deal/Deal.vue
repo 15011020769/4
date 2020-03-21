@@ -380,7 +380,9 @@ export default {
       var params = {
         projectId: this.dataForm.projectId,
         orderId: this.dataForm.orderId,
-        orderOwner: this.$cookie.get('uin')
+        orderOwner: this.$cookie.get('uin'),
+        beginDate: this.dataForm.date[0],
+        endDate: this.dataForm.date[1]
       }
       this.downloadLoading = true
       this.axios

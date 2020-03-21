@@ -812,9 +812,11 @@
       </div>
       <div class="box-content" style="margin-top:20px;">
         <el-row>
-          <el-button type="primary">编辑</el-button>
-          <el-button @click="Remove('', 2)">解除</el-button>
-          <el-button disabled>解除</el-button>
+          <el-button type="primary" @click="EditReceiveObject">编辑</el-button>
+          <el-button @click="Remove('', 2)" v-if="remove.length > 0"
+            >解除</el-button
+          >
+          <el-button disabled v-else>解除</el-button>
         </el-row>
       </div>
       <div class="alarm-object-table">
@@ -824,17 +826,72 @@
           style="width: 100%"
           height="300px"
           v-loading="receivingObjectLoad"
-          @selection-change="handleSelectionChange"
+          @selection-change="receivingSelectionChange"
         >
           <el-table-column type="selection"> </el-table-column>
-          <el-table-column label="接收人">
+          <el-table-column
+            label="接收组"
+            v-if="
+              receivingObjectData.length === 0 ||
+                ReceiverInfos.ReceiverType === 'group'
+            "
+          >
             <template slot-scope="scope">
-              {{ scope.row.Name }}
+              {{ scope.row.GroupName }}
             </template>
           </el-table-column>
-          <el-table-column label="有效时段"> </el-table-column>
-          <el-table-column label="网络类型"> </el-table-column>
-          <el-table-column label="IP地址"> </el-table-column>
+          <el-table-column
+            label="接收人"
+            v-if="
+              receivingObjectData.length === 0 ||
+                ReceiverInfos.ReceiverType === 'group'
+            "
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.UserInfo.length > 0">
+                <span v-for="(item, index) in scope.row.UserInfo" :key="index">
+                  {{ item.Name
+                  }}<i v-if="index != scope.row.UserInfo.length - 1">、</i>
+                </span>
+              </div>
+              <div v-else>
+                未设置
+              </div>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="有效时段"> </el-table-column> -->
+          <el-table-column
+            label="告警渠道"
+            v-if="
+              receivingObjectData.length === 0 ||
+                ReceiverInfos.ReceiverType === 'group'
+            "
+          >
+            <span v-for="(item, index) in ReceiverInfos.NotifyWay" :key="index">
+              {{ item | NotifyWay
+              }}<i v-if="index != ReceiverInfos.NotifyWay.length - 1">、</i>
+            </span>
+          </el-table-column>
+          <el-table-column
+            label="接收人"
+            v-if="ReceiverInfos.ReceiverType === 'user'"
+          >
+            <template slot-scope="scope">
+              <div>
+                {{ scope.row.Name }}
+              </div>
+            </template>
+          </el-table-column>
+          <!-- <el-table-column label="有效时段"> </el-table-column> -->
+          <el-table-column
+            label="告警渠道"
+            v-if="ReceiverInfos.ReceiverType === 'user'"
+          >
+            <span v-for="(item, index) in ReceiverInfos.NotifyWay" :key="index">
+              {{ item | NotifyWay
+              }}<i v-if="index != ReceiverInfos.NotifyWay.length - 1">、</i>
+            </span>
+          </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
               <a href="javascript:;" @click="Remove(scope.row, 1)">移除</a>
@@ -1426,12 +1483,12 @@
       <div class="edit-dialog">
         解除后，将不会收到告警
       </div>
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="AlarmObjectRemovalSure"
           >解除</el-button
         >
         <el-button @click="alarmObjectRemovalVisible = false">取消</el-button>
-      </span>
+      </div>
     </el-dialog>
     <!-- 告警对象全部移出 -->
     <el-dialog
@@ -1443,14 +1500,32 @@
       <div class="edit-dialog">
         解除后，将不会收到告警
       </div>
-      <span slot="footer" class="dialog-footer">
+      <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="AlarmObjectRemovalAllSure"
           >全部解除</el-button
         >
         <el-button @click="alarmObjectRemovalAllVisible = false"
           >取消</el-button
         >
-      </span>
+      </div>
+    </el-dialog>
+    <!-- 告警接收对象 编辑 -->
+    <el-dialog
+      title="告警接收对象"
+      :visible.sync="editReceiveObjectVisuble"
+      width="800px"
+      custom-class="tke-dialog"
+    >
+      <div class="edit-receive-object">
+        <p>您可到访问管理控制台修改用户和用户组信息</p>
+        <div>
+          <Cam @camClick="camFun"></Cam>
+        </div>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="EditReceiveSave">保存</el-button>
+        <el-button @click="editReceiveObjectVisuble = false">取消</el-button>
+      </div>
     </el-dialog>
     <!-- 回调接口 -->
     <el-dialog
@@ -1532,7 +1607,7 @@
         确认解除告警接收人关联
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="Receive">确定</el-button>
         <el-button @click="relieveDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -1551,6 +1626,7 @@ import {
   CM_ALARM_OBJECT_LIST_OUT,
   CM_ALARM_OBJECT_LIST_ALLOUT,
   CM_ALARM_RECEIVE_OBJECT_LIST,
+  CM_ALARM_RECEIVE_OBJECT_GetGroup,
   CM_CALLBACK,
   CM_ALARM_TRIGGER_CONDITION,
   CM_ALARM_RECEIVE_OBJECT_RELIEVE,
@@ -1570,10 +1646,12 @@ import {
   CM_ALARM_OBJECT_LIST_EDIT,
   CM_GROUPING_LIST,
   CM_GROUPING_ALARM_START,
-  CM_GROUPING_UNBINDING
+  CM_GROUPING_UNBINDING,
+  CM_CALLBACK_HISTORY
 } from "@/constants";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
+import Cam from "@/views/CM/CM_assembly/Cam";
 var project = [];
 var _ReceiverUserList = [];
 export default {
@@ -1583,6 +1661,7 @@ export default {
       basicNews: "",
       editName: "",
       GroupName: "",
+      ReceiverInfos: [],
       Remark: "",
       project,
       _ReceiverUserList,
@@ -1650,6 +1729,7 @@ export default {
       alarmObjecLoad: true,
       alarmInstanceLond: true,
       receivingObjectData: [],
+      receiving: [],
       callbackInterface: false,
       //分页
       total: 0, //总条数
@@ -1664,14 +1744,13 @@ export default {
       // 修改触发条件
       nameVal: "",
       triggerCondition: [],
-      Offset: 0,
-      describeContactList: [],
       describeContactListLength: "",
       // 告警接收对象
       relieveDialogVisible: false,
       relieveTitle: "",
       remove: "",
       receivingObjectLoad: true,
+      describeContactList: [],
       // 编辑告警触发条件
       gaoJingLoading: true,
       Conditions: [],
@@ -1871,10 +1950,13 @@ export default {
       InstanceGroupShow: "",
       InstanceGroupOpt: [],
       retract: true,
-      unBindingInstance: false
+      unBindingInstance: false,
+      Offset: 0,
+      editReceiveObjectVisuble: false,
+      cam: {} // cam组件的值
     };
   },
-  components: { Header, CamTransferCpt, ProductTypeCpt },
+  components: { Header, CamTransferCpt, ProductTypeCpt, Cam },
   mounted() {
     this.DetailsInit();
     this.Project();
@@ -1920,88 +2002,133 @@ export default {
       await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.basicNews = res.Response;
-          console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
           this.GroupName = this.basicNews.GroupName;
           this.projectId = this.basicNews.ProjectId;
-          if (
-            this.basicNews.ReceiverInfos !== undefined &&
-            this.basicNews.ReceiverInfos[0].ReceiverUserList.length != 0
-          ) {
-            _ReceiverUserList = this.basicNews.ReceiverInfos[0]
-              .ReceiverUserList;
-
-            this.describeContactList = [];
-            this.receivingObjectLoad = true;
-            var setTime = setInterval(() => {
-              this.receivingObjectData = [];
-              this.Offset++;
-              let params = {
-                Version: "2018-07-24",
-                Module: "monitor",
-                Limit: 100,
-                Offset: this.Offset
-              };
-              this.axios
-                .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
-                .then(res => {
-                  if (res.Response.Error === undefined) {
-                    var arr = res.Response.List;
-                    this.describeContactListLength = res.Response.TotalNum;
-                    for (let i = 0; i < arr.length; i++) {
-                      this.describeContactList.push(arr[i]);
+          this.receivingObjectLoad = true;
+          this.Offset = 0;
+          this.receivingObjectData = [];
+          _ReceiverUserList = [];
+          if (this.basicNews.ReceiverInfos !== undefined) {
+            this.ReceiverInfos = this.basicNews.ReceiverInfos[0];
+            if (this.ReceiverInfos.ReceiverType === "group") {
+              _ReceiverUserList = this.basicNews.ReceiverInfos[0]
+                .ReceiverGroupList;
+              for (let i in _ReceiverUserList) {
+                let params = {
+                  Version: "2019-01-16",
+                  GroupId: _ReceiverUserList[i]
+                };
+                this.axios
+                  .post(CM_ALARM_RECEIVE_OBJECT_GetGroup, params)
+                  .then(res => {
+                    if (res.Response.Error === undefined) {
+                      this.receivingObjectData.push(res.Response);
+                      this.receivingObjectLoad = false;
+                    } else {
+                      let ErrTips = {
+                        FailedOperation: "操作失败。",
+                        InternalError: "内部错误。",
+                        InvalidParameter: "参数错误。",
+                        LimitExceeded: "超过配额限制。",
+                        MissingParameter: "缺少参数错误。",
+                        ResourceInUse: "资源被占用。",
+                        ResourceInsufficient: "资源不足。",
+                        ResourceNotFound: "资源不存在。",
+                        ResourceUnavailable: "资源不可用。",
+                        UnauthorizedOperation: "未授权操作。",
+                        UnknownParameter: "未知参数错误。",
+                        UnsupportedOperation: "操作不支持。"
+                      };
+                      let ErrOr = Object.assign(ErrorTips, ErrTips);
+                      this.$message({
+                        message: ErrOr[res.Response.Error.Code],
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                      });
                     }
-
-                    for (let i in _ReceiverUserList) {
-                      for (let j in this.describeContactList) {
-                        if (
-                          _ReceiverUserList[i] ==
-                          this.describeContactList[j].Uid
-                        ) {
-                          this.receivingObjectData.push(
-                            this.describeContactList[j]
-                          );
+                  });
+              }
+            } else {
+              _ReceiverUserList = this.basicNews.ReceiverInfos[0]
+                .ReceiverUserList;
+              this.describeContactList = [];
+              this.receivingObjectLoad = true;
+              var setTime = setInterval(() => {
+                this.receivingObjectData = [];
+                var arr = [];
+                this.Offset++;
+                let params = {
+                  Version: "2018-07-24",
+                  Module: "monitor",
+                  Limit: 100,
+                  Offset: this.Offset
+                };
+                this.axios
+                  .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
+                  .then(res => {
+                    if (res.Response.Error === undefined) {
+                      arr = res.Response.List;
+                      this.describeContactListLength = res.Response.TotalNum;
+                      for (let i in arr) {
+                        this.describeContactList.push(arr[i]);
+                      }
+                      for (let i in _ReceiverUserList) {
+                        for (let j in this.describeContactList) {
+                          if (
+                            _ReceiverUserList[i] ==
+                            this.describeContactList[j].Uid
+                          ) {
+                            this.receivingObjectData.push(
+                              this.describeContactList[j]
+                            );
+                          }
                         }
                       }
+                      console.log(
+                        "this.receivingObjectData",
+                        this.receivingObjectData
+                      );
+                      if (
+                        this.Offset ==
+                        Math.ceil(Number(this.describeContactListLength) / 100)
+                      ) {
+                        console.log(
+                          Number(this.describeContactListLength / 100)
+                        );
+                        clearInterval(setTime);
+                        this.receivingObjectLoad = false;
+                      }
+                    } else {
+                      let ErrTips = {
+                        FailedOperation: "操作失败。",
+                        InternalError: "内部错误。",
+                        InvalidParameter: "参数错误。",
+                        LimitExceeded: "超过配额限制。",
+                        MissingParameter: "缺少参数错误。",
+                        ResourceInUse: "资源被占用。",
+                        ResourceInsufficient: "资源不足。",
+                        ResourceNotFound: "资源不存在。",
+                        ResourceUnavailable: "资源不可用。",
+                        UnauthorizedOperation: "未授权操作。",
+                        UnknownParameter: "未知参数错误。",
+                        UnsupportedOperation: "操作不支持。"
+                      };
+                      let ErrOr = Object.assign(ErrorTips, ErrTips);
+                      this.$message({
+                        message: ErrOr[res.Response.Error.Code],
+                        type: "error",
+                        showClose: true,
+                        duration: 0
+                      });
                     }
-
-                    console.log(
-                      "this.receivingObjectData",
-                      this.receivingObjectData
-                    );
-                  } else {
-                    let ErrTips = {
-                      FailedOperation: "操作失败。",
-                      InternalError: "内部错误。",
-                      InvalidParameter: "参数错误。",
-                      LimitExceeded: "超过配额限制。",
-                      MissingParameter: "缺少参数错误。",
-                      ResourceInUse: "资源被占用。",
-                      ResourceInsufficient: "资源不足。",
-                      ResourceNotFound: "资源不存在。",
-                      ResourceUnavailable: "资源不可用。",
-                      UnauthorizedOperation: "未授权操作。",
-                      UnknownParameter: "未知参数错误。",
-                      UnsupportedOperation: "操作不支持。"
-                    };
-                    let ErrOr = Object.assign(ErrorTips, ErrTips);
-                    this.$message({
-                      message: ErrOr[res.Response.Error.Code],
-                      type: "error",
-                      showClose: true,
-                      duration: 0
-                    });
-                  }
-
-                  if (
-                    this.Offset ==
-                    Math.ceil(Number(this.describeContactListLength) / 100)
-                  ) {
-                    clearInterval(setTime);
-                    this.receivingObjectLoad = false;
-                  }
-                });
-            }, 1000);
+                  });
+              }, 1000);
+            }
+          } else {
+            this.receivingObjectData = [];
+            this.receivingObjectLoad = false;
           }
         } else {
           let ErrTips = {
@@ -2652,10 +2779,8 @@ export default {
       };
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response);
           this.InstanceGroupShow = res.Response;
           var _enterList = res.Response.List;
-          console.log("_enterList", _enterList);
           this.total = res.Response.Total;
           if (this.total > 0) {
             if (this.ViewName === "cvm_device") {
@@ -3194,6 +3319,7 @@ export default {
           } else {
             this.alarmObjectData = [];
             this.alarmObjecLoad = false;
+            this.alarmInstanceLond = false;
           }
         } else {
           let ErrTips = {
@@ -3563,14 +3689,163 @@ export default {
       this.pageSize = val;
       this.ListInit();
     },
+    // 告警接收对象 编辑
+    EditReceiveObject() {
+      this.editReceiveObjectVisuble = true;
+    },
+
+    // 获取cam组件的值
+    camFun(val) {
+      this.cam = val;
+      console.log(this.cam);
+      // var time = 57599;
+      // var unixTimestamp = new Date(time);
+      // var commonTime = unixTimestamp.toLocaleString();
+      // console.log(commonTime);
+    },
+    EditReceiveSave() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      if (this.cam.selectUserGroup.length > 0) {
+        param["ReceiverInfos.0.StartTime"] = 61261;
+        param["ReceiverInfos.0.EndTime"] = 57599;
+        if (this.cam.channel.length > 0) {
+          for (let i in this.cam.channel) {
+            if (this.cam.channel[i] === "郵件") {
+              param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
+            } else if (this.cam.channel[i] === "簡訊") {
+              param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
+            }
+          }
+        } else {
+          this.$message({
+            message: "请选择接收渠道 ",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        // param[
+        //   "ReceiverInfos.0.PersonInterval"
+        // ] = this.ReceiverInfos.PersonInterval;
+        // param["ReceiverInfos.0.RoundNumber"] = this.ReceiverInfos.RoundNumber;
+        // param[
+        //   "ReceiverInfos.0.RoundInterval"
+        // ] = this.ReceiverInfos.RoundInterval;
+        // for (let i in this.ReceiverInfos.RecoverNotify) {
+        //   param[
+        //     "ReceiverInfos.0.RoundInterval." + i
+        //   ] = this.ReceiverInfos.RecoverNotify[i];
+        // }
+        // param[
+        //   "ReceiverInfos.0.NeedSendNotice"
+        // ] = this.ReceiverInfos.NeedSendNotice;
+
+        if (this.cam.selectType === "group" || this.cam.selectType === "") {
+          param["ReceiverInfos.0.ReceiverType"] = "group";
+          for (let i in this.cam.selectUserGroup) {
+            param[
+              "ReceiverInfos.0.ReceiverGroupList." + i
+            ] = this.cam.selectUserGroup[i].GroupId;
+          }
+        }
+      }
+      if (this.cam.selectUserList.length > 0) {
+        param["ReceiverInfos.0.StartTime"] = 61261;
+        param["ReceiverInfos.0.EndTime"] = 57599;
+        if (this.cam.channel.length > 0) {
+          for (let i in this.cam.channel) {
+            if (this.cam.channel[i] === "郵件") {
+              param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
+            } else if (this.cam.channel[i] === "簡訊") {
+              param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
+            }
+          }
+        } else {
+          this.$message({
+            message: "请选择接收渠道 ",
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false;
+        }
+
+        if (this.cam.selectType === "user") {
+          param["ReceiverInfos.0.ReceiverType"] = "user";
+          for (let i in this.cam.selectUserList) {
+            param[
+              "ReceiverInfos.0.ReceiverUserList." + i
+            ] = this.cam.selectUserList[i].Uid;
+          }
+        }
+      }
+
+      console.log(param);
+      this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.editReceiveObjectVisuble = false;
+          this.DetailsInit();
+        } else {
+          let ErrTips = {
+            "AuthFailure.InvalidSecretId": "密钥非法（不是云 API 密钥类型）。",
+            "AuthFailure.MFAFailure": "MFA 错误。",
+            "AuthFailure.SecretIdNotFound": "密钥不存在。",
+            "AuthFailure.SignatureExpire": "签名过期。",
+            "AuthFailure.SignatureFailure": "签名错误。",
+            "AuthFailure.TokenFailure	token": "错误。",
+            "AuthFailure.UnauthorizedOperation": "请求未 CAM 授权。",
+            DryRunOperation:
+              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            InvalidAction: "接口不存在。",
+            InvalidParameter: "参数错误。",
+            InvalidParameterValue: "参数取值错误。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            NoSuchVersion: "接口版本不存在。",
+            RequestLimitExceeded: "请求的次数超过了频率限制。",
+            ResourceInUse: "资源被占用。",
+            ResourceInsufficient: "资源不足。",
+            ResourceNotFound: "资源不存在。",
+            ResourceUnavailable: "资源不可用。",
+            UnauthorizedOperation: "未授权操作。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。",
+            UnsupportedProtocol:
+              "HTTPS 请求方法错误，只支持 GET 和 POST 请求。",
+            UnsupportedRegion: "接口不支持所传地域。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 告警接收对象 select
+    receivingSelectionChange(val) {
+      console.log(val);
+      this.remove = val;
+    },
     // 告警接收对象 解除
     Remove(row, index) {
-      console.log(row);
       if (index == 1) {
+        this.remove = [];
         this.remove = row;
         this.relieveTitle = "确定解除与该$接收人的关联？";
       } else {
-        this.relieveTitle = "已选择" + 1 + "个告警接收人，确定要解除关联？";
+        this.relieveTitle =
+          "已选择" + this.remove.length + "个告警接收人，确定要解除关联？";
       }
       this.relieveDialogVisible = true;
     },
@@ -3580,8 +3855,82 @@ export default {
         Module: "monitor",
         GroupId: this.$route.query.groupId
       };
+      if (_ReceiverUserList.length > 1) {
+        if (this.remove.length !== _ReceiverUserList.length) {
+          param["ReceiverInfos.0.StartTime"] = this.ReceiverInfos.StartTime;
+          param["ReceiverInfos.0.EndTime"] = this.ReceiverInfos.EndTime;
+          for (let i in this.ReceiverInfos.NotifyWay) {
+            param[
+              "ReceiverInfos.0.NotifyWay." + i
+            ] = this.ReceiverInfos.NotifyWay[i];
+          }
+          param[
+            "ReceiverInfos.0.ReceiverType"
+          ] = this.ReceiverInfos.ReceiverType;
+          // param[
+          //   "ReceiverInfos.0.PersonInterval"
+          // ] = this.ReceiverInfos.PersonInterval;
+          // param["ReceiverInfos.0.RoundNumber"] = this.ReceiverInfos.RoundNumber;
+          // param[
+          //   "ReceiverInfos.0.RoundInterval"
+          // ] = this.ReceiverInfos.RoundInterval;
+          // for (let i in this.ReceiverInfos.RecoverNotify) {
+          //   param[
+          //     "ReceiverInfos.0.RoundInterval." + i
+          //   ] = this.ReceiverInfos.RecoverNotify[i];
+          // }
+          // param[
+          //   "ReceiverInfos.0.NeedSendNotice"
+          // ] = this.ReceiverInfos.NeedSendNotice;
+          if (this.ReceiverInfos.ReceiverType === "group") {
+            if (Array.isArray(this.remove)) {
+              for (let i in this.remove) {
+                for (let j in _ReceiverUserList) {
+                  if (_ReceiverUserList[j] === this.remove[i].GroupId) {
+                    _ReceiverUserList.splice(j, 1);
+                  }
+                }
+              }
+            } else {
+              for (let j in _ReceiverUserList) {
+                if (_ReceiverUserList[j] === this.remove.GroupId) {
+                  _ReceiverUserList.splice(j, 1);
+                }
+              }
+            }
+
+            for (let i in _ReceiverUserList) {
+              param["ReceiverInfos.0.ReceiverGroupList." + i] =
+                _ReceiverUserList[i];
+            }
+          } else {
+            if (Array.isArray(this.remove)) {
+              for (let i in this.remove) {
+                for (let j in _ReceiverUserList) {
+                  if (_ReceiverUserList[j] === this.remove[i].Uid) {
+                    _ReceiverUserList.splice(j, 1);
+                  }
+                }
+              }
+            } else {
+              for (let j in _ReceiverUserList) {
+                if (_ReceiverUserList[j] === this.remove.Uid) {
+                  _ReceiverUserList.splice(j, 1);
+                }
+              }
+            }
+            for (let i in _ReceiverUserList) {
+              param["ReceiverInfos.0.ReceiverUserList." + i] =
+                _ReceiverUserList[i];
+            }
+          }
+        }
+      }
+      console.log(param);
       this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, param).then(res => {
         if (res.Response.Error === undefined) {
+          this.relieveDialogVisible = false;
+          this.DetailsInit();
           this.$message({
             message: "告警接收对象解除成功",
             type: "success",
@@ -3590,47 +3939,34 @@ export default {
           });
         } else {
           let ErrTips = {
-            "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+            "AuthFailure.InvalidSecretId": "密钥非法（不是云 API 密钥类型）。",
+            "AuthFailure.MFAFailure": "MFA 错误。",
+            "AuthFailure.SecretIdNotFound": "密钥不存在。",
+            "AuthFailure.SignatureExpire": "签名过期。",
+            "AuthFailure.SignatureFailure": "签名错误。",
+            "AuthFailure.TokenFailure	token": "错误。",
+            "AuthFailure.UnauthorizedOperation": "请求未 CAM 授权。",
             DryRunOperation:
               "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
             FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
-            "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
-            "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
             InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
+            InvalidAction: "接口不存在。",
             InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
+            InvalidParameterValue: "参数取值错误。",
             LimitExceeded: "超过配额限制。",
-            "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
             MissingParameter: "缺少参数错误。",
+            NoSuchVersion: "接口版本不存在。",
+            RequestLimitExceeded: "请求的次数超过了频率限制。",
             ResourceInUse: "资源被占用。",
             ResourceInsufficient: "资源不足。",
             ResourceNotFound: "资源不存在。",
             ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
             UnauthorizedOperation: "未授权操作。",
             UnknownParameter: "未知参数错误。",
-            UnsupportedOperation: "操作不支持。"
+            UnsupportedOperation: "操作不支持。",
+            UnsupportedProtocol:
+              "HTTPS 请求方法错误，只支持 GET 和 POST 请求。",
+            UnsupportedRegion: "接口不支持所传地域。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -3697,6 +4033,7 @@ export default {
         }
       }
     },
+
     // 状态
     InstanceState(val) {
       if (val === "PENDING") {
@@ -4299,6 +4636,18 @@ input {
         }
       }
     }
+  }
+}
+.edit-receive-object {
+  p {
+    font-size: 12px;
+    line-height: inherit;
+    padding: 10px 30px 10px 20px;
+    vertical-align: middle;
+    color: #003b80;
+    border: 1px solid #97c7ff;
+    background: #e5f0ff;
+    margin-bottom: 10px;
   }
 }
 </style>

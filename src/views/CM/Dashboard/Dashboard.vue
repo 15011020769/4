@@ -1,7 +1,7 @@
 <template>
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
-      <el-select v-model="panelValue" :placeholder="$t('CVM.Dashboard.qxz')" style="margin:0 20px 0 40px;width:260px">
+      <el-select v-model="DashboardID" :placeholder="$t('CVM.Dashboard.qxz')" style="margin:0 20px 0 40px;width:260px">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
             <!-- @mouseover.native="mouseoverSelect(item.value)" -->
             <!-- <span style="float: left">{{ item.label }}</span>
@@ -119,7 +119,7 @@ import AddPanel from "./components/AddPaneldialog";
 import RenameControlPanel from "./components/renameControlPanel";
 import EcharS from '@/components/public/EcharS'
 import {
-  GET_DASHBOARD_LIST, DESCRIBE_DASHBOARD_VIEWS
+  GET_DASHBOARD_LIST, DESCRIBE_DASHBOARD_VIEWS, GET_MONITOR_DATA
 } from "@/constants";
 import {
   ErrorTips
@@ -133,7 +133,7 @@ export default {
           name: '近1小时',
           Time: 'realTime',
           TimeGranularity: [{
-            value: "10000",
+            value: "10",
             label: "10秒"
           }, ]
         },
@@ -141,7 +141,7 @@ export default {
           name: '近24小时',
           Time: 'Nearly_24_hours',
           TimeGranularity: [{
-            value: "60000",
+            value: "60",
             label: "1分鐘"
           }, ]
         },
@@ -149,7 +149,7 @@ export default {
           name: '近7天',
           Time: 'Nearly_7_days',
           TimeGranularity: [{
-            value: "3600000",
+            value: "3600",
             label: "1小時"
           }, ]
         },
@@ -157,7 +157,7 @@ export default {
           name: '近15天',
           Time: 'Nearly_15_days',
           TimeGranularity: [{
-            value: "3600000",
+            value: "3600",
             label: "1小時"
           }, ]
         },
@@ -165,7 +165,7 @@ export default {
           name: '近30天',
           Time: 'Nearly_30_days',
           TimeGranularity: [{
-            value: "3600000",
+            value: "3600",
             label: "1小時"
           }, ]
         },
@@ -205,17 +205,18 @@ export default {
       showEmptyControlPanel: false, // 是否展示空的监控面板
       ViewList: [], // 监控面板数组
       DashboardID: '', // 展示面板的ID
-      period: '10000', // echarts展示粒度
+      period: '10', // echarts展示粒度
       time: [], // 横坐标时间
+      startEnd: {
+        StartTime: '', EndTime: ''
+      },
       seriesArr: [ // 纵坐标
         {series: [{
             type: 'line',
-            stack: '总量',
             data: []
           }],
         },
-      ]
-      ,
+      ],
     };
   },
   components: {
@@ -230,23 +231,26 @@ export default {
     this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
   },
   watch: {
-    panelValue(newVal) {
+    DashboardID(newVal) {
       // this.selectShowControlPanel(newVal);
-      this.DashboardID = newVal;
+      console.log(newVal, 'newVal');
+      // this.DashboardID = newVal;
       this.getDescribeDashboardView(); // 监控面板展示
     }
   },
   methods: {
     GetDat(data) {
-      console.log(data, 'data')
       this.time = data[1].XAxis; // 横坐标时间
+      this.startEnd.StartTime = data[1].StartTIme; // 开始时间
+      this.startEnd.EndTime = data[1].EndTIme; //  结束时间
+      this.period = data[0]; // 粒度
+      console.log(data, 'data', this.startEnd);
       this.seriesArr.forEach(item => {
         item.series[0].data = [];
         this.time.forEach(ele => {
           item.series[0].data.push(parseInt(Math.random() * 100));
         })
       })
-      
     },
     //设置弹框//新建实例分组
     buyMessgae() {
@@ -265,7 +269,7 @@ export default {
     },
     openCreate(){
       this.$router.push({
-        name:'DashboardCreate'
+        name:'DashboardCreate', query: { DashboardID: this.DashboardID }
       })
     },
     // panelStatus(flag) {
@@ -314,8 +318,8 @@ export default {
               value: ele.DashboardID,
               label: ele.DescName
             });
-            this.panelValue = this.options[0].value; // 监控面板默认值
-            this.DashboardID = this.options[0].value; // 展示面板的ID
+            this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
+            console.log(this.panelValue, 'panelValue');
             this.getDescribeDashboardView(); // 获取监控面板视图
           });
           console.log(this.options, 'options');
@@ -388,7 +392,7 @@ export default {
               value: ele.DashboardID,
               label: ele.DescName
             });
-            this.panelValue = this.options[0].label;
+            // this.panelValue = this.options[0].value;
           });
           console.log(this.options, 'options');
         } else {
@@ -488,6 +492,13 @@ export default {
                   //   }]
                   // });
                 // });
+                // this.getMonitorData(Namespace, MetricName, Period, StartTime, EndTime, Dimensions)
+                // 获取监控面板echarts数据
+                // console.log(this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances, 'this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances')
+                var series = []; // Y轴坐标
+                series = this.getMonitorData(ele.Namespace, ele.MetricName[0], this.period, 
+                  this.startEnd.StartTime, this.startEnd.EndTime, ele.Instances);
+                console.log(series, 'series');
               });
               console.log( this.ViewList, 'Response');
             } else {
@@ -532,8 +543,44 @@ export default {
               }
             }
         })
-    }
-
+    },
+    // 获取监控面板echarts数据
+    async getMonitorData(Namespace, MetricName, Period, StartTime, EndTime, Instances) {
+      let params = {'Version': '2017-03-12', Namespace, MetricName, Period, StartTime, EndTime};
+      if (Instances.length != 0) {
+        Instances.forEach((ele,i) => {
+          if (ele.unInstanceId) {
+            params['Dimensions.'+i+'.unInstanceId'] = ele.unInstanceId;
+          } else if (ele.diskId) {
+            params['Dimensions.'+i+'.diskId'] = ele.diskId;
+          }
+        });
+      } else {
+        params['Dimensions.'+0+'.unInstanceId'] = 'null';
+      }
+      await this.axios.get(GET_MONITOR_DATA, {
+        params: params
+      }).then(res => {
+        if (res.Response.Error === undefined) {
+          var DataPoints = []; // 取出这个空数组
+          res.Response.DataPoints.forEach(ele => {
+            DataPoints.push({
+              type: 'line', data: ele.Points
+            });
+          });
+          return DataPoints;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      })
+    },
 
     // //取消
     // cancel() {

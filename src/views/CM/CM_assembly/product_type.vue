@@ -809,7 +809,7 @@
             label: "通道ID"
           }]
           this.HeadConfig = {
-            title1: '名称/ID',
+            title1: 'ID/名称',
             title2: '私有网络',
           }
           this.MetricName = [{
@@ -944,9 +944,9 @@
           parms["Filters.0.Name"] = 'project-id';
           parms["Filters.0.Values.0"] = this.projectId;
         }
-        this.axios.post(CVM_LIST, parms).then(data => {
+        this.axios.post(DISK_LIST, parms).then(data => {
           this.id = 'bs'
-          this.Date = data.Response.InstanceSet
+          this.Date = data.Response.DiskSet
           this.Namespace = 'qce/block_storage'
           this.SearchConfig = [{
               value: "disk-id",

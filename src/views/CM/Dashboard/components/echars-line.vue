@@ -13,8 +13,9 @@
       time: [Array, String, Number],
       opData: Array,
       scale: Number,
+      xdata: Boolean,
       period: String,
-      series: [Array, String, Number],
+      series:[Array, String, Number]
     },
     mounted() {
       this.init();
@@ -93,7 +94,8 @@
               }
             },
             formatter(params) {
-              let relVal = `${params[0].name}<br/>`;
+              let relVal = `${params[0].name}<br/>
+           ${params[0].data}<br />`;
               relVal += `粒度：${TimeGranularity[period]}</br>`;
               return relVal;
             }
@@ -113,17 +115,33 @@
             y: "bottom"
           },
           grid: {
-            x: 45,
+            x: 50,
             y: 45,
             x2: 5,
             y2: 20,
             borderWidth: 1
           },
-          xAxis: {
-            type: 'category',
+          xAxis: [{
+            type: "category",
             boundaryGap: false,
-            data: this.time
-          },
+            data: this.time,
+            axisTick: {
+              // 决定是否显示坐标刻度
+              alignWithLabel: true,
+              show: this.xdata
+            },
+            axisLabel: {
+              // 决定是否显示数据
+              show: this.xdata
+            },
+            splitLine: {
+              show: false
+            },
+            axisLine: {
+              // y轴显示
+              show: this.xdata
+            }
+          }],
           yAxis: [{
             splitLine: {
               // 网格线
@@ -137,7 +155,9 @@
             splitNumber: this.scale
           }],
 
-          series: this.series
+          series:this.series
+
+       
         });
         window.addEventListener("resize", () => {
           myChart.resize();
@@ -162,8 +182,8 @@
   }
 
   #id {
-    // min-width: 500px;
-    min-height: 300px;
+    min-width: 420px;
+    min-height: 120px;
     height: 100%;
   }
 

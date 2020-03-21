@@ -18,7 +18,10 @@
               </el-radio-group>
             </span>
           </div>
-          <div class="blueTip">{{$t('DDOS.Proteccon_figura.IP_address')}}</div>
+          <div class="blueTip" v-if="checkNumFlg == true">{{$t('DDOS.Proteccon_figura.IP_address')}}</div>
+          <p class="tc-15-msg error" v-if="checkNumFlg == false">
+            {{$t('DDOS.Proteccon_figura.UrlNumWarning')}}
+          </p>
           <div class="addUrlBox">
             <h3>IP地址</h3>
             <div class="tableUrl">
@@ -39,7 +42,7 @@
                   <td>
                     <a
                       v-on:click="removeRow(index)"
-                      v-show="index >= 0"
+                      v-show="tags5.length > 1"
                     >{{$t('DDOS.Proteccon_figura.Delete')}}</a>
                   </td>
                 </tr>
@@ -79,6 +82,7 @@ export default {
   },
   data() {
     return {
+      checkNumFlg: true,
       dialogVisible: "", //弹框状态
       httpCheck: "HTTP", //协议
       method: "add", //add表示添加，delete表示删除
@@ -135,6 +139,7 @@ export default {
     },
     //关闭按钮
     handleClose() {
+      this.tags5 = [{urlAddress: ""}];
       this.dialogVisible = false;
       this.$emit("closeModel1", this.dialogVisible);
     },
@@ -146,15 +151,27 @@ export default {
     },
     //新增一行
     addRow: function() {
+      this.checkNumFlg = true;
       var des = this.copyObj();
       this.tags5.push(des);
+      if (this.tags5.length > 50) {
+        this.checkNumFlg = false;
+      }
     },
     // 删除一行
     removeRow: function(idx) {
       this.tags5.splice(idx, 1);
+      if (this.tags5.length > 50) {
+        this.checkNumFlg = false;
+      } else {
+        this.checkNumFlg = true;
+      }
     },
     //确定按钮
     addIpWhiteSure() {
+      if (!this.checkNumFlg) {
+        return
+      }
       this.modifyCCIpAllowDeny();
       this.dialogVisible = false;
       this.$emit("addIpWhiteSure", this.dialogVisible);

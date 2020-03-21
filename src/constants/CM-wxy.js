@@ -79,8 +79,14 @@ export const CM_ALARM_OBJECT_LIST_ALLOUT = 'monitor2/UnBindingAllPolicyObject'
 // 告警策略 详情 告警接收对象 列表
 export const CM_ALARM_RECEIVE_OBJECT_LIST = 'monitor2/DescribeContactList'
 
-// 告警策略 详情 告警接收对象 列表 解除
+// 告警策略 详情 告警接收对象 列表
+export const CM_ALARM_RECEIVE_OBJECT_GetGroup = 'cam2/GetGroup'
+
+// 告警策略 详情 告警接收对象 列表 解除/绑定
 export const CM_ALARM_RECEIVE_OBJECT_RELIEVE = 'monitor2/ModifyAlarmReceivers'
+
+// 告警策略 详情 回调接口
+export const CM_CALLBACK_HISTORY = 'monitor2/DescribeAlarmCallbackHistory'
 
 // 告警策略 详情 回调接口
 export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'

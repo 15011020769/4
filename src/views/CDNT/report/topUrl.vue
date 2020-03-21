@@ -92,12 +92,6 @@ export default {
       let fileName;
       const start = times[0].split(" ")[0];
       const end = times[1].split(" ")[0];
-      if (interval === "5min") {
-        // 日报
-        fileName = `${start}_top10_urls.xlsx`;
-      } else {
-        fileName = `${start}-${end}_top10_urls.xlsx`;
-      }
       let data = [
         ["统计项目", projectName || "全部项目"],
         ["统计域名", domainName || "全部域名"],
@@ -119,6 +113,12 @@ export default {
         this.RequestTableData.map(item => {
           data.push([item.Name, item.Value]);
         });
+      }
+      if (interval === "5min") {
+        // 日报
+        fileName = `${start}_${name}_top10_urls.xlsx`;
+      } else {
+        fileName = `${start}-${end}_${name}_top10_urls.xlsx`;
       }
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();

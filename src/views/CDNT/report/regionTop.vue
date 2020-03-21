@@ -106,7 +106,7 @@ export default {
       const { projectName, domainName, type, times, interval } = this.params;
       let fileName;
       const start = moment(times[0]).format('YYYY-MM-DD');
-      const end = tmoment(times[1]).format('YYYY-MM-DD');
+      const end = moment(times[1]).format('YYYY-MM-DD');
       if (interval === "5min") {
         // 日报
         fileName = `${start}_traffic_distribution.xlsx`;

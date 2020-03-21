@@ -93,7 +93,7 @@ export default {
       ]
       if (type1 === 'billing') {
         data.push(['时间', '当前计费流量（B）', '上一周期计费流量（B）'])
-        name="billing_traffic"
+        name="billing_traffic_trend"
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
             item,

@@ -102,7 +102,9 @@
               <template slot-scope="scope">
                 <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                   <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
-                  <p>有效期：{{ Moment(i.startTime) }}</p>
+                  <p>
+                    有效期：{{ Moment(i.StartTime) }} - {{ Moment(i.EndTime) }}
+                  </p>
                   <p>
                     渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                       >{{ j | NotifyWay
@@ -303,7 +305,7 @@ export default {
       });
     },
     Moment(val) {
-      console.log(moment(val).format("HH:mm:ss"));
+      return moment(val).format("HH:mm:ss");
     },
     // 分页
     handleCurrentChange(val) {
