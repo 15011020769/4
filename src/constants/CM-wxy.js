@@ -91,5 +91,11 @@ export const CM_CALLBACK_HISTORY = 'monitor2/DescribeAlarmCallbackHistory'
 // 告警策略 详情 回调接口
 export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'
 
+// 告警策略 详情 回调接口
+export const CM_CALLBACK_SAVE = 'monitor2/ModifyAlarmCallback'
+
+// 告警策略 详情 回调接口 刷新
+export const CM_CALLBACK_Verify = 'monitor2/VerifyAlarmCallback'
+
 //
 export const MYSQL_LIST_CMD = 'cmd2/DescribeDBInstances'
