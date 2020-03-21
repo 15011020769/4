@@ -159,14 +159,49 @@
           <el-table-column prop="Name" label="用户名"></el-table-column>
           <el-table-column label="手机号">
             <template slot-scope="scope">
-              <span v-if="scope.row.PhoneNum !== ''">{{scope.row.PhoneNum}}</span>
-              <span v-else>未设置手机号</span>
+              <span v-if="scope.row.PhoneNum !== ''">
+                {{scope.row.PhoneNum}}
+                <el-tooltip placement="top" effect="light">
+                  <div slot="content">
+                    未验证, 可在
+                    <a href>权限管理</a>页面设置
+                  </div>
+                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
+                </el-tooltip>
+              </span>
+              <span v-else>
+                <el-tooltip placement="top" effect="light">
+                  <div slot="content">
+                    未验证, 可在
+                    <a href>权限管理</a>页面设置
+                  </div>
+                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
+                </el-tooltip>
+              </span>
             </template>
           </el-table-column>
           <el-table-column label="邮箱">
             <template slot-scope="scope">
-              <span v-if="scope.row.Email !== ''">{{scope.row.Email}}</span>
-              <span v-else>未设置邮箱</span>
+              <span v-if="scope.row.Email !== ''">
+                {{scope.row.Email}}
+                <el-tooltip placement="top" effect="light">
+                  <div slot="content">
+                    未验证, 可在
+                    <a href>权限管理</a>页面设置
+                  </div>
+                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
+                </el-tooltip>
+              </span>
+
+              <span v-else>
+                <el-tooltip placement="top" effect="light">
+                  <div slot="content">
+                    未验证, 可在
+                    <a href>权限管理</a>页面设置
+                  </div>
+                  <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
+                </el-tooltip>
+              </span>
             </template>
           </el-table-column>
         </el-table>
@@ -198,17 +233,17 @@ import {
 import { LIST_SUBACCOUNTS } from "@/constants";
 
 import Header from "@/components/public/Head";
-const cityOptions = ["短信", "邮件", "站内信"];
+// const cityOptions = ["短信", "邮件", "站内信"];
 export default {
   name: "subscription",
   data() {
     return {
-      qudaoCheckList:[],//接收方式
+      qudaoCheckList: [], //接收方式
       loadingShow1: false, // 加载是否显示
       loadShow: false, // 加载是否显示
       triggerInput: "", //选择触发条件名搜索
       num: 0, //已选择几人
-      cities: cityOptions,
+      // cities: cityOptions,
       dialogcancel: false, //取消订阅确认框
       dialogSubscribe: false, //订阅管理确认框
       tableData: [],
@@ -227,7 +262,7 @@ export default {
     this.getEventList();
   },
   methods: {
-     // 选中渠道
+    // 选中渠道
     selectChannel() {
       // var data = this.$route.params;
       // if (data.NotifyWay) {
@@ -254,6 +289,7 @@ export default {
     // 接收人 table表格选中触发的事件
     handleSelectionChange2(val) {
       this.selectUserList = val;
+      this.num = this.selectUserList.length;
       console.log(this.selectUserList);
       // this.$emit("camClick", this.cam);
     },
