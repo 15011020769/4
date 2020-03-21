@@ -58,19 +58,18 @@ export default {
     this.GetPolicyInfoByInstance()
   },
   methods: {
-    GetPolicyInfoByInstance () {
+    GetPolicyInfoByInstance () {   
       const params = {
         Action: 'DescribePolicyInfoByInstance',
         Region: localStorage.getItem("regionv2"),
         Version: "2018-07-24",
         Module: "monitor",
-        ViewName: "dcchannel",
-        // Dimensions: ["{\"name\": \"directconnectconnid\",\"value\" : \"dcx-l1zv1sxs\"}"],
-        'Dimensions.0.Name': "directconnectconnid",
-        'Dimensions.0.Value': this.$router.currentRoute.query.id,
+        ViewName: "dcchannel", 
+        'Dimensions.0': JSON.stringify({directconnectconnid: this.$router.currentRoute.query.id}),
         Offset:0,
         Limit:20
       };
+      // Dimensions: ["{\"name\": \"directconnectconnid\",\"value\" : \"dcx-l1zv1sxs\"}"],
       // directConnectConnId
       this.axios.post(ALARM_STRATEGY_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
