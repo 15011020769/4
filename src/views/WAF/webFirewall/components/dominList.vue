@@ -391,19 +391,22 @@ export default {
   },
   methods: {
     uniqueVip(val) {
-      let brr = []
-      for (var i = 1; i < val.length; i++) {
-        if (val[i].Vip === val[i-1].Vip ) {
-          val[i - 1].Vip = " "
+      for(let i = 0;i < val.length;i++){
+        for(let j = i + 1;j < val.length;j++){
+          if(val[i].Vip === val[j].Vip){
+            val[j].Vip = " "
+          }
         }
       }
       return val
     },
     uniqueId(val) {
-      for (var i = 1; i < val.length; i++) {
-        if (val[i].LoadBalancerId === val[i-1].LoadBalancerId ) {
-          val[i-1].LoadBalancerId = " "
-          val[i-1].LoadBalancerName = " "
+      for(let i = 0;i < val.length;i++){
+        for(let j = i + 1;j < val.length;j++){
+          if(val[i].LoadBalancerId === val[j].LoadBalancerId){
+            val[j].LoadBalancerId = " "
+            val[j].LoadBalancerName = " "
+          }
         }
       }
       return val
