@@ -36,7 +36,8 @@
                 <div class="footer-left-right">
                    <h2>{{picName}}</h2>
                    <div>
-                       
+                       <Echarts :time='times' :series='series' :period = "'60'" :xdata="true" 
+                       style="width:300px;height:400px;margin-left:-30px"></Echarts>
                    </div>
                 </div>
             </div>
@@ -62,16 +63,19 @@
 import Type from '@/views/CM/CM_assembly/product_type'
 import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
 import {CREATDASHBORD,All_MONITOR} from '@/constants'
+import Echarts from './components/echars-line'
 import moment from 'moment';
 export default {
     name:"DashboardCreate",
     components:{
         Type,
-        CamTransferCpt
+        CamTransferCpt,
+        Echarts
     },
     created(){
-        
-        // console.log(new Date(moment().format()).getTime())
+        this.StartTime= moment(new Date(moment().format()).getTime()-1000*60*60).format("YYYY-MM-DD HH:mm:ss")
+        this.EndTime =  moment(new Date(moment().format()).getTime()).format("YYYY-MM-DD HH:mm:ss")
+        // console.log(moment(new Date(moment().format()).getTime()-1000*60*60).format("YYYY-MM-DD HH:mm:ss"))
     },
     data(){
         return{
@@ -83,7 +87,13 @@ export default {
             picName:"",
             productData:[],
             productListData:{},
-            MetricName:'',// 监控名
+            MetricName:"",// 监控名
+            rightData:"",// 多选数据
+            StartTime:"",//开始时间
+            EndTime:"",//结束时间
+            timeDate:{},
+            times:[],
+            series:[],
             flag:false
         }
     },
@@ -113,10 +123,7 @@ export default {
         selectDatas(val) {
             this.rightData  = val;
             console.log(val)
-            this.startTime = moment(val[0].CreatedTime).format("YYYY-MM-DD HH:mm:ss")
-            console.log(this.startTime)
             this.getMonitorList()
-
         },
         // 跳转
         jump(){
@@ -124,24 +131,73 @@ export default {
         },
         // 获取监控列表
         async getMonitorList(){
+            this.timeDate = {}
+            this.times=[]
+            this.series=[]
             let params = {
                 Namespace: this.Namespace,
                 MetricName: this.MetricName,
-                StartTime: "2020-03-20T23:27:48+08:00",
-                EndTime: "2020-03-21T00:27:48+08:00",
-                Period: 10,
-                // "Dimensions.0.unInstanceId": "ins-jft7ju66",
+                StartTime:this.StartTime,
+                EndTime: this.EndTime,
+                Period: 60,
                 Version: "2017-03-12",
             }
-            // for(let i=0 ; i<this.searchParam.length ; i++){
-            //     if()
-            // }
+            for(let i=0 ; i<this.rightData.length ; i++){
+                if (this.productValue=== "cvm_device"){
+                    params['Dimensions.'+i+'.unInstanceId'] = this.rightData[i].InstanceId
+                } else if(this.productValue=== "VPN_GW"){
+                    params['Dimensions.'+i+'.unInstanceId'] = this.rightData[i].InstanceId
+                }
+            }
             await this.axios.post(All_MONITOR, params).then(res=>{
-                console.log(res)
+                if(res.Response.Error == undefined){
+                    console.log(res)
+                    if(res.Response.DataPoints.length){
+                        // 监控数据处理
+                        for(let i in res.Response.DataPoints){
+                            this.timeDate['DataPoints.'+i] = []
+                            for(let j in res.Response.DataPoints[i].Points){
+                                this.timeDate['DataPoints.'+i].push({
+                                    point:res.Response.DataPoints[i].Points[j],
+                                    time:moment(new Date(this.StartTime).getTime()+60000*j).format("YYYY-MM-DD HH:mm:ss")
+                                }) 
+                            }
+                        }
+                        // x轴数据
+                        for(let keyTime in this.timeDate['DataPoints.0']){
+                            this.times.push(this.timeDate['DataPoints.0'][keyTime].time)
+                        }
+                        // y轴
+                        for(let item in res.Response.DataPoints){
+                            if(res.Response.DataPoints.length){
+                                this.series.push({
+                                    labelLine: {
+                                        normal: {
+                                        show: false
+                                        }
+                                    },
+                                    type: 'line', 
+                                    data: res.Response.DataPoints[item].Points,
+                                    symbol: "none",
+                                    itemStyle: {
+                                        normal: {
+                                            color: "#2072d9",
+                                            lineStyle: {
+                                                color: "#2072d9"
+                                            }
+                                        }
+                                    }
+                                })
+                            }
+                        }
+                    } else {
+                        this.series = []
+                    }
+                }
             })
         },
+        
       
-
         // 创建Dashboard
         // async createDashboard(){
         //     const param = {
@@ -265,7 +321,7 @@ export default {
         justify-content: space-between;
         align-items: center;
         .footer-left{
-            width: 55%;
+            width: 56%;
             height: 450px;
             border:1px solid #ddd;
             display: flex;
