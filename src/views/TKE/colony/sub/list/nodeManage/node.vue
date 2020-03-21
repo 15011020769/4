@@ -673,7 +673,13 @@ export default {
                     }
                   }
                 }
-                
+                let now = new Date();
+                now.setMinutes (now.getMinutes () - 30);
+                if(new Date(now).getTime() - new Date(moment(node.CreatedTime).format("YYYY-MM-DD HH:mm:ss")).getTime() > 0) {
+                  node.isDelete = false;
+                } else {
+                  node.isDelete = true;
+                }
                 node.addTime = moment(node.CreatedTime).format(
                   "YYYY-MM-DD HH:mm:ss"
                 );
