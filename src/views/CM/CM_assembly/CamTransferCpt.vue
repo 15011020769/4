@@ -3,7 +3,7 @@
     <div class="left">
       <div class="left-main border">
         <div class="seek" style="">
-          <el-select v-model="projectSelectedOption" @change="changeProject">
+          <el-select v-model="projectSelectedOption" @change="changeProject" v-if="productValue === 'cvm_device' || productValue === 'BS'">
             <el-option v-for="item in projectOptions" :key="item.projectId" :label="item.projectName"
               :value="item.projectId">
             </el-option>
@@ -53,8 +53,8 @@
                 <p>{{scope.row.InstanceName}}</p>
               </div>
               <div v-if="productValue === 'dcchannel'">
-                <p>{{scope.row.DirectConnectId}}</p>
-                <!-- <p>{{scope.row.DirectConnectGatewayId}}</p> -->
+                <p>{{scope.row.DirectConnectTunnelId}}</p>
+                <p>{{scope.row.DirectConnectTunnelName}}</p>
               </div>
               <div v-if="productValue === 'dcline'">
                 <p>{{scope.row.DirectConnectId}}</p>
@@ -63,7 +63,10 @@
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.Name}}</p>
               </div>
-
+              <div v-if="productValue === 'BS'">
+                <p>{{scope.row.DiskId}}</p>
+                <p>{{scope.row.DiskName}}</p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column :label="headConfig.title2" width="120">
@@ -72,14 +75,14 @@
                 <p>VPC 网络</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
-                <p>运行</p>
+                <p>{{vpcConnState[scope.row.State]}}</p>
               </div>
               <div v-if="productValue === 'vpn_tunnel'">
                 <p>{{scope.row.VpcId}}</p>
-                <p>{{scope.row.RouteType}}</p>
+                <!-- <p>{{scope.row.RouteType}}</p> -->
               </div>
               <div v-if="productValue === 'nat_tc_stat'">
-                <p>VPC网络</p>
+                <p>{{natStatu[scope.row.State]}}</p>
               </div>
               <div v-if="productValue === 'DC_GW'">
                 <p>不支持</p>
@@ -103,6 +106,9 @@
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.zone.zone}}</p>
               </div>
+              <div v-if="productValue === 'BS'">
+                <p>{{scope.row.DiskSize}}</p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column :label="headConfig.title3" width="120">
@@ -117,7 +123,7 @@
               </div>
               <div v-if="productValue === 'vpn_tunnel'">
                 <p>{{scope.row.VpnGatewayId}}</p>
-                <p>{{scope.row.VpnProto}}</p>
+                <!-- <p>{{scope.row.VpnProto}}</p> -->
               </div>
               <div v-if="productValue === 'nat_tc_stat'">
                 <p>{{scope.row.VpcId}}</p>
@@ -140,10 +146,14 @@
 
               </div>
               <div v-if="productValue === 'dcline'">
-                <p>{{scope.row.PortType}}</p>
+                <p>{{scope.row.Bandwidth}}</p>
               </div>
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.CreationDate | CreateDate}}</p>
+              </div>
+              <div v-if="productValue === 'BS'">
+                <p>{{DiskType[scope.row.DiskType]}}</p>
+                <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
               </div>
             </template>
           </el-table-column>
@@ -204,8 +214,8 @@
                 <p>{{scope.row.InstanceName}}</p>
               </div>
               <div v-if="productValue === 'dcchannel'">
-                <p>{{scope.row.DirectConnectId}}</p>
-                <!-- <p>{{scope.row.DirectConnectGatewayId}}</p> -->
+                <p>{{scope.row.DirectConnectTunnelId}}</p>
+                <p>{{scope.row.DirectConnectTunnelName}}</p>
               </div>
               <div v-if="productValue === 'dcline'">
                 <p>{{scope.row.DirectConnectId}}</p>
@@ -214,7 +224,10 @@
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.Name}}</p>
               </div>
-
+              <div v-if="productValue === 'BS'">
+                <p>{{scope.row.DiskId}}</p>
+                <p>{{scope.row.DiskName}}</p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column :label="headConfig.title2" width="120">
@@ -223,14 +236,14 @@
                 <p>VPC 网络</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
-                <p>运行</p>
+                <p>{{vpcConnState[scope.row.State]}}</p>
               </div>
               <div v-if="productValue === 'vpn_tunnel'">
                 <p>{{scope.row.VpcId}}</p>
-                <p>{{scope.row.RouteType}}</p>
+                <!-- <p>{{scope.row.RouteType}}</p> -->
               </div>
               <div v-if="productValue === 'nat_tc_stat'">
-                <p>VPC网络</p>
+                <p>{{natStatu[scope.row.State]}}</p>
               </div>
               <div v-if="productValue === 'DC_GW'">
                 <p>不支持</p>
@@ -254,6 +267,9 @@
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.zone.zone}}</p>
               </div>
+              <div v-if="productValue === 'BS'">
+                <p>{{scope.row.DiskSize}}</p>
+              </div>
             </template>
           </el-table-column>
           <el-table-column :label="headConfig.title3" width="120">
@@ -268,7 +284,7 @@
               </div>
               <div v-if="productValue === 'vpn_tunnel'">
                 <p>{{scope.row.VpnGatewayId}}</p>
-                <p>{{scope.row.VpnProto}}</p>
+                <!-- <p>{{scope.row.VpnProto}}</p> -->
               </div>
               <div v-if="productValue === 'nat_tc_stat'">
                 <p>{{scope.row.VpcId}}</p>
@@ -291,10 +307,14 @@
 
               </div>
               <div v-if="productValue === 'dcline'">
-                <p>{{scope.row.PortType}}</p>
+                <p>{{scope.row.Bandwidth}}</p>
               </div>
               <div v-if="productValue === 'COS'">
                 <p>{{scope.row.CreationDate | CreateDate}}</p>
+              </div>
+              <div v-if="productValue === 'BS'">
+                <p>{{DiskType[scope.row.DiskType]}}</p>
+                <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
               </div>
             </template>
           </el-table-column>
@@ -344,6 +364,27 @@
           title1: '',
           title2: '',
           title3: ''
+        },
+        DiskType: {
+          CLOUD_BASIC: "普通雲硬碟",
+          CLOUD_PREMIUM: "高性能雲硬碟",
+          CLOUD_SSD: "SSD雲硬碟"
+        },
+        vpcConnState: {
+          PENDING: "生產中",
+          AVAILABLE: "運行中",
+          DELETING: "刪除中"
+        },
+        natStatu: {
+          PENDING: "生產中",
+          DELETING: "刪除中",
+          AVAILABLE: "運行中",
+          UPDATING: "升級中",
+          FAILED: "失敗"
+        },
+        DiskUsage: {
+          SYSTEM_DISK: "系統盤",
+          DATA_DISK: "數據盤"
         },
         // isShowRight: this.isShowRight,
       }
