@@ -34,7 +34,7 @@
       <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
-        :productValue='productValue' v-loading="loadShow"/>
+        :productValue='productValue'/>
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
@@ -317,39 +317,8 @@ export default {
         { label: '每1天警告一次', value: 86400 },
         { label: '周期指数递增', value: 1 }
       ],
-      zhibiaoType: [// 指标告警类型
-        'CPU利用率',
-        '内存利用率',
-        '内存使用量',
-        '磁盘利用率',
-        '磁盘读流量',
-        '磁盘写流量',
-        '磁盘IO等待',
-        '内网入包量',
-        '内网出包量',
-        '外网入带宽',
-        '外网出带宽',
-        '外网入包量',
-        '外网出包量',
-        '外网带宽使用率',
-        'TCP连接数',
-        'CPU一分钟平均负载',
-        'CPU五分钟平均负载',
-        'CPU十五分钟平均负载',
-        '基础CPU利用率',
-        '内网入带宽',
-        '内网出带宽'
-      ],
-      eventType: [// 事件告警类型
-        '磁盘只读',
-        '内核故障',
-        '内存oom',
-        'ping不可达',
-        '机器重启',
-        '外网出带宽超限导致丢包',
-        'agent上报超时',
-        '子机nvme设备error'
-      ],
+      zhibiaoType: [], // 指标告警类型
+      eventType: [], // 事件告警类型
       form: {
         name: '',
         region: '',
@@ -399,7 +368,6 @@ export default {
       searchParam: {},
       //  value: 'ins-6oz38wnu', label: 'instance-id'
       productValue: 'cvm_device'
-      // aa: [{33: '%'},{},{}]
     }
   },
   watch: {
@@ -408,6 +376,12 @@ export default {
     },
     show: function (val) {
       this.$emit('update:dialogVisible', val)
+    },
+    productValue: function (val, old) {
+      if (val !== old) {
+        console.log(123)
+        this.loadShow = true
+      }
     }
   },
   components: {
@@ -428,9 +402,6 @@ export default {
       type: Function,
       default: () => {}
     }
-  },
-  created () {
-    // console.log(this.productData)
   },
   methods: {
     save (form) {
@@ -502,14 +473,23 @@ export default {
           this.show = false// 关闭弹框
           this.formInline.strategy_name = ' '
           this.formInline.textareas = ''
+          this.indexAry = [{
+            Period: 60,
+            CalcType: '>',
+            CalcValue: '0',
+            MetricId: 33,
+            Unit: '%',
+            ContinuePeriod: 1,
+            alarm: 86400
+          }]
           this.createSuccess()// 更新列表
+          this.loadShow = false
         } else {
           this.errorPrompt(res)
         }
       })
     },
     passData (item) {
-      // this.loadShow = true
       // console.log(item.Metrics)
       this.productData = item
       // this.zhibiaoType = item.MetricName
