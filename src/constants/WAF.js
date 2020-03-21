@@ -2,6 +2,8 @@
 export const DESCRIBE_USER_EDITION = "waf2/DescribeUserEdition";
 /** 获取WAF的套餐信息 */
 export const DESCRIBE_USER_INFO = "waf2/DescribeUserInfo";
+/** 查询QPS峰值 */
+export const DESCRIBE_USER_QPS = "waf2/DescribeUserQPS";
 /** 设置套餐自动续费 */
 export const MODIFY_PACKAGE_RENEW = "waf2/ModifyPackageRenew";
 /** 询价 */

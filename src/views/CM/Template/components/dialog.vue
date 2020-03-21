@@ -34,11 +34,12 @@
       <p class="rowCont" style="display: flex;margin-bottom:20px">
         <span>策略类型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
-        :productValue='productValue'/>
+        :productValue='productValue' @loading="isLoading" />
         <!-- <grouping-type @handleChangeChild="showMsgfromChild"></grouping-type> -->
         <!-- <el-checkbox v-model="checkedUse" style="margin-left:20px;">
           使用预置触发条件
-          <el-popover trigger="hover" placement="top" content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
+          <el-popover trigger="hover" placement="top"
+           content="根据系统预先设定的模版，自动设置对应云产品的告警策略常用触发条件。">
             <i class="el-icon-info" slot="reference"></i>
           </el-popover>
         </el-checkbox> -->
@@ -48,7 +49,8 @@
         <div>
           <div>
             <p>
-              <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao" @change="isDisabledZB()">指标告警</el-checkbox>
+              <el-checkbox v-model="checkedZhibiao" :checked="checkedZhibiao"
+               @change="isDisabledZB()">指标告警</el-checkbox>
             </p>
             <div class="color">
               <p>
@@ -66,7 +68,8 @@
               </p>
               <!-- 在这里进行便利，添加 -->
               <ul v-loading="loadShow">
-                <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
+                <li style="display:flex;align-items: center;cursor: pointer;"
+                 v-for="(it,i) in indexAry" :key="i">
                   <p :class="{mp:metting==1}">
                     if&nbsp;
                     <el-select :disabled="isDisabled" v-model="it.MetricId" style="width:150px;">
@@ -97,10 +100,13 @@
                       ></el-option>
                     </el-select>&nbsp;
                      <!-- placeholder="指标" -->
-                    <input :disabled="isDisabled" v-model="it.CalcValue" min="0" max="100" type="number"
-                      style="height: 30px;line-height: 30px;padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
+                    <input :disabled="isDisabled" v-model="it.CalcValue"
+                      min="0" max="100" type="number"
+                      style="height: 30px;line-height: 30px;
+                      padding:0 10px;width:85px;border: 1px solid #dcdfe6;"/>
                     <b
-                      style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
+                      style="padding:0 10px;display:inline-block;
+                      height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >{{it.Unit||'&nbsp;'}}</b>
                     &nbsp;
                     <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;">
@@ -135,7 +141,8 @@
                   @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
-                <p style="color:red" v-if="isRepeated"><i class="el-icon-info" style="color:#888; margin:0 5px;color:red"></i>请勿重复配置</p>
+                <p style="color:red" v-if="isRepeated"><i class="el-icon-info"
+                   style="color:#888; margin:0 5px;color:red"></i>请勿重复配置</p>
               </ul>
               <p v-if="metting==1">
                 <span style="width:30px">then</span>&nbsp;
@@ -366,7 +373,6 @@ export default {
       this.$emit('update:dialogVisible', val)
     },
     productValue: function (val) {
-      this.loadShow = true
       let { zhibiaoType } = this
       if (zhibiaoType) {
         this.indexAry = [{
@@ -501,6 +507,12 @@ export default {
             ContinuePeriod: 1,
             alarm: 86400
           }]
+          this.$message({
+            message: '新建成功',
+            type: 'success',
+            showClose: true,
+            duration: 2000
+          })
           this.createSuccess()// 更新列表
           this.loadShow = false
         } else {
@@ -516,6 +528,10 @@ export default {
       this.$nextTick(() => {
         this.loadShow = false
       })
+    },
+    // 切换策略类型加载提示
+    isLoading (val) {
+      this.loadShow = val
     },
     // 类型
     msgBtn (index) {

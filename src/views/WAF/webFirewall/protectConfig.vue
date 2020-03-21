@@ -38,6 +38,8 @@ export default {
       domain: {},
       activeName: 'first',
       selectedDomainId: '',
+      abnormal: [4, 5, 6, 9],
+      timer: undefined,
     }
   },
   components:{
@@ -52,11 +54,14 @@ export default {
       this.setDomain(domain[0])
     }
   },
+  beforeRouteLeave (to, from, next) {
+    this.timer && clearTimeout(this.timer)
+    next()
+  },
   async mounted() {
     const { domainId } = await this.$route.query
     this.selectedDomainId = domainId
     const domainList = await this.getDomains() // 查询所有域名 下拉框
-    const currDomain = domainList.find(domain => domain.DomainId === domainId)
     this.domainList = domainList
   },
   methods:{
@@ -70,6 +75,22 @@ export default {
         statusBool: !!currDomain.Status
       }
       loading && loading.close()
+      this.refreshState()
+    },
+    refreshState() {
+      if (this.abnormal.includes(this.domain.State)) {
+        this.timer = setTimeout(() => {
+          this.axios.post(DESCRIBE_HOSTS, {
+            Version: '2018-01-25',
+            DomainId: this.domain.DomainId,
+          }).then(resp => {
+            this.generalRespHandler(resp, ({ HostList }) => {
+              this.domain.State = HostList[0].State
+              this.refreshState()
+            })
+          })
+        }, 5000)
+      }
     },
     async getDomains(domainId) {
       const res = await this.axios.post(DESCRIBE_HOSTS, {

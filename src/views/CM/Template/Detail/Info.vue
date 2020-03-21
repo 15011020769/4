@@ -6,7 +6,7 @@
         <el-form-item label="模板名称" class="form-item">
           <div class="item-text">
             {{infoData.GroupName}}
-            <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i>
+            <!-- <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i> -->
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
@@ -21,17 +21,19 @@
         <el-form-item label="备注">
           <div class="item-text">
             <span>{{infoData.Remark}}</span>
-            <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i>
+            <!-- <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i> -->
           </div>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card class="card2">
-      <h4 class="title-text">告警触发条件 <span @click="openEdit()" style="cursor:pointer">编辑</span></h4>
+      <h4 class="title-text">告警触发条件
+        <!-- <span @click="openEdit()" style="cursor:pointer">编辑</span> -->
+      </h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
         <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持续${it.continueTime}秒,按${it.calcType}天重复告警` }} -->
-        {{ `${it.MetricDisplayName}${it.CalcType}${it.CalcValue}${it.Unit},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
+        {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持续${it.ContinueTime/60}分钟,${it.alarm}` }}
       </p>
       <p class="text-color1" v-if="infoData.EventConditions&&infoData.EventConditions.length>0">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
@@ -209,7 +211,7 @@
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
               </ul>
             </div>
-            <div>
+            <!-- <div>
               <p style="line-height:30px;">
                 <el-checkbox v-model="checkedGaojing" :checked="checkedGaojing" @change="isDisabledGJ()">
                   事件告警
@@ -217,11 +219,9 @@
                 </el-checkbox>
               </p>
               <ul class="color">
-              <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(item,i) in eventAry" :key="i">
                   <p>
-                    <!-- <el-select :disabled="isDisGJ" v-model="formInline.projectName" style="width:180px;margin:0 5px;" size="small"> -->
-                      <el-select :disabled="isDisGJ" v-model="item.EventDisplayName" style="width:180px;margin:0 5px;" size="small">
+                    <el-select :disabled="isDisGJ" v-model="item.EventDisplayName" style="width:180px;margin:0 5px;" size="small">
                       <el-option
                         v-for="(item,index) in formInline.project"
                         :key="index"
@@ -236,7 +236,7 @@
                 <a @click="addShijian" style="cursor:pointer">添加</a>
                 <i class="rubbish-icon"></i>
               </ul>
-            </div>
+            </div> -->
             <p class="red-text">{{`该告警触发条件模板已经关联了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}个策略，若修改，修改内容将应用到所有已关联的告警策略上`}}</p>
           </div>
         </div>

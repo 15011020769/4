@@ -43,7 +43,7 @@
         <el-table-column prop :label="$t('CVM.vpnwg')">
           <template slot-scope="scope">
             <a :href="'../VPC/index.html#/vpnGateway/vpnGatewayDetial/'+  scope.row.VpcId +scope.row.VpnGatewayId +
-              '/ap-taipei/1'">{{scope.row.VpnGatewayId}}</a>
+              '/ap-taipei/'+'1'">{{scope.row.VpnGatewayId}}</a>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>

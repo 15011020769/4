@@ -96,7 +96,7 @@
                 <span>{{ t("QPS扩展包", "WAF.qpskzb") }}</span>
                 <span
                   >{{ t("到期时当前QPS峰值间", "WAF.dqqpsfz") }}
-                  <a class="greenHref">{{ package.MaxQPS || 0 }} </a>
+                  <a class="greenHref">{{ QPSPeak || 0 }} </a>
                   <el-tooltip
                     class="item"
                     effect="dark"
@@ -164,7 +164,7 @@ import RenewModel from './model/RenewModel'
 import dominList from './components/dominList'
 import buyLogBackModel from './model/buyLogBackModel'
 import qpsBackModel from './model/qpsBackModel'
-import { DESCRIBE_USER_INFO, MODIFY_PACKAGE_RENEW } from '@/constants'
+import { DESCRIBE_USER_INFO, MODIFY_PACKAGE_RENEW, DESCRIBE_USER_QPS } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 import { CLB_PACKAGE_CFG_TYPES, COMMON_ERROR } from '../constants'
 
@@ -179,7 +179,8 @@ export default {
       qpsBackModel: false, // qps扩展包
       package: {}, // 套餐信息
       CLB_PACKAGE_CFG_TYPES,
-      AutoRenewBool: false
+      AutoRenewBool: false,
+      QPSPeak: 0,
     }
   },
   components: {
@@ -196,6 +197,14 @@ export default {
   methods: {
     init () {
       this.getPackage()
+      this.axios.post(DESCRIBE_USER_QPS, {
+        Edition: 'clb-waf',
+        Version: '2018-01-25'
+      }).then(resp => {
+        this.generalRespHandler(resp, ({ Value }) => {
+          this.QPSPeak = Value
+        })
+      })
     },
     onChangeAutoRenew (status) {
       this.AutoRenewBool = !status
