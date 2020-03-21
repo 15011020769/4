@@ -381,9 +381,9 @@ export default {
       let { Metrics } = this.product
       for (let i = 0; i < Metrics.length; i++) {
         let exist = this.formInline.configTrigger.Conditions.some(item => {
-          return item.MetricID !== Metrics[i].MetricId
+          return item.MetricID === Metrics[i].MetricId
         })
-        if (exist) {
+        if (!exist) {
           this.formInline.configTrigger.Conditions.push({
             key: Date.now(),
             MetricID: Metrics[i].MetricId,
@@ -396,6 +396,15 @@ export default {
           return
         }
       }
+      this.formInline.configTrigger.Conditions.push({
+        key: Date.now(),
+        MetricID: Metrics[0].MetricId,
+        Period: 60,
+        CalcType: '1',
+        Unit: '',
+        ContinueTime: 1,
+        AlarmNotifyPeriod: 86400
+      })
     },
     initRequest: async function () {
       this.getProjectsList()
@@ -517,9 +526,6 @@ export default {
       }
     }
   },
-  // created: function () {
-  //   this.initRequest()
-  // },
   mounted: function () {
   }
 }
