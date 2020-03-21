@@ -1,8 +1,5 @@
 <template>
   <div>
-    <div class="header">
-      <h2>运营报表</h2>
-    </div>
     <el-row type="flex" align="middle" justify="space-between" class="actions">
       <el-col>
         <el-button-group style="margin-top:-4px">
@@ -211,5 +208,8 @@ export default {
 }
 .card {
   margin-bottom: 20px;
+}
+::v-deep .el-select input::placeholder{
+  color: #606266;
 }
 </style>
