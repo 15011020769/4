@@ -123,6 +123,7 @@
 <script>
 import moment from 'moment'
 import html2canvas from 'html2canvas'
+import { ErrorTips } from "@/components/ErrorTips"
 import DownLoadImg from '../components/downLoadImg'
 import overview from './model/overview'
 import peakTrend from './model/peakTrend'

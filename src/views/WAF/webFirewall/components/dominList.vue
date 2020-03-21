@@ -80,7 +80,7 @@
               <p>{{scope.row.DomainId}} <i v-if="abnormal.includes(scope.row.State)" class="el-icon-loading" /><i v-if="scope.row.State === 0" class="el-icon-success" /></p>
             </template>
           </el-table-column>
-          <el-table-column prop="proStatus" width="120">
+          <el-table-column prop="proStatus" width="110">
             <div slot="header" style="padding: 0;">
               流量模式
               <el-tooltip
@@ -111,19 +111,23 @@
               中國台北
             </template>
           </el-table-column>
-          <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')">
+          <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')" width="110">
             <template slot-scope="scope">
               <span v-if="scope.row.LoadBalancerSet.length">
-                {{ scope.row.LoadBalancerSet[0].LoadBalancerName }}({{
-                  scope.row.LoadBalancerSet[0].LoadBalancerId
-                }})
+                <p
+                  v-for="Id in uniqueId(scope.row.LoadBalancerSet)"
+                  class="ellipsis"
+                  :key="Id.ListenerName"
+                >
+                  {{ Id.LoadBalancerName }}{{ Id.LoadBalancerId }}<br/>
+                </p>
               </span>
               <span v-else>
                 未配置
               </span>
             </template>
           </el-table-column>
-          <el-table-column width="120">
+          <el-table-column width="110">
             <div slot="header" style="padding: 0;">
               {{ t("负载均衡VIP", "WAF.lbvip") }}
               <el-tooltip
@@ -136,7 +140,13 @@
             </div>
             <template slot-scope="scope">
               <span v-if="scope.row.LoadBalancerSet.length">
-                {{ scope.row.LoadBalancerSet[0].Vip }}
+                <p
+                  v-for="(item, index) in uniqueVip(scope.row.LoadBalancerSet)"
+                  class="ellipsis"
+                  :key="item.ListenerName"
+                >
+                  {{ item.Vip }}<br/>
+                </p>
               </span>
               <span v-else>
                 未配置
@@ -380,6 +390,24 @@ export default {
     this.getData()
   },
   methods: {
+    uniqueVip(val) {
+      let brr = []
+      for (var i = 1; i < val.length; i++) {
+        if (val[i].Vip === val[i-1].Vip ) {
+          val[i - 1].Vip = " "
+        }
+      }
+      return val
+    },
+    uniqueId(val) {
+      for (var i = 1; i < val.length; i++) {
+        if (val[i].LoadBalancerId === val[i-1].LoadBalancerId ) {
+          val[i-1].LoadBalancerId = " "
+          val[i-1].LoadBalancerName = " "
+        }
+      }
+      return val
+    },
     checkAble (row) {
       if (this.abnormal.includes(row.State)) {
         return false
