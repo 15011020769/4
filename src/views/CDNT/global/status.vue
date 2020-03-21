@@ -321,14 +321,19 @@ export default {
 .region-container {
     cursor: pointer;
     background-color: #fff;
-    width: 610px;
-        padding: 0 4px;
+    min-width: 610px;
+    width: auto;
+    padding: 0 4px;
     border: 1px solid #ddd;
     font-size: 0;
-      display: flex;
-      align-items: center;
+    padding-top: 5px;
     min-height: 30px;
-        outline: none;
+    outline: none;
+    padding-top: 5px;
+    & > * {
+      line-height: 20px;
+      margin-bottom: 5px;
+    }
     .placeholder {
       font-size: 12px;
       color: #bbb;
