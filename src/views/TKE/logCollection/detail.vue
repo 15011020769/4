@@ -45,7 +45,7 @@
               </div>
             </el-form-item>
           </div>
-          <!--  -->
+          <!-- 收集路径 -->
           <div  v-if="$route.query.type.type == 'host-log'">
              <el-form-item label="收集路径">
                 {{path}}
