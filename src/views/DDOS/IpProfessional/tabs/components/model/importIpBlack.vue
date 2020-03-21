@@ -6,6 +6,12 @@
         :visible.sync="dialogVisible2"
         width="40%"
         :before-close="handleClose">
+        <p class="tc-15-msg error" v-if="checkIpFlg == false">
+          {{$t('DDOS.Proteccon_figura.UrlIPWarning')}}
+        </p>
+        <p class="tc-15-msg error" v-if="checkNumFlg == false">
+          {{$t('DDOS.Proteccon_figura.BlackNumWarning')}}
+        </p>
         <div>
           <el-input v-model="ipBlackTextarea" :placeholder="$t('DDOS.Proteccon_figura.qsrhmd')" class="urlTexttarea" type="textarea"></el-input>
         </div>
@@ -32,6 +38,8 @@ export default {
     return{
       dialogVisible:'',//弹框状态
       ipBlackTextarea:'',//textarea绑定数据
+      checkIpFlg: true, //ip格式/重复校验
+      checkNumFlg: true //ip数量校验
     }
   },
   methods:{
@@ -43,8 +51,36 @@ export default {
     },
     //批量导入确定按钮
     handleSure(){
+      this.checkIpFlg = true;
+      this.checkNumFlg = true;
+      // 1.校验非空
+      if (this.ipBlackTextarea == "") {
+        return
+      }
+      let ipList = this.ipBlackTextarea.split("\n");
+      var regIP = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+      for (let i=0; i<ipList.length; i++) {
+        // 2.校验格式
+        if (!regIP.test(ipList[i])) {
+          this.checkIpFlg = false;
+          return
+        }
+        // 3.校验重复
+        for (let j=i+1; j<ipList.length; j++) {
+          if (ipList[i] == ipList[j]) {
+            this.checkIpFlg = false;
+            return
+          }
+        }
+      }
+      // 4.校验数量<=50
+      if (ipList.length > 50) {
+        this.checkNumFlg = false;
+        return
+      }
+      
       this.dialogVisible=false;
-      this.$emit("importIpBlackSure",[this.dialogVisible,this.ipBlackTextarea]);
+      this.$emit("importIpBlackSure",[this.dialogVisible, this.ipBlackTextarea]);
       this.ipBlackTextarea = ""
     }
   }

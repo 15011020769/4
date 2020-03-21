@@ -78,6 +78,7 @@ export default {
     handleClose(){
       this.dialogVisible1=false;
       this.$emit("closeModelIpt",this.dialogVisible1)
+      this.importRules = "";
     },
     // 1.1.添加L4转发规则
     createL4Rules() {//业务域名(选填)、协议、转发端口、源站端口、回源IP和权重（或回源域名）
