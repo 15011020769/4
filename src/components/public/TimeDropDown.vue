@@ -125,7 +125,7 @@
         let startTimeSec = new Date(startTime).getTime();
         let endTimeSec = new Date(endTime).getTime();
         let XAxis = [];
-        for (var i = startTimeSec; i <= endTimeSec; i = i + Number(this.grainValue)) {
+        for (var i = startTimeSec; i <= endTimeSec; i = i + Number(this.grainValue)*1000) {
           XAxis.push(moment(new Date(i)).format("YYYY/MM/DD HH:mm:ss"))
         }
         return XAxis;
