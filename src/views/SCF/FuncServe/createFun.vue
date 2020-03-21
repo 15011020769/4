@@ -45,7 +45,7 @@
               <el-input class="searchIpt" v-model="searchName"></el-input>
               <el-button class="btn" @click="doFilter" icon="el-icon-search"></el-button>
             </el-form-item>
-            <div class="allFunList" v-loading="loading">
+            <div class="allFunList" v-loading="loading" v-if='totalItems!==0'>
               <el-row>
                 <el-col :span="8" v-for="(item,index) in tableDataBegin" :key="index">
                   <div class="allFunListBoxCon" :class="isactive==index ?'addBorderCla':''"
@@ -133,6 +133,9 @@
                   </div>
                 </el-col>
               </el-row>
+            </div>
+            <div v-else class="zusj">
+              暫無數據
             </div>
             <div class="Right-style pagstyle">
               <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{ $t('SCF.total.tiao') }}</span>
@@ -244,10 +247,14 @@
           param["SearchKey.0.Value"] = this.searchName;
         }
         this.axios.post(TEMPLATE_LIST, param).then(data => {
-          if (data.Response.Demos) {
+          if (data.Response.Demos.length !== 0) {
             this.tableDataBegin = data.Response.Demos;
             this.DemoId = this.tableDataBegin[0].DemoId;
             this.isactive = 0;
+            this.totalItems = data.Response.TotalCount;
+            this.loading = false;
+          } else {
+            this.tableDataBegin = data.Response.Demos;
             this.totalItems = data.Response.TotalCount;
             this.loading = false;
           }
@@ -357,6 +364,12 @@
       width: 300px;
       margin-right: 20px;
     }
+  }
+
+  .zusj {
+    padding: 30px 0;
+    text-align: center;
+    font-weight: bold;
   }
 
   .wrap>>>.el-input__inner,

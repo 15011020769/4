@@ -155,7 +155,7 @@
                 </el-table>
               </div>
             </el-tab-pane>
-            <el-tab-pane name="concurrent_executions">
+            <!-- <el-tab-pane name="concurrent_executions">
               <template slot="label">
                 <p>
                   <span class="menu1">并发执行个数</span>
@@ -179,7 +179,7 @@
                   </el-table-column>
                 </el-table>
               </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane name="throttle">
               <template slot="label">
                 <p>
@@ -207,8 +207,26 @@
             </el-tab-pane>
           </el-tabs>
         </div>
+        <div class="top10">
+          <div class="title">
+            <p>函数资源使用量 TOP 10 统计</p>
+            <p class="shua">刷新</p>
+          </div>
+          <div>
+            <el-table :data="TopArr" style="width: 100%">
+              <el-table-column prop="" label="函数名">
+              </el-table-column>
+              <el-table-column prop="" label="命名空间">
+              </el-table-column>
+              <el-table-column prop="" label="数据指标">
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
       </div>
+
     </div>
+
   </div>
 </template>
 
@@ -305,6 +323,7 @@
           'throttle': '函數運行受限次數',
           'ConcurrentExecutions': '并发执行错误'
         },
+        TopArr: [] //top10列表
       };
     },
     components: {
@@ -315,7 +334,7 @@
       this.GetOverView();
       this.GetUserMonthUsage();
       this.GetUserYesterdayUsage();
-      this._GetTop()
+      // this._GetTop()
     },
     methods: {
       //函数数量
@@ -375,7 +394,7 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: this.MetricName,
-          'Dimensions.0.appid': 1300560919
+          'Dimensions.0.appid': localStorage.getItem('appid'),
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           this.tableData = []
@@ -454,14 +473,17 @@
           MetricName: "mem_duration",
           Region: 'ap-guangzhou',
           Namespace: "qce/scf_v2",
-          Time: "2020-03-12 00:00:00",
-          Period: 3600,
-          Module: 'monitor'
+          Time: "2020-03-21 00:00:00",
+          Period: 86400,
+          Module: 'monitor',
+          'Dimensions.0': JSON.stringify({
+            appid: localStorage.getItem('appid')
+          })
         }
         this.axios.post(TOP_LIST, parms).then(data => {
-          console.log(data)
           if (data.Response.Error == undefined) {
-
+            this.TopArr = JSON.parse(data.Response.ObjList)
+            console.log(this.TopArr)
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
@@ -494,6 +516,21 @@
       .title {
         margin: 20px 0;
         font-weight: bold;
+      }
+    }
+
+    .top10 {
+      margin-top: 50px;
+
+      .title {
+        font-weight: bold;
+        display: flex;
+
+        .shua {
+          padding-left: 20px;
+          color: #006eff;
+          cursor: pointer;
+        }
       }
     }
   }
