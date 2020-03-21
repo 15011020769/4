@@ -198,9 +198,7 @@ export default {
         }
         this.axios
           .post(`${process.env.VUE_APP_adminUrl}taifucloud/account/manage/forword`, params)
-          .then(({
-            data
-          }) => {
+          .then((data) => {
             console.log(data)
             if (data.RetCode === '00') {
               window.location.href = data.Data.url
