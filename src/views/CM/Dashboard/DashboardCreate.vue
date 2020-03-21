@@ -4,7 +4,7 @@
         <div class="top">
             <div class="top-one">
                 <span>产品类型</span>
-                <Type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue' ></Type>
+                <Type v-on:PassData="PassData" :projectId='projectId' :searchParam='searchParam' :productValue='productValue' v-on:loading="Type_loading"></Type>
             </div>
             <div class="top-two">
                 <span>数据视图</span>
@@ -37,7 +37,7 @@
                    <h2>{{picName}}</h2>
                    <div>
                        <Echarts :time='times' :series='series' :period = "'60'" :xdata="true" 
-                       style="width:300px;height:400px;margin-left:-30px"></Echarts>
+                       style="width:90%;height:400px;margin-left:-15px" v-if="series.length"></Echarts>
                    </div>
                 </div>
             </div>
@@ -49,6 +49,7 @@
                     v-on:searchParam="searchParams"
                     v-on:multipleSelection="selectDatas"
                     :isShowRight="flag"
+                    v-loading="loading"
                     ></CamTransferCpt>
                 </div>
             </div>
@@ -75,7 +76,6 @@ export default {
     created(){
         this.StartTime= moment(new Date(moment().format()).getTime()-1000*60*60).format("YYYY-MM-DD HH:mm:ss")
         this.EndTime =  moment(new Date(moment().format()).getTime()).format("YYYY-MM-DD HH:mm:ss")
-        // console.log(moment(new Date(moment().format()).getTime()-1000*60*60).format("YYYY-MM-DD HH:mm:ss"))
     },
     data(){
         return{
@@ -94,23 +94,37 @@ export default {
             timeDate:{},
             times:[],
             series:[],
+            loading: true,
             flag:false
         }
     },
     methods:{
         PassData(data) {
+            
             this.productListData = data
             console.log(this.productListData)
+             setTimeout(() => {
+                this.productListData = {};
+            // this.isShow = true;
+            }, 500);
+            setTimeout(() => {
+                this.productListData = data;
+            // this.isShow = true;
+            }, 600);
             this.Namespace = data.Namespace
             this.productValue = data.productValue
             this.optionTarget=data.MetricName
             this.target = data.MetricName[0] // 指标
             this.MetricName = data.MetricName[0].value // 监控名
             this.picName = "明细-"+ this.target.label
+            this.rightData=[]
+            this.loading =false
         },
         getTarget(val){
             this.picName = "明细-"+ val.label
             this.MetricName = val.value
+            this.getMonitorList()
+            console.log(this.MetricName)
         },
         projectIds(data) {
             console.log(data)
@@ -122,8 +136,12 @@ export default {
         },
         selectDatas(val) {
             this.rightData  = val;
-            console.log(val)
+            // console.log(val)
             this.getMonitorList()
+        },
+        Type_loading(val) {
+            this.loading = val
+            this.series=[]
         },
         // 跳转
         jump(){
@@ -145,9 +163,25 @@ export default {
             for(let i=0 ; i<this.rightData.length ; i++){
                 if (this.productValue=== "cvm_device"){
                     params['Dimensions.'+i+'.unInstanceId'] = this.rightData[i].InstanceId
-                } else if(this.productValue=== "VPN_GW"){
-                    params['Dimensions.'+i+'.unInstanceId'] = this.rightData[i].InstanceId
-                }
+                } else if (this.productValue === "VPN_GW"){
+                    params['Dimensions.'+i+'.vpnGwId'] = this.rightData[i].VpnGatewayId
+                } else if (this.productValue === "vpn_tunnel"){
+                    params['Dimensions.'+i+'.vpnConnId'] = this.rightData[i].VpnConnectionId
+                } else if (this.productValue === "nat_tc_stat"){
+                    params['Dimensions.'+i+'.natId'] = this.rightData[i].NatGatewayId
+                } else if (this.productValue === "DC_GW"){
+                    params['Dimensions.'+i+'.directConnectGatewayId'] = this.rightData[i].DirectConnectGatewayId
+                } else if (this.productValue === "REDIS-CLUSTER"){
+                    params['Dimensions.'+i+'.appid'] = this.rightData[i].Appid
+                    params['Dimensions.'+i+'.instanceid'] = this.rightData[i].InstanceId
+                } else if (this.productValue === "dcchannel"){
+                    params['Dimensions.'+i+'.directConnectConnId'] = this.rightData[i].DirectConnectTunnelId
+                } else if (this.productValue === "COS"){
+                    params['Dimensions.'+i+'.bucket'] = this.rightData[i].Name
+                } 
+                // else if (this.productValue === "BS"){
+                //     params['Dimensions.'+i+'.bucket'] = this.rightData[i].DiskId
+                // }  
             }
             await this.axios.post(All_MONITOR, params).then(res=>{
                 if(res.Response.Error == undefined){
@@ -196,86 +230,21 @@ export default {
                 }
             })
         },
-        
-      
         // 创建Dashboard
-        // async createDashboard(){
-        //     const param = {
-        //         Module :'monitor',
-        //         Namespace:'qce/cvm',
-        //         DescName:this.picName,
-        //         DashboardID:76484,
-        //         MetricNames:["partition"],
-        //         Meta:{"aggregateType":"detail","aggregations":["Avg","Max","Min"],"chartTypes":["column"],"configId":"cvm","layout":{"h":"5","h2":"0","w":"4","x":"0","y":"0"},"timeAggregate":"last"},
-        //         Instances:["{\"regionId\":\"1\",\"unInstanceId\":\"ins-19719mfp\"}"]
-        //     }   
-        //     await this.axios.post(CREATDASHBORD, param).then(res => {
-        //         console.log(res)
-        //     })
-        // }
-        //             if (this.ViewName === "cvm_device") {
-//         param["Dimensions.0.Dimensions"] = {
-//           unInstanceId: row.InstanceId
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           uuid: row.Uuid
-//         };
-//       } else if (this.ViewName === "VPN_GW") {
-//         param["Dimensions.0.Dimensions"] = {
-//           vip: row.PublicIpAddress
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           VpnGatewayId: row.VpnGatewayId
-//         };
-//       } else if (this.ViewName === "vpn_tunnel") {
-//         param["Dimensions.0.Dimensions"] = {
-//           uniqVpnconnId: row.VpnConnectionId
-//         };
-//       } else if (this.ViewName === "nat_tc_stat") {
-//         param["Dimensions.0.Dimensions"] = {
-//           uniq_nat_id: row.NatGatewayId
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           instanceId: row.NatGatewayId
-//         };
-//       } else if (this.ViewName === "DC_GW") {
-//         param["Dimensions.0.Dimensions"] = {
-//           directconnectgatewayid: row.DirectConnectGatewayId
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           instanceId: row.DirectConnectGatewayId
-//         };
-//       } else if (this.ViewName === "EIP") {
-//         param["Dimensions.0.Dimensions"] = {
-//           vip: row.AddressIp
-//         };
-//       } else if (this.ViewName === "cdb_detail") {
-//         param["Dimensions.0.Dimensions"] = {
-//           uInstanceId: row.InstanceId
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           InstanceId: row.InstanceId
-//         };
-//       } else if (this.ViewName === "REDIS-CLUSTER") {
-//         param["Dimensions.0.Dimensions"] = {
-//           instanceid: row.InstanceId
-//         };
-//         param["Dimensions.0.EventDimensions"] = {
-//           instanceid: row.InstanceId
-//         };
-//       } else if (this.ViewName === "dcchannel") {
-//         param["Dimensions.0.Dimensions"] = {
-//           directconnecttunnelid: row.DirectConnectTunnelId
-//         };
-//       } else if (this.ViewName === "dcline") {
-//         param["Dimensions.0.Dimensions"] = {
-//           directconnectid: row.DirectConnectId
-//         };
-//       } else if (this.ViewName === "COS") {
-//         param["Dimensions.0.Dimensions"] = {
-//           bucket: row.Name
-//         };
-//       }
+        async createDashboard(){
+            const param = {
+                Module :'monitor',
+                Namespace:this.Namespace,
+                DescName:this.picName,
+                DashboardID:76484,
+                MetricNames:["partition"],
+                Meta:{"aggregateType":"detail","aggregations":["Avg","Max","Min"],"chartTypes":["column"],"configId":"cvm","layout":{"h":"5","h2":"0","w":"4","x":"0","y":"0"},"timeAggregate":"last"},
+                Instances:["{\"regionId\":\"1\",\"unInstanceId\":\"ins-19719mfp\"}"]
+            }   
+            await this.axios.post(CREATDASHBORD, param).then(res => {
+                console.log(res)
+            })
+        }
     }
 }
 </script>
