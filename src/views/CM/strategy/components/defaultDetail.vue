@@ -1535,27 +1535,48 @@
       class="callback-dialog-box"
     >
       <div class="callback-interface-box">
-        <el-select v-model="formInline.apiStr" style="width:100px;">
-          <el-option
-            v-for="(item, index) in formInline.apiArr"
-            :key="index"
-            :label="item.name"
-            :value="item.value"
-            label-width="40px"
-          ></el-option>
-        </el-select>
-        <el-select
-          filterable
-          v-model="formInline.group"
-          style="width:250px;margin-left:10px;margin-right:20px;"
-        >
-          <el-option
-            v-for="(item, index) in formInline.kind_list"
-            :key="index"
-            :label="item.name"
-            :value="item.value"
-          ></el-option>
-        </el-select>
+        <div class="text-http">
+          <el-select
+            v-model="httpVal"
+            placeholder="请选择"
+            @change="HttpTypeChange"
+          >
+            <el-option
+              v-for="item in httpOpt"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            >
+            </el-option>
+          </el-select>
+          <el-input
+            v-model="httpInput"
+            placeholder="例如：console.cloud.tencent.com:8080/callback"
+            @focus="HttpHistroy"
+            @blur="HttpHistroyBlur"
+            class="input-http"
+            @input="HttpHistruyInput"
+          ></el-input>
+          <ul v-if="httpShow">
+            <li
+              v-for="(item, index) in httpOption"
+              :key="index"
+              @click="HttpSelect(item)"
+            >
+              <p>
+                {{
+                  item.Url.substring(
+                    item.Url.lastIndexOf("/") + 1,
+                    item.Url.length
+                  )
+                }}
+              </p>
+            </li>
+            <li v-if="httpOption.length === 0">
+              无数据
+            </li>
+          </ul>
+        </div>
         <p>
           填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。
         </p>
@@ -1569,7 +1590,7 @@
               ><i class="el-icon-info"></i>
             </el-tooltip>
           </p>
-          <span>c5oqchmd</span>
+          <span>{{ httpCode }}</span>
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
@@ -1658,6 +1679,25 @@ export default {
   data() {
     return {
       backShow: true,
+      httpOpt: [
+        {
+          value: "http",
+          label: "http"
+        },
+        {
+          value: "https",
+          label: "https"
+        }
+      ],
+      httpVal: "http",
+      httpShow: false,
+      httpOption: [],
+      httpOption1: [],
+      httpOption2: [],
+      httpOption3: [],
+      httpCodes: "",
+      httpCode: "",
+      httpInput: "",
       basicNews: "",
       editName: "",
       GroupName: "",
@@ -1669,53 +1709,11 @@ export default {
       dialogFormVisible: false, //基本信息组件弹框
       dialogEditGaojing: false, //编辑告警弹框组件
       dialogEditObject: false, //编辑告警弹框组件
-      form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: ""
-      },
       formLabelWidth: "120px",
       modifyNameDialogVisible: false,
       tipsShow: false,
       modifyRemarksDialogVisible: false,
       remarksVal: "",
-      formInline: {
-        jieshou: "接收组",
-        jieshouArr: [
-          { value: "0", name: "接收组" },
-          {
-            value: "1",
-            name: "接收人"
-          }
-        ],
-        apiStr: "http", //接口回调
-        apiArr: [
-          {
-            value: 0,
-            name: "http"
-          },
-          {
-            value: 1,
-            name: "https"
-          }
-        ], //接口回调数据
-        strategy_name: "", //策略名称
-        textarea: "", //备注
-        strategy: "云服务器-基础监控",
-        strategy_kind: [
-          {
-            value: 0,
-            name: "云服务器-基础监控"
-          }
-        ], //策略类型
-        alarm: "", //策略类型
-        projectName: "默认项目"
-      },
       showQudao1: false, //渠道选择1显示开关
       showQudao2: false, //渠道选择2显示开关
       errorTip1: false, //触发条件模板错误提示
@@ -1964,6 +1962,7 @@ export default {
     this.AlarmObjectList();
     this.AlarmTriggerCondition();
     this.GaoJingGrouping();
+    this.HttpInit();
   },
   methods: {
     passData(data) {
@@ -2205,10 +2204,7 @@ export default {
         }
       });
     },
-    callbackEdit() {
-      // 回调接口配置
-      this.callbackInterface = true;
-    },
+
     EditTips() {
       if (this.GroupName == "") {
         this.tipsShow = true;
@@ -4033,7 +4029,153 @@ export default {
         }
       }
     },
+    callbackEdit() {
+      // 回调接口配置
+      this.callbackInterface = true;
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.httpCodes = res.Response.VerifyCode;
+          this.httpCode = this.httpCodes;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 回调接口
+    HttpHistroy() {
+      this.httpOption = [];
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          var list = res.Response.List;
+          if (this.httpInput == "") {
+            for (let i in list) {
+              if (
+                this.httpVal ===
+                list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+              ) {
+                this.httpOption.push(list[i]);
+                this.httpOption1.push(list[i]);
+              }
+            }
+          }
+          this.httpShow = true;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    HttpHistroyBlur() {
+      // this.httpShow = false;
+    },
+    HttpHistruyInput() {
+      this.httpOption = this.httpOption1;
+      var _arr = [];
+      for (let i in this.httpOption) {
+        //如果字符串中不包含目标字符会返回-1
+        if (this.httpOption[i].Url.indexOf(this.httpInput) >= 0) {
+          _arr.push(this.httpOption[i]);
+        }
+      }
+      this.httpOption = _arr;
+    },
+    HttpInit() {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor"
+      };
+      this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
+        if (res.Response.Error === undefined) {
+          let list = res.Response.List;
 
+          for (let i in list) {
+            if (
+              "http" === list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption2.push(list[i]);
+            }
+            if (
+              "https" === list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption3.push(list[i]);
+            }
+          }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    HttpTypeChange() {
+      console.log(this.httpVal);
+      if (this.httpVal == "http") {
+        for (let i in this.httpOption2) {
+          if (
+            this.httpOption2[i].Url.substring(
+              this.httpOption2[i].Url.lastIndexOf("/") + 1,
+              this.httpOption2[i].Url.length
+            ) === this.httpInput
+          ) {
+            console.log(1);
+            this.HttpSelect(this.httpOption2[i]);
+          } else {
+            console.log(11);
+            this.callbackEdit();
+          }
+        }
+      } else {
+        for (let i in this.httpOption3) {
+          if (
+            this.httpOption3[i].Url.substring(
+              this.httpOption3[i].Url.lastIndexOf("/") + 1,
+              this.httpOption3[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption3[i]);
+            console.log(2);
+          } else {
+            console.log(22);
+            this.callbackEdit();
+          }
+        }
+      }
+    },
+    HttpSelect(item) {
+      console.log(item);
+      this.httpInput = item.Url.substring(
+        item.Url.lastIndexOf("/") + 1,
+        item.Url.length
+      );
+      this.httpCode = item.VerifyCode;
+      this.httpShow = false;
+    },
     // 状态
     InstanceState(val) {
       if (val === "PENDING") {
@@ -4366,9 +4508,37 @@ a:hover {
   }
   .callback-interface-box {
     margin-top: 14px;
+    ::v-deep .el-select {
+      width: 100px;
+    }
+    .input-http {
+      width: 78%;
+      margin-left: 10px;
+    }
     ::v-deep .el-input__inner {
       border-radius: 0;
       height: 30px;
+    }
+    .text-http {
+      position: relative;
+      ul {
+        position: absolute;
+        z-index: 1000;
+        left: 110px;
+        width: 78%;
+        background: #fff;
+        top: 40px;
+        border: 1px solid #ddd;
+        li {
+          padding: 5px;
+          width: 100%;
+          box-sizing: border-box;
+          cursor: pointer;
+          &:hover {
+            background: #f2f2f2;
+          }
+        }
+      }
     }
     & > p {
       color: #888;
