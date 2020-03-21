@@ -275,7 +275,7 @@
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                 <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
-                <p>有效期：</p>
+                <!-- <p>有效期：</p> -->
                 <p v-if="i.NotifyWay.length > 0">
                   渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                     >{{ j | NotifyWay
