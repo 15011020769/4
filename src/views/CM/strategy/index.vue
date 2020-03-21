@@ -104,13 +104,15 @@
     <div class="overview-main">
       <div class="explain">
         <p>
-          告警模板功能已上线，支持触发条件的复用与统一修改，请前往
+          告警模板功能已上线，支持触发条件的复用与统一修改
+          <!-- ，请前往
           <a>触发条件模板</a>进行配置
-          <a>查看详情</a>
+          <a>查看详情</a> -->
         </p>
         <p>
-          现已支持对告警策略的告警启停，可在策略维度、实例维度进行告警策略屏蔽，点击查看
-          <a>告警启停文档</a>
+          现已支持对告警策略的告警启停，可在策略维度、实例维度进行告警策略屏蔽
+          <!-- ，点击查看
+          <a>告警启停文档</a> -->
         </p>
       </div>
     </div>
@@ -1177,25 +1179,24 @@ export default {
     // 设置默认
     SetDefault(row) {
       let param = {
-        groupId: row.GroupId,
-        lang: "zh"
+        GroupId: row.GroupId,
+        Version: "2018-07-24",
+        Module: "monitor"
       };
       this.axios.post(CM_ALARM_SET_DEFAULT, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        console.log(res);
-        this.ListInit();
-        // } else {
-        //   let ErrTips = {
-
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+        if (res.Response.Error === undefined) {
+          console.log(res);
+          this.ListInit();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 修改名称
