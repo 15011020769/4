@@ -128,6 +128,11 @@ export default {
         height: 30px;
         line-height: 30px;
         margin-right: 20px;
+        ::v-deep .el-loading-spinner .circular {
+          width: 20px;
+          height: 20px;
+          margin-top: 10px;
+        }
       }
     }
   }
