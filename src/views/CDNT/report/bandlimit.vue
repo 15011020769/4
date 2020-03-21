@@ -107,7 +107,7 @@ export default {
           [],
           ['时间', '当前计费流量（bps）', '上一周期计费流量（bps）']
         )
-        name="billing_bandwidth"
+        name="billing_bandwidth_trend"
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
             item,
@@ -132,9 +132,9 @@ export default {
       }
 
       if (interval === '5min') { // 日报
-        fileName = `${start}_${name}.xlsx`
+        fileName = `1300561189-overseas${start}_${name}.xlsx`
       } else {
-        fileName = `${start}-${end}_${name}.xlsx`
+        fileName = `1300561189-overseas${start}-${end}_${name}.xlsx`
       }
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();

@@ -92,20 +92,6 @@ export default {
       let fileName;
       const start = times[0].split(" ")[0];
       const end = times[1].split(" ")[0];
-      if (interval === "5min") {
-        // 日报
-        if(type1 == "used") {
-          fileName = `1300561189-overseas-${start}_flux_top10_urls.xlsx`;
-        } else {
-          fileName = `1300561189-overseas-${start}_request_top10_urls.xlsx`;
-        }
-      } else {
-        if(type1 == "used") {
-          fileName = `1300561189-overseas-${start}-${end}_flux_top10_urls.xlsx`;
-        } else {
-          fileName = `1300561189-overseas-${start}-${end}_request_top10_urls.xlsx`;
-        }
-      }
       let data = [
         ["统计项目", projectName || "全部项目"],
         ["统计域名", domainName || "全部域名"],
@@ -127,6 +113,12 @@ export default {
         this.RequestTableData.map(item => {
           data.push([item.Name, item.Value]);
         });
+      }
+      if (interval === "5min") {
+        // 日报
+        fileName = `1300561189-overseas-${start}_${name}_top10_urls.xlsx`;
+      } else {
+        fileName = `1300561189-overseas-${start}-${end}_${name}_top10_urls.xlsx`;
       }
       const ws = XLSX.utils.aoa_to_sheet(data);
       const wb = XLSX.utils.book_new();

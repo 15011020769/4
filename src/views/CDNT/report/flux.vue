@@ -93,7 +93,7 @@ export default {
       ]
       if (type1 === 'billing') {
         data.push(['时间', '当前计费流量（B）', '上一周期计费流量（B）'])
-        name="billing_traffic"
+        name="billing_traffic_trend"
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
             item,
@@ -113,9 +113,9 @@ export default {
         })
       }
       if (interval === '5min') { // 日报
-        fileName = `${start}_${name}.xlsx`
+        fileName = `1300561189-overseas_${start}_${name}.xlsx`
       } else {
-        fileName = `${start}-${end}_${name}.xlsx`
+        fileName = `1300561189-overseas_${start}-${end}_${name}.xlsx`
       }
       const ws = XLSX.utils.aoa_to_sheet(data)
       const wb = XLSX.utils.book_new();

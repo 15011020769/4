@@ -109,9 +109,9 @@ export default {
       const end = tmoment(times[1]).format('YYYY-MM-DD');
       if (interval === "5min") {
         // 日报
-        fileName = `${start}_traffic_distribution.xlsx`;
+        fileName = `1300561189-overseas_${start}_traffic_distribution.xlsx`;
       } else {
-        fileName = `${start}-${end}_traffic_distribution.xlsx`;
+        fileName = `1300561189-overseas_${start}-${end}_traffic_distribution.xlsx`;
       }
       let data = [
         ["统计项目", projectName || "全部项目"],
