@@ -269,7 +269,7 @@ export default {
     },
     openCreate(){
       this.$router.push({
-        name:'DashboardCreate'
+        name:'DashboardCreate', query: { DashboardID: this.DashboardID }
       })
     },
     // panelStatus(flag) {
