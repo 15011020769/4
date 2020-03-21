@@ -82,6 +82,7 @@
               class="floatLeft timePick"
               v-model="timeValue1"
               type="datetimerange"
+              @change="changeTimeValue"
               range-separator="至"
               :start-placeholder="t('开始日期', 'WAF.ksrq')"
               :end-placeholder="t('结束日期', 'WAF.jsrq')"
@@ -451,7 +452,10 @@ export default {
 
       this.timeValue1 = map[temp]
     },
-
+    changeTimeValue (data) {
+      this.createTimeType = 0
+      this.timeValue1 = data
+    },
     // 条件查询
     onSearch () {
       let params = {
