@@ -60,7 +60,7 @@
         <h3>告警触发条件</h3>
         <a
           v-loading="gaoJingLoading"
-          v-if="!gaoJingLoading1"
+          v-if="gaoJingLoading1"
           class="gao-jing-loading"
           >编辑</a
         >

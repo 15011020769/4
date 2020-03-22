@@ -628,7 +628,7 @@ export default {
         Version: "2018-05-25"
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
-        // console.log(res)
+        console.log(res)
         if (res.Response.Error == undefined) {
           console.log(JSON.parse(res.Response.ResponseBody));
           if (JSON.parse(res.Response.ResponseBody).items.length) {
@@ -643,12 +643,14 @@ export default {
             } else {
               this.flagAgin = 2;
               this.loadShow = false;
+              // clearInterval(timeId);
             }
           } else {
             this.flagAgin = 1;
             this.status = "";
             this.loadShow = false;
             this.tableData = [];
+            clearInterval(timeId);
           }
         } else {
           let ErrTips = {};
@@ -720,6 +722,7 @@ export default {
           // this.Data=JSON.parse(res.Response.ResponseBody).release
           // this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
           // let rawDetail = JSON.parse(this.raw)
+           this.$refs['ruleForm'].resetFields();
           console.log(res);
         } else {
           let ErrTips = {};

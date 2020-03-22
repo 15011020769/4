@@ -121,11 +121,11 @@ export default {
           {
             value: "0",
             name: "用戶組名"
-          },
-        //   {
-        //     value: "1",
-        //     name: "用戶名"
-        //   }
+          }
+          //   {
+          //     value: "1",
+          //     name: "用戶名"
+          //   }
         ]
       },
       groupData: [],
@@ -211,7 +211,6 @@ export default {
       this.axios
         .post(GET_GROUP, params)
         .then(res => {
-          this.loadingShow = false;
           if (res.Response.Error === undefined) {
             this.groupData.push(res.Response);
             if (this.groupData.length === this.tableData.length) {
@@ -223,11 +222,13 @@ export default {
                 });
               });
               this.tableData2 = this.tableData;
+              this.loadingShow = false;
             }
           } else {
             let ErrTips = {
               "ResourceNotFound.UserNotExist": "用戶不存在"
             };
+            this.loadingShow = false;
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
               message: ErrOr[res.Response.Error.Code],

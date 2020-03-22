@@ -2,7 +2,7 @@
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
       <el-select
-        v-model="DashboardName"
+        v-model="DashboardID"
         :placeholder="$t('CVM.Dashboard.qxz')"
         style="margin:0 20px 0 40px;width:260px" @change="getDescribeDashboardView"
       >
@@ -109,14 +109,14 @@
           <div class="open">
             <p>
               <span
-                >共 {{ item.Instances.length }}
+                >共 {{ item.DataPoints.length }}
                 {{ $t("CVM.Dashboard.ygsl") }}</span
               >
               <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
             </p>
             <p>
               <span v-show="retractChartFlag">
-                <a @click="exportChart">{{ $t("CVM.Dashboard.dc") }}</a>
+                <a @click="exportChart(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
                 <i class="el-icon-info" style="color:#888"></i>
               </span>
               <a
@@ -134,8 +134,7 @@
             </p>
           </div>
           <div class="chartContent" v-show="retractChartFlag">
-            <el-table :data="item.Instances">
-              <el-table-column type="index" width="50"></el-table-column>
+            <el-table :data="item.Instances" :id = '"#echarts" + item.ViewID'>
               <el-table-column
                 prop=""
                 label="ID"
@@ -153,7 +152,7 @@
                 width=""
               >
                 <template scope="scope">
-                  <span>{{item.DataPoints[scope.$index].data[0]}}</span>
+                  <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[0] : ''}}</span>
                 </template>
               </el-table-column>
             </el-table>
@@ -186,6 +185,8 @@ import {
 import { ErrorTips } from "@/components/ErrorTips";
 import ChartEdit from "./components/ChartEdit"; //公共错误码
 import moment from "moment";
+import XLSX from "xlsx";
+import FileSaver from "file-saver";
 export default {
   name: "Dashboard",
   data() {
@@ -296,7 +297,7 @@ export default {
         }
       ],
       mainLoading: false,
-      chartsLoading: false
+      chartsLoading: false,
     };
   },
   components: {
@@ -309,6 +310,9 @@ export default {
   },
   created() {
     this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
+    if (this.$router.query.DashboardID) {
+      this.DashboardID = this.$router.query.DashboardID; // 路由传过来的
+    }
   },
 
   watch: {
@@ -316,6 +320,10 @@ export default {
       // this.selectShowControlPanel(newVal);
       // console.log(newVal, "newVal");
       // this.DashboardID = newVal;
+      this.mainLoading = true;
+      this.getDescribeDashboardView(); // 监控面板展示
+    },
+    DashboardName() {
       this.mainLoading = true;
       this.getDescribeDashboardView(); // 监控面板展示
     }
@@ -398,6 +406,7 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
+            this.options = [];
             this.options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
@@ -484,6 +493,7 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
+            this.options = [];
             this.options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
@@ -576,7 +586,6 @@ export default {
           this.chartsLoading = false;
           if (res.Response.Error === undefined) {
             const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
-
             ViewList.forEach((ele, index) => {
               let newInstances = [];
               ele.Instances.forEach(el => {
@@ -679,9 +688,12 @@ export default {
         Namespace,
         MetricName,
         Period,
-        StartTime,
-        EndTime
+        StartTime:StartTime,
+        EndTime:EndTime,
       };
+      let color = ["#2072d9", "#fff2cc", "#ffd966", "#f1c232", "#9fc5e8", "#3d85c6",
+        "#00ff00", "#008bff", "#980000", "#1c4587"
+      ];
       if (Instances.length != 0) {
         Instances.forEach((ele, i) => {
           params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
@@ -701,7 +713,7 @@ export default {
           this.mainLoading = false;
           if (res.Response.Error === undefined) {
             var DataPoints = []; // 取出这个空数组
-            res.Response.DataPoints.forEach(ele => {
+            res.Response.DataPoints.forEach((ele,i) => {
               DataPoints.push({
                 type: "line",
                 data: ele.Points.map(item => {
@@ -710,7 +722,10 @@ export default {
                 }),
                 itemStyle: {
                   normal: {
-                    color: '#2072d9'
+                    color: color[i] ? color[i] : color[i % 10],
+                    lineStyle: {
+                      color: color[i] ? color[i] : color[i % 10]
+                    }
                   }
                 }
               });
@@ -749,7 +764,30 @@ export default {
     refresh() {
       // this.chartsLoading = true;
       this.getAllMonitorData();
-    }
+    },
+    //导出表格
+    exportExcel(ViewID) {
+      /* generate workbook object from table */
+      var wb = XLSX.utils.table_to_book(document.querySelector('"#echarts" + ViewID'));
+      console.log(wb);
+      /* get binary string as output */
+      var wbout = XLSX.write(wb, {
+        bookType: "xlsx",
+        bookSST: true,
+        type: "array"
+      });
+      try {
+        FileSaver.saveAs(
+          new Blob([wbout], {
+            type: "application/octet-stream"
+          }),
+          "1300560919-monitor-data" + ".xlsx"
+        );
+      } catch (e) {
+        if (typeof console !== "undefined") console.log(e, wbout);
+      }
+      return wbout;
+    },
 
     // //取消
     // cancel() {

@@ -2,13 +2,13 @@
 export const BASICS_ALARM_LIST = 'monitor2/DescribeBasicAlarmList' // 列表ok
 
 //获取平台事件订阅列表
-export const SUBSCRIPTION_LIST = 'monitor2/DescribeSubscribeInfo'
+export const SUBSCRIPTION_LIST = 'monitor2/DescribeSubscribeInfo' //ok
 
 //订阅管理
 export const SUBSCRIPTION_ADMINISTRATION = 'monitor2/SubscribeEvent'
 
 //取消订阅
-export const CANCEL_SUBSCRIPTION = 'monitor2/UnsubscribeEvent'
+export const CANCEL_SUBSCRIPTION = 'monitor2/UnsubscribeEvent' //ok
 
 //获取自定义消息列表
 export const CUSTON_MESSAGE_LIST = 'monitor2/DescribeMsgPolicyList'//ok
@@ -17,7 +17,7 @@ export const CUSTON_MESSAGE_LIST = 'monitor2/DescribeMsgPolicyList'//ok
 export const RECEIVING_GROUP_DETAILE = 'cam/GetGroup'//ok
 
 //编辑自定义消息
-export const EDIT_CUSTON_MESSAGE = 'monitor2/ModifyMsgPolicy' 
+export const EDIT_CUSTON_MESSAGE = 'monitor2/ModifyMsgPolicy' //ok
 
 //删除自定义消息
 export const DETELE_CUSTON_MESSAGE = 'monitor2/DeleteMsgPolicy'//ok

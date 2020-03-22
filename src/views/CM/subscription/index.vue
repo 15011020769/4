@@ -61,7 +61,8 @@
         <el-table-column label="短信" width="170">
           <template slot-scope="scope">
             <i
-              v-show="scope.row.NotifyWay ? true :false"
+              v-if="scope.row.NotifyWay"
+              v-show="scope.row.NotifyWay[0] ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -71,7 +72,8 @@
         <el-table-column label="邮件" width="180">
           <template slot-scope="scope">
             <i
-              v-show="scope.row.NotifyWay ? true :false"
+              v-if="scope.row.NotifyWay"
+              v-show="scope.row.NotifyWay[1] ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -80,7 +82,8 @@
         <el-table-column label="站内信" width="180">
           <template slot-scope="scope">
             <i
-              v-show="scope.row.NotifyWay ? true :false"
+              v-if="scope.row.NotifyWay"
+              v-show="scope.row.NotifyWay[2] ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
@@ -98,7 +101,12 @@
         <el-table-column label>
           <template slot-scope="scope">
             <el-button type="text" class="btn subBtn" @click="ok(scope.row)">订阅管理</el-button>
-            <el-button type="text" class="btn unSubBtn" @click="cancel(scope.row)"  v-if="scope.row.NotifyWay">取消订阅</el-button>
+            <el-button
+              type="text"
+              class="btn unSubBtn"
+              @click="cancel(scope.row)"
+              v-if="scope.row.NotifyWay"
+            >取消订阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -110,13 +118,13 @@
           <span>接收方式</span>
           <el-checkbox-group v-model="qudaoCheckList" @change="selectChannel">
             <span style="margin:0 0 20px 30px;">
-              <el-checkbox label="郵件"></el-checkbox>
+              <el-checkbox label="1">郵件</el-checkbox>
             </span>
             <span style="margin-left:30px">
-              <el-checkbox label="簡訊"></el-checkbox>
+              <el-checkbox label="2">簡訊</el-checkbox>
             </span>
             <span style="margin-left:30px">
-              <el-checkbox label="站內信"></el-checkbox>
+              <el-checkbox label="4">站内信</el-checkbox>
             </span>
           </el-checkbox-group>
 
@@ -229,7 +237,8 @@ export default {
   name: "subscription",
   data() {
     return {
-      qudaoCheckList: [], //接收方式
+      qudaoCheckList: ["1", "2", "4"], //接收方式
+      // qudaoCheckList: ["郵件", "簡訊", "站內信"], //接收方式
       loadingShow1: false, // 加载是否显示
       loadShow: false, // 加载是否显示
       triggerInput: "", //选择触发条件名搜索
@@ -342,15 +351,14 @@ export default {
       //取消订阅
     },
     cancel1() {
+      this.dialogcancel = false;
       var params = {
         Version: "2018-07-24",
         Module: "monitor",
         BusinessId: this.cancelObj.BusinessId, //业务id
         AccidentId: this.cancelObj.AccidentId //事件id
       };
-      console.log(this.cancelObj);
       this.axios.post(CANCEL_SUBSCRIPTION, params).then(res => {
-        console.log(res);
         if (res.codeDesc === "Success") {
           this.$message({
             message: "取消订阅成功",
@@ -386,17 +394,37 @@ export default {
     ok(data) {
       this.userList();
       this.okObj = data;
+      console.log(data);
       //订阅
       this.dialogSubscribe = true;
     },
     ok1() {
+      this.dialogSubscribe = false;
       var params = {
-        Version: "2018-07-24"
-        // GroupId: item
+        Version: "2018-07-24",
+        Module: "monitor",
+        BusinessId: this.okObj.BusinessId,
+        AccidentId: this.okObj.AccidentId
       };
+      this.qudaoCheckList.forEach((item, index) => {
+        params["NotifyWays." + index] = item;
+      });
+      this.selectUserList.forEach((item, index) => {
+        var data = {};
+        data.username = item.Name;
+        data.uid = item.Uid;
+        // params["Receivers." + index] = data;
+        params.Receivers = data;
+      });
+      //  var key, value;
+      //   key = item.Name;
+      //   value = item.Uid;
+      //   var data = {
+      //     key: value
+      //   };
+      //   params["Receivers." + index] = JSON.stringify(data);
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
-        this.lists.push();
         if (res.codeDesc === "Success") {
           this.$message({
             message: "订阅成功",
@@ -404,6 +432,7 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.getEventList();
           this.dialogSubscribe = false;
         } else {
           let ErrTips = {

@@ -105,9 +105,9 @@
               >
               <span
                 v-else-if="scope.row.ClusterStatus == 'Creating'"
-                class="text-green"
-                >{{ $t("TKE.colony.cjz") }}</span
-              >
+                class="text-orange"
+                >{{ $t("TKE.colony.cjz") }} <i class="el-icon-loading"></i
+              ></span>
               <span v-else class="text-red">{{ $t("TKE.overview.yc") }}</span
               >)
             </template>
@@ -122,61 +122,77 @@
                   <a href="javascript:;" @click="NodeTotal(scope.row)"
                     >{{ scope.row.ClusterNodeNum }}台</a
                   >
-                  (
-                  <p v-if="scope.row.ClusterInitNodeNum == 0">
-                    <span
-                      class="text-green"
-                      v-if="scope.row.ClusterInstanceState == 'AllNormal'"
-                      >全部正常</span
-                    >
-                    <span
-                      class="text-red"
-                      v-else-if="
-                        scope.row.ClusterInstanceState == 'AllAbnormal'
-                      "
-                      >{{ $t("TKE.colony.qbyc") }}</span
-                    >
-                    <span class="text-red" v-else>{{
-                      $t("TKE.colony.bfyc")
-                    }}</span>
-                  </p>
-                  <span v-else class="text-orange"> 正在創建</span>
-                  )
-                  <el-popover
-                    width="50"
-                    trigger="hover"
-                    placement="top"
-                    v-if="scope.row.ClusterInstanceState != 'AllNormal'"
+                  <div
+                    style="display: flex;"
+                    v-if="scope.row.ClusterNodeNum > 0"
                   >
-                    <div class="node-popover">
-                      <p>
-                        {{ $t("TKE.colony.cjz") }}：{{
-                          scope.row.ClusterInitNodeNum
-                        }}台
+                    (
+                    <div v-if="scope.row.ClusterInitNodeNum == 0" class="box">
+                      <span
+                        class="text-green"
+                        v-if="scope.row.ClusterInstanceState == 'AllNormal'"
+                        >全部正常</span
+                      >
+                      <p
+                        v-else-if="
+                          scope.row.ClusterInstanceState == 'AllAbnormal'
+                        "
+                      >
+                        <span
+                          class="text-green"
+                          v-if="
+                            scope.row.ClusterClosedNodeNum != 0 ||
+                              scope.row.ClusterClosingNodeNum != 0
+                          "
+                          >全部正常</span
+                        >
+                        <span class="text-red" v-else>{{
+                          $t("TKE.colony.qbyc")
+                        }}</span>
                       </p>
-                      <p>
-                        {{ $t("TKE.colony.yxz") }}：{{
-                          scope.row.ClusterRunningNodeNum
-                        }}台
-                      </p>
-                      <p>
-                        {{ $t("TKE.overview.yc") }}：{{
-                          scope.row.ClusterFailedNodeNum
-                        }}台
-                      </p>
-                      <p>
-                        {{ $t("TKE.colony.ygj") }}：{{
-                          scope.row.ClusterClosedNodeNum
-                        }}台
-                      </p>
-                      <p>
-                        {{ $t("TKE.colony.gjz") }}：{{
-                          scope.row.ClusterClosingNodeNum
-                        }}台
-                      </p>
+                      <span class="text-red" v-else>{{
+                        $t("TKE.colony.bfyc")
+                      }}</span>
                     </div>
-                    <i class="el-icon-warning-outline" slot="reference"></i>
-                  </el-popover>
+                    <span v-else class="text-orange"> 正在創建</span>
+                    )
+
+                    <el-popover
+                      width="50"
+                      trigger="hover"
+                      placement="top"
+                      v-if="scope.row.ClusterInstanceState != 'AllNormal'"
+                    >
+                      <div class="node-popover">
+                        <p>
+                          {{ $t("TKE.colony.cjz") }}：{{
+                            scope.row.ClusterInitNodeNum
+                          }}台
+                        </p>
+                        <p>
+                          {{ $t("TKE.colony.yxz") }}：{{
+                            scope.row.ClusterRunningNodeNum
+                          }}台
+                        </p>
+                        <p>
+                          {{ $t("TKE.overview.yc") }}：{{
+                            scope.row.ClusterFailedNodeNum
+                          }}台
+                        </p>
+                        <p>
+                          {{ $t("TKE.colony.ygj") }}：{{
+                            scope.row.ClusterClosedNodeNum
+                          }}台
+                        </p>
+                        <p>
+                          {{ $t("TKE.colony.gjz") }}：{{
+                            scope.row.ClusterClosingNodeNum
+                          }}台
+                        </p>
+                      </div>
+                      <i class="el-icon-warning-outline" slot="reference"></i>
+                    </el-popover>
+                  </div>
                 </div>
                 <p v-else>
                   <span style="color:#bbb;"
@@ -1155,6 +1171,10 @@ export default {
   display: flex;
   .node-content {
     display: flex;
+
+    .box {
+      display: flex;
+    }
   }
 }
 </style>
