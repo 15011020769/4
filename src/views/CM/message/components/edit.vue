@@ -76,15 +76,15 @@ export default {
     Cam
   },
   created() {
-    console.log(this.$route.params);
-    this.dataObj = this.$route.params;
+    console.log(this.$route.query);
+    this.dataObj = this.$route.query;
     this.formInline.strategy_name = this.dataObj.PolicyName;
   },
   methods: {
     // 获取cam组件的值
     camFun(data) {
       this.cam = data;
-      console.log(this.cam)
+      console.log(this.cam);
     },
     //确定
     save() {
@@ -101,21 +101,32 @@ export default {
         Version: "2018-07-24",
         Module: "monitor",
         PolicyName: this.formInline.strategy_name, //策略名
-        PolicyId:this.dataObj.PolicyID
+        PolicyId: this.dataObj.PolicyID
       };
       this.cam.selectUserGroup.forEach((v, i) => {
         param["ReceiverGroupIds." + i] = v.GroupId;
       });
+      if (this.cam.channel.length > 0) {
+        this.cam.channel.forEach((v, i) => {
+          if (v == "郵件") {
+            v = "EMAIL";
+          } else if (v == "簡訊") {
+            v = "SMS";
+          }
+          param["NotifyWays." + i] = v;
+        });
+      } else {
+         this.dataObj.NotifyWay.forEach((v, i) => {
+          if (v == "郵件") {
+            v = "EMAIL";
+          } else if (v == "簡訊") {
+            v = "SMS";
+          }
+          param["NotifyWays." + i] = v;
+        });
+      }
 
-      this.cam.channel.forEach((v, i) => {
-        if (v == "郵件") {
-          v = "EMAIL";
-        } else if (v == "簡訊") {
-          v = "SMS";
-        }
-        param["NotifyWays." + i] = v;
-      });
-      console.log(this.cam.channel,param)
+      console.log(this.cam.channel, param);
       this.axios.post(EDIT_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({

@@ -416,7 +416,7 @@ export default {
       // }
       this.$router.push({
         name: "messageEdit",
-        params:data
+        query:data
       });
     }
   }

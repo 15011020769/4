@@ -22,12 +22,12 @@
           v-if="formInline.jieshou === '0'"
           placeholder="請輸入用戶組名稱"
         ></el-input>
-        <el-input
+        <!-- <el-input
           v-model="triggerInput"
           style="margin-left:-1px;margin-top:1px;"
           v-if="formInline.jieshou === '1'"
           placeholder="請輸入用戶名稱"
-        ></el-input>
+        ></el-input>-->
         <el-button
           icon="el-icon-search"
           style="margin-left:-1px;margin-top:1px;"
@@ -37,6 +37,7 @@
     </p>
     <div>
       <!-- 接收组table -->
+      {{cam.selectUserGroup}}
       <el-table
         v-if="formInline.jieshou === '0'"
         :data="tableData2"
@@ -64,7 +65,7 @@
       </el-table>
 
       <!-- 接收人table -->
-      <el-table
+      <!-- <el-table
         v-if="formInline.jieshou === '1'"
         :data="userListArr"
         v-loading="userListLoading"
@@ -87,7 +88,7 @@
             <span v-else>未设置邮箱</span>
           </template>
         </el-table-column>
-      </el-table>
+      </el-table>-->
     </div>
     <p style="display:flex">
       <span>告警渠道&nbsp;&nbsp;</span>
@@ -121,11 +122,7 @@ export default {
           {
             value: "0",
             name: "用戶組名"
-          },
-        //   {
-        //     value: "1",
-        //     name: "用戶名"
-        //   }
+          }
         ]
       },
       groupData: [],
@@ -139,7 +136,9 @@ export default {
     };
   },
   created() {
-    var data = this.$route.params;
+    this.userGroup(); // 查询用户组
+    var data = this.$route.query;
+    console.log(data);
     if (data.NotifyWay) {
       data.NotifyWay.forEach((v, i) => {
         if (v == "EMAIL") {
@@ -150,14 +149,20 @@ export default {
         this.qudaoCheckList.push(v);
       });
     }
-    if (data.ReceiverGroupIds) {
-      data.ReceiverGroupIds.forEach((v, i) => {
-        this.cam.selectUserGroup.push(v);
-      });
-    }
+
+    // if (this.tableData.length > 0) {
+    //   /////////////
+    //   data.ReceiverGroupIds.forEach((v, i) => {
+    //     this.tableData.forEach((item, index) => {
+    //       if (item.GroupId == v) {
+    //         this.cam.selectUserGroup.push(item);
+    //       }
+    //     });
+    //   });
+    // }
   },
   mounted() {
-    this.userGroup(); // 查询接收组
+    // this.userGroup(); // 查询接收组
   },
   methods: {
     // 选中接受组还是接收人
@@ -223,7 +228,6 @@ export default {
       this.axios
         .post(GET_GROUP, params)
         .then(res => {
-          this.loadingShow = false;
           if (res.Response.Error === undefined) {
             this.groupData.push(res.Response);
             if (this.groupData.length === this.tableData.length) {
@@ -235,11 +239,14 @@ export default {
                 });
               });
               this.tableData2 = this.tableData;
+              this.cam.selectUserGroup.push(this.tableData[0]);
+              this.loadingShow = false;
             }
           } else {
             let ErrTips = {
               "ResourceNotFound.UserNotExist": "用戶不存在"
             };
+            this.loadingShow = false;
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
               message: ErrOr[res.Response.Error.Code],
@@ -307,32 +314,21 @@ export default {
     },
     // 接收组 table表格选中触发的事件
     handleSelectionChange(val) {
-      console.log(this.cam.selectUserList);
+      this.cam.selectUserList = [];
       this.cam.selectUserGroup = val;
-      //   this.cam.selectUserList = [];
+      console.log(this.cam.selectUserGroup);
+
       this.$emit("camClick", this.cam);
     },
-    // 接收人 table表格选中触发的事件
-    handleSelectionChange2(val) {
-      this.cam.selectUserGroup = [];
-      this.cam.selectUserList = val;
-      this.$emit("camClick", this.cam);
-    },
+    // // 接收人 table表格选中触发的事件
+    // handleSelectionChange2(val) {
+    //   this.cam.selectUserGroup = [];
+    //   this.cam.selectUserList = val;
+    //   this.$emit("camClick", this.cam);
+    // },
     // 选中渠道
     selectChannel() {
-      var data = this.$route.params;
-      if (data.NotifyWay) {
-        data.NotifyWay.forEach((v, i) => {
-          if (v == "EMAIL") {
-            v = "郵件";
-          } else if (v == "SMS") {
-            v = "簡訊";
-          }
-          this.qudaoCheckList.push(v);
-        });
-      }
       this.cam.channel = this.qudaoCheckList;
-      console.log(this.cam.channel)
       this.$emit("camClick", this.cam);
     }
   }
