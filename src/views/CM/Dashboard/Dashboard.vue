@@ -4,7 +4,7 @@
       <el-select
         v-model="DashboardName"
         :placeholder="$t('CVM.Dashboard.qxz')"
-        style="margin:0 20px 0 40px;width:260px"
+        style="margin:0 20px 0 40px;width:260px" @change="getDescribeDashboardView"
       >
         <el-option
           v-for="item in options"
@@ -105,9 +105,8 @@
             <div class="empty" v-else>
               暫無數據
             </div>
-
           </div>
-          <div class="open">
+          <div class="open" v-if="false">
             <p>
               <span
                 >共 {{ item.Instances.length }}
@@ -134,7 +133,7 @@
               >
             </p>
           </div>
-          <div class="chartContent" v-show="retractChartFlag">
+          <div class="chartContent" v-if="false">
             <el-table :data="item.Instances">
               <el-table-column type="index" width="50"></el-table-column>
               <el-table-column
@@ -693,13 +692,17 @@ export default {
                 data: ele.Points.map(item => {
                   // 存在坐标为null的情况，应该是接口问题
                   return item === null ? 0 : item
-                })
+                }),
+                itemStyle: {
+                  normal: {
+                    color: '#2072d9'
+                  }
+                }
               });
             });
 
             const item = this.ViewList[index];
             item.DataPoints = DataPoints;
-
             this.$set(this.ViewList, index, item);
           } else {
             let ErrTips = {};
@@ -818,7 +821,7 @@ export default {
       padding: 20px;
       background: #ffffff;
       border: 1px solid #e2e1e1;
-
+      margin-bottom: 10px;
       p {
         display: flex;
         justify-content: space-between;
