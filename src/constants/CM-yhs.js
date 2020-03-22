@@ -24,7 +24,8 @@ export const UPDATE_INFO = 'monitor2/UpdatePolicyGroupInfo'
 export const MODIFYPOLICYGROUPINFO = 'monitor2/ModifyPolicyGroupInfo'
 
 // 编辑触发条件(描述基本指标)
-export const DESCRIBE_METRICS = 'monitor/DescribeBaseMetrics'
+// export const DESCRIBE_METRICS = 'monitor/DescribeBaseMetrics'
+export const EDIT_TEMPLATE = 'monitor2/ModifyConditionsTemplate'
 
 // 使用预制触发条件
 // export const DESCRIBE_METRICS = 'monitor/DescribeBaseMetrics'
@@ -38,5 +39,5 @@ export const NEWBUILD_TEMPLATE = 'monitor2/CreateConditionsTemplate'
 // 变更日志获取模板详情
 export const GET_DESCRIBETRANSLOG = 'monitor2/DescribeTransLog'
 
-//获取项目名称
+// 获取项目名称
 export const GET_PROJECTNAME = 'account/DescribeProject'

@@ -28,7 +28,7 @@
     </el-card>
     <el-card class="card2">
       <h4 class="title-text">告警触发条件
-        <!-- <span @click="openEdit()" style="cursor:pointer">编辑</span> -->
+        <span @click="openEdit()" style="cursor:pointer">编辑</span>
       </h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
@@ -104,9 +104,16 @@
       </span>
     </el-dialog>
     <!-- 告警触发条件编辑弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog3" width="65%">
+     <!-- @open="loadShow=true" -->
+    <el-dialog class="dil" @open="openEditloadShow=true" :visible.sync="showDelDialog3" width="65%">
+      <p class="title">修改触发条件</p>
+      <p class="rowCont" style="display: flex;margin-bottom:20px" v-show="showProductType">
+        <span>策略类型</span>
+        <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
+        :productValue='productValue'/>
+         <!-- @loading="isLoading"  -->
+      </P>
       <div>
-        <p class="title">修改触发条件</p>
         <div style="display:flex">
           <span style="display: inline-block;width: 80px;">触发条件</span>
           <div>
@@ -129,18 +136,18 @@
                 </el-select>
                 <span>条件时，触发告警</span>
               </p>
-              <ul>
+              <ul v-loading="openEditloadShow">
                 <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
                   <p>
                     if&nbsp;
                     <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.MetricDisplayName" style="width:150px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.MetricID" style="width:150px;" size="small">
                       <el-option
-                        v-for="(item,index) in conditionsData.conditions"
+                        v-for="(item,index) in zhibiaoType"
                         :key="index"
-                        :label="item.metricShowName"
-                        :value="item.metricShowName"
+                        :label="item.MetricShowName"
+                        :value="item.MetricId"
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
@@ -177,8 +184,7 @@
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >{{it.Unit||'&nbsp;'}}</b>
                     &nbsp;
-                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:110px;" size="small"> -->
-                      <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">
                       <el-option
                         v-for="(item,index) in continuePeriod"
                         :key="index"
@@ -187,9 +193,8 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>&nbsp;
-                    then&nbsp;
-                    <!-- <el-select :disabled="isDisabled" v-model="formInline.projectName" style="width:150px;" size="small"> -->
-                    <el-select :disabled="isDisabled" v-model="it.alarm" style="width:150px;" size="small">
+                    <span style="width:30px" v-if="UnionRule!==1" >then</span>&nbsp;
+                    <el-select :disabled="isDisabled" v-model="it.alarm" v-if="UnionRule!==1" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
                         :key="index"
@@ -198,7 +203,7 @@
                         label-width="40px"
                       ></el-option>
                     </el-select>
-                    <el-popover placement="top" trigger="hover" width="300">
+                    <el-popover v-if="UnionRule!==1" placement="top" trigger="hover" width="300">
                       <div>
                         <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
                         <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
@@ -209,7 +214,28 @@
                   <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="delZhibiao(it)" v-if="indexAry.length>1"></i>
                 </li>
                 <a @click="addZhibiao" style="cursor:pointer">添加</a>
+                <p style="color:red" v-if="isRepeated"><i class="el-icon-info"
+                   style="color:#888; margin:0 5px;color:red"></i>请勿重复配置</p>
               </ul>
+              <p v-if="UnionRule==1">
+                <span style="width:30px">then</span>&nbsp;
+                <el-select :disabled="isDisabled" v-model="all_alarm" style="width:150px;">
+                  <el-option
+                    v-for="(item,index) in jinggaoZQ"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.value"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+                <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
+                  <div>
+                    <p style="font-size:12px">重复通知：可以设置告警发生24小时内重复发送通知；超过24小时，每天告警一次，超过72小时，不再发送告警通知。</p>
+                    <p style="font-size:12px">周期指数递增通知: 告警持续时长到达告警统计周期的1，2，4，8，16，32...倍时发送告警通知</p>
+                  </div>
+                  <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                </el-popover>
+              </p>
             </div>
             <!-- <div>
               <p style="line-height:30px;">
@@ -241,7 +267,7 @@
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
-          <el-button type="primary" size="small">保存</el-button>
+          <el-button :disabled="isRepeated" @click="submitEdit" type="primary" size="small">保存</el-button>
           <el-button size="small" @click="showDelDialog3=false">取消</el-button>
         </div>
       </div>
@@ -250,13 +276,15 @@
 </template>
 
 <script>
+import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
 import {
   GET_GROUP_LIST,
   GET_POLICY_GROUP_TYPE,
   DESCRIBE_METRICS,
   GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO,
-  GET_PROJECTNAME
+  GET_PROJECTNAME,
+  EDIT_TEMPLATE
 } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
 import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
@@ -265,6 +293,9 @@ export default {
   name: 'templateInfo',
   data () {
     return {
+      showProductType: false,
+      openEditloadShow: false, // 打开编辑弹窗的加载
+      isRepeated: false, // 重复警告是否显示
       showDelDialog1: false, // 是否显示修改名称弹框
       showDelDialog2: false, // 是否显示修改备注弹框
       showDelDialog3: false, // 是否显示条件编辑弹框
@@ -342,17 +373,45 @@ export default {
       },
       indexAry: [], // 指标告警数组
       eventAry: [], // 事件告警数组
-      conditionsData: [], // 触发条件数据
+      zhibiaoType: [], // 触发条件数据
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
-      UnionRule: '任意', // 双向绑定的满足条件
+      UnionRule: 0, // 双向绑定的满足条件
+      all_alarm: 86400, // 满足条件为 所有 时告警值
       groupList: [], // 策略组列表
       channelList: [], // 渠道列表
       PolicyGrouplist: [], // 关联政策组列表
-      allProjectName: []// 项目名称列表
+      allProjectName: [], // 项目名称列表
+      projectId: 0,
+      searchParam: {},
+      //  value: 'ins-6oz38wnu', label: 'instance-id'
+      productValue: 'cvm_device'
+    }
+  },
+  watch: {
+    indexAry: {
+      handler: function (val) {
+        let temp = []
+        val.forEach((ele, i) => {
+          let tempObj = this.zhibiaoType.find(item => {
+            return item.MetricId === ele.MetricID
+          })
+          if (tempObj) {
+            this.indexAry[i].Unit = tempObj.MetricUnit
+          }
+          !temp.some(it => it.MetricID === ele.MetricID) && temp.push(ele)
+        })
+        if (val.length === temp.length) {
+          this.isRepeated = false
+        } else {
+          this.isRepeated = true
+        }
+      },
+      deep: true
     }
   },
   components: {
-    Loading
+    Loading,
+    ProductTypeCpt
   },
   created () {
     this.id = this.$route.params.id
@@ -428,6 +487,7 @@ export default {
           // this.conditionsData = msg[0]
           let ct = this.Conditions
           msg.forEach((ele, i) => {
+            ele.ViewName = this.productValue
             ct.forEach((k, j) => {
               if (ele.ViewName === k.PolicyViewName) {
                 ele['Name'] = k.Name
@@ -445,25 +505,25 @@ export default {
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重复告警'
-                this.indexAry[i].alarm = '不重复'// 编辑触发条件
+                this.indexAry[i].alarm = 0// 编辑触发条件
               } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指数递增重复告警'
-                this.indexAry[i].alarm = '周期指数递增'// 编辑触发条件
+                this.indexAry[i].alarm = 1// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
                 item.alarm = `按${time1}分钟重复告警`
-                this.indexAry[i].alarm = `每${time1}分钟警告一次`// 编辑触发条件
+                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小时重复告警`
-                this.indexAry[i].alarm = `每${time2}小时警告一次`// 编辑触发条件
+                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
               } else {
                 item.alarm = '按1天重复告警'
-                this.indexAry[i].alarm = '每1天重复告警'// 编辑触发条件
+                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
               }
             })
             if (ele.IsUnionRule === 0) { // 编辑触发条件
-              this.UnionRule = '任意'
+              this.UnionRule = 0
             } else if (ele.IsUnionRule === 1) {
-              this.UnionRule = '所有'
+              this.UnionRule = 1
             }
             this.infoData = ele
             this.eventAry = ele.EventConditions// 编辑触发条件
@@ -482,6 +542,64 @@ export default {
           })
         }
       })
+    },
+    passData (item) {
+      // console.log(132, item)
+      // this.productData = item
+      // this.zhibiaoType = item.MetricName
+      this.zhibiaoType = item.Metrics
+      this.productValue = item.productValue
+      this.$nextTick(() => {
+        this.openEditloadShow = false
+      })
+    },
+    // 保存编辑条件模板
+    submitEdit () {
+    //   let { GroupID, GroupName, ViewName } = this.infoData
+    //   let params = {
+    //     Version: '2018-07-24',
+    //     Module: 'monitor',
+    //     IsUnionRule: this.UnionRule,
+    //     GroupID: GroupID,
+    //     ViewName: ViewName,
+    //     GroupName: GroupName
+    //   }
+    //   this.indexAry.forEach((ele, i) => {
+    //     params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
+    //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指标类型id值
+    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 统计周期
+    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持续周期
+    //     this.SymbolList.forEach((item3, index) => {
+    //       var CT
+    //       if (ele.CalcType == item3) {
+    //         CT = index + 1
+    //         params[`Conditions.${i}.CalcType`] = CT// 符号
+    //       }
+    //     })
+    //     this.jinggaoZQ.forEach(item4 => {
+    //       var AM
+    //       if (ele.alarm == item4.value && ele.alarm !== 1) {
+    //         AM = item4.value
+    //         params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
+    //         params[`Conditions.${i}.AlarmNotifyType`] = 0
+    //       }
+    //       if (ele.alarm == 1) {
+    //         // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
+    //         params[`Conditions.${i}.AlarmNotifyType`] = 1
+    //       }
+    //     })
+    //     if (this.UnionRule == 1 && this.all_alarm !== 1) {
+    //       params[`Conditions.${i}.AlarmNotifyPeriod`] = this.all_alarm
+    //       params[`Conditions.${i}.AlarmNotifyType`] = 0
+    //     } else if (this.UnionRule == 1 && this.all_alarm == 1) {
+    //       params[`Conditions.${i}.AlarmNotifyType`] = 1
+    //     }
+    //   })
+    //   this.axios.post(EDIT_TEMPLATE, params).then(res => {
+    //     if (res.Response.Error === undefined) {
+    //       console.log(res)
+    //     }
+    //   })
     },
     // 获取策略组列表(未完成  参数有误)
     async getPolicyGroupList () {
@@ -613,15 +731,44 @@ export default {
       })
     },
     addZhibiao () { // 添加触发条件的指标告警
-      this.indexAry.push(
-        {
-          Period: '统计周期1分钟',
-          CalcType: '>',
-          CalcValue: '0',
-          ContinuePeriod: '持续1个周期',
-          alarm: '每1天警告一次'
+      let { zhibiaoType } = this
+      for (let i = 0; i < zhibiaoType.length; i++) {
+        let result = this.indexAry.some(item => {
+          return item.MetricID === zhibiaoType[i].MetricId
+        })
+        this.isRepeated = result
+        if (!result) {
+          this.indexAry.push({
+            Period: 60,
+            CalcType: '>',
+            CalcValue: '0',
+            ContinuePeriod: 1,
+            MetricID: zhibiaoType[i].MetricId,
+            Unit: zhibiaoType[i].MetricUnit,
+            alarm: 86400
+          })
+          return
         }
-      )
+      }
+      // 如果不 return 就把数组第一个push进来
+      this.indexAry.push({
+        Period: 60,
+        CalcType: '>',
+        CalcValue: '0',
+        ContinuePeriod: 1,
+        MetricID: zhibiaoType[0].MetricId,
+        Unit: zhibiaoType[0].MetricUnit,
+        alarm: 86400
+      })
+      // this.indexAry.push(
+      //   {
+      //     Period: '统计周期1分钟',
+      //     CalcType: '>',
+      //     CalcValue: '0',
+      //     ContinuePeriod: '持续1个周期',
+      //     alarm: '每1天警告一次'
+      //   }
+      // )
     },
     delZhibiao (it) { // 删除触发条件的指标告警
       var index = this.indexAry.indexOf(it)
