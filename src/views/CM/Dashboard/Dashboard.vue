@@ -4,7 +4,7 @@
       <el-select
         v-model="DashboardName"
         :placeholder="$t('CVM.Dashboard.qxz')"
-        style="margin:0 20px 0 40px;width:260px"
+        style="margin:0 20px 0 40px;width:260px" @change="getDescribeDashboardView"
       >
         <el-option
           v-for="item in options"
@@ -72,7 +72,7 @@
               <b>
                 <!-- {{$t('CVM.Dashboard.mx')}}-CPU利用率 -->
                 {{ item.DescName }}
-                <span style="color:#888">（%）</span>
+                <!-- <span style="color:#888">（%）</span> -->
               </b>
               <!-- <el-row>
                 <i class="el-icon-zoom-in"></i>
@@ -105,7 +105,6 @@
             <div class="empty" v-else>
               暫無數據
             </div>
-
           </div>
           <div class="open">
             <p>
@@ -138,26 +137,25 @@
             <el-table :data="item.Instances">
               <el-table-column type="index" width="50"></el-table-column>
               <el-table-column
-                prop="unInstanceId"
-                label="ID/主机名"
+                prop=""
+                label="ID"
                 width="120"
               >
                 <template scope="scope">
                   <span style="color: #006eff">{{
-                    scope.row.unInstanceId
+                    scope.row[item.InstanceName]
                   }}</span>
                 </template>
               </el-table-column>
               <el-table-column
                 prop=""
-                label="IP地址"
-                width="120"
-              ></el-table-column>
-              <el-table-column
-                prop=""
-                label="CPU利用率"
+                :label="item.DescName.split('-')[1]"
                 width=""
-              ></el-table-column>
+              >
+                <template scope="scope">
+                  <span>{{item.DataPoints[scope.$index].data[0]}}</span>
+                </template>
+              </el-table-column>
             </el-table>
           </div>
         </div>
@@ -406,7 +404,6 @@ export default {
                 label: ele.DescName
               };
             });
-
             if (this.options.length > 0) {
               this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
               this.DashboardName = this.options[0].label;
@@ -498,9 +495,9 @@ export default {
             let ErrTips = {
               "AuthFailure.UnauthorizedOperation":
                 "请求未授权。请参考 CAM 文档对鉴权的说明。",
-              DryRunOperation:
+              "DryRunOperation":
                 "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-              FailedOperation: "操作失败。",
+              "FailedOperation": "操作失败。",
               "FailedOperation.AlertFilterRuleDeleteFailed":
                 "删除过滤条件失败。",
               "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
@@ -588,10 +585,32 @@ export default {
               ele.Instances = newInstances;
               ele.Meta = JSON.parse(ele.Meta);
               ele.DataPoints = []; // 占位，让vue响应
+              if (ele.Namespace == 'qce/cvm') {
+                ele.InstanceName = 'unInstanceId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'QCE/VPNGW') {
+                ele.InstanceName = 'vpnGwId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/vpnx') {
+                ele.InstanceName = 'vpnConnId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/nat_gateway') {
+                ele.InstanceName = 'natId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/dcg') {
+                ele.InstanceName = 'directConnectGatewayId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/redis') {
+                ele.InstanceName = 'instanceid'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/dcx') {
+                ele.InstanceName = 'directConnectConnId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/cos') {
+                ele.InstanceName = 'bucket'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/dc') {
+                ele.InstanceName = 'directConnectId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/cdb') {
+                ele.InstanceName = 'uInstanceId'; // 与Namespace相对应
+              } else if (ele.Namespace == 'qce/block_storage') {
+                // ele.Id = ele.Instances.length ? ele.Instances[0].diskId : '';
+                ele.InstanceName = 'diskId'; // 与Namespace相对应
+              }
             });
-
             this.ViewList = ViewList;
-
             this.getAllMonitorData();
           } else {
             let ErrTips = {
@@ -652,7 +671,8 @@ export default {
       StartTime,
       EndTime,
       Instances,
-      index
+      index,
+      InstanceName
     ) {
       let params = {
         Version: "2017-03-12",
@@ -662,21 +682,15 @@ export default {
         StartTime,
         EndTime
       };
-
       if (Instances.length != 0) {
         Instances.forEach((ele, i) => {
-          if (ele.unInstanceId) {
-            params["Dimensions." + i + ".unInstanceId"] = ele.unInstanceId;
-          } else if (ele.diskId) {
-            params["Dimensions." + i + ".diskId"] = ele.diskId;
-          }
+          params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
         });
       } else {
         const item = this.ViewList[index];
         item.DataPoints = [];
         this.$set(this.ViewList, index, item);
         return;
-        // params["Dimensions." + 0 + ".unInstanceId"] = "null";
       }
       await this.axios
         .get(GET_MONITOR_DATA, {
@@ -693,13 +707,17 @@ export default {
                 data: ele.Points.map(item => {
                   // 存在坐标为null的情况，应该是接口问题
                   return item === null ? 0 : item
-                })
+                }),
+                itemStyle: {
+                  normal: {
+                    color: '#2072d9'
+                  }
+                }
               });
             });
 
             const item = this.ViewList[index];
             item.DataPoints = DataPoints;
-
             this.$set(this.ViewList, index, item);
           } else {
             let ErrTips = {};
@@ -723,7 +741,8 @@ export default {
           this.startEnd.StartTime,
           this.startEnd.EndTime,
           ele.Instances,
-          index
+          index,
+          ele.InstanceName
         );
       });
     },
@@ -747,7 +766,7 @@ export default {
 <style lang="scss" scoped>
 .chartContent {
   width: 100%;
-  height: 200px;
+  // height: 200px;
   padding: 20px;
   background: #ffffff;
 }
@@ -818,7 +837,7 @@ export default {
       padding: 20px;
       background: #ffffff;
       border: 1px solid #e2e1e1;
-
+      // margin-bottom: 10px;
       p {
         display: flex;
         justify-content: space-between;

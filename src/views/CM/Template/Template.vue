@@ -237,40 +237,40 @@ export default {
           }
         ], // 用户名类型数据
         productOptions: [{
-            label: '云服务器',
-            viewName: 'cvm_device',
-          }, {
-            label: '云硬盘',
-            viewName: 'BS',
-          },
-          {
-            label: 'VPN网关',
-            viewName: 'VPN_GW',
-          }, {
-            label: 'VPN通道',
-            viewName: 'vpn_tunnel',
-          }, {
-            label: 'NAT网关',
-            viewName: 'nat_tc_stat',
-          }, {
-            label: '专线网关',
-            viewName: 'DC_GW',
-          }, {
-            label: 'MYSQL',
-            viewName: 'cdb_detail',
-          }, {
-            label: 'Redis',
-            viewName: 'REDIS-CLUSTER',
-          }, {
-            label: '专用通道',
-            viewName: 'dcchannel',
-          }, {
-            label: '物理专线',
-            viewName: 'dcline',
-          }, {
-            label: '对象存储',
-            viewName: 'COS',
-          }
+          label: '云服务器',
+          viewName: 'cvm_device'
+        }, {
+          label: '云硬盘',
+          viewName: 'BS'
+        },
+        {
+          label: 'VPN网关',
+          viewName: 'VPN_GW'
+        }, {
+          label: 'VPN通道',
+          viewName: 'vpn_tunnel'
+        }, {
+          label: 'NAT网关',
+          viewName: 'nat_tc_stat'
+        }, {
+          label: '专线网关',
+          viewName: 'DC_GW'
+        }, {
+          label: 'MYSQL',
+          viewName: 'cdb_detail'
+        }, {
+          label: 'Redis',
+          viewName: 'REDIS-CLUSTER'
+        }, {
+          label: '专用通道',
+          viewName: 'dcchannel'
+        }, {
+          label: '物理专线',
+          viewName: 'dcline'
+        }, {
+          label: '对象存储',
+          viewName: 'COS'
+        }
         ],
         product_value: '', // 产品
         Template_value: '' // 策略
@@ -392,32 +392,32 @@ export default {
     },
     // 获取策略类型
     async getPolicyType  () {
-      this.loadShow = true
-      let params = {
-        Version: '2018-07-24',
-        Module: 'monitor'
-      }
-      this.loadShow = true
-      await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.Conditions = res.Response.Conditions
-          // console.log(this.Conditions)
-          this.Conditions.forEach(ele => {
-            this.PolicyType.push({ text: ele.Name, value: ele.Name })
-          })
-          this.loadShow = false
-        } else {
-          this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        }
-      })
+      // this.loadShow = true
+      // let params = {
+      //   Version: '2018-07-24',
+      //   Module: 'monitor'
+      // }
+      // this.loadShow = true
+      // await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     this.Conditions = res.Response.Conditions
+      //     // console.log(this.Conditions)
+      //     this.Conditions.forEach(ele => {
+      //       this.PolicyType.push({ text: ele.Name, value: ele.Name })
+      //     })
+      //     this.loadShow = false
+      //   } else {
+      //     this.loadShow = false
+      //     let ErrTips = {}
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: 'error',
+      //       showClose: true,
+      //       duration: 0
+      //     })
+      //   }
+      // })
     },
     // 获取触发条件列表
     async getTemplateList (val) {
@@ -436,14 +436,14 @@ export default {
           // console.log(res)
           this.TotalCount = res.Response.Total
           let msg = res.Response.TemplateGroupList
-          let ct = this.Conditions
-          for (let i in msg) {
-            for (let j in ct) {
-              if (msg[i].ViewName === ct[j].PolicyViewName) {
-                msg[i]['Name'] = ct[j].Name
-              }
-            }
-          }
+          // let ct = this.Conditions
+          // for (let i in msg) {
+          //   for (let j in ct) {
+          //     if (msg[i].ViewName === ct[j].PolicyViewName) {
+          //       msg[i]['Name'] = ct[j].Name
+          //     }
+          //   }
+          // }
           msg.forEach(ele => {
             ele.Conditions.forEach((item, i) => {
               let ct = Number(item.CalcType)
@@ -493,7 +493,6 @@ export default {
     },
     // 确定编辑模板名称完成
     async submitEditName () {
-      // let { groupId, groupName } = this.templateObj
       let params = {
         Version: '2018-07-24',
         Module: 'monitor',
@@ -501,12 +500,17 @@ export default {
         GroupType: 3,
         Key: 'groupName',
         Value: this.editGroupName
-        // lang: 'zh',
       }
       await this.axios.post(MODIFYPOLICYGROUPINFO, params).then(res => {
         if (res.Response.Error === undefined) {
           this.ShowEditDialog = false
           this.getTemplateList()
+          this.$message({
+            message: '条件模板名称修改成功',
+            type: 'success',
+            showClose: true,
+            duration: 2000
+          })
         } else {
           this.errorPrompt(res)
         }
@@ -532,8 +536,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.showCopyDialog = false
           this.getTemplateList()
-          // console.log(res)
-          this.$message.success('复制成功')
+          this.$message({
+            message: '复制成功',
+            type: 'success',
+            showClose: true,
+            duration: 2000
+          })
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -562,7 +570,12 @@ export default {
         if (res.Response.Error === undefined) {
           this.getTemplateList()
           this.showDelDialog = false
-          this.$message.success('删除成功')
+          this.$message({
+            message: '删除成功',
+            type: 'success',
+            showClose: true,
+            duration: 2000
+          })
         } else {
           this.showDelDialog = false
           this.errorPrompt(res)
@@ -686,14 +699,30 @@ export default {
       s = s < 10 ? '0' + s : s
       return y + '/' + MM + '/' + d + ' ' + h + ':' + m + ':' + s
     },
-    ViewName(val) {
-      if(val) {
-        if(val === 'cvm_device') {
-          return "云服务器";
-        } else if(val === 'BS') {
-          return "云硬盘";
-        } else if(val === 'VPN_GW') {
-          return "VPN网关";
+    ViewName (val) {
+      if (val) {
+        if (val === 'cvm_device') {
+          return '云服务器'
+        } else if (val === 'BS') {
+          return '云硬盘'
+        } else if (val === 'VPN_GW') {
+          return 'VPN网关'
+        } else if (val === 'vpn_tunnel') {
+          return 'VPN通道'
+        } else if (val === 'nat_tc_stat') {
+          return 'NAT网关'
+        } else if (val === 'DC_GW') {
+          return '专线网关'
+        } else if (val === 'cdb_detail') {
+          return 'MYSQL'
+        } else if (val === 'REDIS-CLUSTER') {
+          return 'Redis'
+        } else if (val === 'dcchannel') {
+          return '专用通道'
+        } else if (val === 'dcline') {
+          return '物理专线'
+        } else if (val === 'COS') {
+          return '对象存储'
         }
       }
     }

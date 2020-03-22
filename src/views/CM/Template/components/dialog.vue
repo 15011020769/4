@@ -521,8 +521,8 @@ export default {
       })
     },
     passData (item) {
-      this.productData = item
-      this.zhibiaoType = item.MetricName
+      // this.productData = item
+      // this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
       this.$nextTick(() => {

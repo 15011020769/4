@@ -110,7 +110,7 @@
     </p>
     <p style="display:flex">
       <span>接收渠道&nbsp;&nbsp;</span>
-      <el-checkbox-group v-model="qudaoCheckList" @change="selectChannel">
+      <el-checkbox-group v-model="cam.channel" @change="selectChannel">
         <el-checkbox label="郵件"></el-checkbox>
         <el-checkbox label="簡訊"></el-checkbox>
       </el-checkbox-group>
@@ -130,7 +130,7 @@ export default {
       loadingShow: true, // 接收组动画
       userListArr: [], // 接收人列表数组
       userListLoading: "true", // 接收人加载动画
-      qudaoCheckList: ["郵件", "簡訊"], //渠道选择
+      // qudaoCheckList: ["郵件", "簡訊"], //渠道选择
       formInline: {
         jieshou: "0",
         jieshouArr: [
@@ -151,7 +151,7 @@ export default {
         selectUserGroup: [], // 接收组 --> table表格选中
         selectUserList: [], // 接收人 --> table表格选中
         time: [], // 选中的时间
-        channel: [] // 选中的渠道
+        channel: ["郵件", "簡訊"] // 选中的渠道
       }
     };
   },
@@ -334,7 +334,7 @@ export default {
 
     // 选中渠道
     selectChannel() {
-      this.cam.channel = this.qudaoCheckList;
+      // this.cam.channel = this.qudaoCheckList;
       this.$emit("camClick", this.cam);
     }
   }

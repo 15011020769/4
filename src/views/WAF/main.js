@@ -13,7 +13,7 @@ import filters from '@/filters/filters.js'
 import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
-
+import s2t from '@/utils/s2t'
 import { ErrorTips } from "@/components/ErrorTips"
 import VueClipboard from 'vue-clipboard2'
 import { COMMON_ERROR } from './constants'
@@ -87,12 +87,42 @@ if (!Float32Array.prototype.slice) {
       return target;
   };
 }
+// 兼容ie11对象不支持includes
+if (!Array.prototype.includes) {
+  Object.defineProperty(Array.prototype, 'includes', {
+    value: function(valueToFind, fromIndex) {
+
+      if (this == null) {
+        throw new TypeError('"this" is null or not defined');
+      }
+      var o = Object(this);
+      var len = o.length >>> 0;
+      if (len === 0) {
+        return false;
+      }
+      var n = fromIndex | 0;
+      var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+
+      function sameValueZero(x, y) {
+        return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
+      }
+      while (k < len) {
+        if (sameValueZero(o[k], valueToFind)) {
+          return true;
+        } 
+        k++;
+      }
+      return false;
+    }
+  });
+}
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueCookie)
 Vue.use(VueClipboard)
 Vue.prototype.$message = message // 覆盖原有的message方法
+Vue.prototype.$s2t = s2t // 覆盖原有的message方法
 
 new Vue({
     router,

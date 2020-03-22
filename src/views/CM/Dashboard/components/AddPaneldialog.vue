@@ -63,8 +63,14 @@ export default {
       this.$emit("cancel");
     },
     save() { // 确定按钮
-      this.$emit("save");
-      this.handlereateDashboardView();
+      this.$refs['addPanelForm'].validate(valid => {
+        if (valid) {
+          this.$emit("save");
+          this.handlereateDashboardView();
+        } else {
+          return false;
+        }
+      });
     },
     //类型
     msgBtn(index) {

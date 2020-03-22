@@ -38,7 +38,7 @@
 
       <!-- 编辑器的容器 -->
       <div v-if="SubmissionValue === 'Inline'" class="content">
-        <div id="container" style="width: 100%; height: 500px;"></div>
+        <div id="container_editor" style="width: 100%; height: 500px;"></div>
       </div>
 
       <!-- 上传zip -->
@@ -101,7 +101,6 @@
             <el-input v-model="input3" :disabled="true">
             </el-input>
           </div>
-
         </div>
 
       </div>
@@ -110,14 +109,14 @@
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
         <el-button size="small" @click="_testModal">测试</el-button>
         <span class="testmb">测试当前模板</span>
-        <el-select v-model="testvalue" placeholder="请选择">
-          <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
-            <span>{{item}}</span>
-            <span style="float: right">
+        <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+          <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
+            <!-- <span>{{item}}</span> -->
+            <!-- <span style="float: right">
               <i class="el-icon-edit" @click="_editModal(item)" />
               &nbsp;
               <i class="el-icon-close" @click="_deleteModal(item)" />
-            </span>
+            </span> -->
           </el-option>
 
         </el-select>
@@ -125,23 +124,40 @@
           <el-button type="text" size="small" @click="newDialog">新建模板</el-button>
         </span>
       </div>
+
       <div class="test-info" v-if="isShowLogList">
         <div class="test-result">
-          <h3>测试结果: <span style="color: red;">失败</span></h3>
+          <h3>
+            测试结果:
+            <span style="color: red;">{{testResult.InvokeResult === 0 ? '成功' : '失败'}}</span>
+          </h3>
         </div>
         <div class="back-result">
-          <p>返回结果:</p>
-          <p></p>
+          <p class="p-blue">返回结果:</p>
+          <p class="p-result">{{testResult.RetMsg}}</p>
         </div>
         <div class="info-left">
-          <p>摘要: <span></span></p>
-          <p>请求ID:<span></span></p>
-          <p>运行时间:<span>ms</span></p>
-          <p>计费时间:<span>ms</span></p>
-          <p>运行内存:<span>MB</span></p>
+          <p class="p-blue">摘要</p>
+          <p>
+            <span class="span-blue">请求ID:</span>
+            <span>{{testResult.FunctionRequestId}}</span>
+          </p>
+          <p>
+            <span class="span-blue">运行时间:</span>
+            <span>{{testResult.Duration}} ms</span>
+          </p>
+          <p>
+            <span class="span-blue">计费时间:</span>
+            <span>{{testResult.BillDuration}} ms</span>
+          </p>
+          <p>
+            <span class="span-blue">运行内存:</span>
+            <span>{{testResult.MemUsage}} MB</span>
+          </p>
         </div>
         <div class="log-list">
-          <p>日志:</p>
+          <p class="p-blue">日志</p>
+          <p v-html="testResult.Log"></p>
         </div>
       </div>
     </div>
@@ -188,14 +204,14 @@
           <p class="p-1">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
         </el-form-item>
         <el-form-item label="测试事件模板">
-          <el-select v-model="testvalue" placeholder="请选择" @change="GetFunctionTestModel">
-            <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
+          <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+            <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <div class="codemirror-div">
-            <codemirror ref="mycode" v-model="templateDetail.TestModelValue" :options="cmOptions" class="code">
+            <codemirror ref="mycode" v-model="codemirrorValue" :options="cmOptions" class="code">
             </codemirror>
           </div>
         </el-form-item>
@@ -227,7 +243,8 @@ import { ErrorTips } from "@/components/ErrorTips";
 import { codemirror } from 'vue-codemirror'
 import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
 require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
-
+import { defaultTemplate } from './defaultTemplate'
+// import * as cslite from '@/views/SCF/lib/c.js'
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -260,12 +277,18 @@ export default {
       fileBase64zip: '', //zip上传
       fileBase64clip: '',
       fileBase64clip1: '', //文件夹上传
+      address: '',      // 获取到的zip地址
       input2: '',
       Cosoptions: [],
       cosvalue: '', //cos
       input3: '', //cos路径
-      modeloptions: [], //模板列表
-      templateDetail: '',   // 获取模板详情
+      defaultTemplate: defaultTemplate,  // 静态默认模板
+      modeloptions: [], // 模板列表
+      templateList: [],   // 静态默认模板与请求的模板列表集合
+      codemirrorValue: '',    // 弹框编辑器的值
+      templateDetail: {   // 获取模板详情
+        TestModelValue: ''
+      },
       testvalue: '',
       deleteModal: false,//是否启动删除模板modal
       modalName: '',//模板名称
@@ -307,23 +330,16 @@ export default {
     }
   },
   created() {
-    this.GetDate();
-    this.GetListFunctionTestModels();
+
   },
   components: {
     codemirror
   },
   mounted() {
-    // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
-    //   rootNode: document.querySelector('#container'),
-    //   funcName: this.functionName,
-    //   FileTreeModel: {
-    //     isFile: true,
-    //     path: 'https://lambdagz-1253665819.cos.ap-guangzhou.myqcloud.com/1300560919/dasd/dasd_LATEST.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDqbBtfGe4eSSK8CExGjmC0e8Qcnswv6yj%26q-sign-time%3D1584677337%3B1584687397%26q-key-time%3D1584677337%3B1584687397%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dab20ce68cbb4108a6b76c9f5101773ea73a32d5c&response-content-type=application/octet-stream',
-    //     fileName: 'channel-1',
-    //     parentPath: ''
-    //   }
-    // });
+
+    this.GetDate();      // 获取详情
+    this.GetListFunctionTestModels();   // 获取模板列表
+
   },
   methods: {
 
@@ -341,6 +357,7 @@ export default {
           this.implementInput = res.Response.Handler
           this.functionversion = res.Response.FunctionVersion
           this.ScienceValue = res.Response.Runtime
+          this._Clone('address')        // 获取地址
         } else {
           let ErrTips = {
             'InternalError': '內部錯誤',
@@ -365,8 +382,9 @@ export default {
       });
     },
 
-    //下载
-    _Clone() {
+    // 获取地址下载
+    _Clone(name) {
+      console.log(name)
       let param = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-04-16",
@@ -375,7 +393,13 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-          window.open(res.Response.Url)
+          if (name === 'download') {
+            window.open(res.Response.Url)
+          } else if (name === 'address') {
+            this.address = res.Response.Url
+            this.getCsLite()   // 渲染编辑器
+          }
+
         } else {
           let ErrTips = {
             'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
@@ -399,6 +423,35 @@ export default {
           });
         }
       });
+    },
+
+    // 渲染编辑器
+    getCsLite() {
+      console.log(this.address)
+      const cslsSDK = new CloudStudioLiteFilesServiceSDK();
+      cslsSDK.init({
+        rootNode: document.querySelector('#container_editor'),
+        modeType: ModeTypeEnum.ZIP,
+        i18nType: "zh-cn"
+      });
+      // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
+      cslsSDK.addListener({
+        onRead: () => {
+          return new Promise(res => {
+            fetch('https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
+              headers: { 'content-type': 'application/zip' },
+              method: 'GET'
+            })
+              .then(res => res.blob())
+              .then(blob => {
+                res({
+                  content: blob
+                })
+              })
+          })
+        }
+      })
+
     },
 
     //转base64
@@ -484,10 +537,9 @@ export default {
     },
 
     // 点击新建模板弹出框
-    newDialog(){
+    newDialog() {
       this.addModal = true;
-      this.testvalue = this.modeloptions[0]
-      this.GetFunctionTestModel(this.testvalue);
+      this.changeTemplate()   // 触发select下拉模板change事件
     },
 
     // 新建测试模板 确定事件
@@ -508,6 +560,7 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.GetListFunctionTestModels()  // 重新获取列表数据
         } else {
           let ErrTips = {
             'InternalError': '内部错误',
@@ -580,8 +633,16 @@ export default {
       this.axios.post(TESTMODELS_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
-          this.testvalue = this.modeloptions[0]
-          this.GetFunctionTestModel(this.testvalue)
+          this.templateList = []
+          this.templateList = this.defaultTemplate        // 把默认的模板赋值给模板列表 在通过下面的for循环 把自定义的模板push进来
+          this.testvalue = this.templateList[0].name
+          console.log(this.templateList)
+          console.log(this.modeloptions)
+          if (this.modeloptions.length !== 0) {
+            this.modeloptions.forEach((item, i) => {
+              this.GetFunctionTestModel(item)
+            })
+          }
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -615,6 +676,10 @@ export default {
       this.axios.post(TEST_MODAL, param).then(res => {
         if (res.Response.Error === undefined) {
           this.templateDetail = res.Response
+          this.templateList.push({                // 把自定义的模板push到templateList模板列表里面
+            name: name,
+            code: this.templateDetail.TestModelValue
+          })
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -632,6 +697,15 @@ export default {
           });
         }
       });
+    },
+
+    // select选中改变模板
+    changeTemplate() {
+      this.templateList.forEach((item, i) => {
+        if (item.name === this.testvalue) {
+          this.codemirrorValue = item.code
+        }
+      })
     },
 
     //是否删除模板
@@ -690,7 +764,7 @@ export default {
       });
     },
 
-    //测试模板
+    // 测试模板 点击函数
     _testModal() {
       let param = {
         Version: "2018-04-16",
@@ -698,7 +772,7 @@ export default {
         FunctionName: this.functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        ClientContext: this.templateDetail.TestModelValue,
+        ClientContext: this.codemirrorValue,
         Qualifier: this.functionversion,
         Namespace: this.$route.query.SpaceValue
       }
@@ -706,6 +780,7 @@ export default {
       this.axios.post(INVOKE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.testResult = res.Response.Result;
+          this.testResult.Log = this.trim(res.Response.Result.Log)
           this.isShowLogList = true;
         } else {
           let ErrTips = {
@@ -730,6 +805,11 @@ export default {
           });
         }
       });
+    },
+
+    // 换行符变为br标签
+    trim(str) {  //str表示要转换的字符串
+      return str.replace(/\n|\r\n/g, "<br/>");
     },
 
     // 提交方法 切换
@@ -864,13 +944,18 @@ export default {
       margin-top: 20px;
     }
     .back-result {
-      height: 50px;
+      margin-top: 10px;
+      height: 60px;
       width: 100%;
       background-color: rgb(242, 242, 242);
-      p:nth-of-type(1) {
+      .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
         color: rgb(48, 127, 220);
+      }
+      .p-result {
+        padding: 10px 0 0 10px;
+        font-size: 12px;
       }
     }
     .info-left {
@@ -880,8 +965,11 @@ export default {
       margin: 20px 20px 0px 0px;
       height: 300px;
       > p {
-        color: rgb(48, 127, 220);
         padding: 10px 0 0 10px;
+      }
+      .span-blue {
+        color: rgb(48, 127, 220);
+        padding-right: 5px;
       }
     }
     .log-list {
@@ -890,6 +978,10 @@ export default {
       margin: 20px 0px 0px 320px;
       width: auto;
       > p {
+        padding: 10px 0 0 10px;
+        font-size: 12px;
+      }
+      .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
         color: rgb(48, 127, 220);
@@ -907,8 +999,8 @@ export default {
     border: 1px solid #e7e7e7;
   }
 }
-.new-template{
-  .p-1{
+.new-template {
+  .p-1 {
     font-size: 12px;
     line-height: 20px;
   }

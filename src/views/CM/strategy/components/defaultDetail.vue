@@ -58,8 +58,13 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
         <h3>告警触发条件</h3>
-        <a v-loading="gaoJingLoading" class="gao-jing-loading">编辑</a>
-        <a @click="editGaoJing" v-if="!gaoJingLoading" class="gao-jing-loading"
+        <a
+          v-loading="gaoJingLoading"
+          v-if="!gaoJingLoading1"
+          class="gao-jing-loading"
+          >编辑</a
+        >
+        <a @click="editGaoJing" v-if="!gaoJingLoading1" class="gao-jing-loading"
           >编辑</a
         >
       </div>
@@ -1839,6 +1844,7 @@ export default {
       describeContactList: [],
       // 编辑告警触发条件
       gaoJingLoading: true,
+      gaoJingLoading1: true,
       Conditions: [],
       ViewName: this.$route.query.viewName,
       cycle: [
@@ -2068,6 +2074,7 @@ export default {
         // this.isShow = true;
       }, 600);
       this.gaoJingLoading = false;
+      this.gaoJingLoading1 = false;
     },
     projectIds(data) {
       this.projectId = data;

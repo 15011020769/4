@@ -614,7 +614,7 @@ module.exports = {
       yys: '運營商',
       dq: '地區',
       jingdu: '經度',
-      wd: '維度',
+      wd: '緯度',
       zl: '種類',
       sjxzs: '隨機性指數',
       cx: '出現',

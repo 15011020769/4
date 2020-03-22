@@ -1,6 +1,14 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
+
+import overView from './overView/overView.vue'
+import FuncServe from './FuncServe/FuncServe.vue'
+import createFun from './FuncServe/createFun.vue'
+import createFunStep from './FuncServe/createFunStep.vue'
+import funSeverDetail from './FuncServe/funSeverDetail.vue'
+
+
 export default new Router({
   base: process.env.BASE_URL,
   redirect: {
@@ -14,9 +22,9 @@ export default new Router({
     {
       path: '/overView', // 概览
       name: 'overView',
-      //component: overView,
-      component: () =>
-        import('./overView/overView.vue'),
+      component: overView,
+      // component: () =>
+      //   import('./overView/overView.vue'),
       meta: {
         keepAlive: true
       }
@@ -24,9 +32,9 @@ export default new Router({
     {
       path: '/FuncServe', // 函数服务
       name: 'FuncServe',
-      // component: FuncServe,
-      component: () =>
-        import('./FuncServe/FuncServe.vue'),
+      component: FuncServe,
+      // component: () =>
+      //   import('./FuncServe/FuncServe.vue'),
       meta: {
         keepAlive: true
       }
@@ -34,9 +42,9 @@ export default new Router({
     {
       path: '/createFun', // 创建函数
       name: 'createFun',
-      // component: createFun,
-      component: () =>
-        import('./FuncServe/createFun.vue'),
+      component: createFun,
+      // component: () =>
+      //   import('./FuncServe/createFun.vue'),
       meta: {
         keepAlive: true
       }
@@ -44,9 +52,9 @@ export default new Router({
     {
       path: '/createFunStep', // 创建函数第二步
       name: 'createFunStep',
-      // component: createFunStep,
-      component: () =>
-        import('./FuncServe/createFunStep.vue'),
+      component: createFunStep,
+      // component: () =>
+      //   import('./FuncServe/createFunStep.vue'),
       meta: {
         keepAlive: true
       }
@@ -54,9 +62,9 @@ export default new Router({
     {
       path: '/funSeverDetail', // 创建函数第二步
       name: 'funSeverDetail',
-      // component: funSeverDetail,
-      component: () =>
-        import('./FuncServe/funSeverDetail.vue'),
+      component: funSeverDetail,
+      // component: () =>
+      //   import('./FuncServe/funSeverDetail.vue'),
       meta: {
         keepAlive: true
       }

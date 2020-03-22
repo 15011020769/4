@@ -793,13 +793,13 @@
                                 <el-radio-button label="1">{{
                                   $t("TKE.colony.qbslz")
                                 }}</el-radio-button>
-                                <el-radio-button label="Standard">{{
+                                <el-radio-button label="S3">{{
                                   $t("TKE.colony.bzx")
                                 }}</el-radio-button>
-                                <el-radio-button label="MEM-optimized">{{
+                                <el-radio-button label="M3">{{
                                   $t("TKE.colony.ncx")
                                 }}</el-radio-button>
-                                <el-radio-button label="Compute">{{
+                                <el-radio-button label="C3">{{
                                   $t("TKE.colony.jsx")
                                 }}</el-radio-button>
                               </el-radio-group>
@@ -849,7 +849,7 @@
                                   :label="$t('TKE.colony.jxing')"
                                 >
                                   <template slot-scope="scope">
-                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                    {{ scope.row.TypeName }}
                                   </template>
                                 </el-table-column>
                                 <el-table-column :label="$t('TKE.colony.gz')">
@@ -913,7 +913,7 @@
                                   :label="$t('TKE.colony.jxing')"
                                 >
                                   <template slot-scope="scope">
-                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                    {{ TypeNamescope.row.TypeName }}
                                   </template>
                                 </el-table-column>
                                 <el-table-column :label="$t('TKE.colony.gz')">
@@ -1579,13 +1579,13 @@
                                 <el-radio-button label="1">{{
                                   $t("TKE.colony.qbslz")
                                 }}</el-radio-button>
-                                <el-radio-button label="Standard">{{
+                                <el-radio-button label="S3">{{
                                   $t("TKE.colony.bzx")
                                 }}</el-radio-button>
-                                <el-radio-button label="MEM-optimized">{{
+                                <el-radio-button label="M3">{{
                                   $t("TKE.colony.ncx")
                                 }}</el-radio-button>
-                                <el-radio-button label="Compute">{{
+                                <el-radio-button label="C3">{{
                                   $t("TKE.colony.jsx")
                                 }}</el-radio-button>
                               </el-radio-group>
@@ -1647,7 +1647,7 @@
                                   :label="$t('TKE.colony.jxing')"
                                 >
                                   <template slot-scope="scope">
-                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                    {{ scope.row.TypeName }}
                                   </template>
                                 </el-table-column>
                                 <el-table-column :label="$t('TKE.colony.gz')">
@@ -1714,7 +1714,7 @@
                                   :label="$t('TKE.colony.jxing')"
                                 >
                                   <template slot-scope="scope">
-                                    {{ ModelTypeName(scope.row.TypeName) }}
+                                    {{ scope.row.TypeName }}
                                   </template>
                                 </el-table-column>
                                 <el-table-column :label="$t('TKE.colony.gz')">
@@ -2333,8 +2333,10 @@
                 <div v-for="(item, index) in colonyThird.safeArr" :key="index">
                   <div>
                     <el-select
+                      :disabled="!securityGroupOpt.length"
                       :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
+                      @change="selectChange($event, index)" 
                     >
                       <el-option
                         v-for="x in securityGroupOpt"
@@ -2344,7 +2346,12 @@
                       >
                       </el-option>
                     </el-select>
-                    <i class="el-icon-refresh ml5"></i>
+                    <!-- 重复警告提示(yhs) -->
+                    <el-tooltip class="hide" :class="{active:colonyThird.warningNum === index}" effect="light" content="安全组重复" placement="right">
+                      <i class="el-icon-warning-outline ml5"></i>
+                    </el-tooltip>
+                    <!-- 刷新按钮(yhs) -->
+                    <i class="el-icon-refresh ml5" @click="refreshSafeArr()"></i>
                     <i
                       class="el-icon-error ml5"
                       @click="deleteExceptPrice(index)"
@@ -2361,7 +2368,7 @@
                 <span v-if="colonyThird.safeArr.length === 0">{{
                   $t("TKE.colony.ywxyzdy")
                 }}</span
-                ><a href="javascript:;" @click="AddSafe">{{
+                ><a href="javascript:;" @click="AddSafe" v-if="colonyThird.safeArr.length < 10">{{
                   $t("TKE.colony.tjaqz")
                 }}</a>
               </p>
@@ -3118,6 +3125,8 @@ export default {
         safeArr: [],
         defaultSafe: false,
         defaultSafeBox: true,
+        warningNum:'',
+        isShowWarning:false,
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -3628,15 +3637,15 @@ export default {
         this.C3show = true;
         this.S3show = true;
         this.M3show = true;
-      } else if (this.colonySecond.caseRace == "Standard") {
+      } else if (this.colonySecond.caseRace == "S3") {
         this.C3show = false;
         this.S3show = true;
         this.M3show = false;
-      } else if (this.colonySecond.caseRace == "Compute") {
+      } else if (this.colonySecond.caseRace == "C3") {
         this.C3show = true;
         this.S3show = false;
         this.M3show = false;
-      } else if (this.colonySecond.caseRace == "MEM-optimized") {
+      } else if (this.colonySecond.caseRace == "M3") {
         this.C3show = false;
         this.S3show = false;
         this.M3show = true;
@@ -3672,8 +3681,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
           this.colonySecond.AllRAMVal == 0 &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == 1
         ) {
           _array.push(_tableListArr[i]);
@@ -3681,8 +3689,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
           this.colonySecond.AllRAMVal == 0 &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == _tableListArr[i].InstanceFamily
         ) {
           _array.push(_tableListArr[i]);
@@ -3707,8 +3714,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
           this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == 1
         ) {
           _array.push(_tableListArr[i]);
@@ -3716,8 +3722,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == _tableListArr[i].Cpu &&
           this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == _tableListArr[i].InstanceFamily
         ) {
           _array.push(_tableListArr[i]);
@@ -3742,8 +3747,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == 0 &&
           this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == 1
         ) {
           _array.push(_tableListArr[i]);
@@ -3751,8 +3755,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == 0 &&
           this.colonySecond.AllRAMVal == _tableListArr[i].Memory &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == _tableListArr[i].InstanceFamily
         ) {
           _array.push(_tableListArr[i]);
@@ -3769,8 +3772,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == 0 &&
           this.colonySecond.AllRAMVal == 0 &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == 1
         ) {
           _array.push(_tableListArr[i]);
@@ -3778,8 +3780,7 @@ export default {
         if (
           this.colonySecond.AllCPUVal == 0 &&
           this.colonySecond.AllRAMVal == 0 &&
-          this.colonySecond.caseRace ==
-            _tableListArr[i].TypeName.split(" ")[0] &&
+          this.colonySecond.caseRace == _tableListArr[i].InstanceFamily &&
           this.colonySecond.caseType == _tableListArr[i].InstanceFamily
         ) {
           _array.push(_tableListArr[i]);
@@ -4194,7 +4195,7 @@ export default {
       this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if (res.Response.Error === undefined) {
           this.colonySecond.tableList = res.Response.InstanceTypeQuotaSet;
-
+          console.log(this.colonySecond.tableList);
           for (let i in this.colonySecond.tableList) {
             this.colonySecond.tableList[i]["tableDisShow"] = false;
             this.colonySecond.tableList[i]["index"] = Number(i);
@@ -4208,9 +4209,10 @@ export default {
               i
             ].radio1 = this.colonySecond.tableList[i].index;
 
-            this.colonySecond.workerOneList[i].modelType = this.ModelTypeName(
-              this.colonySecond.tableList[i].TypeName
-            );
+            this.colonySecond.workerOneList[
+              i
+            ].modelType = this.colonySecond.tableList[i].TypeName;
+
             this.colonySecond.workerOneList[
               i
             ].modelHe = this.colonySecond.tableList[i].Cpu;
@@ -4229,9 +4231,10 @@ export default {
             this.colonySecond.masterOneList[
               i
             ].modelName = this.colonySecond.masterTableList[i].InstanceType;
-            this.colonySecond.masterOneList[i].modelType = this.ModelTypeName(
-              this.colonySecond.masterTableList[i].TypeName
-            );
+            this.colonySecond.masterOneList[
+              i
+            ].modelType = this.colonySecond.masterTableList[i].TypeName;
+
             this.colonySecond.masterOneList[
               i
             ].modelHe = this.colonySecond.masterTableList[i].Cpu;
@@ -4259,16 +4262,6 @@ export default {
       });
     },
     // 机型
-    ModelTypeName(val) {
-      if (val === "Standard S3") {
-        return "標準型S3";
-      } else if (val === "Compute C3") {
-        return "計算型C3";
-      } else if (val === "MEM-optimized M3") {
-        return "記憶體型M3";
-      }
-    },
-    // 机型
     handleCurrentChange1(val) {
       this.modelText = val;
     },
@@ -4294,9 +4287,10 @@ export default {
         this.colonySecond.workerOneList[
           index
         ].InstanceChargeType = this.modelText.InstanceChargeType;
-        this.colonySecond.workerOneList[index].modelType = this.ModelTypeName(
-          this.modelText.TypeName
-        );
+        this.colonySecond.workerOneList[
+          index
+        ].modelType = this.modelText.TypeName;
+
         this.colonySecond.workerOneList[index].modelHe = this.modelText.Cpu;
         this.colonySecond.workerOneList[index].modelGB = this.modelText.Memory;
         this.colonySecond.index = this.colonySecond.workerOneList[
@@ -4313,9 +4307,10 @@ export default {
         this.colonySecond.masterOneList[
           index
         ].InstanceChargeType = this.modelText2.InstanceChargeType;
-        this.colonySecond.masterOneList[index].modelType = this.ModelTypeName(
-          this.modelText2.TypeName
-        );
+        this.colonySecond.masterOneList[
+          index
+        ].modelType = this.modelText2.TypeName;
+
         this.colonySecond.masterOneList[index].modelHe = this.modelText2.Cpu;
         this.colonySecond.masterOneList[index].modelGB = this.modelText2.Memory;
         this.colonySecond.masterOneList[index].modelShow = false;
@@ -4648,9 +4643,10 @@ export default {
       _workerOneList[_length - 1].modelName = this.colonySecond.tableList[
         this.colonySecond.index
       ].InstanceType;
-      _workerOneList[_length - 1].modelType = this.ModelTypeName(
-        this.colonySecond.tableList[this.colonySecond.index].TypeName
-      );
+      _workerOneList[_length - 1].modelType = this.colonySecond.tableList[
+        this.colonySecond.index
+      ].TypeName;
+
       _workerOneList[_length - 1].modelHe = this.colonySecond.tableList[
         this.colonySecond.index
       ].Cpu;
@@ -4710,10 +4706,10 @@ export default {
       _masterOneList[_length - 1].modelName = this.colonySecond.masterTableList[
         this.colonySecond.masterIndex
       ].InstanceType;
-      _masterOneList[_length - 1].modelType = this.ModelTypeName(
-        this.colonySecond.masterTableList[this.colonySecond.masterIndex]
-          .TypeName
-      );
+      _masterOneList[_length - 1].modelType = this.colonySecond.masterTableList[
+        this.colonySecond.masterIndex
+      ].TypeName;
+
       _masterOneList[_length - 1].modelHe = this.colonySecond.masterTableList[
         this.colonySecond.masterIndex
       ].Cpu;
@@ -5087,12 +5083,35 @@ export default {
         }
       });
     },
+    //安全组刷新按钮(yhs)
+    refreshSafeArr(){
+      this.securityGroupOpt = [];
+      this.SecurityGroup();
+    },
     AddSafe() {
       this.colonyThird.defaultSafeBox = true;
       this.colonyThird.defaultSafe = true;
+      if(this.colonyThird.safeArr.length>=10) return//安全组个数限制(yhs)
       this.colonyThird.safeArr.push({
         securityGroupSel: ""
       });
+    },
+    //安全组重复验证(yhs)
+    selectChange(e, i){
+      let newSafeArr = []
+      let {safeArr} = this.colonyThird
+      safeArr.forEach(ele=>{
+        !newSafeArr.some(item=>{
+          return item.securityGroupSel == e
+        }) && newSafeArr.push(ele)
+      }) 
+      if(safeArr.length>1 && safeArr.length!==newSafeArr.length){
+        this.colonyThird.warningNum = i
+        this.isShowWarning = !this.isShowWarning
+      }else{
+        this.colonyThird.warningNum = ''
+        this.isShowWarning = this.isShowWarning
+      }
     },
     //删除一项
     deleteExceptPrice(index) {
@@ -6864,6 +6883,12 @@ export default {
 .cluster-wran {
   ::v-deep .el-input__inner {
     border: 1px solid #e1504a;
+  }
+}
+.hide{
+  display: none;
+  &.active{
+    display:inline;
   }
 }
 </style>

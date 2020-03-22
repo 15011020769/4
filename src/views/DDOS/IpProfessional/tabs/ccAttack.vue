@@ -304,6 +304,7 @@ export default {
             return
           }
           this.ResIpList = res.Response.Resource
+          let jsonIp = sessionStorage.getItem('selectId')
           if (jsonIp !== null) {
               this.inputIdCC = jsonIp
           } else {

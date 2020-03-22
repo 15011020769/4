@@ -1,6 +1,5 @@
 <template>
   <div>
-    <el-button type="primary" @click="$router.push('/global')">to global</el-button>
     <div class="container">
       <el-card class="card">
         <el-form>

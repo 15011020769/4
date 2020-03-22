@@ -2,25 +2,34 @@
   <el-dialog
     :title="$t('CAM.noticeSubscriptionDialog.subscription')"
     :visible.sync="visible"
-    width="800px"
     :before-close="handleClose"
     destroy-on-close
     @open="handleOpen"
     @closed="handleClosed"
+    width="800px"
   >
     <div class="container">
       <div class="explain">
         <p>
           要管理不同訊息類型的接收人及接收方式可以前往
-          <el-link type="primary" href="../MGC/index.html#/message" target="_blank">訊息中心-訊息訂閱</el-link>
+          <el-link
+            type="primary"
+            href="../MGC/index.html#/message"
+            target="_blank"
+            >訊息中心-訊息訂閱</el-link
+          >
         </p>
       </div>
       <div class="user">
-        <label class="title">{{$t('CAM.noticeSubscriptionDialog.subscriber')}}</label>
-        <label class="value">{{subscriberName}}</label>
+        <label class="title">{{
+          $t("CAM.noticeSubscriptionDialog.subscriber")
+        }}</label>
+        <label class="value">{{ subscriberName }}</label>
       </div>
       <div class="notice-category">
-        <label class="title">{{$t('CAM.noticeSubscriptionDialog.subscribeType')}}</label>
+        <label class="title">{{
+          $t("CAM.noticeSubscriptionDialog.subscribeType")
+        }}</label>
         <el-table
           ref="multipleTable"
           :data="tableData"
@@ -32,10 +41,17 @@
         >
           <el-table-column width="60">
             <template slot="header" slot-scope="scope">
-              <el-checkbox v-model="isSelectAll" :indeterminate="isAllIndeterminate"></el-checkbox>
+              <el-checkbox
+                v-model="isSelectAll"
+                :indeterminate="isAllIndeterminate"
+              ></el-checkbox>
             </template>
           </el-table-column>
-          <el-table-column width="220" :label="$t('CAM.noticeSubscriptionDialog.xxlx')" prop="name">
+          <el-table-column
+            width="220"
+            :label="$t('CAM.noticeSubscriptionDialog.xxlx')"
+            prop="name"
+          >
             <template slot-scope="scope">
               <el-checkbox
                 v-model="scope.row.isChecked"
@@ -62,24 +78,33 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('CAM.noticeSubscriptionDialog.cz')" align="center">
+          <el-table-column
+            :label="$t('CAM.noticeSubscriptionDialog.cz')"
+            align="center"
+          >
             <template slot-scope="scope">
               <el-button
                 type="text"
                 v-show="scope.row.children !== undefined"
                 @click="handleExpand(scope.$index, scope.row)"
-              >{{ scope.row.isExpanded ? $t('CAM.noticeSubscriptionDialog.unexpand') : $t('CAM.noticeSubscriptionDialog.expand') }}</el-button>
+                >{{
+                  scope.row.isExpanded
+                    ? $t("CAM.noticeSubscriptionDialog.unexpand")
+                    : $t("CAM.noticeSubscriptionDialog.expand")
+                }}</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
       </div>
 
       <div class="dialog-footer">
-        <el-button @click="handleClose">{{$t('CAM.noticeSubscriptionDialog.close')}}</el-button>
-        <el-button
-          type="primary"
-          @click="handleConfirm"
-        >{{$t('CAM.noticeSubscriptionDialog.confirm')}}</el-button>
+        <el-button @click="handleClose">{{
+          $t("CAM.noticeSubscriptionDialog.close")
+        }}</el-button>
+        <el-button type="primary" @click="handleConfirm">{{
+          $t("CAM.noticeSubscriptionDialog.confirm")
+        }}</el-button>
       </div>
     </div>
   </el-dialog>
@@ -450,13 +475,10 @@ export default {
 .title {
   vertical-align: baseline;
   color: #888;
-  width: 1px;
   font-size: 12px;
 }
 .container {
   width: 100%;
-  display: flex;
-  flex-direction: column;
   padding: 10px 20px 20px 20px;
   .explain {
     color: #003b80;
@@ -471,34 +493,40 @@ export default {
     }
   }
   .user {
-    flex: 1;
+    display: flex;
+    .title {
+      flex: 1;
+    }
     .value {
+      flex: 9;
       font-size: 12px;
       color: #444;
-      margin-left: 35px;
       vertical-align: middle;
+      margin-left: 30px;
     }
   }
   .notice-category {
+    margin-top: 10px;
     display: flex;
-    flex-direction: row;
-    flex: 8;
-    margin-top: 15px;
-    justify-content: space-around;
     .title {
-      margin-top: -5px;
+      padding: 0px 0px;
+      line-height: 12px;
       flex: 1;
     }
     >>> .el-table {
       flex: 9;
+      margin-left: 30px;
+      width: 400px;
       border: 1px solid #eeeeee;
-      margin-left: 12px;
     }
   }
+  .notice-category::after {
+    content: "";
+    clear: both;
+    display: block;
+  }
   .dialog-footer {
-    flex: 1;
     margin-top: 10px;
-    flex-direction: row;
   }
 }
 </style>

@@ -99,3 +99,6 @@ export const CM_CALLBACK_Verify = 'monitor2/VerifyAlarmCallback'
 
 //
 export const MYSQL_LIST_CMD = 'cmd2/DescribeDBInstances'
+
+// 告警策略 新增 增加策略组
+export const CREATE_POLICYGROUP = 'monitor2/CreatePolicyGroup'
