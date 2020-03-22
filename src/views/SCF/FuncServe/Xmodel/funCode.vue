@@ -101,7 +101,6 @@
             <el-input v-model="input3" :disabled="true">
             </el-input>
           </div>
-
         </div>
 
       </div>
@@ -113,11 +112,11 @@
         <el-select v-model="testvalue" placeholder="请选择">
           <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
             <span>{{item}}</span>
-            <span style="float: right">
+            <!-- <span style="float: right">
               <i class="el-icon-edit" @click="_editModal(item)" />
               &nbsp;
               <i class="el-icon-close" @click="_deleteModal(item)" />
-            </span>
+            </span> -->
           </el-option>
 
         </el-select>
@@ -127,21 +126,37 @@
       </div>
       <div class="test-info" v-if="isShowLogList">
         <div class="test-result">
-          <h3>测试结果: <span style="color: red;">失败</span></h3>
+          <h3>
+            测试结果:
+            <span style="color: red;">{{testResult.InvokeResult === 0 ? '成功' : '失败'}}</span>
+          </h3>
         </div>
         <div class="back-result">
-          <p>返回结果:</p>
-          <p></p>
+          <p class="p-blue">返回结果:</p>
+          <p class="p-result">{{testResult.RetMsg}}</p>
         </div>
         <div class="info-left">
-          <p>摘要: <span></span></p>
-          <p>请求ID:<span></span></p>
-          <p>运行时间:<span>ms</span></p>
-          <p>计费时间:<span>ms</span></p>
-          <p>运行内存:<span>MB</span></p>
+          <p class="p-blue">摘要</p>
+          <p>
+            <span class="span-blue">请求ID:</span>
+            <span>{{testResult.FunctionRequestId}}</span>
+          </p>
+          <p>
+            <span class="span-blue">运行时间:</span>
+            <span>{{testResult.Duration}} ms</span>
+          </p>
+          <p>
+            <span class="span-blue">计费时间:</span>
+            <span>{{testResult.BillDuration}} ms</span>
+          </p>
+          <p>
+            <span class="span-blue">运行内存:</span>
+            <span>{{testResult.MemUsage}} MB</span>
+          </p>
         </div>
         <div class="log-list">
-          <p>日志:</p>
+          <p class="p-blue">日志</p>
+          <p v-html="testResult.Log"></p>
         </div>
       </div>
     </div>
@@ -484,7 +499,7 @@ export default {
     },
 
     // 点击新建模板弹出框
-    newDialog(){
+    newDialog() {
       this.addModal = true;
       this.testvalue = this.modeloptions[0]
       this.GetFunctionTestModel(this.testvalue);
@@ -690,7 +705,7 @@ export default {
       });
     },
 
-    //测试模板
+    // 测试模板 点击函数
     _testModal() {
       let param = {
         Version: "2018-04-16",
@@ -706,6 +721,7 @@ export default {
       this.axios.post(INVOKE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.testResult = res.Response.Result;
+          this.testResult.Log = this.trim(res.Response.Result.Log)
           this.isShowLogList = true;
         } else {
           let ErrTips = {
@@ -730,6 +746,11 @@ export default {
           });
         }
       });
+    },
+
+    // 换行符变为br标签
+    trim(str) {  //str表示要转换的字符串
+      return str.replace(/\n|\r\n/g, "<br/>");    
     },
 
     // 提交方法 切换
@@ -864,13 +885,18 @@ export default {
       margin-top: 20px;
     }
     .back-result {
-      height: 50px;
+      margin-top: 10px;
+      height: 60px;
       width: 100%;
       background-color: rgb(242, 242, 242);
-      p:nth-of-type(1) {
+      .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
         color: rgb(48, 127, 220);
+      }
+      .p-result {
+        padding: 10px 0 0 10px;
+        font-size: 12px;
       }
     }
     .info-left {
@@ -880,8 +906,11 @@ export default {
       margin: 20px 20px 0px 0px;
       height: 300px;
       > p {
-        color: rgb(48, 127, 220);
         padding: 10px 0 0 10px;
+      }
+      .span-blue {
+        color: rgb(48, 127, 220);
+        padding-right: 5px;
       }
     }
     .log-list {
@@ -890,6 +919,10 @@ export default {
       margin: 20px 0px 0px 320px;
       width: auto;
       > p {
+        padding: 10px 0 0 10px;
+        font-size: 12px;
+      }
+      .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
         color: rgb(48, 127, 220);
@@ -907,8 +940,8 @@ export default {
     border: 1px solid #e7e7e7;
   }
 }
-.new-template{
-  .p-1{
+.new-template {
+  .p-1 {
     font-size: 12px;
     line-height: 20px;
   }
