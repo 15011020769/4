@@ -14,7 +14,7 @@
                 <span v-if="package.Level">
                   {{ CLB_PACKAGE_CFG_TYPES[package.Level].name }}
                   <a
-                    v-if="package.Level !== 0"
+                    v-if="package.Level !== 4"
                     href="#"
                     class="blueHref"
                     @click="packageUpgradeModel"
