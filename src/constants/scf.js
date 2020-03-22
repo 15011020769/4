@@ -62,3 +62,5 @@ export const DELETE_MODAL = 'scf2/DeleteFunctionTestModel'//删除测试模板
 export const TEST_MODAL = 'scf2/GetFunctionTestModel'//函数测试模板
 export const GETAPPID = 'redesc/selectAppid'//函数测试模板
 
+
+export const UPDATE_TEST_MODEL = 'scf2/UpdateFunctionTestModel'//函数测试模板

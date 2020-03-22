@@ -14,9 +14,14 @@ import echarts from 'echarts'
 import i18n from './language/i18n.js' // 引入i18n包
 import { message } from '@/utils/resetMessage' // 重写element-ui的message方法
 
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/lib/codemirror.css'
+Vue.use(codemirror)
+
+
 // 引入基本模板
-const cloudstudio = require('cloudstudio-lite/lib')
-Vue.prototype.$cloudstudio = cloudstudio
+// const cloudstudio = require('cloudstudio-lite/lib')
+// Vue.prototype.$cloudstudio = cloudstudio
 // 引入折线图组件
 require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
