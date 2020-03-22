@@ -2,7 +2,7 @@
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
       <el-select
-        v-model="DashboardName"
+        v-model="DashboardID"
         :placeholder="$t('CVM.Dashboard.qxz')"
         style="margin:0 20px 0 40px;width:260px" @change="getDescribeDashboardView"
       >
@@ -318,6 +318,10 @@ export default {
       // this.DashboardID = newVal;
       this.mainLoading = true;
       this.getDescribeDashboardView(); // 监控面板展示
+    },
+    DashboardName() {
+      this.mainLoading = true;
+      this.getDescribeDashboardView(); // 监控面板展示
     }
   },
   methods: {
@@ -398,6 +402,7 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
+            this.options = [];
             this.options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
@@ -484,6 +489,7 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
+            this.options = [];
             this.options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
@@ -682,6 +688,9 @@ export default {
         StartTime,
         EndTime
       };
+      let color = ["#2072d9", "#fff2cc", "#ffd966", "#f1c232", "#9fc5e8", "#3d85c6",
+        "#00ff00", "#008bff", "#980000", "#1c4587"
+      ];
       if (Instances.length != 0) {
         Instances.forEach((ele, i) => {
           params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
@@ -710,7 +719,10 @@ export default {
                 }),
                 itemStyle: {
                   normal: {
-                    color: '#2072d9'
+                    color: color[item] ? color[item] : color[item % 10],
+                    lineStyle: {
+                      color: color[item] ? color[item] : color[item % 10]
+                    }
                   }
                 }
               });
