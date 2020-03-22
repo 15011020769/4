@@ -534,14 +534,14 @@
               var data = JSON.parse(res.Response.ResponseBody);
               this.tableData = data.items;
             }else{
-              let ErrTips = {};
-              let ErrOr = Object.assign(ErrorTips, ErrTips);
-              this.$message({
-                message: ErrOr[res.Response.Error.Code],
-                type: "error",
-                showClose: true,
-                duration: 0
-              });
+              // let ErrTips = {};
+              // let ErrOr = Object.assign(ErrorTips, ErrTips);
+              // this.$message({
+              //   message: ErrOr[res.Response.Error.Code],
+              //   type: "error",
+              //   showClose: true,
+              //   duration: 0
+              // });  注释掉防止若是无数据资源不存在报错
               this.tableFlag=false;
               this.tableData=[]
             }
