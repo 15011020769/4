@@ -287,6 +287,7 @@ export default {
             let projectArr = data.data
             this.getprojectList = defaultProject.concat(projectArr)
             this.pageIndex = 1
+            console.log(this.getprojectList)
             this.getDataList() // 获取项目成功之后 获取订单列表
           } else {
             this.getprojectList = []
@@ -320,18 +321,19 @@ export default {
         .post(`${process.env.VUE_APP_adminUrl + ORDER_LIST}`, params)
         .then(data => {
           if (data && data.code === 0) {
-            this.dataList = []
-            let dataArr = data.page.list
+            this.dataList = data.page.list
+            // let dataArr = data.page.list
             this.TotalCount = data.page.totalCount
             // 根据项目id获取name
-            dataArr.map(item1 => {
+            this.dataList.map(item1 => {
               this.getprojectList.map(item2 => {
                 if (String(item1.projectId) === String(item2.projectId)) {
                   item1.projectName = item2.projectName
-                  this.dataList.push(item1)
                 }
               })
             })
+            // this.dataList = data.page.list
+            console.log(this.dataList)
             this.dataListLoading = false
           } else {
             this.dataList = []
