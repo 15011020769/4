@@ -10,99 +10,81 @@
           size="mini"
           label-position="left"
         >
-          <el-form-item label="策略名称">
-            <el-input v-model="formInline.strategy_name"></el-input>
-          </el-form-item>
-          <el-form-item label="产品/策略类型">
-            <el-select
-              filterable
-              v-model="formInline.product_name"
-              class="select-option"
-            >
-              <el-option
-                v-for="(item, index) in formInline.product_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.id"
-                label-width="40px"
-              ></el-option>
-            </el-select>
-            <el-select
-              multiple
-              v-model="formInline.strategy_value"
-              class="select-option-tow"
-            >
-              <!-- <el-checkbox
-                :indeterminate="isIndeterminate"
-                v-model="checkAllProduct"
-                @change="handleCheckAllChange"
-              >全选</el-checkbox>
-              <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                <el-checkbox
-                  v-for="(item,index) in formInline.strategy_kind"
-                  :label="item.name"
-                  :key="index"
-                >{{item.name}}</el-checkbox>
-              </el-checkbox-group>-->
-              <el-option
-                v-for="(item, index) in formInline.strategy_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="告警对象">
-            <el-tooltip
-              content="搜索告警对象所属告警策略，需先选择确定唯一策略类型"
-              placement="bottom"
-              effect="light"
-            >
-              <el-select
-                v-model="formInline.alarm"
-                disabled
-                style="width:360px;"
+          <div>
+            <el-form-item label="策略名称">
+              <el-input v-model="formInline.strategy_name"></el-input>
+            </el-form-item>
+            
+            <el-form-item label="产品/策略类型">
+              <div style="display: flex;">
+                <el-select
+                  filterable
+                  v-model="formInline.product_name"
+                  class="select-option"
+                >
+                  <el-option
+                    v-for="(item, index) in formInline.product_kind"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+                <ProductTypeCpt v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId"
+                :productValue="productValue" v-on:loading="Type_loading" style="margin-left: 10px;"/>
+              </div>
+            </el-form-item>
+          </div>
+          <div>
+            <el-form-item label="告警对象">
+              <el-tooltip
+                content="搜索告警对象所属告警策略，需先选择确定唯一策略类型"
+                placement="bottom"
+                effect="light"
               >
-                <el-option label value></el-option>
+                <el-select
+                  v-model="formInline.alarm"
+                  
+                  style="width:360px;"
+                >
+                  <el-option label value></el-option>
+                </el-select>
+              </el-tooltip>
+            </el-form-item>
+            <el-form-item label="用户/组">
+              <el-select v-model="formInline.user" class="select-option">
+                <el-option
+                  v-for="(item, index) in formInline.user_kind"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.value"
+                  label-width="40px"
+                ></el-option>
               </el-select>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="用户/组">
-            <el-select v-model="formInline.user" class="select-option">
-              <el-option
-                v-for="(item, index) in formInline.user_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-                label-width="40px"
-              ></el-option>
-            </el-select>
-            <el-select
-              multiple
-              v-model="formInline.group"
-              class="select-option-tow"
-            >
-              <el-option
-                v-for="(item, index) in formInline.kind_list"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="text" class="clearBtn">清除筛选</el-button>
-
-            <!-- <el-link type="primary">主要链接</el-link>
-            <el-link type="info">信息链接</el-link>-->
-          </el-form-item>
+              <el-select
+                multiple
+                v-model="formInline.group"
+                class="select-option-tow"
+              >
+                <el-option
+                  v-for="(item, index) in formInline.kind_list"
+                  :key="index"
+                  :label="item.name"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">查询</el-button>
+              <el-button type="text" class="clearBtn">清除筛选</el-button>
+            </el-form-item>
+          </div>
+          
         </el-form>
       </div>
     </Header>
     <div class="overview-main">
-      <div class="explain">
+      <!-- <div class="explain">
         <p>
           告警模板功能已上线，支持触发条件的复用与统一修改
           <!-- ，请前往
@@ -114,7 +96,7 @@
           <!-- ，点击查看
           <a>告警启停文档</a> -->
         </p>
-      </div>
+      </div> -->
     </div>
     <div class="table">
       <p class="addBtn">
@@ -571,6 +553,7 @@
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
 import FileSaver from "file-saver";
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type_str";
 import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
@@ -618,15 +601,7 @@ export default {
         strategy_kind: [
           {
             value: 0,
-            name: "全选"
-          },
-          {
-            value: 1,
-            name: "云服务器"
-          },
-          {
-            value: 2,
-            name: "云数据库"
+            name: "请选择"
           }
         ], //用户/组
         strategy_name: "", //策略名称
@@ -737,18 +712,40 @@ export default {
         }
       ],
       callOpen: 0,
-      callClose: 0
+      callClose: 0,
+      searchParam: {},
+      projectId: 0,
+      productValue: '',
+      loading: true,
     };
   },
   components: {
     Header,
-    Dialog
+    Dialog,
+    ProductTypeCpt
   },
   mounted() {
     this.ListInit();
     this.Project();
   },
   methods: {
+    passData(data) {
+      console.log("data",data);
+      this.isShow = false;
+      this.productListData = data;
+      this.productValue = data.productValue;
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
+    },
+    Type_loading(val) {
+      this.loading = val
+    },
     async ListInit() {
       this.loadShow = true;
       let params = {

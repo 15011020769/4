@@ -67,6 +67,7 @@
 </template>
 
 <script>
+<<<<<<< Updated upstream
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import { ErrorTips } from "@/components/ErrorTips";
@@ -133,6 +134,37 @@ export default {
     },
     searchParams(data) {
       this.searchParam = data;
+=======
+  import ProductTypeCpt from "@/views/CM/CM_assembly/product_type_str";
+  import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  import {
+    CM_GROUPING_NEWLY_BUILD
+  } from "@/constants";
+  export default {
+    name: "msg",
+    data() {
+      return {
+        groupingName: "",
+        groupingNameTips: true,
+        nameTips: "分组名称不能为空",
+        groupingType: ["云服务器", "cvm_device"],
+        loadSign: true,
+        pageSize: 20, // 分页条数
+        pageIndex: 0, // 当前页码
+        productListData: {},
+        projectId: 0,
+        searchParam: {},
+        productData: {},
+        isShow: false,
+        productValue: "cvm_device",
+        loadShow: true,
+        isShowRight: true,
+        loading: true,
+      };
+>>>>>>> Stashed changes
     },
     //选择右侧表格数据
     selectDatas(val) {
