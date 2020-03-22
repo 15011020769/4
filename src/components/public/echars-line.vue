@@ -93,6 +93,9 @@
               }
             },
             formatter(params) {
+              if (params[0].data === null) {
+                params[0].data = ''
+              }
               let relVal = `${params[0].name}<br/>
            ${params[0].data}<br />`;
               relVal += `粒度：${TimeGranularity[period]}</br>`;
