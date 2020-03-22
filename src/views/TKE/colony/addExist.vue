@@ -832,7 +832,7 @@ export default {
     },
     // 高级设置
     removeDomain2(index) {
-      this.domainstion.splic(index, 1);
+      this.domainstion.splice(index, 1);
     },
     // 完成
     AddComplete() {
@@ -868,7 +868,9 @@ export default {
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-
+        param["InstanceAdvancedSettings.UserScript"] = btoa(
+          encodeURI(this.textarea2)
+        );
         // 数据盘挂载
         if (this.dataMountCheck === true) {
           param["InstanceAdvancedSettings.MountTarget"] = this.dataDiskMount;
