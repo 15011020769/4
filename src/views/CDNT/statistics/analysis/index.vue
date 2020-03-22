@@ -1,11 +1,5 @@
 <template>
   <div>
-<<<<<<< HEAD
-    <!-- <div class="header">
-      <h2>运营报表</h2>
-    </div> -->
-=======
->>>>>>> 59bb0fec8aa343209237242c922e0dd93f8ae440
     <el-row type="flex" align="middle" justify="space-between" class="actions">
       <el-col>
         <el-button-group style="margin-top:-4px">

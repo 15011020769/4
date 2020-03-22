@@ -6,7 +6,7 @@
     </el-row>
     <el-radio-group v-model="type" size="small">
       <el-radio-button label="billing">{{$t('CDNT.report.20')}}</el-radio-button>
-      <el-radio-button label="origin">$t('CDNT.report.21')</el-radio-button>
+      <el-radio-button label="origin">{{$t('CDNT.report.21')}}</el-radio-button>
     </el-radio-group>
     <echart-line
       :xAxis="xAxisCurBill"
@@ -45,8 +45,8 @@ export default {
       xAxisCurOrigin: [], // 回源流量x轴
       serCurOrigin: [], // 当前回源流量宽
       serLastOrigin: [], // 上一周期回源流量
-      legendBill: ['当前计费流量', '上一周期计费流量'],
-      legendOrigin: ['当前回源流量', '上一周期回源流量'],
+      legendBill: ['當前計費流量', '上一週期計費流量'],
+      legendOrigin: ['當前回源流量', '上一週期回源流量'],
       color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
@@ -84,15 +84,15 @@ export default {
       
       let name=''
       let data = [
-        ['统计项目', projectName || '全部项目'],
-        ['统计域名', domainName || '全部域名'],
-        ['报表类型', '日报'],
-        ['开始时间', times[0]],
-        ['结束时间', times[1]],
+        ['統計項目', projectName || '全部項目'],
+        ['統計域名', domainName || '全部域名'],
+        ['報表類型', type],
+        ['開始時間', times[0]],
+        ['結束時間', times[1]],
         [], 
       ]
       if (type1 === 'billing') {
-        data.push(['时间', '当前计费流量（B）', '上一周期计费流量（B）'])
+        data.push(['時間', '當前計費流量（B）', '上一週期計費流量（B）'])
         name="billing_traffic_trend"
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
@@ -102,7 +102,7 @@ export default {
           ])
         })
       } else {
-        data.push(['时间', '当前回源流量（B）', '上一周期回源流量（B）'])
+        data.push(['時間', '當前回源流量（B）', '上一週期回源流量（B）'])
         name="traffic_trend"
         this.xAxisCurOrigin.forEach((item,index) => {
           data.push([

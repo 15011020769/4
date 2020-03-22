@@ -29,7 +29,7 @@
         <el-table
           :data="tableData.slice((currpage - 1) * pageSize, currpage * pageSize)"
           v-loading="loading"
-          :empty-text="($t('CDNT.report.17'), 'WAF.zwsj')"
+          :empty-text="$t('CDNT.report.17')"
         >
           <el-table-column prop="name" :label="$t('CDNT.report.32')"></el-table-column>
           <el-table-column v-if="type === 'flux'" prop="value" :label="$t('CDNT.report.9')">
@@ -136,8 +136,6 @@ export default {
     },
     _export() {
       const { projectName, domainName, AreaType, times, interval } = this.params;
-      console.log(this.params)
-      return
       const start = moment(times[0]).format('YYYY-MM-DD');
       const end = moment(times[1]).format('YYYY-MM-DD');
       let fileName = start
@@ -146,14 +144,14 @@ export default {
       }
       fileName += '_district_detail.xlsx'
       let data = [
-        ["开始时间", moment(times[0]).format('YYYY-MM-DD')],
-        ["结束时间", moment(times[1]).format('YYYY-MM-DD')],
-        ["统计数据类型", AreaType === 'client' ? '客户端地区' : '服务地区'],
-        ["统计项目", projectName || "全部项目"],
-        ["统计域名", domainName || "全部域名"],
-        ["导出时间", moment().format('YYYYMMDDHHmmss')],
+        ["開始時間", moment(times[0]).format('YYYY-MM-DD')],
+        ["結束時間", moment(times[1]).format('YYYY-MM-DD')],
+        ["統計數據類型", AreaType === 'client' ? '用戶端地區' : '服務地區'],
+        ["統計項目", projectName || "全部項目"],
+        ["統計域名", domainName || "全部域名"],
+        ["導出時間", moment().format('YYYYMMDDHHmmss')],
         [],
-        ["地区", "流量（GB）", "訪問次數"]
+        ["地區", "流量（GB）", "訪問次數"]
       ];
       const { fluxData, requestData } = this
       const result = fluxData.map((data, i) => {

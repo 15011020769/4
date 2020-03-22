@@ -93,11 +93,11 @@ export default {
       const start = times[0].split(" ")[0];
       const end = times[1].split(" ")[0];
       let data = [
-        ["统计项目", projectName || "全部项目"],
-        ["统计域名", domainName || "全部域名"],
-        ["报表类型", type],
-        ["开始时间", times[0]],
-        ["结束时间", times[1]],
+        ['統計項目', projectName || '全部項目'],
+        ['統計域名', domainName || '全部域名'],
+        ['報表類型', type],
+        ['開始時間', times[0]],
+        ['結束時間', times[1]],
         []
       ];
       let name;
@@ -108,7 +108,7 @@ export default {
           data.push([item.Name, item.Value]);
         });
       } else {
-        data.push(["URL", "请求数（次）"]);
+        data.push(["URL", "請求數（次）"]);
         name = "request";
         this.RequestTableData.map(item => {
           data.push([item.Name, item.Value]);

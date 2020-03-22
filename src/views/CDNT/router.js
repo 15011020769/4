@@ -6,22 +6,10 @@ Vue.use(Router)
 const router = new Router({
   // mode: 'history',
   base: process.env.BASE_URL,
-  redirect: {
-    name: 'ULive'
-  },
   routes: [
     {
       path: '/',
       redirect: '/report'
-    },
-    {
-      path: '/editor', // 安全概览
-      name: 'editor',
-      component: () => import(/* webpackChunkName: "ipMan" */ './editor.vue'),
-      meta: {
-        keepAlive: true,
-        leftNav: true
-      }
     },
     {
       path: '/report', // 运营月报

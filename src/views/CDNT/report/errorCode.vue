@@ -22,7 +22,7 @@
           :data="tableData"
           v-loading="loading"
         >
-          <el-table-column prop="Metric" label="$t('CDNT.report.12')"></el-table-column>
+          <el-table-column prop="Metric" :label="$t('CDNT.report.12')"></el-table-column>
           <el-table-column prop="SummarizedData.Value" :label="$t('CDNT.report.18')"></el-table-column>
           <el-table-column prop="num" :label="$t('CDNT.report.19')">
             <template slot-scope="scope">
@@ -79,13 +79,13 @@ export default {
         fileName = `${start}-${end}_error_code.xlsx`
       }
       let data = [
-        ['统计项目', projectName || '全部项目'],
-        ['统计域名', domainName || '全部域名'],
-        ['报表类型', type],
-        ['开始时间', times[0]],
-        ['结束时间', times[1]],
+        ['統計項目', projectName || '全部項目'],
+        ['統計域名', domainName || '全部域名'],
+        ['報表類型', type],
+        ['開始時間', times[0]],
+        ['結束時間', times[1]],
         [],
-        ['错误码', '数量（次）', '占比（%）']
+        ['錯誤碼', '數量（次）', '佔比(%）']
       ]
       this.tableData.map(item => {
         data.push([

@@ -151,7 +151,7 @@ export default {
                   position: 'middle',
                   color: '#000',
                   formatter: function (params) {
-                    let  str = "峰值带宽:" + that.peak + "Mbps";                                            
+                    let  str = "峰值寬頻:" + that.peak + "Mbps";                                            
                       return str
                   },
                 }
