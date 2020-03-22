@@ -203,14 +203,14 @@
           <p class="p-1">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
         </el-form-item>
         <el-form-item label="测试事件模板">
-          <el-select v-model="testvalue" placeholder="请选择" @change="GetFunctionTestModel">
-            <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
+          <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+            <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
             </el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <div class="codemirror-div">
-            <codemirror ref="mycode" v-model="templateDetail.TestModelValue" :options="cmOptions" class="code">
+            <codemirror ref="mycode" v-model="codemirrorValue" :options="cmOptions" class="code">
             </codemirror>
           </div>
         </el-form-item>
@@ -242,7 +242,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import { codemirror } from 'vue-codemirror'
 import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
 require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
-
+import { defaultTemplate } from './defaultTemplate'
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -279,8 +279,13 @@ export default {
       Cosoptions: [],
       cosvalue: '', //cos
       input3: '', //cos路径
-      modeloptions: [], //模板列表
-      templateDetail: '',   // 获取模板详情
+      defaultTemplate: defaultTemplate,  // 静态默认模板
+      modeloptions: [], // 模板列表
+      templateList: [],   // 静态默认模板与请求的模板列表集合
+      codemirrorValue: '',    // 弹框编辑器的值
+      templateDetail: {   // 获取模板详情
+        TestModelValue: ''
+      },   
       testvalue: '',
       deleteModal: false,//是否启动删除模板modal
       modalName: '',//模板名称
@@ -501,8 +506,7 @@ export default {
     // 点击新建模板弹出框
     newDialog() {
       this.addModal = true;
-      this.testvalue = this.modeloptions[0]
-      this.GetFunctionTestModel(this.testvalue);
+      this.changeTemplate()   // 触发select下拉模板change事件
     },
 
     // 新建测试模板 确定事件
@@ -595,8 +599,11 @@ export default {
       this.axios.post(TESTMODELS_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
-          this.testvalue = this.modeloptions[0]
-          this.GetFunctionTestModel(this.testvalue)
+          this.templateList = this.defaultTemplate        // 把默认的模板赋值给模板列表 在通过下面的for循环 把自定义的模板push进来
+          this.testvalue = this.templateList[0].name
+          this.modeloptions.forEach((item, i) => {
+            this.GetFunctionTestModel(item)
+          })
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -630,6 +637,10 @@ export default {
       this.axios.post(TEST_MODAL, param).then(res => {
         if (res.Response.Error === undefined) {
           this.templateDetail = res.Response
+          this.templateList.push({                // 把自定义的模板push到templateList模板列表里面
+            name: name,
+            code: this.templateDetail.TestModelValue
+          })
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -647,6 +658,16 @@ export default {
           });
         }
       });
+    },
+
+    // select选中改变模板
+    changeTemplate(){
+      this.templateList.forEach((item, i) => {
+        if(item.name === this.testvalue){
+          this.codemirrorValue = item.code
+          console.log(typeof this.codemirrorValue)
+        }
+      })
     },
 
     //是否删除模板
@@ -750,7 +771,7 @@ export default {
 
     // 换行符变为br标签
     trim(str) {  //str表示要转换的字符串
-      return str.replace(/\n|\r\n/g, "<br/>");    
+      return str.replace(/\n|\r\n/g, "<br/>");
     },
 
     // 提交方法 切换
