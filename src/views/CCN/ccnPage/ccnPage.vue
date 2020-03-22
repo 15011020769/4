@@ -258,37 +258,8 @@
       </div>
     </el-dialog>
     <!-- 标签模态窗 -->
-    <el-dialog :title="$t('CCN.total.edit')" :visible.sync="dialogTagVisible" class="editDialog">
-      <span>{{ $t('CCN.total.edit0') }}</span>
-      <table class="table-div">
-        <tr class="t-head">
-          <td>{{ $t('CCN.total.edit1') }}</td>
-          <td>{{ $t('CCN.total.edit2') }}</td>
-          <td>{{ $t('CCN.total.edit3') }}</td>
-        </tr>
-        <tr class="t-body" v-for="(item, index) in tags" :key="item">
-          <td v-if="item.Key != ''">
-            <el-input v-model="item.Key" autocomplete="off" class="inputKey" disabled="false"></el-input>
-          </td>
-          <td v-else-if="item.Key == ''">
-            <el-input v-model="item.Key" autocomplete="off" class="inputKey"></el-input>
-          </td>
-          <td>
-            <el-input v-model="item.Value" autocomplete="off" class="inputKey"></el-input>
-          </td>
-          <td>
-            <a v-on:click="removeRow(index)" v-show="index >= 0">{{ $t('CCN.total.edit3') }}</a>
-          </td>
-        </tr>
-      </table>
-
-      <a v-on:click="addRow()" v-show="tags.length < 5">{{$t('CCN.total.adds')}}</a>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogTagVisible = false">{{$t('CCN.total.buttonQX')}}</el-button>
-        <el-button type="primary" @click="upTags(tags)">{{ $t('CCN.total.sure') }}</el-button>
-      </div>
-    </el-dialog>
     <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'></editLabel>
+
   </div>
 </template>
 
@@ -356,7 +327,6 @@
         updateNameVisible: false, // 修改名称模态窗
         updateDesVisible: false, // 修改备注模态窗
         updateBandwidthLimitTypeVisible: false, // 修改限速方式模态窗
-        dialogTagVisible: false, // 编辑模态窗
         pagesize: 10, // 分页条数
         currpage: 1 // 当前页码
       };
@@ -370,14 +340,7 @@
       this.getData();
     },
     methods: {
-      //编辑标签
-      modifyLabels(row) {
-        this.dialogVisible = true;
-        this.labelsInfo = {
-          TagSet: row.TagSet,
-          resourceId: row.CcnId
-        }
-      },
+     
       //取消修改姓名
       cancel1() {
         this.getData();
@@ -720,67 +683,14 @@
         });
         this.updateBandwidthLimitTypeVisible = false;
       },
-      // 进入编辑标签模态窗
-      toTags(ccnDetail) {
-        this.ccnIdOfTag = ccnDetail.CcnId;
-        this.oldTags = JSON.parse(JSON.stringify(ccnDetail.TagSet));
-        this.tags = ccnDetail.TagSet;
-        this.dialogTagVisible = true;
+       // 进入编辑标签模态窗
+      modifyLabels(row) {
+        this.dialogVisible = true;
+        this.labelsInfo = {
+          TagSet: row.TagSet,
+          resourceId: row.CcnId
+        }
       },
-      // 编辑标签
-      upTags(tagss) {
-        var params = {
-          Version: "2018-08-13",
-          Region: localStorage.getItem("regionv2"),
-          Resource: "qcs::vpc:ap-guangzhou:uin/100011921910:ccn/" + this.ccnIdOfTag
-        };
-        var newKey = [];
-        for (let j = 0, len = tagss.length; j < len; j++) {
-          newKey.push(tagss[j].Key);
-        }
-        var oldKey = [];
-        for (let j = 0, len = this.oldTags.length; j < len; j++) {
-          oldKey.push(this.oldTags[j].Key);
-        }
-        // 获取删除arr
-        let delCount = 0;
-        for (let j = 0, len = oldKey.length; j < len; j++) {
-          if (newKey.indexOf(oldKey[j]) == -1) {
-            let str = "DeleteTags." + delCount + ".TagKey";
-            params[str] = oldKey[j];
-            delCount++;
-          }
-        }
-        // 获取新增arr
-        let addCount = 0;
-        for (let j = 0, len = newKey.length; j < len; j++) {
-          if (oldKey.indexOf(newKey[j]) == -1) {
-            let str1 = "ReplaceTags." + addCount + ".TagKey";
-            let str2 = "ReplaceTags." + addCount + ".TagValue";
-            params[str1] = newKey[j];
-            params[str2] = tagss[j].Value;
-            addCount++;
-          }
-        }
-        this.axios.post(MODIFYRESOURCE_TAGS, params).then(res => {
-          this.$message({
-            message: "修改成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-          if (res.Response.Error != undefined) {
-            this.$message({
-              message: "修改失敗",
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-          this.getData();
-        });
-        this.dialogTagVisible = false;
-      }
     },
     components: {
       editLabel
