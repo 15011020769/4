@@ -47,36 +47,26 @@
           {{ $t("CVM.Dashboard.tjjktb") }}
         </el-button>
         <div style="float: right">
-          <TimeDropDown
+          <DashboardTimeDropDown
             :TimeArr="TimeArr"
             :Datecontrol="true"
             :Graincontrol="false"
             :Difference="'H'"
             v-on:switchData="GetDat"
+            v-on:refresh="refresh"
             style="float: left"
           />
           <!-- <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'D'"
             v-on:switchData="GetDat" /> -->
-          <el-button type="text" style="float: left"
-            ><i class="el-icon-refresh"></i
-          ></el-button>
-          <el-dropdown>
-            <el-button type="text" style="float: left;margin-left: 0px;"
-              ><i class="el-icon-more"></i
-            ></el-button>
-            <el-dropdown-menu slot="dropdown">
-              <div style="padding: 0 10px 10px;color: #bbb">自动刷新</div>
-              <el-dropdown-item
-                v-for="item in refreshTimeArr"
-                :key="item.value"
-                >{{ item.label }}</el-dropdown-item
-              >
-            </el-dropdown-menu>
-          </el-dropdown>
         </div>
       </div>
       <div class="chart" v-if="this.ViewList.length">
-        <div class="chartList" v-for="item in ViewList" :key="item.ViewID">
+        <div
+          class="chartList"
+          v-for="item in ViewList"
+          :key="item.ViewID"
+          v-loading="chartsLoading"
+        >
           <div class="chartItem">
             <p>
               <b>
@@ -110,7 +100,12 @@
               :time="time"
               :series="item.DataPoints"
               :period="period"
+              v-if="item.DataPoints.length !== 0"
             />
+            <div class="empty" v-else>
+              暫無數據
+            </div>
+
           </div>
           <div class="open">
             <p>
@@ -181,7 +176,7 @@
 
 <script>
 import Header from "@/components/public/Head";
-import TimeDropDown from "@/components/public/TimeDropDown"; //引入时间组件
+import DashboardTimeDropDown from "./components/DashboardTimeDropDown"; //引入时间组件
 import AddPanel from "./components/AddPaneldialog";
 import RenameControlPanel from "./components/renameControlPanel";
 import EcharS from "@/components/public/EcharS";
@@ -192,6 +187,7 @@ import {
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
 import ChartEdit from "./components/ChartEdit"; //公共错误码
+import moment from "moment";
 export default {
   name: "Dashboard",
   data() {
@@ -280,14 +276,6 @@ export default {
       showChartEdit: false, // 添加图表的弹窗
       selectButtonShow: "", // 下拉框按钮是否展示
       renameControlName: "", // 重命名监控面板名称
-      refreshTimeArr: [
-        { label: "暂停", value: 0 },
-        { label: "30秒", value: 30 },
-        { label: "1分钟", value: 60 },
-        { label: "2分钟", value: 120 },
-        { label: "5分钟", value: 300 },
-        { label: "10分钟", value: 600 }
-      ],
       showEmptyControlPanel: false, // 是否展示空的监控面板
       ViewList: [], // 监控面板数组
       DashboardID: "", // 展示面板的ID
@@ -309,13 +297,14 @@ export default {
           ]
         }
       ],
-      mainLoading: false
+      mainLoading: false,
+      chartsLoading: false
     };
   },
   components: {
     ChartEdit,
     Header,
-    TimeDropDown,
+    DashboardTimeDropDown,
     AddPanel,
     RenameControlPanel,
     EcharS
@@ -323,11 +312,13 @@ export default {
   created() {
     this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
   },
+
   watch: {
     DashboardID(newVal) {
       // this.selectShowControlPanel(newVal);
-      console.log(newVal, "newVal");
+      // console.log(newVal, "newVal");
       // this.DashboardID = newVal;
+      this.mainLoading = true;
       this.getDescribeDashboardView(); // 监控面板展示
     }
   },
@@ -337,7 +328,7 @@ export default {
       this.startEnd.StartTime = data[1].StartTIme; // 开始时间
       this.startEnd.EndTime = data[1].EndTIme; //  结束时间
       this.period = data[0]; // 粒度
-      console.log(data, "data", this.startEnd);
+      // console.log(data, "data", this.startEnd);
       // this.seriesArr.forEach(item => {
       //   item.series[0].data = [];
       //   this.time.forEach(ele => {
@@ -579,13 +570,13 @@ export default {
         Module: "monitor",
         DashboardID: this.DashboardID
       };
-      this.mainLoading = true;
       await this.axios
         .get(DESCRIBE_DASHBOARD_VIEWS, {
           params: params
         })
         .then(res => {
           this.mainLoading = false;
+          this.chartsLoading = false;
           if (res.Response.Error === undefined) {
             const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
 
@@ -601,19 +592,7 @@ export default {
 
             this.ViewList = ViewList;
 
-            ViewList.forEach((ele, index) => {
-              // Y轴数据
-              this.getMonitorData(
-                ele.Namespace,
-                ele.MetricName[0],
-                this.period,
-                this.startEnd.StartTime,
-                this.startEnd.EndTime,
-                ele.Instances,
-                index
-              );
-            });
-            console.log(this.ViewList, "Response");
+            this.getAllMonitorData();
           } else {
             let ErrTips = {
               "AuthFailure.UnauthorizedOperation":
@@ -666,7 +645,7 @@ export default {
         });
     },
     // 获取监控面板echarts数据
-    async getMonitorData(
+    async getSingleMonitorData(
       Namespace,
       MetricName,
       Period,
@@ -683,6 +662,7 @@ export default {
         StartTime,
         EndTime
       };
+
       if (Instances.length != 0) {
         Instances.forEach((ele, i) => {
           if (ele.unInstanceId) {
@@ -692,22 +672,30 @@ export default {
           }
         });
       } else {
-        params["Dimensions." + 0 + ".unInstanceId"] = "null";
+        const item = this.ViewList[index];
+        item.DataPoints = [];
+        this.$set(this.ViewList, index, item);
+        return;
+        // params["Dimensions." + 0 + ".unInstanceId"] = "null";
       }
       await this.axios
         .get(GET_MONITOR_DATA, {
           params: params
         })
         .then(res => {
+          // this.chartsLoading = false
+          this.mainLoading = false;
           if (res.Response.Error === undefined) {
             var DataPoints = []; // 取出这个空数组
             res.Response.DataPoints.forEach(ele => {
               DataPoints.push({
                 type: "line",
-                data: ele.Points
+                data: ele.Points.map(item => {
+                  // 存在坐标为null的情况，应该是接口问题
+                  return item === null ? 0 : item
+                })
               });
             });
-            console.log(DataPoints, "DataPoints");
 
             const item = this.ViewList[index];
             item.DataPoints = DataPoints;
@@ -724,6 +712,24 @@ export default {
             });
           }
         });
+    },
+    getAllMonitorData() {
+      this.ViewList.forEach((ele, index) => {
+        // Y轴数据
+        this.getSingleMonitorData(
+          ele.Namespace,
+          ele.MetricName[0],
+          this.period,
+          this.startEnd.StartTime,
+          this.startEnd.EndTime,
+          ele.Instances,
+          index
+        );
+      });
+    },
+    refresh() {
+      // this.chartsLoading = true;
+      this.getAllMonitorData();
     }
 
     // //取消
@@ -833,6 +839,15 @@ export default {
           background: #f3f0f0;
         }
       }
+      .empty {
+        width: 100%;
+        height: 300px;
+        background: rgb(248, 248, 248);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+      }
     }
 
     .open {
@@ -877,15 +892,6 @@ export default {
         }
       }
     }
-  }
-}
-
-.Dashboard-wrap {
-  .el-icon-refresh,
-  .el-icon-more {
-    font-weight: 700;
-    font-size: 16px;
-    color: #888888;
   }
 }
 
