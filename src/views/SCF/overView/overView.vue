@@ -210,15 +210,18 @@
         <div class="top10">
           <div class="title">
             <p>函数资源使用量 TOP 10 统计</p>
-            <p class="shua">刷新</p>
+            <p class="shua" @click="_shua">刷新</p>
           </div>
           <div>
-            <el-table :data="TopArr" style="width: 100%">
-              <el-table-column prop="" label="函数名">
+            <el-table :data="TopArr" style="width: 100%" v-loading='topload'>
+              <el-table-column prop="function_name" label="函数名">
               </el-table-column>
-              <el-table-column prop="" label="命名空间">
+              <el-table-column prop="namespace" label="命名空间">
               </el-table-column>
-              <el-table-column prop="" label="数据指标">
+              <el-table-column label="数据指标">
+                <template slot-scope="scope">
+                  <p>{{scope.row.mem_duration}}MB/s</p>
+                </template>
               </el-table-column>
             </el-table>
           </div>
@@ -251,6 +254,7 @@
   export default {
     data() {
       return {
+        topload: true,
         showHeader: false,
         FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
@@ -334,7 +338,7 @@
       this.GetOverView();
       this.GetUserMonthUsage();
       this.GetUserYesterdayUsage();
-      // this._GetTop()
+      this._GetTop()
     },
     methods: {
       //函数数量
@@ -465,25 +469,31 @@
             dt.getMinutes() : dt.getMinutes()) + ":" + (dt.getSeconds() < 10 ? "0" + dt.getSeconds() : dt
             .getSeconds()));
       },
-
+      _shua() {
+        this.topload = true
+        this._GetTop()
+      },
       //获取top10列表
       _GetTop() {
+        const time = new Date()
+        let timez = time.getTime() - 86400000
         let parms = {
           Version: '2018-07-24',
           MetricName: "mem_duration",
-          Region: 'ap-guangzhou',
+          Region: localStorage.getItem('regionv2'),
           Namespace: "qce/scf_v2",
-          Time: "2020-03-21 00:00:00",
+          Time: moment(new Date(timez)).format("YYYY-MM-DD 0:0:0"),
           Period: 86400,
           Module: 'monitor',
-          'Dimensions.0': JSON.stringify({
-            appid: localStorage.getItem('appid')
-          })
+          'Dimensions.0.Name': 'appid',
+          'Dimensions.0.Value': localStorage.getItem('appid'),
+          'Dimensions.1.Name': 'function_name',
+          'Dimensions.2.Name': 'namespace'
         }
         this.axios.post(TOP_LIST, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.TopArr = JSON.parse(data.Response.ObjList)
-            console.log(this.TopArr)
+            this.topload = false
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
