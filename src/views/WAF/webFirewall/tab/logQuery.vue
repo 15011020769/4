@@ -123,7 +123,6 @@
         <div class="tableMian">
           <el-table
             :data="tableDataBegin"
-            :empty-text="t('暂无数据', 'WAF.zwsj')"
             v-loading="loading"
           >
             <el-table-column
@@ -145,7 +144,11 @@
               prop="AttackType"
               v-if="columnsCopy.includes('AttackType')"
               :label="t('攻击类型', 'WAF.gjlx')"
-            ></el-table-column>
+            >
+              <template slot-scope="scope">
+                {{$s2t(scope.row.AttackType)}}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="RuleId"
               v-if="columnsCopy.includes('RuleId')"
@@ -156,11 +159,11 @@
               v-if="columnsCopy.includes('RuleName')"
               :label="t('策略名称', 'WAF.clmc')"
             >
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span v-if="scope.row.AttackContent.includes('cc:')">{{
-                  scope.row.AttackContent.split(":")[1]
+                  $s2t(scope.row.AttackContent.split(":")[1])
                 }}</span>
-                <span v-else>{{ scope.row.RuleName }}</span>
+                <span v-else>{{ $s2t(scope.row.RuleName) }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -168,7 +171,7 @@
               v-if="columnsCopy.includes('AttackContent')"
               :label="t('攻击内容', 'WAF.gjlr')"
             >
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span v-if="scope.row.AttackContent.includes('cc:')">{{
                   scope.row.AttackContent.split(":")[2]
                 }}</span>
@@ -186,9 +189,9 @@
               v-if="columnsCopy.includes('Status')"
               :label="t('执行动作', 'WAF.zxdz')"
             >
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span :class="'status-' + scope.row.Status">{{
-                  scope.row.Status === "1" ? "拦截" : "观察"
+                  scope.row.Status === "1" ? "攔截" : "觀察"
                 }}</span>
               </template>
             </el-table-column>
@@ -197,7 +200,7 @@
               v-if="columnsCopy.includes('RiskLevel')"
               :label="t('风险等级', 'WAF.fxdj')"
             >
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span
                   :class="'riskLevel-' + scope.row.RiskLevel"
                   v-if="scope.row.RiskLevel === '1'"

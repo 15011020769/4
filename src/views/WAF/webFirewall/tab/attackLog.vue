@@ -23,7 +23,7 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w120">{{t('攻击类型', 'WAF.gjlx')}}</div>
-                    <div>{{log.AttackType}}</div>
+                    <div>{{$s2t(log.AttackType)}}</div>
                   </el-row>
                 </el-col>
               </el-row>
@@ -68,13 +68,13 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w80">{{t('国家', 'WAF.country')}}</div>
-                    <div>{{log.IpinfoNation}}</div>
+                    <div>{{$s2t(log.IpinfoNation)}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w80">省份</div>
-                    <div>{{log.IpinfoProvince}}</div>
+                    <div>{{$s2t(log.IpinfoProvince)}}</div>
                   </el-row>
                 </el-col>
               </el-row>
@@ -93,7 +93,7 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w120">{{t('命中规则名称', 'WAF.mzgzmc')}}</div>
-                    <div>{{log.RuleName}}</div>
+                    <div>{{$s2t(log.RuleName)}}</div>
                   </el-row>
                 </el-col>
               </el-row>
@@ -103,7 +103,7 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w80">城市</div>
-                    <div>{{log.IpinfoCity}}</div>
+                    <div>{{$s2t(log.IpinfoCity)}}</div>
                   </el-row>
                 </el-col>
                 <el-col :span="12">
@@ -165,7 +165,7 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w120">{{t('匹配来源', 'WAF.pply')}}</div>
-                    <div>{{ARGS_MAP[log.ArgsName || "none"] || "其他"}}</div>
+                    <div>{{$s2t(ARGS_MAP[log.ArgsName || "none"] || "其他")}}</div>
                   </el-row>                  
                 </el-col>
               </el-row>
