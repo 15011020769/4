@@ -14,7 +14,7 @@
             <el-form-item label="策略名称">
               <el-input v-model="formInline.strategy_name"></el-input>
             </el-form-item>
-            
+
             <el-form-item>
               <div style="display: flex;">
                 <el-select
@@ -23,8 +23,8 @@
                   class="select-option"
                 >
                   <el-option
-                    v-for="(item, index) in formInline.product_kind"
-                    :key="index"
+                    v-for="item in formInline.product_kind"
+                    :key="item.name"
                     :label="item.name"
                     :value="item.id"
                     label-width="40px"
@@ -38,8 +38,8 @@
                   multiple
                 >
                   <el-option
-                    v-for="(item, index) in productOptions"
-                    :key="index"
+                    v-for="item in productOptions"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.viewName"
                     label-width="40px"
@@ -53,8 +53,8 @@
                   @change="changeMonitor"
                 >
                   <el-option
-                    v-for="(item, index) in productOptions"
-                    :key="index"
+                    v-for="item in productOptions"
+                    :key="item.label"
                     :label="item.label"
                     :value="item.viewName"
                     label-width="40px"
@@ -69,8 +69,7 @@
         </el-form>
       </div>
     </Header>
-    <div class="overview-main">
-    </div>
+    <div class="overview-main"></div>
     <div class="table">
       <p class="addBtn">
         <el-row>
@@ -113,7 +112,8 @@
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
-                  v-for="(i,item) in scope.row.Conditions" :key="item"
+                  v-for="(i, item) in scope.row.Conditions"
+                  :key="item"
                   class="trigger-condition"
                 >
                   <p>
@@ -126,7 +126,7 @@
                 </div>
                 <p class="text-color">事件告警：</p>
                 <div
-                  v-for="(j, items) in scope.row.EventConditions" :key="items"
+                  v-for="j in scope.row.EventConditions"
                   class="trigger-condition"
                 >
                   <p>
@@ -138,8 +138,7 @@
               </div>
               <div slot="reference">
                 <div
-                  v-for="(item, index) in scope.row.Conditions"
-                  :key="index"
+                  v-for="item in scope.row.Conditions"
                   class="trigger-condition"
                 >
                   <p>
@@ -154,7 +153,8 @@
                   </p>
                 </div>
                 <div
-                  v-for="(items, indexs) in scope.row.EventConditions" :key="indexs"
+                  v-for="(items, indexs) in scope.row.EventConditions"
+                  :key="indexs"
                   class="trigger-condition"
                 >
                   <p>
@@ -548,7 +548,7 @@ import {
   Physics_LIST, //物理专线列表
   Private_LIST, //专线通道列表
   OBJ_LIST, //对象存储列表
-  DISK_LIST, //云硬盘列表
+  DISK_LIST //云硬盘列表
 } from "@/constants";
 var project = [];
 export default {
@@ -568,51 +568,61 @@ export default {
         }
       ],
       //产品
-      productOptions: [{
-          label: '云服务器',
-          viewName: 'cvm_device',
-        }, {
-          label: '云硬盘',
-          viewName: 'BS',
+      productOptions: [
+        {
+          label: "云服务器",
+          viewName: "cvm_device"
         },
         {
-          label: 'VPN网关',
-          viewName: 'VPN_GW',
-        }, {
-          label: 'VPN通道',
-          viewName: 'vpn_tunnel',
-        }, {
-          label: 'NAT网关',
-          viewName: 'nat_tc_stat',
-        }, {
-          label: '专线网关',
-          viewName: 'DC_GW',
-        }, {
-          label: 'MYSQL',
-          viewName: 'cdb_detail',
-        }, {
-          label: 'Redis',
-          viewName: 'REDIS-CLUSTER',
-        }, {
-          label: '专用通道',
-          viewName: 'dcchannel',
-        }, {
-          label: '物理专线',
-          viewName: 'dcline',
-        }, {
-          label: '对象存储',
-          viewName: 'COS',
+          label: "云硬盘",
+          viewName: "BS"
+        },
+        {
+          label: "VPN网关",
+          viewName: "VPN_GW"
+        },
+        {
+          label: "VPN通道",
+          viewName: "vpn_tunnel"
+        },
+        {
+          label: "NAT网关",
+          viewName: "nat_tc_stat"
+        },
+        {
+          label: "专线网关",
+          viewName: "DC_GW"
+        },
+        {
+          label: "MYSQL",
+          viewName: "cdb_detail"
+        },
+        {
+          label: "Redis",
+          viewName: "REDIS-CLUSTER"
+        },
+        {
+          label: "专用通道",
+          viewName: "dcchannel"
+        },
+        {
+          label: "物理专线",
+          viewName: "dcline"
+        },
+        {
+          label: "对象存储",
+          viewName: "COS"
         }
       ],
       isIndeterminate: true,
       formInline: {
-        product_name: '1', //策略
-        productArr: [],//产品类型列表
+        product_name: "1", //策略
+        productArr: [], //产品类型列表
         product_kind: [
           {
             id: "1",
             name: "产品类型"
-          },
+          }
           // {
           //   id: "2",
           //   name: "策略类型"
@@ -735,17 +745,17 @@ export default {
       callClose: 0,
       searchParam: {},
       projectId: 0,
-      productValue: '',
+      productValue: "",
       loading: true,
-      dataList:[],//查询告警对象列表
-      selectStrategyList: [],//选中的告警对象列表
+      dataList: [], //查询告警对象列表
+      selectStrategyList: [], //选中的告警对象列表
       headConfig: {
-        title1: '',
-        title2: '',
-        title3: '',
-        title4: ''
+        title1: "",
+        title2: "",
+        title3: "",
+        title4: ""
       },
-      monitorNumber: '',
+      monitorNumber: "",
       DiskType: {
         CLOUD_BASIC: "普通雲硬碟",
         CLOUD_PREMIUM: "高性能雲硬碟",
@@ -767,7 +777,7 @@ export default {
         SYSTEM_DISK: "系統盤",
         DATA_DISK: "數據盤"
       },
-      isShowPopover: false,
+      isShowPopover: false
     };
   },
   components: {
@@ -781,7 +791,7 @@ export default {
   },
   methods: {
     passData(data) {
-      console.log("data",data);
+      console.log("data", data);
       this.isShow = false;
       this.productListData = data;
       this.productValue = data.productValue;
@@ -795,7 +805,7 @@ export default {
       }, 600);
     },
     Type_loading(val) {
-      this.loading = val
+      this.loading = val;
     },
     async ListInit() {
       this.loadShow = true;
@@ -806,16 +816,16 @@ export default {
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
-      if(this.formInline.strategy_name !== '') {
+      if (this.formInline.strategy_name !== "") {
         params.Like = this.formInline.strategy_name;
       }
-      if(this.formInline.productArr.length > 0) {
-        for(let i = 0; i < this.formInline.productArr.length; i++) {
-          params['ViewNames.' + i] = this.formInline.productArr[i];
+      if (this.formInline.productArr.length > 0) {
+        for (let i = 0; i < this.formInline.productArr.length; i++) {
+          params["ViewNames." + i] = this.formInline.productArr[i];
         }
       }
-      if(this.formInline.product_name === '2') {
-        params['ViewNames.0'] = this.productValue;
+      if (this.formInline.product_name === "2") {
+        params["ViewNames.0"] = this.productValue;
       }
       await this.axios.post(CM_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -1541,7 +1551,7 @@ export default {
         if (typeof console !== "undefined") console.log(e, wbout);
       }
       return wbout;
-    },
+    }
   },
   filters: {
     formatDate(value) {
@@ -1561,7 +1571,7 @@ export default {
     },
     CreateDate(val) {
       if (val) {
-        return moment(val).format('YYYY-MM-DD HH :mm:ss');
+        return moment(val).format("YYYY-MM-DD HH :mm:ss");
       }
     },
     CalcType(value) {
