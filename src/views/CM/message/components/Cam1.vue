@@ -122,10 +122,10 @@ export default {
             value: "0",
             name: "用戶組名"
           },
-          {
-            value: "1",
-            name: "用戶名"
-          }
+        //   {
+        //     value: "1",
+        //     name: "用戶名"
+        //   }
         ]
       },
       groupData: [],

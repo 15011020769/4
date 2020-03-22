@@ -9,7 +9,7 @@
       <el-table :data="tableData" style="width: 100%;" v-loading="loadShow">
         <el-table-column label="事件类型" width="240">
           <template slot-scope="scope">
-            <div v-if="scope.row.AccidentName=='雲伺服器存儲問題'">
+            <div v-if="scope.row.AccidentName=='雲伺服器儲存問題'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
@@ -41,7 +41,7 @@
               </el-tooltip>
             </div>
 
-            <div v-if="scope.row.AccidentName=='雲伺服器運行異常'">
+            <div v-if="scope.row.AccidentName=='雲伺服器運列異常'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
@@ -65,6 +65,7 @@
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
+            <!-- <span v-if="">尚未订阅</span> -->
             <i v-else class="el-icon-circle-close" style="color:#e1504a"></i>
           </template>
         </el-table-column>
@@ -192,7 +193,6 @@
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
               </span>
-
               <span v-else>
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">

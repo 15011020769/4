@@ -2,14 +2,15 @@
   <div class="message-wrap">
     <Header title="自定義消息" />
     <!-- <Search></Search> -->
-    <div class="overview-main">
+    <p>.</p>
+    <!-- <div class="overview-main">
       <div class="explain">
         <p>
           当月短信配额已用0条，剩余1000条可用。
           <a>购买短信</a>
         </p>
       </div>
-    </div>
+    </div> -->
     <div class="table">
       <div class="addBtn">
         <el-row>
