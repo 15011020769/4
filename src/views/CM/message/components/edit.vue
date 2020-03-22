@@ -76,7 +76,6 @@ export default {
     Cam
   },
   created() {
-    console.log(this.$route.query);
     this.dataObj = this.$route.query;
     this.formInline.strategy_name = this.dataObj.PolicyName;
   },
@@ -126,7 +125,6 @@ export default {
         });
       }
 
-      console.log(this.cam.channel, param);
       this.axios.post(EDIT_CUSTON_MESSAGE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
