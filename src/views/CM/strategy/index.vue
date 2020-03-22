@@ -62,211 +62,14 @@
                 </el-select>
               </div>
             </el-form-item>
-          </div>
-          <div>
-            <el-form-item label="告警对象">
-              <el-input :disabled="productValue!==''?false:true" @focus="isShowPopover = true" v-model="monitorNumber" style="width:300px" placeholder="请输入内容"></el-input>
-              <el-popover
-                placement="bottom"
-                width="600"
-                trigger="click"
-                v-model="isShowPopover">
-
-                <el-table :data="dataList" height="200" ref="multipleTable" @selection-change="handleSelectionSte"
-                  class="table-left">
-                  <el-table-column type="selection" width="55"></el-table-column>
-                  <el-table-column :label="headConfig.title1" width="120">
-                    <template slot-scope="scope">
-                      <div v-if="productValue === 'cvm_device'">
-                        <p>{{ scope.row.InstanceId }}</p>
-                        <p>{{ scope.row.InstanceName }}</p>
-                      </div>
-                      <div v-if="productValue === 'VPN_GW'">
-                        <p>{{scope.row.VpnGatewayId}}</p>
-                        <p>{{scope.row.VpnGatewayName}}</p>
-                      </div>
-                      <div v-if="productValue === 'vpn_tunnel'">
-                        <p>{{scope.row.VpnConnectionId}}</p>
-                        <p>{{scope.row.VpnConnectionName}}</p>
-                      </div>
-                      <div v-if="productValue === 'nat_tc_stat'">
-                        <p>{{scope.row.NatGatewayId}}</p>
-                        <p>{{scope.row.NatGatewayName}}</p>
-                      </div>
-                      <div v-if="productValue === 'DC_GW'">
-                        <p>{{scope.row.DirectConnectGatewayId}}</p>
-                        <p>{{scope.row.DirectConnectGatewayName}}</p>
-                      </div>
-                      <div v-if="productValue === 'EIP'">
-                        <p>{{scope.row.AddressId}}</p>
-                      </div>
-                      <div v-if="productValue === 'cdb_detail'">
-                        <p>{{scope.row.InstanceId}}</p>
-                        <p>{{scope.row.InstanceName}}</p>
-                      </div>
-                      <div v-if="productValue === 'REDIS-CLUSTER'">
-                        <p>{{scope.row.InstanceName}}</p>
-                        <p>{{scope.row.InstanceName}}</p>
-                      </div>
-                      <div v-if="productValue === 'dcchannel'">
-                        <p>{{scope.row.DirectConnectTunnelId}}</p>
-                        <p>{{scope.row.DirectConnectTunnelName}}</p>
-                      </div>
-                      <div v-if="productValue === 'dcline'">
-                        <p>{{scope.row.DirectConnectId}}</p>
-                        <p>{{scope.row.DirectConnectName}}</p>
-                      </div>
-                      <div v-if="productValue === 'COS'">
-                        <p>{{scope.row.Name}}</p>
-                      </div>
-                      <div v-if="productValue === 'BS'">
-                        <p>{{scope.row.DiskId}}</p>
-                        <p>{{scope.row.DiskName}}</p>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column :label="headConfig.title2" width="120">
-                    <template slot-scope="scope">
-                      <div v-if="productValue == 'cvm_device'">
-                        <p>VPC 网络</p>
-                      </div>
-                      <div v-if="productValue === 'VPN_GW'">
-                        <p>{{vpcConnState[scope.row.State]}}</p>
-                      </div>
-                      <div v-if="productValue === 'vpn_tunnel'">
-                        <p>{{scope.row.VpcId}}</p>
-                      </div>
-                      <div v-if="productValue === 'nat_tc_stat'">
-                        <p>{{natStatu[scope.row.State]}}</p>
-                      </div>
-                      <div v-if="productValue === 'DC_GW'">
-                        <p>不支持</p>
-                      </div>
-                      <div v-if="productValue === 'EIP'">
-                        <p>{{scope.row.AddressId}}</p>
-                      </div>
-                      <div v-if="productValue === 'cdb_detail'">
-                        <p>{{scope.row.Vip}}</p>
-                        <p>{{scope.row.Vport}}</p>
-                      </div>
-                      <div v-if="productValue === 'REDIS-CLUSTER'">
-                        <p>master-slave</p>
-                      </div>
-                      <div v-if="productValue === 'dcchannel'">
-                        <p>{{scope.row.VpcId}}</p>
-                      </div>
-                      <div v-if="productValue === 'dcline'">
-                        <p>{{scope.row.Location}}</p>
-                      </div>
-                      <div v-if="productValue === 'COS'">
-                        <p>{{scope.row.zone.zone}}</p>
-                      </div>
-                      <div v-if="productValue === 'BS'">
-                        <p>{{scope.row.DiskSize}}</p>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column :label="headConfig.title3" width="150">
-                    <template slot-scope="scope">
-                      <div v-if="productValue == 'cvm_device'">
-                        <p>{{scope.row.PrivateIpAddresses[0]}}(内网)</p>
-                        <p>{{scope.row.PublicIpAddresses[0]}}(外网)</p>
-                      </div>
-                      <div v-if="productValue === 'VPN_GW'">
-                        <p>{{scope.row.VpcId}}</p>
-                      </div>
-                      <div v-if="productValue === 'vpn_tunnel'">
-                        <p>{{scope.row.VpnGatewayId}}</p>
-                      </div>
-                      <div v-if="productValue === 'nat_tc_stat'">
-                        <p>{{scope.row.VpcId}}</p>
-                      </div>
-                      <div v-if="productValue === 'DC_GW'">
-                        <p>{{scope.row.VpcId}}</p>
-                      </div>
-                      <div v-if="productValue === 'EIP'">
-                        <p>{{scope.row.AddressId}}</p>
-                      </div>
-                      
-                      <div v-if="productValue === 'REDIS-CLUSTER'">
-                        <p>{{scope.row.WanIp}}</p>
-                      </div>
-                      <div v-if="productValue === 'dcchannel'">
-
-                      </div>
-                      <div v-if="productValue === 'dcline'">
-                        <p>{{scope.row.Bandwidth}}</p>
-                      </div>
-                      <div v-if="productValue === 'COS'">
-                        <p>{{scope.row.CreationDate | CreateDate}}</p>
-                      </div>
-                      <div v-if="productValue === 'BS'">
-                        <p>{{DiskType[scope.row.DiskType]}}</p>
-                        <p>{{DiskUsage[scope.row.DiskUsage]}}</p>
-                      </div>
-                    </template>
-                  </el-table-column>
-                  <el-table-column :label="headConfig.title4" v-if="productValue === 'nat_tc_stat'">
-                    <template slot-scope="scope">
-                      <div v-if="productValue === 'nat_tc_stat'">
-                        <p>最大并发连接数{{scope.row.MaxConcurrentConnection}}</p>
-                      </div>
-                    </template>
-                  </el-table-column>
-                </el-table>
-                <div  class="dialog-footer">
-                  <el-button type="primary" @click="selectOk">确定</el-button>
-                  <el-button @click="isShowPopover = false">取消</el-button>
-                </div>
-              </el-popover>
-            </el-form-item>
-            <el-form-item label="用户/组">
-              <el-select v-model="formInline.user" class="select-option">
-                <el-option
-                  v-for="(item, index) in formInline.user_kind"
-                  
-                  :key="index"
-                  :label="item.name"
-                  :value="item.value"
-                  label-width="40px"
-                ></el-option>
-              </el-select>
-              <el-select
-                multiple
-                v-model="formInline.group"
-                class="select-option-tow"
-              >
-                <el-option
-                  v-for="(item, index) in formInline.kind_list"
-                  :key="index"
-                  :label="item.name"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="onSubmit">查询</el-button>
-              <el-button type="text" class="clearBtn">清除筛选</el-button>
             </el-form-item>
           </div>
-          
         </el-form>
       </div>
     </Header>
     <div class="overview-main">
-      <!-- <div class="explain">
-        <p>
-          告警模板功能已上线，支持触发条件的复用与统一修改
-          ，请前往
-          <a>触发条件模板</a>进行配置
-          <a>查看详情</a>
-        </p>
-        <p>
-          现已支持对告警策略的告警启停，可在策略维度、实例维度进行告警策略屏蔽
-          ，点击查看
-          <a>告警启停文档</a>
-        </p>
-      </div> -->
     </div>
     <div class="table">
       <p class="addBtn">
@@ -310,7 +113,7 @@
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
-                  v-for="i in scope.row.Conditions"
+                  v-for="(i,item) in scope.row.Conditions" :key="item"
                   class="trigger-condition"
                 >
                   <p>
@@ -323,7 +126,7 @@
                 </div>
                 <p class="text-color">事件告警：</p>
                 <div
-                  v-for="j in scope.row.EventConditions"
+                  v-for="(j, items) in scope.row.EventConditions" :key="items"
                   class="trigger-condition"
                 >
                   <p>
@@ -351,7 +154,7 @@
                   </p>
                 </div>
                 <div
-                  v-for="(items, indexs) in scope.row.EventConditions"
+                  v-for="(items, indexs) in scope.row.EventConditions" :key="indexs"
                   class="trigger-condition"
                 >
                   <p>
@@ -810,10 +613,10 @@ export default {
             id: "1",
             name: "产品类型"
           },
-          {
-            id: "2",
-            name: "策略类型"
-          }
+          // {
+          //   id: "2",
+          //   name: "策略类型"
+          // }
         ], //产品/.策略类型
         strategy_kind: [
           {
@@ -1013,111 +816,6 @@ export default {
       }
       if(this.formInline.product_name === '2') {
         params['ViewNames.0'] = this.productValue;
-      }
-      if(this.selectStrategyList.length > 0) {
-        if (this.productValue === 'cvm_device') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"unInstanceId", value:strategy.InstanceId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'nat_tc_stat') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"uniq_nat_id", value:strategy.NatGatewayId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'VPN_GW') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"appid", value:strategy.DiskId}));//怎么取值
-            strategys.push(JSON.stringify({name:"vip", value:strategy.PublicIpAddress}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'vpn_tunnel') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"uniqVpnconnId", value:strategy.VpnConnectionId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'DC_GW') {
-         let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"directconnectgatewayid", value:strategy.DirectConnectGatewayId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'cdb_detail') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"uInstanceId", value:strategy.InstanceId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'REDIS-CLUSTER') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"appid", value:strategy.DiskId}));//怎么取值
-            strategys.push(JSON.stringify({name:"instanceid", value:strategy.InstanceName}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'dcline') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"directconnectid", value:strategy.DirectConnectId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'dcchannel') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"directconnecttunnelid", value:strategy.DirectConnectTunnelId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'COS') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"bucket", value:strategy.Name}));
-            strategys.push(JSON.stringify({name:"appid", value:strategy.Name}));//如何取值
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        } else if (this.productValue === 'BS') {
-          let strategyArr = [];
-          for(let i = 0; i < this.selectStrategyList.length; i++) {
-            let strategys = [];
-            let strategy = this.selectStrategyList[i];
-            strategys.push(JSON.stringify({name:"diskid", value:strategy.DiskId}));
-            strategyArr.push(strategys);
-          }
-          params.Dimensions = strategyArr;
-        }
       }
       await this.axios.post(CM_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -1844,212 +1542,6 @@ export default {
       }
       return wbout;
     },
-    // _PassValue() {
-    //   this.productValue = this.productValue1
-    //   this.Date = this.Date
-    //   this.Pass.HeadConfig = this.HeadConfig
-    //   this.Pass.SearchConfig = this.SearchConfig
-    //   this.Pass.Namespace = this.Namespace
-    //   this.Pass.MetricName = this.MetricName
-    //   this.Pass.id = this.id
-    //   this.Pass.Metrics = this.Metrics
-    // },
-    changeMonitor() {
-      if (this.productValue === 'cvm_device') {
-        this._GetCVM()
-      } else if (this.productValue === 'nat_tc_stat') {
-        this._GetNat()
-      } else if (this.productValue === 'VPN_GW') {
-        this._GetVPNG()
-      } else if (this.productValue === 'vpn_tunnel') {
-        this._GetVPNX()
-      } else if (this.productValue === 'DC_GW') {
-        this._GetPRI()
-      } else if (this.productValue === 'cdb_detail') {
-        this._GetMYSQL()
-      } else if (this.productValue === 'REDIS-CLUSTER') {
-        this._GetREDIS()
-      } else if (this.productValue === 'dcline') {
-        this._GetDCLINE()
-      } else if (this.productValue === 'dcchannel') {
-        this._GetDcPri()
-      } else if (this.productValue === 'COS') {
-        this._GetOBJ()
-      } else if (this.productValue === 'BS') {
-        this._GetBs()
-      }
-    },
-    // 获取云服务器列表
-    _GetCVM() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      this.axios.post(CVM_LIST, parms).then(data => {
-        this.headConfig = {
-          title1: 'ID/主机名',
-          title2: '网络类型',
-          title3: 'IP地址'
-        }
-        this.dataList = data.Response.InstanceSet
-      });
-    },
-    // 获取NAT网关列表
-    _GetNat() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      
-      this.axios.post(NAT_LIST, parms).then(data => {
-        this.dataList = data.Response.NatGatewaySet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '状态',
-          title3: '私有网络',
-          title4: '类型',
-        }
-      });
-    },
-    // 获取VPN网关列表
-    _GetVPNG() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      this.axios.post(VPN_LIST, parms).then(data => {
-        this.dataList = data.Response.VpnGatewaySet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '状态',
-          title3: '所属网络',
-        }
-      });
-    },
-    // 获取VPN通道列表
-    _GetVPNX() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      this.axios.post(VPNTD_LIST, parms).then(data => {
-        this.dataList = data.Response.VpnConnectionSet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '所属网络',
-          title3: 'VPN网关',
-        }
-      });
-    },
-    // 获取专线网关列表
-    _GetPRI() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      this.axios.post(DCG_LIST, parms).then(data => {
-        this.dataList = data.Response.DirectConnectGatewaySet;
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: 'NAT配置状态',
-          title3: '所属网络',
-        }
-      });
-    },
-    // 获取mysql列表
-    _GetMYSQL() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-20",
-      }
-      this.axios.post(MYSQL_LIST, parms).then(data => {
-        this.dataList = data.Response.Items
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '内网IP/端口',
-          // title3: '网络类型',
-          // title4: '类型',
-        }
-      });
-    },
-    // 获取RESIS列表
-    _GetREDIS() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2018-04-12",
-      }
-      this.axios.post(REDIS_LIST, parms).then(data => {
-        this.dataList = data.Response.InstanceSet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '规格',
-          title3: '内网地址',
-        }
-      });
-    },
-    //获取物理专线列表
-    _GetDCLINE() {
-      let parms = {
-        Region: this.selectedRegion,
-        Version: '2018-04-10',
-      }
-      this.axios.post(Physics_LIST, parms).then(data => {
-        this.dataList = data.Response.DirectConnectSet
-        this.headConfig = {
-          title1: '名称/ID',
-          title2: '所在地',
-          title3: '带宽',
-        }
-      });
-    },
-    //获取专线通道列表
-    _GetDcPri() {
-      let parms = {
-        Region: this.selectedRegion,
-        Version: '2018-04-10',
-      }
-      this.axios.post(Private_LIST, parms).then(data => {
-        this.dataList = data.Response.DirectConnectTunnelSet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '私有网络',
-        }
-      });
-    },
-    //获取对象存储列表
-    _GetOBJ() {
-      let parms = {
-        Region: this.selectedRegion,
-        Version: '2018-04-10',
-      }
-      this.axios.post(OBJ_LIST, parms).then(data => {
-        this.dataList = data.Buckets.Bucket
-        this.headConfig = {
-          title1: 'Bucket名称',
-          title2: '地域',
-          title3: '创建时间'
-        }
-      });
-    },
-    //获取云硬盘
-    _GetBs() {
-      let parms = {
-        Region: localStorage.getItem("regionv2"),
-        Version: "2017-03-12",
-      }
-      this.axios.post(DISK_LIST, parms).then(data => {
-        this.dataList = data.Response.DiskSet
-        this.headConfig = {
-          title1: 'ID/名称',
-          title2: '大小(GB)',
-          title3: '硬盘类型',
-        }
-      });
-    },
-    selectOk() {
-      this.isShowPopover = false;
-      this.monitorNumber = "已选择"+ this.selectStrategyList.length +"个对象";
-    }
   },
   filters: {
     formatDate(value) {

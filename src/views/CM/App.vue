@@ -20,6 +20,10 @@
 <script>
   import NavHeader from "@/components/HeaderAside/Header";
   import LeftAside from "./Public/Menu";
+  import {
+    ALL_CITY,
+    GETAPPID,
+  } from "@/constants";
   export default {
     data() {
       return {};
