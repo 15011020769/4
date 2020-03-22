@@ -391,7 +391,7 @@
               >
               </el-input>
             </el-form-item>
-            <el-form-item label="ipvs支持">
+            <el-form-item label="ipvs支持" v-if="!duliblyDis">
               <el-switch v-model="colony.ipvs"> </el-switch>
               <p>
                 {{ $t("TKE.colony.kq") }}Kube-proxy
@@ -2450,17 +2450,26 @@
               [0-9]和[()`~!@#$%^&}*-+=|{}[]:;',.?/]的特殊符號）
             </p>
           </el-form-item>
-          <!-- <el-form-item
-            label="确认密码"
+          <el-form-item
+            label="確認密碼"
             v-if="colonyThird.three"
             class="password"
           >
             <el-input
-              placeholder="请输入主机密码"
+              placeholder="請輸入主機密碼"
               v-model="colonyThird.confirmPassword"
               show-password
+              :class="{ 'cluster-wran': colonyThird.confirmPasswordWran }"
+              @blur="SurePassInput"
             ></el-input>
-          </el-form-item> -->
+            <el-tooltip
+              effect="light"
+              content="兩次密碼輸入不一樣"
+              placement="right"
+              v-if="colonyThird.confirmPasswordWran"
+              ><i class="el-icon-warning-outline ml5"></i>
+            </el-tooltip>
+          </el-form-item>
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
               <el-checkbox v-model="colonyThird.safetyChecked">{{
@@ -3138,6 +3147,7 @@ export default {
         passwordTips: "密碼不能為空",
         // 确认密码
         confirmPassword: "",
+        confirmPasswordWran: false,
         // SSH密钥
         sshKey: [],
         sshKeySel: "",
@@ -5375,9 +5385,23 @@ export default {
         this.colonyThird.passwordWran = false;
       }
     },
+    SurePassInput() {
+      if (this.colonyThird.confirmPassword != this.colonyThird.password) {
+        this.colonyThird.confirmPasswordWran = true;
+      } else {
+        this.colonyThird.confirmPasswordWran = false;
+      }
+    },
     // 第三步 下一步
     thirdNext() {
-      if (this.colonyThird.passwordWran === true) {
+      if (this.colonyThird.confirmPassword == "") {
+        this.colonyThird.confirmPasswordWran = true;
+        return false;
+      }
+      if (
+        this.colonyThird.passwordWran === true ||
+        this.colonyThird.confirmPasswordWran === true
+      ) {
         return false;
       } else {
         this.firstBox = false;
@@ -6547,7 +6571,7 @@ export default {
     padding-bottom: 16px;
     & > p {
       float: left;
-      width: 120px;
+      width: 130px;
       padding: 6px 20px 0 0;
       color: #888;
       font-size: 12px;
