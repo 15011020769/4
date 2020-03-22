@@ -29,7 +29,7 @@
           <div class="tke-step-item is-curr">
             <span class="num">1</span>
 
-            <span class="title">{{$t('TKE.colony.xzjd')}}</span>
+            <span class="title">{{ $t("TKE.colony.xzjd") }}</span>
 
             <i class="el-icon-arrow-right"></i>
           </div>
@@ -37,7 +37,7 @@
           <div class="tke-step-item" :class="{ 'is-curr': secondTab }">
             <span class="num">2</span>
 
-            <span class="title">{{$t('TKE.colony.yfwqpz')}}</span>
+            <span class="title">{{ $t("TKE.colony.yfwqpz") }}</span>
           </div>
         </div>
 
@@ -49,9 +49,10 @@
           <div class="flex">
             <div class="left-box">
               <p>
-                {{$t('TKE.colony.dqjqsz')}}（{{ VpcId }}）{{$t('TKE.colony.yxkyjd')}}{{
-                  leftList.length
-                }}{{$t('TKE.colony.yjz')}} {{ leftList.length }} {{$t('TKE.colony.xiang')}}
+                {{ $t("TKE.colony.dqjqsz") }}（{{ VpcId }}）{{
+                  $t("TKE.colony.yxkyjd")
+                }}{{ leftList.length }}{{ $t("TKE.colony.yjz") }}
+                {{ leftList.length }} {{ $t("TKE.colony.xiang") }}
               </p>
 
               <div class="search">
@@ -67,7 +68,10 @@
                   >
                     <el-option label="instanceId" value="1"></el-option>
 
-                    <el-option :label="$t('TKE.colony.slm')" value="2"></el-option>
+                    <el-option
+                      :label="$t('TKE.colony.slm')"
+                      value="2"
+                    ></el-option>
 
                     <el-option label="ip" value="3"></el-option>
                   </el-select>
@@ -107,10 +111,20 @@
                   <el-table-column label="IP地址">
                     <template slot-scope="scope">
                       <p>
-                        {{ scope.row.PublicIpAddresses[0] }}
+                        <span
+                          v-for="(item, index) in scope.row.PublicIpAddresses"
+                          :key="index"
+                          >{{ item }}
+                        </span>
                       </p>
 
-                      <p>{{ scope.row.PrivateIpAddresses[0] }}</p>
+                      <p>
+                        <span
+                          v-for="(item, index) in scope.row.PrivateIpAddresses"
+                          :key="index"
+                          >{{ item }}
+                        </span>
+                      </p>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -121,7 +135,10 @@
               <i class="el-icon-arrow-right"></i>
             </div>
             <div class="right-box">
-              <p>{{$t('TKE.colony.yxze')}}{{ rightList.length }}{{$t('TKE.colony.xiang')}}</p>
+              <p>
+                {{ $t("TKE.colony.yxze") }}{{ rightList.length
+                }}{{ $t("TKE.colony.xiang") }}
+              </p>
               <el-table
                 :data="rightList"
                 tooltip-effect="dark"
@@ -154,7 +171,9 @@
               </el-table>
             </div>
           </div>
-          <div v-if="selNode" class="select-node">{{$t('TKE.colony.qxzjd')}}</div>
+          <div v-if="selNode" class="select-node">
+            {{ $t("TKE.colony.qxzjd") }}
+          </div>
         </div>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -178,31 +197,25 @@
                   >,
                 </p>
               </div>
-              <span class="tke-tips"
-                >{{$t('TKE.colony.tsbdaqz')}}</span
-              >
+              <span class="tke-tips">{{ $t("TKE.colony.tsbdaqz") }}</span>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.sjpgz')" class="item-box">
               <el-checkbox v-model="dataMountCheck"></el-checkbox>
               <!-- <input class="tke-checkbox" type="checkbox"/> -->
-              <span style="color:#000;"
-                >{{$t('TKE.colony.zdgshsjp')}}</span
-              >
+              <span style="color:#000;">{{ $t("TKE.colony.zdgshsjp") }}</span>
               <div v-if="dataMountCheck">
                 <el-input v-model="dataDiskMount"></el-input>
                 <p class="tke-tips">
-                  {{$t('TKE.colony.zygshd')}}
+                  {{ $t("TKE.colony.zygshd") }}
                 </p>
                 <p class="tke-tips-ash">
-                  {{$t('TKE.colony.zywsj')}}
+                  {{ $t("TKE.colony.zywsj") }}
                 </p>
               </div>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.rqml')" class="item-box">
               <el-checkbox v-model="containerListCheck"></el-checkbox>
-              <span style="color:#000;"
-                >{{$t('TKE.colony.jyccdsjp')}}</span
-              >
+              <span style="color:#000;">{{ $t("TKE.colony.jyccdsjp") }}</span>
               <div v-if="containerListCheck">
                 <el-input v-model="containerList"></el-input>
               </div>
@@ -211,14 +224,14 @@
             <el-form-item :label="$t('TKE.colony.xzzyssxm')">
               <p style="color:#000;">{{ projectName }}</p>
               <span
-                >{{$t('TKE.colony.zyzdfpxm')}}
+                >{{ $t("TKE.colony.zyzdfpxm") }}
                 <!-- <a href="#">使用指引</a> -->
                 <!-- <i class="el-icon-edit-outline"></i> -->
               </span>
             </el-form-item>
             <el-form-item>
               <span slot="label"
-                >{{$t('TKE.colony.czxt')}}
+                >{{ $t("TKE.colony.czxt") }}
                 <el-tooltip
                   effect="dark"
                   :content="$t('TKE.colony.xghsyxxt')"
@@ -230,9 +243,15 @@
             <el-form-item :label="$t('TKE.colony.dlfs')">
               <div class="tke-second-radio-btn">
                 <el-radio-group @change="changeType" v-model="loginType">
-                  <el-radio-button label="1">{{$t('TKE.colony.ljglmy')}}</el-radio-button>
-                  <el-radio-button label="2">{{$t('TKE.colony.zdscmm')}}</el-radio-button>
-                  <el-radio-button label="3">{{$t('TKE.colony.szmm')}}</el-radio-button>
+                  <el-radio-button label="1">{{
+                    $t("TKE.colony.ljglmy")
+                  }}</el-radio-button>
+                  <el-radio-button label="2">{{
+                    $t("TKE.colony.zdscmm")
+                  }}</el-radio-button>
+                  <el-radio-button label="3">{{
+                    $t("TKE.colony.szmm")
+                  }}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -241,7 +260,10 @@
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.sshmy')" v-if="joinPassWord">
               <div class="tke-third-select">
-                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="sshKeySel">
+                <el-select
+                  :placeholder="$t('TKE.overview.qxz')"
+                  v-model="sshKeySel"
+                >
                   <el-option
                     v-for="item in sshKey"
                     :key="item.KeyId"
@@ -253,7 +275,8 @@
                 <i class="el-icon-refresh ml5"></i>
                 <!-- <a href="#">使用指引</a><i class="el-icon-edit-outline"></i> -->
                 <p>
-                  {{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a
+                  {{ $t("TKE.colony.mybhs")
+                  }}<a href="../sshkey">{{ $t("TKE.colony.xzcj") }}</a
                   ><i class="el-icon-edit-outline"></i>
                 </p>
               </div>
@@ -261,7 +284,11 @@
             <el-form-item :label="$t('TKE.overview.yhm')" v-if="setPassWord">
               <p style="color:#000;">ubuntu</p>
             </el-form-item>
-            <el-form-item :label="$t('TKE.overview.mm')" v-if="setPassWord" class="password">
+            <el-form-item
+              :label="$t('TKE.overview.mm')"
+              v-if="setPassWord"
+              class="password"
+            >
               <el-input
                 :placeholder="$t('TKE.colony.qsrzjmm')"
                 :class="{ 'cluster-wran': colonyThird.passwordWran }"
@@ -282,14 +309,19 @@
               </p>
             </el-form-item>
             <el-form-item>
-              <span slot="label">{{$t('TKE.colony.aqz')}} <i class="el-icon-info"></i></span>
+              <span slot="label"
+                >{{ $t("TKE.colony.aqz") }} <i class="el-icon-info"></i
+              ></span>
               <div class="tke-third-select" style="margin-bottom:6px;">
-                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="securityGroupSel">
+                <el-select
+                  :placeholder="$t('TKE.overview.qxz')"
+                  v-model="securityGroupSel"
+                >
                   <el-option
                     v-for="x in securityGroupOpt"
-                    :key="x.label"
+                    :key="x.value"
                     :label="x.label"
-                    :value="x.label"
+                    :value="x.value"
                   >
                   </el-option>
                 </el-select>
@@ -301,7 +333,10 @@
                 :key="index"
                 style="margin-bottom:6px;display: flex;align-items: center;"
               >
-                <el-select :placeholder="$t('TKE.overview.qxz')" v-model="item.securityGroupSel">
+                <el-select
+                  :placeholder="$t('TKE.overview.qxz')"
+                  v-model="item.securityGroupSel"
+                >
                   <el-option
                     v-for="x in securityGroupOpt"
                     :key="x.value"
@@ -321,24 +356,28 @@
                   href="javascript:;"
                   @click="addExceptPrice"
                   v-if="itemArr.length < 9"
-                  >{{$t('TKE.colony.tjaqz')}}</a
+                  >{{ $t("TKE.colony.tjaqz") }}</a
                 >
               </p>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.aqjg')">
-              <el-checkbox v-model="safetyCheck">{{$t('TKE.colony.mfkt')}}</el-checkbox>
+              <el-checkbox v-model="safetyCheck">{{
+                $t("TKE.colony.mfkt")
+              }}</el-checkbox>
               <p>
-                {{$t('TKE.colony.azzjmfkt')}}
+                {{ $t("TKE.colony.azzjmfkt") }}
                 <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.yjk')">
-              <el-checkbox v-model="cloudMonitorCheck">{{$t('TKE.colony.mfkt')}}</el-checkbox>
+              <el-checkbox v-model="cloudMonitorCheck">{{
+                $t("TKE.colony.mfkt")
+              }}</el-checkbox>
               <p class="tke-tips-orange" v-if="!cloudMonitorCheck">
-                {{$t('TKE.colony.qxgx')}}
+                {{ $t("TKE.colony.qxgx") }}
               </p>
               <p>
-                {{$t('TKE.colony.mfktzj')}}
+                {{ $t("TKE.colony.mfktzj") }}
                 <!-- <a href="#">详细介绍</a><i class="el-icon-edit-outline"></i> -->
               </p>
             </el-form-item>
@@ -352,11 +391,13 @@
                 type="text"
                 style="font-size:12px;"
                 @click="isActive = !isActive"
-                >{{$t('TKE.colony.gjszhi')}}</el-button
+                >{{ $t("TKE.colony.gjszhi") }}</el-button
               >
             </p>
             <el-form-item v-show="isActive">
-              <span slot="label">{{$t('TKE.colony.zdysj')}} <i class="el-icon-info"></i></span>
+              <span slot="label"
+                >{{ $t("TKE.colony.zdysj") }} <i class="el-icon-info"></i
+              ></span>
               <el-input
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 4 }"
@@ -368,10 +409,12 @@
             </el-form-item>
 
             <el-form-item :label="$t('TKE.colony.fs')" v-show="isActive">
-              <el-checkbox v-model="openBlockadeCheck">{{$t('TKE.colony.kqfs')}}</el-checkbox>
+              <el-checkbox v-model="openBlockadeCheck">{{
+                $t("TKE.colony.kqfs")
+              }}</el-checkbox>
               <el-form-item>
                 <p>
-                  {{$t('TKE.colony.fsjdh')}}
+                  {{ $t("TKE.colony.fsjdh") }}
                   <!-- <a href="https://cloud.tencent.com/document/product/457/18824" target="_blank"
                     >取消封锁命令</a
                   ><i class="el-icon-edit-outline"></i> -->
@@ -401,10 +444,10 @@
               <el-form-item>
                 <el-button type="text" @click="addDomain2">新增Lable</el-button>
                 <p>
-                  {{$t('TKE.colony.yzmsjjw')}}
+                  {{ $t("TKE.colony.yzmsjjw") }}
                 </p>
                 <p>
-                  {{$t('TKE.colony.ktjw')}}
+                  {{ $t("TKE.colony.ktjw") }}
                 </p>
               </el-form-item>
             </el-form-item>
@@ -521,6 +564,7 @@ export default {
       params["ClusterIds.0"] = this.$route.query.clusterId;
       const res = await this.axios.post(TKE_COLONY_LIST, params);
       if (res.Response.Error === undefined) {
+        console.log(res.Response);
         this.basicNews = res.Response.Clusters[0];
         this.VpcId = this.basicNews.ClusterNetworkSettings.VpcId;
         this.DataList();
@@ -577,7 +621,7 @@ export default {
       this.axios.post(TKE_EXIST, params).then(res => {
         if (res.Response.Error === undefined) {
           this.leftList = res.Response.ExistedInstanceSet;
-          // console.log(res.Response.ExistedInstanceSet);
+          console.log(res.Response.ExistedInstanceSet);
         } else {
           this.leftList = [];
           let ErrTips = {
@@ -655,7 +699,7 @@ export default {
       this.axios.post(TKE_SSH, param).then(res => {
         if (res.Response.Error === undefined) {
           this.sshKey = res.Response.KeyPairSet;
-          // console.log(res.Response.KeyPairSet);
+          // console.log(res.Response);
           this.sshKeySel = this.sshKey[0].KeyName;
         } else {
           let ErrTips = {};
@@ -876,7 +920,8 @@ export default {
             this.$router.push({
               name: "colonyNodeManageNode",
               query: {
-                clusterId: this.$route.query.clusterId
+                clusterId: this.$route.query.clusterId,
+                ProjectId: this.$route.query.ProjectId
               }
             });
           } else {
