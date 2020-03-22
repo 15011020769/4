@@ -38,7 +38,7 @@
 
       <!-- 编辑器的容器 -->
       <div v-if="SubmissionValue === 'Inline'" class="content">
-        <div id="container" style="width: 100%; height: 500px;"></div>
+        <div id="container_editor" style="width: 100%; height: 500px;"></div>
       </div>
 
       <!-- 上传zip -->
@@ -124,6 +124,7 @@
           <el-button type="text" size="small" @click="newDialog">新建模板</el-button>
         </span>
       </div>
+
       <div class="test-info" v-if="isShowLogList">
         <div class="test-result">
           <h3>
@@ -243,6 +244,7 @@ import { codemirror } from 'vue-codemirror'
 import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
 require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
 import { defaultTemplate } from './defaultTemplate'
+// import * as cslite from '@/views/SCF/lib/c.js'
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -275,6 +277,7 @@ export default {
       fileBase64zip: '', //zip上传
       fileBase64clip: '',
       fileBase64clip1: '', //文件夹上传
+      address: '',      // 获取到的zip地址
       input2: '',
       Cosoptions: [],
       cosvalue: '', //cos
@@ -327,25 +330,16 @@ export default {
     }
   },
   created() {
-    this.GetDate();
-    this.GetListFunctionTestModels();
+
   },
   components: {
     codemirror
   },
   mounted() {
-    // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
-    //   rootNode: document.querySelector('#container'),
-    //   funcName: this.functionName,
-    //   FileTreeModel: {
-    //     isFile: true,
-    //     path: 'https://lambdagz-1253665819.cos.ap-guangzhou.myqcloud.com/1300560919/dasd/dasd_LATEST.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDqbBtfGe4eSSK8CExGjmC0e8Qcnswv6yj%26q-sign-time%3D1584677337%3B1584687397%26q-key-time%3D1584677337%3B1584687397%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dab20ce68cbb4108a6b76c9f5101773ea73a32d5c&response-content-type=application/octet-stream',
-    //     fileName: 'channel-1',
-    //     parentPath: ''
-    //   }
-    // });
 
-    
+    this.GetDate();      // 获取详情
+    this.GetListFunctionTestModels();   // 获取模板列表
+
   },
   methods: {
 
@@ -363,6 +357,7 @@ export default {
           this.implementInput = res.Response.Handler
           this.functionversion = res.Response.FunctionVersion
           this.ScienceValue = res.Response.Runtime
+          this._Clone('address')        // 获取地址
         } else {
           let ErrTips = {
             'InternalError': '內部錯誤',
@@ -387,8 +382,9 @@ export default {
       });
     },
 
-    //下载
-    _Clone() {
+    // 获取地址下载
+    _Clone(name) {
+      console.log(name)
       let param = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-04-16",
@@ -397,7 +393,13 @@ export default {
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
-          window.open(res.Response.Url)
+          if (name === 'download') {
+            window.open(res.Response.Url)
+          } else if (name === 'address') {
+            this.address = res.Response.Url
+            this.getCsLite()   // 渲染编辑器
+          }
+
         } else {
           let ErrTips = {
             'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
@@ -421,6 +423,35 @@ export default {
           });
         }
       });
+    },
+
+    // 渲染编辑器
+    getCsLite() {
+      console.log(this.address)
+      const cslsSDK = new CloudStudioLiteFilesServiceSDK();
+      cslsSDK.init({
+        rootNode: document.querySelector('#container_editor'),
+        modeType: ModeTypeEnum.ZIP,
+        i18nType: "zh-cn"
+      });
+      // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
+      cslsSDK.addListener({
+        onRead: () => {
+          return new Promise(res => {
+            fetch('https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
+              headers: { 'content-type': 'application/zip' },
+              method: 'GET'
+            })
+              .then(res => res.blob())
+              .then(blob => {
+                res({
+                  content: blob
+                })
+              })
+          })
+        }
+      })
+
     },
 
     //转base64
@@ -602,11 +633,16 @@ export default {
       this.axios.post(TESTMODELS_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
+          this.templateList = []
           this.templateList = this.defaultTemplate        // 把默认的模板赋值给模板列表 在通过下面的for循环 把自定义的模板push进来
           this.testvalue = this.templateList[0].name
-          this.modeloptions.forEach((item, i) => {
-            this.GetFunctionTestModel(item)
-          })
+          console.log(this.templateList)
+          console.log(this.modeloptions)
+          if (this.modeloptions.length !== 0) {
+            this.modeloptions.forEach((item, i) => {
+              this.GetFunctionTestModel(item)
+            })
+          }
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
