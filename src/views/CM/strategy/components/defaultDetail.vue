@@ -7,6 +7,7 @@
       :projectId="projectId"
       :productValue="ViewName"
       style="display:none;"
+      v-on:loading="Type_loading"
     />
 
     <el-card class="box-card">
@@ -57,10 +58,8 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%;display:flex;">
         <h3>告警触发条件</h3>
-        <a
-          @click="editGaoJing"
-          v-loading="gaoJingLoading"
-          class="gao-jing-loading"
+        <a v-loading="gaoJingLoading" class="gao-jing-loading">编辑</a>
+        <a @click="editGaoJing" v-if="!gaoJingLoading" class="gao-jing-loading"
           >编辑</a
         >
       </div>
@@ -151,7 +150,30 @@
               <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
             </template>
           </el-table-column>
-
+          <!-- BS -->
+          <el-table-column label="ID/名称" v-if="ViewName === 'BS'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.DiskId }}</p>
+              <p>{{ scope.row.DiskName }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="大小(GB)" v-if="ViewName === 'BS'">
+            <template slot-scope="scope">
+              <span>{{ scope.row.DiskSize }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="硬盘类型" v-if="ViewName === 'BS'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.DiskType | DiskType }}</p>
+              <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
+            </template>
+          </el-table-column>
+          <el-table-column label="关联云主机ID" v-if="ViewName === 'BS'">
+            <template slot-scope="scope">
+              <p>{{ scope.row.InstanceId }}</p>
+              <!-- <p>{{ scope.row. }}</p> -->
+            </template>
+          </el-table-column>
           <!-- VPN_GW -->
           <el-table-column label="ID/名称" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
@@ -310,23 +332,23 @@
             </template>
           </el-table-column>
           <!-- dcchannel -->
-          <el-table-column label="ID/名称" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="名称/ID" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ scope.row.DirectConnectTunnelId }}</p>
               <p>{{ scope.row.DirectConnectTunnelName }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="状态" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="物理专线" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               <p>{{ dcchannel_Status(scope.row.State) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="规格" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="私有网络" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="内网地址" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="关联专线网关" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
@@ -478,7 +500,33 @@
                         <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
                       </template>
                     </el-table-column>
-
+                    <!-- BS -->
+                    <el-table-column label="ID/名称" v-if="ViewName === 'BS'">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.DiskId }}</p>
+                        <p>{{ scope.row.DiskName }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="大小(GB)" v-if="ViewName === 'BS'">
+                      <template slot-scope="scope">
+                        <span>{{ scope.row.DiskSize }}</span>
+                      </template>
+                    </el-table-column>
+                    <el-table-column label="硬盘类型" v-if="ViewName === 'BS'">
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.DiskType | DiskType }}</p>
+                        <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
+                      </template>
+                    </el-table-column>
+                    <el-table-column
+                      label="关联云主机ID"
+                      v-if="ViewName === 'BS'"
+                    >
+                      <template slot-scope="scope">
+                        <p>{{ scope.row.InstanceId }}</p>
+                        <!-- <p>{{ scope.row. }}</p> -->
+                      </template>
+                    </el-table-column>
                     <!-- VPN_GW -->
                     <el-table-column
                       label="ID/名称"
@@ -907,15 +955,44 @@
       <p class="tip">
         填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。
       </p>
-      <div class="box-content" style="line-height: 30px;margin:20px 0;">
+      <div
+        class="box-content"
+        style="line-height: 30px;margin:20px 0;"
+        v-if="!basicNews.Callback"
+      >
         未配置
-        <el-tooltip content="Top center" placement="Top" effect="light">
-          <i
-            style="color:#888;cursor: pointer;"
-            class="el-icon-edit"
-            @click="callbackEdit"
-          ></i>
-        </el-tooltip>
+
+        <i
+          style="color:#888;cursor: pointer;"
+          class="el-icon-edit"
+          @click="callbackEdit"
+        ></i>
+      </div>
+      <div class="Callback-box-content" v-if="basicNews.Callback">
+        <span>{{ basicNews.Callback.CallbackUrl }}</span>
+        <span v-if="Verification">
+          {{ basicNews.Callback.ValidFlag == 0 ? "" : "验证超时" }}</span
+        >
+        <span v-if="!Verification">验证中</span>
+        <i
+          class="el-icon-refresh ml5"
+          v-if="Verification"
+          @click="CallBackRefresh"
+        ></i>
+        <i class="el-icon-edit ml5" @click="callbackEdit"></i>
+        <i class="el-icon-error ml5" @click="CallBackSave(2)"></i>
+        <div class="bg-box" style="width:40%;margin-top:16px;">
+          <p>
+            回调域名通过验证后生效，请于Response Body中返回以下code。
+            <el-tooltip
+              effect="light"
+              content="触发验证后推送请求三次，每次3s，累计9s未成功返回即验证超时。"
+              placement="top"
+              ><i class="el-icon-info"></i>
+            </el-tooltip>
+          </p>
+          <span> {{ basicNews.Callback.VerifyCode }}</span>
+        </div>
       </div>
     </el-card>
     <!-- 修改名称 -->
@@ -1421,7 +1498,12 @@
       <div class="edit-alarm-object">
         <el-radio-group v-model="editAlarmObjectRadio">
           <p><el-radio label="1">全部对象</el-radio></p>
-          <p><el-radio label="2">选择部分对象(已选0个)</el-radio></p>
+          <p>
+            <el-radio label="2"
+              >选择部分对象
+              <!-- (已选{{ multipleSelection.length }}个) -->
+            </el-radio>
+          </p>
           <p><el-radio label="3">选择实例组</el-radio></p>
         </el-radio-group>
         <div class="table" v-if="editAlarmObjectRadio == 2">
@@ -1431,6 +1513,8 @@
             v-on:searchParam="searchParams"
             v-on:multipleSelection="selectDatas"
             :isShowRight="isShowRight"
+            v-loading="loading"
+            v-on:CAM_loading="CAM_loading"
           ></CamTransferCpt>
         </div>
         <div class="table" v-if="editAlarmObjectRadio == 3">
@@ -1465,6 +1549,8 @@
             v-on:searchParam="searchParams"
             v-on:multipleSelection="selectDatas"
             :isShowRight="isShowRight"
+            v-loading="loading"
+            v-on:CAM_loading="CAM_loading"
           ></CamTransferCpt>
         </div>
       </div>
@@ -1557,7 +1643,7 @@
             class="input-http"
             @input="HttpHistruyInput"
           ></el-input>
-          <ul v-if="httpShow">
+          <ul v-if="httpShow" @mouseleave="leave()">
             <li
               v-for="(item, index) in httpOption"
               :key="index"
@@ -1570,6 +1656,7 @@
                     item.Url.length
                   )
                 }}
+                <span>{{ item.ValidFlag == 0 ? "" : "验证超时" }}</span>
               </p>
             </li>
             <li v-if="httpOption.length === 0">
@@ -1594,9 +1681,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="callbackInterface = false"
-          >保 存</el-button
-        >
+        <el-button type="primary" @click="CallBackSave(1)">保 存</el-button>
         <el-button @click="callbackInterface = false">取 消</el-button>
       </div>
     </el-dialog>
@@ -1655,6 +1740,7 @@ import {
   TKE_EXIST_NODES,
   CM_GROUPING_NEWLY_BUILD,
   VPN_LIST,
+  DISK_LIST,
   VPNTD_LIST,
   NAT_LIST,
   DCG_LIST,
@@ -1668,7 +1754,9 @@ import {
   CM_GROUPING_LIST,
   CM_GROUPING_ALARM_START,
   CM_GROUPING_UNBINDING,
-  CM_CALLBACK_HISTORY
+  CM_CALLBACK_HISTORY,
+  CM_CALLBACK_SAVE,
+  CM_CALLBACK_Verify
 } from "@/constants";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
@@ -1951,6 +2039,8 @@ export default {
       unBindingInstance: false,
       Offset: 0,
       editReceiveObjectVisuble: false,
+      Verification: true,
+      loading: true,
       cam: {} // cam组件的值
     };
   },
@@ -1966,11 +2056,9 @@ export default {
   },
   methods: {
     passData(data) {
-      console.log("data", data);
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
-      console.log("typeOpt", this.typeOpt);
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -1987,10 +2075,16 @@ export default {
     searchParams(data) {
       this.searchParam = data;
     },
+    Type_loading(val) {
+      this.loading = val;
+    },
+    CAM_loading(val) {
+      this.loading = val;
+    },
     //选择右侧表格数据
     selectDatas(val) {
+      console.log(val);
       this.multipleSelection = val;
-      console.log(this.multipleSelection);
     },
     async DetailsInit() {
       let params = {
@@ -2001,6 +2095,7 @@ export default {
       await this.axios.post(CM_ALARM_STRATEGY_DETAILS, params).then(res => {
         if (res.Response.Error === undefined) {
           this.basicNews = res.Response;
+          console.log(this.basicNews);
           this.ViewName = this.basicNews.ViewName;
           this.GroupName = this.basicNews.GroupName;
           this.projectId = this.basicNews.ProjectId;
@@ -2214,6 +2309,7 @@ export default {
     },
     // 编辑告警对象
     editObject() {
+      this.multipleSelection = [];
       this.dialogEditObject = true;
     },
     AlarmObjectNews() {
@@ -2232,8 +2328,10 @@ export default {
       this.axios.post(CM_GROUPING_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.InstanceGroupOpt = res.Response.InstanceGroupList;
-          this.InstanceGroup =
-            res.Response.InstanceGroupList[0].InstanceGroupId;
+          if (res.Response.Total > 0) {
+            this.InstanceGroup =
+              res.Response.InstanceGroupList[0].InstanceGroupId;
+          }
         } else {
           let ErrTips = {
             FailedOperation: "操作失败。",
@@ -2276,6 +2374,14 @@ export default {
             };
             param["Dimensions." + i + ".EventDimensions"] = {
               uuid: this.multipleSelection[i].Uuid
+            };
+          } else if (this.ViewName === "BS") {
+            param["InstanceList." + i + ".Dimensions"] = {
+              diskid: this.multipleSelection[i].DiskId
+            };
+          } else if (this.ViewName === "vpn_tunnel") {
+            param["Dimensions." + i + ".Dimensions"] = {
+              uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
             };
           } else if (this.ViewName === "VPN_GW") {
             param["Dimensions." + i + ".Dimensions"] = {
@@ -2822,6 +2928,55 @@ export default {
                     InvalidParameter: "参数错误",
                     ResourceNotFound: "资源不存在",
                     ResourceUnavailable: "资源不可用"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.ViewName === "BS") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              params["Filters.0.Name"] = "disk-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).diskid;
+              }
+              this.axios.post(DISK_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.alarmObjectData = res.Response.DiskSet;
+                  for (let i in _enterList) {
+                    for (let j in this.alarmObjectData) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).diskid ===
+                        this.alarmObjectData[j].DiskId
+                      ) {
+                        this.alarmObjectData[j]["UniqueId"] =
+                          _enterList[i].UniqueId;
+                        if (_enterList[i].IsShielded == 0) {
+                          this.alarmObjectData[j]["IsShielded"] = true;
+                        } else {
+                          this.alarmObjectData[j]["IsShielded"] = false;
+                        }
+                      }
+                    }
+                  }
+                  this.alarmObjecLoad = false;
+                  this.alarmInstanceLond = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidVpnGatewayId.Malformed":
+                      "无效的VPN网关,VPN实例ID不合法。",
+                    "InvalidVpnGatewayId.NotFound":
+                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3403,6 +3558,13 @@ export default {
         };
         param["Dimensions.0.EventDimensions"] = {
           uuid: row.Uuid
+        };
+      } else if (this.ViewName === "BS") {
+        param["Dimensions.0.Dimensions"] = {
+          diskid: row.DiskId
+        };
+        param["Dimensions.0.EventDimensions"] = {
+          VpnGatewayId: row.VpnGatewayId
         };
       } else if (this.ViewName === "VPN_GW") {
         param["Dimensions.0.Dimensions"] = {
@@ -4039,7 +4201,6 @@ export default {
       this.axios.post(CM_CALLBACK, param).then(res => {
         if (res.Response.Error === undefined) {
           this.httpCodes = res.Response.VerifyCode;
-          this.httpCode = this.httpCodes;
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -4051,10 +4212,24 @@ export default {
           });
         }
       });
+      if (this.basicNews.Callback) {
+        this.httpVal = this.basicNews.Callback.CallbackUrl.substring(
+          0,
+          this.basicNews.Callback.CallbackUrl.lastIndexOf(":")
+        );
+        this.httpInput = this.basicNews.Callback.CallbackUrl.substring(
+          this.basicNews.Callback.CallbackUrl.lastIndexOf("/") + 1,
+          this.basicNews.Callback.CallbackUrl.length
+        );
+        this.httpCode = this.basicNews.Callback.VerifyCode;
+      } else {
+        this.httpCode = this.httpCodes;
+      }
     },
     // 回调接口
     HttpHistroy() {
       this.httpOption = [];
+      this.httpOption1 = [];
       let param = {
         Version: "2018-07-24",
         Module: "monitor"
@@ -4062,17 +4237,17 @@ export default {
       this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
         if (res.Response.Error === undefined) {
           var list = res.Response.List;
-          if (this.httpInput == "") {
-            for (let i in list) {
-              if (
-                this.httpVal ===
-                list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
-              ) {
-                this.httpOption.push(list[i]);
-                this.httpOption1.push(list[i]);
-              }
+
+          for (let i in list) {
+            if (
+              this.httpVal ===
+              list[i].Url.substring(0, list[i].Url.lastIndexOf(":"))
+            ) {
+              this.httpOption.push(list[i]);
+              this.httpOption1.push(list[i]);
             }
           }
+
           this.httpShow = true;
         } else {
           let ErrTips = {};
@@ -4089,7 +4264,12 @@ export default {
     HttpHistroyBlur() {
       // this.httpShow = false;
     },
+    leave() {
+      this.httpShow = false;
+    },
     HttpHistruyInput() {
+      this.httpShow = true;
+      this.httpOption = [];
       this.httpOption = this.httpOption1;
       var _arr = [];
       for (let i in this.httpOption) {
@@ -4099,6 +4279,35 @@ export default {
         }
       }
       this.httpOption = _arr;
+      if (this.httpVal == "http") {
+        for (let i in this.httpOption2) {
+          if (
+            this.httpOption2[i].Url.substring(
+              this.httpOption2[i].Url.lastIndexOf("/") + 1,
+              this.httpOption2[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption2[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      } else {
+        for (let i in this.httpOption3) {
+          if (
+            this.httpOption3[i].Url.substring(
+              this.httpOption3[i].Url.lastIndexOf("/") + 1,
+              this.httpOption3[i].Url.length
+            ) === this.httpInput
+          ) {
+            this.HttpSelect(this.httpOption3[i]);
+            return false;
+          } else {
+            this.httpCode = this.httpCodes;
+          }
+        }
+      }
     },
     HttpInit() {
       let param = {
@@ -4134,7 +4343,7 @@ export default {
       });
     },
     HttpTypeChange() {
-      console.log(this.httpVal);
+      this.httpShow = false;
       if (this.httpVal == "http") {
         for (let i in this.httpOption2) {
           if (
@@ -4143,11 +4352,10 @@ export default {
               this.httpOption2[i].Url.length
             ) === this.httpInput
           ) {
-            console.log(1);
             this.HttpSelect(this.httpOption2[i]);
+            return false;
           } else {
-            console.log(11);
-            this.callbackEdit();
+            this.httpCode = this.httpCodes;
           }
         }
       } else {
@@ -4159,10 +4367,9 @@ export default {
             ) === this.httpInput
           ) {
             this.HttpSelect(this.httpOption3[i]);
-            console.log(2);
+            return false;
           } else {
-            console.log(22);
-            this.callbackEdit();
+            this.httpCode = this.httpCodes;
           }
         }
       }
@@ -4175,6 +4382,65 @@ export default {
       );
       this.httpCode = item.VerifyCode;
       this.httpShow = false;
+    },
+    // 回调接口 保存
+    CallBackSave(val) {
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+      if (val == 1) {
+        param["UserAction"] = "bind";
+        param["Url"] = this.httpVal + "://" + this.httpInput;
+        param["VerifyCode"] = this.httpCode;
+      } else {
+        param["UserAction"] = "unbind";
+      }
+      this.axios.post(CM_CALLBACK_SAVE, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.callbackInterface = false;
+          this.DetailsInit();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 刷新
+    CallBackRefresh() {
+      this.Verification = false;
+      let param = {
+        Version: "2018-07-24",
+        Module: "monitor",
+        GroupId: this.$route.query.groupId
+      };
+
+      this.axios.post(CM_CALLBACK_Verify, param).then(res => {
+        if (res.Response.Error === undefined) {
+          if (res.Response.VerifyStatus === "fail") {
+            this.basicNews.Callback.ValidFlag = 2;
+          } else {
+            this.basicNews.Callback.ValidFlag = 0;
+          }
+          this.Verification = true;
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     // 状态
     InstanceState(val) {
@@ -4537,6 +4803,10 @@ a:hover {
           &:hover {
             background: #f2f2f2;
           }
+          span {
+            color: #999;
+            font-size: 12px;
+          }
         }
       }
     }
@@ -4546,20 +4816,20 @@ a:hover {
       line-height: 22px;
       margin-top: 10px;
     }
-    .bg-box {
-      margin-top: 10px;
-      background-color: #fff4e3;
-      color: #c07400;
-      border: 1px solid #ffd18b;
-      padding: 10px 20px;
-      font-size: 12px;
-      line-height: 28px;
-      span {
-        margin: 10px 0;
-        font-size: 16px;
-        font-weight: 700;
-      }
-    }
+  }
+}
+.bg-box {
+  margin-top: 10px;
+  background-color: #fff4e3;
+  color: #c07400;
+  border: 1px solid #ffd18b;
+  padding: 10px 20px;
+  font-size: 12px;
+  line-height: 28px;
+  span {
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: 700;
   }
 }
 .trigger-condition {
@@ -4818,6 +5088,22 @@ input {
     border: 1px solid #97c7ff;
     background: #e5f0ff;
     margin-bottom: 10px;
+  }
+}
+.Callback-box-content {
+  margin-top: 20px;
+  span {
+    &:nth-of-type(2) {
+      color: #ff9d00;
+      margin-left: 10px;
+    }
+  }
+  i {
+    color: #888;
+    cursor: pointer;
+    margin: 0px 4px;
+    font-size: 14px;
+    font-weight: 600;
   }
 }
 </style>

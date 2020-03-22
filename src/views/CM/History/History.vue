@@ -5,12 +5,12 @@
       <el-tabs v-model="activeName">
         <el-tab-pane label="基础告警" name="first">
           <div class="history-main">
-            <div class="explain" style="margin-bottom:20px;">
+            <!-- <div class="explain" style="margin-bottom:20px;">
               <p>
                 当月短信配额已用 0 条，剩余 1000 条可用。
                 <a @click="buyMessgae">购买短信</a>
               </p>
-            </div>
+            </div> -->
             <div class="box">
               <div class="table-top">
                 <div style="flex:1;">

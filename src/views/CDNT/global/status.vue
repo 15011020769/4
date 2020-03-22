@@ -45,31 +45,31 @@
           <el-dropdown-item>
             <el-row type="flex" :gutter="20">
               <span class="continent">大洋洲</span>
-              <el-checkbox label="aus|澳大利亚" v-model="regions">澳大利亚</el-checkbox>
+              <el-checkbox label="aus|澳大利亞" v-model="regions">澳大利亞</el-checkbox>
             </el-row>
           </el-dropdown-item>
           <el-dropdown-item>
             <el-row type="flex" :gutter="20">
               <span class="continent">北美洲</span>
-              <el-checkbox label="usa|美国" v-model="regions">美国</el-checkbox>
+              <el-checkbox label="usa|美國" v-model="regions">美國</el-checkbox>
               <el-checkbox label="can|加拿大" v-model="regions">加拿大</el-checkbox>
             </el-row>
           </el-dropdown-item>
           <el-dropdown-item>
             <el-row type="flex" :gutter="20">
-              <span class="continent">欧洲</span>
-              <el-checkbox label="deu|德国" v-model="regions">德国</el-checkbox>
-              <el-checkbox label="fra|法国" v-model="regions">法国</el-checkbox>
-              <el-checkbox label="gbr|英国" v-model="regions">英国</el-checkbox>
+              <span class="continent">歐洲</span>
+              <el-checkbox label="deu|德國" v-model="regions">德國</el-checkbox>
+              <el-checkbox label="fra|法國" v-model="regions">法國</el-checkbox>
+              <el-checkbox label="gbr|英國" v-model="regions">英國</el-checkbox>
             </el-row>
           </el-dropdown-item>
           <el-dropdown-item>
             <el-row type="flex" :gutter="20">
-              <span class="continent">亚洲</span>
+              <span class="continent">亞洲</span>
               <el-checkbox label="ind|印度" v-model="regions">印度</el-checkbox>
               <el-checkbox label="jpn|日本" v-model="regions">日本</el-checkbox>
-              <el-checkbox label="kor|韩国" v-model="regions">韩国</el-checkbox>
-              <el-checkbox label="hkg|中国香港" v-model="regions">中国香港</el-checkbox>
+              <el-checkbox label="kor|韓國" v-model="regions">韓國</el-checkbox>
+              <el-checkbox label="hkg|中國香港" v-model="regions">中國香港</el-checkbox>
             </el-row>
           </el-dropdown-item>
           <el-dropdown-item divided>
@@ -82,15 +82,15 @@
       </el-dropdown>
     </el-row>
     <el-row type="flex" justify="space-between" class="chart-wrap">
-      <h3>时延(ms)</h3>
-      <i class="el-icon-download icon" @click="_export('时延', 'ms', 'delayTime')" />
+      <h3>時延(ms)</h3>
+      <i class="el-icon-download icon" @click="_export('時延', 'ms', 'delayTime')" />
     </el-row>
-    <div ref="delay" class="chart">暂无数据</div>
+    <div ref="delay" class="chart">暫無數據</div>
     <el-row type="flex" justify="space-between" class="chart-wrap">
       <h3>可用性(%)</h3>
       <i class="el-icon-download icon" @click="_export('可用性', '%', 'succRate')" />
     </el-row>
-    <div ref="usability" class="chart">暂无数据</div>
+    <div ref="usability" class="chart">暫無數據</div>
   </el-card>
 </template>
 <script>
@@ -194,12 +194,12 @@ export default {
       }
       fileName += '_delay_time.xlsx'
       const data = [
-        ['类型', type],
-        ['单位', unit],
-        ['开始时间', start],
-        ['结束时间', end],
+        ['類型', type],
+        ['單位', unit],
+        ['開始時間', start],
+        ['結束時間', end],
         [],
-        ['时间', ...regionNames]
+        ['時間', ...regionNames]
       ]
       times.forEach((time, i) => {
         data.push([time, ...regionCodes.map(code => regionCodeData[code][key][i])])

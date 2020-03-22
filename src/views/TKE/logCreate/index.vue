@@ -324,10 +324,14 @@
             <el-button size="small" v-else :disabled="show1" @click="logCreat" type="primary">{{$t('TKE.overview.ljcj')}}</el-button>
             <el-button size="small" @click="$router.go(-1)">取消</el-button>
           </p>
-          <p v-show="show1">
+          <!-- 是否显示状态检查 -->
+          <p v-show="show1" class="btn">
             {{$t('TKE.overview.wfcjgz')}}
+
             <el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sxrzzt')" placement="bottom-start">
-              <i class="el-icon-refresh"></i>
+              <el-button   circle :loading="show2">
+               <i  v-show="!show2" style="font-size:16px" class="el-icon-refresh" @click="checkCluster"></i>
+              </el-button>
             </el-tooltip>
           </p>
           <p></p>
@@ -369,7 +373,8 @@
         filterMethod(query, item) {
           return item.pinyin.indexOf(query) > -1;
         },
-        show1: false,
+        show1: false,//检查状态是否可以新建
+        show2:false,//控制是否显示刷新按钮
         fontColor: false,
         rules: {
           name: [{
@@ -419,13 +424,13 @@
           flag: true,
           activeName: "Deployment",
           workload: '',
-          check0:[],
+          check0:[],//选中的第一项存放的值
           check1:[],
           check2:[],
           check3:[],
           check4:[],
           checkObj:{
-            check1:{},
+            check1:{},//选中第一项预备往后台发的值
             check2:{},
             check3:{},
             check4:{},
@@ -590,8 +595,7 @@
             if (item.radio == '2') {
               //请求接口，重新获得workload数据
               this.workload1=[];
-
-                this.workLoadTab(item.activeName, index)
+              this.workLoadTab(item.activeName, index)
             }
             //新建禁用判断
             if (item.radio == '1') {
@@ -1354,6 +1358,7 @@
       },
       //监测是否可以创建日志采集
       checkCluster() {
+        this.show2=true;
         var params = {
           ClusterName: this.$route.query.clusterId.split("(")[0],
           Method: "GET",
@@ -1365,6 +1370,7 @@
           if (res.Response.Error === undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
             this.show1 = data.status.phase == "running" ? false : true;
+            this.show2=false;
           } else {}
         });
       },
@@ -1751,7 +1757,6 @@
       border: solid 1px #f6b5b5;
       padding: 20px 30px;
       background: #fcecec;
-      flex: 1;
       color: #b43537;
     }
 
@@ -1787,6 +1792,17 @@
     ::v-deep .el-tabs__content {
       overflow: auto !important;
       height: 200px;
+    }
+  }
+  .btn{
+
+    ::v-deep .el-button{
+      border:none;
+      background: #fcecec;
+      cursor: pointer;
+    } 
+    ::v-deep .el-button:hover{
+      color:#b43537;
     }
   }
 

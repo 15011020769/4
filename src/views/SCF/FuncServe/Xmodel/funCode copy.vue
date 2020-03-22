@@ -36,12 +36,11 @@
         </div>
       </div>
 
-      <!-- 编辑器的容器 -->
       <div v-if="SubmissionValue === 'Inline'" class="content">
+        <!-- 编辑器的容器 -->
         <div id="container" style="width: 100%; height: 500px;"></div>
       </div>
 
-      <!-- 上传zip -->
       <div v-if="SubmissionValue === 'ZipFile'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">函数代码</p>
@@ -62,7 +61,6 @@
         <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
       </div>
 
-      <!-- 上传文件夹 -->
       <div v-if="SubmissionValue === 'TempCos'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">函数代码</p>
@@ -83,7 +81,6 @@
         <p>请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M</p>
       </div>
 
-      <!-- cos上传 -->
       <div v-if="SubmissionValue === 'Cos'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">COS Bucket</p>
@@ -105,24 +102,19 @@
         </div>
 
       </div>
-
       <div class="functest">
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
         <el-button size="small" @click="_testModal">测试</el-button>
         <span class="testmb">测试当前模板</span>
         <el-select v-model="testvalue" placeholder="请选择">
           <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
-            <span>{{item}}</span>
-            <span style="float: right">
-              <i class="el-icon-edit" @click="_editModal(item)" />
-              &nbsp;
-              <i class="el-icon-close" @click="_deleteModal(item)" />
-            </span>
+            <span>item</span>
+            <span style="float: right"><i class="el-icon-edit" @click="_editModal(item)" /><i class="el-icon-close" @click="_deleteModal(item)" /></span>
           </el-option>
 
         </el-select>
         <span class="testmb">
-          <el-button type="text" size="small" @click="newDialog">新建模板</el-button>
+          <el-button type="text" size="small" @click="addModal = true">新建模板</el-button>
         </span>
       </div>
       <div class="test-info" v-if="isShowLogList">
@@ -145,8 +137,6 @@
         </div>
       </div>
     </div>
-
-    <!-- 删除模板 dialog -->
     <el-dialog title="提示" :visible.sync="deleteModal" width="35%">
       <p>确定删除{{modalName}}吗?</p>
       <span slot="footer" class="dialog-footer">
@@ -154,50 +144,30 @@
         <el-button @click="deleteModal = false">取 消</el-button>
       </span>
     </el-dialog>
-
-    <!-- 编辑模板 dialog -->
-    <el-dialog class="edit-template" title="更换测试模板" :visible.sync="editModal" width="35%">
-      <span>
-        测试事件模板
-        <el-tooltip placement="top" effect="light">
-          <div slot="content">
-            模板会在测试时作为event参数传递给函数，模板列表
-            <br />
-            中包含了对各触发器事件的模拟数据结构
-          </div>
-          <i class="el-icon-warning"></i>
+    <el-dialog title="更换测试模板" :visible.sync="editModal" width="35%">
+      <span>测试事件模板
+        <el-tooltip effect="light" content="模板会在测试时作为event参数传递给函数，模板列表中包含了对各触发器事件的模拟数据结构" placement="right">
+          <i class="el-icon-info"></i>
         </el-tooltip>
-      </span>
-      <span> {{modalName}}</span>
-      <div class="codemirror-div">
-        <codemirror ref="mycode" v-model="templateDetail.TestModelValue" :options="cmOptions" class="code">
-        </codemirror>
-      </div>
+      </span><span> {{modalName}}</span>
+      <pre class="rich-text"> {{modalName}}</pre>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editTemplate">确认</el-button>
+        <el-button type="primary" @click="_deleteTestModal">确认</el-button>
         <el-button @click="editModal = false">取 消</el-button>
       </span>
     </el-dialog>
-
-    <!-- 新建模板 dialog -->
-    <el-dialog class="new-template" title="配置测试模板" :visible.sync="addModal" width="50%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" size="small">
+    <el-dialog title="配置测试模板" :visible.sync="addModal" width="50%">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" size="small" style="width:800px">
         <el-form-item label="测试事件模板" prop="name">
           <el-input type="text" placeholder="请输入模板名称" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
-          <p class="p-1">1. 最多45个字符，最少2个字符</p>
-          <p class="p-1">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+          <p>1. 最多45个字符，最少2个字符</p>
+          <p>2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
         </el-form-item>
         <el-form-item label="测试事件模板">
-          <el-select v-model="testvalue" placeholder="请选择" @change="GetFunctionTestModel">
+          <el-select v-model="testvalue" placeholder="请选择">
             <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
             </el-option>
           </el-select>
-        </el-form-item>
-        <el-form-item>
-          <div class="codemirror-div">
-            <codemirror ref="mycode" v-model="templateDetail.TestModelValue" :options="cmOptions" class="code">
-            </codemirror>
-          </div>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -209,7 +179,9 @@
 </template>
 
 <script>
-import JsZip from 'jszip'
+import
+JsZip
+  from 'jszip'
 import {
   SCF_DETAILS,
   LIST_VERSION,
@@ -219,15 +191,11 @@ import {
   DELETE_MODAL,
   TEST_MODAL,
   INVOKE,
-  UPD_FUN_CODE,
-  UPDATE_TEST_MODEL
+  UPD_FUN_CODE
 } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
-
-import { codemirror } from 'vue-codemirror'
-import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
-require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
-
+import {
+  ErrorTips
+} from "@/components/ErrorTips";
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -265,7 +233,6 @@ export default {
       cosvalue: '', //cos
       input3: '', //cos路径
       modeloptions: [], //模板列表
-      templateDetail: '',   // 获取模板详情
       testvalue: '',
       deleteModal: false,//是否启动删除模板modal
       modalName: '',//模板名称
@@ -294,24 +261,12 @@ export default {
             required: true
           }
         ]
-      },
-      cmOptions: {
-        mode: { name: 'javascript', json: true },
-        theme: "default",
-        readOnly: false,
-        tabSize: 2,
-        lineNumbers: true,    // 显示行号
-        lineWrapping: true, //代码折叠
-        matchBrackets: true,  //括号匹配
       }
     }
   },
   created() {
     this.GetDate();
     this.GetListFunctionTestModels();
-  },
-  components: {
-    codemirror
   },
   mounted() {
     // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
@@ -482,32 +437,18 @@ export default {
 
 
     },
-
-    // 点击新建模板弹出框
-    newDialog(){
-      this.addModal = true;
-      this.testvalue = this.modeloptions[0]
-      this.GetFunctionTestModel(this.testvalue);
-    },
-
-    // 新建测试模板 确定事件
     _newmodel() {
       let param = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-04-16",
         FunctionName: this.functionName,
-        TestModelName: this.ruleForm.name,
-        TestModelValue: this.templateDetail.TestModelValue,
+        TestModelName: 'ceshi',
+        TestModelValue: '123456789',
       };
       this.axios.post(TEST_MODEL, param).then(res => {
+        console.log(res)
         if (res.Response.Error === undefined) {
-          this.addModal = false
-          this.$message({
-            message: "新建测试模板成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
+
         } else {
           let ErrTips = {
             'InternalError': '内部错误',
@@ -533,7 +474,7 @@ export default {
       });
     },
 
-    // 保存
+    //保存
     _Preservation() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -542,9 +483,9 @@ export default {
         Handler: this.implementInput,
       };
 
-      if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
+      if(this.SubmissionValue === 'ZipFile'){      // 上传的是zip
         param.ZipFile = this.fileBase64zip
-      } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
+      }else if(this.SubmissionValue === 'TempCos'){      // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
       }
 
@@ -567,7 +508,7 @@ export default {
       });
     },
 
-    // 获取函数测试模板 --> 列表
+    //获取函数测试模板列表
     GetListFunctionTestModels() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -580,8 +521,6 @@ export default {
       this.axios.post(TESTMODELS_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
-          this.testvalue = this.modeloptions[0]
-          this.GetFunctionTestModel(this.testvalue)
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -589,39 +528,6 @@ export default {
             "ResourceNotFound.Function": "函数不存在。",
             "ResourceNotFound.FunctionName": "函数不存在。",
             "UnauthorizedOperation.CAM": "CAM鉴权失败。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    // 获取函数测试模板 --> 详情
-    GetFunctionTestModel(name) {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'DeleteFunctionTestModel',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue,
-        TestModelName: name
-      };
-
-      this.axios.post(TEST_MODAL, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.templateDetail = res.Response
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
-            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -644,11 +550,11 @@ export default {
     _editModal(name) {
       this.editModal = true;
       this.modalName = name;
-      this.GetFunctionTestModel(name);
+      this.GetFunctionTestModel();
     },
 
     //删除测试模板
-    _deleteTestModal() {
+    async _deleteTestModal() {
       let param = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-04-16",
@@ -660,7 +566,7 @@ export default {
 
       this.axios.post(DELETE_MODAL, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.deleteModal = false;
+          this.deleteModal = true;
           this.modalName = '';
           this.GetListFunctionTestModels();
           this.$message({
@@ -690,6 +596,38 @@ export default {
       });
     },
 
+    //获取函数测试模板
+    GetFunctionTestModel() {
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2018-04-16",
+        Action: 'DeleteFunctionTestModel',
+        FunctionName: this.functionName,
+        Namespace: this.$route.query.SpaceValue,
+        TestModelName: this.modalName
+      };
+
+      this.axios.post(TEST_MODAL, param).then(res => {
+        if (res.Response.Error === undefined) {
+        } else {
+          let ErrTips = {
+            "InternalError": "内部错误",
+            "InvalidParameterValue": "参数取值错误",
+            "ResourceNotFound.FunctionName": "函数不存在。",
+            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
     //测试模板
     _testModal() {
       let param = {
@@ -698,7 +636,7 @@ export default {
         FunctionName: this.functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        ClientContext: this.templateDetail.TestModelValue,
+        ClientContext: JSON.stringify({ key1: "test value 1", key2: "test value 2" }),
         Qualifier: this.functionversion,
         Namespace: this.$route.query.SpaceValue
       }
@@ -733,40 +671,8 @@ export default {
     },
 
     // 提交方法 切换
-    changSubmit() {
+    changSubmit(){
 
-    },
-
-    // 编辑更新模板
-    editTemplate() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'DeleteFunctionTestModel',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue,
-        TestModelName: this.modalName,
-        TestModelValue: this.templateDetail.TestModelValue
-      };
-
-      this.axios.post(UPDATE_TEST_MODEL, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.editModal = false
-          this.$message({
-            message: "更换测试模板成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          this.$message({
-            message: "更换测试模板失败",
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
     }
   }
 }
@@ -775,8 +681,8 @@ export default {
 <style lang="scss" scoped>
 .CodeContent {
   background-color: #fff;
+  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   padding: 20px;
-  margin-bottom: 20px;
 
   ::v-deep .el-select {
     height: 32px !important;
@@ -895,27 +801,6 @@ export default {
         color: rgb(48, 127, 220);
       }
     }
-  }
-}
-.edit-template {
-  .el-icon-warning {
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .codemirror-div {
-    margin-top: 10px;
-    border: 1px solid #e7e7e7;
-  }
-}
-.new-template{
-  .p-1{
-    font-size: 12px;
-    line-height: 20px;
-  }
-  .codemirror-div {
-    margin-top: 10px;
-    border: 1px solid #e7e7e7;
-    /* width: 100%; */
   }
 }
 </style>

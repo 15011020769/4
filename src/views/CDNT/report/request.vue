@@ -27,7 +27,7 @@ export default {
       seriesCurrent: [],
       seriesLastCycle: [],
       xAxisCurrent: [],
-      legendText: ['当前请求数', '上一周期请求数'],
+      legendText: ['當前請求數', '上一周請求數'],
       color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
@@ -65,14 +65,15 @@ export default {
         fileName = `${start}-${end}_request_trend.xlsx`
       }
       let data = [
-        ['统计项目', projectName || '全部项目'],
-        ['统计域名', domainName || '全部域名'],
-        ['报表类型', type],
-        ['开始时间', times[0]],
-        ['结束时间', times[1]],
+        ['統計項目', projectName || '全部項目'],
+        ['統計域名', domainName || '全部域名'],
+        ['報表類型', type],
+        ['開始時間', times[0]],
+        ['結束時間', times[1]],
         [],
-        ['时间', '当前请求数（次）', '上一次请求数（次）']
+        ['時間', '當前請求數（次）', '上一次請求數（次）']
       ]
+      
       this.xAxisCurrent.map((item, index) => {
         data.push([
           item,

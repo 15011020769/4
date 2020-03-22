@@ -1,5 +1,6 @@
 <template>
   <div>
+    <el-button type="primary" @click="$router.push('/global')">to global</el-button>
     <div class="container">
       <el-card class="card">
         <el-form>
@@ -26,11 +27,7 @@
                 size="small"
                 :placeholder="$t('CDNT.report.3')"
               >
-<<<<<<< HEAD
                 <el-option value="">{{$t('CDNT.report.3')}}</el-option>
-=======
-                <el-option value="" label="">全部域名</el-option>
->>>>>>> 59bb0fec8aa343209237242c922e0dd93f8ae440
                 <el-option
                   v-for="p in domainList"
                   :key="p.DomainName"

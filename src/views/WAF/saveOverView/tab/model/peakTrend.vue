@@ -21,7 +21,7 @@
 </template>
 <script>
 import moment from "moment";
-import { DESCRIBE_PEAK_POINTS } from '@/constants'
+import { DESCRIBE_PEAK_POINTS, DESCRIBE_PEAK_VALUE } from '@/constants'
 import ELine from "../../components/line"
 export default {
   props: {
@@ -42,20 +42,21 @@ export default {
       legendText1: ['QPS', this.t('上行带宽', 'WAF.sxdk'), this.t('下行带宽', 'WAF.xxdk')], // 业务攻击趋势
       color: ["#006eff", "#29CC85", "#FF9D00"],
       loading: true,
-      tooltip: {
-        trigger: 'axis',
-        formatter(params) {
-          let relVal = params[0].name;
-          params.forEach(v => {
-            if(v.seriesName == "QPS") {
-              relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value;
-            } else {
-              relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "bps";
-            }
-          })  
-          return relVal;  
-        }
-      },
+      tootip: {},
+      // tooltip: {
+      //   trigger: 'axis',
+      //   formatter(params) {
+      //     let relVal = params[0].name;
+      //     params.forEach(v => {
+      //       if(v.seriesName == "QPS") {
+      //         relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value;
+      //       } else {
+      //         relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + "bps";
+      //       }
+      //     })  
+      //     return relVal;  
+      //   }
+      // },
     }
   },
   watch: {
@@ -85,6 +86,46 @@ export default {
     this.getPeakPoints()
   },
   methods: {
+    tranBps (upBps, downBps) {
+        upBps = upBps * 8, downBps = downBps * 8;
+        let kbps = 1024, mbps = 1024 * kbps, gbps = 1024 * mbps, tbps = 1024 * gbps;
+        if (upBps > kbps * 10 && upBps < mbps * 10 && downBps > kbps) {
+            return {
+                upPs: Number((upBps / kbps).toFixed(3)),
+                downPs: Number((downBps / kbps).toFixed(3)),
+                unit: "Kbps",
+                number: kbps
+            };
+        } else if (upBps >= mbps * 10 && upBps < gbps * 10 && downBps >= mbps * 10) {
+            return {
+                upPs: Number((upBps / mbps).toFixed(3)),
+                downPs: Number((downBps / mbps).toFixed(3)),
+                unit: "Mbps",
+                number: mbps
+            };
+        } else if (upBps >= gbps * 10 && upBps < tbps * 10 && downBps >= gbps * 10) {
+            return {
+                upPs: Number((upBps / gbps).toFixed(3)),
+                downPs: Number((downBps / gbps).toFixed(3)),
+                unit: "Gbps",
+                number: gbps
+            };
+        } else if (upBps >= tbps && downBps >= tbps) {
+            return {
+                upPs: Number((upBps / tbps).toFixed(3)),
+                downPs: Number((downBps / tbps).toFixed(3)),
+                unit: "Tbps",
+                number: tbps
+            };
+        } else {
+            return {
+                upPs: upBps,
+                downPs: downBps,
+                unit: "bps",
+                number: 1
+            };
+        }
+    },
     // 获取业务攻击趋势
     getPeakPoints() {
       this.loading = true
@@ -100,18 +141,37 @@ export default {
       if (this.domain) {
         params["Domain"] = this.domain
       }
+      let downQps = []
+      const upQps = []
       this.axios.post(DESCRIBE_PEAK_POINTS, params).then(resp => {
         this.generalRespHandler(resp, ({Points}) => {
           Points.map((v) => {
+            downQps.push(v.Down * 8)
+            upQps.push(v.Up * 8)
             axixArr.push(moment.unix(v.Time).format("YYYY-MM-DD HH:mm:ss"))
             series1Arr.push(v.Access)
-            series2Arr.push(v.Up * 8)
-            series3Arr.push(v.Down * 8)
           })
+          let maxDps = Math.max.apply(null, downQps)
+          let maxUps = Math.max.apply(null, upQps)
+          let { upPs, downPs, unit, number } = this.tranBps(maxDps, maxUps)
           this.xAxis1 = axixArr
           this.series1 = series1Arr
-          this.series2 = series2Arr
-          this.series3 = series3Arr
+          this.series2 = upQps.map(item => Number((item / number).toFixed(3)))
+          this.series3 = downQps.map(item => Number((item / number).toFixed(3)))
+          this.tooltip = {
+            trigger: 'axis',
+            formatter(params) {
+              let relVal = params[0].name;
+              params.forEach(v => {
+                if(v.seriesName == "QPS") {
+                  relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value;
+                } else {
+                  relVal += '<br/>' + v.marker + v.seriesName + ' : ' + v.value + unit;
+                }
+              })  
+              return relVal;  
+            }
+          }
         })
       }).then(() => {
         this.loading = false

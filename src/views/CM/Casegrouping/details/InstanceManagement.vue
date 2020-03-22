@@ -29,7 +29,7 @@
             <el-table-column type="selection" width="40"></el-table-column>
             <el-table-column label="ID/主机名" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
-                <a href="javascript:;">{{ scope.row.InstanceId }}</a>
+                <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
@@ -48,6 +48,32 @@
               </template>
             </el-table-column>
             <el-table-column label="地域" v-if="viewName === 'cvm_device'">
+              台湾台北
+            </el-table-column>
+            <el-table-column label="ID/名称" v-if="viewName === 'BS'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.DiskId }}</p>
+                <p>{{ scope.row.DiskName }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="大小(GB)" v-if="viewName === 'BS'">
+              <template slot-scope="scope">
+                <span>{{ scope.row.DiskSize }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="硬盘类型" v-if="viewName === 'BS'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.DiskType | DiskType }}</p>
+                <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="关联云主机ID" v-if="viewName === 'BS'">
+              <template slot-scope="scope">
+                <p>{{ scope.row.InstanceId }}</p>
+                <!-- <p>{{ scope.row. }}</p> -->
+              </template>
+            </el-table-column>
+            <el-table-column label="地域" v-if="viewName === 'BS'">
               台湾台北
             </el-table-column>
             <!-- VPN_GW -->
@@ -317,7 +343,6 @@
         width="1024px"
         :show-close="false"
         class="dialog-box"
-        v-loading="loadShowAdd"
       >
         <div class="title">
           <h3>新建</h3>
@@ -333,6 +358,7 @@
               :projectId="projectId"
               :productValue="viewName"
               style="display:none;"
+              v-on:loading="Type_loading"
             />
             <CamTransferCpt
               :productData="productListData"
@@ -340,6 +366,8 @@
               v-on:searchParam="searchParams"
               v-on:multipleSelection="selectDatas"
               :isShowRight="isShowRight"
+              v-loading="loadShowAdd"
+              v-on:CAM_loading="CAM_loading"
             ></CamTransferCpt>
           </div>
         </div>
@@ -402,6 +430,7 @@ import {
   TKE_EXIST_NODES,
   CM_GROUPING_NEWLY_BUILD,
   VPN_LIST,
+  DISK_LIST,
   VPNTD_LIST,
   NAT_LIST,
   DCG_LIST,
@@ -484,6 +513,12 @@ export default {
     this.ListInit();
   },
   methods: {
+    Type_loading(val) {
+      this.loadShowAdd = val;
+    },
+    CAM_loading(val) {
+      this.loadShowAdd = val;
+    },
     passData(data) {
       console.log("data", data);
       this.isShow = false;
@@ -582,6 +617,50 @@ export default {
                     InvalidParameter: "参数错误",
                     ResourceNotFound: "资源不存在",
                     ResourceUnavailable: "资源不可用"
+                  };
+                  let ErrOr = Object.assign(ErrorTips, ErrTips);
+                  this.$message({
+                    message: ErrOr[res.Response.Error.Code],
+                    type: "error",
+                    showClose: true,
+                    duration: 0
+                  });
+                }
+              });
+            } else if (this.viewName === "BS") {
+              let params = {
+                Version: "2017-03-12",
+                Limit: this.pageSize,
+                Offset: this.pageIndex
+              };
+              console.log(_enterList);
+              params["Filters.0.Name"] = "disk-id";
+              for (let i in _enterList) {
+                params["Filters.0.Values." + i] = JSON.parse(
+                  _enterList[i].Dimensions
+                ).diskid;
+              }
+              this.axios.post(DISK_LIST, params).then(res => {
+                if (res.Response.Error === undefined) {
+                  this.enterList = res.Response.DiskSet;
+                  for (let i in _enterList) {
+                    for (let j in this.enterList) {
+                      if (
+                        JSON.parse(_enterList[i].Dimensions).diskid ===
+                        this.enterList[j].DiskId
+                      ) {
+                        this.enterList[j]["UniqueId"] = _enterList[i].UniqueId;
+                      }
+                    }
+                  }
+                  console.log(this.enterList);
+                  this.loadShow = false;
+                } else {
+                  let ErrTips = {
+                    "InvalidVpnGatewayId.Malformed":
+                      "无效的VPN网关,VPN实例ID不合法。",
+                    "InvalidVpnGatewayId.NotFound":
+                      "无效的VPN网关,VPN实例不存在，请再次核实您输入的资源信息是否正确。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -1151,7 +1230,7 @@ export default {
     // 新增
     AddBtn() {
       this.newBuildByVal.newBuildState = true;
-      this.loadShowAdd = true;
+
       this.AddDataList();
     },
     DeleteListAdd(row) {
@@ -1178,6 +1257,10 @@ export default {
           };
           param["InstanceList." + i + ".EventDimensions"] = {
             uuid: this.multipleSelection[i].Uuid
+          };
+        } else if (this.viewName === "BS") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            diskid: this.multipleSelection[i].DiskId
           };
         } else if (this.viewName === "VPN_GW") {
           param["InstanceList." + i + ".Dimensions"] = {
@@ -1338,9 +1421,7 @@ export default {
       await this.axios.post(TKE_EXIST_NODES, param).then(res => {
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.InstanceSet;
-          this.loadShowAdd = false;
         } else {
-          this.loadShowAdd = false;
           let ErrTips = {
             InternalServerError: "操作内部错误。",
             InvalidFilter: "无效的过滤器。",
@@ -1378,6 +1459,24 @@ export default {
       // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.ListInit();
+    }
+  },
+  filters: {
+    DiskUsage(val) {
+      if (val == "SYSTEM_DISK") {
+        return "系統盤";
+      } else if (val === "DATA_DISK") {
+        return "數據盤";
+      }
+    },
+    DiskType(val) {
+      if (val == "CLOUD_BASIC") {
+        return "普通雲硬碟";
+      } else if (val === "CLOUD_PREMIUM") {
+        return "高性能雲硬碟";
+      } else if (val === "CLOUD_SSD") {
+        return "SSD雲硬碟";
+      }
     }
   }
 };

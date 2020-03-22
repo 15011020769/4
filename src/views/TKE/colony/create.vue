@@ -12,7 +12,7 @@
           <span class="goback" @click="goBack">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">{{$t('TKE.colony.cjjq')}}</h2>
+          <h2 class="header-title">{{ $t("TKE.colony.cjjq") }}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>
@@ -22,7 +22,7 @@
       <div class="tke-step tke-grid">
         <div class="tke-step-item is-curr">
           <span class="num">1</span>
-          <span class="title">{{$t('TKE.colony.jqxx')}}</span>
+          <span class="title">{{ $t("TKE.colony.jqxx") }}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div
@@ -30,7 +30,7 @@
           :class="{ 'is-curr': secondBox || thirdBox || fourthBox }"
         >
           <span class="num">2</span>
-          <span class="title">{{$t('TKE.colony.xzjx')}}</span>
+          <span class="title">{{ $t("TKE.colony.xzjx") }}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div
@@ -38,19 +38,19 @@
           :class="{ 'is-curr': thirdBox || fourthBox }"
         >
           <span class="num">3</span>
-          <span class="title">{{$t('TKE.colony.yfwqpz')}}</span>
+          <span class="title">{{ $t("TKE.colony.yfwqpz") }}</span>
           <i class="el-icon-arrow-right"></i>
         </div>
         <div class="tke-step-item" :class="{ 'is-curr': fourthBox }">
           <span class="num">4</span>
-          <span class="title">{{$t('TKE.colony.xxqr')}}</span>
+          <span class="title">{{ $t("TKE.colony.xxqr") }}</span>
         </div>
       </div>
       <hr />
       <!-- 第一步 -->
       <div v-if="firstBox">
         <div class="tke-reminder">
-          {{$t('TKE.colony.syrqfw')}}
+          {{ $t("TKE.colony.syrqfw") }}
           <!-- <a href="#">集群概述</a> -->
         </div>
         <div class="tke-card tke-formpanel-wrap mb60">
@@ -94,7 +94,7 @@
                 </el-option>
               </el-select>
               <p>
-                {{$t('TKE.colony.zyzdfpxm')}}
+                {{ $t("TKE.colony.zyzdfpxm") }}
                 <!-- <a href="../../index.html#/documentcenter/doc/11185">使用指引</a> -->
               </p>
             </el-form-item>
@@ -133,42 +133,48 @@
               </el-radio-group>
               <el-popover placement="right" width="450" trigger="click">
                 <div class="how-choose">
-                  <h3>{{$t('TKE.colony.rhxz')}}</h3>
-                  <p>{{$t('TKE.colony.tkezcyhxz')}}</p>
+                  <h3>{{ $t("TKE.colony.rhxz") }}</h3>
+                  <p>{{ $t("TKE.colony.tkezcyhxz") }}</p>
                   <p>
-                    {{$t('TKE.colony.cdylgd')}}
-                    {{$t('TKE.colony.jyxz')}} containerd。
+                    {{ $t("TKE.colony.cdylgd") }}
+                    {{ $t("TKE.colony.jyxz") }} containerd。
                   </p>
-                  <p>{{$t('TKE.colony.qxdzwzj')}}</p>
+                  <p>{{ $t("TKE.colony.qxdzwzj") }}</p>
                   <ul>
-                    <li><span></span>{{$t('TKE.colony.rxsy')}} docker in docker</li>
                     <li>
-                      <span></span>{{$t('TKE.colony.rxjdsyd')}}
+                      <span></span>{{ $t("TKE.colony.rxsy") }} docker in docker
+                    </li>
+                    <li>
+                      <span></span>{{ $t("TKE.colony.rxjdsyd") }}
                       build/push/save/load 等命令
                     </li>
-                    <li><span></span>{{$t('TKE.colony.rxdy')}} docker API</li>
+                    <li><span></span>{{ $t("TKE.colony.rxdy") }} docker API</li>
                     <li><span></span>如需 docker compose 或 docker swarm</li>
-                    <li><span></span>{{$t('TKE.colony.rxcjyy')}}</li>
-                    <li><span></span>{{$t('TKE.colony.rxrzcj')}}</li>
+                    <li><span></span>{{ $t("TKE.colony.rxcjyy") }}</li>
+                    <li><span></span>{{ $t("TKE.colony.rxrzcj") }}</li>
                   </ul>
                   <p class="hover-target">
                     <!-- <a href="../../index.html#/documentcenter/doc/35747" class="ml5" slot="reference">查看详情</a> -->
                   </p>
                 </div>
-                <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a>
+                <a href="javascript:;" class="ml5" slot="reference">{{
+                  $t("TKE.colony.rhxz")
+                }}</a>
               </el-popover>
 
               <p v-if="colony.assemblyRadio == 'docker'">
-                {{$t('TKE.colony.dzcapi')}}
+                {{ $t("TKE.colony.dzcapi") }}
               </p>
               <p v-else>
-                {{$t('TKE.colony.cbzcd')}}
+                {{ $t("TKE.colony.cbzcd") }}
                 api，不支持GPU
               </p>
             </el-form-item>
             <el-form-item label="所在地域">
               <el-radio-group v-model="colony.cityRadio" size="small">
-                <el-radio-button label="tb">{{$t('TKE.overview.zgtb')}}</el-radio-button>
+                <el-radio-button label="tb">{{
+                  $t("TKE.overview.zgtb")
+                }}</el-radio-button>
               </el-radio-group>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.jqwl')">
@@ -190,12 +196,12 @@
               <span class="ml5 text-gray">CIDR: {{ colony.CidrBlock }}</span>
               <p>
                 <!-- {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a> -->
-                {{$t('TKE.colony.wlbhs')}}{{$t('TKE.colony.xjsywl')}}
+                {{ $t("TKE.colony.wlbhs") }}{{ $t("TKE.colony.xjsywl") }}
               </p>
             </el-form-item>
             <el-form-item>
               <span slot="label"
-                >{{$t('TKE.colony.rqwl')}}
+                >{{ $t("TKE.colony.rqwl") }}
                 <el-tooltip
                   effect="light"
                   :content="$t('TKE.colony.rqbyjdct')"
@@ -283,7 +289,7 @@
                       v-if="colony.CIDRTips.IsConflict"
                     >
                       <p>
-                        {{$t('TKE.colony.czct')}}
+                        {{ $t("TKE.colony.czct") }}
                         {{ colony.CIDRTips.ConflictType }}
                       </p>
                       <p>{{ colony.CIDRTips.ConflictMsg }}</p>
@@ -350,19 +356,25 @@
               </el-select>
               <el-popover placement="right" width="550" trigger="click">
                 <div class="how-choose">
-                  <h2>TKE-Optimized 的{{$t('TKE.colony.ys')}}</h2>
-                  <h3>{{$t('TKE.colony.nhdz')}}</h3>
-                  <li>{{$t('TKE.colony.jynh')}}</li>
-                  <li>{{$t('TKE.colony.zjxtx')}}</li>
+                  <h2>TKE-Optimized 的{{ $t("TKE.colony.ys") }}</h2>
+                  <h3>{{ $t("TKE.colony.nhdz") }}</h3>
+                  <li>{{ $t("TKE.colony.jynh") }}</li>
+                  <li>{{ $t("TKE.colony.zjxtx") }}</li>
                   <h3>容器支持</h3>
-                  <li>{{$t('TKE.colony.zdrqcj')}}</li>
-                  <li>支持 meminfo、vmstat、cpuinfo、stat、loadavg {{$t('TKE.colony.dgl')}}</li>
-                  <li>支持 sysctl {{$t('TKE.colony.gli')}}，如 tcp_no_delay_ack、tcp_max_orphans</li>
-                  <li>{{$t('TKE.colony.xf')}} bug</li>
-                  <h3>{{$t('TKE.colony.xnyh')}}</h3>
-                  <li>{{$t('TKE.colony.yhncfp')}}</li>
-                  <li>{{$t('TKE.colony.yhwlsb')}}</li>
-                  <li>{{$t('TKE.colony.xzxt')}} OOM</li>
+                  <li>{{ $t("TKE.colony.zdrqcj") }}</li>
+                  <li>
+                    支持 meminfo、vmstat、cpuinfo、stat、loadavg
+                    {{ $t("TKE.colony.dgl") }}
+                  </li>
+                  <li>
+                    支持 sysctl {{ $t("TKE.colony.gli") }}，如
+                    tcp_no_delay_ack、tcp_max_orphans
+                  </li>
+                  <li>{{ $t("TKE.colony.xf") }} bug</li>
+                  <h3>{{ $t("TKE.colony.xnyh") }}</h3>
+                  <li>{{ $t("TKE.colony.yhncfp") }}</li>
+                  <li>{{ $t("TKE.colony.yhwlsb") }}</li>
+                  <li>{{ $t("TKE.colony.xzxt") }} OOM</li>
                 </div>
                 <!-- <a href="javascript:;" class="ml5">如何选择</a> -->
                 <!-- <a href="javascript:;" class="ml5" slot="reference">{{$t('TKE.colony.rhxz')}}</a> -->
@@ -382,8 +394,8 @@
             <el-form-item label="ipvs支持">
               <el-switch v-model="colony.ipvs"> </el-switch>
               <p>
-                {{$t('TKE.colony.kq')}}Kube-proxy
-                {{$t('TKE.colony.ipvszc')}}
+                {{ $t("TKE.colony.kq") }}Kube-proxy
+                {{ $t("TKE.colony.ipvszc") }}
               </p>
             </el-form-item>
           </el-form>
@@ -401,7 +413,7 @@
         v-if="secondBox"
         class="tke-second-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
+        <div class="tke-second-title">{{ $t("TKE.colony.yxpz") }}</div>
         <el-form
           ref="form"
           :model="colonySecond"
@@ -422,7 +434,8 @@
           </el-form-item>
           <div class="tke-second-tips">
             <p>
-              {{$t('TKE.colony.czxt')}}<el-tooltip
+              {{ $t("TKE.colony.czxt")
+              }}<el-tooltip
                 :content="$t('TKE.colony.xghsyxxt')"
                 placement="right"
                 effect="light"
@@ -439,8 +452,12 @@
                 v-model="colonySecond.source"
                 @change="NodeSource"
               >
-                <el-radio-button label="1">{{$t('TKE.colony.xzjdian')}}</el-radio-button>
-                <el-radio-button label="2">{{$t('TKE.colony.yyjd')}}</el-radio-button>
+                <el-radio-button label="1">{{
+                  $t("TKE.colony.xzjdian")
+                }}</el-radio-button>
+                <el-radio-button label="2">{{
+                  $t("TKE.colony.yyjd")
+                }}</el-radio-button>
               </el-radio-group>
             </div>
           </el-form-item>
@@ -450,25 +467,44 @@
                 v-model="colonySecond.master"
                 @change="SecondMaster"
               >
-                <el-radio-button label="1">{{$t('TKE.colony.pttg')}}</el-radio-button>
-                <el-radio-button label="2">{{$t('TKE.colony.dlbs')}}</el-radio-button>
+                <el-radio-button label="1">{{
+                  $t("TKE.colony.pttg")
+                }}</el-radio-button>
+                <el-radio-button label="2" v-if="!duliblyDis">{{
+                  $t("TKE.colony.dlbs")
+                }}</el-radio-button>
+                <el-tooltip
+                  effect="light"
+                  content="僅支持 Kubernetes 1.10.x 及以上版本"
+                  placement="top"
+                  v-if="duliblyDis"
+                >
+                  <el-radio-button label="containerd" disabled>{{
+                    $t("TKE.colony.dlbs")
+                  }}</el-radio-button>
+                </el-tooltip>
               </el-radio-group>
               <p>
-                {{$t('TKE.colony.mrjqm')}}
+                {{ $t("TKE.colony.mrjqm") }}
                 <!-- <a href="#">《集群托管模式说明》</a> -->
                 <i class=""></i>
               </p>
             </div>
           </el-form-item>
           <div v-if="colonySecond.boxShow">
-            <el-form-item :label="$t('TKE.colony.wjd')" v-if="colonySecond.workerShow">
+            <el-form-item
+              :label="$t('TKE.colony.wjd')"
+              v-if="colonySecond.workerShow"
+            >
               <div class="tke-second-radio-btn">
                 <el-radio-group
                   v-model="colonySecond.worker"
                   @change="WorkerNodeChange"
                 >
                   <el-radio-button label="1">立即部署</el-radio-button>
-                  <el-radio-button label="2">{{$t('TKE.colony.zbbs')}}</el-radio-button>
+                  <el-radio-button label="2">{{
+                    $t("TKE.colony.zbbs")
+                  }}</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -478,19 +514,19 @@
               v-if="colonySecond.sourceShow"
             >
               <p>
-                {{$t('TKE.colony.jfms')}}
+                {{ $t("TKE.colony.jfms") }}
                 <el-popover placement="right" width="450" trigger="hover">
                   <div class="charging-mode">
                     <div>
-                      <span>{{$t('TKE.colony.aljf')}}</span>
+                      <span>{{ $t("TKE.colony.aljf") }}</span>
                       <p>
-                        {{$t('TKE.colony.amjf')}}
+                        {{ $t("TKE.colony.amjf") }}
                       </p>
                     </div>
                     <div>
                       <span>包年包月</span>
                       <p>
-                        {{$t('TKE.colony.syny')}}
+                        {{ $t("TKE.colony.syny") }}
                       </p>
                     </div>
                   </div>
@@ -502,7 +538,9 @@
                   v-model="colonySecond.charging"
                   @change="SecondCharging"
                 >
-                  <el-radio-button label="1">{{$t('TKE.colony.aljf')}}</el-radio-button>
+                  <el-radio-button label="1">{{
+                    $t("TKE.colony.aljf")
+                  }}</el-radio-button>
                   <!-- <el-radio-button label="2">包年包月</el-radio-button> -->
                 </el-radio-group>
                 <!-- <a href="#">详细对比</a> -->
@@ -518,21 +556,32 @@
                   v-model="colonySecond.buyTime"
                   @change="BuyTime"
                 >
-                  <el-radio-button label="1">1{{$t('TKE.colony.gy')}}</el-radio-button>
-                  <el-radio-button label="2">2{{$t('TKE.colony.gy')}}</el-radio-button>
-                  <el-radio-button label="3">3{{$t('TKE.colony.gy')}}</el-radio-button>
-                  <el-radio-button label="4">6{{$t('TKE.colony.gy')}}</el-radio-button>
+                  <el-radio-button label="1"
+                    >1{{ $t("TKE.colony.gy") }}</el-radio-button
+                  >
+                  <el-radio-button label="2"
+                    >2{{ $t("TKE.colony.gy") }}</el-radio-button
+                  >
+                  <el-radio-button label="3"
+                    >3{{ $t("TKE.colony.gy") }}</el-radio-button
+                  >
+                  <el-radio-button label="4"
+                    >6{{ $t("TKE.colony.gy") }}</el-radio-button
+                  >
                   <el-radio-button label="12">1年</el-radio-button>
                   <el-radio-button label="24">2年</el-radio-button>
                   <el-radio-button label="36">3年</el-radio-button>
                 </el-radio-group>
               </div>
             </el-form-item>
-            <el-form-item :label="$t('TKE.colony.zdxf')" v-if="colonySecond.chargingShow">
+            <el-form-item
+              :label="$t('TKE.colony.zdxf')"
+              v-if="colonySecond.chargingShow"
+            >
               <div class="tke-second-checkbox">
-                <el-checkbox v-model="colonySecond.renew"
-                  >{{$t('TKE.colony.zhyezg')}}</el-checkbox
-                >
+                <el-checkbox v-model="colonySecond.renew">{{
+                  $t("TKE.colony.zhyezg")
+                }}</el-checkbox>
               </div>
             </el-form-item>
             <div
@@ -550,11 +599,13 @@
                 >
                   <div class="tke-second-worker-array" v-if="item.showText">
                     <p v-if="colonySecond.masterOneList.length > 0">
-                      <span @click="EditWorker(index, 2)">{{$t('TKE.overview.bj')}}</span>
+                      <span @click="EditWorker(index, 2)">{{
+                        $t("TKE.overview.bj")
+                      }}</span>
                       <span
                         @click="DeleteWorker(index, 2)"
                         v-if="colonySecond.masterOneList.length > 0"
-                        >{{$t('TKE.overview.sc')}}</span
+                        >{{ $t("TKE.overview.sc") }}</span
                       >
                       <el-tooltip
                         v-else
@@ -562,16 +613,18 @@
                         placement="top"
                         effect="light"
                       >
-                        <span class="delete-color">{{$t('TKE.overview.sc')}}</span>
+                        <span class="delete-color">{{
+                          $t("TKE.overview.sc")
+                        }}</span>
                       </el-tooltip>
                     </p>
                     <ol>
                       <li>
-                        <span>{{$t('TKE.colony.kyq')}}</span>
-                        <span>{{$t('TKE.colony.tbyq')}}</span>
+                        <span>{{ $t("TKE.colony.kyq") }}</span>
+                        <span>{{ $t("TKE.colony.tbyq") }}</span>
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.jdwl')}}</span>
+                        <span>{{ $t("TKE.colony.jdwl") }}</span>
                         <span>{{ item.workerNodeNetworkValue }}</span>
                       </li>
                       <li>
@@ -583,25 +636,25 @@
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.xtp')}}</span>
+                        <span>{{ $t("TKE.colony.xtp") }}</span>
                         <span
                           >{{ item.systemDiskValue }}
                           {{ item.systemDiskNumber }}GB</span
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.sjp')}}</span>
+                        <span>{{ $t("TKE.colony.sjp") }}</span>
                         <span>{{ item.dataDiskValue }}</span>
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.gwdk')}}</span>
+                        <span>{{ $t("TKE.colony.gwdk") }}</span>
                         <span
                           >{{ item.broadbandValue }}
                           {{ item.broadbandNumber }}Mbps</span
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.sliang')}}</span>
+                        <span>{{ $t("TKE.colony.sliang") }}</span>
                         <span>{{ item.dataNum }} 台</span>
                       </li>
                     </ol>
@@ -609,7 +662,8 @@
                   <ul v-if="item.showEdit">
                     <li>
                       <p>
-                        {{$t('TKE.colony.kyq')}}<el-tooltip
+                        {{ $t("TKE.colony.kyq")
+                        }}<el-tooltip
                           :content="$t('TKE.colony.kyqstydy')"
                           placement="right"
                           effect="light"
@@ -618,13 +672,16 @@
                       </p>
                       <div>
                         <el-radio-group v-model="colonySecond.usableArea">
-                          <el-radio-button label="1">{{$t('TKE.colony.tbyq')}}</el-radio-button>
+                          <el-radio-button label="1">{{
+                            $t("TKE.colony.tbyq")
+                          }}</el-radio-button>
                         </el-radio-group>
                       </div>
                     </li>
                     <li>
                       <p>
-                        {{$t('TKE.colony.jdwl')}}<el-tooltip
+                        {{ $t("TKE.colony.jdwl")
+                        }}<el-tooltip
                           :content="$t('TKE.colony.xtwjqzjfp')"
                           placement="right"
                           effect="light"
@@ -659,21 +716,22 @@
                           </el-option>
                         </el-select>
                         <span
-                          >共{{ item.nodeTotalNum }}{{$t('TKE.colony.gzw')}}{{
-                            item.nodeSurplusNum
-                          }}{{$t('TKE.overview.ge')}}可用</span
+                          >共{{ item.nodeTotalNum }}{{ $t("TKE.colony.gzw")
+                          }}{{ item.nodeSurplusNum
+                          }}{{ $t("TKE.overview.ge") }}可用</span
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <p>
                           <!-- {{$t('TKE.colony.wlbhs')}}<a href="../priNetwork">{{$t('TKE.colony.xjsywl')}}</a>或
                           <a href="../subnet">{{$t('TKE.colony.xjzw')}}</a> -->
-                          {{$t('TKE.colony.wlbhs')}}{{$t('TKE.colony.xjsywl')}}或
-                          {{$t('TKE.colony.xjzw')}}
+                          {{ $t("TKE.colony.wlbhs")
+                          }}{{ $t("TKE.colony.xjsywl") }}或
+                          {{ $t("TKE.colony.xjzw") }}
                         </p>
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.jxing')}}</p>
+                      <p>{{ $t("TKE.colony.jxing") }}</p>
                       <p class="tke-second-worker-text">
                         {{ item.modelName }}({{ item.modelType }},{{
                           item.modelHe
@@ -689,7 +747,7 @@
                       >
                         <div class="tke-second-worker-model">
                           <p>
-                            <span>{{$t('TKE.colony.xzjx')}}</span
+                            <span>{{ $t("TKE.colony.xzjx") }}</span
                             ><i
                               class="el-icon-close"
                               @click="item.modelShow = false"
@@ -732,18 +790,18 @@
                                   TableFilter(2);
                                 "
                               >
-                                <el-radio-button label="1"
-                                  >{{$t('TKE.colony.qbslz')}}</el-radio-button
-                                >
-                                <el-radio-button label="Standard"
-                                  >{{$t('TKE.colony.bzx')}}</el-radio-button
-                                >
-                                <el-radio-button label="MEM-optimized"
-                                  >{{$t('TKE.colony.ncx')}}</el-radio-button
-                                >
-                                <el-radio-button label="Compute"
-                                  >{{$t('TKE.colony.jsx')}}</el-radio-button
-                                >
+                                <el-radio-button label="1">{{
+                                  $t("TKE.colony.qbslz")
+                                }}</el-radio-button>
+                                <el-radio-button label="Standard">{{
+                                  $t("TKE.colony.bzx")
+                                }}</el-radio-button>
+                                <el-radio-button label="MEM-optimized">{{
+                                  $t("TKE.colony.ncx")
+                                }}</el-radio-button>
+                                <el-radio-button label="Compute">{{
+                                  $t("TKE.colony.jsx")
+                                }}</el-radio-button>
                               </el-radio-group>
                             </div>
                             <div style="margin-top:16px;">
@@ -751,17 +809,17 @@
                                 v-model="colonySecond.caseType"
                                 @change="TableFilter(2)"
                               >
-                                <el-radio-button label="1"
-                                  >{{$t('TKE.colony.qbsllx')}}</el-radio-button
-                                >
+                                <el-radio-button label="1">{{
+                                  $t("TKE.colony.qbsllx")
+                                }}</el-radio-button>
                                 <el-radio-button label="S3" v-if="S3show"
-                                  >{{$t('TKE.colony.bzx')}}S3</el-radio-button
+                                  >{{ $t("TKE.colony.bzx") }}S3</el-radio-button
                                 >
                                 <el-radio-button label="C3" v-if="C3show"
-                                  >{{$t('TKE.colony.jsx')}}C3</el-radio-button
+                                  >{{ $t("TKE.colony.jsx") }}C3</el-radio-button
                                 >
                                 <el-radio-button label="M3" v-if="M3show"
-                                  >{{$t('TKE.colony.ncx')}}M3</el-radio-button
+                                  >{{ $t("TKE.colony.ncx") }}M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -787,7 +845,9 @@
                                     </el-radio>
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.colony.jxing')">
+                                <el-table-column
+                                  :label="$t('TKE.colony.jxing')"
+                                >
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
@@ -802,7 +862,9 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.overview.ncun')">
+                                <el-table-column
+                                  :label="$t('TKE.overview.ncun')"
+                                >
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
@@ -811,7 +873,7 @@
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{$t('TKE.colony.xs')}}起
+                                    >元/{{ $t("TKE.colony.xs") }}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -847,7 +909,9 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.colony.jxing')">
+                                <el-table-column
+                                  :label="$t('TKE.colony.jxing')"
+                                >
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
@@ -862,7 +926,9 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.overview.ncun')">
+                                <el-table-column
+                                  :label="$t('TKE.overview.ncun')"
+                                >
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
@@ -871,7 +937,7 @@
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{$t('TKE.colony.xs')}}起
+                                    >元/{{ $t("TKE.colony.xs") }}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -881,7 +947,7 @@
                             <el-button
                               class="determine"
                               @click="ModelSure(index, 2)"
-                              >{{$t('TKE.overview.qd')}}</el-button
+                              >{{ $t("TKE.overview.qd") }}</el-button
                             >
                             <el-button
                               class="cancel"
@@ -893,7 +959,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.xtp')}}</p>
+                      <p>{{ $t("TKE.colony.xtp") }}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.systemDiskValue }}
@@ -927,10 +993,15 @@
                                   :max="500"
                                 ></el-input-number>
                                 <span>GB</span>
-                                <p>{{$t('TKE.colony.fw')}}：50~500，{{$t('TKE.colony.bc')}}：1</p>
+                                <p>
+                                  {{ $t("TKE.colony.fw") }}：50~500，{{
+                                    $t("TKE.colony.bc")
+                                  }}：1
+                                </p>
                                 <div class="btn">
-                                  <el-button @click="SystemDiskSure(index, 2)"
-                                    >{{$t('TKE.overview.qd')}}</el-button
+                                  <el-button
+                                    @click="SystemDiskSure(index, 2)"
+                                    >{{ $t("TKE.overview.qd") }}</el-button
                                   >
                                   <el-button
                                     @click="item.systemDiskShow = false"
@@ -944,7 +1015,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.sjp')}}</p>
+                      <p>{{ $t("TKE.colony.sjp") }}</p>
                       <div class="tke-second-worker-text">
                         <span>{{ item.dataDiskValue }}</span>
                         <div class="tke-second-worker-icon-pen">
@@ -965,14 +1036,14 @@
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
                                   @change="BuyDataDisk(index, 2)"
-                                  >{{$t('TKE.colony.gmsjp')}}</el-checkbox
+                                  >{{ $t("TKE.colony.gmsjp") }}</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
                                 <div class="tke-second-worker-popover-data-bg">
                                   <div>
                                     <div class="box">
-                                      <p>{{$t('TKE.colony.ypsz')}}</p>
+                                      <p>{{ $t("TKE.colony.ypsz") }}</p>
                                       <div>
                                         <el-select
                                           v-model="item.dataDiskVal"
@@ -1000,14 +1071,22 @@
                                             item.dataDiskVal === 'CLOUD_PREMIUM'
                                           "
                                         >
-                                          {{$t('TKE.colony.fw')}}：10~16000，{{$t('TKE.colony.bc')}}：10
+                                          {{
+                                            $t("TKE.colony.fw")
+                                          }}：10~16000，{{
+                                            $t("TKE.colony.bc")
+                                          }}：10
                                         </p>
                                         <p
                                           v-if="
                                             item.dataDiskVal === 'CLOUD_SSD'
                                           "
                                         >
-                                          {{$t('TKE.colony.fw')}}：100~16000，{{$t('TKE.colony.bc')}}：10
+                                          {{
+                                            $t("TKE.colony.fw")
+                                          }}：100~16000，{{
+                                            $t("TKE.colony.bc")
+                                          }}：10
                                         </p>
                                       </div>
                                     </div>
@@ -1015,9 +1094,9 @@
                                 </div>
                               </div>
                               <div class="btn">
-                                <el-button @click="DataDiskSure(index, 2)"
-                                  >{{$t('TKE.overview.qd')}}</el-button
-                                >
+                                <el-button @click="DataDiskSure(index, 2)">{{
+                                  $t("TKE.overview.qd")
+                                }}</el-button>
                                 <el-button @click="item.dataDiskShow = false"
                                   >取消</el-button
                                 >
@@ -1028,7 +1107,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.gwdk')}}</p>
+                      <p>{{ $t("TKE.colony.gwdk") }}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.broadbandValue }}
@@ -1062,24 +1141,23 @@
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
-                                <p>{{$t('TKE.colony.dksx')}}：0~100</p>
+                                <p>{{ $t("TKE.colony.dksx") }}：0~100</p>
                                 <div
                                   class="tke-second-worker-popover-data-bg distribution"
                                 >
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >{{$t('TKE.colony.fpmfgw')}}，
+                                    >{{ $t("TKE.colony.fpmfgw") }}，
                                     <!-- <a href="#"
                                       >查看详情</a
                                     > -->
-                                  </el-checkbox
-                                  >
+                                  </el-checkbox>
                                 </div>
                                 <div class="btn">
-                                  <el-button @click="BroadbandSure(index, 2)"
-                                    >{{$t('TKE.overview.qd')}}</el-button
-                                  >
+                                  <el-button @click="BroadbandSure(index, 2)">{{
+                                    $t("TKE.overview.qd")
+                                  }}</el-button>
                                   <el-button @click="item.broadbandShow = false"
                                     >取消</el-button
                                   >
@@ -1092,7 +1170,8 @@
                     </li>
                     <li>
                       <p>
-                        {{$t('TKE.colony.sj')}}<el-tooltip
+                        {{ $t("TKE.colony.sj")
+                        }}<el-tooltip
                           :content="$t('TKE.colony.mzsbs')"
                           placement="right"
                           effect="light"
@@ -1106,18 +1185,18 @@
                           :max="1"
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
-                          {{$t('TKE.colony.cvmzdpe')}}
-                         {{$t('TKE.colony.tjgnsqpe') }}
+                          {{ $t("TKE.colony.cvmzdpe") }}
+                          {{ $t("TKE.colony.tjgnsqpe") }}
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
-                          {{$t('TKE.colony.cvmpe')}}
+                          {{ $t("TKE.colony.cvmpe") }}
                         </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
                             @click="WorkerSure(index, 2)"
-                            >{{$t('TKE.overview.qd')}}</el-button
+                            >{{ $t("TKE.overview.qd") }}</el-button
                           >
                           <el-button
                             class="worker-cancel-btn"
@@ -1142,7 +1221,9 @@
                   </ul>
                 </div>
                 <div class="tke-second-worker-add-models">
-                  <el-button @click="MasterAddModel">{{$t('TKE.colony.tjjx')}}</el-button>
+                  <el-button @click="MasterAddModel">{{
+                    $t("TKE.colony.tjjx")
+                  }}</el-button>
                 </div>
               </div>
             </div>
@@ -1152,8 +1233,8 @@
               class="tke-second-checkbox"
             >
               <el-checkbox v-model="colonySecond.masterDataDiskMount"
-                >{{$t('TKE.colony.zdgsh')}} Master
-                {{$t('TKE.colony.jdsjpc')}}</el-checkbox
+                >{{ $t("TKE.colony.zdgsh") }} Master
+                {{ $t("TKE.colony.jdsjpc") }}</el-checkbox
               >
               <el-input
                 v-model="colonySecond.masterDataDiskMountVal"
@@ -1183,7 +1264,10 @@
                             :placeholder="$t('TKE.overview.qxz')"
                           >
                             <el-option label="完整ID" value="1"></el-option>
-                            <el-option :label="$t('TKE.colony.jdmc')" value="2"></el-option>
+                            <el-option
+                              :label="$t('TKE.colony.jdmc')"
+                              value="2"
+                            ></el-option>
                           </el-select>
                           <el-button
                             slot="append"
@@ -1267,7 +1351,7 @@
                             <span
                               class="el-delete"
                               @click="DeleteListMaster(scope.row)"
-                              >{{$t('TKE.overview.sc')}}</span
+                              >{{ $t("TKE.overview.sc") }}</span
                             >
                           </template>
                         </el-table-column>
@@ -1283,14 +1367,10 @@
                       colonySecond.master == 2
                   "
                 >
-                  <p>{{$t('TKE.colony.zyxz')}}：</p>
-                  <p>
-                    1、{{$t('TKE.colony.sxxczxt')}}
-                  </p>
-                  <p>2、{{$t('TKE.colony.sxyfwq')}}</p>
-                  <p>
-                    3、{{$t('TKE.colony.yfwqxzqy')}}
-                  </p>
+                  <p>{{ $t("TKE.colony.zyxz") }}：</p>
+                  <p>1、{{ $t("TKE.colony.sxxczxt") }}</p>
+                  <p>2、{{ $t("TKE.colony.sxyfwq") }}</p>
+                  <p>3、{{ $t("TKE.colony.yfwqxzqy") }}</p>
                 </div>
               </div>
             </div>
@@ -1307,11 +1387,13 @@
                 >
                   <div class="tke-second-worker-array" v-if="item.showText">
                     <p>
-                      <span @click="EditWorker(index, 1)">{{$t('TKE.overview.bj')}}</span>
+                      <span @click="EditWorker(index, 1)">{{
+                        $t("TKE.overview.bj")
+                      }}</span>
                       <span
                         @click="DeleteWorker(index, 1)"
                         v-if="colonySecond.workerOneList.length > 1"
-                        >{{$t('TKE.overview.sc')}}</span
+                        >{{ $t("TKE.overview.sc") }}</span
                       >
                       <el-tooltip
                         v-else
@@ -1319,16 +1401,18 @@
                         placement="top"
                         effect="light"
                       >
-                        <span class="delete-color">{{$t('TKE.overview.sc')}}</span>
+                        <span class="delete-color">{{
+                          $t("TKE.overview.sc")
+                        }}</span>
                       </el-tooltip>
                     </p>
                     <ol>
                       <li>
-                        <span>{{$t('TKE.colony.kyq')}}</span>
-                        <span>{{$t('TKE.colony.tbyq')}}</span>
+                        <span>{{ $t("TKE.colony.kyq") }}</span>
+                        <span>{{ $t("TKE.colony.tbyq") }}</span>
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.jdwl')}}</span>
+                        <span>{{ $t("TKE.colony.jdwl") }}</span>
                         <span>{{ item.workerNodeNetworkValue }}</span>
                       </li>
                       <li>
@@ -1340,25 +1424,25 @@
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.xtp')}}</span>
+                        <span>{{ $t("TKE.colony.xtp") }}</span>
                         <span
                           >{{ item.systemDiskValue }}
                           {{ item.systemDiskNumber }}GB</span
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.sjp')}}</span>
+                        <span>{{ $t("TKE.colony.sjp") }}</span>
                         <span>{{ item.dataDiskValue }}</span>
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.gwdk')}}</span>
+                        <span>{{ $t("TKE.colony.gwdk") }}</span>
                         <span
                           >{{ item.broadbandValue }}
                           {{ item.broadbandNumber }}Mbps</span
                         >
                       </li>
                       <li>
-                        <span>{{$t('TKE.colony.sliang')}}</span>
+                        <span>{{ $t("TKE.colony.sliang") }}</span>
                         <span>{{ item.dataNum }} 台</span>
                       </li>
                     </ol>
@@ -1366,7 +1450,8 @@
                   <ul v-if="item.showEdit">
                     <li>
                       <p>
-                        {{$t('TKE.colony.kyq')}}<el-tooltip
+                        {{ $t("TKE.colony.kyq")
+                        }}<el-tooltip
                           :content="$t('TKE.colony.kyqstydy')"
                           placement="right"
                           effect="light"
@@ -1375,13 +1460,16 @@
                       </p>
                       <div>
                         <el-radio-group v-model="colonySecond.usableArea">
-                          <el-radio-button label="1">{{$t('TKE.colony.tbyq')}}</el-radio-button>
+                          <el-radio-button label="1">{{
+                            $t("TKE.colony.tbyq")
+                          }}</el-radio-button>
                         </el-radio-group>
                       </div>
                     </li>
                     <li>
                       <p>
-                        {{$t('TKE.colony.jdwl')}}<el-tooltip
+                        {{ $t("TKE.colony.jdwl")
+                        }}<el-tooltip
                           :content="$t('TKE.colony.xtwjqzjfp')"
                           placement="right"
                           effect="light"
@@ -1416,9 +1504,9 @@
                           </el-option>
                         </el-select>
                         <span
-                          >共{{ item.nodeTotalNum }}{{$t('TKE.colony.gzw')}}{{
-                            item.nodeSurplusNum
-                          }}{{$t('TKE.overview.ge')}}可用</span
+                          >共{{ item.nodeTotalNum }}{{ $t("TKE.colony.gzw")
+                          }}{{ item.nodeSurplusNum
+                          }}{{ $t("TKE.overview.ge") }}可用</span
                         >
                         <p>CIDR:{{ colony.CidrBlock }}</p>
                         <!-- <p>
@@ -1429,7 +1517,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.jxing')}}</p>
+                      <p>{{ $t("TKE.colony.jxing") }}</p>
                       <p class="tke-second-worker-text">
                         {{ item.modelName }}({{ item.modelType }},{{
                           item.modelHe
@@ -1445,7 +1533,7 @@
                       >
                         <div class="tke-second-worker-model">
                           <p>
-                            <span>{{$t('TKE.colony.xzjx')}}</span
+                            <span>{{ $t("TKE.colony.xzjx") }}</span
                             ><i
                               class="el-icon-close"
                               @click="item.modelShow = false"
@@ -1488,18 +1576,18 @@
                                   TableFilter(1);
                                 "
                               >
-                                <el-radio-button label="1"
-                                  >{{$t('TKE.colony.qbslz')}}</el-radio-button
-                                >
-                                <el-radio-button label="Standard"
-                                  >{{$t('TKE.colony.bzx')}}</el-radio-button
-                                >
-                                <el-radio-button label="MEM-optimized"
-                                  >{{$t('TKE.colony.ncx')}}</el-radio-button
-                                >
-                                <el-radio-button label="Compute"
-                                  >{{$t('TKE.colony.jsx')}}</el-radio-button
-                                >
+                                <el-radio-button label="1">{{
+                                  $t("TKE.colony.qbslz")
+                                }}</el-radio-button>
+                                <el-radio-button label="Standard">{{
+                                  $t("TKE.colony.bzx")
+                                }}</el-radio-button>
+                                <el-radio-button label="MEM-optimized">{{
+                                  $t("TKE.colony.ncx")
+                                }}</el-radio-button>
+                                <el-radio-button label="Compute">{{
+                                  $t("TKE.colony.jsx")
+                                }}</el-radio-button>
                               </el-radio-group>
                             </div>
                             <div style="margin-top:16px;">
@@ -1507,17 +1595,17 @@
                                 v-model="colonySecond.caseType"
                                 @change="TableFilter(1)"
                               >
-                                <el-radio-button label="1"
-                                  >{{$t('TKE.colony.qbsllx')}}</el-radio-button
-                                >
+                                <el-radio-button label="1">{{
+                                  $t("TKE.colony.qbsllx")
+                                }}</el-radio-button>
                                 <el-radio-button label="S3" v-if="S3show"
-                                  >{{$t('TKE.colony.bzx')}}S3</el-radio-button
+                                  >{{ $t("TKE.colony.bzx") }}S3</el-radio-button
                                 >
                                 <el-radio-button label="C3" v-if="C3show"
-                                  >{{$t('TKE.colony.jsx')}}C3</el-radio-button
+                                  >{{ $t("TKE.colony.jsx") }}C3</el-radio-button
                                 >
                                 <el-radio-button label="M3" v-if="M3show"
-                                  >{{$t('TKE.colony.ncx')}}M3</el-radio-button
+                                  >{{ $t("TKE.colony.ncx") }}M3</el-radio-button
                                 >
                               </el-radio-group>
                             </div>
@@ -1555,7 +1643,9 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.colony.jxing')">
+                                <el-table-column
+                                  :label="$t('TKE.colony.jxing')"
+                                >
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
@@ -1570,7 +1660,9 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.overview.ncun')">
+                                <el-table-column
+                                  :label="$t('TKE.overview.ncun')"
+                                >
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
@@ -1579,7 +1671,7 @@
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{$t('TKE.colony.xs')}}起
+                                    >元/{{ $t("TKE.colony.xs") }}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1618,7 +1710,9 @@
                                     </el-tooltip>
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.colony.jxing')">
+                                <el-table-column
+                                  :label="$t('TKE.colony.jxing')"
+                                >
                                   <template slot-scope="scope">
                                     {{ ModelTypeName(scope.row.TypeName) }}
                                   </template>
@@ -1633,7 +1727,9 @@
                                     {{ scope.row.Cpu }}核
                                   </template>
                                 </el-table-column>
-                                <el-table-column :label="$t('TKE.overview.ncun')">
+                                <el-table-column
+                                  :label="$t('TKE.overview.ncun')"
+                                >
                                   <template slot-scope="scope">
                                     {{ scope.row.Memory }}GB
                                   </template>
@@ -1642,7 +1738,7 @@
                                   <template slot-scope="scope">
                                     <span class="text-orange"
                                       >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{$t('TKE.colony.xs')}}起
+                                    >元/{{ $t("TKE.colony.xs") }}起
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1652,7 +1748,7 @@
                             <el-button
                               class="determine"
                               @click="ModelSure(index, 1)"
-                              >{{$t('TKE.overview.qd')}}</el-button
+                              >{{ $t("TKE.overview.qd") }}</el-button
                             >
                             <el-button
                               class="cancel"
@@ -1664,7 +1760,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.xtp')}}</p>
+                      <p>{{ $t("TKE.colony.xtp") }}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.systemDiskValue }}
@@ -1698,10 +1794,15 @@
                                   :max="500"
                                 ></el-input-number>
                                 <span>GB</span>
-                                <p>{{$t('TKE.colony.fw')}}：50~500，{{$t('TKE.colony.bc')}}：1</p>
+                                <p>
+                                  {{ $t("TKE.colony.fw") }}：50~500，{{
+                                    $t("TKE.colony.bc")
+                                  }}：1
+                                </p>
                                 <div class="btn">
-                                  <el-button @click="SystemDiskSure(index, 1)"
-                                    >{{$t('TKE.overview.qd')}}</el-button
+                                  <el-button
+                                    @click="SystemDiskSure(index, 1)"
+                                    >{{ $t("TKE.overview.qd") }}</el-button
                                   >
                                   <el-button
                                     @click="item.systemDiskShow = false"
@@ -1715,7 +1816,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.sjp')}}</p>
+                      <p>{{ $t("TKE.colony.sjp") }}</p>
                       <div class="tke-second-worker-text">
                         <span>{{ item.dataDiskValue }}</span>
                         <div class="tke-second-worker-icon-pen">
@@ -1736,7 +1837,7 @@
                                 <el-checkbox
                                   v-model="item.buyDataDisk"
                                   @change="BuyDataDisk(index, 1)"
-                                  >{{$t('TKE.colony.gmsjp')}}</el-checkbox
+                                  >{{ $t("TKE.colony.gmsjp") }}</el-checkbox
                                 >
                               </div>
                               <div v-if="item.buyDataDisk">
@@ -1747,7 +1848,7 @@
                                 >
                                   <div>
                                     <div class="box">
-                                      <p>{{$t('TKE.colony.ypsz')}}</p>
+                                      <p>{{ $t("TKE.colony.ypsz") }}</p>
                                       <div>
                                         <el-select
                                           v-model="x.dataDiskVal"
@@ -1775,17 +1876,25 @@
                                             x.dataDiskVal === 'CLOUD_PREMIUM'
                                           "
                                         >
-                                          {{$t('TKE.colony.fw')}}：10~16000，{{$t('TKE.colony.bc')}}：10
+                                          {{
+                                            $t("TKE.colony.fw")
+                                          }}：10~16000，{{
+                                            $t("TKE.colony.bc")
+                                          }}：10
                                         </p>
                                         <p v-if="x.dataDiskVal === 'CLOUD_SSD'">
-                                          {{$t('TKE.colony.fw')}}：100~16000，{{$t('TKE.colony.bc')}}：10
+                                          {{
+                                            $t("TKE.colony.fw")
+                                          }}：100~16000，{{
+                                            $t("TKE.colony.bc")
+                                          }}：10
                                         </p>
                                       </div>
                                       <p
                                         style="margin-top:16px;"
                                         v-if="x.formatMount"
                                       >
-                                        {{$t('TKE.colony.gshsz')}}
+                                        {{ $t("TKE.colony.gshsz") }}
                                       </p>
                                       <div
                                         style="margin-top:16px;"
@@ -1824,12 +1933,12 @@
                                 "
                                 @click="AddDataDisk(index)"
                               >
-                                {{$t('TKE.colony.tjsjp')}}
+                                {{ $t("TKE.colony.tjsjp") }}
                               </div>
                               <div class="btn">
-                                <el-button @click="DataDiskSure(index, 1)"
-                                  >{{$t('TKE.overview.qd')}}</el-button
-                                >
+                                <el-button @click="DataDiskSure(index, 1)">{{
+                                  $t("TKE.overview.qd")
+                                }}</el-button>
                                 <el-button @click="item.dataDiskShow = false"
                                   >取消</el-button
                                 >
@@ -1840,7 +1949,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.gwdk')}}</p>
+                      <p>{{ $t("TKE.colony.gwdk") }}</p>
                       <div class="tke-second-worker-text">
                         <span
                           >{{ item.broadbandValue }}
@@ -1874,24 +1983,23 @@
                                   :max="100"
                                 ></el-input-number>
                                 <span>Mbps</span>
-                                <p>{{$t('TKE.colony.dksx')}}：0~100</p>
+                                <p>{{ $t("TKE.colony.dksx") }}：0~100</p>
                                 <div
                                   class="tke-second-worker-popover-data-bg distribution"
                                 >
                                   <el-checkbox
                                     v-model="colonySecond.pubBroadbandShow"
                                     class="format-and-mount"
-                                    >{{$t('TKE.colony.fpmfgw')}}，
+                                    >{{ $t("TKE.colony.fpmfgw") }}，
                                     <!-- <a href="#"
                                       >查看详情</a
                                     > -->
-                                  </el-checkbox
-                                  >
+                                  </el-checkbox>
                                 </div>
                                 <div class="btn">
-                                  <el-button @click="BroadbandSure(index, 1)"
-                                    >{{$t('TKE.overview.qd')}}</el-button
-                                  >
+                                  <el-button @click="BroadbandSure(index, 1)">{{
+                                    $t("TKE.overview.qd")
+                                  }}</el-button>
                                   <el-button @click="item.broadbandShow = false"
                                     >取消</el-button
                                   >
@@ -1903,7 +2011,7 @@
                       </div>
                     </li>
                     <li>
-                      <p>{{$t('TKE.colony.sj')}}</p>
+                      <p>{{ $t("TKE.colony.sj") }}</p>
                       <div class="tke-second-worker-data">
                         <el-input-number
                           v-model="item.dataNum"
@@ -1911,18 +2019,18 @@
                           :max="1"
                         ></el-input-number>
                         <p v-if="!colonySecond.chargingShow">
-                          {{$t('TKE.colony.cvmzdpe')}}
-                          {{$t('TKE.colony.tjgnsqpe')}}
+                          {{ $t("TKE.colony.cvmzdpe") }}
+                          {{ $t("TKE.colony.tjgnsqpe") }}
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="colonySecond.chargingShow">
-                          {{$t('TKE.colony.cvmpe')}}
+                          {{ $t("TKE.colony.cvmpe") }}
                         </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
                             @click="WorkerSure(index, 1)"
-                            >{{$t('TKE.overview.qd')}}</el-button
+                            >{{ $t("TKE.overview.qd") }}</el-button
                           >
                           <el-button
                             class="worker-cancel-btn"
@@ -1947,11 +2055,21 @@
                   </ul>
                 </div>
                 <div class="tke-second-worker-add-models">
-                  <el-button @click="OneAddModel">{{$t('TKE.colony.tjjx')}}</el-button>
+                  <el-button @click="OneAddModel">{{
+                    $t("TKE.colony.tjjx")
+                  }}</el-button>
                 </div>
               </div>
             </div>
-            <div class="tke-second-worker" v-if="colonySecond.workerDeployShow">
+            <div
+              class="tke-second-worker"
+              v-if="
+                (colonySecond.source == 2 && colonySecond.master == 1) ||
+                  (colonySecond.source == 2 &&
+                    colonySecond.master == 2 &&
+                    colonySecond.worker == 1)
+              "
+            >
               <p class="tke-second-worker-l">Worker 配置</p>
               <div class="tke-second-worker-r">
                 <div class="bg">
@@ -1969,7 +2087,10 @@
                             :placeholder="$t('TKE.overview.qxz')"
                           >
                             <el-option label="完整ID" value="1"></el-option>
-                            <el-option :label="$t('TKE.colony.jdmc')" value="2"></el-option>
+                            <el-option
+                              :label="$t('TKE.colony.jdmc')"
+                              value="2"
+                            ></el-option>
                           </el-select>
                           <el-button
                             slot="append"
@@ -2049,7 +2170,7 @@
                               class="el-delete"
                               @click="DeleteList(scope.row)"
                             >
-                              {{$t('TKE.overview.sc')}}</span
+                              {{ $t("TKE.overview.sc") }}</span
                             >
                           </template>
                         </el-table-column>
@@ -2058,33 +2179,38 @@
                   </div>
                 </div>
                 <div class="tips">
-                  <p>{{$t('TKE.colony.zyxz')}}：</p>
-                  <p>
-                    1、{{$t('TKE.colony.sxxczxt')}}
-                  </p>
-                  <p>2、{{$t('TKE.colony.sxyfwq')}}</p>
-                  <p>
-                    3、{{$t('TKE.colony.yfwqxzqy')}}
-                  </p>
+                  <p>{{ $t("TKE.colony.zyxz") }}：</p>
+                  <p>1、{{ $t("TKE.colony.sxxczxt") }}</p>
+                  <p>2、{{ $t("TKE.colony.sxyfwq") }}</p>
+                  <p>3、{{ $t("TKE.colony.yfwqxzqy") }}</p>
                 </div>
               </div>
             </div>
-            <el-form-item :label="$t('TKE.colony.zjfy')" v-if="colonySecond.sourceShow">
+            <el-form-item
+              :label="$t('TKE.colony.zjfy')"
+              v-if="colonySecond.sourceShow"
+            >
               <div class="tke-second-cost-query" v-if="colonySecond.costShow">
-                {{$t('TKE.colony.cxz')}}...
+                {{ $t("TKE.colony.cxz") }}...
               </div>
               <div class="tke-second-cost" v-if="!colonySecond.costShow">
                 <span class="tke-second-cost-num">{{
                   colonySecond.allocationCost
                 }}</span
-                ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-                ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
+                ><span class="tke-second-cost-h"
+                  >元/{{ $t("TKE.colony.xs") }}</span
+                ><span class="tke-second-cost-t"
+                  >({{ $t("TKE.colony.pzfy") }})</span
+                >
                 <i>|</i>
                 <span class="tke-second-cost-num">{{
                   colonySecond.networkCost
                 }}</span
-                ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-                ><span class="tke-second-cost-w"> ({{$t('TKE.colony.wlfyong')}})</span>
+                ><span class="tke-second-cost-h"
+                  >元/{{ $t("TKE.colony.xs") }}</span
+                ><span class="tke-second-cost-w">
+                  ({{ $t("TKE.colony.wlfyong") }})</span
+                >
               </div>
             </el-form-item>
           </div>
@@ -2105,10 +2231,10 @@
             >
           </p>
           <span class="footer-tips" v-if="colonySecond.workerTips">
-            {{$t('TKE.colony.qxzwjd')}}
+            {{ $t("TKE.colony.qxzwjd") }}
           </span>
           <span class="footer-tips" v-if="colonySecond.masterTips">
-            Master {{$t('TKE.colony.jdzsxz')}}
+            Master {{ $t("TKE.colony.jdzsxz") }}
           </span>
           <el-button
             size="small"
@@ -2125,7 +2251,7 @@
         v-if="thirdBox"
         class="tke-second-box tke-third-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
+        <div class="tke-second-title">{{ $t("TKE.colony.yxpz") }}</div>
         <el-form
           ref="form"
           :model="colonyThird"
@@ -2149,7 +2275,8 @@
           </el-form-item>
           <div class="tke-second-tips">
             <p>
-              {{$t('TKE.colony.czxt')}}<el-tooltip
+              {{ $t("TKE.colony.czxt")
+              }}<el-tooltip
                 :content="$t('TKE.colony.xghsyxxt')"
                 placement="right"
                 effect="light"
@@ -2160,10 +2287,13 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
-          <el-form-item :label="$t('TKE.colony.sjpgz')" v-if="colonySecond.workerDeployShow">
-            <el-checkbox v-model="colonyThird.dataDiskChecked"
-              >{{$t('TKE.colony.zdgshsjp')}}</el-checkbox
-            >
+          <el-form-item
+            :label="$t('TKE.colony.sjpgz')"
+            v-if="colonySecond.workerDeployShow"
+          >
+            <el-checkbox v-model="colonyThird.dataDiskChecked">{{
+              $t("TKE.colony.zdgshsjp")
+            }}</el-checkbox>
             <el-input
               v-model="colonyThird.dataDiskInput"
               :placeholder="$t('TKE.colony.qsrnr')"
@@ -2171,9 +2301,9 @@
             ></el-input>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.rqml')">
-            <el-checkbox v-model="colonyThird.containerChecked"
-              >{{$t('TKE.colony.jyccdsjp')}}</el-checkbox
-            >
+            <el-checkbox v-model="colonyThird.containerChecked">{{
+              $t("TKE.colony.jyccdsjp")
+            }}</el-checkbox>
             <el-input
               v-model="colonyThird.containerInput"
               :placeholder="$t('TKE.colony.qsrnr')"
@@ -2182,7 +2312,8 @@
           </el-form-item>
           <div class="tke-third-tips">
             <p>
-              {{$t('TKE.colony.aqz')}}<el-tooltip
+              {{ $t("TKE.colony.aqz")
+              }}<el-tooltip
                 :content="$t('TKE.colony.aqzyfhqgn')"
                 placement="right"
                 effect="light"
@@ -2222,14 +2353,17 @@
                 </div>
               </div>
               <p v-if="colonyThird.safeArr.length === 0">
-                {{$t('TKE.colony.xggz')}}
+                {{ $t("TKE.colony.xggz") }}
                 <!-- <a href="#">预览默认安全组规则</a> -->
               </p>
 
               <p>
-                <span v-if="colonyThird.safeArr.length === 0"
-                  >{{$t('TKE.colony.ywxyzdy')}}</span
-                ><a href="javascript:;" @click="AddSafe">{{$t('TKE.colony.tjaqz')}}</a>
+                <span v-if="colonyThird.safeArr.length === 0">{{
+                  $t("TKE.colony.ywxyzdy")
+                }}</span
+                ><a href="javascript:;" @click="AddSafe">{{
+                  $t("TKE.colony.tjaqz")
+                }}</a>
               </p>
             </div>
           </div>
@@ -2244,13 +2378,19 @@
                   placement="top"
                   effect="light"
                 >
-                  <el-radio-button label="1">{{$t('TKE.colony.ljglmy')}}</el-radio-button>
+                  <el-radio-button label="1">{{
+                    $t("TKE.colony.ljglmy")
+                  }}</el-radio-button>
                 </el-tooltip>
-                <el-radio-button label="2">{{$t('TKE.colony.zdscmm')}}</el-radio-button>
-                <el-radio-button label="3">{{$t('TKE.colony.szmm')}}</el-radio-button>
+                <el-radio-button label="2">{{
+                  $t("TKE.colony.zdscmm")
+                }}</el-radio-button>
+                <el-radio-button label="3">{{
+                  $t("TKE.colony.szmm")
+                }}</el-radio-button>
               </el-radio-group>
               <p v-if="colonyThird.two">
-                {{$t('TKE.colony.czmm')}}
+                {{ $t("TKE.colony.czmm") }}
               </p>
             </div>
           </el-form-item>
@@ -2262,7 +2402,10 @@
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.sshmy')" v-if="colonyThird.one">
             <div class="tke-third-select">
-              <el-select :placeholder="$t('TKE.overview.qxz')" v-model="colonyThird.sshKeySel">
+              <el-select
+                :placeholder="$t('TKE.overview.qxz')"
+                v-model="colonyThird.sshKeySel"
+              >
                 <el-option
                   v-for="item in colonyThird.sshKey"
                   :key="item.KeyId"
@@ -2273,10 +2416,14 @@
               </el-select>
               <i class="el-icon-refresh ml5"></i>
               <!-- <p>{{$t('TKE.colony.mybhs')}}<a href="../sshkey">{{$t('TKE.colony.xzcj')}}</a></p> -->
-              <p>{{$t('TKE.colony.mybhs')}}{{$t('TKE.colony.xzcj')}}</p>
+              <p>{{ $t("TKE.colony.mybhs") }}{{ $t("TKE.colony.xzcj") }}</p>
             </div>
           </el-form-item>
-          <el-form-item :label="$t('TKE.overview.mm')" v-if="colonyThird.three" class="password">
+          <el-form-item
+            :label="$t('TKE.overview.mm')"
+            v-if="colonyThird.three"
+            class="password"
+          >
             <el-input
               :placeholder="$t('TKE.colony.qsrzjmm')"
               :class="{ 'cluster-wran': colonyThird.passwordWran }"
@@ -2309,25 +2456,25 @@
           </el-form-item> -->
           <el-form-item label="安全加固">
             <div class="tke-third-checkbox" style="padding-bottom:10px;">
-              <el-checkbox v-model="colonyThird.safetyChecked"
-                >{{$t('TKE.colony.mfkt')}}</el-checkbox
-              >
+              <el-checkbox v-model="colonyThird.safetyChecked">{{
+                $t("TKE.colony.mfkt")
+              }}</el-checkbox>
               <p>
-                {{$t('TKE.colony.azzjmfkt')}}
+                {{ $t("TKE.colony.azzjmfkt") }}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.yjk')">
             <div class="tke-third-checkbox">
-              <el-checkbox v-model="colonyThird.cloudwatchChecked"
-                >{{$t('TKE.colony.mfkt')}}</el-checkbox
-              >
+              <el-checkbox v-model="colonyThird.cloudwatchChecked">{{
+                $t("TKE.colony.mfkt")
+              }}</el-checkbox>
               <p class="checkbox-tips" v-if="!colonyThird.cloudwatchChecked">
-                {{$t('TKE.colony.qxgx')}}
+                {{ $t("TKE.colony.qxgx") }}
               </p>
               <p>
-                {{$t('TKE.colony.mfktzj')}}
+                {{ $t("TKE.colony.mfktzj") }}
                 <!-- <a href="#">详细介绍</a> -->
               </p>
             </div>
@@ -2346,7 +2493,7 @@
         v-if="fourthBox"
         class="tke-second-box tke-fourth-box tke-card tke-formpanel-wrap mb60"
       >
-        <div class="tke-second-title">{{$t('TKE.colony.yxpz')}}</div>
+        <div class="tke-second-title">{{ $t("TKE.colony.yxpz") }}</div>
         <el-form ref="form" label-width="120px" label-position="left">
           <el-form-item :label="$t('TKE.colony.jqm')">
             <p>{{ dispose.name }}</p>
@@ -2362,9 +2509,9 @@
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.rqwl')">
             <p>
-              {{ dispose.container }}，{{
-                colony.ServiceValue
-              }}{{$t('TKE.overview.ge')}}Service/集群，{{ colony.PodValue }}{{$t('TKE.colony.gjd')}}
+              {{ dispose.container }}，{{ colony.ServiceValue
+              }}{{ $t("TKE.overview.ge") }}Service/集群，{{ colony.PodValue
+              }}{{ $t("TKE.colony.gjd") }}
             </p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.jfms')">
@@ -2379,7 +2526,8 @@
             class="tke-fourth-node-text"
           >
             <p v-for="(item, index) in rightListMaster" :key="index">
-              {{ item.InstanceId }}<span v-if="rightListMaster.length > 1">,</span>
+              {{ item.InstanceId
+              }}<span v-if="rightListMaster.length > 1">,</span>
             </p>
           </el-form-item>
           <el-form-item
@@ -2388,7 +2536,7 @@
             class="tke-fourth-node-text"
           >
             <p v-for="(item, index) in rightList" :key="index">
-             {{ item.InstanceId }}<span v-if="rightList.length > 1">,</span>
+              {{ item.InstanceId }}<span v-if="rightList.length > 1">,</span>
             </p>
           </el-form-item>
           <el-form-item
@@ -2401,21 +2549,22 @@
               v-for="(item, index) in colonySecond.masterOneList"
               :key="index"
             >
-              <p>{{$t('TKE.colony.kyq')}}:{{$t('TKE.colony.tbyq')}}</p>
+              <p>{{ $t("TKE.colony.kyq") }}:{{ $t("TKE.colony.tbyq") }}</p>
               <p>
-                {{$t('TKE.colony.jxing')}}:{{ item.modelName }}({{ item.modelType }},{{
-                  item.modelHe
-                }}核{{ item.modelGB }}GB)
+                {{ $t("TKE.colony.jxing") }}:{{ item.modelName }}({{
+                  item.modelType
+                }},{{ item.modelHe }}核{{ item.modelGB }}GB)
               </p>
               <p>
-                {{$t('TKE.colony.xtp')}}:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+                {{ $t("TKE.colony.xtp") }}:{{ item.systemDiskValue }}
+                {{ item.systemDiskNumber }}GB
               </p>
-              <p>{{$t('TKE.colony.sjp')}}:{{ item.dataDiskValue }}</p>
+              <p>{{ $t("TKE.colony.sjp") }}:{{ item.dataDiskValue }}</p>
               <p>
-                {{$t('TKE.colony.gwdk')}}:{{ item.broadbandValue }}
+                {{ $t("TKE.colony.gwdk") }}:{{ item.broadbandValue }}
                 {{ item.broadbandNumber }}Mbps
               </p>
-              <p>{{$t('TKE.colony.sliang')}}:{{ item.dataNum }}</p>
+              <p>{{ $t("TKE.colony.sliang") }}:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
           <el-form-item
@@ -2427,21 +2576,22 @@
               v-for="(item, index) in colonySecond.workerOneList"
               :key="index"
             >
-              <p>{{$t('TKE.colony.kyq')}}:{{$t('TKE.colony.tbyq')}}</p>
+              <p>{{ $t("TKE.colony.kyq") }}:{{ $t("TKE.colony.tbyq") }}</p>
               <p>
-                {{$t('TKE.colony.jxing')}}:{{ item.modelName }}({{ item.modelType }},{{
-                  item.modelHe
-                }}核{{ item.modelGB }}GB)
+                {{ $t("TKE.colony.jxing") }}:{{ item.modelName }}({{
+                  item.modelType
+                }},{{ item.modelHe }}核{{ item.modelGB }}GB)
               </p>
               <p>
-                {{$t('TKE.colony.xtp')}}:{{ item.systemDiskValue }} {{ item.systemDiskNumber }}GB
+                {{ $t("TKE.colony.xtp") }}:{{ item.systemDiskValue }}
+                {{ item.systemDiskNumber }}GB
               </p>
-              <p>{{$t('TKE.colony.sjp')}}:{{ item.dataDiskValue }}</p>
+              <p>{{ $t("TKE.colony.sjp") }}:{{ item.dataDiskValue }}</p>
               <p>
-                {{$t('TKE.colony.gwdk')}}:{{ item.broadbandValue }}
+                {{ $t("TKE.colony.gwdk") }}:{{ item.broadbandValue }}
                 {{ item.broadbandNumber }}Mbps
               </p>
-              <p>{{$t('TKE.colony.sliang')}}:{{ item.dataNum }}</p>
+              <p>{{ $t("TKE.colony.sliang") }}:{{ item.dataNum }}</p>
             </div>
           </el-form-item>
           <el-form-item
@@ -2452,14 +2602,20 @@
               <span class="tke-second-cost-num">{{
                 colonySecond.allocationCost
               }}</span
-              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-              ><span class="tke-second-cost-t">({{$t('TKE.colony.pzfy')}})</span>
+              ><span class="tke-second-cost-h"
+                >元/{{ $t("TKE.colony.xs") }}</span
+              ><span class="tke-second-cost-t"
+                >({{ $t("TKE.colony.pzfy") }})</span
+              >
               <i>|</i>
               <span class="tke-second-cost-num">{{
                 colonySecond.networkCost
               }}</span
-              ><span class="tke-second-cost-h">元/{{$t('TKE.colony.xs')}}</span
-              ><span class="tke-second-cost-w"> ({{$t('TKE.colony.wlfyong')}})</span>
+              ><span class="tke-second-cost-h"
+                >元/{{ $t("TKE.colony.xs") }}</span
+              ><span class="tke-second-cost-w">
+                ({{ $t("TKE.colony.wlfyong") }})</span
+              >
             </div>
           </el-form-item>
         </el-form>
@@ -2509,6 +2665,7 @@ export default {
       secondBox: false,
       thirdBox: false,
       fourthBox: false,
+      duliblyDis: false,
       // 第一步
       colony: {
         name: "",
@@ -2524,6 +2681,7 @@ export default {
         kuValue: "",
         assemblyRadio: "docker",
         assemblyDis: false,
+
         cityRadio: "tb",
         networkOptions: [],
         CidrBlock: "",
@@ -3097,6 +3255,11 @@ export default {
       } else {
         this.colony.assemblyDis = true;
       }
+      if (_valOne > 0 && _valTwo > 9) {
+        this.duliblyDis = false;
+      } else {
+        this.duliblyDis = true;
+      }
     },
     // 集群网络
     ClusterNetworkData() {
@@ -3123,7 +3286,7 @@ export default {
       });
     },
     NetworkRefresh() {
-      // this.ClusterNetworkData()
+      this.ClusterNetworkData();
     },
     NetWork(val) {
       if (val) {
@@ -4712,28 +4875,28 @@ export default {
             } else {
               let ErrTips = {
                 AccountQualificationRestrictions: "該請求帳戶未通過資格審計。",
-              InstancesQuotaLimitExceeded:
-                "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
-              "InvalidClientToken.TooLong":
-                "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
-              "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求帳號所有。",
-              "InvalidInstanceName.TooLong":
-                "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
-              "InvalidInstanceType.Malformed":
-                "指定InstanceType參數格式不合法。",
-              InvalidParameterCombination: "表示參數組合不正確。",
-              InvalidParameterValue:
-                "無效參數值。參數值格式錯誤或者參數值不被支持等。",
-              "InvalidParameterValue.Range":
-                "無效參數值。參數值取值範圍不合法。",
-              InvalidPassword:
-                "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
-              InvalidPeriod:
-                "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
-              InvalidPermission: "帳戶不支持該操作。",
-              "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              MissingParameter: "參數缺失。請求沒有帶必選參數。"
+                InstancesQuotaLimitExceeded:
+                  "表示當前創建的實例個數超過了該帳戶允許購買的剩餘配額數。",
+                "InvalidClientToken.TooLong":
+                  "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
+                "InvalidHostId.NotFound":
+                  "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "InvalidInstanceName.TooLong":
+                  "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
+                "InvalidInstanceType.Malformed":
+                  "指定InstanceType參數格式不合法。",
+                InvalidParameterCombination: "表示參數組合不正確。",
+                InvalidParameterValue:
+                  "無效參數值。參數值格式錯誤或者參數值不被支持等。",
+                "InvalidParameterValue.Range":
+                  "無效參數值。參數值取值範圍不合法。",
+                InvalidPassword:
+                  "無效密碼。指定的密碼不符合密碼複雜度限制。例如密碼長度不符合限制等。",
+                InvalidPeriod:
+                  "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
+                InvalidPermission: "帳戶不支持該操作。",
+                "InvalidZone.MismatchRegion": "指定的zone不存在。",
+                MissingParameter: "參數缺失。請求沒有帶必選參數。"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
               this.$message({

@@ -20,6 +20,10 @@
 <script>
   import NavHeader from "@/components/HeaderAside/Header";
   import LeftAside from "./Public/Menu";
+  import {
+    ALL_CITY,
+    GETAPPID,
+  } from "@/constants";
   export default {
     data() {
       return {};
@@ -29,9 +33,19 @@
       LeftAside
     },
     mounted() {
-
+      this.GetAPPid()
     },
-    methods: {}
+    methods: {
+      GetAPPid() {
+        let parms = {
+          uin: this.$cookie.get('uin')
+        }
+        this.axios.post(GETAPPID, parms).then(data => {
+          localStorage.setItem("appid", data.data[0].app_id);
+
+        });
+      },
+    }
   };
 
 </script>

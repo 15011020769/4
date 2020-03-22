@@ -154,10 +154,7 @@
             type: "value",
             splitNumber: this.scale
           }],
-
           series:this.series
-
-       
         });
         window.addEventListener("resize", () => {
           myChart.resize();

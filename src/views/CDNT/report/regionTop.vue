@@ -29,7 +29,7 @@
               {{ fluxStr(scope.row.value) }}
             </template>
           </el-table-column>
-          <el-table-column label="占比">
+          <el-table-column label="佔比">
             <template slot-scope="scope">
               {{ totalNumber === 0 ? 0 : fixed((scope.row.value / totalNumber) * 100) }}%
             </template>
@@ -114,13 +114,13 @@ export default {
         fileName = `${start}-${end}_traffic_distribution.xlsx`;
       }
       let data = [
-        ["统计项目", projectName || "全部项目"],
-        ["统计域名", domainName || "全部域名"],
-        ["报表类型", type],
-        ["开始时间", times[0]],
-        ["结束时间", times[1]],
+        ['統計項目', projectName || '全部項目'],
+        ['統計域名', domainName || '全部域名'],
+        ['報表類型', type],
+        ['開始時間', times[0]],
+        ['結束時間', times[1]],
         [],
-        ["区域", "消耗量（B）", "占比（%）"]
+        ["區域", "消耗量（B）", "佔比（%）"]
       ];
       this.tableData.map(item => {
         data.push([
@@ -139,13 +139,13 @@ export default {
     },
     fluxStr(v) {
       if (v > 1e12) {
-        return [v / 1e12, "TB"].join("");
+        return [this.fixed(v / 1e12), "TB"].join("");
       }
       if (v > 1e9) {
-        return [v / 1e9, "GB"].join("");
+        return [this.fixed(v / 1e9), "GB"].join("");
       }
       if (v > 1e6) {
-        return [v / 1e6, "MB"].join("");
+        return [this.fixed(v / 1e6), "MB"].join("");
       }
       if (v > 1e3) {
         return [this.fixed(v / 1e3), "KB"].join("");

@@ -10,109 +10,66 @@
           size="mini"
           label-position="left"
         >
-          <el-form-item label="策略名称">
-            <el-input v-model="formInline.strategy_name"></el-input>
-          </el-form-item>
-          <el-form-item label="产品/策略类型">
-            <el-select
-              filterable
-              v-model="formInline.product_name"
-              class="select-option"
-            >
-              <el-option
-                v-for="(item, index) in formInline.product_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.id"
-                label-width="40px"
-              ></el-option>
-            </el-select>
-            <el-select
-              multiple
-              v-model="formInline.strategy_value"
-              class="select-option-tow"
-            >
-              <!-- <el-checkbox
-                :indeterminate="isIndeterminate"
-                v-model="checkAllProduct"
-                @change="handleCheckAllChange"
-              >全选</el-checkbox>
-              <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                <el-checkbox
-                  v-for="(item,index) in formInline.strategy_kind"
-                  :label="item.name"
-                  :key="index"
-                >{{item.name}}</el-checkbox>
-              </el-checkbox-group>-->
-              <el-option
-                v-for="(item, index) in formInline.strategy_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="告警对象">
-            <el-tooltip
-              content="搜索告警对象所属告警策略，需先选择确定唯一策略类型"
-              placement="bottom"
-              effect="light"
-            >
-              <el-select
-                v-model="formInline.alarm"
-                disabled
-                style="width:360px;"
-              >
-                <el-option label value></el-option>
-              </el-select>
-            </el-tooltip>
-          </el-form-item>
-          <el-form-item label="用户/组">
-            <el-select v-model="formInline.user" class="select-option">
-              <el-option
-                v-for="(item, index) in formInline.user_kind"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-                label-width="40px"
-              ></el-option>
-            </el-select>
-            <el-select
-              multiple
-              v-model="formInline.group"
-              class="select-option-tow"
-            >
-              <el-option
-                v-for="(item, index) in formInline.kind_list"
-                :key="index"
-                :label="item.name"
-                :value="item.value"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-            <el-button type="text" class="clearBtn">清除筛选</el-button>
-
-            <!-- <el-link type="primary">主要链接</el-link>
-            <el-link type="info">信息链接</el-link>-->
-          </el-form-item>
+          <div>
+            <el-form-item label="策略名称">
+              <el-input v-model="formInline.strategy_name"></el-input>
+            </el-form-item>
+            
+            <el-form-item>
+              <div style="display: flex;">
+                <el-select
+                  filterable
+                  v-model="formInline.product_name"
+                  class="select-option"
+                >
+                  <el-option
+                    v-for="(item, index) in formInline.product_kind"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.id"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+                <el-select
+                  filterable
+                  v-model="formInline.productArr"
+                  class="select-option-tow"
+                  v-if="formInline.product_name === '1'"
+                  multiple
+                >
+                  <el-option
+                    v-for="(item, index) in productOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.viewName"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+                <el-select
+                  filterable
+                  v-model="productValue"
+                  class="select-option-tow"
+                  v-if="formInline.product_name === '2'"
+                  @change="changeMonitor"
+                >
+                  <el-option
+                    v-for="(item, index) in productOptions"
+                    :key="index"
+                    :label="item.label"
+                    :value="item.viewName"
+                    label-width="40px"
+                  ></el-option>
+                </el-select>
+              </div>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="onSubmit">查询</el-button>
+            </el-form-item>
+          </div>
         </el-form>
       </div>
     </Header>
     <div class="overview-main">
-      <div class="explain">
-        <p>
-          告警模板功能已上线，支持触发条件的复用与统一修改，请前往
-          <a>触发条件模板</a>进行配置
-          <a>查看详情</a>
-        </p>
-        <p>
-          现已支持对告警策略的告警启停，可在策略维度、实例维度进行告警策略屏蔽，点击查看
-          <a>告警启停文档</a>
-        </p>
-      </div>
     </div>
     <div class="table">
       <p class="addBtn">
@@ -156,7 +113,7 @@
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
-                  v-for="i in scope.row.Conditions"
+                  v-for="(i,item) in scope.row.Conditions" :key="item"
                   class="trigger-condition"
                 >
                   <p>
@@ -169,7 +126,7 @@
                 </div>
                 <p class="text-color">事件告警：</p>
                 <div
-                  v-for="j in scope.row.EventConditions"
+                  v-for="(j, items) in scope.row.EventConditions" :key="items"
                   class="trigger-condition"
                 >
                   <p>
@@ -197,7 +154,7 @@
                   </p>
                 </div>
                 <div
-                  v-for="(items, indexs) in scope.row.EventConditions"
+                  v-for="(items, indexs) in scope.row.EventConditions" :key="indexs"
                   class="trigger-condition"
                 >
                   <p>
@@ -569,6 +526,7 @@
 import Header from "./components/Head";
 import Dialog from "./components/dialog";
 import FileSaver from "file-saver";
+import ProductTypeCpt from "@/views/CM/CM_assembly/product_type_str";
 import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
 import {
@@ -579,7 +537,18 @@ import {
   CM_ALARM_DELETE,
   CM_ALARM_SET_DEFAULT,
   CM_GROUPING_LIST_EDIT,
-  CM_ALARM_MODIFY_NOTIFY
+  CM_ALARM_MODIFY_NOTIFY,
+  CVM_LIST, //云服务器列表
+  NAT_LIST, //NAT网关列表
+  VPN_LIST, //VPN网关列表
+  VPNTD_LIST, //VPN通道列表
+  DCG_LIST, //专线网关列表
+  MYSQL_LIST, //MYSQL列表
+  REDIS_LIST, //REDIS列表
+  Physics_LIST, //物理专线列表
+  Private_LIST, //专线通道列表
+  OBJ_LIST, //对象存储列表
+  DISK_LIST, //云硬盘列表
 } from "@/constants";
 var project = [];
 export default {
@@ -598,33 +567,61 @@ export default {
           name: "策略类型"
         }
       ],
+      //产品
+      productOptions: [{
+          label: '云服务器',
+          viewName: 'cvm_device',
+        }, {
+          label: '云硬盘',
+          viewName: 'BS',
+        },
+        {
+          label: 'VPN网关',
+          viewName: 'VPN_GW',
+        }, {
+          label: 'VPN通道',
+          viewName: 'vpn_tunnel',
+        }, {
+          label: 'NAT网关',
+          viewName: 'nat_tc_stat',
+        }, {
+          label: '专线网关',
+          viewName: 'DC_GW',
+        }, {
+          label: 'MYSQL',
+          viewName: 'cdb_detail',
+        }, {
+          label: 'Redis',
+          viewName: 'REDIS-CLUSTER',
+        }, {
+          label: '专用通道',
+          viewName: 'dcchannel',
+        }, {
+          label: '物理专线',
+          viewName: 'dcline',
+        }, {
+          label: '对象存储',
+          viewName: 'COS',
+        }
+      ],
       isIndeterminate: true,
       formInline: {
-        product_name: "产品类型", //策略
+        product_name: '1', //策略
+        productArr: [],//产品类型列表
         product_kind: [
           {
             id: "1",
-            value: 0,
             name: "产品类型"
           },
-          {
-            id: "2",
-            value: 1,
-            name: "策略类型"
-          }
+          // {
+          //   id: "2",
+          //   name: "策略类型"
+          // }
         ], //产品/.策略类型
         strategy_kind: [
           {
             value: 0,
-            name: "全选"
-          },
-          {
-            value: 1,
-            name: "云服务器"
-          },
-          {
-            value: 2,
-            name: "云数据库"
+            name: "请选择"
           }
         ], //用户/组
         strategy_name: "", //策略名称
@@ -735,18 +732,71 @@ export default {
         }
       ],
       callOpen: 0,
-      callClose: 0
+      callClose: 0,
+      searchParam: {},
+      projectId: 0,
+      productValue: '',
+      loading: true,
+      dataList:[],//查询告警对象列表
+      selectStrategyList: [],//选中的告警对象列表
+      headConfig: {
+        title1: '',
+        title2: '',
+        title3: '',
+        title4: ''
+      },
+      monitorNumber: '',
+      DiskType: {
+        CLOUD_BASIC: "普通雲硬碟",
+        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_SSD: "SSD雲硬碟"
+      },
+      vpcConnState: {
+        PENDING: "生產中",
+        AVAILABLE: "運行中",
+        DELETING: "刪除中"
+      },
+      natStatu: {
+        PENDING: "生產中",
+        DELETING: "刪除中",
+        AVAILABLE: "運行中",
+        UPDATING: "升級中",
+        FAILED: "失敗"
+      },
+      DiskUsage: {
+        SYSTEM_DISK: "系統盤",
+        DATA_DISK: "數據盤"
+      },
+      isShowPopover: false,
     };
   },
   components: {
     Header,
-    Dialog
+    Dialog,
+    ProductTypeCpt
   },
   mounted() {
     this.ListInit();
     this.Project();
   },
   methods: {
+    passData(data) {
+      console.log("data",data);
+      this.isShow = false;
+      this.productListData = data;
+      this.productValue = data.productValue;
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
+    },
+    Type_loading(val) {
+      this.loading = val
+    },
     async ListInit() {
       this.loadShow = true;
       let params = {
@@ -756,6 +806,17 @@ export default {
         Limit: this.pageSize,
         Offset: this.pageIndex
       };
+      if(this.formInline.strategy_name !== '') {
+        params.Like = this.formInline.strategy_name;
+      }
+      if(this.formInline.productArr.length > 0) {
+        for(let i = 0; i < this.formInline.productArr.length; i++) {
+          params['ViewNames.' + i] = this.formInline.productArr[i];
+        }
+      }
+      if(this.formInline.product_name === '2') {
+        params['ViewNames.0'] = this.productValue;
+      }
       await this.axios.post(CM_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
           var _tableData = res.Response.GroupList;
@@ -979,8 +1040,17 @@ export default {
         this.ModifyAlarm = false;
       }
     },
+    handleSelectionSte(val) {
+      this.selectStrategyList = val;
+    },
     onSubmit() {
-      console.log("submit!");
+      this.ListInit();
+    },
+    loadMore() {
+      if (this.loadSign) {
+        this.loadSign = false;
+        // this.pageIndex++;
+      }
     },
     // 分页
     handleCurrentChange(val) {
@@ -1177,25 +1247,24 @@ export default {
     // 设置默认
     SetDefault(row) {
       let param = {
-        groupId: row.GroupId,
-        lang: "zh"
+        GroupId: row.GroupId,
+        Version: "2018-07-24",
+        Module: "monitor"
       };
       this.axios.post(CM_ALARM_SET_DEFAULT, param).then(res => {
-        // if (res.Response.Error === undefined) {
-        console.log(res);
-        this.ListInit();
-        // } else {
-        //   let ErrTips = {
-
-        //   };
-        //   let ErrOr = Object.assign(ErrorTips, ErrTips);
-        //   this.$message({
-        //     message: ErrOr[res.Response.Error.Code],
-        //     type: "error",
-        //     showClose: true,
-        //     duration: 0
-        //   });
-        // }
+        if (res.Response.Error === undefined) {
+          console.log(res);
+          this.ListInit();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
       });
     },
     // 修改名称
@@ -1472,7 +1541,7 @@ export default {
         if (typeof console !== "undefined") console.log(e, wbout);
       }
       return wbout;
-    }
+    },
   },
   filters: {
     formatDate(value) {
@@ -1489,6 +1558,11 @@ export default {
       let s = date.getSeconds();
       s = s < 10 ? "0" + s : s;
       return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
+    },
+    CreateDate(val) {
+      if (val) {
+        return moment(val).format('YYYY-MM-DD HH :mm:ss');
+      }
     },
     CalcType(value) {
       if (value == 1) {

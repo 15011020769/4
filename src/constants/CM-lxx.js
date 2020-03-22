@@ -8,7 +8,7 @@ export const SUBSCRIPTION_LIST = 'monitor2/DescribeSubscribeInfo'
 export const SUBSCRIPTION_ADMINISTRATION = 'monitor2/SubscribeEvent'
 
 //取消订阅
-export const CANCEL_SUBSCRIPTION = 'monitor2/UnSubscribeEvent'
+export const CANCEL_SUBSCRIPTION = 'monitor2/UnsubscribeEvent'
 
 //获取自定义消息列表
 export const CUSTON_MESSAGE_LIST = 'monitor2/DescribeMsgPolicyList'//ok

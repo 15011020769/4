@@ -21,7 +21,8 @@
   import NavHeader from "@/components/HeaderAside/Header";
   import LeftAside from "./Public/Menu";
   import {
-    ALL_CITY
+    ALL_CITY,
+    GETAPPID,
   } from "@/constants";
   export default {
     data() {
@@ -35,8 +36,9 @@
       NavHeader,
       LeftAside
     },
-    mounted() {
+    created() {
       this.GetCity();
+      this.GetAPPid()
     },
     methods: {
       // 获取城市列表
@@ -47,7 +49,16 @@
           localStorage.setItem("regionv2", city.Region);
           localStorage.setItem("regionv3", city.zone);
         });
-      }
+      },
+      GetAPPid() {
+        let parms = {
+          uin: this.$cookie.get('uin')
+        }
+        this.axios.post(GETAPPID, parms).then(data => {
+          localStorage.setItem("appid", data.data[0].app_id);
+
+        });
+      },
     }
   };
 

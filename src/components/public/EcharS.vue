@@ -29,6 +29,11 @@
         handler() {
           this.init();
         }
+      },
+      series: {
+        handler() {
+          this.init();
+        }
       }
     },
     methods: {

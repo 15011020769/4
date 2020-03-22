@@ -49,7 +49,7 @@ export const CM_ALARM_L = 'monitor2/DescribeProductEventList'
 export const CM_ALARM_DELETE = 'monitor2/DeletePolicyGroup'
 
 // 告警策略 列表 策略类型 设置默认
-export const CM_ALARM_SET_DEFAULT = 'monitor/SetDefaultPolicyGroup'
+export const CM_ALARM_SET_DEFAULT = 'monitor2/SetDefaultPolicyGroup'
 
 // 告警策略 列表 策略类型 修改告警渠道
 export const CM_ALARM_MODIFY_NOTIFY = 'monitor2/ModifyNotifyBatch'
@@ -90,6 +90,12 @@ export const CM_CALLBACK_HISTORY = 'monitor2/DescribeAlarmCallbackHistory'
 
 // 告警策略 详情 回调接口
 export const CM_CALLBACK = 'monitor2/DescribeAlarmCallbackVerifyCode'
+
+// 告警策略 详情 回调接口
+export const CM_CALLBACK_SAVE = 'monitor2/ModifyAlarmCallback'
+
+// 告警策略 详情 回调接口 刷新
+export const CM_CALLBACK_Verify = 'monitor2/VerifyAlarmCallback'
 
 //
 export const MYSQL_LIST_CMD = 'cmd2/DescribeDBInstances'

@@ -155,7 +155,7 @@
                 </el-table>
               </div>
             </el-tab-pane>
-            <el-tab-pane name="concurrent_executions">
+            <!-- <el-tab-pane name="concurrent_executions">
               <template slot="label">
                 <p>
                   <span class="menu1">并发执行个数</span>
@@ -179,7 +179,7 @@
                   </el-table-column>
                 </el-table>
               </div>
-            </el-tab-pane>
+            </el-tab-pane> -->
             <el-tab-pane name="throttle">
               <template slot="label">
                 <p>
@@ -207,8 +207,29 @@
             </el-tab-pane>
           </el-tabs>
         </div>
+        <div class="top10">
+          <div class="title">
+            <p>函数资源使用量 TOP 10 统计</p>
+            <p class="shua" @click="_shua">刷新</p>
+          </div>
+          <div>
+            <el-table :data="TopArr" style="width: 100%" v-loading='topload'>
+              <el-table-column prop="function_name" label="函数名">
+              </el-table-column>
+              <el-table-column prop="namespace" label="命名空间">
+              </el-table-column>
+              <el-table-column label="数据指标">
+                <template slot-scope="scope">
+                  <p>{{scope.row.mem_duration}}MB/s</p>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
       </div>
+
     </div>
+
   </div>
 </template>
 
@@ -233,6 +254,7 @@
   export default {
     data() {
       return {
+        topload: true,
         showHeader: false,
         FuncList: [], //函数列表
         addressIpt: localStorage.getItem('regionv3'),
@@ -305,6 +327,7 @@
           'throttle': '函數運行受限次數',
           'ConcurrentExecutions': '并发执行错误'
         },
+        TopArr: [] //top10列表
       };
     },
     components: {
@@ -375,7 +398,7 @@
           StartTime: this.Time.StartTIme,
           EndTime: this.Time.EndTIme,
           MetricName: this.MetricName,
-          'Dimensions.0.appid': 1300560919
+          'Dimensions.0.appid': localStorage.getItem('appid'),
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           this.tableData = []
@@ -446,22 +469,34 @@
             dt.getMinutes() : dt.getMinutes()) + ":" + (dt.getSeconds() < 10 ? "0" + dt.getSeconds() : dt
             .getSeconds()));
       },
-
+      _shua() {
+        this.topload = true
+        this._GetTop()
+      },
       //获取top10列表
       _GetTop() {
+        const time = new Date()
+        let timez = time.getTime() - 86400000
         let parms = {
           Version: '2018-07-24',
           MetricName: "mem_duration",
           Region: 'ap-guangzhou',
           Namespace: "qce/scf_v2",
-          Time: "2020-03-12 00:00:00",
-          Period: 3600,
-          Module: 'monitor'
+          Time: '2020-3-20 0:0:0',
+          Period: 86400,
+          Module: 'monitor',
+          'Dimensions.0.Name': 'appid',
+          'Dimensions.0.Value': localStorage.getItem('appid'),
+          'Dimensions.1.Name': 'function_name',
+          'Dimensions.1.Value': 'dasd',
+          'Dimensions.2.Name': 'namespace',
+          'Dimensions.2.Value': 'default',
         }
         this.axios.post(TOP_LIST, parms).then(data => {
-          console.log(data)
           if (data.Response.Error == undefined) {
-
+            this.TopArr = JSON.parse(data.Response.ObjList)
+            console.log(this.TopArr)
+            this.topload = false
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],
@@ -494,6 +529,21 @@
       .title {
         margin: 20px 0;
         font-weight: bold;
+      }
+    }
+
+    .top10 {
+      margin-top: 50px;
+
+      .title {
+        font-weight: bold;
+        display: flex;
+
+        .shua {
+          padding-left: 20px;
+          color: #006eff;
+          cursor: pointer;
+        }
       }
     }
   }

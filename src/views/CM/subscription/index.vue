@@ -9,7 +9,7 @@
       <el-table :data="tableData" style="width: 100%;" v-loading="loadShow">
         <el-table-column label="事件类型" width="240">
           <template slot-scope="scope">
-            <div v-if="scope.row.AccidentName=='雲伺服器存儲問題'">
+            <div v-if="scope.row.AccidentName=='雲伺服器儲存問題'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
@@ -41,7 +41,7 @@
               </el-tooltip>
             </div>
 
-            <div v-if="scope.row.AccidentName=='雲伺服器運行異常'">
+            <div v-if="scope.row.AccidentName=='雲伺服器運列異常'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
@@ -61,31 +61,29 @@
         <el-table-column label="短信" width="170">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.type == 0 ? false : true"
+              v-show="scope.row.NotifyWay ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
-            <i v-else class="el-icon-circle-close" style="color:#e1504a"></i>
+            <span v-if="!scope.row.NotifyWay">尚未订阅</span>
           </template>
         </el-table-column>
         <el-table-column label="邮件" width="180">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.email == 0 ? false : true"
+              v-show="scope.row.NotifyWay ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
-            <i v-else class="el-icon-circle-close" style="color:#e1504a"></i>
           </template>
         </el-table-column>
         <el-table-column label="站内信" width="180">
           <template slot-scope="scope">
             <i
-              v-if="scope.row.zhanneixin == 0 ? false : true"
+              v-show="scope.row.NotifyWay ? true :false"
               class="el-icon-circle-check"
               style="color:#0abf5b"
             ></i>
-            <i v-else class="el-icon-circle-close" style="color:#e1504a"></i>
           </template>
         </el-table-column>
         <el-table-column prop="receive" label="接收人">
@@ -93,7 +91,6 @@
             <div style="width: 200px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">
               <span v-for="(v,i) in scope.row.Receivers" :key="i">{{v.Username}},</span>
             </div>
-
             <p v-if="scope.row.Receivers.length==0">-</p>
             <p v-else>共{{scope.row.Receivers.length}}人</p>
           </template>
@@ -101,12 +98,7 @@
         <el-table-column label>
           <template slot-scope="scope">
             <el-button type="text" class="btn subBtn" @click="ok(scope.row)">订阅管理</el-button>
-            <el-button
-              type="text"
-              class="btn unSubBtn"
-              @click="cancel(scope.row)"
-              v-show="hide"
-            >取消订阅</el-button>
+            <el-button type="text" class="btn unSubBtn" @click="cancel(scope.row)"  v-if="scope.row.NotifyWay">取消订阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -192,7 +184,6 @@
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
               </span>
-
               <span v-else>
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
@@ -251,7 +242,6 @@ export default {
       multipleSelection: [],
       okObj: {},
       cancelObj: {},
-      hide: true,
       selectUserList: []
     };
   },
@@ -385,7 +375,7 @@ export default {
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
-            message: ErrOr[res.Response.Error.Code],
+            message: ErrOr[res.Response],
             type: "error",
             showClose: true,
             duration: 0

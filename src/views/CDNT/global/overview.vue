@@ -34,16 +34,16 @@ export default {
       outUseData: [],
       piecesDelay: [
         {lte: 1, label: '好(<1s)',color: '#319a18'},
-        {gt: 1, lte: 2, label: '较好(1-5s)',color: '#51af32'},
+        {gt: 1, lte: 2, label: '較好(1-5s)',color: '#51af32'},
         {gt: 2, lte: 3, label: '告警(2-3s)',color: '#ffb800'},
-        {gt: 3, lte: 5, label: '较差(3-5s)',color: '#e1504a'},
+        {gt: 3, lte: 5, label: '較差(3-5s)',color: '#e1504a'},
         {gt: 5, label: '差(>5s)',color: '#e32310'},
       ],
       piecesUse: [
         {lte: 92, label: '差(<92%)',color: '#e32310'},
-        {gt: 92, lte: 94, label: '较差(94-92%)',color: '#e1504a'},
+        {gt: 92, lte: 94, label: '較差(94-92%)',color: '#e1504a'},
         {gt: 94, lte: 96, label: '告警(96-94%)',color: '#ffb800'},
-        {gt: 96, lte: 98, label: '较好(98-96%)',color: '#51af32'},
+        {gt: 96, lte: 98, label: '較好(98-96%)',color: '#51af32'},
         {gt: 98, label: '好(>98%)',color: '#319a18'},
       ],
       tooltipDelay: {
@@ -54,9 +54,9 @@ export default {
             return
           }
           if(val.data.value == 0) {
-            relVal = val.data.name + '<br/>' + '时延'  + ' : ' + '--';
+            relVal = val.data.name + '<br/>' + '時延'  + ' : ' + '--';
           } else {
-            relVal = val.data.name + '<br/>' + '时延'  + ' : ' + (val.data.value * 1000).toFixed(2) + 'ms';
+            relVal = val.data.name + '<br/>' + '時延'  + ' : ' + (val.data.value * 1000).toFixed(2) + 'ms';
           }
           return relVal
         }

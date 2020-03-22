@@ -66,7 +66,7 @@
         filter-placement="top-start" 策略类型下拉框属性和方法-->
         <el-table-column prop="type" label="策略类型">
           <template slot-scope="scope">
-            <span>{{scope.row.Name}}</span>
+            <span>{{scope.row.ViewName | ViewName}}</span>
             <!-- <i class="el-icon-caret-bottom"></i> -->
           </template>
         </el-table-column>
@@ -236,6 +236,42 @@ export default {
             name: '测试误删'
           }
         ], // 用户名类型数据
+        productOptions: [{
+            label: '云服务器',
+            viewName: 'cvm_device',
+          }, {
+            label: '云硬盘',
+            viewName: 'BS',
+          },
+          {
+            label: 'VPN网关',
+            viewName: 'VPN_GW',
+          }, {
+            label: 'VPN通道',
+            viewName: 'vpn_tunnel',
+          }, {
+            label: 'NAT网关',
+            viewName: 'nat_tc_stat',
+          }, {
+            label: '专线网关',
+            viewName: 'DC_GW',
+          }, {
+            label: 'MYSQL',
+            viewName: 'cdb_detail',
+          }, {
+            label: 'Redis',
+            viewName: 'REDIS-CLUSTER',
+          }, {
+            label: '专用通道',
+            viewName: 'dcchannel',
+          }, {
+            label: '物理专线',
+            viewName: 'dcline',
+          }, {
+            label: '对象存储',
+            viewName: 'COS',
+          }
+        ],
         product_value: '', // 产品
         Template_value: '' // 策略
       },
@@ -649,6 +685,17 @@ export default {
       let s = date.getSeconds()
       s = s < 10 ? '0' + s : s
       return y + '/' + MM + '/' + d + ' ' + h + ':' + m + ':' + s
+    },
+    ViewName(val) {
+      if(val) {
+        if(val === 'cvm_device') {
+          return "云服务器";
+        } else if(val === 'BS') {
+          return "云硬盘";
+        } else if(val === 'VPN_GW') {
+          return "VPN网关";
+        }
+      }
     }
   }
 }

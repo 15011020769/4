@@ -25,7 +25,7 @@
         </p>
       </el-col>
       <el-col :span="8" v-loading="requestLoading">
-        <p class="title">请求数</p>
+        <p class="title">請求數</p>
         <p class="number">{{ request }}</p>
         <p class="info">
           <i class="el-icon-top" v-if="requestChain > 0" />
