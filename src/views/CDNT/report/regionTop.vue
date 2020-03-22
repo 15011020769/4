@@ -139,13 +139,13 @@ export default {
     },
     fluxStr(v) {
       if (v > 1e12) {
-        return [v / 1e12, "TB"].join("");
+        return [this.fixed(v / 1e12), "TB"].join("");
       }
       if (v > 1e9) {
-        return [v / 1e9, "GB"].join("");
+        return [this.fixed(v / 1e9), "GB"].join("");
       }
       if (v > 1e6) {
-        return [v / 1e6, "MB"].join("");
+        return [this.fixed(v / 1e6), "MB"].join("");
       }
       if (v > 1e3) {
         return [this.fixed(v / 1e3), "KB"].join("");
