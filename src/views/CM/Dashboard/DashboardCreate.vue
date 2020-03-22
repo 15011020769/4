@@ -76,6 +76,7 @@ export default {
     created(){
         this.StartTime= moment(new Date(moment().format()).getTime()-1000*60*60).format("YYYY-MM-DD HH:mm:ss")
         this.EndTime =  moment(new Date(moment().format()).getTime()).format("YYYY-MM-DD HH:mm:ss")
+        this.DashboardID = this.$route.query.DashboardID
     },
     data(){
         return{
@@ -94,13 +95,13 @@ export default {
             timeDate:{},
             times:[],
             series:[],
+            DashboardID:"",//
             loading: true,
             flag:false
         }
     },
     methods:{
         PassData(data) {
-            
             this.productListData = data
             console.log(this.productListData)
              setTimeout(() => {
@@ -154,6 +155,7 @@ export default {
             this.timeDate = {}
             this.times=[]
             this.series=[]
+            let color = ['#2072d9','#fff2cc','#ffd966','#f1c232','#9fc5e8','#3d85c6','#00ff00','#008bff','#980000','#1c4587']
             let params = {
                 Namespace: this.Namespace,
                 MetricName: this.MetricName,
@@ -217,15 +219,16 @@ export default {
                                     symbol: "none",
                                     itemStyle: {
                                         normal: {
-                                            color: "#2072d9",
+                                            color: color[item]?color[item]:color[item%10],
                                             lineStyle: {
-                                                color: "#2072d9"
+                                                color: color[item]?color[item]:color[item%10]
                                             }
                                         }
                                     }
                                 })
                             }
                         }
+                        console.log(this.series)
                     } else {
                         this.series = []
                     }
@@ -233,20 +236,29 @@ export default {
             })
         },
         // 创建Dashboard
-        async createDashboard(){
-            const param = {
-                Module :'monitor',
-                Namespace:this.Namespace,
-                DescName:this.picName,
-                DashboardID:76484,
-                MetricNames:["partition"],
-                Meta:{"aggregateType":"detail","aggregations":["Avg","Max","Min"],"chartTypes":["column"],"configId":"cvm","layout":{"h":"5","h2":"0","w":"4","x":"0","y":"0"},"timeAggregate":"last"},
-                Instances:["{\"regionId\":\"1\",\"unInstanceId\":\"ins-19719mfp\"}"]
-            }   
-            await this.axios.post(CREATDASHBORD, param).then(res => {
-                console.log(res)
-            })
-        }
+        // async createDashboard(){
+        //     const param = {
+        //         Version: '2018-07-24',
+        //         Region: 'ap-taipei',
+        //         Module: 'monitor',
+        //         Namespace:this.Namespace,
+        //         DescName:this.picName,
+        //         DashboardID:this.DashboardID,
+        //         MetricNames:["partition"],
+        //         Meta:{
+        //         "aggregateType":"detail",
+        //         "aggregations":["Avg","Max","Min"],
+        //         "chartTypes":["column"],
+        //         "configId":"cvm",
+        //         "layout":{"h":"5","h2":"0","w":"4","x":"0","y":"0"},
+        //         "timeAggregate":"last"
+        //         },
+        //         "Instances.0":["{\"regionId\":\"1\",\"unInstanceId\":\"ins-19719mfp\"}"]
+        //     }   
+        //     await this.axios.post(CREATDASHBORD, param).then(res => {
+        //         console.log(res)
+        //     })
+        // }
     }
 }
 </script>
