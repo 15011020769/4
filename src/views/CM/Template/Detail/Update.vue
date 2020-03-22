@@ -38,7 +38,7 @@
           <span class="text">{{information.groupName}}</span>
         </el-form-item>
         <el-form-item label="策略类型">
-          <span class="text">{{information.showName}}</span>
+          <span class="text">{{information.showName | ViewName}}</span>
         </el-form-item>
         <el-form-item label="最后修改人">
           <span class="text">{{information.lastEditUin}}</span>
@@ -53,7 +53,7 @@
       <p class="text-color2" v-for="(it) in IndexAlarm" :key="it.metricShowName">
         {{ `${it.metricShowName}${it.calcType}${it.calcValue}${it.unit},持续${it.continueTime/60}分钟,${it.alarm}` }}
       </p>
-      <p class="text-color1">事件告警</p>
+      <p class="text-color1" v-if="EventAlarm&&EventAlarm.length">事件告警</p>
       <p class="text-color2" v-for="(it) in EventAlarm" :key="it.eventShowName">
         {{ `${it.eventShowName},不重复告警` }}
       </p>
@@ -99,7 +99,6 @@ export default {
         Module: 'monitor',
         ModuleId: 1,
         DId: this.groudId
-        // lang: 'zh',
         // limit: 20,
         // offset: 0
       }
@@ -130,7 +129,7 @@ export default {
             })
             this.information.groupName = it.groupName// 基本信息数据
             this.information.lastEditUin = it.lastEditUin
-            this.information.showName = it.showName
+            this.information.showName = it.viewName
             this.information.updateTime = it.updateTime
             this.IndexAlarm = it.conditionsConfig// 指标告警数据
             this.EventAlarm = it.eventConfig// 事件告警数据
@@ -170,6 +169,35 @@ export default {
     // 格式化时间
     upTime (value) {
       return moment(value).format('YYYY/MM/DD HH :mm:ss')
+    }
+  },
+  filters:{
+    ViewName (val) {
+      if (val) {
+        if (val === 'cvm_device') {
+          return '云服务器'
+        } else if (val === 'BS') {
+          return '云硬盘'
+        } else if (val === 'VPN_GW') {
+          return 'VPN网关'
+        } else if (val === 'vpn_tunnel') {
+          return 'VPN通道'
+        } else if (val === 'nat_tc_stat') {
+          return 'NAT网关'
+        } else if (val === 'DC_GW') {
+          return '专线网关'
+        } else if (val === 'cdb_detail') {
+          return 'MYSQL'
+        } else if (val === 'REDIS-CLUSTER') {
+          return 'Redis'
+        } else if (val === 'dcchannel') {
+          return '专用通道'
+        } else if (val === 'dcline') {
+          return '物理专线'
+        } else if (val === 'COS') {
+          return '对象存储'
+        }
+      }
     }
   }
 }

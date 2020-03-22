@@ -2333,8 +2333,10 @@
                 <div v-for="(item, index) in colonyThird.safeArr" :key="index">
                   <div>
                     <el-select
+                      :disabled="!securityGroupOpt.length"
                       :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
+                      @change="selectChange($event, index)" 
                     >
                       <el-option
                         v-for="x in securityGroupOpt"
@@ -2344,7 +2346,12 @@
                       >
                       </el-option>
                     </el-select>
-                    <i class="el-icon-refresh ml5"></i>
+                    <!-- 重复警告提示(yhs) -->
+                    <el-tooltip class="hide" :class="{active:colonyThird.warningNum === index}" effect="light" content="安全组重复" placement="right">
+                      <i class="el-icon-warning-outline ml5"></i>
+                    </el-tooltip>
+                    <!-- 刷新按钮(yhs) -->
+                    <i class="el-icon-refresh ml5" @click="refreshSafeArr()"></i>
                     <i
                       class="el-icon-error ml5"
                       @click="deleteExceptPrice(index)"
@@ -2361,7 +2368,7 @@
                 <span v-if="colonyThird.safeArr.length === 0">{{
                   $t("TKE.colony.ywxyzdy")
                 }}</span
-                ><a href="javascript:;" @click="AddSafe">{{
+                ><a href="javascript:;" @click="AddSafe" v-if="colonyThird.safeArr.length < 10">{{
                   $t("TKE.colony.tjaqz")
                 }}</a>
               </p>
@@ -3118,6 +3125,8 @@ export default {
         safeArr: [],
         defaultSafe: false,
         defaultSafeBox: true,
+        warningNum:'',
+        isShowWarning:false,
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -5074,12 +5083,35 @@ export default {
         }
       });
     },
+    //安全组刷新按钮(yhs)
+    refreshSafeArr(){
+      this.securityGroupOpt = [];
+      this.SecurityGroup();
+    },
     AddSafe() {
       this.colonyThird.defaultSafeBox = true;
       this.colonyThird.defaultSafe = true;
+      if(this.colonyThird.safeArr.length>=10) return//安全组个数限制(yhs)
       this.colonyThird.safeArr.push({
         securityGroupSel: ""
       });
+    },
+    //安全组重复验证(yhs)
+    selectChange(e, i){
+      let newSafeArr = []
+      let {safeArr} = this.colonyThird
+      safeArr.forEach(ele=>{
+        !newSafeArr.some(item=>{
+          return item.securityGroupSel == e
+        }) && newSafeArr.push(ele)
+      }) 
+      if(safeArr.length>1 && safeArr.length!==newSafeArr.length){
+        this.colonyThird.warningNum = i
+        this.isShowWarning = !this.isShowWarning
+      }else{
+        this.colonyThird.warningNum = ''
+        this.isShowWarning = this.isShowWarning
+      }
     },
     //删除一项
     deleteExceptPrice(index) {
@@ -6851,6 +6883,12 @@ export default {
 .cluster-wran {
   ::v-deep .el-input__inner {
     border: 1px solid #e1504a;
+  }
+}
+.hide{
+  display: none;
+  &.active{
+    display:inline;
   }
 }
 </style>

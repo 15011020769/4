@@ -10,7 +10,7 @@
           </div>
         </el-form-item>
         <el-form-item label="策略类型">
-          <div class="item-text">{{infoData.Name}}</div>
+          <div class="item-text">{{infoData.ViewName | ViewName}}</div>
         </el-form-item>
         <el-form-item label="最后修改人">
           <div class="item-text">{{infoData.LastEditUin}}</div>
@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item label="备注">
           <div class="item-text">
-            <span>{{infoData.Remark}}</span>
+            <span>{{infoData.Remark||'-'}}</span>
             <!-- <i class="el-icon-edit" @click="openRemark(infoData.Remark)" style="cursor:pointer"></i> -->
           </div>
         </el-form-item>
@@ -28,7 +28,7 @@
     </el-card>
     <el-card class="card2">
       <h4 class="title-text">告警触发条件
-        <span @click="openEdit()" style="cursor:pointer">编辑</span>
+        <!-- <span @click="openEdit()" style="cursor:pointer">编辑</span> -->
       </h4>
       <p class="text-color1">指标告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
@@ -383,8 +383,8 @@ export default {
       allProjectName: [], // 项目名称列表
       projectId: 0,
       searchParam: {},
-      //  value: 'ins-6oz38wnu', label: 'instance-id'
-      productValue: 'cvm_device'
+      //  value: 'ins-6oz38wnu', label: 'instance-id'  cvm_device
+      productValue: ''
     }
   },
   watch: {
@@ -426,30 +426,30 @@ export default {
     },
     // 获取策略类型
     async getPolicyType  () {
-      this.loadShow = true
-      let params = {
-        Version: '2018-07-24',
-        // Region:"",
-        Module: 'monitor'
-      }
-      this.loadShow = true
-      await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
-        if (res.Response.Error === undefined) {
-          this.Conditions = res.Response.Conditions
-          // console.log(this.Conditions)
-          this.loadShow = false
-        } else {
-          this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        }
-      })
+      // this.loadShow = true
+      // let params = {
+      //   Version: '2018-07-24',
+      //   // Region:"",
+      //   Module: 'monitor'
+      // }
+      // this.loadShow = true
+      // await this.axios.post(GET_POLICY_GROUP_TYPE, params).then(res => {
+      //   if (res.Response.Error === undefined) {
+      //     this.Conditions = res.Response.Conditions
+      //     // console.log(this.Conditions)
+      //     this.loadShow = false
+      //   } else {
+      //     this.loadShow = false
+      //     let ErrTips = {}
+      //     let ErrOr = Object.assign(ErrorTips, ErrTips)
+      //     this.$message({
+      //       message: ErrOr[res.Response.Error.Code],
+      //       type: 'error',
+      //       showClose: true,
+      //       duration: 0
+      //     })
+      //   }
+      // })
     },
     // 获取项目名称
     async getProjectName () {
@@ -481,22 +481,18 @@ export default {
         GroupID: this.id
       }
       await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res => {
-        // console.log(res)
         if (res.Response.Error === undefined) {
           var msg = res.Response.TemplateGroupList
-          // this.conditionsData = msg[0]
-          let ct = this.Conditions
+          // let ct = this.Conditions
           msg.forEach((ele, i) => {
-            ele.ViewName = this.productValue
-            ct.forEach((k, j) => {
-              if (ele.ViewName === k.PolicyViewName) {
-                ele['Name'] = k.Name
-              }
-            })
+            this.productValue = ele.ViewName
+            // ct.forEach((k, j) => {
+            //   if (ele.ViewName === k.PolicyViewName) {
+            //     ele['Name'] = k.Name
+            //   }
+            // })
             this.indexAry = ele.Conditions// 编辑触发条件
-            ele.Conditions.forEach((item, i) => {
-              let ct = Number(item.CalcType)
-              item.CalcType = this.SymbolList[ct - 1]
+            this.indexAry.forEach((item,i)=>{
               let time = item.Period / 60// 编辑触发条件
               item['Period'] = `统计周期${time}分钟`// 编辑触发条件
               let num = item.ContinueTime / (time * 60)// 编辑触发条件
@@ -504,28 +500,40 @@ export default {
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = '不重复告警'
-                this.indexAry[i].alarm = 0// 编辑触发条件
+                item.alarm = 0// 编辑触发条件
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指数递增重复告警'
-                this.indexAry[i].alarm = 1// 编辑触发条件
+                item.alarm = 1// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
-                item.alarm = `按${time1}分钟重复告警`
-                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
+                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = `按${time2}小时重复告警`
-                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
+                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
               } else {
-                item.alarm = '按1天重复告警'
-                this.indexAry[i].alarm = item.AlarmNotifyPeriod// 编辑触发条件
+                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
               }
             })
+            ele.Conditions.forEach((item, i) => {
+              let ct = Number(item.CalcType)
+              item.CalcType = this.SymbolList[ct - 1]
+              let time1 = item.AlarmNotifyPeriod / 60
+              let time2 = item.AlarmNotifyPeriod / (60 * 60)
+              if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
+                item.alarm = '不重复告警'
+              } else if (item.AlarmNotifyType == 1) {
+                item.alarm = '按周期指数递增重复告警'
+              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
+                item.alarm = `按${time1}分钟重复告警`
+              } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+                item.alarm = `按${time2}小时重复告警`
+              } else {
+                item.alarm = '按1天重复告警'
+              }
+            })
+            this.infoData = ele
             if (ele.IsUnionRule === 0) { // 编辑触发条件
               this.UnionRule = 0
             } else if (ele.IsUnionRule === 1) {
               this.UnionRule = 1
             }
-            this.infoData = ele
             this.eventAry = ele.EventConditions// 编辑触发条件
           })
           // this.infoData = msg[0]
@@ -862,6 +870,33 @@ export default {
         return '微信'
       } else if (val === 'CALL') {
         return '电话'
+      }
+    },
+    ViewName (val) {
+      if (val) {
+        if (val === 'cvm_device') {
+          return '云服务器'
+        } else if (val === 'BS') {
+          return '云硬盘'
+        } else if (val === 'VPN_GW') {
+          return 'VPN网关'
+        } else if (val === 'vpn_tunnel') {
+          return 'VPN通道'
+        } else if (val === 'nat_tc_stat') {
+          return 'NAT网关'
+        } else if (val === 'DC_GW') {
+          return '专线网关'
+        } else if (val === 'cdb_detail') {
+          return 'MYSQL'
+        } else if (val === 'REDIS-CLUSTER') {
+          return 'Redis'
+        } else if (val === 'dcchannel') {
+          return '专用通道'
+        } else if (val === 'dcline') {
+          return '物理专线'
+        } else if (val === 'COS') {
+          return '对象存储'
+        }
       }
     }
   }
