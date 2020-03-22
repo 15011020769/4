@@ -4,14 +4,14 @@
     <div class="create-main">
       <div class="box">
         <el-form class="create-form" :model="formInline" ref="form" label-position='left' label-width="70px" size="mini">
-          <el-form-item label="策略名称" prop='strategy_name'>
+          <el-form-item label="策略名称" prop='strategy_name' :rules="strategyNameValidator">
             <el-input class="w200" v-model="formInline.strategy_name" placeholder="1-20个中英文字符或下划线"></el-input>
           </el-form-item>
           <el-form-item label="备注" prop="textarea">
             <el-input class="w420" :autosize="{ minRows: 5, maxRows: 2 }" type="textarea" placeholder="1-100个中英文字符或下划线" v-model="formInline.textarea" maxlength="100" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="策略类型">
-            <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="0" productValue="cvm_device"/>
+            <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="projectId" productValue="cvm_device" @loading="(e)=>loading=e"/>
           </el-form-item>
           <el-form-item label="所属项目" prop="projectName">
             <el-select class="w200" v-model="formInline.projectId">
@@ -33,8 +33,7 @@
           <!-- 告警对象-》选择部分对象 -->
           <div style="margin-bottom: 18px" v-show="radio==='2'">
             <div style="margin-left: 70px">
-              <cam-transfer-cpt :productData="product" isShowRight></cam-transfer-cpt>
-              <!--                              @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"-->
+              <cam-transfer-cpt v-loading="loading" :productData="product" isShowRight @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
             </div>
           </div>
           <!-- 告警对象-》 选择实例组 -->
@@ -51,20 +50,20 @@
           <!-- 触发条件 -->
           <div style="margin-bottom: 18px">
             <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">触发条件</label>
-            <div style="margin-left: 70px">
+            <div style="margin-left: 70px" v-loading="loading">
               <!-- 触发条件模板 -->
               <div style="background-color: #f2f2f2;padding: 20px">
                 <el-radio v-model="radioChufa" label="1">触发条件模板</el-radio>
                 <el-button type="text" size="mini" style="margin-left: 20px">新增触发条件模板</el-button>
                 <div v-show="radioChufa === '1'" style="padding: 10px">
                   <el-form-item label-width="0px" style="margin-bottom: 0px">
-                    <el-select v-model="formInline.conditionsTemplateName" style="width:150px;" placeholder="当前策略下没有触发条件模板"
-                               @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateName">
-                      <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupName" label-width="40px"></el-option>
+                    <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="当前策略下没有触发条件模板"
+                               @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateId">
+                      <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupID" label-width="40px"></el-option>
                     </el-select>
                     <el-button type="text" size="mini" style="margin-left: 20px" @click="describeInstanceGroupList">刷新</el-button>
                   </el-form-item>
-                  <div v-show="formInline.conditionsTemplateName">
+                  <div v-show="formInline.conditionsTemplateId">
                     <p style="line-height: 28px"><el-checkbox disabled>指标告警</el-checkbox></p>
                     <div style="padding-left: 21px">
                       <el-form-item label-width="0px">
@@ -75,7 +74,7 @@
                         <span>条件时，触发告警</span>
                       </el-form-item>
                       <div v-for="cItem in formInline.triggerCondition.Conditions" :key="cItem.RuleID">
-                        <div>
+                        <div class="indication-alarm">
                           <span>if</span>
                           <el-form-item label-width="0px" style="display: inline-block">
                             <el-select v-model="cItem.MetricID" style="width:150px;" disabled>
@@ -124,24 +123,24 @@
                       </div>
                     </div>
                     <!-- 事件告警 -->
-<!--                    <p style="line-height: 28px">-->
-<!--                      <el-checkbox disabled>事件告警</el-checkbox>-->
-<!--                      <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>-->
-<!--                    </p>-->
-<!--                    <div style="padding-left: 21px">-->
-<!--                      <el-form-item label-width="0px">-->
-<!--                        <el-select v-model="formInline.projectName" style="width:180px;">-->
-<!--                          <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>-->
-<!--                        </el-select>-->
-<!--                      </el-form-item>-->
-<!--                    </div>-->
+                    <!--                    <p style="line-height: 28px">-->
+                    <!--                      <el-checkbox disabled>事件告警</el-checkbox>-->
+                    <!--                      <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>-->
+                    <!--                    </p>-->
+                    <!--                    <div style="padding-left: 21px">-->
+                    <!--                      <el-form-item label-width="0px">-->
+                    <!--                        <el-select v-model="formInline.projectName" style="width:180px;">-->
+                    <!--                          <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.name" :value="item.value" label-width="40px"></el-option>-->
+                    <!--                        </el-select>-->
+                    <!--                      </el-form-item>-->
+                    <!--                    </div>-->
                   </div>
                 </div>
               </div>
               <!-- 配置触发条件 -->
               <div style="background-color: #f2f2f2;padding: 20px;margin-top: 10px;">
                 <el-radio v-model="radioChufa" label="2">配置触发条件</el-radio>
-<!--                <div class="tip">请至少配置1项触发条件</div>-->
+                <!--                <div class="tip">请至少配置1项触发条件</div>-->
                 <div v-show="radioChufa === '2'" style="padding: 10px">
                   <p style="line-height: 28px"><el-checkbox checked disabled>指标告警</el-checkbox></p>
                   <div style="padding-left: 21px">
@@ -152,43 +151,46 @@
                       </el-select>
                       <span>条件时，触发告警</span>
                     </el-form-item>
-                    <div v-for="cItem in formInline.configTrigger.Conditions" :key="cItem.key">
-                      <span>if</span>
-                      <el-form-item label-width="0px" style="display: inline-block">
-                        <el-select v-model="cItem.MetricID" style="width:150px;">
-                          <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
-                        </el-select>
-                      </el-form-item>
-                      <el-form-item label-width="0px" style="display: inline-block">
-                        <el-select v-model="cItem.Period" style="width:150px;">
-                          <el-option v-for="(item, index) in tongjiZQ" :key="index" :label="item.label" :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                      <el-form-item label-width="0px" style="display: inline-block">
-                        <el-select v-model="cItem.CalcType" style="width:80px;">
-                          <el-option v-for="(item, index) in symbolList" :key="index" :label="item.label" :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                      <el-form-item label-width="0px" style="display: inline-block">
-                        <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number">
-                          <template slot="append">{{cItem.Unit}}</template>
-                        </el-input>
-                      </el-form-item>
-                      <el-form-item label-width="0px" style="display: inline-block">
-                        <el-select v-model="cItem.ContinueTime" style="width:120px;">
-                          <el-option v-for="(item, index) in continuePeriod" :key="index" :label="item.label" :value="item.id"></el-option>
-                        </el-select>
-                      </el-form-item>
-                      <template v-if="formInline.configTrigger.IsUnionRule === 0">
-                        <span>then</span>
+                    <div v-for="(cItem, cIndex) in formInline.configTrigger.Conditions" :key="cItem.key">
+                      <div class="indication-alarm">
+                        <span>if</span>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-select v-model="cItem.AlarmNotifyPeriod" style="width:150px;">
-                            <el-option v-for="(item, index) in jinggaoZQ" :key="index" :label="item.label" :value="item.id"></el-option>
+                          <el-select v-model="cItem.MetricID" style="width:150px;">
+                            <el-option v-for="(item, index) in product.Metrics" :key="index" :label="item.MetricShowName" :value="item.MetricId"></el-option>
                           </el-select>
                         </el-form-item>
-                        <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
-                        <i class="el-icon-error" style="color:#888; margin:0 5px;"></i>
-                      </template>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-select v-model="cItem.Period" style="width:150px;">
+                            <el-option v-for="(item, index) in tongjiZQ" :key="index" :label="item.label" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-select v-model="cItem.CalcType" style="width:80px;">
+                            <el-option v-for="(item, index) in symbolList" :key="index" :label="item.label" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number">
+                            <template slot="append">{{cItem.Unit}}</template>
+                          </el-input>
+                        </el-form-item>
+                        <el-form-item label-width="0px" style="display: inline-block">
+                          <el-select v-model="cItem.ContinueTime" style="width:120px;">
+                            <el-option v-for="(item, index) in continuePeriod" :key="index" :label="item.label" :value="item.id"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <template v-if="formInline.configTrigger.IsUnionRule === 0">
+                          <span>then</span>
+                          <el-form-item label-width="0px" style="display: inline-block">
+                            <el-select v-model="cItem.AlarmNotifyPeriod" style="width:150px;">
+                              <el-option v-for="(item, index) in jinggaoZQ" :key="index" :label="item.label" :value="item.id"></el-option>
+                            </el-select>
+                          </el-form-item>
+                          <i class="el-icon-info" style="color:#888; margin:0 5px;"></i>
+                          <i class="el-icon-error" style="color:#888; margin:0 5px;" @click="triggerConditionDelConditions(formInline.configTrigger.Conditions, cIndex)"
+                             v-if="formInline.configTrigger.Conditions.length > 1"></i>
+                        </template>
+                      </div>
                     </div>
                     <div v-show="formInline.configTrigger.IsUnionRule === 1">
                       <span>then</span>
@@ -230,19 +232,23 @@
             </div>
             <div style="margin-left: 70px">
               <el-form-item style="display: inline-block" label-width="0px">
-                <el-select v-model="formInline.protocolValue" style="display: inline-block">
+                <el-select v-model="formInline.protocolValue" style="display: inline-block" @change="formInline.callbackVerifyCode = ''">
                   <el-option v-for="(item, index) in protocol" :key="index" :label="item" :value="item" label-width="40px"></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item style="display: inline-block;margin-left: 10px" label-width="0px">
-                <el-select filterable v-model="formInline.group">
-                  <el-option v-for="(item, index) in formInline.kind_list" :key="index" :label="item.name" :value="item.value"></el-option>
+                <el-select filterable v-model="formInline.callbackVerifyCode" style="width: 300px">
+                  <el-option v-for="item in formInline.protocolValue === 'http'?httpOption:httpsOption"
+                             :key="item.VerifyCode" :label="item.website" :value="item.VerifyCode">
+                    <span>{{item.website}}</span>
+                    <span style="margin-left: 10px;color: #999999">{{item.ValidFlag===2?'请求超时': ''}}</span>
+                  </el-option>
                 </el-select>
               </el-form-item>
               <p style="line-height: 28px">填写公网可访问到的url作为回调接口地址(域名或IP[:端口][/path])，云监控将及时把告警信息推送到该地址。</p>
-              <div>
+              <div style="margin-top: 10px;background-color: #fff4e3;color: #c07400;border: 1px solid #ffd18b;padding: 10px 20px;font-size: 12px;line-height: 28px;">
                 <p>回调域名通过验证后生效，请于Response Body中返回以下code。<i class="el-icon-info" style="margin:0 5px;color: #c07400;"></i></p>
-                <p>y46vg1ma</p>
+                <p style="margin: 10px 0;font-size: 16px;font-weight: 700;">{{formInline.callbackVerifyCode===''? httpCodes : formInline.callbackVerifyCode}}</p>
               </div>
             </div>
           </div>
@@ -258,10 +264,11 @@
 import Header from './Head'
 import Cam from '@/views/CM/CM_assembly/Cam'
 import { ErrorTips } from '@/components/ErrorTips'
-import { ALL_PROJECT, CM_GROUPING_LIST } from '@/constants'
-import { GET_CONDITIONSTEMPLATELIST, GET_POLICY_GROUP_TYPE } from '@/constants/CM-yhs.js'
+import { ALL_PROJECT, CM_GROUPING_LIST, CM_ALARM_OBJECT_LIST_EDIT, CM_ALARM_RECEIVE_OBJECT_RELIEVE, CM_CALLBACK_SAVE } from '@/constants'
+import { GET_CONDITIONSTEMPLATELIST } from '@/constants/CM-yhs.js'
+import { CM_CALLBACK, CM_CALLBACK_HISTORY, CREATE_POLICYGROUP } from '@/constants/CM-wxy.js'
 import CamTransferCpt from '@/views/CM/CM_assembly/CamTransferCpt'
-import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
+import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
 
 export default {
   components: {
@@ -272,19 +279,24 @@ export default {
   },
   data: function () {
     return {
+      strategyNameValidator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('策略名称不能为空'))
+          } else if (value.length > 20) {
+            callback(new Error('策略名称不能超过20个字符'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur'
+      }],
       radio: '2', // 选择告警对象类型
       radioChufa: '2', // 触发条件单选
       options: [],
-      protocol: ['http', 'https'],
       formInline: {
         protocolValue: 'http', // 接口回调
-        apiArr: [{
-          value: 0,
-          name: 'http'
-        }, {
-          value: 1,
-          name: 'https'
-        }], // 接口回调数据
+        callbackVerifyCode: '',
         strategy_name: '', // 策略名称
         textarea: '', // 备注
         strategy: '云服务器-基础监控',
@@ -298,7 +310,7 @@ export default {
         instanceGroup: [],
         instanceGroupId: '',
         conditionsTemplate: [], // 触发条件模板下拉数组
-        conditionsTemplateName: '',
+        conditionsTemplateId: '',
         triggerCondition: {
           IsUnionRule: 0,
           Conditions: [], // 触发条件-》指标告警
@@ -343,16 +355,16 @@ export default {
         { label: '周期指数递增', id: 1 }
       ], // 警告周期
       cam: {}, // cam组件的值
-      // policyConditionList: [], // 描述策略的数组
-      policyConditionValue: {
-        Metrics: [],
-        EventMetrics: [],
-        PolicyViewName: ''
-      },
+      projectId: 0,
       searchParam: {},
-      product: {
-        // Metrics: []
-      }
+      product: {},
+      loading: false,
+      httpCodes: '', // 回调的随机码
+      protocol: ['http', 'https'],
+      httpOption: [],
+      httpsOption: [],
+      saveResponseGroupId: '', // 新建响应回的GroupId
+      multipleSelection: []
     }
   },
   watch: {
@@ -371,11 +383,22 @@ export default {
     }
   },
   methods: {
-    passData: function (val) {
-      this.product = val
-      console.log(this.product)
-      this.initRequest()
-
+    selectDatas: function (val) {
+      this.multipleSelection = val
+    },
+    searchParams: function (val) {
+      this.searchParam = val
+    },
+    projectIds: function (val) {
+      this.projectId = val
+    },
+    passData: async function (val) {
+      this.product = { ...val }
+      await this.initRequest()
+      this.loading = false
+    },
+    triggerConditionDelConditions: function (arr, index) {
+      arr.splice(index, 1)
     },
     triggerConditionAddConditions: function () {
       let { Metrics } = this.product
@@ -407,7 +430,6 @@ export default {
       })
     },
     initRequest: async function () {
-      this.getProjectsList()
       await Promise.all([
         this.describeConditionsTemplateList()
       ]).then(() => {
@@ -415,17 +437,51 @@ export default {
         this.formInline.configTrigger.Conditions = []
         this.triggerConditionAddConditions()
         if (this.formInline.conditionsTemplate.length > 0) {
-          this.conditionTemplateChange(this.formInline.conditionsTemplate[0].GroupName)
+          this.conditionTemplateChange(this.formInline.conditionsTemplate[0].GroupID)
         } else {
           this.conditionTemplateChange('')
         }
       })
     },
+    callbackEdit: async function () {
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor'
+      }
+      await this.axios.post(CM_CALLBACK, params).then(res => {
+        this.axiosUtils(res, () => {
+          this.httpCodes = res.Response.VerifyCode
+        })
+      })
+    },
+    httpHistroy: function () {
+      this.httpOption = []
+      this.httpsOption = []
+      let param = {
+        Version: '2018-07-24',
+        Module: 'monitor'
+      }
+      this.axios.post(CM_CALLBACK_HISTORY, param).then(res => {
+        this.axiosUtils(res, () => {
+          let { List } = res.Response
+          List.forEach(item => {
+            let [protocol, website] = item.Url.split('://')
+            item.website = website
+            item.protocol = protocol
+            if (protocol === 'http') {
+              this.httpOption.push(item)
+            } else {
+              this.httpsOption.push(item)
+            }
+          })
+        })
+      })
+    },
     // 条件触发模板 更改
-    conditionTemplateChange: function (groupName) {
-      if (groupName !== '') {
+    conditionTemplateChange: function (groupID) {
+      if (groupID !== '') {
         let oneConditionsTemplate = this.formInline.conditionsTemplate.find(item => {
-          return item.GroupName === groupName
+          return item.GroupID === groupID
         })
         let { IsUnionRule, Conditions } = oneConditionsTemplate
         Conditions.map(item => {
@@ -439,7 +495,6 @@ export default {
         if (IsUnionRule === 1 && Conditions.length > 0) {
           oneConditionsTemplate.AlarmNotifyPeriod = Conditions[0].AlarmNotifyPeriod
         }
-        console.log('oneConditionsTemplate', oneConditionsTemplate)
         this.formInline.triggerCondition = oneConditionsTemplate
       } else {
         this.formInline.triggerCondition = {
@@ -485,9 +540,9 @@ export default {
         this.axiosUtils(res, () => {
           this.formInline.conditionsTemplate = res.Response.TemplateGroupList
           if (res.Response.TemplateGroupList.length > 0) {
-            this.formInline.conditionsTemplateName = res.Response.TemplateGroupList[0].GroupName
+            this.formInline.conditionsTemplateId = res.Response.TemplateGroupList[0].GroupID
           } else {
-            this.formInline.conditionsTemplateName = ''
+            this.formInline.conditionsTemplateId = ''
           }
         })
       })
@@ -496,9 +551,242 @@ export default {
       this.cam = data
     },
     // 保存
-    save: function () {
-      this.$router.push({
-        path: '/strategy'
+    save: async function () {
+      let { multipleSelection, radio, cam } = this
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          if (radio === '2' && multipleSelection.length <= 0) {
+            this.$message({
+              message: '请选择绑定对象',
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
+            return
+          }
+          if (JSON.stringify(cam) === '{}' || (cam.selectUserGroup.length <= 0 && cam.selectUserList <= 0)) {
+            this.$message({
+              message: '请选择接收对象',
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
+            return
+          } else if (cam.channel.length <= 0) {
+            this.$message({
+              message: '请选择接收渠道 ',
+              type: 'error',
+              showClose: true,
+              duration: 0
+            })
+            return
+          }
+          this.saveSubmit()
+        } else {
+          console.error('有验证错误')
+          return false
+        }
+      })
+    },
+    saveSubmit: async function () {
+      let { configTrigger, triggerCondition, textarea } = this.formInline
+      let params = {
+        Version: '2018-07-24',
+        Region: localStorage.getItem('regionv2'),
+        GroupName: this.formInline.strategy_name,
+        Module: 'monitor',
+        ViewName: this.product.productValue,
+        ProjectId: this.formInline.projectId
+      }
+      if (textarea !== '') params.Remark = textarea
+      if (this.radioChufa === '1') {
+        let { Conditions } = triggerCondition
+        Conditions.forEach((item, index) => {
+          params[`Conditions.${index}.MetricId`] = item.MetricID
+          params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
+          params[`Conditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+          params[`Conditions.${index}.CalcType`] = item.CalcType
+          params[`Conditions.${index}.CalcValue`] = item.CalcValue
+          params[`Conditions.${index}.CalcPeriod`] = item.Period
+          params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
+          params[`Conditions.${index}.RuleId`] = item.RuleID
+        })
+        params.ConditionTempGroupId = this.formInline.conditionsTemplateId
+      } else {
+        let { Conditions } = configTrigger
+        // params.IsUnionRule = configTrigger.IsUnionRule
+        Conditions.forEach((item, index) => {
+          params[`Conditions.${index}.MetricId`] = item.MetricID
+          // todo 有问题，不知道给后台传的是什么值，文档上是 0.连续告警 1.指数告警
+          // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
+          params[`Conditions.${index}.AlarmNotifyType`] = 0
+          if (configTrigger.IsUnionRule === 0) {
+            params[`Conditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+          } else {
+            params[`Conditions.${index}.AlarmNotifyPeriod`] = configTrigger.AlarmNotifyPeriod
+          }
+          params[`Conditions.${index}.CalcType`] = item.CalcType
+          params[`Conditions.${index}.CalcValue`] = 0
+          params[`Conditions.${index}.CalcPeriod`] = item.Period
+          params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
+          // params[`Conditions.${index}.RuleId`] = item.RuleID
+        })
+        params.IsShielded = 1
+      }
+      await this.axios.post(CREATE_POLICYGROUP, params).then(res => {
+        this.axiosUtils(res, () => {
+          this.saveResponseGroupId = res.Response.GroupId
+          Promise.all([this.saveOther()]).then(()=>{
+            this.$message({
+              message: '创建告警策略成功',
+              type: 'success',
+              showClose: true,
+              duration: 2000
+            })
+            this.$router.replace({
+              path: '/strategy'
+            })
+          })
+        })
+      })
+    },
+    saveOther: async function () {
+      this.bandingPolicyObject()
+      this.updateAlarmReceivers()
+      if (this.formInline.callbackVerifyCode !== '') {
+        this.modifyAlarmCallback()
+      }
+    },
+    bandingPolicyObject: async function () {
+      let {
+        radio,
+        multipleSelection,
+        product: { productValue, Date },
+        formInline: { instanceGroupId }
+      } = this
+      let params = {
+        GroupId: this.saveResponseGroupId,
+        Version: '2018-07-24',
+        Module: 'monitor'
+      }
+      if (radio !== '3') {
+        if (radio === '1') multipleSelection = Date
+        multipleSelection.forEach((item, index) => {
+          params[`Dimensions.${index}.Region`] = 'tpe'
+          if (productValue === 'cvm_device') {
+            params[`Dimensions.${index}.Dimensions`] = { unInstanceId: item.InstanceId }
+            params[`Dimensions.${index}.EventDimensions`] = { uuid: item.Uuid }
+          } else if (productValue === 'BS') {
+            params[`InstanceList.${index}.Dimensions`] = { diskid: item.DiskId }
+          } else if (productValue === 'vpn_tunnel') {
+            params[`Dimensions.${index}.Dimensions`] = { uniqVpnconnId: item.VpnConnectionId }
+          } else if (productValue === 'VPN_GW') {
+            params[`Dimensions.${index}.Dimensions`] = { vip: item.PublicIpAddress }
+            params[`Dimensions.${index}.EventDimensions`] = { VpnGatewayId: item.VpnGatewayId }
+          } else if (productValue === 'vpn_tunnel') {
+            params[`Dimensions.${index}.Dimensions`] = { uniqVpnconnId: item.VpnConnectionId }
+          } else if (productValue === 'nat_tc_stat') {
+            params[`Dimensions.${index}.Dimensions`] = { uniq_nat_id: item.NatGatewayId }
+            params[`Dimensions.${index}.EventDimensions`] = { instanceId: item.NatGatewayId }
+          } else if (productValue === 'DC_GW') {
+            params[`Dimensions.${index}.Dimensions`] = { directconnectgatewayid: item.DirectConnectGatewayId }
+            params[`Dimensions.${index}.EventDimensions`] = { instanceId: item.DirectConnectGatewayId }
+          } else if (productValue === 'EIP') {
+            params[`Dimensions.${index}.Dimensions`] = { vip: item.AddressIp }
+          } else if (productValue === 'cdb_detail') {
+            params[`Dimensions.${index}.Dimensions`] = { uInstanceId: item.InstanceId }
+            params[`Dimensions.${index}.EventDimensions`] = { InstanceId: item.InstanceId }
+          } else if (productValue === 'REDIS-CLUSTER') {
+            params[`Dimensions.${index}.Dimensions`] = { instanceid: item.InstanceId }
+            params[`Dimensions.${index}.EventDimensions`] = { instanceid: item.InstanceId }
+          } else if (productValue === 'dcchannel') {
+            params[`Dimensions.${index}.Dimensions`] = { directconnecttunnelid: item.DirectConnectTunnelId }
+          } else if (productValue === 'dcline') {
+            params[`Dimensions.${index}.Dimensions`] = { directconnectid: item.DirectConnectId }
+          } else if (productValue === 'COS') {
+            params[`Dimensions.${index}.Dimensions`] = { bucket: item.Name }
+          }
+        })
+      } else {
+        params['InstanceGroupId'] = instanceGroupId
+      }
+      await this.axios.post(CM_ALARM_OBJECT_LIST_EDIT, params).then(res => {
+        this.axiosUtils(res, () => {
+          console.log('success')
+        })
+      })
+    },
+    updateAlarmReceivers: async function () {
+      let { selectUserGroup, channel, selectType, selectUserList } = this.cam
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupId: this.saveResponseGroupId
+      }
+      if (selectUserGroup.length > 0) {
+        params['ReceiverInfos.0.StartTime'] = 61261
+        params['ReceiverInfos.0.EndTime'] = 57599
+        for (let i in channel) {
+          if (channel[i] === '郵件') {
+            params['ReceiverInfos.0.NotifyWay.' + i] = 'EMAIL'
+          } else if (channel[i] === '簡訊') {
+            params['ReceiverInfos.0.NotifyWay.' + i] = 'SMS'
+          }
+        }
+        /* params['ReceiverInfos.0.PersonInterval'] = this.ReceiverInfos.PersonInterval
+        params['ReceiverInfos.0.RoundNumber'] = this.ReceiverInfos.RoundNumber
+        params['ReceiverInfos.0.RoundInterval'] = this.ReceiverInfos.RoundInterval
+        for (let i in this.ReceiverInfos.RecoverNotify) {
+          params['ReceiverInfos.0.RoundInterval.' + i] = this.ReceiverInfos.RecoverNotify[i]
+        }
+        params['ReceiverInfos.0.NeedSendNotice'] = this.ReceiverInfos.NeedSendNotice */
+
+        if (selectType === 'group' || selectType === '') {
+          params['ReceiverInfos.0.ReceiverType'] = 'group'
+          for (let i in this.cam.selectUserGroup) {
+            params['ReceiverInfos.0.ReceiverGroupList.' + i] = selectUserGroup[i].GroupId
+          }
+        }
+      }
+      if (selectUserList.length > 0) {
+        params['ReceiverInfos.0.StartTime'] = 61261
+        params['ReceiverInfos.0.EndTime'] = 57599
+        for (let i in channel) {
+          if (channel[i] === '郵件') {
+            params['ReceiverInfos.0.NotifyWay.' + i] = 'EMAIL'
+          } else if (channel[i] === '簡訊') {
+            params['ReceiverInfos.0.NotifyWay.' + i] = 'SMS'
+          }
+        }
+        if (selectType === 'user') {
+          params['ReceiverInfos.0.ReceiverType'] = 'user'
+          for (let i in selectUserList) {
+            params['ReceiverInfos.0.ReceiverUserList.' + i] = selectUserList[i].Uid
+          }
+        }
+      }
+      await this.axios.post(CM_ALARM_RECEIVE_OBJECT_RELIEVE, params).then(res => {
+        this.axiosUtils(res, () => {
+          console.log(res)
+        })
+      })
+    },
+    modifyAlarmCallback: async function () {
+      let { formInline: { protocolValue, callbackVerifyCode }, httpOption, httpsOption, saveResponseGroupId } = this
+      let urlOption = protocolValue === 'http' ? httpOption : httpsOption
+      let callbackObj = urlOption.find(item => item.VerifyCode === callbackVerifyCode)
+      let param = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        GroupId: saveResponseGroupId,
+        UserAction: 'bind',
+        Url: callbackObj.Url,
+        VerifyCode: callbackVerifyCode
+      }
+      this.axios.post(CM_CALLBACK_SAVE, param).then(res => {
+        this.axiosUtils(res, () => {
+          console.log(res)
+        })
       })
     },
     axiosUtils: function (res, func) {
@@ -525,6 +813,11 @@ export default {
         })
       }
     }
+  },
+  created: function () {
+    this.getProjectsList()
+    this.callbackEdit()
+    this.httpHistroy()
   },
   mounted: function () {
   }
@@ -555,5 +848,8 @@ export default {
       font-size: 12px;
       color: #888;
     }
+  }
+  .indication-alarm > * {
+    margin-right: 5px;
   }
 </style>
