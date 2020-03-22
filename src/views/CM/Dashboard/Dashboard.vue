@@ -2,7 +2,7 @@
   <div class="Dashboard-wrap">
     <Header title="Dashboard">
       <el-select
-        v-model="DashboardID"
+        v-model="DashboardName"
         :placeholder="$t('CVM.Dashboard.qxz')"
         style="margin:0 20px 0 40px;width:260px"
       >
@@ -33,7 +33,7 @@
         :name="this.renameControlName"
       />
     </Header>
-    <div class="Dashboard-main">
+    <div class="Dashboard-main" v-loading="mainLoading">
       <div class="explain" v-show="this.ViewList.length">
         <p>{{ $t("CVM.Dashboard.jhtjsj") }}</p>
         <p>{{ $t("CVM.Dashboard.zcbbdc") }}</p>
@@ -291,6 +291,7 @@ export default {
       showEmptyControlPanel: false, // 是否展示空的监控面板
       ViewList: [], // 监控面板数组
       DashboardID: "", // 展示面板的ID
+      DashboardName: "",
       period: "10", // echarts展示粒度
       time: [], // 横坐标时间
       startEnd: {
@@ -307,7 +308,8 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      mainLoading: false
     };
   },
   components: {
@@ -407,17 +409,20 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.options = [];
-            res.Response.DashboardList.forEach(ele => {
-              this.options.push({
+            this.options = res.Response.DashboardList.map(ele => {
+              return {
                 value: ele.DashboardID,
                 label: ele.DescName
-              });
-              this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
-              console.log(this.panelValue, "panelValue");
-              this.getDescribeDashboardView(); // 获取监控面板视图
+              };
             });
-            console.log(this.options, "options");
+
+            if (this.options.length > 0) {
+              this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
+              this.DashboardName = this.options[0].label;
+            } else {
+              this.DashboardID = "";
+              this.DashboardName = "";
+            }
           } else {
             let ErrTips = {
               "AuthFailure.UnauthorizedOperation":
@@ -491,13 +496,11 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.options = [];
-            res.Response.DashboardList.forEach(ele => {
-              this.options.push({
+            this.options = res.Response.DashboardList.map(ele => {
+              return {
                 value: ele.DashboardID,
                 label: ele.DescName
-              });
-              // this.panelValue = this.options[0].value;
+              };
             });
             console.log(this.options, "options");
           } else {
@@ -576,11 +579,13 @@ export default {
         Module: "monitor",
         DashboardID: this.DashboardID
       };
+      this.mainLoading = true;
       await this.axios
         .get(DESCRIBE_DASHBOARD_VIEWS, {
           params: params
         })
         .then(res => {
+          this.mainLoading = false;
           if (res.Response.Error === undefined) {
             const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
 
@@ -591,7 +596,7 @@ export default {
               });
               ele.Instances = newInstances;
               ele.Meta = JSON.parse(ele.Meta);
-              ele.DataPoints = [];   // 占位，让vue响应
+              ele.DataPoints = []; // 占位，让vue响应
             });
 
             this.ViewList = ViewList;

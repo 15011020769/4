@@ -72,7 +72,7 @@ export default {
     },
     //添加监控面板按钮
     async handlereateDashboardView() {
-      let params = 
+      let params =
       {
         Version: '2018-07-24',
         Module: 'monitor',
@@ -90,6 +90,7 @@ export default {
           // res.Response.RequestId
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
           this.$parent.$parent.DashboardID = res.Response.DashboardID; // 跳转到新的监控面板ID
+          this.$parent.$parent.DashboardName = this.form.name
           this.form.name = "";
           // console.log(res.Response, this.$parent.$parent.panelValue, this.$parent.$parent, 'res.Response');
         } else {
