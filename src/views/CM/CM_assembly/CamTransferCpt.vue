@@ -114,8 +114,8 @@
           <el-table-column :label="headConfig.title3" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>{{scope.row.PrivateIpAddresses[0]}}(内网)</p>
-                <p>{{scope.row.PublicIpAddresses[0]}}(外网)</p>
+                <p>{{scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0]}}(内网)</p>
+                <p>{{scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0]}}(外网)</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{scope.row.VpcId}}</p>
@@ -275,8 +275,8 @@
           <el-table-column :label="headConfig.title3" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>{{scope.row.PrivateIpAddresses[0]}}(内网)</p>
-                <p>{{scope.row.PublicIpAddresses[0]}}(外网)</p>
+                <p>{{scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0]}}(内网)</p>
+                <p>{{scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0]}}(外网)</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{scope.row.VpcId}}</p>
@@ -359,7 +359,6 @@
         loadSign: true,
         tableData: [],
         productValue: '', //产品类型
-        searchItemOptions: [],
         headConfig: {
           title1: '',
           title2: '',
@@ -409,6 +408,9 @@
               this.tableData = value.Date;
             }
             this.searchItemOptions = value.SearchConfig;
+            if(this.searchItemOptions.length > 0) {
+              this.searchItem = this.searchItemOptions[0].value;
+            }
             this.headConfig = value.HeadConfig;
             this.productValue = value.productValue;
             this.$emit('CAM_loading', false)
