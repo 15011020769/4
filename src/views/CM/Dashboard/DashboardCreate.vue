@@ -20,7 +20,7 @@
     <h3 style="margin-bottom:20px">配置监控图表</h3>
     <div class="footer">
       <div class="footer-left">
-        <div class="footer-left-left">
+        <div class="footer-left-left" v-loading="loading">
           <h4>图标配置</h4>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">图表名称</p>
@@ -220,7 +220,8 @@ export default {
         Period: 60,
         Version: "2017-03-12"
       };
-      for (let i = 0; i < this.rightData.length; i++) {
+    //   this.rightData.length
+      for (let i = 0; i < (this.rightData.length >10?10:this.rightData.length); i++) {
         if (this.productValue === "cvm_device") {
           // 云服务器
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
@@ -339,7 +340,8 @@ export default {
               this.times.push(this.timeDate["DataPoints.0"][keyTime].time);
             }
             // y轴
-            for (let item in res.Response.DataPoints) {
+            //  res.Response.DataPoints
+            for (let item=0 ;item<res.Response.DataPoints.length ; item++) {
               if (res.Response.DataPoints.length) {
                 this.series.push({
                   labelLine: {
