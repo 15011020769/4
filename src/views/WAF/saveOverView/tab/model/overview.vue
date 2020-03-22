@@ -5,7 +5,7 @@
             <div class="rowContain">
               <p v-loading="loading">
                 <span class="green">{{upPeakValue}}</span>
-                <span>bps</span>
+                <span>{{unit}}</span>
               </p>
               <p>{{t('上行带宽峰值', 'WAF.sxdkfz')}}</p>
             </div>
@@ -14,7 +14,7 @@
             <div class="rowContain">
               <p v-loading="loading">
                 <span class="oarnge">{{downPeakValue}}</span>
-                <span>bps</span>
+                <span>{{unit}}</span>
               </p>
               <p>{{t('下行带宽峰值', 'WAF.xxdkfz')}}</p>
             </div>
@@ -46,6 +46,7 @@ export default {
       downPeakValue: 0, // 下行峰值
       qpsRequest: 0, // QPS请求
       loading: true,
+      unit: "bps"
     }
   },
   watch: {
@@ -75,6 +76,46 @@ export default {
     this.getPeakValue()
   },
   methods: {
+    tranBps (upBps, downBps) {
+        upBps = upBps * 8, downBps = downBps * 8;
+        let kbps = 1024, mbps = 1024 * kbps, gbps = 1024 * mbps, tbps = 1024 * gbps;
+        if (upBps > kbps * 10 && upBps < mbps * 10 && downBps > kbps) {
+            return {
+                upPs: Number((upBps / kbps).toFixed(3)),
+                downPs: Number((downBps / kbps).toFixed(3)),
+                unit: "Kbps",
+                number: kbps
+            };
+        } else if (upBps >= mbps * 10 && upBps < gbps * 10 && downBps >= mbps * 10) {
+            return {
+                upPs: Number((upBps / mbps).toFixed(3)),
+                downPs: Number((downBps / mbps).toFixed(3)),
+                unit: "Mbps",
+                number: mbps
+            };
+        } else if (upBps >= gbps * 10 && upBps < tbps * 10 && downBps >= gbps * 10) {
+            return {
+                upPs: Number((upBps / gbps).toFixed(3)),
+                downPs: Number((downBps / gbps).toFixed(3)),
+                unit: "Gbps",
+                number: gbps
+            };
+        } else if (upBps >= tbps && downBps >= tbps) {
+            return {
+                upPs: Number((upBps / tbps).toFixed(3)),
+                downPs: Number((downBps / tbps).toFixed(3)),
+                unit: "Tbps",
+                number: tbps
+            };
+        } else {
+            return {
+                upPs: upBps,
+                downPs: downBps,
+                unit: "bps",
+                number: 1
+            };
+        }
+    },
     // 获取峰值
     getPeakValue() {
       this.loading = true
@@ -88,8 +129,10 @@ export default {
       }
       this.axios.post(DESCRIBE_PEAK_VALUE, params).then((resp) => {
         this.generalRespHandler(resp, ({Up, Down, Access}) => {
-          this.upPeakValue = Up * 8
-          this.downPeakValue = Down * 8
+          let { upPs, downPs, unit } = this.tranBps(Up, Down)
+          this.upPeakValue = upPs
+          this.downPeakValue = downPs
+          this.unit = unit
           this.qpsRequest = Access
         })
       }).then(() => {
