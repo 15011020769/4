@@ -60,8 +60,6 @@
                     label-width="40px"
                   ></el-option>
                 </el-select>
-                <!-- <ProductTypeCpt v-if="formInline.product_name === '2'" v-on:PassData="passData" :searchParam="searchParam" :projectId="projectId"
-                :productValue="productValue" v-on:loading="Type_loading" style="margin-left: 10px;"/> -->
               </div>
             </el-form-item>
           </div>
@@ -226,6 +224,7 @@
               <el-select v-model="formInline.user" class="select-option">
                 <el-option
                   v-for="(item, index) in formInline.user_kind"
+                  
                   :key="index"
                   :label="item.name"
                   :value="item.value"
@@ -1014,6 +1013,111 @@ export default {
       }
       if(this.formInline.product_name === '2') {
         params['ViewNames.0'] = this.productValue;
+      }
+      if(this.selectStrategyList.length > 0) {
+        if (this.productValue === 'cvm_device') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"unInstanceId", value:strategy.InstanceId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'nat_tc_stat') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"uniq_nat_id", value:strategy.NatGatewayId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'VPN_GW') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"appid", value:strategy.DiskId}));//怎么取值
+            strategys.push(JSON.stringify({name:"vip", value:strategy.PublicIpAddress}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'vpn_tunnel') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"uniqVpnconnId", value:strategy.VpnConnectionId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'DC_GW') {
+         let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"directconnectgatewayid", value:strategy.DirectConnectGatewayId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'cdb_detail') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"uInstanceId", value:strategy.InstanceId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'REDIS-CLUSTER') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"appid", value:strategy.DiskId}));//怎么取值
+            strategys.push(JSON.stringify({name:"instanceid", value:strategy.InstanceName}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'dcline') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"directconnectid", value:strategy.DirectConnectId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'dcchannel') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"directconnecttunnelid", value:strategy.DirectConnectTunnelId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'COS') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"bucket", value:strategy.Name}));
+            strategys.push(JSON.stringify({name:"appid", value:strategy.Name}));//如何取值
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        } else if (this.productValue === 'BS') {
+          let strategyArr = [];
+          for(let i = 0; i < this.selectStrategyList.length; i++) {
+            let strategys = [];
+            let strategy = this.selectStrategyList[i];
+            strategys.push(JSON.stringify({name:"diskid", value:strategy.DiskId}));
+            strategyArr.push(strategys);
+          }
+          params.Dimensions = strategyArr;
+        }
       }
       await this.axios.post(CM_ALARM_LIST, params).then(res => {
         if (res.Response.Error === undefined) {
@@ -1944,7 +2048,7 @@ export default {
     },
     selectOk() {
       this.isShowPopover = false;
-      this.monitorNumber = "已选择"+ this.handleSelectionSte.length +"个对象";
+      this.monitorNumber = "已选择"+ this.selectStrategyList.length +"个对象";
     }
   },
   filters: {
