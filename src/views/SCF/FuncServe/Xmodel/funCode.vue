@@ -122,7 +122,7 @@
 
         </el-select>
         <span class="testmb">
-          <el-button type="text" size="small" @click="addModal = true">新建模板</el-button>
+          <el-button type="text" size="small" @click="newDialog">新建模板</el-button>
         </span>
       </div>
       <div class="test-info" v-if="isShowLogList">
@@ -483,7 +483,14 @@ export default {
 
     },
 
-    // 新建测试模板
+    // 点击新建模板弹出框
+    newDialog(){
+      this.addModal = true;
+      this.testvalue = this.modeloptions[0]
+      this.GetFunctionTestModel(this.testvalue);
+    },
+
+    // 新建测试模板 确定事件
     _newmodel() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -526,7 +533,7 @@ export default {
       });
     },
 
-    //保存
+    // 保存
     _Preservation() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -560,7 +567,7 @@ export default {
       });
     },
 
-    //获取函数测试模板列表
+    // 获取函数测试模板 --> 列表
     GetListFunctionTestModels() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -573,6 +580,8 @@ export default {
       this.axios.post(TESTMODELS_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
+          this.testvalue = this.modeloptions[0]
+          this.GetFunctionTestModel(this.testvalue)
         } else {
           let ErrTips = {
             "InternalError": "内部错误",
@@ -580,6 +589,39 @@ export default {
             "ResourceNotFound.Function": "函数不存在。",
             "ResourceNotFound.FunctionName": "函数不存在。",
             "UnauthorizedOperation.CAM": "CAM鉴权失败。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
+    // 获取函数测试模板 --> 详情
+    GetFunctionTestModel(name) {
+      let param = {
+        Region: localStorage.getItem('regionv2'),
+        Version: "2018-04-16",
+        Action: 'DeleteFunctionTestModel',
+        FunctionName: this.functionName,
+        Namespace: this.$route.query.SpaceValue,
+        TestModelName: name
+      };
+
+      this.axios.post(TEST_MODAL, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.templateDetail = res.Response
+        } else {
+          let ErrTips = {
+            "InternalError": "内部错误",
+            "InvalidParameterValue": "参数取值错误",
+            "ResourceNotFound.FunctionName": "函数不存在。",
+            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -648,39 +690,6 @@ export default {
       });
     },
 
-    // 获取函数测试模板详情
-    GetFunctionTestModel(name) {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'DeleteFunctionTestModel',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue,
-        TestModelName: name
-      };
-
-      this.axios.post(TEST_MODAL, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.templateDetail = res.Response
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
-            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
     //测试模板
     _testModal() {
       let param = {
@@ -689,7 +698,7 @@ export default {
         FunctionName: this.functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        ClientContext: JSON.stringify({ key1: "test value 1", key2: "test value 2" }),
+        ClientContext: this.templateDetail.TestModelValue,
         Qualifier: this.functionversion,
         Namespace: this.$route.query.SpaceValue
       }
@@ -766,8 +775,8 @@ export default {
 <style lang="scss" scoped>
 .CodeContent {
   background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
   padding: 20px;
+  margin-bottom: 20px;
 
   ::v-deep .el-select {
     height: 32px !important;
