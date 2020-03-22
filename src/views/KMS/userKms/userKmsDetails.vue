@@ -245,24 +245,26 @@
             （工具仅密钥启用状态时可用）">
           </el-popover>
           <div class="btnBottom">
-            <el-button @click="changeBtnEncrypt(1)" :class="thisType=='1'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
-              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"||keyList.KeyState=="PendingImport"?true:false'>{{$t('KMS.total.encryption')}}</el-button>
-            <el-button style="margin-left:4px" @click="changeBtnEncrypt(2)" :class="thisType=='2'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
-              :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"||keyList.KeyState=="PendingImport"?true:false'>{{$t('KMS.total.Decrypt')}}</el-button>
+            <el-button @click="changeBtnEncrypt(1)"
+              :class="thisType=='1'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
+              :disabled='keyList.KeyState=="Disabled"?true:false'>{{$t('KMS.total.encryption')}}</el-button>
+            <el-button style="margin-left:4px" @click="changeBtnEncrypt(2)"
+              :class="thisType=='2'&&keyList.KeyState!='PendingImport'?'bthBorderColor':''"
+              :disabled='keyList.KeyState=="Disabled"?true:false'>
+              {{$t('KMS.total.Decrypt')}}</el-button>
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
-              <el-input
-                :disabled='projectDetail.KeyState==$t("KMS.total.alredayStop")||projectDetail.KeyState=="PendingDelete"?true:false'
-                class="textareaIpt" v-model="Plaintext" type="textarea" :placeholder="$t('KMS.total.placeholder2')"
-                @input='changeTextarea1'></el-input>
-              <el-button @click="actionPlain" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}
+              <el-input :disabled='keyList.KeyState=="Disabled"?true:false' class="textareaIpt" v-model="Plaintext"
+                type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
+              <el-button @click="actionPlain" :disabled="AdisableTextarea" type="primary">{{$t('KMS.total.action1')}}
               </el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
               <el-input class="textareaIpt" v-model="Ciphertext" type="textarea"
-                :placeholder="$t('KMS.total.enterText')" @input='changeTextarea1'></el-input>
-              <el-button @click="actionCipher" :disabled="disableTextarea" type="primary">{{$t('KMS.total.action1')}}
+                :disabled='keyList.KeyState=="Disabled"?true:false' :placeholder="$t('KMS.total.enterText')"
+                @input='changeTextarea2'></el-input>
+              <el-button @click="actionCipher" :disabled="BdisableTextarea" type="primary">{{$t('KMS.total.action1')}}
               </el-button>
             </div>
             <div>
@@ -312,7 +314,8 @@
         thisType: 1,
         Plaintext: '', //请输入明文
         Ciphertext: "", //请输入密文
-        disableTextarea: true, //解密加密第二框
+        BdisableTextarea: true, //解密加密第二框
+        AdisableTextarea: true,
         downLoadText: '', //'执行加解密之后的下载框'
         downLoadText1: '', //'执行加解密之后的下载框'
         downLoadText2: '', //'执行加解密之后的下载框'
@@ -358,7 +361,6 @@
       GetList() {
         this.loading = true;
         this.projectDetail = JSON.parse(sessionStorage.getItem("projectId"));
-        console.log(this.projectDetail)
         this.projectDetail.KeyState == this.$t('KMS.total.alredayStop') || this.projectDetail.KeyState ==
           "PendingDelete" ? this.thisType = "0" : 3
         let params = {
@@ -370,7 +372,6 @@
           if (res.Response.Error === undefined) {
 
             this.keyList = res.Response.KeyMetadata;
-            console.log(this.keyList,'this.keyList')
             this.loading = false;
           } else {
             let ErrTips = {
@@ -388,7 +389,11 @@
               duration: 0
             });
           }
-        });
+        }).then(() => {
+          this.changeTextarea1()
+          this.changeTextarea2()
+        })
+
       },
       //修改名称关闭按钮
       handleClose1() {
@@ -635,11 +640,30 @@
         })
       },
       //监测输入框是否有内容
-      changeTextarea1(e) {
-        if (e == '') {
-          this.disableTextarea = true;
+      changeTextarea1() {
+        if (this.Plaintext === '') {
+          this.AdisableTextarea = true;
         } else {
-          this.disableTextarea = false;
+          if (this.keyList.KeyState == 'Disabled') {
+            this.AdisableTextarea = true;
+          } else {
+            this.AdisableTextarea = false;
+          }
+        }
+
+      },
+      changeTextarea2() {
+
+        if (this.Ciphertext == '') {
+          this.BdisableTextarea = true;
+        } else {
+          if (this.keyList.KeyState == 'Disabled') {
+
+            this.BdisableTextarea = true;
+          } else {
+
+            this.BdisableTextarea = false;
+          }
         }
       },
       //下载按钮
