@@ -29,9 +29,19 @@
       LeftAside
     },
     mounted() {
-
+      this.GetAPPid()
     },
-    methods: {}
+    methods: {
+      GetAPPid() {
+        let parms = {
+          uin: this.$cookie.get('uin')
+        }
+        this.axios.post(GETAPPID, parms).then(data => {
+          localStorage.setItem("appid", data.data[0].app_id);
+
+        });
+      },
+    }
   };
 
 </script>
