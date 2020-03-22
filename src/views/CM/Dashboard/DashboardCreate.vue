@@ -131,7 +131,15 @@ export default {
   },
   methods: {
     PassData(data) {
-      this.productListData = { ...data };
+      this.productListData = data
+      setTimeout(() => {
+        this.productListData = {};
+        // this.isShow = true;
+      }, 500);
+      setTimeout(() => {
+        this.productListData = data;
+        // this.isShow = true;
+      }, 600);
       console.log(this.productListData);
       this.Namespace = data.Namespace;
       this.productValue = data.productValue;
