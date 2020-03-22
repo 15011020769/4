@@ -109,9 +109,9 @@
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
         <el-button size="small" @click="_testModal">测试</el-button>
         <span class="testmb">测试当前模板</span>
-        <el-select v-model="testvalue" placeholder="请选择">
-          <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
-            <span>{{item}}</span>
+        <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+          <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
+            <!-- <span>{{item}}</span> -->
             <!-- <span style="float: right">
               <i class="el-icon-edit" @click="_editModal(item)" />
               &nbsp;
@@ -285,7 +285,7 @@ export default {
       codemirrorValue: '',    // 弹框编辑器的值
       templateDetail: {   // 获取模板详情
         TestModelValue: ''
-      },   
+      },
       testvalue: '',
       deleteModal: false,//是否启动删除模板modal
       modalName: '',//模板名称
@@ -344,6 +344,8 @@ export default {
     //     parentPath: ''
     //   }
     // });
+
+    
   },
   methods: {
 
@@ -527,6 +529,7 @@ export default {
             showClose: true,
             duration: 0
           });
+          this.GetListFunctionTestModels()  // 重新获取列表数据
         } else {
           let ErrTips = {
             'InternalError': '内部错误',
@@ -661,11 +664,10 @@ export default {
     },
 
     // select选中改变模板
-    changeTemplate(){
+    changeTemplate() {
       this.templateList.forEach((item, i) => {
-        if(item.name === this.testvalue){
+        if (item.name === this.testvalue) {
           this.codemirrorValue = item.code
-          console.log(typeof this.codemirrorValue)
         }
       })
     },
@@ -734,7 +736,7 @@ export default {
         FunctionName: this.functionName,
         InvocationType: "RequestResponse",
         LogType: "Tail",
-        ClientContext: this.templateDetail.TestModelValue,
+        ClientContext: this.codemirrorValue,
         Qualifier: this.functionversion,
         Namespace: this.$route.query.SpaceValue
       }
