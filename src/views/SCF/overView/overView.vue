@@ -480,19 +480,22 @@
         let parms = {
           Version: '2018-07-24',
           MetricName: "mem_duration",
-          Region: localStorage.getItem('regionv2'),
+          Region: 'ap-guangzhou',
           Namespace: "qce/scf_v2",
-          Time: moment(new Date(timez)).format("YYYY-MM-DD 0:0:0"),
+          Time: '2020-3-20 0:0:0',
           Period: 86400,
           Module: 'monitor',
           'Dimensions.0.Name': 'appid',
           'Dimensions.0.Value': localStorage.getItem('appid'),
           'Dimensions.1.Name': 'function_name',
-          'Dimensions.2.Name': 'namespace'
+          'Dimensions.1.Value': 'dasd',
+          'Dimensions.2.Name': 'namespace',
+          'Dimensions.2.Value': 'default',
         }
         this.axios.post(TOP_LIST, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.TopArr = JSON.parse(data.Response.ObjList)
+            console.log(this.TopArr)
             this.topload = false
           } else {
             this.$message({
