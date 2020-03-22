@@ -31,7 +31,6 @@
     </p>
     <div>
       <!-- 接收组table -->
-      {{cam.selectUserGroup}}
       <el-table
         v-if="formInline.jieshou === '0'"
         :data="tableData2"
