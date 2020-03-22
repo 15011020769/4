@@ -146,13 +146,19 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [
+          'InPkg',
+          'InTraffic',
+          'OutPkg',
+          'OutTraffic'
+
+        ],
         disName: {
-          'ConNum': '当前连接数',
           'InPkg': '入包量',
-          'InTraffic': '公网入带宽',
-          'NewConn': '新增连接数',
-          'OutPkg': '公网出包量',
-          'OutTraffic': '公网出带宽'
+          'InTraffic': '入带宽',
+
+          'OutPkg': '出包量',
+          'OutTraffic': '出带宽'
         },
         Company: {
           'ConNum': '个',
@@ -163,12 +169,12 @@
           'OutTraffic': ' Mbps'
         },
         Tips: {
-          'ConNum': '公网连接数',
+          'ConNum': '连接数',
           'InPkg': '入包量',
-          'InTraffic': '公网入带宽',
+          'InTraffic': '入带宽',
           'NewConn': '新增连接数',
-          'OutPkg': '公网出包量',
-          'OutTraffic': '公网出带宽'
+          'OutPkg': '出包量',
+          'OutTraffic': '出带宽'
         },
 
       }
@@ -219,12 +225,17 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                setTimeout(() => {
-                  this._GetMonitorData(item.MetricName)
-                }, 500);
-              }
+              this.available.forEach(element => {
+                if (item.MetricName === element) {
+                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
+                    this.BaseListK.push(item)
+                    setTimeout(() => {
+                      this._GetMonitorData(item.MetricName)
+                    }, 500);
+                  }
+                }
+              });
+
             });
           } else {
             this.$message({
