@@ -198,8 +198,8 @@ export default {
           Time: "realTime",
           TimeGranularity: [
             {
-              value: "10",
-              label: "10秒"
+              value: "60",
+              label: "1分鐘"
             }
           ]
         },
@@ -208,8 +208,8 @@ export default {
           Time: "Nearly_24_hours",
           TimeGranularity: [
             {
-              value: "60",
-              label: "1分鐘"
+              value: "300",
+              label: "5分鐘"
             }
           ]
         },
