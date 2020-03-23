@@ -332,6 +332,32 @@ export default {
     // 从展开的列表ID 跳转到别的路由
     goMonitorDetail(row) {
       console.log(row, 'row');
+      let name = ""; let query = {id: row.id};
+      if (row.Namespace == 'qce/cvm') { // 雲服务器详情监控
+        name = "CMCVMdetails"
+      } else if (row.Namespace == 'QCE/VPNGW') { // vpn网关详情
+        name = "CMVPNdetails"
+      } else if (row.Namespace == 'qce/vpnx') { // VPN通道列表
+        name = "CMVPNTdetails"
+      } else if (row.Namespace == 'qce/nat_gateway') { // NAT网关列表
+        name = "NATdetails"
+      } else if (row.Namespace == 'qce/dcg') { // 专线网关列表
+        name = "PrivateGatewaydetails"
+      } else if (row.Namespace == 'qce/redis') { // 获取RESIS列表
+        name = "Redisdetails"
+      } else if (row.Namespace == 'qce/dcx') { // 专线通道列表
+        name = "Privatedetails"
+      } else if (row.Namespace == 'qce/cos') { // 对象存储
+        name = "CMobjdetails"
+      } else if (row.Namespace == 'qce/dc') { // 物理专线
+        name = "Physicsdetails"
+      } else if (row.Namespace == 'qce/cdb') { // mysql列表
+        name = "CMMysqldetails"
+      } else if (row.Namespace == 'qce/block_storage') { // 云硬盘
+        name = "Diskdetails"
+      }
+
+      this.$router.push({name: name, query: query});
     },
     GetDat(data) {
       this.time = data[1].XAxis; // 横坐标时间
