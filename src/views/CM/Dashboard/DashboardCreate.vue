@@ -14,7 +14,7 @@
       </div>
       <div class="top-two">
         <span>数据视图</span>
-        <div class="top-two-see">明细试图</div>
+        <div class="top-two-see">明细视图</div>
       </div>
     </div>
     <h3 style="margin-bottom:20px">配置监控图表</h3>
