@@ -115,14 +115,16 @@
               </el-table-column>
               <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
                 <template slot-scope="scope">
-                  <!-- <span v-if="scope.row.desc !== 0"
+                  <span v-if="scope.row.desc !== 0"
                     >{{ scope.row.subtitle + "："
-                    }}<a @click="goToProduct(scope.row)">{{
-                      scope.row.desc
-                    }}</a></span
+                    }}<a
+                      @click="goToProduct(scope.row)"
+                      class="go-to-product"
+                      >{{ scope.row.desc }}</a
+                    ></span
                   >
-                  <span v-else>-</span> -->
-                  <span>{{ scope.row.desc }}</span>
+                  <span v-else>-</span>
+                  <!-- <span>{{ scope.row.desc }}</span> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -525,17 +527,17 @@ export default {
               item.tips = [];
             }
 
-            if (viewNameObj !== undefined) {
-              item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
-            } else {
-              item.desc = "-";
-            }
-
             // if (viewNameObj !== undefined) {
-            //   item.desc = viewNameObj.AbnormalCount;
+            //   item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
             // } else {
-            //   item.desc = 0;
+            //   item.desc = "-";
             // }
+
+            if (viewNameObj !== undefined) {
+              item.desc = viewNameObj.AbnormalCount;
+            } else {
+              item.desc = 0;
+            }
 
             return item;
           });
@@ -809,6 +811,9 @@ export default {
 }
 .overview-wrap >>> .el-button {
   line-height: 28px;
+}
+.go-to-product:hover {
+  text-decoration: underline;
 }
 .overview-wrap {
   a {
