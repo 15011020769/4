@@ -594,7 +594,6 @@
             }
             if (item.radio == '2') {
               //请求接口，重新获得workload数据
-              this.workload1=[];
               this.workLoadTab(item.activeName, index)
             }
             //新建禁用判断
@@ -1296,15 +1295,17 @@
             Version: "2018-05-25"
           };
           console.log(params)
-          this.workload1 = [];
+          // this.workload1 = [];
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
             console.log(res)
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
-              if( data.items&&data.items.length!=0){
+              if( data.items){
                 console.log(data.items,'worklods++++++++++++++++++++++++++++++++')
-                this.workload1 = data.items;
+                this.workload1 =[...data.items];
               }
+            }else{
+              this.workload1 = []
             }
           });
         }
@@ -1413,26 +1414,32 @@
         }
       },
       roomShow(index,np) {
-        console.log(np,'np')
+       
         if (this.namespaceOptions1.length == '1') {
           this.namespaceOptions1 = []
         }
         if(this.formFour[index].radio=='2'){
           var s = 0;
-          console.log(this.formFour)
-          for(let i in this.formFour[index].checkObj){
-            if(JSON.stringify(this.formFour[index].checkObj[i])!='{}'){
-
-              for(let j in this.formFour[index].checkObj[i]){
-              
-                if( this.formFour[index].checkObj[i].acname==np){
-                
-                  s=this.formFour[index].checkObj[i].val.length
-                }
-              }
-            }
+          for(let i in this.formFour[index]){
+           switch(i){
+             case 'check0':
+               s+=this.formFour[index][i].length
+             break
+             case 'check1':
+               s+=this.formFour[index][i].length
+             break
+             case 'check2':
+               s+=this.formFour[index][i].length
+             break
+             case 'check3':
+               s+=this.formFour[index][i].length
+             break
+             case 'check4':
+               s+=this.formFour[index][i].length
+             break
+           }
           }
-          console.log('长度',s)
+         
           if(s==0){
              this.$message({
                   message: '已選工作負載項為0個，請至少選擇一個工作負載項或者選擇全部容器',
