@@ -82,11 +82,12 @@
                 <el-input v-model="SpaceListK[$scope.$index].name" :disabled="true"> </el-input>
               </div>
               <div v-else>
-                <el-input v-model="SpaceListK[$scope.$index].name" @blur="inpBlur(SpaceListK[$scope.$index].name)">
+                <el-input v-model="SpaceListK[$scope.$index].name" @input="inpBlur(SpaceListK[$scope.$index].name)">
                 </el-input>
                 <div :class="{'errActive':isbol}">
                   <p class="modelNameSpace">{{ $t('SCF.total.ts1') }}</p>
                   <p class="modelNameSpace">{{ $t('SCF.total.ts2') }}</p>
+                  <p class="modelNameSpace">{{ $t('SCF.total.tbs3') }}</p>
                 </div>
 
               </div>
@@ -369,14 +370,30 @@
       },
       //创建命名空间名字校验
       inpBlur(val) {
+        let spaceArr = []
+        this.SpaceListK.forEach(item => {
+          spaceArr.push(item.name)
+        });
         if (val) {
           let reg = /^[a-zA-Z][a-zA-Z0-9_-]{2,59}$/;
           let bol = reg.test(val);
           if (!bol) {
             this.isbol = true;
           } else {
-            this.isbol = false;
+            if ([...new Set(spaceArr)].length !== this.SpaceListK.length) {
+              this.isbol = true;
+            } else {
+              this.isbol = false;
+            }
+
           }
+
+
+
+
+
+
+
         } else {
           this.isbol = true;
         }
