@@ -612,8 +612,6 @@ export default {
         this.updateCsliteFun(param)      // 更新函数代码
       } else if (this.SubmissionValue === 'Inline') {      // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
-          console.log('我是二进制')
-          console.log(blob)
           this.blobToDataURI(blob, data => {    //blob格式再转换为base64格式
             console.log('我是base64')
             console.log(data)

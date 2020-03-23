@@ -22,9 +22,6 @@ export default {
       billMenu: localStorage.getItem('billMenu') ? localStorage.getItem('billMenu') : 'deal'       // 默认选中的菜单
     };
   },
-  created() {
-    localStorage.setItem('billMenu', 'deal')
-  },
   methods: {
     // 选中菜单点击事件
     handleSelect(key, keyPath) {

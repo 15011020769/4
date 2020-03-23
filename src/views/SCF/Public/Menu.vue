@@ -21,9 +21,6 @@ export default {
       scfMenu: localStorage.getItem('scfMenu') ? localStorage.getItem('scfMenu') : 'overView'
     };
   },
-  created() {
-    localStorage.setItem('scfMenu', 'overView')
-  },
   methods: {
     handleOpen(key, keyPath) {
       console.log(key, keyPath);
