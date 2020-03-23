@@ -2336,7 +2336,7 @@
                       :disabled="!securityGroupOpt.length"
                       :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
-                      @change="selectChange($event, index)" 
+                      @change="selectChange" 
                     >
                       <el-option
                         v-for="x in securityGroupOpt"
@@ -2347,7 +2347,7 @@
                       </el-option>
                     </el-select>
                     <!-- 重复警告提示(yhs) -->
-                    <el-tooltip class="hide" :class="{active:colonyThird.warningNum === index}" effect="light" content="安全组重复" placement="right">
+                    <el-tooltip class="hide" :class="{active:item.error}" effect="light" content="安全组重复" placement="right">
                       <i class="el-icon-warning-outline ml5"></i>
                     </el-tooltip>
                     <!-- 刷新按钮(yhs) -->
@@ -3135,7 +3135,6 @@ export default {
         defaultSafe: false,
         defaultSafeBox: true,
         warningNum:'',
-        isShowWarning:false,
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -5107,21 +5106,20 @@ export default {
       });
     },
     //安全组重复验证(yhs)
-    selectChange(e, i){
-      let newSafeArr = []
-      let {safeArr} = this.colonyThird
-      safeArr.forEach(ele=>{
-        !newSafeArr.some(item=>{
-          return item.securityGroupSel == e
-        }) && newSafeArr.push(ele)
-      }) 
-      if(safeArr.length>1 && safeArr.length!==newSafeArr.length){
-        this.colonyThird.warningNum = i
-        this.isShowWarning = !this.isShowWarning
-      }else{
-        this.colonyThird.warningNum = ''
-        this.isShowWarning = this.isShowWarning
+    selectChange(){
+      let { safeArr } = this.colonyThird
+      safeArr.map(item=>{
+        item.error=false
+      })
+      for (let i = 0; i < safeArr.length - 1; i++) {
+          for (let j = i + 1; j < safeArr.length; j++) {
+              if (safeArr[i].securityGroupSel === '' || safeArr[i].error) break
+              if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel){
+                safeArr[j].error = true
+              }
+          }
       }
+      this.colonyThird.safeArr = safeArr
     },
     //删除一项
     deleteExceptPrice(index) {
