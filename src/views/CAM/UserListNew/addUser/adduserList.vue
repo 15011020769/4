@@ -102,9 +102,9 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item :label="$t('CAM.userList.resetPassword')">
+              <!-- <el-form-item :label="$t('CAM.userList.resetPassword')">
                 <el-checkbox :label="0" name="pwdType">{{$t('CAM.userList.passAgin')}}</el-checkbox>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item :label="$t('CAM.userList.protect')" required>
                 <el-radio-group v-model="ruleForm.loginRadio">
                   <el-radio :label="true">{{$t('CAM.userList.open')}}</el-radio>
