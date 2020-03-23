@@ -57,9 +57,9 @@ export default {
       default: false,
       type: Boolean
     },
-    options: {
-      default: [], type: Array
-    }
+    // options: {
+    //   default: [], type: Array
+    // }
   },
   watch: {
     show: function (val) {

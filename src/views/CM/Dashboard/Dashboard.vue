@@ -138,7 +138,7 @@
               <el-table-column
                 prop=""
                 label="ID"
-                width="120"
+                width=""
               >
                 <template scope="scope">
                   <a style="color: #006eff" @click="goMonitorDetail(scope.row)">{{
@@ -148,14 +148,14 @@
               </el-table-column>
               <el-table-column
                 prop=""
-                :label="item.DescName.split('-')[1]"
+                :label="item.MetricName[0]"
                 width=""
               >
                 <template scope="scope">
                   <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[0] : ''}}</span>
                 </template>
               </el-table-column>
-              <el-table-column prop="Namespace" v-show="false"></el-table-column>
+              <el-table-column prop="Namespace" v-if="false"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -332,7 +332,7 @@ export default {
     // 从展开的列表ID 跳转到别的路由
     goMonitorDetail(row) {
       console.log(row, 'row');
-      let name = ""; let query = {id: row.id};
+      let name = ""; let query = {id: row.Id};
       if (row.Namespace == 'qce/cvm') { // 雲服务器详情监控
         name = "CMCVMdetails"
       } else if (row.Namespace == 'QCE/VPNGW') { // vpn网关详情
