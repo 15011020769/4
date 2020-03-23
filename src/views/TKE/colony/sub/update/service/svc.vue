@@ -84,7 +84,7 @@
 			      		v-for="item in LBsubnet"
 			      		:key="item.SubnetName"
 			      		:label="item.SubnetName"
-			      		:value="item.SubnetName">
+			      		:value="item.SubnetId">
 			      	</el-option>
 			      </el-select>
 			      <el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
@@ -231,7 +231,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="updateAccessMode()">{{$t('TKE.subList.gxfwfs')}}</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" >取消</el-button>
         </div>
       </div>
     </div>
@@ -274,7 +274,7 @@ export default {
         workload: [],
         tabPosition: 'dep',
         vpcIds: '',
-        subnetId: '',
+        subnetId: '',//子网id
         describe: ''// 描述
       },
       clusterId: '', // 集群id
@@ -413,7 +413,7 @@ export default {
   watch: {
     'svc.LBvalue2': function (val) {
       this.addressCount = this.LBsubnet.find(item => {
-        return item.SubnetName === val
+        return item.SubnetId == val
       })
     }
   },
@@ -427,11 +427,11 @@ export default {
   },
   methods: {
     initRequery: async function () {
-      await this.getInfo()// 获取服务详情信息
       await this.getDescribeClusters()// 获取集群列表
       await this.getDescribeLoadBalancers()// 扫描均衡器
       await this.getDescribeVpcs()// 描述Vpcs
       await this.getDescribeSubnets()// 扫描子网
+      await this.getInfo()// 获取服务详情信息      
     },
     // 获取集群列表(1)
     async getDescribeClusters () {
@@ -542,16 +542,11 @@ export default {
     async getDescribeSubnets () {
       this.loadShow = true
       let params = {
-        // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
-        // 'Filters.0.Name': 'vpc-id',
-        // 'Filters.0.Values.0': this.svc.vpcIds,
         Limit: 100,
         Offset: 0,
         Version: '2017-03-12'
       }
-      // params['Filters.0.Name'] = 'vpc-id'
       params['Filters.0.Name'] = 'vpc-id'
-      // params['Filters.0.Values.0'] = this.svc.vpcIds
       params['Filters.0.Values.0'] = this.svc.vpcIds
 
       await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
@@ -560,16 +555,16 @@ export default {
           let msg = res.Response.SubnetSet
           this.LBsubnet = msg
           // console.log(msg)
-          if (this.svc.radio !== '3') {
-            this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetName
-          }
+          // if (this.svc.radio !== '3') {
+          //   this.svc.LBvalue2 = res.Response.SubnetSet[0].SubnetId
+          // }
           this.loadShow = false
-          msg.forEach(ele => {
-            if (ele.SubnetId == this.svc.subnetId) {
-              this.svc.LBvalue2 = ele.SubnetName
-              // this.svc.subnetId = ele.SubnetId
-            }
-          })
+          // msg.forEach(ele => {
+          //   if (ele.SubnetId == this.svc.subnetId) {
+          //     this.svc.LBvalue2 = ele.SubnetName
+          //     // this.svc.subnetId = ele.SubnetId
+          //   }
+          // })
         } else {
           this.loadShow = false
           let ErrTips = {}
@@ -653,18 +648,18 @@ export default {
       if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy
       // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
       if (radio === '3' && loadBalance === '1') {
-        this.getSubnetId()
+        // this.getSubnetId()
         // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
-        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
         // this.svc.value = ''
       } else if (radio === '3' && loadBalance === '2') {
-        this.getSubnetId()
+        // this.getSubnetId()
         // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
         // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
-        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.subnetId
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
       }
       // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
@@ -737,7 +732,8 @@ export default {
           }
           if (this.svc.radio === '3') {
           // LB子网id
-            this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+            // this.svc.subnetId = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
+            this.svc.LBvalue2 = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
           // 用来判断选中的是哪个访问方式
           // var isart = msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid']
           }

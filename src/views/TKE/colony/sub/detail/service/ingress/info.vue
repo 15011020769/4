@@ -67,6 +67,7 @@ export default {
   },
   created () {
     // 从路由获取类型
+    console.log(this.$route.query)
     let { clusterId, ingressName, namespace } = this.$route.query
     this.clusterId = clusterId
     this.namespace = namespace

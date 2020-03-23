@@ -22,7 +22,7 @@
 					<div>{{$t('TKE.subList.bzfwwlglx')}}。</div>
 					<div>
 						<el-checkbox v-model="svc.checked">Headless&nbsp;Service</el-checkbox>
-						<el-tooltip ：content="$t('TKE.subList.yyjz')" placement="top" effect="light">
+						<el-tooltip :content="$t('TKE.subList.yyjz')" placement="top" effect="light">
 						<i class="el-icon-question" style="margin-left:5px;"></i>
 						</el-tooltip>
 						（Headless&nbsp;Service{{$t('TKE.subList.zzccjsxz')}}，<span class="text-error">{{$t('TKE.subList.bzcbgfw')}}）</span>
@@ -55,9 +55,9 @@
 			<el-select v-model="svc.LBvalue2" :placeholder="$t('TKE.overview.qxz')">
 				<el-option
 					v-for="item in personObj.LBsubnet"
-					:key="item.SubnetName"
+					:key="item.SubnetId"
 					:label="item.SubnetName"
-					:value="item.SubnetName">
+					:value="item.SubnetId">
 				</el-option>
 			</el-select>
 			<el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
@@ -334,15 +334,15 @@ export default {
       immediate: true
     },
   	'svc.LBvalue2': function (val) {
-  		this.addressCount = this.personObj.LBsubnet.find(item => {
-        return item.SubnetName === val
+      this.addressCount = this.personObj.LBsubnet.find(item => {
+        return item.SubnetId === val
       })
     },
     personObj: {
       handler: function () {
         let { LBsubnet, vpcNameAry, ownLoadBalancer } = this.personObj
         if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer[0])) return
-        this.svc.LBvalue2 = LBsubnet[0].SubnetName
+        this.svc.LBvalue2 = LBsubnet[0].SubnetId
         this.svc.LBvalue1 = vpcNameAry[0].VpcName
         this.svc.balancerValue = ownLoadBalancer[0].LoadBalancerId
         // + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
