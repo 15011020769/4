@@ -433,8 +433,12 @@
       },
       changeSearch() {
         let searchParam = {};
-        searchParam.value = this.searchInput;
-        searchParam.label = this.searchItem;
+        if(this.searchInput) {
+          searchParam.value = this.searchInput;
+          searchParam.label = this.searchItem;
+        }
+        // searchParam.value = this.searchInput;
+        // searchParam.label = this.searchItem;
         this.$emit("searchParam", searchParam);
       },
 
