@@ -14,7 +14,7 @@ export default {
   name: "TimelineCharts",
   props: {
     timelineData: {
-      type: [Array, Array, Array],
+      type: [Array],
       default: function() {
         return [[], [], []];
       }

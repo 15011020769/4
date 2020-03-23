@@ -39,7 +39,7 @@
                 v-model="value1"
                 :placeholder="$t('CVM.Dashboard.qxz')"
                 style="width:140px;margin-left:-1px;"
-                @change="getProjectList"
+                @change="getHealthStatusList"
               >
                 <el-option
                   v-for="item in options1"
@@ -116,6 +116,7 @@
               <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
                 <template slot-scope="scope">
                   <span>{{ scope.row.desc }}</span>
+                  <!-- <span v-html="scope.row.desc"></span> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -281,9 +282,14 @@ export default {
       tableLoading: false,
       productOptions: [
         {
-          label: "云伺服器",
+          label: "雲伺服器",
           viewName: "cvm_device",
           subtitle: "基礎監控"
+        },
+        {
+          label: "雲硬碟",
+          viewName: "BS",
+          subtitle: "雲硬碟"
         },
         {
           label: "VPN網關",
@@ -364,7 +370,7 @@ export default {
     this.GetCity();
     this.getProject();
     // this.getServiceType();
-    this.getProjectList();
+    this.getHealthStatusList();
     this.MonitorList();
     // this.getSMS();
 
@@ -483,7 +489,7 @@ export default {
     //     }
     //   });
     // },
-    getProjectList() {
+    getHealthStatusList() {
       //获取项目列表数据
       let params = {
         Version: "2018-07-24",
@@ -514,6 +520,12 @@ export default {
             }
 
             if (viewNameObj !== undefined) {
+              // item.desc =
+              //   item.subtitle +
+              //   "：" +
+              //   `<router-link to="${this.getRouterByViewName(item.viewName)}">${
+              //     viewNameObj.AbnormalCount
+              //   }</router-link>`;
               item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
             } else {
               item.desc = "-";
@@ -535,6 +547,44 @@ export default {
           });
         }
       });
+    },
+    getRouterByViewName(viewName) {
+      if (viewName === "VPN_GW") {
+        // VPN网关
+        return "/VPNgateway";
+      } else if (viewName === "vpn_tunnel") {
+        // vpn通道
+        return "/VPNchannel";
+      } else if (viewName === "nat_tc_stat") {
+        // Nat网关
+        return "/NATgateway";
+      } else if (viewName === "DC_GW") {
+        // 专线网关
+        return "/PrivateGateway";
+      } else if (viewName === "REDIS-CLUSTER") {
+        // Redis
+        return "/Redis";
+      } else if (viewName === "dcchannel") {
+        // 专用通道
+        return "/PrivateGateway";
+      } else if (viewName === "COS") {
+        // 对象存储
+        return "/objectStorage";
+      } else if (viewName === "dcline") {
+        // 物理专线
+        return "/Physics";
+      } else if (viewName === "cdb_detail") {
+        // MYSQL
+        return "/cloudMysql";
+      } else if (viewName === "BS") {
+        // 云硬盘
+        return "/cloudDisk";
+      } else if (viewName === "EIP") {
+        // 弹性公网IP
+        return "/networkIP";
+      } else {
+        return "/CVM";
+      }
     },
     getAbnormalList(viewName, index) {
       const params = {
