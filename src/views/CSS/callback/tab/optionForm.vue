@@ -91,7 +91,7 @@ export default {
         console.log(result)
         if (!result) {
           return callback(
-            new Error('回調金鑰由大小寫字母及數字組成，最長32個字符')
+            new Error('回調金鑰由大小寫字母及數字組成，最長32個字元')
           )
         }
       }
@@ -165,9 +165,9 @@ export default {
           { required: true, message: '請輸入範本名稱', trigger: 'blur' },
           { pattern: /^[\w\-\u4e00-\u9fa5]{1,30}$/, message: '範本名稱不符要求', trigger: 'blur' }
         ],
-        desc: [
+        Description: [
           { required: false },
-          { max: 100, message: '長度不能超過100個字符', trigger: 'blur' },
+          { max: 100, message: '長度不能超過100個字元', trigger: 'blur' },
           { pattern: /^[\w\-\u4e00-\u9fa5]{0,100}$/, message: '描述不符要求', trigger: 'blur' }
         ],
         CallbackKey: [

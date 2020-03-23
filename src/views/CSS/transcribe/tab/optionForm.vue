@@ -152,7 +152,7 @@ export default {
           { required: true, message: '請輸入範本名稱', trigger: 'blur' },
           { pattern: /^[\w\-\u4e00-\u9fa5]{1,30}$/, message: '範本名稱不符要求', trigger: 'blur' }
         ],
-        desc: [
+        Description: [
           { required: false },
           { pattern: /^[\w\-\u4e00-\u9fa5]{0,100}$/, message: '描述不符要求', trigger: 'blur' }
         ],

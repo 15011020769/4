@@ -65,7 +65,7 @@ export default {
     let checkTemplateName = (rule, value, callback) => {
       let result = regex.test(value)
       if (!result) {
-        callback(new Error('範本僅支持中文、英文、數字、_、-，不超過30個字符'))
+        callback(new Error('範本僅支持中文、英文、數字、_、-，不超過30個字元'))
       }
       callback()
     }
@@ -74,7 +74,7 @@ export default {
       let result = regex.test(value)
       if (!result) {
         callback(
-          new Error('範本描述僅支持中文、英文、數字、_、-，不超過100個字符')
+          new Error('範本描述僅支持中文、英文、數字、_、-，不超過100個字元')
         )
       }
       callback()
