@@ -310,7 +310,7 @@ export default {
           subtitle: "VPN通道"
         },
         {
-          label: "NAT网網關",
+          label: "NAT網關",
           viewName: "nat_tc_stat",
           subtitle: "NAT網關"
         },
@@ -340,7 +340,7 @@ export default {
           subtitle: "專用通道"
         },
         {
-          label: "物理专线",
+          label: "物理專線",
           viewName: "dcline",
           subtitle: "物理專線"
         },
