@@ -5,19 +5,19 @@
       <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item :label="$t('TKE.overview.mc')">
-          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.name}}</div>
+          <div class="tke-form-item_text">{{serviceName}}</div>
         </el-form-item>
         <el-form-item label="Namespace">
-          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.namespace}}</div>
+          <div class="tke-form-item_text">{{spaceName}}</div>
         </el-form-item>
         <el-form-item label="描述">
-          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.annotations.description||'-'}}</div>
+          <div class="tke-form-item_text">{{detailData.metadata && detailData.metadata.annotations && detailData.metadata.annotations.description||'-'}}</div>
         </el-form-item>
         <el-form-item label="Labels">
           <div class="tke-form-item_text" v-if="detailData.metadata &&detailData.metadata.labels">
             <!-- {{detailData.metadata && detailData.metadata.labels}} -->
             <span v-for="(v,i) in detailData.metadata && detailData.metadata.labels" :key="v">
-              {{i}}:{{v+'  '}}
+              {{i}}: {{v+'&nbsp;&nbsp;'}}
               </span>
           </div>
           <div class="tke-form-item_text" v-else>-</div>
@@ -76,7 +76,7 @@
       <h4  class="tke-formpanel-title">{{$t('TKE.colony.gjszhi')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="130px" size="mini">
         <el-form-item label="ExternalTrafficPolicy">
-          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.externalTrafficPolicy||'-'}}</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type||'-'}}</div>
         </el-form-item>
         <el-form-item label="Session Affinity">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinity}}</div>

@@ -82,7 +82,7 @@
             <div class="new-set" v-show="this.visitType">
               <el-form-item :label="$t('CAM.userList.ConsolePassword')" required>
                 <el-radio-group v-model="ruleForm.pwdRadio" @change="_pwdRadio">
-                  <el-radio :label="false">{{$t('CAM.userList.generation')}}</el-radio>
+                  <el-radio :label="false">{{$t('CAM.userList.mrmm')}}</el-radio>
                   <el-radio :label="true">{{$t('CAM.userList.Custom')}}</el-radio>
                 </el-radio-group>
                 <div v-show="pwdInp" class="regPWD">
@@ -102,9 +102,9 @@
                   </div>
                 </div>
               </el-form-item>
-              <el-form-item :label="$t('CAM.userList.resetPassword')">
+              <!-- <el-form-item :label="$t('CAM.userList.resetPassword')">
                 <el-checkbox :label="0" name="pwdType">{{$t('CAM.userList.passAgin')}}</el-checkbox>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item :label="$t('CAM.userList.protect')" required>
                 <el-radio-group v-model="ruleForm.loginRadio">
                   <el-radio :label="true">{{$t('CAM.userList.open')}}</el-radio>

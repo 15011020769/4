@@ -277,8 +277,9 @@ export default {
       return n + "/" + y + "/" + r + " " + h + ":" + m + ":" + s;
     },
     setStrategy(data) {
+      console.log(data)
       //跳转设置策略
-      this.$router.push({ path: "/strategy/create:" + data.Id });
+      this.$router.push({ path: "/strategy/createdetail",query:{groupId:data.GroupId,viewName:'cvm_device'} });
     },
     //获取数据
     getBasicsList(val) {

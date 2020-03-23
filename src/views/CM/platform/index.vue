@@ -34,11 +34,11 @@
           </div>
         </div>
         <div class="table">
-          <el-table :data="tableData" style="width: 100%" height="450">
+          <el-table :data="tableData" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
             <el-table-column prop="BusinessTypeDesc" label="事件" class="el-icon-info"></el-table-column>
             <el-table-column prop label="地域" >
               <template slot-scope="scope">
-                <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
+                <p>{{scope.row.Region === 'tpe' ? '台灣台北' : ''}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="EventStatus" label="狀態" ></el-table-column>

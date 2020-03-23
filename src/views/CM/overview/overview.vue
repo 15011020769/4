@@ -39,7 +39,7 @@
                 v-model="value1"
                 :placeholder="$t('CVM.Dashboard.qxz')"
                 style="width:140px;margin-left:-1px;"
-                @change="getProjectList"
+                @change="getHealthStatusList"
               >
                 <el-option
                   v-for="item in options1"
@@ -115,7 +115,16 @@
               </el-table-column>
               <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
                 <template slot-scope="scope">
-                  <span>{{ scope.row.desc }}</span>
+                  <span v-if="scope.row.desc !== 0"
+                    >{{ scope.row.subtitle + "："
+                    }}<a
+                      @click="goToProduct(scope.row)"
+                      class="go-to-product"
+                      >{{ scope.row.desc }}</a
+                    ></span
+                  >
+                  <span v-else>-</span>
+                  <!-- <span>{{ scope.row.desc }}</span> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -281,9 +290,14 @@ export default {
       tableLoading: false,
       productOptions: [
         {
-          label: "云伺服器",
+          label: "雲伺服器",
           viewName: "cvm_device",
           subtitle: "基礎監控"
+        },
+        {
+          label: "雲硬碟",
+          viewName: "BS",
+          subtitle: "雲硬碟"
         },
         {
           label: "VPN網關",
@@ -296,7 +310,7 @@ export default {
           subtitle: "VPN通道"
         },
         {
-          label: "NAT网網關",
+          label: "NAT網關",
           viewName: "nat_tc_stat",
           subtitle: "NAT網關"
         },
@@ -326,7 +340,7 @@ export default {
           subtitle: "專用通道"
         },
         {
-          label: "物理专线",
+          label: "物理專線",
           viewName: "dcline",
           subtitle: "物理專線"
         },
@@ -364,13 +378,13 @@ export default {
     this.GetCity();
     this.getProject();
     // this.getServiceType();
-    this.getProjectList();
+    this.getHealthStatusList();
     this.MonitorList();
     // this.getSMS();
 
     this.productOptions.forEach(item => {
       item.status = true;
-      item.desc = "";
+      item.desc = 0;
       item.tips = [];
     });
   },
@@ -483,7 +497,7 @@ export default {
     //     }
     //   });
     // },
-    getProjectList() {
+    getHealthStatusList() {
       //获取项目列表数据
       let params = {
         Version: "2018-07-24",
@@ -513,10 +527,16 @@ export default {
               item.tips = [];
             }
 
+            // if (viewNameObj !== undefined) {
+            //   item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
+            // } else {
+            //   item.desc = "-";
+            // }
+
             if (viewNameObj !== undefined) {
-              item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
+              item.desc = viewNameObj.AbnormalCount;
             } else {
-              item.desc = "-";
+              item.desc = 0;
             }
 
             return item;
@@ -534,6 +554,49 @@ export default {
             duration: 0
           });
         }
+      });
+    },
+    getRouterNameByViewName(viewName) {
+      if (viewName === "VPN_GW") {
+        // VPN网关
+        return "VPNgateway";
+      } else if (viewName === "vpn_tunnel") {
+        // vpn通道
+        return "VPNchannel";
+      } else if (viewName === "nat_tc_stat") {
+        // Nat网关
+        return "NATgateway";
+      } else if (viewName === "DC_GW") {
+        // 专线网关
+        return "PrivateGateway";
+      } else if (viewName === "REDIS-CLUSTER") {
+        // Redis
+        return "Redis";
+      } else if (viewName === "dcchannel") {
+        // 专用通道
+        return "PrivateGateway";
+      } else if (viewName === "COS") {
+        // 对象存储
+        return "objectStorage";
+      } else if (viewName === "dcline") {
+        // 物理专线
+        return "Physics";
+      } else if (viewName === "cdb_detail") {
+        // MYSQL
+        return "cloudMysql";
+      } else if (viewName === "BS") {
+        // 云硬盘
+        return "cloudDisk";
+      } else if (viewName === "EIP") {
+        // 弹性公网IP
+        return "networkIP";
+      } else {
+        return "CVM";
+      }
+    },
+    goToProduct(row) {
+      this.$router.push({
+        name: this.getRouterNameByViewName(row.ViewName)
       });
     },
     getAbnormalList(viewName, index) {
@@ -749,6 +812,9 @@ export default {
 .overview-wrap >>> .el-button {
   line-height: 28px;
 }
+.go-to-product:hover {
+  text-decoration: underline;
+}
 .overview-wrap {
   a {
     color: #006eff;
@@ -775,17 +841,11 @@ export default {
       }
     }
 
-    .main-box {
-      display: flex;
-    }
-
     .left {
-      flex: 1;
+      width: 100%;
       margin-right: 20px;
     }
-    .right {
-      width: 30%;
-    }
+
     .head {
       display: flex;
       align-items: center;

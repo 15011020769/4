@@ -138,6 +138,7 @@ module.exports = {
       bhzf: "包含数字，特殊字符，小写字母，大写字母",
       mmbnyyhmxt: "密码不能与当前用户名相同",
       xzyhz: '选择用户组',
+      mrmm: '默认密码',
     },
     userGroup: {
       title: "用户组",

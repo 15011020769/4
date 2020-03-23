@@ -14,7 +14,7 @@ export default {
   name: "TimelineCharts",
   props: {
     timelineData: {
-      type: [Array, Array, Array],
+      type: [Array],
       default: function() {
         return [[], [], []];
       }
@@ -28,6 +28,9 @@ export default {
 
     let myCharts = echarts.init(this.$refs.chart);
     this.setupEcharts(myCharts, [], [], []);
+  },
+  beforeDestroy() {
+    window.onresize = null;
   },
   watch: {
     timelineData: function(n, o) {

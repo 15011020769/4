@@ -146,7 +146,7 @@
                 <el-col :span="12">
                   <el-row type="flex">
                     <div class="w80">{{t('纬度', 'WAF.wd')}}</div>
-                    <div>{{log.IpinfoLongtitude}}</div>
+                    <div>{{log.IpinfoLongitude}}</div>
                   </el-row>
                 </el-col>
               </el-row>

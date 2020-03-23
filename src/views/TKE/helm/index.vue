@@ -85,7 +85,7 @@
               <template slot-scope="scope">
                 <div>
                   <!-- @click="jumpDetail(scope.row)" -->
-                  <a style="cursor:pointer;">{{scope.row.name}}</a>
+                  <p>{{scope.row.name}}</p>
                 </div>
               </template>
             </el-table-column>

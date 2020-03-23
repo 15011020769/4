@@ -280,7 +280,6 @@ import ProductTypeCpt from '@/views/CM/CM_assembly/product_type'
 import {
   GET_GROUP_LIST,
   GET_POLICY_GROUP_TYPE,
-  DESCRIBE_METRICS,
   GET_CONDITIONSTEMPLATELIST,
   MODIFYPOLICYGROUPINFO,
   GET_PROJECTNAME,
@@ -728,16 +727,16 @@ export default {
       return moment(value).format('HH :mm:ss')
     },
     // 告警触发条件弹框(未完成)
-    openEdit () {
-      this.showDelDialog3 = true
-      let params = {
-        lang: 'zh',
-        namespace: 'qce/cvm'
-      }
-      this.axios.post(DESCRIBE_METRICS, params).then(res => {
-        // console.log(res)
-      })
-    },
+    // openEdit () {
+    //   this.showDelDialog3 = true
+    //   let params = {
+    //     lang: 'zh',
+    //     namespace: 'qce/cvm'
+    //   }
+    //   this.axios.post(DESCRIBE_METRICS, params).then(res => {
+    //     // console.log(res)
+    //   })
+    // },
     addZhibiao () { // 添加触发条件的指标告警
       let { zhibiaoType } = this
       for (let i = 0; i < zhibiaoType.length; i++) {

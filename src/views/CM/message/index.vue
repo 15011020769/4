@@ -75,17 +75,6 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-      <!-- <div class="Right-style pagstyle" style="background: #fff;">
-        <span class="pagtotal">共&nbsp;{{ TotalCount }}&nbsp;{{ $t("CVM.strip") }}</span>
-        <el-pagination
-          :page-size="pagesize"
-          :pager-count="7"
-          layout="prev, pager, next"
-          @current-change="handleCurrentChange"
-          :total="TotalCount"
-        ></el-pagination>
-      </div>-->
-      <!-- 分页 -->
       <div class="tke-page">
         <div class="block">
           <el-pagination
@@ -243,7 +232,6 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
       this.pageSize = val;
       this.getCustomMessage(this.timeObjs);
     },
@@ -265,7 +253,6 @@ export default {
       };
       // params.Filter       //筛选数据
       this.axios.post(CUSTON_MESSAGE_LIST, params).then(res => {
-        // console.log(res.Response.PolicyList, "数据");
         if (res.Response.Error === undefined) {
           this.tableData = res.Response.PolicyList;
           this.TotalCount = res.Response.Total;
@@ -292,7 +279,6 @@ export default {
     },
     receiverGroup(val) {
       //接收组
-      console.log(val.ReceiverGroupIds);
       // this.groups = val;
       // this.groups.ReceiverGroupIds.forEach((item, index) => {
       //   var params = {
@@ -329,7 +315,6 @@ export default {
     getAlarmList() {},
     // 删除
     Delete(row) {
-      console.log(row.PolicyID);
       this.deteleId=row.PolicyID;
       this.deleteDialogVisible = true;
     },

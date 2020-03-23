@@ -49,8 +49,8 @@
         <h3>{{$t('CAM.userList.askMesg')}}</h3>
         <el-form label-width="120px">
           <el-form-item :label="$t('CAM.userList.askWay')">
-            <p v-show="userInfo.ConsoleLogin == 1">{{$t('CAM.userList.consoleAsk')}}</p>
-            <p v-show="userInfo.ConsoleLogin == 0">{{$t('CAM.userList.noWayAsk')}}</p>
+            <p v-if="userInfo.type.includes('1')">可以訪問控制台</p>
+            <p v-else>不能訪問控制台</p>
           </el-form-item>
           <el-form-item :label="$t('CAM.userList.passType')">
             <p v-if="userInfo.pwdRadio">{{$t('CAM.userList.Custom')}}</p>

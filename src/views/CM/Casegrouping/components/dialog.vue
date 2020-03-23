@@ -17,7 +17,7 @@
           <span>分组名</span>
           <el-tooltip
             :disabled="groupingNameTips"
-            placement="bottom"
+            placement="right"
             effect="light"
           >
             <div slot="content" class="group-name">
@@ -28,6 +28,7 @@
               v-model="groupingName"
               placeholder="1-20个中英文字符或下划线"
               class="group-input"
+              :class="{ 'cread-input': !groupingNameTips }"
               @input="GroupingNameInput"
               maxlength="20"
             ></el-input>
@@ -90,7 +91,8 @@ export default {
       productValue: "cvm_device",
       loadShow: true,
       isShowRight: true,
-      loading: true
+      loading: true,
+      multipleSelection: []
     };
   },
   components: {
@@ -154,114 +156,123 @@ export default {
     // 保存
     save() {
       if (this.groupingNameTips === false || this.groupingName == "") {
+        this.groupingNameTips = false;
         return false;
-      } else {
-        let param = {
-          GroupName: this.groupingName,
-          Version: "2018-07-24",
-          Module: "monitor",
-          ViewName: this.productValue
-        };
-        console.log(this.multipleSelection);
-        for (let i in this.multipleSelection) {
-          if (this.productValue === "cvm_device") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              unInstanceId: this.multipleSelection[i].InstanceId
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              uuid: this.multipleSelection[i].Uuid
-            };
-          } else if (this.productValue === "BS") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              diskid: this.multipleSelection[i].DiskId
-            };
-          } else if (this.productValue === "VPN_GW") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              vip: this.multipleSelection[i].PublicIpAddress
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              VpnGatewayId: this.multipleSelection[i].VpnGatewayId
-            };
-          } else if (this.productValue === "vpn_tunnel") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
-            };
-          } else if (this.productValue === "nat_tc_stat") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              uniq_nat_id: this.multipleSelection[i].NatGatewayId
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              instanceId: this.multipleSelection[i].NatGatewayId
-            };
-          } else if (this.productValue === "DC_GW") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              directconnectgatewayid: this.multipleSelection[i]
-                .DirectConnectGatewayId
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              instanceId: this.multipleSelection[i].DirectConnectGatewayId
-            };
-          } else if (this.productValue === "EIP") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              vip: this.multipleSelection[i].AddressIp
-            };
-          } else if (this.productValue === "cdb_detail") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              uInstanceId: this.multipleSelection[i].InstanceId
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              InstanceId: this.multipleSelection[i].InstanceId
-            };
-          } else if (this.productValue === "REDIS-CLUSTER") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              instanceid: this.multipleSelection[i].InstanceId
-            };
-            param["InstanceList." + i + ".EventDimensions"] = {
-              instanceid: this.multipleSelection[i].InstanceId
-            };
-          } else if (this.productValue === "dcchannel") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              directconnecttunnelid: this.multipleSelection[i]
-                .DirectConnectTunnelId
-            };
-          } else if (this.productValue === "dcline") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              directconnectid: this.multipleSelection[i].DirectConnectId
-            };
-          } else if (this.productValue === "COS") {
-            param["InstanceList." + i + ".Dimensions"] = {
-              bucket: this.multipleSelection[i].Name
-            };
-          }
-        }
-        this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
-          if (res.Response.Error === undefined) {
-            this.cancel();
-            this.$parent.ListInit();
-          } else {
-            let ErrTips = {
-              FailedOperation: "操作失败。",
-              InternalError: "内部错误。",
-              "InternalError.ExeTimeout": "执行超时。",
-              InvalidParameter: "参数错误。",
-              "InvalidParameter.InvalidParameter": "参数错误。",
-              "InvalidParameter.InvalidParameterParam": "参数错误。",
-              InvalidParameterValue: "无效的参数值。",
-              LimitExceeded: "超过配额限制。",
-              MissingParameter: "缺少参数错误。",
-              UnknownParameter: "未知参数错误。",
-              UnsupportedOperation: "操作不支持。"
-            };
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
       }
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: "请选择要添加组",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return false;
+      }
+      let param = {
+        GroupName: this.groupingName,
+        Version: "2018-07-24",
+        Module: "monitor",
+        ViewName: this.productValue
+      };
+      console.log(this.multipleSelection);
+      for (let i in this.multipleSelection) {
+        if (this.productValue === "cvm_device") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            unInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            uuid: this.multipleSelection[i].Uuid
+          };
+        } else if (this.productValue === "BS") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            diskid: this.multipleSelection[i].DiskId
+          };
+        } else if (this.productValue === "VPN_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].PublicIpAddress
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            VpnGatewayId: this.multipleSelection[i].VpnGatewayId
+          };
+        } else if (this.productValue === "vpn_tunnel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniqVpnconnId: this.multipleSelection[i].VpnConnectionId
+          };
+        } else if (this.productValue === "nat_tc_stat") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uniq_nat_id: this.multipleSelection[i].NatGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].NatGatewayId
+          };
+        } else if (this.productValue === "DC_GW") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectgatewayid: this.multipleSelection[i]
+              .DirectConnectGatewayId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceId: this.multipleSelection[i].DirectConnectGatewayId
+          };
+        } else if (this.productValue === "EIP") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            vip: this.multipleSelection[i].AddressIp
+          };
+        } else if (this.productValue === "cdb_detail") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            uInstanceId: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            InstanceId: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.productValue === "REDIS-CLUSTER") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+          param["InstanceList." + i + ".EventDimensions"] = {
+            instanceid: this.multipleSelection[i].InstanceId
+          };
+        } else if (this.productValue === "dcchannel") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnecttunnelid: this.multipleSelection[i]
+              .DirectConnectTunnelId
+          };
+        } else if (this.productValue === "dcline") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            directconnectid: this.multipleSelection[i].DirectConnectId
+          };
+        } else if (this.productValue === "COS") {
+          param["InstanceList." + i + ".Dimensions"] = {
+            bucket: this.multipleSelection[i].Name
+          };
+        }
+      }
+      this.axios.post(CM_GROUPING_NEWLY_BUILD, param).then(res => {
+        if (res.Response.Error === undefined) {
+          this.cancel();
+          this.$parent.ListInit();
+        } else {
+          let ErrTips = {
+            FailedOperation: "操作失败。",
+            InternalError: "内部错误。",
+            "InternalError.ExeTimeout": "执行超时。",
+            InvalidParameter: "参数错误。",
+            "InvalidParameter.InvalidParameter": "参数错误。",
+            "InvalidParameter.InvalidParameterParam": "参数错误。",
+            InvalidParameterValue: "无效的参数值。",
+            LimitExceeded: "超过配额限制。",
+            MissingParameter: "缺少参数错误。",
+            UnknownParameter: "未知参数错误。",
+            UnsupportedOperation: "操作不支持。"
+          };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
     //类型
     msgBtn(index) {
@@ -320,6 +331,11 @@ export default {
   }
 }
 
+.cread-input {
+  ::v-deep .el-input__inner {
+    border-color: red;
+  }
+}
 .dialog-footer {
   text-align: center;
 }

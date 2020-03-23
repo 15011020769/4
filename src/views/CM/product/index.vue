@@ -73,7 +73,7 @@
             <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
             <el-table-column prop label="地域" width="100">
               <template slot-scope="scope">
-                <p>{{scope.row.Region === 'tpe' ? '中國台北' : ''}}</p>
+                <p>{{scope.row.Region === 'tpe' ? '台灣台北' : ''}}</p>
               </template>
             </el-table-column>
             <el-table-column prop label="影響對象" width="205">

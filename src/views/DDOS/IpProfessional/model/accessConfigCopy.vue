@@ -165,7 +165,7 @@ export default {
     },
     // 1.1复制确定按钮
     copySure() {
-      if (!this.checkflg || !this.checkNetFlg || !this.checkNumFlg) {
+      if (!this.checkIpFlg || !this.checkNetFlg || !this.checkNumFlg) {
         return;
       }
       let params = {

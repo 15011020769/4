@@ -67,7 +67,11 @@
           </li>
           <li class="include-examples">
             <span>包含实例</span>
-            <el-table :data="tableData" style="width: 100%">
+            <el-table
+              :data="tableData"
+              style="width: 100%"
+              v-loading="loadShow"
+            >
               <el-table-column label="ID/主机名" width="180">
                 <template slot-scope="scope">
                   <p>
@@ -82,12 +86,26 @@
               </el-table-column>
               <el-table-column label="IP地址">
                 <template slot-scope="scope">
-                  <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                  <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+                  <p>
+                    <span
+                      v-for="(item, index) in scope.row.PrivateIpAddresses"
+                      :key="index"
+                    >
+                      {{ item }}(内网)
+                    </span>
+                  </p>
+                  <p>
+                    <span
+                      v-for="(item, index) in scope.row.PublicIpAddresses"
+                      :key="index"
+                    >
+                      {{ item }}(外网)
+                    </span>
+                  </p>
                 </template>
               </el-table-column>
               <el-table-column prop="address" label="地域"
-                >中国台北</el-table-column
+                >台湾台北</el-table-column
               >
             </el-table>
           </li>
@@ -112,7 +130,8 @@ export default {
       pageSize: 10, // 分页条数
       pageIndex: 0, // 当前页码
       tableData: [],
-      details: ""
+      details: "",
+      loadShow: true
     };
   },
   props: {
@@ -123,12 +142,10 @@ export default {
   },
   components: {},
   created() {
-    console.log(658);
     this.ListInit();
   },
   methods: {
     ListInit() {
-      console.log("ListInit");
       let params = {
         Version: "2018-07-24",
         Module: "monitor",
@@ -142,7 +159,6 @@ export default {
         .then(res => {
           if (res.Response.Error === undefined) {
             this.enterList = res.Response.List;
-            console.log(this.tableData);
             this.total = res.Response.Total;
           } else {
             let ErrTips = {};
@@ -160,12 +176,11 @@ export default {
         });
     },
     LookDeatils(row) {
-      console.log(JSON.parse(row.LogData));
       this.visible = true;
+      this.loadShow = true;
       this.details = JSON.parse(row.LogData).instanceGroupInfo;
       // console.log(this.details);
       var list = JSON.parse(row.LogData).list;
-      console.log(list);
       let param = {
         Version: "2017-03-12",
         Limit: 100
@@ -175,8 +190,8 @@ export default {
       }
       this.axios.post(CM_GROUPING_MANAGELIST, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res.Response.InstanceSet);
           this.tableData = res.Response.InstanceSet;
+          this.loadShow = false;
         } else {
           let ErrTips = {
             FailedOperation: "操作失败",

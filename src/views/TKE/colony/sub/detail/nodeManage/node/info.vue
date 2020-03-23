@@ -11,7 +11,7 @@
           <div class="tke-form-item_text"><span class="text-green"></span>{{detail.status}}</div>
         </el-form-item>
         <el-form-item label="地域">
-          <div class="tke-form-item_text">港澳台地区(中国台北)</div>
+          <div class="tke-form-item_text">港澳台地区(台灣台北)</div>
         </el-form-item>
         <el-form-item label="可用区">
           <div class="tke-form-item_text">台北一区</div>

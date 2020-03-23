@@ -126,6 +126,7 @@ export default {
         resourcesValue: '', // 幕布层资源列表选中的值
         loadBalance: '1', // 负载均衡
         // value: 'default',
+        vpcId:'',//获取子网所用到的id值
         LBvalue1: '', // LB子网1
         LBvalue2: '', // LB子网2
         balancerValue: '', // 已有均衡器
@@ -178,15 +179,24 @@ export default {
     this.clusterId = clusterId
     // console.log(this.$route)
     this.spaceName = nameSpaceName
-    this.GetSpaceValue()// 获取命名空间
-    this.getDescribeLoadBalancers()// 扫描均衡器
-    this.getDescribeSubnets()// 扫描子网
-    this.getDescribeVpcs()// 描述Vpcs
-    this.getDescribeClusters()// 获取集群列表
-    this.getForwardRequest()// 转发请求
+    // this.GetSpaceValue()// 获取命名空间
+    // this.getDescribeLoadBalancers()// 扫描均衡器
+    // this.getDescribeSubnets()// 扫描子网
+    // this.getDescribeVpcs()// 描述Vpcs
+    // this.getDescribeClusters()// 获取集群列表
+    // this.getForwardRequest()// 转发请求
+    this.getInitData()
     this.handleType1()
   },
   methods: {
+    async getInitData(){
+       await this.GetSpaceValue()// 获取命名空间
+       await this.getDescribeLoadBalancers()// 扫描均衡器
+       await this.getDescribeSubnets()// 扫描子网
+       await this.getDescribeVpcs()// 描述Vpcs
+       await this.getDescribeClusters()// 获取集群列表
+       await this.getForwardRequest()// 转发请求
+    },
     // 扫描均衡器
     async getDescribeLoadBalancers () {
       let params = {
@@ -197,7 +207,9 @@ export default {
       }
       await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.ownLoadBalancer = res.Response.LoadBalancerSet
+          let msg = res.Response.LoadBalancerSet
+          this.ownLoadBalancer = msg
+          this.svc.vpcId = msg[0].VpcId
           // console.log(this.ownLoadBalancer)
         } else {
           let ErrTips = {}
@@ -214,17 +226,16 @@ export default {
     // 扫描子网
     async getDescribeSubnets () {
       let params = {
-        // Filters: [{ Name: 'vpc-id', Values: ['vpc-apm60zou'] }],
         'Filters.0.Name': 'vpc-id',
-        'Filters.0.Values.0': 'vpc-apm60zou',
+        'Filters.0.Values.0': this.svc.vpcId,
         Limit: 100,
         Offset: 0,
         Version: '2017-03-12'
       }
       await this.axios.post(TKE_WORKER_METWORK, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.LBsubnet = res.Response.SubnetSet
-          // console.log(222, this.LBsubnet)
+          let msg = res.Response.SubnetSet
+          this.LBsubnet = msg
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -243,7 +254,7 @@ export default {
         Limit: 100,
         Offset: 0,
         Version: '2017-03-12',
-        'VpcIds.0': 'vpc-apm60zou'
+        'VpcIds.0': this.svc.vpcId
         // VpcIds: ["vpc-apm60zou"]
       }
       await this.axios.post(TKE_VPC_METWORK, params).then(res => {
@@ -448,8 +459,8 @@ export default {
       list.forEach(ele => { // 端口映射参数
         let ports = {
           name: `${ele.input1}-${ele.input2}-${ele.protocol.toLowerCase()}`,
-          port: Number(ele.input1),
-          targetPort: Number(ele.input2),
+          port: Number(ele.input2),
+          targetPort: Number(ele.input1),
           protocol: ele.protocol
         }
         if (this.svc.radio === '4') {
@@ -495,7 +506,7 @@ export default {
       if (loadBalance == '2') reqBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = balancerValue
       if (radio == '3') { // 服务访问方式 第3个需要的参数
         reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
-        reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = 'subnet-91szf8s5'
+        reqBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
       }
       // 高级设置第一项的判断
       if (radio !== '2') { reqBody.spec.externalTrafficPolicy = policy }
@@ -516,7 +527,7 @@ export default {
           'apiVersion': 'v1',
           'metadata': { 'name': name, 'namespace': value },
           'spec': {
-            // 'type': 'NodePort',
+            'type': 'NodePort',
             'ports': newPortAry,
             'externalTrafficPolicy': policy,
             'sessionAffinity': session

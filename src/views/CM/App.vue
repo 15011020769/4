@@ -34,8 +34,18 @@
     },
     mounted() {
       this.GetAPPid()
+      this.GetCity()
     },
     methods: {
+      // 获取城市列表
+      GetCity() {
+        this.axios.get(ALL_CITY).then(data => {
+          let city = data.data[0];
+          localStorage.setItem("regionv1", city.regionCode);
+          localStorage.setItem("regionv2", city.Region);
+          localStorage.setItem("regionv3", city.zone);
+        });
+      },
       GetAPPid() {
         let parms = {
           uin: this.$cookie.get('uin')

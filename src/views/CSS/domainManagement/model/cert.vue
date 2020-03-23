@@ -4,13 +4,19 @@
       <el-switch v-model="form.enable" />
     </el-form-item>
     <el-form-item prop="CertName" :label="$t('CSS.detailPlay.8')">
-      <el-input v-model.trim="form.CertName" />
+      <el-input v-model.trim="form.CertName" :placeholder="$t('CSS.domainManagement.55')"/>
     </el-form-item>
     <el-form-item prop="HttpsCrt" :label="$t('CSS.detailPlay.14')">
-      <el-input type="textarea" v-model.trim="form.HttpsCrt" />
+      <el-input
+        type="textarea"
+        v-model.trim="form.HttpsCrt"
+        :placeholder="$t('CSS.domainManagement.54')"/>
     </el-form-item>
     <el-form-item prop="HttpsKey" :label="$t('CSS.detailPlay.15')">
-      <el-input type="textarea" v-model.trim="form.HttpsKey" />
+      <el-input 
+        type="textarea"
+        v-model.trim="form.HttpsKey"
+        :placeholder="!!this.cert ? $t('CSS.domainManagement.52') : $t('CSS.domainManagement.53')"/>
     </el-form-item>
     <el-form-item
       style="margin-bottom: 0;text-align: center;margin-left: -120px;"
@@ -78,7 +84,7 @@ export default {
       if (!HttpsCrt) {
         return void this.msg("请填写证书内容");
       }
-      if (!HttpsKey) {
+      if (!this.cert && !HttpsKey) {
         return void this.msg("请填写私钥内容");
       }
 
@@ -100,7 +106,7 @@ export default {
           HttpsKey
         })
         .then(resp => {
-          
+          this.loading = false
           if (resp.Response.Error) {
             this.msg(error[resp.Response.Error.Code]);
           } else {

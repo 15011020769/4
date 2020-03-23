@@ -724,8 +724,8 @@ export default {
         GroupId: this.saveResponseGroupId
       }
       if (selectUserGroup.length > 0) {
-        params['ReceiverInfos.0.StartTime'] = 61261
-        params['ReceiverInfos.0.EndTime'] = 57599
+        params['ReceiverInfos.0.StartTime'] = this.cam.time[0]
+        params['ReceiverInfos.0.EndTime'] = this.cam.time[1]
         for (let i in channel) {
           if (channel[i] === '郵件') {
             params['ReceiverInfos.0.NotifyWay.' + i] = 'EMAIL'
@@ -749,8 +749,8 @@ export default {
         }
       }
       if (selectUserList.length > 0) {
-        params['ReceiverInfos.0.StartTime'] = 61261
-        params['ReceiverInfos.0.EndTime'] = 57599
+        params['ReceiverInfos.0.StartTime'] = this.cam.time[0]
+        params['ReceiverInfos.0.EndTime'] = this.cam.time[1]
         for (let i in channel) {
           if (channel[i] === '郵件') {
             params['ReceiverInfos.0.NotifyWay.' + i] = 'EMAIL'

@@ -51,7 +51,7 @@
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column type="expand" :label="$t('CAM.userList.userDetils')" width="50">
             <template slot-scope="scope">
-              <div class="user-details" v-loading="loadrowC">
+              <div class="user-details" v-loading="scope.row.loading">
                 <div class="top">
                   <dl>
                     <dd>{{$t('CAM.userGroup.title')}}</dd>
@@ -462,15 +462,19 @@ export default {
         });
       }
     },
-    rowChange(row) {
-      this.loadrowC = true;
-
+    rowChange(row, a, b) {
+      if (row.expanded) {
+        row.expanded = false
+        return
+      }
+      row.loading = true
       const item = this.tableData.find(element => {
         return row.Uid === element.Uid;
       });
 
       if (item === undefined) {
-        this.loadrowC = false;
+        row.loading = false;
+        row.expanded = true
         return;
       }
 
@@ -481,8 +485,6 @@ export default {
 
       this.axios.post(RELATE_USER, params).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
-
           item.group = res.Response.GroupInfo;
         } else {
           let ErrTips = {
@@ -695,7 +697,6 @@ export default {
       this.axios
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
-          console.log(data)
           this.loading = false;
           // 如果返回的data是String类型的，说明接口返回信息有误
           if (typeof data !== "string") {
@@ -707,6 +708,8 @@ export default {
                   item.group = [];
                   item.index = index;
                   item.subscription = undefined;
+                  item.loading = false
+                  item.expanded = false
                 });
                 this.tableData = arr;
                 // this.tableData.reverse();
@@ -1102,11 +1105,12 @@ export default {
                 }
               }
             }
-            console.log(subscribedParentNames);
-
             row.subscription = subscribedParentNames.join(",");
-
+            row.loading = false
+            row.expanded = true
           } else {
+             row.loading = false
+             row.expanded = true
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             if (res.Response.Error) {
               this.$message({
@@ -1118,9 +1122,6 @@ export default {
             }
           }
         })
-        .then(function() {
-          that.loadrowC = false;
-        });
     },
     isThisTypeSubscribedByUser(typeKey, types, uid) {
       if (!Array.isArray(types)) {

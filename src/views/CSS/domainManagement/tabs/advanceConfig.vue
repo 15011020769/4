@@ -70,30 +70,22 @@
           <div
             class="newClear newList1"
             v-if="
-              bandLimit.AbroadBandLimitEnable === 1 && domainInfo.PlayType === 3
+              bandLimit.BandLimitEnable === 1
             "
           >
             <p>带宽阈值</p>
-            <p>{{ bandLimit.AbroadBandLimitValue | unit }}</p>
-          </div>
-          <div
-            class="newClear newList1"
-            v-if="
-              bandLimit.DomesticBandLimitEnable === 1 &&
-                domainInfo.PlayType === 1
-            "
-          >
-            <p>带宽阈值</p>
-            <p>{{ bandLimit.DomesticBandLimitValue | unit }}</p>
-          </div>
-          <div
-            class="newClear newList1"
-            v-if="
-              bandLimit.GlobalBandLimitEnable === 1 && domainInfo.PlayType === 2
-            "
-          >
-            <p>带宽阈值</p>
-            <p>{{ bandLimit.GlobalBandLimitValue | unit }}</p>
+            <p>
+              <template v-if="bandLimit.GlobalBandLimitEnable === 1">
+                {{ bandLimit.GlobalBandLimitValue | unit }}
+              </template>
+              <template v-else-if="bandLimit.AbroadBandLimitEnable === 1">
+                {{ bandLimit.AbroadBandLimitValue | unit }}
+              </template>
+              <template v-else>
+                {{ bandLimit.DomesticBandLimitValue | unit }}
+              </template>
+              
+            </p>
           </div>
         </div>
       </div>

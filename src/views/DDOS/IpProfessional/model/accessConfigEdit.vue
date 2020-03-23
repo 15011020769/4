@@ -161,7 +161,7 @@ export default {
     },
     //编辑确定按钮
     editSure() {
-      if (!this.checkflg || !this.checkNetFlg || !this.checkNumFlg) {
+      if (!this.checkIpFlg || !this.checkNetFlg || !this.checkNumFlg) {
         return;
       }
       let params = {

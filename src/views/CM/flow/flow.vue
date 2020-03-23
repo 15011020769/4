@@ -15,7 +15,6 @@
                       :Graincontrol="false"
                       v-on:switchData="GetDate"
                       :Difference="'D'"
-                      v-if
                     ></TimeDropDown>
                   </div>
                   <!-- <div class="contrast">
@@ -26,7 +25,7 @@
                     <a @click="exportExcel" style="margin-right:10px;">导出数据</a>
                   </div>
                 </div>
-                <h3>外网出带宽</h3>
+                <h3>外网出带宽Mbps</h3>
                 <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                 <!-- <Ecarts/> -->
                 <EcharLine

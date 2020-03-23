@@ -9,7 +9,7 @@
             <i class="el-icon-back"></i>
           </span>
           <span class="goback" @click="goColonyList()">
-            集群(中国台北) /
+            集群(台灣台北) /
           </span>
           <span class="goback" @click="goBack()">
             cls-gwblk71e(tfy_test1) /

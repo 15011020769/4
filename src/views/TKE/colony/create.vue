@@ -65,16 +65,17 @@
               <el-input
                 class="w200"
                 v-model="colony.name"
-                :class="{ 'cluster-wran': colony.nameWran }"
+                :class="{ 'cluster-wran': colony.nameWran || colony.nameLength }"
                 @blur="ClusterNameBlur"
                 @focus="ClusterNameFocus"
+                @change="ClusterNameChange"
                 :placeholder="$t('TKE.colony.qsrjqmc')"
               ></el-input>
               <el-tooltip
                 effect="light"
-                :content="$t('TKE.colony.jqmcbwk')"
+                :content="colony.nameWran?$t('TKE.colony.jqmcbwk'):colony.nameLength?'集群名稱不能大於60個字符':''"
                 placement="right"
-                v-if="colony.nameWran"
+                v-if="colony.nameWran || colony.nameLength"
                 ><i class="el-icon-warning-outline ml5"></i>
               </el-tooltip>
             </el-form-item>
@@ -2332,13 +2333,13 @@
               <div v-if="colonyThird.safeArr.length > 0">
                 <div v-for="(item, index) in colonyThird.safeArr" :key="index">
                   <div>
-                    <el-select
+                    <el-select                     
                       :disabled="!securityGroupOpt.length"
                       :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
-                      @change="selectChange($event, index)" 
+                      @change="selectChange" 
                     >
-                      <el-option
+                      <el-option                       
                         v-for="x in securityGroupOpt"
                         :key="x.value"
                         :label="x.label"
@@ -2347,7 +2348,8 @@
                       </el-option>
                     </el-select>
                     <!-- 重复警告提示(yhs) -->
-                    <el-tooltip class="hide" :class="{active:colonyThird.warningNum === index}" effect="light" content="安全组重复" placement="right">
+                    <el-tooltip class="hide" :class="{active:item.error||item.textNull}" effect="light" 
+                      :content="item.textNull?'请选择安全组':item.error?'安全组重复':''" placement="right">
                       <i class="el-icon-warning-outline ml5"></i>
                     </el-tooltip>
                     <!-- 刷新按钮(yhs) -->
@@ -2686,6 +2688,7 @@ export default {
       colony: {
         name: "",
         nameWran: false,
+        nameLength:false,
         projectOptions: [
           {
             projectId: "0",
@@ -3134,8 +3137,6 @@ export default {
         safeArr: [],
         defaultSafe: false,
         defaultSafeBox: true,
-        warningNum:'',
-        isShowWarning:false,
         // 登录方式
         loginModeRadio: 1,
         one: true,
@@ -3212,6 +3213,13 @@ export default {
         this.colony.nameWran = true;
       } else {
         this.colony.nameWran = false;
+      }
+    },
+    ClusterNameChange(){
+      if(this.colony.name.length>=60){
+        this.colony.nameLength = true;
+      } else {
+        this.colony.nameLength = false;
       }
     },
     ClusterNameFocus() {
@@ -5099,7 +5107,7 @@ export default {
       this.SecurityGroup();
     },
     AddSafe() {
-      this.colonyThird.defaultSafeBox = true;
+      // this.colonyThird.defaultSafeBox = true;
       this.colonyThird.defaultSafe = true;
       if(this.colonyThird.safeArr.length>=10) return//安全组个数限制(yhs)
       this.colonyThird.safeArr.push({
@@ -5107,21 +5115,21 @@ export default {
       });
     },
     //安全组重复验证(yhs)
-    selectChange(e, i){
-      let newSafeArr = []
-      let {safeArr} = this.colonyThird
-      safeArr.forEach(ele=>{
-        !newSafeArr.some(item=>{
-          return item.securityGroupSel == e
-        }) && newSafeArr.push(ele)
-      }) 
-      if(safeArr.length>1 && safeArr.length!==newSafeArr.length){
-        this.colonyThird.warningNum = i
-        this.isShowWarning = !this.isShowWarning
-      }else{
-        this.colonyThird.warningNum = ''
-        this.isShowWarning = this.isShowWarning
+    selectChange(){
+      let { safeArr } = this.colonyThird
+      safeArr.map(item=>{
+        item.error=false
+        if (item.securityGroupSel !== '') item.textNull = false//对安全组的非空验证
+      })
+      for (let i = 0; i < safeArr.length - 1; i++) {
+        for (let j = i + 1; j < safeArr.length; j++) {
+          if (safeArr[i].securityGroupSel === '' || safeArr[i].error) break
+          if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel){
+            safeArr[j].error = true
+          }
+        }
       }
+      this.colonyThird.safeArr = safeArr
     },
     //删除一项
     deleteExceptPrice(index) {
@@ -5394,6 +5402,19 @@ export default {
     },
     // 第三步 下一步
     thirdNext() {
+      //安全组非空验证(yhs)
+      let submit = 'success'
+      let {safeArr} = this.colonyThird
+      safeArr.forEach(item=>{
+        item.textNull = false
+        if(item.securityGroupSel === '') {
+          item.textNull = true
+          submit = 'error'
+        }
+      })
+      this.colonyThird.safeArr = [...safeArr]
+      if(submit === 'error') return
+
       if (this.colonyThird.confirmPassword == "") {
         this.colonyThird.confirmPasswordWran = true;
         return false;
@@ -6914,5 +6935,9 @@ export default {
   &.active{
     display:inline;
   }
+}
+.errorStyle{
+  color: red;
+  border-color: red;
 }
 </style>

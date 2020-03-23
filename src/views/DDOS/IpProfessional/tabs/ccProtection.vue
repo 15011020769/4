@@ -25,7 +25,7 @@
               active-color="#006eff"
               inactive-color="#bbb"
               style="margin-top: 20px;"
-              @click="modifyCCThreshold"
+              @change="changeCCThreshold"
             ></el-switch>
             <span class="switchTip">{{$t('DDOS.Proteccon_figura.Sensitive_services')}}</span>
           </p>
@@ -33,13 +33,12 @@
         <div class="newClear" v-if="switchState==true?true:false">
           <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.qqsyz')}}</p>
           <p class="partTwoPT">
-            <el-select class="ccProtectSele" v-model="httpRequestNum" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
+            <el-select class="ccProtectSele" v-model="httpRequestNum" @change="changeRequestNum" :placeholder="$t('DDOS.Proteccon_figura.qxz')">
               <el-option
                 v-for="item in httpOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-                @click="modifyCCThreshold"
               ></el-option>
             </el-select>
             <span class="marginLeftSpan">{{$t('DDOS.Proteccon_figura.numbe_HTTP')}}</span>
@@ -48,7 +47,7 @@
         <div class="newClear" v-if="switchState==true?true:false">
           <p class="partTwoPO">{{$t('DDOS.Proteccon_figura.gjgjyz')}}</p>
           <p class="partTwoPT">
-            <el-input v-model="alarmThreshold" class="partTwoPTIpt" :onchange="changeAlarmThreshold()" @focus="inputFlgFun(true)" @blur="inputFlgFun(false)"></el-input>
+            <el-input v-model="alarmThreshold" class="partTwoPTIpt" @change="changeAlarmThreshold"></el-input>
             <span class="marginLeftSpan">QPS</span>
           </p>
           <span class="botTop">{{$t('DDOS.Proteccon_figura.CC_classified')}}</span>
@@ -152,9 +151,7 @@ export default {
           label: "20000QPS"
         }
       ], //http请求阈值数据
-      alarmThreshold: 1000, //HTTP CC攻击告警阈值
-      flg: false,
-      alarmThresholdT: 1000 
+      alarmThreshold: 1000 //HTTP CC攻击告警阈值
     };
   },
   components: {
@@ -232,7 +229,6 @@ export default {
       this.axios.post(CCALARMTHRESHOLD_GET, params).then(res => {
         // console.log(params, res);
         this.alarmThreshold = res.Response.CCAlarmThreshold.AlarmThreshold;
-        this.alarmThresholdT = res.Response.CCAlarmThreshold.AlarmThreshold;
       });
     },
     // 1.4.设置CC告警通知阈值
@@ -256,7 +252,6 @@ export default {
       this.axios.post(CCALARMTHRESHOLD_MODIFY, params).then(res => {
         // console.log(params, res);
         if (res.Response.Error === undefined) {
-          this.alarmThresholdT = this.alarmThreshold;
           this.$message({
             message: "修改成功",
             type: "success",
@@ -275,14 +270,14 @@ export default {
         }
       });
     },
-    inputFlgFun(bl) {
-      this.flg = bl;
+    changeCCThreshold() {
+      this.modifyCCThreshold();
+    },
+    changeRequestNum() {
+      this.modifyCCThreshold();
     },
     // 修改CC告警通知阈值
     changeAlarmThreshold() {
-      if (!this.flg || this.alarmThreshold == this.alarmThresholdT) {
-        return
-      }
       var regNUM = /(^[1-9]\d*$)/;
       if (!regNUM.test(this.alarmThreshold)) {
         this.$message({

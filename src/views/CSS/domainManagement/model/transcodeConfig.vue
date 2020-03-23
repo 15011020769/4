@@ -46,10 +46,13 @@ export default {
     }
   },
   watch: {
-    visible(n) {
-      if (n) {
-        this.init()
-      }
+    visible: {
+      handler(n) {
+        if (n) {
+          this.init()
+        }
+      },
+      immediate: true,
     }
   },
   // mounted () {

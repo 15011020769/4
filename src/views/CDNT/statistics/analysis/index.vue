@@ -41,6 +41,7 @@
           v-model="project"
           value-key="ProjectId"
           size="small"
+          filterable
           :placeholder="$t('CDNT.report.1')"
         >
           <el-option value="">{{$t('CDNT.report.1')}}</el-option>
@@ -51,7 +52,12 @@
             :label="p.ProjectName"
           ></el-option>
         </el-select>&nbsp;&nbsp;
-        <el-select v-model="domainName" size="small" :placeholder="$t('CDNT.report.3')">
+        <el-select
+          v-model="domainName"
+          size="small"
+          :placeholder="$t('CDNT.report.3')"
+          filterable
+        >
           <el-option value="">{{$t('CDNT.report.3')}}</el-option>
           <el-option
             v-for="p in domainList"
@@ -211,5 +217,8 @@ export default {
 }
 ::v-deep .el-select input::placeholder{
   color: #606266;
+}
+::v-deep .el-select .el-input.is-focus input::placeholder {
+  color: rgb(193, 196, 203);
 }
 </style>

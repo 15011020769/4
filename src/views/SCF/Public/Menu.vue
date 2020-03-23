@@ -2,10 +2,10 @@
   <div class="SCF">
     <div class="big-title">{{ $t('SCF.total.yhs') }} SCF</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#292b36" text-color="#fff" active-text-color="#fff" :router="true">
-      <el-menu-item index="overView" :class="{'menu-active': activeMenu === 'overView'}">
+      <el-menu-item index="overView" :class="{'menu-active': scfMenu === 'overView'}">
         <span slot="title">{{ $t('SCF.total.gl') }}</span>
       </el-menu-item>
-      <el-menu-item index="FuncServe" :class="{'menu-active': activeMenu == 'FuncServe'}">
+      <el-menu-item index="FuncServe" :class="{'menu-active': scfMenu == 'FuncServe'}">
         <span slot="title">{{ $t('SCF.total.hsfw') }}</span>
       </el-menu-item>
     </el-menu>
@@ -18,11 +18,8 @@ export default {
     return {
       activeIndex: "1",
       activeIndex2: "1",
-      activeMenu: localStorage.getItem('activeMenu')
+      scfMenu: localStorage.getItem('scfMenu') ? localStorage.getItem('scfMenu') : 'overView'
     };
-  },
-  created() {
-    localStorage.setItem('activeMenu', 'overView')
   },
   methods: {
     handleOpen(key, keyPath) {
@@ -33,8 +30,8 @@ export default {
     },
     // 选中菜单点击事件
     handleSelect(key, keyPath) {
-      this.activeMenu = key
-      localStorage.setItem('activeMenu', key)
+      this.scfMenu = key
+      localStorage.setItem('scfMenu', key)
     }
   },
 };

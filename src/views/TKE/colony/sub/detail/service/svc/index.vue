@@ -12,9 +12,9 @@
             集群({{$t('TKE.overview.zgtb')}}) /
           </span>
           <span class="goback" @click="goBack()">
-            cls-gwblk71e(tfy_test1) /
+            {{clusterId}} /
           </span>
-          <h2 class="header-title">Service:asdasd(default)</h2>
+          <h2 class="header-title">Service:{{`${serviceName}(${spaceName})`}}</h2>
         </div>
         <!-- 右侧 -->
         <div class="grid-right"></div>

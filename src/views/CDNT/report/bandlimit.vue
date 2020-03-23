@@ -103,7 +103,7 @@ export default {
       let name = ''
       if (type1 == 'billing') {
         data.push(
-          ['峰值寬頻', this.curBillMax + 'bps'],
+          ['峰值寬頻', this.curBillMax + 'Mbps'],
           [],
           ['時間', '當前計費流量（bps）', '上一週期計費流量（bps）']
         )
@@ -119,7 +119,7 @@ export default {
         })
       } else {
         data.push(
-          ['峰值寬頻', this.curOriginMax + 'bps'],
+          ['峰值寬頻', this.curOriginMax + 'Mbps'],
           [],
           ['時間', '當前回源流量（bps）', '上一週期回源流量（bps）']
         )

@@ -15,7 +15,7 @@
     <ul class="content-box">
       <li>
         <el-row type="flex">
-          <el-col :span="7">{{$t('CSS.transcribe.7')}}}</el-col>
+          <el-col :span="7">{{$t('CSS.transcribe.7')}}</el-col>
           <el-col class="text-black">{{ selectItem.TemplateName }}</el-col>
         </el-row>
       </li>

@@ -302,7 +302,7 @@
       <p>{{$t('TKE.subList.fsjdhou')}}</p>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="blockNode()">{{$t('TKE.overview.qd')}}</el-button>
-        <el-button @click="showBlockademodal = false">取 消</el-button>
+        <el-button @click="closeBlock">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -339,7 +339,7 @@
       <p>{{$t('TKE.subList.fsjdhou')}}</p>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="unBlockNode()">{{$t('TKE.overview.qd')}}</el-button>
-        <el-button @click="showUnBlockademodal = false">取 消</el-button>
+        <el-button @click="closeUnBlock">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -387,7 +387,7 @@
       >
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="deleteNode()">{{$t('TKE.overview.qd')}}</el-button>
-        <el-button @click="showDelModal = false">取 消</el-button>
+        <el-button @click="closeDelete">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog
@@ -762,6 +762,21 @@ export default {
       }
       this.showBlockademodal = true;
       this.unschedulable = 1;
+    },
+
+    closeBlock() {
+      this.showBlockademodal = false;
+      this.multipleSelection = [];
+    },
+
+    closeUnBlock() {
+      this.showUnBlockademodal = false;
+      this.multipleSelection = [];
+    },
+
+    closeDelete() {
+      this.showDelModal = false;
+      this.multipleSelection = [];
     },
 
     //打开解除封锁弹窗

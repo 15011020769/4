@@ -1141,8 +1141,6 @@ export default {
             params["WaterPrint." + i + ".UdpPortList." + index] = item[0];
           });
         }
-        console.log(params)
-        return
         if (bl) {
           params.Name = this.tacticsName;
           // console.log(params, "tianjia");

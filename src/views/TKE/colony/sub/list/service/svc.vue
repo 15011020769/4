@@ -228,7 +228,6 @@ export default {
             })
           }
           this.list = data// 得到列表数据并赋值
-          console.log(this.list)
           this.total = data.length// 总条数
         } else {
           this.loadShow = false

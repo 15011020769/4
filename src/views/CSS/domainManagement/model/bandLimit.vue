@@ -84,27 +84,6 @@ export default {
       },
       immediate: true
     },
-    enable (n) {
-      let unitNum = 0
-      if (this.bandLimit.DomesticBandLimitValue < 1000) {
-        unitNum = 1
-      } else if (this.bandLimit.DomesticBandLimitValue >= 1000 && this.bandLimit.DomesticBandLimitValue < 1000000) {
-        unitNum = 2
-      } else if (this.bandLimit.DomesticBandLimitValue >= 1000000) {
-        unitNum = 3
-      }
-      if (!n) {
-        this.info = JSON.parse(JSON.stringify([]))
-      }
-      if (n && this.bandLimit.BandLimitEnable === 1) {
-        this.info = []
-        this.info.push({
-          playType: this.playType,
-          value: this.bandLimit.AbroadBandLimitValue,
-          unit: unitNum
-        })
-      }
-    },
   },
   computed: {
     playTypes () {
@@ -118,28 +97,48 @@ export default {
     init() {
       if (this.bandLimit && this.bandLimit.BandLimitEnable === 1) {
         this.enable = true
-        const info = {
-          unit: 1
-        }
-        if (this.playType === 1) {
-          info.value = this.bandLimit.DomesticBandLimitValue
-        } else if (this.playType === 2) {
-          info.value = this.bandLimit.GlobalBandLimitValue
+        this.info = []
+        if (this.bandLimit.GlobalBandLimitEnable === 1) {
+          this.info.push({
+            playType: 2,
+            value: this.convertValue(this.bandLimit.GlobalBandLimitValue),
+            unit: this.convertUnit(this.bandLimit.GlobalBandLimitValue)
+          })
         } else {
-          info.value = this.bandLimit.AbroadBandLimitValue
+          if (this.bandLimit.DomesticBandLimitEnable === 1) {
+            this.info.push({
+              playType: 1,
+              value: this.convertValue(this.bandLimit.DomesticBandLimitValue),
+              unit: this.convertUnit(this.bandLimit.DomesticBandLimitValue)
+            })
+          }
+          
+          if (this.bandLimit.AbroadBandLimitEnable === 1) {
+            this.info.push({
+              playType: 3,
+              value: this.convertValue(this.bandLimit.AbroadBandLimitValue),
+              unit: this.convertUnit(this.bandLimit.AbroadBandLimitValue)
+            })
+          }
         }
-        if (info.value >= 1000 && info.value < 1000000) {
-          info.value /= 1000
-          info.unit = 2
-        } else if (info.value >= 1000000) {
-          info.value /= 1000000
-          info.unit = 3
-        }
-        this.info.push({
-          key,
-          ...info,
-          playType: this.playType
-        })
+      }
+    },
+    convertUnit(v) {
+      if (v < 1e3) {
+        return 1
+      } else if (v >= 1e3 && v < 1e6) {
+        return 2
+      } else if (v >= 1e6) {
+        return 3
+      }
+    },
+    convertValue(v) {
+      if (v < 1e3) {
+        return v
+      } else if (v >= 1e3 && v < 1e6) {
+        return v / 1e3
+      } else if (v >= 1e6) {
+        return v / 1e6
       }
     },
     save () {
@@ -154,27 +153,29 @@ export default {
         GlobalBandLimitEnable: 0, // 全球
         GlobalBandLimitValue: 100
       }
-      if (this.enable && this.info.length === 0) {
-        return void this.msg('带宽封顶已开启，请添加限制条件')
-      }
-      const bandLimit = {}
-      for (let i = 0; i < this.info.length; i++) {
-        if (Number(this.info[i].value) < 100 && this.info[i].unit === 1) {
-          return void this.msg('带宽封顶值必须大于等于100Mbps')
+      if (this.enable) {
+        if (this.info.length === 0) {
+          return void this.msg('带宽封顶已开启，请添加限制条件')
         }
-        bandLimit[this.info[i].playType] = this.toMbps(this.info[i])
-      }
-      if (bandLimit[1]) { // 国内
-        req.DomesticBandLimitEnable = 1
-        req.DomesticBandLimitValue = Number(bandLimit[1])
-      }
-      if (bandLimit[2]) { // 全球
-        req.GlobalBandLimitEnable = 1
-        req.GlobalBandLimitValue = Number(bandLimit[2])
-      }
-      if (bandLimit[3]) { // 港澳台
-        req.AbroadBandLimitEnable = 1
-        req.AbroadBandLimitValue = Number(bandLimit[3])
+        const bandLimit = {}
+        for (let i = 0; i < this.info.length; i++) {
+          if (Number(this.info[i].value) < 100 && this.info[i].unit === 1) {
+            return void this.msg('带宽封顶值必须大于等于100Mbps')
+          }
+          bandLimit[this.info[i].playType] = this.toMbps(this.info[i])
+        }
+        if (bandLimit[1]) { // 国内
+          req.DomesticBandLimitEnable = 1
+          req.DomesticBandLimitValue = Number(bandLimit[1])
+        }
+        if (bandLimit[2]) { // 全球
+          req.GlobalBandLimitEnable = 1
+          req.GlobalBandLimitValue = Number(bandLimit[2])
+        }
+        if (bandLimit[3]) { // 港澳台
+          req.AbroadBandLimitEnable = 1
+          req.AbroadBandLimitValue = Number(bandLimit[3])
+        }
       }
       this.axios.post(MODIFY_LIVE_BAND_LIMIT, req)
         .then(res => {
@@ -198,10 +199,10 @@ export default {
 
     toMbps (info) {
       if (info.unit === 2) { // Gbps
-        return info.value * 1000
+        return Math.ceil(info.value * 1e3)
       }
       if (info.unit === 3) { // Tbps
-        return info.value * 1000000
+        return Math.ceil(info.value * 1e6)
       }
       return info.value
     },

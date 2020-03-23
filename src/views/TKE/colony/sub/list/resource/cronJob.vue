@@ -64,13 +64,13 @@
         </el-table-column>
         <el-table-column prop :label="$t('TKE.subList.bxd')">
           <template slot-scope="scope">
-            <span>{{scope.row.spec.jobTemplate.spec.parallelism}}</span>
+            <span>{{scope.row.spec.jobTemplate.spec.parallelism || '-'}}</span>
           </template>
         </el-table-column>
 
         <el-table-column prop :label="$t('TKE.subList.cfcs')">
           <template slot-scope="scope">
-            <span>{{scope.row.spec.jobTemplate.spec.completions}}</span>
+            <span>{{scope.row.spec.jobTemplate.spec.completions || '-'}}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="240">
@@ -161,7 +161,7 @@ export default {
 
       //搜索下拉框
       searchOptions: [],
-      searchType: "default", //下拉选中的值
+      searchType: "", //下拉选中的值
       searchInput: "", //输入的搜索关键字
       isShowDeleteModal:false,
       deploymentName:'',
@@ -172,10 +172,13 @@ export default {
     // 从路由获取集群id
     this.clusterId = this.$route.query.clusterId;
 
-    this.nameSpaceList();
-    this.listData();
+    this.getData();
   },
   methods: {
+    async getData() {
+      await this.nameSpaceList();
+      await this.listData();
+    },
     // 新建
     goWorkloadCreate(type) {
       this.$router.push({
@@ -334,7 +337,7 @@ export default {
       // this.getColonyList();
     },
     //命名空间选项
-    nameSpaceList() {
+    async nameSpaceList() {
       if (this.clusterId) {
         var params = {
           ClusterName: this.clusterId,
@@ -343,7 +346,7 @@ export default {
           Version: "2018-05-25"
         };
         // console.log(params)
-        this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
           if (res.Response.Error == undefined) {
             var data = JSON.parse(res.Response.ResponseBody);
             var nameList = [];
@@ -359,19 +362,43 @@ export default {
         });
       }
     },
-    listData() {
+    async listData() {
       this.loadShow=true;
-      var params = {
-        ClusterName: this.clusterId,
-        Method: "GET",
-        Path:
-          "/apis/batch/v1beta1/namespaces/" +
-          this.searchType +
-          "/cronjobs?fieldSelector=metadata.name=" +
-          this.searchInput,
-        Version: "2018-05-25"
-      };
-      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      // var params = {
+      //   ClusterName: this.clusterId,
+      //   Method: "GET",
+      //   Path:
+      //     "/apis/batch/v1beta1/namespaces/" +
+      //     this.searchType +
+      //     "/cronjobs?fieldSelector=metadata.name=" +
+      //     this.searchInput,
+      //   Version: "2018-05-25"
+      // };
+
+      let params = {};
+      if (this.searchInput === "") {
+        params = {
+          Method: "GET",
+          Version: "2018-05-25",
+          ClusterName: this.clusterId,
+          Path:
+            "/apis/batch/v1beta1/namespaces/" +
+            this.searchType +
+            "/cronjobs?limit=100",
+        };
+      } else {
+        params = {
+          Method: "GET",
+          Path:
+            "/apis/batch/v1beta1/namespaces/" +
+            this.searchType +
+            "/cronjobs?fieldSelector=metadata.name=" +
+            this.searchInput,
+          Version: "2018-05-25",
+          ClusterName: this.clusterId
+        };
+      }
+      await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error == undefined) {
           var data = JSON.parse(res.Response.ResponseBody);
           this.loadShow=false

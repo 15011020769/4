@@ -1,13 +1,13 @@
 export const defaultTemplate = [
   {
-    name: 'Hello World事件模板',
+    name: 'Hello World事件範本',
     code: `{
       "key1": "test value 1",
       "key2": "test value 2"
     }`
   },
   {
-    name: 'COS 对象存储的 POST 事件模板',
+    name: 'COS 對象存儲的 POST 事件範本',
     code: `{
       "Records": [
       {
@@ -49,7 +49,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'COS 对象存储的 PUT 事件模板',
+    name: 'COS 對象存儲的 PUT 事件範本',
     code: `{
       "Records": [
       {
@@ -91,7 +91,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'COS 对象存储的 DELETE 事件模板',
+    name: 'COS 對象存儲的 DELETE 事件範本',
     code: `{
       "Records": [
       {
@@ -133,7 +133,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'Api Gateway 事件模板',
+    name: 'Api Gateway 事件範本',
     code: `{
       "requestContext": {
         "serviceId": "service-f94sy04v",
@@ -174,7 +174,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'Ckafka 事件模板',
+    name: 'Ckafka 事件範本',
     code: `{
       "Records": [
         {
@@ -190,7 +190,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'Timer 定时触发器事件模板',
+    name: 'Timer 定時觸發器事件範本',
     code: `{
       "Type":"Timer",
       "TriggerName":"EveryDay",

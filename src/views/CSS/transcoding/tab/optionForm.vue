@@ -39,7 +39,7 @@
           :disabled="Object.keys(selectItem).length > 0"
         />
         <!-- <br /> -->
-        <span class="sub-text">僅支持字母、數字組合，請輸入3-10字符</span>
+        <span class="sub-text">僅支持字母、數字組合，請輸入3-10字元</span>
       </el-form-item>
       <el-form-item :label="$t('CSS.transcribe.8') " prop="Description">
         <el-input
