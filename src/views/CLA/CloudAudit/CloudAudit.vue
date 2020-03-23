@@ -54,7 +54,7 @@
                   <span>{{ props.row.EventName }}</span>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.sjy')">
-                  <span>{{ props.row.EventSource }}</span>
+                  <span>{{ props.row.EventSource |UpName}}</span>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.sjsj')">
                   <span>{{ props.row.EventTime }}</span>
@@ -123,7 +123,7 @@
           <el-table-column :label="$t('CLA.total.sjy')">
             <template slot-scope="scope">
               <p>
-                {{scope.row.EventSource}}
+                {{scope.row.EventSource |UpName}}
               </p>
             </template>
           </el-table-column>
@@ -466,6 +466,11 @@
       UpTime(value) {
         let time = String(value + '(事件時間)')
         return time;
+      },
+      UpName(value) {
+        var index = value.replace('tencent', 'taipei');
+        return index
+
       }
     }
   };
