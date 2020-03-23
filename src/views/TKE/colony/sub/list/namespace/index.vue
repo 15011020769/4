@@ -136,7 +136,8 @@ export default {
       this.loadShow = true;
       const param = {
         Method: "GET",
-        Path: "/api/v1/namespaces?limit="+this.pageSize,
+        // Path: "/api/v1/namespaces?limit="+this.pageSize,
+        Path: "/api/v1/namespaces",
         Version: "2018-05-25",
         ClusterName: this.clusterId
       }
@@ -145,6 +146,7 @@ export default {
       }
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
+          this.list = [];
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           console.log("sss",response.items,"items");
@@ -161,6 +163,7 @@ export default {
             this.total = response.items.length;
           }
         } else {
+          this.list = [];
           this.loadShow = false;
           let ErrTips = {
             
@@ -263,7 +266,7 @@ export default {
           new Blob([wbout], {
             type: "application/octet-stream"
           }),
-          this.$t("tke-nodeList") + ".xlsx"
+          this.$t("tke-spaceList") + ".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);

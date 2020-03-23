@@ -96,9 +96,11 @@
             <!-- <span @click="goNodeDetail(scope.row)" class="tke-text-link">{{
               scope.row.InstanceId
             }}</span> -->
-            <span>{{
-              scope.row.InstanceId
-            }}</span>
+            <span>{{scope.row.InstanceId}}
+              <a :href="'../CVM/index.html#/cloudHost/cloudHostDetail/'+scope.row.InstanceId+'/1'">
+                <i class="el-icon-edit-outline"/>
+              </a>
+            </span>
             <p class="" slot="{{scope.row.InstanceName}}">
               {{ scope.row.InstanceName }}
             </p>
@@ -153,22 +155,22 @@
           <template slot-scope="scope">
             <p>
               {{
-                scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0]
-              }}
+                scope.row.PublicIpAddresses && scope.row.PublicIpAddresses[0] || '-'
+              }}(公網)
               <!-- <i class="el-icon-document-copy" @click="copyData"/> -->
             </p>
             <p>
               {{
-                scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0]
-              }}
+                scope.row.PrivateIpAddresses && scope.row.PrivateIpAddresses[0] || '-'
+              }}(内網)
               <!-- <i class="el-icon-document-copy"/> -->
             </p>
           </template>
         </el-table-column>
         <el-table-column prop="address" :label="$t('TKE.subList.yfpzzy')">
           <template slot-scope="scope">
-            <p>CPU: {{scope.row.cpu}}/{{scope.row.cpuTotal}}</p>
-            <p>{{$t('TKE.overview.ncun')}}: {{scope.row.memory}}/{{scope.row.memoyTotal}}</p>
+            <p>CPU: {{scope.row.cpu || '-'}}/{{scope.row.cpuTotal || '-'}}</p>
+            <p>{{$t('TKE.overview.ncun')}}: {{scope.row.memory || '-'}}/{{scope.row.memoyTotal || '-'}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="" :label="$t('TKE.subList.ssssz')">
