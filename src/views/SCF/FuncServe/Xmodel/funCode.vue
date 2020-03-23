@@ -8,21 +8,21 @@
               提交方法
               <!-- <i class="el-icon-question"></i> -->
             </span>
-            <el-select v-model="SubmissionValue" placeholder="请选择" class="select" @change="changSubmit()">
+            <el-select v-model="SubmissionValue" :placeholder="$t('SCF.total.qsz')" class="select" @change="changSubmit()">
               <el-option v-for="item in SubmissionArr" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
           </P>
           <P>
             <span>
-              执行方法
+              {{$t('SCF.total.zxff')}}
               <!-- <i class="el-icon-question"></i> -->
             </span>
             <el-input v-model="implementInput"></el-input>
           </P>
           <P>
             <span>
-              运行环境
+              {{$t('SCF.total.yxhj')}}
             </span>
             <span>{{ScienceValue}}</span>
           </P>
@@ -30,7 +30,7 @@
         <div>
           <p>
             <el-button size="small" @click="_Clone">
-              下载代码包
+              {{$t('SCF.total.xzdmb')}}
             </el-button>
           </p>
         </div>
@@ -44,7 +44,7 @@
       <!-- 上传zip -->
       <div v-if="SubmissionValue === 'ZipFile'" class="content">
         <div class="ZipFile">
-          <p class="ZipFilename">函数代码</p>
+          <p class="ZipFilename">{{$t('SCF.total.hsdm')}}</p>
           <div class="ZipFilecontent">
             <p>
               <el-input v-model="input1" :disabled="true">
@@ -52,27 +52,27 @@
             </p>
             <p>
               <el-upload action="" :show-file-list="false" :auto-upload="false" :on-change="filezip">
-                <el-button size="small" accept="application/x-zip-compressed">上传</el-button>
+                <el-button size="small" accept="application/x-zip-compressed">{{$t('SCF.total.schuan')}}</el-button>
               </el-upload>
             </p>
 
           </div>
 
         </div>
-        <p>请上传zip格式的代码包，最大支持50M（如果zip大于10M，仅显示入口文件）</p>
+        <p>{{$t('SCF.total.qscdmb')}}</p>
       </div>
 
       <!-- 上传文件夹 -->
       <div v-if="SubmissionValue === 'TempCos'" class="content">
         <div class="ZipFile">
-          <p class="ZipFilename">函数代码</p>
+          <p class="ZipFilename">{{$t('SCF.total.hsdm')}}</p>
           <div class="ZipFilecontent">
             <p>
               <el-input v-model="input2" :disabled="true">
               </el-input>
             </p>
             <p>
-              <el-button size="small" @click="_fileClip">上传</el-button>
+              <el-button size="small" @click="_fileClip">{{$t('SCF.total.schuan')}}</el-button>
             </p>
 
           </div>
@@ -80,7 +80,7 @@
         </div>
         <input type="file" multiple directory mozdirectory webkitdirectory @change="fileClip" class="inputfile" id="webk" v-show="false" />
 
-        <p>请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M</p>
+        <p>{{$t('SCF.total.qxzwjj')}}</p>
       </div>
 
       <!-- cos上传 -->
@@ -88,7 +88,7 @@
         <div class="ZipFile">
           <p class="ZipFilename">COS Bucket</p>
           <div class="ZipFilecontent">
-            <el-select v-model="cosvalue" placeholder="请选择">
+            <el-select v-model="cosvalue" :placeholder="$t('SCF.total.qsz')">
               <el-option v-for="item in Cosoptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
@@ -96,7 +96,7 @@
 
         </div>
         <div class="ZipFile">
-          <p class="ZipFilename">COS对象文件</p>
+          <p class="ZipFilename">{{$t('SCF.total.dxwj')}}</p>
           <div class="ZipFilecontent">
             <el-input v-model="input3" :disabled="true">
             </el-input>
@@ -107,9 +107,9 @@
 
       <div class="functest">
         <el-button type="primary" size="small" @click="_Preservation">保存</el-button>
-        <el-button size="small" @click="_testModal">测试</el-button>
-        <span class="testmb">测试当前模板</span>
-        <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+        <el-button size="small" @click="_testModal">{{$t('SCF.total.cs')}}</el-button>
+        <span class="testmb">{{$t('SCF.total.csdqmb')}}</span>
+        <el-select v-model="testvalue" :placeholder="$t('SCF.total.qsz')" @change="changeTemplate">
           <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
             <!-- <span>{{item}}</span> -->
             <!-- <span style="float: right">
@@ -121,42 +121,42 @@
 
         </el-select>
         <span class="testmb">
-          <el-button type="text" size="small" @click="newDialog">新建模板</el-button>
+          <el-button type="text" size="small" @click="newDialog">{{$t('SCF.total.xjmb')}}</el-button>
         </span>
       </div>
 
       <div class="test-info" v-if="isShowLogList">
         <div class="test-result">
           <h3>
-            测试结果:
-            <span style="color: red;">{{testResult.InvokeResult === 0 ? '成功' : '失败'}}</span>
+            {{$t('SCF.total.csjg')}}:
+            <span style="color: red;">{{testResult.InvokeResult === 0 ? '成功' : '失敗'}}</span>
           </h3>
         </div>
         <div class="back-result">
-          <p class="p-blue">返回结果:</p>
+          <p class="p-blue">{{$t('SCF.total.fhjg')}}:</p>
           <p class="p-result">{{testResult.RetMsg}}</p>
         </div>
         <div class="info-left">
           <p class="p-blue">摘要</p>
           <p>
-            <span class="span-blue">请求ID:</span>
+            <span class="span-blue">{{$t('SCF.total.qqid')}}:</span>
             <span>{{testResult.FunctionRequestId}}</span>
           </p>
           <p>
-            <span class="span-blue">运行时间:</span>
+            <span class="span-blue">{{$t('SCF.total.yxsj')}}:</span>
             <span>{{testResult.Duration}} ms</span>
           </p>
           <p>
-            <span class="span-blue">计费时间:</span>
+            <span class="span-blue">{{$t('SCF.total.jfsj')}}:</span>
             <span>{{testResult.BillDuration}} ms</span>
           </p>
           <p>
-            <span class="span-blue">运行内存:</span>
+            <span class="span-blue">{{$t('SCF.total.yxnc')}}:</span>
             <span>{{testResult.MemUsage}} MB</span>
           </p>
         </div>
         <div class="log-list">
-          <p class="p-blue">日志</p>
+          <p class="p-blue">{{$t('SCF.total.rz')}}</p>
           <p v-html="testResult.Log"></p>
         </div>
       </div>
@@ -164,22 +164,22 @@
 
     <!-- 删除模板 dialog -->
     <el-dialog title="提示" :visible.sync="deleteModal" width="35%">
-      <p>确定删除{{modalName}}吗?</p>
+      <p>{{$t('SCF.total.qdschu')}}{{modalName}}嗎?</p>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="_deleteTestModal">确认</el-button>
+        <el-button type="primary" @click="_deleteTestModal">{{$t('SCF.total.qr')}}</el-button>
         <el-button @click="deleteModal = false">取 消</el-button>
       </span>
     </el-dialog>
 
     <!-- 编辑模板 dialog -->
-    <el-dialog class="edit-template" title="更换测试模板" :visible.sync="editModal" width="35%">
+    <el-dialog class="edit-template" :title="$t('SCF.total.ghcsmb')" :visible.sync="editModal" width="35%">
       <span>
-        测试事件模板
+        {{$t('SCF.total.cssjmb')}}
         <el-tooltip placement="top" effect="light">
           <div slot="content">
-            模板会在测试时作为event参数传递给函数，模板列表
+            {{$t('SCF.total.mblb')}}
             <br />
-            中包含了对各触发器事件的模拟数据结构
+            {{$t('SCF.total.bhcfsj')}}
           </div>
           <i class="el-icon-warning"></i>
         </el-tooltip>
@@ -190,21 +190,21 @@
         </codemirror>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="editTemplate">确认</el-button>
+        <el-button type="primary" @click="editTemplate">{{$t('SCF.total.qr')}}</el-button>
         <el-button @click="editModal = false">取 消</el-button>
       </span>
     </el-dialog>
 
     <!-- 新建模板 dialog -->
-    <el-dialog class="new-template" title="配置测试模板" :visible.sync="addModal" width="50%">
+    <el-dialog class="new-template" :title="$t('SCF.total.pzsjmb')" :visible.sync="addModal" width="50%">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" size="small">
-        <el-form-item label="测试事件模板" prop="name">
-          <el-input type="text" placeholder="请输入模板名称" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
-          <p class="p-1">1. 最多45个字符，最少2个字符</p>
-          <p class="p-1">2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
+        <el-form-item :label="$t('SCF.total.cssjmb')" prop="name">
+          <el-input type="text" :placeholder="$t('SCF.total.qsrmbmc')" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
+          <p class="p-1">{{$t('SCF.total.zdzszf')}}</p>
+          <p class="p-1">{{$t('SCF.total.ts2')}}</p>
         </el-form-item>
-        <el-form-item label="测试事件模板">
-          <el-select v-model="testvalue" placeholder="请选择" @change="changeTemplate">
+        <el-form-item :label="$t('SCF.total.cssjmb')">
+          <el-select v-model="testvalue" :placeholder="$t('SCF.total.qsz')" @change="changeTemplate">
             <el-option v-for="(item, i) in templateList" :key="i" :label="item.name" :value="item.name">
             </el-option>
           </el-select>
@@ -257,23 +257,23 @@ export default {
       implementInput: '', //执行方法
       ScienceValue: '', //运行环境
       SubmissionArr: [{ //提交方法数组
-        label: '在线编辑',
+        label: '在線編輯',
         value: 'Inline'
       },
       {
-        label: '本地上传zip包',
+        label: '本地上傳zip包',
         value: 'ZipFile'
       },
       {
-        label: '本地上传文件夹',
+        label: '本地上傳文件夾',
         value: 'TempCos'
       },
       {
-        label: '通过cos上传zip包',
+        label: '通過cos上傳zip包',
         value: 'Cos'
       }
       ],
-      textarea: '测试',
+      textarea: '測試',
       input1: '',
       fileBase64zip: '', //zip上传
       fileBase64clip: '',
@@ -305,11 +305,11 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (value === '') {
-                callback(new Error('模板名稱不能為空'))
+                callback(new Error('範本名稱不能為空'))
               } else if (value.length < 2 || value.length > 45) {
-                callback(new Error('模板名稱长度仅限于2到45个字符'))
+                callback(new Error('範本名稱长度仅限于2到45个字符'))
               } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('模板名稱格式不正確'))
+                callback(new Error('範本名稱格式不正確'))
               } else {
                 callback()
               }
@@ -403,17 +403,17 @@ export default {
 
         } else {
           let ErrTips = {
-            'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
-            'InternalError': '内部错误',
-            'InternalError.System': '内部系统错误',
-            'InvalidParameter.Payload': '请求参数不合法',
-            'InvalidParameterValue': ' 参数取值错误',
-            'ResourceNotFound.Function': '函数不存在',
-            'ResourceNotFound.FunctionName': '函数不存在',
-            'ResourceNotFound.FunctionVersion': '函数版本不存在',
+            'FailedOperation.FunctionStatusError': '函數在部署中,無法做此操作',
+            'InternalError': '內部錯誤',
+            'InternalError.System': '內部系統錯誤',
+            'InvalidParameter.Payload': '請求參數不合法',
+            'InvalidParameterValue': ' 參數取值錯誤',
+            'ResourceNotFound.Function': '函數不存在',
+            'ResourceNotFound.FunctionName': '函數不存在',
+            'ResourceNotFound.FunctionVersion': '函數版本不存在',
             'ResourceNotFound.Version': '版本不存在',
-            'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-            'UnauthorizedOperation.CodeSecret': ' 无访问代码权限'
+            'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+            'UnauthorizedOperation.CodeSecret': ' 無訪問程式碼權限'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -482,13 +482,13 @@ export default {
       let pos = fileName.lastIndexOf('.')
       let lastName = fileName.substring(pos, fileName.length)
       if (lastName.toLowerCase() !== '.zip' && lastName.toLowerCase() !== '.rar') {
-        this.$message.error('文件必须为.zip或者.rar类型')
+        this.$message.error('文件必須為.zip或者.rar類型')
         return
       }
       // 限制上传文件的大小
       const isLt = file.size / 1024 / 1024 / 100 <= 0.5
       if (!isLt) {
-        this.$message.error('最大支持50M（如果zip大于10M，仅显示入口文件）')
+        this.$message.error('最大支持50M（如果zip大於10M，僅顯示入口文件）')
       }
       this.input1 = file.name
       this.getBase64(file.raw).then(resBase64 => {
@@ -526,7 +526,7 @@ export default {
       }).then((result) => {
         const isLt = that.fileBase64clip.size / 1024 / 1024 / 100 <= 2.5
         if (!isLt) {
-          this.$message.error('请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M')
+          this.$message.error('請選擇文件夾（該文件夾根目錄應包含 handler 入口文件），最大支持250M')
           return
         }
         this.getBase64(this.fileBase64clip).then(resBase64 => {
@@ -556,7 +556,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.addModal = false
           this.$message({
-            message: "新建测试模板成功",
+            message: "新建測試範本成功",
             type: "success",
             showClose: true,
             duration: 0
@@ -564,17 +564,17 @@ export default {
           this.GetListFunctionTestModels()  // 重新获取列表数据
         } else {
           let ErrTips = {
-            'InternalError': '内部错误',
-            'InvalidParameterValue': '参数取值错误',
-            'InvalidParameterValue.TestModelName': 'TestModelName传入错误',
-            'InvalidParameterValue.TestModelValue': 'testModelValue长度超限',
-            'LimitExceeded.FunctionTestModel': 'FunctionTestModel数量超出最大限制',
-            'LimitExceeded.TestModel': '同一个函数下测试模版配额个数已达限制',
-            'ResourceInUse.TestModel': '测试模版已存在',
+            'InternalError': '內部錯誤',
+            'InvalidParameterValue': '參數取值錯誤',
+            'InvalidParameterValue.TestModelName': 'TestModelName傳入錯誤',
+            'InvalidParameterValue.TestModelValue': 'testModelValue長度超限',
+            'LimitExceeded.FunctionTestModel': 'FunctionTestModel數量超出最大限制',
+            'LimitExceeded.TestModel': '同一個函數下測試範本配額個數已達限制',
+            'ResourceInUse.TestModel': '測試範本已存在',
             'ResourceInUse.TestModelName': 'TestModelName已存在',
-            'ResourceNotFound.Function': '函数不存在',
-            'ResourceNotFound.FunctionName': '函数不存在',
-            'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+            'ResourceNotFound.Function': '函數不存在',
+            'ResourceNotFound.FunctionName': '函數不存在',
+            'UnauthorizedOperation.CAM': 'CAM鑒權失敗'
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -612,7 +612,7 @@ export default {
           });
         } else {
           this.$message({
-            message: '保存失败',
+            message: '保存失敗',
             type: "error",
             showClose: true,
             duration: 0
@@ -646,11 +646,11 @@ export default {
           }
         } else {
           let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。"
+            "InternalError": "內部錯誤",
+            "InvalidParameterValue": "參數取值錯誤",
+            "ResourceNotFound.Function": "函數不存在。",
+            "ResourceNotFound.FunctionName": "函數不存在。",
+            "UnauthorizedOperation.CAM": "CAM鑒權失敗。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -683,10 +683,10 @@ export default {
           })
         } else {
           let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+            "InternalError": "內部錯誤",
+            "InvalidParameterValue": "參數取值錯誤",
+            "ResourceNotFound.FunctionName": "函數不存在。",
+            "UnauthorizedOperation.CAM": "CAM鑒權失敗。",
             "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -746,13 +746,13 @@ export default {
           });
         } else {
           let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+            "InternalError": "內部錯誤",
+            "InvalidParameterValue": "參數取值錯誤",
+            "ResourceNotFound.Function": "函數不存在。",
+            "ResourceNotFound.FunctionName": "函數不存在。",
+            "UnauthorizedOperation.CAM": "CAM鑒權失敗。",
             "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
-            "ResourceNotFound.TestModel": "测试模版不存在。"
+            "ResourceNotFound.TestModel": "測試範本不存在。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -785,17 +785,17 @@ export default {
           this.isShowLogList = true;
         } else {
           let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+            "InternalError": "內部錯誤",
+            "InvalidParameterValue": "參數取值錯誤",
+            "ResourceNotFound.FunctionName": "函數不存在。",
+            "UnauthorizedOperation.CAM": "CAM鑒權失敗。",
             "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
-            "FailedOperation.FunctionStatusError": "函数在部署中,无法做此操作。",
-            "FailedOperation.InvokeFunction": "调用函数失败。",
-            "InternalError.System": "内部系统错误。",
-            "InvalidParameterValue.Param": "入参不是标准的json。",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceUnavailable.InsufficientBalance": "余额不足，请先充值。"
+            "FailedOperation.FunctionStatusError": "函數在部署中,無法做此操作。",
+            "FailedOperation.InvokeFunction": "調用函數失敗。",
+            "InternalError.System": "內部系統錯誤。",
+            "InvalidParameterValue.Param": "入參不是標準的json。",
+            "ResourceNotFound.Function": "函數不存在。",
+            "ResourceUnavailable.InsufficientBalance": "餘額不足，請先充值。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -834,14 +834,14 @@ export default {
         if (res.Response.Error === undefined) {
           this.editModal = false
           this.$message({
-            message: "更换测试模板成功",
+            message: "更換測試範本成功",
             type: "success",
             showClose: true,
             duration: 0
           });
         } else {
           this.$message({
-            message: "更换测试模板失败",
+            message: "更換測試範本失敗",
             type: "error",
             showClose: true,
             duration: 0
