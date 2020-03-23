@@ -95,7 +95,7 @@ module.exports = {
       tab1no: '記錄為空',
       tab2: '監控',
       tab2tag: '單地域監控',
-      tab2R: '港澳台地區(中國台北)',
+      tab2R: '港澳台地區(台灣台北)',
       tab2D: '註釋：Max、Min和Avg數值統計為當前折線圖內所有點的最大值、最小值和平均值',
       tab2out: '導出數據',
       tab3: '頻寬管理',
