@@ -599,6 +599,7 @@ export default {
 
       if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
         console.log('我是base64')
+        console.log(this.fileBase64zip)
         param.ZipFile = this.fileBase64zip
       } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
@@ -615,7 +616,7 @@ export default {
             let base64 = btoa(encode);
             console.log('我是base64')
             console.log(base64)
-            param.ZipFile = base64
+            param.ZipFile = str
           })
         })
       }
