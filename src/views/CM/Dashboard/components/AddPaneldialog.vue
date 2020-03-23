@@ -22,6 +22,14 @@ import {
 } from "@/components/ErrorTips"; //公共错误码
 export default {
   data() {
+    // var validateRepeatName = (rule, value, callback) => {
+    //   console.log(this.options, 12313)
+    //   this.options.forEach(ele => {
+    //     if (ele.value == value) {
+    //       callback(new Error('名称重复了'));
+    //     }
+    //   });
+    // };
     return {
       form: {
         name: "",
@@ -36,15 +44,21 @@ export default {
       show: this.dialogVisible,
       // dialogFormVisible: false //监控面板的开关
       rules: {
-        name: [{ required: true, message: '请输入名称', trigger: 'blur' }]
+        name: [
+          { required: true, message: '请输入名称', trigger: 'blur' },
+          // { validator: validateRepeatName, trigger: 'blur' }
+        ],
       },
-      options: [] // 暂存的下拉选框
+      options: [], // 暂存的下拉选框
     };
   },
    props: {
     dialogVisible: {
       default: false,
       type: Boolean
+    },
+    options: {
+      default: [], type: Array
     }
   },
   watch: {
@@ -54,6 +68,9 @@ export default {
     dialogVisible: function (val) {
       this.show = val
     }
+  },
+  created() {
+
   },
   methods: {
     close() {
@@ -94,7 +111,6 @@ export default {
         if (res.Response.Error === undefined) {
           // res.Response.DashboardID
           // res.Response.RequestId
-
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
           this.$parent.$parent.DashboardID = res.Response.DashboardID.toString(); // 跳转到新的监控面板ID
           

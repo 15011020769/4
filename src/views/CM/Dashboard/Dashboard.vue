@@ -26,7 +26,7 @@
         @click="addPanel"
         >{{ $t("CVM.Dashboard.tjjkmb") }}</a
       >
-      <AddPanel :dialogVisible.sync="panelFlag" @cancel="cancel" @save="save" />
+      <AddPanel :dialogVisible.sync="panelFlag" :options.sync="options" @cancel="cancel" @save="save" />
       <!-- 重名名监控面板弹框 -->
       <RenameControlPanel
         ref="renameControlPanel"
