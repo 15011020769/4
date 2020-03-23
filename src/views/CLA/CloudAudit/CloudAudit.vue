@@ -464,7 +464,7 @@
     },
     filters: {
       UpTime(value) {
-        let time = String(value + '(事件时间)')
+        let time = String(value + '(事件時間)')
         return time;
       }
     }
