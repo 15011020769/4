@@ -424,14 +424,6 @@ export default {
       })
       if (httpRules.length === 0) httpRules = null
       if (httpsRules.length === 0) httpsRules = null
-      let extensiveParameters = '{"AddressIPVersion":"IPV4"}'
-      if (tabPosition !== 'gw') {
-        // 获取选中 "所属网络" 对象
-        let oneWorkerNetWorkOption = this.ing.workerNetWorkOption.find(item => {
-          return item.SubnetName === this.ing.workerNetWorkValue
-        })
-        extensiveParameters = oneWorkerNetWorkOption.SubnetId
-      }
       let ingressQueryBody = {
         'kind': 'Ingress',
         'apiVersion': 'extensions/v1beta1',
@@ -440,7 +432,6 @@ export default {
           'namespace': nameSpaceValue,
           'annotations': {
             'kubernetes.io/ingress.class': 'qcloud',
-            'kubernetes.io/ingress.extensiveParameters': extensiveParameters,
             'kubernetes.io/ingress.http-rules': JSON.stringify(httpRules),
             'kubernetes.io/ingress.https-rules': JSON.stringify(httpsRules),
             'kubernetes.io/ingress.rule-mix': `${checkedtwo}`
@@ -449,6 +440,15 @@ export default {
         'spec': {
           'rules': specRules
         }
+      }
+      if (tabPosition !== 'gw') {
+        // 获取选中 "所属网络" 对象
+        let oneWorkerNetWorkOption = this.ing.workerNetWorkOption.find(item => {
+          return item.SubnetName === this.ing.workerNetWorkValue
+        })
+        ingressQueryBody.metadata.annotations['kubernetes.io/ingress.subnetId'] = oneWorkerNetWorkOption.SubnetId
+      } else {
+        ingressQueryBody.metadata.annotations['kubernetes.io/ingress.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
       }
       // 如果描述有填写则添加到参数里面
       if (description) ingressQueryBody.metadata.annotations.description = description

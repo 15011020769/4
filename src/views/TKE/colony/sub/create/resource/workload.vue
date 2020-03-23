@@ -222,8 +222,7 @@
                     </el-dialog>
                   </div>
                   <div v-if="item.name == 'useConfig'">
-                    <div style="display: inline-block" v-if="item.configMap.items.length>0">
-                    </div>
+                    <div style="display: inline-block" v-if="item.configMap.items.length>0"></div>
                     <div style="display: inline-block" v-else>{{$t('TKE.subList.zwxz')}}ConfigMap</div>
                     <el-button type="text" size="mini" @click="openConfigMapDialog">{{$t('TKE.subList.xzpzx')}}</el-button>
                     <sc-dialog type="ConfigMap" :visible.sync="dialogVisibleConfig" :index="index" :sc-option="configMap.option" :sc-data.sync="item.configMap"></sc-dialog>
@@ -383,7 +382,7 @@
                       </div>
                       <el-divider v-if="v.environmentVar.length>0&&v.citeCs.length>0"></el-divider>
                       <!-- 引用ConfigMap/Secret -->
-                      <div v-for="val in v.citeCs" :key="val.key">
+                      <div v-for="(val,idx) in v.citeCs" :key="val.key">
                         <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
                           <el-select v-model="val.value1" class="w100" :placeholder="$t('TKE.subList.qxzlx')" @change="citeCsValue1Change($event, val)">
                             <el-option v-for="item in val.option1" :key="item" :label="item" :value="item">
@@ -405,7 +404,7 @@
                             </el-option>
                           </el-select></el-form-item>
                         以
-                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px">
+                        <el-form-item style="display: inline-block;margin-bottom: 0px" label-width="0px" :prop="`instanceContent.${i}.citeCs.${idx}.input1`" :rules="citeCsInput1Validator">
                           <el-input class="w150" v-model="val.input1"></el-input>
                         </el-form-item>
                         {{$t('TKE.subList.wbm')}}
@@ -478,7 +477,7 @@
                             <el-input class="w100" v-model="v.surviveExamineContent.startDelay"></el-input>
                             <span>{{$t('TKE.colony.fw')}}：0~60秒</span>
                           </el-form-item>
-                          <el-form-item :label="$t('TKE.subList.xycj')">
+                          <el-form-item :label="$t('TKE.subList.xycs')">
                             <el-tooltip effect="light" :content="$t('TKE.subList.jcxyzcsj')" placement="right">
                               <i class="el-icon-info  setPosition"></i>
                             </el-tooltip>
@@ -1911,7 +1910,7 @@ export default {
       this.submitErrorMessage = ''
       let {
         name, labels, type, namespace, description, replicas, updateWay, configTacticsPods,
-        updateInterval, mirrorPullTactics, instanceContent, portMapping, caseNum, caseScope1,
+        updateInterval, instanceContent, portMapping, caseNum, caseScope1,
         caseScope2, touchTactics, updateTactics, configTacticsMaxSurge, configTacticsMaxUnavailable,
         serviceEnbel, nodeTactics, specifyNodeDispatchValue, mustCondition, needCondition,
         serviceAccess, ETP, SA, time, describeLoadBalancersValue, loadBalance, handlessChecked, subnetTwoValue,
@@ -1966,7 +1965,7 @@ export default {
         let {
           name: iName, mirrorImg, versions, requestCpu, limitCpu, requestMemory, mountPoints,
           limitMemory, gpuNum, privilegeLevelContainer, environmentVar, citeCs, workDirectory,
-          runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent
+          runCommand, runParam, surviveExamine, readyToCheck, surviveExamineContent, readyToCheckContent, mirrorPullTactics
         } = item
         if (versions !== '') mirrorImg = `${mirrorImg}:${versions}`
         let oneContainer = {
@@ -2001,7 +2000,7 @@ export default {
         })
         oneContainer.volumeMounts = volumeMounts
         // 镜像拉取策略
-        if (mirrorPullTactics) oneContainer.restartPolicy = mirrorPullTactics
+        if (mirrorPullTactics) oneContainer.imagePullPolicy = mirrorPullTactics
         if (limitCpu) oneContainer.resources.limits.cpu = limitCpu
         if (requestCpu) oneContainer.resources.requests.cpu = requestCpu
         if (limitMemory) oneContainer.resources.limits.memory = limitMemory + 'Mi'
@@ -2017,16 +2016,21 @@ export default {
         // 新增引用
         if (citeCs.length > 0) {
           let citeCsArr = citeCs.map(item => {
-            return {
+            let oneCiteCs = {
               name: item.input1,
-              valueFrom: {
-                secretKeyRef: {
-                  key: item.value3,
-                  name: item.value2,
-                  optional: false
-                }
-              }
+              valueFrom: {}
             }
+            let oneRef = {
+              key: item.value3,
+              name: item.value2,
+              optional: false
+            }
+            if (item.value1 === 'ConfigMap') {
+              oneCiteCs.valueFrom.configMapKeyRef = oneRef
+            } else {
+              oneCiteCs.valueFrom.secretKeyRef = oneRef
+            }
+            return oneCiteCs
           })
           oneContainer.env = [...oneContainer.env, ...citeCsArr]
         }
@@ -2094,7 +2098,7 @@ export default {
               }
             })
           } else if (name === 'useNFS') {
-            let nfsArr = nfs.serverAndPath.split(':/')
+            let nfsArr = nfs.serverAndPath.split(':')
             volumes.push({
               name: name2,
               nfs: {
@@ -2318,8 +2322,8 @@ export default {
       }
       if (type === 'Job' || type === 'CronJob') {
         template.spec.restartPolicy = jobSettings.failedRestartPolicy
-        requestBody.spec.completions = jobSettings.repeatNumber
-        requestBody.spec.parallelism = jobSettings.parallelNumber
+        requestBody.spec.completions = parseInt(jobSettings.repeatNumber)
+        requestBody.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.updateStrategy = {
           type: 'RollingUpdate',
           rollingUpdate: {}
@@ -2402,19 +2406,19 @@ export default {
           let routerName = ''
           switch (type) {
             case 'Deployment':
-              routerName = 'deploymentDetailEvent'
+              routerName = 'colonyResourceDeployment'
               break
             case 'DaemonSet':
-              routerName = 'daemonSetDetailEvent'
+              routerName = 'colonyResourceDaemonSet'
               break
             case 'StatefulSet':
-              routerName = 'statefulSetDetailEvent'
+              routerName = 'colonyResourceStatefulSet'
               break
             case 'CronJob':
-              routerName = 'cronJobDetailEvent'
+              routerName = 'colonyResourceCronJob'
               break
             case 'Job':
-              routerName = 'jobDetailEvent'
+              routerName = 'colonyResourceJob'
               break
           }
           this.$message({
@@ -2426,14 +2430,15 @@ export default {
           this.$router.replace({
             name: routerName,
             query: {
-              clusterId: this.clusterId,
-              spaceName: namespace,
+              /* spaceName: namespace,
               rowData: {
                 metadata: {
                   name: name,
                   namespace: namespace
                 }
-              }
+              }, */
+              clusterId: this.clusterId,
+              ProjectId: 0
             }
           })
         } else {
