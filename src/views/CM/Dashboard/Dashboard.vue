@@ -116,7 +116,7 @@
             </p>
             <p>
               <span v-show="retractChartFlag">
-                <a @click="exportChart(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
+                <a @click="exportExcel(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
                 <i class="el-icon-info" style="color:#888"></i>
               </span>
               <a
@@ -141,9 +141,9 @@
                 width="120"
               >
                 <template scope="scope">
-                  <span style="color: #006eff">{{
+                  <a style="color: #006eff" @click="goMonitorDetail(scope.row)">{{
                     scope.row[item.InstanceName]
-                  }}</span>
+                  }}</a>
                 </template>
               </el-table-column>
               <el-table-column
@@ -155,6 +155,7 @@
                   <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[0] : ''}}</span>
                 </template>
               </el-table-column>
+              <el-table-column prop="Namespace" v-show="false"></el-table-column>
             </el-table>
           </div>
         </div>
@@ -310,11 +311,10 @@ export default {
   },
   created() {
     this.createGetDashboardList(); // 先 获取Dashboard列表数据 再 获取监控面板视图
-    if (this.$router.query.DashboardID) {
+    if (this.$router.query) {
       this.DashboardID = this.$router.query.DashboardID; // 路由传过来的
     }
   },
-
   watch: {
     DashboardID(newVal) {
       // this.selectShowControlPanel(newVal);
@@ -329,6 +329,10 @@ export default {
     }
   },
   methods: {
+    // 从展开的列表ID 跳转到别的路由
+    goMonitorDetail(row) {
+      console.log(row, 'row');
+    },
     GetDat(data) {
       this.time = data[1].XAxis; // 横坐标时间
       this.startEnd.StartTime = data[1].StartTIme; // 开始时间
@@ -371,15 +375,14 @@ export default {
       //添加dialog面板
       this.panelFlag = true;
     },
-    openChart() {
-      //展开图表
+    openChart() { //展开图表
       this.openChartFlag = false;
       this.retractChartFlag = true;
     },
-    retractChart() {
+    retractChart() { //收起
       this.openChartFlag = true;
       this.retractChartFlag = false;
-    }, //收起
+    }, 
     exportChart() {
       //导出图表
       alert("導出");
@@ -589,7 +592,35 @@ export default {
             ViewList.forEach((ele, index) => {
               let newInstances = [];
               ele.Instances.forEach(el => {
-                newInstances.push(JSON.parse(el));
+                // newInstances.push(JSON.parse(el));
+                let newEl = JSON.parse(el);
+                newEl.Namespace = ele.Namespace;
+                // 加一个id
+                if (ele.Namespace == 'qce/cvm') {
+                  newEl.Id = newEl.unInstanceId; // 与Namespace相对应
+                } else if (ele.Namespace == 'QCE/VPNGW') {
+                  newEl.Id = newEl.vpnGwId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/vpnx') {
+                  newEl.Id = newEl.vpnConnId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/nat_gateway') {
+                  newEl.Id = newEl.natId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/dcg') {
+                  newEl.Id = newEl.directConnectGatewayId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/redis') {
+                  newEl.Id = newEl.instanceid; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/dcx') {
+                  newEl.Id = newEl.directConnectConnId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/cos') {
+                  newEl.Id = newEl.bucket; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/dc') {
+                  newEl.Id = newEl.directConnectId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/cdb') {
+                  newEl.Id = newEl.uInstanceId; // 与Namespace相对应
+                } else if (ele.Namespace == 'qce/block_storage') {
+                  ele.InstanceName = 'diskId'; // 与Namespace相对应
+                  newEl.Id = newEl.diskId; // 与Namespace相对应
+                }
+                newInstances.push(newEl);
               });
               ele.Instances = newInstances;
               ele.Meta = JSON.parse(ele.Meta);
@@ -768,7 +799,7 @@ export default {
     //导出表格
     exportExcel(ViewID) {
       /* generate workbook object from table */
-      var wb = XLSX.utils.table_to_book(document.querySelector('"#echarts" + ViewID'));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#echarts" + ViewID));
       console.log(wb);
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
