@@ -588,6 +588,15 @@ export default {
       });
     },
 
+    // 二进制转base64
+    blobToDataURI(blob, callback) {
+      var reader = new FileReader();
+      reader.readAsDataURL(blob);
+      reader.onload = function (e) {
+        callback(e.target.result);
+      }
+    },
+
     // 保存
     _Preservation() {
       let param = {
@@ -598,25 +607,17 @@ export default {
       };
 
       if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
-        console.log('我是base64')
-        console.log(this.fileBase64zip)
         param.ZipFile = this.fileBase64zip
       } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
       } else if (this.SubmissionValue === 'Inline') {      // 在线编辑
-        param.ZipFile = this.fileBase64clip1
         this.cslsSDK.getBlob().then(blob => {
           console.log('我是二进制')
           console.log(blob)
-          this.cslsSDK.blobToString(blob).then(str => {
-            console.log('我是字符串')
-            console.log(str)
-            let encode = encodeURI(str);
-            // 对编码的字符串转化base64
-            let base64 = btoa(encode);
+          this.blobToDataURI(blob, function (data) {    //blob格式再转换为base64格式
             console.log('我是base64')
-            console.log(base64)
-            param.ZipFile = str
+            console.log(data)
+            param.ZipFile = data
           })
         })
       }
@@ -629,7 +630,7 @@ export default {
             showClose: true,
             duration: 0
           });
-          location.reload()
+          // location.reload()
         } else {
           this.$message({
             message: '保存失敗',
