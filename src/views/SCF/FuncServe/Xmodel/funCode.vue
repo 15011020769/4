@@ -434,7 +434,7 @@ export default {
       this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor'),
         modeType: ModeTypeEnum.ZIP,
-        i18nType: "zh-tw"
+        i18nType: "zh-TW"
       });
       // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
       this.cslsSDK.addListener({
@@ -597,7 +597,7 @@ export default {
       }
     },
 
-    // 保存
+    // 保存 按钮
     _Preservation() {
       let param = {
         Region: localStorage.getItem('regionv2'),
@@ -608,10 +608,10 @@ export default {
 
       if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
         param.ZipFile = this.fileBase64zip
-        this.updateCslite(param)      // 更新函数代码
+        this.updateCsliteFun(param)      // 更新函数代码
       } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
-        this.updateCslite(param)      // 更新函数代码
+        this.updateCsliteFun(param)      // 更新函数代码
       } else if (this.SubmissionValue === 'Inline') {      // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
           console.log('我是二进制')
@@ -620,14 +620,14 @@ export default {
             console.log('我是base64')
             console.log(data)
             param.ZipFile = data
-            this.updateCslite(param)      // 更新函数代码
+            this.updateCsliteFun(param)      // 更新函数代码
           })
         })
       }
     },
 
     // 更新函数代码
-    updateCslite(param) {
+    updateCsliteFun(param) {
       this.axios.post(UPD_FUN_CODE, param).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
