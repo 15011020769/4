@@ -4,9 +4,12 @@ const s = '万与丑专业丛东丝丢两严丧个丬丰临为丽举么义乌乐
 export default str => {
   var ret = "", i, len, idx;
   str = str || this;
-  for(i=0,len=str.length; i<len; i++) {
-    idx = s.indexOf(str.charAt(i));
-    ret += (idx === -1 ) ? str.charAt(i): t.charAt(idx);
+  if(str) {
+    for(i=0,len=str.length; i<len; i++) {
+      idx = s.indexOf(str.charAt(i));
+      ret += (idx === -1 ) ? str.charAt(i): t.charAt(idx);
+    }
+    return ret;
   }
-  return ret;
+  return "-"
 }
