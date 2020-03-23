@@ -245,6 +245,7 @@ import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根
 require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
 import { defaultTemplate } from './defaultTemplate'
 // import * as cslite from '@/views/SCF/lib/c.js'
+// const { CloudStudioLiteFilesServiceSDK, ModeTypeEnum } = require('../../lib/c')
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -438,7 +439,7 @@ export default {
       cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            fetch('https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
+            fetch('https://cos-scf-1300103758.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
               headers: { 'content-type': 'application/zip' },
               method: 'GET'
             })

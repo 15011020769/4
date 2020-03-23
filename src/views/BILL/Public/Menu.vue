@@ -2,13 +2,13 @@
   <div class="CCN">
     <div class="big-title">{{$t('BILL.Deal.bigTitle')}}</div>
     <el-menu default-active="2" class="el-menu-vertical-demo" @select="handleSelect" background-color="#292b36" text-color="#fff" active-text-color="#ffd04b" :router="true">
-      <el-menu-item index="deal" :class="{'menu-active': activeMenu === 'deal'}">
+      <el-menu-item index="deal" :class="{'menu-active': billMenu === 'deal'}">
         <span slot="title">{{$t('BILL.Deal.title')}}</span>
       </el-menu-item>
-      <el-menu-item index="overview" :class="{'menu-active': activeMenu === 'overview'}">
+      <el-menu-item index="overview" :class="{'menu-active': billMenu === 'overview'}">
         <span slot="title">{{$t('BILL.Overview.title')}}</span>
       </el-menu-item>
-      <el-menu-item index="detail" :class="{'menu-active': activeMenu === 'detail'}">
+      <el-menu-item index="detail" :class="{'menu-active': billMenu === 'detail'}">
         <span slot="title">{{$t('BILL.Detail.title')}}</span>
       </el-menu-item>
     </el-menu>
@@ -19,17 +19,17 @@
 export default {
   data() {
     return {
-      activeMenu: localStorage.getItem('activeMenu')       // 默认选中的菜单
+      billMenu: localStorage.getItem('billMenu') ? localStorage.getItem('billMenu') : 'deal'       // 默认选中的菜单
     };
   },
   created() {
-    localStorage.setItem('activeMenu', 'deal')
+    localStorage.setItem('billMenu', 'deal')
   },
   methods: {
     // 选中菜单点击事件
     handleSelect(key, keyPath) {
-      this.activeMenu = key
-      localStorage.setItem('activeMenu', key)
+      this.billMenu = key
+      localStorage.setItem('billMenu', key)
     }
   }
 };
