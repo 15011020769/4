@@ -9,7 +9,7 @@
           <span class="goback" @click="()=>$router.back()">
             <i class="el-icon-back"></i>
           </span>
-          <h2 class="header-title">更新</h2>
+          <h2 class="header-title">更新轉發配置</h2>
         </div>
         <!-- 右侧 -->
       </div>
@@ -63,7 +63,7 @@
                     </el-option>
                   </el-select>
                   <span style="padding-left:23px">{{it.portNumber}}</span>
-                  <el-input style="width:200px;padding-left:75px;" :placeholder="$t('TKE.subList.mrw')"></el-input>
+                  <el-input style="width:200px;padding-left:75px;" :placeholder="$t('TKE.subList.mrw')" v-model="it.host"></el-input>
                   <el-form-item style="display: inline-block;width:120px;padding-left:30px;" :prop="`list.${i}.path`" :rules="pathValidator">
                     <el-input v-model="it.path"></el-input>
                   </el-form-item>
@@ -321,6 +321,7 @@ export default {
             tempArr.servicePort = tempArr.backendServicePortSelect = item.backend.servicePort
             tempArr.domainName = mes.status.loadBalancer && mes.status.loadBalancer && mes.status.loadBalancer.ingress && mes.status.loadBalancer.ingress[0].ip
             tempArr.path = item.path
+            tempArr.host = item.host
             this.ing.list.push(tempArr)
             this.backendServiceChange(null, tempArr.key, item.backend.servicePort)
           }
@@ -384,12 +385,13 @@ export default {
           path: item.path,
           backend: { serviceName: item.backendServiceSelect, servicePort: item.backendServicePortSelect.toString() }
         }
+        if (item.host) rules.host = item.host
         if (item.protocolValue === 'http') {
           httpRules.push(rules)
         } else {
           httpsRules.push(rules)
         }
-        specRules.push({
+        let oneSpecRules = {
           http: {
             paths: [{
               'backend': {
@@ -399,8 +401,9 @@ export default {
               'path': item.path
             }]
           }
-        })
-        console.log('1', specRules)
+        }
+        if (item.host) oneSpecRules.host = item.host
+        specRules.push(oneSpecRules)
       })
       let ingressQueryBody = {
         'kind': 'Ingress',
