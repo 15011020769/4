@@ -416,6 +416,7 @@ export default {
       //     key: value
       //   };
       //   params["Receivers." + index] = JSON.stringify(data);
+      
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
         if (res.codeDesc === "Success") {
