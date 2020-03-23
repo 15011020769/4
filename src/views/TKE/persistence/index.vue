@@ -32,7 +32,7 @@
           @cell-mouse-enter="hoverShow"
           @cell-mouse-leave="hoverHide"
         >
-          <el-table-column :label="$t('TKE.overview.idmc')" width="220">
+          <el-table-column :label="$t('TKE.overview.idmc')" width="264">
             <template slot-scope="scope">
               <span
                 :class="[
@@ -55,7 +55,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column :label="$t('TKE.overview.zt')" width="220">
+          <el-table-column :label="$t('TKE.overview.zt')" width="264">
             <template slot-scope="scope">
               <el-tooltip
                 v-if="scope.row.targetStatus == 'failed'"
@@ -82,19 +82,19 @@
               <span v-else>{{$t('TKE.overview.wkq')}}</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('TKE.overview.ccd')" width="220">
+          <el-table-column :label="$t('TKE.overview.ccd')" width="264">
             <template slot-scope="scope">
               <span v-if="scope.row.storageObject">Elasticsearch</span>
               <span v-else-if="!scope.row.storageObject">-</span>
             </template>
           </el-table-column>
-          <el-table-column :label="$t('TKE.overview.ccdx')" width="320">
+          <el-table-column :label="$t('TKE.overview.ccdx')" width="264">
             <template slot-scope="scope">
               <span>{{scope.row.storageObject ? scope.row.storageObject: '-'}}</span>
               <p>{{scope.row.indexName ? scope.row.indexName: ''}}</p>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="220">
+          <el-table-column label="操作" width="264">
             <template slot-scope="scope">
               <span v-if="!scope.row.storageObject">
                 <el-button

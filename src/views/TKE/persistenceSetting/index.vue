@@ -27,7 +27,7 @@
               <span class="font-orange">&nbsp;CPU&nbsp;（0.2核）{{$t('TKE.overview.nc')}}（100MB）</span>
               {{$t('TKE.overview.gbsfzy')}}
             </div>
-            <div v-if="deteleFlag" style="color:#e54545;padding-top:12px;">{{$t('TKE.overview.wfkqcjh')}}</div>
+            <!-- <div v-if="deteleFlag" style="color:#e54545;padding-top:12px;">{{$t('TKE.overview.wfkqcjh')}}</div> -->
           </div>
         </div>
         <div v-show="value">
@@ -196,12 +196,12 @@ export default {
       if (this.value == false) {
         this.ok = "刪除";
         this.deteleFlag = true;
-        this.okFlag = true;
+        // this.okFlag = true;
         // this.elasticVal = "";
         // this.indexesVal = "";
       } else {
         this.deteleFlag = false;
-        this.okFlag = false;
+        // this.okFlag = false;
         this.ok = "保存";
       }
     },
