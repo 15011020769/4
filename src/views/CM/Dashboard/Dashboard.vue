@@ -134,7 +134,7 @@
             </p>
           </div>
           <div class="chartContent" v-show="retractChartFlag">
-            <el-table :data="item.Instances" :id = '"#echarts" + item.ViewID'>
+            <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
               <el-table-column
                 prop=""
                 label="ID"
@@ -798,8 +798,9 @@ export default {
     },
     //导出表格
     exportExcel(ViewID) {
+      console.log(ViewID)
       /* generate workbook object from table */
-      var wb = XLSX.utils.table_to_book(document.querySelector("#echarts" + ViewID));
+      var wb = XLSX.utils.table_to_book(document.querySelector("#exportTable"+ViewID));
       console.log(wb);
       /* get binary string as output */
       var wbout = XLSX.write(wb, {
