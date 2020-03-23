@@ -248,7 +248,7 @@ export default {
     },
     init(domain) {
       loading = this.$loading()
-      this.getWebShellStatus(domain)
+      this.getWebShellStatus(domain.Domain)
       this.getAreaBan(domain)
       this.getAreaBanSupport()
     },

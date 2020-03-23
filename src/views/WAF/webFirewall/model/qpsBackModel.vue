@@ -208,12 +208,12 @@ export default {
             resourceId: QPS.ResourceIds,
             oldConfig: {
               pid: CLB_BUY_QPS_TYPES.pid,
-              [CLB_BUY_QPS_TYPES.pricetype]: 1000 * QPS.Count,
+              [CLB_BUY_QPS_TYPES.pricetype]: QPS.Count,
               type: CLB_BUY_QPS_TYPES.goodstype
             },
             newConfig: {
               pid: CLB_BUY_QPS_TYPES.pid,
-              [CLB_BUY_QPS_TYPES.pricetype]: 1000 * (QPS.Count + this.buyNum),
+              [CLB_BUY_QPS_TYPES.pricetype]: QPS.Count + this.buyNum * 1000,
               type: CLB_BUY_QPS_TYPES.goodstype
             }
           }),

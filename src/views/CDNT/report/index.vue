@@ -9,6 +9,7 @@
                 v-model="project"
                 value-key="ProjectId"
                 size="small"
+                filterable
                 :placeholder="$t('CDNT.report.1')"
               >
                 <el-option value="">{{$t('CDNT.report.1')}}</el-option>
@@ -24,6 +25,7 @@
               <el-select
                 v-model="domainName"
                 size="small"
+                filterable
                 :placeholder="$t('CDNT.report.3')"
               >
                 <el-option value="">{{$t('CDNT.report.3')}}</el-option>
@@ -255,7 +257,10 @@ export default {
 ::v-deep .el-input--suffix .el-input__inner {
   padding-right: 0;
 }
-::v-deep .el-select input::placeholder{
+::v-deep .el-select input::placeholder {
   color: #606266;
+}
+::v-deep .el-select .el-input.is-focus input::placeholder {
+  color: rgb(193, 196, 203);
 }
 </style>

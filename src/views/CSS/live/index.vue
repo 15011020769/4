@@ -18,9 +18,9 @@
             <el-checkbox v-model="checked" >
               同意
             </el-checkbox>
-            <a href="#" >《{{$t('CSS.builder.26')}}》</a>
+            <a href="../../index.html#/footerContent/termService" >《{{$t('CSS.builder.26')}}》</a>
             <span :class="{ 'active': checked }">和</span>
-              <a href="#">《{{$t('CSS.builder.27')}}》</a>
+              <a href="../../index.html#/priceDocument/cssPrice">《{{$t('CSS.builder.27')}}》</a>
           </div>
           <div class="button">
             <el-button type="primary" :disabled="!checked" style="border-radius: 0;width:150px;height:40px">
