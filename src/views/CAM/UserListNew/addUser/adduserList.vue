@@ -82,7 +82,7 @@
             <div class="new-set" v-show="this.visitType">
               <el-form-item :label="$t('CAM.userList.ConsolePassword')" required>
                 <el-radio-group v-model="ruleForm.pwdRadio" @change="_pwdRadio">
-                  <el-radio :label="false">{{$t('CAM.userList.generation')}}</el-radio>
+                  <el-radio :label="false">{{$t('CAM.userList.mrmm')}}</el-radio>
                   <el-radio :label="true">{{$t('CAM.userList.Custom')}}</el-radio>
                 </el-radio-group>
                 <div v-show="pwdInp" class="regPWD">
