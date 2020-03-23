@@ -429,8 +429,6 @@ export default {
 
     // 渲染编辑器
     getCsLite() {
-      console.log(this.address)
-
       this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor'),
         modeType: ModeTypeEnum.ZIP,
@@ -616,7 +614,7 @@ export default {
         this.cslsSDK.getBlob().then(blob => {
           console.log('我是二进制')
           console.log(blob)
-          this.blobToDataURI(blob, function (data) {    //blob格式再转换为base64格式
+          this.blobToDataURI(blob, data => {    //blob格式再转换为base64格式
             console.log('我是base64')
             console.log(data)
             param.ZipFile = data
