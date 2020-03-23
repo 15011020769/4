@@ -413,6 +413,9 @@
             }
             this.headConfig = value.HeadConfig;
             this.productValue = value.productValue;
+            if (value.projectId !== undefined) {
+              this.projectSelectedOption = value.projectId
+            }
             this.$emit('CAM_loading', false)
           }
         },

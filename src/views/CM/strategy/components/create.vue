@@ -11,7 +11,7 @@
             <el-input class="w420" :autosize="{ minRows: 5, maxRows: 2 }" type="textarea" placeholder="1-100个中英文字符或下划线" v-model="formInline.textarea" maxlength="100" show-word-limit></el-input>
           </el-form-item>
           <el-form-item label="策略类型">
-            <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="projectId" productValue="cvm_device" @loading="(e)=>loading=e"/>
+            <product-type-cpt @PassData="passData" :searchParam="searchParam" :projectId="formInline.projectId" productValue="cvm_device" @loading="(e)=>loading=e"/>
           </el-form-item>
           <el-form-item label="所属项目" prop="projectName">
             <el-select class="w200" v-model="formInline.projectId">
@@ -27,13 +27,13 @@
             </p>
             <p>
               <el-radio v-model="radio" label="3">选择实例组</el-radio>
-              <el-button type="text" size="mini" style="position: relative;margin-left: 20px">新建实例组</el-button>
+              <el-button type="text" size="mini" style="position: relative;margin-left: 20px" @click="$router.push({path: '/Casegrouping'})">新建实例组</el-button>
             </p>
           </el-form-item>
           <!-- 告警对象-》选择部分对象 -->
           <div style="margin-bottom: 18px" v-show="radio==='2'">
             <div style="margin-left: 70px">
-              <cam-transfer-cpt v-loading="loading" :productData="product" isShowRight @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
+                <cam-transfer-cpt v-loading="loading" :productData="product" isShowRight @projectId="projectIds" @searchParam="searchParams" @multipleSelection="selectDatas"></cam-transfer-cpt>
             </div>
           </div>
           <!-- 告警对象-》 选择实例组 -->
@@ -43,7 +43,7 @@
                 <el-select v-model="formInline.instanceGroupId" style="width:150px;">
                   <el-option v-for="(item, index) in formInline.instanceGroup" :key="index" :label="item.GroupName" :value="item.InstanceGroupId" label-width="40px"></el-option>
                 </el-select>
-                <el-button type="text" size="mini" style="width: 50px">刷新</el-button>
+                <el-button type="text" size="mini" style="width: 50px" @click="describeInstanceGroupList">刷新</el-button>
               </el-form-item>
             </div>
           </div>
@@ -54,14 +54,14 @@
               <!-- 触发条件模板 -->
               <div style="background-color: #f2f2f2;padding: 20px">
                 <el-radio v-model="radioChufa" label="1">触发条件模板</el-radio>
-                <el-button type="text" size="mini" style="margin-left: 20px">新增触发条件模板</el-button>
+                <el-button type="text" size="mini" style="margin-left: 20px" @click="$router.push({path: '/Template'})">新增触发条件模板</el-button>
                 <div v-show="radioChufa === '1'" style="padding: 10px">
                   <el-form-item label-width="0px" style="margin-bottom: 0px">
                     <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="当前策略下没有触发条件模板"
                                @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateId">
                       <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupID" label-width="40px"></el-option>
                     </el-select>
-                    <el-button type="text" size="mini" style="margin-left: 20px" @click="describeInstanceGroupList">刷新</el-button>
+                    <el-button type="text" size="mini" style="margin-left: 20px" @click="describeConditionsTemplateList">刷新</el-button>
                   </el-form-item>
                   <div v-show="formInline.conditionsTemplateId">
                     <p style="line-height: 28px"><el-checkbox disabled>指标告警</el-checkbox></p>
@@ -92,7 +92,8 @@
                             </el-select>
                           </el-form-item>
                           <el-form-item label-width="0px" style="display: inline-block">
-                            <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number" v-model="cItem.CalcValue" disabled>
+                            <el-input style="vertical-align: baseline;width: 140px" placeholder="指标"
+                                      value="0" min="0" max="100" type="number" v-model="cItem.CalcValue" disabled>
                               <template slot="append">{{cItem.Unit}}</template>
                             </el-input>
                           </el-form-item>
@@ -170,7 +171,7 @@
                           </el-select>
                         </el-form-item>
                         <el-form-item label-width="0px" style="display: inline-block">
-                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number">
+                          <el-input style="vertical-align: baseline;width: 140px" placeholder="指标" value="0" min="0" max="100" type="number" v-model.number="cItem.CalcValue">
                             <template slot="append">{{cItem.Unit}}</template>
                           </el-input>
                         </el-form-item>
@@ -305,8 +306,8 @@ export default {
           name: '云服务器-基础监控'
         }], // 策略类型
         alarm: '', // 策略类型
-        project: [],
-        projectId: '',
+        project: [{ projectName: '默认项目', projectId: 0 }],
+        projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
         conditionsTemplate: [], // 触发条件模板下拉数组
@@ -393,7 +394,7 @@ export default {
       this.projectId = val
     },
     passData: async function (val) {
-      this.product = { ...val }
+      this.product = { ...val, projectId: this.formInline.projectId }
       await this.initRequest()
       this.loading = false
     },
@@ -412,6 +413,7 @@ export default {
             MetricID: Metrics[i].MetricId,
             Period: 60,
             CalcType: '1',
+            CalcValue: 0,
             Unit: '',
             ContinueTime: 1,
             AlarmNotifyPeriod: 86400
@@ -424,6 +426,7 @@ export default {
         MetricID: Metrics[0].MetricId,
         Period: 60,
         CalcType: '1',
+        CalcValue: 0,
         Unit: '',
         ContinueTime: 1,
         AlarmNotifyPeriod: 86400
@@ -508,8 +511,7 @@ export default {
     getProjectsList: async function () {
       this.axios.get(ALL_PROJECT).then(res => {
         this.axiosUtils(res, () => {
-          this.formInline.project = res.data
-          if (res.data.length > 0) this.formInline.projectId = res.data[0].projectId
+          this.formInline.project = [{ projectName: '默认项目', projectId: 0 }, ...res.data]
         })
       })
     },
@@ -626,7 +628,7 @@ export default {
             params[`Conditions.${index}.AlarmNotifyPeriod`] = configTrigger.AlarmNotifyPeriod
           }
           params[`Conditions.${index}.CalcType`] = item.CalcType
-          params[`Conditions.${index}.CalcValue`] = 0
+          params[`Conditions.${index}.CalcValue`] = item.CalcValue
           params[`Conditions.${index}.CalcPeriod`] = item.Period
           params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
           // params[`Conditions.${index}.RuleId`] = item.RuleID
