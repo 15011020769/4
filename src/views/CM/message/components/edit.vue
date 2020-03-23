@@ -102,9 +102,12 @@ export default {
         PolicyName: this.formInline.strategy_name, //策略名
         PolicyId: this.dataObj.PolicyID
       };
-      this.cam.selectUserGroup.forEach((v, i) => {
-        param["ReceiverGroupIds." + i] = v.GroupId;
-      });
+      if (this.cam.selectUserGroup.length > 0) {
+        this.cam.selectUserGroup.forEach((v, i) => {
+          param["ReceiverGroupIds." + i] = v.GroupId;
+        });
+      }
+
       if (this.cam.channel.length > 0) {
         this.cam.channel.forEach((v, i) => {
           if (v == "郵件") {
@@ -115,7 +118,7 @@ export default {
           param["NotifyWays." + i] = v;
         });
       } else {
-         this.dataObj.NotifyWay.forEach((v, i) => {
+        this.dataObj.NotifyWay.forEach((v, i) => {
           if (v == "郵件") {
             v = "EMAIL";
           } else if (v == "簡訊") {

@@ -127,13 +127,6 @@
               <el-checkbox label="4">站内信</el-checkbox>
             </span>
           </el-checkbox-group>
-
-          <!-- <el-checkbox
-            v-for="city in cities"
-            :label="city"
-            :key="city"
-            style="margin:0 10px;"
-          >{{ city }}</el-checkbox>-->
         </p>
         <p class="search">
           <span>

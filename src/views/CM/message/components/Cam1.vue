@@ -196,7 +196,8 @@ export default {
                 });
               });
               this.tableData2 = this.tableData;
-              if (this.tableData2.length > 0) {
+              this.$nextTick(()=>{
+                  if (this.tableData2.length > 0) {
                 this.$route.query.ReceiverGroupIds.forEach((v, i) => {
                   this.tableData2.forEach((item, index) => {
                     if (item.GroupId == v) {
@@ -207,6 +208,8 @@ export default {
                   });
                 });
               }
+              })
+              
               this.loadingShow = false;
             }
           } else {
