@@ -70,9 +70,6 @@
             label: 'Redis',
             viewName: 'REDIS-CLUSTER',
           }, {
-            label: '专用通道',
-            viewName: 'dcchannel',
-          }, {
             label: '物理专线',
             viewName: 'dcline',
           }, {
