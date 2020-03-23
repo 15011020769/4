@@ -439,7 +439,7 @@ export default {
       cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
-            fetch('https://cos-scf-1300103758.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip', {
+            fetch(this.address, {
               headers: { 'content-type': 'application/zip' },
               method: 'GET'
             })
