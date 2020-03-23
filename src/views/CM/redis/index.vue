@@ -227,9 +227,9 @@
         this.axios
           .post(REDIS_LIST, param)
           .then(data => {
-            if (data.Response.Error == undefined) {
-              this.TbaleData = data.Response.InstanceSet;
-              this.TotalCount = data.Response.TotalCount;
+            if (data.data.Response.Error == undefined) {
+              this.TbaleData = data.data.Response.InstanceSet;
+              this.TotalCount = data.data.Response.TotalCount;
             } else {
               let ErrTips = {
                 InternalError: "內部錯誤",
