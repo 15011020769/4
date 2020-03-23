@@ -532,7 +532,6 @@ import FileSaver from "file-saver";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type_str";
 import XLSX from "xlsx";
 import moment from "moment";
-
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_ALARM_LIST,

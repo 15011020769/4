@@ -912,7 +912,17 @@
               </div>
             </template>
           </el-table-column>
-          <!-- <el-table-column label="有效时段"> </el-table-column> -->
+          <el-table-column
+            label="有效时段"
+            v-if="
+              receivingObjectData.length === 0 ||
+                ReceiverInfos.ReceiverType === 'group'
+            "
+          >
+            {{ ReceiverInfos.StartTime | EndTime }} -
+            {{ ReceiverInfos.EndTime | EndTime }}
+          </el-table-column>
+
           <el-table-column
             label="告警渠道"
             v-if="
@@ -935,7 +945,13 @@
               </div>
             </template>
           </el-table-column>
-          <!-- <el-table-column label="有效时段"> </el-table-column> -->
+          <el-table-column
+            label="有效时段"
+            v-if="ReceiverInfos.ReceiverType === 'user'"
+          >
+            {{ ReceiverInfos.StartTime | EndTime }} -
+            {{ ReceiverInfos.EndTime | EndTime }}
+          </el-table-column>
           <el-table-column
             label="告警渠道"
             v-if="ReceiverInfos.ReceiverType === 'user'"
@@ -1766,6 +1782,7 @@ import {
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type";
 import CamTransferCpt from "@/views/CM/CM_assembly/CamTransferCpt";
 import Cam from "@/views/CM/CM_assembly/Cam";
+import moment from "moment";
 var project = [];
 var _ReceiverUserList = [];
 export default {
@@ -2126,6 +2143,10 @@ export default {
                     if (res.Response.Error === undefined) {
                       this.receivingObjectData.push(res.Response);
                       this.receivingObjectLoad = false;
+                      console.log(
+                        "this.receivingObjectData",
+                        this.receivingObjectData
+                      );
                     } else {
                       let ErrTips = {
                         FailedOperation: "操作失败。",
@@ -3875,8 +3896,8 @@ export default {
         GroupId: this.$route.query.groupId
       };
       if (this.cam.selectUserGroup.length > 0) {
-        param["ReceiverInfos.0.StartTime"] = 61261;
-        param["ReceiverInfos.0.EndTime"] = 57599;
+        param["ReceiverInfos.0.StartTime"] = this.cam.time[0];
+        param["ReceiverInfos.0.EndTime"] = this.cam.time[1];
         if (this.cam.channel.length > 0) {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
@@ -3921,8 +3942,8 @@ export default {
         }
       }
       if (this.cam.selectUserList.length > 0) {
-        param["ReceiverInfos.0.StartTime"] = 61261;
-        param["ReceiverInfos.0.EndTime"] = 57599;
+        param["ReceiverInfos.0.StartTime"] = this.cam.time[0];
+        param["ReceiverInfos.0.EndTime"] = this.cam.time[1];
         if (this.cam.channel.length > 0) {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
@@ -4592,6 +4613,9 @@ export default {
       } else if (val === "TERMINATING") {
         return "销毁中";
       }
+    },
+    EndTime(val) {
+      return moment(val * 1000).format("HH:mm:ss");
     },
     formatDate(value) {
       let date = new Date(value * 1000);
