@@ -327,7 +327,8 @@ export default {
         lineNumbers: true,    // 显示行号
         lineWrapping: true, //代码折叠
         matchBrackets: true,  //括号匹配
-      }
+      },
+      cslsSDK: new CloudStudioLiteFilesServiceSDK()     // 初始化编辑器
     }
   },
   created() {
@@ -429,14 +430,14 @@ export default {
     // 渲染编辑器
     getCsLite() {
       console.log(this.address)
-      const cslsSDK = new CloudStudioLiteFilesServiceSDK();
-      cslsSDK.init({
+
+      this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor'),
         modeType: ModeTypeEnum.ZIP,
         i18nType: "zh-cn"
       });
       // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
-      cslsSDK.addListener({
+      this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
             fetch(this.address, {
@@ -597,9 +598,26 @@ export default {
       };
 
       if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
+        console.log('我是base64')
         param.ZipFile = this.fileBase64zip
       } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
+      } else if (this.SubmissionValue === 'Inline') {      // 在线编辑
+        param.ZipFile = this.fileBase64clip1
+        this.cslsSDK.getBlob().then(blob => {
+          console.log('我是二进制')
+          console.log(blob)
+          this.cslsSDK.blobToString(blob).then(str => {
+            console.log('我是字符串')
+            console.log(str)
+            let encode = encodeURI(str);
+            // 对编码的字符串转化base64
+            let base64 = btoa(encode);
+            console.log('我是base64')
+            console.log(base64)
+            param.ZipFile = base64
+          })
+        })
       }
 
       this.axios.post(UPD_FUN_CODE, param).then(res => {
@@ -610,6 +628,7 @@ export default {
             showClose: true,
             duration: 0
           });
+          location.reload()
         } else {
           this.$message({
             message: '保存失敗',
