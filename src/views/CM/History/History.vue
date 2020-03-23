@@ -10,11 +10,18 @@
                 当月短信配额已用 0 条，剩余 1000 条可用。
                 <a @click="buyMessgae">购买短信</a>
               </p>
-            </div> -->
+            </div>-->
             <div class="box">
               <div class="table-top">
                 <div style="flex:1;">
-                  <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX>
+                  <TimeDropDown
+                    :TimeArr="TimeArr"
+                    :Datecontrol="true"
+                    :Graincontrol="true"
+                    :Difference="'H'"
+                    v-on:switchData="GetDate"
+                  />
+                  <!-- <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX> -->
                 </div>
                 <div class="seek">
                   <el-input v-model="input" placeholder="请输入告警对象" @input="searchName"></el-input>
@@ -181,7 +188,7 @@
 <script>
 import Header from "@/components/public/Head";
 import buymsg from "../components/buymsg";
-import XTimeX from "./components/TimeN";
+import TimeDropDown from "./components/TimeN.vue";
 import Dialog from "./components/custom"; //配置表格显示参数
 
 import moment from "moment"; //日期格式js
@@ -202,22 +209,90 @@ export default {
       tableData: [], //列表数据
       dialogVisible1: false, //设置显示参数弹框
       timeObjs: [],
+      TimeArr: [
+        {
+          name: "今天",
+          Time: "Today",
+          TimeGranularity: [
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "1天"
+            }
+          ]
+        },
+        {
+          name: "昨天",
+          Time: "Yesterday",
+          TimeGranularity: [
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "1天"
+            }
+          ]
+        },
+        {
+          name: "近7天",
+          Time: "Nearly_7_days",
+          TimeGranularity: [
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "1天"
+            }
+          ]
+        },
+        {
+          name: "近30天",
+          Time: "Nearly_30_days",
+          TimeGranularity: [
+            {
+              value: "3600",
+              label: "1小時"
+            },
+            {
+              value: "86400",
+              label: "1天"
+            }
+          ]
+        }
+      ],
       //分页
       totals: 0, //总条数
       pageSize: 10, //每页10条
-      pageIndex: 1 // 当前页码
+      pageIndex: 1, // 当前页码
+      StartTime: "",
+      EndTime: "",
+      Period: {}
     };
   },
   components: {
     Header,
     buymsg,
-    XTimeX,
+    TimeDropDown,
     Dialog
   },
   created() {
     this.getBasicsList(); //获取基础告警列表
   },
   methods: {
+    GetDate(val) {
+      this.Period = val[0];
+      this.StartTime = val[1].StartTIme;
+      this.EndTime = val[1].EndTIme;
+      this.loadShow = true;
+      this.getBasicsList(val);
+    },
     setValue() {
       this.dialogVisible1 = true;
     },
@@ -277,15 +352,17 @@ export default {
       return n + "/" + y + "/" + r + " " + h + ":" + m + ":" + s;
     },
     setStrategy(data) {
-      console.log(data)
       //跳转设置策略
-      this.$router.push({ path: "/strategy/createdetail",query:{groupId:data.GroupId,viewName:'cvm_device'} });
+      this.$router.push({
+        path: "/strategy/createdetail",
+        query: { groupId: data.GroupId, viewName: "cvm_device" }
+      });
     },
     //获取数据
     getBasicsList(val) {
       this.loadShow = true; //加载
       this.timeObjs = val;
-      if (this.timeObjs) {
+      if (val) {
         this.value = this.timeObjs[1];
         var params = {
           Region: localStorage.getItem("regionv2"),
@@ -295,8 +372,8 @@ export default {
           Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
-        params.StartTime = Date.parse(this.timeObjs[0].StartTIme) / 1000; //开始时间戳
-        params.EndTime = Date.parse(this.timeObjs[0].EndTIme) / 1000; //结束时间戳
+        params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
+        params.EndTime = new Date(this.EndTime).getTime()/1000; //结束时间戳
       } else {
         var params = {
           Region: localStorage.getItem("regionv2"),
