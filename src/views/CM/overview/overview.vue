@@ -825,17 +825,11 @@ export default {
       }
     }
 
-    .main-box {
-      display: flex;
-    }
-
     .left {
-      flex: 1;
+      width: 100%;
       margin-right: 20px;
     }
-    .right {
-      width: 30%;
-    }
+
     .head {
       display: flex;
       align-items: center;
