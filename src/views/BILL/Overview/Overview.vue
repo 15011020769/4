@@ -241,7 +241,7 @@ export default {
             type: 'value',
             axisLabel: {
               formatter: function (value, index) {
-                return value.toFixed(2)
+                return value
               }
             }
           }],
@@ -323,7 +323,7 @@ export default {
                   tarValue = item.totalAmount
                 }
               })
-              let p = (tarValue / total * 100).toFixed(2)
+              let p = (tarValue / total * 100).toFixed(8)
               let arr
               arr = [
                 name,
@@ -341,10 +341,10 @@ export default {
               normal: {
                 show: true,
                 position: 'center',
-                formatter: '{active|總費用（含稅）}' + '\n\r' + '{total|' + total.toFixed(2) + '}',
+                formatter: '{active|總費用（含稅）}' + '\n\r' + '{total|' + total.toFixed(8) + '}',
                 rich: {
                   total: {
-                    fontSize: 20,
+                    fontSize: 17,
                     color: '#000',
                     fontWeight: '200'
                   },
