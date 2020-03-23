@@ -29,6 +29,9 @@ export default {
     let myCharts = echarts.init(this.$refs.chart);
     this.setupEcharts(myCharts, [], [], []);
   },
+  beforeDestroy() {
+    window.onresize = null;
+  },
   watch: {
     timelineData: function(n, o) {
       let myCharts = echarts.init(this.$refs.chart);

@@ -115,8 +115,14 @@
               </el-table-column>
               <el-table-column prop="address" :label="$t('CVM.overview.yxdxs')">
                 <template slot-scope="scope">
+                  <!-- <span v-if="scope.row.desc !== 0"
+                    >{{ scope.row.subtitle + "："
+                    }}<a @click="goToProduct(scope.row)">{{
+                      scope.row.desc
+                    }}</a></span
+                  >
+                  <span v-else>-</span> -->
                   <span>{{ scope.row.desc }}</span>
-                  <!-- <span v-html="scope.row.desc"></span> -->
                 </template>
               </el-table-column>
             </el-table>
@@ -376,7 +382,7 @@ export default {
 
     this.productOptions.forEach(item => {
       item.status = true;
-      item.desc = "";
+      item.desc = 0;
       item.tips = [];
     });
   },
@@ -520,16 +526,16 @@ export default {
             }
 
             if (viewNameObj !== undefined) {
-              // item.desc =
-              //   item.subtitle +
-              //   "：" +
-              //   `<router-link to="${this.getRouterByViewName(item.viewName)}">${
-              //     viewNameObj.AbnormalCount
-              //   }</router-link>`;
               item.desc = item.subtitle + "：" + viewNameObj.AbnormalCount;
             } else {
               item.desc = "-";
             }
+
+            // if (viewNameObj !== undefined) {
+            //   item.desc = viewNameObj.AbnormalCount;
+            // } else {
+            //   item.desc = 0;
+            // }
 
             return item;
           });
@@ -548,43 +554,48 @@ export default {
         }
       });
     },
-    getRouterByViewName(viewName) {
+    getRouterNameByViewName(viewName) {
       if (viewName === "VPN_GW") {
         // VPN网关
-        return "/VPNgateway";
+        return "VPNgateway";
       } else if (viewName === "vpn_tunnel") {
         // vpn通道
-        return "/VPNchannel";
+        return "VPNchannel";
       } else if (viewName === "nat_tc_stat") {
         // Nat网关
-        return "/NATgateway";
+        return "NATgateway";
       } else if (viewName === "DC_GW") {
         // 专线网关
-        return "/PrivateGateway";
+        return "PrivateGateway";
       } else if (viewName === "REDIS-CLUSTER") {
         // Redis
-        return "/Redis";
+        return "Redis";
       } else if (viewName === "dcchannel") {
         // 专用通道
-        return "/PrivateGateway";
+        return "PrivateGateway";
       } else if (viewName === "COS") {
         // 对象存储
-        return "/objectStorage";
+        return "objectStorage";
       } else if (viewName === "dcline") {
         // 物理专线
-        return "/Physics";
+        return "Physics";
       } else if (viewName === "cdb_detail") {
         // MYSQL
-        return "/cloudMysql";
+        return "cloudMysql";
       } else if (viewName === "BS") {
         // 云硬盘
-        return "/cloudDisk";
+        return "cloudDisk";
       } else if (viewName === "EIP") {
         // 弹性公网IP
-        return "/networkIP";
+        return "networkIP";
       } else {
-        return "/CVM";
+        return "CVM";
       }
+    },
+    goToProduct(row) {
+      this.$router.push({
+        name: this.getRouterNameByViewName(row.ViewName)
+      });
     },
     getAbnormalList(viewName, index) {
       const params = {
