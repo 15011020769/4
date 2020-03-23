@@ -232,7 +232,10 @@
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                 <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
-                <!-- <p>有效期：</p> -->
+                <p>
+                  有效期：{{ i.StartTime | EndTime }} -
+                  {{ i.EndTime | EndTime }}
+                </p>
                 <p v-if="i.NotifyWay.length > 0">
                   渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                     >{{ j | NotifyWay
@@ -528,6 +531,8 @@ import Dialog from "./components/dialog";
 import FileSaver from "file-saver";
 import ProductTypeCpt from "@/views/CM/CM_assembly/product_type_str";
 import XLSX from "xlsx";
+import moment from "moment";
+
 import { ErrorTips } from "@/components/ErrorTips";
 import {
   CM_ALARM_LIST,
@@ -1569,10 +1574,8 @@ export default {
       s = s < 10 ? "0" + s : s;
       return y + "-" + MM + "-" + d + " " + h + ":" + m + ":" + s;
     },
-    CreateDate(val) {
-      if (val) {
-        return moment(val).format("YYYY-MM-DD HH :mm:ss");
-      }
+    EndTime(val) {
+      return moment(val * 1000).format("HH:mm:ss");
     },
     CalcType(value) {
       if (value == 1) {

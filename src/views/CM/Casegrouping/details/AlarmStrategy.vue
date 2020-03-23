@@ -103,7 +103,8 @@
                 <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
                   <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
                   <p>
-                    有效期：{{ Moment(i.StartTime) }} - {{ Moment(i.EndTime) }}
+                    有效期：{{ i.StartTime | EndTime }} -
+                    {{ i.EndTime | EndTime }}
                   </p>
                   <p>
                     渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
@@ -304,9 +305,6 @@ export default {
         }
       });
     },
-    Moment(val) {
-      return moment(val).format("HH:mm:ss");
-    },
     // 分页
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
@@ -461,6 +459,9 @@ export default {
       } else if ((val / 60) % 1 == 0) {
         return val / 60 + "分钟";
       }
+    },
+    EndTime(val) {
+      return moment(val * 1000).format("HH:mm:ss");
     },
     NotifyWay(val) {
       if (val === "EMAIL") {

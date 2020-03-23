@@ -577,7 +577,6 @@ export default {
       };
       await this.axios.post(CM_GROUPING_MANAGE, param).then(res => {
         if (res.Response.Error === undefined) {
-          console.log(res);
           var _enterList = res.Response.InstanceList;
           this.total = res.Response.Total;
           if (_enterList.length > 0) {
@@ -633,7 +632,6 @@ export default {
                 Limit: this.pageSize,
                 Offset: this.pageIndex
               };
-              console.log(_enterList);
               params["Filters.0.Name"] = "disk-id";
               for (let i in _enterList) {
                 params["Filters.0.Values." + i] = JSON.parse(
@@ -880,7 +878,7 @@ export default {
               });
             } else if (this.viewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-12",
+                Version: "2017-03-20",
                 Limit: this.pageSize,
                 Offset: this.pageIndex
               };
@@ -1241,7 +1239,17 @@ export default {
         }
       }
     },
+    // 保存
     save() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: "请选择要添加组",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
+        return false;
+      }
       let param = {
         GroupName: this.Rules.groupName,
         Version: "2018-07-24",

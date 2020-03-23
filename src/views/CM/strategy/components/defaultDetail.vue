@@ -3235,7 +3235,7 @@ export default {
               });
             } else if (this.ViewName === "cdb_detail") {
               let params = {
-                Version: "2017-03-12",
+                Version: "2017-03-20",
                 Limit: this.pageSize,
                 Offset: this.pageIndex
               };
