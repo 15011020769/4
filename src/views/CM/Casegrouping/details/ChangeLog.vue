@@ -63,7 +63,7 @@
           </li>
           <li>
             <span>修改时间</span>
-            <span>{{ details.createTime | formatDate }}</span>
+            <span>{{ details.lastModifyTime | formatDate }}</span>
           </li>
           <li class="include-examples">
             <span>包含实例</span>
@@ -179,7 +179,7 @@ export default {
       this.visible = true;
       this.loadShow = true;
       this.details = JSON.parse(row.LogData).instanceGroupInfo;
-      // console.log(this.details);
+      console.log(this.details);
       var list = JSON.parse(row.LogData).list;
       let param = {
         Version: "2017-03-12",

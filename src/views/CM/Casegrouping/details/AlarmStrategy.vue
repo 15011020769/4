@@ -31,7 +31,9 @@
           >
             <el-table-column label="策略名称">
               <template slot-scope="scope">
-                <a href="javascript:;">{{ scope.row.GroupName }}</a>
+                <a href="javascript:;" @click="defaultClick(scope.row)">
+                  {{ scope.row.GroupName }}</a
+                >
               </template>
             </el-table-column>
             <el-table-column label="触发条件">
@@ -325,6 +327,16 @@ export default {
         }
       });
     },
+    defaultClick(row) {
+      console.log(row);
+      this.$router.push({
+        name: "strategyCreateDetail",
+        query: {
+          groupId: row.GroupId,
+          viewName: row.ViewName
+        }
+      });
+    },
     // 告警启停
     AlarmStart(row, index) {
       console.log(row);
@@ -373,7 +385,7 @@ export default {
     },
     CelStart() {
       this.startStop = false;
-      this.tableData[this.indexs].IsOpen = !this.tableData[this.indexs].IsOpen;
+      this.ListInit();
     },
     // 解除绑定
     UnDelete(row) {
