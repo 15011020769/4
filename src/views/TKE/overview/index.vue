@@ -69,7 +69,7 @@
                   class="el-icon-caret-right data-card-icon"
                   style="margin-right:5px"
                 ></i
-                >中国台北
+                >台灣台北
                 <span class="font-small"
                   >共&nbsp;{{ TotalCount }}&nbsp;个集群</span
                 >
