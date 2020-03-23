@@ -60,12 +60,14 @@
         </el-table-column>
         <el-table-column label="短信" width="170">
           <template slot-scope="scope">
-            <i
-              v-if="scope.row.NotifyWay"
-              v-show="scope.row.NotifyWay[0] ? true :false"
-              class="el-icon-circle-check"
-              style="color:#0abf5b"
-            ></i>
+            <span v-if="scope.row.NotifyWay">
+              <i
+                v-show="scope.row.NotifyWay[0] ? true :false"
+                class="el-icon-circle-check"
+                style="color:#0abf5b"
+              ></i>
+            </span>
+
             <span v-if="!scope.row.NotifyWay">尚未订阅</span>
           </template>
         </el-table-column>
@@ -416,7 +418,7 @@ export default {
       //     key: value
       //   };
       //   params["Receivers." + index] = JSON.stringify(data);
-      
+
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
         if (res.codeDesc === "Success") {
