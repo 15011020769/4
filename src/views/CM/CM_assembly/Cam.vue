@@ -98,13 +98,16 @@
     <p class="effective-period">
       <span>有效时段&nbsp;&nbsp;</span>
       <el-time-picker
-        is-range
-        v-model="value1"
+        v-model="timeValue.start"
         @change="selectTime"
-        range-separator="至"
-        start-placeholder="開始時間"
-        end-placeholder="結束時間"
-        placeholder="選擇時間範圍"
+        :clearable="false"
+      >
+      </el-time-picker>
+      <span style="display: inline-block;padding: 0px 10px">至</span>
+      <el-time-picker
+        v-model="timeValue.end"
+        @change="selectTime"
+        :clearable="false"
       >
       </el-time-picker>
     </p>
@@ -124,7 +127,10 @@ export default {
   data() {
     return {
       triggerInput: "", // 查询关键字
-      value1: "", // 时间组件选中的值
+      timeValue: {
+        start: new Date(this.startTime * 1000),
+        end: new Date(this.endTime * 1000)
+      },
       tableData: [],
       tableData2: [], // 接收组数据
       loadingShow: true, // 接收组动画
@@ -154,6 +160,38 @@ export default {
         channel: ["郵件", "簡訊"] // 选中的渠道
       }
     };
+  },
+  props: {
+    startTime: {
+      type: Number,
+      default: 57600
+    },
+    endTime: {
+      type: Number,
+      default: 57599
+    }
+  },
+  watch: {
+    startTime: function (val) {
+      this.timeValue.start = new Date(val * 1000)
+    },
+    endTime: function (val) {
+      this.timeValue.end = new Date(val * 1000)
+    },
+    timeValue: {
+      handler: function (val) {
+        console.log(val)
+        let timeArr = [val.start, val.end]
+        this.cam.time = timeArr.map(item => {
+          let tempTime = Date.parse(item) / 1000
+          if (tempTime > 86400) tempTime = tempTime - 86400
+          if (tempTime < 0) tempTime = tempTime + 86400
+          return tempTime
+        })
+      },
+      immediate: true,
+      deep: true
+    }
   },
   mounted() {
     this.userGroup(); // 查询接收组
@@ -328,7 +366,7 @@ export default {
 
     // 选中时间
     selectTime() {
-      this.cam.time = this.value1;
+      // this.cam.time = this.value1;
       this.$emit("camClick", this.cam);
     },
 
@@ -376,6 +414,7 @@ export default {
   }
 }
 .effective-period {
+  margin-bottom: 18px;
   ::v-deep .el-range-input {
     margin-top: 5px;
   }
