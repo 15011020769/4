@@ -314,21 +314,21 @@
       custom-class="tke-dialog"
     >
       <div>
-        <el-form label-width="80px">
+        <el-form label-width="80px" :model="editForm" :rules="rules" ref="editForm">
           <el-form-item :label="$t('TKE.colony.ymc')">
             <p>{{ oldnName }}</p>
           </el-form-item>
-          <el-form-item :label="$t('TKE.colony.xmc')">
+          <el-form-item :label="$t('TKE.colony.xmc')" prop="editSearchVal">
             <el-input
               size="small"
               :placeholder="$t('TKE.colony.qsrxmc')"
-              v-model="editSearchVal"
+              v-model="editForm.editSearchVal"
             ></el-input>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="setColonyName">提交</el-button>
+        <el-button type="primary" @click="setColonyName('editForm')">提交</el-button>
         <el-button @click="editNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -477,7 +477,9 @@ export default {
       listStatusArr: [], // 集群列表节点数状态
       editClusterId: "",
       oldnName: "",
-      editSearchVal: "", // 编辑名称
+      editForm:{
+        editSearchVal: "", // 编辑名称
+      },
       total: 0,
       pageSize: 10,
       pageIndex: 0,
@@ -514,7 +516,13 @@ export default {
       detaleTableData_ETCD: [],
       deteleCheck: true,
       deleteLoadShow: true,
-      oldnName: ""
+      oldnName: "",
+      rules:{
+        editSearchVal:[
+          { required: true, message: '集群名稱不能為空', trigger: 'blur' },
+          { min: 1, max: 60, message:'集群名稱不能大於60個字符', trigger:'blur'}
+        ]
+      }
     };
   },
   components: {
@@ -706,18 +714,35 @@ export default {
       this.getColonyList();
     },
     // 修改集群名称
-    setColonyName(row) {
-      const param = {
-        Version: "2018-05-25",
-        ClusterId: this.editClusterId,
-        ClusterName: this.editSearchVal
-      };
-      this.axios.post(TKE_COLONY_DES, param).then(res => {
-        this.editNameDialogVisible = false;
-        this.loadShow = true;
-        this.searchInput = "";
-        this.getColonyList();
-      });
+    setColonyName(formName) {
+      this.$refs[formName].validate((valid) => {
+          if (valid) {
+            const param = {
+              Version: "2018-05-25",
+              ClusterId: this.editClusterId,
+              ClusterName: this.editForm.editSearchVal
+            };
+            this.axios.post(TKE_COLONY_DES, param).then(res => {
+              this.editNameDialogVisible = false;
+              this.loadShow = true;
+              this.searchInput = "";
+              this.getColonyList();
+            });
+          } else {
+            return false;
+          }
+        });
+      // const param = {
+      //   Version: "2018-05-25",
+      //   ClusterId: this.editClusterId,
+      //   ClusterName: this.editForm.editSearchVal
+      // };
+      // this.axios.post(TKE_COLONY_DES, param).then(res => {
+      //   this.editNameDialogVisible = false;
+      //   this.loadShow = true;
+      //   this.searchInput = "";
+      //   this.getColonyList();
+      // });
     },
     // 创建集群跳转
     goColonyCreate() {
