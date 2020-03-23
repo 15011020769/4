@@ -527,12 +527,19 @@ export default {
       const param = {
         // password: word
         // Version: "2019-09-24",
-        password: word
+        password: word,
+        RequestOperator:this.$cookie.get('uuid')
       }
       this.axios.post(TKE_CHANGEPASSWORD, param).then(res => {
         // console.log(res)
         if (res.code == 0 && res.Error == undefined) {
           this.loadShow = false
+           this.$message({
+              message: "重置密码成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+          })
           // console.log(res)
           // console.log(ErrorTips)
         } else {

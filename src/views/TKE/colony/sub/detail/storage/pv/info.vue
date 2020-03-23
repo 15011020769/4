@@ -1,6 +1,6 @@
  <!-- PersistentVolume-基本信息 -->
 <template>
-  <div class="colony-main">
+  <div class="colony-main" v-if="list">
     <div class="tke-card tke-formpanel-wrap">
       <h4 class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
@@ -19,7 +19,7 @@
           <div class="tke-form-item_text">{{list.spec.accessModes[0]}}</div>
         </el-form-item>
         <el-form-item label="PVC">
-          <div class="tke-form-item_text">{{list.spec.claimRef.name}}</div>
+          <div class="tke-form-item_text">{{list.spec.claimRef|claimsRefs}}</div>
         </el-form-item>
         <el-form-item label="StorageClass">
           <div class="tke-form-item_text">{{list.spec.storageClassName}}</div>
@@ -47,7 +47,7 @@ export default {
   name: "pvDetailInfo",
   data() {
     return {
-      list: ""
+      list: {}
     };
   },
   created() {
@@ -90,6 +90,13 @@ export default {
       h < 10 ? (h = "0" + h) : h;
       m < 10 ? (m = "0" + m) : m;
       return n + "-" + y + "-" + r + " " + h + ":" + m + ":" + s;
+    },
+    claimsRefs:function(value){
+      if(value === undefined) {
+        return '-'
+      } else {
+        return value.name
+      }
     }
   }
 };
