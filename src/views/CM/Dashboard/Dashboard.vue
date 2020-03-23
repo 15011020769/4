@@ -435,13 +435,14 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.options = [];
-            this.options = res.Response.DashboardList.map(ele => {
+            let options = [];
+            options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
                 label: ele.DescName
               };
             });
+            this.options = options;
             if (this.options.length > 0) {
               this.DashboardID = this.options[0].value; // 首次加载 展示面板的ID
               this.DashboardName = this.options[0].label;
@@ -522,13 +523,14 @@ export default {
         })
         .then(res => {
           if (res.Response.Error === undefined) {
-            this.options = [];
-            this.options = res.Response.DashboardList.map(ele => {
+            let options = [];
+            options = res.Response.DashboardList.map(ele => {
               return {
                 value: ele.DashboardID,
                 label: ele.DescName
               };
             });
+            this.options = JSON.parse(JSON.stringify(options));
             console.log(this.options, "options");
           } else {
             let ErrTips = {
@@ -745,8 +747,8 @@ export default {
         Namespace,
         MetricName,
         Period,
-        StartTime:StartTime,
-        EndTime:EndTime,
+        StartTime: StartTime,
+        EndTime: EndTime,
       };
       let color = ["#2072d9", "#fff2cc", "#ffd966", "#f1c232", "#9fc5e8", "#3d85c6",
         "#00ff00", "#008bff", "#980000", "#1c4587"

@@ -94,8 +94,10 @@ export default {
         if (res.Response.Error === undefined) {
           // res.Response.DashboardID
           // res.Response.RequestId
+
           this.$parent.$parent.getDashboardList(); // 获取Dashboard列表数据
-          this.$parent.$parent.DashboardID = res.Response.DashboardID; // 跳转到新的监控面板ID
+          this.$parent.$parent.DashboardID = res.Response.DashboardID.toString(); // 跳转到新的监控面板ID
+          
           this.$parent.$parent.DashboardName = this.form.name
           this.form.name = "";
           // console.log(res.Response, this.$parent.$parent.panelValue, this.$parent.$parent, 'res.Response');
