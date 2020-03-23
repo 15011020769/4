@@ -116,7 +116,7 @@
         </el-table>
       </div>
 
-      <div class="tab-list" v-show="true">
+      <div class="tab-list" v-show="false">
         <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
           :empty-text="$t('CLA.total.zwsj')" id="exportTable">
 
@@ -464,7 +464,6 @@
     },
     filters: {
       UpTime(value) {
-        console.log(value)
         let time = String(value + '(事件时间)')
         return time;
       }
