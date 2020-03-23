@@ -22,7 +22,7 @@
           <div class="tke-form-item_text">{{list.spec.accessModes[0]}}</div>
         </el-form-item>
         <el-form-item label="Storage">
-          <div class="tke-form-item_text">{{list.status.capacity.storage}}</div>
+          <div class="tke-form-item_text">{{list.status.capacity|capacitys}}</div>
         </el-form-item>
         <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{list.metadata.creationTimestamp|creationTimestamps}}</div>
@@ -94,6 +94,13 @@ export default {
       h < 10 ? (h = "0" + h) : h;
       m < 10 ? (m = "0" + m) : m;
       return n + "-" + y + "-" + r + " " + h + ":" + m + ":" + s;
+    },
+    capacitys:function(value){
+      if(value === undefined){
+        return '-'
+      } else {
+        return value.storage
+      }
     }
   }
 };
