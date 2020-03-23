@@ -116,7 +116,7 @@
         </el-table>
       </div>
 
-      <div class="tab-list" v-show="false">
+      <div class="tab-list" v-show="true">
         <el-table :data="tableData" style="width: 100%" v-if="isRouterAlive" v-loading="vloading"
           :empty-text="$t('CLA.total.zwsj')" id="exportTable">
 
@@ -165,7 +165,7 @@
           <el-table-column :label="$t('CLA.total.sjsj')">
             <template slot-scope="scope">
               <p>
-                {{scope.row.EventTime}}
+                {{scope.row.EventTime |UpTime}}
               </p>
             </template>
           </el-table-column>
@@ -460,6 +460,13 @@
           this.isRouterAlive = true;
           this.Loading();
         });
+      }
+    },
+    filters: {
+      UpTime(value) {
+        console.log(value)
+        let time = String(value + '(事件时间)')
+        return time;
       }
     }
   };
