@@ -108,7 +108,7 @@
             width="70"
           >
             <template slot-scope="scope">
-              中國台北
+              台灣台北
             </template>
           </el-table-column>
           <el-table-column :label="t('负载均衡（ID）', 'WAF.lbid')" width="110">
