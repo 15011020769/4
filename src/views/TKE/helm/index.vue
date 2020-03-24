@@ -213,7 +213,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="getUpdate()">{{$t('TKE.overview.qd')}}</el-button>
-        <el-button @click="centerDialogVisible = false">取 消</el-button>
+        <el-button @click="closeUpdate()">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 删除 -->
@@ -247,7 +247,7 @@
       </span>
       <span slot="footer" class="dialog-footer" v-if="this.flagAgin == 2">
         <el-button type="primary" @click="openContect()">{{$t('TKE.overview.qd')}}</el-button>
-        <el-button @click="centerDialogVisible3 = false">取 消</el-button>
+        <el-button @click="centerDialogVisible3=false">取 消</el-button>
       </span>
     </el-dialog>
     <el-dialog :title="$t('TKE.overview.yyazrz')" :visible.sync="centerDialogVisible4" width="60%">
@@ -512,6 +512,14 @@ export default {
       });
       console.log(this.value);
     },
+    closeUpdate(){
+      this.centerDialogVisible = false
+      this.ruleForm.address = '',
+      this.ruleForm.nameTwo = '',
+      this.ruleForm.pass = '',
+      this.domains.splice(0, this.domains.length);
+      this.isCollapse = true
+    },
     // 申请开通
     ApplyOpen() {
       console.log(2);
@@ -726,10 +734,13 @@ export default {
       this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error == undefined) {
           this.getColony();
-          // this.Data=JSON.parse(res.Response.ResponseBody).release
-          // this.raw =JSON.parse(res.Response.ResponseBody).release.config.raw
-          // let rawDetail = JSON.parse(this.raw)
-           this.$refs['ruleForm'].resetFields();
+          // 清除格式
+          this.ruleForm.address = '',
+          this.ruleForm.nameTwo = '',
+          this.ruleForm.pass = '',
+           this.domains.splice(0, this.domains.length);
+           this.isCollapse = true
+          // this.$refs['ruleForm'].resetFields();
           console.log(res);
         } else {
           let ErrTips = {};
