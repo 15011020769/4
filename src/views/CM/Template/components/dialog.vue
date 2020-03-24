@@ -25,8 +25,7 @@
               type="textarea"
               placeholder="1-100个中英文字符或下划线"
               v-model="formInline.textareas"
-              maxlength="100"
-              show-word-limit
+              maxlength="101"
             ></el-input>
           </el-form-item>
         </p>
@@ -338,14 +337,14 @@ export default {
                 callback()
               }
             },
-            trigger: 'change',
+            trigger: 'blur',
             required: true
           }
         ],
         textareas: [
           {
             validator: (rule, value, callback) => {
-              if (value.length === 100) {
+              if (value.length > 100) {
                 callback(new Error('描述不能超过100个字'))
               } else {
                 callback()
@@ -496,7 +495,7 @@ export default {
         if (res.Response.Error === undefined) {
           // console.log(res)
           this.show = false// 关闭弹框
-          this.formInline.strategy_name = ' '
+          this.formInline.strategy_name = ''
           this.formInline.textareas = ''
           this.indexAry = [{
             Period: 60,

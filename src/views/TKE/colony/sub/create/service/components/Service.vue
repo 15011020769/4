@@ -78,9 +78,17 @@
 			<div v-show="svc.loadBalance=='2'">{{$t('TKE.subList.qwsdxgjt')}}
         <!-- <a href="javascript:;">查看更多说明</a> -->
 			<p>
-				<el-select v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
+				<el-select v-if="svc.radio==='1'" v-model="svc.balancerValue" @change="$set(personObj.ownLoadBalancer)" :placeholder="$t('TKE.overview.qxz')">
 					<el-option
-						v-for="item in personObj.ownLoadBalancer"
+						v-for="item in personObj.ownLoadBalancer1"
+						:key="item.LoadBalancerId"
+						:label="`${item.LoadBalancerId}  (${item.LoadBalancerName})`"
+						:value="item.LoadBalancerId">
+					</el-option>
+				</el-select>
+        <el-select v-if="svc.radio==='3'" v-model="svc.balancerValue" @change="$set(personObj.ownLoadBalancer)" :placeholder="$t('TKE.overview.qxz')">
+					<el-option
+						v-for="item in personObj.ownLoadBalancer2"
 						:key="item.LoadBalancerId"
 						:label="`${item.LoadBalancerId}  (${item.LoadBalancerName})`"
 						:value="item.LoadBalancerId">
@@ -340,11 +348,12 @@ export default {
     },
     personObj: {
       handler: function () {
-        let { LBsubnet, vpcNameAry, ownLoadBalancer } = this.personObj
-        if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer[0])) return
+        let { LBsubnet, vpcNameAry, ownLoadBalancer1, ownLoadBalancer2 } = this.personObj
+        if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer1[0] && ownLoadBalancer2[0])) return
         this.svc.LBvalue2 = LBsubnet[0].SubnetId
         this.svc.LBvalue1 = vpcNameAry[0].VpcName
-        this.svc.balancerValue = ownLoadBalancer[0].LoadBalancerId
+        if(this.svc.radio==='1') this.svc.balancerValue = ownLoadBalancer1[0].LoadBalancerId
+        if(this.svc.radio==='3') this.svc.balancerValue = ownLoadBalancer2[0].LoadBalancerId
         // + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
       }
     }

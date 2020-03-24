@@ -38,7 +38,7 @@
 						</el-form-item>
 					</div>
           <!-- 访问设置的封装组件 -->
-					<Service :personObj="{ownLoadBalancer,LBsubnet,vpcNameAry}" :svcData.sync='svc'></Service>
+					<Service :personObj="{ownLoadBalancer1,ownLoadBalancer2,LBsubnet,vpcNameAry}" :svcData.sync='svc'></Service>
          <!-- Selectors中的workload选填 -->
 					<div class="card">
 						<h3 style="padding-bottom:20px;">Workload（{{$t('TKE.subList.xt')}}）</h3>
@@ -147,7 +147,8 @@ export default {
       },
       clusterId: '', // 集群id
       spaceName: '', // 命名空间的名称
-      ownLoadBalancer: [], // 已有负载均衡器
+      ownLoadBalancer1: [], // 已有负载均衡器
+      ownLoadBalancer2:[],
       vpcNameAry: [], // vpcName的数据
       LBsubnet: [], // LB所在子网
       resourcesList: [], // 幕布层资源列表
@@ -177,14 +178,7 @@ export default {
     // 从路由获取类型
     let { clusterId, nameSpaceName } = this.$route.query
     this.clusterId = clusterId
-    // console.log(this.$route)
     this.spaceName = nameSpaceName
-    // this.GetSpaceValue()// 获取命名空间
-    // this.getDescribeLoadBalancers()// 扫描均衡器
-    // this.getDescribeSubnets()// 扫描子网
-    // this.getDescribeVpcs()// 描述Vpcs
-    // this.getDescribeClusters()// 获取集群列表
-    // this.getForwardRequest()// 转发请求
     this.getInitData()
     this.handleType1()
   },
@@ -208,9 +202,16 @@ export default {
       await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
           let msg = res.Response.LoadBalancerSet
-          this.ownLoadBalancer = msg
+          msg.forEach(item=>{
+            let {radio} = this.svc
+            if(item.VipIsp=='BGP'){
+              this.ownLoadBalancer1.push(item)
+            }
+            if(item.VipIsp=='INTERNAL'){
+              this.ownLoadBalancer2.push(item)
+            }
+          })
           this.svc.vpcId = msg[0].VpcId
-          // console.log(this.ownLoadBalancer)
         } else {
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
