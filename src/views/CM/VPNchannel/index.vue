@@ -36,14 +36,14 @@
 
         <el-table-column prop :label="$t('CVM.clBload.sswl')">
           <template slot-scope="scope">
-            <a
-              :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'">{{scope.row.VpcId}}</a>
+            <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
+              target="_self">{{scope.row.VpcId}}</a>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.vpnwg')">
           <template slot-scope="scope">
             <a :href="'../VPC/index.html#/vpnGateway/vpnGatewayDetial/'+  scope.row.VpcId + '/' +scope.row.VpnGatewayId +
-              '/ap-taipei/'+'1'">{{scope.row.VpnGatewayId}}</a>
+              '/ap-taipei/'+'1'" target="_self">{{scope.row.VpnGatewayId}}</a>
             <p>{{scope.row.vpnGwName}}</p>
           </template>
         </el-table-column>
