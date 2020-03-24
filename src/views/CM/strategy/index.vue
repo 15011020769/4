@@ -215,16 +215,19 @@
         </el-table-column>
         <el-table-column label="已启用/实例数">
           <template slot-scope="scope">
-            <p>{{ scope.row.NoShieldedSum }} / {{ scope.row.UseSum }}</p>
-            <p class="group-color" v-if="scope.row.InstanceGroup != undefined">
+            <div>{{ scope.row.NoShieldedSum }} / {{ scope.row.UseSum }}</div>
+            <div
+              class="group-color"
+              v-if="scope.row.InstanceGroup != undefined"
+            >
               组：{{ scope.row.InstanceGroup.GroupName }}
-            </p>
+            </div>
           </template>
         </el-table-column>
         <el-table-column label="最后修改">
           <template slot-scope="scope">
-            <p>{{ scope.row.LastEditUin }}</p>
-            <p>{{ scope.row.UpdateTime | formatDate }}</p>
+            <div>{{ scope.row.LastEditUin }}</div>
+            <div>{{ scope.row.UpdateTime | formatDate }}</div>
           </template>
         </el-table-column>
         <el-table-column label="告警渠道">
