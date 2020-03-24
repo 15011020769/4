@@ -2429,7 +2429,7 @@
             :label="$t('TKE.overview.yhm')"
             v-if="colonyThird.one || colonyThird.three"
           >
-            <p>ubuntu</p>
+            <p>{{ dispose.OSvalue | OSvalue }}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.sshmy')" v-if="colonyThird.one">
             <div class="tke-third-select">
@@ -6350,6 +6350,20 @@ export default {
           });
         }
       });
+    }
+  },
+  filters: {
+    OSvalue(val) {
+      let _val = val
+        .trim()
+        .split(" ")[0]
+        .toLowerCase();
+      if (_val === "ubuntu") {
+        _val = "ubuntu";
+      } else {
+        _val = "root";
+      }
+      return _val;
     }
   }
 };
