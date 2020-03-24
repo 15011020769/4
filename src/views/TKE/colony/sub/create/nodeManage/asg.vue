@@ -40,13 +40,13 @@
             </el-radio-group>
             <p v-if="asg.typeRadio=='SPOTPAID'">
               {{$t('TKE.subList.jjsl')}}
-              <span class="tke-text-link">{{$t('TKE.overview.ckxq')}}</span>
+              <!-- <span class="tke-text-link">{{$t('TKE.overview.ckxq')}}</span> -->
             </p>
           </el-form-item>
           <el-form-item :label="$t('TKE.subList.jxsz')">
             <div class="form-controls">
               <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
-                <el-form-item :label="$t('TKE..colony.kyq')">
+                <el-form-item :label="$t('TKE.colony.kyq')">
                   <el-radio-group v-model="asg.regionRadio" size="small">
                     <el-radio-button label="region1">{{$t('TKE.subList.qbkyq')}}</el-radio-button>
                     <el-radio-button label="region2">{{$t('TKE.colony.tbyq')}}</el-radio-button>
@@ -110,13 +110,13 @@
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" v-model="asg.password" :placeholder="$t('TKE.myMirror.qsrmm')"></el-input>
+            <el-input class="w200" type="password" v-model="asg.password" :placeholder="$t('TKE.myMirror.qsrmm')"></el-input>
             <p
               class="pass"
             >linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] , [0-9]和[()`~!@#$%^&*-+=|{}[]:;',.?/]的特殊符號</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.qrmm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" v-model="asg.passwordAgin" :placeholder="$t('TKE.subList.qqrmm')"></el-input>
+            <el-input class="w200" type="password" v-model="asg.passwordAgin" :placeholder="$t('TKE.subList.qqrmm')"></el-input>
           </el-form-item>
 
           <el-form-item :label="$t('TKE.colony.rqml')">
@@ -1268,6 +1268,8 @@ export default {
         return "計算型C3";
       } else if (val === "MEM-optimized M3") {
         return "記憶體型M3";
+      } else {
+        return val;
       }
     },
     //获取支持网络
