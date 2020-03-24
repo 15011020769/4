@@ -933,7 +933,6 @@ export default {
       // ExtraArgs: {Kubelet: []}
       // Kubelet: []
 
-      console.log(params);
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
