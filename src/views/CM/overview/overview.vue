@@ -656,13 +656,10 @@ export default {
           let chartsObjects = [];
           const startTimes = [];
           const endTimes = [];
-          const titles = [];
           const otherInfo = [];
-          const statusArray = [];
-          const types = []
 
           const thresholdObjects = res.Response.ThresholdObjects;
-          // const eventObjects = res.Response.EventObjects;
+          const eventObjects = res.Response.EventObjects;
 
           // 添加到图表数据源
           if (thresholdObjects !== undefined) {
@@ -681,42 +678,50 @@ export default {
               })
             );
           }
-          // if (eventObjects !== undefined) {
-          //   chartsObjects = chartsObjects.concat(
-          //     eventObjects.map(item => {
-          //       return {
-          //         FirstOccurTime: item.FirstOccurTime,
-          //         LastOccurTime: item.LastOccurTime,
-          //         Content: item.EventCName,
-          //         Dimensions: item.Dimensions,
-          //         Status: item.Status,
-          //         Type: "event",
-          //         GroupName: item.GroupName,
-          //         ProductCName: item.ProductCName
-          //       };
-          //     })
-          //   );
-          // }
+
+          if (eventObjects !== undefined) {
+            chartsObjects = chartsObjects.concat(
+              eventObjects.map(item => {
+                return {
+                  FirstOccurTime: item.FirstOccurTime,
+                  LastOccurTime: item.LastOccurTime,
+                  Content: item.EventCName,
+                  Dimensions: item.Dimensions,
+                  Status: item.Status,
+                  Type: "event",
+                  GroupName: item.GroupName,
+                  ProductCName: item.ProductCName
+                };
+              })
+            );
+          }
 
           // 排序
           chartsObjects.sort((value1, value2) => {
             return this.sortChartObject(value1, value2);
           });
 
-          this.chartsObjects = chartsObjects;
+          // this.chartsObjects = chartsObjects;
+          // const monitorStartTime = this.monitorStartTime;
+          // chartsObjects = chartsObjects.filter(function(item) {
+          //   const firstOccurTime = moment(item.FirstOccurTime);
+          //   return firstOccurTime.isBefore(monitorStartTime, "day");
+          // });
 
           chartsObjects.forEach(item => {
             startTimes.push(item.FirstOccurTime);
             endTimes.push(item.LastOccurTime);
-            titles.push(item.Content);
             otherInfo.push({
               Status: item.Status,
               Type: item.Type,
-              ProductCName: item.ProductCName
+              ProductCName: item.ProductCName,
+              Title: item.Content,
+              FirstOccurTime: item.FirstOccurTime,
+              LastOccurTime: item.LastOccurTime
             });
           });
 
-          this.timelineData = [startTimes, endTimes, titles, otherInfo];
+          this.timelineData = [startTimes, endTimes, otherInfo];
         } else {
           this.chartLoading = false;
           this.chartsObjects = [];
@@ -780,7 +785,10 @@ export default {
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
           告警策略: item.GroupName,
           開始時間: moment(item.FirstOccurTime).format("YYYY-MM-DD HH:mm:ss"),
-          結束時間: item.LastOccurTime === "-" ? "-" : moment(item.LastOccurTime).format("YYYY-MM-DD HH:mm:ss")
+          結束時間:
+            item.LastOccurTime === "-"
+              ? "-"
+              : moment(item.LastOccurTime).format("YYYY-MM-DD HH:mm:ss")
         });
       });
 
