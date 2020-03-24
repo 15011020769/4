@@ -113,7 +113,11 @@
                 <div>{{scope.row.chart_metadata.repo}}</div>
               </template>
             </el-table-column>
-            <el-table-column :label="$t('TKE.overview.chartmmkj')" max-width="15%"></el-table-column>
+            <el-table-column :label="$t('TKE.overview.chartmmkj')" max-width="15%" prop="chart_metadata">
+              <template slot-scope="scope">
+                <div>{{scope.row.chart_metadata.chart_ns}}</div>
+              </template>
+            </el-table-column>
             <el-table-column label="Chart版本" max-width="10%" prop="chart_metadata">
               <template slot-scope="scope">
                 <div>{{scope.row.chart_metadata.version}}</div>
@@ -605,6 +609,7 @@ export default {
         // console.log(res)
         if (res.Response.Error == undefined) {
           this.tableData = JSON.parse(res.Response.ResponseBody).releases;
+          console.log(this.tableData)
           this.loadShow = false;
           this.flagSE = false;
           // clearInterval(timeId)
