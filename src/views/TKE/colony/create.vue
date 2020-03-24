@@ -4963,8 +4963,8 @@ export default {
         0
       );
 
-      this.colonySecond.allocationCost = _allcost.toFixed(2);
-      this.colonySecond.networkCost = _netcost.toFixed(2);
+      this.colonySecond.allocationCost = _allcost;
+      this.colonySecond.networkCost = _netcost;
 
       if (this.colonySecond.source == 1 && this.colonySecond.master == 2) {
         _allcost2 = this.costAll2.reduce(
@@ -4975,8 +4975,8 @@ export default {
           (num, item) => num + item.BandwidthPrice.UnitPrice,
           0
         );
-        this.colonySecond.allocationCost = (_allcost + _allcost2).toFixed(2);
-        this.colonySecond.networkCost = (_netcost + _netcost2).toFixed(2);
+        this.colonySecond.allocationCost = _allcost + _allcost2;
+        this.colonySecond.networkCost = _netcost + _netcost2;
       }
       this.colonySecond.costShow = false;
     },

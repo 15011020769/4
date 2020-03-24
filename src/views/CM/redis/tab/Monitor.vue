@@ -341,12 +341,19 @@
               this.available.forEach(element => {
                 if (item.MetricName === element) {
                   this.BaseListK.push(item)
-                  setTimeout(() => {
-                    this._GetMonitorData(item.MetricName)
-                  }, 500);
                 }
               });
             });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  console.log(_this.BaseListK[o].MetricName)
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],
