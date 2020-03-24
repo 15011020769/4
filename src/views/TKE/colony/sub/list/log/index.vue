@@ -225,7 +225,13 @@ export default {
     refresh() {
       if (this.autoRefresh === true) {
         this.timeId = setInterval(() => {
-          this.nameSpaceList2();
+          if (this.option3.length == 0) {
+            this.nameSpaceList2();
+          } else if (this.option4.length>0) {
+            this.getPodData();
+          }else if(this.option5.length>0){
+           this.getLog();
+          }
         }, 20000);
       } else {
         clearInterval(this.timeId);
@@ -257,7 +263,6 @@ export default {
               label: item.metadata.name
             });
           });
-          // this.getWorkload();
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -296,15 +301,25 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           // this.option1 = []; //命名空间选项
-          mes.items.forEach(item => {
-            this.option3.push({
-              value: item.metadata.name,
-              label: item.metadata.name
+          if (mes.items.length > 0) {
+            mes.items.forEach(item => {
+              this.option3.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
             });
-          });
-          // if(){//假如Workload有参数的话就调用
-          this.getWorkload();
-          // }
+            // this.getWorkload();
+             this.getPodData();
+          } else {
+            this.option3 = []; //工作负载实例
+            this.option4 = [];
+            this.option5 = [];
+            this.value3 = "Workload" + this.$t("TKE.event.lbwk");
+            this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+            this.value5 = "Container" + this.$t("TKE.event.lbwk");
+            this.htmls = "";
+            this.autoRefresh = false;
+          }
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -452,7 +467,6 @@ export default {
                 label: item.metadata.name
               });
             });
-            // console.log(this.option3[0].value);
             if (this.option3[0].value != "") {
               this.value3 = this.option3[0].value;
             }
