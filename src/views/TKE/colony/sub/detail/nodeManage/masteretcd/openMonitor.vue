@@ -617,7 +617,7 @@ export default {
     getNodeJob(){
        const param = {
         'Conditions.0': JSON.stringify(["tke_cluster_instance_id","=",this.clusterId]),
-        'Conditions.1': JSON.stringify(["node_role","=","Node"]),
+        'Conditions.1': JSON.stringify(["node_role","!=","Node"]),
         'Conditions.2': JSON.stringify(["unInstanceId","in",this.Nodelist]),
         EndTime: this.EndTime,
         Limit: 65535,
@@ -643,8 +643,7 @@ export default {
       param["GroupBys.0"] = "timestamp("+this.grain+"s)";
       param["GroupBys.1"] = "unInstanceId";
       this.axios.post(TKE_GETTKEDATAJOB, param).then(res => {
-          // console.log()
-          console.log(res)
+          // console.log(res)
         if(res.Response.Error === undefined) {
             console.log(res.Response.JobId)
             this.JobId = res.Response.JobId
@@ -660,8 +659,6 @@ export default {
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
-        console.log(this.NodeTitle)
-        //   console.log(res)
         if(res.Response.Error === undefined) {
           let data = JSON.parse(res.Response.Data)
           console.log(JSON.parse(res.Response.Data))
