@@ -196,7 +196,7 @@ module.exports = {
       xjmb: '新建範本',
       csdqmb: '測試當前範本',
       cs: '測試',
-      dxwj: 'COS对對象文件',
+      dxwj: 'COS對象文件',
       qxzwjj: '請選擇文件夾（該文件夾根目錄應包含 handler 入口文件），最大支持250M',
       schuan: '上傳',
       qscdmb: '請上傳zip格式的程式碼包，最大支持50M（如果zip大於10M，僅顯示入口文件）',
