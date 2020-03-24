@@ -146,11 +146,19 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
-        available: [
-          'InPkg',
-          'InTraffic',
-          'OutPkg',
-          'OutTraffic'
+        available: [{
+            MetricName: 'InTraffic'
+          },
+          {
+            MetricName: 'OutTraffic'
+          },
+          {
+            MetricName: 'InPkg'
+          },
+          {
+            MetricName: 'OutPkg'
+          }
+
 
         ],
         disName: {
@@ -226,17 +234,26 @@
             this.BaseListK = []
             this.BaseList.forEach(item => {
               this.available.forEach(element => {
-                if (item.MetricName === element) {
+                if (item.MetricName === element.MetricName) {
                   if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                    this.BaseListK.push(item)
-                    setTimeout(() => {
-                      this._GetMonitorData(item.MetricName)
-                    }, 500);
+                    element.data = item
                   }
                 }
               });
 
             });
+            this.available.forEach(i => {
+              this.BaseListK.push(i.data)
+            });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],

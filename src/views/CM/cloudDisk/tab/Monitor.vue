@@ -183,12 +183,12 @@
         },
         Company: {
           'DiskAwait': 'ms',
-          'DiskReadIops': '次数',
+          'DiskReadIops': '个',
           'DiskReadTraffic': 'KB/s',
           'DiskSvctm': 'ms',
           'DiskUsage': '%',
           'DiskUtil': '%',
-          'DiskWriteIops': '次数',
+          'DiskWriteIops': '个',
           'DiskWriteTraffic': 'KB/s'
         },
         Tips: {
