@@ -13,8 +13,8 @@
         <el-tab-pane :label="$t('TKE.totalMirror.gyjx')" name="third"></el-tab-pane>
         <el-tab-pane :label="$t('TKE.subList.dhjx')" name="fourth"></el-tab-pane>
       </el-tabs>
-      <el-input :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
-        <i slot="suffix" class="el-input__icon el-icon-search"></i>
+      <el-input  v-model="searchContent" :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
+        <i slot="suffix" @click="searchByContent(activeName)" class="el-input__icon el-icon-search"></i>
       </el-input>
       <div v-show="activeName === 'first'">
         <el-table height="300" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
@@ -56,7 +56,7 @@
       <div class="pagstyle" style="height:70px;">
         <span>共&nbsp;{{ TotalCount }}&nbsp;{{$t('TKE.colony.xiang')}}</span>
         <div class="pagestyle_right">
-          <el-pagination :page-size="pagesize" :pager-count="10" :page-sizes="[50, 40, 30, 20, 10]"
+          <el-pagination :page-size="pagesize" :pager-count="7" :page-sizes="[50, 40, 30, 20, 10]"
                          layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
                          @size-change="handleSizeChange"
                          :total="TotalCount">
@@ -84,6 +84,7 @@ export default {
       // city: ['默认区域', '1', '2', '3', '4', '5', '6', '7', '8'],
       // 分页
       mirrorImageRadio: '',
+      searchContent:'',
       tableData: [],
       tableData2: [],
       TotalCount: 0,
@@ -120,6 +121,17 @@ export default {
       this.getNamespaceInfo()
       this.searchUserRepository()
     },
+    searchByContent(str){
+      console.log(str)
+      this.mirrorImageRadio = ''
+      let arr = {
+        first: this.searchUserRepository,
+        second: this.getFavor,
+        third: this.getRepositoryList,
+        fourth: this.getDockerHubRepositoryList
+      }
+      arr[str]()
+    },
     getNamespaceInfo: async function () {
       await this.axios.post(SPACENAME_LIST, { limit: 100 }).then(res => {
         console.log(res)
@@ -128,7 +140,8 @@ export default {
     searchUserRepository: async function () {
       await this.axios.post(MIRROR_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         repoInfo.forEach(item => {
@@ -146,7 +159,8 @@ export default {
     getFavor: async function () {
       await this.axios.post(GETFAVOR, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         console.log(res)
         let { data: { repoInfo } } = res
@@ -157,7 +171,8 @@ export default {
     getRepositoryList: async function () {
       await this.axios.post(GET_REPOSITORY_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
@@ -167,7 +182,8 @@ export default {
     getDockerHubRepositoryList: async function () {
       await this.axios.post(TKE_DOCKERHUB_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
@@ -193,7 +209,8 @@ export default {
       }
     },
     handleClick (tab) {
-      this.activeName = tab
+      this.activeName = tab;
+      this.searchContent='';
     },
     // 改变页数
     handleCurrentChange (val) {
@@ -209,8 +226,8 @@ export default {
 <style scoped lang="scss">
   /* css */
   .dialog > > > .el-dialog {
-    height: 100%;
-    margin-top: 0px !important;
+    height: 95%;
+    margin-top:20px !important;
     position: fixed;
     bottom: 0px;
     top: 0px;
