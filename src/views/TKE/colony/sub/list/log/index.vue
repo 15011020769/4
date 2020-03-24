@@ -21,7 +21,7 @@
             class="ml10"
             @change="nameSpaceList1"
           >
-          <!-- 命名空间 -->
+            <!-- 命名空间 -->
             <el-option
               v-for="(item,index) in option1"
               :key="index"
@@ -36,7 +36,7 @@
             class="ml10"
             @change="nameSpaceList"
           >
-          <!-- 工作负载类型 -->
+            <!-- 工作负载类型 -->
             <el-option
               v-for="(item,index) in option2"
               :key="index"
@@ -44,7 +44,12 @@
               :value="item.value"
             ></el-option>
           </el-select>
-          <el-select v-model="value3" :placeholder="$t('TKE.event.qxzwork')" size="mini" class="ml10">
+          <el-select
+            v-model="value3"
+            :placeholder="$t('TKE.event.qxzwork')"
+            size="mini"
+            class="ml10"
+          >
             <!-- 工作负载实例 -->
             <el-option
               v-for="(item,index) in option3"
@@ -65,7 +70,7 @@
             class="ml10"
             @change="getPodData"
           >
-          <!-- pod第一项 -->
+            <!-- pod第一项 -->
             <el-option
               v-for="(item,index) in option4"
               :key="index"
@@ -81,7 +86,7 @@
             class="ml10"
             @change="getLog"
           >
-          <!-- pod第二项 -->
+            <!-- pod第二项 -->
             <el-option
               v-for="(item,index) in  Array.from(new Set(option5))"
               :key="index"
@@ -93,7 +98,7 @@
         <el-form-item :label="$t('TKE.event.qtxx')">
           <span>{{$t('TKE.overview.zdsx')}}</span>
           <!-- 自动刷新 -->
-          <el-switch v-model="autoRefresh"  class="ml10"></el-switch>
+          <el-switch v-model="autoRefresh" class="ml10"></el-switch>
           <el-select
             v-model="value6"
             :placeholder="$t('TKE.overview.qxz')"
@@ -101,7 +106,7 @@
             class="ml10"
             :disabled="listNumFlag"
           >
-          <!-- 选择多少条数据 -->
+            <!-- 选择多少条数据 -->
             <el-option
               v-for="item in option6"
               :key="item.value"
@@ -140,7 +145,7 @@ export default {
   data() {
     return {
       htmls: "",
-      autoRefreshFlag:false,//自动刷新禁用
+      autoRefreshFlag: false, //自动刷新禁用
       listNumFlag: true, //条数禁用
       option1: [],
       timeId: null,
@@ -167,20 +172,20 @@ export default {
       option5: [],
       option6: [
         {
-          value: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`,
-          label: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`
+          value: `${this.$t("TKE.event.xs")}100${this.$t("TKE.event.tsj")}`,
+          label: `${this.$t("TKE.event.xs")}100${this.$t("TKE.event.tsj")}`
         },
         {
-          value: `${this.$t('TKE.event.xs')}200${this.$t('TKE.event.tsj')}`,
-          label: `${this.$t('TKE.event.xs')}200${this.$t('TKE.event.tsj')}`
+          value: `${this.$t("TKE.event.xs")}200${this.$t("TKE.event.tsj")}`,
+          label: `${this.$t("TKE.event.xs")}200${this.$t("TKE.event.tsj")}`
         },
         {
-          value: `${this.$t('TKE.event.xs')}500${this.$t('TKE.event.tsj')}`,
-          label: `${this.$t('TKE.event.xs')}500${this.$t('TKE.event.tsj')}`
+          value: `${this.$t("TKE.event.xs")}500${this.$t("TKE.event.tsj")}`,
+          label: `${this.$t("TKE.event.xs")}500${this.$t("TKE.event.tsj")}`
         },
         {
-          value: `${this.$t('TKE.event.xs')}1000${this.$t('TKE.event.tsj')}`,
-          label: `${this.$t('TKE.event.xs')}1000${this.$t('TKE.event.tsj')}`
+          value: `${this.$t("TKE.event.xs")}1000${this.$t("TKE.event.tsj")}`,
+          label: `${this.$t("TKE.event.xs")}1000${this.$t("TKE.event.tsj")}`
         }
       ],
       value1: "default",
@@ -188,7 +193,7 @@ export default {
       value3: "",
       value4: "",
       value5: "",
-      value6: `${this.$t('TKE.event.xs')}100${this.$t('TKE.event.tsj')}`,
+      value6: `${this.$t("TKE.event.xs")}100${this.$t("TKE.event.tsj")}`,
       autoRefresh: false, //自动刷新
       loadShow: true // 加载是否显示
     };
@@ -197,15 +202,15 @@ export default {
     HeadCom,
     SEARCH
   },
-  watch:{
-    autoRefresh(val){
+  watch: {
+    autoRefresh(val) {
       if (this.autoRefresh === true) {
-        console.log('kq')
+        console.log("kq");
         var timeId = setInterval(() => {
           this.nameSpaceList();
         }, 40000);
       } else {
-        console.log('gb')
+        console.log("gb");
         this.nameSpaceList();
       }
     }
@@ -233,9 +238,10 @@ export default {
     nameSpaceList1() {
       this.nameSpaceList();
     },
-    async nameSpaceList() {//改变命名空间
+    async nameSpaceList() {
+      //改变命名空间
       //第一项命名空间
-      this.option3 = [];//工作负载实例
+      this.option3 = []; //工作负载实例
       this.option4 = [];
       this.option5 = [];
       var params = {
@@ -247,7 +253,7 @@ export default {
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.option1 = [];//命名空间选项
+          this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
             this.option1.push({
               value: item.metadata.name,
@@ -304,7 +310,7 @@ export default {
             this.value4 = this.option4[0].value;
           } else {
             this.option4 = [];
-            this.value4 = "Pod" + this.$t('TKE.event.lbwk');
+            this.value4 = "Pod" + this.$t("TKE.event.lbwk");
             return;
           }
           if (mes.items.length > 0) {
@@ -318,11 +324,11 @@ export default {
               });
             });
             this.value5 = this.option5[0].value;
-            this.autoRefresh=true;
+            this.autoRefresh = true;
             this.getLog();
           } else {
             this.option5 = [];
-            this.value5 = "Container" + this.$t('TKE.event.lbwk');
+            this.value5 = "Container" + this.$t("TKE.event.lbwk");
             return;
           }
           this.loadShow = false;
@@ -348,14 +354,14 @@ export default {
         this.value1 === "kube-node-lease" ||
         this.value1 === "kube-public"
       ) {
-        this.option3 = [];//工作负载实例
+        this.option3 = []; //工作负载实例
         this.option4 = [];
         this.option5 = [];
-        this.value3 = "Workload" + this.$t('TKE.event.lbwk');
-        this.value4 = "Pod" + this.$t('TKE.event.lbwk');
-        this.value5 = "Container" + this.$t('TKE.event.lbwk');
-        this.htmls='';
-        this.autoRefresh=false;
+        this.value3 = "Workload" + this.$t("TKE.event.lbwk");
+        this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+        this.value5 = "Container" + this.$t("TKE.event.lbwk");
+        this.htmls = "";
+        this.autoRefresh = false;
         var params = {
           Method: "GET",
           Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
@@ -375,27 +381,27 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           if (mes === []) {
-            this.value3 = "Workload" + this.$t('TKE.event.lbwk');
-            this.value4 = "Pod" + this.$t('TKE.event.lbwk');
-            this.value5 = "Container" + this.$t('TKE.event.lbwk');
-            this.option3 = [];////工作负载实例
+            this.value3 = "Workload" + this.$t("TKE.event.lbwk");
+            this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+            this.value5 = "Container" + this.$t("TKE.event.lbwk");
+            this.option3 = []; ////工作负载实例
             this.option4 = [];
             this.option5 = [];
-             this.htmls='';
+            this.htmls = "";
 
-             this.autoRefresh=false;
+            this.autoRefresh = false;
             this.listNumFlag = true;
             return;
           } else {
-            this.option3 = [];////工作负载实例
+            this.option3 = []; ////工作负载实例
             mes.items.forEach(item => {
               this.option3.push({
                 value: item.metadata.name,
                 label: item.metadata.name
               });
             });
-            console.log(this.option3[0].value)
-            if (this.option3[0].value!="") {
+            console.log(this.option3[0].value);
+            if (this.option3[0].value != "") {
               this.value3 = this.option3[0].value;
             }
             this.listNumFlag = false;

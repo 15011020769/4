@@ -16,7 +16,12 @@
           </el-select>
         </el-form-item>
         <el-form-item :label="$t('TKE.overview.lx')">
-          <el-select v-model="typeValue" filterable :placeholder="$t('TKE.event.qxzlx')" @change="getEventList">
+          <el-select
+            v-model="typeValue"
+            filterable
+            :placeholder="$t('TKE.event.qxzlx')"
+            @change="getEventList"
+          >
             <el-option
               v-for="item in typeOptions"
               :key="item.value"
@@ -204,8 +209,9 @@ export default {
       if (this.autoRefresh == true) {
         this.timeId = setInterval(() => {
           this.getKind();
-        }, 30000);
+        }, 1000);
       } else {
+        window.clearInterval(this.timeId);
         this.nsOptions = [];
         this.getKind();
       }
@@ -292,7 +298,7 @@ export default {
           typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
       }
 
-      console.log(this.typeValue);
+      // console.log(this.typeValue);
       var params = {};
       if (
         this.typeValue == "daemonset" ||
