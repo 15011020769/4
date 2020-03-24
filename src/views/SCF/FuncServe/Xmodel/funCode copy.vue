@@ -76,7 +76,8 @@
           </div>
 
         </div>
-        <input type="file" multiple directory mozdirectory webkitdirectory @change="fileClip" class="inputfile" id="webk" v-show="false" />
+        <input type="file" multiple directory mozdirectory webkitdirectory @change="fileClip" class="inputfile"
+          id="webk" v-show="false" />
 
         <p>请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M</p>
       </div>
@@ -109,7 +110,8 @@
         <el-select v-model="testvalue" placeholder="请选择">
           <el-option v-for="(item, i) in modeloptions" :key="i" :label="item" :value="item">
             <span>item</span>
-            <span style="float: right"><i class="el-icon-edit" @click="_editModal(item)" /><i class="el-icon-close" @click="_deleteModal(item)" /></span>
+            <span style="float: right"><i class="el-icon-edit" @click="_editModal(item)" /><i class="el-icon-close"
+                @click="_deleteModal(item)" /></span>
           </el-option>
 
         </el-select>
@@ -157,9 +159,11 @@
       </span>
     </el-dialog>
     <el-dialog title="配置测试模板" :visible.sync="addModal" width="50%">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" size="small" style="width:800px">
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm" size="small"
+        style="width:800px">
         <el-form-item label="测试事件模板" prop="name">
-          <el-input type="text" placeholder="请输入模板名称" v-model="ruleForm.name" autocomplete="off" style="width:200px"></el-input>
+          <el-input type="text" placeholder="请输入模板名称" v-model="ruleForm.name" autocomplete="off" style="width:200px">
+          </el-input>
           <p>1. 最多45个字符，最少2个字符</p>
           <p>2. 字母开头，支持 a-z，A-Z，0-9，-，_，且需要以数字或字母结尾</p>
         </el-form-item>
@@ -179,73 +183,72 @@
 </template>
 
 <script>
-import
-JsZip
+  import
+  JsZip
   from 'jszip'
-import {
-  SCF_DETAILS,
-  LIST_VERSION,
-  CLONE_SCF,
-  TEST_MODEL,
-  TESTMODELS_LIST,
-  DELETE_MODAL,
-  TEST_MODAL,
-  INVOKE,
-  UPD_FUN_CODE
-} from "@/constants";
-import {
-  ErrorTips
-} from "@/components/ErrorTips";
-export default {
-  props: ['FunctionVersion'],
-  data() {
-    return {
-      functionName: this.$route.query.functionName,
-      funDate: {}, //函数详情
-      functionversion: '',
-      SubmissionValue: 'Inline', //提交方法
-      implementInput: '', //执行方法
-      ScienceValue: '', //运行环境
-      SubmissionArr: [{ //提交方法数组
-        label: '在线编辑',
-        value: 'Inline'
-      },
-      {
-        label: '本地上传zip包',
-        value: 'ZipFile'
-      },
-      {
-        label: '本地上传文件夹',
-        value: 'TempCos'
-      },
-      {
-        label: '通过cos上传zip包',
-        value: 'Cos'
-      }
-      ],
-      textarea: '测试',
-      input1: '',
-      fileBase64zip: '', //zip上传
-      fileBase64clip: '',
-      fileBase64clip1: '', //文件夹上传
-      input2: '',
-      Cosoptions: [],
-      cosvalue: '', //cos
-      input3: '', //cos路径
-      modeloptions: [], //模板列表
-      testvalue: '',
-      deleteModal: false,//是否启动删除模板modal
-      modalName: '',//模板名称
-      editModal: false,//是否启动编辑模板modal
-      addModal: false,//是否打开新增modal
-      ruleForm: {
-        name: ''//名称
-      },
-      testResult: {},//测试结果
-      isShowLogList: false,//是否显示日志列表
-      rules: {
-        name: [
+  import {
+    SCF_DETAILS,
+    LIST_VERSION,
+    CLONE_SCF,
+    TEST_MODEL,
+    TESTMODELS_LIST,
+    DELETE_MODAL,
+    TEST_MODAL,
+    INVOKE,
+    UPD_FUN_CODE
+  } from "@/constants";
+  import {
+    ErrorTips
+  } from "@/components/ErrorTips";
+  export default {
+    props: ['FunctionVersion'],
+    data() {
+      return {
+        functionName: this.$route.query.functionName,
+        funDate: {}, //函数详情
+        functionversion: '',
+        SubmissionValue: 'Inline', //提交方法
+        implementInput: '', //执行方法
+        ScienceValue: '', //运行环境
+        SubmissionArr: [{ //提交方法数组
+            label: '在线编辑',
+            value: 'Inline'
+          },
           {
+            label: '本地上传zip包',
+            value: 'ZipFile'
+          },
+          {
+            label: '本地上传文件夹',
+            value: 'TempCos'
+          },
+          {
+            label: '通过cos上传zip包',
+            value: 'Cos'
+          }
+        ],
+        textarea: '测试',
+        input1: '',
+        fileBase64zip: '', //zip上传
+        fileBase64clip: '',
+        fileBase64clip1: '', //文件夹上传
+        input2: '',
+        Cosoptions: [],
+        cosvalue: '', //cos
+        input3: '', //cos路径
+        modeloptions: [], //模板列表
+        testvalue: '',
+        deleteModal: false, //是否启动删除模板modal
+        modalName: '', //模板名称
+        editModal: false, //是否启动编辑模板modal
+        addModal: false, //是否打开新增modal
+        ruleForm: {
+          name: '' //名称
+        },
+        testResult: {}, //测试结果
+        isShowLogList: false, //是否显示日志列表
+        rules: {
+          name: [{
             validator: (rule, value, callback) => {
               if (value === '') {
                 callback(new Error('模板名稱不能為空'))
@@ -259,548 +262,559 @@ export default {
             },
             trigger: "blur",
             required: true
-          }
-        ]
-      }
-    }
-  },
-  created() {
-    this.GetDate();
-    this.GetListFunctionTestModels();
-  },
-  mounted() {
-    // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
-    //   rootNode: document.querySelector('#container'),
-    //   funcName: this.functionName,
-    //   FileTreeModel: {
-    //     isFile: true,
-    //     path: 'https://lambdagz-1253665819.cos.ap-guangzhou.myqcloud.com/1300560919/dasd/dasd_LATEST.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDqbBtfGe4eSSK8CExGjmC0e8Qcnswv6yj%26q-sign-time%3D1584677337%3B1584687397%26q-key-time%3D1584677337%3B1584687397%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dab20ce68cbb4108a6b76c9f5101773ea73a32d5c&response-content-type=application/octet-stream',
-    //     fileName: 'channel-1',
-    //     parentPath: ''
-    //   }
-    // });
-  },
-  methods: {
-
-    //获取函数详情数据
-    GetDate() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue
-      };
-      this.axios.post(SCF_DETAILS, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.funDate = res.Response
-          this.implementInput = res.Response.Handler
-          this.functionversion = res.Response.FunctionVersion
-          this.ScienceValue = res.Response.Runtime
-        } else {
-          let ErrTips = {
-            'InternalError': '內部錯誤',
-            'InternalError.System': '內部系統錯誤',
-            'InvalidParameter.Payload': '請求參數不合法',
-            'InvalidParameterValue': '參數取值錯誤',
-            'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
-            'ResourceNotFound.Function': '函數不存在',
-            'ResourceNotFound.FunctionName': '函數不存在',
-            'UnauthorizedOperation': '未授權操作',
-            'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
-            'UnauthorizedOperation.CodeSecret': '無訪問程式碼權限'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          }]
         }
-      });
-    },
-
-    //下载
-    _Clone() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        FunctionName: this.functionName,
-        Qualifier: this.functionversion,
-      };
-      this.axios.post(CLONE_SCF, param).then(res => {
-        if (res.Response.Error === undefined) {
-          window.open(res.Response.Url)
-        } else {
-          let ErrTips = {
-            'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
-            'InternalError': '内部错误',
-            'InternalError.System': '内部系统错误',
-            'InvalidParameter.Payload': '请求参数不合法',
-            'InvalidParameterValue': ' 参数取值错误',
-            'ResourceNotFound.Function': '函数不存在',
-            'ResourceNotFound.FunctionName': '函数不存在',
-            'ResourceNotFound.FunctionVersion': '函数版本不存在',
-            'ResourceNotFound.Version': '版本不存在',
-            'UnauthorizedOperation.CAM': 'CAM鉴权失败',
-            'UnauthorizedOperation.CodeSecret': ' 无访问代码权限'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    //转base64
-    getBase64(file) {
-      return new Promise((resolve, reject) => {
-        let reader = new FileReader();
-        let fileResult = "";
-        reader.readAsDataURL(file);
-        //开始转
-        reader.onload = function () {
-          fileResult = reader.result;
-        };
-        //转 失败
-        reader.onerror = function (error) {
-          reject(error);
-        };
-        //转 结束 咱就 resolve 出去
-        reader.onloadend = function () {
-          resolve(fileResult);
-        };
-      });
-    },
-
-    //上传zip
-    filezip(file) {
-      let fileName = file.name
-      let pos = fileName.lastIndexOf('.')
-      let lastName = fileName.substring(pos, fileName.length)
-      if (lastName.toLowerCase() !== '.zip' && lastName.toLowerCase() !== '.rar') {
-        this.$message.error('文件必须为.zip或者.rar类型')
-        return
       }
-      // 限制上传文件的大小
-      const isLt = file.size / 1024 / 1024 / 100 <= 0.5
-      if (!isLt) {
-        this.$message.error('最大支持50M（如果zip大于10M，仅显示入口文件）')
-      }
-      this.input1 = file.name
-      this.getBase64(file.raw).then(resBase64 => {
-        this.fileBase64zip = resBase64.split(',')[1] //直接拿到base64信息
-      })
     },
-    _fileClip() {
-      document.getElementById('webk').click()
+    created() {
+      this.GetDate();
+      this.GetListFunctionTestModels();
     },
+    mounted() {
+      // const CSLite = new this.$cloudstudio.CloudStudioLiteSDK({
+      //   rootNode: document.querySelector('#container'),
+      //   funcName: this.functionName,
+      //   FileTreeModel: {
+      //     isFile: true,
+      //     path: 'https://lambdagz-1253665819.cos.ap-guangzhou.myqcloud.com/1300560919/dasd/dasd_LATEST.zip?sign=q-sign-algorithm%3Dsha1%26q-ak%3DAKIDqbBtfGe4eSSK8CExGjmC0e8Qcnswv6yj%26q-sign-time%3D1584677337%3B1584687397%26q-key-time%3D1584677337%3B1584687397%26q-header-list%3D%26q-url-param-list%3D%26q-signature%3Dab20ce68cbb4108a6b76c9f5101773ea73a32d5c&response-content-type=application/octet-stream',
+      //     fileName: 'channel-1',
+      //     parentPath: ''
+      //   }
+      // });
+    },
+    methods: {
 
-    //上传文件夹
-    fileClip(file) {
-      const that = this
-      let clip = file.target.files
-      var JSZip = require("jszip");
-      const zip = new JSZip()
-      var FileApi = require('file-save');
-      Array.from(clip).forEach((item) => {
-        const fixedPath = item.name
-        zip.file(fixedPath, item, {
-          compression: 'DEFLATE',
-          compressionOptions: {
-            level: '6'
+      //获取函数详情数据
+      GetDate() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue
+        };
+        this.axios.post(SCF_DETAILS, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.funDate = res.Response
+            this.implementInput = res.Response.Handler
+            this.functionversion = res.Response.FunctionVersion
+            this.ScienceValue = res.Response.Runtime
+          } else {
+            let ErrTips = {
+              'InternalError': '內部錯誤',
+              'InternalError.System': '內部系統錯誤',
+              'InvalidParameter.Payload': '請求參數不合法',
+              'InvalidParameterValue': '參數取值錯誤',
+              'InvalidParameterValue.CodeSecret': 'CodeSecret傳入錯誤',
+              'ResourceNotFound.Function': '函數不存在',
+              'ResourceNotFound.FunctionName': '函數不存在',
+              'UnauthorizedOperation': '未授權操作',
+              'UnauthorizedOperation.CAM': 'CAM鑒權失敗',
+              'UnauthorizedOperation.CodeSecret': '無訪問程式碼權限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
-        })
-      })
-      const zipcontent = zip.generateAsync({
-        type: 'blob'
-      }).then(function (content) {
-        return new File([content], 'index.zip')
-      });
-      Promise.resolve(zipcontent)
-      zipcontent.then((result) => {
-        that.fileBase64clip = result
-      }).then((result) => {
-        const isLt = that.fileBase64clip.size / 1024 / 1024 / 100 <= 2.5
-        if (!isLt) {
-          this.$message.error('请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M')
+        });
+      },
+
+      //下载
+      _Clone() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          Qualifier: this.functionversion,
+          Namespace: this.$route.query.SpaceValue,
+        };
+        this.axios.post(CLONE_SCF, param).then(res => {
+          if (res.Response.Error === undefined) {
+            window.open(res.Response.Url)
+          } else {
+            let ErrTips = {
+              'FailedOperation.FunctionStatusError': '函数在部署中,无法做此操作',
+              'InternalError': '内部错误',
+              'InternalError.System': '内部系统错误',
+              'InvalidParameter.Payload': '请求参数不合法',
+              'InvalidParameterValue': ' 参数取值错误',
+              'ResourceNotFound.Function': '函数不存在',
+              'ResourceNotFound.FunctionName': '函数不存在',
+              'ResourceNotFound.FunctionVersion': '函数版本不存在',
+              'ResourceNotFound.Version': '版本不存在',
+              'UnauthorizedOperation.CAM': 'CAM鉴权失败',
+              'UnauthorizedOperation.CodeSecret': ' 无访问代码权限'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      //转base64
+      getBase64(file) {
+        return new Promise((resolve, reject) => {
+          let reader = new FileReader();
+          let fileResult = "";
+          reader.readAsDataURL(file);
+          //开始转
+          reader.onload = function () {
+            fileResult = reader.result;
+          };
+          //转 失败
+          reader.onerror = function (error) {
+            reject(error);
+          };
+          //转 结束 咱就 resolve 出去
+          reader.onloadend = function () {
+            resolve(fileResult);
+          };
+        });
+      },
+
+      //上传zip
+      filezip(file) {
+        let fileName = file.name
+        let pos = fileName.lastIndexOf('.')
+        let lastName = fileName.substring(pos, fileName.length)
+        if (lastName.toLowerCase() !== '.zip' && lastName.toLowerCase() !== '.rar') {
+          this.$message.error('文件必须为.zip或者.rar类型')
           return
         }
-        this.getBase64(this.fileBase64clip).then(resBase64 => {
-          this.fileBase64clip1 = resBase64.split(',')[1] //直接拿到base64信息
+        // 限制上传文件的大小
+        const isLt = file.size / 1024 / 1024 / 100 <= 0.5
+        if (!isLt) {
+          this.$message.error('最大支持50M（如果zip大于10M，仅显示入口文件）')
+        }
+        this.input1 = file.name
+        this.getBase64(file.raw).then(resBase64 => {
+          this.fileBase64zip = resBase64.split(',')[1] //直接拿到base64信息
         })
-      })
+      },
+      _fileClip() {
+        document.getElementById('webk').click()
+      },
+
+      //上传文件夹
+      fileClip(file) {
+        const that = this
+        let clip = file.target.files
+        var JSZip = require("jszip");
+        const zip = new JSZip()
+        var FileApi = require('file-save');
+        Array.from(clip).forEach((item) => {
+          const fixedPath = item.name
+          zip.file(fixedPath, item, {
+            compression: 'DEFLATE',
+            compressionOptions: {
+              level: '6'
+            }
+          })
+        })
+        const zipcontent = zip.generateAsync({
+          type: 'blob'
+        }).then(function (content) {
+          return new File([content], 'index.zip')
+        });
+        Promise.resolve(zipcontent)
+        zipcontent.then((result) => {
+          that.fileBase64clip = result
+        }).then((result) => {
+          const isLt = that.fileBase64clip.size / 1024 / 1024 / 100 <= 2.5
+          if (!isLt) {
+            this.$message.error('请选择文件夹（该文件夹根目录应包含 handler 入口文件），最大支持250M')
+            return
+          }
+          this.getBase64(this.fileBase64clip).then(resBase64 => {
+            this.fileBase64clip1 = resBase64.split(',')[1] //直接拿到base64信息
+          })
+        })
 
 
-    },
-    _newmodel() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        FunctionName: this.functionName,
-        TestModelName: 'ceshi',
-        TestModelValue: '123456789',
-      };
-      this.axios.post(TEST_MODEL, param).then(res => {
-        console.log(res)
-        if (res.Response.Error === undefined) {
+      },
+      _newmodel() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          TestModelName: 'ceshi',
+          TestModelValue: '123456789',
+        };
+        this.axios.post(TEST_MODEL, param).then(res => {
+          console.log(res)
+          if (res.Response.Error === undefined) {
 
-        } else {
-          let ErrTips = {
-            'InternalError': '内部错误',
-            'InvalidParameterValue': '参数取值错误',
-            'InvalidParameterValue.TestModelName': 'TestModelName传入错误',
-            'InvalidParameterValue.TestModelValue': 'testModelValue长度超限',
-            'LimitExceeded.FunctionTestModel': 'FunctionTestModel数量超出最大限制',
-            'LimitExceeded.TestModel': '同一个函数下测试模版配额个数已达限制',
-            'ResourceInUse.TestModel': '测试模版已存在',
-            'ResourceInUse.TestModelName': 'TestModelName已存在',
-            'ResourceNotFound.Function': '函数不存在',
-            'ResourceNotFound.FunctionName': '函数不存在',
-            'UnauthorizedOperation.CAM': 'CAM鉴权失败'
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          } else {
+            let ErrTips = {
+              'InternalError': '内部错误',
+              'InvalidParameterValue': '参数取值错误',
+              'InvalidParameterValue.TestModelName': 'TestModelName传入错误',
+              'InvalidParameterValue.TestModelValue': 'testModelValue长度超限',
+              'LimitExceeded.FunctionTestModel': 'FunctionTestModel数量超出最大限制',
+              'LimitExceeded.TestModel': '同一个函数下测试模版配额个数已达限制',
+              'ResourceInUse.TestModel': '测试模版已存在',
+              'ResourceInUse.TestModelName': 'TestModelName已存在',
+              'ResourceNotFound.Function': '函数不存在',
+              'ResourceNotFound.FunctionName': '函数不存在',
+              'UnauthorizedOperation.CAM': 'CAM鉴权失败'
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      //保存
+      _Preservation() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          FunctionName: this.functionName,
+          Handler: this.implementInput,
+        };
+
+        if (this.SubmissionValue === 'ZipFile') { // 上传的是zip
+          param.ZipFile = this.fileBase64zip
+        } else if (this.SubmissionValue === 'TempCos') { // 上传的是文件夹
+          param.ZipFile = this.fileBase64clip1
         }
-      });
-    },
 
-    //保存
-    _Preservation() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        FunctionName: this.functionName,
-        Handler: this.implementInput,
-      };
+        this.axios.post(UPD_FUN_CODE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.$message({
+              message: '保存成功',
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            this.$message({
+              message: '保存失败',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
 
-      if(this.SubmissionValue === 'ZipFile'){      // 上传的是zip
-        param.ZipFile = this.fileBase64zip
-      }else if(this.SubmissionValue === 'TempCos'){      // 上传的是文件夹
-        param.ZipFile = this.fileBase64clip1
+      //获取函数测试模板列表
+      GetListFunctionTestModels() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          Action: 'ListFunctionTestModels',
+          FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue
+        };
+
+        this.axios.post(TESTMODELS_LIST, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.modeloptions = res.Response.TestModels;
+          } else {
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "InvalidParameterValue": "参数取值错误",
+              "ResourceNotFound.Function": "函数不存在。",
+              "ResourceNotFound.FunctionName": "函数不存在。",
+              "UnauthorizedOperation.CAM": "CAM鉴权失败。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      //是否删除模板
+      _deleteModal(name) {
+        this.deleteModal = true;
+        this.modalName = name;
+      },
+
+      //是否修改模板
+      _editModal(name) {
+        this.editModal = true;
+        this.modalName = name;
+        this.GetFunctionTestModel();
+      },
+
+      //删除测试模板
+      async _deleteTestModal() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          Action: 'DeleteFunctionTestModel',
+          FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue,
+          TestModelName: this.modalName
+        };
+
+        this.axios.post(DELETE_MODAL, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.deleteModal = true;
+            this.modalName = '';
+            this.GetListFunctionTestModels();
+            this.$message({
+              message: "删除成功",
+              type: "success",
+              showClose: true,
+              duration: 0
+            });
+          } else {
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "InvalidParameterValue": "参数取值错误",
+              "ResourceNotFound.Function": "函数不存在。",
+              "ResourceNotFound.FunctionName": "函数不存在。",
+              "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+              "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
+              "ResourceNotFound.TestModel": "测试模版不存在。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      //获取函数测试模板
+      GetFunctionTestModel() {
+        let param = {
+          Region: localStorage.getItem('regionv2'),
+          Version: "2018-04-16",
+          Action: 'DeleteFunctionTestModel',
+          FunctionName: this.functionName,
+          Namespace: this.$route.query.SpaceValue,
+          TestModelName: this.modalName
+        };
+
+        this.axios.post(TEST_MODAL, param).then(res => {
+          if (res.Response.Error === undefined) {} else {
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "InvalidParameterValue": "参数取值错误",
+              "ResourceNotFound.FunctionName": "函数不存在。",
+              "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+              "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      //测试模板
+      _testModal() {
+        let param = {
+          Version: "2018-04-16",
+          Region: localStorage.getItem('regionv2'),
+          FunctionName: this.functionName,
+          InvocationType: "RequestResponse",
+          LogType: "Tail",
+          ClientContext: JSON.stringify({
+            key1: "test value 1",
+            key2: "test value 2"
+          }),
+          Qualifier: this.functionversion,
+          Namespace: this.$route.query.SpaceValue
+        }
+
+        this.axios.post(INVOKE, param).then(res => {
+          if (res.Response.Error === undefined) {
+            this.testResult = res.Response.Result;
+            this.isShowLogList = true;
+          } else {
+            let ErrTips = {
+              "InternalError": "内部错误",
+              "InvalidParameterValue": "参数取值错误",
+              "ResourceNotFound.FunctionName": "函数不存在。",
+              "UnauthorizedOperation.CAM": "CAM鉴权失败。",
+              "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
+              "FailedOperation.FunctionStatusError": "函数在部署中,无法做此操作。",
+              "FailedOperation.InvokeFunction": "调用函数失败。",
+              "InternalError.System": "内部系统错误。",
+              "InvalidParameterValue.Param": "入参不是标准的json。",
+              "ResourceNotFound.Function": "函数不存在。",
+              "ResourceUnavailable.InsufficientBalance": "余额不足，请先充值。"
+            };
+            let ErrOr = Object.assign(ErrorTips, ErrTips);
+            this.$message({
+              message: ErrOr[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+
+      // 提交方法 切换
+      changSubmit() {
+
       }
-
-      this.axios.post(UPD_FUN_CODE, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.$message({
-            message: '保存成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          this.$message({
-            message: '保存失败',
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    //获取函数测试模板列表
-    GetListFunctionTestModels() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'ListFunctionTestModels',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue
-      };
-
-      this.axios.post(TESTMODELS_LIST, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.modeloptions = res.Response.TestModels;
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    //是否删除模板
-    _deleteModal(name) {
-      this.deleteModal = true;
-      this.modalName = name;
-    },
-
-    //是否修改模板
-    _editModal(name) {
-      this.editModal = true;
-      this.modalName = name;
-      this.GetFunctionTestModel();
-    },
-
-    //删除测试模板
-    async _deleteTestModal() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'DeleteFunctionTestModel',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue,
-        TestModelName: this.modalName
-      };
-
-      this.axios.post(DELETE_MODAL, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.deleteModal = true;
-          this.modalName = '';
-          this.GetListFunctionTestModels();
-          this.$message({
-            message: "删除成功",
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
-            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
-            "ResourceNotFound.TestModel": "测试模版不存在。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    //获取函数测试模板
-    GetFunctionTestModel() {
-      let param = {
-        Region: localStorage.getItem('regionv2'),
-        Version: "2018-04-16",
-        Action: 'DeleteFunctionTestModel',
-        FunctionName: this.functionName,
-        Namespace: this.$route.query.SpaceValue,
-        TestModelName: this.modalName
-      };
-
-      this.axios.post(TEST_MODAL, param).then(res => {
-        if (res.Response.Error === undefined) {
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
-            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    //测试模板
-    _testModal() {
-      let param = {
-        Version: "2018-04-16",
-        Region: localStorage.getItem('regionv2'),
-        FunctionName: this.functionName,
-        InvocationType: "RequestResponse",
-        LogType: "Tail",
-        ClientContext: JSON.stringify({ key1: "test value 1", key2: "test value 2" }),
-        Qualifier: this.functionversion,
-        Namespace: this.$route.query.SpaceValue
-      }
-
-      this.axios.post(INVOKE, param).then(res => {
-        if (res.Response.Error === undefined) {
-          this.testResult = res.Response.Result;
-          this.isShowLogList = true;
-        } else {
-          let ErrTips = {
-            "InternalError": "内部错误",
-            "InvalidParameterValue": "参数取值错误",
-            "ResourceNotFound.FunctionName": "函数不存在。",
-            "UnauthorizedOperation.CAM": "CAM鉴权失败。",
-            "ResourceNotFound.FunctionTestModel": "FunctionTestModel不存在。",
-            "FailedOperation.FunctionStatusError": "函数在部署中,无法做此操作。",
-            "FailedOperation.InvokeFunction": "调用函数失败。",
-            "InternalError.System": "内部系统错误。",
-            "InvalidParameterValue.Param": "入参不是标准的json。",
-            "ResourceNotFound.Function": "函数不存在。",
-            "ResourceUnavailable.InsufficientBalance": "余额不足，请先充值。"
-          };
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
-        }
-      });
-    },
-
-    // 提交方法 切换
-    changSubmit(){
-
     }
   }
-}
 
 </script>
 <style lang="scss" scoped>
-.CodeContent {
-  background-color: #fff;
-  box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
-  padding: 20px;
+  .CodeContent {
+    background-color: #fff;
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+    padding: 20px;
 
-  ::v-deep .el-select {
-    height: 32px !important;
-    line-height: 32px !important;
-    width: 200px !important;
-  }
-
-  ::v-deep .el-input__inner {
-    height: 32px !important;
-    line-height: 32px !important;
-    width: 200px !important;
-  }
-
-  ::v-deep .el-input {
-    height: 32px !important;
-    line-height: 32px !important;
-    width: 200px !important;
-  }
-
-  .CodeTool {
-    font-size: 12px;
-    color: #888;
-    display: flex;
-    justify-content: space-between;
-
-    .CodeTool-frist {
-      flex-basis: 70%;
+    ::v-deep .el-select {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
     }
 
-    div {
-      display: flex;
+    ::v-deep .el-input__inner {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
+    }
 
-      .CourseRight {
-        margin-right: 40px;
+    ::v-deep .el-input {
+      height: 32px !important;
+      line-height: 32px !important;
+      width: 200px !important;
+    }
+
+    .CodeTool {
+      font-size: 12px;
+      color: #888;
+      display: flex;
+      justify-content: space-between;
+
+      .CodeTool-frist {
+        flex-basis: 70%;
       }
 
-      p {
+      div {
         display: flex;
-        line-height: 30px;
-        margin-right: 10px;
 
-        span {
+        .CourseRight {
+          margin-right: 40px;
+        }
+
+        p {
+          display: flex;
+          line-height: 30px;
           margin-right: 10px;
+
+          span {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+
+    .content {
+      background: #f2f2f2;
+      padding: 20px;
+      margin: 20px 0;
+
+      .ZipFile {
+        display: flex;
+        margin-bottom: 20px;
+
+        .ZipFilename {
+          line-height: 32px;
+          color: #888;
+          width: 100px;
+        }
+
+        .ZipFilecontent {
+          display: flex;
+        }
+      }
+    }
+
+    .functest {
+      padding-top: 20px;
+      border-top: 1px solid #ccc;
+
+      .testmb {
+        margin: 0 20px;
+      }
+    }
+
+    .test-info {
+      position: relative;
+      left: 0;
+      right: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .test-result {
+        margin-top: 20px;
+      }
+
+      .back-result {
+        height: 50px;
+        width: 100%;
+        background-color: rgb(242, 242, 242);
+
+        p:nth-of-type(1) {
+          padding: 10px 0 0 10px;
+          font-size: 12px;
+          color: rgb(48, 127, 220);
+        }
+      }
+
+      .info-left {
+        background-color: rgb(242, 242, 242);
+        width: 300px;
+        float: left;
+        margin: 20px 20px 0px 0px;
+        height: 300px;
+
+        >p {
+          color: rgb(48, 127, 220);
+          padding: 10px 0 0 10px;
+        }
+      }
+
+      .log-list {
+        background-color: rgb(242, 242, 242);
+        height: 300px;
+        margin: 20px 0px 0px 320px;
+        width: auto;
+
+        >p {
+          padding: 10px 0 0 10px;
+          font-size: 12px;
+          color: rgb(48, 127, 220);
         }
       }
     }
   }
 
-  .content {
-    background: #f2f2f2;
-    padding: 20px;
-    margin: 20px 0;
-
-    .ZipFile {
-      display: flex;
-      margin-bottom: 20px;
-
-      .ZipFilename {
-        line-height: 32px;
-        color: #888;
-        width: 100px;
-      }
-
-      .ZipFilecontent {
-        display: flex;
-      }
-    }
-  }
-
-  .functest {
-    padding-top: 20px;
-    border-top: 1px solid #ccc;
-
-    .testmb {
-      margin: 0 20px;
-    }
-  }
-  .test-info {
-    position: relative;
-    left: 0;
-    right: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    .test-result {
-      margin-top: 20px;
-    }
-    .back-result {
-      height: 50px;
-      width: 100%;
-      background-color: rgb(242, 242, 242);
-      p:nth-of-type(1) {
-        padding: 10px 0 0 10px;
-        font-size: 12px;
-        color: rgb(48, 127, 220);
-      }
-    }
-    .info-left {
-      background-color: rgb(242, 242, 242);
-      width: 300px;
-      float: left;
-      margin: 20px 20px 0px 0px;
-      height: 300px;
-      > p {
-        color: rgb(48, 127, 220);
-        padding: 10px 0 0 10px;
-      }
-    }
-    .log-list {
-      background-color: rgb(242, 242, 242);
-      height: 300px;
-      margin: 20px 0px 0px 320px;
-      width: auto;
-      > p {
-        padding: 10px 0 0 10px;
-        font-size: 12px;
-        color: rgb(48, 127, 220);
-      }
-    }
-  }
-}
 </style>
