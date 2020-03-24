@@ -38,7 +38,7 @@ module.exports = {
     vpnwg: 'VPN連接',
     errorTxt: '請輸入正確搜索訊息',
     table: {
-      x1: 'ID/主機名',
+      x1: 'ID/名稱',
       x2: '監控',
       x3: '狀態',
       x4: '網路類型',
@@ -98,7 +98,7 @@ module.exports = {
       gjcl: '告警策略',
       fhlb: '返回清單',
       fzjh: '負載均衡CLB',
-      zjm: 'ID/主機名',
+      zjm: 'ID/名稱',
       zt: '狀態',
       wllx: '網路類型',
       sswl: '所屬網路',
