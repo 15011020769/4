@@ -1,7 +1,7 @@
 <template>
   <div class="Monitor">
     <div class="Tips">
-      <p>如果当前函数尚未配置告警服务，可以<a>[前往新增告警]</a>为函数添加告警策略</p>
+      <p>如果当前函数尚未配置告警服务，可以<a href="../CM/index.html#/strategy/create"> [前往新增告警]</a>为函数添加告警策略</p>
     </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
