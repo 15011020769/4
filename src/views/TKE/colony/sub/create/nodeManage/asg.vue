@@ -389,7 +389,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange">￥{{ scope.row.Price.UnitPrice }}</span>元/{{$t('TKE.colony.xs')}}起
+                    <span class="text-orange">NT$ {{ scope.row.Price.UnitPrice }}</span>元/{{$t('TKE.colony.xs')}}起
                   </template>
                 </el-table-column>
               </el-table>

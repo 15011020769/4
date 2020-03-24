@@ -917,7 +917,7 @@
                                   :label="$t('TKE.colony.jxing')"
                                 >
                                   <template slot-scope="scope">
-                                    {{ TypeNamescope.row.TypeName }}
+                                    {{ scope.row.TypeName }}
                                   </template>
                                 </el-table-column>
                                 <el-table-column :label="$t('TKE.colony.gz')">
