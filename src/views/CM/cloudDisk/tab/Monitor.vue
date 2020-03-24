@@ -247,15 +247,14 @@
             this.BaseList.forEach(item => {
               this.available.forEach(element => {
                 if (item.MetricName === element.MetricName) {
-                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                    element.data = item
-                  }
+                  element.data = item
                 }
               });
-
             });
             this.available.forEach(i => {
-              this.BaseListK.push(i.data)
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
+              }
             });
             for (let
                 k = 0; k < this.BaseListK.length; k++) {
