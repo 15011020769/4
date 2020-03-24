@@ -1,6 +1,6 @@
  <!-- 事件 -->
 <template>
-  <div>
+  <div style="height: 400px;">
     <subTitle title="事件" />
     <div class="tke-card tke-formpanel-wrap">
       <h4 class="tke-formpanel-title">{{$t('TKE.event.tjsx')}}</h4>
