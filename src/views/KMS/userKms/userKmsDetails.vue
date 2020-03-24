@@ -372,7 +372,7 @@
           if (res.Response.Error === undefined) {
 
             this.keyList = res.Response.KeyMetadata;
-            console.log(this.keyList)
+            // console.log(this.keyList)
             this.loading = false;
           } else {
             let ErrTips = {
