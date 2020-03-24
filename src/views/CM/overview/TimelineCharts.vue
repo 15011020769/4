@@ -14,12 +14,10 @@ export default {
   name: "TimelineCharts",
   props: {
     timelineData: {
-      type: [Array],
-      default: function() {
-        return [[], [], []];
-      }
+      type: [Array]
     },
-    loading: Boolean
+    loading: Boolean,
+    day: String
   },
   mounted() {
     window.onresize = () => {
@@ -27,7 +25,7 @@ export default {
     };
 
     let myCharts = echarts.init(this.$refs.chart);
-    this.setupEcharts(myCharts, [], [], []);
+    this.setupEcharts(myCharts, [], [], [], []);
   },
   beforeDestroy() {
     window.onresize = null;
@@ -39,35 +37,42 @@ export default {
         myCharts,
         this.timelineData[0],
         this.timelineData[1],
-        this.timelineData[2]
+        this.timelineData[2],
+        this.timelineData[3]
       );
     }
   },
   methods: {
-    setupEcharts(myCharts, startTimes, endTimes, titles) {
+    setupEcharts(myCharts, startTimes, endTimes, titles, otherInfo) {
       let contentData = [];
       let timeShow = "";
 
-      let today = moment().format("YYYY-MM-DD");
+      let todayMoment = moment(this.day);
+      let today = todayMoment.format("YYYY-MM-DD");
 
       for (var ii = 0; ii < 27; ii++) {
         timeShow = `${today} ${ii > 10 ? ii : "0" + ii}:00:00`;
-        contentData.push([timeShow, "", "", "", "", "", ""]);
+        contentData.push([timeShow, "", "", "", "", "", "", "", ""]);
       }
 
       endTimes.forEach((tempEndTime, index) => {
         // 有些是今天以前的，为了和腾讯云显示一致，改为今天
         let startTimeMoment = moment(startTimes[index]);
-        startTimeMoment.set("year", moment().year());
-        startTimeMoment.set("month", moment().month());
-        startTimeMoment.set("date", moment().date());
+        startTimeMoment.set("year", todayMoment.year());
+        startTimeMoment.set("month", todayMoment.month());
+        startTimeMoment.set("date", todayMoment.date());
 
         let endTime = null;
         // “-”表示至今
         if (tempEndTime === "-") {
           endTime = `${today} 23:59:59`;
         } else {
-          endTime = moment(tempEndTime).format("YYYY-MM-DD HH:mm:ss");
+          let endTimeMoment = moment(endTimes[index]);
+          endTimeMoment.set("year", todayMoment.year());
+          endTimeMoment.set("month", todayMoment.month());
+          endTimeMoment.set("date", todayMoment.date());
+
+          endTime = endTimeMoment.format("YYYY-MM-DD HH:mm:ss");
         }
 
         contentData.push([
@@ -77,7 +82,8 @@ export default {
           titles[index], // 标题
           startTimes[index], // 实际开始时间
           endTimes[index], // 实际结束时间
-          (index + 1) * 25 // 用于显示y轴的值
+          (index + 1) * 25, // 用于显示y轴的值
+          otherInfo[index]
         ]);
       });
 
@@ -85,9 +91,19 @@ export default {
         tooltip: {
           trigger: "item",
           formatter: val => {
-            let text = "";
-            text = `${val.data[3]}<br/>正在告警<br/>發生/結束時間<br/>`;
+            let text = `${val.data[3]}<br/>`;
+            let otherInfo = val.data[7];
+            if (otherInfo !== undefined) {
+              const type = otherInfo.Type;
+              const status = otherInfo.Status;
+              const statusText = status === 0 ? "正在告警" : "已恢復";
+              const productName = otherInfo.ProductCName;
+
+              text += `${productName} ${statusText}<br/>`;
+            }
+
             if (val.data[4] && val.data[5]) {
+              text += `發生/結束時間<br/>`;
               let startTime = moment(val.data[4]).format("YYYY-MM-DD HH:mm:ss");
               let endTime = "";
               if (val.data[5] === "-") {
@@ -119,7 +135,8 @@ export default {
             yAxisIndex: 0,
             filterMode: "filter",
             start: 60,
-            end: 100
+            end: 100,
+            showDetail: false
           }
         ],
         xAxis: {
