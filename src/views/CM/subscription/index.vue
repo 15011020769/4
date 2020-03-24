@@ -459,7 +459,8 @@ export default {
       this.loadShow = true; //加载
       var params = {
         Version: "2018-07-24",
-        Module: "monitor"
+        Module: "monitor",
+        Language:"zh-CN"
       };
       this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
         console.log(res.Response, "数据");
