@@ -480,7 +480,7 @@
         return time;
       },
       UpName(value) {
-        var index = value.replace('tencent', 'taipei');
+        var index = value.replace('tencent', 'taipei').replace('cloud', 'Top Cloud').replace('qcloud', 'Top Cloud')
         return index
 
       }
