@@ -58,6 +58,10 @@ export default {
       curBillMax: 0,
       lastBillMax: 0,
       curOriginMax: 0,
+      exportCurBill: [], // 导出表格中当前计费带宽
+      exportLastBill: [], // 导出表格上一周期计费带宽
+      exportCurOrigin: [], // 导出表格当前回源寬頻
+      exportLastOrigin: [], // 导出表格上一周期回源寬頻
       color: ['#006eff', '#29cc85', '#FF584C'],
       tooltip: {
         trigger: 'axis',
@@ -105,7 +109,7 @@ export default {
         data.push(
           ['峰值寬頻', this.curBillMax + 'Mbps'],
           [],
-          ['時間', '當前計費流量（bps）', '上一週期計費流量（bps）']
+          ['時間', '當前計費寬頻（bps）', '上一週期計費寬頻（bps）']
         )
 
         name="billing_bandwidth_trend"
@@ -113,22 +117,22 @@ export default {
 
           data.push([
             item,
-            this.serCurBill[index],
-            this.serLastBill[index]
+            this.exportCurBill[index],
+            this.exportLastBill[index]
           ])
         })
       } else {
         data.push(
           ['峰值寬頻', this.curOriginMax + 'Mbps'],
           [],
-          ['時間', '當前回源流量（bps）', '上一週期回源流量（bps）']
+          ['時間', '當前回源寬頻（bps）', '上一週期回源寬頻（bps）']
         )
         name = 'bandwidth_trend'
         this.xAxisCurOrigin.forEach((item, index) => {
           data.push([
             item,
-            this.serCurOrigin[index],
-            this.serLastOrigin[index]
+            this.exportCurOrigin[index],
+            this.exportLastOrigin[index]
           ])
         })
       }
@@ -192,6 +196,7 @@ export default {
         .then(({ Response: { Data } }) => {
           const curBillArr = []
           const xAxisArr = []
+          const exportBill = []
           if (Data && Data.length) {
             const curMax = Data[0].BillingData[0].SummarizedData.Value
             this.curBillMax = Number((curMax / 1e6).toFixed(2) === '0.00' ? 0 : (curMax / 1e6).toFixed(2))
@@ -199,10 +204,12 @@ export default {
             res && res.map((item) => {
               xAxisArr.push(item.Time)
               curBillArr.push((item.Value / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2))
+              exportBill.push(item.Value)
             })
           }
           this.xAxisCurBill = xAxisArr
           this.serCurBill = curBillArr
+          this.exportCurBill = exportBill
         })
     },
     // 上一周期$t('CDNT.report.14')
@@ -213,13 +220,16 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastBillArr = []
+          const exportBill = []
           if (Data && Data.length) {
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
               lastBillArr.push((item.Value / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2))
+              exportBill.push(item.Value)
             })
           }
           this.serLastBill = lastBillArr
+          this.exportLastBill = exportBill
         })
     },
     // 当前回源寬頻
@@ -231,6 +241,7 @@ export default {
         .then(({ Response: { Data } }) => {
           const curOriginArr = []
           const xAxisArr = []
+          const exportOrigin = []
           if (Data && Data.length) {
             const curMax = Data[0].OriginData[0].SummarizedData.Value
             this.curOriginMax = Number((curMax / 1e6).toFixed(2) === '0.00' ? 0 : (curMax / 1e6).toFixed(2))
@@ -238,10 +249,12 @@ export default {
             res && res.map((item) => {
               xAxisArr.push(item.Time)
               curOriginArr.push((item.Value / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2))
+              exportOrigin.push(item.Value)
             })
           }
           this.xAxisCurOrigin = xAxisArr
           this.serCurOrigin = curOriginArr
+          this.exportCurOrigin = exportOrigin
         })
     },
     // 上一周期回源寬頻
@@ -252,13 +265,16 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastOriginArr = []
+          const exportOrigin = []
           if (Data && Data.length) {
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
               lastOriginArr.push((item.Value / 1e6).toFixed(2) === '0.00' ? 0 : (item.Value / 1e6).toFixed(2))
+              exportOrigin.push(item.Value)
             })
           }
           this.serLastOrigin = lastOriginArr
+          this.exportLastOrigin = exportOrigin
         })
     }
   }

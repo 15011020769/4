@@ -97,6 +97,7 @@
             v-for="item in refreshTimeArr"
             :key="item.value"
             :command="item.value"
+            :class="item.dropActive ? 'dropActive' : ''"
             >{{ item.label }}</el-dropdown-item
           >
         </el-dropdown-menu>
@@ -141,12 +142,12 @@ export default {
         EndTIme: ""
       },
       refreshTimeArr: [
-        { label: "暂停", value: 0 },
-        { label: "30秒", value: 30 },
-        { label: "1分钟", value: 60 },
-        { label: "2分钟", value: 120 },
-        { label: "5分钟", value: 300 },
-        { label: "10分钟", value: 600 }
+        { label: "暂停", value: 0, dropActive: false },
+        { label: "30秒", value: 30, dropActive: false },
+        { label: "1分钟", value: 60, dropActive: false },
+        { label: "2分钟", value: 120, dropActive: false },
+        { label: "5分钟", value: 300, dropActive: false },
+        { label: "10分钟", value: 600, dropActive: false }
       ],
       picker: {
         disabledDate(time) {
@@ -368,6 +369,13 @@ export default {
     },
     handleCommand(command) {
       clearInterval(this.refreshTimer);
+      this.refreshTimeArr.forEach(ele => {
+        if (command == ele.value) {
+          ele.dropActive = true;
+        } else {
+          ele.dropActive = false;
+        }
+      });
       if (command != 0) {
         this.currentRefreshInterval = command;
         this.refreshTimer = setInterval(
@@ -427,5 +435,13 @@ export default {
   font-weight: 700;
   font-size: 16px;
   color: #888888;
+}
+.dropActive {
+  background-color: #006eff;
+  color: #fff;
+}
+.el-dropdown-menu__item:not(.is-disabled):hover {
+  background-color: #006eff;
+  color: #fff;
 }
 </style>

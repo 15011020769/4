@@ -283,6 +283,9 @@ export default {
             }
           ]
         } else {
+          if(this.granularity === 86400 ) {
+            this.granularity = 300
+          }
           this.options = [
             {
               value: 300,

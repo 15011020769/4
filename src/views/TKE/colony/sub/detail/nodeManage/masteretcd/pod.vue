@@ -86,7 +86,7 @@
           label="实例名称"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link">{{scope.row.metadata.name}}</span>
+            <span>{{scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -94,7 +94,7 @@
           label="状态"
           >
           <template slot-scope="scope">
-              <span :class="[scope,row.redStatus?'text-red':'text-green']">{{scope.row.status.phase}}</span>
+              <span :class="[scope.row.redStatus?'text-red':'text-green']">{{scope.row.status.phase}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -163,14 +163,14 @@
             <span>{{scope.row.restart}}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           label="操作"
           >
           <template slot-scope="scope">
             <span class="tke-text-link" @click="reconstruction(scope.row)">销毁重建</span>
             <span class="tke-text-link ml10" @click="remoteLogin(scope.row)">远程登录</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       
 

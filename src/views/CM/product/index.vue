@@ -106,7 +106,8 @@
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置">
               <template slot-scope="scope">
-                  <p><span>{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span> <a @click="jump(scope.row.InstanceId)">新增配置</a></p>
+                  <p><span>{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span>
+                  <span class="New_Configuration"><a @click="jump(scope.row.InstanceId)">新增配置</a></span></p>
               </template>
             </el-table-column>
           </el-table>
@@ -507,6 +508,9 @@ export default {
     width: 100%;
     background: white;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.32);
+    .New_Configuration :hover{
+      cursor: pointer;
+    }
   }
 }
 .explain {

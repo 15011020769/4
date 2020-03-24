@@ -5,7 +5,13 @@
       <h4  class="tke-formpanel-title">主机信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item label="节点ID">
-          <div class="tke-form-item_text"><span class="tke-text-link">{{detail.InstanceId}}</span></div>
+          <div class="tke-form-item_text">
+            <span>
+              <a :href="'../CVM/index.html#/cloudHost/cloudHostDetail/'+detail.InstanceId+'/1'">
+                {{detail.InstanceId}}
+              </a>
+            </span>
+          </div>
         </el-form-item>
         <el-form-item label="状态">
           <div class="tke-form-item_text"><span class="text-green"></span></div>
@@ -38,7 +44,7 @@
       </el-form>
     </div>
 
-    <div class="tke-card tke-formpanel-wrap mt10">
+    <!-- <div class="tke-card tke-formpanel-wrap mt10">
       <h4  class="tke-formpanel-title">Kubernetes信息</h4>
       <el-form  class="tke-form" label-position='left' label-width="150px" size="mini">
         <el-form-item label="Kubernetes Labels">
@@ -81,7 +87,7 @@
           <div class="tke-form-item_text">v1.10.5-tke.6</div>
         </el-form-item>
       </el-form>
-    </div>
+    </div> -->
    </div>
 </template>
 

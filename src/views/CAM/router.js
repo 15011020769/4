@@ -14,6 +14,14 @@ export default new Router({
     redirect: '/UserListNew'
   },
   {
+    path: '/serviceAuthority', // 服务授权
+    name: 'serviceAuthority',
+    component: () => import( /* webpackChunkName: "UserGroup" */ './Role/serviceAuthority.vue'),
+    meta: {
+      keepAlive: true
+    }
+  },
+  {
     path: '/UserGroup', // 用户组
     name: 'UserGroup',
     component: () => import( /* webpackChunkName: "UserGroup" */ './UserGroup/UserGroup.vue'),

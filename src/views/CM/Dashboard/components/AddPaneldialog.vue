@@ -7,7 +7,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save" :disabled="!canSubmit">{{$t('CVM.Dashboard.qd')}}</el-button>
+        <el-button type="primary" @click="save('addPanelForm')" :disabled="!canSubmit">{{$t('CVM.Dashboard.qd')}}</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -23,7 +23,6 @@ import {
 export default {
   data() {
     var validateRepeatName = (rule, value, callback) => {
-      console.log(this.options, 12313);
       let inFlag = true;
       this.options.forEach(ele => {
         if (ele.label == value) {
@@ -34,6 +33,7 @@ export default {
       });
       if (inFlag) {
         this.canSubmit = true;
+        callback();
       }
     };
     return {
@@ -86,8 +86,8 @@ export default {
     cancel() {
       this.$emit("cancel");
     },
-    save() { // 确定按钮
-      this.$refs['addPanelForm'].validate(valid => {
+    save(formName) { // 确定按钮
+      this.$refs[formName].validate(valid => {
         if (valid) {
           this.$emit("save");
           this.handlereateDashboardView();

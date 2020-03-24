@@ -162,7 +162,7 @@
                   style="margin:0;"
                 ></el-button>
               </div>
-              <div class="trail" v-if="thresholdObjects.length > 0">
+              <div class="trail" v-if="chartsObjects.length > 0">
                 <a href="#" @click="exportCSV">導出CSV</a
                 ><i class="el-icon-download"></i>
               </div>
@@ -170,6 +170,7 @@
             <TimelineCharts
               :timelineData="timelineData"
               :loading="chartLoading"
+              :day="monitorStartTime"
             ></TimelineCharts>
             <div class="button-group">
               <el-button
@@ -280,7 +281,7 @@ export default {
       ],
       period: "10",
       timelineData: null,
-      thresholdObjects: [],
+      chartsObjects: [],
       quotaList: [],
       projectId: 0,
       productValue: "cvm_device",
@@ -652,51 +653,79 @@ export default {
       this.axios.post(ONE_DAY_MONITOR_LIST, params).then(res => {
         this.chartLoading = false;
         if (res.Response.Error === undefined) {
+          let chartsObjects = [];
           const startTimes = [];
           const endTimes = [];
-          const titles = [];
+          const otherInfo = [];
 
           const thresholdObjects = res.Response.ThresholdObjects;
+          const eventObjects = res.Response.EventObjects;
 
-          if (thresholdObjects === undefined) {
-            this.thresholdObjects = [];
-            this.timelineData = [[], [], []];
-          } else {
-            thresholdObjects.sort((value1, value2) => {
-              const firstTime = moment(value1.FirstOccurTime);
-              const secondTime = moment(value2.FirstOccurTime);
-
-              var i =
-                firstTime.hour() * 60 * 60 +
-                firstTime.minute() * 60 +
-                firstTime.second();
-              var n =
-                secondTime.hour() * 60 * 60 +
-                secondTime.minute() * 60 +
-                secondTime.second();
-              if (i > n) {
-                return -1;
-              } else if (i < n) {
-                return 1;
-              } else {
-                return 0;
-              }
-            });
-
-            this.thresholdObjects = thresholdObjects;
-
-            thresholdObjects.forEach(item => {
-              startTimes.push(item.FirstOccurTime);
-              endTimes.push(item.LastOccurTime);
-              titles.push(item.Content);
-            });
-
-            this.timelineData = [startTimes, endTimes, titles];
+          // 添加到图表数据源
+          if (thresholdObjects !== undefined) {
+            chartsObjects = chartsObjects.concat(
+              thresholdObjects.map(item => {
+                return {
+                  FirstOccurTime: item.FirstOccurTime,
+                  LastOccurTime: item.LastOccurTime,
+                  Content: item.Content,
+                  Dimensions: item.Dimensions,
+                  Status: item.Status,
+                  Type: "threshold",
+                  GroupName: item.GroupName,
+                  ProductCName: ""
+                };
+              })
+            );
           }
+
+          if (eventObjects !== undefined) {
+            chartsObjects = chartsObjects.concat(
+              eventObjects.map(item => {
+                return {
+                  FirstOccurTime: item.FirstOccurTime,
+                  LastOccurTime: item.LastOccurTime,
+                  Content: item.EventCName,
+                  Dimensions: item.Dimensions,
+                  Status: item.Status,
+                  Type: "event",
+                  GroupName: item.GroupName,
+                  ProductCName: item.ProductCName
+                };
+              })
+            );
+          }
+
+          // 排序
+          chartsObjects.sort((value1, value2) => {
+            return this.sortChartObject(value1, value2);
+          });
+
+          // this.chartsObjects = chartsObjects;
+          // const monitorStartTime = this.monitorStartTime;
+          // chartsObjects = chartsObjects.filter(function(item) {
+          //   const firstOccurTime = moment(item.FirstOccurTime);
+          //   return firstOccurTime.isBefore(monitorStartTime, "day");
+          // });
+
+          chartsObjects.forEach(item => {
+            startTimes.push(item.FirstOccurTime);
+            endTimes.push(item.LastOccurTime);
+            otherInfo.push({
+              Status: item.Status,
+              Type: item.Type,
+              ProductCName: item.ProductCName,
+              Title: item.Content,
+              FirstOccurTime: item.FirstOccurTime,
+              LastOccurTime: item.LastOccurTime
+            });
+          });
+
+          this.timelineData = [startTimes, endTimes, otherInfo];
         } else {
           this.chartLoading = false;
-          this.thresholdObjects = [];
-          this.timelineData = [[], [], []];
+          this.chartsObjects = [];
+          this.timelineData = [];
           let ErrTips = {
             InternalError: "内部错误",
             UnauthorizedOperation: "未授权操作"
@@ -710,6 +739,26 @@ export default {
           });
         }
       });
+    },
+    sortChartObject(value1, value2) {
+      const firstTime = moment(value1.FirstOccurTime);
+      const secondTime = moment(value2.FirstOccurTime);
+
+      var i =
+        firstTime.hour() * 60 * 60 +
+        firstTime.minute() * 60 +
+        firstTime.second();
+      var n =
+        secondTime.hour() * 60 * 60 +
+        secondTime.minute() * 60 +
+        secondTime.second();
+      if (i > n) {
+        return -1;
+      } else if (i < n) {
+        return 1;
+      } else {
+        return 0;
+      }
     },
     exportCSV() {
       let json = [];
@@ -725,18 +774,21 @@ export default {
         return item.viewName === this.productValue;
       });
 
-      this.thresholdObjects.forEach(item => {
+      this.chartsObjects.forEach(item => {
         json.push({
           監控事件: item.Content,
-          項目: project,
-          地域: "中國臺北",
+          項目: item.Type === "threshold" ? project : "-",
+          地域: "台灣台北",
           產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
           對象: item.Dimensions === undefined ? "" : item.Dimensions,
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
           告警策略: item.GroupName,
-          開始時間: item.FirstOccurTime,
-          結束時間: item.LastOccurTime
+          開始時間: moment(item.FirstOccurTime).format("YYYY-MM-DD HH:mm:ss"),
+          結束時間:
+            item.LastOccurTime === "-"
+              ? "-"
+              : moment(item.LastOccurTime).format("YYYY-MM-DD HH:mm:ss")
         });
       });
 

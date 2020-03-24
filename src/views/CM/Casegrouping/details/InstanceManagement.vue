@@ -26,7 +26,7 @@
             v-loading="loadShow"
             height="500px"
           >
-            <el-table-column type="selection" width="40"></el-table-column>
+            <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column label="ID/主机名" v-if="viewName === 'cvm_device'">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>

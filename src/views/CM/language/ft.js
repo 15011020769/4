@@ -38,7 +38,7 @@ module.exports = {
     vpnwg: 'VPN連接',
     errorTxt: '請輸入正確搜索訊息',
     table: {
-      x1: 'ID/主機名',
+      x1: 'ID/名稱',
       x2: '監控',
       x3: '狀態',
       x4: '網路類型',
@@ -98,7 +98,7 @@ module.exports = {
       gjcl: '告警策略',
       fhlb: '返回清單',
       fzjh: '負載均衡CLB',
-      zjm: 'ID/主機名',
+      zjm: 'ID/名稱',
       zt: '狀態',
       wllx: '網路類型',
       sswl: '所屬網路',
@@ -173,7 +173,9 @@ module.exports = {
       mcheng: '名稱',
       qd: '確 定',
       cmmjkmb: '重命名監控面板',
-      zjklbz: '在監控面板中添加監控圖表，讓您更便捷查看指標監控！'
+      zjklbz: '在監控面板中添加監控圖表，讓您更便捷查看指標監控！',
+      elPop1: '導出的csv文件為utf-8編碼,',
+      elPop2: '如果查看有亂碼，請嘗試切換文件編碼格式'
     },
     overview: {
       syysy: '剩餘1000條/已使用0條',

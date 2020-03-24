@@ -19,7 +19,7 @@
     </Header>
     <div class="Dashboard-main" v-loading="mainLoading">
       <div class="explain" v-show="this.ViewList.length">
-        <p>{{ $t("CVM.Dashboard.jhtjsj") }}</p>
+        <!-- <p>{{ $t("CVM.Dashboard.jhtjsj") }}</p> -->
         <p>{{ $t("CVM.Dashboard.zcbbdc") }}</p>
       </div>
       <div class="headBtn">
@@ -78,7 +78,14 @@
             <p>
               <span v-show="retractChartFlag">
                 <a @click="exportExcel(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
-                <i class="el-icon-info" style="color:#888"></i>
+                <el-popover
+                  placement="left-start"
+                  width="200"
+                  trigger="hover">
+                  <p>{{ $t("CVM.Dashboard.elPop1") }}</p>
+                  <p>{{ $t("CVM.Dashboard.elPop2") }}</p>
+                  <i class="el-icon-info" slot="reference" style="color:#888"></i>
+                </el-popover>
               </span>
               <a v-show="openChartFlag" @click="openChart" style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
               <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
@@ -849,13 +856,11 @@
 
     >div.chartList {
       width: 32%;
-
+      margin-bottom: 10px;
       .chartItem {
         padding: 20px;
         background: #ffffff;
         border: 1px solid #e2e1e1;
-
-        // margin-bottom: 10px;
         p {
           display: flex;
           justify-content: space-between;

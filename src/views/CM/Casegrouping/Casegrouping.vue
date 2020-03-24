@@ -115,6 +115,7 @@
           placeholder="请输入实例组名称，20字以内"
           v-model="editSearchVal"
           @input="EditTips"
+          maxlength="20"
         ></el-input>
         <p v-if="tipsShow">实例组名称不能为空</p>
       </div>

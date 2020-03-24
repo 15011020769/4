@@ -47,6 +47,10 @@ export default {
       serLastOrigin: [], // 上一周期回源流量
       legendBill: ['當前計費流量', '上一週期計費流量'],
       legendOrigin: ['當前回源流量', '上一週期回源流量'],
+      exportCurBill: [], // 导出表格中当前计费流量
+      exportLastBill: [], // 导出表格上一周期计费流量
+      exportCurOrigin: [], // 导出表格当前回源流量
+      exportLastOrigin: [], // 导出表格上一周期回源流量
       color: ['#006eff', '#29cc85', "#FF584C"],
       tooltip: {
         trigger: 'axis',
@@ -97,8 +101,8 @@ export default {
         this.xAxisCurBill.forEach((item,index) => {
           data.push([
             item,
-            this.serCurBill[index],
-            this.serLastBill[index]
+            this.exportCurBill[index],
+            this.exportLastBill[index]
           ])
         })
       } else {
@@ -107,8 +111,8 @@ export default {
         this.xAxisCurOrigin.forEach((item,index) => {
           data.push([
             item,
-            this.serCurOrigin[index],
-            this.serLastOrigin[index]
+            this.exportCurOrigin[index],
+            this.exportLastOrigin[index]
           ])
         })
       }
@@ -171,15 +175,18 @@ export default {
         .then(({ Response: { Data } }) => {
           const curBillArr = []
           const xAxisArr = []
+          const exportBill = []
           if (Data && Data.length) {
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)
               curBillArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
+              exportBill.push(item.Value)
             })
           }
           this.xAxisCurBill = xAxisArr
           this.serCurBill = curBillArr
+          this.exportCurBill = exportBill // 导出流量单位为B
         })
     },
     // 上一周期计费流量
@@ -190,13 +197,16 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastBillArr = []
+          const exportBill = []
           if (Data && Data.length) {
             const res = Data[0].BillingData[0].DetailData
             res && res.map((item) => {
               lastBillArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
+              exportBill.push(item.Value)
             })
           }
           this.serLastBill = lastBillArr
+          this.exportLastBill = exportBill
         })
     },
     // 当前回源流量
@@ -208,15 +218,18 @@ export default {
         .then(({ Response: { Data } }) => {
           const curOriginArr = []
           const xAxisArr = []
+          const exportOrigin = []
           if (Data && Data.length) {
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
               xAxisArr.push(item.Time)
               curOriginArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
+              exportOrigin.push(item.Value)
             })
           }
           this.xAxisCurOrigin = xAxisArr
           this.serCurOrigin = curOriginArr
+          this.exportCurOrigin = exportOrigin
         })
     },
     // 上一周期回源流量
@@ -227,13 +240,16 @@ export default {
       })
         .then(({ Response: { Data } }) => {
           const lastOriginArr = []
+          const exportOrigin = []
           if (Data && Data.length) {
             const res = Data[0].OriginData[0].DetailData
             res && res.map((item) => {
               lastOriginArr.push((item.Value / 1e9).toFixed(2) === '0.00' ? 0 : (item.Value / 1e9).toFixed(2))
+              exportOrigin.push(item.Value)
             })
           }
           this.serLastOrigin = lastOriginArr
+          this.exportLastOrigin = exportOrigin
         })
     },
   }

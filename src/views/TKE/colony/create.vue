@@ -1935,16 +1935,16 @@
                                 </div>
                               </div>
                               <div v-if="item.addBtnShow">
-                              <div
-                                class="add-data-disk"
-                                v-if="
-                                  item.buyDataDisk &&
-                                    item.buyDataDiskArr.length != 0
-                                "
-                                @click="AddDataDisk(index)"
-                              >
-                                {{ $t("TKE.colony.tjsjp") }}
-                              </div>
+                                <div
+                                  class="add-data-disk"
+                                  v-if="
+                                    item.buyDataDisk &&
+                                      item.buyDataDiskArr.length != 0
+                                  "
+                                  @click="AddDataDisk(index)"
+                                >
+                                  {{ $t("TKE.colony.tjsjp") }}
+                                </div>
                               </div>
                               <div class="btn">
                                 <el-button @click="DataDiskSure(index, 1)">{{
@@ -2874,7 +2874,7 @@ export default {
             // 数据盘
             dataDiskValue: "暫不購買",
             buyDataDisk: false,
-            addBtnShow:true,
+            addBtnShow: true,
             dataDiskArr: [],
             buyDataDiskArr: [],
             dataDiskVal: "CLOUD_PREMIUM",
@@ -2914,7 +2914,7 @@ export default {
             dataDiskArr: [],
             buyDataDiskArr: [],
             buyDataDisk: false,
-            addBtnShow:true,
+            addBtnShow: true,
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
             dataDiskNum1: "100",
@@ -4822,8 +4822,12 @@ export default {
           param["InternetAccessible.PublicIpAssigned"] = true;
         }
         if (this.colonySecond.charging == 2) {
-          param["EnhancedService.SecurityService.Enabled"] = true;
-          param["EnhancedService.MonitorService.Enabled"] = true;
+          param[
+            "EnhancedService.SecurityService.Enabled"
+          ] = this.colonyThird.safetyChecked;
+          param[
+            "EnhancedService.MonitorService.Enabled"
+          ] = this.colonyThird.cloudwatchChecked;
           param["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
           // if (this.colonySecond.renew === true) {
           param["InstanceChargePrepaid.RenewFlag"] = "NOTIFY_AND_AUTO_RENEW";
@@ -4907,8 +4911,12 @@ export default {
           }
 
           if (this.colonySecond.charging == 2) {
-            params["EnhancedService.SecurityService.Enabled"] = true;
-            params["EnhancedService.MonitorService.Enabled"] = true;
+            params[
+              "EnhancedService.SecurityService.Enabled"
+            ] = this.colonyThird.safetyChecked;
+            params[
+              "EnhancedService.MonitorService.Enabled"
+            ] = this.colonyThird.cloudwatchChecked;
 
             params["InstanceChargePrepaid.Period"] = this.colonySecond.buyTime;
             // if (this.colonySecond.renew === true) {
@@ -5150,18 +5158,18 @@ export default {
     //安全组重复验证(yhs)
     selectChange() {
       let { safeArr } = this.colonyThird;
-      safeArr.map(item => {
-        item.error = false;
-        if (item.securityGroupSel !== "") item.textNull = false; //对安全组的非空验证
-      });
+      // safeArr.map(item => {
+      //   item.error = false;
+      //   if (item.securityGroupSel !== "") item.textNull = false; //对安全组的非空验证
+      // });
       for (let i = 0; i < safeArr.length - 1; i++) {
         for (let j = i + 1; j < safeArr.length; j++) {
-          if (safeArr[i].securityGroupSel === "" || safeArr[i].error) break;
           if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel) {
             safeArr[j].error = true;
           }
         }
       }
+      console.log(safeArr);
       this.colonyThird.safeArr = safeArr;
     },
     //删除一项
@@ -5278,8 +5286,8 @@ export default {
           param["InternetAccessible"].PublicIpAssigned = true;
         }
         param["EnhancedService"] = {
-          SecurityService: { Enabled: true },
-          MonitorService: { Enabled: true }
+          SecurityService: { Enabled: this.colonyThird.safetyChecked },
+          MonitorService: { Enabled: this.colonyThird.cloudwatchChecked }
         };
 
         if (this.colonySecond.charging == 2) {
@@ -5368,8 +5376,8 @@ export default {
           params["InternetAccessible"].PublicIpAssigned = true;
         }
         params["EnhancedService"] = {
-          SecurityService: { Enabled: true },
-          MonitorService: { Enabled: true }
+          SecurityService: { Enabled: this.colonyThird.safetyChecked },
+          MonitorService: { Enabled: this.colonyThird.cloudwatchChecked }
         };
         if (this.colonySecond.charging == 2) {
           if (this.colonySecond.renew === true) {
@@ -5438,31 +5446,32 @@ export default {
       //安全组非空验证(yhs)
       let submit = "success";
       let { safeArr } = this.colonyThird;
-      safeArr.forEach(item => {
-        item.textNull = false;
-        if (item.securityGroupSel === "") {
-          item.textNull = true;
-          submit = "error";
-        }
-      });
+      // safeArr.forEach(item => {
+      //   item.textNull = false;
+      //   if (item.securityGroupSel === "") {
+      //     item.textNull = true;
+      //     submit = "error";
+      //   }
+      // });
       this.colonyThird.safeArr = [...safeArr];
       if (submit === "error") return;
+      if (this.colonyThird.loginModeRadio == 3) {
+        if (this.colonyThird.confirmPassword == "") {
+          this.colonyThird.confirmPasswordWran = true;
+          return false;
+        }
+        if (
+          this.colonyThird.passwordWran === true ||
+          this.colonyThird.confirmPasswordWran === true
+        ) {
+          return false;
+        }
+      }
+      this.firstBox = false;
+      this.secondBox = false;
+      this.thirdBox = false;
+      this.fourthBox = true;
 
-      if (this.colonyThird.confirmPassword == "") {
-        this.colonyThird.confirmPasswordWran = true;
-        return false;
-      }
-      if (
-        this.colonyThird.passwordWran === true ||
-        this.colonyThird.confirmPasswordWran === true
-      ) {
-        return false;
-      } else {
-        this.firstBox = false;
-        this.secondBox = false;
-        this.thirdBox = false;
-        this.fourthBox = true;
-      }
       this.ValueParam();
     },
     // ----------------------------------------- 第四步 ---------------------------------------
@@ -5750,15 +5759,14 @@ export default {
         this.colonySecond.worker == 1
       ) {
         param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
-        
-param[
+
+        param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] =  this.colonyThird.cloudwatchChecked
-       
-        
+        ] = this.colonyThird.cloudwatchChecked;
+
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = this.colonyThird.safetyChecked
+        ] = this.colonyThird.safetyChecked;
         for (let i in this.rightList) {
           param[
             "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
@@ -5787,10 +5795,10 @@ param[
         param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = true;
+        ] = this.colonyThird.cloudwatchChecked;
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = true;
+        ] = this.colonyThird.safetyChecked;
         for (let i in this.rightList) {
           param[
             "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
@@ -5811,10 +5819,10 @@ param[
         param["ExistedInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
         param[
           "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = true;
+        ] = this.colonyThird.cloudwatchChecked;
         param[
           "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = true;
+        ] = this.colonyThird.safetyChecked;
         for (let i in this.rightList) {
           param[
             "ExistedInstancesForNode.1.ExistedInstancesPara.InstanceIds." + i
@@ -5843,10 +5851,10 @@ param[
         param["ExistedInstancesForNode.0.NodeRole"] = "MASTER_ETCD";
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = true;
+        ] = this.colonyThird.cloudwatchChecked;
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = true;
+        ] = this.colonyThird.safetyChecked;
         for (let i in this.rightList) {
           param[
             "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i

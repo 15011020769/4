@@ -93,14 +93,12 @@
         </el-table-column>
         <el-table-column :label="$t('TKE.colony.idjdm')">
           <template slot-scope="scope">
-            <!-- <span @click="goNodeDetail(scope.row)" class="tke-text-link">{{
-              scope.row.InstanceId
-            }}</span> -->
-            <span>{{scope.row.InstanceId}}
-              <a :href="'../CVM/index.html#/cloudHost/cloudHostDetail/'+scope.row.InstanceId+'/1'">
-                <i class="el-icon-edit-outline"/>
-              </a>
+            <span @click="goNodeDetail(scope.row)" class="tke-text-link">
+              {{scope.row.InstanceId}}
             </span>
+            <a :href="'../CVM/index.html#/cloudHost/cloudHostDetail/'+scope.row.InstanceId+'/1'">
+              <i class="el-icon-edit-outline"/>
+            </a>
             <p class="" slot="{{scope.row.InstanceName}}">
               {{ scope.row.InstanceName }}
             </p>

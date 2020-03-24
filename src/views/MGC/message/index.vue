@@ -46,7 +46,7 @@
         </div> -->
       </div>
       <div class="meaasge-table" v-loading="loading">
-        <el-table :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table ref="multipleTable" :data="tableData" style="width: 100%" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="title" label="訊息内容" width="650">
             <template slot-scope="scope">
@@ -60,7 +60,7 @@
             其他
           </el-table-column>
         </el-table>
-        <span class="choose-num">{{'已選擇'+this.getData.length+'項'}}</span>
+        <span class="choose-num">{{'已選擇'+this.getDataAll.length+'項'}}</span>
         <div class="Right-style pagstyle" style="height:70px;">
           <span class="pagtotal">共&nbsp;{{TotalCount}}&nbsp;{{$t('MGC.tiao')}}</span>
           <el-select v-model="pagevalue" placeholder="请選擇" size="mini" class="pageselect" @change='pagechange'>
@@ -112,6 +112,7 @@
         btnIndex: 0, //按钮默认选中
         delshow: true, //删除按钮可用状态
         readshow: true, //标记已读可用状态
+        idKey: 'id',
         //按钮数据
         btnData: [
           "全部",
@@ -125,6 +126,7 @@
         inputVal: "", //搜索输入的内容
         tableData: [], //表格数据
         getData: [], //获取选中时的数据
+        getDataAll: [], //获取选中时所有的数据
         json: [], //搜索数据
         tableAll: [],
         //分页
@@ -190,7 +192,8 @@
             this.TotalCount = res.page.totalCount
             this.json = res.page.list;
             this.tableAll = res.page.list;
-            this.loading = false
+            this.loading = false;
+            setTimeout(()=>{this.setSelectRow()},50)
           } else {
             this.loading = false;
             this.$message({
@@ -216,13 +219,14 @@
       //批量删除弹框点击确定删除
       confirmDel() {
         var delIndex = [];
-        this.getData.forEach(item => {
+        this.getDataAll.forEach(item => {
           delIndex.push(item.id)
         })
         let id = delIndex.join(',')
         this.axios.get(`${process.env.VUE_APP_adminUrl + DELETE_DATA}` + '?ids=' + id).then(res => {
-          console.log(res)
           this.init()
+          this.$refs.multipleTable.clearSelection()
+          this.getDataAll=this.getData=[]
         })
         this.dialogVisible = false;
       },
@@ -250,13 +254,14 @@
       changeRead() {
         if (this.getData.length != 0) {
           var updata = []
-          this.getData.forEach(item => {
+          this.getDataAll.forEach(item => {
             updata.push(item.id)
           })
           let id = updata.join(',')
           this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATAID_DATA}` + '?ids=' + id).then(res => {
-            console.log(res)
             this.init()
+            this.$refs.multipleTable.clearSelection();
+            this.getDataAll=this.getData=[]
           })
         } else {
           this.$message({
@@ -275,7 +280,6 @@
         this.tableData.forEach(item => {
           let uin = item.uin
           this.axios.get(`${process.env.VUE_APP_adminUrl + UPDATALL_DATA}` + '?uin=' + uin).then(res => {
-            console.log(res)
             this.init()
           })
         })
@@ -317,20 +321,8 @@
       //多选框
       handleSelectionChange(val) {
         this.getData = val;
-        if (this.getData.length == 0) {
-          this.delshow = true;
-          this.readshow = true
-        } else {
-          this.delshow = false;
-        }
-        for (var i = 0; i < this.getData.length; i++) {
-          if (this.getData[i].status.includes("0")) {
-            this.readshow = false;
-            break;
-          } else {
-            this.readshow = true
-          }
-        }
+        setTimeout(()=>{this.changePageCoreRecordData()}, 50) 
+        setTimeout(()=>{this.disablechoose()}, 60) 
       },
       //删除弹框x
       handleClose() {
@@ -339,6 +331,85 @@
       //改变未读状态弹框
       handleCloseMsg() {
         this.MessageDialog = false;
+      },
+      //选择回显
+       setSelectRow() {
+       if (!this.getDataAll || this.getDataAll.length <= 0) {
+           return;
+       }
+       // 标识当前行的唯一键的名称
+       let idKey = this.idKey;
+       let selectAllIds = [];
+       let that = this;
+       this.getDataAll.forEach(row=>{
+           selectAllIds.push(row[idKey]);
+       })
+       this.$refs.multipleTable.clearSelection();
+       for(var i = 0; i < this.tableData.length; i++) {                    
+           if (selectAllIds.indexOf(this.tableData[i][idKey]) >= 0) {
+               // 设置选中
+               this.$refs.multipleTable.toggleRowSelection(this.tableData[i], true);
+           }
+        }
+      },
+      //判断删除，已读按钮是否可用
+     disablechoose(){
+     if (this.getDataAll.length <= 0) {
+          this.delshow = true;
+          this.readshow = true
+        } else {
+          this.delshow = false;
+        }
+        for (var i = 0; i < this.getDataAll.length; i++) {
+          if (this.getDataAll[i].status.includes("0")) {
+            this.readshow = false;
+            break;
+          } else {
+            this.readshow = true
+          }
+        }
+     },
+           // 记忆选择核心方法
+      changePageCoreRecordData () {
+         // 标识当前行的唯一键的名称
+         let idKey = this.idKey;
+         let that = this;
+      // 如果总记忆中还没有选择的数据，那么就直接取当前页选中的数据，不需要后面一系列计算
+      if (this.getDataAll.length <= 0) {
+             this.getDataAll = this.getData;
+             return;
+         }
+         // 总选择里面的key集合
+         let selectAllIds = [];
+         this.getDataAll.forEach(row=>{
+             selectAllIds.push(row[idKey]);
+         })
+         let selectIds = []
+         // 获取当前页选中的id
+         this.getData.forEach(row=>{
+             selectIds.push(row[idKey]);
+             // 如果总选择里面不包含当前页选中的数据，那么就加入到总选择集合里
+             if (selectAllIds.indexOf(row[idKey]) < 0) {
+                 that.getDataAll.push(row);
+             }
+         })
+         let noSelectIds = [];
+         // 得到当前页没有选中的id
+         this.tableData.forEach(row=>{
+             if (selectIds.indexOf(row[idKey]) < 0) {
+                 noSelectIds.push(row[idKey]);
+             }
+         })
+         noSelectIds.forEach(id=>{
+             if (selectAllIds.indexOf(id) >= 0) {
+                 for(let i = 0; i< that.getDataAll.length; i ++) {
+                     if (that.getDataAll[i][idKey] == id) {
+                         that.getDataAll.splice(i, 1);
+                         break;
+                     }
+                 }
+             }
+         })  
       }
     }
   };

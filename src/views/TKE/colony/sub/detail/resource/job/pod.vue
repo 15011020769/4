@@ -55,7 +55,7 @@
           label="实例名称"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link">{{scope.row.metadata && scope.row.metadata.name}}</span>
+            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
