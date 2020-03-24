@@ -28,7 +28,7 @@
           <h4>图标配置</h4>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">图表名称</p>
-            <el-input size="mini" v-model="picName" style="max-width:250px"></el-input>
+            <el-input size="mini" v-model="picName" style="max-width:250px" maxlength='30'></el-input>
           </div>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">监控指标</p>
@@ -49,7 +49,7 @@
           </div>
         </div>
         <div class="footer-left-right">
-          <h2>{{picName}}</h2>
+          <h2 class="white-point">{{picName}}</h2>
           <div>
             <Echarts
               :time="times"
@@ -545,5 +545,11 @@ export default {
 }
 .Cam-right {
   float: right;
+}
+.white-point{
+  width: 250px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 </style>
