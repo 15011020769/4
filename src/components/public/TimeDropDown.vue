@@ -84,7 +84,7 @@
         },
         picker: {
           disabledDate(time) {
-            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 5184000000)
+            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 5184000000 * 2.5)
           }
         },
 
@@ -125,7 +125,7 @@
         let startTimeSec = new Date(startTime).getTime();
         let endTimeSec = new Date(endTime).getTime();
         let XAxis = [];
-        for (var i = startTimeSec; i <= endTimeSec; i = i + Number(this.grainValue)*1000) {
+        for (var i = startTimeSec; i <= endTimeSec; i = i + Number(this.grainValue) * 1000) {
           XAxis.push(moment(new Date(i)).format("YYYY/MM/DD HH:mm:ss"))
         }
         return XAxis;
@@ -189,12 +189,25 @@
         } else if (endTime.diff(startTime, 'd') <= 29 && this.Difference == 'D') {
           Basis = 'Nearly_30_days'
         }
-        this.TimeArr.forEach(item => {
+        if (endTime.diff(startTime, 'd') > 60 && this.Difference == 'H') {
+          this.TimeArr.push({
+            Time: 'Nearly_60_days',
+            TimeGranularity: [{
+              value: "86400",
+              label: "1天"
+            }]
+          })
+          Basis = 'Nearly_60_days'
+        }
+        this.TimeArr.forEach((item, index) => {
           if (item.Time === Basis) {
             if (item.TimeGranularity) {
               this.TimeGranularity = item.TimeGranularity
               this.grainValue = item.TimeGranularity[0].value
             }
+          }
+          if (item.Time == 'Nearly_60_days') {
+            this.TimeArr.splice(index, 1)
           }
         });
         this.visible = false;
