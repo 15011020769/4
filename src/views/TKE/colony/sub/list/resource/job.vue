@@ -56,11 +56,11 @@
       <el-table :data="list.slice((pageIndex - 1) * pageSize, pageIndex * pageSize)" v-loading="loadShow" id="exportTable" style="width: 100%">
         <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
-            <!-- <span
+            <span
               class="tke-text-link"
               @click="goJobDetail(scope.row)"
-            >{{scope.row.metadata && scope.row.metadata.name}}</span> -->
-            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
+            >{{scope.row.metadata && scope.row.metadata.name}}</span>
+            <!-- <span>{{scope.row.metadata && scope.row.metadata.name}}</span> -->
           </template>
         </el-table-column>
         <el-table-column prop label="Labels">

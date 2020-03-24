@@ -29,7 +29,7 @@
         </div>
         <div>
           <p>
-            <el-button size="small" @click="_Clone">
+            <el-button size="small" @click="_Clone('download')">
               {{$t('SCF.total.xzdmb')}}
             </el-button>
           </p>
@@ -37,12 +37,12 @@
       </div>
 
       <!-- 编辑器的容器 -->
-      <div v-if="SubmissionValue === 'Inline'" class="content">
+      <div v-show="SubmissionValue === 'Inline'" class="content">
         <div id="container_editor" style="width: 100%; height: 500px;"></div>
       </div>
 
       <!-- 上传zip -->
-      <div v-if="SubmissionValue === 'ZipFile'" class="content">
+      <div v-show="SubmissionValue === 'ZipFile'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">{{$t('SCF.total.hsdm')}}</p>
           <div class="ZipFilecontent">
@@ -63,7 +63,7 @@
       </div>
 
       <!-- 上传文件夹 -->
-      <div v-if="SubmissionValue === 'TempCos'" class="content">
+      <div v-show="SubmissionValue === 'TempCos'" class="content">
         <div class="ZipFile">
           <p class="ZipFilename">{{$t('SCF.total.hsdm')}}</p>
           <div class="ZipFilecontent">
@@ -84,22 +84,41 @@
       </div>
 
       <!-- cos上传 -->
-      <div v-if="SubmissionValue === 'Cos'" class="content">
+      <div v-show="SubmissionValue === 'Cos'" class="content">
         <div class="ZipFile">
-          <p class="ZipFilename">COS Bucket</p>
+          <p class="ZipFilename">
+            COS Bucket
+            <el-tooltip placement="top" effect="light">
+              <div slot="content">
+                選擇用作事件源的 COS 存儲桶，
+                <br />
+                該存儲桶必須位於函數所在地域
+              </div>
+              <i class="el-icon-warning"></i>
+            </el-tooltip>
+          </p>
           <div class="ZipFilecontent">
-            <el-select v-model="cosvalue" :placeholder="$t('SCF.total.qsz')">
-              <el-option v-for="item in Cosoptions" :key="item.value" :label="item.label" :value="item.value">
+            <el-select v-model="cosName" :placeholder="$t('SCF.total.qsz')">
+              <el-option v-for="item in cosArr" :key="item.Name" :label="item.Name" :value="item.Name">
               </el-option>
             </el-select>
           </div>
 
         </div>
         <div class="ZipFile">
-          <p class="ZipFilename">{{$t('SCF.total.dxwj')}}</p>
+          <p class="ZipFilename">
+            {{$t('SCF.total.dxwj')}}
+            <el-tooltip placement="top" effect="light">
+              <div slot="content">
+                請填寫從Bucket根目錄(\"/\")開始的zip代碼文件
+                <br />
+                完整路徑，例如: \"/test/demo.zip\"
+              </div>
+              <i class="el-icon-warning"></i>
+            </el-tooltip>
+          </p>
           <div class="ZipFilecontent">
-            <el-input v-model="input3" :disabled="true">
-            </el-input>
+            <el-input v-model="cosInput"></el-input>
           </div>
         </div>
 
@@ -236,14 +255,21 @@ import {
   TEST_MODAL,
   INVOKE,
   UPD_FUN_CODE,
-  UPDATE_TEST_MODEL
+  UPDATE_TEST_MODEL,
+  SCF_LIST_COSBUCKETS
 } from "@/constants";
-import { ErrorTips } from "@/components/ErrorTips";
+import {
+  ErrorTips
+} from "@/components/ErrorTips";
 
-import { codemirror } from 'vue-codemirror'
-import "codemirror/theme/ambiance.css";  // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
+import {
+  codemirror
+} from 'vue-codemirror'
+import "codemirror/theme/ambiance.css"; // 这里引入的是主题样式，根据设置的theme的主题引入，一定要引入！！
 require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js，根据设置的mode引入，一定要引入！！
-import { defaultTemplate } from './defaultTemplate'
+import {
+  defaultTemplate
+} from './defaultTemplate'
 // import * as cslite from '@/views/SCF/lib/c.js'
 // const { CloudStudioLiteFilesServiceSDK, ModeTypeEnum } = require('../../lib/c')
 export default {
@@ -278,57 +304,59 @@ export default {
       fileBase64zip: '', //zip上传
       fileBase64clip: '',
       fileBase64clip1: '', //文件夹上传
-      address: '',      // 获取到的zip地址
+      address: '', // 获取到的zip地址
       input2: '',
-      Cosoptions: [],
-      cosvalue: '', //cos
-      input3: '', //cos路径
-      defaultTemplate: defaultTemplate,  // 静态默认模板
+      cosName: '', //cos桶的名字
+      cosInput: '', //cos路径
+      cosArr: [],    // 获取到cos的数量
+      defaultTemplate: defaultTemplate, // 静态默认模板
       modeloptions: [], // 模板列表
-      templateList: [],   // 静态默认模板与请求的模板列表集合
-      codemirrorValue: '',    // 弹框编辑器的值
-      templateDetail: {   // 获取模板详情
+      templateList: [], // 静态默认模板与请求的模板列表集合
+      codemirrorValue: '', // 弹框编辑器的值
+      templateDetail: { // 获取模板详情
         TestModelValue: ''
       },
       testvalue: '',
-      deleteModal: false,//是否启动删除模板modal
-      modalName: '',//模板名称
-      editModal: false,//是否启动编辑模板modal
-      addModal: false,//是否打开新增modal
+      deleteModal: false, //是否启动删除模板modal
+      modalName: '', //模板名称
+      editModal: false, //是否启动编辑模板modal
+      addModal: false, //是否打开新增modal
       ruleForm: {
-        name: ''//名称
+        name: '' //名称
       },
-      testResult: {},//测试结果
-      isShowLogList: false,//是否显示日志列表
+      testResult: {}, //测试结果
+      isShowLogList: false, //是否显示日志列表
       rules: {
-        name: [
-          {
-            validator: (rule, value, callback) => {
-              if (value === '') {
-                callback(new Error('範本名稱不能為空'))
-              } else if (value.length < 2 || value.length > 45) {
-                callback(new Error('範本名稱长度仅限于2到45个字符'))
-              } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
-                callback(new Error('範本名稱格式不正確'))
-              } else {
-                callback()
-              }
-            },
-            trigger: "blur",
-            required: true
-          }
-        ]
+        name: [{
+          validator: (rule, value, callback) => {
+            if (value === '') {
+              callback(new Error('範本名稱不能為空'))
+            } else if (value.length < 2 || value.length > 45) {
+              callback(new Error('範本名稱长度仅限于2到45个字符'))
+            } else if (!(/^[a-z][a-z\d-]*$/.test(value))) {
+              callback(new Error('範本名稱格式不正確'))
+            } else {
+              callback()
+            }
+          },
+          trigger: "blur",
+          required: true
+        }]
       },
       cmOptions: {
-        mode: { name: 'javascript', json: true },
+        mode: {
+          name: 'javascript',
+          json: true
+        },
         theme: "default",
         readOnly: false,
         tabSize: 2,
-        lineNumbers: true,    // 显示行号
+        lineNumbers: true, // 显示行号
         lineWrapping: true, //代码折叠
-        matchBrackets: true,  //括号匹配
+        matchBrackets: true, //括号匹配
       },
-      cslsSDK: new CloudStudioLiteFilesServiceSDK()     // 初始化编辑器
+      cslsSDK: new CloudStudioLiteFilesServiceSDK() // 初始化编辑器
+
     }
   },
   created() {
@@ -339,8 +367,8 @@ export default {
   },
   mounted() {
 
-    this.GetDate();      // 获取详情
-    this.GetListFunctionTestModels();   // 获取模板列表
+    this.GetDate(); // 获取详情
+    this.GetListFunctionTestModels(); // 获取模板列表
 
   },
   methods: {
@@ -359,7 +387,7 @@ export default {
           this.implementInput = res.Response.Handler
           this.functionversion = res.Response.FunctionVersion
           this.ScienceValue = res.Response.Runtime
-          this._Clone('address')        // 获取地址
+          this._Clone('address') // 获取地址
         } else {
           let ErrTips = {
             'InternalError': '內部錯誤',
@@ -392,6 +420,7 @@ export default {
         Version: "2018-04-16",
         FunctionName: this.functionName,
         Qualifier: this.functionversion,
+        Namespace: this.$route.query.SpaceValue,
       };
       this.axios.post(CLONE_SCF, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -399,7 +428,7 @@ export default {
             window.open(res.Response.Url)
           } else if (name === 'address') {
             this.address = res.Response.Url
-            this.getCsLite()   // 渲染编辑器
+            this.getCsLite() // 渲染编辑器
           }
 
         } else {
@@ -432,14 +461,16 @@ export default {
       this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor'),
         modeType: ModeTypeEnum.ZIP,
-        i18nType: "zh-TW"
+        i18nType: "zh-tw"
       });
       // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
       this.cslsSDK.addListener({
         onRead: () => {
           return new Promise(res => {
             fetch(this.address, {
-              headers: { 'content-type': 'application/zip' },
+              headers: {
+                'content-type': 'application/zip'
+              },
               method: 'GET'
             })
               .then(res => res.blob())
@@ -539,7 +570,7 @@ export default {
     // 点击新建模板弹出框
     newDialog() {
       this.addModal = true;
-      this.changeTemplate()   // 触发select下拉模板change事件
+      this.changeTemplate() // 触发select下拉模板change事件
     },
 
     // 新建测试模板 确定事件
@@ -560,7 +591,7 @@ export default {
             showClose: true,
             duration: 0
           });
-          this.GetListFunctionTestModels()  // 重新获取列表数据
+          this.GetListFunctionTestModels() // 重新获取列表数据
         } else {
           let ErrTips = {
             'InternalError': '內部錯誤',
@@ -604,21 +635,26 @@ export default {
         Handler: this.implementInput,
       };
 
-      if (this.SubmissionValue === 'ZipFile') {      // 上传的是zip
+      if (this.SubmissionValue === 'ZipFile') {         // 上传的是zip
         param.ZipFile = this.fileBase64zip
-        this.updateCsliteFun(param)      // 更新函数代码
-      } else if (this.SubmissionValue === 'TempCos') {      // 上传的是文件夹
+        this.updateCsliteFun(param) // 更新函数代码
+      } else if (this.SubmissionValue === 'TempCos') {  // 上传的是文件夹
         param.ZipFile = this.fileBase64clip1
-        this.updateCsliteFun(param)      // 更新函数代码
-      } else if (this.SubmissionValue === 'Inline') {      // 在线编辑
+        this.updateCsliteFun(param) // 更新函数代码
+      } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
-          this.blobToDataURI(blob, data => {    //blob格式再转换为base64格式
+          this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
             console.log('我是base64')
             console.log(data)
             param.ZipFile = data
-            this.updateCsliteFun(param)      // 更新函数代码
+            this.updateCsliteFun(param) // 更新函数代码
           })
         })
+      }else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
+        param.CosBucketName = this.cosName
+        param.CosObjectName = this.cosInput
+        param.CosBucketRegion = localStorage.getItem('regionv2')
+        this.updateCsliteFun(param)     // 更新函数代码
       }
     },
 
@@ -658,7 +694,7 @@ export default {
         if (res.Response.Error === undefined) {
           this.modeloptions = res.Response.TestModels;
           this.templateList = []
-          this.templateList = this.defaultTemplate        // 把默认的模板赋值给模板列表 在通过下面的for循环 把自定义的模板push进来
+          this.templateList = this.defaultTemplate // 把默认的模板赋值给模板列表 在通过下面的for循环 把自定义的模板push进来
           this.testvalue = this.templateList[0].name
           console.log(this.templateList)
           console.log(this.modeloptions)
@@ -700,7 +736,7 @@ export default {
       this.axios.post(TEST_MODAL, param).then(res => {
         if (res.Response.Error === undefined) {
           this.templateDetail = res.Response
-          this.templateList.push({                // 把自定义的模板push到templateList模板列表里面
+          this.templateList.push({ // 把自定义的模板push到templateList模板列表里面
             name: name,
             code: this.templateDetail.TestModelValue
           })
@@ -832,13 +868,15 @@ export default {
     },
 
     // 换行符变为br标签
-    trim(str) {  //str表示要转换的字符串
+    trim(str) { //str表示要转换的字符串
       return str.replace(/\n|\r\n/g, "<br/>");
     },
 
     // 提交方法 切换
     changSubmit() {
-
+      if (this.SubmissionValue === 'Cos') {
+        this.getCosList()     // 点击cos获取cos的数据
+      }
     },
 
     // 编辑更新模板
@@ -870,6 +908,39 @@ export default {
             duration: 0
           });
         }
+      });
+    },
+
+    // 请求COS的存储桶数据
+    getCosList() {
+      const params = {
+        Region: localStorage.getItem("regionv2"),
+        Version: "2017-03-12"
+      };
+      this.axios.post(SCF_LIST_COSBUCKETS, params).then(res => {
+        var data = res.Buckets.Bucket;
+        this.cosArr = [];
+        data.forEach((item, index) => {
+          if (item.Location == localStorage.getItem("regionv2")) {
+            let bucketName = item.Name.split('-')
+            bucketName.pop()
+            item.Name = bucketName.join("-")
+            this.cosArr.push(item);
+          }
+        });
+        console.log(this.cosArr)
+        // if (arr.length == 0) {
+        //   this.BucketSelect.name = "";
+        // } else {
+        //   arr.forEach(item => {
+        //     if (item.name == this.detailData.CosBucketName) {
+        //       this.BucketSelect.name = item.name;
+        //     }
+        //   });
+        // }
+        // this.BucketSelect.options = arr;
+        //解决 数据更新页面不更新
+
       });
     }
   }
@@ -941,7 +1012,7 @@ export default {
       .ZipFilename {
         line-height: 32px;
         color: #888;
-        width: 100px;
+        width: 110px;
       }
 
       .ZipFilecontent {
@@ -958,53 +1029,64 @@ export default {
       margin: 0 20px;
     }
   }
+
   .test-info {
     position: relative;
     left: 0;
     right: 0;
     overflow-y: auto;
     overflow-x: hidden;
+
     .test-result {
       margin-top: 20px;
     }
+
     .back-result {
       margin-top: 10px;
       height: 60px;
       width: 100%;
       background-color: rgb(242, 242, 242);
+
       .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
         color: rgb(48, 127, 220);
       }
+
       .p-result {
         padding: 10px 0 0 10px;
         font-size: 12px;
       }
     }
+
     .info-left {
       background-color: rgb(242, 242, 242);
       width: 300px;
       float: left;
       margin: 20px 20px 0px 0px;
       height: 300px;
+
       > p {
         padding: 10px 0 0 10px;
       }
+
       .span-blue {
         color: rgb(48, 127, 220);
         padding-right: 5px;
       }
     }
+
     .log-list {
       background-color: rgb(242, 242, 242);
       height: 300px;
       margin: 20px 0px 0px 320px;
       width: auto;
+
       > p {
         padding: 10px 0 0 10px;
         font-size: 12px;
       }
+
       .p-blue {
         padding: 10px 0 0 10px;
         font-size: 12px;
@@ -1012,22 +1094,30 @@ export default {
       }
     }
   }
+  .el-icon-warning {
+    font-size: 12px;
+    cursor: pointer;
+  }
 }
+
 .edit-template {
   .el-icon-warning {
     font-size: 12px;
     cursor: pointer;
   }
+
   .codemirror-div {
     margin-top: 10px;
     border: 1px solid #e7e7e7;
   }
 }
+
 .new-template {
   .p-1 {
     font-size: 12px;
     line-height: 20px;
   }
+
   .codemirror-div {
     margin-top: 10px;
     border: 1px solid #e7e7e7;

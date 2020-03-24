@@ -36,14 +36,14 @@
       </el-form>
     </div>
 
-    <div class="tke-card tke-formpanel-wrap mt10">
+    <!-- <div class="tke-card tke-formpanel-wrap mt10">
       <h4  class="tke-formpanel-title">数据卷（Volumes）</h4>
-      <!-- <el-form  class="tke-form" label-position='left' label-width="120px" size="mini"  v-for="(item, i) in rowData.spec.template.spec.volumes && rowData.spec.template.spec.volumes" :key="i">
+      <el-form  class="tke-form" label-position='left' label-width="120px" size="mini"  v-for="(item, i) in rowData.spec.template.spec.volumes && rowData.spec.template.spec.volumes" :key="i">
         <el-form-item label="">
           <div class="tke-form-item_text">{{item | volumes}}</div>
         </el-form-item>
-      </el-form> -->
-    </div>
+      </el-form>
+    </div> -->
 
     <div class="tke-card tke-formpanel-wrap mt10">
       <h4  class="tke-formpanel-title">容器（Containers）</h4>

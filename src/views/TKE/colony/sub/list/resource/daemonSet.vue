@@ -64,11 +64,11 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
-            <!-- <span
+            <span
               class="tke-text-link"
               @click="goDaemonSetDetail(scope.row)"
-            >{{scope.row.metadata && scope.row.metadata.name}}</span> -->
-            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
+            >{{scope.row.metadata && scope.row.metadata.name}}</span>
+            <!-- <span>{{scope.row.metadata && scope.row.metadata.name}}</span> -->
           </template>
         </el-table-column>
         <el-table-column prop label="Labels">

@@ -13,8 +13,8 @@
         <el-tab-pane :label="$t('TKE.totalMirror.gyjx')" name="third"></el-tab-pane>
         <el-tab-pane :label="$t('TKE.subList.dhjx')" name="fourth"></el-tab-pane>
       </el-tabs>
-      <el-input :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
-        <i slot="suffix" class="el-input__icon el-icon-search"></i>
+      <el-input  v-model="searchContent" :placeholder="$t('TKE.myMirror.qsrjxmc')" class="input-set">
+        <i slot="suffix" @click="searchByContent(activeName)" class="el-input__icon el-icon-search"></i>
       </el-input>
       <div v-show="activeName === 'first'">
         <el-table height="300" :data="tableData.slice((currpage - 1) * pagesize, currpage * pagesize)"
@@ -37,7 +37,7 @@
         </el-table>
       </div>
       <div v-show="activeName!=='first'">
-        <el-table :data="tableData2" height="300" tooltip-effect="dark" style="width: 100%"
+        <el-table :data="tableData2.slice((currpage - 1) * pagesize, currpage * pagesize)" height="300" tooltip-effect="dark" style="width: 100%"
                   highlight-current-row @current-change="tableCurrentChange">
           <el-table-column width="55">
             <template slot-scope="scope">
@@ -84,6 +84,7 @@ export default {
       // city: ['默认区域', '1', '2', '3', '4', '5', '6', '7', '8'],
       // 分页
       mirrorImageRadio: '',
+      searchContent:'',
       tableData: [],
       tableData2: [],
       TotalCount: 0,
@@ -120,6 +121,17 @@ export default {
       this.getNamespaceInfo()
       this.searchUserRepository()
     },
+    searchByContent(str){
+      console.log(str)
+      this.mirrorImageRadio = ''
+      let arr = {
+        first: this.searchUserRepository,
+        second: this.getFavor,
+        third: this.getRepositoryList,
+        fourth: this.getDockerHubRepositoryList
+      }
+      arr[str]()
+    },
     getNamespaceInfo: async function () {
       await this.axios.post(SPACENAME_LIST, { limit: 100 }).then(res => {
         console.log(res)
@@ -128,7 +140,8 @@ export default {
     searchUserRepository: async function () {
       await this.axios.post(MIRROR_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         repoInfo.forEach(item => {
@@ -137,35 +150,44 @@ export default {
           item.name = reponameArr[1]
           item.publicText = item.public ? '公有' : '私有'
         })
-        this.tableData = repoInfo
+        this.tableData = repoInfo;
+        this.TotalCount= repoInfo.length;
+
         console.log('searchUserRepository', this.tableData)
       })
     },
     getFavor: async function () {
       await this.axios.post(GETFAVOR, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
+        console.log(res)
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     getRepositoryList: async function () {
       await this.axios.post(GET_REPOSITORY_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     getDockerHubRepositoryList: async function () {
       await this.axios.post(TKE_DOCKERHUB_LIST, {
         offset: 0,
-        limit: 20
+        limit: 20,
+        reponame:this.searchContent,
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     handleClose (done) {
@@ -187,7 +209,8 @@ export default {
       }
     },
     handleClick (tab) {
-      this.activeName = tab
+      this.activeName = tab;
+      this.searchContent='';
     },
     // 改变页数
     handleCurrentChange (val) {
@@ -201,17 +224,6 @@ export default {
 
 </script>
 <style scoped lang="scss">
-  /* css */
-  .dialog > > > .el-dialog {
-    height: 100%;
-    margin-top: 0px !important;
-    position: fixed;
-    bottom: 0px;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    overflow: auto;
-  }
 
   .dialog > > > .el-dialog__footer {
     text-align: center !important;

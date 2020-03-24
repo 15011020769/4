@@ -209,7 +209,8 @@ export default {
     getData() {
       this.funllscreenLoading = true;
       let params = {
-        Version: "2018-05-25"
+        Region: localStorage.getItem("regionv2"),
+        Version: "2018-07-24"
       };
       const res = this.axios.post(WARNING_GetUSER, params).then(res => {
         this.funllscreenLoading = false;
@@ -229,7 +230,7 @@ export default {
       oInput.select(); // 选择对象;
       document.execCommand("Copy"); // 执行浏览器复制命令
       this.$message({
-        message: this.$t('TKE.mirrorDetail.fzcg'),
+        message: this.$t("TKE.mirrorDetail.fzcg"),
         type: "success",
         showClose: true
       });
@@ -238,16 +239,13 @@ export default {
     async getColonyList() {
       this.loadShow = true;
       let params = {
-        Version: "2018-05-25",
-        Limit: this.pageSize,
-        Offset: this.pageIndex
+        Version: "2018-05-25"
       };
       if (this.searchInput !== "") {
         params["Filters.0.Name"] = "ClusterName";
         params["Filters.0.Values.0"] = this.searchInput;
       }
-      const res = await this.axios.post(TKE_COLONY_LIST, params);
-      //  console.log(res);
+      const res = await this.axios.post(TKE_COLONY_LIST, params); //  console.log(res);
       if (res.Response.Error === undefined) {
         let paramsD = {
           Method: "GET",
@@ -259,7 +257,6 @@ export default {
 
         if (k8sRes.Response.Error === undefined) {
           var data = JSON.parse(k8sRes.Response.ResponseBody);
-          // console.log(data.items);
           if (data.items.length <= 0) {
             this.$message({
               message: "暫無資料",
@@ -271,7 +268,20 @@ export default {
           k8sList = data.items;
           this.loadShow = false;
         } else {
-          let ErrTips = {};
+          let ErrTips = {
+            InternalError: "内部错误",
+            "InternalError.CamNoAuth": "没有权限。",
+            "InternalError.Db": "db错误。",
+            "InternalError.DbAffectivedRows": "DB错误",
+            "InternalError.Param": "Param。",
+            "InternalError.PublicClusterOpNotSupport": "集群不支持当前操作。",
+            "InternalError.QuotaMaxClsLimit": "超过配额限制。",
+            "InternalError.QuotaMaxNodLimit": "超过配额限制。",
+            InvalidParameter: "参数错误",
+            "InvalidParameter.Param": "参数错误。",
+            LimitExceeded: "超过配额限制",
+            ResourceNotFound: "资源不存在"
+          };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[k8sRes.Response.Error.Code],

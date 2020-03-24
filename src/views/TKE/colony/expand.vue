@@ -296,7 +296,8 @@
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
                       <div class="block">
-                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize" show-input @change="changeDataDisk"></el-slider>
+                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input show-input-controls show-stops @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
@@ -313,7 +314,7 @@
                           >
                           </el-option>
                         </el-select>
-                        <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
+                        <el-input v-model="item.filePath" @ :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
                       </div>
                     </el-form-item>
                   </div>
@@ -330,7 +331,7 @@
                 class="add-data-disk" style="margin-top: 10px;"
                 v-if="nodeForm.dataDiskShow"
               >
-                <el-button @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button> 
+                <el-button :disabled="nodeForm.buyDataDiskArr.length >19?true:false" @click="AddDataDisk()" style="color: #006eff;">{{$t('TKE.colony.tjsjp')}}</el-button> 
               </div>
             </div>
           </div>
@@ -472,6 +473,7 @@
                   <el-select
                     :placeholder="$t('TKE.colony.qxzaqz')"
                     v-model="item.securityId"
+                    @change="selectChange"
                   >
                     <el-option
                       v-for="x in nodeForm.securityGroups"
@@ -481,6 +483,15 @@
                     >
                     </el-option>
                   </el-select>
+                  <el-tooltip
+                    class="hide"
+                    :class="{ active: item.error }"
+                    effect="light"
+                    :content="item.error ? '安全组重复' : ''"
+                    placement="right"
+                  >
+                    <i class="el-icon-warning-outline ml5"></i>
+                  </el-tooltip>
                   <i class="el-icon-refresh ml5" @click="refeshSecurity"></i>
                   <i
                     class="el-icon-error ml5"
@@ -1435,6 +1446,32 @@ export default {
         securityId:''
       });
     },
+    selectChange() {
+      let { safeArr } = this.nodeForm;
+      // safeArr.push({securityId: this.nodeForm.securityId});
+      if(safeArr.length === 1) {
+         if(safeArr[0].securityId === this.nodeForm.securityId) {
+          safeArr[safeArr.length-1].error = true;
+        } else {
+          safeArr[safeArr.length-1].error = false;
+        }
+      } else {
+        for (let i = 0; i < safeArr.length -1; i++) {
+          if(safeArr[i].securityId === this.nodeForm.securityId) {
+            safeArr[safeArr.length-1].error = true;
+          } else {
+            safeArr[safeArr.length-1].error = true;
+          }
+          if (safeArr[i].securityId === safeArr[safeArr.length -1].securityId) {
+            safeArr[safeArr.length-1].error = true;
+          } else {
+            safeArr[safeArr.length-1].error = false;
+          }
+        }
+      }
+      console.log(safeArr);
+      this.nodeForm.safeArr = safeArr;
+    },
     //选择带宽
     changeInternet() {
       if(this.nodeForm.internetMaxBandwidthOut === 0) {
@@ -1638,7 +1675,9 @@ export default {
                 "無效時長。目前只支持時長：[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 24, 36]，單位：月。",
               "InvalidPermission": "帳戶不支持該操作。",
               "InvalidZone.MismatchRegion": "指定的zone不存在。",
-              "MissingParameter": "參數缺失。請求沒有帶必選參數。"
+              "MissingParameter": "參數缺失。請求沒有帶必選參數。",
+              "InvalidCloudDisk.SsdDataDiskSize": "SSD雲硬碟為數據盤時，購買大小不得小於100GB",
+              "InvalidCloudDisk.Unavailable": "雲硬碟為數據盤時，購買大小必須為10的倍數"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -2479,6 +2518,13 @@ export default {
         text-decoration: underline;
       }
     }
+  }
+}
+
+.hide {
+  display: none;
+  &.active {
+    display: inline;
   }
 }
 </style>

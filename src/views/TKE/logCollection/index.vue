@@ -122,7 +122,7 @@
         xjF:false,
         funllscreenLoading: false,
         dialogVisible:false,
-        tableFlag:true,
+        tableFlag:false,
         delLogFlag: false,
         delLogName: '',
         delLogNameSpace: '',
@@ -520,6 +520,7 @@
 
       //列表数据
       findList() {
+         this.tableFlag=true;
         if (this.value2) {
           var params = {
             ClusterName: this.value2,

@@ -42,13 +42,13 @@
             <span>{{scope.row.addTime}}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           label="操作"
           >
           <template slot-scope="scope">
             <el-button type='text' class="tke-text-link" @click="isShowRollBack(scope.row)">回滚</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
     </div>
     <el-dialog title="版本详情" :visible.sync="isShowYamlModal" width="35%">

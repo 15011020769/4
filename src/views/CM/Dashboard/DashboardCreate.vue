@@ -13,7 +13,11 @@
         ></Type>
       </div>
       <div class="top-two">
-        <span>数据视图</span>
+        <span>数据视图
+          <el-tooltip class="item" effect="light" content="明细视图展示不同实例的多条曲线, 聚合视图展示跨实例的聚合数据" placement="top">
+            <i class="el-icon-info"></i>
+          </el-tooltip>
+        </span>
         <div class="top-two-see">明细视图</div>
       </div>
     </div>
@@ -24,7 +28,7 @@
           <h4>图标配置</h4>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">图表名称</p>
-            <el-input size="mini" v-model="picName" style="max-width:250px"></el-input>
+            <el-input size="mini" v-model="picName" style="max-width:250px" maxlength='30'></el-input>
           </div>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">监控指标</p>
@@ -45,7 +49,7 @@
           </div>
         </div>
         <div class="footer-left-right">
-          <h2>{{picName}}</h2>
+          <h2 class="white-point">{{picName}}</h2>
           <div>
             <Echarts
               :time="times"
@@ -491,7 +495,7 @@ export default {
     align-items: center;
   }
   .top-two {
-    width: 150px;
+    width: 180px;
     float: left;
     margin-left: 20px;
     display: flex;
@@ -541,5 +545,11 @@ export default {
 }
 .Cam-right {
   float: right;
+}
+.white-point{
+  width: 250px;
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
 </style>

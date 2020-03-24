@@ -4,9 +4,10 @@
       <div class="top-left">
          <el-popover
           placement="right"
-          width="300"
-          :trigger="tableData.length == 10 ?'hover':''"
-          content="数量已达到限制">
+          width="100"
+          trigger="hover"
+          content="数量已达到限制"
+          :disabled="!tableData.length == 10">
           <div slot="reference">
             <el-button type="primary" size="mini"  @click="dialogVisible = true" :disabled="tableData.length == 10" >新建</el-button>
           </div>
@@ -27,8 +28,9 @@
                   <el-popover
                     placement="left"
                     width="300"
-                    :trigger="scope.row.repoCount ?'hover':''"
+                    trigger="hover"
                     content="镜像仓库数量不为零，不能进行删除操作"
+                    :disabled="!scope.row.repoCount"
                    >
                   <div slot="reference">
                       <el-button @click="handleClick(scope.row)" type="text" size="small"  :disabled="scope.row.repoCount ? true:false" >

@@ -16,7 +16,7 @@
         <el-form-item :label="$t('TKE.overview.cjsj')">
           <div class="tke-form-item_text">{{changeTime(detail.metadata.creationTimestamp)}}</div>
         </el-form-item>
-        <el-form-item :label="$t('TKE.subList.jxckmy')">
+        <!-- <el-form-item :label="$t('TKE.subList.jxckmy')">
           <div style="overflow: visible; max-width: 550px;">
             <el-table
               :data="secretsList"
@@ -52,7 +52,7 @@
               
             </el-table>
           </div>
-        </el-form-item>
+        </el-form-item> -->
         
       </el-form>
     </div>

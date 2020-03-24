@@ -16,6 +16,17 @@
        <div class="block">
             <!-- 时间组件 -->
         <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="true" v-on:switchData="GetDat" :Difference="'D'" ></TimeDropDown>
+        <!-- <div class="block-left">
+                 <span>{{$t('TKE.overview.jd')}}：</span>
+                  <el-select v-model="value" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange($event)">
+                    <el-option
+                      v-for="item in podData"
+                      :key="item.InstanceId"
+                      :label="item.InstanceId+'('+item.InstanceName+')'"
+                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                    ></el-option>
+                  </el-select>
+               </div> -->
       </div>
     <el-tabs v-model="activeName" @tab-click="handleClick" class="tab-background">
         <el-tab-pane :label="$t('TKE.overview.jd')" name="k8s_node" class="tab-one">
@@ -430,7 +441,7 @@ export default {
     getChange(val){
       this.value = val
       this.valueLast = val.split("|")
-      console.log(this.valueLast)
+      // console.log(this.valueLast)
       this.NodeTitle = this.valueLast[1]
       this.getNodeList()
     },
@@ -648,17 +659,18 @@ export default {
     },
     getResult() {
     //   this.list = [];
+     let data = []
       const param = {
         JobId: this.JobId,
         Module: "/front/v1",
         Version: "2019-06-06"
       }
       this.axios.post(TKE_GETTKEDATARESULT, param).then(res => {
-        console.log(this.NodeTitle)
-        //   console.log(res)
+        // console.log(this.NodeTitle)
         if(res.Response.Error === undefined) {
-          let data = JSON.parse(res.Response.Data)
-          console.log(JSON.parse(res.Response.Data))
+          // console.log(JSON.parse(res.Response.Data))
+          data = JSON.parse(res.Response.Data)
+          // console.log(JSON.parse(res.Response.Data))
           if(this.activeName == "k8s_node"){
              this.NodesDataId=[]
             let times = [], podIds = [], pods = [], statuErrs = [], cpus = [], cpuUseds = [],

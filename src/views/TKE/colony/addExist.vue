@@ -238,7 +238,7 @@
                   placement="right"
                   ><i class="el-icon-info"></i> </el-tooltip
               ></span>
-              <p style="color:#000;">Ubuntu Server 16.04.1 LTS 64bit</p>
+              <p style="color:#000;">{{ clusterOs }}</p>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.dlfs')">
               <div class="tke-second-radio-btn">
@@ -256,7 +256,7 @@
               </div>
             </el-form-item>
             <el-form-item :label="$t('TKE.overview.yhm')" v-if="joinPassWord">
-              <p style="color:#000;">ubuntu</p>
+              <p style="color:#000;">{{ clusterOs | OSvalue }}</p>
             </el-form-item>
             <el-form-item :label="$t('TKE.colony.sshmy')" v-if="joinPassWord">
               <div class="tke-third-select">
@@ -282,7 +282,7 @@
               </div>
             </el-form-item>
             <el-form-item :label="$t('TKE.overview.yhm')" v-if="setPassWord">
-              <p style="color:#000;">ubuntu</p>
+              <p style="color:#000;">{{ clusterOs | OSvalue }}</p>
             </el-form-item>
             <el-form-item
               :label="$t('TKE.overview.mm')"
@@ -473,6 +473,7 @@ import XLSX from "xlsx";
 import {
   ALL_CITY,
   ALL_PROJECT,
+  TKE_OPERAT_SYSTEM,
   TKE_COLONY_LIST,
   TKE_EXIST,
   TKE_EXIST_NODES,
@@ -505,6 +506,7 @@ export default {
       },
       searchInput: "",
       basicNews: "",
+      clusterOs: "",
       selectList: "",
       VpcId: "",
       leftList: [],
@@ -549,6 +551,7 @@ export default {
   mounted() {
     this.getColonyList();
     this.SSHKey();
+    this.OperatSystemData();
   },
   methods: {
     // 返回上一层
@@ -681,6 +684,32 @@ export default {
             InternalError: "内部錯誤",
             UnauthorizedOperation: "未授權操作"
           };
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    // 操作系统
+    OperatSystemData() {
+      const param = {
+        Version: "2018-05-25"
+      };
+      this.axios.post(TKE_OPERAT_SYSTEM, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response.ImageInstanceSet);
+          let _arr = res.Response.ImageInstanceSet;
+          for (let i in _arr) {
+            if (this.basicNews.ClusterOs === _arr[i].OsName) {
+              this.clusterOs = _arr[i].Alias;
+            }
+          }
+        } else {
+          let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -968,6 +997,20 @@ export default {
         this.autoPassWord = false;
         this.setPassWord = true;
       }
+    }
+  },
+  filters: {
+    OSvalue(val) {
+      let _val = val
+        .trim()
+        .split(" ")[0]
+        .toLowerCase();
+      if (_val === "ubuntu") {
+        _val = "ubuntu";
+      } else {
+        _val = "root";
+      }
+      return _val;
     }
   }
 };

@@ -2224,57 +2224,10 @@ export default {
         template.spec.affinity = affinity
       }
       // 类型为 Deployment 或 statefulSet 需要提交 Services
-      if ((type === 'Deployment' || type === 'StatefulSet') && serviceEnbel) {
-        let ports = portMapping.map(item => {
-          let { portValue, conPort, host, servicePort } = item
-          let onePort = {
-            'name': `${conPort}-${servicePort}-${portValue.toLowerCase()}`,
-            'port': parseInt(servicePort),
-            'targetPort': parseInt(conPort),
-            'protocol': portValue
-          }
-          if (serviceAccess === '4') onePort.nodePort = parseInt(host)
-          return onePort
-        })
-        let serviceRequestBody = {
-          kind: 'Service',
-          apiVersion: 'v1',
-          metadata: {
-            name: name,
-            namespace: namespace
-          },
-          spec: {
-            ports: ports,
-            selector: labelsObj,
-            sessionAffinity: SA
-          }
-        }
-        // 服务访问方式 不同选项传不同值
-        if (serviceAccess === '1') {
-          serviceRequestBody.metadata.annotations = {}
-          serviceRequestBody.spec.type = 'LoadBalancer'
-          serviceRequestBody.spec.externalTrafficPolicy = ETP
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = JSON.stringify({ AddressIPVersion: 'IPV4' })
-        } else if (serviceAccess === '2') {
-          serviceRequestBody.spec.type = 'ClusterIP'
-          if (handlessChecked) serviceRequestBody.spec.clusterIP = 'None'
-        } else if (serviceAccess === '3') {
-          serviceRequestBody.metadata.annotations = {}
-          serviceRequestBody.spec.type = 'LoadBalancer'
-          serviceRequestBody.spec.externalTrafficPolicy = ETP
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
-          let oneSubOption = this.subnetTwoOption.find(item => item.SubnetName === subnetTwoValue)
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption.SubnetId
-        } else if (serviceAccess === '4') {
-          serviceRequestBody.spec.externalTrafficPolicy = ETP
-          serviceRequestBody.spec.type = 'NodePort'
-        }
-        if ((serviceAccess === '1' || serviceAccess === '3') && loadBalance === '2') {
-          serviceRequestBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = describeLoadBalancersValue
-        }
+      if (type === 'Deployment' || type === 'StatefulSet') {
         // 实例数量为自动调节时
         if (caseNum === 'autoAdjust') {
-          let hpaName = `hpa-${this.name}-${Date.now().toString(36)}`
+          let hpaName = `hpa-${name}-${Date.now().toString(36)}`
           let metrics = touchTactics.map(item => {
             let { touch2, touch2Option, size } = item
             let oneOption = touch2Option.find(item2 => item2.value === touch2)
@@ -2310,20 +2263,67 @@ export default {
           console.log('hpaRequestBody', JSON.stringify(hpaRequestBody))
           queryBodyJson += JSON.stringify(hpaRequestBody)
         }
-        if (SA === 'ClientIP') {
-          serviceRequestBody.spec.sessionAffinityConfig = {
-            clientIP: {
-              timeoutSeconds: time
+        if (serviceEnbel) {
+          let ports = portMapping.map(item => {
+            let { portValue, conPort, host, servicePort } = item
+            let onePort = {
+              'name': `${conPort}-${servicePort}-${portValue.toLowerCase()}`,
+              'port': parseInt(servicePort),
+              'targetPort': parseInt(conPort),
+              'protocol': portValue
+            }
+            if (serviceAccess === '4') onePort.nodePort = parseInt(host)
+            return onePort
+          })
+          let serviceRequestBody = {
+            kind: 'Service',
+            apiVersion: 'v1',
+            metadata: {
+              name: name,
+              namespace: namespace
+            },
+            spec: {
+              ports: ports,
+              selector: labelsObj,
+              sessionAffinity: SA
             }
           }
+          // 服务访问方式 不同选项传不同值
+          if (serviceAccess === '1') {
+            serviceRequestBody.metadata.annotations = {}
+            serviceRequestBody.spec.type = 'LoadBalancer'
+            serviceRequestBody.spec.externalTrafficPolicy = ETP
+            serviceRequestBody.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = JSON.stringify({ AddressIPVersion: 'IPV4' })
+          } else if (serviceAccess === '2') {
+            serviceRequestBody.spec.type = 'ClusterIP'
+            if (handlessChecked) serviceRequestBody.spec.clusterIP = 'None'
+          } else if (serviceAccess === '3') {
+            serviceRequestBody.metadata.annotations = {}
+            serviceRequestBody.spec.type = 'LoadBalancer'
+            serviceRequestBody.spec.externalTrafficPolicy = ETP
+            serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
+            let oneSubOption = this.subnetTwoOption.find(item => item.SubnetName === subnetTwoValue)
+            serviceRequestBody.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = oneSubOption.SubnetId
+          } else if (serviceAccess === '4') {
+            serviceRequestBody.spec.externalTrafficPolicy = ETP
+            serviceRequestBody.spec.type = 'NodePort'
+          }
+          if ((serviceAccess === '1' || serviceAccess === '3') && loadBalance === '2') {
+            serviceRequestBody.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = describeLoadBalancersValue
+          }
+          if (SA === 'ClientIP') {
+            serviceRequestBody.spec.sessionAffinityConfig = {
+              clientIP: {
+                timeoutSeconds: time
+              }
+            }
+          }
+          console.log('serviceRequestBody', JSON.stringify(serviceRequestBody))
+          queryBodyJson += JSON.stringify(serviceRequestBody)
         }
-        console.log('serviceRequestBody', JSON.stringify(serviceRequestBody))
-        queryBodyJson += JSON.stringify(serviceRequestBody)
       }
       if (type === 'Job' || type === 'CronJob') {
         template.spec.restartPolicy = jobSettings.failedRestartPolicy
-        requestBody.spec.completions = parseInt(jobSettings.repeatNumber)
-        requestBody.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.updateStrategy = {
           type: 'RollingUpdate',
           rollingUpdate: {}
@@ -2381,10 +2381,14 @@ export default {
         requestBody.spec.schedule = executionStrategy
         requestBody.spec.jobTemplate = {}
         requestBody.spec.jobTemplate.spec = {}
+        requestBody.spec.jobTemplate.spec.completions = parseInt(jobSettings.repeatNumber)
+        requestBody.spec.jobTemplate.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.jobTemplate.spec.template = template
         requestBody.apiVersion = 'batch/v1beta1'
         params.Path = `/apis/batch/v1beta1/namespaces/${namespace}/cronjobs`
       } else if (type === 'Job') {
+        requestBody.spec.completions = parseInt(jobSettings.repeatNumber)
+        requestBody.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.template = template
         requestBody.apiVersion = 'batch/v1'
         params.Path = `/apis/batch/v1/namespaces/${namespace}/jobs`

@@ -105,7 +105,7 @@
               >
               <span
                 v-else-if="scope.row.ClusterStatus == 'Creating'"
-                class="text-green"
+                class="text-orange"
                 >{{ $t("TKE.colony.cjz") }}</span
               >
               <span v-else class="text-red">{{ $t("TKE.overview.yc") }}</span

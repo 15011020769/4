@@ -495,6 +495,7 @@ export default {
         valueKey: ""
       });
     },
+    // 选择集群
     setCusId() {
       this.flagSE = true;
       // this.flagAgin = 1
@@ -520,7 +521,8 @@ export default {
       var timeId = setInterval(() => {
         if (this.status != "running") {
           this.getFlag(timeId);
-          if (this.status == "running" || this.status == "failed") {
+          // || this.status == "failed"
+          if (this.status == "running" ) {
             this.getHelmList();
             clearInterval(timeId);
           }
@@ -540,12 +542,10 @@ export default {
           if (
             time > 4 ||
             this.status == "running" ||
-            this.status == "failed" ||
             this.$route.path != "/helm"
           ) {
             this.getHelmList();
             clearInterval(timeId);
-            // this.flagAgin = 2
           }
         }, 4000);
       }
@@ -625,12 +625,13 @@ export default {
         Path:
           "/apis/platform.tke/v1/helms?fieldSelector=spec.clusterName=" +
           this.value,
-        Version: "2018-05-25"
+        Version: "2018-05-25",
+        RequestBody: 'null'
       };
       this.axios.post(POINT_REQUEST, param).then(res => {
         console.log(res)
         if (res.Response.Error == undefined) {
-          console.log(JSON.parse(res.Response.ResponseBody));
+          // console.log(JSON.parse(res.Response.ResponseBody));
           if (JSON.parse(res.Response.ResponseBody).items.length) {
             this.status = JSON.parse(
               res.Response.ResponseBody
@@ -640,10 +641,16 @@ export default {
               this.getHelmList();
             } else if (this.status == "checking") {
               this.flagAgin = 3;
+              this.getFlag()
+              console.log('check')
+            } else if(this.status == "failed"){
+              console.log('fail')
+              this.flagAgin = 2;
+              clearInterval(timeId);
             } else {
               this.flagAgin = 2;
               this.loadShow = false;
-              // clearInterval(timeId);
+              clearInterval(timeId);
             }
           } else {
             this.flagAgin = 1;
@@ -860,14 +867,6 @@ export default {
           console.log(this.$store.state.flag, 45);
           console.log(JSON.parse(res.Response.ResponseBody), 99999);
         } else {
-          // let ErrTips = {};
-          // let ErrOr = Object.assign(ErrorTips, ErrTips);
-          // this.$message({
-          //   message: ErrOr[res.Response.Error.Code],
-          //   type: "error",
-          //   showClose: true,
-          //   duration: 0
-          // });
           this.loadShow = false;
           this.getflags = false;
           this.$store.commit("getFlag", this.getflags);

@@ -324,7 +324,7 @@ export default {
       );
     } else {
       // this.value = false;
-      this.okFlag = true;
+      // this.okFlag = true;
       this.status();
     }
   },
