@@ -232,13 +232,14 @@
         vloading: true,
         pickerOptions: {
           disabledDate(time) {
-            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 86400000 * 29)
+            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 86400000 * 7)
           },
           shortcuts: [{
             text: "最近一周",
             onClick(picker) {
               const end = new Date();
               const start = new Date();
+              console.log(start)
               start.setTime(start.getTime() - 3600 * 1000 * 24 * 6);
               picker.$emit("pick", [start, end]);
             }
@@ -387,7 +388,7 @@
               "InvalidParameterValue.MaxResult": "單次檢索支持的最大返回條數是50",
               "InvalidParameterValue.Time": "開始時間不能大於結束時間",
               "InvalidParameterValue.attributeKey": "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
-              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是30天"
+              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -430,10 +431,21 @@
         }
       },
       seachpicker() {
-        this.nowtime = String(moment(this.value1[1]).valueOf() / 1000)
-        this.oldTime = String(moment(this.value1[0]).valueOf() / 1000 - 86400)
-        this.tableData = []
-        this.Loading()
+        if (this.value1[0].getTime() == this.value1[1].getTime()) {
+          this.value1[0] = moment(new Date(this.value1[0])).format("YYYY/MM/DD 00:00:00")
+          this.value1[1] = moment(new Date(this.value1[1])).format("YYYY/MM/DD 23:59:59")
+          this.oldTim = parseInt(moment(this.value1[0], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
+          this.nowtime = parseInt(moment(this.value1[1], 'YYYY-MM-DD HH:mm:ss').valueOf() / 1000)
+          this.tableData = []
+          this.Loading()
+        } else {
+          this.oldTime = parseInt(this.value1[0].getTime() / 1000)
+          this.nowtime = parseInt(this.value1[1].getTime() / 1000)
+          this.tableData = []
+          this.Loading()
+        }
+
+
       },
       //加载更多
       more() {
