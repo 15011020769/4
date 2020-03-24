@@ -1,5 +1,8 @@
 <template>
   <div class="Monitor">
+    <div class="Tips">
+      <p>如果当前函数尚未配置告警服务，可以<a>[前往新增告警]</a>为函数添加告警策略</p>
+    </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
         v-on:switchData="GetDat" />
@@ -475,6 +478,19 @@
 
       p {
         color: #006eff;
+        cursor: pointer;
+      }
+    }
+
+    .Tips {
+      padding: 20px;
+      margin-bottom: 20px;
+      color: #0046b9;
+      border-width: 0;
+      border-radius: 0;
+      background: #d5e7ff;
+
+      a {
         cursor: pointer;
       }
     }
