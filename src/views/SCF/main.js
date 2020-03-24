@@ -18,21 +18,18 @@ import { codemirror } from 'vue-codemirror'
 import 'codemirror/lib/codemirror.css'
 Vue.use(codemirror)
 
-
-// 引入基本模板
-// const cloudstudio = require('cloudstudio-lite/lib')
-// Vue.prototype.$cloudstudio = cloudstudio
 // 引入折线图组件
 require('echarts/lib/chart/line')
 // 引入提示框和title组件，图例
 require('echarts/lib/component/tooltip')
-// const cloudStudio = document.createElement('script')
-// cloudStudio.src = 'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.3.4/bluebird.min.js'
-// document.body.appendChild(cloudStudio)
 
-const cslite = document.createElement("script")
-cslite.src= 'https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js'
-document.body.appendChild(cslite)
+// const cslite = document.createElement("script")
+// cslite.src= 'https://g.gtimg.cn/CMFE/codingEditor-IDE-dependency/aca16d50/codingEditor.afa8bb24bba15.js'
+// document.body.appendChild(cslite)
+
+import './lib/cslite'     // 导入编辑器的代码
+
+
 Vue.prototype.$echarts = echarts
 for (let key in CMfilters) {
   Vue.filter(key, CMfilters[key])
