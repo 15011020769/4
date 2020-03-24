@@ -1136,7 +1136,8 @@ export default {
         })
       })
 
-    },  
+    }, 
+    // 页面回显 
     baseData(){
 
       var params={
@@ -1225,7 +1226,7 @@ export default {
                  })
               }
             }
-            console.log(v)
+            console.log(v,'vvvvvvvvvvvvvvvvvvvvvvvvv')
             if(v.volumeMounts&&v.volumeMounts.length!=0){//挂载点数据处理
               var  volumeArr=[];
               v.volumeMounts.forEach(v=>{
@@ -1247,10 +1248,10 @@ export default {
             } 
             this.addInstanceContent(
             v.name,v.image.split(':')[0],v.image.split(':')[1],v.imagePullPolicy,
-            JSON.stringify(v.resources) == "{}"?'':parseInt(v.resources.requests.cpu),
-            JSON.stringify(v.resources) == "{}"?'':parseInt(v.resources.limits.cpu),
-            JSON.stringify(v.resources) == "{}"?'':this.formatData(v.resources.requests.memory),
-            JSON.stringify(v.resources) == "{}"?'':this.formatData(v.resources.limits.memory),
+            JSON.stringify(v.resources) == "{}"||v.resources.requests.cpu==undefined?'':v.resources.requests.cpu.indexOf('m')==-1?v.resources.requests.cpu:parseInt(v.resources.requests.cpu)/1000,
+            JSON.stringify(v.resources) == "{}"||v.resources.limits.cpu==undefined?'':v.resources.limits.cpu.indexOf('m')==-1?v.resources.limits.cpu:parseInt(v.resources.limits.cpu)/1000,
+            JSON.stringify(v.resources) == "{}"||v.resources.requests.memory==0||v.resources.requests.memory==undefined?'':this.formatData(v.resources.requests.memory),
+            JSON.stringify(v.resources) == "{}"||v.resources.limits.memory==0||v.resources.limits.memory==undefined?'':this.formatData(v.resources.limits.memory),
             JSON.stringify(v.resources) == "{}"? 0:Number(v.resources.limits['nvidia.com/gpu']),
             arr2,//环境变量
             arr3,//引用ConfigMap/Secret
@@ -1444,7 +1445,7 @@ watch: {
         let isAddContainer = true
         val.forEach(item => {
           let completed = true
-          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent,mountPoint } = item
+          let { name, mirrorImg, environmentVar, citeCs, disAdvancedSetting, surviveExamine, readyToCheck, surviveExamineContent,mountPoint,requestCpu,limitCpu} = item
           this.firstPointInfoData=[];
           mountPoint.forEach(v=>{
             console.log(v)
