@@ -95,7 +95,7 @@
             <!-- <span class="ml10" :class="scope.row.isDisabled?'fontColor':'tke-text-link'" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">删除</span> -->
             <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goSvcUpdteType(scope.row)">{{$t('TKE.subList.gxfwfs')}}</el-button>
             <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':goEdit(scope.row)">{{$t('TKE.overview.bj')}}YAML</el-button>
-            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row.metadata.name)">{{$t('TKE.overview.sc')}}</el-button>
+            <el-button size="small" type="text" :disabled="scope.row.isDisabled" @click="scope.row.isDisabled?'':deleteInfo(scope.row)">{{$t('TKE.overview.sc')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -248,14 +248,17 @@ export default {
     },
     // 操作列删除按钮事件
     deleteInfo (item) {
+      let {name,namespace} = item.metadata
       this.showNameSpaceModal = true
-      this.name = item
+      this.name = name
+      this.nameSpaceName = namespace
     },
     // 删除列表中的命名空间
     async submitDelete () {
       const params = {
         Method: 'DELETE',
-        Path: `/api/v1/namespaces/${this.searchType}/services/${this.name}`,
+        // Path: `/api/v1/namespaces/${this.searchType}/services/${this.name}`,
+        Path: `/api/v1/namespaces/${this.nameSpaceName}/services/${this.name}`,
         Version: '2018-05-25',
         RequestBody: { 'propagationPolicy': 'Background' },
         ClusterName: this.clusterId

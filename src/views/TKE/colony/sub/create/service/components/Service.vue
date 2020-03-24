@@ -204,8 +204,6 @@ export default {
   data () {
     return {
       svc: this.svcData,
-      // TotalIpAddressCount: '', // 总共的子网数
-      // AvailableIpAddressCount: '', // 剩余可用子网数
       protocolList: ['TCP', 'UDP'], // 协议列表
       addressCount: {}, // 子网点对象
       timeRules: [{// 会话时间的验证
@@ -351,21 +349,27 @@ export default {
     },
     personObj: {
       handler: function () {
-        let { LBsubnet, vpcNameAry, ownLoadBalancer1, ownLoadBalancer2 } = this.personObj
-        if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer1[0] && ownLoadBalancer2[0])) return
+        //  LBsubnet, vpcNameAry,   LBsubnet[0] && vpcNameAry[0] && 
+        let { ownLoadBalancer1, ownLoadBalancer2 } = this.personObj
+        if (!(ownLoadBalancer1[0] && ownLoadBalancer2[0])) return
         // this.svc.LBvalue2 = LBsubnet[0].SubnetId
         // this.svc.LBvalue1 = vpcNameAry[0].VpcId
         if(this.svc.radio==='1') this.svc.balancerValue = ownLoadBalancer1[0].LoadBalancerId
-        if(this.svc.radio==='3') this.svc.balancerValue = ownLoadBalancer2[0].LoadBalancerId
-        // + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'
-      }
+        // if(this.svc.radio==='3') this.svc.balancerValue = ownLoadBalancer2[0].LoadBalancerId
+      },
+      deep:true
+    },
+    'svc.radio':function(val){
+      let { LBsubnet, vpcNameAry, ownLoadBalancer1, ownLoadBalancer2 } = this.personObj
+      if (!(ownLoadBalancer1[0] && ownLoadBalancer2[0])) return
+      if(val==='1') this.svc.balancerValue = ownLoadBalancer1[0].LoadBalancerId
+      if(val==='3') this.svc.balancerValue = ownLoadBalancer2[0].LoadBalancerId
     }
   },
   methods: {
     // 显示或隐藏高级设置
     show () {
       this.svc.show = !this.svc.show
-      // console.log(this.personObj.ownLoadBalancer)
     },
     // 删除端口
     removeprot (item) {
@@ -376,8 +380,6 @@ export default {
     },
     // 新增端口
     addport () {
-      // console.log(this.svc.list)
-      // if (this.svc.radio == '4') {
       this.svc.list.push({
         value: '',
         input1: '',
@@ -386,15 +388,6 @@ export default {
         protocol: 'TCP',
         key: Date.now()
       })
-      // } else {
-      //   this.svc.list.push({
-      //     value: '',
-      //     input1: '',
-      //     input2: '',
-      //     protocol: 'TCP',
-      //     key: Date.now()
-      //   })
-      // }
     }
   }
 }
