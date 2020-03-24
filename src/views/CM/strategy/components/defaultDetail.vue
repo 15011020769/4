@@ -2910,6 +2910,7 @@ export default {
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
         if (res.Response.Error === undefined) {
           this.InstanceGroupShow = res.Response;
+          console.log(this.InstanceGroupShow);
           var _enterList = res.Response.List;
           this.total = res.Response.Total;
           if (this.total > 0) {
@@ -3579,7 +3580,10 @@ export default {
       } else {
         param["IsShielded"] = 1;
       }
-      param["Dimensions.0.Region"] = "tpe";
+      if (this.ViewName !== "BS") {
+        param["Dimensions.0.Region"] = "tpe";
+      }
+
       if (this.ViewName === "cvm_device") {
         param["Dimensions.0.Dimensions"] = {
           unInstanceId: row.InstanceId

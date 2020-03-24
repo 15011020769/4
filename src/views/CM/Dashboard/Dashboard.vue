@@ -13,7 +13,7 @@
         </el-option>
       </el-select>
       <a class="addPanel" style="font-size:12px;font-weight:20" @click="addPanel">{{ $t("CVM.Dashboard.tjjkmb") }}</a>
-      <AddPanel :dialogVisible.sync="panelFlag" :options.sync="options" @cancel="cancel" @save="save" />
+      <AddPanel ref="addPanel" :dialogVisible.sync="panelFlag" :options.sync="options" @cancel="cancel" @save="save" />
       <!-- 重名名监控面板弹框 -->
       <RenameControlPanel ref="renameControlPanel" :name="this.renameControlName" />
     </Header>
@@ -303,6 +303,7 @@
         this.startEnd.StartTime = data[1].StartTIme; // 开始时间
         this.startEnd.EndTime = data[1].EndTIme; //  结束时间
         this.period = data[0]; // 粒度
+        this.getAllMonitorData(); // 获取Y轴数据
         // console.log(data, "data", this.startEnd);
         // this.seriesArr.forEach(item => {
         //   item.series[0].data = [];
@@ -341,6 +342,7 @@
       addPanel() {
         //添加dialog面板
         this.panelFlag = true;
+        this.$refs.addPanel.getDashboardList(); // 子组件下拉框数据
       },
       openChart() { //展开图表
         this.openChartFlag = false;
@@ -463,7 +465,7 @@
                   label: ele.DescName
                 };
               });
-              this.options = JSON.parse(JSON.stringify(options));
+              this.options = options;
               console.log(this.options, "options");
             } else {
               let ErrTips = {
@@ -604,7 +606,7 @@
                 }
               });
               this.ViewList = ViewList;
-              this.getAllMonitorData();
+              this.getAllMonitorData(); // 获取echarts数据
             } else {
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation": "请求未授权。请参考 CAM 文档对鉴权的说明。",
@@ -706,7 +708,6 @@
                   }
                 });
               });
-
               const item = this.ViewList[index];
               item.DataPoints = DataPoints;
               this.$set(this.ViewList, index, item);

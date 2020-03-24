@@ -84,6 +84,13 @@ export default {
           showClose: true,
           duration: 0
         });
+      } else if (this.formInline.strategy_name.length >= 20) {
+        this.$message({
+          message: "策略名最多不能超过20位",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 获取cam组件的值

@@ -1,280 +1,263 @@
 <template>
-  <div class="box-dis">
-    <!-- 时间粒度搜素 -->
-    <div class="btn-style">
+  <div>
+    <div class="TimeDropDown">
       <el-row>
         <el-button-group>
-          <el-button
-            size="small"
-            @click="TimeChoice(1)"
-            :type="classsvalue == 1 ? 'primary' : ''"
-          >今天</el-button>
-          <el-button
-            size="small"
-            @click="TimeChoice(1*24)"
-            :type="classsvalue == 1*24 ? 'primary' : ''"
-          >昨天</el-button>
-          <el-button
-            size="small"
-            @click="TimeChoice(1*24*7)"
-            :type="classsvalue == 1*24*7 ? 'primary' : ''"
-          >近7天</el-button>
-          <el-button
-            size="small"
-            @click="TimeChoice(1*24*30)"
-            :type="classsvalue == 1*24*30? 'primary' : ''"
-          >近30天</el-button>
-          <el-popover placement="bottom" width="400" trigger="manual" v-model="visible">
+          <el-button v-for="(item,index) in TimeArr" :key="index" :type="item.Time == TimeValue ? 'primary' : ''"
+            size="small" @click="TimeChoice(item)">
+            {{item.name}}
+          </el-button>
+          <el-popover placement="bottom" width="400" trigger="manual" v-model="visible" v-if="Datecontrol">
             <p class="p-dis">
               <span>從</span>
-              <el-date-picker
-                class="width-date"
-                v-model="datevalueStart"
-                type="date"
-                placeholder="選擇日期"
-              ></el-date-picker>
-              <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點"></el-time-picker>
+              <el-date-picker class="width-date" v-model="timevalueStart" type="date" placeholder="選擇日期"
+                :picker-options="picker">
+              </el-date-picker>
+              <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點">
+              </el-time-picker>
             </p>
             <p class="p-dis">
               <span>至</span>
-              <el-date-picker
-                class="width-date"
-                v-model="datevalueEnd"
-                type="date"
-                placeholder="選擇日期"
-              ></el-date-picker>
-              <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點"></el-time-picker>
+              <el-date-picker class="width-date" v-model="timevalueEnd" type="date" placeholder="選擇日期"
+                :picker-options="picker">
+              </el-date-picker>
+              <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點">
+              </el-time-picker>
             </p>
             <el-row class="margin-row">
               <el-button size="mini" type="primary" @click="Sure">確定</el-button>
               <el-button size="mini" @click="visible = false">取消</el-button>
             </el-row>
-            <el-button
-              size="small"
-              v-if="datetim"
-              icon="el-icon-search"
-              @click="SelectionTime"
-              slot="reference"
-            >選擇日期</el-button>
+            <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">選擇日期
+            </el-button>
+            <el-button size="small" v-if="datetime" @click="SelectionTime" slot="reference">
+              {{timevalueStart}}至{{timevalueEnd}}<i class="el-icon-date el-icon--right"></i>
+            </el-button>
           </el-popover>
-          <el-date-picker
-            v-if="datetime"
-            v-model="datetimeval"
-            type="datetimerange"
-            range-separator="至"
-            start-placeholder="開始日期"
-            end-placeholder="結束日期"
-            :clearable="false"
-            class="dateheight"
-            @change="ReSelection"
-          ></el-date-picker>
         </el-button-group>
       </el-row>
+      <!-- <div class="drop" v-if="Graincontrol">
+        <span style="margin-right:15px">時間粒度:</span>
+        <el-select v-model="grainValue" size="small" @change="SwitchGrain">
+          <el-option v-for="item in TimeGranularity" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </div> -->
     </div>
   </div>
 </template>
-
 <script>
-import moment from "moment";
-
-export default {
-  data() {
-    return {
-      datevalueStart: new Date(), // 日期（从）
-      timevalueStart: new Date(), // 时间（从）
-      datevalueEnd: new Date(), // 日期（至）
-      timevalueEnd: new Date(), // 时间（至）
-      datetimeval: [], // 选择时间数据
-      visible: false, // 时间选择器的变化
-      datetim: true, // 时间选择器的变化
-      datetime: false, // 时间选择器的变化
-      Start_End: {
-        StartTIme: "",
-        EndTIme: ""
+  import moment from "moment"
+  export default {
+    props: {
+      TimeArr: {
+        required: true,
+        type: Array
       },
-      classvalue: 1
-    };
-  },
-  props: {
-    classsvalue: {
-      required: true
-    }
-  },
-  created() {
-    this.TimeChoice(1);
-  },
-  methods: {
-    //点击时间按钮
-    TimeChoice(time) {
-      this.classvalue = time;
-      this.Initialization();
-      if (time === 1) {
-        //今天
-        const KTime = moment(new Date()).format("YYYY/MM/DD 00:00:00"); //获取当前时间
-        const ETime = moment(new Date()).format("YYYY-MM-DD HH:mm:ss"); //获取当前时间
-        this.Start_End.StartTIme = KTime;
-        this.Start_End.EndTIme = ETime;
-      } else if (time === 1 * 24) {
-        //昨天
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
-        //
-        const noeago = moment(startTime - 86400000).format(
-          "YYYY-MM-DD 00:00:00"
-        ); //获取1天前的时间
-        const noenow = moment(startTime - 86400000).format(
-          "YYYY-MM-DD 23:59:59"
-        ); //获取1天前的时间
-        this.Start_End.StartTIme = noeago;
-        this.Start_End.EndTIme = noenow;
-      } else if (time === 1 * 24 * 7) {
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
-        const zhouago = moment(startTime - 518400000).format(
-          "YYYY-MM-DD 00:00:00"
-        ); //获取1周前的时间
-        const zhounow = moment(startTime).format("YYYY-MM-DD 23:59:59");
-        this.Start_End.StartTIme = zhouago;
-        this.Start_End.EndTIme = zhounow;
-      } else if (time === 1 * 24 * 30) {
-        const KTime = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
-        const startTime = new Date(KTime).getTime();
-        const yueago = moment(startTime - 2505600000).format(
-          "YYYY-MM-DD 00:00:00"
-        ); //获取1周前的时间
-        const yuenow = moment(startTime).format("YYYY-MM-DD 23:59:59");
-        this.Start_End.StartTIme = yueago;
-        this.Start_End.EndTIme = yuenow;
+      Datecontrol: {
+        required: true,
+        type: Boolean
+      },
+      Graincontrol: {
+        required: true,
+        type: Boolean
+      },
+      Difference: {
+        required: true,
+        type: String
       }
-      this.$emit("switchData", [this.Start_End, this.classvalue]);
     },
-    switchData() {
-      this.$emit("switchData", [this.Start_End, this.classvalue]);
-    },
-    // 确定按钮
-    Sure() {
-      this.visible = false;
-      this.getdate();
-      this.TimeAfter();
-    },
-    // 截取时间
-    getdate() {
-      this.datetim = false;
-      this.datetime = true;
-      const y = moment(this.datevalueStart).format("YYYY");
-      const m = moment(this.datevalueStart).format("MM") - 1;
-      const d = moment(this.datevalueStart).format("DD");
-      const h = moment(this.timevalueStart).format("HH");
-      const f = moment(this.timevalueStart).format("mm");
-      const s = moment(this.timevalueStart).format("ss");
+    data() {
+      return {
+        TimeValue: '',
+        grainValue: '',
+        TimeGranularity: [],
+        timevalueStart: null,
+        timevalueEnd: null,
+        datetimeval: [], // 选择时间数据
+        visible: false, // 时间选择器的变化
+        datetim: true, // 时间选择器的变化
+        datetime: false, // 时间选择器的变化
+        Start_End: {
+          StartTIme: "",
+          EndTIme: ""
+        },
+        picker: {
+          disabledDate(time) {
+            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 5184000000)
+          }
+        },
 
-      const yy = moment(this.datevalueEnd).format("YYYY");
-      const mm = moment(this.datevalueEnd).format("MM") - 1;
-      const dd = moment(this.datevalueEnd).format("DD");
-      const hh = moment(this.timevalueEnd).format("HH") - 1;
-      const ff = moment(this.timevalueEnd).format("mm");
-      const ss = moment(this.timevalueEnd).format("ss");
-
-      this.datetimeval = [
-        new Date(y, m, d, h, f, s),
-        new Date(yy, mm, dd, hh, ff, ss)
-      ];
-    },
-    // 选择时间
-    SelectionTime() {
-      this.visible = true;
-    },
-    // 时间重新选择---确定
-    ReSelection() {
-      this.TimeAfter();
-    },
-    // 按钮控制时间粒度初始化
-    Initialization() {
-      this.datetim = true;
-      this.datetime = false;
-    },
-    // 确定之后
-    TimeAfter() {
-      const qdate = moment(this.datetimeval[0]).format("YYYY/MM/DD-HH:mm:ss");
-      const hdate = moment(this.datetimeval[1]).format("YYYY/MM/DD-HH:mm:ss");
-      const startTime = new Date(qdate).getTime() / 1000;
-      const endTime = new Date(hdate).getTime() / 1000;
-      if (endTime - startTime <= 3600) {
-        this.TimeSlot = "1hours";
-        this.classvalue = "";
-      } else if (endTime - startTime <= 86400) {
-        this.TimeSlot = "1days";
-        this.classvalue = "";
-      } else {
-        this.TimeSlot = "1weeks";
-        this.classvalue = "";
       }
-      this.Start_End.StartTIme = moment(this.datetimeval[0]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.Start_End.EndTIme = moment(this.datetimeval[1]).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.$emit("switchData", [this.Start_End, this.classvalue]);
-    }
+    },
+    created() {
+      this.initial()
+    },
+    methods: {
+      //初始化数据
+      initial() {
+        this.TimeValue = this.TimeArr[0].Time
+        if (this.TimeArr[0].TimeGranularity) {
+          this.TimeGranularity = this.TimeArr[0].TimeGranularity
+          this.grainValue = this.TimeArr[0].TimeGranularity[0].value
+        }
+        if (this.TimeValue)[
+          this.AcquisitionTime()
+        ]
+      },
+      //点击时间按钮
+      TimeChoice(item) {
+        this.datetime = false;
+        this.datetim = true;
+        this.TimeValue = item.Time
+        if (item.TimeGranularity) {
+          this.TimeGranularity = item.TimeGranularity
+          this.grainValue = item.TimeGranularity[0].value
+        }
+        this.AcquisitionTime()
+      },
+      //切换粒度
+      SwitchGrain() {
+        this.$emit("switchData", [this.grainValue, this.Start_End]);
+      },
+      // 返回横坐标数组
+      getXAxis(startTime, endTime) {
+        let startTimeSec = new Date(startTime).getTime();
+        let endTimeSec = new Date(endTime).getTime();
+        let XAxis = [];
+        for (var i = startTimeSec; i <= endTimeSec; i = i + Number(this.grainValue)*1000) {
+          XAxis.push(moment(new Date(i)).format("YYYY/MM/DD HH:mm:ss"))
+        }
+        return XAxis;
+      },
+      //根据字段获取响应时间
+      AcquisitionTime() {
+        if (this.TimeValue === 'realTime') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Nearly_24_hours') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(1, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Nearly_7_days') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(6, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Nearly_15_days') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(14, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Today') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).startOf('day').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Yesterday') {
+          this.Start_End.StartTIme = moment().subtract(1, 'days').startOf('day').format("YYYY/MM/DD HH:mm:ss");
+          this.Start_End.EndTIme = moment().subtract(1, 'days').endOf('day').format("YYYY/MM/DD HH:mm:ss");
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        } else if (this.TimeValue === 'Nearly_30_days') {
+          this.Start_End.EndTIme = moment(new Date()).format("YYYY/MM/DD HH:mm:ss"); //获取当前时间
+          this.Start_End.StartTIme = moment(new Date()).subtract(29, 'days').format("YYYY/MM/DD HH:mm:ss");;
+          this.Start_End.XAxis = this.getXAxis(this.Start_End.StartTIme, this.Start_End.EndTIme);
+        }
+        this.Start_End.StartTIme = moment(new Date(this.Start_End.StartTIme)).format("YYYY-MM-DD HH:mm:ss")
+        this.Start_End.EndTIme = moment(new Date(this.Start_End.EndTIme)).format("YYYY-MM-DD HH:mm:ss")
+        this.$emit("switchData", [this.grainValue, this.Start_End]);
+      },
+      // 确定按钮
+      Sure() {
+        this.TimeValue = '' //按钮样式去掉
+        this.timevalueStart = moment(this.timevalueStart).format("YYYY/MM/DD HH:mm:ss")
+        this.timevalueEnd = moment(this.timevalueEnd).format("YYYY/MM/DD HH:mm:ss")
+        const startTime = moment(this.timevalueStart);
+        const endTime = moment(this.timevalueEnd);
+        let Basis = ''
+        if (endTime.diff(startTime, 'h') <= 1 && this.Difference == 'H') {
+          Basis = 'realTime'
+        } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'H') {
+          Basis = 'Nearly_24_hours'
+        } else if ((endTime.diff(startTime, 'd') <= 6 && this.Difference == 'H') || (endTime.diff(startTime, 'd') > 6 &&
+            this.Difference == 'H')) {
+          Basis = 'Nearly_7_days'
+        } else if (endTime.diff(startTime, 'd') <= 1 && this.Difference == 'D') {
+          Basis = 'Today'
+        } else if (endTime.diff(startTime, 'd') <= 6 && this.Difference == 'D') {
+          Basis = 'Nearly_7_days'
+        } else if (endTime.diff(startTime, 'd') <= 14 && this.Difference == 'D') {
+          Basis = 'Nearly_15_days'
+        } else if (endTime.diff(startTime, 'd') <= 29 && this.Difference == 'D') {
+          Basis = 'Nearly_30_days'
+        }
+        this.TimeArr.forEach(item => {
+          if (item.Time === Basis) {
+            if (item.TimeGranularity) {
+              this.TimeGranularity = item.TimeGranularity
+              this.grainValue = item.TimeGranularity[0].value
+            }
+          }
+        });
+        this.visible = false;
+        this.datetime = true;
+        this.datetim = false;
+        this.Start_End.StartTIme = moment(new Date(this.timevalueStart)).format("YYYY-MM-DD HH:mm:ss")
+        this.Start_End.EndTIme = moment(new Date(this.timevalueEnd)).format("YYYY-MM-DD HH:mm:ss")
+        this.$emit("switchData", [this.grainValue, this.Start_End]);
+      },
+      // 选择时间
+      SelectionTime() {
+        this.datetime = false;
+        this.datetim = true;
+        if (this.timevalueStart === null) {
+          this.timevalueStart = moment(new Date()).subtract(1, 'hours').format("YYYY/MM/DD HH:mm:ss")
+          this.timevalueEnd = moment(new Date()).format("YYYY/MM/DD HH:mm:ss")
+        }
+        this.visible = true;
+      },
+
+    },
   }
-};
+
 </script>
-
-<style scoped lang="scss">
-.box-dis >>> .el-button,
-.box-dis >>> .el-input__inner {
-  height: 30px;
-  border-radius: 0;
-  padding-top: 0;
-  line-height: 30px;
-  font-size: 12px;
-}
-.box-dis {
-  display: flex;
-  justify-content: space-between;
-
-  .btn-style {
+<style lang="scss" scoped>
+  .TimeDropDown {
     display: flex;
-    line-height: 32px;
-  }
-}
-
-.p-dis {
-  display: flex;
-
-  span {
-    line-height: 40px;
   }
 
-  .width-date {
-    width: 150px;
-    margin-left: 20px;
+  .p-dis {
+    display: flex;
+
+    span {
+      line-height: 40px;
+    }
+
+    .width-date {
+      width: 150px;
+      margin-left: 20px;
+    }
   }
-}
 
-.margin-row {
-  margin-top: 30px;
-  margin-left: 55%;
-}
+  .margin-row {
+    margin-top: 30px;
+    margin-left: 55%;
+  }
 
-.dateheight {
-  height: 34px;
-}
+  .dateheight {
+    height: 32px;
+  }
 
-::v-deep.i-font {
-  font-size: 36px;
-}
+  .drop {
+    margin-left: 30px;
 
-::v-deep.el-button--small {
-  font-size: 14px !important;
-}
+    span {
+      color: #cccccc;
+      font-size: 10px;
+    }
 
-.bgImgSet {
-  background: blue;
-}
+    ::v-deep.el-input {
+      width: 100px !important;
+      border: none;
+    }
+  }
 
-.LocaP {
-  padding-right: 20px;
-}
 </style>

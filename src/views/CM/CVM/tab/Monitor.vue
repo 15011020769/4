@@ -205,7 +205,7 @@
           'LanInpkg': '个/s ',
           'WanOuttraffic': 'Mbps',
           'WanIntraffic': 'Mbps ',
-          'AccOuttraffic': '个/s',
+          'AccOuttraffic': 'Mbps',
           'WanOutpkg': '个/s',
           'WanInpkg': '个/s',
           'CpuUsage': '%',

@@ -106,9 +106,17 @@
               {{$t('TKE.subList.qwsdxgjt')}}
               <!-- <a href="">查看更多说明</a> -->
               <p>
-                <el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
+                <el-select v-if="svc.radio==='1'" v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
 				        	<el-option
-				        		v-for="item in ownLoadBalancer"
+				        		v-for="item in ownLoadBalancer1"
+				        		:key="item.LoadBalancerId"
+				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
+				        		:value="item.LoadBalancerId">
+				        	</el-option>
+				        </el-select>
+                <el-select v-if="svc.radio==='3'" v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
+				        	<el-option
+				        		v-for="item in ownLoadBalancer2"
 				        		:key="item.LoadBalancerId"
 				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
 				        		:value="item.LoadBalancerId">
@@ -231,7 +239,7 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="updateAccessMode()">{{$t('TKE.subList.gxfwfs')}}</el-button>
-          <el-button size="small" >取消</el-button>
+          <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
     </div>
@@ -281,7 +289,8 @@ export default {
       spaceName: '', // 命名空间的名称
       serviceName: '', // 服务的名称
       describeClustersList: [], // 描述聚群
-      ownLoadBalancer: [], // 已有负载均衡器
+      ownLoadBalancer1: [], // 已有负载均衡器
+      ownLoadBalancer2: [], // 已有负载均衡器
       LBsubnet: [], // LB所在子网
       vpcNameAry: [], // vpcName的数据
       addressCount: {}, // LB中的子网点对象
@@ -472,8 +481,16 @@ export default {
       }
       await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
-          let msg = res.Response.LoadBalancerSet
-          this.ownLoadBalancer = msg
+          let msg = res.Response.LoadBalancerSet          
+          msg.forEach(item=>{
+            let {radio} = this.svc
+            if(item.VipIsp=='BGP'){
+              this.ownLoadBalancer1.push(item)
+            }
+            if(item.VipIsp=='INTERNAL'){
+              this.ownLoadBalancer2.push(item)
+            }
+          })
           // this.svc.value = msg[0].LoadBalancerId + '  (' + msg[0].LoadBalancerName + ')'
           // this.vpcId = this.vpcId.push(msg[0].VpcId)
           // msg.forEach(ele => {

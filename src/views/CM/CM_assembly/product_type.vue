@@ -163,7 +163,9 @@
           Region: localStorage.getItem("regionv2"),
           Version: "2017-03-12",
         }
-        if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
+        // this.searchParam.label !== undefined &&
+        debugger
+        if ( this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;
           parms["Filters.0.Values.0"] = this.searchParam.value;
           parms["Filters.1.Name"] = 'project-id';

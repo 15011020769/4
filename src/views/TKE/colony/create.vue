@@ -65,7 +65,9 @@
               <el-input
                 class="w200"
                 v-model="colony.name"
-                :class="{ 'cluster-wran': colony.nameWran || colony.nameLength }"
+                :class="{
+                  'cluster-wran': colony.nameWran || colony.nameLength
+                }"
                 @blur="ClusterNameBlur"
                 @focus="ClusterNameFocus"
                 @change="ClusterNameChange"
@@ -73,7 +75,13 @@
               ></el-input>
               <el-tooltip
                 effect="light"
-                :content="colony.nameWran?$t('TKE.colony.jqmcbwk'):colony.nameLength?'集群名稱不能大於60個字符':''"
+                :content="
+                  colony.nameWran
+                    ? $t('TKE.colony.jqmcbwk')
+                    : colony.nameLength
+                    ? '集群名稱不能大於60個字符'
+                    : ''
+                "
                 placement="right"
                 v-if="colony.nameWran || colony.nameLength"
                 ><i class="el-icon-warning-outline ml5"></i>
@@ -1040,7 +1048,7 @@
                                   >{{ $t("TKE.colony.gmsjp") }}</el-checkbox
                                 >
                               </div>
-                              <div v-if="item.buyDataDisk">
+                              <div v-if="item.buyDataDisk" class="boxx">
                                 <div class="tke-second-worker-popover-data-bg">
                                   <div>
                                     <div class="box">
@@ -1841,7 +1849,7 @@
                                   >{{ $t("TKE.colony.gmsjp") }}</el-checkbox
                                 >
                               </div>
-                              <div v-if="item.buyDataDisk">
+                              <div v-if="item.buyDataDisk" class="boxx">
                                 <div
                                   class="tke-second-worker-popover-data-bg"
                                   v-for="(x, i) in item.buyDataDiskArr"
@@ -1926,6 +1934,7 @@
                                   ></i>
                                 </div>
                               </div>
+                              <div v-if="item.addBtnShow">
                               <div
                                 class="add-data-disk"
                                 v-if="
@@ -1935,6 +1944,7 @@
                                 @click="AddDataDisk(index)"
                               >
                                 {{ $t("TKE.colony.tjsjp") }}
+                              </div>
                               </div>
                               <div class="btn">
                                 <el-button @click="DataDiskSure(index, 1)">{{
@@ -2333,13 +2343,13 @@
               <div v-if="colonyThird.safeArr.length > 0">
                 <div v-for="(item, index) in colonyThird.safeArr" :key="index">
                   <div>
-                    <el-select                     
+                    <el-select
                       :disabled="!securityGroupOpt.length"
                       :placeholder="$t('TKE.colony.qxzaqz')"
                       v-model="item.securityGroupSel"
-                      @change="selectChange" 
+                      @change="selectChange"
                     >
-                      <el-option                       
+                      <el-option
                         v-for="x in securityGroupOpt"
                         :key="x.value"
                         :label="x.label"
@@ -2348,12 +2358,26 @@
                       </el-option>
                     </el-select>
                     <!-- 重复警告提示(yhs) -->
-                    <el-tooltip class="hide" :class="{active:item.error||item.textNull}" effect="light" 
-                      :content="item.textNull?'请选择安全组':item.error?'安全组重复':''" placement="right">
+                    <el-tooltip
+                      class="hide"
+                      :class="{ active: item.error || item.textNull }"
+                      effect="light"
+                      :content="
+                        item.textNull
+                          ? '请选择安全组'
+                          : item.error
+                          ? '安全组重复'
+                          : ''
+                      "
+                      placement="right"
+                    >
                       <i class="el-icon-warning-outline ml5"></i>
                     </el-tooltip>
                     <!-- 刷新按钮(yhs) -->
-                    <i class="el-icon-refresh ml5" @click="refreshSafeArr()"></i>
+                    <i
+                      class="el-icon-refresh ml5"
+                      @click="refreshSafeArr()"
+                    ></i>
                     <i
                       class="el-icon-error ml5"
                       @click="deleteExceptPrice(index)"
@@ -2370,9 +2394,12 @@
                 <span v-if="colonyThird.safeArr.length === 0">{{
                   $t("TKE.colony.ywxyzdy")
                 }}</span
-                ><a href="javascript:;" @click="AddSafe" v-if="colonyThird.safeArr.length < 10">{{
-                  $t("TKE.colony.tjaqz")
-                }}</a>
+                ><a
+                  href="javascript:;"
+                  @click="AddSafe"
+                  v-if="colonyThird.safeArr.length < 10"
+                  >{{ $t("TKE.colony.tjaqz") }}</a
+                >
               </p>
             </div>
           </div>
@@ -2688,7 +2715,7 @@ export default {
       colony: {
         name: "",
         nameWran: false,
-        nameLength:false,
+        nameLength: false,
         projectOptions: [
           {
             projectId: "0",
@@ -2847,6 +2874,7 @@ export default {
             // 数据盘
             dataDiskValue: "暫不購買",
             buyDataDisk: false,
+            addBtnShow:true,
             dataDiskArr: [],
             buyDataDiskArr: [],
             dataDiskVal: "CLOUD_PREMIUM",
@@ -2886,6 +2914,7 @@ export default {
             dataDiskArr: [],
             buyDataDiskArr: [],
             buyDataDisk: false,
+            addBtnShow:true,
             dataDiskVal: "CLOUD_PREMIUM",
             dataDiskNumber: "10",
             dataDiskNum1: "100",
@@ -3215,8 +3244,8 @@ export default {
         this.colony.nameWran = false;
       }
     },
-    ClusterNameChange(){
-      if(this.colony.name.length>=60){
+    ClusterNameChange() {
+      if (this.colony.name.length >= 60) {
         this.colony.nameLength = true;
       } else {
         this.colony.nameLength = false;
@@ -4419,6 +4448,10 @@ export default {
     },
     // 购买数据盘 添加数据盘
     AddDataDisk(index) {
+      if (this.colonySecond.workerOneList[index].buyDataDiskArr.length === 20) {
+        this.colonySecond.workerOneList[index].addBtnShow = false;
+        return false;
+      }
       this.colonySecond.workerOneList[index].buyDataDiskArr.push({
         dataDiskVal: "CLOUD_PREMIUM",
         dataDiskNum: "10",
@@ -5102,34 +5135,34 @@ export default {
       });
     },
     //安全组刷新按钮(yhs)
-    refreshSafeArr(){
+    refreshSafeArr() {
       this.securityGroupOpt = [];
       this.SecurityGroup();
     },
     AddSafe() {
       // this.colonyThird.defaultSafeBox = true;
       this.colonyThird.defaultSafe = true;
-      if(this.colonyThird.safeArr.length>=10) return//安全组个数限制(yhs)
+      if (this.colonyThird.safeArr.length >= 10) return; //安全组个数限制(yhs)
       this.colonyThird.safeArr.push({
         securityGroupSel: ""
       });
     },
     //安全组重复验证(yhs)
-    selectChange(){
-      let { safeArr } = this.colonyThird
-      safeArr.map(item=>{
-        item.error=false
-        if (item.securityGroupSel !== '') item.textNull = false//对安全组的非空验证
-      })
+    selectChange() {
+      let { safeArr } = this.colonyThird;
+      safeArr.map(item => {
+        item.error = false;
+        if (item.securityGroupSel !== "") item.textNull = false; //对安全组的非空验证
+      });
       for (let i = 0; i < safeArr.length - 1; i++) {
         for (let j = i + 1; j < safeArr.length; j++) {
-          if (safeArr[i].securityGroupSel === '' || safeArr[i].error) break
-          if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel){
-            safeArr[j].error = true
+          if (safeArr[i].securityGroupSel === "" || safeArr[i].error) break;
+          if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel) {
+            safeArr[j].error = true;
           }
         }
       }
-      this.colonyThird.safeArr = safeArr
+      this.colonyThird.safeArr = safeArr;
     },
     //删除一项
     deleteExceptPrice(index) {
@@ -5403,17 +5436,17 @@ export default {
     // 第三步 下一步
     thirdNext() {
       //安全组非空验证(yhs)
-      let submit = 'success'
-      let {safeArr} = this.colonyThird
-      safeArr.forEach(item=>{
-        item.textNull = false
-        if(item.securityGroupSel === '') {
-          item.textNull = true
-          submit = 'error'
+      let submit = "success";
+      let { safeArr } = this.colonyThird;
+      safeArr.forEach(item => {
+        item.textNull = false;
+        if (item.securityGroupSel === "") {
+          item.textNull = true;
+          submit = "error";
         }
-      })
-      this.colonyThird.safeArr = [...safeArr]
-      if(submit === 'error') return
+      });
+      this.colonyThird.safeArr = [...safeArr];
+      if (submit === "error") return;
 
       if (this.colonyThird.confirmPassword == "") {
         this.colonyThird.confirmPasswordWran = true;
@@ -5717,12 +5750,15 @@ export default {
         this.colonySecond.worker == 1
       ) {
         param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
-        param[
+        
+param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = true;
+        ] =  this.colonyThird.cloudwatchChecked
+       
+        
         param[
           "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = true;
+        ] = this.colonyThird.safetyChecked
         for (let i in this.rightList) {
           param[
             "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
@@ -6930,14 +6966,18 @@ export default {
     border: 1px solid #e1504a;
   }
 }
-.hide{
+.hide {
   display: none;
-  &.active{
-    display:inline;
+  &.active {
+    display: inline;
   }
 }
-.errorStyle{
+.errorStyle {
   color: red;
   border-color: red;
+}
+.boxx {
+  max-height: 300px;
+  overflow: auto;
 }
 </style>

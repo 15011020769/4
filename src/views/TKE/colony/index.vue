@@ -105,9 +105,9 @@
               >
               <span
                 v-else-if="scope.row.ClusterStatus == 'Creating'"
-                class="text-orange"
-                >{{ $t("TKE.colony.cjz") }} <i class="el-icon-loading"></i
-              ></span>
+                class="text-green"
+                >{{ $t("TKE.colony.cjz") }}</span
+              >
               <span v-else class="text-red">{{ $t("TKE.overview.yc") }}</span
               >)
             </template>
@@ -122,77 +122,61 @@
                   <a href="javascript:;" @click="NodeTotal(scope.row)"
                     >{{ scope.row.ClusterNodeNum }}台</a
                   >
-                  <div
-                    style="display: flex;"
-                    v-if="scope.row.ClusterNodeNum > 0"
-                  >
-                    (
-                    <div v-if="scope.row.ClusterInitNodeNum == 0" class="box">
-                      <span
-                        class="text-green"
-                        v-if="scope.row.ClusterInstanceState == 'AllNormal'"
-                        >全部正常</span
-                      >
-                      <p
-                        v-else-if="
-                          scope.row.ClusterInstanceState == 'AllAbnormal'
-                        "
-                      >
-                        <span
-                          class="text-green"
-                          v-if="
-                            scope.row.ClusterClosedNodeNum != 0 ||
-                              scope.row.ClusterClosingNodeNum != 0
-                          "
-                          >全部正常</span
-                        >
-                        <span class="text-red" v-else>{{
-                          $t("TKE.colony.qbyc")
-                        }}</span>
-                      </p>
-                      <span class="text-red" v-else>{{
-                        $t("TKE.colony.bfyc")
-                      }}</span>
-                    </div>
-                    <span v-else class="text-orange"> 正在創建</span>
-                    )
-
-                    <el-popover
-                      width="50"
-                      trigger="hover"
-                      placement="top"
-                      v-if="scope.row.ClusterInstanceState != 'AllNormal'"
+                  (
+                  <p v-if="scope.row.ClusterInitNodeNum == 0">
+                    <span
+                      class="text-green"
+                      v-if="scope.row.ClusterInstanceState == 'AllNormal'"
+                      >全部正常</span
                     >
-                      <div class="node-popover">
-                        <p>
-                          {{ $t("TKE.colony.cjz") }}：{{
-                            scope.row.ClusterInitNodeNum
-                          }}台
-                        </p>
-                        <p>
-                          {{ $t("TKE.colony.yxz") }}：{{
-                            scope.row.ClusterRunningNodeNum
-                          }}台
-                        </p>
-                        <p>
-                          {{ $t("TKE.overview.yc") }}：{{
-                            scope.row.ClusterFailedNodeNum
-                          }}台
-                        </p>
-                        <p>
-                          {{ $t("TKE.colony.ygj") }}：{{
-                            scope.row.ClusterClosedNodeNum
-                          }}台
-                        </p>
-                        <p>
-                          {{ $t("TKE.colony.gjz") }}：{{
-                            scope.row.ClusterClosingNodeNum
-                          }}台
-                        </p>
-                      </div>
-                      <i class="el-icon-warning-outline" slot="reference"></i>
-                    </el-popover>
-                  </div>
+                    <span
+                      class="text-red"
+                      v-else-if="
+                        scope.row.ClusterInstanceState == 'AllAbnormal'
+                      "
+                      >{{ $t("TKE.colony.qbyc") }}</span
+                    >
+                    <span class="text-red" v-else>{{
+                      $t("TKE.colony.bfyc")
+                    }}</span>
+                  </p>
+                  <span v-else class="text-orange"> 正在創建</span>
+                  )
+                  <el-popover
+                    width="50"
+                    trigger="hover"
+                    placement="top"
+                    v-if="scope.row.ClusterInstanceState != 'AllNormal'"
+                  >
+                    <div class="node-popover">
+                      <p>
+                        {{ $t("TKE.colony.cjz") }}：{{
+                          scope.row.ClusterInitNodeNum
+                        }}台
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.yxz") }}：{{
+                          scope.row.ClusterRunningNodeNum
+                        }}台
+                      </p>
+                      <p>
+                        {{ $t("TKE.overview.yc") }}：{{
+                          scope.row.ClusterFailedNodeNum
+                        }}台
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.ygj") }}：{{
+                          scope.row.ClusterClosedNodeNum
+                        }}台
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.gjz") }}：{{
+                          scope.row.ClusterClosingNodeNum
+                        }}台
+                      </p>
+                    </div>
+                    <i class="el-icon-warning-outline" slot="reference"></i>
+                  </el-popover>
                 </div>
                 <p v-else>
                   <span style="color:#bbb;"
@@ -204,8 +188,17 @@
           </el-table-column>
           <el-table-column prop="address" :label="$t('TKE.colony.yfpzpz')">
             <template slot-scope="scope">
-              <p>CPU: -/{{ scope.row.root }}核</p>
-              <p>{{ $t("TKE.overview.ncun") }}: -/-GB</p>
+              <p>
+                CPU: {{ scope.row.yroot ? scope.row.yroot : "-" }}/{{
+                  scope.row.root ? scope.row.root : "-"
+                }}核
+              </p>
+              <p>
+                {{ $t("TKE.overview.ncun") }}:
+                {{ scope.row.ymemory ? scope.row.ymemory : "-" }}/{{
+                  scope.row.memory ? scope.row.memory : "-"
+                }}GB
+              </p>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="220">
@@ -314,21 +307,21 @@
       custom-class="tke-dialog"
     >
       <div>
-        <el-form label-width="80px" :model="editForm" :rules="rules" ref="editForm">
+        <el-form label-width="80px">
           <el-form-item :label="$t('TKE.colony.ymc')">
             <p>{{ oldnName }}</p>
           </el-form-item>
-          <el-form-item :label="$t('TKE.colony.xmc')" prop="editSearchVal">
+          <el-form-item :label="$t('TKE.colony.xmc')">
             <el-input
               size="small"
               :placeholder="$t('TKE.colony.qsrxmc')"
-              v-model="editForm.editSearchVal"
+              v-model="editSearchVal"
             ></el-input>
           </el-form-item>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="setColonyName('editForm')">提交</el-button>
+        <el-button type="primary" @click="setColonyName">提交</el-button>
         <el-button @click="editNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -469,6 +462,7 @@ export default {
   name: "colony",
   data() {
     return {
+      xiazai: true,
       loadShow: true, // 加载是否显示
       list: [], // 集群列表
       list1: [], // 集群列表
@@ -477,9 +471,7 @@ export default {
       listStatusArr: [], // 集群列表节点数状态
       editClusterId: "",
       oldnName: "",
-      editForm:{
-        editSearchVal: "", // 编辑名称
-      },
+      editSearchVal: "", // 编辑名称
       total: 0,
       pageSize: 10,
       pageIndex: 0,
@@ -516,13 +508,7 @@ export default {
       detaleTableData_ETCD: [],
       deteleCheck: true,
       deleteLoadShow: true,
-      oldnName: "",
-      rules:{
-        editSearchVal:[
-          { required: true, message: '集群名稱不能為空', trigger: 'blur' },
-          { min: 1, max: 60, message:'集群名稱不能大於60個字符', trigger:'blur'}
-        ]
-      }
+      oldnName: ""
     };
   },
   components: {
@@ -635,6 +621,27 @@ export default {
                   } else {
                     this.list1[j]["root"] = 0;
                   }
+                  if (_Data[k][3]) {
+                    this.list1[j]["memory"] = (
+                      _Data[k][3] /
+                      (1024 * 1024 * 1024)
+                    ).toFixed(2);
+                  } else {
+                    this.list1[j]["memory"] = 0;
+                  }
+                  if (_Data[k][4]) {
+                    this.list1[j]["yroot"] = _Data[k][4].toFixed(2);
+                  } else {
+                    this.list1[j]["yroot"] = 0;
+                  }
+                  if (_Data[k][5]) {
+                    this.list1[j]["ymemory"] = (
+                      _Data[k][5] /
+                      (1024 * 1024 * 1024)
+                    ).toFixed(2);
+                  } else {
+                    this.list1[j]["ymemory"] = 0;
+                  }
                 }
               }
             }
@@ -714,35 +721,18 @@ export default {
       this.getColonyList();
     },
     // 修改集群名称
-    setColonyName(formName) {
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
-            const param = {
-              Version: "2018-05-25",
-              ClusterId: this.editClusterId,
-              ClusterName: this.editForm.editSearchVal
-            };
-            this.axios.post(TKE_COLONY_DES, param).then(res => {
-              this.editNameDialogVisible = false;
-              this.loadShow = true;
-              this.searchInput = "";
-              this.getColonyList();
-            });
-          } else {
-            return false;
-          }
-        });
-      // const param = {
-      //   Version: "2018-05-25",
-      //   ClusterId: this.editClusterId,
-      //   ClusterName: this.editForm.editSearchVal
-      // };
-      // this.axios.post(TKE_COLONY_DES, param).then(res => {
-      //   this.editNameDialogVisible = false;
-      //   this.loadShow = true;
-      //   this.searchInput = "";
-      //   this.getColonyList();
-      // });
+    setColonyName(row) {
+      const param = {
+        Version: "2018-05-25",
+        ClusterId: this.editClusterId,
+        ClusterName: this.editSearchVal
+      };
+      this.axios.post(TKE_COLONY_DES, param).then(res => {
+        this.editNameDialogVisible = false;
+        this.loadShow = true;
+        this.searchInput = "";
+        this.getColonyList();
+      });
     },
     // 创建集群跳转
     goColonyCreate() {
@@ -1032,6 +1022,7 @@ export default {
         bookSST: true,
         type: "array"
       });
+      console.log(wbout);
       try {
         FileSaver.saveAs(
           new Blob([wbout], {
@@ -1196,10 +1187,6 @@ export default {
   display: flex;
   .node-content {
     display: flex;
-
-    .box {
-      display: flex;
-    }
   }
 }
 </style>

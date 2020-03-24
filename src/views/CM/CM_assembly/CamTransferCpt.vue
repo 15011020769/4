@@ -413,6 +413,9 @@
             }
             this.headConfig = value.HeadConfig;
             this.productValue = value.productValue;
+            if (value.projectId !== undefined) {
+              this.projectSelectedOption = value.projectId
+            }
             this.$emit('CAM_loading', false)
           }
         },
@@ -430,8 +433,12 @@
       },
       changeSearch() {
         let searchParam = {};
-        searchParam.value = this.searchInput;
-        searchParam.label = this.searchItem;
+        if(this.searchInput) {
+          searchParam.value = this.searchInput;
+          searchParam.label = this.searchItem;
+        }
+        // searchParam.value = this.searchInput;
+        // searchParam.label = this.searchItem;
         this.$emit("searchParam", searchParam);
       },
 

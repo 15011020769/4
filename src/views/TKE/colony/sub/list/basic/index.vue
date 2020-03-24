@@ -175,7 +175,7 @@
             <el-option
               v-for="item in projectData"
               :key="item.projectId"
-              :label="item.projectInfo"
+              :label="item.projectName"
               :value="item.projectId"
             ></el-option>
           </el-select>

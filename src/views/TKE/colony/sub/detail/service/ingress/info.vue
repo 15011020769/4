@@ -95,7 +95,12 @@ export default {
             tempArr.listenPort = listenPort
             tempArr.backend = item.backend.serviceName
             tempArr.servicePort = item.backend.servicePort
-            tempArr.domainName = mes.status.loadBalancer && mes.status.loadBalancer && mes.status.loadBalancer.ingress && mes.status.loadBalancer.ingress[0].ip
+            console.log(item, protocol, listenPort)
+            if (item.host) {
+              tempArr.domainName = item.host
+            } else {
+              tempArr.domainName = mes.status.loadBalancer && mes.status.loadBalancer && mes.status.loadBalancer.ingress && mes.status.loadBalancer.ingress[0].ip
+            }
             tempArr.url = item.path
             this.list.push(tempArr)
           }

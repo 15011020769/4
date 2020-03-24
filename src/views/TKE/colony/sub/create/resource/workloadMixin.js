@@ -467,7 +467,20 @@ export default {
         },
         trigger: 'blur',
         required: true
-      }]
+      }], // NFS路径验证
+      citeCsInput1Validator: [{
+        validator: (rule, value, callback) => {
+          if (value === '') {
+            callback(new Error('别名不能为空'))
+          } else if (!(/^[-._a-zA-Z][-._a-zA-Z0-9]*$/.test(value))) {
+            callback(new Error('格式不正确，别名只能包含字母、数字及分隔符("-"、"_"、".")，且以字母开头'))
+          } else {
+            callback()
+          }
+        },
+        trigger: 'blur',
+        required: true
+      }] // 环境变量 引用ConfigMap/Secret 别名验证
     }
   },
   methods: {
