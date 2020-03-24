@@ -383,7 +383,6 @@
           });
           if (this.BaseListKd.length == val.length) {
             this.tableData1 = this.BaseListKd
-            this.TableLoad = false
           }
         }
       }
