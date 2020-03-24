@@ -351,6 +351,8 @@
           if (res.Response.FunctionTotalNum) {
             this.topList.number = res.Response.FunctionTotalNum;
             this.loading = false;
+          } else {
+            this.GetOverView()
           }
         });
       },
@@ -480,17 +482,15 @@
         let parms = {
           Version: '2018-07-24',
           MetricName: "mem_duration",
-          Region: 'ap-guangzhou',
+          Region: localStorage.getItem('regionv2'),
           Namespace: "qce/scf_v2",
-          Time: '2020-3-20 0:0:0',
+          Time: moment(new Date(timez)).format("YYYY-MM-DD 00:00:00"),
           Period: 86400,
           Module: 'monitor',
           'Dimensions.0.Name': 'appid',
           'Dimensions.0.Value': localStorage.getItem('appid'),
           'Dimensions.1.Name': 'function_name',
-          'Dimensions.1.Value': 'dasd',
           'Dimensions.2.Name': 'namespace',
-          'Dimensions.2.Value': 'default',
         }
         this.axios.post(TOP_LIST, parms).then(data => {
           if (data.Response.Error == undefined) {
