@@ -36,8 +36,7 @@
           <el-form-item :label="$t('TKE.colony.sllx')">
             <el-radio-group v-model="asg.typeRadio" size="small">
               <el-radio-button label="POSTPAID_BY_HOUR">{{$t('TKE.colony.aljf')}}</el-radio-button>
-              <!-- 去掉竞价计费 2020.3.25 wzh  -->
-              <el-radio-button v-if="false" label="SPOTPAID">{{$t('TKE.subList.jjjf')}}</el-radio-button>
+              <el-radio-button label="SPOTPAID">{{$t('TKE.subList.jjjf')}}</el-radio-button>
             </el-radio-group>
             <p v-if="asg.typeRadio=='SPOTPAID'">
               {{$t('TKE.subList.jjsl')}}
@@ -1013,14 +1012,12 @@ export default {
       this.$router.go(-1);
     },
     removeDomain(item) {
-      console.log(item);
       var index = this.domains.indexOf(item);
       if (index !== -1) {
         this.domains.splice(index, 1);
       }
     },
     removeDomain2(item) {
-      console.log(item);
       var index = this.domainstion.indexOf(item);
       if (index !== -1) {
         this.domainstion.splice(index, 1);
@@ -1049,7 +1046,6 @@ export default {
     //机型表格选中的数据
     handleCurrentChange(val) {
       this.modeData = val;
-      console.log(val);
     },
     //机型model确定选择数据
     ModelSure() {
@@ -1210,7 +1206,6 @@ export default {
         this.publicband = "按使用流量 " + this.asg.broadbandNum + "Mbps";
       }
     },
-
     //获取安全组列表
     async getSecurityGroups() {
       this.loadShow = true;
