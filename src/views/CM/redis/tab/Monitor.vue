@@ -140,20 +140,135 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
-        available: [
-          'cpu_us_min',
-          'cmdstat_get_min', 'cmdstat_getbit_min', 'cmdstat_getrange_min', 'cmdstat_hget_min', 'cmdstat_hgetall_min',
-          'cmdstat_hmget_min', 'cmdstat_hmset_min', 'cmdstat_hset_min', 'cmdstat_hsetnx_min', 'cmdstat_lset_min',
-          'cmdstat_mget_min', 'cmdstat_mset_min', 'cmdstat_msetnx_min', 'cmdstat_set_min',
-          'cmdstat_setbit_min', 'cmdstat_setex_min', 'cmdstat_setnx_min', 'cmdstat_setrange_min', 'connections_min',
-          'in_flow_min', 'keys_min', 'out_flow_min', 'stat_get_min',
-          'stat_set_min',
-          'storage_min', 'storage_us_min', 'slow_query_min',
-          'in_flow_us_min', 'out_flow_us_min', 'connections_us_min', 'expired_keys_min', 'evicted_keys_min',
-          'latency_min', 'latency_get_min', 'latency_set_min',
-          'latency_other_min',
-          'big_value_min', 'stat_success_min', 'stat_missed_min', 'cmd_err_min', 'cache_hit_ratio_min',
-          'cpu_max_us_min'
+        available: [{
+            MetricName: 'cpu_us_min'
+          },
+          {
+            MetricName: 'cmdstat_get_min'
+          },
+          {
+            MetricName: 'cmdstat_getbit_min'
+          },
+          {
+            MetricName: 'cmdstat_getrange_min'
+          },
+          {
+            MetricName: 'cmdstat_hget_min'
+          },
+          {
+            MetricName: 'cmdstat_hgetall_min'
+          },
+          {
+            MetricName: 'cmdstat_hmget_min'
+          },
+          {
+            MetricName: 'cmdstat_hmset_min'
+          },
+          {
+            MetricName: 'cmdstat_hset_min'
+          },
+          {
+            MetricName: 'cmdstat_hsetnx_min'
+          },
+          {
+            MetricName: 'cmdstat_lset_min'
+          },
+          {
+            MetricName: 'cmdstat_mget_min'
+          },
+          {
+            MetricName: 'cmdstat_mset_min'
+          },
+          {
+            MetricName: 'cmdstat_msetnx_min'
+          },
+          {
+            MetricName: 'cmdstat_set_min'
+          },
+          {
+            MetricName: 'cmdstat_setbit_min'
+          },
+          {
+            MetricName: 'cmdstat_setex_min'
+          },
+          {
+            MetricName: 'cmdstat_setnx_min'
+          },
+          {
+            MetricName: 'cmdstat_setrange_min'
+          },
+          {
+            MetricName: 'connections_min'
+          },
+          {
+            MetricName: 'in_flow_min'
+          },
+          {
+            MetricName: 'keys_min'
+          },
+          {
+            MetricName: 'out_flow_min'
+          },
+          {
+            MetricName: 'stat_get_min'
+          },
+          {
+            MetricName: 'stat_set_min'
+          },
+          {
+            MetricName: 'storage_min'
+          },
+          {
+            MetricName: 'storage_us_min'
+          },
+          {
+            MetricName: 'slow_query_min'
+          },
+          {
+            MetricName: 'in_flow_us_min'
+          },
+          {
+            MetricName: 'out_flow_us_min'
+          },
+          {
+            MetricName: 'connections_us_min'
+          },
+          {
+            MetricName: 'expired_keys_min'
+          },
+          {
+            MetricName: 'evicted_keys_min'
+          },
+          {
+            MetricName: 'latency_min'
+          },
+          {
+            MetricName: 'latency_get_min'
+          },
+          {
+            MetricName: 'latency_set_min'
+          },
+          {
+            MetricName: 'latency_other_min'
+          },
+          {
+            MetricName: 'big_value_min'
+          },
+          {
+            MetricName: 'stat_success_min'
+          },
+          {
+            MetricName: 'stat_missed_min'
+          },
+          {
+            MetricName: 'cmd_err_min'
+          },
+          {
+            MetricName: 'cache_hit_ratio_min'
+          },
+          {
+            MetricName: 'cpu_max_us_min'
+          },
         ], //可用指标
         disName: {
           'cpu_us_min': 'CPU使用率',
@@ -332,24 +447,28 @@
           Module: 'monitor',
         }
         this.axios.post(ALL_Basics1, parms).then(res => {
-          console.log(res)
+
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.Data
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
               this.available.forEach(element => {
-                if (item.MetricName === element) {
-                  this.BaseListK.push(item)
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
                 }
               });
+            });
+            this.available.forEach(i => {
+
+              this.BaseListK.push(i.data)
+
             });
             for (let
                 k = 0; k < this.BaseListK.length; k++) {
               let _this = this;
               (function (o) {
                 setTimeout(() => {
-                  console.log(_this.BaseListK[o].MetricName)
                   _this._GetMonitorData(_this.BaseListK[o].MetricName)
                 }, o * 50);
               })(k)
