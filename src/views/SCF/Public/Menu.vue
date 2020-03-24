@@ -18,8 +18,17 @@ export default {
     return {
       activeIndex: "1",
       activeIndex2: "1",
-      scfMenu: localStorage.getItem('scfMenu') ? localStorage.getItem('scfMenu') : 'overView'
+      scfMenu: localStorage.getItem('scfMenu')
     };
+  },
+  mounted(){
+    const routerPath = this.$route.path
+    console.log(routerPath)
+    if(routerPath === '/overView') {
+      localStorage.setItem('scfMenu', 'overView')
+    }else {
+      localStorage.setItem('scfMenu', 'FuncServe')
+    }
   },
   methods: {
     handleOpen(key, keyPath) {
