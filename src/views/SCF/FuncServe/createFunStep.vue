@@ -330,7 +330,10 @@
                 duration: 0
               });
               this.$router.push({
-                path: "/FuncServe"
+                path: "/FuncServe",
+                query: {
+                  Namespace: this.$route.query.Namespace
+                }
               });
             } else {
               let ErrTips = {

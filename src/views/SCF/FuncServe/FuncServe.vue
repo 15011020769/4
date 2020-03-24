@@ -196,6 +196,10 @@
       copy
     },
     created() {
+
+      if (this.$route.query.Namespace != undefined) {
+        this.SpaceValue = this.$route.query.Namespace
+      }
       this._GetFuncList()
     },
     mounted() {
