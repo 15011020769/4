@@ -54,7 +54,7 @@
                   <span>{{ props.row.EventName }}</span>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.sjy')">
-                  <span>{{ props.row.EventSource }}</span>
+                  <span>{{ props.row.EventSource |UpName}}</span>
                 </el-form-item>
                 <el-form-item :label="$t('CLA.total.sjsj')">
                   <span>{{ props.row.EventTime }}</span>
@@ -123,7 +123,7 @@
           <el-table-column :label="$t('CLA.total.sjy')">
             <template slot-scope="scope">
               <p>
-                {{scope.row.EventSource}}
+                {{scope.row.EventSource |UpName}}
               </p>
             </template>
           </el-table-column>
@@ -165,7 +165,7 @@
           <el-table-column :label="$t('CLA.total.sjsj')">
             <template slot-scope="scope">
               <p>
-                {{scope.row.EventTime}}
+                {{scope.row.EventTime |UpTime}}
               </p>
             </template>
           </el-table-column>
@@ -216,7 +216,7 @@
       return {
         WEiY: false,
         placeholder: "請輸入內容",
-        value1: "", // 日历
+        value1: null, // 日历
         startTime: "", //  搜索 --> 默认开始时间
         endTime: "", //  搜索 --> 默认结束时间
         nowtime: "", // 现在时间
@@ -232,8 +232,7 @@
         vloading: true,
         pickerOptions: {
           disabledDate(time) {
-
-            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 604800000)
+            return time.getTime() > Date.now() || time.getTime() < (Date.now() - 86400000 * 29)
           },
           shortcuts: [{
             text: "最近一周",
@@ -388,7 +387,7 @@
               "InvalidParameterValue.MaxResult": "單次檢索支持的最大返回條數是50",
               "InvalidParameterValue.Time": "開始時間不能大於結束時間",
               "InvalidParameterValue.attributeKey": "AttributeKey的有效取值範圍是:RequestId、EventName、ReadOnly、Username、ResourceType、ResourceName和AccessKeyId",
-              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是7天"
+              "LimitExceeded.OverTime": "檢索支持的有效時間範圍是30天"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({
@@ -432,7 +431,7 @@
       },
       seachpicker() {
         this.nowtime = String(moment(this.value1[1]).valueOf() / 1000)
-        this.oldTime = String(moment(this.value1[0]).valueOf() / 1000)
+        this.oldTime = String(moment(this.value1[0]).valueOf() / 1000 - 86400)
         this.tableData = []
         this.Loading()
       },
@@ -461,6 +460,17 @@
           this.isRouterAlive = true;
           this.Loading();
         });
+      }
+    },
+    filters: {
+      UpTime(value) {
+        let time = String(value + '(事件時間)')
+        return time;
+      },
+      UpName(value) {
+        var index = value.replace('tencent', 'taipei');
+        return index
+
       }
     }
   };

@@ -432,7 +432,7 @@ export default {
       this.cslsSDK.init({
         rootNode: document.querySelector('#container_editor'),
         modeType: ModeTypeEnum.ZIP,
-        i18nType: "zh-TW"
+        i18nType: "zh-tw"
       });
       // https://03-20-1300561189.cos.ap-taipei.myqcloud.com/dasd_LATEST.zip
       this.cslsSDK.addListener({

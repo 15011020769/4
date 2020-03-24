@@ -26,7 +26,7 @@ export const NAT_LIST = 'vpc2/DescribeNatGateways' // 列表
 // 对等连接
 export const PEE_LIST = 'vpc/DescribeVpcPeeringConnections' // 列表
 // 雲数据库Redis
-export const REDIS_LIST = 'redis2/DescribeInstances' // 列表
+export const REDIS_LIST = 'redesc/redis2/DescribeInstances' // 列表
 //物理专线
 export const Physics_LIST = 'dc2/DescribeDirectConnects' // 列表
 //专线通道

@@ -412,7 +412,7 @@ export default {
           new Blob([wbout], {
             type: "application/octet-stream"
           }),
-          this.$t("tke-nodeList") + ".xlsx"
+          this.$t("tke-jobList") + ".xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);

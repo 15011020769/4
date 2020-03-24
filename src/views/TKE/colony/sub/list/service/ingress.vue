@@ -39,7 +39,7 @@
         </el-table-column>
         <el-table-column prop="" :label="$t('TKE.overview.lx')">
           <template slot-scope="scope">
-            <span class="tke-text-link">{{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}</span>
+            <span>{{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}</span>
             <p>{{$t('TKE.subList.fzjh')}}</p>
           </template>
         </el-table-column>
@@ -49,14 +49,18 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="" :label="$t('TKE.subList.hdfw')" width="350">
+        <el-table-column prop="" :label="$t('TKE.subList.hdfw')">
           <template slot-scope="scope">
-            <span class="tke-text-link">
-              http://{{scope.row.status.loadBalancer.ingress?scope.row.status.loadBalancer.ingress[0].ip:'-'}}{{scope.row.spec.rules[0].http.paths[0].path}}
-            </span>
-            &ndash;&gt;
-            {{scope.row.spec.rules[0].http.paths[0].backend.serviceName}}
-            : {{scope.row.spec.rules[0].http.paths[0].backend.servicePort}}
+            <el-popover placement="top" trigger="hover">
+              <div v-for="(item, index) in scope.row.backendService" :key="index">
+                <a :href="item.url" class="tke-text-link">{{item.url}}</a>-->{{item.other}}
+              </div>
+              <div slot="reference">
+                <a :href="scope.row.backendService[0].url" class="tke-text-link">{{scope.row.backendService[0].url}}</a>-->{{scope.row.backendService[0].other}}
+                <p class="tke-text-link" v-if="scope.row.backendService.length>1">
+                  等{{scope.row.backendService.length}}条转发规则</p>
+              </div>
+            </el-popover>
           </template>
         </el-table-column>
 
@@ -214,7 +218,32 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody)
           let { items } = mes
-          this.list = items
+          this.list = items.map(item => {
+            let http = JSON.parse(item.metadata.annotations['kubernetes.io/ingress.http-rules'])
+            let https = JSON.parse(item.metadata.annotations['kubernetes.io/ingress.https-rules'])
+            item.backendService = []
+            if (http) {
+              http.forEach(httpItem => {
+                let host = httpItem.host ? httpItem.host : item.status.loadBalancer.ingress[0].ip
+                item.backendService.push({
+                  url: `http://${host}${httpItem.path}`,
+                  other: `${httpItem.backend.serviceName}:${httpItem.backend.servicePort}`
+                })
+              })
+            }
+            if (https) {
+              https.forEach(httpsItem => {
+                let host = httpsItem.host ? httpsItem.host : item.status.loadBalancer.ingress[0].ip
+                item.backendService.push({
+                  url: `https://${host}${httpsItem.path}`,
+                  other: `${httpsItem.backend.serviceName}:${httpsItem.backend.servicePort}`
+                })
+              })
+            }
+            // console.log(item.metadata.annotations)
+            return item
+          })
+          console.log(this.list)
           this.total = items.length
           this.loadShow = false
         } else {
