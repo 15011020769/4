@@ -53,8 +53,8 @@
       >
         <el-table-column :label="$t('TKE.overview.mc')">
           <template slot-scope="scope">
-            <!-- <span class="tke-text-link" @click="goCronJobDetail(scope.row)">{{scope.row.metadata.name}}</span> -->
-            <span>{{scope.row.metadata.name}}</span>
+            <span class="tke-text-link" @click="goCronJobDetail(scope.row)">{{scope.row.metadata.name}}</span>
+            <!-- <span>{{scope.row.metadata.name}}</span> -->
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('TKE.subList.zxcl')">

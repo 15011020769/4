@@ -87,8 +87,8 @@
           :label="$t('TKE.subList.sszmc')"
           >
           <template slot-scope="scope">
-            <span>{{scope.row.AutoScalingGroupId}}</span>
-            <!-- <span class="tke-text-link" >{{scope.row.AutoScalingGroupId}}</span> -->
+            <!-- <span>{{scope.row.AutoScalingGroupId}}</span> -->
+            <span> <a :href="'../AS/index.html#/flexGroup/secDetails/'+ scope.row.AutoScalingGroupId">{{scope.row.AutoScalingGroupId}}</a></span>
             <p>{{scope.row.AutoScalingGroupName}}<i class="el-icon-edit tke-icon" @click="modifyNameModal(scope.row)"></i></p>
           </template>
         </el-table-column>
@@ -145,7 +145,7 @@
           prop="address"
           :label="$t('TKE.subList.qdpzmc')">
           <template slot-scope="scope">
-            <p><a :href="'../startCon/secDetails/' + scope.row.LaunchConfigurationId">{{scope.row.LaunchConfigurationId}}</a></p>
+            <p><a :href="'../AS/index.html#/startCon/secDetails/' + scope.row.LaunchConfigurationId">{{scope.row.LaunchConfigurationId}}</a></p>
             <p>{{scope.row.LaunchConfigurationName}}</p>
           </template>
         </el-table-column>

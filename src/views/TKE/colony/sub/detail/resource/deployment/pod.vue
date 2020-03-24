@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 左侧 -->
       <div class="grid-left">
-        <el-button size="small" >监控</el-button>
+        <!-- <el-button size="small" >监控</el-button> -->
       </div>
     </div>
     
@@ -55,7 +55,7 @@
           label="实例名称"
           >
           <template slot-scope="scope">
-            <span class="tke-text-link">{{scope.row.metadata && scope.row.metadata.name}}</span>
+            <span>{{scope.row.metadata && scope.row.metadata.name}}</span>
           </template>
         </el-table-column>
         <el-table-column
