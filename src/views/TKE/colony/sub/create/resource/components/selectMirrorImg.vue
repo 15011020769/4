@@ -152,7 +152,7 @@ export default {
         })
         this.tableData = repoInfo;
         this.TotalCount= repoInfo.length;
-        
+
         console.log('searchUserRepository', this.tableData)
       })
     },
@@ -224,17 +224,6 @@ export default {
 
 </script>
 <style scoped lang="scss">
-  /* css */
-  .dialog > > > .el-dialog {
-    height: 95%;
-    margin-top:20px !important;
-    position: fixed;
-    bottom: 0px;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    overflow: auto;
-  }
 
   .dialog > > > .el-dialog__footer {
     text-align: center !important;
