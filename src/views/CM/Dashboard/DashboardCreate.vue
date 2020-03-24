@@ -13,7 +13,11 @@
         ></Type>
       </div>
       <div class="top-two">
-        <span>数据视图</span>
+        <span>数据视图
+          <el-tooltip class="item" effect="light" content="明细视图展示不同实例的多条曲线, 聚合视图展示跨实例的聚合数据" placement="top">
+            <i class="el-icon-info"></i>
+          </el-tooltip>
+        </span>
         <div class="top-two-see">明细视图</div>
       </div>
     </div>
@@ -491,7 +495,7 @@ export default {
     align-items: center;
   }
   .top-two {
-    width: 150px;
+    width: 180px;
     float: left;
     margin-left: 20px;
     display: flex;
