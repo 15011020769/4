@@ -98,7 +98,7 @@
               }
             },
             formatter(params) {
-              console.log(params, 'params');
+              // console.log(params, 'params');
               let relVal = `${params[0].name}<br/>`;
               params.forEach((ele,i) => {
                 relVal += `<span style="color: ${params[i].color}">${params[i].data}</span><br/>`;
