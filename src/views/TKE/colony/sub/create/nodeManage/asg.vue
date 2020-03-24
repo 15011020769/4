@@ -107,7 +107,8 @@
 
           <el-form-item :label="$t('TKE.overview.yhm')" v-show="asg.pwdRadio === 'pwd3'">
             <div class="tke-form-item_text">
-              <span>uunin</span>
+              <span v-if="caozuo==='centos'">ubuntu</span>
+              <span v-if="caozuo==='ubuntu'">root</span>
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-show="asg.pwdRadio === 'pwd3'">
@@ -536,6 +537,7 @@ export default {
   data() {
     return {
       clusterId: "", //集群id
+      caozuo:'centos',//操作系统
       flag1: true,
       flag2: false,
       checked: false,

@@ -237,7 +237,7 @@ export default {
       this.$router.go(-1);
     },
     nameSpaceList1() {
-       //第一项命名空间
+      //第一项命名空间
       this.option3 = []; //工作负载实例
       this.option4 = [];
       this.option5 = [];
@@ -250,7 +250,7 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.option1 = []; //命名空间选项
+          // this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
             this.option1.push({
               value: item.metadata.name,
@@ -275,7 +275,7 @@ export default {
       this.option3 = []; //工作负载实例
       this.option4 = [];
       this.option5 = [];
-       var v = this.value2;
+      var v = this.value2;
       v = v.replace(v, this.value2.toLowerCase()) + "s";
       if (v === "jobs") {
         var params = {
@@ -295,17 +295,16 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.option1 = []; //命名空间选项
+          // this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
-            this.option1.push({
+            this.option3.push({
               value: item.metadata.name,
               label: item.metadata.name
             });
           });
-          // if(){
-this.getWorkload();
-          // }
+          // if(){//假如Workload有参数的话就调用
           this.getWorkload();
+          // }
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -442,7 +441,6 @@ this.getWorkload();
             this.option4 = [];
             this.option5 = [];
             this.htmls = "";
-
             this.autoRefresh = false;
             this.listNumFlag = true;
             return;
