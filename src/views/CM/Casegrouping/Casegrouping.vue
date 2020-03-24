@@ -433,6 +433,7 @@ export default {
     },
     // 复制
     Copy(row) {
+      console.log(row);
       this.copyDialogVisible = true;
       this.groupName = row.GroupName;
       this.instanceGroupId = row.InstanceGroupId;

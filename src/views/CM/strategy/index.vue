@@ -264,7 +264,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn">复制</el-button>
+            <el-button type="text" class="cloneBtn" @click="Copy(scope.row)"
+              >复制</el-button
+            >
             <el-tooltip
               content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
               placement="left"
@@ -510,6 +512,19 @@
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
+    <!-- 复制 -->
+    <el-dialog
+      title="确定复制所选实例组"
+      :visible.sync="copyDialogVisible"
+      width="500px"
+      custom-class="tke-dialog"
+    >
+      <div>是否复制 {{ groupName }}</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="CopyList()">确定复制</el-button>
+        <el-button @click="copyDialogVisible = false">取消</el-button>
+      </div>
+    </el-dialog>
     <!-- 告警启停 -->
     <el-dialog
       title="告警操作确认"
@@ -701,6 +716,7 @@ export default {
       GroupId: "",
       GroupName: "",
       startStop: false,
+      copyDialogVisible: false,
       IsOpen: false,
       inputVal: "",
       indexs: "",
@@ -1156,6 +1172,15 @@ export default {
             showClose: true,
             duration: 0
           });
+        }
+      });
+    },
+    // 复制
+    Copy(row) {
+      this.$router.push({
+        path: "/strategy/create",
+        query: {
+          groupId: row.GroupId
         }
       });
     },
