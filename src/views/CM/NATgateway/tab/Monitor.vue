@@ -148,6 +148,18 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [{
+          MetricName: 'OutBandwidth'
+        }, {
+          MetricName: 'InBandwidth'
+        }, {
+          MetricName: 'OutPkg'
+        }, {
+          MetricName: 'InPkg'
+        }, {
+          MetricName: 'Conns'
+        }, ],
+
         disName: {
           "OutBandwidth": '外網出頻寬',
           "InBandwidth": '外網入頻寬',
@@ -212,13 +224,26 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                setTimeout(() => {
-                  this._GetMonitorData(item.MetricName)
-                }, 500);
+              this.available.forEach(element => {
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
+                }
+              });
+            });
+            this.available.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
               }
             });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],
