@@ -49,7 +49,7 @@
 					v-for="item in personObj.vpcNameAry"
 					:key="item.VpcName"
 					:label="item.VpcName"
-					:value="item.VpcName">
+					:value="item.VpcId">
 				</el-option>
 			</el-select>
 			<el-select v-model="svc.LBvalue2" :placeholder="$t('TKE.overview.qxz')">
@@ -60,8 +60,8 @@
 					:value="item.SubnetId">
 				</el-option>
 			</el-select>
-			<el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
-			共<span>{{addressCount.TotalIpAddressCount}}</span>{{$t('TKE.subList.gzwd')}}<span>{{addressCount.AvailableIpAddressCount}}</span>{{$t('TKE.overview.ge')}}可用
+			<!-- <el-button style="border:none;"><i class="el-icon-refresh"></i></el-button> -->
+			&nbsp;共<span>{{addressCount.TotalIpAddressCount}}</span>{{$t('TKE.subList.gzwd')}}<span>{{addressCount.AvailableIpAddressCount}}</span>{{$t('TKE.overview.ge')}}可用
 		</el-form-item>
 
 		<el-form-item :label="$t('TKE.subList.fzjhq')" v-if="svc.radio=='1' || svc.radio=='3'">
@@ -78,7 +78,7 @@
 			<div v-show="svc.loadBalance=='2'">{{$t('TKE.subList.qwsdxgjt')}}
         <!-- <a href="javascript:;">查看更多说明</a> -->
 			<p>
-				<el-select v-if="svc.radio==='1'" v-model="svc.balancerValue" @change="$set(personObj.ownLoadBalancer)" :placeholder="$t('TKE.overview.qxz')">
+				<el-select v-if="svc.radio==='1'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
 					<el-option
 						v-for="item in personObj.ownLoadBalancer1"
 						:key="item.LoadBalancerId"
@@ -86,7 +86,7 @@
 						:value="item.LoadBalancerId">
 					</el-option>
 				</el-select>
-        <el-select v-if="svc.radio==='3'" v-model="svc.balancerValue" @change="$set(personObj.ownLoadBalancer)" :placeholder="$t('TKE.overview.qxz')">
+        <el-select v-if="svc.radio==='3'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
 					<el-option
 						v-for="item in personObj.ownLoadBalancer2"
 						:key="item.LoadBalancerId"
@@ -156,11 +156,15 @@
 						  <el-input class="w250" v-model="it.input2" :placeholder="$t('TKE.subList.jyydkyz')"></el-input>
 						</el-form-item>
 						<!-- 对删除按钮的判断 -->
-						<el-tooltip class="item" effect="dark" :content="$t('TKE.subList.zslgdk')" placement="right" v-if="svc.list.length===1">
-							<i style="font-size:18px;" :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close"></i>
+						<el-tooltip class="item" effect="dark" :content="$t('TKE.subList.zslgdk')"
+                        placement="right" v-if="svc.list.length===1">
+							<i style="font-size:18px;" 
+                 :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close"></i>
 						</el-tooltip>
-						<el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right" v-else>
-							<i style="font-size:18px;" :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close" @click="removeprot(it)"></i>
+						<el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" 
+                        placement="right" v-else>
+							<i style="font-size:18px;" 
+              :style="svc.radio=='4'?'padding-left:40px;':'padding-left:20px;'" class="el-icon-close" @click="removeprot(it)"></i>
 						</el-tooltip>
 					</div>
 				</div>
@@ -309,7 +313,6 @@ export default {
             if (i !== idx && ls[i].protocol !== value) {
               flog = false
             }
-            console.log(typeof ls[i].protocol, typeof value)
           }
           // }
           if (!flog) {
@@ -350,8 +353,8 @@ export default {
       handler: function () {
         let { LBsubnet, vpcNameAry, ownLoadBalancer1, ownLoadBalancer2 } = this.personObj
         if (!(LBsubnet[0] && vpcNameAry[0] && ownLoadBalancer1[0] && ownLoadBalancer2[0])) return
-        this.svc.LBvalue2 = LBsubnet[0].SubnetId
-        this.svc.LBvalue1 = vpcNameAry[0].VpcName
+        // this.svc.LBvalue2 = LBsubnet[0].SubnetId
+        // this.svc.LBvalue1 = vpcNameAry[0].VpcId
         if(this.svc.radio==='1') this.svc.balancerValue = ownLoadBalancer1[0].LoadBalancerId
         if(this.svc.radio==='3') this.svc.balancerValue = ownLoadBalancer2[0].LoadBalancerId
         // + ' (' + ownLoadBalancer[0].LoadBalancerName + ')'

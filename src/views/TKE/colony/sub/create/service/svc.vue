@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="colony-main">
-      <div class="tke-card tke-formpanel-wrap mb60">
+      <div class="tke-card tke-formpanel-wrap mb60" v-loading="loadShow">
         <el-form  class="tke-form" :model="svc" :rules="rules" ref="form" label-position='left' label-width="120px" size="mini">
 					<div style="padding: 0 10px 10px 10px;border-bottom:1px solid #dcdfe6;">
 						<h3 style="margin-bottom:11px;">{{$t('TKE.overview.jbxx')}}</h3>
@@ -43,7 +43,7 @@
 					<div class="card">
 						<h3 style="padding-bottom:20px;">Workload（{{$t('TKE.subList.xt')}}）</h3>
 						<el-form-item label="Selectors">
-							<div style="padding-bottom:10px;" v-for="it in svc.workload" :key="it.key">
+							<div style="padding-bottom:10px;" v-for="(it,i) in svc.workload" :key="i">
 								<el-input v-model="it.key" placeholder="key" class="w100"></el-input>=
 								<el-input v-model="it.value" placeholder="value" class="w100"></el-input>
 								<el-tooltip class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
@@ -51,7 +51,9 @@
 								</el-tooltip>
 							</div>
 							<div>
-								<a href="javascript:;" @click="addwork()">添加</a> | <a href="javascript:;" @click="dialogFormVisible = true">引用Workload</a>
+								<a href="javascript:;" @click="addwork()">添加</a> | 
+                <a href="javascript:;" @click="dialogFormVisible = true">引用Workload</a>
+                <!-- <span type="primary" @click="addwork()">添加</span> | <span type="primary" @click="dialogFormVisible = true">引用Workload</span> -->
 							</div>
 						</el-form-item>
 					</div>
@@ -60,21 +62,22 @@
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
           <el-button size="small" type="primary" @click="submitSer('form')">{{$t('TKE.subList.cj')}}Service</el-button>
-          <el-button size="small">取消</el-button>
+          <el-button size="small" @click="$router.go(-1)">取消</el-button>
         </div>
       </div>
     </div>
 		<!-- 幕布层 -->
-		<el-dialog :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
-			<el-form label-width="100px">
+		<el-dialog class="dialog" :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
+			 <!-- v-loading="dialogLoadShow" -->
+      <el-form label-width="100px">
 				<el-form-item :label="$t('TKE.event.zylx')">
 					<el-radio-group v-model="svc.tabPosition" style="margin-left:70px;">
-						<el-radio-button label="dep" @click.native="handleType1">Deploymemt</el-radio-button>
-						<el-radio-button label="state" @click.native="handleType2">Statefulset</el-radio-button>
-						<el-radio-button label="daem" @click.native="handleType3">Daemonset</el-radio-button>
+						<el-radio-button label="dep" @click.native="handleType('deployments')">Deploymemt</el-radio-button>
+						<el-radio-button label="state" @click.native="handleType('statefulsets')">Statefulset</el-radio-button>
+						<el-radio-button label="daem" @click.native="handleType('daemonsets')">Daemonset</el-radio-button>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item :label="$t('TKE.overview.zylb')">
+				<el-form-item v-loading="dialogLoadShow" :label="$t('TKE.overview.zylb')">
 					<el-select v-model="svc.resourcesValue" :placeholder="resourcesList.length?'請選擇':'無可用資源'"
           :disabled="resourcesList.length?false:true" style="margin-left:70px;">
 						<el-option
@@ -86,13 +89,13 @@
 					</el-select>
 					<div v-if="resourcesList.length?false:true" style="margin-left:70px;">{{$t('TKE.subList.wkyzy')}}<a href="">{{$t('TKE.subList.zykzt')}}</a>新建</div>
 				</el-form-item>
-				<el-form-item label="Labels">
+				<el-form-item v-loading="dialogLoadShow" label="Labels">
 					<div style="margin-left:70px;">
             <p v-if="resourcesList.length === 0">{{$t('TKE.subList.qxxz')}}Workload</p>
             <div v-else v-for="(v1, i1) in resourcesList" :key="i1">
               <!-- <p v-if="v1">1313</p> -->
               <p v-for="(item, key) in v1.metadata.labels" :key="key"
-              v-if="svc.resourcesValue === v1.metadata.name">{{key}}: {{item}}</p>
+                v-if="svc.resourcesValue === v1.metadata.name">{{key}}: {{item}}</p>
             </div>
             <!-- <p v-else v-for="(item,key,i) in resourcesList[i].metadata.labels" :key="i">{{key}}:{{item}}</p> -->
           </div>
@@ -107,6 +110,7 @@
 </template>
 
 <script>
+import Loading from '@/components/public/Loading'
 import Service from './components/Service'
 import FileSaver from 'file-saver'
 import XLSX from 'xlsx'
@@ -117,8 +121,10 @@ export default {
   data () {
     return {
       dialogFormVisible: false,
+      dialogLoadShow:false,
       svc: {
-        show: true,
+        loadShow:false,
+        show: false,
         time: 30,
         checked: false,
         name: '', // 新建的名称
@@ -172,27 +178,57 @@ export default {
     }
   },
   components: {
-    Service
+    Service,
+    Loading
   },
   created () {
     // 从路由获取类型
     let { clusterId, nameSpaceName } = this.$route.query
     this.clusterId = clusterId
-    this.spaceName = nameSpaceName
-    this.getInitData()
-    this.handleType1()
+    this.spaceName = nameSpaceName    
+    this.getInitData()    
   },
   methods: {
     async getInitData(){
-       await this.GetSpaceValue()// 获取命名空间
-       await this.getDescribeLoadBalancers()// 扫描均衡器
-       await this.getDescribeSubnets()// 扫描子网
-       await this.getDescribeVpcs()// 描述Vpcs
-       await this.getDescribeClusters()// 获取集群列表
-       await this.getForwardRequest()// 转发请求
+      await this.GetSpaceValue()// 获取命名空间
+      await this.getDescribeClusters()// 获取集群列表
+      await this.getDescribeLoadBalancers()// 扫描均衡器
+      await this.getDescribeSubnets()// 扫描子网
+      await this.getDescribeVpcs()// 描述Vpcs
+      await this.handleType('deployments')
+    },
+    // 获取集群列表
+    async getDescribeClusters () {
+      this.loadShow = true
+      let params = {
+        // ClusterIds: ["cls-a7rua9ae"]
+        'ClusterIds.0': this.clusterId,
+        Version: '2018-05-25'
+      }
+      await this.axios.post(TKE_COLONY_LIST, params).then(res => {
+        if (res.Response.Error === undefined) {
+          let msg = res.Response.Clusters
+          msg.forEach(ele=>{
+            this.svc.vpcId = ele.ClusterNetworkSettings.VpcId
+          })
+          // console.log(res)
+          this.loadShow = false
+        } else {
+          this.loadShow = false
+          let ErrTips = {}
+          let ErrOr = Object.assign(ErrorTips, ErrTips)
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: 'error',
+            showClose: true,
+            duration: 2000
+          })
+        }
+      })
     },
     // 扫描均衡器
     async getDescribeLoadBalancers () {
+      this.loadShow = true
       let params = {
         Forward: 1,
         Limit: 100,
@@ -211,8 +247,10 @@ export default {
               this.ownLoadBalancer2.push(item)
             }
           })
-          this.svc.vpcId = msg[0].VpcId
+          // this.svc.vpcId = msg[0].VpcId
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -226,6 +264,7 @@ export default {
     },
     // 扫描子网
     async getDescribeSubnets () {
+      this.loadShow = true
       let params = {
         'Filters.0.Name': 'vpc-id',
         'Filters.0.Values.0': this.svc.vpcId,
@@ -237,7 +276,10 @@ export default {
         if (res.Response.Error === undefined) {
           let msg = res.Response.SubnetSet
           this.LBsubnet = msg
+          this.svc.LBvalue2 = msg[0].SubnetId
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -251,6 +293,7 @@ export default {
     },
     // 描述Vpcs
     async getDescribeVpcs () {
+      this.loadShow = true
       let params = {
         Limit: 100,
         Offset: 0,
@@ -260,9 +303,13 @@ export default {
       }
       await this.axios.post(TKE_VPC_METWORK, params).then(res => {
         if (res.Response.Error === undefined) {
-          this.vpcNameAry = res.Response.VpcSet
+          let msg = res.Response.VpcSet
+          this.vpcNameAry = msg
+          this.svc.LBvalue1 = msg[0].VpcId
           // console.log(res.Response.VpcSet)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -274,53 +321,11 @@ export default {
         }
       })
     },
-    // 获取集群列表
-    async getDescribeClusters () {
-      let params = {
-        // ClusterIds: ["cls-a7rua9ae"]
-        'ClusterIds.0': this.clusterId,
-        Version: '2018-05-25'
-      }
-      await this.axios.post(TKE_COLONY_LIST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(res)
-        } else {
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 2000
-          })
-        }
-      })
-    },
-    // 转发请求
-    async getForwardRequest () {
-      let params = {
-        ClusterName: this.clusterId,
-        Method: 'GET',
-        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/deployments`,
-        Version: '2018-05-25'
-      }
-      this.axios.post(POINT_REQUEST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(res)
-        } else {
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 2000
-          })
-        }
-      })
-    },
+    // 获取命名空间请求(腾讯云传参)
+    // Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/deployments`,
     // 获取命名空间
     GetSpaceValue () {
+      this.loadShow = true
       var params = {
         ClusterName: this.$route.query.clusterId,
         Method: 'GET',
@@ -333,7 +338,9 @@ export default {
           this.svc.options = searchOpt// 赋值命名空间数据
           this.svc.value = searchOpt[0].metadata.name
           // console.log(searchOpt)
+          this.loadShow = false
         } else {
+          this.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -346,11 +353,12 @@ export default {
       })
     },
     // 引用Workload资源的处理
-    async handleType1 () {
+    async handleType (val) {
+      this.dialogLoadShow = true
       let params = {
         ClusterName: this.clusterId,
         Method: 'GET',
-        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/deployments`,
+        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/${val}`,
         Version: '2018-05-25'
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
@@ -364,75 +372,10 @@ export default {
             this.svc.resourcesValue = ''
           }
           // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
+          this.dialogLoadShow = false
         } else {
-          let ErrTips = {
-
-          }
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        }
-      })
-    },
-    async handleType2 () {
-      let params = {
-        ClusterName: this.clusterId,
-        Method: 'GET',
-        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/statefulsets`,
-        Version: '2018-05-25'
-      }
-      await this.axios.post(POINT_REQUEST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(JSON.parse(res.Response.ResponseBody).items)
-          let msg = JSON.parse(res.Response.ResponseBody).items
-          this.resourcesList = msg
-          // console.log(msg)
-          if (msg.length > 0) {
-            this.svc.resourcesValue = msg[0].metadata.name
-          } else {
-            this.svc.resourcesValue = ''
-          }
-          // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
-        } else {
-          let ErrTips = {
-
-          }
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
-        }
-      })
-    },
-    async handleType3 () {
-      let params = {
-        ClusterName: this.clusterId,
-        Method: 'GET',
-        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/daemonsets`,
-        Version: '2018-05-25'
-      }
-      await this.axios.post(POINT_REQUEST, params).then(res => {
-        if (res.Response.Error === undefined) {
-          // console.log(res)
-          // this.resourcesList = JSON.parse(res.Response.ResponseBody).items
-          let msg = JSON.parse(res.Response.ResponseBody).items
-          this.resourcesList = msg
-          if (msg.length > 0) {
-            this.svc.resourcesValue = msg[0].metadata.name
-          } else {
-            this.svc.resourcesValue = ''
-          }
-        } else {
-          let ErrTips = {
-
-          }
+          this.dialogLoadShow = false
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -686,4 +629,9 @@ export default {
 	border: 1px solid #dcdfe6;
 	resize: none;
 }
+.dialog ::v-deep .el-loading-spinner .circular {
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+  }
 </style>
