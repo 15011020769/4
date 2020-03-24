@@ -2322,8 +2322,6 @@ export default {
       }
       if (type === 'Job' || type === 'CronJob') {
         template.spec.restartPolicy = jobSettings.failedRestartPolicy
-        requestBody.spec.completions = parseInt(jobSettings.repeatNumber)
-        requestBody.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.updateStrategy = {
           type: 'RollingUpdate',
           rollingUpdate: {}
@@ -2381,10 +2379,14 @@ export default {
         requestBody.spec.schedule = executionStrategy
         requestBody.spec.jobTemplate = {}
         requestBody.spec.jobTemplate.spec = {}
+        requestBody.spec.jobTemplate.spec.completions = parseInt(jobSettings.repeatNumber)
+        requestBody.spec.jobTemplate.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.jobTemplate.spec.template = template
         requestBody.apiVersion = 'batch/v1beta1'
         params.Path = `/apis/batch/v1beta1/namespaces/${namespace}/cronjobs`
       } else if (type === 'Job') {
+        requestBody.spec.completions = parseInt(jobSettings.repeatNumber)
+        requestBody.spec.parallelism = parseInt(jobSettings.parallelNumber)
         requestBody.spec.template = template
         requestBody.apiVersion = 'batch/v1'
         params.Path = `/apis/batch/v1/namespaces/${namespace}/jobs`
