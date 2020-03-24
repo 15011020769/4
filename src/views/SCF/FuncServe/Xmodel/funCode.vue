@@ -90,9 +90,9 @@
             COS Bucket
             <el-tooltip placement="top" effect="light">
               <div slot="content">
-                选择用作事件源的 COS 存储桶，
+                選擇用作事件源的 COS 存儲桶，
                 <br />
-                该存储桶必须位于函数所在地域
+                該存儲桶必須位於函數所在地域
               </div>
               <i class="el-icon-warning"></i>
             </el-tooltip>
@@ -110,9 +110,9 @@
             {{$t('SCF.total.dxwj')}}
             <el-tooltip placement="top" effect="light">
               <div slot="content">
-                请填写从Bucket根目录("/")开始的zip代码文件
+                請填寫從Bucket根目錄(\"/\")開始的zip代碼文件
                 <br />
-                完整路径，例如: "/test/demo.zip"
+                完整路徑，例如: \"/test/demo.zip\"
               </div>
               <i class="el-icon-warning"></i>
             </el-tooltip>
