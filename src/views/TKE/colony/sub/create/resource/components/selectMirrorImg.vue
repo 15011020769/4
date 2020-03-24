@@ -37,7 +37,7 @@
         </el-table>
       </div>
       <div v-show="activeName!=='first'">
-        <el-table :data="tableData2" height="300" tooltip-effect="dark" style="width: 100%"
+        <el-table :data="tableData2.slice((currpage - 1) * pagesize, currpage * pagesize)" height="300" tooltip-effect="dark" style="width: 100%"
                   highlight-current-row @current-change="tableCurrentChange">
           <el-table-column width="55">
             <template slot-scope="scope">
@@ -56,7 +56,7 @@
       <div class="pagstyle" style="height:70px;">
         <span>共&nbsp;{{ TotalCount }}&nbsp;{{$t('TKE.colony.xiang')}}</span>
         <div class="pagestyle_right">
-          <el-pagination :page-size="pagesize" :pager-count="7" :page-sizes="[50, 40, 30, 20, 10]"
+          <el-pagination :page-size="pagesize" :pager-count="10" :page-sizes="[50, 40, 30, 20, 10]"
                          layout="sizes, prev, pager, next" @current-change="handleCurrentChange"
                          @size-change="handleSizeChange"
                          :total="TotalCount">
@@ -137,7 +137,9 @@ export default {
           item.name = reponameArr[1]
           item.publicText = item.public ? '公有' : '私有'
         })
-        this.tableData = repoInfo
+        this.tableData = repoInfo;
+        this.TotalCount= repoInfo.length;
+        
         console.log('searchUserRepository', this.tableData)
       })
     },
@@ -146,8 +148,10 @@ export default {
         offset: 0,
         limit: 20
       }).then(res => {
+        console.log(res)
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     getRepositoryList: async function () {
@@ -157,6 +161,7 @@ export default {
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     getDockerHubRepositoryList: async function () {
@@ -166,6 +171,7 @@ export default {
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
+        this.TotalCount= repoInfo.length;
       })
     },
     handleClose (done) {
