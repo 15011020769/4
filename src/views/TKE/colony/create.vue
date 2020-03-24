@@ -70,20 +70,14 @@
                 }"
                 @blur="ClusterNameBlur"
                 @focus="ClusterNameFocus"
-                @change="ClusterNameChange"
+                maxlength="60"
                 :placeholder="$t('TKE.colony.qsrjqmc')"
               ></el-input>
               <el-tooltip
                 effect="light"
-                :content="
-                  colony.nameWran
-                    ? $t('TKE.colony.jqmcbwk')
-                    : colony.nameLength
-                    ? '集群名稱不能大於60個字符'
-                    : ''
-                "
+                :content="content"
                 placement="right"
-                v-if="colony.nameWran || colony.nameLength"
+                v-if="colony.nameWran"
                 ><i class="el-icon-warning-outline ml5"></i>
               </el-tooltip>
             </el-form-item>
@@ -455,6 +449,7 @@
               {{ dispose.OSvalue }}
             </p>
           </div>
+          <!-- jid -->
           <el-form-item :label="$t('TKE.colony.jdly')">
             <div class="tke-second-radio-btn">
               <el-radio-group
@@ -3240,17 +3235,18 @@ export default {
     ClusterNameBlur() {
       if (this.colony.name === "") {
         this.colony.nameWran = true;
+        this.content = "集群名稱不能為空";
+      } else {
+        this.colony.nameWran = false;
+      }
+      if (this.colony.name.length >= 60) {
+        this.colony.nameWran = true;
+        this.content = "集群名稱大於60個字符";
       } else {
         this.colony.nameWran = false;
       }
     },
-    ClusterNameChange() {
-      if (this.colony.name.length >= 60) {
-        this.colony.nameLength = true;
-      } else {
-        this.colony.nameLength = false;
-      }
-    },
+
     ClusterNameFocus() {
       if (this.colony.nameWran === true) {
         this.colony.nameWran = false;
@@ -4471,15 +4467,15 @@ export default {
     },
     // 数据盘 弹框确认
     DataDiskSure(index, a) {
-      this.colonySecond.workerOneList[index].dataDiskArr = [];
       let _masterOneList = this.colonySecond.masterOneList;
       let text = [];
       let text_2 = "";
-      if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
-        this.colonySecond.workerOneList[index].dataDiskValue = "暫不購買";
-      }
 
       if (a == 1) {
+        this.colonySecond.workerOneList[index].dataDiskArr = [];
+        if (this.colonySecond.workerOneList[index].dataDiskArr.length === 0) {
+          this.colonySecond.workerOneList[index].dataDiskValue = "暫不購買";
+        }
         let buyDataDiskArr = this.colonySecond.workerOneList[index]
           .buyDataDiskArr;
         for (var i in buyDataDiskArr) {
@@ -5166,6 +5162,8 @@ export default {
         for (let j = i + 1; j < safeArr.length; j++) {
           if (safeArr[i].securityGroupSel === safeArr[j].securityGroupSel) {
             safeArr[j].error = true;
+          } else {
+            safeArr[j].error = false;
           }
         }
       }
@@ -5320,7 +5318,7 @@ export default {
             _saArr.push(_safeArr1[i].securityGroupSel);
           }
 
-          param["SecurityGroupIds"] = _saArr1;
+          param["SecurityGroupIds"] = _safeArr1;
         }
         this.param.push(param);
       }
@@ -5500,68 +5498,519 @@ export default {
       } else {
         param["ClusterType"] = "INDEPENDENT_CLUSTER";
       }
-      if (!this.colonySecond.workerDeployShow) {
-        if (
-          this.colonySecond.workerShow === true &&
-          this.colonySecond.source == 1
-        ) {
-          param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
-          for (let i in masterOneListArr) {
-            param[
-              "RunInstancesForNode.1.RunInstancesPara." + i
-            ] = JSON.stringify(this.params[i]);
-            if (this.colonySecond.masterDataDiskMount === true) {
-              param[
-                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
-                  i +
-                  ".MountTarget"
-              ] = this.colonySecond.masterDataDiskMountVal;
-            } else {
-              param[
-                "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
-                  i +
-                  ".MountTarget"
-              ] = "";
-            }
 
-            if (this.colonyThird.containerChecked) {
-              param[
-                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-                  i +
-                  ".DockerGraphPath"
-              ] = this.colonyThird.containerInput;
-            } else {
-              param[
-                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-                  i +
-                  ".DockerGraphPath"
-              ] = "";
+      // 第一種情況
+      if (
+        this.colonySecond.source == 1 &&
+        this.colonySecond.master == 1 &&
+        this.colonySecond.worker === 1
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+        // InstanceAdvancedSettings
+        if (this.colonyThird.dataDiskChecked) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonyThird.dataDiskInput;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+
+        // InstanceDataDiskMountSettings
+        param["InstanceDataDiskMountSettings.0.InstanceType"] = "";
+        param["InstanceDataDiskMountSettings.0.Zone"] = "";
+
+        // RunInstancesForNode
+        param["RunInstancesForNode.0.NodeRole"] = "WORKER";
+        for (let i in workerOneListArr) {
+          param["RunInstancesForNode.0.RunInstancesPara." + i] = JSON.stringify(
+            this.param[i]
+          );
+          if (this.colonySecond.masterDataDiskMount) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = this.colonySecond.masterDataDiskMountVal;
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = "";
+          }
+        }
+      }
+
+      // 第二種情況
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 1 &&
+        this.colonySecond.worker === 1
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = this.colonyThird.cloudwatchChecked;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = this.colonyThird.safetyChecked;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        for (let i in this.colonyThird.safeArr) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds." +
+              i
+          ] = this.colonyThird.safeArr[i].securityGroupSel;
+        }
+
+        if (this.colonyThird.dataDiskChecked) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonyThird.dataDiskInput;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
+
+      // 第三種情況
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker === 1
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = this.colonyThird.cloudwatchChecked;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = this.colonyThird.safetyChecked;
+        for (let i in this.rightList) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightList[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        for (let i in this.colonyThird.safeArr) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds." +
+              i
+          ] = this.colonyThird.safeArr[i].securityGroupSel;
+        }
+
+        param["ExistedInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+        param[
+          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = this.colonyThird.cloudwatchChecked;
+        param[
+          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = this.colonyThird.safetyChecked;
+        for (let i in this.rightListMaster) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightListMaster[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        for (let i in this.colonyThird.safeArr) {
+          param[
+            "ExistedInstancesForNode.1.ExistedInstancesPara.SecurityGroupIds." +
+              i
+          ] = this.colonyThird.safeArr[i].securityGroupSel;
+        }
+
+        if (this.colonyThird.dataDiskChecked) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonyThird.dataDiskInput;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
+
+      // 第四種情況
+      if (
+        this.colonySecond.source == 2 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker === 2
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+        param["ExistedInstancesForNode.0.NodeRole"] = "MASTER_ETCD";
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
+        ] = this.colonyThird.cloudwatchChecked;
+        param[
+          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
+        ] = this.colonyThird.safetyChecked;
+        for (let i in this.rightListMaster) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
+          ] = this.rightListMaster[i].InstanceId;
+        }
+        // 登录方式
+        if (this.colonyThird.loginModeRadio == 1) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
+          ] = this.colonyThird.sshKeySel;
+        }
+        if (this.colonyThird.loginModeRadio == 3) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
+          ] = this.colonyThird.password;
+        }
+        for (let i in this.colonyThird.safeArr) {
+          param[
+            "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds." +
+              i
+          ] = this.colonyThird.safeArr[i].securityGroupSel;
+        }
+
+        if (this.colonyThird.dataDiskChecked) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonyThird.dataDiskInput;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
+      // 第五種情況
+      if (
+        this.colonySecond.source == 1 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker == 1
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+
+        if (this.colonySecond.masterDataDiskMount) {
+          param[
+            "InstanceAdvancedSettings.MountTarget"
+          ] = this.colonySecond.masterDataDiskMountVal;
+        } else {
+          param["InstanceAdvancedSettings.MountTarget"] = "";
+        }
+        if (this.colonyThird.containerChecked) {
+          param[
+            "InstanceAdvancedSettings.DockerGraphPath"
+          ] = this.colonyThird.containerInput;
+        } else {
+          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+        }
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (!this.colonySecond.workerDeployShow) {
+          let buyDataArr = [];
+          for (let i in workerOneListArr) {
+            if (workerOneListArr[i].buyDataDisk === true) {
+              buyDataArr.push(workerOneListArr[i]);
+              for (let x in buyDataArr) {
+                param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+                  workerOneListArr[i].modelName;
+                param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+                  "ap-taipei-1";
+                for (let j in workerOneListArr[i].dataDiskArr) {
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".DiskType"
+                  ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".DiskSize"
+                  ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".AutoFormatAndMount"
+                  ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".FileSystem"
+                  ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".MountTarget"
+                  ] = workerOneListArr[i].dataDiskArr[j].setValue;
+                }
+              }
             }
-            param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
-                i +
-                ".UserScript"
-            ] = "";
-            param[
-              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
-                i +
-                ".Unschedulable"
-            ] = 0;
-            param[
-              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-                i +
-                ".ExtraArgs.Kubelet.0"
-            ] = "";
-            param[
-              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-                i +
-                ".Labels.0.Name"
-            ] = "";
-            param[
-              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-                i +
-                ".Labels.0.Value"
-            ] = "";
           }
         }
 
@@ -5623,48 +6072,110 @@ export default {
               ".Labels.0.Value"
           ] = "";
         }
-      }
 
-      let ClusterOs = "";
-      for (let i in this.colony.OSoptions) {
-        if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
-          ClusterOs = this.colony.OSoptions[i].OsName;
+        param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
+        for (let i in masterOneListArr) {
+          param["RunInstancesForNode.1.RunInstancesPara." + i] = JSON.stringify(
+            this.params[i]
+          );
+          if (this.colonySecond.masterDataDiskMount === true) {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = this.colonySecond.masterDataDiskMountVal;
+          } else {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = "";
+          }
+          if (this.colonyThird.containerChecked) {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = this.colonyThird.containerInput;
+          } else {
+            param[
+              "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = "";
+          }
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".UserScript"
+          ] = "";
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Unschedulable"
+          ] = 0;
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".ExtraArgs.Kubelet.0"
+          ] = "";
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Name"
+          ] = "";
+          param[
+            "RunInstancesForNode.1.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Value"
+          ] = "";
         }
       }
-      param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
-      param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
-      param["ClusterBasicSettings.ClusterName"] = this.colony.name;
-      param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
-      param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
-      param["ClusterBasicSettings.ProjectId"] = Number(
-        this.colony.projectValue
-      );
-      if (this.colonyThird.defaultSafeBox === true) {
-        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
-      } else {
-        param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
-      }
-      param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
-      // param["ClusterBasicSettings.TagSpecification.0.ResourceType"] = "cluster";
-      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
-      param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
+      // 第六種情況
+      if (
+        this.colonySecond.source == 1 &&
+        this.colonySecond.master == 2 &&
+        this.colonySecond.worker == 2
+      ) {
+        if (this.colony.ipvs === true) {
+          param["ClusterAdvancedSettings.IPVS"] = true;
+        } else {
+          param["ClusterAdvancedSettings.IPVS"] = false;
+        }
+        param["ClusterAdvancedSettings.AsEnabled"] = false;
+        param[
+          "ClusterAdvancedSettings.ContainerRuntime"
+        ] = this.colony.assemblyRadio;
+        param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
+        param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
-      if (this.colony.ipvs === true) {
-        param["ClusterAdvancedSettings.IPVS"] = true;
-      } else {
-        param["ClusterAdvancedSettings.IPVS"] = false;
-      }
-      param["ClusterAdvancedSettings.AsEnabled"] = false;
-      param[
-        "ClusterAdvancedSettings.ContainerRuntime"
-      ] = this.colony.assemblyRadio;
-      param["ClusterAdvancedSettings.NodeNameType"] = "lan-ip";
-      param["ClusterAdvancedSettings.ExtraArgs.KubeAPIServer.0"] = "";
-      param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
-      param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
+        // ClusterBasicSettings
+        let ClusterOs = "";
+        for (let i in this.colony.OSoptions) {
+          if (this.colony.OSvalue === this.colony.OSoptions[i].ImageId) {
+            ClusterOs = this.colony.OSoptions[i].OsName;
+          }
+        }
+        param["ClusterBasicSettings.ClusterOs"] = ClusterOs;
+        param["ClusterBasicSettings.ClusterVersion"] = this.colony.kuValue;
+        param["ClusterBasicSettings.ClusterName"] = this.colony.name;
+        param["ClusterBasicSettings.ClusterDescription"] = this.colony.desc;
+        param["ClusterBasicSettings.VpcId"] = this.colony.networkValue;
+        param["ClusterBasicSettings.ProjectId"] = Number(
+          this.colony.projectValue
+        );
+        if (this.colonyThird.defaultSafeBox === true) {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = true;
+        } else {
+          param["ClusterBasicSettings.NeedWorkSecurityGroup"] = false;
+        }
+        param["ClusterBasicSettings.OsCustomizeType"] = "GENERAL";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Key"] = "";
+        param["ClusterBasicSettings.TagSpecification.0.Tags.0.Value"] = "";
 
-      if (!this.colonySecond.workerDeployShow) {
-        if (this.colonySecond.masterDataDiskMount === true) {
+        if (this.colonySecond.masterDataDiskMount) {
           param[
             "InstanceAdvancedSettings.MountTarget"
           ] = this.colonySecond.masterDataDiskMountVal;
@@ -5682,198 +6193,115 @@ export default {
         param["InstanceAdvancedSettings.Unschedulable"] = 0;
         param["InstanceAdvancedSettings.Labels.0.Name"] = "";
         param["InstanceAdvancedSettings.Labels.0.Value"] = "";
-      } else {
-        if (this.colonyThird.dataDiskChecked) {
-          param[
-            "InstanceAdvancedSettings.MountTarget"
-          ] = this.colonyThird.dataDiskInput;
-        } else {
-          param["InstanceAdvancedSettings.MountTarget"] = "";
-        }
-        if (this.colonyThird.containerChecked) {
-          param[
-            "InstanceAdvancedSettings.DockerGraphPath"
-          ] = this.colonyThird.containerInput;
-        } else {
-          param["InstanceAdvancedSettings.DockerGraphPath"] = "";
-        }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
-      }
-      if (!this.colonySecond.workerDeployShow) {
-        let buyDataArr = [];
-        for (let i in workerOneListArr) {
-          if (workerOneListArr[i].buyDataDisk === true) {
-            buyDataArr.push(workerOneListArr[i]);
-            for (let x in buyDataArr) {
-              param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
-                workerOneListArr[i].modelName;
-              param["InstanceDataDiskMountSettings." + x + ".Zone"] =
-                "ap-taipei-1";
-              for (let j in workerOneListArr[i].dataDiskArr) {
-                param[
-                  "InstanceDataDiskMountSettings." +
-                    x +
-                    ".DataDisks." +
-                    j +
-                    ".DiskType"
-                ] = workerOneListArr[i].dataDiskArr[j].DiskType;
-                param[
-                  "InstanceDataDiskMountSettings." +
-                    x +
-                    ".DataDisks." +
-                    j +
-                    ".DiskSize"
-                ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
-                param[
-                  "InstanceDataDiskMountSettings." +
-                    x +
-                    ".DataDisks." +
-                    j +
-                    ".AutoFormatAndMount"
-                ] = workerOneListArr[i].dataDiskArr[j].formatMount;
-                param[
-                  "InstanceDataDiskMountSettings." +
-                    x +
-                    ".DataDisks." +
-                    j +
-                    ".FileSystem"
-                ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
-                param[
-                  "InstanceDataDiskMountSettings." +
-                    x +
-                    ".DataDisks." +
-                    j +
-                    ".MountTarget"
-                ] = workerOneListArr[i].dataDiskArr[j].setValue;
+        if (!this.colonySecond.workerDeployShow) {
+          let buyDataArr = [];
+          for (let i in workerOneListArr) {
+            if (workerOneListArr[i].buyDataDisk === true) {
+              buyDataArr.push(workerOneListArr[i]);
+              for (let x in buyDataArr) {
+                param["InstanceDataDiskMountSettings." + x + ".InstanceType"] =
+                  workerOneListArr[i].modelName;
+                param["InstanceDataDiskMountSettings." + x + ".Zone"] =
+                  "ap-taipei-1";
+                for (let j in workerOneListArr[i].dataDiskArr) {
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".DiskType"
+                  ] = workerOneListArr[i].dataDiskArr[j].DiskType;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".DiskSize"
+                  ] = workerOneListArr[i].dataDiskArr[j].DiskSize;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".AutoFormatAndMount"
+                  ] = workerOneListArr[i].dataDiskArr[j].formatMount;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".FileSystem"
+                  ] = workerOneListArr[i].dataDiskArr[j].latticeSetVal;
+                  param[
+                    "InstanceDataDiskMountSettings." +
+                      x +
+                      ".DataDisks." +
+                      j +
+                      ".MountTarget"
+                  ] = workerOneListArr[i].dataDiskArr[j].setValue;
+                }
               }
             }
           }
         }
-      }
-      if (
-        this.colonySecond.source == 2 &&
-        this.colonySecond.master == 1 &&
-        this.colonySecond.worker == 1
-      ) {
-        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
 
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = this.colonyThird.cloudwatchChecked;
-
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = this.colonyThird.safetyChecked;
-        for (let i in this.rightList) {
+        param["RunInstancesForNode.0.NodeRole"] = "MASTER_ETCD";
+        for (let i in masterOneListArr) {
+          param["RunInstancesForNode.0.RunInstancesPara." + i] = JSON.stringify(
+            this.params[i]
+          );
+          if (this.colonySecond.masterDataDiskMount === true) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = this.colonySecond.masterDataDiskMountVal;
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".MountTarget"
+            ] = "";
+          }
+          if (this.colonyThird.containerChecked) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = this.colonyThird.containerInput;
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = "";
+          }
           param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
-          ] = this.rightList[i].InstanceId;
-        }
-        // 登录方式
-        if (this.colonyThird.loginModeRadio == 1) {
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".UserScript"
+          ] = "";
           param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
-          ] = this.colonyThird.sshKeySel;
-        }
-        if (this.colonyThird.loginModeRadio == 3) {
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Unschedulable"
+          ] = 0;
           param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
-          ] = this.colonyThird.password;
-        }
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds.0"
-        ] = "";
-      }
-      if (
-        this.colonySecond.source == 2 &&
-        this.colonySecond.master == 2 &&
-        this.colonySecond.worker == 1
-      ) {
-        param["ExistedInstancesForNode.0.NodeRole"] = "WORKER";
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = this.colonyThird.cloudwatchChecked;
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = this.colonyThird.safetyChecked;
-        for (let i in this.rightList) {
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".ExtraArgs.Kubelet.0"
+          ] = "";
           param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
-          ] = this.rightList[i].InstanceId;
-        }
-        // 登录方式
-        if (this.colonyThird.loginModeRadio == 1) {
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Name"
+          ] = "";
           param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
-          ] = this.colonyThird.sshKeySel;
+            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+              i +
+              ".Labels.0.Value"
+          ] = "";
         }
-        if (this.colonyThird.loginModeRadio == 3) {
-          param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
-          ] = this.colonyThird.password;
-        }
-        param["ExistedInstancesForNode.0.SecurityGroupIds.0"] = "";
-        param["ExistedInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
-        param[
-          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = this.colonyThird.cloudwatchChecked;
-        param[
-          "ExistedInstancesForNode.1.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = this.colonyThird.safetyChecked;
-        for (let i in this.rightList) {
-          param[
-            "ExistedInstancesForNode.1.ExistedInstancesPara.InstanceIds." + i
-          ] = this.rightList[i].InstanceId;
-        }
-        // 登录方式
-        if (this.colonyThird.loginModeRadio == 1) {
-          param[
-            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.KeyIds.0"
-          ] = this.colonyThird.sshKeySel;
-        }
-        if (this.colonyThird.loginModeRadio == 3) {
-          param[
-            "ExistedInstancesForNode.1.ExistedInstancesPara.LoginSettings.Password"
-          ] = this.colonyThird.password;
-        }
-        param[
-          "ExistedInstancesForNode.1.ExistedInstancesPara.SecurityGroupIds.0"
-        ] = "";
-      }
-      if (
-        this.colonySecond.source == 2 &&
-        this.colonySecond.master == 2 &&
-        this.colonySecond.worker == 2
-      ) {
-        param["ExistedInstancesForNode.0.NodeRole"] = "MASTER_ETCD";
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.MonitorService.Enabled"
-        ] = this.colonyThird.cloudwatchChecked;
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.EnhancedService.SecurityService.Enabled"
-        ] = this.colonyThird.safetyChecked;
-        for (let i in this.rightList) {
-          param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.InstanceIds." + i
-          ] = this.rightList[i].InstanceId;
-        }
-        // 登录方式
-        if (this.colonyThird.loginModeRadio == 1) {
-          param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.KeyIds.0"
-          ] = this.colonyThird.sshKeySel;
-        }
-        if (this.colonyThird.loginModeRadio == 3) {
-          param[
-            "ExistedInstancesForNode.0.ExistedInstancesPara.LoginSettings.Password"
-          ] = this.colonyThird.password;
-        }
-        param[
-          "ExistedInstancesForNode.0.ExistedInstancesPara.SecurityGroupIds.0"
-        ] = "";
       }
 
       console.log(param);

@@ -98,10 +98,15 @@
               }
             },
             formatter(params) {
+              console.log(params, 'params');
               let relVal = `${params[0].name}<br/>`;
-              relVal += `粒度：${TimeGranularity[period]}</br>`;
+              params.forEach((ele,i) => {
+                relVal += `<span style="color: ${params[i].color}">${params[i].data}</span><br/>`;
+              })
+              relVal += `粒度：${TimeGranularity[period]}<br />`;
               return relVal;
             }
+            // formatter: '{b}<br />{c}<br/>' + `粒度：${TimeGranularity[period]}<br />`
           },
           toolbox: {
             feature: {
@@ -110,7 +115,6 @@
                 name: this.MetricName,
                 title: "導出圖片"
               }
-
             }
           },
           legend: {
