@@ -109,7 +109,7 @@ export default {
             ...fnDel(delArrSure),
             ...fnEdit(addArr),
             ...fnEdit(editArrSure2),
-            Resource: `qcs::scf:ap-taipei:uin/${VueCookie.get('uuid')}:lam/${this.resourceId}`,
+            Resource: `qcs::scf:ap-taipei:uin/${VueCookie.get('uin')}:lam/${this.resourceId}`,
             Version:'2018-08-13',
             Action:'ModifyResourceTags',
         }
