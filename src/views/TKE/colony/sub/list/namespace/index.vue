@@ -237,7 +237,8 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.getNameSpaceList();
+          // this.getNameSpaceList();
+          this.getNameSpaceTotal();
           this.loadShow = false;
           this.showNameSpaceModal = false;
           this.$message({
@@ -289,11 +290,13 @@ export default {
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
-      this.getNameSpaceList();
+      // this.getNameSpaceList();
+      this.getNameSpaceTotal();
     },
     //刷新数据
     refreshList(){
-      this.getNameSpaceList();
+      // this.getNameSpaceList();
+      this.getNameSpaceTotal();
     },
     // 导出表格
     exportExcel() {
@@ -372,7 +375,8 @@ export default {
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      this.getNameSpaceList();
+      this.getNameSpaceTotal();
+      // this.getNameSpaceList();
     },
 
   },
