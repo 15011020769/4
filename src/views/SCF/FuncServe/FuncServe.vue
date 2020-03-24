@@ -7,7 +7,7 @@
         {{ $t('SCF.total.title') }}
       </p>
       <p>
-        <el-button size="small">{{regionName}}</el-button>
+        <el-button size="small" type="primary">{{regionName}}</el-button>
       </p>
       <div>
         <span class="namespace">{{ $t('SCF.total.mmkj') }}:</span>
