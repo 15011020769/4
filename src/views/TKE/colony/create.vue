@@ -876,8 +876,8 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{ $t("TKE.colony.xs") }}起
+                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                    >每小時
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -940,8 +940,8 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{ $t("TKE.colony.xs") }}起
+                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                    >每小時
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1674,8 +1674,8 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{ $t("TKE.colony.xs") }}起
+                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                    >每小時
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -1741,8 +1741,8 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >￥{{ scope.row.Price.UnitPrice }}</span
-                                    >元/{{ $t("TKE.colony.xs") }}起
+                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                    >每小時
                                   </template>
                                 </el-table-column>
                               </el-table>
@@ -2200,20 +2200,16 @@
                 {{ $t("TKE.colony.cxz") }}...
               </div>
               <div class="tke-second-cost" v-if="!colonySecond.costShow">
-                <span class="tke-second-cost-num">{{
-                  colonySecond.allocationCost
-                }}</span
-                ><span class="tke-second-cost-h"
-                  >元/{{ $t("TKE.colony.xs") }}</span
+                <span class="tke-second-cost-num"
+                  >NT$ {{ colonySecond.allocationCost }}</span
+                ><span class="tke-second-cost-h">每小時</span
                 ><span class="tke-second-cost-t"
                   >({{ $t("TKE.colony.pzfy") }})</span
                 >
                 <i>|</i>
-                <span class="tke-second-cost-num">{{
-                  colonySecond.networkCost
-                }}</span
-                ><span class="tke-second-cost-h"
-                  >元/{{ $t("TKE.colony.xs") }}</span
+                <span class="tke-second-cost-num"
+                  >NT$ {{ colonySecond.networkCost }}</span
+                ><span class="tke-second-cost-h">每小時</span
                 ><span class="tke-second-cost-w">
                   ({{ $t("TKE.colony.wlfyong") }})</span
                 >
@@ -2642,8 +2638,7 @@
               <span class="tke-second-cost-num">{{
                 colonySecond.allocationCost
               }}</span
-              ><span class="tke-second-cost-h"
-                >元/{{ $t("TKE.colony.xs") }}</span
+              ><span class="tke-second-cost-h">每小時</span
               ><span class="tke-second-cost-t"
                 >({{ $t("TKE.colony.pzfy") }})</span
               >
@@ -2651,8 +2646,7 @@
               <span class="tke-second-cost-num">{{
                 colonySecond.networkCost
               }}</span
-              ><span class="tke-second-cost-h"
-                >元/{{ $t("TKE.colony.xs") }}</span
+              ><span class="tke-second-cost-h">每小時</span
               ><span class="tke-second-cost-w">
                 ({{ $t("TKE.colony.wlfyong") }})</span
               >
