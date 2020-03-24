@@ -148,22 +148,36 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
-        available: [
-          'DiskAwait',
-          'DiskReadIops',
-          'DiskReadTraffic',
-          'DiskSvctm',
-          'DiskUtil',
-          'DiskWriteIops',
-          'DiskWriteTraffic'
+        available: [{
+            MetricName: 'DiskReadTraffic'
+          },
+          {
+            MetricName: 'DiskWriteTraffic'
+          },
+          {
+            MetricName: 'DiskReadIops'
+          },
+          {
+            MetricName: 'DiskWriteIops'
+          },
+          {
+            MetricName: 'DiskAwait'
+          },
+          {
+            MetricName: 'DiskSvctm'
+          },
+          {
+            MetricName: 'DiskUtil'
+          },
+
         ], //可用指标
         disName: {
-          'DiskAwait': '硬盘 IO 等待时间',
+          'DiskAwait': '硬盘IO Await',
           'DiskReadIops': '硬盘读 IOPS',
           'DiskReadTraffic': '硬盘读流量',
-          'DiskSvctm': '硬盘 IO 服务时间',
+          'DiskSvctm': '硬盘IO Svctm',
           'DiskUsage': '磁盘分区使用率',
-          'DiskUtil': '硬盘 IO 繁忙比率',
+          'DiskUtil': '硬盘IO %util',
           'DiskWriteIops': '硬盘写 IOPS',
           'DiskWriteTraffic': '硬盘写流量'
         },
@@ -232,16 +246,26 @@
             this.BaseListK = []
             this.BaseList.forEach(item => {
               this.available.forEach(element => {
-                if (item.MetricName === element) {
+                if (item.MetricName === element.MetricName) {
                   if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                    this.BaseListK.push(item)
-                    setTimeout(() => {
-                      this._GetMonitorData(item.MetricName)
-                    }, 500);
+                    element.data = item
                   }
                 }
               });
+
             });
+            this.available.forEach(i => {
+              this.BaseListK.push(i.data)
+            });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],
