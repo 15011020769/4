@@ -67,14 +67,14 @@
       </div>
     </div>
 		<!-- 幕布层 -->
-		<el-dialog class="dialog" :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
+		<el-dialog @open="openDialog" class="dialog" :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
 			 <!-- v-loading="dialogLoadShow" -->
       <el-form label-width="100px">
 				<el-form-item :label="$t('TKE.event.zylx')">
 					<el-radio-group v-model="svc.tabPosition" style="margin-left:70px;">
-						<el-radio-button label="dep" @click.native="handleType('deployments')">Deploymemt</el-radio-button>
-						<el-radio-button label="state" @click.native="handleType('statefulsets')">Statefulset</el-radio-button>
-						<el-radio-button label="daem" @click.native="handleType('daemonsets')">Daemonset</el-radio-button>
+						<el-radio-button label="deployments" @click.native="handleType('deployments')">Deploymemt</el-radio-button>
+						<el-radio-button label="statefulsets" @click.native="handleType('statefulsets')">Statefulset</el-radio-button>
+						<el-radio-button label="daemonsets" @click.native="handleType('daemonsets')">Daemonset</el-radio-button>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item v-loading="dialogLoadShow" :label="$t('TKE.overview.zylb')">
@@ -102,8 +102,8 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" :disabled="dialogDisabled" @click="handlerDet">{{$t('TKE.overview.qd')}}</el-button>
 				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="handlerDet">{{$t('TKE.overview.qd')}}</el-button>
 			</div>
 		</el-dialog>
   </div>
@@ -122,6 +122,7 @@ export default {
     return {
       dialogFormVisible: false,
       dialogLoadShow:false,
+      dialogDisabled:false,
       svc: {
         loadShow:false,
         show: false,
@@ -145,7 +146,7 @@ export default {
         input: '',
         list: [],
         workload: [], // 高级选项的值
-        tabPosition: 'dep', // 幕布层资源类型
+        tabPosition: 'deployments', // 幕布层资源类型
         describe: '', // 描述
         inputValue1: '',
         inputValue2: '',
@@ -195,7 +196,7 @@ export default {
       await this.getDescribeLoadBalancers()// 扫描均衡器
       await this.getDescribeSubnets()// 扫描子网
       await this.getDescribeVpcs()// 描述Vpcs
-      await this.handleType('deployments')
+      // await this.handleType('deployments')
     },
     // 获取集群列表
     async getDescribeClusters () {
@@ -358,18 +359,19 @@ export default {
       let params = {
         ClusterName: this.clusterId,
         Method: 'GET',
-        Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/${val}`,
+        Path: `/apis/apps/v1beta2/namespaces/${this.svc.value}/${val}`,
         Version: '2018-05-25'
       }
       await this.axios.post(POINT_REQUEST, params).then(res => {
         if (res.Response.Error === undefined) {
           let msg = JSON.parse(res.Response.ResponseBody).items
           this.resourcesList = msg
-          // console.log(msg)
           if (msg.length > 0) {
             this.svc.resourcesValue = msg[0].metadata.name
+            this.dialogDisabled = false
           } else {
             this.svc.resourcesValue = ''
+            this.dialogDisabled = true
           }
           // this.svc.resourcesValue = msg.length > 0 && msg[0].metadata.name
           this.dialogLoadShow = false
@@ -385,6 +387,9 @@ export default {
           })
         }
       })
+    },
+    openDialog(){
+      this.handleType(this.svc.tabPosition)
     },
     // 验证新建按钮
     submitSer (form) {
