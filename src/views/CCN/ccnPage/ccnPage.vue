@@ -182,7 +182,7 @@
         <el-form-item :label="$t('CCN.total.new6')">
           <el-select v-model="form.instanceType" :placeholder="$t('CCN.total.vpc1')" @change="_instance()">
             <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
-            <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
+            <!-- <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option> -->
           </el-select>
           <el-select v-model="form.instanceRegion" :placeholder="$t('CCN.total.region')">
             <el-option :label="$t('CCN.total.region')" value="ap-taipei"></el-option>
@@ -304,7 +304,7 @@
           BandwidthLimitType: "OUTER_REGION_LIMIT",
           CcnDescription: "",
           QosLevel: "AU",
-          instanceType: "",
+          instanceType: "VPC",
           instanceRegion: localStorage.getItem("regionv2"),
           instanceId: ""
         },
@@ -338,6 +338,7 @@
     },
     created() {
       this.getData();
+      this.getInstanceIds('VPC');
     },
     methods: {
      
