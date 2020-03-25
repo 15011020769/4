@@ -74,6 +74,7 @@
 <script>
 import {NOTICE_LIST} from  '@/constants/MGC.js';
 import HeadCom from "@/components/public/Head";
+import VueCookie from 'vue-cookie'
 export default {
   components: {
     HeadCom
