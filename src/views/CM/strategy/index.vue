@@ -108,7 +108,7 @@
         </el-table-column>
         <el-table-column label="触发条件">
           <template slot-scope="scope">
-            <el-popover placement="left-start" width="400" trigger="hover">
+            <el-popover placement="right" width="400" trigger="hover">
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
