@@ -512,19 +512,6 @@
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 复制 -->
-    <el-dialog
-      title="确定复制所选实例组"
-      :visible.sync="copyDialogVisible"
-      width="500px"
-      custom-class="tke-dialog"
-    >
-      <div>是否复制 {{ groupName }}</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="CopyList()">确定复制</el-button>
-        <el-button @click="copyDialogVisible = false">取消</el-button>
-      </div>
-    </el-dialog>
     <!-- 告警启停 -->
     <el-dialog
       title="告警操作确认"
