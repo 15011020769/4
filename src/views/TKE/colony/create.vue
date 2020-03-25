@@ -2515,6 +2515,66 @@
               </p>
             </div>
           </el-form-item>
+          <!-- 高級設置 -->
+          <p class="advanced-setting-a">
+            <i class="el-icon-caret-right" v-if="!advancedSettingShow"></i>
+            <i class="el-icon-caret-bottom" v-if="advancedSettingShow"></i
+            ><a href="javascript:;" @click="AdvancedSettingBtn">高級設置</a>
+          </p>
+          <div class="advanced-setting-box" v-if="advancedSettingShow">
+            <div class="tke-second-tips">
+              <p>
+                節點啟動配置
+                <el-tooltip
+                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑查看"
+                  placement="right"
+                  width="200px"
+                  effect="light"
+                  ><i class="el-icon-info ml5"></i
+                ></el-tooltip>
+              </p>
+              <p>
+                <el-input
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4 }"
+                  placeholder="可選，用於啟動時配置實例，支持 Shell 格式，原始數據不能超過 16 KB"
+                  v-model="textarea2"
+                  class="w420"
+                >
+                </el-input>
+              </p>
+            </div>
+            <div class="tke-second-tips">
+              <p>封鎖（cordon）</p>
+              <div>
+                <el-checkbox>
+                  開啟封鎖
+                </el-checkbox>
+                <p>
+                  封鎖節點後，將不接受新的Pod調度到該節點，需要手動取消封鎖的節點，或在自定義數據中執行取消封鎖命令
+                </p>
+              </div>
+            </div>
+            <div class="tke-second-tips">
+              <p>Label</p>
+              <div>
+                <ul>
+                  <li>
+                    <el-input></el-input>
+                    <span style="margin:0 10px;">=</span>
+                    <el-input></el-input>
+                  </li>
+                </ul>
+                <a href="javascript:;">新增</a>
+                <p>
+                  標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
+                </p>
+                <p>
+                  標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
+                </p>
+              </div>
+            </div>
+          </div>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -2635,17 +2695,15 @@
             v-if="colonySecond.sourceShow && colonySecond.worker != 2"
           >
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">NT$ {{
-                colonySecond.allocationCost
-              }}</span
+              <span class="tke-second-cost-num"
+                >NT$ {{ colonySecond.allocationCost }}</span
               ><span class="tke-second-cost-h">每小時</span
               ><span class="tke-second-cost-t"
                 >({{ $t("TKE.colony.pzfy") }})</span
               >
               <i>|</i>
-              <span class="tke-second-cost-num">NT$ {{
-                colonySecond.networkCost
-              }}</span
+              <span class="tke-second-cost-num"
+                >NT$ {{ colonySecond.networkCost }}</span
               ><span class="tke-second-cost-h">每小時</span
               ><span class="tke-second-cost-w">
                 ({{ $t("TKE.colony.wlfyong") }})</span
@@ -3195,7 +3253,10 @@ export default {
       tableFilterShow: true,
       S3show: true,
       C3show: true,
-      M3show: true
+      M3show: true,
+      // 第三步 高級設置
+      advancedSettingShow: false,
+      textarea2: ""
     };
   },
   components: {
@@ -5210,6 +5271,10 @@ export default {
         }
       });
     },
+    // 高級設置
+    AdvancedSettingBtn() {
+      this.advancedSettingShow = !this.advancedSettingShow;
+    },
     // 第三步 上一步
     thirdPrev() {
       this.firstBox = false;
@@ -5557,9 +5622,9 @@ export default {
         param["InstanceAdvancedSettings.Labels.0.Name"] = "";
         param["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
-        // InstanceDataDiskMountSettings
-        param["InstanceDataDiskMountSettings.0.InstanceType"] = "";
-        param["InstanceDataDiskMountSettings.0.Zone"] = "";
+        // // InstanceDataDiskMountSettings
+        // param["InstanceDataDiskMountSettings.0.InstanceType"] = "";
+        // param["InstanceDataDiskMountSettings.0.Zone"] = "";
 
         // RunInstancesForNode
         param["RunInstancesForNode.0.NodeRole"] = "WORKER";
@@ -7423,5 +7488,33 @@ export default {
 .boxx {
   max-height: 300px;
   overflow: auto;
+}
+// 高級設置
+.advanced-setting-a {
+  margin-top: 10px;
+}
+.advanced-setting-box {
+  .tke-second-tips {
+    display: flex;
+    border: 0px;
+    margin-bottom: 0px;
+    ul {
+      margin-bottom: 8px;
+      li {
+        display: flex;
+        align-items: center;
+      }
+    }
+    ::v-deep .el-input {
+      top: 0;
+      border-radius: 0px;
+      width: auto;
+    }
+
+    p {
+      margin-top: 8px;
+      color: #888;
+    }
+  }
 }
 </style>

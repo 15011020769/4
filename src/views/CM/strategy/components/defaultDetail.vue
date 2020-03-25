@@ -516,9 +516,20 @@
                     >
                       <template slot-scope="scope">
                         <p>
-                          <span v-for="(item,index) in scope.row.PrivateIpAddresses" :key="index">{{item}}(内网)</span></p>
-                        <p><span v-for="(item,index) in scope.row.PublicIpAddresses" :key="index">{{item}}(外网)</span>
-                         </p>
+                          <span
+                            v-for="(item, index) in scope.row
+                              .PrivateIpAddresses"
+                            :key="index"
+                            >{{ item }}(内网)</span
+                          >
+                        </p>
+                        <p>
+                          <span
+                            v-for="(item, index) in scope.row.PublicIpAddresses"
+                            :key="index"
+                            >{{ item }}(外网)</span
+                          >
+                        </p>
                       </template>
                     </el-table-column>
                     <!-- BS -->
@@ -1674,7 +1685,7 @@
           </el-select>
           <el-input
             v-model="httpInput"
-            placeholder="例如：console.cloud.tencent.com:8080/callback"
+            placeholder="例如：www.com:8080/callback"
             @focus="HttpHistroy"
             @blur="HttpHistroyBlur"
             class="input-http"
