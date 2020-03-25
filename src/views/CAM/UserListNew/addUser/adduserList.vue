@@ -19,7 +19,7 @@
           <div class="step2" v-show="active == 1">
             <el-form-item label="用戶名稱" required>
               <el-input v-model="ruleForm.Name" style="width: 330px" placeholder="請輸入用戶名"></el-input>
-              <p style="color: #888;">支持數字字母漢字下劃線和+=,.@-   長度1-64</p>
+              <p style="color: #888;">支持數字英文字母 長度1-32位</p>
               <!-- <table width="100%" boder="1" cellspacing="0" cellpadding="1">
                 <thead>
                   <tr>/^[\u4e00-\u9fa5\da-zA-Z_\+=,\.!@-]{1,64}$/
@@ -555,7 +555,7 @@ export default {
             type: "error",
             duration: 0
           });
-        } else if (!this.ruleForm.Name || !/^[\u4e00-\u9fa5\da-zA-Z_\+=,\.@-]{1,64}$/.test(this.ruleForm.Name)) {
+        } else if (!this.ruleForm.Name || !/^[\da-zA-Z]{1,32}$/.test(this.ruleForm.Name)) {
           this.$message({
             showClose: true,
             message: "用戶名格式錯誤",
