@@ -391,7 +391,7 @@
                     }}</span>
                   </p>
                   <span v-else class="text-orange"> 正在創建</span>
-                  )
+                  )；
                   <el-popover
                     width="50"
                     trigger="hover"
