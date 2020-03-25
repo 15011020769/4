@@ -1875,6 +1875,11 @@
                                           class="input-number"
                                         ></el-input-number>
                                         <span>GB</span>
+
+                                        <el-checkbox v-model="x.formatMount"
+                                          >格式化並掛載</el-checkbox
+                                        >
+
                                         <p
                                           v-if="
                                             x.dataDiskVal === 'CLOUD_PREMIUM'
@@ -1894,6 +1899,7 @@
                                           }}：10
                                         </p>
                                       </div>
+                                      <!-- <div v-if="x.formatMount"> -->
                                       <p
                                         style="margin-top:16px;"
                                         v-if="x.formatMount"
@@ -1919,6 +1925,7 @@
                                         <el-input
                                           v-model="x.setValue"
                                         ></el-input>
+                                        <!-- </div> -->
                                       </div>
                                     </div>
                                   </div>
@@ -2547,7 +2554,7 @@
             <div class="tke-second-tips">
               <p>封鎖（cordon）</p>
               <div>
-                <el-checkbox>
+                <el-checkbox v-model="checkoutFs">
                   開啟封鎖
                 </el-checkbox>
                 <p>
@@ -2559,13 +2566,17 @@
               <p>Label</p>
               <div>
                 <ul>
-                  <li>
-                    <el-input></el-input>
+                  <li v-for="(item, index) in advancedSettingArr" :key="index">
+                    <el-input v-model="item.name"></el-input>
                     <span style="margin:0 10px;">=</span>
-                    <el-input></el-input>
+                    <el-input v-model="item.value"></el-input>
+                    <i
+                      class="el-icon-close"
+                      @click="DeleteAdvancedSetting(index)"
+                    ></i>
                   </li>
                 </ul>
-                <a href="javascript:;">新增</a>
+                <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
                 <p>
                   標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
                 </p>
@@ -2729,6 +2740,7 @@
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
+import { Base64 } from "js-base64";
 import {
   ALL_CITY,
   ALL_PROJECT,
@@ -3256,7 +3268,10 @@ export default {
       M3show: true,
       // 第三步 高級設置
       advancedSettingShow: false,
-      textarea2: ""
+      textarea2: "",
+      checkoutFs: false,
+      advancedSettingArr: [],
+      dataShow: []
     };
   },
   components: {
@@ -5110,12 +5125,48 @@ export default {
       param["ClusterAdvancedSettings.ExtraArgs.KubeControllerManager.0"] = "";
       param["ClusterAdvancedSettings.ExtraArgs.KubeScheduler.0"] = "";
 
-      param["InstanceAdvancedSettings.MountTarget"] = "";
-      param["InstanceAdvancedSettings.DockerGraphPath"] = "";
-      param["InstanceAdvancedSettings.UserScript"] = "";
-      param["InstanceAdvancedSettings.Unschedulable"] = 0;
-      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      if (this.colonyThird.dataDiskChecked) {
+        param[
+          "InstanceAdvancedSettings.MountTarget"
+        ] = this.colonyThird.dataDiskInput;
+      } else {
+        param["InstanceAdvancedSettings.MountTarget"] = "";
+      }
+      if (this.colonyThird.containerChecked) {
+        param[
+          "InstanceAdvancedSettings.DockerGraphPath"
+        ] = this.colonyThird.containerInput;
+      } else {
+        param["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      }
+      if (this.advancedSettingShow) {
+        param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+          this.textarea2
+        );
+        if (this.checkoutFs) {
+          param["InstanceAdvancedSettings.Unschedulable"] = 1;
+        } else {
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        }
+        if (this.advancedSettingArr.length > 0) {
+          for (let i in this.advancedSettingArr) {
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Name"
+            ] = this.advancedSettingArr[i].name;
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Value"
+            ] = this.advancedSettingArr[i].value;
+          }
+        } else {
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
+      } else {
+        param["InstanceAdvancedSettings.UserScript"] = "";
+        param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+      }
 
       this.axios.post(TKE_CREATW_CLUSTERS, param).then(res => {
         if (res.Response.Error === undefined) {
@@ -5274,6 +5325,15 @@ export default {
     // 高級設置
     AdvancedSettingBtn() {
       this.advancedSettingShow = !this.advancedSettingShow;
+    },
+    AddAdvancedSetting() {
+      this.advancedSettingArr.push({
+        name: "",
+        value: ""
+      });
+    },
+    DeleteAdvancedSetting(index) {
+      this.advancedSettingArr.splice(index, 1);
     },
     // 第三步 上一步
     thirdPrev() {
@@ -5543,6 +5603,7 @@ export default {
     CreateFinish() {
       var workerOneListArr = this.colonySecond.workerOneList;
       var masterOneListArr = this.colonySecond.masterOneList;
+      this.dataShow = [];
       let param = {
         Version: "2018-05-25",
         "ClusterCIDRSettings.ClusterCIDR": this.dispose.container,
@@ -5617,14 +5678,88 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
 
-        // // InstanceDataDiskMountSettings
-        // param["InstanceDataDiskMountSettings.0.InstanceType"] = "";
-        // param["InstanceDataDiskMountSettings.0.Zone"] = "";
+        for (let i in this.colonySecond.workerOneList) {
+          if (this.colonySecond.workerOneList[i].buyDataDisk) {
+            this.dataShow.push(this.colonySecond.workerOneList[i]);
+          }
+        }
+        console.log(this.dataShow);
+        // InstanceDataDiskMountSettings
+        if (this.dataShow.length !== 0) {
+          for (let i in this.dataShow) {
+            param[
+              "InstanceDataDiskMountSettings." + i + ".InstanceType"
+            ] = this.dataShow[i].modelName;
+            param["InstanceDataDiskMountSettings." + i + ".Zone"] =
+              "ap-taipei-1";
+            for (let j in this.dataShow[i].buyDataDiskArr) {
+              param[
+                "InstanceDataDiskMountSettings." +
+                  i +
+                  ".DataDisks." +
+                  j +
+                  ".AutoFormatAndMount"
+              ] = this.dataShow[i].buyDataDiskArr[j].formatMount;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  i +
+                  ".DataDisks." +
+                  j +
+                  ".DiskSize"
+              ] = this.dataShow[i].buyDataDiskArr[j].dataDiskNum;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  i +
+                  ".DataDisks." +
+                  j +
+                  ".DiskType"
+              ] = this.dataShow[i].buyDataDiskArr[j].dataDiskVal;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  i +
+                  ".DataDisks." +
+                  j +
+                  ".FileSystem"
+              ] = this.dataShow[i].buyDataDiskArr[j].latticeSetVal;
+              param[
+                "InstanceDataDiskMountSettings." +
+                  i +
+                  ".DataDisks." +
+                  j +
+                  ".MountTarget"
+              ] = this.dataShow[i].buyDataDiskArr[j].setValue;
+            }
+          }
+        }
 
         // RunInstancesForNode
         param["RunInstancesForNode.0.NodeRole"] = "WORKER";
@@ -5643,6 +5778,95 @@ export default {
               "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
                 i +
                 ".MountTarget"
+            ] = "";
+          }
+          if (this.colonyThird.containerChecked) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = this.colonyThird.containerInput;
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".DockerGraphPath"
+            ] = "";
+          }
+          if (this.advancedSettingShow) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = Base64.encode(this.textarea2);
+
+            if (this.checkoutFs) {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 1;
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 0;
+            }
+            if (this.advancedSettingArr.length > 0) {
+              for (let j in this.advancedSettingArr) {
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Name"
+                ] = this.advancedSettingArr[j].name;
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Value"
+                ] = this.advancedSettingArr[j].value;
+              }
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Name"
+              ] = "";
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Value"
+              ] = "";
+            }
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Unschedulable"
+            ] = 0;
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".ExtraArgs.Kubelet.0"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Name"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Value"
             ] = "";
           }
         }
@@ -5736,10 +5960,34 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
       }
 
       // 第三種情況
@@ -5860,10 +6108,34 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
       }
 
       // 第四種情況
@@ -5954,10 +6226,34 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
       }
       // 第五種情況
       if (
@@ -6017,10 +6313,34 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
         if (!this.colonySecond.workerDeployShow) {
           let buyDataArr = [];
           for (let i in workerOneListArr) {
@@ -6105,31 +6425,82 @@ export default {
             ] = "";
           }
 
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".UserScript"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Unschedulable"
-          ] = 0;
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".ExtraArgs.Kubelet.0"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Labels.0.Name"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Labels.0.Value"
-          ] = "";
+          if (this.advancedSettingShow) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = Base64.encode(this.textarea2);
+
+            if (this.checkoutFs) {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 1;
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 0;
+            }
+            if (this.advancedSettingArr.length > 0) {
+              for (let j in this.advancedSettingArr) {
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Name"
+                ] = this.advancedSettingArr[j].name;
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Value"
+                ] = this.advancedSettingArr[j].value;
+              }
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Name"
+              ] = "";
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Value"
+              ] = "";
+            }
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Unschedulable"
+            ] = 0;
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".ExtraArgs.Kubelet.0"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Name"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Value"
+            ] = "";
+          }
         }
 
         param["RunInstancesForNode.1.NodeRole"] = "MASTER_ETCD";
@@ -6248,10 +6619,34 @@ export default {
         } else {
           param["InstanceAdvancedSettings.DockerGraphPath"] = "";
         }
-        param["InstanceAdvancedSettings.UserScript"] = "";
-        param["InstanceAdvancedSettings.Unschedulable"] = 0;
-        param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-        param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        if (this.advancedSettingShow) {
+          param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+            this.textarea2
+          );
+          if (this.checkoutFs) {
+            param["InstanceAdvancedSettings.Unschedulable"] = 1;
+          } else {
+            param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          }
+          if (this.advancedSettingArr.length > 0) {
+            for (let i in this.advancedSettingArr) {
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Name"
+              ] = this.advancedSettingArr[i].name;
+              param[
+                "InstanceAdvancedSettings.Labels." + i + ".Value"
+              ] = this.advancedSettingArr[i].value;
+            }
+          } else {
+            param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+            param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+          }
+        } else {
+          param["InstanceAdvancedSettings.UserScript"] = "";
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
+        }
         if (!this.colonySecond.workerDeployShow) {
           let buyDataArr = [];
           for (let i in workerOneListArr) {
@@ -6335,31 +6730,82 @@ export default {
                 ".DockerGraphPath"
             ] = "";
           }
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".UserScript"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Unschedulable"
-          ] = 0;
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".ExtraArgs.Kubelet.0"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Labels.0.Name"
-          ] = "";
-          param[
-            "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
-              i +
-              ".Labels.0.Value"
-          ] = "";
+          if (this.advancedSettingShow) {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = Base64.encode(this.textarea2);
+
+            if (this.checkoutFs) {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 1;
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Unschedulable"
+              ] = 0;
+            }
+            if (this.advancedSettingArr.length > 0) {
+              for (let j in this.advancedSettingArr) {
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Name"
+                ] = this.advancedSettingArr[j].name;
+                param[
+                  "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                    i +
+                    ".Labels." +
+                    j +
+                    ".Value"
+                ] = this.advancedSettingArr[j].value;
+              }
+            } else {
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Name"
+              ] = "";
+              param[
+                "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                  i +
+                  ".Labels.0.Value"
+              ] = "";
+            }
+          } else {
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".UserScript"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Unschedulable"
+            ] = 0;
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".ExtraArgs.Kubelet.0"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Name"
+            ] = "";
+            param[
+              "RunInstancesForNode.0.InstanceAdvancedSettingsOverrides." +
+                i +
+                ".Labels.0.Value"
+            ] = "";
+          }
         }
       }
 
