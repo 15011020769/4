@@ -24,7 +24,7 @@
             :series="seriesPieStatus"
             :color="colorPie"
             :legendText="legendTextPieStatus"
-            :radius="['40%', '55%']"
+            :radius="['35%', '45%']"
             :left="'50%'"
             v-loading="loading"
           />
@@ -37,7 +37,7 @@
             :series="seriesPieMethod"
             :color="colorPieMethod"
             :legendText="legendTextPieMethod"
-            :radius="['37%', '50%']"
+            :radius="['35%', '45%']"
             :left="'50%'"
             v-loading="loading"
           />
@@ -50,7 +50,7 @@
             :series="seriesPieProtocal"
             :color="colorPie"
             :legendText="legendTextPieProtocal"
-            :radius="['40%', '55%']"
+            :radius="['35%', '45%']"
             :left="'50%'"
             v-loading="loading"
           />
