@@ -1,10 +1,10 @@
 <template>
   <div class="group-wrap">
-    <Header title="实例分组" />
+    <Header :title="$t('CVM.Casegrouping.slfz')" />
     <div class="group-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
-          实例分组功能提供对跨地域、跨项目组的云产品资源进行分组管理的能力
+          {{ $t("CVM.Casegrouping.slfztgnl") }}
         </p>
       </div>
       <div class="box">
@@ -24,7 +24,7 @@
           <div class="seek">
             <el-input
               v-model="searchInput"
-              placeholder="请输入实例组名搜索"
+              :placeholder="$t('CVM.Casegrouping.placeholder1')"
               @input="SearchInput"
             ></el-input>
             <el-button
@@ -41,7 +41,7 @@
             height="450"
             v-loading="loadShow"
           >
-            <el-table-column label="实例组名称">
+            <el-table-column :label="$t('CVM.Casegrouping.slzmc')">
               <template slot-scope="scope">
                 <div class="case-name">
                   <a href="javascript:;" @click="DetailsTo(scope.row)">{{
@@ -54,24 +54,24 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="分组类型">
+            <el-table-column :label="$t('CVM.Casegrouping.fzlx')">
               <template slot-scope="scope">
                 {{ scope.row.Name }}
               </template>
             </el-table-column>
-            <el-table-column label="实例数">
+            <el-table-column :label="$t('CVM.Casegrouping.sls')">
               <template slot-scope="scope">
-                {{ scope.row.InstanceSum }}个
+                {{ scope.row.InstanceSum }}個
               </template>
             </el-table-column>
-            <el-table-column label="绑定告警策略数">
+            <el-table-column :label="$t('CVM.Casegrouping.bdgjcls')">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="DetailsToTwo(scope.row)"
-                  >{{ scope.row.PolicyGroups.length }}个</a
+                  >{{ scope.row.PolicyGroups.length }}個</a
                 >
               </template>
             </el-table-column>
-            <el-table-column label="最后修改">
+            <el-table-column :label="$t('CVM.Casegrouping.zhxg')">
               <template slot-scope="scope">
                 <p>{{ scope.row.LastEditUin }}</p>
                 <p>{{ scope.row.UpdateTime | formatDate }}</p>
@@ -79,7 +79,9 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <a style="padding-right:10px;" @click="Copy(scope.row)">复制</a>
+                <a style="padding-right:10px;" @click="Copy(scope.row)">{{
+                  $t("CVM.Casegrouping.zhxg")
+                }}</a>
                 <a @click="Delete(scope.row)">删除</a>
               </template>
             </el-table-column>
@@ -103,7 +105,7 @@
     </div>
     <!-- 编辑集群名称弹窗 -->
     <el-dialog
-      title="修改实例组名称"
+      :title="$t('CVM.Casegrouping.xgslzmc')"
       :visible.sync="editNameDialogVisible"
       width="500px"
       custom-class="tke-dialog"
@@ -111,12 +113,12 @@
       <div class="edit-dialog">
         <el-input
           size="small"
-          placeholder="请输入实例组名称，20字以内"
+          :placeholder="$t('CVM.Casegrouping.placeholder2')"
           v-model="editSearchVal"
           @input="EditTips"
           maxlength="20"
         ></el-input>
-        <p v-if="tipsShow">实例组名称不能为空</p>
+        <p v-if="tipsShow">{{ $t("CVM.Casegrouping.tips2") }}</p>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="setColonyName">保存</el-button>
@@ -125,26 +127,30 @@
     </el-dialog>
     <!-- 复制 -->
     <el-dialog
-      title="确定复制所选实例组"
+      :title="$t('CVM.Casegrouping.title1')"
       :visible.sync="copyDialogVisible"
       width="500px"
       custom-class="tke-dialog"
     >
-      <div>是否复制 {{ groupName }}</div>
+      <div>{{ $t("CVM.Casegrouping.sffz") + groupName }}</div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="CopyList()">确定复制</el-button>
+        <el-button type="primary" @click="CopyList()">{{
+          $t("CVM.Casegrouping.qdfz")
+        }}</el-button>
         <el-button @click="copyDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
     <!-- 删除 -->
     <el-dialog
-      title="确定删除所选实例组"
+      :title="$t('CVM.Casegrouping.title2')"
       :visible.sync="deleteDialogVisible"
       width="500px"
       custom-class="tke-dialog"
     >
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteList()">确定删除</el-button>
+        <el-button type="primary" @click="DeleteList()">{{
+          $t("CVM.Casegrouping.qdsc")
+        }}</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </div>
     </el-dialog>
@@ -237,50 +243,51 @@ export default {
               this.loadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "请求未授权。请参考 CAM 文档对鉴权的说明。",
+                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
                 DryRunOperation:
-                  "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-                FailedOperation: "操作失败。",
+                  "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+                FailedOperation: "操作失敗。",
                 "FailedOperation.AlertFilterRuleDeleteFailed":
-                  "删除过滤条件失败。",
-                "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-                "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+                  "刪除過濾條件失敗。",
+                "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
                 "FailedOperation.AlertPolicyDescribeFailed":
-                  "告警策略查询失败。",
-                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+                  "告警策略查詢失敗。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
                 "FailedOperation.AlertTriggerRuleDeleteFailed":
-                  "删除触发条件失败。",
-                "FailedOperation.DbQueryFailed": "数据库查询失败。",
-                "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-                "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-                "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+                  "刪除触发條件失敗。",
+                "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+                "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+                "FailedOperation.DbRecordDeleteFailed": "數據庫記錄删除失敗。",
+                "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
                 "FailedOperation.DbTransactionBeginFailed":
-                  "数据库事务开始失败。",
+                  "數據庫事務開始失敗。",
                 "FailedOperation.DbTransactionCommitFailed":
-                  "数据库事务提交失败。",
+                  "數據庫事務提交失敗。",
                 "FailedOperation.DimQueryRequestFailed":
-                  "请求维度查询服务失败。",
-                "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-                "FailedOperation.DuplicateName": "名字重复。",
+                  "請求維度查詢服務失敗。",
+                "FailedOperation.DivisionByZero": "被除數為0。",
+                "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+                "FailedOperation.DruidTableNotFound": "druid表不存在。",
+                "FailedOperation.DuplicateName": "名字重複。",
                 "FailedOperation.ServiceNotEnabled":
-                  "服务未启用，开通服务后方可使用。",
-                InternalError: "内部错误。",
-                "InternalError.ExeTimeout": "	执行超时。",
-                InvalidParameter: "	参数错误。",
-                "InvalidParameter.InvalidParameter": "参数错误。",
-                "InvalidParameter.InvalidParameterParam": "参数错误。",
-                InvalidParameterValue: "无效的参数值。",
-                LimitExceeded: "超过配额限制。",
+                  "服務未啟用，開通服務後方可使用。",
+                InternalError: "內部錯誤。",
+                "InternalError.ExeTimeout": "執行超時。",
+                InvalidParameter: "參數錯誤。",
+                "InvalidParameter.InvalidParameter": "參數錯誤。",
+                "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+                InvalidParameterValue: "無效的參數值。",
                 "LimitExceeded.MetricQuotaExceeded":
-                  "指标数量达到配额限制，禁止含有未注册指标的请求。",
-                MissingParameter: "缺少参数错误。",
-                ResourceInUse: "资源被占用。",
-                ResourceInsufficient: "资源不足。",
-                ResourceNotFound: "资源不存在。",
-                ResourceUnavailable: "资源不可用。",
-                ResourcesSoldOut: "资源售罄。",
-                UnauthorizedOperation: "未授权操作。",
-                UnknownParameter: "未知参数错误。",
+                  "指標數量達到配額限制，禁止含有未註冊指標的請求。",
+                MissingParameter: "缺少參數錯誤。",
+                ResourceInUse: "資源被佔用。",
+                ResourceInsufficient: "資源不足。",
+                ResourceNotFound: "資源不存在。",
+                ResourceUnavailable: "資源不可用。",
+                ResourcesSoldOut: "資源售罄。",
+                UnauthorizedOperation: "未授權操作。",
+                UnknownParameter: "未知參數錯誤。",
                 UnsupportedOperation: "操作不支持。"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -297,45 +304,46 @@ export default {
           this.deleteLoadShow = false;
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除触发條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄删除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DivisionByZero": "被除數為0。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DruidTableNotFound": "druid表不存在。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啟用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未註冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被佔用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -408,16 +416,16 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -449,15 +457,16 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -488,44 +497,47 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
+            "AuthFailure.UnauthorizedOperation":
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "	操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除触发條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄删除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DivisionByZero": "被除數為0。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DruidTableNotFound": "druid表不存在。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啟用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未註冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被佔用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);

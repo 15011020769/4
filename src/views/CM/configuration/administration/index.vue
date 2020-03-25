@@ -5,40 +5,40 @@
       <div class="box">
         <!-- <div class="box_content"> -->
         <div class="box_first">
-          <h3>指标基本配置</h3>
+          <h3>指標基本配置</h3>
           <span>
             <i class="el-icon-edit"></i>
-            <a >编辑</a>
+            <a >編輯</a>
           </span>
         </div>
 
         <div class="box_send">
-          <p>命名空间</p>
+          <p>命名空間</p>
           <span>test1</span>
         </div>
 
         <div class="box_dime">
-          <p>维度</p>
+          <p>維度</p>
           <span>1,2,3</span>
         </div>
 
         <div class="box_form">
-          <p>指标</p>
+          <p>指標</p>
           <div class="box_formtable">
             <el-table :data="tableDatas" style="width: 100%" height="200">
-              <el-table-column prop="date" label="指标" ></el-table-column>
-              <el-table-column prop="name" label="指标中文" ></el-table-column>
-              <el-table-column prop="address" label="单位">%</el-table-column>
+              <el-table-column prop="date" label="指標" ></el-table-column>
+              <el-table-column prop="name" label="指標中文" ></el-table-column>
+              <el-table-column prop="address" label="單位">%</el-table-column>
             </el-table>
           </div>
         <!-- </div> -->
-        </div> 
+        </div>
       </div>
       <div class="indexdetail">
         <div class="indexdetail_head">
-          <h2>指标详细配置</h2>
+          <h2>指標詳細配置</h2>
           <div class="explain" style="margin-bottom:20px;">
-            <p>您可在指标详情中配置统计方式和聚合维度，配置统计方式的指标才可正常上报数据</p>
+            <p>您可在指標詳情中配置統計方式和聚合維度，配置統計方式的指標才可正常上報數據</p>
           </div>
         </div>
         <div class="indexdetail_content">
@@ -49,60 +49,60 @@
             tab-position="left"
             stretch
           >
-            <el-tab-pane label="聚合维度(1)" name="first">
+            <el-tab-pane label="聚合維度(1)" name="first">
               <div class="tab_right">
-                <h2>指标统计方式</h2>
+                <h2>指標統計方式</h2>
                 <p class="page_first">
-                  <el-button type="primary" @click="pageindex">配置指标</el-button>
+                  <el-button type="primary" @click="pageindex">配置指標</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="100">
-                  <el-table-column prop="address" label="指标" width="180"></el-table-column>
-                  <el-table-column prop="address" label="统计方法"></el-table-column>
-                  <el-table-column prop="address" label="统计周期" width="180"></el-table-column>
+                  <el-table-column prop="address" label="指標" width="180"></el-table-column>
+                  <el-table-column prop="address" label="統計方法"></el-table-column>
+                  <el-table-column prop="address" label="統計周期" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">
-                  <p>以此为通用告警管理，如需要对特定的监控对象配置告警规则和告警接收组，请至监控对象详情页进行配置。</p>
+                  <p>以此爲通用告警管理，如需要對特定的監控對象配置告警規則和告警接收組，請至監控對象詳情頁進行配置。</p>
                 </div>
                 <p class="page_nav">
                   <el-button type="primary" size="small" @click="warings">配置告警</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="指标" width="180"></el-table-column>
-                  <el-table-column prop="address" label="触发条件"></el-table-column>
-                  <el-table-column prop="address" label="告警接收组" width="180"></el-table-column>
+                  <el-table-column prop="address" label="指標" width="180"></el-table-column>
+                  <el-table-column prop="address" label="觸發條件"></el-table-column>
+                  <el-table-column prop="address" label="告警接收組" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
               </div>
             </el-tab-pane>
 
-            <el-tab-pane label="原始维度(1,2,3)" name="second">
+            <el-tab-pane label="原始維度(1,2,3)" name="second">
               <div class="tab_right">
-                <h2>指标统计方式</h2>
+                <h2>指標統計方式</h2>
                 <p class="page_first">
-                  <el-button type="primary" @click="pageindex">配置指标</el-button>
+                  <el-button type="primary" @click="pageindex">配置指標</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="100">
-                  <el-table-column prop="address" label="指标" width="180"></el-table-column>
-                  <el-table-column prop="address" label="统计方法"></el-table-column>
-                  <el-table-column prop="address" label="统计周期" width="180"></el-table-column>
+                  <el-table-column prop="address" label="指標" width="180"></el-table-column>
+                  <el-table-column prop="address" label="統計方法"></el-table-column>
+                  <el-table-column prop="address" label="統計周期" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">
-                  <p>以此为通用告警管理，如需要对特定的监控对象配置告警规则和告警接收组，请至监控对象详情页进行配置。</p>
+                  <p>以此爲通用告警管理，如需要對特定的監控對象配置告警規則和告警接收組，請至監控對象詳情頁進行配置。</p>
                 </div>
                 <p class="page_nav">
                   <el-button type="primary" size="small" @click="warings">配置告警</el-button>
                 </p>
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="指标" width="180"></el-table-column>
-                  <el-table-column prop="address" label="触发条件"></el-table-column>
-                  <el-table-column prop="address" label="告警接收组" width="180"></el-table-column>
+                  <el-table-column prop="address" label="指標" width="180"></el-table-column>
+                  <el-table-column prop="address" label="觸發條件"></el-table-column>
+                  <el-table-column prop="address" label="告警接收組" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
               </div>
             </el-tab-pane>
-            <el-button @click="addTab" style="margin-top:20px">新增聚合维度</el-button>
+            <el-button @click="addTab" style="margin-top:20px">新增聚合維度</el-button>
           </el-tabs>
         </div>
       </div>
@@ -126,19 +126,19 @@ export default {
       backShow: true,
       activeName: "first",
       value: 1,
-      dialogVisible: false, //新增配置弹框
+      dialogVisible: false, //新增配置彈框
       dialogVisibles: false,
       // dialogVisiblenew: false,
       input: "", //搜索框的值
       tableData: [],
-      //city选择
+      //city選擇
       options: [],
       values: "",
       //管理表格
       editableTabsValue: "2",
       tableDatas: [{
           date:"aa",
-          name:"内存",
+          name:"內存",
           address:"%"
       }]
     };
@@ -234,7 +234,7 @@ export default {
       font-size: 15px;
       font-weight: 600;
       font-family: "微软雅黑";
-    
+
       margin-right: 26px;
     }
     span {
@@ -324,4 +324,4 @@ export default {
         margin: 0 0 10px 0;
     }
 }
-</style>  
+</style>

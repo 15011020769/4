@@ -1,10 +1,10 @@
 <template>
   <div class="newdialog">
     <div>
-      <el-dialog title="自定义列表字段" :visible.sync="dialogVisible1" width="40%">
+      <el-dialog title="自定義列表字段" :visible.sync="dialogVisible1" width="40%">
         <div class="content">
           <div class="explain" style="margin-bottom:20px;">
-            <p>请选择您想显示的列表详细信息，最多勾选10个字段，已勾选10个</p>
+            <p>請選擇您想顯示的列表詳細信息，最多勾選10個字段，已勾選10個</p>
           </div>
           <div class="checkbox">
             <el-checkbox-group v-model="checkedlistNo">
@@ -17,7 +17,7 @@
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="cancel">取 消</el-button>
-          <el-button type="primary" @click="save">确 定</el-button>
+          <el-button type="primary" @click="save">確 定</el-button>
         </span>
       </el-dialog>
     </div>
@@ -25,39 +25,39 @@
 </template>
 
 <script>
-const opts = ["发生时间", "告警对象", "告警内容"];
+const opts = ["發生時間", "告警對象", "告警內容"];
 
 const options = [
-  "持续时长",
+  "持續時長",
   "告警渠道",
-  "告警状态",
-  "结束时间",
-  "告警类型",
-  "策略类型",
-  "策略名称",
-  "所属网络",
-  "所属项目",
-  "所属实例组"
+  "告警狀態",
+  "結束時間",
+  "告警類型",
+  "策略類型",
+  "策略名稱",
+  "所屬網絡",
+  "所屬項目",
+  "所屬實例組"
 ];
 export default {
   data() {
     return {
       checkedlist: [
-        "持续时长",
+        "持續時長",
         "告警渠道",
-        "告警状态",
-        "结束时间",
-        "告警类型",
-        "策略类型",
-        "策略名称",
-        "所属网络",
-        "所属项目",
-        "所属实例组"
+        "告警狀態",
+        "結束時間",
+        "告警類型",
+        "策略類型",
+        "策略名稱",
+        "所屬網絡",
+        "所屬項目",
+        "所屬實例組"
       ],
-      checkedlistNo: ["发生时间", "告警对象", "告警内容"],
+      checkedlistNo: ["發生時間", "告警對象", "告警內容"],
       cis: opts,
       cities: options,
-      num: 13 //个数
+      num: 13 //個數
     };
   },
   props: {

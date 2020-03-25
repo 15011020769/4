@@ -1,32 +1,32 @@
 <template>
   <div class="wrap">
     <el-dialog
-      title="自定义列表字段"
+      title="自定義列表字段"
       :visible.sync="dialogVisible"
       width="40%"
       :close-on-click-modal="false"
     >
       <div class="dialog">
         <div class="explain">
-          <p>请选择您想显示的列表详细信息，最多勾选5个字段，已勾选5个。</p>
+          <p>請選擇您想顯示的列表詳細信息，最多勾選5個字段，已勾選5個。</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">
             <p>
               <el-checkbox label="ID/策略名" disabled></el-checkbox>
-              <el-checkbox label="近24小时触发告警" disabled></el-checkbox>
-              <el-checkbox label="消息接收组"></el-checkbox>
+              <el-checkbox label="近24小時觸發告警" disabled></el-checkbox>
+              <el-checkbox label="消息接收組"></el-checkbox>
               <el-checkbox label="告警渠道"></el-checkbox>
               <el-checkbox label="操作" disabled></el-checkbox>
             </p>
             <p>
-            
+
             </p>
           </el-checkbox-group>
         </div>
       </div>
       <p slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button type="primary" @click="save">確 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </p>
     </el-dialog>
@@ -38,12 +38,12 @@ export default {
   name: "msg",
   data() {
     return {
-      checkList: ["选中且禁用", "复选框 A"],
+      checkList: ["選中且禁用", "複選框 A"],
       msgPrice: 0,
       num: 100,
-      //购买短信 类型
+      //購買短信 類型
       liIndex: 0,
-      btnArr: ["基础告警", "云拨测告警", "自定义监控告警", "自定义消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
     };
   },
   props: {
@@ -59,7 +59,7 @@ export default {
     save() {
       this.$emit("save");
     },
-    //类型
+    //類型
     msgBtn(index) {
       this.liIndex = index;
     }
@@ -132,4 +132,4 @@ export default {
 .dialog-footer {
   text-align: center;
 }
-</style>  
+</style>

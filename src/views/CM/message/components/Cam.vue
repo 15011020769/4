@@ -1,6 +1,6 @@
 <template>
   <div class="qudaoContent">
-    <p>选择告警接收组</p>
+    <p>選擇告警接收組</p>
     <p class="receiving-objects">
       <el-select
         v-model="formInline.jieshou"
@@ -20,13 +20,13 @@
           v-model="triggerInput"
           style="margin-left:-1px;margin-top:1px;"
           v-if="formInline.jieshou === '0'"
-          placeholder="請輸入用戶組名稱"
+          placeholder="請輸入用護組名稱"
         ></el-input>
         <el-input
           v-model="triggerInput"
           style="margin-left:-1px;margin-top:1px;"
           v-if="formInline.jieshou === '1'"
-          placeholder="請輸入用戶名稱"
+          placeholder="請輸入用護名稱"
         ></el-input>
         <el-button
           icon="el-icon-search"
@@ -36,7 +36,7 @@
       </el-row>
     </p>
     <div>
-      <!-- 接收组table -->
+      <!-- 接收組table -->
       <el-table
         v-if="formInline.jieshou === '0'"
         :data="tableData2"
@@ -47,8 +47,8 @@
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="GroupName" label="用户组名"></el-table-column>
-        <el-table-column label="用户名">
+        <el-table-column prop="GroupName" label="用戶組名"></el-table-column>
+        <el-table-column label="用戶名">
           <template slot-scope="scope">
             <span
               v-if="scope.row.UserInfo.length !== 0"
@@ -74,17 +74,17 @@
         :default-sort="{ prop: 'changeData', order: 'descending' }"
       >
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="Name" label="用户名"></el-table-column>
-        <el-table-column label="手机号">
+        <el-table-column prop="Name" label="用戶名"></el-table-column>
+        <el-table-column label="手機號">
           <template slot-scope="scope">
             <span v-if="scope.row.PhoneNum !== ''">{{scope.row.PhoneNum}}</span>
-            <span v-else>未设置手机号</span>
+            <span v-else>未設置手機號</span>
           </template>
         </el-table-column>
-        <el-table-column label="邮箱">
+        <el-table-column label="郵箱">
           <template slot-scope="scope">
             <span v-if="scope.row.Email !== ''">{{scope.row.Email}}</span>
-            <span v-else>未设置邮箱</span>
+            <span v-else>未設置郵箱</span>
           </template>
         </el-table-column>
       </el-table>
@@ -96,7 +96,7 @@
           <el-checkbox label="郵件"></el-checkbox>
         </p>
         <p style="margin-left:30px">
-          <el-checkbox label="簡訊"></el-checkbox>
+          <el-checkbox label="間訊"></el-checkbox>
         </p>
       </el-checkbox-group>
     </p>
@@ -108,61 +108,61 @@ import { USER_GROUP, GET_GROUP, LIST_SUBACCOUNTS } from "@/constants";
 export default {
   data() {
     return {
-      triggerInput: "", // 查询关键字
+      triggerInput: "", // 查詢關鍵字
       tableData: [],
-      tableData2: [], // 接收组数据
-      loadingShow: true, // 接收组动画
-      userListArr: [], // 接收人列表数组
-      userListLoading: "true", // 接收人加载动画
-      qudaoCheckList: [], //渠道选择
+      tableData2: [], // 接收組數據
+      loadingShow: true, // 接收組動畫
+      userListArr: [], // 接收人列表數組
+      userListLoading: "true", // 接收人加載動畫
+      qudaoCheckList: [], //渠道選擇
       formInline: {
         jieshou: "0",
         jieshouArr: [
           {
             value: "0",
-            name: "用戶組名"
+            name: "用護組名"
           }
           //   {
           //     value: "1",
-          //     name: "用戶名"
+          //     name: "用護名"
           //   }
         ]
       },
       groupData: [],
       cam: {
-        // 此组件向外暴露的值
-        selectUserGroup: [], // 接收组 --> table表格选中
-        selectUserList: [], // 接收人 --> table表格选中
-        time: [], // 选中的时间
-        channel: [] // 选中的渠道
+        // 此組件向外暴露的值
+        selectUserGroup: [], // 接收組 --> table表格選中
+        selectUserList: [], // 接收人 --> table表格選中
+        time: [], // 選中的時間
+        channel: [] // 選中的渠道
       }
     };
   },
   created() {},
   mounted() {
-    this.userGroup(); // 查询接收组
+    this.userGroup(); // 查詢接收組
   },
   methods: {
-    // 选中接受组还是接收人
+    // 選中接受組還是接收人
     selectChange() {
       this.triggerInput = "";
       if (this.formInline.jieshou === "0") {
-        this.userGroup(); // 查询接受组
+        this.userGroup(); // 查詢接受組
       } else {
-        this.userList(); // 查询接收人
+        this.userList(); // 查詢接收人
       }
     },
 
-    // 搜索关键字
+    // 搜索關鍵字
     searchKey() {
       if (this.formInline.jieshou === "0") {
-        this.userGroup(); // 查询用户组
+        this.userGroup(); // 查詢用戶組
       } else {
-        this.userList(); // 查询接收人
+        this.userList(); // 查詢接收人
       }
     },
 
-    // 查询接收组
+    // 查詢接收組
     userGroup() {
       this.loadingShow = true;
       let params = {
@@ -199,7 +199,7 @@ export default {
         });
     },
 
-    // 查询接收组详情
+    // 查詢接收組詳情
     userGroupDetail(GroupId) {
       let params = {
         Version: "2019-01-16"
@@ -226,7 +226,7 @@ export default {
             }
           } else {
             let ErrTips = {
-              "ResourceNotFound.UserNotExist": "用戶不存在"
+              "ResourceNotFound.UserNotExist": "用護不存在"
             };
             this.loadingShow = false;
             let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -243,7 +243,7 @@ export default {
         });
     },
 
-    // 查询接收人数据
+    // 查詢接收人數據
     userList() {
       this.userListLoading = true;
       let userList = {
@@ -259,12 +259,12 @@ export default {
         .post(LIST_SUBACCOUNTS, userList)
         .then(data => {
           this.userListLoading = false;
-          // 如果返回的data是String类型的，说明接口返回信息有误
+          // 如果返回的data是String類型的，說明接口返回信息有誤
           if (typeof data !== "string") {
             if (data.Response.Error === undefined) {
               if (data != "") {
                 var arr = data.Response.UserInfo;
-                //获取用户关联的用户组
+                //獲取用戶關聯的用戶組
                 arr.forEach((item, index) => {
                   item.group = [];
                   item.index = index;
@@ -296,21 +296,21 @@ export default {
         });
     },
 
-    // 接收组 table表格选中触发的事件
+    // 接收組 table表格選中觸發的事件
     handleSelectionChange(val) {
       this.cam.selectUserGroup = val;
       this.cam.selectUserList = [];
       this.$emit("camClick", this.cam);
     },
 
-    // 接收人 table表格选中触发的事件
+    // 接收人 table表格選中觸發的事件
     handleSelectionChange2(val) {
       this.cam.selectUserGroup = [];
       this.cam.selectUserList = val;
       this.$emit("camClick", this.cam);
     },
 
-    // 选中渠道
+    // 選中渠道
     selectChannel() {
       this.cam.channel = this.qudaoCheckList;
       this.$emit("camClick", this.cam);

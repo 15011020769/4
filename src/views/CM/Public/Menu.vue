@@ -12,16 +12,16 @@
       :router="true"
     >
       <el-menu-item index="/overview">
-        <span slot="title">监控概览</span>
+        <span slot="title">監控概覽</span>
       </el-menu-item>
       <el-menu-item index="/Dashboard">
         <span slot="title">Dashboard</span>
       </el-menu-item>
       <el-menu-item index="/Casegrouping">
-        <span slot="title">实例分组</span>
+        <span slot="title">實例分組</span>
       </el-menu-item>
       <el-menu-item index="/History">
-        <span slot="title">告警历史</span>
+        <span slot="title">告警曆史</span>
       </el-menu-item>
       -->
       <el-submenu index="4">
@@ -33,15 +33,15 @@
             <span slot="title">告警策略</span>
           </el-menu-item>
           <el-menu-item index="/subscription">
-            <span slot="title">平台事件订阅</span>
+            <span slot="title">平台事件訂閱</span>
           </el-menu-item>
           <el-menu-item index="/message">
-            <span slot="title">自定义消息</span>
+            <span slot="title">自定義消息</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="/Template">
-        <span slot="title">触发条件模板</span>
+        <span slot="title">觸發條件模板</span>
       </el-menu-item>
       <el-submenu index="5">
         <template slot="title">
@@ -49,7 +49,7 @@
         </template>
         <el-menu-item-group>
           <el-menu-item index="/product">
-            <span slot="title">产品事件</span>
+            <span slot="title">産品事件</span>
           </el-menu-item>
           <el-menu-item index="/platform">
             <span slot="title">平台事件</span>
@@ -58,19 +58,19 @@
       </el-submenu>
       <el-submenu index="6">
         <template slot="title">
-          <span>自定义监控</span>
+          <span>自定義監控</span>
         </template>
         <el-menu-item-group>
           <el-menu-item index="/configuration">
-            <span slot="title">监控配置</span>
+            <span slot="title">監控配置</span>
           </el-menu-item>
           <el-menu-item index="/view">
-            <span slot="title">监控视图</span>
+            <span slot="title">監控視圖</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="/flow">
-        <span slot="title">流量监控</span>
+        <span slot="title">流量監控</span>
       </el-menu-item>
       -->
       <el-menu-item
@@ -183,7 +183,7 @@
       </el-submenu>
       <!-- <el-menu-item index="peerConnect">
         <i class="iconfont">&#xe679;</i>
-        <span slot="title">对等连接</span>
+        <span slot="title">對等連接</span>
       </el-menu-item>-->
 
       <el-menu-item

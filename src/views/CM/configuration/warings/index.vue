@@ -1,30 +1,30 @@
 <template>
     <div class="newdialog">
       <el-dialog
-            title="配置警告规则"
+            title="配置警告規則"
             :visible.sync="dialogVisibles"
             width="40%">
             <div class="content">
                 <div class="explain" style="margin-bottom:20px;">
                     <p>
-                    您可到 <a href=""> 用户和权限</a>   修改组成员
+                    您可到 <a href=""> 用戶和權限</a>   修改組成員
                     </p>
                 </div>
                 <div class="table">
                     <p>
-                        <span style="font-white:600">告警触发条件</span>
-                        <span>满足任一条件即可触发告警</span>
+                        <span style="font-white:600">告警觸發條件</span>
+                        <span>滿足任壹條件即可觸發告警</span>
                     </p>
                      <div class="plan" style="margin-bottom:20px;">
                         <p>
-                            你还未添加告警触发条件
+                            妳還未添加告警觸發條件
                         </p>
                     </div>
                 </div>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="dele">取 消</el-button>
-                <el-button type="primary" @click="yes">确 定</el-button>
+                <el-button type="primary" @click="yes">確 定</el-button>
             </span>
         </el-dialog>
     </div>
@@ -56,7 +56,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-    
+
   .newdialog{
     width: 100%;
     height: 100%;
@@ -88,7 +88,7 @@ export default {
     font-size: 11px;
     line-height: 18px;
   }
-   
+
 }
 .plan {
     padding: 10px 30px 10px 20px;

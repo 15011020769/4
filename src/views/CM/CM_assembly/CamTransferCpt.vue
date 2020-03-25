@@ -16,7 +16,7 @@
             >
             </el-option>
           </el-select>
-          <el-select v-model="searchItem" placeholder="请选择">
+          <el-select v-model="searchItem" :placeholder="$t('CVM.CamTransferCpt.placeholder1')">
             <el-option
               v-for="item in searchItemOptions"
               :key="item.value"
@@ -26,7 +26,7 @@
             </el-option>
           </el-select>
           <el-input
-            placeholder="请输入内容"
+            :placeholder="$t('CVM.CamTransferCpt.placeholder1')"
             v-model="searchInput"
             class="input-with-select"
           >
@@ -104,7 +104,7 @@
           <el-table-column :label="headConfig.title2" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>VPC 网络</p>
+                <p>VPC 網絡</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{ vpcConnState[scope.row.State] }}</p>
@@ -150,13 +150,13 @@
                   {{
                     scope.row.PrivateIpAddresses &&
                       scope.row.PrivateIpAddresses[0]
-                  }}(内网)
+                  }}(内網)
                 </p>
                 <p>
                   {{
                     scope.row.PublicIpAddresses &&
                       scope.row.PublicIpAddresses[0]
-                  }}(外网)
+                  }}(外網)
                 </p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
@@ -203,7 +203,7 @@
           >
             <template slot-scope="scope">
               <div v-if="productValue === 'nat_tc_stat'">
-                <p>最大并发连接数{{ scope.row.MaxConcurrentConnection }}</p>
+                <p>最大並發連接數{{ scope.row.MaxConcurrentConnection }}</p>
               </div>
               <!-- <div v-if="productValue === 'cdb_detail'">
               <p>主实例</p>
@@ -281,7 +281,7 @@
           <el-table-column :label="headConfig.title2" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>VPC 网络</p>
+                <p>VPC 網路</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{ vpcConnState[scope.row.State] }}</p>
@@ -327,13 +327,13 @@
                   {{
                     scope.row.PrivateIpAddresses &&
                       scope.row.PrivateIpAddresses[0]
-                  }}(内网)
+                  }}(内網)
                 </p>
                 <p>
                   {{
                     scope.row.PublicIpAddresses &&
                       scope.row.PublicIpAddresses[0]
-                  }}(外网)
+                  }}(外網)
                 </p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
@@ -380,7 +380,7 @@
           >
             <template slot-scope="scope">
               <div v-if="productValue === 'nat_tc_stat'">
-                <p>最大并发连接数{{ scope.row.MaxConcurrentConnection }}</p>
+                <p>最大並發連接數{{ scope.row.MaxConcurrentConnection }}</p>
               </div>
               <!-- <div v-if="productValue === 'cdb_detail'">
               <p>主实例</p>
@@ -408,7 +408,7 @@ export default {
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默认项目"
+          projectName: "默認項目"
         }
       ], //項目資源列表
       searchItem: "", //搜索项值
@@ -654,8 +654,8 @@ export default {
           }
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({

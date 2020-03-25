@@ -11,7 +11,7 @@
           label-position="left"
         >
           <div>
-            <el-form-item label="策略名称">
+            <el-form-item label="策略名稱">
               <el-input v-model="formInline.strategy_name"></el-input>
             </el-form-item>
 
@@ -63,7 +63,7 @@
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="onSubmit">查询</el-button>
+              <el-button type="primary" @click="onSubmit">查詢</el-button>
             </el-form-item>
           </div>
         </el-form>
@@ -75,9 +75,9 @@
         <el-row>
           <el-button type="primary" @click="addCreate">新增</el-button>
           <el-button v-if="multipleSelection.length > 0" @click="AllDelete"
-            >删除</el-button
+            >刪除</el-button
           >
-          <el-button v-else disabled>删除</el-button>
+          <el-button v-else disabled>刪除</el-button>
           <el-button v-if="ModifyAlarm" @click="ModifyAlarmBtn()"
             >修改告警渠道</el-button
           >
@@ -98,7 +98,7 @@
         id="exportTable"
       >
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column label="策略名称">
+        <el-table-column label="策略名稱">
           <template slot-scope="scope">
             <a class="defaultDialog" @click="defaultClick(scope.row)">{{
               scope.row.GroupName
@@ -106,11 +106,11 @@
             <i @click="NameModify(scope.row)" class="el-icon-edit"></i>
           </template>
         </el-table-column>
-        <el-table-column label="触发条件">
+        <el-table-column label="觸發條件">
           <template slot-scope="scope">
             <el-popover placement="right" width="400" trigger="hover">
               <div class="popover-box">
-                <p class="text-color">指标告警（任意）：</p>
+                <p class="text-color">指標告警（任意）：</p>
                 <div
                   v-for="(i, item) in scope.row.Conditions"
                   :key="item"
@@ -119,9 +119,9 @@
                   <p>
                     {{ i.MetricShowName }}
                     {{ i.CalcType | CalcType }} {{ i.CalcValue
-                    }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，按{{
+                    }}{{ i.Unit }}，持續{{ i.ContinueTime / 60 }}分鍾，按{{
                       i.AlarmNotifyPeriod | AlarmNotifyPeriod
-                    }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+                    }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
                   </p>
                 </div>
                 <p class="text-color">事件告警：</p>
@@ -131,7 +131,7 @@
                 >
                   <p>
                     {{ j.EventShowName }}，{{
-                      j.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
                 </div>
@@ -144,11 +144,11 @@
                   <p>
                     {{ item.MetricShowName }}
                     {{ item.CalcType | CalcType }} {{ item.CalcValue
-                    }}{{ item.Unit }}，持续{{
+                    }}{{ item.Unit }}，持續{{
                       item.ContinueTime / 60
-                    }}分钟，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                    }}分鍾，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
                     }}{{
-                      item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
                 </div>
@@ -159,7 +159,7 @@
                 >
                   <p>
                     {{ items.EventShowName }}，{{
-                      items.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      items.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
                 </div>
@@ -167,18 +167,18 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="所属项目">
+        <el-table-column label="所屬項目">
           <template slot-scope="scope">
             {{ scope.row.ProjectId | ProjectName }}
           </template>
         </el-table-column>
-        <el-table-column label="策略类型">
+        <el-table-column label="策略類型">
           <template slot-scope="scope">
             <el-popover placement="left-start" trigger="hover">
               <div>
                 <p>
                   <span
-                    >策略类型： <span v-if="scope.row.IsDefault == 1">默认</span
+                    >策略類型： <span v-if="scope.row.IsDefault == 1">默認</span
                     >{{ scope.row.Name }}</span
                   >
                 </p>
@@ -189,7 +189,7 @@
                   "
                   style="color:#888;"
                 >
-                  此告警策略绑定的对象是实力组，当前不支持设置为默认策略
+                  此告警策略綁定的對象是實力組，當前不支持設置爲默認策略
                 </p>
               </div>
               <div slot="reference">
@@ -198,14 +198,14 @@
                   @mouseenter="enter(scope.$index)"
                   @mouseleave="leave()"
                 >
-                  <span v-if="scope.row.IsDefault == 1">默认</span
+                  <span v-if="scope.row.IsDefault == 1">默認</span
                   >{{ scope.row.Name }}
                   <p
                     v-show="edit && scope.$index == current"
                     v-if="scope.row.IsDefault != 1 && scope.row.CanSetDefault"
                   >
                     <a href="javascript:;" @click="SetDefault(scope.row)"
-                      >设置默认</a
+                      >設置默認</a
                     >
                   </p>
                 </div>
@@ -213,18 +213,18 @@
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="已启用/实例数">
+        <el-table-column label="已啓用/實例數">
           <template slot-scope="scope">
             <div>{{ scope.row.NoShieldedSum }} / {{ scope.row.UseSum }}</div>
             <div
               class="group-color"
               v-if="scope.row.InstanceGroup != undefined"
             >
-              组：{{ scope.row.InstanceGroup.GroupName }}
+              組：{{ scope.row.InstanceGroup.GroupName }}
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="最后修改">
+        <el-table-column label="最後修改">
           <template slot-scope="scope">
             <div>{{ scope.row.LastEditUin }}</div>
             <div>{{ scope.row.UpdateTime | formatDate }}</div>
@@ -234,7 +234,7 @@
           <template slot-scope="scope">
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
-                <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
+                <p>接收組：{{ i.ReceiverGroupList.length }}個</p>
                 <p>
                   有效期：{{ i.StartTime | EndTime }} -
                   {{ i.EndTime | EndTime }}
@@ -251,7 +251,7 @@
             <div v-else>-</div>
           </template>
         </el-table-column>
-        <el-table-column label="告警启停">
+        <el-table-column label="告警啓停">
           <template slot-scope="scope">
             <el-switch
               v-model="scope.row.IsOpen"
@@ -265,26 +265,26 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button type="text" class="cloneBtn" @click="Copy(scope.row)"
-              >复制</el-button
+              >複制</el-button
             >
             <el-tooltip
-              content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
+              content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
               placement="left"
               effect="light"
               v-if="scope.row.IsDefault != 0"
             >
               <el-button type="text" class="deleteBtn-color deleteBtn"
-                >删除</el-button
+                >刪除</el-button
               >
             </el-tooltip>
             <el-tooltip
-              content="解绑所有资源后支持删除"
+              content="解綁所有資源後支持刪除"
               placement="left"
               effect="light"
               v-else-if="scope.row.UseSum != 0"
             >
               <el-button type="text" class="deleteBtn-color deleteBtn"
-                >删除</el-button
+                >刪除</el-button
               >
             </el-tooltip>
             <el-button
@@ -292,12 +292,12 @@
               class="deleteBtn"
               v-else
               @click="Delete(scope.row)"
-              >删除</el-button
+              >刪除</el-button
             >
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页 -->
+      <!-- 分頁 -->
       <div class="tke-page">
         <div class="block">
           <el-pagination
@@ -312,11 +312,11 @@
         </div>
       </div>
     </div>
-    <!-- 点击设置 -->
+    <!-- 點擊設置 -->
     <Dialog :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
-    <!-- 修改名称 -->
+    <!-- 修改名稱 -->
     <el-dialog
-      title="修改告警策略名称"
+      title="修改告警策略名稱"
       :visible.sync="modifyNameDialogVisible"
       width="500px"
       custom-class="dialog-box"
@@ -324,41 +324,41 @@
       <div class="edit-dialog">
         <el-input
           size="small"
-          placeholder="请输告警策略名称，20字以内"
+          placeholder="請輸告警策略名稱，20字以內"
           v-model="GroupName"
           @input="EditTips"
         ></el-input>
-        <p v-if="tipsShow">告警策略名称不能为空</p>
+        <p v-if="tipsShow">告警策略名稱不能爲空</p>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="NameSure">确定</el-button>
+        <el-button type="primary" @click="NameSure">確定</el-button>
         <el-button @click="modifyNameDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 删除 -->
+    <!-- 刪除 -->
     <el-dialog
-      title="策略删除确认"
+      title="策略刪除確認"
       :visible.sync="deleteDialogVisible"
       width="500px"
       custom-class="tke-dialog"
       class="dialog-box"
     >
-      <div>您确定要删除此条告警策略吗？</div>
+      <div>您確定要刪除此條告警策略嗎？</div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="DeleteSure()">确定</el-button>
+        <el-button type="primary" @click="DeleteSure()">確定</el-button>
         <el-button @click="deleteDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 删除策略 -->
+    <!-- 刪除策略 -->
     <el-dialog
-      title="删除策略"
+      title="刪除策略"
       :visible.sync="deleteAllDialogVisible"
       width="600px"
       custom-class="tke-dialog"
       class="dialog-box"
     >
       <div>
-        <p>您已选择{{ multipleSelection.length }}条策略，详情如下:</p>
+        <p>您已選擇{{ multipleSelection.length }}條策略，詳情如下:</p>
         <div class="delete-table">
           <el-table
             :data="multipleSelection"
@@ -370,16 +370,16 @@
                 {{ scope.row.GroupName }}
               </template>
             </el-table-column>
-            <el-table-column label="备注">
+            <el-table-column label="備注">
               <template slot-scope="scope">
                 <p
                   class="text-color-red"
                   v-if="scope.row.IsDefault != 0"
                   id="text-color-red"
                 >
-                  <span>默认策略,无法删除</span>
+                  <span>默認策略,無法刪除</span>
                   <el-tooltip
-                    content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
+                    content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
                     placement="left"
                     effect="light"
                   >
@@ -392,9 +392,9 @@
                   v-else-if="scope.row.UseSum != 0"
                   id="text-color-red"
                 >
-                  <span>已关联对象,无法删除</span>
+                  <span>已關聯對象,無法刪除</span>
                   <el-tooltip
-                    content="解绑所有资源后支持删除"
+                    content="解綁所有資源後支持刪除"
                     placement="left"
                     effect="light"
                   >
@@ -402,24 +402,24 @@
                   </el-tooltip>
                 </p>
 
-                <p v-else class="text-color-grey">可删除</p>
+                <p v-else class="text-color-grey">可刪除</p>
               </template>
             </el-table-column>
           </el-table>
         </div>
         <div v-if="showIsAll">
-          <p class="tips">确定删除所选可删除策略？</p>
-          <p class="tips-grey">删除后,策略配置将彻底销毁</p>
+          <p class="tips">確定刪除所選可刪除策略？</p>
+          <p class="tips-grey">刪除後,策略配置將徹底銷毀</p>
         </div>
         <div v-if="showIsDefault">
-          <p class="tips">无可删除策略</p>
+          <p class="tips">無可刪除策略</p>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" v-if="!showIsDefault" @click="DeleteSure"
-          >确定</el-button
+          >確定</el-button
         >
-        <el-button disabled v-if="showIsDefault">确定</el-button>
+        <el-button disabled v-if="showIsDefault">確定</el-button>
         <el-button @click="deleteAllDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
@@ -435,22 +435,22 @@
         <p>
           <el-tooltip
             effect="light"
-            content="告警渠道为空的策略不支持修改"
+            content="告警渠道爲空的策略不支持修改"
             placement="top"
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
-          您已选择{{ multipleSelection.length }}条策略，其中{{
+          您已選擇{{ multipleSelection.length }}條策略，其中{{
             arr.length
-          }}条支持修改。接收渠道统计如下:
+          }}條支持修改。接收渠道統計如下:
         </p>
         <div class="modify-box">
           <div>
             <p>
-              <span>邮件</span>
-              <span>已开通数:{{ emailOpen }},未开通数:{{ emailClose }}</span>
+              <span>郵件</span>
+              <span>已開通數:{{ emailOpen }},未開通數:{{ emailClose }}</span>
             </p>
-            <el-select v-model="emailVal" placeholder="请选择">
+            <el-select v-model="emailVal" placeholder="請選擇">
               <el-option
                 v-for="item in emailOpt"
                 :key="item.value"
@@ -463,9 +463,9 @@
           <div>
             <p>
               <span>短信</span>
-              <span>已开通数:{{ SMSOpen }},未开通数:{{ SMSClose }}</span>
+              <span>已開通數:{{ SMSOpen }},未開通數:{{ SMSClose }}</span>
             </p>
-            <el-select v-model="SMSVal" placeholder="请选择">
+            <el-select v-model="SMSVal" placeholder="請選擇">
               <el-option
                 v-for="item in SMSOpt"
                 :key="item.value"
@@ -478,9 +478,9 @@
           <div>
             <p>
               <span>微信</span>
-              <span>已开通数:{{ wechatOpen }},未开通数:{{ wechatClose }}</span>
+              <span>已開通數:{{ wechatOpen }},未開通數:{{ wechatClose }}</span>
             </p>
-            <el-select v-model="wechatVal" placeholder="请选择">
+            <el-select v-model="wechatVal" placeholder="請選擇">
               <el-option
                 v-for="item in wechatOpt"
                 :key="item.value"
@@ -492,10 +492,10 @@
           </div>
           <div>
             <p>
-              <span>电话</span>
-              <span>已开通数:{{ callOpen }},未开通数:{{ callClose }}</span>
+              <span>電話</span>
+              <span>已開通數:{{ callOpen }},未開通數:{{ callClose }}</span>
             </p>
-            <el-select v-model="callVal" placeholder="请选择">
+            <el-select v-model="callVal" placeholder="請選擇">
               <el-option
                 v-for="item in callOpt"
                 :key="item.value"
@@ -508,23 +508,23 @@
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="ModifyNotifySure">确定</el-button>
+        <el-button type="primary" @click="ModifyNotifySure">確定</el-button>
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 告警启停 -->
+    <!-- 告警啓停 -->
     <el-dialog
-      title="告警操作确认"
+      title="告警操作確認"
       :visible.sync="startStop"
       width="500px"
       custom-class="tke-dialog"
       :before-close="CelStart"
     >
       <div>
-        <p>确定{{ statue }}告警策略【{{ GroupName }}】</p>
+        <p>確定{{ statue }}告警策略【{{ GroupName }}】</p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="SureStart()">确定</el-button>
+        <el-button type="primary" @click="SureStart()">確定</el-button>
         <el-button @click="CelStart()">取消</el-button>
       </div>
     </el-dialog>
@@ -547,17 +547,17 @@ import {
   CM_ALARM_SET_DEFAULT,
   CM_GROUPING_LIST_EDIT,
   CM_ALARM_MODIFY_NOTIFY,
-  CVM_LIST, //云服务器列表
-  NAT_LIST, //NAT网关列表
-  VPN_LIST, //VPN网关列表
+  CVM_LIST, //雲服務器列表
+  NAT_LIST, //NAT網關列表
+  VPN_LIST, //VPN網關列表
   VPNTD_LIST, //VPN通道列表
-  DCG_LIST, //专线网关列表
+  DCG_LIST, //專線網關列表
   MYSQL_LIST, //MYSQL列表
   REDIS_LIST, //REDIS列表
-  Physics_LIST, //物理专线列表
-  Private_LIST, //专线通道列表
-  OBJ_LIST, //对象存储列表
-  DISK_LIST //云硬盘列表
+  Physics_LIST, //物理專線列表
+  Private_LIST, //專線通道列表
+  OBJ_LIST, //對象存儲列表
+  DISK_LIST //雲硬盤列表
 } from "@/constants";
 var project = [];
 export default {
@@ -569,25 +569,25 @@ export default {
       cities: [
         {
           value: 0,
-          name: "产品类型"
+          name: "産品類型"
         },
         {
           value: 1,
-          name: "策略类型"
+          name: "策略類型"
         }
       ],
-      //产品
+      //産品
       productOptions: [
         {
-          label: "云服务器",
+          label: "雲服務器",
           viewName: "cvm_device"
         },
         {
-          label: "云硬盘",
+          label: "雲硬盤",
           viewName: "BS"
         },
         {
-          label: "VPN网关",
+          label: "VPN網關",
           viewName: "VPN_GW"
         },
         {
@@ -595,11 +595,11 @@ export default {
           viewName: "vpn_tunnel"
         },
         {
-          label: "NAT网关",
+          label: "NAT網關",
           viewName: "nat_tc_stat"
         },
         {
-          label: "专线网关",
+          label: "專線網關",
           viewName: "DC_GW"
         },
         {
@@ -611,86 +611,86 @@ export default {
           viewName: "REDIS-CLUSTER"
         },
         {
-          label: "专用通道",
+          label: "專用通道",
           viewName: "dcchannel"
         },
         {
-          label: "物理专线",
+          label: "物理專線",
           viewName: "dcline"
         },
         {
-          label: "对象存储",
+          label: "對象存儲",
           viewName: "COS"
         }
       ],
       isIndeterminate: true,
       formInline: {
         product_name: "1", //策略
-        productArr: [], //产品类型列表
+        productArr: [], //産品類型列表
         product_kind: [
           {
             id: "1",
-            name: "产品类型"
+            name: "産品類型"
           }
           // {
           //   id: "2",
-          //   name: "策略类型"
+          //   name: "策略類型"
           // }
-        ], //产品/.策略类型
+        ], //産品/.策略類型
         strategy_kind: [
           {
             value: 0,
-            name: "请选择"
+            name: "請選擇"
           }
-        ], //用户/组
-        strategy_name: "", //策略名称
-        alarm: "", //告警对象
+        ], //用戶/組
+        strategy_name: "", //策略名稱
+        alarm: "", //告警對象
         alarm_list: [
           {
-            name: "告警对象1"
+            name: "告警對象1"
           }
-        ], //告警对象数组
-        user: "用户组", //用户
-        group: "", //组
+        ], //告警對象數組
+        user: "用戶組", //用戶
+        group: "", //組
         user_kind: [
           {
             value: "0",
-            name: "用户组"
+            name: "用戶組"
           },
           {
             vale: "1",
-            name: "用户名"
+            name: "用戶名"
           }
-        ], //用户类型数据
+        ], //用戶類型數據
         kind_list: [
           {
             value: "0",
-            name: "全选"
+            name: "全選"
           },
           {
             value: "1",
-            name: "误删"
+            name: "誤刪"
           },
           {
             value: "2",
-            name: "测试误删"
+            name: "測試誤刪"
           }
-        ], //用户名类型数据
-        product_value: "", //产品
+        ], //用戶名類型數據
+        product_value: "", //産品
         strategy_value: "" //策略
       },
-      tableData: [], //表格数据
+      tableData: [], //表格數據
       loadShow: true,
       edit: false,
-      current: "", // 编辑
-      //分页
-      total: 0, //总条数
-      pageSize: 10, // 分页条数
-      pageIndex: 0, // 当前页码
-      operationFlag: -1, //按钮禁用开关
+      current: "", // 編輯
+      //分頁
+      total: 0, //總條數
+      pageSize: 10, // 分頁條數
+      pageIndex: 0, // 當前頁碼
+      operationFlag: -1, //按鈕禁用開關
       dataListLoading: false,
-      dialogVisible: false, //设置弹出框
-      defaultIconFlag: false, //鼠标事件
+      dialogVisible: false, //設置彈出框
+      defaultIconFlag: false, //鼠標事件
       deleteDialogVisible: false,
       deleteAllDialogVisible: false,
       deleteTableData: [],
@@ -714,12 +714,12 @@ export default {
       arrClose: [],
       showIsDefault: false,
       showIsAll: true,
-      // 邮件
+      // 郵件
       emailVal: "1",
       emailOpt: [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ],
       emailOpen: 0,
@@ -729,7 +729,7 @@ export default {
       SMSOpt: [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ],
       SMSOpen: 0,
@@ -739,17 +739,17 @@ export default {
       wechatOpt: [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ],
       wechatOpen: 0,
       wechatClose: 0,
-      // 电话
+      // 電話
       callVal: "1",
       callOpt: [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ],
       callOpen: 0,
@@ -758,8 +758,8 @@ export default {
       projectId: 0,
       productValue: "",
       loading: true,
-      dataList: [], //查询告警对象列表
-      selectStrategyList: [], //选中的告警对象列表
+      dataList: [], //查詢告警對象列表
+      selectStrategyList: [], //選中的告警對象列表
       headConfig: {
         title1: "",
         title2: "",
@@ -863,50 +863,50 @@ export default {
               this.loadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "请求未授权。请参考 CAM 文档对鉴权的说明。",
+                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
                 DryRunOperation:
-                  "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-                FailedOperation: "操作失败。",
+                  "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+                FailedOperation: "操作失敗。",
                 "FailedOperation.AlertFilterRuleDeleteFailed":
-                  "删除过滤条件失败。",
-                "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-                "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
+                  "刪除過濾條件失敗。",
+                "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
                 "FailedOperation.AlertPolicyDescribeFailed":
-                  "告警策略查询失败。",
-                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+                  "告警策略查詢失敗。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
                 "FailedOperation.AlertTriggerRuleDeleteFailed":
-                  "删除触发条件失败。",
-                "FailedOperation.DbQueryFailed": "数据库查询失败。",
-                "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-                "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-                "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
+                  "刪除觸發條件失敗。",
+                "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+                "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+                "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+                "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
                 "FailedOperation.DbTransactionBeginFailed":
-                  "数据库事务开始失败。",
+                  "數據庫事務開始失敗。",
                 "FailedOperation.DbTransactionCommitFailed":
-                  "数据库事务提交失败。",
+                  "數據庫事務提交失敗。",
                 "FailedOperation.DimQueryRequestFailed":
-                  "请求维度查询服务失败。",
-                "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-                "FailedOperation.DuplicateName": "名字重复。",
+                  "請求維度查詢服務失敗。",
+                "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+                "FailedOperation.DuplicateName": "名字重複。",
                 "FailedOperation.ServiceNotEnabled":
-                  "服务未启用，开通服务后方可使用。",
-                InternalError: "内部错误。",
-                "InternalError.ExeTimeout": "	执行超时。",
-                InvalidParameter: "	参数错误。",
-                "InvalidParameter.InvalidParameter": "参数错误。",
-                "InvalidParameter.InvalidParameterParam": "参数错误。",
-                InvalidParameterValue: "无效的参数值。",
-                LimitExceeded: "超过配额限制。",
+                  "服務未啓用，開通服務後方可使用。",
+                InternalError: "內部錯誤。",
+                "InternalError.ExeTimeout": "	執行超時。",
+                InvalidParameter: "	參數錯誤。",
+                "InvalidParameter.InvalidParameter": "參數錯誤。",
+                "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+                InvalidParameterValue: "無效的參數值。",
+                LimitExceeded: "超過配額限制。",
                 "LimitExceeded.MetricQuotaExceeded":
-                  "指标数量达到配额限制，禁止含有未注册指标的请求。",
-                MissingParameter: "缺少参数错误。",
-                ResourceInUse: "资源被占用。",
-                ResourceInsufficient: "资源不足。",
-                ResourceNotFound: "资源不存在。",
-                ResourceUnavailable: "资源不可用。",
-                ResourcesSoldOut: "资源售罄。",
-                UnauthorizedOperation: "未授权操作。",
-                UnknownParameter: "未知参数错误。",
+                  "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+                MissingParameter: "缺少參數錯誤。",
+                ResourceInUse: "資源被占用。",
+                ResourceInsufficient: "資源不足。",
+                ResourceNotFound: "資源不存在。",
+                ResourceUnavailable: "資源不可用。",
+                ResourcesSoldOut: "資源售罄。",
+                UnauthorizedOperation: "未授權操作。",
+                UnknownParameter: "未知參數錯誤。",
                 UnsupportedOperation: "操作不支持。"
               };
               let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -921,44 +921,44 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。UnknownParameter	未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。UnknownParameter	未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -971,7 +971,7 @@ export default {
         }
       });
     },
-    // 项目
+    // 項目
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -979,8 +979,8 @@ export default {
           project = arr;
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -992,7 +992,7 @@ export default {
         }
       });
     },
-    // 告警启停
+    // 告警啓停
     AlarmStart(row, index) {
       console.log(row);
       this.startStop = true;
@@ -1024,15 +1024,15 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。"
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -1078,27 +1078,27 @@ export default {
         // this.pageIndex++;
       }
     },
-    // 分页
+    // 分頁
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
       this.ListInit();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
+      // console.log(`每頁 ${val} 條`);
       this.pageSize = val;
       this.ListInit();
     },
-    //设置弹框
+    //設置彈框
     buyMessgae() {
       // alert("11")
       this.dialogVisible = true;
     },
-    //取消设置弹框
+    //取消設置彈框
     cancel() {
       this.dialogVisible = false;
     },
-    //确定设置弹框
+    //確定設置彈框
     save() {
       this.dialogVisible = false;
     },
@@ -1112,20 +1112,20 @@ export default {
         }
       });
     },
-    //思路：便利你所有的数据，给每条都加上defaultIconFlag：false属性，当你划过的时候就可以改成true
+    //思路：便利妳所有的數據，給每條都加上defaultIconFlag：false屬性，當妳劃過的時候就可以改成true
     mouseoverDefault() {
-      //鼠标划入事件
+      //鼠標劃入事件
       this.defaultIconFlag = true;
     },
     mouseoutDefault() {
-      //鼠标移除事件
+      //鼠標移除事件
       this.defaultIconFlag = false;
     },
     addCreate() {
       // alert('/strategy/create');
       this.$router.push({ path: "/strategy/create" });
     },
-    // 修改名称
+    // 修改名稱
     NameModify(row) {
       this.modifyNameDialogVisible = true;
       this.GroupId = row.GroupId;
@@ -1146,16 +1146,16 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1168,7 +1168,7 @@ export default {
         }
       });
     },
-    // 复制
+    // 複制
     Copy(row) {
       this.$router.push({
         path: "/strategy/create",
@@ -1177,13 +1177,13 @@ export default {
         }
       });
     },
-    // 删除
+    // 刪除
     Delete(row) {
       this.deleteDialogVisible = true;
       this.GroupId = row.GroupId;
       this.multipleSelection = row;
     },
-    // 全部删除
+    // 全部刪除
     AllDelete() {
       this.deleteAllDialogVisible = true;
       this.$nextTick(() => {
@@ -1219,45 +1219,45 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "	数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
+              "刪除觸發條件失敗。",
+            "FailedOperation.DbQueryFailed": "	數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄刪除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啓用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未注冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1270,7 +1270,7 @@ export default {
         }
       });
     },
-    // 策略类型
+    // 策略類型
     enter(index) {
       this.edit = true;
       this.current = index;
@@ -1279,7 +1279,7 @@ export default {
       this.edit = false;
       this.current = null;
     },
-    // 设置默认
+    // 設置默認
     SetDefault(row) {
       let param = {
         GroupId: row.GroupId,
@@ -1302,7 +1302,7 @@ export default {
         }
       });
     },
-    // 修改名称
+    // 修改名稱
     EditTips() {
       if (this.GroupName == "") {
         this.tipsShow = true;
@@ -1318,11 +1318,11 @@ export default {
       //   if (this.arr[i]) {
       //   }
       // }
-      // 邮件
+      // 郵件
       this.emailOpt = [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ];
       this.emailOpen = 0;
@@ -1332,7 +1332,7 @@ export default {
       this.SMSOpt = [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ];
       this.SMSOpen = 0;
@@ -1342,17 +1342,17 @@ export default {
       this.wechatOpt = [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ];
       this.wechatOpen = 0;
       this.wechatClose = 0;
       this.wechatVal = "1";
-      // 电话
+      // 電話
       this.callOpt = [
         {
           value: "1",
-          label: "-(保持不变)"
+          label: "-(保持不變)"
         }
       ];
       this.callOpen = 0;
@@ -1390,52 +1390,52 @@ export default {
       if (this.emailOpen > 0) {
         this.emailOpt.push({
           value: "2",
-          label: "关闭已开通的" + this.emailOpen + "条策略"
+          label: "關閉已開通的" + this.emailOpen + "條策略"
         });
       }
       if (this.emailClose > 0) {
         this.emailOpt.unshift({
           value: "0",
-          label: "开启未开通的" + this.emailClose + "条策略"
+          label: "開啓未開通的" + this.emailClose + "條策略"
         });
       }
 
       if (this.SMSOpen > 0) {
         this.SMSOpt.push({
           value: "2",
-          label: "关闭已开通的" + this.SMSOpen + "条策略"
+          label: "關閉已開通的" + this.SMSOpen + "條策略"
         });
       }
       if (this.SMSClose > 0) {
         this.SMSOpt.unshift({
           value: "0",
-          label: "开启未开通的" + this.SMSClose + "条策略"
+          label: "開啓未開通的" + this.SMSClose + "條策略"
         });
       }
 
       if (this.wechatOpen > 0) {
         this.wechatOpt.push({
           value: "2",
-          label: "关闭已开通的" + this.wechatOpen + "条策略"
+          label: "關閉已開通的" + this.wechatOpen + "條策略"
         });
       }
       if (this.wechatClose > 0) {
         this.wechatOpt.unshift({
           value: "0",
-          label: "开启未开通的" + this.wechatClose + "条策略"
+          label: "開啓未開通的" + this.wechatClose + "條策略"
         });
       }
 
       if (this.callOpen > 0) {
         this.callOpt.push({
           value: "2",
-          label: "关闭已开通的" + this.callOpen + "条策略"
+          label: "關閉已開通的" + this.callOpen + "條策略"
         });
       }
       if (this.callClose > 0) {
         this.callOpt.unshift({
           value: "0",
-          label: "开启未开通的" + this.callClose + "条策略"
+          label: "開啓未開通的" + this.callClose + "條策略"
         });
       }
     },
@@ -1530,18 +1530,18 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被占用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -1554,7 +1554,7 @@ export default {
         }
       });
     },
-    // 导出表格
+    // 導出表格
     exportExcel() {
       console.log("exportExcel...");
       /* generate workbook object from table */
@@ -1611,17 +1611,17 @@ export default {
       } else if (value == 6) {
         return "!=";
       } else if (value == 7) {
-        return "日同比上涨";
+        return "日同比上漲";
       } else if (value == 8) {
         return "日同比下降";
       } else if (value == 9) {
-        return "周同比上涨";
+        return "周同比上漲";
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期环比上涨";
+        return "周期環比上漲";
       } else if (value == 12) {
-        return "周期环比下降";
+        return "周期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -1629,26 +1629,26 @@ export default {
         if ((val / 60 / 60 / 24) % 1 == 0) {
           return val / 60 / 60 / 24 + "天";
         } else {
-          return val / 60 / 60 + "小时";
+          return val / 60 / 60 + "小時";
         }
       } else if ((val / 60) % 1 == 0) {
-        return val / 60 + "分钟";
+        return val / 60 + "分鍾";
       }
     },
     NotifyWay(val) {
       if (val === "EMAIL") {
-        return "邮件";
+        return "郵件";
       } else if (val === "SMS") {
         return "短信";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
-        return "电话";
+        return "電話";
       }
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默认项目";
+        return "默認項目";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

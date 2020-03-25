@@ -2,13 +2,13 @@
     <div class="newdialog">
       <div>
          <el-dialog
-            title="自定义列表字段"
+            title="自定義列表字段"
             :visible.sync="dialogVisible"
             width="40%">
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  请选择您想显示的列表详细信息，最多勾选5个字段，已勾选5个
+                  請選擇您想顯示的列表詳細信息，最多勾選5個字段，已勾選5個
                 </p>
               </div>
               <div class="checkbox">
@@ -21,7 +21,7 @@
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="cancel">取 消</el-button>
-                <el-button type="primary" @click="save">确 定</el-button>
+                <el-button type="primary" @click="save">確 定</el-button>
             </span>
         </el-dialog>
       </div>
@@ -29,11 +29,11 @@
 </template>
 
 <script>
-  const options = ['命名空间', '指标', '维度', '统计方式',"操作"];
+  const options = ['命名空間', '指標', '維度', '統計方式',"操作"];
   export default {
     data() {
       return {
-        checkedlist: [ '指标', '维度', '统计方式'],
+        checkedlist: [ '指標', '維度', '統計方式'],
         cities: options,
       };
     },
@@ -53,7 +53,7 @@
     }
   };
 </script>
-<style lang="scss" scoped> 
+<style lang="scss" scoped>
 
   .newdialog{
     width: 100%;

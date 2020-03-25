@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="box-dis">
-      <!-- 时间粒度搜素 -->
+      <!-- 時間粒度搜素 -->
       <div class="btn-style">
         <el-row>
           <el-button-group>
@@ -121,16 +121,16 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      datevalueStart: new Date(), // 日期（从）
-      timevalueStart: new Date(), // 时间（从）
+      datevalueStart: new Date(), // 日期（從）
+      timevalueStart: new Date(), // 時間（從）
       datevalueEnd: new Date(), // 日期（至）
-      timevalueEnd: new Date(), // 时间（至）
-      datetimeval: [], // 选择时间数据
-      visible: false, // 时间选择器的变化
-      datetim: true, // 时间选择器的变化
-      datetime: false, // 时间选择器的变化
+      timevalueEnd: new Date(), // 時間（至）
+      datetimeval: [], // 選擇時間數據
+      visible: false, // 時間選擇器的變化
+      datetim: true, // 時間選擇器的變化
+      datetime: false, // 時間選擇器的變化
       options: [
-        // 默认下拉数据
+        // 默認下拉數據
         {
           value: '10',
           label: '10秒'
@@ -144,7 +144,7 @@ export default {
           label: '5分鐘'
         }
       ],
-      value: '10', // 粒度选择值
+      value: '10', // 粒度選擇值
       Start_End: {
         StartTIme: '',
         EndTIme: ''
@@ -161,7 +161,7 @@ export default {
     this.TimeChoice(1)
   },
   methods: {
-    // 点击时间按钮
+    // 點擊時間按鈕
     TimeChoice (time) {
       this.classvalue = time
       this.Initialization()
@@ -181,13 +181,13 @@ export default {
             label: '5分鐘'
           }
         ]
-        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
-        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 獲取當前時間
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 獲取當前時間
         const startTime = new Date(KTime).getTime()
-        // 1小时前
+        // 1小時前
         const noehoursago = moment(startTime - 3600000).format(
           'YYYY-MM-DD HH:mm:ss'
-        ) // 获取1小时前的时间
+        ) // 獲取1小時前的時間
         this.Start_End.StartTIme = noehoursago
         this.Start_End.EndTIme = ETime
       } else if (time === 1 * 24) {
@@ -210,13 +210,13 @@ export default {
             label: '1天'
           }
         ]
-        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
-        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 獲取當前時間
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 獲取當前時間
         const startTime = new Date(KTime).getTime()
-        // 1小时前
+        // 1小時前
         const noehoursago = moment(startTime - 86400000).format(
           'YYYY-MM-DD HH:mm:ss'
-        ) // 获取1天前的时间
+        ) // 獲取1天前的時間
         this.Start_End.StartTIme = noehoursago
         this.Start_End.EndTIme = ETime
       } else if (time === 1 * 24 * 7) {
@@ -231,13 +231,13 @@ export default {
             label: '1天'
           }
         ]
-        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 获取当前时间
-        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 获取当前时间
+        const KTime = moment(new Date()).format('YYYY/MM/DD HH:mm:ss') // 獲取當前時間
+        const ETime = moment(new Date()).format('YYYY-MM-DD HH:mm:ss') // 獲取當前時間
         const startTime = new Date(KTime).getTime()
-        // 1小时前
+        // 1小時前
         const noehoursago = moment(startTime - 604800000).format(
           'YYYY-MM-DD HH:mm:ss'
-        ) // 获取1周前的时间
+        ) // 獲取1周前的時間
         this.Start_End.StartTIme = noehoursago
         this.Start_End.EndTIme = ETime
       }
@@ -246,13 +246,13 @@ export default {
     switchData () {
       this.$emit('switchData', [this.value, this.Start_End, this.classvalue])
     },
-    // 确定按钮
+    // 確定按鈕
     Sure () {
       this.visible = false
       this.getdate()
       this.TimeAfter()
     },
-    // 截取时间
+    // 截取時間
     getdate () {
       this.datetim = false
       this.datetime = true
@@ -275,22 +275,22 @@ export default {
         new Date(yy, mm, dd, hh, ff, ss)
       ]
     },
-    // 选择时间
+    // 選擇時間
     SelectionTime () {
       this.visible = true
     },
-    // 时间重新选择---确定
+    // 時間重新選擇---確定
     ReSelection () {
       this.value = ''
       this.TimeAfter()
     },
-    // 按钮控制时间粒度初始化
+    // 按鈕控制時間粒度初始化
     Initialization () {
       this.value = ''
       this.datetim = true
       this.datetime = false
     },
-    // 确定之后
+    // 確定之後
     TimeAfter () {
       const qdate = moment(this.datetimeval[0]).format('YYYY/MM/DD-HH:mm:ss')
       const hdate = moment(this.datetimeval[1]).format('YYYY/MM/DD-HH:mm:ss')
@@ -347,7 +347,7 @@ export default {
           },
           {
             value: '86400',
-            label: '一天'
+            label: '壹天'
           }
         ]
       }

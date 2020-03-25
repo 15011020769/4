@@ -4,8 +4,8 @@
     <div class="overview-main">
       <div class="explain">
         <p>
-          触发条件模板功能支持对相同告警规则的复用和统一修改
-          <!-- ，点击查看<a>触发条件模板文档</a> -->
+          觸發條件模板功能支持對相同告警規則的複用和統壹修改
+          <!-- ，點擊查看<a>觸發條件模板文檔</a> -->
         </p>
       </div>
     </div>
@@ -15,46 +15,46 @@
           <el-button type="primary" @click="buyMessgae">新建</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input v-model="triggerInput" placeholder="请输入触发条件模板名搜索"></el-input>
+          <el-input v-model="triggerInput" placeholder="請輸入觸發條件模板名搜索"></el-input>
           <el-button icon="el-icon-search" @click="clickSerch(triggerInput)" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
       <el-table style="width: 100%" height="500" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column prop label="模板名称">
+        <el-table-column prop label="模板名稱">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" :content="`策略名称: ${scope.row.GroupName}`">
+            <el-popover trigger="hover" placement="right" :content="`策略名稱: ${scope.row.GroupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID,scope.row.GroupName)">{{scope.row.GroupName}}</span>
             </el-popover>
             <i class="el-icon-edit ml5" @click="showEditNameDlg(scope.row)" style="cursor:pointer"></i>
           </template>
         </el-table-column>
-        <el-table-column prop label="触发条件">
+        <el-table-column prop label="觸發條件">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right">
               <div>
-                <p style="color:#999;font-size:12px">指标告警(任意):</p>
+                <p style="color:#999;font-size:12px">指標告警(任意):</p>
                 <p v-for="(it,i) in scope.row.Conditions" :key="i" style="font-size:12px">
-                  {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持续${it.ContinueTime/60}分钟,${it.alarm}` }}</p>
+                  {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持續${it.ContinueTime/60}分鍾,${it.alarm}` }}</p>
               </div>
               <div v-if="scope.row.EventConditions.length">
                 <p style="color:#999;font-size:12px">事件告警:</p>
                 <p v-for="(it,i) in scope.row.EventConditions" :key="i" style="font-size:12px">
-                  {{ `${it.EventDisplayName},不重复告警` }}</p>
+                  {{ `${it.EventDisplayName},不重複告警` }}</p>
               </div>
               <div slot="reference" class="name-wrapper">
                 <p class="textEps" v-for="items in scope.row.Conditions.slice(0,3)" :key="items.MetricDisplayName">
                   {{ `${items.MetricDisplayName}
                       ${items.CalcType||'-'}
                       ${items.CalcValue||'-'}
-                      ${items.Unit||''},持续
-                      ${items.ContinueTime/60}分钟,
+                      ${items.Unit||''},持續
+                      ${items.ContinueTime/60}分鍾,
                       ${items.alarm}` }}
                 </p>
                 <p class="textEps"
                  v-for="items in scope.row.EventConditions.slice(0,3-scope.row.Conditions.length<=0?0:3-scope.row.Conditions.length)" :key="items.EventDisplayName">
-                  {{ `${items.EventDisplayName},不重复告警` }}
+                  {{ `${items.EventDisplayName},不重複告警` }}
                 </p>
               </div>
             </el-popover>
@@ -63,28 +63,28 @@
         <!-- :filter-method="filterName"
         :filters="PolicyType"
         :filter-multiple="false"
-        filter-placement="top-start" 策略类型下拉框属性和方法-->
-        <el-table-column prop="type" label="策略类型">
+        filter-placement="top-start" 策略類型下拉框屬性和方法-->
+        <el-table-column prop="type" label="策略類型">
           <template slot-scope="scope">
             <span>{{scope.row.ViewName | ViewName}}</span>
             <!-- <i class="el-icon-caret-bottom"></i> -->
           </template>
         </el-table-column>
-        <el-table-column prop label="备注">
+        <el-table-column prop label="備注">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="scope.row.Remark||'-'">
               <span class="textEps" slot="reference">{{scope.row.Remark || '-'}}</span>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop label="绑定告警策略数">
+        <el-table-column prop label="綁定告警策略數">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" content="点击查看详情">
-              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID)">{{`${scope.row.PolicyGroups.length}个`}}</span>
+            <el-popover trigger="hover" placement="right" content="點擊查看詳情">
+              <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID)">{{`${scope.row.PolicyGroups.length}個`}}</span>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column prop sortable label="最后修改">
+        <el-table-column prop sortable label="最後修改">
           <template slot-scope="scope">
             <p>{{ scope.row.LastEditUin }}</p>
             <p>{{ scope.row.UpdateTime | formatDate }}</p>
@@ -92,8 +92,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row)">复制</el-button>
-            <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.GroupID)">删除</el-button>
+            <el-button type="text" class="cloneBtn" @click="copyBtn(scope.row)">複制</el-button>
+            <el-button type="text" class="deleteBtn" @click="delBtn(scope.row.GroupID)">刪除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -113,12 +113,13 @@
       </div>
     </div>
     <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改条件模板名称">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改条件模板名称</p> -->
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件模板名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
           <div>
             <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
-            <p v-if="editGroupName==''" class="edit-text-tips">条件模板名称不能为空</p>
-            <p v-if="editGroupName.length==20" class="edit-text-tips">条件模板名称不能超过20个字符</p>
+            <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
+      <!-- 分页 -->
+            <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
           </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
@@ -127,18 +128,18 @@
     </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">确定删除所选触发条件模板吗?</p>
+        <p style="color:#444;font-weight:bolder;">確定刪除所選觸發條件模板嗎?</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="submitDelete()">确 定</el-button>
+          <el-button type="primary" @click="submitDelete()">確 定</el-button>
           <el-button @click="showDelDialog = false">取 消</el-button>
         </span>
       </el-dialog>
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">复制所选触发条件模板</p>
-        <p style="font-size:12px;margin-top:20px">{{`是否复制${groupName}`}}</p>
+        <p style="color:#444;font-weight:bolder;">複制所選觸發條件模板</p>
+        <p style="font-size:12px;margin-top:20px">{{`是否複制${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
-          <el-button type="primary" @click="coptData()">确 定</el-button>
+          <el-button type="primary" @click="coptData()">確 定</el-button>
           <el-button @click="showCopyDialog = false">取 消</el-button>
         </span>
       </el-dialog>
@@ -182,32 +183,32 @@ export default {
         product_kind: [
           {
             value: 0,
-            name: '产品类型'
+            name: '産品類型'
           },
           {
             value: 1,
-            name: '策略类型'
+            name: '策略類型'
           }
         ], // 产品/.策略类型
         Template_kind: [
           {
             value: 0,
-            name: '全选'
+            name: '全選'
           },
           {
             value: 1,
-            name: '云服务器'
+            name: '雲服務器'
           },
           {
             value: 2,
-            name: '云数据库'
+            name: '雲數據庫'
           }
         ], // 用户/组
         Template_name: '', // 策略名称
         alarm: '', // 告警对象
         alarm_list: [
           {
-            name: '告警对象1'
+            name: '告警對象1'
           }
         ], // 告警对象数组
         user: '', // 用户
@@ -215,45 +216,45 @@ export default {
         user_kind: [
           {
             value: '0',
-            name: '用户组'
+            name: '用戶組'
           },
           {
             vale: '1',
-            name: '用户名'
+            name: '用戶名'
           }
         ], // 用户类型数据
         kind_list: [
           {
             value: '0',
-            name: '全选'
+            name: '全選'
           },
           {
             value: '1',
-            name: '误删'
+            name: '誤刪'
           },
           {
             value: '2',
-            name: '测试误删'
+            name: '測試誤刪'
           }
         ], // 用户名类型数据
         productOptions: [{
-          label: '云服务器',
+          label: '雲服務器',
           viewName: 'cvm_device'
         }, {
-          label: '云硬盘',
+          label: '雲硬盤',
           viewName: 'BS'
         },
         {
-          label: 'VPN网关',
+          label: 'VPN網關',
           viewName: 'VPN_GW'
         }, {
           label: 'VPN通道',
           viewName: 'vpn_tunnel'
         }, {
-          label: 'NAT网关',
+          label: 'NAT網關',
           viewName: 'nat_tc_stat'
         }, {
-          label: '专线网关',
+          label: '專線網關',
           viewName: 'DC_GW'
         }, {
           label: 'MYSQL',
@@ -262,13 +263,13 @@ export default {
           label: 'Redis',
           viewName: 'REDIS-CLUSTER'
         }, {
-          label: '专用通道',
+          label: '專用通道',
           viewName: 'dcchannel'
         }, {
-          label: '物理专线',
+          label: '物理專線',
           viewName: 'dcline'
         }, {
-          label: '对象存储',
+          label: '對象存儲',
           viewName: 'COS'
         }
         ],
@@ -278,11 +279,11 @@ export default {
       tableData: [
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
-        //   chufa: '容量使用率>80%,持续5分钟，不重复告警',
-        //   object: '東崋雲计算有限公司',
-        //   type: '默认云数据库-Redis-其他版本',
+        //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
+        //   object: '東崋雲計算有限公司',
+        //   type: '默認雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -293,11 +294,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
-        //   chufa: '容量使用率>80%,持续5分钟',
-        //   object: '東崋雲计算有限公司',
-        //   type: '默认云数据库',
+        //   chufa: '容量使用率>80%,持續5分鍾',
+        //   object: '東崋雲計算有限公司',
+        //   type: '默認雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -308,11 +309,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
-        //   object: '東崋雲计算有限公司',
-        //   type: '東崋雲云数据库',
+        //   object: '東崋雲計算有限公司',
+        //   type: '東崋雲雲數據庫',
         //   YS: '15/15',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -323,11 +324,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
-        //   chufa: '容量使用率>80%,持续5分钟，不重复告警',
-        //   object: '東崋雲计算有限公司',
-        //   type: '默认云数据库-Redis-其他版本',
+        //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
+        //   object: '東崋雲計算有限公司',
+        //   type: '默認雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -338,11 +339,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
-        //   chufa: '容量使用率>80%,持续5分钟',
-        //   object: '東崋雲计算有限公司',
-        //   type: '默认云数据库',
+        //   chufa: '容量使用率>80%,持續5分鍾',
+        //   object: '東崋雲計算有限公司',
+        //   type: '默認雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -353,11 +354,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默认',
+        //   groupName: '默認',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
-        //   object: '東崋雲计算有限公司',
-        //   type: '東崋雲云数据库',
+        //   object: '東崋雲計算有限公司',
+        //   type: '東崋雲雲數據庫',
         //   YS: '15/15',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -366,15 +367,15 @@ export default {
         //   qudao: '',
         //   zanting: true
         // }
-      ], // 表格数据
-      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
-      // 分页
-      TotalCount: 0, // 总条数
-      pageSize: 10, // 分页条数
-      currpage: 0, // 当前页码
-      operationFlag: -1, // 按钮禁用开关
+      ], // 表格數據
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符號數組
+      // 分頁
+      TotalCount: 0, // 總條數
+      pageSize: 10, // 分頁條數
+      currpage: 0, // 當前頁碼
+      operationFlag: -1, // 按鈕禁用開關
       searchName: '',
-      triggerInput: '' // 触发条件模板名
+      triggerInput: '' // 觸發條件模板名
     }
   },
   components: {
@@ -452,15 +453,15 @@ export default {
               let time1 = anp / 60
               let time2 = anp / (60 * 60)
               if (anp == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = '不重复告警'
+                item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指数递增重复告警'
+                item.alarm = '按周期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
-                item.alarm = `按${time1}分钟重复告警`
+                item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = `按${time2}小时重复告警`
+                item.alarm = `按${time2}小時重複告警`
               } else {
-                item.alarm = '按1天重复告警'
+                item.alarm = '按1天重複告警'
               }
             })
           })
@@ -506,7 +507,7 @@ export default {
           this.ShowEditDialog = false
           this.getTemplateList()
           this.$message({
-            message: '条件模板名称修改成功',
+            message: '條件模板名稱修改成功',
             type: 'success',
             showClose: true,
             duration: 2000
@@ -537,7 +538,7 @@ export default {
           this.showCopyDialog = false
           this.getTemplateList()
           this.$message({
-            message: '复制成功',
+            message: '複制成功',
             type: 'success',
             showClose: true,
             duration: 2000
@@ -571,7 +572,7 @@ export default {
           this.getTemplateList()
           this.showDelDialog = false
           this.$message({
-            message: '删除成功',
+            message: '刪除成功',
             type: 'success',
             showClose: true,
             duration: 2000
@@ -585,40 +586,40 @@ export default {
     // 错误提示
     errorPrompt (res) {
       let ErrTips = {
-        'AuthFailure.UnauthorizedOperation': '请求未授权。请参考 CAM 文档对鉴权的说明。',
-        'DryRunOperation': 'DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。',
-        'FailedOperation.AlertFilterRuleDeleteFailed': '删除过滤条件失败。',
-        'FailedOperation.AlertPolicyCreateFailed': '创建告警策略失败。',
-        'FailedOperation.AlertPolicyDeleteFailed': '告警策略删除失败。',
-        'FailedOperation.AlertPolicyDescribeFailed': '告警策略查询失败。',
-        'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失败。',
-        'FailedOperation.AlertTriggerRuleDeleteFailed': '删除触发条件失败。',
-        'FailedOperation.DbQueryFailed': '数据库查询失败。',
-        'FailedOperation.DbRecordCreateFailed': '创建数据库记录失败。',
-        'FailedOperation.DbRecordDeleteFailed': '数据库记录删除失败。',
-        'FailedOperation.DbRecordUpdateFailed': '数据库记录更新失败。',
-        'FailedOperation.DbTransactionBeginFailed': '数据库事务开始失败。',
-        'FailedOperation.DbTransactionCommitFailed': '数据库事务提交失败。',
-        'FailedOperation.DimQueryRequestFailed': '请求维度查询服务失败。',
-        'FailedOperation.DruidQueryFailed': '查询分析数据失败。',
-        'FailedOperation.DuplicateName': '名字重复。',
-        'FailedOperation.ServiceNotEnabled': '服务未启用，开通服务后方可使用。',
-        'InternalError': '内部错误。',
-        'InternalError.ExeTimeout': '执行超时。',
-        'InvalidParameter': '参数错误。',
-        'InvalidParameter.InvalidParameter': '参数错误。',
-        'InvalidParameter.InvalidParameterParam': '参数错误。',
-        'InvalidParameterValue': '无效的参数值。',
-        'LimitExceeded': '超过配额限制。',
-        'LimitExceeded.MetricQuotaExceeded': '指标数量达到配额限制，禁止含有未注册指标的请求。',
-        'MissingParameter': '缺少参数错误。',
-        'ResourceInUse': '资源被占用。',
-        'ResourceInsufficient': '资源不足。',
-        'ResourceNotFound': '资源不存在。',
-        'ResourceUnavailable': '资源不可用。',
-        'ResourcesSoldOut': '资源售罄。',
-        'UnauthorizedOperation': '未授权操作。',
-        'UnknownParameter': '未知参数错误。',
+        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文檔對鑒權的說明。',
+        'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+        'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+        'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+        'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+        'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+        'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+        'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+        'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+        'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+        'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+        'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+        'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+        'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+        'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+        'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+        'FailedOperation.DuplicateName': '名字重複。',
+        'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+        'InternalError': '內部錯誤。',
+        'InternalError.ExeTimeout': '執行超時。',
+        'InvalidParameter': '參數錯誤。',
+        'InvalidParameter.InvalidParameter': '參數錯誤。',
+        'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+        'InvalidParameterValue': '無效的參數值。',
+        'LimitExceeded': '超過配額限制。',
+        'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+        'MissingParameter': '缺少參數錯誤。',
+        'ResourceInUse': '資源被占用。',
+        'ResourceInsufficient': '資源不足。',
+        'ResourceNotFound': '資源不存在。',
+        'ResourceUnavailable': '資源不可用。',
+        'ResourcesSoldOut': '資源售罄。',
+        'UnauthorizedOperation': '未授權操作。',
+        'UnknownParameter': '未知參數錯誤。',
         'UnsupportedOperation': '操作不支持。'
       }
       let ErrOr = Object.assign(ErrorTips, ErrTips)
@@ -655,7 +656,7 @@ export default {
     },
     handleClose (done) {
 
-      // this.$confirm("确认关闭？")
+      // this.$confirm("確認關閉？")
       //   .then(_ => {
       //     done();
       //   })
@@ -702,27 +703,27 @@ export default {
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '云服务器'
+          return '雲服務器'
         } else if (val === 'BS') {
-          return '云硬盘'
+          return '雲硬盤'
         } else if (val === 'VPN_GW') {
-          return 'VPN网关'
+          return 'VPN網關'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT网关'
+          return 'NAT網關'
         } else if (val === 'DC_GW') {
-          return '专线网关'
+          return '專線網關'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
           return 'Redis'
         } else if (val === 'dcchannel') {
-          return '专用通道'
+          return '專用通道'
         } else if (val === 'dcline') {
-          return '物理专线'
+          return '物理專線'
         } else if (val === 'COS') {
-          return '对象存储'
+          return '對象存儲'
         }
       }
     }

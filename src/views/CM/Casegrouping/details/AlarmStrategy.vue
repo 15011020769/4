@@ -4,11 +4,13 @@
       <div class="tab-box">
         <div class="btn">
           <el-row>
-            <el-button type="primary" @click="NewRelation()">新建</el-button>
+            <el-button type="primary" @click="NewRelation()">{{
+              $t("CVM.Casegrouping.xj")
+            }}</el-button>
           </el-row>
           <div class="search">
             <el-input
-              placeholder="请输入策略名称搜索"
+              :placeholder="$t('CVM.Casegrouping.placeholder4')"
               class="input-with-select"
               v-model="inputVal"
               @input="Input()"
@@ -29,18 +31,18 @@
             style="width: 100%"
             v-loading="loadShow"
           >
-            <el-table-column label="策略名称">
+            <el-table-column :label="$t('CVM.Casegrouping.clmc')">
               <template slot-scope="scope">
                 <a href="javascript:;" @click="defaultClick(scope.row)">
                   {{ scope.row.GroupName }}</a
                 >
               </template>
             </el-table-column>
-            <el-table-column label="触发条件">
+            <el-table-column :label="$t('CVM.Casegrouping.cftj')">
               <template slot-scope="scope">
                 <el-popover placement="left-start" width="400" trigger="hover">
                   <div class="popover-box">
-                    <p class="text-color">指标告警（任意）：</p>
+                    <p class="text-color">{{ $t("CVM.Casegrouping.zbgj") }}</p>
                     <div
                       v-for="i in scope.row.Conditions"
                       class="trigger-condition"
@@ -48,21 +50,25 @@
                       <p>
                         {{ i.MetricShowName }}
                         {{ i.CalcType | CalcType }} {{ i.CalcValue
-                        }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，按{{
+                        }}{{ i.Unit }}，持續{{ i.ContinueTime / 60 }}分鐘，按{{
                           i.AlarmNotifyPeriod | AlarmNotifyPeriod
                         }}{{
-                          i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                          i.AlarmNotifyPeriod > 0
+                            ? $t("CVM.Casegrouping.cfgj")
+                            : $t("CVM.Casegrouping.bcfgj")
                         }}
                       </p>
                     </div>
-                    <p class="text-color">事件告警：</p>
+                    <p class="text-color">{{ $t("CVM.Casegrouping.sjgj") }}</p>
                     <div
                       v-for="j in scope.row.EventConditions"
                       class="trigger-condition"
                     >
                       <p>
                         {{ j.EventShowName }}，{{
-                          j.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                          j.AlarmNotifyPeriod > 0
+                            ? $t("CVM.Casegrouping.cfgj")
+                            : $t("CVM.Casegrouping.bcfgj")
                         }}
                       </p>
                     </div>
@@ -78,9 +84,11 @@
                         {{ item.CalcType | CalcType }} {{ item.CalcValue
                         }}{{ item.Unit }}，持续{{
                           item.ContinueTime / 60
-                        }}分钟，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                        }}分鍾，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
                         }}{{
-                          item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                          item.AlarmNotifyPeriod > 0
+                            ? $t("CVM.Casegrouping.cfgj")
+                            : $t("CVM.Casegrouping.bcfgj")
                         }}
                       </p>
                     </div>
@@ -91,8 +99,8 @@
                       <p>
                         {{ items.EventShowName }}，{{
                           items.AlarmNotifyPeriod > 0
-                            ? "重复告警"
-                            : "不重复告警"
+                            ? $t("CVM.Casegrouping.cfgj")
+                            : $t("CVM.Casegrouping.bcfgj")
                         }}
                       </p>
                     </div>
@@ -100,10 +108,10 @@
                 </el-popover>
               </template>
             </el-table-column>
-            <el-table-column label="告警渠道">
+            <el-table-column :label="$t('CVM.Casegrouping.gjqd')">
               <template slot-scope="scope">
                 <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
-                  <p>接收组：{{ i.ReceiverGroupList.length }}个</p>
+                  <p>接收組：{{ i.ReceiverGroupList.length }}个</p>
                   <p>
                     有效期：{{ i.StartTime | EndTime }} -
                     {{ i.EndTime | EndTime }}
@@ -117,7 +125,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column label="告警启停">
+            <el-table-column :label="$t('CVM.Casegrouping.gjqt')">
               <template slot-scope="scope">
                 <el-switch
                   v-model="scope.row.IsOpen"
@@ -130,7 +138,7 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <a href="javascript:;" @click="UnDelete(scope.row)">解除绑定</a>
+                <a href="javascript:;" @click="UnDelete(scope.row)">{{ $t("CVM.Casegrouping.jcbd") }}</a>
               </template>
             </el-table-column>
           </el-table>
@@ -153,39 +161,41 @@
     </div>
     <!-- 告警启停 -->
     <el-dialog
-      title="告警操作确认"
+      :label="$t('CVM.Casegrouping.gjczqr')"
       :visible.sync="startStop"
       width="500px"
       class="tke-dialog"
       :before-close="CelStart"
     >
       <div>
-        <p>确定停用告警策略【{{ GroupName }}】</p>
+        <p>{{ $t("CVM.Casegrouping.tips3") }}【{{ GroupName }}】</p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="SureStart()">确定</el-button>
+        <el-button type="primary" @click="SureStart()">{{
+          $t("CVM.Casegrouping.qd")
+        }}</el-button>
         <el-button @click="CelStart">取消</el-button>
       </div>
     </el-dialog>
     <!-- 解除绑定 -->
     <el-dialog
-      title="确定解绑告警策略"
+      :label="$t('CVM.Casegrouping.title3')"
       :visible.sync="UnBinding"
       width="500px"
       custom-class="tke-dialog"
     >
       <div>
-        <p>解绑后，策略将不再对实例分组生效</p>
+        <p>{{ $t("CVM.Casegrouping.tips4") }}</p>
         <p>
           <el-checkbox
             v-model="checked"
             style="margin-right:10px;"
           ></el-checkbox
-          >同时删除关联的告警策略
+          >{{ $t("CVM.Casegrouping.tips5") }}
         </p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="SureUnBind()">确定解绑</el-button>
+        <el-button type="primary" @click="SureUnBind()">{{ $t("CVM.Casegrouping.qdjb") }}</el-button>
         <el-button @click="UnBinding = false">取消</el-button>
       </div>
     </el-dialog>
@@ -255,48 +265,54 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
-            DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "	操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
-            "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
-            "FailedOperation.DuplicateName": "名字重复。",
-            "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
-            UnsupportedOperation: "操作不支持。"
-          };
+                "AuthFailure.UnauthorizedOperation":
+                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+                DryRunOperation:
+                  "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+                FailedOperation: "操作失敗。",
+                "FailedOperation.AlertFilterRuleDeleteFailed":
+                  "刪除過濾條件失敗。",
+                "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+                "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+                "FailedOperation.AlertPolicyDescribeFailed":
+                  "告警策略查詢失敗。",
+                "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
+                "FailedOperation.AlertTriggerRuleDeleteFailed":
+                  "刪除触发條件失敗。",
+                "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+                "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+                "FailedOperation.DbRecordDeleteFailed": "數據庫記錄删除失敗。",
+                "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+                "FailedOperation.DbTransactionBeginFailed":
+                  "數據庫事務開始失敗。",
+                "FailedOperation.DbTransactionCommitFailed":
+                  "數據庫事務提交失敗。",
+                "FailedOperation.DimQueryRequestFailed":
+                  "請求維度查詢服務失敗。",
+                "FailedOperation.DivisionByZero": "被除數為0。",
+                "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
+                "FailedOperation.DruidTableNotFound": "druid表不存在。",
+                "FailedOperation.DuplicateName": "名字重複。",
+                "FailedOperation.ServiceNotEnabled":
+                  "服務未啟用，開通服務後方可使用。",
+                InternalError: "內部錯誤。",
+                "InternalError.ExeTimeout": "執行超時。",
+                InvalidParameter: "參數錯誤。",
+                "InvalidParameter.InvalidParameter": "參數錯誤。",
+                "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+                InvalidParameterValue: "無效的參數值。",
+                "LimitExceeded.MetricQuotaExceeded":
+                  "指標數量達到配額限制，禁止含有未註冊指標的請求。",
+                MissingParameter: "缺少參數錯誤。",
+                ResourceInUse: "資源被佔用。",
+                ResourceInsufficient: "資源不足。",
+                ResourceNotFound: "資源不存在。",
+                ResourceUnavailable: "資源不可用。",
+                ResourcesSoldOut: "資源售罄。",
+                UnauthorizedOperation: "未授權操作。",
+                UnknownParameter: "未知參數錯誤。",
+                UnsupportedOperation: "操作不支持。"
+              };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
             message: ErrOr[res.Response.Error.Code],
@@ -363,15 +379,15 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。"
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -411,15 +427,16 @@ export default {
           this.ListInit();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -448,17 +465,17 @@ export default {
       } else if (value == 6) {
         return "!=";
       } else if (value == 7) {
-        return "日同比上涨";
+        return "日同比上漲";
       } else if (value == 8) {
         return "日同比下降";
       } else if (value == 9) {
-        return "周同比上涨";
+        return "周同比上漲";
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期环比上涨";
+        return "周期環比上漲";
       } else if (value == 12) {
-        return "周期环比下降";
+        return "周期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -466,10 +483,10 @@ export default {
         if ((val / 60 / 60 / 24) % 1 == 0) {
           return val / 60 / 60 / 24 + "天";
         } else {
-          return val / 60 / 60 + "小时";
+          return val / 60 / 60 + "小時";
         }
       } else if ((val / 60) % 1 == 0) {
-        return val / 60 + "分钟";
+        return val / 60 + "分鍾";
       }
     },
     EndTime(val) {
@@ -483,7 +500,7 @@ export default {
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
-        return "电话";
+        return "電話";
       }
     }
   }

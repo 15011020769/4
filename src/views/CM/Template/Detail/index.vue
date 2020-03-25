@@ -11,15 +11,15 @@
       </div>
     </div>
 
-    <!-- 详情子菜单导航 -->
+    <!-- 詳情子菜單導航 -->
     <div class="detial-nav">
       <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'}">模板信息</router-link> -->
-      <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">变更日志</router-link> -->
+      <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">變更日志</router-link> -->
       <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Info`}">模板信息</router-link>
-      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Update`}">变更日志</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Update`}">變更日志</router-link>
     </div>
 
-    <!-- 子页面 -->
+    <!-- 子頁面 -->
     <keep-alive>
         <transition name="fade" mode="out-in">
           <router-view></router-view>
@@ -31,7 +31,7 @@
 <script>
 import { GET_CONDITIONSTEMPLATELIST } from '@/constants/CM-yhs.js'
 import Loading from '@/components/public/Loading'
-import { ErrorTips } from '@/components/ErrorTips.js' // 公共错误码
+import { ErrorTips } from '@/components/ErrorTips.js' // 公共錯誤碼
 export default {
   name: 'TemplateDetail',
   data () {
@@ -77,7 +77,7 @@ export default {
         }
       })
     },
-    // 返回上一层
+    // 返回上壹層
     goBack () {
       this.$router.push({
         name: 'Template'
@@ -188,7 +188,7 @@ export default {
         }
     }
 }
-// 子页面切换动画
+// 子頁面切換動畫
 .fade-enter-active,
 .fade-leave-active {
     transition: opacity .2s;

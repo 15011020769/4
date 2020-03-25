@@ -19,14 +19,14 @@
             <SEARCH
               :isSHows = "true"
              :searchOptions="searchOptions"
-             :searchValue="searchValue" 
-             :searchInput="searchInput" 
+             :searchValue="searchValue"
+             :searchInput="searchInput"
               @changeValue="changeValue"
-              @changeinput="changeinput" 
-              @clicksearch="clicksearch" 
+              @changeinput="changeinput"
+              @clicksearch="clicksearch"
               @exportExcel="exportExcel">
             </SEARCH>
-              
+
           </div>
           <div class="icons">
                 <!-- <i class="el-icon-setting" @click="dialog"></i>
@@ -60,7 +60,7 @@
             <el-table-column prop="AccidentTypeDesc" label="事件類型"></el-table-column>
           </el-table>
 
-          <!-- 分页 -->
+          <!-- 分頁 -->
           <div class="Right-style pagstyle">
             <el-pagination
                 @size-change="handleSizeChange"
@@ -85,7 +85,7 @@ import TimeDropDown from '@/components/public/TimeDropDown';
 import Dialog from "./custom/custom";
 import SEARCH from "@/components/public/SEARCH";
 import Loading from "@/components/public/Loading";
-import { ErrorTips } from "@/components/ErrorTips.js"; //公共错误码
+import { ErrorTips } from "@/components/ErrorTips.js"; //公共錯誤碼
 import { PLATFORM_EVENT_LIST } from "@/constants";
 export default {
   name: "platform",
@@ -93,7 +93,7 @@ export default {
     return {
       activeName: "first",
       value: 13,
-      dialogVisible: false, //弹出框
+      dialogVisible: false, //彈出框
 
       searchInput: "", //搜索框的值
       searchOptions: [
@@ -107,25 +107,25 @@ export default {
           // },
           // {
           //   value: "Status.0",
-          //   label: "状态"
+          //   label: "狀態"
           // },
           // {
           //   value: "Type.0",
-          //   label: "事件类型"
+          //   label: "事件類型"
           // },
       ],
-      searchValue: "", //inp输入的值
+      searchValue: "", //inp輸入的值
 
-      loadShow: true, // 加载是否显示
+      loadShow: true, // 加載是否顯示
       tableData: [],
-      StartTime: "", //起始时间
-      EndTime: "", //结束时间
-      //分页
-      TotalCount: 0, //总条数
-      pageSize: 10, // 分页条数
-      pageIndex: 1, // 当前页码
+      StartTime: "", //起始時間
+      EndTime: "", //結束時間
+      //分頁
+      TotalCount: 0, //總條數
+      pageSize: 10, // 分頁條數
+      pageIndex: 1, // 當前頁碼
       TimeArr: [
-          
+
           {
             name: '近7天',
             Time: 'Nearly_7_days',
@@ -153,9 +153,9 @@ export default {
     SEARCH
   },
   methods: {
-    // 获取时间戳
+    // 獲取時間戳
     GetDat(data) {
-        
+
         let StartTIme = new Date(data[1].StartTIme)
         let EndTIme = new Date(data[1].EndTIme)
 
@@ -163,11 +163,11 @@ export default {
         this.EndTime = EndTIme.getTime()/1000;
         this.GetPlatformList()
       },
-      // 将时间戳转为日期格式
+      // 將時間戳轉爲日期格式
     getConvDate(data){
         var _data = data;
           _data = data*1000
-        const time = new Date(_data);    
+        const time = new Date(_data);
         const Y = time.getFullYear();
         const Mon = time.getMonth() + 1;
         const Day = time.getDate();
@@ -176,9 +176,9 @@ export default {
         const S = time.getSeconds();
           return `${Y}-${Mon}-${Day} ${H}:${Min}:${S}`
       },
-   //获取数据
+   //獲取數據
     GetPlatformList(data) {
-      this.loadShow = true; //加载
+      this.loadShow = true; //加載
       const params = {
         Region: localStorage.getItem('regionv2'),
         Version: "2018-07-24",
@@ -196,10 +196,10 @@ export default {
       this.axios.post(PLATFORM_EVENT_LIST, params).then(res => {
         console.log(res);
         if (res.Response.Error === undefined) {
-          this.tableData = res.Response.Alarms; //列表数据
+          this.tableData = res.Response.Alarms; //列表數據
 
           this.TotalCount = res.Response.Total;
-          this.loadShow = false; //取消加载
+          this.loadShow = false; //取消加載
           this.showNameSpaceModal = false;
         } else {
           this.loadShow = false;
@@ -214,19 +214,19 @@ export default {
         }
       });
     },
-    
-    // 分页
+
+    // 分頁
     handleCurrentChange(val) {
       this.pageIndex = val - 1;
       this.GetPlatformList();
       this.pageIndex += 1;
     },
     handleSizeChange(val) {
-      // console.log(`每页 ${val} 条`);
+      // console.log(`每頁 ${val} 條`);
       this.pageSize = val;
       this.GetPlatformList();
     },
-     //弹框
+     //彈框
     dialog(){
       this.dialogVisible = true;
     },
@@ -237,7 +237,7 @@ export default {
       this.dialogVisible = false;
     },
 
-    //选择搜索条件
+    //選擇搜索條件
       changeValue(val) {
         this.searchValue = val;
       },
