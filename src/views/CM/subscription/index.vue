@@ -182,7 +182,7 @@
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
                     未驗證, 可在
-                    <a href>權限管理</a>頁面設置
+                    <a>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
@@ -190,8 +190,8 @@
               <span v-else>
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
-                   未驗證, 可在
-                    <a href>權限管理</a>頁面設置
+                    未驗證, 可在
+                    <a>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
@@ -354,8 +354,7 @@ export default {
         AccidentId: this.cancelObj.AccidentId //事件id
       };
       this.axios.post(CANCEL_SUBSCRIPTION, params).then(res => {
-        console.log(res,"取消訂閱");
-        if (res.codeDesc === "Success") {
+        if (res.Response.RequestId) {
           this.$message({
             message: "取消訂閱成功",
             type: "success",
@@ -363,6 +362,7 @@ export default {
             duration: 0
           });
           this.dialogcancel = false;
+          this.getEventList();
         } else {
           let ErrTips = {
             InternalError: "內部錯誤。",
@@ -411,7 +411,6 @@ export default {
         data.uid = item.Uid;
         // params["Receivers." + index] = data;
         params.Receivers = data;
-
       });
       //  var key, value;
       //   key = item.Name;
@@ -430,8 +429,8 @@ export default {
             showClose: true,
             duration: 0
           });
-          this.getEventList();
           this.dialogSubscribe = false;
+          this.getEventList();
         } else {
           let ErrTips = {
             FailedOperation: "操作失敗。",
@@ -462,7 +461,7 @@ export default {
       var params = {
         Version: "2018-07-24",
         Module: "monitor",
-        Language:"zh-CN"
+        Language: "zh-CN"
       };
       this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
         console.log(res.Response, "数据");
