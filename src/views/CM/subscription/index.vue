@@ -314,6 +314,22 @@ export default {
                   item.index = index;
                   item.subscription = undefined;
                 });
+                this.$nextTick(() => {//回显参数，由于数据返回有误，无法开发
+                
+                    this.okObj.Receivers.forEach((v, i) => {
+                      arr.forEach((item, index) => {
+                        if (item.GroupId == v) {
+                          console.log(item);
+                          this.cam.selectUserGroup = item;
+                          this.$refs.multipleTable.toggleRowSelection(
+                            item,
+                            true
+                          );
+                        }
+                      });
+                    });
+
+                });
                 this.userListArr = arr;
               } else {
                 this.$message({
@@ -408,9 +424,11 @@ export default {
       this.selectUserList.forEach((item, index) => {
         var data = {};
         data.username = item.Name;
-        data.uid = item.Uid;
-        // params["Receivers." + index] = data;
-        params.Receivers = data;
+        data.uin = item.Uid;
+        //params.Receivers = data;
+        console.log(item);
+
+        params["Receivers." + index] = data;
       });
       //  var key, value;
       //   key = item.Name;
@@ -419,7 +437,7 @@ export default {
       //     key: value
       //   };
       //   params["Receivers." + index] = JSON.stringify(data);
-
+      console.log(params);
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
         if (res.Response.Error === undefined) {
