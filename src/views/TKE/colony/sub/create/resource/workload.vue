@@ -221,14 +221,34 @@
                       </div>
                     </el-dialog>
                   </div>
-                  <div v-if="item.name == 'useConfig'">
-                    <div style="display: inline-block" v-if="item.configMap.items.length>0"></div>
+                  <div v-if="item.name == 'useConfig'" style="display: flex;align-items: center">
+                    <el-popover placement="top" trigger="hover" v-if="item.configMap.name!==''"
+                                :disabled="!(item.configMap.items.length>0 && item.configMap.checked !== 'all')">
+                      <p v-for="icItem in item.configMap.items" :key="icItem.ikey">{{icItem.key}} , {{icItem.path}} , {{icItem.mode}}</p>
+                      <div slot="reference" style="display: flex;align-items: center">
+                        <div style="margin-right: 5px">
+                          <p style="line-height: 14px">{{item.configMap.name}}</p>
+                          <p style="line-height: 14px">{{item.configMap.checked === 'all'?'全部Key': '指定部分Key'}}</p>
+                        </div>
+                        <i class="el-icon-warning-outline" style="margin-right: 5px" v-if="item.configMap.items.length>0 && item.configMap.checked !== 'all'"></i>
+                      </div>
+                    </el-popover>
                     <div style="display: inline-block" v-else>{{$t('TKE.subList.zwxz')}}ConfigMap</div>
                     <el-button type="text" size="mini" @click="openConfigMapDialog">{{$t('TKE.subList.xzpzx')}}</el-button>
                     <sc-dialog type="ConfigMap" :visible.sync="dialogVisibleConfig" :index="index" :sc-option="configMap.option" :sc-data.sync="item.configMap"></sc-dialog>
                   </div>
-                  <div v-if="item.name == 'useSecret'">
-                  <div style="display: inline-block" v-if="item.secret.items.length>0"></div>
+                  <div v-if="item.name == 'useSecret'" style="display: flex;align-items: center">
+                    <el-popover placement="top" trigger="hover" v-if="item.secret.name!==''"
+                                :disabled="!(item.secret.items.length>0 && item.secret.checked !== 'all')">
+                      <p v-for="isItem in item.secret.items" :key="isItem.ikey">{{isItem.key}} , {{isItem.path}} , {{isItem.mode}}</p>
+                      <div slot="reference" style="display: flex;align-items: center">
+                        <div style="margin-right: 5px">
+                          <p style="line-height: 14px">{{item.secret.name}}</p>
+                          <p style="line-height: 14px">{{item.secret.checked === 'all'?'全部Key': '指定部分Key'}}</p>
+                        </div>
+                        <i class="el-icon-warning-outline" style="margin-right: 5px" v-if="item.secret.items.length>0 && item.secret.checked !== 'all'"></i>
+                      </div>
+                    </el-popover>
                   <div style="display: inline-block" v-else>{{$t('TKE.subList.zwxz')}}Secret</div>
                     <el-button type="text" size="mini" @click="openSecretDialog">{{$t('TKE.subList.xze')}}Secret</el-button>
                     <sc-dialog type="Secret" :visible.sync="dialogVisibleSecret" :index="index" :sc-option="secrets.option" :sc-data.sync="item.secret"></sc-dialog>
