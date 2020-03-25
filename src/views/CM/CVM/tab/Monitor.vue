@@ -30,7 +30,7 @@
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
+                :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>
@@ -90,7 +90,7 @@
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
+                :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>
