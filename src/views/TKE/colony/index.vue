@@ -45,12 +45,7 @@
 
       <!-- 数据列表展示 -->
       <div class="tke-card mt10">
-        <el-table
-          :data="list"
-          v-loading="loadShow"
-          style="width: 100%"
-          id="exportTable"
-        >
+        <el-table :data="list" v-loading="loadShow" style="width: 100%">
           <el-table-column :label="$t('TKE.overview.idmc')">
             <template slot-scope="scope">
               <span
@@ -296,6 +291,167 @@
             ></el-pagination>
           </div>
         </div>
+      </div>
+      <!-- 用于导出的表格 -->
+      <div class="tke-card mt10" v-show="false">
+        <el-table
+          :data="list"
+          v-loading="loadShow"
+          style="width: 100%"
+          id="exportTable"
+        >
+          <el-table-column :label="$t('TKE.overview.idmc')">
+            <template slot-scope="scope">
+              <span
+                :class="[
+                  scope.row.ClusterStatus == 'Running' ? 'tke-text-link' : ''
+                ]"
+                @click="
+                  scope.row.ClusterStatus == 'Running'
+                    ? goColonySub(scope.row)
+                    : ''
+                "
+                >{{ scope.row.ClusterId }}/</span
+              >
+              <p class="stk-editor-name">
+                <span>{{ scope.row.ClusterName }}</span>
+                <i
+                  class="el-icon-edit tke-icon"
+                  @click="showEditNameDlg(scope.row)"
+                  v-if="scope.row.ClusterStatus == 'Running'"
+                ></i>
+              </p>
+            </template>
+          </el-table-column>
+          <el-table-column prop :label="$t('TKE.colony.jk')">
+            <template slot-scope="scope">
+              <i
+                class="icon-chart"
+                @click="
+                  scope.row.ClusterStatus == 'Running'
+                    ? goMonitor(scope.row)
+                    : ''
+                "
+              ></i>
+              <span class="tag-danger">未配告警</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="ClusterVersion" label="kubernetes版本">
+            <template slot-scope="scope">
+              <span>v{{ scope.row.ClusterVersion }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('TKE.colony.lxzt')">
+            <template slot-scope="scope">
+              <span v-if="scope.row.ClusterType == 'MANAGED_CLUSTER'">{{
+                $t("TKE.colony.tgjq")
+              }}</span>
+              <span v-else>{{ $t("TKE.colony.dlbs") }}</span>
+              (
+              <span
+                v-if="scope.row.ClusterStatus == 'Running'"
+                class="text-green"
+                >{{ $t("TKE.colony.yxz") }}</span
+              >
+              <span
+                v-else-if="scope.row.ClusterStatus == 'Creating'"
+                class="text-orange"
+                >{{ $t("TKE.colony.cjz") }}</span
+              >
+              <span v-else class="text-red">{{ $t("TKE.overview.yc") }}</span
+              >)
+            </template>
+          </el-table-column>
+          <el-table-column :label="$t('TKE.colony.jds')">
+            <template slot-scope="scope">
+              <div class="node-total">
+                <div
+                  v-if="scope.row.ClusterStatus != 'Creating'"
+                  class="node-content"
+                >
+                  <a href="javascript:;" @click="NodeTotal(scope.row)"
+                    >{{ scope.row.ClusterNodeNum }}台</a
+                  >
+                  (
+                  <p v-if="scope.row.ClusterInitNodeNum == 0">
+                    <span
+                      class="text-green"
+                      v-if="scope.row.ClusterInstanceState == 'AllNormal'"
+                      >全部正常</span
+                    >
+                    <span
+                      class="text-red"
+                      v-else-if="
+                        scope.row.ClusterInstanceState == 'AllAbnormal'
+                      "
+                      >{{ $t("TKE.colony.qbyc") }}</span
+                    >
+                    <span class="text-red" v-else>{{
+                      $t("TKE.colony.bfyc")
+                    }}</span>
+                  </p>
+                  <span v-else class="text-orange"> 正在創建</span>
+                  )
+                  <el-popover
+                    width="50"
+                    trigger="hover"
+                    placement="top"
+                    v-if="scope.row.ClusterInstanceState != 'AllNormal'"
+                  >
+                    <div class="node-popover">
+                      <p>
+                        {{ $t("TKE.colony.cjz") }}：{{
+                          scope.row.ClusterInitNodeNum
+                        }}台；
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.yxz") }}：{{
+                          scope.row.ClusterRunningNodeNum
+                        }}台；
+                      </p>
+                      <p>
+                        {{ $t("TKE.overview.yc") }}：{{
+                          scope.row.ClusterFailedNodeNum
+                        }}台；
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.ygj") }}：{{
+                          scope.row.ClusterClosedNodeNum
+                        }}台；
+                      </p>
+                      <p>
+                        {{ $t("TKE.colony.gjz") }}：{{
+                          scope.row.ClusterClosingNodeNum
+                        }}台
+                      </p>
+                    </div>
+                    <i class="el-icon-warning-outline" slot="reference"></i>
+                  </el-popover>
+                </div>
+                <p v-else>
+                  <span style="color:#bbb;"
+                    >{{ scope.row.ClusterNodeNum }}台</span
+                  >
+                </p>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="address" :label="$t('TKE.colony.yfpzpz')">
+            <template slot-scope="scope">
+              <p>
+                CPU: {{ scope.row.yroot ? scope.row.yroot : "-" }}/{{
+                  scope.row.root ? scope.row.root : "-"
+                }}核；
+              </p>
+              <p>
+                {{ $t("TKE.overview.ncun") }}:
+                {{ scope.row.ymemory ? scope.row.ymemory : "-" }}/{{
+                  scope.row.memory ? scope.row.memory : "-"
+                }}GB
+              </p>
+            </template>
+          </el-table-column>
+        </el-table>
       </div>
     </div>
 
