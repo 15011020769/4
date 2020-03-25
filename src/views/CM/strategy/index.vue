@@ -108,7 +108,7 @@
         </el-table-column>
         <el-table-column label="触发条件">
           <template slot-scope="scope">
-            <el-popover placement="left-start" width="400" trigger="hover">
+            <el-popover placement="right" width="400" trigger="hover">
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
@@ -511,19 +511,6 @@
         <el-button type="primary" @click="ModifyNotifySure">确定</el-button>
         <el-button @click="ModifyDialogVisible = false">取消</el-button>
       </span>
-    </el-dialog>
-    <!-- 复制 -->
-    <el-dialog
-      title="确定复制所选实例组"
-      :visible.sync="copyDialogVisible"
-      width="500px"
-      custom-class="tke-dialog"
-    >
-      <div>是否复制 {{ groupName }}</div>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="CopyList()">确定复制</el-button>
-        <el-button @click="copyDialogVisible = false">取消</el-button>
-      </div>
     </el-dialog>
     <!-- 告警启停 -->
     <el-dialog

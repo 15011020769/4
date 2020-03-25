@@ -580,7 +580,20 @@ export default {
               duration: 0
             });
           }
-        });
+        }).then(() => {
+          let delparams = {
+            QcloudUin: this.$cookie.get("uin"),
+            SubAccountname: item.Name
+          };
+          this.axios
+            .post(
+              `${process.env.VUE_APP_adminUrl}taifucloud/account-sub/manage/delete`,
+              delparams
+            )
+            .then(res => {
+              console.log(res);
+            });
+        })
       });
       this.dialogVisible = false;
     },
@@ -634,7 +647,7 @@ export default {
         })
         .then(() => {
           let delparams = {
-            QcloudUin: this.delUin,
+            QcloudUin: this.$cookie.get("uin"),
             SubAccountname: this.deleteRowName
           };
           this.axios

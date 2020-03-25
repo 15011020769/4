@@ -2635,7 +2635,7 @@
             v-if="colonySecond.sourceShow && colonySecond.worker != 2"
           >
             <div class="tke-second-cost">
-              <span class="tke-second-cost-num">{{
+              <span class="tke-second-cost-num">NT$ {{
                 colonySecond.allocationCost
               }}</span
               ><span class="tke-second-cost-h">每小時</span
@@ -2643,7 +2643,7 @@
                 >({{ $t("TKE.colony.pzfy") }})</span
               >
               <i>|</i>
-              <span class="tke-second-cost-num">{{
+              <span class="tke-second-cost-num">NT$ {{
                 colonySecond.networkCost
               }}</span
               ><span class="tke-second-cost-h">每小時</span
