@@ -5437,7 +5437,7 @@ export default {
             _saArr.push(_safeArr1[i].securityGroupSel);
           }
 
-          param["SecurityGroupIds"] = _safeArr1;
+          param["SecurityGroupIds"] = _saArr;
         }
         this.param.push(param);
       }
