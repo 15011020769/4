@@ -1922,8 +1922,9 @@ export default {
     querySearch: function (index, queryStr) {
       console.log(index, queryStr)
       let mirrorImgTagArr = this.wl.instanceContent[index].mirrorImgTagArr.map(item => ({ value: item }))
-      let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
-      return queryArr
+      // let queryArr = mirrorImgTagArr.filter(item => item.value.includes(queryStr))
+      // return queryArr
+      return mirrorImgTagArr
     },
     // 获取镜像的版本Tag
     describeImagePersonal: async function (mirrorImgName, index) {
@@ -1972,6 +1973,7 @@ export default {
       }).then(res => {
         let { TagList } = res.Response.Data
         this.wl.instanceContent[index].mirrorImgTagArr = TagList
+        this.wl.instanceContent[index].versions = TagList[0]
       })
     },
     // 提交新增
