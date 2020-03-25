@@ -63,8 +63,9 @@
             <!-- <div  v-for="(item,i) in seriesArr" :key='i'>
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
             </div>  -->
-            <EcharS class="line" :time="time" :series="item.DataPoints" :period="period" :echartsIndex="item.echartsIndex"
-              v-if="item.DataPoints.length !== 0" @changeDataIndex="changeDataIndex" />
+            <EcharS class="line" :time="time" :series="item.DataPoints" :period="period"
+              :echartsIndex="item.echartsIndex" v-if="item.DataPoints.length !== 0"
+              @changeDataIndex="changeDataIndex" />
             <div class="empty" v-else>
               暫無數據
             </div>
@@ -78,16 +79,14 @@
             <p>
               <span>
                 <a @click="exportExcel(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
-                <el-popover
-                  placement="left-start"
-                  width="200"
-                  trigger="hover">
+                <el-popover placement="left-start" width="200" trigger="hover">
                   <p>{{ $t("CVM.Dashboard.elPop1") }}</p>
                   <p>{{ $t("CVM.Dashboard.elPop2") }}</p>
                   <i class="el-icon-info" slot="reference" style="color:#888"></i>
                 </el-popover>
               </span>
-              <a v-show="!item.openChartFlag" @click="openChart(index)" style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
+              <a v-show="!item.openChartFlag" @click="openChart(index)"
+                style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
               <a v-show="item.openChartFlag" @click="retractChart(index)" style="margin-left:30px;">收起</a>
             </p>
           </div>
@@ -175,16 +174,16 @@
             name: "近15天",
             Time: "Nearly_15_days",
             TimeGranularity: [{
-              value: "3600",
-              label: "1小時"
+              value: "86400",
+              label: "1天"
             }]
           },
           {
             name: "近30天",
             Time: "Nearly_30_days",
             TimeGranularity: [{
-              value: "3600",
-              label: "1小時"
+              value: "86400",
+              label: "1天"
             }]
           }
         ],
@@ -878,10 +877,12 @@
     >div.chartList {
       width: 32%;
       margin-bottom: 10px;
+
       .chartItem {
         padding: 20px;
         background: #ffffff;
         border: 1px solid #e2e1e1;
+
         p {
           display: flex;
           justify-content: space-between;
