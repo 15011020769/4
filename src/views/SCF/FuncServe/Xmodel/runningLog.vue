@@ -281,14 +281,17 @@
       margin-top: 30px;
 
       .menu {
+        // height:auto;
         height: 800px;
+        overflow: auto;
         width: 260px;
         border-right: 1px solid #ddd;
 
         ul {
           li {
             cursor: pointer;
-            line-height: 50px;
+            padding: 14px 0px;
+            // line-height: 50px;
             border-bottom: 1px solid #ddd;
 
             .success {
@@ -334,7 +337,7 @@
           margin-top: 20px;
           padding-left: 20px;
           background-color: rgb(242, 242, 242);
-          height: 800px;
+          height: 710px;
 
           div {
             padding-top: 20px;
