@@ -134,7 +134,7 @@
           v-loading="alarmObjecLoad"
           @selection-change="handleSelectionChange"
         >
-          <el-table-column type="selection" width="40"></el-table-column>
+          <el-table-column type="selection" width="50"></el-table-column>
           <el-table-column label="ID/主机名" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
               <p>{{ scope.row.InstanceId }}</p>
