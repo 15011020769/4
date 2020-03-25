@@ -85,7 +85,7 @@
               <template slot-scope="scope">
                 <div>
                   <!-- @click="jumpDetail(scope.row)" -->
-                  <p>{{scope.row.name}}</p>
+                  <a style="cursor:pointer" @click="jumpDetail(scope.row)">{{scope.row.name}}</a>
                 </div>
               </template>
             </el-table-column>
@@ -941,15 +941,15 @@ export default {
       });
     },
     // 跳转详情
-    // jumpDetail(row) {
-    //   this.$router.push({
-    //     name: "helmDetailDetail",
-    //     query: {
-    //       clusterId: this.value,
-    //       helmName: row.name
-    //     }
-    //   });
-    // }
+    jumpDetail(row) {
+      this.$router.push({
+        name: "helmDetailDetail",
+        query: {
+          clusterId: this.value,
+          helmName: row.name
+        }
+      });
+    }
   },
   filters: {
     codes: function(value) {
