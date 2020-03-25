@@ -120,6 +120,9 @@ module.exports = {
     hotOnly: false // 没啥效果，热模块，webpack已经做好了
   },
   chainWebpack: config => {
+    config
+      .plugin('monaco-editor')
+      .use(require('monaco-editor-webpack-plugin'))
     config.performance
       .maxEntrypointSize(40000000)
       .maxAssetSize(40000000)
