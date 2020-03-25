@@ -8,7 +8,7 @@
         关于推流域名：慢直播已为您提供系统推流域名，您亦可添加自有已备案域名进行推流。
       </div>
       <div class="Tips">
-        关于播放域名：您需要添加自有已备案域名进行慢直播播放，更多域名管理使用方法参见域名管理和CNAME配置
+        关于播放域名：您需要添加自有已备案域名进行慢直播播放，更多域名管理使用方法参见域名管理
       </div>
       <div class="Addto">
         <el-button type="primary" size="small" @click="_Addto">添加域名</el-button>

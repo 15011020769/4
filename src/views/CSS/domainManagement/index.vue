@@ -13,13 +13,6 @@
               target="_blank"
               >域名管理</el-link
             >
-            和
-            <el-link
-              type="primary"
-              href="../../index.html#/documentcenter/doc/30560"
-              target="_blank"
-              >CNAME配置</el-link
-            >
           </p>
 
           <p>{{ $t("CSS.domainManagement.2") }}</p>
