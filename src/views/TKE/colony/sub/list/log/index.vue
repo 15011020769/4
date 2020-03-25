@@ -14,6 +14,7 @@
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
+          <!-- 工作负载选项名 -->
           <el-select
             v-model="value1"
             :placeholder="$t('TKE.overview.qxz')"
@@ -78,13 +79,12 @@
               :value="item.value"
             ></el-option>
           </el-select>
+            <!-- :disabled="listNumFlag" -->
           <el-select
             v-model="value5"
             :placeholder="$t('TKE.overview.qxz')"
-            :disabled="listNumFlag"
             size="mini"
             class="ml10"
-            @change="getLog"
           >
             <!-- pod第二项 -->
             <el-option
@@ -104,8 +104,10 @@
             :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
-            :disabled="listNumFlag"
+            @change="getLog()"
+            :disabled="value4=='Pod'+$t('TKE.event.lbwk')"
           >
+            <!-- :disabled="listNumFlag" -->
             <!-- 选择多少条数据 -->
             <el-option
               v-for="item in option6"
@@ -300,7 +302,8 @@ export default {
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          // this.option1 = []; //命名空间选项
+        console.log(mes,'mes++++++++++++++++++++++++++命名空间change')
+         
           if (mes.items.length > 0) {
             mes.items.forEach(item => {
               this.option3.push({
@@ -308,6 +311,9 @@ export default {
                 label: item.metadata.name
               });
             });
+            this.value3=this.option3[0].value;
+            this.getLog();
+            console.log( this.value3,' this.value3')
             // this.getWorkload();
             this.getPodData();
           } else {
@@ -335,6 +341,7 @@ export default {
     },
     getPodData() {
       if (v != "") {
+        console.log(this.value3[0],'this.value3[0]')
         var v = this.value3.replace(
           this.value3[0],
           this.value3[0].toLowerCase()
@@ -394,15 +401,17 @@ export default {
           }
           this.loadShow = false;
         } else {
-          let ErrTips = {};
-          this.option5 = [];
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+           this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+          this.value5 = "Container" + this.$t("TKE.event.lbwk");
+          // let ErrTips = {};
+          // this.option5 = [];
+          // let ErrOr = Object.assign(ErrorTips, ErrTips);
+          // this.$message({
+          //   message: ErrOr[res.Response.Error.Code],
+          //   type: "error",
+          //   showClose: true,
+          //   duration: 0
+          // });
         }
       });
     },
@@ -505,6 +514,7 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
+      console.log(params,'params')
       await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = res.Response.ResponseBody;
@@ -519,14 +529,15 @@ export default {
           this.htmls = newarrs;
           this.loadShow = false;
         } else {
-          let ErrTips = {};
-          let ErrOr = Object.assign(ErrorTips, ErrTips);
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+          this.htmls=''
+          // let ErrTips = {};
+          // let ErrOr = Object.assign(ErrorTips, ErrTips);
+          // this.$message({
+          //   message: ErrOr[res.Response.Error.Code],
+          //   type: "error",
+          //   showClose: true,
+          //   duration: 0
+          // });
         }
       });
     }
