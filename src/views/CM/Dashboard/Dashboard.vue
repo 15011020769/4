@@ -555,7 +555,7 @@
               const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
               ViewList.forEach((ele, index) => {
                 ele.openChartFlag = false; // 列表展开收起的标志
-                ele.echartsIndex = index; // 折线图在ViewList中的索引
+                // ele.echartsIndex = index; // 折线图在ViewList中的索引
                 ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 let newInstances = [];
                 ele.Instances.forEach(el => {
@@ -707,7 +707,16 @@
               res.Response.DataPoints.forEach((ele, i) => {
                 DataPoints.push({
                   type: "line",
-                  data: ele.Points.map(item => {
+                  data: ele.Points.map((item,i) => {
+                    if (i==0) {
+                      item = 1;
+                    } else if (i == 1) {
+                      item = 2;
+                    } else if (i == 2) {
+                      item = 3;
+                    } else if (i == 3) {
+                      item = 4;
+                    }
                     // 存在坐标为null的情况，应该是接口问题
                     return item === null ? 0 : item
                   }),
@@ -782,8 +791,8 @@
       },
       // 改变监控图标实时展示的列表值
       changeDataIndex(seriesIndex, dataIndex) {
-        this.ViewList[seriesIndex].echartsIndex = dataIndex;
-        console.log(this.ViewList[seriesIndex].DataPoints, seriesIndex, dataIndex)
+        this.ViewList[seriesIndex].dataIndex = dataIndex;
+        console.log(this.ViewList[seriesIndex], seriesIndex, dataIndex)
       }
 
       // //取消
