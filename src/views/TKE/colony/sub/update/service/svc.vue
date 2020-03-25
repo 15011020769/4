@@ -106,15 +106,6 @@
               {{$t('TKE.subList.qwsdxgjt')}}
               <!-- <a href="">查看更多说明</a> -->
               <div>
-                 <!-- :disabled="svc.value==='暫無數據'" -->
-                <!-- <el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
-				        	<el-option
-				        		v-for="item in ownLoadBalancer"
-				        		:key="item.LoadBalancerId"
-				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
-				        		:value="item.LoadBalancerId">
-				        	</el-option>
-                </el-select> -->
                 <el-select :disabled="svc.value1==='暫無數據'" v-show="svc.radio==='1'" v-model="svc.value1" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
 				        	<el-option
 				        		v-for="item in ownLoadBalancer"
@@ -281,11 +272,10 @@ export default {
         loadBalance: '', // 负载平衡选项
         val: '', // 自有创建的id
         value: '', // 使用已有均衡器
-        value1:'',
-        value2:'',
+        value1:'',// 使用已有均衡器(访问方式为1)
+        value2:'',// 使用已有均衡器(访问方式为3)
         LBvalue2: '', // LB所在子网
         LBvalue1: '', // LB所在子网
-        // options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
         options: ['TCP', 'UDP'],
         radio: '1', // 服务访问方式
         protocol: '', // 协议
@@ -505,8 +495,6 @@ export default {
           let msg = res.Response.Clusters
           this.describeClustersList = msg
           this.svc.vpcIds = msg[0].ClusterNetworkSettings.VpcId
-          // this.vpcId = msg
-          // console.log(msg)
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -643,7 +631,6 @@ export default {
           name: `${ele.targetPort}-${ele.port}-${ele.protocol.toLowerCase()}`,
           port: Number(ele.port),
           targetPort: Number(ele.targetPort),
-          // nodePort: ele.nodePort ? Number(ele.nodePort) : null,
           protocol: ele.protocol
         }
         if (ele.nodePort && radio !== '2') {
@@ -676,9 +663,7 @@ export default {
       }
       let jsonStr = { 'metadata': {// 要传递的RequestBody参数
         'annotations': {
-          // 'description': this.serviceName,
           'service.kubernetes.io/loadbalance-id': val || ''
-          // 'service.kubernetes.io/service.extensiveParameters': '{"AddressIPVersion":"IPV4"}'
         } },
       'spec': { 'type': specType,
         'ports': newPortAry,
@@ -703,20 +688,16 @@ export default {
       if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy
       if (radio !== '1') jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
       if (radio === '3' && loadBalance === '1') {
-        // this.getSubnetId()
         // jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = null
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
       } else if (radio === '3' && loadBalance === '2') {
-        // this.getSubnetId()
         // jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
-        // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = this.svc.value2
       }
-      // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
 
       let param = {
         ContentType: 'application/merge-patch+json',
@@ -777,9 +758,7 @@ export default {
             this.svc.radio = '3'
           } else {
             this.svc.radio = '1'
-            // msg.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
           }
-          // var at = 'kubernetes.io/loadbalance-id'
           // 自有创建的均衡器id
           if (msg.metadata.annotations) {
             this.svc.val = msg.metadata.annotations['service.kubernetes.io/loadbalance-id']
