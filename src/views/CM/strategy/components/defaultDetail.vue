@@ -2214,76 +2214,78 @@ export default {
                 .ReceiverUserList;
               this.describeContactList = [];
               this.receivingObjectLoad = true;
-              var setTime = setInterval(() => {
-                this.receivingObjectData = [];
-                var arr = [];
-                this.Offset++;
-                let params = {
-                  Version: "2018-07-24",
-                  Module: "monitor",
-                  Limit: 100,
-                  Offset: this.Offset
-                };
-                this.axios
-                  .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
-                  .then(res => {
-                    if (res.Response.Error === undefined) {
-                      arr = res.Response.List;
-                      this.describeContactListLength = res.Response.TotalNum;
-                      for (let i in arr) {
-                        this.describeContactList.push(arr[i]);
-                      }
-                      for (let i in _ReceiverUserList) {
-                        for (let j in this.describeContactList) {
-                          if (
-                            _ReceiverUserList[i] ==
-                            this.describeContactList[j].Uid
-                          ) {
-                            this.receivingObjectData.push(
-                              this.describeContactList[j]
-                            );
-                          }
+              // var setTime = setInterval(() => {
+              this.receivingObjectData = [];
+              var arr = [];
+              this.Offset++;
+              let params = {
+                Version: "2018-07-24",
+                Module: "monitor",
+                Limit: 100,
+                Offset: 1
+              };
+              this.axios
+                .post(CM_ALARM_RECEIVE_OBJECT_LIST, params)
+                .then(res => {
+                  if (res.Response.Error === undefined) {
+                    arr = res.Response.List;
+                    this.describeContactListLength = res.Response.TotalNum;
+                    for (let i in arr) {
+                      this.describeContactList.push(arr[i]);
+                    }
+                    for (let i in _ReceiverUserList) {
+                      for (let j in this.describeContactList) {
+                        if (
+                          _ReceiverUserList[i] ==
+                          this.describeContactList[j].Uid
+                        ) {
+                          this.receivingObjectData.push(
+                            this.describeContactList[j]
+                          );
                         }
                       }
-                      console.log(
-                        "this.receivingObjectData",
-                        this.receivingObjectData
-                      );
-                      if (
-                        this.Offset ==
-                        Math.ceil(Number(this.describeContactListLength) / 100)
-                      ) {
-                        console.log(
-                          Number(this.describeContactListLength / 100)
-                        );
-                        clearInterval(setTime);
-                        this.receivingObjectLoad = false;
-                      }
-                    } else {
-                      let ErrTips = {
-                        FailedOperation: "操作失敗。",
-                        InternalError: "內部錯誤。",
-                        InvalidParameter: "參數錯誤。",
-                        LimitExceeded: "超過配額限制。",
-                        MissingParameter: "缺少參數錯誤。",
-                        ResourceInUse: "資源被占用。",
-                        ResourceInsufficient: "資源不足。",
-                        ResourceNotFound: "資源不存在。",
-                        ResourceUnavailable: "資源不可用。",
-                        UnauthorizedOperation: "未授權操作。",
-                        UnknownParameter: "未知參數錯誤。",
-                        UnsupportedOperation: "操作不支持。"
-                      };
-                      let ErrOr = Object.assign(ErrorTips, ErrTips);
-                      this.$message({
-                        message: ErrOr[res.Response.Error.Code],
-                        type: "error",
-                        showClose: true,
-                        duration: 0
-                      });
                     }
-                  });
-              }, 1000);
+                    this.receivingObjectLoad = false;
+                    console.log(
+                      "this.receivingObjectData",
+                      this.receivingObjectData
+                    );
+                    // if (
+                    //   this.Offset ==
+                    //   Math.ceil(Number(this.describeContactListLength) / 100)
+                    // ) {
+                    //   console.log(
+                    //     Number(this.describeContactListLength / 100)
+                    //   );
+                    //   clearInterval(setTime);
+                    //   this.receivingObjectLoad = false;
+                    //   return false;
+                    // }
+                  } else {
+                    let ErrTips = {
+                      FailedOperation: "操作失敗。",
+                      InternalError: "內部錯誤。",
+                      InvalidParameter: "參數錯誤。",
+                      LimitExceeded: "超過配額限制。",
+                      MissingParameter: "缺少參數錯誤。",
+                      ResourceInUse: "資源被占用。",
+                      ResourceInsufficient: "資源不足。",
+                      ResourceNotFound: "資源不存在。",
+                      ResourceUnavailable: "資源不可用。",
+                      UnauthorizedOperation: "未授權操作。",
+                      UnknownParameter: "未知參數錯誤。",
+                      UnsupportedOperation: "操作不支持。"
+                    };
+                    let ErrOr = Object.assign(ErrorTips, ErrTips);
+                    this.$message({
+                      message: ErrOr[res.Response.Error.Code],
+                      type: "error",
+                      showClose: true,
+                      duration: 0
+                    });
+                  }
+                });
+              // }, 1000);
             }
           } else {
             this.receivingObjectData = [];
