@@ -275,7 +275,8 @@
                 <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input @change="changeSyetem" :marks="mark"></el-slider>
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" 
+                    show-input @change="changeSyetem" :marks="mark"></el-slider>
               </div>
             </div>
           </el-form-item>
@@ -295,9 +296,13 @@
                         <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
-                      <div class="block" style="height: auto;">
-                        <el-slider :min="100" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
-                         show-input show-input-controls show-stops @change="changeDataDisk"></el-slider>
+                      <div class="block" style="height: auto;" v-if="item.dataDiskType = 'CLOUD_PREMIUM'">
+                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk"></el-slider>
+                      </div>
+                      <div class="block" style="height: auto;" v-else>
+                        <el-slider :min="100" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                         show-input @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.colony.gshsz')" class="norms" style="padding-left: 10px;">
@@ -325,7 +330,7 @@
                       <!-- </div> -->
                     </el-form-item>
                   </div>
-                  <span>
+                  <span v-if="nodeForm.buyDataDiskArr.length > 1">
                     <i
                       class="el-icon-error ml5"
                       style="margin-top:10px;height: 20px;width:20px;"
@@ -740,14 +745,12 @@ export default {
   data() {
     return {
       marks:{
-        10: '10',
-        16000: '16000',
+        0: '10',
+        100: '16000',
       },
-      mark: {
-        50: '50G',
-        100: '100G',
-        250: '250G',
-        500: '500G'
+      mark:{
+        60: '50G',
+        300: '500G'
       },//slider滑块
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
