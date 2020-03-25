@@ -7,7 +7,7 @@
           width="100"
           trigger="hover"
           content="数量已达到限制"
-          :disabled="!tableData.length == 10">
+          :disabled="tableData.length == 10?false:true">
           <div slot="reference">
             <el-button type="primary" size="mini"  @click="dialogVisible = true" :disabled="tableData.length == 10" >新建</el-button>
           </div>
