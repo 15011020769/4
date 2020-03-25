@@ -312,8 +312,8 @@ export default {
     },
     changeTimeValue () {
       this.selBtn = 0
-      this.StartTIme = moment(this.dateTimeValue[0]).startOf('days').format('YYYY-MM-DD HH:mm:ss')
-      this.EndTIme = moment(this.dateTimeValue[1]).endOf('days').format('YYYY-MM-DD HH:mm:ss')
+      this.StartTIme = moment(this.dateTimeValue[0]).format('YYYY-MM-DD HH:mm:ss')
+      this.EndTIme = moment(this.dateTimeValue[1]).format('YYYY-MM-DD HH:mm:ss')
     },
     // 获取城市
     getCity () {
