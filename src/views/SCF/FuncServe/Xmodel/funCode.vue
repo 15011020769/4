@@ -256,7 +256,8 @@ import {
   INVOKE,
   UPD_FUN_CODE,
   UPDATE_TEST_MODEL,
-  SCF_LIST_COSBUCKETS
+  SCF_LIST_COSBUCKETS,
+  GetTempCosInfo
 } from "@/constants";
 import {
   ErrorTips
@@ -329,11 +330,11 @@ export default {
       defaultTemplate: defaultTemplate, // 静态默认模板
       modeloptions: [], // 模板列表
       templateList: [], // 静态默认模板与请求的模板列表集合
-      codemirrorValue: '', // 弹框编辑器的值
+      codemirrorValue: defaultTemplate[0].code, // 弹框编辑器的值
       templateDetail: { // 获取模板详情
         TestModelValue: ''
       },
-      testvalue: '',
+      testvalue: 'Hello World事件範本',
       deleteModal: false, //是否启动删除模板modal
       modalName: '', //模板名称
       editModal: false, //是否启动编辑模板modal
@@ -388,6 +389,8 @@ export default {
     this.GetDate(); // 获取详情
     this.GetListFunctionTestModels(); // 获取模板列表
 
+    // this.getTempCosToken()
+
   },
   methods: {
 
@@ -406,13 +409,13 @@ export default {
           this.functionversion = res.Response.FunctionVersion
           this.ScienceValue = res.Response.Runtime
           this._Clone('address') // 获取地址
-          if(res.Response.Status !== 'Active'){
+          if (res.Response.Status !== 'Active') {
             this.$message({
-            message: '執行方法handler上傳錯誤，請查看執行方法handler說明，重新上傳',
-            type: "error",
-            showClose: true,
-            duration: 0
-          });
+              message: '執行方法handler上傳錯誤，請查看執行方法handler說明，重新上傳',
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
           }
         } else {
           let ErrTips = {
@@ -670,7 +673,7 @@ export default {
         this.updateCsliteFun(param) // 更新函数代码
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
-          // const objectPath = `${this.$cookie.get("uin")}/${namespace}/${functionName}.zip`
+
         })
       } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
         param.CosBucketName = this.cosName
@@ -678,6 +681,35 @@ export default {
         param.CosBucketRegion = localStorage.getItem('regionv2')
         this.updateCsliteFun(param)     // 更新函数代码
       }
+    },
+
+    // 获取临时token 用作在线编辑的cos上传
+    getTempCosToken() {
+      const objectPath = `${this.$cookie.get("appid")}/${this.$route.query.SpaceValue}/${this.functionName}.zip`
+      let params = {
+        ObjectPath: objectPath,
+        Region: localStorage.getItem('regionv2'),
+        Type: "",
+        Version: "2018-04-16"
+      }
+      this.axios.post(GetTempCosInfo, params).then(res => {
+        if (res.Response.Error === undefined) {
+          // this.$message({
+          //   message: '保存成功',
+          //   type: "success",
+          //   showClose: true,
+          //   duration: 0
+          // });
+          location.reload()
+        } else {
+          this.$message({
+            message: '保存失敗',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
     },
 
     // 更新函数代码
