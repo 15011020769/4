@@ -673,6 +673,12 @@ export default {
         this.updateCsliteFun(param) // 更新函数代码
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
+          this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
+            console.log('我是base64')
+            console.log(data)
+            param.ZipFile = data
+            this.updateCsliteFun(param) // 更新函数代码
+          })
 
         })
       } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
@@ -1004,7 +1010,7 @@ export default {
         title: '執行方法說明',
         dangerouslyUseHTMLString: true,
         duration: 0,
-        message: '111'
+        message: <openHint></openHint>
       });
     }
   }
