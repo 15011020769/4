@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -89,7 +89,7 @@
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: "60",
@@ -102,7 +102,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: "60",
@@ -210,27 +210,27 @@
 
         ], //可用指标
         disName: {
-          'NelStorage': '近线存储存储空间',
-          'SiaStorage': '低频存储存储空间',
-          'ArcStorage': '归档存储存储空间',
-          'StdStorage': '标准存储存储空间',
-          '2xxResponse': '2xx状态码',
-          '3xxResponse': '3xx状态码',
-          '4xxResponse': '4xx状态码',
-          '5xxResponse': '5xx状态码',
+          'NelStorage': '近線存儲存儲空間',
+          'SiaStorage': '低頻存儲存儲空間',
+          'ArcStorage': '歸檔存儲存儲空間',
+          'StdStorage': '標準存儲存儲空間',
+          '2xxResponse': '2xx狀態碼',
+          '3xxResponse': '3xx狀態碼',
+          '4xxResponse': '4xx狀態碼',
+          '5xxResponse': '5xx狀態碼',
           'CdnOriginTraffic': 'CDN回源流量',
-          'IaReadRequests': '低频存储读请求',
-          'IaRetrieval': '低频数据取回',
-          'IaWriteRequests': '低频存储写请求',
-          'InboundTraffic': '上传流量',
-          'InternalTraffic': '内网流量',
-          'InternetTraffic': '外网流量',
-          'NlReadRequests': '近线存储读请求',
-          'NlRetrieval': '近线数据取回',
-          'NlWriteRequests': '近线存储写请求',
-          'StdReadRequests': '标准存储读请求',
-          'StdRetrieval': '标准数据读取',
-          'StdWriteRequests': '标准存储写请求',
+          'IaReadRequests': '低頻存儲讀請求',
+          'IaRetrieval': '低頻數據取回',
+          'IaWriteRequests': '低頻存儲寫請求',
+          'InboundTraffic': '上傳流量',
+          'InternalTraffic': '內網流量',
+          'InternetTraffic': '外網流量',
+          'NlReadRequests': '近線存儲讀請求',
+          'NlRetrieval': '近線數據取回',
+          'NlWriteRequests': '近線存儲寫請求',
+          'StdReadRequests': '標準存儲讀請求',
+          'StdRetrieval': '標準數據讀取',
+          'StdWriteRequests': '標準存儲寫請求',
         },
         Company: {
           'NelStorage': '次',
@@ -256,27 +256,27 @@
           'ArcStorage': '次',
         },
         Tips: {
-          'NelStorage': '近线存储存储空间',
-          'SiaStorage': '低频存储存储空间',
-          'ArcStorage': '归档存储存储空间',
-          'StdStorage': '标准存储存储空间',
-          '2xxResponse': '2xx状态码',
-          '3xxResponse': '3xx状态码',
-          '4xxResponse': '4xx状态码',
-          '5xxResponse': '5xx状态码',
+          'NelStorage': '近線存儲存儲空間',
+          'SiaStorage': '低頻存儲存儲空間',
+          'ArcStorage': '歸檔存儲存儲空間',
+          'StdStorage': '標準存儲存儲空間',
+          '2xxResponse': '2xx狀態碼',
+          '3xxResponse': '3xx狀態碼',
+          '4xxResponse': '4xx狀態碼',
+          '5xxResponse': '5xx狀態碼',
           'CdnOriginTraffic': 'CDN回源流量',
-          'IaReadRequests': '低频存储读请求',
-          'IaRetrieval': '低频数据取回',
-          'IaWriteRequests': '低频存储写请求',
-          'InboundTraffic': '上传流量',
-          'InternalTraffic': '内网流量',
-          'InternetTraffic': '外网流量',
-          'NlReadRequests': '近线存储读请求',
-          'NlRetrieval': '近线数据取回',
-          'NlWriteRequests': '近线存储写请求',
-          'StdReadRequests': '标准存储读请求',
-          'StdRetrieval': '标准数据读取',
-          'StdWriteRequests': '标准存储写请求',
+          'IaReadRequests': '低頻存儲讀請求',
+          'IaRetrieval': '低頻數據取回',
+          'IaWriteRequests': '低頻存儲寫請求',
+          'InboundTraffic': '上傳流量',
+          'InternalTraffic': '內網流量',
+          'InternetTraffic': '外網流量',
+          'NlReadRequests': '近線存儲讀請求',
+          'NlRetrieval': '近線數據取回',
+          'NlWriteRequests': '近線存儲寫請求',
+          'StdReadRequests': '標準存儲讀請求',
+          'StdRetrieval': '標準數據讀取',
+          'StdWriteRequests': '標準存儲寫請求',
         },
 
       }
