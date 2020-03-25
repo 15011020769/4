@@ -675,7 +675,7 @@ export default {
     },
     handleSelectionChange(val) {
 
-      // 将以前已选择的过滤掉，只保留用户手动勾选的
+      // 将以前已选择的过滤掉，右边表格只保留用户手动勾选的
       let selectedItems = [];
       if (this.selectedList.length !== 0) {
         if (this.productValue === "cvm_device") {

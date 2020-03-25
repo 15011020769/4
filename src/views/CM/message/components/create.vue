@@ -4,22 +4,22 @@
     <div class="create-main">
       <div class="box">
         <p class="rowCont">
-          <span>策略名称</span>
+          <span>策略名稱</span>
           <el-input
             style="width:330px;margin:0"
             v-model="formInline.strategy_name"
-            placeholder="请输入策略名称，20字以内"
+            placeholder="請輸入策略名稱，20字以內"
             @blur="reg"
           ></el-input>
         </p>
-        <div class="rowGaojing">
-          <span style>告警接收组</span>
+        <!-- <div class="rowGaojing">
+          <span style>告警接收組</span>
           <p class="tip">
-            您可到访问
-            <a>管理控制台</a>修改用户和用户组信息
+             您可到
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用戶和用戶組信息
             <br />
           </p>
-        </div>
+        </div> -->
         <Cam v-on:camClick="camFun"></Cam>
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
@@ -52,19 +52,19 @@ export default {
       formInline: {
         strategy_name: "", //策略名称
         textarea: "", //备注
-        strategy: "云服务器-基础监控",
+        strategy: "雲伺服器-基礎監控",
         strategy_kind: [
           {
             value: 0,
-            name: "云服务器-基础监控"
+            name: "雲伺服器-基礎監控"
           }
         ], //策略类型
         alarm: "", //策略类型
-        projectName: "默认项目",
+        projectName: "默認項目",
         project: [
           {
             value: 0,
-            name: "默认项目"
+            name: "默認項目"
           }
         ]
       }
@@ -79,14 +79,14 @@ export default {
       //策略名
       if (this.formInline.strategy_name == "") {
         this.$message({
-          message: "策略名不能为空",
+          message: "策略名不能為空",
           type: "error",
           showClose: true,
           duration: 0
         });
       } else if (this.formInline.strategy_name.length >= 20) {
         this.$message({
-          message: "策略名最多不能超过20位",
+          message: "策略名最多不能超過20位",
           type: "error",
           showClose: true,
           duration: 0

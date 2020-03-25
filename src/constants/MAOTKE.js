@@ -25,6 +25,12 @@ export const BLOCK_NODE = 'ccs/ModifyClusterNodeSchedulable'
 //操作系统
 export const CLUSTER_OS = 'ccs/DescribeClusterImage'
 
+//自定义镜像
+export const PRIVATE_IMAGE = 'cvm2/DescribeImages'
+
+//共有镜像
+export const PUBLIC_IMAGE = 'tke2/DescribeImages'
+
 //修改操作系统
 export const UPDATE_OS = 'tke2/ModifyClusterImage'
 

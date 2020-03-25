@@ -49,6 +49,10 @@
         const period = this.period;
         const chartView = this.$refs.chart;
         const myChart = this.$echarts.init(chartView);
+        let _this = this;
+        myChart.on('click', function(params) {
+          _this.$emit("changeDataIndex", params.seriesIndex, params.dataIndex);
+        });
         myChart.setOption({
           tooltip: {
             enterable: true,
@@ -87,7 +91,6 @@
 
               return [x, y];
             },
-
             axisPointer: {
               type: "line",
               lineStyle: {
@@ -117,12 +120,11 @@
               }
             }
           },
-          legend: {
-            // data: this.title,
-            y: "bottom"
-          },
+          // legend: {
+          //   y: "bottom"
+          // },
           grid: {
-            x: 45,
+            x: 60,
             y: 45,
             x2: 5,
             y2: 20,

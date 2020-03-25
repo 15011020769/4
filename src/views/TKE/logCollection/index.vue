@@ -19,7 +19,7 @@
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
            <el-tooltip :disabled='value!=""' class="item" effect="dark" content="请先创建一个集群" placement="top-start">
-             <button class="data-card-hd" :style="{cursor:(value!=''?'pointer':'no-drop')}" v-if="!xjF"   @click="value!=''?newCread:''">新建</button>
+             <button class="data-card-hd" :style="{cursor:(value!=''?'pointer':'no-drop')}" v-if="!xjF"   @click="value!=''?newCread():''">新建</button>
            </el-tooltip>
           <button class="data-card-hd" v-if="xjF" @click="dialogVisible = true">新建</button>
         </div>

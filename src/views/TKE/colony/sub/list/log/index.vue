@@ -227,15 +227,15 @@ export default {
         this.timeId = setInterval(() => {
           if (this.option3.length == 0) {
             this.nameSpaceList2();
-          } else if (this.option4.length>0) {
+          } else if (this.option4.length > 0) {
             this.getPodData();
-          }else if(this.option5.length>0){
-           this.getLog();
+          } else if (this.option5.length > 0) {
+            this.getLog();
           }
-        }, 20000);
+        }, 5000);
       } else {
-        clearInterval(this.timeId);
-        this.nameSpaceList2();
+        window.clearInterval(this.timeId);
+        // this.nameSpaceList2();
       }
     },
     //返回上一层
@@ -309,7 +309,7 @@ export default {
               });
             });
             // this.getWorkload();
-             this.getPodData();
+            this.getPodData();
           } else {
             this.option3 = []; //工作负载实例
             this.option4 = [];
@@ -319,6 +319,7 @@ export default {
             this.value5 = "Container" + this.$t("TKE.event.lbwk");
             this.htmls = "";
             this.autoRefresh = false;
+            this.refresh();
           }
         } else {
           let ErrTips = {};
@@ -384,6 +385,7 @@ export default {
             });
             this.value5 = this.option5[0].value;
             this.autoRefresh = true;
+            this.refresh();
             this.getLog();
           } else {
             this.option5 = [];
@@ -457,6 +459,7 @@ export default {
             this.option5 = [];
             this.htmls = "";
             this.autoRefresh = false;
+            this.refresh();
             this.listNumFlag = true;
             return;
           } else {
@@ -529,7 +532,7 @@ export default {
     }
   },
   destroyed() {
-    clearInterval(this.timeId);
+    window.clearInterval(this.timeId);
   }
 };
 </script>

@@ -64,7 +64,8 @@
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
             </div>  -->
             <EcharS class="line" :time="time" :series="item.DataPoints" :period="period"
-              v-if="item.DataPoints.length !== 0" />
+              v-if="item.DataPoints.length !== 0"
+              @changeDataIndex="changeDataIndex" />
             <div class="empty" v-else>
               暫無數據
             </div>
@@ -78,31 +79,29 @@
             <p>
               <span>
                 <a @click="exportExcel(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
-                <el-popover
-                  placement="left-start"
-                  width="200"
-                  trigger="hover">
+                <el-popover placement="left-start" width="200" trigger="hover">
                   <p>{{ $t("CVM.Dashboard.elPop1") }}</p>
                   <p>{{ $t("CVM.Dashboard.elPop2") }}</p>
                   <i class="el-icon-info" slot="reference" style="color:#888"></i>
                 </el-popover>
               </span>
-              <a v-show="!item.openChartFlag" @click="openChart(index)" style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
+              <a v-show="!item.openChartFlag" @click="openChart(index)"
+                style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
               <a v-show="item.openChartFlag" @click="retractChart(index)" style="margin-left:30px;">收起</a>
             </p>
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
               <el-table-column prop="" label="ID" width="">
-                <template scope="scope">
+                <template slot-scope="scope">
                   <a style="color: #006eff" @click="goMonitorDetail(scope.row)">{{
                     scope.row[item.InstanceName]
                   }}</a>
                 </template>
               </el-table-column>
               <el-table-column prop="" :label="CMname[item.MetricName[0]]" width="">
-                <template scope="scope">
-                  <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[0] : ''}}</span>
+                <template slot-scope="scope">
+                  <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[item.dataIndex] : ''}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="Namespace" v-if="false"></el-table-column>
@@ -175,16 +174,16 @@
             name: "近15天",
             Time: "Nearly_15_days",
             TimeGranularity: [{
-              value: "3600",
-              label: "1小時"
+              value: "86400",
+              label: "1天"
             }]
           },
           {
             name: "近30天",
             Time: "Nearly_30_days",
             TimeGranularity: [{
-              value: "3600",
-              label: "1小時"
+              value: "86400",
+              label: "1天"
             }]
           }
         ],
@@ -555,6 +554,7 @@
               const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
               ViewList.forEach((ele, index) => {
                 ele.openChartFlag = false; // 列表展开收起的标志
+                ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 let newInstances = [];
                 ele.Instances.forEach(el => {
                   // newInstances.push(JSON.parse(el));
@@ -616,6 +616,7 @@
                 }
               });
               this.ViewList = ViewList;
+              console.log(this.ViewList, 'this.ViewList');
               this.getAllMonitorData(); // 获取echarts数据
             } else {
               let ErrTips = {
@@ -704,10 +705,20 @@
               res.Response.DataPoints.forEach((ele, i) => {
                 DataPoints.push({
                   type: "line",
-                  data: ele.Points.map(item => {
+                  data: ele.Points.map((item,i) => {
+                    if (i==0) {
+                      item = 1;
+                    } else if (i == 1) {
+                      item = 2;
+                    } else if (i == 2) {
+                      item = 3;
+                    } else if (i == 3) {
+                      item = 4;
+                    }
                     // 存在坐标为null的情况，应该是接口问题
                     return item === null ? 0 : item
                   }),
+                  name: ele.Dimensions[InstanceName], // Id名对应的Id
                   itemStyle: {
                     normal: {
                       color: color[i] ? color[i] : color[i % 10],
@@ -776,6 +787,11 @@
         }
         return wbout;
       },
+      // 改变监控图标实时展示的列表值
+      changeDataIndex(seriesIndex, dataIndex) {
+        this.ViewList[seriesIndex].dataIndex = dataIndex;
+        console.log(this.ViewList[seriesIndex], seriesIndex, dataIndex)
+      }
 
       // //取消
       // cancel() {
@@ -860,10 +876,12 @@
     >div.chartList {
       width: 32%;
       margin-bottom: 10px;
+
       .chartItem {
         padding: 20px;
         background: #ffffff;
         border: 1px solid #e2e1e1;
+
         p {
           display: flex;
           justify-content: space-between;

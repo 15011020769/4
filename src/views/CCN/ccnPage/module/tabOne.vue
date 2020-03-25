@@ -66,7 +66,7 @@
               <td>
                 <el-select v-model="form.instanceType" :placeholder="$t('CCN.tabs.tab1new2')" @change="_instance()">
                   <el-option :label="$t('CCN.total.vpc1')" value="VPC"></el-option>
-                  <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option>
+                  <!-- <el-option :label="$t('CCN.total.vpc2')" value="DIRECTCONNECT"></el-option> -->
                 </el-select>
               </td>
               <td>

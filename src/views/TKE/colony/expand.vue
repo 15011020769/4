@@ -268,14 +268,14 @@
           <el-form-item :label="$t('TKE.colony.gg')" class="norms">
             <p>{{nodeForm.instanceType}} ({{nodeForm.modelType.Cpu}}核{{nodeForm.modelType.Memory}}GB)</p>
           </el-form-item>
-          <el-form-item :label="$t('TKE.colony.xtp')">
+          <el-form-item :label="$t('TKE.colony.xtp')" style="margin-bottom:20px">
             <div class="tke-second-radio-btn tke-third-radio-btn">
               <el-radio-group v-model="nodeForm.systemDiskType" @change="changeSyetemType">
                 <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                 <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
               </el-radio-group>
               <div class="block">
-                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input @change="changeSyetem"></el-slider>
+                <el-slider :min="50" :max="500" :step="10" :show-tooltip="true" v-model="nodeForm.systemSize" show-input @change="changeSyetem" :marks="mark"></el-slider>
               </div>
             </div>
           </el-form-item>
@@ -289,14 +289,14 @@
             <div v-if="nodeForm.dataDiskShow" style="margin: 0 120px;background-color: #f2f2f2;" class="tke-second-radio-btn tke-third-radio-btn">
               <div>
                 <div v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i" style="display: flex;"><!--v-for="(item, i) in nodeForm.buyDataDiskArr" :key="i"-->
-                  <div style="flex: 1;">
+                  <div style="flex: 1;" >
                     <el-form-item :label="$t('TKE.colony.sjplx')" class="norms" style="padding-left: 10px;" >
                       <el-radio-group v-model="item.dataDiskType" @change="changeDataDiskType">
                         <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
                       <div class="block" style="height: auto;">
-                        <el-slider :min="10" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                        <el-slider :min="100" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
                          show-input show-input-controls show-stops @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
@@ -304,7 +304,8 @@
                       <el-checkbox v-model="item.fomatAndMount" @change="isFomatMount">
                         {{$t('TKE.colony.gshbgz')}}          
                       </el-checkbox>
-                      <div v-if="item.fomatAndMount" style="display: flex;">
+                      <div v-if="item.fomatAndMount" style="display: flex;width:440px">
+                        <!-- <div style="width:600px"> -->
                         <el-select v-model="item.fileSystem" :placeholder="$t('TKE.overview.qxz')" style="padding-right: 10px;">
                           <el-option
                             v-for="item in nodeForm.latticeSetOpt"
@@ -314,8 +315,14 @@
                           >
                           </el-option>
                         </el-select>
-                        <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
-                      </div>
+                        <!-- <div class='box-form'> -->
+                        
+                        <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')" @blur="getInput()" :class='[item.rule? "box-form" : ""]' ></el-input>
+                        <el-tooltip class="item" effect="light" content="挂载路径不可重复" placement="top">
+                          <i class="el-icon-info" v-if="item.rule"></i>
+                        </el-tooltip>
+                        </div>
+                      <!-- </div> -->
                     </el-form-item>
                   </div>
                   <span>
@@ -671,6 +678,12 @@ export default {
         10: '10',
         16000: '16000',
       },
+      mark: {
+        50: '50G',
+        100: '100G',
+        250: '250G',
+        500: '500G'
+      },//slider滑块
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
       clusterInfo: {},//集群基本信息
@@ -1280,7 +1293,31 @@ export default {
 
     },
 
+    getInput(){
+      let arr=[]
+      for( let i = 0 ; i <this.nodeForm.buyDataDiskArr.length; i++){
+           let test = this.nodeForm.buyDataDiskArr[i].filePath
+            for(let j = 0 ; j <this.nodeForm.buyDataDiskArr.length; j++){
+                if(i!=j){
+                  if(this.nodeForm.buyDataDiskArr[j].filePath === test){
+                     arr.push(j)
+                  }
+                }
+            }
+        }
+        Array.from(new Set(arr))
+        for(let key in this.nodeForm.buyDataDiskArr){
+          this.nodeForm.buyDataDiskArr[key]['rule'] = false
+          for(let keys in arr){
+            if(key == arr[keys]){
+                this.nodeForm.buyDataDiskArr[key]['rule'] = true
+            } 
+          }
+        }
+        console.log(this.nodeForm.buyDataDiskArr)
+    },
     isFomatMount() {
+      this.getInput()
       if(this.nodeForm.fomatAndMount) {
         this.nodeForm.isShowFomatMount = true;
       } else {
@@ -1290,13 +1327,14 @@ export default {
 
     // 购买数据盘 添加数据盘
     AddDataDisk(index) {
-      this.nodeForm.buyDataDiskArr.push({
-        dataDiskType: "CLOUD_PREMIUM",
-        dataSize: 10,
-        fomatAndMount: false,
-        fileSystem: "ext4",
-        filePath: "/var/lib/docker"
-      });
+        this.nodeForm.buyDataDiskArr.push({
+          dataDiskType: "CLOUD_PREMIUM",
+          dataSize: 100,
+          fomatAndMount: false,
+          fileSystem: "ext4",
+          filePath: "/var/lib/docker",
+          rule:false
+        });
       this.costPrice();
     },
 
@@ -1429,6 +1467,7 @@ export default {
         this.AddDataDisk();
       } else {
         this.nodeForm.dataDiskShow = false;
+        this.nodeForm.buyDataDiskArr=[]
       }
     },
     // 购买时长
@@ -1438,6 +1477,7 @@ export default {
     // 删除
     deleteDataDisk(index) {
       this.nodeForm.buyDataDiskArr.splice(index, 1);
+      this.getInput()
       this.costPrice();
     },
     //删除安全组
@@ -2261,6 +2301,7 @@ export default {
     }
   }
   .norms {
+    // margin-top:20px;
     border-bottom: 1px solid rgb(221, 221, 221);
     margin-bottom: 20px;
     ::v-deep .el-form-item__content {
@@ -2536,7 +2577,13 @@ export default {
     }
   }
 }
-
+.box-form{
+  ::v-deep.el-input__inner {
+        // border: 0 none;
+        border: 1px solid red;
+        border-radius: 0px;
+    }
+}
 .hide {
   display: none;
   &.active {

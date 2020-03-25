@@ -94,7 +94,12 @@
           </el-form-item>
 
           <el-form-item :label="$t('TKE.colony.sshmy')" v-show="asg.pwdRadio === 'pwd1'">
-            <el-select v-model="asg.sshSecret" filterable :placeholder="$t('TKE.overview.qxz')" class="w200">
+            <el-select
+              v-model="asg.sshSecret"
+              filterable
+              :placeholder="$t('TKE.overview.qxz')"
+              class="w200"
+            >
               <el-option
                 v-for="item in secretList"
                 :key="item.KeyId"
@@ -106,18 +111,27 @@
 
           <el-form-item :label="$t('TKE.overview.yhm')" v-show="asg.pwdRadio === 'pwd3'">
             <div class="tke-form-item_text">
-              <span v-if="caozuo==='centos'">ubuntu</span>
-              <span v-if="caozuo==='ubuntu'">root</span>
+              {{caozuo}}
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" type="password" v-model="asg.password" :placeholder="$t('TKE.myMirror.qsrmm')"></el-input>
+            <el-input
+              class="w200"
+              type="password"
+              v-model="asg.password"
+              :placeholder="$t('TKE.myMirror.qsrmm')"
+            ></el-input>
             <p
               class="pass"
             >linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] , [0-9]和[()`~!@#$%^&*-+=|{}[]:;',.?/]的特殊符號</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.qrmm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" type="password" v-model="asg.passwordAgin" :placeholder="$t('TKE.subList.qqrmm')"></el-input>
+            <el-input
+              class="w200"
+              type="password"
+              v-model="asg.passwordAgin"
+              :placeholder="$t('TKE.subList.qqrmm')"
+            ></el-input>
           </el-form-item>
 
           <el-form-item :label="$t('TKE.colony.rqml')">
@@ -150,7 +164,12 @@
               @click.prevent="deleteAll()"
             ></i>
             <el-form-item v-for="(domain,w) in domains" :key="domain.key">
-              <el-select v-model="values" :placeholder="$t('TKE.overview.qxz')" class="w200" @change="a1(w)">
+              <el-select
+                v-model="values"
+                :placeholder="$t('TKE.overview.qxz')"
+                class="w200"
+                @change="a1(w)"
+              >
                 <el-option
                   v-for="item in securityGroups"
                   :key="item.SecurityGroupId"
@@ -173,7 +192,7 @@
               <!-- <a
                 href="https://cloud.tencent.com/product/cwp?_ga=1.173966502.440655928.1500464439"
                 target="_blank"
-              >详细介绍</a> -->
+              >详细介绍</a>-->
             </el-form-item>
           </el-form-item>
 
@@ -186,7 +205,7 @@
                 <!-- <a
                   href="https://cloud.tencent.com/product/cm"
                   target="_blank"
-                >详细介绍</a> -->
+                >详细介绍</a>-->
               </p>
             </el-form-item>
           </el-form-item>
@@ -206,7 +225,11 @@
           </el-form-item>-->
           <p>
             <i :class="[isActive?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
-            <el-button type="text" style="font-size:12px;" @click="isActive=!isActive">{{$t('TKE.colony.gjszhi')}}</el-button>
+            <el-button
+              type="text"
+              style="font-size:12px;"
+              @click="isActive=!isActive"
+            >{{$t('TKE.colony.gjszhi')}}</el-button>
           </p>
           <el-form-item :label="$t('TKE.colony.zdysj')" v-show="isActive">
             <el-input
@@ -226,7 +249,7 @@
                 <!-- <a
                   href="https://cloud.tencent.com/document/product/457/18824"
                   target="_blank"
-                >取消封锁命令</a> -->
+                >取消封锁命令</a>-->
               </p>
             </el-form-item>
           </el-form-item>
@@ -244,7 +267,12 @@
           size="mini"
         >
           <el-form-item :label="$t('TKE.subList.zcwl')">
-            <el-select v-model="asg.groupVps" disabled :placeholder="$t('TKE.overview.qxz')" @change="changeVpcs()">
+            <el-select
+              v-model="asg.groupVps"
+              disabled
+              :placeholder="$t('TKE.overview.qxz')"
+              @change="changeVpcs()"
+            >
               <el-option
                 v-for="item in describeVpcs"
                 :key="item.VpcId"
@@ -277,9 +305,19 @@
 
           <el-form-item :label="$t('TKE.subList.jdslfw')">
             <div class="form-input">
-              <el-input v-model="asg.minSize" size="mini" class="w150" :placeholder="$t('TKE.subList.zxjd')"></el-input>
+              <el-input
+                v-model="asg.minSize"
+                size="mini"
+                class="w150"
+                :placeholder="$t('TKE.subList.zxjd')"
+              ></el-input>
               <span>~</span>
-              <el-input v-model="asg.maxSize" size="mini" class="w150" :placeholder="$t('TKE.subList.zdjd')"></el-input>
+              <el-input
+                v-model="asg.maxSize"
+                size="mini"
+                class="w150"
+                :placeholder="$t('TKE.subList.zdjd')"
+              ></el-input>
             </div>
             <p>{{$t('TKE.subList.sdjdfw')}}</p>
             <p>
@@ -287,13 +325,17 @@
               <!-- <a
                 href="https://cloud.tencent.com/document/product/457/32190#.E9.80.9A.E8.BF.87.E5.BC.B9.E6.80.A7.E4.BC.B8.E7.BC.A9.E8.87.AA.E5.8A.A8.E6.B7.BB.E5.8A.A0.2F.E7.A7.BB.E9.99.A4.E8.8A.82.E7.82.B9"
                 target="_blank"
-              >集群自动扩缩容说明</a> -->
+              >集群自动扩缩容说明</a>-->
             </p>
           </el-form-item>
 
           <p>
             <i :class="[isActiveMode?'el-icon-caret-bottom':'el-icon-caret-right']"></i>
-            <el-button type="text" style="font-size:12px;" @click="isActiveMode=!isActiveMode">{{$t('TKE.colony.gjszhi')}}</el-button>
+            <el-button
+              type="text"
+              style="font-size:12px;"
+              @click="isActiveMode=!isActiveMode"
+            >{{$t('TKE.colony.gjszhi')}}</el-button>
           </p>
           <el-form-item :label="$t('TKE.subList.cscl')" v-show="isActiveMode">
             <el-radio-group v-model="asg.restart" size="small" @change="setRadio($event)">
@@ -301,9 +343,7 @@
               <el-radio-button label="INCREMENTAL_INTERVALS">{{$t('TKE.subList.jjdzcs')}}</el-radio-button>
             </el-radio-group>
             <p v-show="asg.restart==='IMMEDIATE_RETRY'">{{$t('TKE.subList.ljcs')}}</p>
-            <p
-              v-show="asg.restart==='INCREMENTAL_INTERVALS'"
-            >{{$t('TKE.subList.jgdzcs')}}</p>
+            <p v-show="asg.restart==='INCREMENTAL_INTERVALS'">{{$t('TKE.subList.jgdzcs')}}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.subList.ksrms')" v-show="isActiveMode">
             <el-radio-group v-model="asg.shrinkage" size="small">
@@ -389,7 +429,8 @@
                 </el-table-column>
                 <el-table-column :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange">NT$ {{ scope.row.Price.UnitPrice }}</span>元/{{$t('TKE.colony.xs')}}起
+                    <span class="text-orange">NT$ {{ scope.row.Price.UnitPrice }}</span>
+                    元/{{$t('TKE.colony.xs')}}起
                   </template>
                 </el-table-column>
               </el-table>
@@ -447,7 +488,10 @@
               </el-select>
               <el-input-number v-model="x.dataDiskNum" :min="10" :max="16000" :step="10"></el-input-number>
               <span>GB</span>
-              <el-checkbox v-model="x.formatMount" class="format-and-mount">{{$t('TKE.colony.gshbgz')}}</el-checkbox>
+              <el-checkbox
+                v-model="x.formatMount"
+                class="format-and-mount"
+              >{{$t('TKE.colony.gshbgz')}}</el-checkbox>
             </div>
             <p>{{$t('TKE.colony.fw')}}：10~16000，{{$t('TKE.colony.bc')}}：10</p>
             <p style="margin-top:16px;" v-if="x.formatMount">{{$t('TKE.colony.gshsz')}}</p>
@@ -536,7 +580,8 @@ export default {
   data() {
     return {
       clusterId: "", //集群id
-      caozuo:'centos',//操作系统
+      ClusterOs: "",
+      caozuo: "", //操作系统
       flag1: true,
       flag2: false,
       checked: false,
@@ -818,6 +863,13 @@ export default {
     this.getSecretList();
     this.getDescribeVpcs();
     this.clusterId = this.$route.query.clusterId;
+    this.ClusterOs = sessionStorage.getItem("ClusterOs");
+    if (this.ClusterOs.substring(0,6)=='centos') {
+      this.caozuo = "root";
+    } else if (this.ClusterOs.substring(0,6)=='ubuntu') {
+      this.caozuo = "ubuntu";
+    }
+    console.log(this.ClusterOs);
   },
   methods: {
     changeValue(val) {
@@ -949,8 +1001,8 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            "FailedOperation": "操作失敗",
-            "InternalError": "内部錯誤",
+            FailedOperation: "操作失敗",
+            InternalError: "内部錯誤",
             "InternalError.AccountUserNotAuthenticated	": "帳戶未通過認證",
             "InternalError.AsCommon": "配額不足,請釋放部分資源後再創建",
             "InternalError.CvmCommon": "cvm創建節點報錯。",
@@ -1082,6 +1134,8 @@ export default {
       param["Filters.0.Name"] = "instance-charge-type";
       param["Filters.0.Values.0"] = "POSTPAID_BY_HOUR";
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
+        console.log(res);
+
         if (res.Response.Error === undefined) {
           var dataList = res.Response.InstanceTypeQuotaSet;
           this.modeData = res.Response.InstanceTypeQuotaSet[0];
@@ -1216,6 +1270,7 @@ export default {
       params["Filters.0.Name"] = "project-id";
       params["Filters.0.Values.0"] = 0;
       await this.axios.post(TKE_MISG, params).then(res => {
+        console.log(res);
         if (res.Response.Error === undefined) {
           this.securityGroups = res.Response.SecurityGroupSet;
           this.asg.security =
@@ -1242,6 +1297,7 @@ export default {
         Limit: 100
       };
       await this.axios.post(TKE_SSH, params).then(res => {
+        console.log(res);
         if (res.Response.Error === undefined) {
           this.secretList = res.Response.KeyPairSet;
           this.loadShow = false;
@@ -1278,6 +1334,8 @@ export default {
         Limit: 100
       };
       await this.axios.post(TKE_VPC_METWORK, params).then(async res => {
+        console.log(res);
+
         if (res.Response.Error === undefined) {
           this.describeVpcs = res.Response.VpcSet;
           this.asg.groupVps = res.Response.VpcSet[0].VpcId;
@@ -1332,7 +1390,9 @@ export default {
         "Filters.0.Values.0": this.asg.groupVps
       };
       await this.axios.post(TKE_WORKER_METWORK, param).then(res => {
-        debugger;
+        console.log(res);
+
+        // debugger;
         if (res.Response.Error === undefined) {
           this.subNetList = res.Response.SubnetSet;
           this.loadShow = false;

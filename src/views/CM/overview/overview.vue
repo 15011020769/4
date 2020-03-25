@@ -687,7 +687,7 @@ export default {
                   LastOccurTime: item.LastOccurTime,
                   Content: item.EventCName,
                   Dimensions: item.Dimensions,
-                  Status: item.Status,
+                  Status: item.Status === "abnormal",
                   Type: "event",
                   GroupName: item.GroupName,
                   ProductCName: item.ProductCName

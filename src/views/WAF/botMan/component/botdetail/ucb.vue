@@ -160,9 +160,9 @@ export default {
     botFeatureFilter(text) {
       if (text.length > 5) {
         text = text.slice(0, 5)
-        return text.join('') + '...'
+        return text.join('、') + '...'
       }
-      return text.join('')
+      return text.join('、')
     }
   },
   methods: {

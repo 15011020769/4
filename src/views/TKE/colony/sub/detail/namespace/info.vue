@@ -5,16 +5,16 @@
       <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
         <el-form-item :label="$t('TKE.overview.mc')">
-          <div class="tke-form-item_text">{{detail.metadata.name}}</div>
+          <div class="tke-form-item_text">{{detail.metadata&&detail.metadata.name}}</div>
         </el-form-item>
         <el-form-item :label="$t('TKE.overview.zt')">
           <div class="tke-form-item_text"><span class="text-green">{{detail.status && detail.status.phase}}</span></div>
         </el-form-item>
         <el-form-item label="描述">
-          <div class="tke-form-item_text">{{detail.metadata.annotations?detail.metadata.annotations.description:'-'}}</div>
+          <div class="tke-form-item_text">{{detail.metadata&&detail.metadata.annotations?detail.metadata.annotations.description:'-'}}</div>
         </el-form-item>
         <el-form-item :label="$t('TKE.overview.cjsj')">
-          <div class="tke-form-item_text">{{changeTime(detail.metadata.creationTimestamp)}}</div>
+          <div class="tke-form-item_text">{{detail.metadata&&changeTime(detail.metadata.creationTimestamp)}}</div>
         </el-form-item>
         <!-- <el-form-item :label="$t('TKE.subList.jxckmy')">
           <div style="overflow: visible; max-width: 550px;">
@@ -114,6 +114,7 @@ export default {
           this.loadShow = false;
           let response = JSON.parse(res.Response.ResponseBody);
           this.detail = response;
+          console.log(this.detail,'this.detail')
         } else {
           this.loadShow = false;
           let ErrTips = {

@@ -482,7 +482,7 @@ import {
   TKE_ADD_COMPLETE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
-import { Base64 } from 'js-base64';
+import { Base64 } from "js-base64";
 export default {
   name: "clusterAddExist",
   data() {
@@ -926,7 +926,6 @@ export default {
         if (this.loginType == 3) {
           param["LoginSettings.Password"] = this.passwordVal;
         }
-
         // 安全加固
         param["EnhancedService.SecurityService.Enabled"] = this.safetyCheck;
 
