@@ -1,6 +1,6 @@
 <template>
   <div class="create-wrap">
-    <Header title="编辑消息策略" backShow="true"></Header>
+    <Header title="編輯消息策略" backShow="true"></Header>
     <div class="create-main">
       <div class="box">
         <p>
@@ -8,21 +8,21 @@
           <span style="margin-left:45px">{{dataObj.PolicyID}}</span>
         </p>
         <p class="rowCont">
-          <span>策略名称</span>
+          <span>策略名稱</span>
           <el-input
             style="width:330px;margin:0"
             v-model="formInline.strategy_name"
-            placeholder="请输入策略名称，20字以内"
+            placeholder="請輸入策略名稱，20字以內"
           ></el-input>
         </p>
-        <div class="rowGaojing">
-          <span style>告警接收组</span>
+        <!-- <div class="rowGaojing">
+          <span style>告警接收組</span>
           <p class="tip">
-            您可到访问
-            <a>管理控制台</a>修改用户和用户组信息
+            您可到
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用戶和用戶組信息
             <br />
           </p>
-        </div>
+        </div> -->
         <Cam v-on:camClick="camFun"></Cam>
         <div class="foot">
           <el-button type="primary" size="small" @click="save">完成</el-button>
@@ -80,6 +80,9 @@ export default {
     this.formInline.strategy_name = this.dataObj.PolicyName;
   },
   methods: {
+    Console(){
+      //訪問管理控制台
+    },
     // 获取cam组件的值
     camFun(data) {
       this.cam = data;
@@ -89,7 +92,7 @@ export default {
     save() {
       if (this.cam.selectUserGroup.length == 0) {
         this.$message({
-          message: "请选择告警接收组",
+          message: "請選擇告警接收組",
           type: "error",
           showClose: true,
           duration: 0

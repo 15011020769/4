@@ -744,11 +744,12 @@ export default {
     // 查看详情跳转
     goColonySub(row) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
+      sessionStorage.setItem('ClusterOs', row.ClusterOs);
       this.$router.push({
         name: "colonyResourceDeployment",
         query: {
           clusterId: row.ClusterId,
-          ProjectId: row.ProjectId
+          ProjectId: row.ProjectId,
         }
       });
     },
