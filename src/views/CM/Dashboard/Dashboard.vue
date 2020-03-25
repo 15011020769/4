@@ -64,7 +64,7 @@
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
             </div>  -->
             <EcharS class="line" :time="time" :series="item.DataPoints" :period="period"
-              v-if="item.DataPoints.length !== 0"
+              v-if="item.DataPoints.length !== 0" :echartsIndex="item.echartsIndex"
               @changeDataIndex="changeDataIndex" />
             <div class="empty" v-else>
               暫無數據
@@ -92,6 +92,11 @@
           </div>
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
+              <el-table-column prop="" label="" width="">
+                <template slot-scope="scope">
+                  <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.bgColor'></div>
+                </template>
+              </el-table-column>
               <el-table-column prop="" label="ID" width="">
                 <template slot-scope="scope">
                   <a style="color: #006eff" @click="goMonitorDetail(scope.row)">{{
@@ -236,7 +241,9 @@
         ],
         mainLoading: false,
         chartsLoading: false,
-        CMname: CMname
+        CMname: CMname,
+        colorArr: ["#2072d9", "#fff2cc", "#ffd966", "#f1c232", "#9fc5e8", "#3d85c6",
+          "#00ff00", "#008bff", "#980000", "#1c4587"]
       };
     },
     components: {
@@ -555,11 +562,13 @@
               ViewList.forEach((ele, index) => {
                 ele.openChartFlag = false; // 列表展开收起的标志
                 ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
+                ele.echartsIndex = index; // echarts图在Viewlist中的索引
                 let newInstances = [];
-                ele.Instances.forEach(el => {
+                ele.Instances.forEach((el,i) => {
                   // newInstances.push(JSON.parse(el));
                   let newEl = JSON.parse(el);
                   newEl.Namespace = ele.Namespace;
+                  newEl.bgColor = this.colorArr[i] ? this.colorArr[i] : '#fff';
                   // 加一个id
                   if (ele.Namespace == 'qce/cvm') {
                     newEl.Id = newEl.unInstanceId; // 与Namespace相对应
@@ -680,9 +689,7 @@
           StartTime: StartTime,
           EndTime: EndTime,
         };
-        let color = ["#2072d9", "#fff2cc", "#ffd966", "#f1c232", "#9fc5e8", "#3d85c6",
-          "#00ff00", "#008bff", "#980000", "#1c4587"
-        ];
+        let color = this.colorArr;
         if (Instances.length != 0) {
           Instances.forEach((ele, i) => {
             params["Dimensions." + i + '.' + InstanceName] = ele[InstanceName];
@@ -779,9 +786,9 @@
         return wbout;
       },
       // 改变监控图标实时展示的列表值
-      changeDataIndex(seriesIndex, dataIndex) {
-        this.ViewList[seriesIndex].dataIndex = dataIndex;
-        console.log(this.ViewList[seriesIndex], seriesIndex, dataIndex)
+      changeDataIndex(echartsIndex, dataIndex) {
+        // console.log(this.ViewList, echartsIndex, dataIndex);
+        this.ViewList[echartsIndex]['dataIndex'] = dataIndex;
       }
 
       // //取消

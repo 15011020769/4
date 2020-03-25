@@ -3,7 +3,7 @@
     <el-dialog :title="$t('CVM.Dashboard.cjjkmb')" :visible.sync="show" @close="close" width="30%">
       <el-form :model="form" label-position="left" :rules="rules" ref="addPanelForm">
         <el-form-item :label="$t('CVM.Dashboard.mcheng')" label-width="80px" prop="name">
-          <el-input v-model="form.name" autocomplete="off" style="width: 50%"></el-input>
+          <el-input v-model="form.name" autocomplete="off" style="width: 50%" maxlength="64"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
