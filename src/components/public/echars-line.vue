@@ -14,7 +14,8 @@
       opData: Array,
       scale: Number,
       xdata: Boolean,
-      period: String
+      period: String,
+      Company: String
     },
     mounted() {
       this.init();
@@ -33,6 +34,7 @@
     },
     methods: {
       init() {
+        var Company = this.Company
         const TimeGranularity = {
           '5': '5秒',
           '10': '10秒',
@@ -45,6 +47,7 @@
         const chartView = this.$refs.chart;
         const myChart = this.$echarts.init(chartView);
         myChart.setOption({
+
           tooltip: {
             enterable: true,
             trigger: "axis",
@@ -92,12 +95,13 @@
                 backgroundColor: "#6a7985"
               }
             },
+
             formatter(params) {
               if (params[0].data === null) {
                 params[0].data = ''
               }
               let relVal = `${params[0].name}<br/>
-           ${params[0].data}<br />`;
+           ${params[0].data}${Company}<br />`;
               relVal += `粒度：${TimeGranularity[period]}</br>`;
               return relVal;
             }
