@@ -64,7 +64,7 @@
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
             </div>  -->
             <EcharS class="line" :time="time" :series="item.DataPoints" :period="period"
-              :echartsIndex="item.echartsIndex" v-if="item.DataPoints.length !== 0"
+              v-if="item.DataPoints.length !== 0"
               @changeDataIndex="changeDataIndex" />
             <div class="empty" v-else>
               暫無數據
@@ -554,7 +554,6 @@
               const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
               ViewList.forEach((ele, index) => {
                 ele.openChartFlag = false; // 列表展开收起的标志
-                // ele.echartsIndex = index; // 折线图在ViewList中的索引
                 ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 let newInstances = [];
                 ele.Instances.forEach(el => {

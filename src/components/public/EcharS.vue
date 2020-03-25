@@ -15,7 +15,6 @@
       scale: Number,
       period: String,
       series: [Array, String, Number],
-      echartsIndex: Number, // 传入echarts图标的索引
     },
     mounted() {
       this.init();
