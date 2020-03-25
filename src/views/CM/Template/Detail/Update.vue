@@ -175,9 +175,9 @@ export default {
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '雲服務器'
+          return '雲伺服器'
         } else if (val === 'BS') {
-          return '雲硬盤'
+          return '雲硬碟'
         } else if (val === 'VPN_GW') {
           return 'VPN網關'
         } else if (val === 'vpn_tunnel') {

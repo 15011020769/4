@@ -197,7 +197,7 @@ export default {
           },
           {
             value: 1,
-            name: '雲服務器'
+            name: '雲伺服器'
           },
           {
             value: 2,
@@ -238,10 +238,10 @@ export default {
           }
         ], // 用户名类型数据
         productOptions: [{
-          label: '雲服務器',
+          label: '雲伺服器',
           viewName: 'cvm_device'
         }, {
-          label: '雲硬盤',
+          label: '雲硬碟',
           viewName: 'BS'
         },
         {
@@ -703,9 +703,9 @@ export default {
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '雲服務器'
+          return '雲伺服器'
         } else if (val === 'BS') {
-          return '雲硬盤'
+          return '雲硬碟'
         } else if (val === 'VPN_GW') {
           return 'VPN網關'
         } else if (val === 'vpn_tunnel') {

@@ -53,11 +53,11 @@ export default {
       formInline: {
         strategy_name: "", //策略名稱
         textarea: "", //備注
-        strategy: "雲服務器-基礎監控",
+        strategy: "雲伺服器-基礎監控",
         strategy_kind: [
           {
             value: 0,
-            name: "雲服務器-基礎監控"
+            name: "雲伺服器-基礎監控"
           }
         ], //策略類型
         alarm: "", //策略類型

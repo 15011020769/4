@@ -547,7 +547,7 @@ import {
   CM_ALARM_SET_DEFAULT,
   CM_GROUPING_LIST_EDIT,
   CM_ALARM_MODIFY_NOTIFY,
-  CVM_LIST, //雲服務器列表
+  CVM_LIST, //雲伺服器列表
   NAT_LIST, //NAT網關列表
   VPN_LIST, //VPN網關列表
   VPNTD_LIST, //VPN通道列表
@@ -557,7 +557,7 @@ import {
   Physics_LIST, //物理專線列表
   Private_LIST, //專線通道列表
   OBJ_LIST, //對象存儲列表
-  DISK_LIST //雲硬盤列表
+  DISK_LIST //雲硬碟列表
 } from "@/constants";
 var project = [];
 export default {
@@ -579,11 +579,11 @@ export default {
       //産品
       productOptions: [
         {
-          label: "雲服務器",
+          label: "雲伺服器",
           viewName: "cvm_device"
         },
         {
-          label: "雲硬盤",
+          label: "雲硬碟",
           viewName: "BS"
         },
         {

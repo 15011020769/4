@@ -807,11 +807,11 @@ export default {
           ], // 接口回調數據
           strategy_name: '', // 策略名稱
           textareas: '', // 備注
-          strategy: '雲服務器-基礎監控',
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
-              name: '雲服務器-基礎監控'
+              name: '雲伺服器-基礎監控'
             }
           ], // 策略類型
           alarm: '', // 策略類型
@@ -874,9 +874,9 @@ export default {
     ViewName (val) {
       if (val) {
         if (val === 'cvm_device') {
-          return '雲服務器'
+          return '雲伺服器'
         } else if (val === 'BS') {
-          return '雲硬盤'
+          return '雲硬碟'
         } else if (val === 'VPN_GW') {
           return 'VPN網關'
         } else if (val === 'vpn_tunnel') {

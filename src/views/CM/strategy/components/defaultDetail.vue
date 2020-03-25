@@ -181,7 +181,7 @@
               <span>{{ scope.row.DiskSize }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="硬盤類型" v-if="ViewName === 'BS'">
+          <el-table-column label="硬碟類型" v-if="ViewName === 'BS'">
             <template slot-scope="scope">
               <p>{{ scope.row.DiskType | DiskType }}</p>
               <p>{{ scope.row.DiskUsage | DiskUsage }}</p>
@@ -544,7 +544,7 @@
                         <span>{{ scope.row.DiskSize }}</span>
                       </template>
                     </el-table-column>
-                    <el-table-column label="硬盤類型" v-if="ViewName === 'BS'">
+                    <el-table-column label="硬碟類型" v-if="ViewName === 'BS'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.DiskType | DiskType }}</p>
                         <p>{{ scope.row.DiskUsage | DiskUsage }}</p>

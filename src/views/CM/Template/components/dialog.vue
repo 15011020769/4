@@ -271,11 +271,11 @@ export default {
           ], // 接口回調數據
           strategy_name: '', // 策略名稱
           textareas: '', // 備注
-          strategy: '雲服務器-基礎監控',
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
-              name: '雲服務器-基礎監控'
+              name: '雲伺服器-基礎監控'
             }
           ], // 策略類型
           alarm: '', // 策略類型
@@ -598,11 +598,11 @@ export default {
           ], // 接口回調數據
           strategy_name: '', // 策略名稱
           textareas: '', // 備注
-          strategy: '雲服務器-基礎監控',
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
-              name: '雲服務器-基礎監控'
+              name: '雲伺服器-基礎監控'
             }
           ], // 策略類型
           alarm: '', // 策略類型

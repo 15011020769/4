@@ -120,10 +120,10 @@
                       <el-tooltip
                         class="item"
                         effect="dark"
-                        content="策略類型: 雲服務器-基礎監控策略"
+                        content="策略類型: 雲伺服器-基礎監控策略"
                         placement="bottom-start"
                       >
-                        <span v-if="scope.row.ViewName=='cvm_device'">雲服務器-基礎監控策略</span>
+                        <span v-if="scope.row.ViewName=='cvm_device'">雲伺服器-基礎監控策略</span>
                       </el-tooltip>
                     </template>
                   </el-table-column>
