@@ -566,6 +566,7 @@ import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import Loading from "@/components/public/Loading";
 import { ErrorTips } from "@/components/ErrorTips";
+import { Base64 } from "js-base64";
 import {
   ALL_CITY,
   DESCRIBE_ZONE_INFO,
@@ -962,9 +963,23 @@ export default {
         LaunchConfigurePara: JSON.stringify(LaunchConfigurePara) //启动配置
         // InstanceAdvancedSettings: InstanceAdvancedSettings
       };
-      params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
-      params["InstanceAdvancedSettings.UserScript"] = "";
-      params["InstanceAdvancedSettings.Unschedulable"] = 0;
+      if(this.checked){
+        params["InstanceAdvancedSettings.DockerGraphPath"] = this.inputRoom;
+      } else {
+        params["InstanceAdvancedSettings.DockerGraphPath"] = "";
+      }
+      // params["InstanceAdvancedSettings.UserScript"] = "";
+      // params["InstanceAdvancedSettings.Unschedulable"] = 0;
+      if (this.isActive) {
+        params["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+          this.textarea2
+        );
+        if(this.checkedThree) {
+          params["InstanceAdvancedSettings.Unschedulable"] = 1;
+        } else {
+          params["InstanceAdvancedSettings.Unschedulable"] = 0;
+        }
+      } 
       params["InstanceAdvancedSettings.Labels.0.Name"] = "";
       params["InstanceAdvancedSettings.Labels.0.Value"] = "";
 
