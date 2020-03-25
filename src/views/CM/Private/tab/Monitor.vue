@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -89,7 +89,7 @@
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: "60",
@@ -102,7 +102,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: "60",
@@ -155,28 +155,28 @@
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-          'Delay': '延时',
-          'Inbandwidth': '入带宽',
+          'Delay': '延時',
+          'Inbandwidth': '入帶寬',
           'Inpkg': '入包量',
           'Outpkg': '出包量',
-          'Outbandwidth': '出带宽',
-          'Pkgdrop': '丢包',
+          'Outbandwidth': '出帶寬',
+          'Pkgdrop': '丟包',
         },
         Company: {
           'Delay': 'Ms',
           'Inbandwidth': 'Bps',
-          'Inpkg': '个/s',
-          'Outpkg': '个/s',
+          'Inpkg': '個/s',
+          'Outpkg': '個/s',
           'Outbandwidth': 'Bps',
           'Pkgdrop': '%'
         },
         Tips: {
-          'Delay': '延时',
-          'Inbandwidth': '入带宽',
+          'Delay': '延時',
+          'Inbandwidth': '入帶寬',
           'Inpkg': '入包量',
           'Outpkg': '出包量',
-          'Outbandwidth': '出带宽',
-          'Pkgdrop': '丢包',
+          'Outbandwidth': '出帶寬',
+          'Pkgdrop': '丟包',
 
         },
 
