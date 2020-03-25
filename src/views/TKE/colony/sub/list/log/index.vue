@@ -232,9 +232,8 @@ export default {
           }else if(this.option5.length>0){
            this.getLog();
           }
-        }, 5000);
+        }, 20000);
       } else {
-        console.log('tingshi')
         clearInterval(this.timeId);
         this.nameSpaceList2();
       }
