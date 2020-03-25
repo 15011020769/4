@@ -3,9 +3,7 @@
     <el-card class="card">
       <el-table :data="transLogData">
         <el-table-column prop label="变更时间">
-          <template slot-scope="scope">
-            <span>{{upTime(scope.row.updateTime)}}</span>
-          </template>
+          <span>{{upTime( this.information.updateTime)}}</span>
         </el-table-column>
         <el-table-column prop label="修改人">
           <template slot-scope="scope">
@@ -44,7 +42,9 @@
           <span class="text">{{information.lastEditUin}}</span>
         </el-form-item>
         <el-form-item label="最后修改时间">
+          <!-- formatDate -->
           <span class="text">{{upTime(information.updateTime)}}</span>
+          <!-- <span class="text">{{information.updateTime|formatDate}}</span> -->
         </el-form-item>
       </el-form>
       <hr style="margin-bottom:20px;color:#ddd"/>

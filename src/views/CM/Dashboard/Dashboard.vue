@@ -706,15 +706,6 @@
                 DataPoints.push({
                   type: "line",
                   data: ele.Points.map((item,i) => {
-                    if (i==0) {
-                      item = 1;
-                    } else if (i == 1) {
-                      item = 2;
-                    } else if (i == 2) {
-                      item = 3;
-                    } else if (i == 3) {
-                      item = 4;
-                    }
                     // 存在坐标为null的情况，应该是接口问题
                     return item === null ? 0 : item
                   }),

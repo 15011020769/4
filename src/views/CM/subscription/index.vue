@@ -4,10 +4,10 @@
     <div class="table">
       <p class="boxLi" style="border-top:1px solid #ebeef5;border-bottom:1px solid #ebeef5">
         <i class="el-icon-arrow-down"></i>
-        <span>问题：</span>
+        <span>問題：</span>
       </p>
       <el-table :data="tableData" style="width: 100%;" v-loading="loadShow">
-        <el-table-column label="事件类型" width="240">
+        <el-table-column label="事件類型" width="240">
           <template slot-scope="scope">
             <div v-if="scope.row.AccidentName=='雲伺服器儲存問題'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
@@ -18,7 +18,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="云服务器基础设施存储模块; 影响：导致IO性能下降 ，数据读写异常"
+                content="雲伺服器基礎設施存儲模塊; 影響：導致IO性能下降 ，數據讀寫異常"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -34,7 +34,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="云服务器基础设施网络模块导致; 影响：网速下降或网络连接中断"
+                content="雲伺服器基礎設施網路模塊導致; 影響：網速下降或網路連接中斷"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -50,7 +50,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="云服务器基础设施导致; 影响：云服务器高负载或宕机，服务不可用"
+                content="雲伺服器基礎設施導致; 影響：雲伺服器高負載或宕機，服務不可用"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -58,7 +58,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="短信" width="170">
+        <el-table-column label="簡訊" width="170">
           <template slot-scope="scope">
             <span v-if="scope.row.NotifyWay">
               <i
@@ -68,10 +68,10 @@
               ></i>
             </span>
 
-            <span v-if="!scope.row.NotifyWay">尚未订阅</span>
+            <span v-if="!scope.row.NotifyWay">尚未訂閱</span>
           </template>
         </el-table-column>
-        <el-table-column label="邮件" width="180">
+        <el-table-column label="郵件" width="180">
           <template slot-scope="scope">
             <i
               v-if="scope.row.NotifyWay"
@@ -102,19 +102,19 @@
         </el-table-column>
         <el-table-column label>
           <template slot-scope="scope">
-            <el-button type="text" class="btn subBtn" @click="ok(scope.row)">订阅管理</el-button>
+            <el-button type="text" class="btn subBtn" @click="ok(scope.row)">訂閱管理</el-button>
             <el-button
               type="text"
               class="btn unSubBtn"
               @click="cancel(scope.row)"
               v-if="scope.row.NotifyWay"
-            >取消订阅</el-button>
+            >取消訂閱</el-button>
           </template>
         </el-table-column>
       </el-table>
     </div>
     <!-- 订阅管理 -->
-    <el-dialog title="订阅管理" :visible.sync="dialogSubscribe" width="640px">
+    <el-dialog title="訂閱管理" :visible.sync="dialogSubscribe" width="640px">
       <div class="list">
         <p style="display:flex;">
           <span>接收方式</span>
@@ -132,7 +132,7 @@
         </p>
         <p class="search">
           <span>
-            请选择接收人(已选
+            請選擇接收人(已選
             <b>{{ num }}</b>人)
           </span>
           <el-row class="seek" style="display:flex;">
@@ -151,15 +151,15 @@
           :default-sort="{ prop: 'changeData', order: 'descending' }"
         >
           <el-table-column type="selection" width="55"></el-table-column>
-          <el-table-column prop="Name" label="用户名"></el-table-column>
-          <el-table-column label="手机号">
+          <el-table-column prop="Name" label="用戶名"></el-table-column>
+          <el-table-column label="手機號">
             <template slot-scope="scope">
               <span v-if="scope.row.PhoneNum !== ''">
                 {{scope.row.PhoneNum}}
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
-                    未验证, 可在
-                    <a href>权限管理</a>页面设置
+                    未驗證, 可在
+                    <a href>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
@@ -167,22 +167,22 @@
               <span v-else>
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
-                    未验证, 可在
-                    <a href>权限管理</a>页面设置
+                    未驗證, 可在
+                    <a href>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
               </span>
             </template>
           </el-table-column>
-          <el-table-column label="邮箱">
+          <el-table-column label="郵箱">
             <template slot-scope="scope">
               <span v-if="scope.row.Email !== ''">
                 {{scope.row.Email}}
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
-                    未验证, 可在
-                    <a href>权限管理</a>页面设置
+                    未驗證, 可在
+                    <a>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
@@ -190,8 +190,8 @@
               <span v-else>
                 <el-tooltip placement="top" effect="light">
                   <div slot="content">
-                    未验证, 可在
-                    <a href>权限管理</a>页面设置
+                    未驗證, 可在
+                    <a>權限管理</a>頁面設置
                   </div>
                   <i class="el-icon-warning" style="color:#e54545;cursor: pointer;"></i>
                 </el-tooltip>
@@ -201,15 +201,15 @@
         </el-table>
       </div>
       <span slot="footer" class="dialog-footer center">
-        <el-button class="subscribe" type="primary" @click="ok1">确定</el-button>
+        <el-button class="subscribe" type="primary" @click="ok1">確定</el-button>
         <el-button @click="dialogSubscribe = false">取 消</el-button>
       </span>
     </el-dialog>
     <!-- 取消订阅 -->
-    <el-dialog title="取消订阅" :visible.sync="dialogcancel" width="30%">
-      <span>取消订阅云服务器存储问题？</span>
+    <el-dialog title="取消訂閱" :visible.sync="dialogcancel" width="30%">
+      <span>取消訂閱雲伺服器存儲問題？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button class="cancelsubscribe" type="primary" @click="cancel1">取消订阅</el-button>
+        <el-button class="cancelsubscribe" type="primary" @click="cancel1">取消訂閱</el-button>
         <el-button @click="dialogcancel = false">取 消</el-button>
       </span>
     </el-dialog>
@@ -343,7 +343,7 @@ export default {
     cancel(data) {
       this.cancelObj = data;
       this.dialogcancel = true;
-      //取消订阅
+      //取消訂閱
     },
     cancel1() {
       this.dialogcancel = false;
@@ -354,26 +354,27 @@ export default {
         AccidentId: this.cancelObj.AccidentId //事件id
       };
       this.axios.post(CANCEL_SUBSCRIPTION, params).then(res => {
-        if (res.codeDesc === "Success") {
+        if (res.Response.RequestId) {
           this.$message({
-            message: "取消订阅成功",
+            message: "取消訂閱成功",
             type: "success",
             showClose: true,
             duration: 0
           });
           this.dialogcancel = false;
+          this.getEventList();
         } else {
           let ErrTips = {
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            InternalError: "內部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被佔用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -428,21 +429,21 @@ export default {
             showClose: true,
             duration: 0
           });
-          this.getEventList();
           this.dialogSubscribe = false;
+          this.getEventList();
         } else {
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            InvalidParameter: "参数错误。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "内部錯誤。",
+            InvalidParameter: "參數錯誤。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被佔用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -460,7 +461,7 @@ export default {
       var params = {
         Version: "2018-07-24",
         Module: "monitor",
-        Language:"zh-CN"
+        Language: "zh-CN"
       };
       this.axios.post(SUBSCRIPTION_LIST, params).then(res => {
         console.log(res.Response, "数据");
@@ -470,18 +471,18 @@ export default {
         } else {
           this.loadShow = false;
           let ErrTips = {
-            FailedOperation: "操作失败。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
-            MissingParameter: "缺少参数错误。",
-            ResourceNotFound: "资源不存在。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+            FailedOperation: "操作失敗。",
+            InternalError: "内部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
+            LimitExceeded: "超過配額限制。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceNotFound: "資源不存在。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -506,12 +507,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     }
-    // cancelSubscribe() {
-    //   //取消订阅
-    // },
-    // subscribe() {
-    //   //订阅
-    // }
   }
 };
 </script>

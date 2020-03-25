@@ -106,7 +106,7 @@
             </el-table-column>
             <el-table-column prop="alarm" label="告警配置" width="132">
               <template slot-scope="scope">
-                  <p><span>{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span>
+                  <p><span style="cursor:default">{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span>
                   <span class="New_Configuration"><a @click="jump(scope.row.InstanceId)">新增配置</a></span></p>
               </template>
             </el-table-column>

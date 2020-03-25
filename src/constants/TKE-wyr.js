@@ -73,18 +73,8 @@ export const TKE_DELETEIMAGEVERSION='tcr2/DeleteImagePersonal'
 
 // export const TKE_MIRROR_AUTODELELTE = 'ccr/closeAutoDelStrategy'
 
+// 获取 根据镜像版本 获取变量
+export const TKE_DESCRIBEIMAGECONFIGPERSONAL = 'tcr2/DescribeImageConfigPersonal'
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// 获取 Docker Hub镜像 镜像版本
+export const TKE_DESCRIBEDOCKERHUBIMAGEPERSONAL = 'tcr2/DescribeDockerHubImagePersonal'

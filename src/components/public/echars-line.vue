@@ -34,7 +34,12 @@
     },
     methods: {
       init() {
-        var Company = this.Company
+        if (this.Company != undefined) {
+          var Company = this.Company
+        } else {
+          Company = ''
+        }
+
         const TimeGranularity = {
           '5': '5秒',
           '10': '10秒',

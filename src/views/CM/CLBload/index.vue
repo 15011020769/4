@@ -16,7 +16,7 @@
         :empty-text="$t('CVM.clBload.zwsj')">
         <el-table-column prop :label="$t('CVM.clBload.zjm') " width="120">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.LoadBalancerVips">
+            <p v-for="(i,index) in scope.row.LoadBalancerVips" :key="index">
               <a @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.NumericalVpcId)"
                 style="cursor:pointer;">{{scope.row.LoadBalancerId}}</a>
             </p>
@@ -25,7 +25,7 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')" width="80">
           <template slot-scope="scope">
-            <div v-for="i in scope.row.LoadBalancerVips">
+            <div v-for="(i,index) in scope.row.LoadBalancerVips" :key="index">
               <div class="a"
                 @click="jump(scope.row.LoadBalancerId,i,scope.row.LoadBalancerType,scope.row.NumericalVpcId)">
               </div>
@@ -44,7 +44,7 @@
 
         <el-table-column prop label="VIP">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.LoadBalancerVips">{{i}}</p>
+            <p v-for="(i,index) in scope.row.LoadBalancerVips"  :key="index">{{i}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.wllx')">
@@ -84,7 +84,7 @@
         </el-table-column>
         <el-table-column prop label="VIP">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.LoadBalancerVips">{{i}}</p>
+            <p v-for="(i,index) in scope.row.LoadBalancerVips" :key="index">{{i}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.wllx')">

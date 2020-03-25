@@ -30,7 +30,7 @@
             <div v-if="scope.row.DataPoints[0].Points.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Values "
                 :opData="scope.row.DataPoints[0].Points" :scale="3" :period="Period" :xdata="false"
-                :MetricName='disName[scope.row.MetricName]'></echart-line>
+                :MetricName='disName[scope.row.MetricName]' :Company='Company[scope.row.MetricName]'></echart-line>
             </div>
           </template>
         </el-table-column>

@@ -539,6 +539,70 @@
               </p>
             </div>
           </el-form-item>
+          <!-- 高級設置 -->
+          <p class="advanced-setting-a">
+            <i class="el-icon-caret-right" v-if="!nodeForm.advancedSettingShow"></i>
+            <i class="el-icon-caret-bottom" v-if="nodeForm.advancedSettingShow"></i
+            ><a href="javascript:;" @click="AdvancedSettingBtn">高級設置</a>
+          </p>
+          <div class="advanced-setting-box" v-if="nodeForm.advancedSettingShow" style="margin-top: 10px;">
+            <div class="tke-second-tips">
+              <p>
+                節點啟動配置
+                <el-tooltip
+                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑查看"
+                  placement="right"
+                  width="200px"
+                  effect="light"
+                  ><i class="el-icon-info ml5"></i
+                ></el-tooltip>
+              </p>
+              <p>
+                <el-input
+                  type="textarea"
+                  :autosize="{ minRows: 2, maxRows: 4 }"
+                  placeholder="可選，用於啟動時配置實例，支持 Shell 格式，原始數據不能超過 16 KB"
+                  v-model="nodeForm.textarea2"
+                  class="w420"
+                >
+                </el-input>
+              </p>
+            </div>
+            <div class="tke-second-tips">
+              <p>封鎖（cordon）</p>
+              <div>
+                <el-checkbox v-model="nodeForm.checkoutFs">
+                  開啟封鎖
+                </el-checkbox>
+                <p style="margin-left: 120px">
+                  封鎖節點後，將不接受新的Pod調度到該節點，需要手動取消封鎖的節點，或在自定義數據中執行取消封鎖命令
+                </p>
+              </div>
+            </div>
+            <!-- <div class="tke-second-tips">
+              <p>Label</p>
+              <div>
+                <ul>
+                  <li v-for="(item, index) in nodeForm.advancedSettingArr" :key="index">
+                    <el-input v-model="item.name"></el-input>
+                    <span style="margin:0 10px;">=</span>
+                    <el-input v-model="item.value"></el-input>
+                    <i
+                      class="el-icon-close"
+                      @click="DeleteAdvancedSetting(index)"
+                    ></i>
+                  </li>
+                </ul>
+                <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
+                <p>
+                  標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
+                </p>
+                <p>
+                  標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
+                </p>
+              </div>
+            </div> -->
+          </div>
         </el-form>
         <!-- 底部 -->
         <div class="tke-formpanel-footer">
@@ -658,6 +722,7 @@
 // import HeadCom from '@/components/public/Head'
 // import SEARCH from '@/components/public/SEARCH'
 import { ErrorTips } from "@/components/ErrorTips";
+import { Base64 } from "js-base64";
 import { type } from 'os';
 import { ALL_CITY,
   TKE_COLONY_LIST,
@@ -891,6 +956,12 @@ export default {
         allocationCost: '',//配置费用
         networkCost: '',//网络费用
         isShowathirdNext: false,//是否禁用第三步下一步
+        // 第三步 高級設置
+        advancedSettingShow: false,
+        textarea2: "",
+        checkoutFs: false,
+        advancedSettingArr: [],
+        dataShow: []
       },
       rules: {
         container: [
@@ -930,8 +1001,19 @@ export default {
   },
   methods: {
     //提交保存
-    
-    
+    AddAdvancedSetting() {
+      this.nodeForm.advancedSettingArr.push({
+        name: "",
+        value: ""
+      });
+    },
+    DeleteAdvancedSetting(index) {
+      this.nodeForm.advancedSettingArr.splice(index, 1);
+    },
+    // 高級設置
+    AdvancedSettingBtn() {
+      this.nodeForm.advancedSettingShow = !this.nodeForm.advancedSettingShow;
+    },
     //获取镜像 
     async getImagesList() {
       
@@ -1583,11 +1665,21 @@ export default {
         RunInstancePara: JSON.stringify(RunInstancePara)
       }
       param["InstanceAdvancedSettings.DockerGraphPath"] = containerInput;
-      param["InstanceAdvancedSettings.UserScript"] = "";
-      param["InstanceAdvancedSettings.Unschedulable"] = 0;
+      
       param["InstanceAdvancedSettings.Labels.0.Name"] = "";
       param["InstanceAdvancedSettings.Labels.0.Value"] = "";
       param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0"] = "";
+
+      if (this.nodeForm.advancedSettingShow) {
+        param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+          this.nodeForm.textarea2
+        );
+        if(this.nodeForm.checkoutFs) {
+          param["InstanceAdvancedSettings.Unschedulable"] = 1;
+        } else {
+          param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        }
+      }  
       // param["InstanceAdvancedSettings.Kubelet.0"] = "";
 
       let buyDataDiskArr = this.nodeForm.buyDataDiskArr;

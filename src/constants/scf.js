@@ -65,5 +65,6 @@ export const GETAPPID = 'redesc/selectAppid'//函数测试模板
 
 export const UPDATE_TEST_MODEL = 'scf2/UpdateFunctionTestModel'//函数测试模板
 
-// 函数代码 cos存储桶
-export const SCF_LIST_COSBUCKETS = 'bucket/list'
+export const SCF_LIST_COSBUCKETS = 'bucket/list'      // 函数代码 cos存储桶
+
+export const GetTempCosInfo = 'scf2/GetTempCosInfo'   // 函数代码 获取临时token 用作在线编辑的cos上传
