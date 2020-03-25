@@ -652,7 +652,6 @@ export default {
       let osString = this.clusterInfo.ClusterOs;
       let osList = [];
       await this.axios.post(CLUSTER_OS).then(res => {
-        debugger
         if(res && res.code === 0 && res.data) {
           if(res.data.images.length > 0) {
             console.log(res.data.images);
