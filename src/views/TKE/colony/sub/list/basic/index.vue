@@ -96,13 +96,13 @@
       </el-col>
     </el-row>
 
-    <!-- <div class="tke-card tke-formpanel-wrap mt10">
+    <div class="tke-card tke-formpanel-wrap mt10">
       <h4 class="tke-formpanel-title">集群APIServer信息</h4>
       <el-form  class="tke-form"  label-position='left' label-width="130px" size="mini">
         <el-form-item label="访问地址">
           <div class="tke-form-item_text"><span>https://{{security.Domain}}</span></div>
         </el-form-item>
-        <el-form-item label="外网访问">
+        <!-- <el-form-item label="外网访问">
           <div class="tke-form-item_text">
             <el-switch class="ml10" v-model="extranet" @change="changeSwitch()" ></el-switch>
             <span>{{extranet?'已开启':'未开启'}}</span>
@@ -117,7 +117,7 @@
           <p v-if="intranet">开通内网访问入口， 您还需要在访问机上配置域名。请在访问机上执行以下命令：
             <span>sudo sed -i '$a {{security.PgwEndpoint}} {{security.Domain}}'/etc/hosts</span>
           </p>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="Kubeconfig">
           <div class="tke-form-item_text tke-rich-textarea" >
             <div class="rich-content">
@@ -127,13 +127,13 @@
         </el-form-item>
       </el-form>
       <hr>
-      <div style='line-height:1.5'>
+      <!-- <div style='line-height:1.5'>
         <p><strong>通过Kubectl连接Kubernetes集群操作说明:</strong></p>
         <p class="mt10">1.安装Kubectl客户端：从Kubernetes版本页面下载最新的kubectl客户端，并安装和设置kubectl客户端，具体可参考安装和设置kubectl。</p>
         <p>2.配置Kubeconfig：复制上方Kubeconfig访问凭证内容，替换 $HOME/.kube/config 内已有内容；或下载该kubeconfig至指定位置，并配置环境变量： KUBECONFIG=$HOME/.kube/config:cls-gwblk71e-config。</p>
         <p>3.完成以上配置即可使用kubectl访问Kubernetes集群。如果无法连接请查看是否已经开启公网访问或内网访问入口，并确保访问客户端在指定的网络环境内。</p>
-      </div>
-    </div> -->
+      </div> -->
+    </div>
 
     <el-dialog :title="$t('TKE.colony.bjjqmc')" :visible.sync="showUpdateName" width="550px">
       <el-form
@@ -289,7 +289,7 @@ import { ErrorTips } from "@/components/ErrorTips";
 import { CLUSTERS_SECURITY, TKE_COLONY_LIST, ALL_PROJECT, UPDATE_CLUSTER_NAME, 
   UPDATE_PROJECT, CLUSTER_VERSION, CLUSTER_OS, UPDATE_OS,CLUSTERS_INSTANCES, 
   TKE_CCN_ROUTES, ADD_CIDE_TO_CCN, CLOSE_CIDE_TO_CCN, TKE_COLONY_DES,TKE_WORKER_METWORK,OPEN_INTRANET,
-  ClOSE_INTRANET } from '@/constants'
+  ClOSE_INTRANET,PRIVATE_IMAGE,PUBLIC_IMAGE } from '@/constants'
 export default {
   name: 'colonyBasic',
   data () {
@@ -652,13 +652,22 @@ export default {
       let osString = this.clusterInfo.ClusterOs;
       let osList = [];
       await this.axios.post(CLUSTER_OS).then(res => {
+        debugger
         if(res && res.code === 0 && res.data) {
           if(res.data.images.length > 0) {
+            console.log(res.data.images);
             for(let i = 0; i<res.data.images.length; i++) {
               let currOs = res.data.images[i].OsName;
               if(currOs === osString) {
+                let osobj = {
+                  Alias: res.data.images[i].Alias,
+                  OsName: res.data.images[i].OsName,
+                  ImageId: res.data.images[i].ImageId,
+                  OsCustomizeType: res.data.images[i].CustomizeType
+
+                }
                 this.os = res.data.images[i];
-                osList.push(res.data.images[i]);
+                osList.push(osobj);
               }
             }
           }
@@ -666,11 +675,55 @@ export default {
       });
       this.osList = osList;
     },
+// export const PRIVATE_IMAGE = 'cvm2/DescribeImages'
+
+// //共有镜像
+// export const PUBLIC_IMAGE = 'tke2/DescribeImages'
+//     getPrivateImage() {
+
+//     },
+
+    getPublicImage() {
+      let param = {
+        Version: "2018-05-25"
+      }
+      
+      let osString = this.clusterInfo.ClusterOs;
+      let osList = [];
+      this.axios.post(PUBLIC_IMAGE, param).then(res => {
+        if(res.Response.Error === undefined) {
+          if(res.Response.ImageInstanceSet.length > 0) {
+            for(let i = 0; i<res.Response.ImageInstanceSet.length; i++) {
+              let currOs = res.Response.ImageInstanceSet[i].OsName;
+              debugger
+              if(currOs.substring(0, 6).toLowerCase() === osString.substring(0, 6).toLowerCase()) {
+                
+                // this.os = res.data.ImageInstanceSet[i];
+                osList.push(res.Response.ImageInstanceSet[i]);
+              }
+            }
+          }
+          debugger
+          this.osList.push(osList);
+        } else {
+          this.loadShow = false;
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
 
     //打开操作系统modal
     showOsModal() {
       this.showUpdateOs = true;
       this.getOsList();
+      // this.getPublicImage();
     },
 
     //更新集群名称
