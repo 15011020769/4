@@ -39,14 +39,14 @@
         </el-table-column>
 
         <el-table-column prop :label="$t('CVM.clBload.wllx')">
-          <template slot-scope="scope">
+          <template slot-scope>
             <p>{{$t("CVM.cloudMysql.wl")}}</p>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.table.x5')">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.PrivateIpAddresses">{{i}}({{ $t('CVM.nwang') }})</p>
-            <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
+            <p v-for="(i,index) in scope.row.PrivateIpAddresses" :key="index">{{i}}({{ $t('CVM.nwang') }})</p>
+            <p v-for="(i,index) in scope.row.PublicIpAddresses" :key="index">{{i}}</p>
           </template>
         </el-table-column>
 
@@ -86,18 +86,18 @@
         </el-table-column>
 
         <el-table-column prop :label="$t('CVM.clBload.wllx')">
-          <template slot-scope="scope">
+          <template slot-scope>
             <p>{{$t("CVM.cloudMysql.wl")}}</p>
           </template>
         </el-table-column>
         <el-table-column prop label="內網">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.PrivateIpAddresses">{{i}}({{ $t('CVM.nwang') }})</p>
+            <p v-for="(i,index) in scope.row.PrivateIpAddresses" :key="index">{{i}}({{ $t('CVM.nwang') }})</p>
           </template>
         </el-table-column>
         <el-table-column prop label="公網">
           <template slot-scope="scope">
-            <p v-for="i in scope.row.PublicIpAddresses">{{i}}</p>
+            <p v-for="(i,index) in scope.row.PublicIpAddresses" :key="index">{{i}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="projectName" :label="$t('CVM.table.x6')"></el-table-column>
