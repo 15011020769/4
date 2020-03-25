@@ -343,7 +343,7 @@ export default {
     cancel(data) {
       this.cancelObj = data;
       this.dialogcancel = true;
-      //取消订阅
+      //取消訂閱
     },
     cancel1() {
       this.dialogcancel = false;
@@ -354,6 +354,7 @@ export default {
         AccidentId: this.cancelObj.AccidentId //事件id
       };
       this.axios.post(CANCEL_SUBSCRIPTION, params).then(res => {
+        console.log(res,"取消訂閱");
         if (res.codeDesc === "Success") {
           this.$message({
             message: "取消訂閱成功",
@@ -410,6 +411,7 @@ export default {
         data.uid = item.Uid;
         // params["Receivers." + index] = data;
         params.Receivers = data;
+
       });
       //  var key, value;
       //   key = item.Name;
@@ -506,12 +508,6 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val;
     }
-    // cancelSubscribe() {
-    //   //取消订阅
-    // },
-    // subscribe() {
-    //   //订阅
-    // }
   }
 };
 </script>
