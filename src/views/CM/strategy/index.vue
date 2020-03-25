@@ -108,7 +108,7 @@
         </el-table-column>
         <el-table-column label="觸發條件">
           <template slot-scope="scope">
-            <el-popover placement="right" width="400" trigger="hover">
+            <el-popover placement="right" width="500" trigger="hover">
               <div class="popover-box">
                 <p class="text-color">指標告警（任意）：</p>
                 <div
@@ -119,12 +119,25 @@
                   <p>
                     {{ i.MetricShowName }}
                     {{ i.CalcType | CalcType }} {{ i.CalcValue
+<<<<<<< HEAD
                     }}{{ i.Unit }}，持續{{ i.ContinueTime / 60 }}分鍾，按{{
                       i.AlarmNotifyPeriod | AlarmNotifyPeriod
                     }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+=======
+                    }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，
+                    <span v-if="i.AlarmNotifyType != 1"
+                      >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+                      }}{{
+                        i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      }}
+                    </span>
+                    <span v-else>
+                      按周期指数递增重复告警
+                    </span>
+>>>>>>> 告警策略详情
                   </p>
                 </div>
-                <p class="text-color">事件告警：</p>
+                <!-- <p class="text-color">事件告警：</p>
                 <div
                   v-for="j in scope.row.EventConditions"
                   class="trigger-condition"
@@ -134,7 +147,7 @@
                       j.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
-                </div>
+                </div> -->
               </div>
               <div slot="reference">
                 <div
@@ -849,6 +862,7 @@ export default {
           this.axios.post(CM_GROUPING_LIST_TYPE, param).then(res => {
             if (res.Response.Error === undefined) {
               let Conditions = res.Response.Conditions;
+
               for (let i in _tableData) {
                 for (let j in Conditions) {
                   if (_tableData[i].ViewName === Conditions[j].PolicyViewName) {

@@ -87,8 +87,19 @@
             {{ i.MetricShowName }}
             {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
+<<<<<<< HEAD
             }}分鍾，按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
             }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
+=======
+            }}分钟，
+            <span v-if="i.AlarmNotifyType != 1"
+              >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
+              }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
+            </span>
+            <span v-else>
+              按周期指数递增重复告警
+            </span>
+>>>>>>> 告警策略详情
           </p>
         </div>
         <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
@@ -2545,6 +2556,7 @@ export default {
           var _ConditionsConfig = this.basicNews.ConditionsConfig;
           var _typeVal = "";
           var _max = "";
+          var _AlarmNotifyPeriod = "";
           this.formWrite.arr = [];
           for (let i in _ConditionsConfig) {
             for (let j in this.typeOpt) {
@@ -2557,6 +2569,12 @@ export default {
               }
             }
 
+            if (_ConditionsConfig[i].AlarmNotifyType == 1) {
+              _AlarmNotifyPeriod = 60;
+            } else {
+              _AlarmNotifyPeriod = _ConditionsConfig[i].AlarmNotifyPeriod;
+            }
+            console.log(_AlarmNotifyPeriod);
             this.formWrite.arr.push({
               max: _max,
               typeVal: _typeVal,
@@ -2567,7 +2585,7 @@ export default {
               continuousCycleVal:
                 Number(_ConditionsConfig[i].ContinueTime) /
                 Number(_ConditionsConfig[i].Period),
-              warningVal: _ConditionsConfig[i].AlarmNotifyPeriod
+              warningVal: _AlarmNotifyPeriod
             });
           }
         }
@@ -2656,6 +2674,7 @@ export default {
           this.Conditions = this.triggerCondition[i];
         }
       }
+      console.log(this.Conditions.Conditions);
       for (let j in this.Conditions.Conditions) {
         this.ContinueTime.push({
           value: this.Conditions.Conditions[j].ContinueTime,
@@ -2665,19 +2684,47 @@ export default {
               Number(this.Conditions.Conditions[j].Period) +
             "個周期"
         });
-        if (
-          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
-          0
-        ) {
+        console.log(this.Conditions.Conditions[j].AlarmNotifyType);
+        if (this.Conditions.Conditions[j].AlarmNotifyType == 1) {
+          this.Conditions.Conditions[j].AlarmNotifyPeriod = "周期指数递增";
+        } else {
           if (
-            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24) %
-              1 ==
+            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
+            0
+          ) {
+            if (
+              (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24) %
+                1 ==
+              0
+            ) {
+              this.AlarmNotifyPeriod.push({
+                value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+                label:
+                  "每" +
+                  this.Conditions.Conditions[j].AlarmNotifyPeriod /
+                    60 /
+                    60 /
+                    24 +
+                  "天警告一次"
+              });
+            } else {
+              this.AlarmNotifyPeriod.push({
+                value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
+                label:
+                  "每" +
+                  this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 +
+                  "小时警告一次"
+              });
+            }
+          } else if (
+            (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60) % 1 ==
             0
           ) {
             this.AlarmNotifyPeriod.push({
               value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
               label:
                 "每" +
+<<<<<<< HEAD
                 this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24 +
                 "天警告壹次"
             });
@@ -2701,6 +2748,12 @@ export default {
               this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
               "分鍾警告壹次"
           });
+=======
+                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
+                "分钟警告一次"
+            });
+          }
+>>>>>>> 告警策略详情
         }
       }
       let newobj = {};
@@ -2748,7 +2801,7 @@ export default {
             _Conditions[i].AlarmNotifyType;
           param["Conditions." + i + ".AlarmNotifyPeriod"] =
             _Conditions[i].AlarmNotifyPeriod;
-          param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
+          // param["Conditions." + i + ".RuleId"] = _Conditions[i].RuleID;
         }
         for (let j in _EventConfig) {
           param["EventConditions." + j + ".EventId"] = Number(
@@ -2758,7 +2811,7 @@ export default {
             _EventConfig[j].AlarmNotifyType;
           param["EventConditions." + j + ".AlarmNotifyPeriod"] =
             _EventConfig[j].AlarmNotifyPeriod;
-          param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
+          // param["EventConditions." + j + ".RuleId"] = _EventConfig[j].RuleID;
         }
       } else {
         param["IsUnionRule"] = this.formWrite.satisfyVal;
