@@ -481,6 +481,7 @@
       },
       UpName(value) {
         var index = value.replace('tencent', 'taipei').replace('cloud', 'Top Cloud').replace('qcloud', 'Top Cloud')
+          .replace('qTop Cloud', 'Top Cloud')
         return index
 
       }
