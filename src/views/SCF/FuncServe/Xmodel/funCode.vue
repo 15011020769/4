@@ -271,8 +271,24 @@ import {
   defaultTemplate
 } from './defaultTemplate'
 import openHint from './openHint'
-// import * as cslite from '@/views/SCF/lib/c.js'
-// const { CloudStudioLiteFilesServiceSDK, ModeTypeEnum } = require('../../lib/c')
+// import COS from 'cos-js-sdk-v5'
+
+// const cos = new COS({
+//   getAuthorization: async (_, callback) => {
+//     const res = await Vue.prototype.axios({
+//       url: 'bucket/uploadKey3',
+//       method: 'get'
+//     })
+//     console.log(res)
+//     callback({
+//       TmpSecretId: res.data.secretId,
+//       TmpSecretKey: res.data.secretKey,
+//       XCosSecurityToken: res.data.sessionToken,
+//       ExpiredTime: res.data.extra.expiredTime // SDK 在 ExpiredTime 时间前，不会再次调用 getAuthorization
+//     })
+//   }
+// })
+
 export default {
   props: ['FunctionVersion'],
   data() {
@@ -390,6 +406,14 @@ export default {
           this.functionversion = res.Response.FunctionVersion
           this.ScienceValue = res.Response.Runtime
           this._Clone('address') // 获取地址
+          if(res.Response.Status !== 'Active'){
+            this.$message({
+            message: '執行方法handler上傳錯誤，請查看執行方法handler說明，重新上傳',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          }
         } else {
           let ErrTips = {
             'InternalError': '內部錯誤',
@@ -646,12 +670,7 @@ export default {
         this.updateCsliteFun(param) // 更新函数代码
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
-          this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
-            console.log('我是base64')
-            console.log(data)
-            param.ZipFile = data
-            this.updateCsliteFun(param) // 更新函数代码
-          })
+          // const objectPath = `${this.$cookie.get("uin")}/${namespace}/${functionName}.zip`
         })
       } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
         param.CosBucketName = this.cosName
@@ -665,13 +684,13 @@ export default {
     updateCsliteFun(param) {
       this.axios.post(UPD_FUN_CODE, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.$message({
-            message: '保存成功',
-            type: "success",
-            showClose: true,
-            duration: 0
-          });
-          // location.reload()
+          // this.$message({
+          //   message: '保存成功',
+          //   type: "success",
+          //   showClose: true,
+          //   duration: 0
+          // });
+          location.reload()
         } else {
           this.$message({
             message: '保存失敗',
