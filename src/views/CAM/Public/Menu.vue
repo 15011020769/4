@@ -60,11 +60,11 @@
 export default {
   data() {
     return {
-      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : 'deal'        // 默认选中的菜单
+      activeMenu: localStorage.getItem('activeMenu') ? localStorage.getItem('activeMenu') : '/UserListNew'        // 默认选中的菜单
     };
   },
-  mounted() {
-
+  created() {
+    this.activeMenu = this.$route.path
   },
   methods: {
     // 选中菜单点击事件
