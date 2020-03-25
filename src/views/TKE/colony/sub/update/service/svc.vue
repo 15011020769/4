@@ -88,7 +88,7 @@
 			      	</el-option>
 			      </el-select>
 			      <el-button style="border:none;"><i class="el-icon-refresh"></i></el-button>
-			      共<span>{{addressCount.TotalIpAddressCount}}</span>{{$t('TKE.subList.gzwd')}}<span>{{addressCount.AvailableIpAddressCount}}</span>{{$t('TKE.overview.ge')}}可用
+			      共<span>{{addressCount.TotalIpAddressCount||0}}</span>{{$t('TKE.subList.gzwd')}}<span>{{addressCount.AvailableIpAddressCount||0}}</span>{{$t('TKE.overview.ge')}}可用
 		      </el-form-item>
 
           <el-form-item :label="$t('TKE.subList.fzjhq')" v-if="svc.radio=='3' || svc.radio=='1'">
@@ -106,7 +106,16 @@
               {{$t('TKE.subList.qwsdxgjt')}}
               <!-- <a href="">查看更多说明</a> -->
               <div>
-                <el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
+                 <!-- :disabled="svc.value==='暫無數據'" -->
+                <!-- <el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
+				        	<el-option
+				        		v-for="item in ownLoadBalancer"
+				        		:key="item.LoadBalancerId"
+				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
+				        		:value="item.LoadBalancerId">
+				        	</el-option>
+                </el-select> -->
+                <el-select :disabled="svc.value1==='暫無數據'" v-show="svc.radio==='1'" v-model="svc.value1" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
 				        	<el-option
 				        		v-for="item in ownLoadBalancer"
 				        		:key="item.LoadBalancerId"
@@ -114,12 +123,22 @@
 				        		:value="item.LoadBalancerId">
 				        	</el-option>
                 </el-select>
-                <!-- <el-tooltip effect="light" content="请选择CLB" placement="right" v-if="svc.value===''">
+                <el-select :disabled="svc.value2==='暫無數據'" v-show="svc.radio==='3'" v-model="svc.value2" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
+				        	<el-option
+				        		v-for="item in ownLoadBalancer"
+				        		:key="item.LoadBalancerId"
+				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
+				        		:value="item.LoadBalancerId">
+				        	</el-option>
+                </el-select>
+                <!-- <el-tooltip effect="light" content="请选择CLB" placement="right"
+                            v-if="svc.value1===''||svc.value2===''">
                   <i class="el-icon-warning-outline" style="margin-left:10px;font-weight:800;"></i>
                 </el-tooltip> -->
               </div>
             </div>
           </el-form-item>
+
           <el-form-item label="端口映射">
             <div class="port" :class="{ports:svc.radio=='4'}">
               <!-- 头部 -->
@@ -262,6 +281,8 @@ export default {
         loadBalance: '', // 负载平衡选项
         val: '', // 自有创建的id
         value: '', // 使用已有均衡器
+        value1:'',
+        value2:'',
         LBvalue2: '', // LB所在子网
         LBvalue1: '', // LB所在子网
         // options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
@@ -424,14 +445,36 @@ export default {
     },
     'svc.radio':function(val){
       let {ownLoadBalancers} = this
-      let newAry = []  
-      switch(this.svc.radio){
+      let newAry = []
+      switch(val){
         case'1':newAry = ownLoadBalancers.filter(ele=>ele.VipIsp=='BGP');break
         case'3':newAry = ownLoadBalancers.filter(ele=>ele.VipIsp=='INTERNAL');break
       }
       this.ownLoadBalancer = newAry
-      let aa = this.ownLoadBalancer.find(item=>this.svc.value===item.LoadBalancerId)
-      if(aa!==undefined) this.svc.value = aa
+      if(val==='1'){
+        let LBobj = newAry.find(item=>this.svc.value1===item.LoadBalancerId)
+        if(LBobj!==undefined){
+          this.svc.value1 = LBobj.LoadBalancerId
+        }else{
+          if(newAry.length!==0){
+            this.svc.value1 = ''
+          }else{
+            this.svc.value1 = '暫無數據'
+          }
+        }
+      }
+      if(val==='3'){
+        let LBobj = newAry.find(item=>this.svc.value2===item.LoadBalancerId)
+        if(LBobj!==undefined){
+          this.svc.value2 = LBobj.LoadBalancerId
+        }else{
+          if(newAry.length!==0){
+            this.svc.value2 = ''
+          }else{
+            this.svc.value2 = '暫無數據'
+          }
+        }
+      }    
     }
   },
   created () {
@@ -490,8 +533,8 @@ export default {
       await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
           let msg = res.Response.LoadBalancerSet
-          this.ownLoadBalancers = msg
           let ary = msg.filter(item=>item.VpcId === this.svc.vpcIds) 
+          this.ownLoadBalancers = ary
           let newAry = []  
           switch(this.svc.radio){
             case'1':newAry = ary.filter(ele=>ele.VipIsp=='BGP');break
@@ -649,29 +692,29 @@ export default {
       // 访问方式1参数
       if (radio === '1' && loadBalance === '1') {
         jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
-        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
-        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = null
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = null
       } else if (radio === '1' && loadBalance === '2') {
         jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = '{"AddressIPVersion":"IPV4"}'
-        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = ''
-        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+        jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = null
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = this.svc.value1
       }
       // 高级选项ExtermalTrafficPolicy的参数
       if (radio !== '2') jsonStr.spec.externalTrafficPolicy = policy
-      // if (radio == '2') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
+      if (radio !== '1') jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
       if (radio === '3' && loadBalance === '1') {
         // this.getSubnetId()
-        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
-        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
+        // jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = null
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
       } else if (radio === '3' && loadBalance === '2') {
         // this.getSubnetId()
-        // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
+        // jsonStr.metadata.annotations['service.kubernetes.io/service.extensiveParameters'] = null
         // jsonStr.metadata.annotations['service.kubernetes.io/loadbalance-id'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
-        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = value
+        jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = this.svc.value2
       }
       // if (radio == '4') jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
 
@@ -750,13 +793,18 @@ export default {
           }
           // 获取使用已有均衡器的id
           if (msg.metadata.annotations && msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']) {
-            this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+            // this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+            if(this.svc.radio==='1'){
+              this.svc.value1 = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+            }else if(this.svc.radio==='3'){
+              this.svc.value2 = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
+            }
           }
           // 获取描述信息
           if (msg.metadata.annotations) {
             this.svc.describe = msg.metadata.annotations.description
-          }
-          if (this.svc.value) {
+          }      
+          if (this.svc.value1 || this.svc.value2) {
             this.svc.loadBalance = '2'
           } else {
             this.svc.loadBalance = '1'
