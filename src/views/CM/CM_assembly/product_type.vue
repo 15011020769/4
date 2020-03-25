@@ -9,16 +9,16 @@
 <script>
   import {
     CVM_LIST, //云服务器列表
-    NAT_LIST, //NAT网关列表
-    VPN_LIST, //VPN网关列表
+    NAT_LIST, //NAT網關列表
+    VPN_LIST, //VPN網關列表
     VPNTD_LIST, //VPN通道列表
-    DCG_LIST, //专线网关列表
+    DCG_LIST, //专线網關列表
     MYSQL_LIST, //MYSQL列表
     REDIS_LIST, //REDIS列表
-    Physics_LIST, //物理专线列表
+    Physics_LIST, //物理專線列表
     Private_LIST, //专线通道列表
-    OBJ_LIST, //对象存储列表
-    DISK_LIST, //云硬盘列表
+    OBJ_LIST, //對象存儲列表
+    DISK_LIST, //云硬碟列表
     CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
@@ -45,23 +45,23 @@
     data() {
       return {
         productOptions: [{
-            label: '云服务器',
+            label: '雲伺服器',
             viewName: 'cvm_device',
           }, {
-            label: '云硬盘',
+            label: '云硬碟',
             viewName: 'BS',
           },
           {
-            label: 'VPN网关',
+            label: 'VPN網關',
             viewName: 'VPN_GW',
           }, {
             label: 'VPN通道',
             viewName: 'vpn_tunnel',
           }, {
-            label: 'NAT网关',
+            label: 'NAT網關',
             viewName: 'nat_tc_stat',
           }, {
-            label: '专线网关',
+            label: '专线網關',
             viewName: 'DC_GW',
           }, {
             label: 'MYSQL',
@@ -70,17 +70,17 @@
             label: 'Redis',
             viewName: 'REDIS-CLUSTER',
           }, {
-            label: '物理专线',
+            label: '物理專線',
             viewName: 'dcline',
           }, {
-            label: '对象存储',
+            label: '對象存儲',
             viewName: 'COS',
           }
         ],
-        Date: [], //各个产品数组
+        Date: [], //各個产品數组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置
-        Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
+        Namespace: 'QCE/CVM', //各产品调取监控數據命名空间
         MetricName: [],
         id: '',
         Pass: {},
@@ -195,18 +195,18 @@
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/主机名',
-            title2: '网络类型',
+            title1: 'ID/主機名',
+            title2: '網路類型',
             title3: 'IP地址'
           }
           this.MetricName = [{
               label: 'CPU使用率%',
               value: 'cpu_usage'
             }, {
-              label: 'CPU平均负载',
+              label: 'CPU平均負載',
               value: 'cpu_loadavg'
             }, {
-              label: '基础CPU使用率%',
+              label: '基礎CPU使用率%',
               value: 'base_cpu_usage'
             },
             {
@@ -217,47 +217,47 @@
               value: 'mem_usage'
             },
             {
-              label: '内网出带宽(Mbps)',
+              label: '內網出頻寬(Mbps)',
               value: 'lan_outtraffic'
             }, {
-              label: '内网入带宽(Mbps)',
+              label: '內網入頻寬(Mbps)',
               value: 'lan_intraffic'
             },
             {
-              label: '内网出包量(个/s)',
+              label: '內網出包量(個/s)',
               value: 'lan_outpkg'
             },
             {
-              label: '内网入包量(个/s)',
+              label: '內網入包量(個/s)',
               value: 'lan_inpkg'
             }, {
-              label: 'TCP连接数(个)',
+              label: 'TCP連接數(個)',
               value: 'tcp_curr_estab'
             },
             {
-              label: '外网出带宽(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'wan_outtraffic'
             },
             {
-              label: '外网入带宽(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'wan_intraffic'
             }, {
-              label: '外网出包量(个/s)',
-              value: 'wan_outpkg(个/s)'
+              label: '外網出包量(個/s)',
+              value: 'wan_outpkg(個/s)'
             },
             {
-              label: '外网入包量(个/s)',
+              label: '外網入包量(個/s)',
               value: 'wan_inpkg'
             },
             {
-              label: '外网出流量(MB)',
+              label: '外網出流量(MB)',
               value: 'acc_outtraffic'
             }
           ]
           this._PassValue()
         });
       },
-      // 获取NAT网关列表
+      // 获取NAT網關列表
       _GetNat() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -281,36 +281,36 @@
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '状态',
-            title3: '私有网络',
-            title4: '类型',
+            title1: 'ID/名稱',
+            title2: '狀態',
+            title3: '私有網路',
+            title4: '類型',
           }
           this.MetricName = [{
-              label: '外网出带宽(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外网入带宽(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '出包量(个/s)',
+              label: '出包量(個/s)',
               value: 'outpkg'
             },
             {
-              label: '入包量(个/s)',
+              label: '入包量(個/s)',
               value: 'inpkg'
             },
             {
-              label: '連接數(个/s)',
+              label: '連接數(個/s)',
               value: 'conns'
             }
           ]
           this._PassValue()
         });
       },
-      // 获取VPN网关列表
+      // 获取VPN網關列表
       _GetVPNG() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -334,24 +334,24 @@
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '状态',
-            title3: '所属网络',
+            title1: 'ID/名稱',
+            title2: '狀態',
+            title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '外网出带宽(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外网入带宽(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '出包量(个/s)',
+              label: '出包量(個/s)',
               value: 'outpkg'
             },
             {
-              label: '入包量(个/s)',
+              label: '入包量(個/s)',
               value: 'inpkg'
             }
           ]
@@ -382,24 +382,24 @@
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '所属网络',
-            title3: 'VPN网关',
+            title1: 'ID/名稱',
+            title2: '所屬網路',
+            title3: 'VPN網關',
           }
           this.MetricName = [{
-              label: '网络出带宽(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '网络入带宽(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '出包量(个/s)',
+              label: '出包量(個/s)',
               value: 'outpkg'
             },
             {
-              label: '入包量(个/s)',
+              label: '入包量(個/s)',
               value: 'inpkg'
             },
             {
@@ -414,7 +414,7 @@
           this._PassValue()
         });
       },
-      // 获取专线网关列表
+      // 获取专线網關列表
       _GetPRI() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -438,24 +438,24 @@
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: 'NAT配置状态',
-            title3: '所属网络',
+            title1: 'ID/名稱',
+            title2: 'NAT配置狀態',
+            title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '网络出带宽(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '网络入带宽(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '出包量(个/s)',
+              label: '出包量(個/s)',
               value: 'outpkg'
             },
             {
-              label: '入包量(个/s)',
+              label: '入包量(個/s)',
               value: 'inpkg'
             }
 
@@ -481,131 +481,131 @@
             label: "實例 ID"
           }]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '内网IP/端口',
-            // title3: '网络类型',
-            // title4: '类型',
+            title1: 'ID/名稱',
+            title2: '內網IP/端口',
+            // title3: '網路類型',
+            // title4: '類型',
           }
           this.MetricName = [
 
             {
-              label: '慢查询数(次/分钟)',
+              label: '慢查詢數(次/分鍾)',
               value: 'slow_queries'
             },
             {
-              label: '连接数利用率(%)',
+              label: '連接數利用率(%)',
               value: 'connection_use_rate'
             },
             {
-              label: '最大连接数(个)',
+              label: '最大連接數(個)',
               value: 'max_connections'
             },
             {
-              label: '全表扫描数(次/秒)',
+              label: '最全表掃描數(次/秒)',
               value: 'select_scan'
             },
             {
-              label: '查询数(次/秒)',
+              label: '查詢數(次/秒)',
               value: 'select_count'
             },
             {
-              label: '更新数(次/秒)',
+              label: '更新數(次/秒)',
               value: 'com_update'
             },
             {
-              label: '删除数(次/秒)',
+              label: '刪除數(次/秒)',
               value: 'com_delete'
             },
             {
-              label: '插入数(次/秒)',
+              label: '插入數(次/秒)',
               value: 'com_insert'
             },
             {
-              label: '覆盖数(次/秒)',
+              label: '覆蓋數(次/秒)',
               value: 'com_replace'
             },
             {
-              label: '总请求数(次/秒)',
+              label: '總請求數(次/秒)',
               value: 'queries',
             },
             {
-              label: '当前打开连接数(个)',
+              label: '當前打開連接數(個)',
               value: 'threads_connected'
             },
             {
-              label: '磁盘使用空间(MB)',
+              label: '磁盤使用空間(MB)',
               value: 'real_capacity'
             },
             {
-              label: '磁盘占用空间(MB)',
+              label: '磁盤占用空間(MB)',
               value: 'capacity'
             },
             {
-              label: '内网出流量(Byte/秒)',
+              label: '內網出流量(Byte/秒)',
               value: 'bytes_sent'
             },
             {
-              label: '内网入流量(Byte/秒)',
+              label: '內網入流量(Byte/秒)',
               value: 'bytes_received'
             },
             {
-              label: '缓存使用率(%)',
+              label: '緩存使用率(%)',
               value: 'qcache_use_rate',
             },
             {
-              label: '缓存命中率(%)',
+              label: '緩存命中率(%)',
               value: 'qcache_hit_rate'
             },
             {
-              label: '等待表锁次数(次/秒)',
+              label: '等待表鎖次數(次/秒)',
               value: 'table_locks_waited'
             },
             {
-              label: '临时表数量(次/秒)',
+              label: '臨時表數量(次/秒)',
               value: 'created_tmp_tables'
             },
             {
-              label: 'innodb缓存使用率(%)',
+              label: 'innodb緩存使用率(%)',
               value: 'innodb_cache_use_rate'
             },
             {
-              label: 'innodb缓存命中率(%)',
+              label: 'innodb緩存命中率(%)',
               value: 'innodb_cache_hit_rate'
             },
             {
-              label: 'innodb读磁盘数量(次/秒)',
+              label: 'innodb讀磁盤數量(次/秒)',
               value: 'innodb_os_file_reads'
             },
             {
-              label: 'innodb写磁盘数量(次/秒)',
+              label: 'innodb寫磁盤數量(次/秒)',
               value: 'innodb_os_file_writes'
             },
             {
-              label: 'innodb fsync数量(次/秒)',
+              label: 'innodb fsync數量(次/秒)',
               value: 'innodb_os_fsyncs'
             },
             {
-              label: 'myisam缓存使用率(%)',
+              label: 'myisam緩存使用率(%)',
               value: 'key_cache_use_rate'
             },
             {
-              label: 'myisam缓存命中率(%)',
+              label: 'myisam緩存命中率(%)',
               value: 'key_cache_hit_rate'
             },
             {
-              label: '磁盘利用率(%)',
+              label: '磁盤利用率(%)',
               value: 'volume_rate'
             },
             {
-              label: '查询使用率(%)',
+              label: '查詢使用率(%)',
               value: 'query_rate'
             },
             {
-              label: '每秒执行操作数(次/秒)',
+              label: '每秒執行操作數(次/秒)',
               value: 'qps'
             },
             {
-              label: '每秒执行事务数(次/秒)',
+              label: '每秒執行事務數(次/秒)',
               value: 'tps'
             },
             {
@@ -638,9 +638,9 @@
             label: "ID"
           }]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '规格',
-            title3: '内网地址',
+            title1: 'ID/名稱',
+            title2: '規格',
+            title3: '內網地址',
           }
           this.MetricName = [{
               value: 'cpu_us_min',
@@ -648,79 +648,79 @@
             },
             {
               value: 'cmdstat_get_min',
-              label: 'get请求数(次)'
+              label: 'get請求數(次)'
             },
             {
               value: 'cmdstat_getbit_min',
-              label: 'getbit请求数(次)'
+              label: 'getbit請求數(次)'
             },
             {
               value: 'cmdstat_getrange_min',
-              label: 'getrange请求数(次)'
+              label: 'getrange請求數(次)'
             },
             {
               value: 'cmdstat_hget_min',
-              label: 'hget请求数(次)'
+              label: 'hget請求數(次)'
             },
             {
               value: 'cmdstat_hgetall_min',
-              label: 'hgetall请求数(次)'
+              label: 'hgetall請求數(次)'
             },
             {
               value: 'cmdstat_hmget_min',
-              label: 'hmget请求数(次)'
+              label: 'hmget請求數(次)'
             },
             {
               value: 'cmdstat_hmset_min',
-              label: 'hmset请求数(次)'
+              label: 'hmset請求數(次)'
             },
             {
               value: 'cmdstat_hset_min',
-              label: 'hset请求数(次)'
+              label: 'hset請求數(次)'
             },
             {
               value: 'cmdstat_hsetnx_min',
-              label: 'hsetnx请求数(次)'
+              label: 'hsetnx請求數(次)'
             },
             {
               value: 'cmdstat_lset_min',
-              label: 'lset请求数(次)'
+              label: 'lset請求數(次)'
             },
             {
               value: 'cmdstat_mget_min',
-              label: 'mget请求数(次)'
+              label: 'mget請求數(次)'
             },
             {
               value: 'cmdstat_mset_min',
-              label: 'mset请求数(次)'
+              label: 'mset請求數(次)'
             },
             {
               value: 'cmdstat_msetnx_min',
-              label: 'msetnx请求数(次)'
+              label: 'msetnx請求數(次)'
             },
             {
               value: 'cmdstat_set_min',
-              label: 'set请求数(次)'
+              label: 'set請求數(次)'
             },
             {
               value: 'cmdstat_setbit_min',
-              label: 'setbit请求数(次)'
+              label: 'setbit請求數(次)'
             },
             {
               value: 'cmdstat_setex_min',
-              label: 'setex请求数(次)'
+              label: 'setex請求數(次)'
             },
             {
               value: 'cmdstat_setnx_min',
-              label: 'setnx请求数(次)'
+              label: 'setnx請求數(次)'
             },
             {
               value: 'cmdstat_setrange_min',
-              label: 'setrange请求数(次)'
+              label: 'setrange請求數(次)'
             },
             {
               value: 'connections_min',
-              label: '连接数量(个)'
+              label: '連接數量(個)'
             },
             {
               value: 'in_flow_min',
@@ -728,7 +728,7 @@
             },
             {
               value: 'keys_min',
-              label: 'Key总数(个)'
+              label: 'Key總數(個)'
             },
             {
               value: 'out_flow_min',
@@ -736,11 +736,11 @@
             },
             {
               value: 'stat_get_min',
-              label: '读请求数(次)'
+              label: '讀請求數(次)'
             },
             {
               value: 'stat_set_min',
-              label: '写请求数(次)'
+              label: '寫請求數(次)'
             },
             {
               value: 'storage_min',
@@ -754,7 +754,7 @@
           this._PassValue()
         });
       },
-      //获取物理专线列表
+      //获取物理專線列表
       _GetDCLINE() {
         let parms = {
           Region: this.selectedRegion,
@@ -772,16 +772,16 @@
             label: '專線ID'
           }]
           this.HeadConfig = {
-            title1: '名称/ID',
+            title1: '名稱/ID',
             title2: '所在地',
-            title3: '带宽',
+            title3: '頻寬',
           }
           this.MetricName = [{
-              label: '网络出带宽(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '网络入带宽(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             }
           ]
@@ -807,31 +807,31 @@
             label: "通道ID"
           }]
           this.HeadConfig = {
-            title1: 'ID/名称',
-            title2: '私有网络',
+            title1: 'ID/名稱',
+            title2: '私有網路',
           }
           this.MetricName = [{
-              label: '网络入带宽(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '网络出带宽(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '入包量(个/s)',
+              label: '入包量(個/s)',
               value: 'inpkg'
             },
 
             {
-              label: '出包量(个/s)',
+              label: '出包量(個/s)',
               value: 'outpkg'
             }
           ]
           this._PassValue()
         });
       },
-      //获取对象存储列表
+      //获取對象存儲列表
       _GetOBJ() {
         let parms = {
           Region: this.selectedRegion,
@@ -850,41 +850,41 @@
             label: "儲存桶名稱"
           }]
           this.HeadConfig = {
-            title1: 'Bucket名称',
+            title1: 'Bucket名稱',
             title2: '地域',
-            title3: '创建时间'
+            title3: '創建時間'
           }
           this.MetricName = [{
               value: 'std_read_requests',
-              label: '标准存储读请求(次)'
+              label: '標准存儲讀請求(次)'
             },
             {
               value: 'std_write_requests',
-              label: '标准存储写请求(次)',
+              label: '標准存儲寫請求(次)',
             },
             {
               value: 'ia_read_requests',
-              label: '低频存储读请求(次)',
+              label: '低頻存儲讀請求(次)',
             },
             {
               value: 'outbandwidth',
-              label: '低频存储写请求(次)',
+              label: '低頻存儲寫請求(次)',
             },
             {
               value: 'nl_read_request',
-              label: '近线存储读请求(次)',
+              label: '近線存儲讀請求(次)',
             },
             {
               value: 'nl_write_requests',
-              label: '近线存储写请求(次)',
+              label: '近線存儲寫請求(次)',
             },
             {
               value: 'inbound_traffic',
-              label: '上传流量(B)',
+              label: '上傳流量(B)',
             },
             {
               value: 'internal_traffic',
-              label: '内网流量(B)',
+              label: '內網流量(B)',
             },
             {
               value: 'internet_traffic',
@@ -896,38 +896,38 @@
             },
             {
               value: '2xx_response',
-              label: '2xx状态码(次)',
+              label: '2xx狀態碼(次)',
             },
             {
               value: '3xx_response',
-              label: '3xx状态码(次)',
+              label: '3xx狀態碼(次)',
             },
 
             {
               value: '4xx_response',
-              label: '4xx状态码(次)',
+              label: '4xx狀態碼(次)',
             },
             {
               value: '5xx_response',
-              label: '5xx状态码(次)',
+              label: '5xx狀態碼(次)',
             },
             {
               value: 'std_retrieval',
-              label: '标准数据读取(B)',
+              label: '標准數據讀取(B)',
             },
 
             {
               value: 'ia_retrieval',
-              label: '低频数据取回(B)',
+              label: '低頻數據取回(B)',
             }, {
               value: 'nl_retrieval',
-              label: '近线数据取回(B)',
+              label: '近線數據取回(B)',
             }
           ]
           this._PassValue()
         });
       },
-      //获取云硬盘
+      //获取云硬碟
       _GetBs() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -952,40 +952,40 @@
             },
             {
               value: "disk-name",
-              label: "雲盤名稱"
+              label: "雲碟名稱"
             }
           ]
           this.HeadConfig = {
-            title1: 'ID/名称',
+            title1: 'ID/名稱',
             title2: '大小(GB)',
-            title3: '硬盘类型',
+            title3: '硬碟類型',
           }
           this.MetricName = [{
-              label: '硬盘读流量(KB/s)',
+              label: '硬碟讀流量(KB/s)',
               value: 'disk_read_traffic'
             },
             {
-              label: '硬盘写流量',
+              label: '硬碟寫流量',
               value: 'disk_write_traffic'
             },
             {
-              label: '硬盘读IOPS',
+              label: '硬碟讀IOPS',
               value: 'disk_read_iops'
             },
             {
-              label: '硬盘写IOPS',
+              label: '硬碟寫IOPS',
               value: 'disk_write_iops'
             },
             {
-              label: '硬盘IO Await',
+              label: '硬碟IO Await',
               value: 'disk_await'
             },
             {
-              label: '硬盘IO Svctm',
+              label: '硬碟IO Svctm',
               value: 'disk_svctm'
             },
             {
-              label: '硬盘IO %util',
+              label: '硬碟IO %util',
               value: 'disk_util'
             }
           ]

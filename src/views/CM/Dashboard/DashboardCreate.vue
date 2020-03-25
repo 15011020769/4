@@ -1,9 +1,9 @@
 <template>
   <div class="room">
-    <h2>创建监控图表</h2>
+    <h2>{{ $t("CVM.DashboardCreate.cjjktb") }}</h2>
     <div class="top">
       <div class="top-one">
-        <span>产品类型</span>
+        <span>{{ $t("CVM.DashboardCreate.cplx") }}</span>
         <Type
           v-on:PassData="PassData"
           :projectId="projectId"
@@ -13,28 +13,43 @@
         ></Type>
       </div>
       <div class="top-two">
-        <span>数据视图
-          <el-tooltip class="item" effect="light" content="明细视图展示不同实例的多条曲线" placement="top">
+        <span
+          >{{ $t("CVM.DashboardCreate.sjst") }}
+          <el-tooltip
+            class="item"
+            effect="light"
+            :content="$t('CVM.DashboardCreate.qxz')"
+            placement="top"
+          >
             <i class="el-icon-info"></i>
           </el-tooltip>
         </span>
-        <div class="top-two-see">明细视图</div>
+        <div class="top-two-see">{{ $t("CVM.DashboardCreate.mxst") }}</div>
       </div>
     </div>
-    <h3 style="margin-bottom:20px">配置监控图表</h3>
+    <h3 style="margin-bottom:20px">{{ $t("CVM.DashboardCreate.pzjktb") }}</h3>
     <div class="footer">
       <div class="footer-left">
         <div class="footer-left-left" v-loading="loading">
-          <h4>图标配置</h4>
+          <h4>{{ $t("CVM.DashboardCreate.tbpz") }}</h4>
           <div style="margin-top:30px">
-            <p style="margin-bottom:10px">图表名称</p>
-            <el-input size="mini" v-model="picName" style="max-width:250px" maxlength='30'></el-input>
+            <p style="margin-bottom:10px">
+              {{ $t("CVM.DashboardCreate.tbmc") }}
+            </p>
+            <el-input
+              size="mini"
+              v-model="picName"
+              style="max-width:250px"
+              maxlength="30"
+            ></el-input>
           </div>
           <div style="margin-top:30px">
-            <p style="margin-bottom:10px">监控指标</p>
+            <p style="margin-bottom:10px">
+              {{ $t("CVM.DashboardCreate.jkzb") }}
+            </p>
             <el-select
               v-model="target"
-              placeholder="请选择"
+              :placeholder="$t('CVM.DashboardCreate.qxz')"
               size="mini"
               @change="getTarget"
               style="max-width:250px"
@@ -49,7 +64,7 @@
           </div>
         </div>
         <div class="footer-left-right">
-          <h2 class="white-point">{{picName}}</h2>
+          <h2 class="white-point">{{ picName }}</h2>
           <div>
             <Echarts
               :time="times"
@@ -82,8 +97,11 @@
         size="mini"
         @click="createJump()"
         :disabled="!this.rightData.length"
-      >确定</el-button>
-      <el-button size="mini" @click="jump">取消</el-button>
+        >{{ $t("CVM.DashboardCreate.qd") }}</el-button
+      >
+      <el-button size="mini" @click="jump">{{
+        $t("CVM.DashboardCreate.qx")
+      }}</el-button>
     </div>
   </div>
 </template>
@@ -135,7 +153,7 @@ export default {
   },
   methods: {
     PassData(data) {
-      this.productListData = data
+      this.productListData = data;
       setTimeout(() => {
         this.productListData = {};
         // this.isShow = true;
@@ -150,15 +168,15 @@ export default {
       this.optionTarget = data.MetricName;
       this.target = data.MetricName[0]; // 指标
       this.MetricName = data.MetricName[0].value; // 监控名
-      this.picName = "明细-" + this.target.label;
+      this.picName = "明細-" + this.target.label;
       this.rightData = [];
       this.loading = false;
       this.configId = data.id;
     },
     getTarget(val) {
-      this.picName = "明细-" + val.label;
+      this.picName = "明細-" + val.label;
       this.MetricName = val.value;
-      if(this.rightData.length){
+      if (this.rightData.length) {
         this.getMonitorList();
       }
       console.log(this.MetricName);
@@ -174,7 +192,7 @@ export default {
     selectDatas(val) {
       this.rightData = val;
       console.log(val);
-      if(this.rightData.length){
+      if (this.rightData.length) {
         this.getMonitorList();
       }
     },
@@ -224,8 +242,12 @@ export default {
         Period: 60,
         Version: "2017-03-12"
       };
-    //   this.rightData.length
-      for (let i = 0; i < (this.rightData.length >10?10:this.rightData.length); i++) {
+      //   this.rightData.length
+      for (
+        let i = 0;
+        i < (this.rightData.length > 10 ? 10 : this.rightData.length);
+        i++
+      ) {
         if (this.productValue === "cvm_device") {
           // 云服务器
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
@@ -345,7 +367,7 @@ export default {
             }
             // y轴
             //  res.Response.DataPoints
-            for (let item=0 ;item<res.Response.DataPoints.length ; item++) {
+            for (let item = 0; item < res.Response.DataPoints.length; item++) {
               if (res.Response.DataPoints.length) {
                 this.series.push({
                   labelLine: {
@@ -373,8 +395,8 @@ export default {
           }
         } else {
           let ErrTips = {
-            InternalError:"内部错误",
-            InvalidParameterValue:"无效的参数值",
+            InternalError: "內部錯誤",
+            InvalidParameterValue: "無效的參數值"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -420,47 +442,46 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "请求未授权。请参考 CAM 文档对鉴权的说明。",
+              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
             DryRunOperation:
-              "DryRun 操作，代表请求将会是成功的，只是多传了 DryRun 参数。",
-            FailedOperation: "操作失败。",
-            "FailedOperation.AlertFilterRuleDeleteFailed": "删除过滤条件失败。",
-            "FailedOperation.AlertPolicyCreateFailed": "创建告警策略失败。",
-            "FailedOperation.AlertPolicyDeleteFailed": "告警策略删除失败。",
-            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查询失败。",
-            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失败。",
+              "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
+            FailedOperation: "操作失敗。",
+            "FailedOperation.AlertFilterRuleDeleteFailed": "刪除過濾條件失敗。",
+            "FailedOperation.AlertPolicyCreateFailed": "創建告警策略失敗。",
+            "FailedOperation.AlertPolicyDeleteFailed": "告警策略刪除失敗。",
+            "FailedOperation.AlertPolicyDescribeFailed": "告警策略查詢失敗。",
+            "FailedOperation.AlertPolicyModifyFailed": "告警策略修改失敗。",
             "FailedOperation.AlertTriggerRuleDeleteFailed":
-              "删除触发条件失败。",
-            "FailedOperation.DbQueryFailed": "数据库查询失败。",
-            "FailedOperation.DbRecordCreateFailed": "创建数据库记录失败。",
-            "FailedOperation.DbRecordDeleteFailed": "数据库记录删除失败。",
-            "FailedOperation.DbRecordUpdateFailed": "数据库记录更新失败。",
-            "FailedOperation.DbTransactionBeginFailed": "数据库事务开始失败。",
-            "FailedOperation.DbTransactionCommitFailed": "数据库事务提交失败。",
-            "FailedOperation.DimQueryRequestFailed": "请求维度查询服务失败。",
-            "FailedOperation.DivisionByZero": "被除数为0。",
-            "FailedOperation.DruidQueryFailed": "查询分析数据失败。",
+              "刪除触发條件失敗。",
+            "FailedOperation.DbQueryFailed": "數據庫查詢失敗。",
+            "FailedOperation.DbRecordCreateFailed": "創建數據庫記錄失敗。",
+            "FailedOperation.DbRecordDeleteFailed": "數據庫記錄删除失敗。",
+            "FailedOperation.DbRecordUpdateFailed": "數據庫記錄更新失敗。",
+            "FailedOperation.DbTransactionBeginFailed": "數據庫事務開始失敗。",
+            "FailedOperation.DbTransactionCommitFailed": "數據庫事務提交失敗。",
+            "FailedOperation.DimQueryRequestFailed": "請求維度查詢服務失敗。",
+            "FailedOperation.DivisionByZero": "被除數為0。",
+            "FailedOperation.DruidQueryFailed": "查詢分析數據失敗。",
             "FailedOperation.DruidTableNotFound": "druid表不存在。",
-            "FailedOperation.DuplicateName": "名字重复。",
+            "FailedOperation.DuplicateName": "名字重複。",
             "FailedOperation.ServiceNotEnabled":
-              "服务未启用，开通服务后方可使用。",
-            InternalError: "内部错误。",
-            "InternalError.ExeTimeout": "执行超时。",
-            InvalidParameter: "参数错误。",
-            "InvalidParameter.InvalidParameter": "参数错误。",
-            "InvalidParameter.InvalidParameterParam": "参数错误。",
-            InvalidParameterValue: "无效的参数值。",
-            LimitExceeded: "超过配额限制。",
+              "服務未啟用，開通服務後方可使用。",
+            InternalError: "內部錯誤。",
+            "InternalError.ExeTimeout": "執行超時。",
+            InvalidParameter: "參數錯誤。",
+            "InvalidParameter.InvalidParameter": "參數錯誤。",
+            "InvalidParameter.InvalidParameterParam": "參數錯誤。",
+            InvalidParameterValue: "無效的參數值。",
             "LimitExceeded.MetricQuotaExceeded":
-              "指标数量达到配额限制，禁止含有未注册指标的请求。",
-            MissingParameter: "缺少参数错误。",
-            ResourceInUse: "资源被占用。",
-            ResourceInsufficient: "资源不足。",
-            ResourceNotFound: "资源不存在。",
-            ResourceUnavailable: "资源不可用。",
-            ResourcesSoldOut: "资源售罄。",
-            UnauthorizedOperation: "未授权操作。",
-            UnknownParameter: "未知参数错误。",
+              "指標數量達到配額限制，禁止含有未註冊指標的請求。",
+            MissingParameter: "缺少參數錯誤。",
+            ResourceInUse: "資源被佔用。",
+            ResourceInsufficient: "資源不足。",
+            ResourceNotFound: "資源不存在。",
+            ResourceUnavailable: "資源不可用。",
+            ResourcesSoldOut: "資源售罄。",
+            UnauthorizedOperation: "未授權操作。",
+            UnknownParameter: "未知參數錯誤。",
             UnsupportedOperation: "操作不支持。"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -546,10 +567,10 @@ export default {
 .Cam-right {
   float: right;
 }
-.white-point{
+.white-point {
   width: 250px;
   overflow: hidden;
-  text-overflow:ellipsis;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 </style>

@@ -92,7 +92,7 @@
       <el-dropdown @command="handleCommand">
         <el-button type="text"><i class="el-icon-more"></i></el-button>
         <el-dropdown-menu slot="dropdown">
-          <div style="padding: 0 10px 10px;color: #bbb">自动刷新</div>
+          <div style="padding: 0 10px 10px;color: #bbb">自動刷新</div>
           <el-dropdown-item
             v-for="item in refreshTimeArr"
             :key="item.value"
@@ -142,12 +142,12 @@ export default {
         EndTIme: ""
       },
       refreshTimeArr: [
-        { label: "暂停", value: 0, dropActive: false },
+        { label: "暫停", value: 0, dropActive: false },
         { label: "30秒", value: 30, dropActive: false },
-        { label: "1分钟", value: 60, dropActive: false },
-        { label: "2分钟", value: 120, dropActive: false },
-        { label: "5分钟", value: 300, dropActive: false },
-        { label: "10分钟", value: 600, dropActive: false }
+        { label: "1分鍾", value: 60, dropActive: false },
+        { label: "2分鍾", value: 120, dropActive: false },
+        { label: "5分鍾", value: 300, dropActive: false },
+        { label: "10分鍾", value: 600, dropActive: false }
       ],
       picker: {
         disabledDate(time) {
