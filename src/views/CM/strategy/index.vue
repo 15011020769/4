@@ -119,11 +119,6 @@
                   <p>
                     {{ i.MetricShowName }}
                     {{ i.CalcType | CalcType }} {{ i.CalcValue
-<<<<<<< HEAD
-                    }}{{ i.Unit }}，持續{{ i.ContinueTime / 60 }}分鍾，按{{
-                      i.AlarmNotifyPeriod | AlarmNotifyPeriod
-                    }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
-=======
                     }}{{ i.Unit }}，持续{{ i.ContinueTime / 60 }}分钟，
                     <span v-if="i.AlarmNotifyType != 1"
                       >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
@@ -134,7 +129,6 @@
                     <span v-else>
                       按周期指数递增重复告警
                     </span>
->>>>>>> 告警策略详情
                   </p>
                 </div>
                 <!-- <p class="text-color">事件告警：</p>

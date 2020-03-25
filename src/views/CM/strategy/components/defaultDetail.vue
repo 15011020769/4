@@ -87,10 +87,6 @@
             {{ i.MetricShowName }}
             {{ i.CalcType | CalcType }} {{ i.CalcValue }}{{ i.Unit }}，持續{{
               i.ContinueTime / 60
-<<<<<<< HEAD
-            }}分鍾，按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
-            }}{{ i.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警" }}
-=======
             }}分钟，
             <span v-if="i.AlarmNotifyType != 1"
               >按{{ i.AlarmNotifyPeriod | AlarmNotifyPeriod
@@ -99,7 +95,6 @@
             <span v-else>
               按周期指数递增重复告警
             </span>
->>>>>>> 告警策略详情
           </p>
         </div>
         <span class="textColor" v-if="basicNews.EventConfig">事件告警</span>
@@ -1111,11 +1106,11 @@
               <el-radio v-model="radioChufa" label="1" @change="chufaTemplate"
                 >觸發條件模板</el-radio
               >
-<<<<<<< a18613ecac8e4fb832f680788d28583ab5e184e0
-              <a style="margin-left:15px;">新增觸發條件模板</a>
-=======
-              <a style="margin-left:15px;" @click="$router.push({path: '/Template'})">新增触发条件模板</a>
->>>>>>> 改bug
+              <a
+                style="margin-left:15px;"
+                @click="$router.push({ path: '/Template' })"
+                >新增触发条件模板</a
+              >
               <div class="content" v-if="radioChufa == 1">
                 <p>
                   <el-select
@@ -2724,36 +2719,10 @@ export default {
               value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
               label:
                 "每" +
-<<<<<<< HEAD
-                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 / 24 +
-                "天警告壹次"
-            });
-          } else {
-            this.AlarmNotifyPeriod.push({
-              value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
-              label:
-                "每" +
-                this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60 +
-                "小時警告壹次"
-            });
-          }
-        } else if (
-          (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60) % 1 ==
-          0
-        ) {
-          this.AlarmNotifyPeriod.push({
-            value: this.Conditions.Conditions[j].AlarmNotifyPeriod,
-            label:
-              "每" +
-              this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
-              "分鍾警告壹次"
-          });
-=======
                 this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 +
                 "分钟警告一次"
             });
           }
->>>>>>> 告警策略详情
         }
       }
       let newobj = {};
