@@ -63,8 +63,8 @@
             <!-- <div  v-for="(item,i) in seriesArr" :key='i'>
               <EcharS class="line" :time="time" :series='item.series' :period='period' />
             </div>  -->
-            <EcharS class="line" :time="time" :series="item.DataPoints" :period="period"
-              v-if="item.DataPoints.length !== 0" />
+            <EcharS class="line" :time="time" :series="item.DataPoints" :period="period" :echartsIndex="item.echartsIndex"
+              v-if="item.DataPoints.length !== 0" @changeDataIndex="changeDataIndex" />
             <div class="empty" v-else>
               暫無數據
             </div>
@@ -94,15 +94,15 @@
           <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
               <el-table-column prop="" label="ID" width="">
-                <template scope="scope">
+                <template slot-scope="scope">
                   <a style="color: #006eff" @click="goMonitorDetail(scope.row)">{{
                     scope.row[item.InstanceName]
                   }}</a>
                 </template>
               </el-table-column>
               <el-table-column prop="" :label="CMname[item.MetricName[0]]" width="">
-                <template scope="scope">
-                  <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[0] : ''}}</span>
+                <template slot-scope="scope">
+                  <span>{{item.DataPoints.length ? item.DataPoints[scope.$index].data[item.dataIndex] : ''}}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="Namespace" v-if="false"></el-table-column>
@@ -555,6 +555,8 @@
               const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
               ViewList.forEach((ele, index) => {
                 ele.openChartFlag = false; // 列表展开收起的标志
+                ele.echartsIndex = index; // 折线图在ViewList中的索引
+                ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 let newInstances = [];
                 ele.Instances.forEach(el => {
                   // newInstances.push(JSON.parse(el));
@@ -616,6 +618,7 @@
                 }
               });
               this.ViewList = ViewList;
+              console.log(this.ViewList, 'this.ViewList');
               this.getAllMonitorData(); // 获取echarts数据
             } else {
               let ErrTips = {
@@ -708,6 +711,7 @@
                     // 存在坐标为null的情况，应该是接口问题
                     return item === null ? 0 : item
                   }),
+                  name: ele.Dimensions[InstanceName], // Id名对应的Id
                   itemStyle: {
                     normal: {
                       color: color[i] ? color[i] : color[i % 10],
@@ -776,6 +780,11 @@
         }
         return wbout;
       },
+      // 改变监控图标实时展示的列表值
+      changeDataIndex(seriesIndex, dataIndex) {
+        this.ViewList[seriesIndex].echartsIndex = dataIndex;
+        console.log(this.ViewList[seriesIndex].DataPoints, seriesIndex, dataIndex)
+      }
 
       // //取消
       // cancel() {
