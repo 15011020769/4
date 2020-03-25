@@ -1,9 +1,9 @@
 <template>
   <div class="history-wrap">
     <div class="head">
-      <Header title="流量监控" />
+      <Header title="流量監控" />
       <el-tabs v-model="activeName">
-        <el-tab-pane label="外网出带宽" name="first">
+        <el-tab-pane label="外網出帶寬" name="first">
           <div class="history-main">
             <div class="box">
               <div class="table-top">
@@ -22,10 +22,10 @@
                     <span><span>对比</span><span>&times;</span></p>
                   </div>-->
                   <div class="export">
-                    <a @click="exportExcel" style="margin-right:10px;">导出数据</a>
+                    <a @click="exportExcel" style="margin-right:10px;">導出數據</a>
                   </div>
                 </div>
-                <h3>外网出带宽Mbps</h3>
+                <h3>外網出帶寬Mbps</h3>
                 <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                 <!-- <Ecarts/> -->
                 <EcharLine
@@ -38,7 +38,7 @@
                 ></EcharLine>
                 <!-- </div> -->
               </div>
-              <h3>报表详情</h3>
+              <h3>報表詳情</h3>
               <div class="table">
                 <el-table
                   :data="tableData"
@@ -48,10 +48,10 @@
                   v-loading="loadShow"
                   id="exportTable"
                 >
-                  <el-table-column prop="times" label="时间" sortable>
+                  <el-table-column prop="times" label="時間" sortable>
                     <template slot-scope="scope">{{scope.row.times}}</template>
                   </el-table-column>
-                  <el-table-column prop="Points" label="外出带宽">
+                  <el-table-column prop="Points" label="外出帶寬">
                     <template slot-scope="scope">{{scope.row.Points}}Mbps</template>
                   </el-table-column>
                 </el-table>
@@ -108,7 +108,7 @@ export default {
       times: [], // 时间
       TimeArr: [
         {
-          name: "实时",
+          name: "實時",
           Time: "realTime",
           TimeGranularity: [
             {
@@ -122,7 +122,7 @@ export default {
           ]
         },
         {
-          name: "近一天",
+          name: "近壹天",
           Time: "Nearly_24_hours",
           TimeGranularity: [
             {
@@ -217,8 +217,8 @@ export default {
           this.loadShow = false;
         } else {
           let ErrTips = {
-            InternalError:"内部错误",
-            InvalidParameterValue:"无效的参数值",
+            InternalError:"內部錯誤",
+            InvalidParameterValue:"無效的參數值",
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -267,7 +267,7 @@ export default {
     },
     exportImg() {
       //导出图片
-      alert("导出图片");
+      alert("導出圖片");
     }
   }
 };
