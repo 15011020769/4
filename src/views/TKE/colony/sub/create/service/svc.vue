@@ -136,7 +136,7 @@ export default {
         vpcId:'',//获取子网所用到的id值
         LBvalue1: '', // LB子网1
         LBvalue2: '', // LB子网2
-        balancerValue: '', // 已有均衡器
+        balancerValue: '暫無數據', // 已有均衡器
         protocol: 'TCP', // 选中的协议
         options: [], // 命名空间列表
         radio: '1',
@@ -248,15 +248,15 @@ export default {
         if (res.Response.Error === undefined) {
           let msg = res.Response.LoadBalancerSet
           msg.forEach(item=>{
-            let {radio} = this.svc
-            if(item.VipIsp=='BGP'){
-              this.ownLoadBalancer1.push(item)
-            }
-            if(item.VipIsp=='INTERNAL'){
-              this.ownLoadBalancer2.push(item)
+            if(item.VpcId === this.svc.vpcId){
+              if(item.VipIsp=='BGP'){
+                this.ownLoadBalancer1.push(item)
+              }
+              if(item.VipIsp=='INTERNAL'){
+                this.ownLoadBalancer2.push(item)
+              }
             }
           })
-          // this.svc.vpcId = msg[0].VpcId
           this.svc.loadShow = false
         } else {
           this.svc.loadShow = false

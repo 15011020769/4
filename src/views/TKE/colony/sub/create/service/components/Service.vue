@@ -64,7 +64,7 @@
 			&nbsp;共<span>{{addressCount.TotalIpAddressCount}}</span>{{$t('TKE.subList.gzwd')}}<span>{{addressCount.AvailableIpAddressCount}}</span>{{$t('TKE.overview.ge')}}可用
 		</el-form-item>
 
-		<el-form-item :label="$t('TKE.subList.fzjhq')" v-if="svc.radio=='1' || svc.radio=='3'">
+		<el-form-item :label="$t('TKE.subList.fzjhq')" v-show="svc.radio=='1' || svc.radio=='3'">
 			<div class="radio1">
 			<el-radio-group v-model='svc.loadBalance' style="margin-bottom: 5px;">
         <el-radio-button label="1">{{$t('TKE.subList.zdcjian')}}</el-radio-button>
@@ -78,7 +78,7 @@
 			<div v-show="svc.loadBalance=='2'">{{$t('TKE.subList.qwsdxgjt')}}
         <!-- <a href="javascript:;">查看更多说明</a> -->
 			<p>
-				<el-select v-if="svc.radio==='1'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
+				<el-select v-show="svc.radio==='1'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
 					<el-option
 						v-for="item in personObj.ownLoadBalancer1"
 						:key="item.LoadBalancerId"
@@ -86,7 +86,7 @@
 						:value="item.LoadBalancerId">
 					</el-option>
 				</el-select>
-        <el-select v-if="svc.radio==='3'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
+        <el-select v-show="svc.radio==='3'" v-model="svc.balancerValue" :placeholder="$t('TKE.overview.qxz')">
 					<el-option
 						v-for="item in personObj.ownLoadBalancer2"
 						:key="item.LoadBalancerId"

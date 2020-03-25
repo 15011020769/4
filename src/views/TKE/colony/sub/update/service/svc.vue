@@ -105,24 +105,19 @@
             <div v-show="svc.loadBalance=='2'">
               {{$t('TKE.subList.qwsdxgjt')}}
               <!-- <a href="">查看更多说明</a> -->
-              <p>
-                <el-select v-if="svc.radio==='1'" v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
+              <div>
+                <el-select v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
 				        	<el-option
-				        		v-for="item in ownLoadBalancer1"
+				        		v-for="item in ownLoadBalancer"
 				        		:key="item.LoadBalancerId"
 				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
 				        		:value="item.LoadBalancerId">
 				        	</el-option>
-				        </el-select>
-                <el-select v-if="svc.radio==='3'" v-model="svc.value" :placeholder="$t('TKE.overview.qxz')">
-				        	<el-option
-				        		v-for="item in ownLoadBalancer2"
-				        		:key="item.LoadBalancerId"
-				        		:label="item.LoadBalancerId+'  ('+item.LoadBalancerName+')'"
-				        		:value="item.LoadBalancerId">
-				        	</el-option>
-				        </el-select>
-              </p>
+                </el-select>
+                <!-- <el-tooltip effect="light" content="请选择CLB" placement="right" v-if="svc.value===''">
+                  <i class="el-icon-warning-outline" style="margin-left:10px;font-weight:800;"></i>
+                </el-tooltip> -->
+              </div>
             </div>
           </el-form-item>
           <el-form-item label="端口映射">
@@ -271,7 +266,7 @@ export default {
         LBvalue1: '', // LB所在子网
         // options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
         options: ['TCP', 'UDP'],
-        radio: '', // 服务访问方式
+        radio: '1', // 服务访问方式
         protocol: '', // 协议
         ETP: '1',
         SA: '2',
@@ -289,6 +284,8 @@ export default {
       spaceName: '', // 命名空间的名称
       serviceName: '', // 服务的名称
       describeClustersList: [], // 描述聚群
+      ownLoadBalancer:[],
+      ownLoadBalancers:[],
       ownLoadBalancer1: [], // 已有负载均衡器
       ownLoadBalancer2: [], // 已有负载均衡器
       LBsubnet: [], // LB所在子网
@@ -424,6 +421,17 @@ export default {
       this.addressCount = this.LBsubnet.find(item => {
         return item.SubnetId == val
       })
+    },
+    'svc.radio':function(val){
+      let {ownLoadBalancers} = this
+      let newAry = []  
+      switch(this.svc.radio){
+        case'1':newAry = ownLoadBalancers.filter(ele=>ele.VipIsp=='BGP');break
+        case'3':newAry = ownLoadBalancers.filter(ele=>ele.VipIsp=='INTERNAL');break
+      }
+      this.ownLoadBalancer = newAry
+      let aa = this.ownLoadBalancer.find(item=>this.svc.value===item.LoadBalancerId)
+      if(aa!==undefined) this.svc.value = aa
     }
   },
   created () {
@@ -481,28 +489,15 @@ export default {
       }
       await this.axios.post(TKE_EDSCRIBELOADBALANCERS, params).then(res => {
         if (res.Response.Error === undefined) {
-          let msg = res.Response.LoadBalancerSet          
-          msg.forEach(item=>{
-            let {radio} = this.svc
-            if(item.VipIsp=='BGP'){
-              this.ownLoadBalancer1.push(item)
-            }
-            if(item.VipIsp=='INTERNAL'){
-              this.ownLoadBalancer2.push(item)
-            }
-          })
-          // this.svc.value = msg[0].LoadBalancerId + '  (' + msg[0].LoadBalancerName + ')'
-          // this.vpcId = this.vpcId.push(msg[0].VpcId)
-          // msg.forEach(ele => {
-          //   if (this.svc.value === ele.LoadBalancerId) {
-          //     this.svc.loadBalance = '2'
-          //   } else {
-          //     this.svc.loadBalance = '1'
-          //     // this.svc.value = ''
-          //   }
-          // })
-          // console.log(msg)
-          // console.log(this.ownLoadBalancer)
+          let msg = res.Response.LoadBalancerSet
+          this.ownLoadBalancers = msg
+          let ary = msg.filter(item=>item.VpcId === this.svc.vpcIds) 
+          let newAry = []  
+          switch(this.svc.radio){
+            case'1':newAry = ary.filter(ele=>ele.VipIsp=='BGP');break
+            case'3':newAry = ary.filter(ele=>ele.VipIsp=='INTERNAL');break
+          }   
+          this.ownLoadBalancer = newAry  
           this.loadShow = false
         } else {
           this.loadShow = false
@@ -602,7 +597,7 @@ export default {
       let newPortAry = []// 更改时的 端口映射数组
       list.forEach(ele => { // 端口映射传参的判断
         let ports = {
-          name: `${ele.port}-${ele.targetPort}-${ele.protocol.toLowerCase()}`,
+          name: `${ele.targetPort}-${ele.port}-${ele.protocol.toLowerCase()}`,
           port: Number(ele.port),
           targetPort: Number(ele.targetPort),
           // nodePort: ele.nodePort ? Number(ele.nodePort) : null,
@@ -670,7 +665,6 @@ export default {
         jsonStr.metadata.annotations['service.kubernetes.io/tke-existed-lbid'] = ''
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-clusterid'] = this.clusterId
         jsonStr.metadata.annotations['service.kubernetes.io/qcloud-loadbalancer-internal-subnetid'] = this.svc.LBvalue2
-        // this.svc.value = ''
       } else if (radio === '3' && loadBalance === '2') {
         // this.getSubnetId()
         // jsonStr.annotations['service.kubernetes.io/service.extensiveParameters'] = ''
@@ -758,12 +752,10 @@ export default {
           if (msg.metadata.annotations && msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']) {
             this.svc.value = msg.metadata.annotations['service.kubernetes.io/tke-existed-lbid']
           }
-          // console.log(this.svc.value)
           // 获取描述信息
           if (msg.metadata.annotations) {
             this.svc.describe = msg.metadata.annotations.description
           }
-          // console.log(this.svc.val, this.svc.subnetId, this.svc.value, isart)
           if (this.svc.value) {
             this.svc.loadBalance = '2'
           } else {
