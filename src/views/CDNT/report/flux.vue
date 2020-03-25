@@ -155,8 +155,8 @@ export default {
         params2.Project = projectId
       }
       if (domainName) {
-        params1['Domains.0'] = domainName
-        params2['Domains.0'] = domainName
+        params1.Domain = domainName
+        params2.Domain = domainName
       }
       if(this.type === 'billing') {
         this.getCurBillData(params1)
