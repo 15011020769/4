@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -89,7 +89,7 @@
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: "60",
@@ -154,22 +154,22 @@
           MetricName: 'InPkg'
         }],
         disName: {
-          'InBandwidth': '外网入带宽',
+          'InBandwidth': '外網入帶寬',
           'InPkg': '入包量',
-          'OutBandwidth': '外网出带宽',
+          'OutBandwidth': '外網出帶寬',
           'OutPkg': ' 出包量'
         },
         Company: {
           'InBandwidth': 'Mbps',
-          'InPkg': ' 个/秒',
+          'InPkg': ' 個/秒',
           'OutBandwidth': 'Mbps',
-          'OutPkg': ' 个/秒'
+          'OutPkg': ' 個/秒'
         },
         Tips: {
-          'InBandwidth': 'VPN网关平均每秒入流量',
-          'InPkg': 'VPN网关平均每秒入包量',
-          'OutBandwidth': 'VPN网关平均每秒出流量',
-          'OutPkg': 'VPN网关平均每秒出包量'
+          'InBandwidth': 'VPN網關平均每秒入流量',
+          'InPkg': 'VPN網關平均每秒入包量',
+          'OutBandwidth': 'VPN網關平均每秒出流量',
+          'OutPkg': 'VPN網關平均每秒出包量'
         },
 
       }

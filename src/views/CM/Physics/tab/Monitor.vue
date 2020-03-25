@@ -25,7 +25,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length == 0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length == 0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length != 0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -100,7 +100,7 @@
     data() {
       return {
         TimeArr: [{
-            name: '实时',
+            name: '實時',
             Time: 'realTime',
             TimeGranularity: [{
                 value: '60',
@@ -113,7 +113,7 @@
             ]
           },
           {
-            name: '近24小时',
+            name: '近24小時',
             Time: 'Nearly_24_hours',
             TimeGranularity: [{
                 value: '60',
@@ -160,16 +160,16 @@
           'OutBandwidth'
         ], // 可用指标
         disName: {
-          'InBandwidth': '入带宽',
-          'OutBandwidth': ' 出带宽 '
+          'InBandwidth': '入帶寬',
+          'OutBandwidth': ' 出帶寬 '
         },
         Company: {
           'InBandwidth': 'Mbps',
           'OutBandwidth': 'Mbps'
         },
         Tips: {
-          'InBandwidth': '物理专线平均每秒出流量',
-          'OutBandwidth': '出带宽'
+          'InBandwidth': '物理專線平均每秒出流量',
+          'OutBandwidth': '出帶寬'
         }
 
       }

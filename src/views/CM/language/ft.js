@@ -177,6 +177,20 @@ module.exports = {
       elPop1: '導出的csv文件為utf-8編碼,',
       elPop2: '如果查看有亂碼，請嘗試切換文件編碼格式'
     },
+    DashboardCreate: {
+      cjjktb: "創建監控圖表",
+      cplx: "産品類型",
+      sjst: "數據視圖",
+      mxst: "明細視圖",
+      pzjktb: "配置監控圖表",
+      tbpz: "圖標配置",
+      tbmc: "圖表名稱",
+      jkzb: "監控指標",
+      qxz: "請選擇",
+      tips1: "明細視圖展示不同實例的多條曲線",
+      qd: "確定",
+      qx: "取消"
+    },
     overview: {
       syysy: '剩餘1000條/已使用0條',
       zdyxx: '自定義訊息',

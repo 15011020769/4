@@ -38,7 +38,7 @@
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.gg')">
-          <template slot-scope="scope">
+          <template slot-scope>
             <p>{{ $t('CVM.cloudMysql.wl') }}</p>
           </template>
         </el-table-column>
@@ -75,7 +75,7 @@
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.gg')">
-          <template slot-scope="scope">
+          <template slot-scope>
             <p>{{ $t('CVM.cloudMysql.wl') }}</p>
           </template>
         </el-table-column>

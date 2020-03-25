@@ -270,12 +270,12 @@ export default {
       series: [
         {
           type: "line",
-          stack: "总量",
+          stack: "總量",
           data: [220, 182, 191, 234, 290, 330, 310]
         },
         {
           type: "line",
-          stack: "总量",
+          stack: "總量",
           data: [150, 232, 201, 154, 190, 330, 410]
         }
       ],
@@ -616,8 +616,8 @@ export default {
           this.$set(this.productOptions, index, item);
         } else {
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
@@ -727,8 +727,8 @@ export default {
           this.chartsObjects = [];
           this.timelineData = [];
           let ErrTips = {
-            InternalError: "内部错误",
-            UnauthorizedOperation: "未授权操作"
+            InternalError: "內部錯誤",
+            UnauthorizedOperation: "未授權操作"
           };
           let ErrOr = Object.assign(ErrorTips, ErrTips);
           this.$message({
