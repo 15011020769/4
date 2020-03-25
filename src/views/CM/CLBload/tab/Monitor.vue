@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -163,26 +163,26 @@
         ],
         disName: {
           'InPkg': '入包量',
-          'InTraffic': '入带宽',
+          'InTraffic': '入帶寬',
 
           'OutPkg': '出包量',
-          'OutTraffic': '出带宽'
+          'OutTraffic': '出帶寬'
         },
         Company: {
-          'ConNum': '个',
-          'InPkg': ' 个/s',
+          'ConNum': '個',
+          'InPkg': ' 個/s',
           'InTraffic': ' Mbps',
-          'NewConn': '个',
-          'OutPkg': ' 个/s',
+          'NewConn': '個',
+          'OutPkg': ' 個/s',
           'OutTraffic': ' Mbps'
         },
         Tips: {
-          'ConNum': '连接数',
+          'ConNum': '連接數',
           'InPkg': '入包量',
-          'InTraffic': '入带宽',
-          'NewConn': '新增连接数',
+          'InTraffic': '入帶寬',
+          'NewConn': '新增連接數',
           'OutPkg': '出包量',
-          'OutTraffic': '出带宽'
+          'OutTraffic': '出帶寬'
         },
 
       }
