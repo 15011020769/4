@@ -18,10 +18,10 @@
       <!-- 搜索框与新建，删除 -->
       <div class="flex">
         <div class="font" style="flex:1;padding-top:20px;">
-          <!-- <router-link :to="{path:'/logCreate',query:{clusterId:value}}"> -->
-          <button class="data-card-hd" v-if="!xjF"   @click="newCread">新建</button>
+           <el-tooltip :disabled='value!=""' class="item" effect="dark" content="请先创建一个集群" placement="top-start">
+             <button class="data-card-hd" :style="{cursor:(value!=''?'pointer':'no-drop')}" v-if="!xjF"   @click="value!=''?newCread:''">新建</button>
+           </el-tooltip>
           <button class="data-card-hd" v-if="xjF" @click="dialogVisible = true">新建</button>
-          <!-- </router-link> -->
         </div>
         <div style="position: relative;" class="flex">
           <div class="font" style="margin-top:29px;margin-right:10px;">{{$t('TKE.overview.mmkj')}}</div>
@@ -496,6 +496,7 @@
         }
         // console.log(params)
         this.axios.post(TKE_OPENLOGJUDGE, params).then(res=>{
+          console.log(res)
           if(res.codeDesc=='Success'){
             if(res.data.enabled){
               this.xjF=false
@@ -512,8 +513,6 @@
               duration: 0
             });
           }
-          console.log(res,'respanduna',this.xjF,'xjf')
-
         })
       },
 
@@ -521,7 +520,6 @@
       //列表数据
       findList() {
          this.tableFlag=true;
-        if (this.value2) {
           var params = {
             ClusterName: this.value2,
             Method: "GET",
@@ -548,7 +546,6 @@
             }
           })
 
-        }
       }
 
     }
@@ -690,5 +687,6 @@
   .show {
     display: block;
   }
+  
 
 </style>

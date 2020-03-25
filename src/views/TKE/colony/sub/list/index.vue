@@ -67,7 +67,7 @@
                 >CronJob</el-menu-item
               >
             </el-submenu>
-            <!-- <el-menu-item index="/colony/sub/list/hpa">自动伸缩</el-menu-item> -->
+            <el-menu-item index="/colony/sub/list/hpa">自动伸缩</el-menu-item>
             <el-submenu index="6">
               <template slot="title"><span>服务</span></template>
               <el-menu-item index="/colony/sub/list/service/svc"

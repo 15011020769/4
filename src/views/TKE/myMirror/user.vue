@@ -49,7 +49,7 @@
         </el-table-column>
         <el-table-column prop="reponame" :label="$t('TKE.myMirror.jxdz')">
           <template slot-scope="scope">
-                {{tableServer+'/'+scope.row.reponame}}
+                {{tableServer+'/'+scope.row.reponame|tableServers}}
             </template>
         </el-table-column>
         <el-table-column prop="creationTime" :label="$t('TKE.overview.cjsj')"></el-table-column>
@@ -82,8 +82,7 @@
         class="demo-ruleForm tke-form"
         size="small"
         style="width:500px"
-        label-position="left"
-      >
+        label-position="left">
         <el-form-item :label="$t('TKE.overview.mc')" prop="name" size="mini">
           <el-input  v-model="name" @change="getName()" style="width:200px"></el-input>
           <p class="form-p">{{$t('TKE.myMirror.zcw200gzf')}}</p>
@@ -569,6 +568,10 @@ export default {
       } else {
         return '私有'
       }
+    },
+    tableServers:function(value){
+       var index = value.replace('tencent', 'taipei').replace('cloud', 'Top Cloud').replace('qcloud', 'Top Cloud')
+        return index
     }
   }
 }

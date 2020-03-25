@@ -295,8 +295,8 @@
                         <el-radio-button label="CLOUD_PREMIUM">{{$t('TKE.colony.gxnyp')}}</el-radio-button>
                         <el-radio-button label="CLOUD_SSD">{{$t('TKE.colony.yyp')}}</el-radio-button>
                       </el-radio-group>
-                      <div class="block">
-                        <el-slider :min="10" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
+                      <div class="block" style="height: auto;">
+                        <el-slider :min="10" :marks="marks" :max="16000" :step="10" :show-tooltip="true" v-model="item.dataSize"
                          show-input show-input-controls show-stops @change="changeDataDisk"></el-slider>
                       </div>
                     </el-form-item>
@@ -667,6 +667,10 @@ export default {
   name: "create",
   data() {
     return {
+      marks:{
+        10: '10',
+        16000: '16000',
+      },
       loadShow: false,//是否显示加载
       clusterId: '',//集群id
       clusterInfo: {},//集群基本信息

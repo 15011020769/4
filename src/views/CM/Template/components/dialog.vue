@@ -18,15 +18,16 @@
         <p class="rowCont">
           <span style="vertical-align:top">备注</span>
           <el-form-item style="display:inline-block" prop="textareas">
-            <!-- v-model="formInline.textareas" -->
+              <!-- show-word-limit   -->
             <el-input
               style="width:330px;"
               :autosize="{ minRows: 5, maxRows: 2}"
               type="textarea"
               placeholder="1-100个中英文字符或下划线"
               v-model="formInline.textareas"
-              maxlength="101"
+              maxlength="100"
             ></el-input>
+            <div v-if="formInline.textareas.length==100" style="color:red;font-size:12px;margin-bottom:-20px">描述不能超过100个字</div>
           </el-form-item>
         </p>
       </el-form>
