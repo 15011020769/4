@@ -45,8 +45,8 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.table.x5')">
           <template slot-scope="scope">
-            <p v-for="(i,index) in scope.row.PrivateIpAddresses" :key="index">{{i}}({{ $t('CVM.nwang') }})</p>
-            <p v-for="(i,index) in scope.row.PublicIpAddresses" :key="index">{{i}}</p>
+            <p v-for="(i) in scope.row.PrivateIpAddresses" :key="i">{{i}}({{ $t('CVM.nwang') }})</p>
+            <p v-for="(i) in scope.row.PublicIpAddresses" :key="i">{{i}}</p>
           </template>
         </el-table-column>
 
@@ -97,7 +97,7 @@
         </el-table-column>
         <el-table-column prop label="公網">
           <template slot-scope="scope">
-            <p v-for="(i,index) in scope.row.PublicIpAddresses" :key="index">{{i}}</p>
+            <p v-for="(i,index1) in scope.row.PublicIpAddresses" :key="index1">{{i}}</p>
           </template>
         </el-table-column>
         <el-table-column prop="projectName" :label="$t('CVM.table.x6')"></el-table-column>
