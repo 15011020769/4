@@ -1188,14 +1188,14 @@
                           :min="1"
                           :max="1"
                         ></el-input-number>
-                        <p v-if="!colonySecond.chargingShow">
+                        <!-- <p v-if="!colonySecond.chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
-                          {{ $t("TKE.colony.tjgnsqpe") }}
-                          <!-- <a href="#">提交工单</a> -->
-                        </p>
+                          {{ $t("TKE.colony.tjgnsqpe") }} -->
+                        <!-- <a href="#">提交工单</a> -->
+                        <!-- </p>
                         <p v-if="colonySecond.chargingShow">
                           {{ $t("TKE.colony.cvmpe") }}
-                        </p>
+                        </p> -->
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
@@ -2031,14 +2031,14 @@
                           :min="1"
                           :max="1"
                         ></el-input-number>
-                        <p v-if="!colonySecond.chargingShow">
+                        <!-- <p v-if="!colonySecond.chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
-                          {{ $t("TKE.colony.tjgnsqpe") }}
-                          <!-- <a href="#">提交工单</a> -->
-                        </p>
+                          {{ $t("TKE.colony.tjgnsqpe") }} -->
+                        <!-- <a href="#">提交工单</a> -->
+                        <!-- </p>
                         <p v-if="colonySecond.chargingShow">
                           {{ $t("TKE.colony.cvmpe") }}
-                        </p>
+                        </p> -->
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
