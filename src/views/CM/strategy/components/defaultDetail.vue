@@ -1100,7 +1100,11 @@
               <el-radio v-model="radioChufa" label="1" @change="chufaTemplate"
                 >觸發條件模板</el-radio
               >
+<<<<<<< a18613ecac8e4fb832f680788d28583ab5e184e0
               <a style="margin-left:15px;">新增觸發條件模板</a>
+=======
+              <a style="margin-left:15px;" @click="$router.push({path: '/Template'})">新增触发条件模板</a>
+>>>>>>> 改bug
               <div class="content" v-if="radioChufa == 1">
                 <p>
                   <el-select

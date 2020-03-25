@@ -10,6 +10,7 @@
             <el-input
               style="width:330px;margin:0"
               maxlength="20"
+              show-word-limit
               v-model="formInline.strategy_name"
               placeholder="1-20個中英文字符或下劃線"
             ></el-input>
@@ -331,12 +332,20 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (!value) {
+<<<<<<< a18613ecac8e4fb832f680788d28583ab5e184e0
                 callback(new Error('模板名稱不能爲空'))
               } else if (value.length === 20) {
                 callback(new Error('模板名稱不能超過 20 字'))
               } else {
+=======
+                callback(new Error('模板名称不能为空'))
+              }else {
+>>>>>>> 改bug
                 callback()
               }
+              //  else if (value.length === 20) {
+              // callback(new Error('提示:模板名称不能超过 20 字'))
+              // } 
             },
             trigger: 'blur',
             required: true
@@ -446,7 +455,7 @@ export default {
         GroupName: this.formInline.strategy_name,
         ViewName: this.productValue,
         Module: 'monitor',
-        // IsUnionRule: this.metting,
+        IsUnionRule: this.metting,
         Remark: this.formInline.textareas
       }
       this.indexAry.forEach((ele, i) => {
