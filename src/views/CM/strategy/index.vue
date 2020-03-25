@@ -521,7 +521,7 @@
       :before-close="CelStart"
     >
       <div>
-        <p>确定停用告警策略【{{ GroupName }}】</p>
+        <p>确定{{ statue }}告警策略【{{ GroupName }}】</p>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="SureStart()">确定</el-button>
@@ -703,6 +703,7 @@ export default {
       GroupId: "",
       GroupName: "",
       startStop: false,
+      statue: "停用",
       copyDialogVisible: false,
       IsOpen: false,
       inputVal: "",
@@ -997,6 +998,11 @@ export default {
       this.startStop = true;
       this.GroupId = row.GroupId;
       this.GroupName = row.GroupName;
+      if (row.IsOpen) {
+        this.statue = "開啟";
+      } else {
+        this.statue = "停用";
+      }
       this.IsOpen = !row.IsOpen;
       this.indexs = index;
     },
