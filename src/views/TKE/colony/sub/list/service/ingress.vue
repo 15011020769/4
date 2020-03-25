@@ -39,7 +39,11 @@
         </el-table-column>
         <el-table-column prop="" :label="$t('TKE.overview.lx')">
           <template slot-scope="scope">
-            <span>{{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}</span>
+            <span></span>
+            <a target="_self"
+              :href="'../CLB/index.html#/LB/LB-detail-applied/' + scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id'] + '/1'">
+              {{scope.row.metadata.annotations['kubernetes.io/ingress.qcloud-loadbalance-id']}}
+            </a>
             <p>{{$t('TKE.subList.fzjh')}}</p>
           </template>
         </el-table-column>

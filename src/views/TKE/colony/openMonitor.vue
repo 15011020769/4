@@ -652,7 +652,7 @@ export default {
   .box-bottom {
     background: #ffffff;
     box-sizing: border-box;
-    height: 580px;
+    height: auto;
     display: flex;
     justify-content: space-between;
     .box-bottom-left {
