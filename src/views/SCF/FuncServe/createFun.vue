@@ -239,12 +239,16 @@
           Version: "2018-04-16",
           Offset: this.currentPage - 1,
           Limit: this.pageSize,
-          "SearchKey.0.Key": "Runtime",
-          "SearchKey.0.Value": this.createFunTable.runMoment
+          'SearchKey.0.Key': "Type",
+          'SearchKey.0.Value': "Event",
+          "SearchKey.1.Key": "All",
+          // "SearchKey.0.Key": "Runtime",
+          "SearchKey.1.Value": this.createFunTable.runMoment
         };
         if (this.searchName !== "") {
-          param["SearchKey.0.Key"] = "Runtime";
-          param["SearchKey.0.Value"] = this.searchName;
+          param["SearchKey.1.Key"] = "All";
+          // param["SearchKey.0.Key"] = "Runtime";
+          param["SearchKey.1.Value"] = this.searchName;
         }
         this.axios.post(TEMPLATE_LIST, param).then(data => {
           if (data.Response.Demos.length !== 0) {
@@ -287,11 +291,11 @@
       },
       //搜索
       doFilter() {
-        if (this.searchName !== "") {
+        // if (this.searchName !== "") {
           this.GetTemplateList();
-        } else {
-          this.$message("請輸入相關語言搜索");
-        }
+        // } else {
+        //   this.$message("請輸入相關語言搜索");
+        // }
       },
       // 分页开始
       getData() {},
