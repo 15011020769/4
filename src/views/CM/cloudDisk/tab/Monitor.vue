@@ -26,7 +26,7 @@
 
         <el-table-column width="550">
           <template slot-scope="scope">
-            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暫無數據</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">
               <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
                 :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
@@ -172,34 +172,34 @@
 
         ], //可用指标
         disName: {
-          'DiskAwait': '硬盘IO Await',
-          'DiskReadIops': '硬盘读 IOPS',
-          'DiskReadTraffic': '硬盘读流量',
-          'DiskSvctm': '硬盘IO Svctm',
-          'DiskUsage': '磁盘分区使用率',
-          'DiskUtil': '硬盘IO %util',
-          'DiskWriteIops': '硬盘写 IOPS',
-          'DiskWriteTraffic': '硬盘写流量'
+          'DiskAwait': '硬碟IO Await',
+          'DiskReadIops': '硬碟讀 IOPS',
+          'DiskReadTraffic': '硬碟讀流量',
+          'DiskSvctm': '硬碟IO Svctm',
+          'DiskUsage': '磁碟分區使用率',
+          'DiskUtil': '硬碟IO %util',
+          'DiskWriteIops': '硬碟寫 IOPS',
+          'DiskWriteTraffic': '硬碟寫流量'
         },
         Company: {
           'DiskAwait': 'ms',
-          'DiskReadIops': '个',
+          'DiskReadIops': '個',
           'DiskReadTraffic': 'KB/s',
           'DiskSvctm': 'ms',
           'DiskUsage': '%',
           'DiskUtil': '%',
-          'DiskWriteIops': '个',
+          'DiskWriteIops': '個',
           'DiskWriteTraffic': 'KB/s'
         },
         Tips: {
-          'DiskAwait': '硬盘I / O平均每次操作的等待时间',
-          'DiskReadIops': '硬盘平均每秒读次数',
-          'DiskReadTraffic': '平均每秒从硬盘读到内存的数据量',
-          'DiskSvctm': '硬盘平均每次I / O操作所花的时间',
-          'DiskUsage': '磁盘分区使用率',
-          'DiskUtil': '硬盘有IO操作的时间与总时间的百分比',
-          'DiskWriteIops': '硬盘平均每秒写次数',
-          'DiskWriteTraffic': '平均每秒从内存写到硬盘的数据量'
+          'DiskAwait': '硬碟I / O平均每次操作的等待時間',
+          'DiskReadIops': '硬碟平均每秒讀次數',
+          'DiskReadTraffic': '平均每秒從硬碟讀到內存的數據量',
+          'DiskSvctm': '硬碟平均每次I / O操作所花的時間',
+          'DiskUsage': '磁碟分區使用率',
+          'DiskUtil': '硬碟有IO操作的時間與總時間的百分比',
+          'DiskWriteIops': '硬碟平均每秒寫次數',
+          'DiskWriteTraffic': '平均每秒從內存寫到硬碟的數據量'
         },
 
       }
