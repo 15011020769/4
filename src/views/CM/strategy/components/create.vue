@@ -598,7 +598,8 @@ export default {
         GroupName: this.formInline.strategy_name,
         Module: 'monitor',
         ViewName: this.product.productValue,
-        ProjectId: this.formInline.projectId
+        ProjectId: this.formInline.projectId,
+        IsShielded: 0
       }
       if (textarea !== '') params.Remark = textarea
       if (this.radioChufa === '1') {
@@ -624,8 +625,10 @@ export default {
           params[`Conditions.${index}.AlarmNotifyType`] = 0
           if (configTrigger.IsUnionRule === 0) {
             params[`Conditions.${index}.AlarmNotifyPeriod`] = item.AlarmNotifyPeriod
+            params.IsUnionRule = 0
           } else {
             params[`Conditions.${index}.AlarmNotifyPeriod`] = configTrigger.AlarmNotifyPeriod
+            params.IsUnionRule = 1
           }
           params[`Conditions.${index}.CalcType`] = item.CalcType
           params[`Conditions.${index}.CalcValue`] = item.CalcValue
@@ -633,7 +636,6 @@ export default {
           params[`Conditions.${index}.ContinuePeriod`] = item.ContinueTime
           // params[`Conditions.${index}.RuleId`] = item.RuleID
         })
-        params.IsShielded = 1
       }
       await this.axios.post(CREATE_POLICYGROUP, params).then(res => {
         this.axiosUtils(res, () => {

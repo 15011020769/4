@@ -330,7 +330,10 @@ export default {
       defaultTemplate: defaultTemplate, // 静态默认模板
       modeloptions: [], // 模板列表
       templateList: [], // 静态默认模板与请求的模板列表集合
-      codemirrorValue: defaultTemplate[0].code, // 弹框编辑器的值
+      codemirrorValue: `{
+        "key1": "test value 1",
+        "key2": "test value 2"
+      }`, // 弹框编辑器的默认值
       templateDetail: { // 获取模板详情
         TestModelValue: ''
       },
