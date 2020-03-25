@@ -151,8 +151,22 @@
           </el-table-column>
           <el-table-column label="IP地址" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
-              <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-              <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+              <p>
+                <span
+                  v-for="(item, index) in scope.row.PrivateIpAddresses"
+                  :key="index"
+                >
+                  {{ item }}(内网)
+                </span>
+              </p>
+              <p>
+                <span
+                  v-for="(item, index) in scope.row.PublicIpAddresses"
+                  :key="index"
+                >
+                  {{ item }}(外网)
+                </span>
+              </p>
             </template>
           </el-table-column>
           <!-- BS -->
@@ -501,8 +515,10 @@
                       v-if="ViewName === 'cvm_device'"
                     >
                       <template slot-scope="scope">
-                        <p>{{ scope.row.PrivateIpAddresses[0] }}(内网)</p>
-                        <p>{{ scope.row.PublicIpAddresses[0] }}(外网)</p>
+                        <p>
+                          <span v-for="(item,index) in scope.row.PrivateIpAddresses" :key="index">{{item}}(内网)</span></p>
+                        <p><span v-for="(item,index) in scope.row.PublicIpAddresses" :key="index">{{item}}(外网)</span>
+                         </p>
                       </template>
                     </el-table-column>
                     <!-- BS -->
