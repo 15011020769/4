@@ -482,6 +482,7 @@ import {
   TKE_ADD_COMPLETE
 } from "@/constants";
 import { ErrorTips } from "@/components/ErrorTips";
+import { Base64 } from 'js-base64';
 export default {
   name: "clusterAddExist",
   data() {
@@ -897,8 +898,8 @@ export default {
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
         }
-        param["InstanceAdvancedSettings.UserScript"] = btoa(
-          encodeURI(this.textarea2)
+        param["InstanceAdvancedSettings.UserScript"] = Base64.encode(
+          this.textarea2
         );
         // 数据盘挂载
         if (this.dataMountCheck === true) {

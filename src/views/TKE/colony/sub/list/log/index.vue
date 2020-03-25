@@ -19,7 +19,7 @@
             :placeholder="$t('TKE.overview.qxz')"
             size="mini"
             class="ml10"
-            @change="nameSpaceList1"
+            @change="nameSpaceList2"
           >
             <!-- 命名空间 -->
             <el-option
@@ -34,7 +34,7 @@
             :placeholder="$t('TKE.event.qxzgzfzlx')"
             size="mini"
             class="ml10"
-            @change="nameSpaceList"
+            @change="nameSpaceList2"
           >
             <!-- 工作负载类型 -->
             <el-option
@@ -98,7 +98,7 @@
         <el-form-item :label="$t('TKE.event.qtxx')">
           <span>{{$t('TKE.overview.zdsx')}}</span>
           <!-- 自动刷新 -->
-          <el-switch v-model="autoRefresh" class="ml10"></el-switch>
+          <el-switch v-model="autoRefresh" class="ml10" @change="refresh"></el-switch>
           <el-select
             v-model="value6"
             :placeholder="$t('TKE.overview.qxz')"
@@ -145,7 +145,7 @@ export default {
   data() {
     return {
       htmls: "",
-      autoRefreshFlag: false, //自动刷新禁用
+      autoRefreshFlag: true, //自动刷新
       listNumFlag: true, //条数禁用
       option1: [],
       timeId: null,
@@ -203,32 +203,39 @@ export default {
     SEARCH
   },
   watch: {
-    autoRefresh(val) {
-      if (this.autoRefresh === true) {
-        console.log("kq");
-        var timeId = setInterval(() => {
-          this.nameSpaceList();
-        }, 40000);
-      } else {
-        console.log("gb");
-        this.nameSpaceList();
-      }
-    }
+    // autoRefresh(val) {
+    //   if (this.autoRefresh === true) {
+    //     console.log("kq");
+    //     var timeId = setInterval(() => {
+    //       this.nameSpaceList();
+    //     }, 40000);
+    //   } else {
+    //     console.log("gb");
+    //     this.nameSpaceList();
+    //   }
+    // }
   },
   created() {
-    // this.value2 = this.option2[0].value;
-    this.nameSpaceList();
+    this.nameSpaceList1();
+  },
+  mounted() {
     this.refresh();
   },
-  mounted() {},
   methods: {
     refresh() {
       if (this.autoRefresh === true) {
         this.timeId = setInterval(() => {
-          this.nameSpaceList();
-        }, 40000);
+          if (this.option3.length == 0) {
+            this.nameSpaceList2();
+          } else if (this.option4.length>0) {
+            this.getPodData();
+          }else if(this.option5.length>0){
+           this.getLog();
+          }
+        }, 20000);
       } else {
-        this.nameSpaceList();
+        clearInterval(this.timeId);
+        this.nameSpaceList2();
       }
     },
     //返回上一层
@@ -236,10 +243,6 @@ export default {
       this.$router.go(-1);
     },
     nameSpaceList1() {
-      this.nameSpaceList();
-    },
-    async nameSpaceList() {
-      //改变命名空间
       //第一项命名空间
       this.option3 = []; //工作负载实例
       this.option4 = [];
@@ -250,17 +253,73 @@ export default {
         Version: "2018-05-25",
         ClusterName: this.$route.query.clusterId
       };
-      await this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          this.option1 = []; //命名空间选项
+          // this.option1 = []; //命名空间选项
           mes.items.forEach(item => {
             this.option1.push({
               value: item.metadata.name,
               label: item.metadata.name
             });
           });
-          this.getWorkload();
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    nameSpaceList2() {
+      //第二项命名空间
+      this.option3 = []; //工作负载实例
+      this.option4 = [];
+      this.option5 = [];
+      var v = this.value2;
+      v = v.replace(v, this.value2.toLowerCase()) + "s";
+      if (v === "jobs") {
+        var params = {
+          Method: "GET",
+          Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
+          Version: "2018-05-25",
+          ClusterName: this.$route.query.clusterId
+        };
+      } else {
+        var params = {
+          Method: "GET",
+          Path: "/apis/apps/v1beta2/namespaces/" + this.value1 + "/" + v,
+          Version: "2018-05-25",
+          ClusterName: this.$route.query.clusterId
+        };
+      }
+      this.axios.post(TKE_COLONY_QUERY, params).then(res => {
+        if (res.Response.Error === undefined) {
+          var mes = JSON.parse(res.Response.ResponseBody);
+          // this.option1 = []; //命名空间选项
+          if (mes.items.length > 0) {
+            mes.items.forEach(item => {
+              this.option3.push({
+                value: item.metadata.name,
+                label: item.metadata.name
+              });
+            });
+            // this.getWorkload();
+             this.getPodData();
+          } else {
+            this.option3 = []; //工作负载实例
+            this.option4 = [];
+            this.option5 = [];
+            this.value3 = "Workload" + this.$t("TKE.event.lbwk");
+            this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+            this.value5 = "Container" + this.$t("TKE.event.lbwk");
+            this.htmls = "";
+            this.autoRefresh = false;
+          }
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -348,27 +407,34 @@ export default {
     getWorkload() {
       var v = this.value2;
       v = v.replace(v, this.value2.toLowerCase()) + "s";
-      if (
-        v === "jobs" ||
-        v === "statefulsets" ||
-        this.value1 === "kube-node-lease" ||
-        this.value1 === "kube-public"
-      ) {
-        this.option3 = []; //工作负载实例
-        this.option4 = [];
-        this.option5 = [];
-        this.value3 = "Workload" + this.$t("TKE.event.lbwk");
-        this.value4 = "Pod" + this.$t("TKE.event.lbwk");
-        this.value5 = "Container" + this.$t("TKE.event.lbwk");
-        this.htmls = "";
-        this.autoRefresh = false;
+      // if (
+      //   v === "jobs" ||
+      //   v === "statefulsets" ||
+      //   this.value1 === "kube-node-lease" ||
+      //   this.value1 === "kube-public"
+      // ) {
+      //   this.option3 = []; //工作负载实例
+      //   this.option4 = [];
+      //   this.option5 = [];
+      //   this.value3 = "Workload" + this.$t("TKE.event.lbwk");
+      //   this.value4 = "Pod" + this.$t("TKE.event.lbwk");
+      //   this.value5 = "Container" + this.$t("TKE.event.lbwk");
+      //   this.htmls = "";
+      //   this.autoRefresh = false;
+      //   var params = {
+      //     Method: "GET",
+      //     Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
+      //     Version: "2018-05-25",
+      //     ClusterName: this.$route.query.clusterId
+      //   };
+      // } else
+      if (v === "jobs") {
         var params = {
           Method: "GET",
           Path: "/apis/batch/v1/namespaces/" + this.value1 + "/" + v,
           Version: "2018-05-25",
           ClusterName: this.$route.query.clusterId
         };
-        return;
       } else {
         var params = {
           Method: "GET",
@@ -377,6 +443,8 @@ export default {
           ClusterName: this.$route.query.clusterId
         };
       }
+
+      console.log(params);
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
@@ -388,7 +456,6 @@ export default {
             this.option4 = [];
             this.option5 = [];
             this.htmls = "";
-
             this.autoRefresh = false;
             this.listNumFlag = true;
             return;
@@ -400,7 +467,6 @@ export default {
                 label: item.metadata.name
               });
             });
-            console.log(this.option3[0].value);
             if (this.option3[0].value != "") {
               this.value3 = this.option3[0].value;
             }
@@ -463,7 +529,7 @@ export default {
     }
   },
   destroyed() {
-    window.clearInterval(this.timeId);
+    clearInterval(this.timeId);
   }
 };
 </script>

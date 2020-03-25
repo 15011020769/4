@@ -116,18 +116,19 @@
       GetPolicyInfoByInstance() {
           this.loadShow = true;
 
-        // const params = {
-        //   Version: "2018-07-24",
-        //   Module: "monitor",
-        //   ViewName: "dcchannel",
-        //   "Dimensions.0": {"name": "directconnectconnid","value":"dcx-l1zv1sxs"}
-        // };
         const params = {
           Version: "2018-07-24",
           Module: "monitor",
-          ViewName: "cvm_device",
-          "Dimensions.0": {"name": "unInstanceId","value":"ins-7xygzuog"}
+          ViewName: "dcchannel",
+          "Dimensions.0": {"name": "directconnectconnid","value":this.$router.currentRoute.query.id}
         };
+        //测试
+        // const params = {
+        //   Version: "2018-07-24",
+        //   Module: "monitor",
+        //   ViewName: "cvm_device",
+        //   "Dimensions.0": {"name": "unInstanceId","value":"ins-7xygzuog"}
+        // };
         
         
         

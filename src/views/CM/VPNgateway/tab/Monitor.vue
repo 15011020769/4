@@ -144,6 +144,15 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [{
+          MetricName: 'OutBandwidth'
+        }, {
+          MetricName: 'InBandwidth'
+        }, {
+          MetricName: 'OutPkg'
+        }, {
+          MetricName: 'InPkg'
+        }],
         disName: {
           'InBandwidth': '外网入带宽',
           'InPkg': '入包量',
@@ -203,18 +212,29 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            console.log(this.BaseList)
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                console.log(item.MetricName, item.Meaning.Zh)
-                this.BaseListK.push(item)
-                setTimeout(() => {
-                  this._GetMonitorData(item.MetricName)
-                }, 500);
+              this.available.forEach(element => {
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
+                }
+              });
+            });
+            this.available.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
               }
             });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],

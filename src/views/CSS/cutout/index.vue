@@ -97,7 +97,7 @@ export default {
       StartTime: '',
       EndTime: '',
       value: 1,
-      searchInput: '',
+      searchInput: this.$route.query.name || '',
       tableData: [],
       pageNum: 1,
       pageSize: 10,

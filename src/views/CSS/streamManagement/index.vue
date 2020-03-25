@@ -42,7 +42,12 @@
       <div class="streamWTable">
         <div class="tableWrap">
           <el-table :data="tableData" empty-text="暫無數據" style="width: 100%" v-loading="loading">
-            <el-table-column prop="StreamName" :label="$t('CSS.domainManagement.35')"></el-table-column>
+            <el-table-column prop="StreamName" :label="$t('CSS.domainManagement.35')">
+              <template slot-scope="scope">
+                <el-button v-if="type === $t('CSS.domainManagement.34')" type="text" @click="$router.push(`/cutout?name=${scope.row.StreamName}`)">{{scope.row.StreamName}}</el-button>
+                <span v-else>{{scope.row.StreamName}}</span>
+              </template>
+            </el-table-column>
 
             <template v-if="type !== '禁推流'">
               <el-table-column prop="DomainName" label="域名"></el-table-column>

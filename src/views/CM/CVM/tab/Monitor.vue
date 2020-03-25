@@ -70,7 +70,66 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-table :data="tableData1" style="width: 100%" v-loading='TableLoad'>
+        <el-table-column prop width="200">
+          <template slot-scope="scope">
+            <p>
+              <span class='span_1'>{{disName[scope.row.MetricName]}}</span>
+              <span class='span_2'>{{Company[scope.row.MetricName]}}</span>
+              <el-popover placement="bottom-start" title width="200" trigger="hover">
+                <p>{{Tips[scope.row.MetricName]}}</p>
+                <i class="el-icon-warning" slot="reference"></i>
+              </el-popover>
+            </p>
+          </template>
+        </el-table-column>
 
+        <el-table-column width="550">
+          <template slot-scope="scope">
+            <p v-if="scope.row.DataPoints[0].Values.length==0">暂无数据</p>
+            <div v-if="scope.row.DataPoints[0].Values.length!=0">
+              <echart-line id="diskEchearrts-line" :time="scope.row.DataPoints[0].Timestamps | UpTime"
+                :opData="scope.row.DataPoints[0].Values" :scale="3" :period="Period" :xdata="false"
+                :MetricName='disName[scope.row.MetricName]'></echart-line>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Max:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMax}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Min:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMMin}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop>
+          <template slot-scope="scope">
+            <p style="font-size:12px;color:#bbb;font-weight:600">Avg:</p>
+            <template v-if="scope.row.DataPoints[0].Values.length!==0">
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.DataPoints[0].Values|CMAvg}} <span
+                  class='span_2'>{{Company[scope.row.MetricName]}}</span></span>
+              <span style="color:#333;font-weight:600;font-size: 12px;">{{scope.row.symbol}}</span>
+            </template>
+            <template v-if="scope.row.DataPoints[0].Values.length==0">-</template>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -147,32 +206,75 @@
         Period: '', //粒度
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
+        MonitorData1: [], //监控数据
         tableData: [], // 组合数据
-        available: [
-          'AccOuttraffic',
-          'BaseCpuUsage',
-          'Cpuloadavg15m',
-          'Cpuloadavg5m',
-          'CpuLoadavg',
-          'CpuUsage',
-          'DiskIoAwait',
-          'DiskReadIops',
-          'DiskReadTrafficNew',
-          'DiskSvctm',
-          'DiskUtil',
-          'DiskWriteTrafficNew',
-          'LanInpkg',
-          'LanIntraffic',
-          'LanOutpkg',
-          'LanOuttraffic',
-          'MemUsage',
-          'MemUsed',
-          'TcpCurrEstab',
-          'WanInpkg',
-          'WanIntraffic',
-          'WanOutpkg',
-          'WanOuttraffic'
+        tableData1: [],
+        available: [{
+            MetricName: 'CpuUsage'
+          },
+          {
+            MetricName: 'CpuLoadavg'
+          },
+          {
+            MetricName: 'BaseCpuUsage'
+          },
+          {
+            MetricName: 'MemUsed'
+          },
+          {
+            MetricName: 'MemUsage'
+          },
+          {
+            MetricName: 'LanOuttraffic'
+          },
+          {
+            MetricName: 'LanIntraffic'
+          },
+          {
+            MetricName: 'LanOutpkg'
+          },
+          {
+            MetricName: 'LanInpkg'
+          },
+          {
+            MetricName: 'TcpCurrEstab'
+          },
+          {
+            MetricName: 'WanOuttraffic'
+          },
+          {
+            MetricName: 'WanIntraffic'
+          },
+          {
+            MetricName: 'WanOutpkg'
+          },
+          {
+            MetricName: 'WanInpkg'
+          },
+          {
+            MetricName: 'AccOuttraffic'
+          },
         ], //可用指标
+        available1: [{
+            MetricName: 'DiskReadTraffic'
+          }, {
+            MetricName: 'DiskWriteTraffic'
+          }, {
+            MetricName: 'DiskReadIops'
+          },
+          {
+            MetricName: 'DiskWriteIops'
+          },
+          {
+            MetricName: 'DiskAwait'
+          },
+          {
+            MetricName: 'DiskSvctm'
+          },
+          {
+            MetricName: 'DiskUtil'
+          },
+        ],
         disName: {
           'LanOuttraffic': '内网出带宽',
           'LanIntraffic': '内网入带宽',
@@ -183,20 +285,19 @@
           'AccOuttraffic': '外网出流量',
           'WanOutpkg': '外网出包量',
           'WanInpkg': '外网入包量',
-          'CpuUsage': 'CPU使用率',
+          'CpuUsage': 'CPU利用率',
           'CpuLoadavg': 'CPU平均负载',
           'MemUsed': '内存使用量',
           'MemUsage': '内存利用率',
           'TcpCurrEstab': 'TCP连接数',
           'BaseCpuUsage': '基础CPU使用率',
-          'Cpuloadavg15m': 'CPU平均负载',
-          'Cpuloadavg5m': 'CPU平均负载',
-          'DiskIoAwait': 'IO Await',
+          'DiskAwait': 'IO Await',
           'DiskReadIops': '读IOPS',
-          'DiskReadTrafficNew': '读流量',
+          'DiskReadTraffic': '读流量',
           'DiskSvctm': 'IO Svctm',
           'DiskUtil': 'IO %util',
-          'DiskWriteTrafficNew': '写流量',
+          'DiskWriteIops': '写IOPS',
+          'DiskWriteTraffic': '写流量'
         },
         Company: {
           'LanOuttraffic': 'Mbps',
@@ -214,25 +315,21 @@
           'MemUsage': '%',
           'TcpCurrEstab': '个',
           'BaseCpuUsage': '%',
-          'Cpuloadavg15m': '',
-          'Cpuloadavg5m': '',
           'DiskIoAwait': 'ms',
+          'DiskAwait': 'ms',
           'DiskReadIops': '个',
-          'DiskReadTrafficNew': 'KB/s',
+          'DiskReadTraffic': 'KB/s',
           'DiskSvctm': 'ms',
-          'DiskUtil': 'ms',
-          'DiskWriteTrafficNew': 'KB/s',
+          'DiskUtil': '%',
+          'DiskWriteIops': '个',
+          'DiskWriteTraffic': 'KB/s'
         },
         Tips: {
           'AccOuttraffic': '外网网卡的平均每秒出流量',
           'BaseCpuUsage': ' 基础CPU使用率通过宿主机采集上报，无须安装监控组件即可查看数据，子机高负载情况下仍可持续采集上报数据',
-          'Cpuloadavg15m': '15分钟内CPU平均负载，取 /proc/loadavg 第三列数据（windows操作系统无此指标），依赖监控组件安装采集',
-          'Cpuloadavg5m': ' 5分钟内CPU平均负载，取 /proc/loadavg 第二列数据（windows操作系统无此指标），依赖监控组件安装采集',
           'CpuLoadavg': '1分钟内CPU平均负载，取 /proc/loadavg 第一列数据（windows操作系统无此指标），依赖监控组件安装采集',
           'CpuUsage': 'CPU利用率是通过CVM子机内部监控组件采集上报，数据更加精准',
           'DiskIoAwait': ' 磁盘分区I/O平均每次操作的等待时间',
-          'DiskReadIops': '磁盘分区平均每秒读次数',
-          'DiskReadTrafficNew': '平均每秒从磁盘读到内存的数据量',
           'DiskSvctm': '磁盘分区平均每次I/O操作所花的时间',
           'DiskUtil': '磁盘分区有IO操作的时间与总时间的百分比',
           'DiskWriteTrafficNew': '平均每秒从内存写到磁盘的数据量',
@@ -246,7 +343,12 @@
           'WanInpkg': '外网平均每秒入包量',
           'WanIntraffic': '外网平均每秒入流量',
           'WanOutpkg': '外网平均每秒出包量',
-          'WanOuttraffic': '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出'
+          'WanOuttraffic': '外网平均每秒出流量，最小粒度数据为10秒总流量/10秒 计算得出',
+          'DiskAwait': '硬盘I / O平均每次操作的等待时间',
+          'DiskReadIops': '硬盘平均每秒读次数',
+          'DiskReadTraffic': '平均每秒从硬盘读到内存的数据量',
+          'DiskWriteIops': '硬盘平均每秒写次数',
+          'DiskWriteTraffic': '平均每秒从内存写到硬盘的数据量'
         },
       }
     },
@@ -269,6 +371,20 @@
             this.TableLoad = false
           }
         }
+      },
+      MonitorData1(val) {
+        if (this.MonitorData1) {
+          this.MonitorData1.forEach(element => {
+            this.BaseListKd.forEach(item => {
+              if (item.MetricName === element.MetricName) {
+                item.DataPoints = element.DataPoints
+              }
+            });
+          });
+          if (this.BaseListKd.length == val.length) {
+            this.tableData1 = this.BaseListKd
+          }
+        }
       }
     },
     methods: {
@@ -277,6 +393,7 @@
         this.Time = data[1]
         this.TableLoad = true
         this._GetBase()
+        this._GetBase1()
       },
       //获取基础指标详情
       _GetBase() {
@@ -288,70 +405,29 @@
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
-            if (this.Period == 10) {
-              this.available = [
-                'AccOuttraffic',
-                'BaseCpuUsage',
-                'Cpuloadavg15m',
-                'Cpuloadavg5m',
-                'CpuLoadavg',
-                'CpuUsage',
-                'DiskIoAwait',
-                'LanInpkg',
-                'LanIntraffic',
-                'LanOutpkg',
-                'LanOuttraffic',
-                'MemUsage',
-                'MemUsed',
-                'TcpCurrEstab',
-                'WanInpkg',
-                'WanIntraffic',
-                'WanOutpkg',
-                'WanOuttraffic'
-              ] //可用指标
-            } else {
-              this.available = [
-                'AccOuttraffic',
-                'BaseCpuUsage',
-                'Cpuloadavg15m',
-                'Cpuloadavg5m',
-                'CpuLoadavg',
-                'CpuUsage',
-                'DiskIoAwait',
-                'DiskReadIops',
-                'DiskReadTrafficNew',
-                'DiskSvctm',
-                'DiskUtil',
-                'DiskWriteTrafficNew',
-                'LanInpkg',
-                'LanIntraffic',
-                'LanOutpkg',
-                'LanOuttraffic',
-                'MemUsage',
-                'MemUsed',
-                'TcpCurrEstab',
-                'WanInpkg',
-                'WanIntraffic',
-                'WanOutpkg',
-                'WanOuttraffic'
-              ] //可用指标
-            }
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
               this.available.forEach(element => {
-                if (item.MetricName === element) {
-                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                    this.BaseListK.push(item)
-                    setTimeout(() => {
-                      this._GetMonitorData(item.MetricName)
-                    }, 500);
-                  }
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
                 }
               });
-
             });
-
+            this.available.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
+              }
+            });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],
@@ -378,6 +454,75 @@
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {
             this.MonitorData.push(data.Response);
+          } else {
+            this.$message({
+              message: ErrorTips[data.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //获取基础指标详情
+      _GetBase1() {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/BLOCK_STORAGE'
+        }
+        this.axios.post(ALL_Basics, parms).then(res => {
+          if (res.Response.Error == undefined) {
+            let BaseList = res.Response.MetricSet
+            this.MonitorData1 = []
+            this.BaseListKd = []
+            BaseList.forEach(item => {
+              this.available1.forEach(element => {
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
+                }
+              });
+            });
+            this.available1.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListKd.push(i.data)
+              }
+            });
+            for (let
+                k = 0; k < this.BaseListKd.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData1(_this.BaseListKd[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
+          } else {
+            this.$message({
+              message: ErrorTips[res.Response.Error.Code],
+              type: "error",
+              showClose: true,
+              duration: 0
+            });
+          }
+        });
+      },
+      //获取监控数据
+      _GetMonitorData1(MetricName) {
+        let parms = {
+          Version: '2018-07-24',
+          Region: localStorage.getItem('regionv2'),
+          Namespace: 'QCE/BLOCK_STORAGE',
+          Period: this.Period,
+          StartTime: this.Time.StartTIme,
+          EndTime: this.Time.EndTIme,
+          MetricName: MetricName,
+          'Instances.0.Dimensions.0.Name': 'diskId',
+          'Instances.0.Dimensions.0.Value': this.$route.query.DiskId,
+        }
+        this.axios.post(All_MONITOR, parms).then(data => {
+          if (data.Response.Error == undefined) {
+            this.MonitorData1.push(data.Response);
           } else {
             this.$message({
               message: ErrorTips[data.Response.Error.Code],

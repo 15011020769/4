@@ -48,7 +48,7 @@
         <el-form-item :label="$t('TKE.event.qyxx')">
           <div class="tke-form-item_text">
             <span>{{$t('TKE.overview.zdsx')}}</span>
-            <el-switch v-model="autoRefresh" class="ml10"></el-switch>
+            <el-switch v-model="autoRefresh" class="ml10" @change="refresh"></el-switch>
           </div>
         </el-form-item>
       </el-form>
@@ -195,12 +195,13 @@ export default {
       typeValue: "全部類型",
       nameOptions: [],
       nameValue: "",
-      autoRefresh: false
+      autoRefresh: true
     };
   },
-
   created() {
     this.nameSpaceList();
+  },
+  mounted() {
     this.refresh();
   },
   methods: {
@@ -208,12 +209,11 @@ export default {
       this.nsOptions = [];
       if (this.autoRefresh == true) {
         this.timeId = setInterval(() => {
-          this.getKind();
-        }, 1000);
+          this.getEventList();
+        }, 20000);
       } else {
-        window.clearInterval(this.timeId);
-        this.nsOptions = [];
-        this.getKind();
+        clearInterval(this.timeId);
+        this.getEventList();
       }
     },
     // 初始化命名空间获取的列表事件
@@ -269,7 +269,6 @@ export default {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
           this.list = mes.items;
-          console.log(this.list);
           this.total = mes.items.length;
           this.loadShow = false;
         } else {
@@ -297,8 +296,6 @@ export default {
         typeValues =
           typeValues.replace(typeValues[0], typeValues[0].toLowerCase()) + "s";
       }
-
-      // console.log(this.typeValue);
       var params = {};
       if (
         this.typeValue == "daemonset" ||
@@ -308,6 +305,8 @@ export default {
         // /apis/apps/v1beta2/namespaces/default/daemonsets
         params.Path =
           "/apis/apps/v1beta2/namespaces/" + this.nsValue + "/" + typeValues;
+      } else if (this.typeValue == "全部類型") {
+        params.Path= "/api/v1/namespaces/" + this.nsValue + "/events?&limit=20";
       } else if (this.typeValue == "cronjob") {
         // Path: "/apis/batch/v1beta1/namespaces/default/cronjobs"
         params.Path =
@@ -358,15 +357,10 @@ export default {
       params1.Method = "GET";
       params1.ClusterName = this.$route.query.clusterId;
       params1.Version = "2018-05-25";
-
-      console.log(this.typeValue, params);
       this.axios.post(TKE_COLONY_QUERY, params).then(res => {
         this.nameOptions = [];
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
-          console.log(mes);
-          // this.list = mes.items;
-          // this.total = mes.items.length;
           if (mes.items.length > 0) {
             mes.items.forEach(item => {
               this.nameOptions.push({
@@ -378,7 +372,6 @@ export default {
           } else {
             this.nameFlag = true;
           }
-          this.loadShow = false;
         } else {
           let ErrTips = {};
           this.nameOptions = [];
@@ -429,7 +422,6 @@ export default {
       params1.ClusterName = this.$route.query.clusterId;
       params1.Version = "2018-05-25";
 
-      console.log(params1);
       this.axios.post(TKE_COLONY_QUERY, params1).then(res => {
         if (res.Response.Error === undefined) {
           var mes = JSON.parse(res.Response.ResponseBody);
@@ -465,7 +457,7 @@ export default {
     Loading
   },
   destroyed() {
-    window.clearInterval(this.timeId);
+    clearInterval(this.timeId);
   }
 };
 </script>

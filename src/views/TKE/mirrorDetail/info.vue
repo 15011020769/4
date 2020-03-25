@@ -12,12 +12,12 @@
     </div>
     <div class="room-top" style="margin-bottom:20px;">
       <div class="top-left">
-        <el-button
+        <!-- <el-button
           type="primary"
           size="mini"
           class="botton-size"
           @click="dialogFormVisible = true"
-        >使用索引</el-button>
+        >使用索引</el-button> -->
          <!-- <el-button disabled size="mini" class="botton-size">{{$t('TKE.overview.sc')}}</el-button>  -->
       </div>
       <div class="top-right">
@@ -68,7 +68,7 @@
       </span>
    </el-dialog>
     <!-- 使用指引弹出框 -->
-    <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
+    <!-- <el-dialog title="使用指引" :visible.sync="dialogFormVisible" width="620px">
         <ul>
           <li>
             <p class="pli-1">登录腾讯云docker registry</p>
@@ -106,7 +106,7 @@
              <p class="pli-2">其中[ImageId]请根据您的实际镜像ID信息进行填写, [tag]请根据您的镜像版本信息进行填写。</p>
           </li>
         </ul>
-    </el-dialog>
+    </el-dialog> -->
     <!-- 设置 -->
     <el-dialog
       title="自动删除镜像设置"

@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="chart" v-if="this.ViewList.length">
-        <div class="chartList" v-for="item in ViewList" :key="item.ViewID" v-loading="chartsLoading">
+        <div class="chartList" v-for="(item, index) in ViewList" :key="item.ViewID" v-loading="chartsLoading">
           <div class="chartItem">
             <p>
               <b>
@@ -76,7 +76,7 @@
               <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
             </p>
             <p>
-              <span v-show="retractChartFlag">
+              <span>
                 <a @click="exportExcel(item.ViewID)">{{ $t("CVM.Dashboard.dc") }}</a>
                 <el-popover
                   placement="left-start"
@@ -87,11 +87,11 @@
                   <i class="el-icon-info" slot="reference" style="color:#888"></i>
                 </el-popover>
               </span>
-              <a v-show="openChartFlag" @click="openChart" style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
-              <a v-show="retractChartFlag" @click="retractChart" style="margin-left:30px;">收起</a>
+              <a v-show="!item.openChartFlag" @click="openChart(index)" style="margin-left:30px;">{{ $t("CVM.Dashboard.zk") }}</a>
+              <a v-show="item.openChartFlag" @click="retractChart(index)" style="margin-left:30px;">收起</a>
             </p>
           </div>
-          <div class="chartContent" v-show="retractChartFlag">
+          <div class="chartContent" v-show="item.openChartFlag">
             <el-table :data="item.Instances" :id="'exportTable'+item.ViewID">
               <el-table-column prop="" label="ID" width="">
                 <template scope="scope">
@@ -351,13 +351,15 @@
         this.panelFlag = true;
         this.$refs.addPanel.getDashboardList(); // 子组件下拉框数据
       },
-      openChart() { //展开图表
-        this.openChartFlag = false;
-        this.retractChartFlag = true;
+      openChart(index) { //展开图表
+        // this.openChartFlag = false;
+        // this.retractChartFlag = true;
+        this.ViewList[index].openChartFlag = true;
       },
-      retractChart() { //收起
-        this.openChartFlag = true;
-        this.retractChartFlag = false;
+      retractChart(index) { //收起
+        // this.openChartFlag = true;
+        // this.retractChartFlag = false;
+        this.ViewList[index].openChartFlag = false;
       },
       exportChart() {
         //导出图表
@@ -552,6 +554,7 @@
             if (res.Response.Error === undefined) {
               const ViewList = JSON.parse(JSON.stringify(res.Response.ViewList)); // 监控面板视图数组
               ViewList.forEach((ele, index) => {
+                ele.openChartFlag = false; // 列表展开收起的标志
                 let newInstances = [];
                 ele.Instances.forEach(el => {
                   // newInstances.push(JSON.parse(el));

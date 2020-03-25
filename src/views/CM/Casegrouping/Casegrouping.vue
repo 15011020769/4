@@ -4,8 +4,7 @@
     <div class="group-main">
       <div class="explain" style="margin-bottom:20px;">
         <p>
-          实例分组功能提供对跨地域、跨项目组的云产品资源进行分组管理的能力，点击查看
-          <a>实例分组文档</a>
+          实例分组功能提供对跨地域、跨项目组的云产品资源进行分组管理的能力
         </p>
       </div>
       <div class="box">
@@ -433,6 +432,7 @@ export default {
     },
     // 复制
     Copy(row) {
+      console.log(row);
       this.copyDialogVisible = true;
       this.groupName = row.GroupName;
       this.instanceGroupId = row.InstanceGroupId;

@@ -361,6 +361,7 @@
               v-on:loading="Type_loading"
             />
             <CamTransferCpt
+              :selectedList="enterList"
               :productData="productListData"
               v-on:projectId="projectIds"
               v-on:searchParam="searchParams"

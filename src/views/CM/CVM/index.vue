@@ -20,17 +20,15 @@
         <el-table-column prop :label="$t('CVM.clBload.zjm') ">
           <template slot-scope="scope">
             <p>
-              <a @click="jump(scope.row.InstanceId)" style="cursor:pointer;">{{scope.row.InstanceId}}</a>
+              <a @click="jump(scope.row.InstanceId,scope.row.SystemDisk.DiskId)"
+                style="cursor:pointer;">{{scope.row.InstanceId}}</a>
             </p>
             {{ scope.row.InstanceName}}
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="jump(scope.row.InstanceId)"></div>
-            <!-- <a @click="jump(scope.row.InstanceId)"  :style="note">
-              <img src="./../../../assets/CAM/images/cvm-20199061519.svg" style="width:160px;height:160px">
-            </a>-->
+            <div class="a" @click="jump(scope.row.InstanceId,scope.row.SystemDisk.DiskId)"></div>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
@@ -319,11 +317,12 @@
         this.currpage = val;
         this.GetTabularData();
       },
-      jump(id) {
+      jump(id, DiskId) {
         this.$router.push({
           name: "CMCVMdetails",
           query: {
-            id
+            id,
+            DiskId
           }
         });
       }

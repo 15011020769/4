@@ -45,7 +45,7 @@
       <div class="tableCoontent">
         <div class="tableList">
           <el-table :data="tableDataBegin" tooltip-effect="dark" style="width: 100%"
-            @selection-change="handleSelectionChange" height="450" v-loading="loading"
+            @selection-change="handleSelectionChange" height="500" v-loading="loading"
             :empty-text="$t('KMS.total.zwsj')">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="KeyId" :label="$t('KMS.total.label1')">

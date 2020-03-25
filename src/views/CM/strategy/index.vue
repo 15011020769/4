@@ -108,7 +108,7 @@
         </el-table-column>
         <el-table-column label="触发条件">
           <template slot-scope="scope">
-            <el-popover placement="left-start" width="400" trigger="hover">
+            <el-popover placement="right" width="400" trigger="hover">
               <div class="popover-box">
                 <p class="text-color">指标告警（任意）：</p>
                 <div
@@ -264,7 +264,9 @@
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="text" class="cloneBtn">复制</el-button>
+            <el-button type="text" class="cloneBtn" @click="Copy(scope.row)"
+              >复制</el-button
+            >
             <el-tooltip
               content="默认策略不支持删除，可解绑所有资源或设置新的默认策略后将此转为非默认策略"
               placement="left"
@@ -701,6 +703,7 @@ export default {
       GroupId: "",
       GroupName: "",
       startStop: false,
+      copyDialogVisible: false,
       IsOpen: false,
       inputVal: "",
       indexs: "",
@@ -1156,6 +1159,15 @@ export default {
             showClose: true,
             duration: 0
           });
+        }
+      });
+    },
+    // 复制
+    Copy(row) {
+      this.$router.push({
+        path: "/strategy/create",
+        query: {
+          groupId: row.GroupId
         }
       });
     },

@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="colony-main">
-      <div class="tke-card tke-formpanel-wrap mb60" v-loading="loadShow">
+      <div class="tke-card tke-formpanel-wrap mb60" v-loading="svc.loadShow">
         <el-form  class="tke-form" :model="svc" :rules="rules" ref="form" label-position='left' label-width="120px" size="mini">
 					<div style="padding: 0 10px 10px 10px;border-bottom:1px solid #dcdfe6;">
 						<h3 style="margin-bottom:11px;">{{$t('TKE.overview.jbxx')}}</h3>
@@ -67,7 +67,7 @@
       </div>
     </div>
 		<!-- 幕布层 -->
-		<el-dialog @open="openDialog" class="dialog" :title="$t('TKE.subList.shdz')" :visible.sync="dialogFormVisible">
+		<el-dialog @open="openDialog" class="dialog" title="引用Workload资源" :visible.sync="dialogFormVisible">
 			 <!-- v-loading="dialogLoadShow" -->
       <el-form label-width="100px">
 				<el-form-item :label="$t('TKE.event.zylx')">
@@ -138,7 +138,6 @@ export default {
         LBvalue2: '', // LB子网2
         balancerValue: '', // 已有均衡器
         protocol: 'TCP', // 选中的协议
-        // options: ['default', 'kube-public', 'kube-system', 'tfy-pub'],
         options: [], // 命名空间列表
         radio: '1',
         ETP: '1',
@@ -178,6 +177,15 @@ export default {
       }
     }
   },
+  watch:{
+    'svc.value':function(val){
+      let obj = {
+        clusterId: this.clusterId,
+        nameSpaceName: val
+      }
+      this.$router.push({name:'svcCreate',query:obj})
+    }
+  },
   components: {
     Service,
     Loading
@@ -186,7 +194,7 @@ export default {
     // 从路由获取类型
     let { clusterId, nameSpaceName } = this.$route.query
     this.clusterId = clusterId
-    this.spaceName = nameSpaceName    
+    this.svc.value = nameSpaceName    
     this.getInitData()    
   },
   methods: {
@@ -200,7 +208,7 @@ export default {
     },
     // 获取集群列表
     async getDescribeClusters () {
-      this.loadShow = true
+      this.svc.loadShow = true
       let params = {
         // ClusterIds: ["cls-a7rua9ae"]
         'ClusterIds.0': this.clusterId,
@@ -213,9 +221,9 @@ export default {
             this.svc.vpcId = ele.ClusterNetworkSettings.VpcId
           })
           // console.log(res)
-          this.loadShow = false
+          this.svc.loadShow = false
         } else {
-          this.loadShow = false
+          this.svc.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -229,7 +237,7 @@ export default {
     },
     // 扫描均衡器
     async getDescribeLoadBalancers () {
-      this.loadShow = true
+      this.svc.loadShow = true
       let params = {
         Forward: 1,
         Limit: 100,
@@ -249,9 +257,9 @@ export default {
             }
           })
           // this.svc.vpcId = msg[0].VpcId
-          this.loadShow = false
+          this.svc.loadShow = false
         } else {
-          this.loadShow = false
+          this.svc.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -265,7 +273,7 @@ export default {
     },
     // 扫描子网
     async getDescribeSubnets () {
-      this.loadShow = true
+      this.svc.loadShow = true
       let params = {
         'Filters.0.Name': 'vpc-id',
         'Filters.0.Values.0': this.svc.vpcId,
@@ -278,9 +286,9 @@ export default {
           let msg = res.Response.SubnetSet
           this.LBsubnet = msg
           this.svc.LBvalue2 = msg[0].SubnetId
-          this.loadShow = false
+          this.svc.loadShow = false
         } else {
-          this.loadShow = false
+          this.svc.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -294,7 +302,7 @@ export default {
     },
     // 描述Vpcs
     async getDescribeVpcs () {
-      this.loadShow = true
+      this.svc.loadShow = true
       let params = {
         Limit: 100,
         Offset: 0,
@@ -308,9 +316,9 @@ export default {
           this.vpcNameAry = msg
           this.svc.LBvalue1 = msg[0].VpcId
           // console.log(res.Response.VpcSet)
-          this.loadShow = false
+          this.svc.loadShow = false
         } else {
-          this.loadShow = false
+          this.svc.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -326,7 +334,7 @@ export default {
     // Path: `/apis/apps/v1beta2/namespaces/${this.spaceName}/deployments`,
     // 获取命名空间
     GetSpaceValue () {
-      this.loadShow = true
+      this.svc.loadShow = true
       var params = {
         ClusterName: this.$route.query.clusterId,
         Method: 'GET',
@@ -337,11 +345,11 @@ export default {
         if (res.Response.Error === undefined) {
           var searchOpt = JSON.parse(res.Response.ResponseBody).items// 得到数组
           this.svc.options = searchOpt// 赋值命名空间数据
-          this.svc.value = searchOpt[0].metadata.name
+          // this.svc.value = searchOpt[0].metadata.name
           // console.log(searchOpt)
-          this.loadShow = false
+          this.svc.loadShow = false
         } else {
-          this.loadShow = false
+          this.svc.loadShow = false
           let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
@@ -403,7 +411,7 @@ export default {
     },
     // 新建服务
     async submitFound () {
-      let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue, workload, workloadObj } = this.svc
+      let { name, describe, checked, radio, list, value, time, ETP, SA, loadBalance, balancerValue,  workload, workloadObj } = this.svc
       let newPortAry = []
       list.forEach(ele => { // 端口映射参数
         let ports = {
@@ -434,7 +442,7 @@ export default {
         specType = 'ClusterIP'
       } else {
         specType = 'NodePort'
-      }
+      }    
       let reqBody = {// 传递的reqbody整体参数
         'kind': 'Service',
         'apiVersion': 'v1',
@@ -486,7 +494,7 @@ export default {
       if (workload.length > 0) reqBody.spec.selector = workloadObj// Workload（选填）
       let param = {
         Method: 'POST',
-        Path: `/api/v1/namespaces/${this.spaceName}/services`,
+        Path: `/api/v1/namespaces/${value}/services`,
         Version: '2018-05-25',
         RequestBody: JSON.stringify(reqBody),
         ClusterName: this.clusterId

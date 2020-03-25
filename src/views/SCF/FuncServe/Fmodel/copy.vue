@@ -219,7 +219,14 @@
 
           this.axios.post(SCF_COPY, param).then(res => {
             if (res.Response.Error == undefined) {
-
+              this.$emit('cancel', false)
+              this.$message({
+                message: '複製成功',
+                type: "success",
+                showClose: true,
+                duration: 0
+              });
+              this.$parent._GetFuncList();
             } else {
               let ErrTips = {
 

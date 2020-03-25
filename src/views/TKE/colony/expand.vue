@@ -211,9 +211,9 @@
                 </el-table-column>
                 <el-table-column property="address" :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">￥{{ scope.row.Price.UnitPrice }}</span>
+                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.Price.UnitPrice }}</span>
                     <span class="text-orange" style="color:#ff7800;" v-else>￥{{ scope.row.Price.DiscountPrice }}</span>
-                    元/{{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小時' : '月'}}起
+                    {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小時' : '月'}}
                   </template>
                 </el-table-column>
               </el-table>
@@ -314,7 +314,7 @@
                           >
                           </el-option>
                         </el-select>
-                        <el-input v-model="item.filePath" @ :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
+                        <el-input v-model="item.filePath" :placeholder="$t('TKE.colony.qsrgzlj')"></el-input>
                       </div>
                     </el-form-item>
                   </div>
@@ -406,7 +406,7 @@
             :label="$t('TKE.overview.yhm')"
             v-if="nodeForm.loginSettings === 'relation' || nodeForm.loginSettings === 'set'"
           >
-            <p>ubuntu</p>
+            <p>{{ nodeForm.os | OSvalue }}</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.sshmy')" v-if="nodeForm.loginSettings === 'relation'">
             <div class="tke-third-select">
@@ -1752,6 +1752,18 @@ export default {
           return '包年包月';
         }
       }
+    },
+    OSvalue(val) {
+      let _val = val.substring(0, 6).toLowerCase();
+        // .trim()
+        // .split(" ")[0]
+        // .toLowerCase();
+      if (_val === "ubuntu") {
+        _val = "ubuntu";
+      } else {
+        _val = "root";
+      }
+      return _val;
     },
     //系统盘类型
     systemDiskType(val) {

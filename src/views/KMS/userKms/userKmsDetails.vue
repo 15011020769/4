@@ -255,15 +255,14 @@
           </div>
           <div class="EncryptText newClear">
             <div v-if="thisType=='1'||thisType=='0'?true:false">
-              <el-input :disabled='keyList.KeyState=="Disabled"?true:false' class="textareaIpt" v-model="Plaintext"
-                type="textarea" :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
+              <el-input :disabled='disabled_input' class="textareaIpt" v-model="Plaintext" type="textarea"
+                :placeholder="$t('KMS.total.placeholder2')" @input='changeTextarea1'></el-input>
               <el-button @click="actionPlain" :disabled="AdisableTextarea" type="primary">{{$t('KMS.total.action1')}}
               </el-button>
             </div>
             <div v-if="thisType=='2'||thisType=='3'?true:false">
-              <el-input class="textareaIpt" v-model="Ciphertext" type="textarea"
-                :disabled='keyList.KeyState=="Disabled"?true:false' :placeholder="$t('KMS.total.enterText')"
-                @input='changeTextarea2'></el-input>
+              <el-input class="textareaIpt" v-model="Ciphertext" type="textarea" :disabled='disabled_input'
+                :placeholder="$t('KMS.total.enterText')" @input='changeTextarea2'></el-input>
               <el-button @click="actionCipher" :disabled="BdisableTextarea" type="primary">{{$t('KMS.total.action1')}}
               </el-button>
             </div>
@@ -301,6 +300,7 @@
   export default {
     data() {
       return {
+        disabled_input: true,
         loading: true,
         projectDetail: {},
         createUser: "",
@@ -372,6 +372,7 @@
           if (res.Response.Error === undefined) {
 
             this.keyList = res.Response.KeyMetadata;
+            // console.log(this.keyList)
             this.loading = false;
           } else {
             let ErrTips = {
@@ -651,6 +652,11 @@
           }
         }
 
+        if (this.keyList.KeyState == 'Enabled') {
+          this.disabled_input = false
+        } else {
+          this.disabled_input = true
+        }
       },
       changeTextarea2() {
 
