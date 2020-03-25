@@ -71,7 +71,13 @@
   </el-dialog>
 </template>
 <script type="text/javascript">
-import { SPACENAME_LIST, MIRROR_LIST, GETFAVOR, GET_REPOSITORY_LIST, TKE_DOCKERHUB_LIST } from '@/constants'
+import {
+  SPACENAME_LIST,
+  MIRROR_LIST,
+  GETFAVOR,
+  GET_REPOSITORY_LIST,
+  TKE_DOCKERHUB_LIST
+} from '@/constants'
 export default {
   props: ['dialogVisible'],
   data () {
@@ -84,12 +90,12 @@ export default {
       // city: ['默认区域', '1', '2', '3', '4', '5', '6', '7', '8'],
       // 分页
       mirrorImageRadio: '',
-      searchContent:'',
+      searchContent: '',
       tableData: [],
       tableData2: [],
       TotalCount: 0,
       pagesize: 10,
-      currpage: 1,
+      currpage: 1
     }
   },
   watch: {
@@ -115,13 +121,12 @@ export default {
     tableCurrentChange: function (row) {
       if (!row) return
       this.mirrorImageRadio = row.reponame
-      console.log(row)
     },
     initRequery: function () {
       this.getNamespaceInfo()
       this.searchUserRepository()
     },
-    searchByContent(str){
+    searchByContent (str) {
       console.log(str)
       this.mirrorImageRadio = ''
       let arr = {
@@ -141,7 +146,7 @@ export default {
       await this.axios.post(MIRROR_LIST, {
         offset: 0,
         limit: 20,
-        reponame:this.searchContent,
+        reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
         repoInfo.forEach(item => {
@@ -150,8 +155,8 @@ export default {
           item.name = reponameArr[1]
           item.publicText = item.public ? '公有' : '私有'
         })
-        this.tableData = repoInfo;
-        this.TotalCount= repoInfo.length;
+        this.tableData = repoInfo
+        this.TotalCount = repoInfo.length
 
         console.log('searchUserRepository', this.tableData)
       })
@@ -160,34 +165,34 @@ export default {
       await this.axios.post(GETFAVOR, {
         offset: 0,
         limit: 20,
-        reponame:this.searchContent,
+        reponame: this.searchContent
       }).then(res => {
         console.log(res)
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount= repoInfo.length;
+        this.TotalCount = repoInfo.length
       })
     },
     getRepositoryList: async function () {
       await this.axios.post(GET_REPOSITORY_LIST, {
         offset: 0,
         limit: 20,
-        reponame:this.searchContent,
+        reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount= repoInfo.length;
+        this.TotalCount = repoInfo.length
       })
     },
     getDockerHubRepositoryList: async function () {
       await this.axios.post(TKE_DOCKERHUB_LIST, {
         offset: 0,
         limit: 20,
-        reponame:this.searchContent,
+        reponame: this.searchContent
       }).then(res => {
         let { data: { repoInfo } } = res
         this.tableData2 = repoInfo
-        this.TotalCount= repoInfo.length;
+        this.TotalCount = repoInfo.length
       })
     },
     handleClose (done) {
@@ -198,8 +203,7 @@ export default {
       this.visible = false
       this.$emit('close', this.visible)
     },
-    sure () {
-      this.visible = false
+    sure: function () {
       if (this.activeName === 'first') {
         if (this.mirrorImageRadio !== '') {
           this.$emit('confirm', `tpeccr.ccs.tencentyun.com/${this.mirrorImageRadio}`)
@@ -207,10 +211,16 @@ export default {
       } else {
         this.$emit('confirm', this.mirrorImageRadio)
       }
+      this.visible = false
+      if (this.activeName === 'first' || this.activeName === 'third') {
+        this.$emit('getMirrorImgTag', this.mirrorImageRadio)
+      } else if (this.activeName === 'fourth') {
+        this.$emit('getMirrorImgHubTag', this.mirrorImageRadio)
+      }
     },
     handleClick (tab) {
-      this.activeName = tab;
-      this.searchContent='';
+      this.activeName = tab
+      this.searchContent = ''
     },
     // 改变页数
     handleCurrentChange (val) {

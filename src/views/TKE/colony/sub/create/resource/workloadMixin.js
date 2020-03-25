@@ -9,6 +9,7 @@ let instanceContent = {
     this.wl.instanceContent.push({
       name: '', // 名称
       mirrorImg: '', // 镜像
+      mirrorImgTagArr: [], // 镜像版本数组
       versions: '', // 镜像版本
       mirrorPullTactics: '', // 镜像拉取策略
       requestCpu: '0.25', // cpu 限制
