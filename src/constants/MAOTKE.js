@@ -41,7 +41,7 @@ export const MODIFY_GROUP_STATUS = 'tke2/ModifyClusterAsGroupAttribute'
 export const DELETE_GROUP = 'tke2/DeleteClusterAsGroups'
 
 //获取可用区机型配置信息
-export const DESCRIBE_ZONE_INFO = 'cvm/DescribeZoneInstanceConfigInfos'
+export const DESCRIBE_ZONE_INFO = 'cvm2/DescribeZoneInstanceConfigInfos'
 
 //伸缩组列表修改名称
 export const MODIFY_NAME = 'as/ModifyAutoScalingGroup'

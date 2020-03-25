@@ -170,7 +170,7 @@
 									<!-- 容器端口 -->
                   <el-form-item :prop="`list.${i}.port`" :rules="verifyPort1" class="w250" :class="{cons:svc.radio=='4'}"
                    style="display: inline-block;padding-left:30px;">
-                    <el-input v-model="it.port" :placeholder="$t('TKE.colony.qsrnr')"></el-input>
+                    <el-input v-model="it.targetPort" :placeholder="$t('TKE.colony.qsrnr')"></el-input>
 									</el-form-item>
                   <!-- 主机端口 -->
                   <el-form-item :class="{cons:svc.radio=='4'}" v-if="svc.radio=='4'"
@@ -180,7 +180,7 @@
                   <!-- 服务端口 -->
                   <el-form-item :prop="`list.${i}.targetPort`" :rules="verifyPort2" class="w250"
                    :class="{cons:svc.radio=='4'}" style="display: inline-block;padding-left:30px;">
-                    <el-input v-model="it.targetPort" :placeholder="$t('TKE.colony.qsrnr')"></el-input>
+                    <el-input v-model="it.port" :placeholder="$t('TKE.colony.qsrnr')"></el-input>
 									</el-form-item>
                   <!-- 关闭按钮 -->
                   <el-tooltip class="item" effect="dark" :content="$t('TKE.subList.zslgdk')" placement="left" v-if="svc.list.length===1">

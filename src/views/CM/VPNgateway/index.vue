@@ -41,7 +41,7 @@
           <el-table-column prop :label="$t('CVM.clBload.sswl')">
             <template slot-scope="scope">
               <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
-                target="_blank">{{scope.row.VpcId}}</a>
+                target="_self">{{scope.row.VpcId}}</a>
               <p>{{ scope.row.vpnGwName}}</p>
             </template>
           </el-table-column>
@@ -92,7 +92,7 @@
           <el-table-column prop :label="$t('CVM.clBload.sswl')">
             <template slot-scope="scope">
               <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.VpcId + '/ap-taipei'"
-                target="_blank">{{scope.row.VpcId}}</a>
+                target="_self">{{scope.row.VpcId}}</a>
               <p>{{ scope.row.vpnGwName}}</p>
             </template>
           </el-table-column>

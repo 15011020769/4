@@ -16,7 +16,7 @@
           <template slot-scope="scope">
             <!-- <el-button @click="handleClick(scope.row)" type="text">{{ scope.row.InstanceId }}</el-button> -->
             <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ scope.row.InstanceId + '/ap-taipei'"
-              target="_blank">{{ scope.row.InstanceId }}</a>
+              target="_self">{{ scope.row.InstanceId }}</a>
             <p class="edit">{{ scope.row.InstanceName }}</p>
           </template>
         </el-table-column>

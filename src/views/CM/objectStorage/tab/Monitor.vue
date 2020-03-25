@@ -144,28 +144,70 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
-        available: [
-          '2xxResponse',
-          '3xxResponse',
-          '4xxResponse',
-          '5xxResponse',
-          'ArcStorage',
-          'CdnOriginTraffic',
-          'IaReadRequests',
-          'IaRetrieval',
-          'IaWriteRequests',
-          'InboundTraffic',
-          'InternalTraffic',
-          'InternetTraffic',
-          'NelStorage',
-          'NlReadRequests',
-          'NlRetrieval',
-          'NlWriteRequests',
-          'SiaStorage',
-          'StdReadRequests',
-          'StdRetrieval',
-          'StdStorage',
-          'StdWriteRequests'
+        available: [{
+            MetricName: 'StdReadRequests'
+          },
+          {
+            MetricName: 'StdWriteRequests'
+          },
+          {
+            MetricName: 'IaReadRequests'
+          },
+          {
+            MetricName: 'IaWriteRequests'
+          },
+          {
+            MetricName: 'NlReadRequests'
+          },
+          {
+            MetricName: 'NlWriteRequests'
+          },
+          {
+            MetricName: 'InboundTraffic'
+          },
+          {
+            MetricName: 'InternalTraffic'
+          },
+          {
+            MetricName: 'InternetTraffic'
+          },
+          {
+            MetricName: 'CdnOriginTraffic'
+          },
+          {
+            MetricName: '2xxResponse'
+          },
+          {
+            MetricName: '3xxResponse'
+          },
+          {
+            MetricName: '4xxResponse'
+          },
+          {
+            MetricName: '5xxResponse'
+          },
+          {
+            MetricName: 'StdRetrieval'
+          },
+          {
+            MetricName: 'IaRetrieval'
+          },
+          {
+            MetricName: 'NlRetrieval'
+          },
+          {
+            MetricName: 'ArcStorage'
+          },
+          {
+            MetricName: 'NelStorage'
+          },
+          {
+            MetricName: 'SiaStorage'
+          },
+          {
+            MetricName: 'StdStorage'
+          },
+
         ], //可用指标
         disName: {
           'NelStorage': '近线存储存储空间',
@@ -280,18 +322,26 @@
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              console.log(item.MetricName, item.Meaning.Zh)
               this.available.forEach(element => {
-                if (item.MetricName === element) {
-                  if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                    this.BaseListK.push(item)
-                    setTimeout(() => {
-                      this._GetMonitorData(item.MetricName)
-                    }, 500);
-                  }
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
                 }
               });
             });
+            this.available.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
+              }
+            });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],

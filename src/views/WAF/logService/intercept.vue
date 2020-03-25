@@ -10,7 +10,7 @@
           <el-col>
             {{t('使用访问日志功能，需要先购买安全日志服务包，并且在域名列表页选择域名开启访问日志开关。安全日志服务包，支持访问日志记录、查询和下载等功能。', 'WAF.syfwrzgn')}}
           </el-col>
-          <el-button type="primary" size="small" class="buy" @click="buyLogBackModel=true">{{t('立即购买', 'WAF.ljgm')}}</el-button>
+          <el-button type="primary" :disabled="loading" size="small" class="buy" @click="buyLogBackModel=true">{{t('立即购买', 'WAF.ljgm')}}</el-button>
         </el-row>
       </el-row>
     </el-card>
@@ -25,6 +25,7 @@ export default {
     return {
       buyLogBackModel: false,
       package: {},
+      loading: true,
     }
   },
   components: {
@@ -43,6 +44,7 @@ export default {
       }).then(resp => {
         this.generalRespHandler(resp, ({ Data }) => {
           this.package = Data
+          this.loading = false
         })
       })
     },

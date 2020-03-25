@@ -106,6 +106,7 @@ import Loading from "@/components/public/Loading";
 import moment from 'moment';
 import XLSX from "xlsx";
 import { ErrorTips } from "@/components/ErrorTips";
+import { Base64 } from 'js-base64';
 import FileSaver from "file-saver";
 import { ALL_CITY, POINT_REQUEST } from "@/constants";
 export default {
@@ -122,13 +123,14 @@ export default {
       multipleSelection: [],//全选数据数组
       showNameSpaceModal: false,//是否显示删除框
       nameSpaceName: {},//命名空间名称
+      dataList: [],
     };
   },
  
  created() {
     // 从路由获取集群id
     this.clusterId=this.$route.query.clusterId;
-    this.getNameSpaceList();
+    // this.getNameSpaceList();
     this.getNameSpaceTotal();
   },
   methods: {
@@ -198,6 +200,8 @@ export default {
           let response = JSON.parse(res.Response.ResponseBody);
           console.log("sss",response.items,"items");
           if(response.items.length > 0) {
+            this.dataList = response.items;
+            this.list = response.items.slice(this.pageIndex, this.pageSize);
             this.total = response.items.length;
           }
         } else {
@@ -233,7 +237,8 @@ export default {
       }
       await this.axios.post(POINT_REQUEST, param).then(res => {
         if (res.Response.Error === undefined) {
-          this.getNameSpaceList();
+          // this.getNameSpaceList();
+          this.getNameSpaceTotal();
           this.loadShow = false;
           this.showNameSpaceModal = false;
           this.$message({
@@ -285,11 +290,13 @@ export default {
     // 点击搜索
     clickSearch(val){
       this.searchInput = val;
-      this.getNameSpaceList();
+      // this.getNameSpaceList();
+      this.getNameSpaceTotal();
     },
     //刷新数据
     refreshList(){
-      this.getNameSpaceList();
+      // this.getNameSpaceList();
+      this.getNameSpaceTotal();
     },
     // 导出表格
     exportExcel() {
@@ -314,12 +321,16 @@ export default {
 
     // 分页
     handleCurrentChange(val) {
-      this.pageIndex = val-1;
+      let pageIndex = val - 1;
+      let list = this.dataList;
+      this.list = list.slice(pageIndex * this.pageSize, (pageIndex + 1) * this.pageSize);
+      pageIndex += 1;
+      // this.pageIndex = val-1;
       // this.loadShow = true;
       // const param = {
       //   Method: "GET",
       //   Path: "/api/v1/namespaces?limit="+this.pageSize+"&continue=" + 
-      //     btoa(JSON.stringify({v:"meta.k8s.io/v1",rv:90778097,start: this.list[this.list.length - 1].metadata.name+"\u0000"})),
+      //     Base64.encode(JSON.stringify({v:"meta.k8s.io/v1",rv:90778097,start: this.list[this.list.length - 1].metadata.name+"\u0000"})),
       //   Version: "2018-05-25",
       //   ClusterName: this.clusterId
       // }
@@ -359,12 +370,13 @@ export default {
       //   }
       // });
       // this.getNameSpaceList();
-      this.pageIndex+=1;
+      this.pageIndex = pageIndex;
     },
     handleSizeChange(val) {
       // console.log(`每页 ${val} 条`);
       this.pageSize=val;
-      this.getNameSpaceList();
+      this.getNameSpaceTotal();
+      // this.getNameSpaceList();
     },
 
   },

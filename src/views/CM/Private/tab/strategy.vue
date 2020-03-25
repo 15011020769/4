@@ -120,7 +120,7 @@
           Version: "2018-07-24",
           Module: "monitor",
           ViewName: "dcchannel",
-          "Dimensions.0": {"name": "directconnectconnid","value":"dcx-l1zv1sxs"}
+          "Dimensions.0": {"name": "directconnectconnid","value":this.$router.currentRoute.query.id}
         };
         //测试
         // const params = {

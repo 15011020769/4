@@ -109,7 +109,7 @@ export default {
             ...fnDel(delArrSure),
             ...fnEdit(addArr),
             ...fnEdit(editArrSure2),
-            Resource: `qcs::vpc:ap-guangzhou:uin/${VueCookie.get('uuid')}:ccn/${this.resourceId}`,
+            Resource: `qcs::vpc:ap-guangzhou:uin/${VueCookie.get('uin')}:ccn/${this.resourceId}`,
             Version:'2018-08-13',
             Action:'ModifyResourceTags',
         }

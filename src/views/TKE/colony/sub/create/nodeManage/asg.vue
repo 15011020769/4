@@ -40,13 +40,13 @@
             </el-radio-group>
             <p v-if="asg.typeRadio=='SPOTPAID'">
               {{$t('TKE.subList.jjsl')}}
-              <span class="tke-text-link">{{$t('TKE.overview.ckxq')}}</span>
+              <!-- <span class="tke-text-link">{{$t('TKE.overview.ckxq')}}</span> -->
             </p>
           </el-form-item>
           <el-form-item :label="$t('TKE.subList.jxsz')">
             <div class="form-controls">
               <el-form class="tke-form" label-position="left" label-width="120px" size="mini">
-                <el-form-item :label="$t('TKE..colony.kyq')">
+                <el-form-item :label="$t('TKE.colony.kyq')">
                   <el-radio-group v-model="asg.regionRadio" size="small">
                     <el-radio-button label="region1">{{$t('TKE.subList.qbkyq')}}</el-radio-button>
                     <el-radio-button label="region2">{{$t('TKE.colony.tbyq')}}</el-radio-button>
@@ -106,17 +106,18 @@
 
           <el-form-item :label="$t('TKE.overview.yhm')" v-show="asg.pwdRadio === 'pwd3'">
             <div class="tke-form-item_text">
-              <span>uunin</span>
+              <span v-if="caozuo==='centos'">ubuntu</span>
+              <span v-if="caozuo==='ubuntu'">root</span>
             </div>
           </el-form-item>
           <el-form-item :label="$t('TKE.overview.mm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" v-model="asg.password" :placeholder="$t('TKE.myMirror.qsrmm')"></el-input>
+            <el-input class="w200" type="password" v-model="asg.password" :placeholder="$t('TKE.myMirror.qsrmm')"></el-input>
             <p
               class="pass"
             >linux機器密碼需8到16位，至少包括兩項（[a-z,A-Z] , [0-9]和[()`~!@#$%^&*-+=|{}[]:;',.?/]的特殊符號</p>
           </el-form-item>
           <el-form-item :label="$t('TKE.colony.qrmm')" v-show="asg.pwdRadio === 'pwd3'">
-            <el-input class="w200" v-model="asg.passwordAgin" :placeholder="$t('TKE.subList.qqrmm')"></el-input>
+            <el-input class="w200" type="password" v-model="asg.passwordAgin" :placeholder="$t('TKE.subList.qqrmm')"></el-input>
           </el-form-item>
 
           <el-form-item :label="$t('TKE.colony.rqml')">
@@ -388,7 +389,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange">￥{{ scope.row.Price.UnitPrice }}</span>元/{{$t('TKE.colony.xs')}}起
+                    <span class="text-orange">NT$ {{ scope.row.Price.UnitPrice }}</span>元/{{$t('TKE.colony.xs')}}起
                   </template>
                 </el-table-column>
               </el-table>
@@ -535,6 +536,7 @@ export default {
   data() {
     return {
       clusterId: "", //集群id
+      caozuo:'centos',//操作系统
       flag1: true,
       flag2: false,
       checked: false,
@@ -931,7 +933,6 @@ export default {
       // ExtraArgs: {Kubelet: []}
       // Kubelet: []
 
-      console.log(params);
       await this.axios.post(CREATE_GROUP, params).then(res => {
         if (res.Response.Error === undefined) {
           this.$message({
@@ -1010,14 +1011,12 @@ export default {
       this.$router.go(-1);
     },
     removeDomain(item) {
-      console.log(item);
       var index = this.domains.indexOf(item);
       if (index !== -1) {
         this.domains.splice(index, 1);
       }
     },
     removeDomain2(item) {
-      console.log(item);
       var index = this.domainstion.indexOf(item);
       if (index !== -1) {
         this.domainstion.splice(index, 1);
@@ -1046,7 +1045,6 @@ export default {
     //机型表格选中的数据
     handleCurrentChange(val) {
       this.modeData = val;
-      console.log(val);
     },
     //机型model确定选择数据
     ModelSure() {
@@ -1207,7 +1205,6 @@ export default {
         this.publicband = "按使用流量 " + this.asg.broadbandNum + "Mbps";
       }
     },
-
     //获取安全组列表
     async getSecurityGroups() {
       this.loadShow = true;
@@ -1268,6 +1265,8 @@ export default {
         return "計算型C3";
       } else if (val === "MEM-optimized M3") {
         return "記憶體型M3";
+      } else {
+        return val;
       }
     },
     //获取支持网络

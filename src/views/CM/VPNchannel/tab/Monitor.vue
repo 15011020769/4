@@ -159,8 +159,8 @@
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-          "Outbandwidth": '外網出頻寬',
-          "Inbandwidth": '外網入頻寬',
+          "Outbandwidth": '網路出頻寬',
+          "Inbandwidth": '網路入頻寬',
           "Outpkg": '出包量',
           "Inpkg": '入包量',
           "Pkgdrop": '丢包率',

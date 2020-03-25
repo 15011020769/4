@@ -64,14 +64,14 @@
         </div>
         <div class="table">
           <el-table :data="tableData" v-loading="loadShow" style="width: 100%" height="450" :empty-text="$t('CVM.clBload.zwsj')">
-            <el-table-column prop="EventCName" label="事件" width="100"></el-table-column>
+            <el-table-column prop="EventCName" label="事件" width="90"></el-table-column>
             <el-table-column prop label="類型" width="100">
               <template slot-scope="scope">
                 <p>{{scope.row.Type === 'abnormal' ? '異常事件' : '状态变更'}}</p>
               </template>
             </el-table-column>
             <el-table-column prop="ProductCName" label="產品類型" width="90"></el-table-column>
-            <el-table-column prop label="地域" width="100">
+            <el-table-column prop label="地域" width="90">
               <template slot-scope="scope">
                 <p>{{scope.row.Region === 'tpe' ? '台灣台北' : ''}}</p>
               </template>
@@ -82,29 +82,29 @@
                 <p>{{scope.row.InstanceName}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="對象詳情" width="200">
+            <el-table-column prop label="對象詳情" width="220">
               <template slot-scope="scope">
                 <div v-for="(items,index) in scope.row.Dimensions" :key="index">
                   <p><span>{{items.Name}}：</span>{{items.Value}}</p>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column prop label="狀態" width="70">
+            <el-table-column prop label="狀態" width="50">
               <template slot-scope="scope">
                 <p>{{scope.row.Status == "recover" ? "已恢復" : scope.row.Status == "alarm" ? "未恢復" : "-"}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="開始時間" width="90">
+            <el-table-column prop label="開始時間" width="132">
               <template slot-scope="scope">
                   <p>{{getConvDate(scope.row.StartTime)}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="更新時間" width="90">
+            <el-table-column prop label="更新時間" width="132">
               <template slot-scope="scope">
                   <p>{{getConvDate(scope.row.UpdateTime)}}</p>
               </template>
             </el-table-column>
-            <el-table-column prop="alarm" label="告警配置">
+            <el-table-column prop="alarm" label="告警配置" width="132">
               <template slot-scope="scope">
                   <p><span>{{scope.row.IsAlarmConfig == 1 ? '已配置' : '未配置'}}</span>
                   <span class="New_Configuration"><a @click="jump(scope.row.InstanceId)">新增配置</a></span></p>

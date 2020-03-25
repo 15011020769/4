@@ -48,7 +48,7 @@
         <p v-if="Vpc_Smb.Vpc===''">{{$t('SCF.total.w')}}</p>
         <p v-else>
           <a :href="'../VPC/index.html#/priNetwork/priNetworkDetial/'+ ConfigDate.VpcConfig.VpcId + '/ap-taipei'"
-            target="_blank"> {{ConfigDate.VpcConfig.VpcId}}</a>
+            target="_self"> {{ConfigDate.VpcConfig.VpcId}}</a>
           ({{Vpc_Smb.Vpc.VpcId}} | {{Vpc_Smb.Vpc.VpcName}} | {{Vpc_Smb.Vpc.CidrBlock}})
         </p>
       </div>
@@ -57,16 +57,16 @@
         <p v-if="ConfigDate.VpcConfig.SubnetId===''">{{$t('SCF.total.wzw')}}</p>
         <p v-else>
           <a :href="'../VPC/index.html#/subnet/subnetDetailOther/'+ ConfigDate.VpcConfig.SubnetId+ConfigDate.VpcConfig.VpcId + '/ap-taipei'"
-            target=" _blank"> {{ConfigDate.VpcConfig.SubnetId}}</a>
+            target="_self"> {{ConfigDate.VpcConfig.SubnetId}}</a>
           ({{Vpc_Smb.Smb.SubnetId}} | {{Vpc_Smb.Smb.SubnetName}} | {{Vpc_Smb.Smb.CidrBlock}})
         </p>
       </div>
       <div class="Content" v-if="!Congigload">
-           <p>标签</p>
-           <span v-for="(v,i) in ConfigDate.Tags" :key="i">{{v}}</span>
-           <p><i @click="modifyLabels()" class="el-icon-edit" style="cursor:pointer"></i></p>
+        <p>标签</p>
+        <span v-for="(v,i) in ConfigDate.Tags" :key="i">{{v}}</span>
+        <p><i @click="modifyLabels()" class="el-icon-edit" style="cursor:pointer"></i></p>
       </div>
-      <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'  ></editLabel>
+      <editLabel :editVisible.sync="dialogVisible" :labelsInfo='labelsInfo'></editLabel>
     </div>
     <div v-if="edit===true">
       <div class="Content">
@@ -172,9 +172,9 @@
             </el-option>
           </el-select>
           <p style="color:#888">{{$t('SCF.total.wlbs')}}
-            <a :href="'../VPC/index.html#/priNetwork/'" target=" _blank">{{$t('SCF.total.xjsywl')}}</a>
+            <a :href="'../VPC/index.html#/priNetwork/'" target="_self">{{$t('SCF.total.xjsywl')}}</a>
             或
-            <a :href="'../VPC/index.html#/subnet/'" target=" _blank">{{$t('SCF.total.xjzw')}}</a> </p>
+            <a :href="'../VPC/index.html#/subnet/'" target="_self">{{$t('SCF.total.xjzw')}}</a> </p>
         </div>
       </div>
       <div class="Preservation">
@@ -203,8 +203,8 @@
     data() {
       return {
         disedit: false, //编辑按钮禁用
-        dialogVisible:false,//标签弹出框
-        labelsInfo:{},
+        dialogVisible: false, //标签弹出框
+        labelsInfo: {},
         Congigload: true,
         edit: false,
         functionName: this.$route.query.functionName,
@@ -299,16 +299,16 @@
       }
     },
     methods: {
-         //编辑标签
-      modifyLabels(){
-        this.dialogVisible=true;
+      //编辑标签
+      modifyLabels() {
+        this.dialogVisible = true;
         // this.labelsInfo={
         //   TagSet:row.TagSet,
         //   resourceId:row.CcnId
         // }
       },
-      getLabelsFather(){
-        let params={
+      getLabelsFather() {
+        let params = {
           FunctionName: this.functionName,
           Namespace: this.$route.query.SpaceValue,
           Qualifier: this.FunctionVersion,
@@ -316,11 +316,11 @@
           ShowCode: "TRUE",
           Version: "2018-04-16",
         }
-        this.axios.post(SCF_DETAILS, params).then(res=>{
+        this.axios.post(SCF_DETAILS, params).then(res => {
           console.log(res)
-           if (res.Response.Error === undefined){
+          if (res.Response.Error === undefined) {
 
-           }
+          }
         })
       },
       //获取详情数据
@@ -336,11 +336,11 @@
         console.log(param)
         this.axios.post(SCF_DETAILS, param).then(res => {
           if (res.Response.Error === undefined) {
-            console.log( res.Response)
+            console.log(res.Response)
             this.ConfigDate = res.Response
-            this.labelsInfo={
-              TagSet:res.Response.Tags,
-              resourceId:res.Response.FunctionId
+            this.labelsInfo = {
+              TagSet: res.Response.Tags,
+              resourceId: res.Response.FunctionId
             }
             this.Variables = res.Response.Environment.Variables
             if (this.Variables.length !== 0) {
@@ -585,7 +585,9 @@
         this.edit = false
       }
     },
-    components:{editLabel},
+    components: {
+      editLabel
+    },
   }
 
 </script>

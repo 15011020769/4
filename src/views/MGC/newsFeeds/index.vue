@@ -115,7 +115,7 @@ export default {
   methods: {
     //初始化表格数据
     init() {
-       let uin = VueCookie.get('uuid')
+       let uin = VueCookie.get('uin')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
        this.axios.get(`${process.env.VUE_APP_adminUrl + NOTICE_LIST}`+'?uin='+uin+'&publishStatus=2'+'&page='+Page+'&limit='+Rp).then(res=>{
@@ -132,7 +132,7 @@ export default {
     this.init()
     },
     tableSearch() {
-       let uin = VueCookie.get('uuid')
+       let uin = VueCookie.get('uin')
        let Page = this.currpage //当前页码
        let Rp = this.pagesize  //条数
        let title = this.inputVal

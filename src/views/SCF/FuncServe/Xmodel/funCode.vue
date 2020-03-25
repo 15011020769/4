@@ -16,7 +16,7 @@
           <P>
             <span>
               {{$t('SCF.total.zxff')}}
-              <!-- <i class="el-icon-question"></i> -->
+              <i class="el-icon-question" plain @click="openHint"></i>
             </span>
             <el-input v-model="implementInput"></el-input>
           </P>
@@ -270,6 +270,7 @@ require("codemirror/mode/javascript/javascript"); // 这里引入的模式的js�
 import {
   defaultTemplate
 } from './defaultTemplate'
+import openHint from './openHint'
 // import * as cslite from '@/views/SCF/lib/c.js'
 // const { CloudStudioLiteFilesServiceSDK, ModeTypeEnum } = require('../../lib/c')
 export default {
@@ -363,7 +364,8 @@ export default {
 
   },
   components: {
-    codemirror
+    codemirror,
+    openHint
   },
   mounted() {
 
@@ -633,6 +635,7 @@ export default {
         Version: "2018-04-16",
         FunctionName: this.functionName,
         Handler: this.implementInput,
+        Namespace: this.$route.query.SpaceValue
       };
 
       if (this.SubmissionValue === 'ZipFile') {         // 上传的是zip
@@ -650,7 +653,7 @@ export default {
             this.updateCsliteFun(param) // 更新函数代码
           })
         })
-      }else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
+      } else if (this.SubmissionValue === 'Cos') {         // 上传的是COS
         param.CosBucketName = this.cosName
         param.CosObjectName = this.cosInput
         param.CosBucketRegion = localStorage.getItem('regionv2')
@@ -942,6 +945,16 @@ export default {
         //解决 数据更新页面不更新
 
       });
+    },
+
+    // 执行方法提醒
+    openHint() {
+      this.$notify({
+        title: '執行方法說明',
+        dangerouslyUseHTMLString: true,
+        duration: 0,
+        message: '111'
+      });
     }
   }
 }
@@ -952,6 +965,10 @@ export default {
   background-color: #fff;
   padding: 20px;
   margin-bottom: 20px;
+  .el-icon-question {
+    font-size: 12px;
+    cursor: pointer;
+  }
 
   ::v-deep .el-select {
     height: 32px !important;

@@ -158,10 +158,11 @@
               @click="addNewRoom()">
               添加Namespace
             </el-button>
+            <!-- 容器文件路径 -->
             <div class="form-form" v-if="tabPosition == 'two'">
               <el-form :model="formTwo" label-width="100px" class="tke-form" label-position="left">
                 <el-form-item :label="$t('TKE.overview.gzfzxx')">
-                  <el-select :placeholder="$t('TKE.overview.qxzmmkj')" :disabled='editStatus' size="mini" v-model="formTwo.value1">
+                  <el-select :placeholder="$t('TKE.overview.qxzmmkj')" @change="selectOneNamespace(formTwo.value1,formTwo.value2)" :disabled='editStatus' size="mini" v-model="formTwo.value1">
                     <el-option v-for="item in namespaceOptions" :key="item" :label="item" :value="item">
                     </el-option>
                   </el-select>
@@ -170,6 +171,7 @@
                     </el-option>
                   </el-select>
                   <el-select :placeholder="$t('TKE.overview.qxz')" :disabled="formTwo.value3=='無'||editStatus" size="mini" class="ml10"
+                    @change="selectWorkload(formTwo.value3)"
                     v-model="formTwo.value3">
                     <el-option v-for="item in formTwo.option3" :key="item" :label="item" :value="item">
                     </el-option>
@@ -179,7 +181,7 @@
                 <el-form-item :label="$t('TKE.overview.pzlj')" v-if="formTwo.value3!='無'">
                   <div v-for="(domain, index) in formTwo.optionAll" :key="index">
                     <el-form-item label="容器名">
-                      <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" class="ml10" v-model="domain.value4">
+                      <el-select :placeholder="$t('TKE.overview.qxz')" @change="selectContainerName(domain.value4,index)" size="mini" class="ml10" v-model="domain.value4">
                         <el-option v-for="item in domain.option4" :key="item" :label="item" :value="item">
                         </el-option>
                       </el-select>
@@ -474,9 +476,17 @@
         instanceList: [],
         workload1: [],
         resourceVersion: '',
+        filterData:[],//联动数据
       };
     },
     watch: {
+      'formTwo.value3':{
+        handler(val){
+          console.log(val)
+          this.selectWorkload(val)
+        },
+        deep:true,
+      },
       Ckafka: {
         handler(val) {
           var params = {
@@ -514,72 +524,6 @@
             this.output.topic_id = "";
             this.output.topic = "";
           }
-        },
-        deep: true
-      },
-      formTwo: {
-        handler(val) {
-          var params = {
-            ClusterName: this.$route.query.clusterId.split("(")[0],
-            Method: "GET",
-            Path: "/apis/apps/v1beta2/namespaces/" + val.value1 + "/" + val.value2.toLocaleLowerCase() + 's',
-            Version: "2018-05-25"
-          };
-          this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            if (res.Response.Error === undefined) {
-              this.formTwo.option3 = ['請選擇workload'];
-              var data = JSON.parse(res.Response.ResponseBody);
-              if (data.items) {
-                data.items.forEach(item => {
-                  //workload选项
-                  this.formTwo.option3.push(item.metadata.name)
-                })
-                var needData = data.items.filter(val1 => {
-                  return val1.metadata.name == this.formTwo.value3
-                })
-                if (needData.length != 0) {
-                  //容器名称选项
-                  val.optionAll.forEach(v => {
-                    v.option4 = ['請選擇容器名稱']
-                  })
-                  var optionData = needData[0].spec.template.spec.containers; //存放容器名
-                  optionData.forEach(val2 => {
-                    val.optionAll.forEach(v => {
-                      v.option4.push(val2.name) //容器名选项
-                    })
-                  })
-
-                  val.optionAll.forEach(vi => { //当切换容器会出现不同下拉菜单选项
-                    var needData2 = optionData.filter(val3 => {
-                      return val3.name == vi.value4
-                    }) //容器 存放
-                    if (needData2.length != 0) {
-                      if (needData2[0].volumeMounts) {
-                        val.optionAll.forEach(v => {
-                          v.option5 = ['請選擇掛載目錄']
-                        })
-                        needData2[0].volumeMounts.forEach(val4 => {
-                          val.optionAll.forEach(v => {
-                            v.option5.push(val4.mountPath)
-                          })
-                          // val.optionAll[0].option5.push(val4.mountPath)
-                        })
-                      } else {
-                        val.optionAll.forEach(v => {
-                          v.value5 = "無"
-                        })
-                      }
-                    }
-                  })
-                } else {
-                  val.optionAll[0].value4 = '無'
-                }
-              }
-              
-            }
-          });
-
-
         },
         deep: true
       },
@@ -624,7 +568,6 @@
     },
     mounted() {},
     methods: {
-     
       async reflowData(){
          await this.nameSpaceList()
          await this.findEditData();
@@ -874,11 +817,11 @@
 
               this.tabPosition = 'two';
 
+              this.selectOneNamespace(data.metadata.namespace,data.spec.input.pod_log_input.workload.type);
               this.formTwo.value1 = data.metadata.namespace;
               this.formTwo.value2 = data.spec.input.pod_log_input.workload.type;
               this.formTwo.value3 = data.spec.input.pod_log_input.workload.name;
               var data3 = data.spec.input.pod_log_input.container_log_files;
-
               var arr = [];
               for (let i in data3) {
                 for (let j in data3[i]) {
@@ -1356,6 +1299,87 @@
             }
           });
         }
+      },
+      selectOneNamespace(namespace,type){
+        this.formTwo.value3='';
+        this.formTwo.optionAll.forEach(item=>{
+          item.value4='';
+          item.value5='';
+        })
+        this.getWorkLoadData(namespace,type)
+      },
+      getWorkLoadData(namespace,type){
+        var params = {
+            ClusterName: this.$route.query.clusterId.split("(")[0],
+            Method: "GET",
+            Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" +type.toLocaleLowerCase() + 's',
+            Version: "2018-05-25"
+        };
+        this.axios.post(TKE_COLONY_QUERY, params).then(res=>{
+          
+          if (res.Response.Error === undefined){
+              this.formTwo.option3 = ['請選擇workload'];
+              var data = JSON.parse(res.Response.ResponseBody);
+              if (data.items) {
+                console.log(data.items,'data.items')
+                this.filterData=data.items;
+                data.items.forEach(item => {
+                  //workload选项
+                  this.formTwo.option3.push(item.metadata.name)
+                })
+              }
+          }
+        })
+      },
+      selectWorkload(workload){
+        this.formTwo.optionAll.forEach(item=>{
+          item.value4=''
+        })
+         var needData =this.filterData.filter(one => {
+            return one.metadata.name == this.formTwo.value3
+          })
+          if (needData.length != 0) {
+              //容器名称选项
+              this.formTwo.optionAll.forEach(v => {
+                v.option4 = ['請選擇容器名稱']
+              })
+              var optionData = needData[0].spec.template.spec.containers; //存放容器名
+              optionData.forEach(val2 => {
+                this.formTwo.optionAll.forEach(v => {
+                  v.option4.push(val2.name) //容器名选项
+                })
+              })
+          }
+      },
+      selectContainerName(val,index){
+        this.formTwo.optionAll.forEach(item=>{
+             item.value5=''
+        })
+        var needData =this.filterData.filter(one => {
+            return one.metadata.name == this.formTwo.value3
+          })
+       var optionData = needData[0].spec.template.spec.containers; //存放容器名
+        this.formTwo.optionAll.forEach(vi => { //当切换容器会出现不同下拉菜单选项
+            var needData2 = optionData.filter(item => {
+              return item.name == val
+            }) //容器 存放
+            if (needData2.length != 0) {
+              if (needData2[0].volumeMounts) {
+                this.formTwo.optionAll.forEach(v => {
+                  v.option5 = ['請選擇掛載目錄']
+                })
+                needData2[0].volumeMounts.forEach(val4 => {
+                  this.formTwo.optionAll.forEach(v => {
+                    v.option5.push(val4.mountPath)
+                  })
+                })
+              } else {
+                this.formTwo.optionAll.forEach(v => {
+                  v.value5 = "無"
+                })
+              }
+            }
+          })
       },
       //监测是否可以创建日志采集
       checkCluster() {

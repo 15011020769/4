@@ -151,6 +151,73 @@
         Time: {}, //监控传递时间
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
+        available: [{
+            MetricName: 'SlowQueries'
+          },
+          {
+            MetricName: 'ConnectionUseRate'
+          }, {
+            MetricName: 'MaxConnections'
+          }, {
+            MetricName: 'SelectScan'
+          }, {
+            MetricName: 'SelectCount'
+          }, {
+            MetricName: 'ComUpdate'
+          }, {
+            MetricName: 'ComDelete'
+          }, {
+            MetricName: 'ComInsert'
+          }, {
+            MetricName: 'ComReplace'
+          }, {
+            MetricName: 'Queries'
+          }, {
+            MetricName: 'ThreadsConnected'
+          }, {
+            MetricName: 'RealCapacity'
+          }, {
+            MetricName: 'Capacity'
+          }, {
+            MetricName: 'BytesSent'
+          }, {
+            MetricName: 'BytesReceived'
+          }, {
+            MetricName: 'QcacheUseRate'
+          }, {
+            MetricName: 'QcacheHitRate'
+          }, {
+            MetricName: 'TableLocksWaited'
+          }, {
+            MetricName: 'CreatedTmpTables'
+          }, {
+            MetricName: 'InnodbCacheUseRate'
+          }, {
+            MetricName: 'InnodbCacheHitRate'
+          }, {
+            MetricName: 'InnodbOsFileReads'
+          }, {
+            MetricName: 'InnodbOsFileWrites'
+          }, {
+            MetricName: 'InnodbOsFsyncs'
+          }, {
+            MetricName: 'KeyCacheUseRate'
+          }, {
+            MetricName: 'KeyCacheHitRate'
+          }, {
+            MetricName: 'VolumeRate'
+          }, {
+            MetricName: 'QueryRate'
+          }, {
+            MetricName: 'Qps'
+          }, {
+            MetricName: 'Tps'
+          }, {
+            MetricName: 'CpuUseRate'
+          }, {
+            MetricName: 'MemoryUseRate'
+          }
+        ],
         disName: {
           'BytesReceived': '内网入流量',
           'BytesSent': '内网出流量',
@@ -207,13 +274,13 @@
           'QcacheFreeBlocks': '查询缓存空闲块',
           'QcacheFreeMemory': '缓存中空闲内存量',
           'QcacheHits': '缓存命中次数',
-          'QcacheHitRate': '查询缓存命中率',
+          'QcacheHitRate': '缓存命中率',
           'QcacheInserts': '缓存写入次数',
           'QcacheLowmemPrunes': '因内存不足删除缓存次数',
           'QcacheNotCached': '查询未被缓存次数',
           'QcacheQueriesInCache': '以注册到缓存内的查询数',
           'QcacheTotalBlocks': '查询缓存内的总块数',
-          'QcacheUseRate': '查询缓存使用率',
+          'QcacheUseRate': '缓存使用率',
           'Qps': '每秒执行操作数',
           'Queries': '总请求数',
           'QueryRate': '查询使用率',
@@ -230,7 +297,7 @@
           'ThreadsCreated': '已创建的线程数',
           'ThreadsRunning': '运行的线程数',
           'Tps': '每秒执行事务数',
-          'VolumeRate': '磁盘使用率',
+          'VolumeRate': '磁盘利用率',
         },
         Company: {
           'BytesReceived': 'Byte/秒',
@@ -392,7 +459,7 @@
           'ThreadsCreated': '已创建的线程数',
           'ThreadsRunning': '运行的线程数',
           'Tps': '每秒执行事务数',
-          'VolumeRate': '磁盘使用率',
+          'VolumeRate': '磁盘利用率',
         },
 
       }
@@ -425,6 +492,9 @@
         this.TableLoad = true
         this._GetBase()
       },
+      Initialization() {
+
+      },
       //获取基础指标详情
       _GetBase() {
         let parms = {
@@ -432,19 +502,33 @@
           Region: localStorage.getItem('regionv2'),
           Namespace: 'QCE/CDB'
         }
+
         this.axios.post(ALL_Basics, parms).then(res => {
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
             this.MonitorData = []
             this.BaseListK = []
             this.BaseList.forEach(item => {
-              if (item.Period.indexOf(Number(this.Period)) !== -1) {
-                this.BaseListK.push(item)
-                setTimeout(() => {
-                  this._GetMonitorData(item.MetricName)
-                }, 500);
+              this.available.forEach(element => {
+                if (item.MetricName === element.MetricName) {
+                  element.data = item
+                }
+              });
+            });
+            this.available.forEach(i => {
+              if (i.data.Period.indexOf(Number(this.Period)) !== -1) {
+                this.BaseListK.push(i.data)
               }
             });
+            for (let
+                k = 0; k < this.BaseListK.length; k++) {
+              let _this = this;
+              (function (o) {
+                setTimeout(() => {
+                  _this._GetMonitorData(_this.BaseListK[o].MetricName)
+                }, o * 50);
+              })(k)
+            }
           } else {
             this.$message({
               message: ErrorTips[res.Response.Error.Code],

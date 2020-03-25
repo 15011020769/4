@@ -16,7 +16,45 @@
        <div class="block">
             <!-- 时间组件 -->
         <TimeDropDown :TimeArr='TimeArr'  :Datecontrol="true" :Graincontrol="true" v-on:switchData="GetDat" :Difference="'D'" ></TimeDropDown>
-        <!-- <div class="block-left">
+        <div class="block-left" v-if="activeName==='k8s_node'">
+          <span>{{$t('TKE.overview.jd')}}：</span>
+          <el-select v-model="value" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange($event)">
+            <el-option
+              v-for="item in podData"
+              :key="item.InstanceId"
+              :label="item.InstanceId+'('+item.InstanceName+')'"
+              :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+            ></el-option>
+          </el-select>
+        </div>
+         <div class="block-left" v-if="activeName==='k8s_pod'">
+              <span>{{$t('TKE.overview.jd')}}：</span>
+              <el-select v-model="value2" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange2($event)">
+                <el-option
+                  v-for="item in podData"
+                  :key="item.InstanceId"
+                  :label="item.InstanceId+'('+item.InstanceName+')'"
+                  :value="item.PrivateIpAddresses+'|'+item.InstanceId"
+                ></el-option>
+              </el-select>
+              <span style="margin-left:20px">Pod:</span>
+              <el-select v-model="podValue" :placeholder="$t('TKE.overview.qxz')" size="mini" @change="getPodChange">
+                <el-option
+                  v-for="item in Podlist"
+                  :key="item"
+                  :label="item"
+                  :value="item"
+                ></el-option>
+              </el-select>
+          </div>
+      </div>
+    <el-tabs v-model="activeName" @tab-click="handleClick" class="tab-background">
+        <el-tab-pane :label="$t('TKE.overview.jd')" name="k8s_node" class="tab-one">
+          <div>
+          <div class="box-top">
+            <div class="box-top-left">
+              <!-- <span class="span-1">实时</span> -->
+               <!-- <div class="block-left">
                  <span>{{$t('TKE.overview.jd')}}：</span>
                   <el-select v-model="value" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange($event)">
                     <el-option
@@ -27,24 +65,6 @@
                     ></el-option>
                   </el-select>
                </div> -->
-      </div>
-    <el-tabs v-model="activeName" @tab-click="handleClick" class="tab-background">
-        <el-tab-pane :label="$t('TKE.overview.jd')" name="k8s_node" class="tab-one">
-          <div>
-          <div class="box-top">
-            <div class="box-top-left">
-              <!-- <span class="span-1">实时</span> -->
-               <div class="block-left">
-                 <span>{{$t('TKE.overview.jd')}}：</span>
-                  <el-select v-model="value" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange($event)">
-                    <el-option
-                      v-for="item in podData"
-                      :key="item.InstanceId"
-                      :label="item.InstanceId+'('+item.InstanceName+')'"
-                      :value="item.PrivateIpAddresses+'|'+item.InstanceId"
-                    ></el-option>
-                  </el-select>
-               </div>
             </div>
           </div>
           <div class="room-bottom">
@@ -115,7 +135,7 @@
         <el-tab-pane label="pod" name="k8s_pod">
            <div class="box-top">
             <div class="box-top-left">
-               <div class="block-left">
+               <!-- <div class="block-left">
                  <span>{{$t('TKE.overview.jd')}}：</span>
                   <el-select v-model="value2" :placeholder="$t('TKE.overview.qxz')" size="mini"  @change="getChange2($event)">
                     <el-option
@@ -134,7 +154,7 @@
                       :value="item"
                     ></el-option>
                   </el-select>
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="room-bottom">
@@ -503,7 +523,6 @@ export default {
                       if(val['InstanceId']==this.podData[y]['InstanceId']){
                           this.podData[y]['InstanceName']=val.InstanceName
                           this.podData[y]['PrivateIpAddresses'] = val.PrivateIpAddresses[0]
-                          
                       }
                       if(!this.podData[y]['InstanceName']){
                           this.podData[y]['InstanceName']=''
@@ -859,13 +878,15 @@ export default {
     background-color: white;
   }
 }
-// .block-left{
-//   float: left;
-// }
+.block-left{
+  margin-left:20px;
+}
 .block{
   width: 100%;
   background: white;
   padding:20px 0 20px 20px;
+  display: flex;
+  align-items: center;
 }
 .room-bottom {
   width: 94%;
