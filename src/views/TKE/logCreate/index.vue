@@ -83,12 +83,12 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item :label="$t('TKE.overview.ssjq')">
-                  <el-radio-group v-model="item.radio">
+                  <el-radio-group v-model="item.radio" @change="changeRadio(item.radio,index,item.value1)">
                     <el-radio label="1">{{$t('TKE.overview.qbrq')}}</el-radio>
                     <el-radio label="2">{{$t('TKE.overview.agzfzxz')}}</el-radio>
                   </el-radio-group>
                 </el-form-item>
-                <el-form-item v-show="item.radio == 2">
+                <el-form-item v-if="item.radio == 2">
                   <div class="border-room">
                     <div class="border-text">
                       <div class="border-left">{{$t('TKE.overview.gzfzlx')}}</div>
@@ -99,7 +99,7 @@
                     
                       @tab-click="workLoadTab(item.activeName, index)">
                       <el-tab-pane label="Deployment" name="Deployment">
-                        <div v-show="workload1" style="overflow:auto">
+                        <div v-if="workload1" style="overflow:auto">
                           <el-checkbox-group v-model="item.check0" @change="checkboxChange0(item.check0,item.value1,item.activeName,index)">
                             <p v-for="(item0,index0) in workload1" :key="index0">
                               <el-checkbox :label="item0.metadata.name">{{item0.metadata.name}}</el-checkbox>
@@ -107,47 +107,47 @@
                           </el-checkbox-group>
 
                         </div>
-                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-if="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="DaemonSet " name="DaemonSet">
-                        <div v-show="workload1" style="overflow:auto">
+                        <div v-if="workload1" style="overflow:auto">
                           <el-checkbox-group v-model="item.check1" @change="checkboxChange1(item.check1,item.value1,item.activeName,index)">
                             <p v-for="(item1,index1) in workload1" :key="index1">
                               <el-checkbox :label="item1.metadata.name">{{item1.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-if="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="StatefulSet" name="StatefulSet">
-                        <div v-show="workload1" style="overflow:auto">
+                        <div v-if="workload1" style="overflow:auto">
                           <el-checkbox-group v-model="item.check2" @change="checkboxChange2(item.check2,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-if="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="CronJob" name="CronJob">
-                        <div v-show="workload1" style="overflow:auto">
+                        <div v-if="workload1" style="overflow:auto">
                           <el-checkbox-group v-model="item.check3" @change="checkboxChange3(item.check3,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-if="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                       <el-tab-pane label="Job" name="Job">
-                        <div v-show="workload1" style="overflow:auto">
+                        <div v-if="workload1" style="overflow:auto">
                           <el-checkbox-group v-model="item.check4" @change="checkboxChange4(item.check4,item.value1,item.activeName,index)">
                             <p v-for="(item,index) in workload1" :key="index">
                               <el-checkbox :label="item.metadata.name">{{item.metadata.name}}</el-checkbox>
                             </p>
                           </el-checkbox-group>
                         </div>
-                        <span  v-show="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
+                        <span  v-if="workload1.length==0">{{$t('TKE.overview.dqlbwk')}}</span>
                       </el-tab-pane>
                     </el-tabs>
                   </div>
@@ -188,7 +188,8 @@
                     </el-form-item>
                     <el-form-item :label="$t('TKE.overview.wjlj')">
                       <span v-if="!editStatus">
-                        <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" class="ml10" v-model="domain.value5">
+                        <el-select placeholder="請選擇掛載目錄" size="mini" class="ml10" v-model="domain.value5">
+                        <!-- <el-select :placeholder="$t('TKE.overview.qxz')" size="mini" class="ml10" v-model="domain.value5"> -->
                           <el-option v-for="item in domain.option5" :key="item" :label="item" :value="item">
                           </el-option>
                         </el-select>
@@ -259,7 +260,6 @@
                     <div class="flex">
                       <el-col :span="10">
                         <el-form-item prop="CKafka">
-                          <!-- <el-select v-model="form.Ckafka" placeholder="请选择" style='margin-right:10px;'> -->
                           <el-select v-model="Ckafka.value" :placeholder="$t('TKE.overview.qxz')" class="setwidth2"
                             style="margin-right:5px;">
                             <el-option v-for="item in Ckafka.options" :key="item" :value="item">
@@ -407,7 +407,7 @@
             option4: ['請選擇容器名稱'],
             option5: ['請選擇掛載目錄'],
             value4: "", //容器名
-            value5: "請選擇掛載目錄", //挂载目录文件路径1
+            value5: "", //挂载目录文件路径1
             value6: '', //路径
             value7: '', //编辑状态下的路径
             valueKey: ""
@@ -477,13 +477,13 @@
         workload1: [],
         resourceVersion: '',
         filterData:[],//联动数据
+
       };
     },
     watch: {
-      'formTwo.value3':{
+      filterData:{//监测数据
         handler(val){
-          console.log(val)
-          this.selectWorkload(val)
+          this.selectWorkload(this.formTwo.value3)
         },
         deep:true,
       },
@@ -510,6 +510,9 @@
                 this.Topic.value = arr[1]
               }
               this.Topic.options = arr;
+            }else{
+              this.Topic.options=[];
+              this.Topic.value = ""
             }
           });
         },
@@ -530,16 +533,13 @@
       formFour: {
         handler(val){
           val.forEach((item,index )=> {
-            console.log('this.namespaceOptions.length',this.namespaceOptions.length)
-            console.log('formFour.length',val.length)
+            // console.log('this.namespaceOptions.length',this.namespaceOptions.length)
+            // console.log('formFour.length',val.length)
             if (val.length == this.namespaceOptions.length) {
               this.newroomFlag = true
               return false
             }
-            if (item.radio == '2') {
-              //请求接口，重新获得workload数据
-              this.workLoadTab(item.activeName, index)
-            }
+           
             //新建禁用判断
             if (item.radio == '1') {
               this.newroomFlag = false
@@ -568,6 +568,8 @@
     },
     mounted() {},
     methods: {
+     
+     
       async reflowData(){
          await this.nameSpaceList()
          await this.findEditData();
@@ -610,6 +612,18 @@
 
         if (this.checked) {
           //是否使用腾讯云消息队列kafka
+           
+          if(this.output.topic_id==''){
+            this.$message({
+            message:"请选择CKafka實例Topic",
+            type:'warning',
+            showClose: true,
+            duration: 0
+            });
+            return
+          }
+
+
           params.RequestBody.spec.output.ckafka_output = this.output;
           params.RequestBody.spec.output.type = "ckafka";
         } else {
@@ -774,6 +788,15 @@
                 showClose: true
               });
               this.$router.go(-1);
+            }else{
+              let ErrTips = { };
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
       },
@@ -844,7 +867,7 @@
                
               }
               let namespace=data.spec.input.container_log_input.namespaces,arr=[];
-              console.log(namespace)
+              console.log(namespace,'namespace++++++++++++')
               namespace.forEach(item=>{
                 if(item.all_containers){
                   let obj={}
@@ -1171,8 +1194,23 @@
                   showClose: true
                 });
               this.$router.go(-1);
+            }else{
+               let ErrTips = { };
+              let ErrOr = Object.assign(this.$ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
             }
           });
+        }
+      },
+      changeRadio(val,index){
+         if (val == '2') {
+              //请求接口，重新获得workload数据
+              this.workLoadTab("Deployment", index)
         }
       },
       clearSelect(index){
@@ -1186,6 +1224,7 @@
         this.formFour[index].check2=[];
         this.formFour[index].check3=[];
         this.formFour[index].check4=[];
+        this.workLoadTab("Deployment",index)
       },
       checkboxChange0(val,np,clickname,index) {
         let cname=clickname.toLocaleLowerCase(),arr=[];
@@ -1228,7 +1267,7 @@
           }
       },
       workLoadTab(workLoad, index) {
-        let that=this;
+          // this.workload1 = []
         if (this.$route.query.clusterId) {
           var namespace = this.formFour[index].value1;
           var params = {
@@ -1237,19 +1276,18 @@
             Path: "/apis/apps/v1beta2/namespaces/" + namespace + "/" + workLoad.toLocaleLowerCase() + 's',
             Version: "2018-05-25"
           };
-          console.log(params)
-          // this.workload1 = [];
+          console.log(params,'paramsworkload')
           this.axios.post(TKE_COLONY_QUERY, params).then(res => {
-            console.log(res)
+            console.log(JSON.parse(res.Response.ResponseBody),'JSON.parse(res.Response.ResponseBody)')
             if (res.Response.Error === undefined) {
               var data = JSON.parse(res.Response.ResponseBody);
               if( data.items){
-                console.log(data.items,'worklods++++++++++++++++++++++++++++++++')
                 this.workload1 =[...data.items];
               }
             }else{
               this.workload1 = []
             }
+            console.log(this.workload1,'worklods1++++++++++++++++++++++++++++++++')
           });
         }
       },
@@ -1305,6 +1343,8 @@
         this.formTwo.optionAll.forEach(item=>{
           item.value4='';
           item.value5='';
+          item.value6='';
+          item.valueKey='';
         })
         this.getWorkLoadData(namespace,type)
       },
@@ -1332,11 +1372,13 @@
         })
       },
       selectWorkload(workload){
-        this.formTwo.optionAll.forEach(item=>{
-          item.value4=''
-        })
+        if(!this.editStatus){
+          this.formTwo.optionAll.forEach(item=>{
+            item.value4=''
+          })
+        }
          var needData =this.filterData.filter(one => {
-            return one.metadata.name == this.formTwo.value3
+            return one.metadata.name == workload
           })
           if (needData.length != 0) {
               //容器名称选项
@@ -1352,9 +1394,11 @@
           }
       },
       selectContainerName(val,index){
-        this.formTwo.optionAll.forEach(item=>{
-             item.value5=''
-        })
+        if(!this.editStatus){
+          this.formTwo.optionAll.forEach(item=>{
+               item.value5=''
+          })
+        }
         var needData =this.filterData.filter(one => {
             return one.metadata.name == this.formTwo.value3
           })
@@ -1364,20 +1408,20 @@
               return item.name == val
             }) //容器 存放
             if (needData2.length != 0) {
-              if (needData2[0].volumeMounts) {
-                this.formTwo.optionAll.forEach(v => {
-                  v.option5 = ['請選擇掛載目錄']
-                })
-                needData2[0].volumeMounts.forEach(val4 => {
+                if (needData2[0].volumeMounts) {
                   this.formTwo.optionAll.forEach(v => {
-                    v.option5.push(val4.mountPath)
+                    v.option5 = ['請選擇掛載目錄']
                   })
-                })
-              } else {
-                this.formTwo.optionAll.forEach(v => {
-                  v.value5 = "無"
-                })
-              }
+                  needData2[0].volumeMounts.forEach(val4 => {
+                    this.formTwo.optionAll.forEach(v => {
+                      v.option5.push(val4.mountPath)
+                    })
+                  })
+                } else {
+                  this.formTwo.optionAll.forEach(v => {
+                    v.value5 = "無"
+                  })
+                }
             }
           })
       },
@@ -1406,11 +1450,17 @@
         }
       },
       addDomain() {
+        let needData=null;
+        this.formTwo.optionAll.forEach(item=>{
+          needData=item.option4
+        })
         this.formTwo.optionAll.push({
-          option4: [],
+          option4:needData,
           option5: [],
           value4: "",
-          value5: "",
+          value5: "", 
+          value6: "", 
+          value7: "", 
           valueKey: ""
         });
       },
@@ -1483,7 +1533,7 @@
 
       },
       addNewRoom() { //
-      
+       this.workload1=[];
         //实现数组内容递减
         var arr = [],arr2, arr3 = [];
         this.formFour.forEach(v => {
