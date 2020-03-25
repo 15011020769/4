@@ -33,17 +33,6 @@
         <div class="footer-left-left" v-loading="loading">
           <h4>{{ $t("CVM.DashboardCreate.tbpz") }}</h4>
           <div style="margin-top:30px">
-<<<<<<< HEAD
-            <p style="margin-bottom:10px">
-              {{ $t("CVM.DashboardCreate.tbmc") }}
-            </p>
-            <el-input
-              size="mini"
-              v-model="picName"
-              style="max-width:250px"
-              maxlength="30"
-            ></el-input>
-=======
             <p style="margin-bottom:10px">图表名称</p>
             <el-popover
               placement="right"
@@ -53,7 +42,6 @@
               :disabled="picName.length === 30 ? false:true">
               <el-input size="mini" v-model="picName" style="max-width:250px" maxlength='30' slot="reference"></el-input>
            </el-popover>
->>>>>>> 更新bug
           </div>
           <div style="margin-top:30px">
             <p style="margin-bottom:10px">
@@ -379,11 +367,7 @@ export default {
             }
             // y轴
             //  res.Response.DataPoints
-<<<<<<< HEAD
-            for (let item = 0; item < res.Response.DataPoints.length; item++) {
-=======
             for (let item=0 ;item<(res.Response.DataPoints.length>10?10:res.Response.DataPoints.length);item++) {
->>>>>>> 更新bug
               if (res.Response.DataPoints.length) {
                 this.series.push({
                   labelLine: {
