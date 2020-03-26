@@ -42,6 +42,7 @@
           height="420"
           ref="multipleTable"
           @select="handleSelectionChange"
+          @select-all="handleSelectionChange"
           v-loadmore="loadMore"
           class="table-left"
         >
