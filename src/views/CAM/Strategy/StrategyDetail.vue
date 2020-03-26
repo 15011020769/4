@@ -33,7 +33,7 @@
       <div class="tabs">
         <el-tabs v-model="activeName" @tab-click="handleClick">
           <el-tab-pane :label="$t('CAM.strategy.starLangu')" name="first">
-            <div ref="monaco" style="height: 400px;"></div>
+            <div ref="monaco" style="height: 400px;" v-loading="loadingMonaco"></div>
             <!-- <div class="markdown" v-html="formatJson(policy.PolicyDocument)"></div> -->
           </el-tab-pane>
           <!-- tab 策略详情页面，关联用户组tab  start -->
@@ -202,6 +202,7 @@ export default {
       handleFlag: false,
       groupArr: [],
       userArr: [],
+      loadingMonaco: true,
       Type: {
         1: "自定義策略",
         2: "預設策略"
@@ -221,13 +222,26 @@ export default {
         const editor = monaco.editor.create(this.$refs.monaco, {
           value: res.Response.PolicyDocument,
           language: 'json',
+          automaticLayout: true,
+            autoIndent: true,
+            contextmenu: false,
+            formatOnType: true
         })
-        setTimeout(() => {
-          editor.trigger('anyString', 'editor.action.formatDocument')
-        }, 300)
-        setTimeout(() => {
-          editor.updateOptions({ readOnly: true })
-        }, 400)
+        var didScrollChangeDisposable = editor.onDidScrollChange(() => {
+          didScrollChangeDisposable.dispose();
+          editor.getAction("editor.action.formatDocument").run().then(() => {
+            editor.updateOptions({ readOnly: true})
+            this.loadingMonaco = false
+          })
+        });
+        // editor.getAction('editor.action.formatDocument').run().then(() => editor.updateOptions({ readOnly: true}));
+        // loadingMonaco
+        // setTimeout(() => {
+        //   editor.trigger('anyString', 'editor.action.formatDocument')
+        // }, 300)
+        // setTimeout(() => {
+        //   editor.updateOptions({ readOnly: true })
+        // }, 400)
         
         this.inputValue = res.Response.PresetAlias
         this.infoLoad = false;
