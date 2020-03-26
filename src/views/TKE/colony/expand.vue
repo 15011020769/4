@@ -584,29 +584,44 @@
                 </p>
               </div>
             </div>
-            <!-- <div class="tke-second-tips">
-              <p>Label</p>
-              <div>
-                <ul>
-                  <li v-for="(item, index) in nodeForm.advancedSettingArr" :key="index">
-                    <el-input v-model="item.name"></el-input>
-                    <span style="margin:0 10px;">=</span>
-                    <el-input v-model="item.value"></el-input>
-                    <i
-                      class="el-icon-close"
-                      @click="DeleteAdvancedSetting(index)"
-                    ></i>
-                  </li>
-                </ul>
-                <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
-                <p>
-                  標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
-                </p>
-                <p>
-                  標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
-                </p>
-              </div>
-            </div> -->
+            <el-form-item label="Label">
+              <ul>
+                <li v-for="(item, index) in nodeForm.advancedSettingArr" :key="index" style="display: flex;">
+                  <div class="form-input">
+                    <el-input v-model="item.name" size="mini" style="top:8px" ></el-input>
+                    <span style="top:8px">=</span>
+                    <el-input class="text" v-model="item.value" style="top:8px"></el-input>
+                    <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
+                    <!-- <el-tooltip
+                      v-if="dynamicValidateForm.domains.length=='1'"
+                      class="item"
+                      effect="dark"
+                      :content="$t('TKE.subList.zsszyx')"
+                      placement="right"
+                    >
+                      <i class="el-icon-close"></i>
+                    </el-tooltip>
+                    <el-tooltip v-else class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
+                      <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
+                    </el-tooltip> -->
+                  </div>
+                  <!-- <el-input v-model="item.name" size="mini"></el-input>
+                  <span style="margin:0 10px;">=</span>
+                  <el-input v-model="item.value" style="margin-left: -100px;"></el-input>
+                  <i
+                    class="el-icon-close"
+                    @click="DeleteAdvancedSetting(index)"
+                  ></i> -->
+                </li>
+              </ul>
+              <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
+              <p>
+                標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
+              </p>
+              <p>
+                標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
+              </p>
+            </el-form-item>
           </div>
         </el-form>
         <!-- 底部 -->
@@ -1677,9 +1692,6 @@ export default {
         RunInstancePara: JSON.stringify(RunInstancePara)
       }
       param["InstanceAdvancedSettings.DockerGraphPath"] = containerInput;
-      
-      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
       param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0"] = "";
 
       if (this.nodeForm.advancedSettingShow) {
@@ -1690,6 +1702,20 @@ export default {
           param["InstanceAdvancedSettings.Unschedulable"] = 1;
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        }
+        debugger
+        if (this.nodeForm.advancedSettingArr.length > 0) {
+          for (let i in this.nodeForm.advancedSettingArr) {
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Name"
+            ] = this.nodeForm.advancedSettingArr[i].name;
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Value"
+            ] = this.nodeForm.advancedSettingArr[i].value;
+          }
+        } else {
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
         }
       }  
       // param["InstanceAdvancedSettings.Kubelet.0"] = "";
@@ -2054,6 +2080,7 @@ export default {
       }
       &:nth-of-type(2) {
         line-height: 24px;
+        margin-left: 120px;
       }
     }
     .data-disk {
@@ -2692,6 +2719,20 @@ export default {
   display: none;
   &.active {
     display: inline;
+  }
+}
+
+.form-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  span {
+    margin: 0 10px;
+  }
+  i {
+    margin: 0 10px;
+    cursor: pointer;
   }
 }
 </style>
