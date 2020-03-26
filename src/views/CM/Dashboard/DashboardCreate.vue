@@ -73,14 +73,32 @@
               :xdata="true"
               style="width:95%;height:180px;margin-left:-20px"
               v-if="rightData.length"
+              @paramValue="paramValue"
             ></Echarts>
           </div>
           <div>
             <div style="width:100%;height:30px;background-color:#f2f2f2;margin:10px 0px;" v-if='rightData.length'>
                 <div style="margin-left:20px;line-height:30px">
                     <span>共有{{rightData.length}}个实例</span>
-                    <span style="margin-left:20px">共有{{rightData.length}}个实例</span>
+                    <span style="margin-left:20px">监控明细({{StartTime}})</span>
                 </div>
+                <el-table
+                 :data="tableData"
+                  style="width: 100%"
+                  max-height="180"
+                  v-loading="loadShow">
+                  <el-table-column
+                    prop="color">
+                  </el-table-column>
+                  <el-table-column
+                    prop="pointId"
+                    label="ID">
+                  </el-table-column>
+                  <el-table-column
+                    prop="points"
+                    :label="picNameLable">
+                  </el-table-column>
+                </el-table>
             </div>
           </div>
         </div>
@@ -144,6 +162,7 @@ export default {
       optionTarget: [], // 监控指标
       target: "", // 指标
       picName: "",
+      picNameLable:"",
       productData: [],
       productListData: {},
       MetricName: "", // 监控名
@@ -156,9 +175,23 @@ export default {
       DashboardID: "",
       DashboardData: [],
       tableData:[],
+      Data:[],
       pointId:"",
       loading: true,
-      flag: false
+      flag: false,
+      loadShow:true,
+      color : [
+        "#2072d9",
+        "#fff2cc",
+        "#f45333",
+        "#33d8f4",
+        "#c151df",
+        "#90e52a",
+        "#e5ce2a",
+        "#9486f8",
+        "#980000",
+        "#1c4587"
+      ]
     };
   },
   methods: {
@@ -178,6 +211,7 @@ export default {
       this.optionTarget = data.MetricName;
       this.target = data.MetricName[0]; // 指标
       this.MetricName = data.MetricName[0].value; // 监控名
+      this.picNameLable = this.target.label; 
       this.picName = "明細-" + this.target.label;
       this.rightData = [];
       this.loading = false;
@@ -185,6 +219,8 @@ export default {
     },
     getTarget(val) {
       this.picName = "明細-" + val.label;
+      this.picNameLable = val.label
+      console.log(this.picNameLable)
       this.MetricName = val.value;
       if (this.rightData.length) {
         this.getMonitorList();
@@ -195,14 +231,27 @@ export default {
       console.log(data);
       this.projectId = data;
     },
+    paramValue(evt){
+      for(let i in this.times){
+        if(this.times[i] == evt){
+            // this.tableData[points]=res.Response.DataPoints[i].Points[0],
+            for(let j in this.tableData){
+              this.tableData[j]['points'] = this.Data[j].Points[i]
+            }
+        }
+      }
+        // console.log(evt)
+    },
     searchParams(data) {
       console.log(data);
       this.searchParam = data;
     },
     selectDatas(val) {
       this.rightData = val;
+      this.loadShow = true
       console.log(val);
       if (this.rightData.length) {
+        this.series = []
         this.getMonitorList();
       }
     },
@@ -230,20 +279,10 @@ export default {
     async getMonitorList() {
       this.timeDate = {};
       this.times = [];
-      this.series = [];
+      // this.series = [];
       this.DashboardData = [];
-      let color = [
-        "#2072d9",
-        "#fff2cc",
-        "#f45333",
-        "#33d8f4",
-        "#c151df",
-        "#90e52a",
-        "#e5ce2a",
-        "#9486f8",
-        "#980000",
-        "#1c4587"
-      ];
+      this.tableData = [];
+      
       let params = {
         Namespace: this.Namespace,
         MetricName: this.MetricName,
@@ -369,6 +408,7 @@ export default {
       await this.axios.post(All_MONITOR, params).then(res => {
         if (res.Response.Error == undefined) {
           console.log(res);
+          this.Data = res.Response.DataPoints
           if (res.Response.DataPoints.length) {
             // 监控数据处理
             for (let i in res.Response.DataPoints) {
@@ -398,11 +438,12 @@ export default {
                   },
                   type: "line",
                   data: res.Response.DataPoints[item].Points,
+                  // ? color[item] : color[item % 10],
                   itemStyle: {
                     normal: {
-                      color: color[item] ? color[item] : color[item % 10],
+                      color: this.color[item],
                       lineStyle: {
-                        color: color[item] ? color[item] : color[item % 10]
+                        color: this.color[item]
                       }
                     }
                   },
@@ -415,11 +456,13 @@ export default {
             for(let i in res.Response.DataPoints){
               this.tableData.push({
                 points:res.Response.DataPoints[i].Points[0],
-                pointId:res.Response.DataPoints[i].Dimensions[this.pointId]
+                pointId:res.Response.DataPoints[i].Dimensions[this.pointId],
+                color:this.color[i]
               })
             }
-
-            console.log(this.tableData);
+            this.loadShow = false
+            console.log(this.series);
+            console.log(this.times);
           } else {
             this.series = [];
           }
