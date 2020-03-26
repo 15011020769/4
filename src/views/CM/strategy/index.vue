@@ -21,6 +21,7 @@
                   filterable
                   v-model="formInline.product_name"
                   class="select-option"
+                  disabled
                 >
                   <el-option
                     v-for="item in formInline.product_kind"
@@ -486,7 +487,7 @@
               </el-option>
             </el-select>
           </div>
-          <div>
+          <!-- <div>
             <p>
               <span>微信</span>
               <span>已開通數:{{ wechatOpen }},未開通數:{{ wechatClose }}</span>
@@ -515,7 +516,7 @@
               >
               </el-option>
             </el-select>
-          </div>
+          </div> -->
         </div>
       </div>
       <span slot="footer" class="dialog-footer">

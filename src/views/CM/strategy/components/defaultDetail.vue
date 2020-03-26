@@ -111,7 +111,7 @@
         </div>
       </div>
     </el-card>
-    <el-card class="box-card alarm-object">
+    <el-card class="box-card alarm-object" v-if="ViewName !== 'BS'">
       <div slot="header" class="clearfix">
         <h3>告警物件</h3>
         <a @click="editObject">編輯</a>
@@ -1062,6 +1062,7 @@
           placeholder="請輸告警策略名稱，20字以內"
           v-model="GroupName"
           @input="EditTips"
+          maxlength="20"
         ></el-input>
         <p v-if="tipsShow">告警策略名稱不能爲空</p>
       </div>
@@ -2113,7 +2114,10 @@ export default {
     this.DetailsInit();
     this.Project();
     // 告警對象列表
-    this.AlarmObjectList();
+    if (this.ViewName !== "BS") {
+      this.AlarmObjectList();
+    }
+
     this.AlarmTriggerCondition();
     this.GaoJingGrouping();
     this.HttpInit();
@@ -2377,6 +2381,14 @@ export default {
         this.tipsShow = true;
       } else {
         this.tipsShow = false;
+      }
+      if (this.GroupName.length === 20) {
+        this.$message({
+          message: "名稱不能超過20個字",
+          type: "error",
+          showClose: true,
+          duration: 0
+        });
       }
     },
     // 編輯告警對象
@@ -3421,7 +3433,7 @@ export default {
             } else if (this.ViewName === "dcchannel") {
               let params = {
                 Version: "2018-04-10",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "direct-connect-tunnel-id";
@@ -3966,7 +3978,7 @@ export default {
           for (let i in this.cam.channel) {
             if (this.cam.channel[i] === "郵件") {
               param["ReceiverInfos.0.NotifyWay." + i] = "EMAIL";
-            } else if (this.cam.channel[i] === "間訊") {
+            } else {
               param["ReceiverInfos.0.NotifyWay." + i] = "SMS";
             }
           }
