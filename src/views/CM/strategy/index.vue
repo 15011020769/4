@@ -200,7 +200,7 @@
                   "
                   style="color:#888;"
                 >
-                  此告警策略綁定的對象是實力組，當前不支持設置爲默認策略
+                  此告警策略綁定的物件是實力組，當前不支持設置爲默認策略
                 </p>
               </div>
               <div slot="reference">
@@ -403,7 +403,7 @@
                   v-else-if="scope.row.UseSum != 0"
                   id="text-color-red"
                 >
-                  <span>已關聯對象,無法刪除</span>
+                  <span>已關聯物件,無法刪除</span>
                   <el-tooltip
                     content="解綁所有資源後支持刪除"
                     placement="left"
@@ -630,7 +630,7 @@ export default {
           viewName: "dcline"
         },
         {
-          label: "對象存儲",
+          label: "物件存儲",
           viewName: "COS"
         }
       ],
@@ -658,7 +658,7 @@ export default {
         alarm: "", //告警對象
         alarm_list: [
           {
-            name: "告警對象1"
+            name: "告警物件1"
           }
         ], //告警對象數組
         user: "用戶組", //用戶

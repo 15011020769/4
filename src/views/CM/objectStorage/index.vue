@@ -129,7 +129,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "對象儲存" + ".xlsx"
+            "物件儲存" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);

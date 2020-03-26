@@ -24,7 +24,7 @@
                   <!-- <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX> -->
                 </div>
                 <div class="seek">
-                  <el-input v-model="input" placeholder="請輸入告警對象" @input="searchName"></el-input>
+                  <el-input v-model="input" placeholder="請輸入告警物件" @input="searchName"></el-input>
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
@@ -55,12 +55,12 @@
                       </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="告警對象" width="180">
+                  <el-table-column prop label="告警物件" width="180">
                     <template slot-scope="scope">
                       <el-tooltip
                         class="item"
                         effect="dark"
-                        :content="'告警對象:'+scope.row.ObjName"
+                        :content="'告警物件:'+scope.row.ObjName"
                         placement="bottom-start"
                       >
                         <div

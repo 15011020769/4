@@ -73,7 +73,7 @@
             label: '物理專線',
             viewName: 'dcline',
           }, {
-            label: '對象存儲',
+            label: '物件存儲',
             viewName: 'COS',
           }
         ],
@@ -549,11 +549,11 @@
               value: 'bytes_received'
             },
             {
-              label: '緩存使用率(%)',
+              label: '快取使用率(%)',
               value: 'qcache_use_rate',
             },
             {
-              label: '緩存命中率(%)',
+              label: '快取命中率(%)',
               value: 'qcache_hit_rate'
             },
             {
@@ -565,11 +565,11 @@
               value: 'created_tmp_tables'
             },
             {
-              label: 'innodb緩存使用率(%)',
+              label: 'innodb快取使用率(%)',
               value: 'innodb_cache_use_rate'
             },
             {
-              label: 'innodb緩存命中率(%)',
+              label: 'innodb快取命中率(%)',
               value: 'innodb_cache_hit_rate'
             },
             {
@@ -585,11 +585,11 @@
               value: 'innodb_os_fsyncs'
             },
             {
-              label: 'myisam緩存使用率(%)',
+              label: 'myisam快取使用率(%)',
               value: 'key_cache_use_rate'
             },
             {
-              label: 'myisam緩存命中率(%)',
+              label: 'myisam快取命中率(%)',
               value: 'key_cache_hit_rate'
             },
             {

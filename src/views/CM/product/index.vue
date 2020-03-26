@@ -121,13 +121,13 @@
                 <p>{{ scope.row.Region === "tpe" ? "台灣台北" : "" }}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="影響對象" width="205">
+            <el-table-column prop label="影響物件" width="205">
               <template slot-scope="scope">
                 <p>{{ scope.row.InstanceId }}</p>
                 <p>{{ scope.row.InstanceName }}</p>
               </template>
             </el-table-column>
-            <el-table-column prop label="對象詳情" width="220">
+            <el-table-column prop label="物件詳情" width="220">
               <template slot-scope="scope">
                 <div
                   v-for="(items, index) in scope.row.Dimensions"
@@ -228,7 +228,7 @@ export default {
       searchOptions: [
         {
           value: "InstanceId.0",
-          label: "影響對象ID"
+          label: "影響物件ID"
         }
         // {
         //   value: "EventName.0",

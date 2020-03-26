@@ -62,7 +62,7 @@
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">
-                  <p>以此爲通用告警管理，如需要對特定的監控對象配置告警規則和告警接收組，請至監控對象詳情頁進行配置。</p>
+                  <p>以此爲通用告警管理，如需要對特定的監控物件配置告警規則和告警接收組，請至監控物件詳情頁進行配置。</p>
                 </div>
                 <p class="page_nav">
                   <el-button type="primary" size="small" @click="warings">配置告警</el-button>
@@ -89,7 +89,7 @@
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">
-                  <p>以此爲通用告警管理，如需要對特定的監控對象配置告警規則和告警接收組，請至監控對象詳情頁進行配置。</p>
+                  <p>以此爲通用告警管理，如需要對特定的監控物件配置告警規則和告警接收組，請至監控物件詳情頁進行配置。</p>
                 </div>
                 <p class="page_nav">
                   <el-button type="primary" size="small" @click="warings">配置告警</el-button>

@@ -113,13 +113,13 @@
     </el-card>
     <el-card class="box-card alarm-object">
       <div slot="header" class="clearfix">
-        <h3>告警對象</h3>
+        <h3>告警物件</h3>
         <a @click="editObject">編輯</a>
       </div>
       <div class="box-content" v-if="!InstanceGroupShow.InstanceGroup">
         <el-row style="margin:10px 5px;padding-top:10px">
           <el-button type="primary" @click="AlarmObjectNews"
-            >新增對象</el-button
+            >新增物件</el-button
           >
           <el-button
             v-if="UniqueId.length > 0"
@@ -894,7 +894,7 @@
     </el-card>
     <el-card class="box-card alarm-object alarm-receiving-object">
       <div slot="header" class="clearfix">
-        <h3>告警接收對象</h3>
+        <h3>告警接收物件</h3>
       </div>
       <div class="box-content" style="margin-top:20px;">
         <el-row>
@@ -1549,16 +1549,16 @@
     </el-dialog>
     <!-- 告警對象編輯 -->
     <el-dialog
-      title="編輯告警對象"
+      title="編輯告警物件"
       :visible.sync="dialogEditObject"
       width="1024px"
     >
       <div class="edit-alarm-object">
         <el-radio-group v-model="editAlarmObjectRadio">
-          <p><el-radio label="1">全部對象</el-radio></p>
+          <p><el-radio label="1">全部物件</el-radio></p>
           <p>
             <el-radio label="2"
-              >選擇部分對象
+              >選擇部分物件
               <!-- (已選{{ multipleSelection.length }}個) -->
             </el-radio>
           </p>
@@ -1594,12 +1594,12 @@
     </el-dialog>
     <!-- 告警對象-新增對象 -->
     <el-dialog
-      title="關聯告警對象"
+      title="關聯告警物件"
       :visible.sync="alarmObjectNews"
       width="1024px"
     >
       <div class="edit-alarm-object-news">
-        <p>選擇部分對象</p>
+        <p>選擇部分物件</p>
         <div class="table">
           <CamTransferCpt
             :productData="productListData"
@@ -1655,7 +1655,7 @@
     </el-dialog>
     <!-- 告警接收對象 編輯 -->
     <el-dialog
-      title="告警接收對象"
+      title="告警接收物件"
       :visible.sync="editReceiveObjectVisuble"
       width="800px"
       custom-class="tke-dialog"
@@ -1883,7 +1883,7 @@ export default {
       // 告警對象
       alarmObjectNews: false,
       alarmObjectRemovalVisible: false,
-      alarmObjecTitle: "確定解除與該告警對象的關聯？",
+      alarmObjecTitle: "確定解除與該告警物件的關聯？",
       UniqueId: "",
       alarmObjectRemovalAllVisible: false,
       // 修改觸發條件
@@ -3615,11 +3615,11 @@ export default {
     // 告警對象移除
     AlarmObjectRemoval(row, index) {
       if (index == 1) {
-        this.alarmObjecTitle = "確定解除與該告警對象的關聯？";
+        this.alarmObjecTitle = "確定解除與該告警物件的關聯？";
         this.UniqueId = row.UniqueId;
       } else {
         this.alarmObjecTitle =
-          "已選擇" + this.UniqueId.length + "個告警對象，確定要解除關聯？";
+          "已選擇" + this.UniqueId.length + "個告警物件，確定要解除關聯？";
       }
       this.alarmObjectRemovalVisible = true;
     },
@@ -4177,7 +4177,7 @@ export default {
           this.relieveDialogVisible = false;
           this.DetailsInit();
           this.$message({
-            message: "告警接收對象解除成功",
+            message: "告警接收物件解除成功",
             type: "success",
             showClose: true,
             duration: 0

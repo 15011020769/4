@@ -195,7 +195,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '對象存儲'
+          return '物件存儲'
         }
       }
     }

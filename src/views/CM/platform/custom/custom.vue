@@ -27,11 +27,11 @@
 </template>
 
 <script>
-  const options = ['事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"];
+  const options = ['事件', '地域',"狀態","影響物件","開始時間","更新時間","事件類型"];
   export default {
     data() {
       return {
-        checkedlist: [ '事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"],
+        checkedlist: [ '事件', '地域',"狀態","影響物件","開始時間","更新時間","事件類型"],
         cities: options,
       };
     },

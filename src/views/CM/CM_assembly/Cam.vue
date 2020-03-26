@@ -1,7 +1,7 @@
 <template>
   <div class="qudaoContent">
     <p class="receiving-objects">
-      <span>接收对象&nbsp;&nbsp;</span>
+      <span>接收物件&nbsp;&nbsp;</span>
       <el-select
         v-model="formInline.jieshou"
         style="width:100px;"

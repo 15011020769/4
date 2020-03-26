@@ -25,7 +25,7 @@
 </template>
 
 <script>
-const opts = ["發生時間", "告警對象", "告警內容"];
+const opts = ["發生時間", "告警物件", "告警內容"];
 
 const options = [
   "持續時長",
@@ -54,7 +54,7 @@ export default {
         "所屬專案",
         "所屬實例組"
       ],
-      checkedlistNo: ["發生時間", "告警對象", "告警內容"],
+      checkedlistNo: ["發生時間", "告警物件", "告警內容"],
       cis: opts,
       cities: options,
       num: 13 //個數

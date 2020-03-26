@@ -18,12 +18,12 @@
               <el-option v-for="(item, index) in formInline.project" :key="index" :label="item.projectName" :value="item.projectId" label-width="40px"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="告警對象">
+          <el-form-item label="告警物件">
             <p>
-              <el-radio v-model="radio" label="1">全部對象</el-radio>
+              <el-radio v-model="radio" label="1">全部物件</el-radio>
             </p>
             <p>
-              <el-radio v-model="radio" label="2">選擇部分對象</el-radio>
+              <el-radio v-model="radio" label="2">選擇部分物件</el-radio>
             </p>
             <p>
               <el-radio v-model="radio" label="3">選擇實例組</el-radio>
@@ -559,7 +559,7 @@ export default {
         if (valid) {
           if (radio === '2' && multipleSelection.length <= 0) {
             this.$message({
-              message: '請選擇綁定對象',
+              message: '請選擇綁定物件',
               type: 'error',
               showClose: true,
               duration: 0
@@ -568,7 +568,7 @@ export default {
           }
           if (JSON.stringify(cam) === '{}' || (cam.selectUserGroup.length <= 0 && cam.selectUserList <= 0)) {
             this.$message({
-              message: '請選擇接收對象',
+              message: '請選擇接收物件',
               type: 'error',
               showClose: true,
               duration: 0

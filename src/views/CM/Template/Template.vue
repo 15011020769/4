@@ -208,7 +208,7 @@ export default {
         alarm: '', // 告警对象
         alarm_list: [
           {
-            name: '告警對象1'
+            name: '告警物件1'
           }
         ], // 告警对象数组
         user: '', // 用户
@@ -269,7 +269,7 @@ export default {
           label: '物理專線',
           viewName: 'dcline'
         }, {
-          label: '對象存儲',
+          label: '物件存儲',
           viewName: 'COS'
         }
         ],
@@ -723,7 +723,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '對象存儲'
+          return '物件存儲'
         }
       }
     }

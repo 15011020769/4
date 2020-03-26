@@ -42,7 +42,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="EventStatus" label="狀態" ></el-table-column>
-            <el-table-column prop label="影響對象" >
+            <el-table-column prop label="影響物件" >
               <template slot-scope="scope">
                 <p>{{scope.row.AffectResource}}</p>
               </template>
@@ -99,7 +99,7 @@ export default {
       searchOptions: [
           {
             value: "InstanceId.0",
-            label: "影響對象ID"
+            label: "影響物件ID"
           },
           // {
           //   value: "EventName.0",

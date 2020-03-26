@@ -346,9 +346,9 @@ export default {
           subtitle: "物理專線"
         },
         {
-          label: "對象存儲",
+          label: "物件存儲",
           viewName: "COS",
-          subtitle: "對象存儲"
+          subtitle: "物件存儲"
         }
       ]
     };
@@ -781,7 +781,7 @@ export default {
           地域: "台灣台北",
           產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
-          對象: item.Dimensions === undefined ? "" : item.Dimensions,
+          物件: item.Dimensions === undefined ? "" : item.Dimensions,
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
           告警策略: item.GroupName,
           開始時間: moment(item.FirstOccurTime).format("YYYY-MM-DD HH:mm:ss"),
