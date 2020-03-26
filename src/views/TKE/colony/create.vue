@@ -1186,16 +1186,16 @@
                         <el-input-number
                           v-model="item.dataNum"
                           :min="1"
-                          :max="1"
+                          :max="item.datanum"
                         ></el-input-number>
-                        <!-- <p v-if="!colonySecond.chargingShow">
+                        <p v-if="!chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
-                          {{ $t("TKE.colony.tjgnsqpe") }} -->
-                        <!-- <a href="#">提交工单</a> -->
-                        <!-- </p>
-                        <p v-if="colonySecond.chargingShow">
-                          {{ $t("TKE.colony.cvmpe") }}
-                        </p> -->
+                          {{ $t("TKE.colony.tjgnsqpe") }}
+                          <!-- <a href="#">提交工单</a> -->
+                        </p>
+                        <p v-if="chargingShow">
+                          {{ $t("TKE.colony.cvmpe") }}{{ item.datanum }}台
+                        </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
@@ -2029,16 +2029,16 @@
                         <el-input-number
                           v-model="item.dataNum"
                           :min="1"
-                          :max="1"
+                          :max="item.datanum"
                         ></el-input-number>
-                        <!-- <p v-if="!colonySecond.chargingShow">
+                        <p v-if="!chargingShow">
                           {{ $t("TKE.colony.cvmzdpe") }}
-                          {{ $t("TKE.colony.tjgnsqpe") }} -->
-                        <!-- <a href="#">提交工单</a> -->
-                        <!-- </p>
-                        <p v-if="colonySecond.chargingShow">
-                          {{ $t("TKE.colony.cvmpe") }}
-                        </p> -->
+                          {{ $t("TKE.colony.tjgnsqpe") }}
+                          <!-- <a href="#">提交工单</a> -->
+                        </p>
+                        <p v-if="chargingShow">
+                          {{ $t("TKE.colony.cvmpe") }}{{ item.datanum }}台
+                        </p>
                         <el-row>
                           <el-button
                             class="worker-determine-btn"
@@ -2754,6 +2754,8 @@ import {
   TKE_EXIST,
   DESCRIBE_ZONE_INFO,
   TKE_PRICE,
+  TKE_CREATW_Quota,
+  TKE_CREATW_InstanceQuota,
   // 第三步
   TKE_MISG,
   TKE_SSH,
@@ -2902,6 +2904,8 @@ export default {
         OSvalue: "",
         ipvs: false
       },
+      chargingShow: true,
+
       // 第二步
       colonySecond: {
         // 节点来源
@@ -2946,9 +2950,11 @@ export default {
             broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
-            dataNum: "1"
+            dataNum: "1",
+            datanum: 100
           }
         ],
+
         workerOneList: [
           {
             showText: false,
@@ -2983,7 +2989,8 @@ export default {
             broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
             broadbandNumber: "1",
             formatMount: true,
-            dataNum: "1"
+            dataNum: "1",
+            datanum: 100
           }
         ],
         masterDataDiskMountShow: false,
@@ -3289,6 +3296,11 @@ export default {
     this.ClusterNetworkData();
     // 操作系统
     this.OperatSystemData();
+
+    //  --------------------------------  第二步 -----------------------------
+    this.Number();
+    this.Number1();
+
     //  --------------------------------  第三步 -----------------------------
     // 安全组
     this.SecurityGroup();
@@ -4749,7 +4761,11 @@ export default {
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
-        dataNum: "1"
+        dataNum: "1",
+        datanum:
+          this.colonySecond.workerOneList[
+            this.colonySecond.workerOneList.length - 1
+          ].datanum - 1
       });
       let _workerOneList = this.colonySecond.workerOneList;
       let _length = this.colonySecond.workerOneList.length;
@@ -4814,7 +4830,11 @@ export default {
         broadbandVal: "BANDWIDTH_POSTPAID_BY_HOUR",
         broadbandNumber: "1",
         formatMount: true,
-        dataNum: "1"
+        dataNum: "1",
+        datanum:
+          this.colonySecond.masterOneList[
+            this.colonySecond.masterOneList.length - 1
+          ].datanum - 1
       });
       let _length = this.colonySecond.masterOneList.length;
       let _masterOneList = this.colonySecond.masterOneList;
@@ -4833,6 +4853,7 @@ export default {
       _masterOneList[_length - 1].modelGB = this.colonySecond.masterTableList[
         this.colonySecond.masterIndex
       ].Memory;
+
       this.ChildNodes();
       this.TotalCost();
       if (this.colonySecond.masterOneList.length > 2) {
@@ -4840,6 +4861,63 @@ export default {
         this.colonySecond.secondNextShow = true;
       }
     },
+    // 數量
+    Number() {
+      let param = {
+        Version: "2018-05-25"
+      };
+      this.axios.post(TKE_CREATW_Quota, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res);
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+    Number1() {
+      let param = {
+        Version: "2017-03-12"
+      };
+      this.axios.post(TKE_CREATW_InstanceQuota, param).then(res => {
+        if (res.Response.Error === undefined) {
+          console.log(res.Response.UserInstanceQuotaSet);
+          let UserInstanceQuotaSet = res.Response.UserInstanceQuotaSet;
+          for (let i in UserInstanceQuotaSet) {
+            if (
+              UserInstanceQuotaSet[i].Zone === "ap-taipei-1" &&
+              UserInstanceQuotaSet[i].InstanceChargeType === "POSTPAID_BY_HOUR"
+            ) {
+              if (UserInstanceQuotaSet[i].QuotaCurrent != 0) {
+                this.workerOneList[0].datanum = 100;
+                this.masterOneList[0].datanum = 100;
+                this.chargingShow = true;
+              } else {
+                this.workerOneList[0].datanum = 1;
+                this.masterOneList[0].datanum = 1;
+                this.chargingShow = false;
+              }
+            }
+          }
+        } else {
+          let ErrTips = {};
+          let ErrOr = Object.assign(ErrorTips, ErrTips);
+          this.$message({
+            message: ErrOr[res.Response.Error.Code],
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+        }
+      });
+    },
+
     // 总计费用
     async TotalCost() {
       this.colonySecond.costShow = true;
