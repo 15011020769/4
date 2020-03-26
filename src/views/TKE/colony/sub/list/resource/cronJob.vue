@@ -284,7 +284,7 @@ export default {
       this.listData();
       console.log(this.searchInput);
     },
-    //刷新数据
+    //重新整理数据
     refreshList() {
       console.log("refreshList....");
       this.listData();

@@ -165,7 +165,7 @@
                               <span>kube-system</span>
                               <a style="margin-left:55px;" href="">coredns</a>
                               <br />
-                              <a style="margin-left:130px" href="">檢視事件</a>
+                              <a style="margin-left:130px" href="">查看事件</a>
                             </div>
                           </div>
                           <i
@@ -373,7 +373,7 @@ export default {
     this.statusData();
   },
   methods: {
-    // 檢視详情跳转
+    // 查看详情跳转
     goColonySub(id) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({

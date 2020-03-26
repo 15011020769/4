@@ -251,19 +251,19 @@
                    <el-form-item label="工作目录">
                      <el-input class="w192" v-model="v.workDirectory"></el-input>
                      <p> 指定容器运行后的工作目录，
-                       <!-- <a href="#">檢視详情</a>  -->
+                       <!-- <a href="#">查看详情</a>  -->
                        </p>
                    </el-form-item>
                    <el-form-item label="运行命令">
                      <el-input type="textarea"  v-model="v.runCommand" class="w400"  rows="3" resize="none"></el-input>
                      <p> 控制容器运行的输入命令，
-                       <!-- <a href="#">檢視详情</a>  -->
+                       <!-- <a href="#">查看详情</a>  -->
                        </p>
                    </el-form-item>
                    <el-form-item label="运行参数">
                      <el-input type="textarea"  v-model="v.runParam"   class="w400"  rows="3" resize="none"></el-input>
                      <p>传递给容器运行命令的输入参数，注意每个参数单独一行，
-                       <!-- <a href="#">檢視详情</a>  -->
+                       <!-- <a href="#">查看详情</a>  -->
                        </p>
                    </el-form-item>
                    <el-form-item label="容器健康检查">
@@ -405,7 +405,7 @@
                        </div>
                      </div>
 
-                     <p>檢視健康检查和就绪检查
+                     <p>查看健康检查和就绪检查
                        <!-- <a href="#">使用指引</a>  -->
                        </p>
                    </el-form-item>

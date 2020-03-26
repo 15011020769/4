@@ -256,7 +256,7 @@ export default {
       this.searchInput = val;
       this.getData();
     },
-    //刷新数据
+    //重新整理数据
     refreshList() {
       this.getData();
     },

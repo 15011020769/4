@@ -35,7 +35,7 @@
           <el-form-item :label="$t('TKE.overview.jsz')">
             <div>6</div>
           </el-form-item>
-          <el-form-item label="接收管道">
+          <el-form-item label="接收渠道">
             <div>7</div>
           </el-form-item>
         </el-form>

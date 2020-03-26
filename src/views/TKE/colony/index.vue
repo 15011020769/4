@@ -900,7 +900,7 @@ export default {
         query: {}
       });
     },
-    // 檢視详情跳转
+    // 查看详情跳转
     goColonySub(row) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
       sessionStorage.setItem("ClusterOs", row.ClusterOs);
@@ -928,7 +928,7 @@ export default {
         name: "warnings"
       });
     },
-    // 檢視集权凭证
+    // 查看集权凭证
     ViewCluster(id) {
       this.$router.push({
         name: "colonyBasic",
@@ -1088,7 +1088,7 @@ export default {
         }
       });
     },
-    // 檢視详情
+    // 查看详情
     DetailsShow() {
       this.detailsShow = !this.detailsShow;
     },

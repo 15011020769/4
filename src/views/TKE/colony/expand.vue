@@ -555,7 +555,7 @@
               <p>
                 節點啟動配置
                 <el-tooltip
-                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑檢視"
+                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑查看"
                   placement="right"
                   width="200px"
                   effect="light"
@@ -1282,7 +1282,7 @@ export default {
         }
       });
     },
-    //刷新安全组列表
+    //重新整理安全组列表
     refeshSecurity() {
       this.getSecurityGroups();
     },
@@ -1833,7 +1833,7 @@ export default {
               "InvalidClientToken.TooLong":
                 "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "指定的HostId不存在，或不屬於該請求賬號所有。",
               "InvalidInstanceName.TooLong":
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
@@ -1877,7 +1877,7 @@ export default {
               "InvalidClientToken.TooLong":
                 "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "指定的HostId不存在，或不屬於該請求賬號所有。",
               "InvalidInstanceName.TooLong":
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":

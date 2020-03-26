@@ -40,7 +40,7 @@
             </el-radio-group>
             <div v-if="ing.fz=='yy'">
               <div>{{$t('TKE.subList.cjjtq')}}，
-                <!-- <a href="">檢視更多说明</a><i
+                <!-- <a href="">查看更多说明</a><i
                 class="el-icon-edit-outline"></i> -->
               </div>
               <el-select v-model="ing.describeLoadBalancersValue" :placeholder="$t('TKE.overview.qxz')" class="borderRed" @change="describeLoadBalancersChange">

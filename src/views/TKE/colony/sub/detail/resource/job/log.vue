@@ -95,7 +95,7 @@ export default {
         matchBrackets: true,  //括号匹配
         autoCloseBrackets: true
       },
-      autoRefresh: true, //自动刷新
+      autoRefresh: true, //自动重新整理
       timer: null,//定时器
     };
   },
@@ -159,7 +159,7 @@ export default {
     changeSize() {
       this.getdaemonSetLog();
     },
-    //是否刷新
+    //是否重新整理
     changeSwitch() {
       let autoRefresh = this.autoRefresh;
       if(autoRefresh) {

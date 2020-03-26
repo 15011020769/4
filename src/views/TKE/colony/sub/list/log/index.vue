@@ -97,7 +97,7 @@
         </el-form-item>
         <el-form-item :label="$t('TKE.event.qtxx')">
           <span>{{$t('TKE.overview.zdsx')}}</span>
-          <!-- 自动刷新 -->
+          <!-- 自动重新整理 -->
           <el-switch v-model="autoRefresh" class="ml10" @change="refresh"></el-switch>
           <el-select
             v-model="value6"
@@ -147,7 +147,7 @@ export default {
   data() {
     return {
       htmls: "",
-      autoRefreshFlag: true, //自动刷新
+      autoRefreshFlag: true, //自动重新整理
       listNumFlag: true, //条数禁用
       option1: [],
       timeId: null,
@@ -196,7 +196,7 @@ export default {
       value4: "",
       value5: "",
       value6: `${this.$t("TKE.event.xs")}100${this.$t("TKE.event.tsj")}`,
-      autoRefresh: false, //自动刷新
+      autoRefresh: false, //自动重新整理
       loadShow: true // 加载是否显示
     };
   },

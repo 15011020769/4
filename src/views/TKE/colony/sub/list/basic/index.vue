@@ -131,7 +131,7 @@
         <p><strong>通过Kubectl连接Kubernetes集群操作说明:</strong></p>
         <p class="mt10">1.安装Kubectl客户端：从Kubernetes版本页面下载最新的kubectl客户端，并安装和设置kubectl客户端，具体可参考安装和设置kubectl。</p>
         <p>2.配置Kubeconfig：复制上方Kubeconfig访问凭证内容，替换 $HOME/.kube/config 内已有内容；或下载该kubeconfig至指定位置，并配置环境变量： KUBECONFIG=$HOME/.kube/config:cls-gwblk71e-config。</p>
-        <p>3.完成以上配置即可使用kubectl访问Kubernetes集群。如果无法连接请檢視是否已经开启公网访问或内网访问入口，并确保访问客户端在指定的网络环境内。</p>
+        <p>3.完成以上配置即可使用kubectl访问Kubernetes集群。如果无法连接请查看是否已经开启公网访问或内网访问入口，并确保访问客户端在指定的网络环境内。</p>
       </div> -->
     </div>
 

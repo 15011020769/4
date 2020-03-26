@@ -63,7 +63,7 @@ export default {
       required: true,
       type: String
     },
-    refreshData: { //是否有刷新
+    refreshData: { //是否有重新整理
       type: Boolean,
       default: false
     },
@@ -96,7 +96,7 @@ export default {
     clickSearch(val) {
       this.$emit("clickSearch", val);
     },
-    //刷新数据
+    //重新整理数据
     refresh() {
       this.$emit("refresh");
     },

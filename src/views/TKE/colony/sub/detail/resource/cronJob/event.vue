@@ -96,7 +96,7 @@ export default {
       clusterId:'',//集群id
       rowData: {},//传过来的数据
       spaceName: '',//路由传过来的命名空间名称
-      autoRefresh: true, //自动刷新
+      autoRefresh: true, //自动重新整理
       list:[], //列表
       timer: null,//定时器
     };
@@ -156,7 +156,7 @@ export default {
         }
       });
     },
-    //是否刷新
+    //是否重新整理
     changeSwitch() {
       let autoRefresh = this.autoRefresh;
       if(autoRefresh) {

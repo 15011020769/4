@@ -92,7 +92,7 @@ export default {
   data() {
     return {
       loadShow: false, //加载是否显示
-      autoRefresh: true, //自动刷新
+      autoRefresh: true, //自动重新整理
       list:[], //列表
       node: '',
       timer: null,
@@ -149,7 +149,7 @@ export default {
         }
       });
     },
-    //是否刷新
+    //是否重新整理
     changeSwitch() {
       console.log(this.autoRefresh,"val")
       let autoRefresh = this.autoRefresh;
