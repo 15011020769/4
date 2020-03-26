@@ -211,9 +211,9 @@
                 </el-table-column>
                 <el-table-column property="address" :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.Price.UnitPrice }}</span>
-                    <span class="text-orange" style="color:#ff7800;" v-else>￥{{ scope.row.Price.DiscountPrice }}</span>
-                    {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小時' : '月'}}
+                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.cost }}</span>
+                    <span class="text-orange" style="color:#ff7800;" v-else>NT${{ scope.row.Price.DiscountPrice }}</span>
+                    {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '每小時' : '月'}}
                   </template>
                 </el-table-column>
               </el-table>
@@ -584,29 +584,44 @@
                 </p>
               </div>
             </div>
-            <!-- <div class="tke-second-tips">
-              <p>Label</p>
-              <div>
-                <ul>
-                  <li v-for="(item, index) in nodeForm.advancedSettingArr" :key="index">
-                    <el-input v-model="item.name"></el-input>
-                    <span style="margin:0 10px;">=</span>
-                    <el-input v-model="item.value"></el-input>
-                    <i
-                      class="el-icon-close"
-                      @click="DeleteAdvancedSetting(index)"
-                    ></i>
-                  </li>
-                </ul>
-                <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
-                <p>
-                  標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
-                </p>
-                <p>
-                  標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
-                </p>
-              </div>
-            </div> -->
+            <el-form-item label="Label">
+              <ul>
+                <li v-for="(item, index) in nodeForm.advancedSettingArr" :key="index" style="display: flex;">
+                  <div class="form-input">
+                    <el-input v-model="item.name" size="mini" style="top:8px" ></el-input>
+                    <span style="top:8px">=</span>
+                    <el-input class="text" v-model="item.value" style="top:8px"></el-input>
+                    <i class="el-icon-close" @click="DeleteAdvancedSetting(index)"></i>
+                    <!-- <el-tooltip
+                      v-if="dynamicValidateForm.domains.length=='1'"
+                      class="item"
+                      effect="dark"
+                      :content="$t('TKE.subList.zsszyx')"
+                      placement="right"
+                    >
+                      <i class="el-icon-close"></i>
+                    </el-tooltip>
+                    <el-tooltip v-else class="item" effect="dark" :content="$t('TKE.overview.sc')" placement="right">
+                      <i class="el-icon-close" @click.prevent="removeDomain(domain)"></i>
+                    </el-tooltip> -->
+                  </div>
+                  <!-- <el-input v-model="item.name" size="mini"></el-input>
+                  <span style="margin:0 10px;">=</span>
+                  <el-input v-model="item.value" style="margin-left: -100px;"></el-input>
+                  <i
+                    class="el-icon-close"
+                    @click="DeleteAdvancedSetting(index)"
+                  ></i> -->
+                </li>
+              </ul>
+              <a href="javascript:;" @click="AddAdvancedSetting">新增</a>
+              <p>
+                標籤名稱只能包含字母、數字及分隔符("-"、"_"、"."、"/")，且必須以字母、數字開頭和結尾
+              </p>
+              <p>
+                標籤值只能包含字母、數字及分隔符("-"、"_"、".")，且必須以字母、數字開頭和結尾
+              </p>
+            </el-form-item>
           </div>
         </el-form>
         <!-- 底部 -->
@@ -1003,7 +1018,6 @@ export default {
     this.getClusterVersion();
   },
   methods: {
-    //提交保存
     AddAdvancedSetting() {
       this.nodeForm.advancedSettingArr.push({
         name: "",
@@ -1154,9 +1168,19 @@ export default {
       param["Filters.0.Values.0"] = "ap-taipei-1";
       param["Filters.1.Name"] = "instance-charge-type";
       param["Filters.1.Values.0"] = this.nodeForm.instanceChargeType;
+      let usdRate = localStorage.getItem('usdRate');   // 美元汇率
+      let tpdRate = localStorage.getItem('tpdRate');   // 台币汇率
+      let taRate = localStorage.getItem('taRate');  // 税率
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if(res.Response.Error === undefined) {
+          console.log(res.Response.InstanceTypeQuotaSet);
+          if(res.Response.InstanceTypeQuotaSet.length > 0) {
+            for(let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
+              res.Response.InstanceTypeQuotaSet[i].cost = (res.Response.InstanceTypeQuotaSet[i].Price.UnitPrice * usdRate * tpdRate * taRate).toFixed(8);
+            }
+          }
           this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+          console.log(this.nodeForm.zoneInfoList)
           this.nodeForm.modelType = res.Response.InstanceTypeQuotaSet[0];
         } else {
           this.loadShow = false;
@@ -1258,7 +1282,7 @@ export default {
         }
       });
     },
-    //刷新安全组列表
+    //重新整理安全组列表
     refeshSecurity() {
       this.getSecurityGroups();
     },
@@ -1668,9 +1692,6 @@ export default {
         RunInstancePara: JSON.stringify(RunInstancePara)
       }
       param["InstanceAdvancedSettings.DockerGraphPath"] = containerInput;
-      
-      param["InstanceAdvancedSettings.Labels.0.Name"] = "";
-      param["InstanceAdvancedSettings.Labels.0.Value"] = "";
       param["InstanceAdvancedSettings.ExtraArgs.Kubelet.0"] = "";
 
       if (this.nodeForm.advancedSettingShow) {
@@ -1681,6 +1702,20 @@ export default {
           param["InstanceAdvancedSettings.Unschedulable"] = 1;
         } else {
           param["InstanceAdvancedSettings.Unschedulable"] = 0;
+        }
+        debugger
+        if (this.nodeForm.advancedSettingArr.length > 0) {
+          for (let i in this.nodeForm.advancedSettingArr) {
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Name"
+            ] = this.nodeForm.advancedSettingArr[i].name;
+            param[
+              "InstanceAdvancedSettings.Labels." + i + ".Value"
+            ] = this.nodeForm.advancedSettingArr[i].value;
+          }
+        } else {
+          param["InstanceAdvancedSettings.Labels.0.Name"] = "";
+          param["InstanceAdvancedSettings.Labels.0.Value"] = "";
         }
       }  
       // param["InstanceAdvancedSettings.Kubelet.0"] = "";
@@ -1798,12 +1833,12 @@ export default {
               "InvalidClientToken.TooLong":
                 "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "指定的HostId不存在，或不屬於該請求賬號所有。",
               "InvalidInstanceName.TooLong":
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
                 "指定InstanceType參數格式不合法。",
-              "InvalidParameterCombination": "表示參數組合不正確。",
+              "InvalidParameterCombination": "表示參陣列合不正確。",
               "InvalidParameterValue":
                 "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
@@ -1842,12 +1877,12 @@ export default {
               "InvalidClientToken.TooLong":
                 "指定的ClientToken字元串長度超出限制，必須小於等於64位元組。",
               "InvalidHostId.NotFound":
-                "指定的HostId不存在，或不屬於該請求帳號所有。",
+                "指定的HostId不存在，或不屬於該請求賬號所有。",
               "InvalidInstanceName.TooLong":
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
                 "指定InstanceType參數格式不合法。",
-              "InvalidParameterCombination": "表示參數組合不正確。",
+              "InvalidParameterCombination": "表示參陣列合不正確。",
               "InvalidParameterValue":
                 "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
@@ -2045,6 +2080,7 @@ export default {
       }
       &:nth-of-type(2) {
         line-height: 24px;
+        margin-left: 120px;
       }
     }
     .data-disk {
@@ -2683,6 +2719,20 @@ export default {
   display: none;
   &.active {
     display: inline;
+  }
+}
+
+.form-input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  span {
+    margin: 0 10px;
+  }
+  i {
+    margin: 0 10px;
+    cursor: pointer;
   }
 }
 </style>

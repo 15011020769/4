@@ -580,7 +580,7 @@ export default {
           if (this.ruleForm.loginRadio === "") {
             this.$message({
               showClose: true,
-              message: "請設置登入保護",
+              message: "請設置登錄保護",
               type: "error",
               duration: 0
             });

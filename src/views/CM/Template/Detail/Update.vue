@@ -11,7 +11,7 @@
           </template>
         </el-table-column>
         <el-table-column label="最後修改">
-          <span class="text" @click="showDelDialog=true">查看變更後詳情</span>
+          <span class="text" @click="showDelDialog=true">檢視變更後詳情</span>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
@@ -27,12 +27,12 @@
         ></el-pagination>
       </div>
     </el-card>
-    <!-- 查看变更后详情弹窗 -->
+    <!-- 檢視变更后详情弹窗 -->
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
       <p style="color:#444;font-weight:800;margin-bottom:30px">變更後詳情</p>
-      <h4 class="title-text">基本信息</h4>
+      <h4 class="title-text">基本訊息</h4>
       <el-form>
-        <el-form-item label="模板名稱">
+        <el-form-item label="範本名稱">
           <span class="text">{{information.groupName}}</span>
         </el-form-item>
         <el-form-item label="策略類型">
@@ -118,7 +118,7 @@ export default {
               if (anp == 0 && item.alarmNotifyType == 0) {
                 item.alarm = '不重複告警'
               } else if (item.alarmNotifyType == 1) {
-                item.alarm = '按周期指數遞增重複告警'
+                item.alarm = '按週期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
@@ -179,13 +179,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -195,7 +195,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '對象存儲'
+          return '物件儲存'
         }
       }
     }

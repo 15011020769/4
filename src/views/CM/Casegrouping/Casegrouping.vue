@@ -243,7 +243,7 @@ export default {
               this.loadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+                  "請求未授權。請參考 CAM 文件對鑒權的說明。",
                 DryRunOperation:
                   "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
                 FailedOperation: "操作失敗。",
@@ -304,7 +304,7 @@ export default {
           this.deleteLoadShow = false;
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -498,7 +498,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",

@@ -77,7 +77,7 @@ export default {
     return {
       activeName: "first",
       value: 1,
-      dialogVisible: false, //新增配置彈框
+      dialogVisible: false, //新增配置弹框
       input: "", //搜索框的值
       tableData: [
         {
@@ -87,11 +87,11 @@ export default {
           method:"已配置",
         },
       ],
-      //分頁
-      TotalCount: 0, //總條數
-      pagesize: 10, // 分頁條數
-      currpage: 1, // 當前頁碼
-      //city選擇
+      //分页
+      TotalCount: 0, //总条数
+      pagesize: 10, // 分页条数
+      currpage: 1, // 当前页码
+      //city选择
       options:[],
       values:"",
     };

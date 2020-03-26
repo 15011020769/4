@@ -18,7 +18,7 @@
           <el-tooltip
             class="item"
             effect="light"
-            :content="$t('CVM.DashboardCreate.qxz')"
+            :content="$t('CVM.DashboardCreate.tips1')"
             placement="top"
           >
             <i class="el-icon-info"></i>
@@ -71,9 +71,38 @@
               :series="series"
               :period="'60'"
               :xdata="true"
-              style="width:95%;height:400px;margin-left:-20px"
+              style="width:95%;height:180px;margin-left:-20px"
               v-if="rightData.length"
+              @paramValue="paramValue"
             ></Echarts>
+          </div>
+          <div>
+            <div style="width:100%;height:30px;background-color:#f2f2f2;margin:10px 0px;" v-if='rightData.length'>
+                <div style="margin-left:20px;line-height:30px">
+                    <span>共有{{rightData.length}}個實例</span>
+                    <span style="margin-left:20px">監控明細({{StartTime}})</span>
+                </div>
+                <el-table
+                 :data="tableData"
+                  style="width: 100%"
+                  max-height="180"
+                  v-loading="loadShow">
+                  <el-table-column
+                    prop="color">
+                    <template slot-scope="scope">
+                      <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.color'></div>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    prop="pointId"
+                    label="ID">
+                  </el-table-column>
+                  <el-table-column
+                    prop="points"
+                    :label="picNameLable">
+                  </el-table-column>
+                </el-table>
+            </div>
           </div>
         </div>
       </div>
@@ -136,6 +165,7 @@ export default {
       optionTarget: [], // 监控指标
       target: "", // 指标
       picName: "",
+      picNameLable:"",
       productData: [],
       productListData: {},
       MetricName: "", // 监控名
@@ -147,8 +177,24 @@ export default {
       series: [],
       DashboardID: "",
       DashboardData: [],
+      tableData:[],
+      Data:[],
+      pointId:"",
       loading: true,
-      flag: false
+      flag: false,
+      loadShow:true,
+      color : [
+        "#2072d9",
+        "#fff2cc",
+        "#f45333",
+        "#33d8f4",
+        "#c151df",
+        "#90e52a",
+        "#e5ce2a",
+        "#9486f8",
+        "#980000",
+        "#1c4587"
+      ]
     };
   },
   methods: {
@@ -168,6 +214,7 @@ export default {
       this.optionTarget = data.MetricName;
       this.target = data.MetricName[0]; // 指标
       this.MetricName = data.MetricName[0].value; // 监控名
+      this.picNameLable = this.target.label; 
       this.picName = "明細-" + this.target.label;
       this.rightData = [];
       this.loading = false;
@@ -175,7 +222,10 @@ export default {
     },
     getTarget(val) {
       this.picName = "明細-" + val.label;
-      this.MetricName = val.value;
+      this.picNameLable = val.label
+      // console.log(this.picNameLable)
+      this.MetricName = this.filterMetricName(val.value);
+      this.loadShow = true
       if (this.rightData.length) {
         this.getMonitorList();
       }
@@ -185,20 +235,42 @@ export default {
       console.log(data);
       this.projectId = data;
     },
+    paramValue(evt){
+      this.StartTime = evt
+      for(let i in this.times){
+        if(this.times[i] == evt){
+            // this.tableData[points]=res.Response.DataPoints[i].Points[0],
+            for(let j in this.tableData){
+              this.tableData[j]['points'] = this.Data[j].Points[i]
+            }
+        }
+      }
+        // console.log(evt)
+    },
     searchParams(data) {
       console.log(data);
       this.searchParam = data;
     },
     selectDatas(val) {
       this.rightData = val;
+      this.loadShow = true
       console.log(val);
       if (this.rightData.length) {
+        this.series = []
         this.getMonitorList();
       }
     },
     Type_loading(val) {
       this.loading = val;
       this.series = [];
+    },
+    filterMetricName(val){
+        if(val.indexOf('(')!==-1){
+          return val.split('(')[0]
+        } else {
+          return val
+        }
+        console.log(val)
     },
     // 创建
     createJump() {
@@ -222,18 +294,8 @@ export default {
       this.times = [];
       this.series = [];
       this.DashboardData = [];
-      let color = [
-        "#2072d9",
-        "#fff2cc",
-        "#f45333",
-        "#33d8f4",
-        "#c151df",
-        "#90e52a",
-        "#e5ce2a",
-        "#9486f8",
-        "#980000",
-        "#1c4587"
-      ];
+      this.tableData = [];
+      
       let params = {
         Namespace: this.Namespace,
         MetricName: this.MetricName,
@@ -250,6 +312,7 @@ export default {
       ) {
         if (this.productValue === "cvm_device") {
           // 云服务器
+          this.pointId = "unInstanceId"
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
             i
           ].InstanceId;
@@ -259,6 +322,7 @@ export default {
           });
         } else if (this.productValue === "VPN_GW") {
           // VPN网关
+          this.pointId = "vpnGwId"
           params["Dimensions." + i + ".vpnGwId"] = this.rightData[
             i
           ].VpnGatewayId;
@@ -268,6 +332,7 @@ export default {
           });
         } else if (this.productValue === "vpn_tunnel") {
           // vpn通道
+          this.pointId = "vpnConnId"
           params["Dimensions." + i + ".vpnConnId"] = this.rightData[
             i
           ].VpnConnectionId;
@@ -277,6 +342,7 @@ export default {
           });
         } else if (this.productValue === "nat_tc_stat") {
           // Nat网关
+          this.pointId = "natId"
           params["Dimensions." + i + ".natId"] = this.rightData[i].NatGatewayId;
           this.DashboardData.push({
             regionId: "39",
@@ -284,6 +350,7 @@ export default {
           });
         } else if (this.productValue === "DC_GW") {
           // 专线网关
+          this.pointId = "directConnectGatewayId"
           params[
             "Dimensions." + i + ".directConnectGatewayId"
           ] = this.rightData[i].DirectConnectGatewayId;
@@ -293,6 +360,7 @@ export default {
           });
         } else if (this.productValue === "REDIS-CLUSTER") {
           // Redis
+          this.pointId = "instanceid"
           params["Dimensions." + i + ".appid"] = this.rightData[i].Appid;
           params["Dimensions." + i + ".instanceid"] = this.rightData[
             i
@@ -304,6 +372,7 @@ export default {
           });
         } else if (this.productValue === "dcchannel") {
           // 专用通道
+          this.pointId = "directConnectConnId"
           params["Dimensions." + i + ".directConnectConnId"] = this.rightData[
             i
           ].DirectConnectTunnelId;
@@ -313,6 +382,7 @@ export default {
           });
         } else if (this.productValue === "COS") {
           // 对象存储
+          this.pointId = "bucket"
           params["Dimensions." + i + ".bucket"] = this.rightData[i].Name;
           this.DashboardData.push({
             regionId: "39",
@@ -320,6 +390,7 @@ export default {
           });
         } else if (this.productValue === "dcline") {
           // 物理专线
+          this.pointId = "directConnectId"
           params["Dimensions." + i + ".directConnectId"] = this.rightData[
             i
           ].DirectConnectId;
@@ -329,6 +400,7 @@ export default {
           });
         } else if (this.productValue === "cdb_detail") {
           // MYSQL
+          this.pointId = "uInstanceId"
           params["Dimensions." + i + ".uInstanceId"] = this.rightData[
             i
           ].InstanceId;
@@ -338,6 +410,7 @@ export default {
           });
         } else if (this.productValue === "BS") {
           // 云硬盘
+          this.pointId = "diskId"
           params["Dimensions." + i + ".diskId"] = this.rightData[i].DiskId;
           this.DashboardData.push({
             regionId: "39",
@@ -348,6 +421,7 @@ export default {
       await this.axios.post(All_MONITOR, params).then(res => {
         if (res.Response.Error == undefined) {
           console.log(res);
+          this.Data = res.Response.DataPoints
           if (res.Response.DataPoints.length) {
             // 监控数据处理
             for (let i in res.Response.DataPoints) {
@@ -367,7 +441,7 @@ export default {
             }
             // y轴
             //  res.Response.DataPoints
-            for (let item=0 ;item<(res.Response.DataPoints.length>10?10:res.Response.DataPoints.length);item++) {
+            for (let item=0 ;item<res.Response.DataPoints.length;item++) {
               if (res.Response.DataPoints.length) {
                 this.series.push({
                   labelLine: {
@@ -377,19 +451,31 @@ export default {
                   },
                   type: "line",
                   data: res.Response.DataPoints[item].Points,
-                  symbol: "none",
+                  // ? color[item] : color[item % 10],
                   itemStyle: {
                     normal: {
-                      color: color[item] ? color[item] : color[item % 10],
+                      color: this.color[item],
                       lineStyle: {
-                        color: color[item] ? color[item] : color[item % 10]
+                        color: this.color[item]
                       }
                     }
-                  }
+                  },
+                  symbol:'circle',
+                  showSymbol: false
                 });
               }
             }
-            console.log(this.series);
+            // table数据
+            for(let i in res.Response.DataPoints){
+              this.tableData.push({
+                points:res.Response.DataPoints[i].Points[0],
+                pointId:res.Response.DataPoints[i].Dimensions[this.pointId],
+                color:this.color[i]
+              })
+            }
+            this.loadShow = false
+            // console.log(this.series);
+            // console.log(this.times);
           } else {
             this.series = [];
           }
@@ -442,7 +528,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",

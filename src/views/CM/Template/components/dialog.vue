@@ -185,8 +185,8 @@
                           重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                         </p>
                         <p style="font-size:12px">
-                          周期指數遞增通知:
-                          告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                          週期指數遞增通知:
+                          告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                         </p>
                       </div>
                       <i
@@ -239,8 +239,8 @@
                       重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                     </p>
                     <p style="font-size:12px">
-                      周期指數遞增通知:
-                      告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                      週期指數遞增通知:
+                      告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                     </p>
                   </div>
                   <i
@@ -299,35 +299,34 @@ import Loading from "@/components/public/Loading";
 export default {
   data() {
     return {
-      loadShow: false, // 加載是否顯示
-      isChected: true, // 多選框是否選中
-      isDisabled: false, // 指標告警是否禁用
+      loadShow: false, // 加载是否显示
+      isChected: true, // 多选框是否选中
+      isDisabled: false, // 指标告警是否禁用
       isDisGJ: false, // 事件告警是否禁用
-      isRepeated: false, // 是否爲重複的指標告警條件
-      backShow: "true",
-      strategy_name: "", // 策略名稱
-      remark: "", // 備注信息
+      isRepeated: false, // 是否为重复的指标告警条件
+      backShow: 'true',
+      strategy_name: '', // 策略名称
+      remark: '', // 备注信息
       value1: new Date(2020, 1, 10, 18, 40),
       value2: new Date(2020, 1, 10, 18, 40),
 
-      showChufa1: false, // 觸發條件1顯示開關
-      showChufa2: true, // 觸發條件2顯示開關
+      showChufa1: false, // 触发条件1显示开关
+      showChufa2: true, // 触发条件2显示开关
 
-      showQudao1: false, // 渠道選擇1顯示開關
-      showQudao2: false, // 渠道選擇2顯示開關
+      showQudao1: false, // 管道选择1显示开关
+      showQudao2: false, // 管道选择2显示开关
 
-      errorTip1: false, // 觸發條件模板錯誤提示
-      errorTip2: true, // 配置觸發條件錯誤提示
+      errorTip1: false, // 触发条件範本错误提示
+      errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
-      checkedUse: false, // 使用預置觸發條件
-      productData: [], // 策略類型
-      SymbolList: [">", ">=", "<", "<=", "=", "!="], // 符號數組
+      checkedUse: false, // 使用预置触发条件
+      productData: [], // 策略类型
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
       formInline: {
-        strategy_name: "", // 策略名稱
-        textareas: "" // 備注
+        strategy_name: '', // 策略名称
+        textareas: '' // 备注
       },
-      indexAry: [
-        // 指標告警數組
+      indexAry: [ // 指标告警数组
         {
           Period: 60,
           CalcType: ">",
@@ -338,8 +337,7 @@ export default {
           alarm: 86400
         }
       ],
-      eventAry: [
-        // 事件告警數組
+      eventAry: [// 事件告警数组
         {
           jieshou: "接收組",
           jieshouArr: [
@@ -359,10 +357,10 @@ export default {
               value: 1,
               name: "https"
             }
-          ], // 接口回調數據
-          strategy_name: "", // 策略名稱
-          textareas: "", // 備注
-          strategy: "雲伺服器-基礎監控",
+          ], // 接口回调数据
+          strategy_name: '', // 策略名称
+          textareas: '', // 备注
+          strategy: '雲伺服器-基礎監控',
           strategy_kind: [
             {
               value: 0,
@@ -370,11 +368,11 @@ export default {
             }
           ], // 策略類型
           alarm: "", // 策略類型
-          projectName: "默認項目",
+          projectName: "預設專案",
           project: [
             {
               value: 0,
-              name: "默認項目"
+              name: "預設專案"
             }
           ]
         }
@@ -385,19 +383,19 @@ export default {
         { label: "所有", value: 1 }
       ], // 滿足條件
       tongjiZQ: [
-        { label: "統計周期1分鍾", value: 60 },
-        { label: "統計周期5分鍾", value: 300 }
+        { label: "統計週期1分鍾", value: 60 },
+        { label: "統計週期5分鍾", value: 300 }
       ],
       continuePeriod: [
-        // 持續周期
-        { label: "持續1個周期", value: 1 },
-        { label: "持續2個周期", value: 2 },
-        { label: "持續3個周期", value: 3 },
-        { label: "持續4個周期", value: 4 },
-        { label: "持續5個周期", value: 5 }
+        // 持續週期
+        { label: "持續1個週期", value: 1 },
+        { label: "持續2個週期", value: 2 },
+        { label: "持續3個週期", value: 3 },
+        { label: "持續4個週期", value: 4 },
+        { label: "持續5個週期", value: 5 }
       ],
       jinggaoZQ: [
-        // 警告周期
+        // 警告週期
         { label: "不重複", value: 0 },
         { label: "每5分鍾警告壹次", value: 300 },
         { label: "每10分鍾警告壹次", value: 600 },
@@ -409,7 +407,7 @@ export default {
         { label: "每6小時警告壹次", value: 21600 },
         { label: "每12小時警告壹次", value: 43200 },
         { label: "每1天警告壹次", value: 86400 },
-        { label: "周期指數遞增", value: 1 }
+        { label: "週期指數遞增", value: 1 }
       ],
       zhibiaoType: [], // 指標告警類型
       eventType: [], // 事件告警類型
@@ -429,15 +427,16 @@ export default {
         strategy_name: [
           {
             validator: (rule, value, callback) => {
+              let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
               if (!value) {
-                callback(new Error("模板名稱不能爲空"));
-              } else if (value.length === 20) {
-                callback(new Error("模板名稱不能超過 20 字"));
+                callback(new Error("範本名稱不能爲空"));
+              } else if (!(rg.test(value))) {
+                callback(new Error("含有非法字符,请输入1-20個中英文字符或下劃線"));
               } else {
                 callback();
               }
               //  else if (value.length === 20) {
-              // callback(new Error('提示:模板名称不能超过 20 字'))
+              // callback(new Error('提示:範本名称不能超过 20 字'))
               // }
             },
             trigger: "blur",
@@ -457,10 +456,10 @@ export default {
             required: true
           }
         ]
-      }, // 名稱和備注的驗證
-      show: this.dialogVisible, // 控制彈框顯示隱藏
-      all_alarm: 86400, // 滿足條件爲 所有 時告警值
-      view_name: "", // 策略視圖名稱
+      }, // 名称和备注的验证
+      show: this.dialogVisible, // 控制弹框显示隐藏
+      all_alarm: 86400, // 满足条件为 所有 时告警值
+      view_name: '', // 策略视图名称
       projectId: 0,
       searchParam: {},
       //  value: 'ins-6oz38wnu', label: 'instance-id'
@@ -560,14 +559,14 @@ export default {
           var PD;
           if (ele.Period == item1.value) {
             PD = item1.value;
-            params[`Conditions.${i}.CalcPeriod`] = PD; // 統計周期
+            params[`Conditions.${i}.CalcPeriod`] = PD; // 統計週期
           }
         });
         this.continuePeriod.forEach(item2 => {
           var CP;
           if (ele.ContinuePeriod == item2.value) {
             CP = item2.value;
-            params[`Conditions.${i}.ContinuePeriod`] = CP; // 持續周期
+            params[`Conditions.${i}.ContinuePeriod`] = CP; // 持續週期
           }
         });
         this.SymbolList.forEach((item3, index) => {
@@ -664,7 +663,7 @@ export default {
           return;
         }
       }
-      // 如果不 return 就把數組第壹個push進來
+      // 如果不 return 就把陣列第壹個push進來
       this.indexAry.push({
         Period: 60,
         CalcType: ">",
@@ -714,11 +713,11 @@ export default {
           }
         ], // 策略類型
         alarm: "", // 策略類型
-        projectName: "默認項目",
+        projectName: "預設專案",
         project: [
           {
             value: 0,
-            name: "默認項目"
+            name: "預設專案"
           }
         ]
       });
@@ -750,7 +749,7 @@ export default {
     errorPrompt(res) {
       let ErrTips = {
         "AuthFailure.UnauthorizedOperation":
-          "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+          "請求未授權。請參考 CAM 文件對鑒權的說明。",
         DryRunOperation:
           "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
         FailedOperation: "操作失敗。",

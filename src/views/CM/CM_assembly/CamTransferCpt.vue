@@ -104,7 +104,7 @@
           <el-table-column :label="headConfig.title2" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>VPC 網絡</p>
+                <p>VPC 網路</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{ vpcConnState[scope.row.State] }}</p>
@@ -404,13 +404,13 @@ export default {
   name: "CamTransferCpt",
   data() {
     return {
-      projectSelectedOption: 0, //選擇了一個項目
+      projectSelectedOption: 0, //選擇了一個專案
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默認項目"
+          projectName: "預設專案"
         }
-      ], //項目資源列表
+      ], //專案資源列表
       searchItem: "", //搜索项值
       multipleSelection: [],
       searchItemOptions: [], //搜索项数组
@@ -425,7 +425,7 @@ export default {
       },
       DiskType: {
         CLOUD_BASIC: "普通雲硬碟",
-        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_PREMIUM: "高效能雲硬碟",
         CLOUD_SSD: "SSD雲硬碟"
       },
       vpcConnState: {

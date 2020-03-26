@@ -5,7 +5,7 @@
     <div class="tke-grid ">
       <!-- 右侧 -->
     <!--  <div class="grid-right">
-        <span>自动刷新</span>
+        <span>自动重新整理</span>
         <el-switch class="ml10" v-model="autoRefresh"></el-switch>
       </div>-->
     </div>
@@ -73,7 +73,7 @@ export default {
       namespace: '', // 所在页面的命名空间
       ingressName: '', // 所在页面的ingress名称
       loadShow: false, // 加载是否显示
-      autoRefresh: true, // 自动刷新
+      autoRefresh: true, // 自动重新整理
       list: [] // 列表
     }
   },

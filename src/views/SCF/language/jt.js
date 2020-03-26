@@ -202,7 +202,7 @@ module.exports = {
       xzdmb: '下载代码包',
       ge: '个',
       hszysylqs: '函数资源使用量 TOP 10 统计',
-      sx: '刷新',
+      sx: '重新整理',
       sjzb: '数据指标',
       yxzy: '你已选择1个资源',
       bqj: '标签键',

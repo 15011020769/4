@@ -6,3 +6,5 @@ export const CREATE_DASHBOARD = 'monitor2/CreateDashboard'
 export const DESCRIBE_DASHBOARD_VIEWS = 'monitor2/DescribeDashboardViews'
 // 获取云产品的监控数据
 export const GET_MONITOR_DATA = 'monitor2/GetMonitorData'
+// 删除监控面板视图
+export const DELETE_DASHBOARD_VIEW = 'monitor2/DeleteDashboardView'

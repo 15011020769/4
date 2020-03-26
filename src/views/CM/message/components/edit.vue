@@ -1,6 +1,6 @@
 <template>
   <div class="create-wrap">
-    <Header title="編輯消息策略" backShow="true"></Header>
+    <Header title="編輯訊息策略" backShow="true"></Header>
     <div class="create-main">
       <div class="box">
         <p>
@@ -19,7 +19,7 @@
           <span style>告警接收組</span>
           <p class="tip">
             您可到
-            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組信息
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組訊息
             <br />
           </p>
         </div> -->
@@ -40,19 +40,19 @@ import { EDIT_CUSTON_MESSAGE } from "@/constants/CM-lxx.js";
 export default {
   data() {
     return {
-      multipleSelection: [], //穿梭框數據
-      checked1: "", //郵件
-      checked2: "", //短信
+      multipleSelection: [], //穿梭框数据
+      checked1: "", //邮件
+      checked2: "", //簡訊
       input: "",
       input1: "",
       tableData: [],
       options: [],
       values: "",
       cam: {},
-      dataObj: {}, //編輯傳的對象
+      dataObj: {}, //编辑传的对象
       formInline: {
-        strategy_name: "", //策略名稱
-        textarea: "", //備注
+        strategy_name: "", //策略名称
+        textarea: "", //备注
         strategy: "雲伺服器-基礎監控",
         strategy_kind: [
           {
@@ -61,11 +61,11 @@ export default {
           }
         ], //策略類型
         alarm: "", //策略類型
-        projectName: "默認項目",
+        projectName: "預設專案",
         project: [
           {
             value: 0,
-            name: "默認項目"
+            name: "預設專案"
           }
         ]
       }
@@ -83,7 +83,7 @@ export default {
     Console(){
       //訪問管理控制台
     },
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(data) {
       this.cam = data;
       console.log(this.cam);

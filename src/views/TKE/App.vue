@@ -31,6 +31,7 @@ export default {
   },
   mounted() {
     this.GetCity();
+    this.getPriceParams();
   },
   methods: {
     // 获取城市列表
@@ -55,6 +56,23 @@ export default {
         // localStorage存储对象或者数据，必须先转成字符串JSON.stringify存储，在用JSON.parse进行解析
         localStorage.setItem("projectList", JSON.stringify(projectList));
       });
+    },
+    //美元转台币
+    getPriceParams() {
+      var params = {};
+      this.axios.post("new/exchange", params).then(data => {
+        localStorage.setItem('usdRate', data.data.cny2usd)   // 美元汇率
+        localStorage.setItem('tpdRate', data.data.usd2twd)   // 台币汇率
+        localStorage.setItem('taRate', data.data.taxRate)   // 税率
+      });
+      // this.$http({
+      //   url: `${window.SITE_CONFIG['adminUrl']}taifucloud/texchangerate/getExchange`,
+      //   method: 'get'
+      // }).then(({ data }) => {
+      //   localStorage.setItem('cny2usd', data.cny2usd)   // 美元汇率
+      //   localStorage.setItem('usd2twd', data.usd2twd)   // 台币汇率
+      //   localStorage.setItem('taxRate', data.taxRate)   // 税率
+      // })
     }
   }
 };

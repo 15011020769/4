@@ -46,9 +46,9 @@ export default {
     return {
       msgPrice: 0,
       num: 100,
-      //购买短信 类型
+      //购买簡訊 类型
       liIndex: 0,
-      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義訊息"]
     };
   },
   props: {
@@ -126,4 +126,4 @@ export default {
     position: relative;
   }
 }
-</style>  
+</style>

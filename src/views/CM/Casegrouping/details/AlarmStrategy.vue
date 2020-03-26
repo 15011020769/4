@@ -117,7 +117,7 @@
                     {{ i.EndTime | EndTime }}
                   </p>
                   <p>
-                    渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                    管道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                       >{{ j | NotifyWay
                       }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
                     >
@@ -266,7 +266,7 @@ export default {
         } else {
           let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+                  "請求未授權。請參考 CAM 文件對鑒權的說明。",
                 DryRunOperation:
                   "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
                 FailedOperation: "操作失敗。",
@@ -379,7 +379,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -473,9 +473,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -494,9 +494,9 @@ export default {
     },
     NotifyWay(val) {
       if (val === "EMAIL") {
-        return "邮件";
+        return "郵件";
       } else if (val === "SMS") {
-        return "短信";
+        return "簡訊";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {

@@ -1,13 +1,13 @@
 <template>
     <div class="newdialog">
          <el-dialog
-            title="自定義列表字段"
+            title="自定義清單字段"
             :visible.sync="dialogVisible"
             width="40%">
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  請選擇您想顯示的列表詳細信息，最多勾選7個字段，已勾選7個
+                  請選擇您想顯示的清單詳細訊息，最多勾選7個字段，已勾選7個
                 </p>
               </div>
               <div class="checkbox">
@@ -27,11 +27,11 @@
 </template>
 
 <script>
-  const options = ['事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"];
+  const options = ['事件', '地域',"狀態","影響物件","開始時間","更新時間","事件類型"];
   export default {
     data() {
       return {
-        checkedlist: [ '事件', '地域',"狀態","影響對象","開始時間","更新時間","事件類型"],
+        checkedlist: [ '事件', '地域',"狀態","影響物件","開始時間","更新時間","事件類型"],
         cities: options,
       };
     },
@@ -51,7 +51,7 @@
     }
   };
 </script>
-<style lang="scss" scoped> 
+<style lang="scss" scoped>
 
   .newdialog{
     width: 100%;

@@ -95,6 +95,12 @@ export const TKE_SSH = 'cvm2/DescribeKeyPairs'
 // 新建集群 创建集群
 export const TKE_CREATW_CLUSTERS = 'tke2/CreateCluster'
 
+// 新建集群 创建集群
+export const TKE_CREATW_Quota = 'tke2/DescribeQuota'
+
+// 新建集群 创建集群
+export const TKE_CREATW_InstanceQuota = 'cvm2/DescribeUserInstanceQuota'
+
 // 新建集群 总费计算
 export const TKE_PRICE = 'cvm2/InquiryPriceRunInstances'
 
@@ -180,15 +186,3 @@ export const TKE_PAY_MONEY = 'cbs2/InquiryPriceCreateDisks'
 
 
 // export const TKE_PAY_MONEY = 'cbs2/InquiryPriceCreateDisks'
-
-
-
-
-
-
-
-
-
-
-
-

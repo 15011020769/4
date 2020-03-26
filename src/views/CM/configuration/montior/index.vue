@@ -39,7 +39,7 @@
             <div class="box">
               <div class="table">
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="監控對象" width="180"></el-table-column>
+                  <el-table-column prop="address" label="監控物件" width="180"></el-table-column>
                   <el-table-column prop="address" label="監控"></el-table-column>
                 </el-table>
               </div>
@@ -56,7 +56,7 @@
             <div class="box">
               <div class="table">
                 <el-table :data="tableData" style="width: 100%" height="450">
-                  <el-table-column prop="address" label="監控對象" width="180"></el-table-column>
+                  <el-table-column prop="address" label="監控物件" width="180"></el-table-column>
                   <el-table-column prop="address" label="監控" width="180"></el-table-column>
                   <el-table-column prop="address" label="aa(5分鍾，最大值)"></el-table-column>
                 </el-table>
@@ -80,7 +80,7 @@ export default {
       value1:"",
       value2:"",
       value3:"",
-      dialogVisible: false, //購買短信彈出框
+      dialogVisible: false, //購買簡訊彈出框
       input: "", //搜索框的值
       tableData: [],
       option1:[],

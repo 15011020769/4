@@ -51,7 +51,7 @@
       </el-form-item>
       <template v-if="selectType !== '純音訊'">
         <el-form-item
-          label="影音碼率(kbps)"
+          label="視頻碼率(kbps)"
           prop="VideoBitrate"
         >
           <el-input
@@ -65,7 +65,7 @@
             100K-8000K，1000K以內僅支持整百填寫，1000Kbps以上僅支持整500填寫</span
           >
         </el-form-item>
-        <el-form-item label="影音高度(px)" prop="Height">
+        <el-form-item label="視頻高度(px)" prop="Height">
           <el-input
             type="textarea"
             v-model.number="ruleForm.Height"
@@ -156,12 +156,12 @@ export default {
            { pattern: /^[\u4e00-\u9fa5\w\-]*$/, message: '描述不符要求', trigger: 'blur' }
         ],
         Height: [
-          { required: true, message: '請輸入影音高度' },
+          { required: true, message: '請輸入視頻高度' },
           {
             validator: (rule, value, callback) => {
 
               if (value < 0 || value > 3000) {
-                return void callback('影音高度範圍為0-3000')
+                return void callback('視頻高度範圍為0-3000')
               }
 
               if (value % 4 !== 0) {
@@ -173,12 +173,12 @@ export default {
           
         ],
         VideoBitrate: [
-          { required: true, message: '請輸入影音碼率' },
+          { required: true, message: '請輸入視頻碼率' },
           {
             validator(rule, VideoBitrate, callback) {
               
               if (!VideoBitrate) {
-                return void callback('請輸入影音碼率')
+                return void callback('請輸入視頻碼率')
               }
 
               if (VideoBitrate < 100 || VideoBitrate > 8000) {

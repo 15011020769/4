@@ -1,12 +1,14 @@
 <template>
   <div class="create-wrap">
-    <Header title="新建消息策略" backShow="true"></Header>
+    <Header title="新建訊息策略" backShow="true"></Header>
     <div class="create-main">
       <div class="box">
         <p class="rowCont">
           <span>策略名稱</span>
           <el-input
-            style="width:330px;margin:0"
+            maxlength="20"
+            show-word-limit
+            style="width:330px;margin:0;line-height:30px"
             v-model="formInline.strategy_name"
             placeholder="請輸入策略名稱，20字以內"
             @blur="reg"
@@ -16,7 +18,7 @@
           <span style>告警接收組</span>
           <p class="tip">
              您可到
-            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組信息
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組訊息
             <br />
           </p>
         </div> -->
@@ -35,20 +37,21 @@ import Cam from "./Cam";
 import {
   ADD_CUSTON_MESSAGE,
   RECEIVING_GROUP_DETAILE
-} from "@/constants/CM-lxx.js"; /////////
+} from "@/constants/CM-lxx.js";
 
 export default {
   data() {
     return {
+      VerifyName:false,//验证策略名称
       multipleSelection: [], //穿梭框數據
       // checked1: "", //郵件
-      // checked2: "", //短信
+      // checked2: "", //簡訊
       input: "",
       input1: "",
       tableData: [],
       options: [],
       values: "",
-      cam: {}, // cam組件的值
+      cam: {}, // cam元件的值
       formInline: {
         strategy_name: "", //策略名稱
         textarea: "", //備注
@@ -60,11 +63,11 @@ export default {
           }
         ], //策略類型
         alarm: "", //策略類型
-        projectName: "默認項目",
+        projectName: "預設專案",
         project: [
           {
             value: 0,
-            name: "默認項目"
+            name: "預設專案"
           }
         ]
       }
@@ -77,23 +80,34 @@ export default {
   methods: {
     reg() {
       //策略名
+      let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
       if (this.formInline.strategy_name == "") {
+        this.VerifyName = true
         this.$message({
           message: "策略名不能為空",
           type: "error",
           showClose: true,
           duration: 0
         });
-      } else if (this.formInline.strategy_name.length >= 20) {
+      }else if(!(rg.test(this.formInline.strategy_name))) {
+        this.VerifyName = true
         this.$message({
-          message: "策略名最多不能超過20位",
+          message: "存在非法字符,请输入1-20個中英文字符或下劃線",
           type: "error",
           showClose: true,
           duration: 0
         });
       }
+      // else if (this.formInline.strategy_name.length >= 20) {
+      //   this.$message({
+      //     message: "策略名最多不能超過20位",
+      //     type: "error",
+      //     showClose: true,
+      //     duration: 0
+      //   });
+      // }
     },
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(data) {
       this.cam = data;
     },
@@ -131,6 +145,7 @@ export default {
         });
         return;
       }
+      if(this.VerifyName) return;
       let param = {
         Version: "2018-07-24",
         Module: "monitor",

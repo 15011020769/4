@@ -179,7 +179,7 @@ export default {
       // tab内容
       tab: [
         {
-          name: '頻寬峰值',
+          name: '帶寬峰值',
           code: 'Mbps',
           value: 0
         },

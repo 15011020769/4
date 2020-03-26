@@ -121,7 +121,7 @@
           },
           {
             value: "direct-connect-gateway-name",
-            label: "網關名稱"
+            label: "閘道名稱"
           }
         ],
         //inp输入的值
@@ -213,9 +213,9 @@
         } else if (this.searchInput !== "" || this.searchValue !== "") {
           this.currpage = 1;
           this.GetTabularData();
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         } else {
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         }
       },
       // 添加项目列表的表格数据

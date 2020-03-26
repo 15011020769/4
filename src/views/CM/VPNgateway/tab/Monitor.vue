@@ -154,9 +154,9 @@
           MetricName: 'InPkg'
         }],
         disName: {
-          'InBandwidth': '外網入帶寬',
+          'InBandwidth': '外網入頻寬',
           'InPkg': '入包量',
-          'OutBandwidth': '外網出帶寬',
+          'OutBandwidth': '外網出頻寬',
           'OutPkg': ' 出包量'
         },
         Company: {
@@ -166,10 +166,10 @@
           'OutPkg': ' 個/秒'
         },
         Tips: {
-          'InBandwidth': 'VPN網關平均每秒入流量',
-          'InPkg': 'VPN網關平均每秒入包量',
-          'OutBandwidth': 'VPN網關平均每秒出流量',
-          'OutPkg': 'VPN網關平均每秒出包量'
+          'InBandwidth': 'VPN閘道平均每秒入流量',
+          'InPkg': 'VPN閘道平均每秒入包量',
+          'OutBandwidth': 'VPN閘道平均每秒出流量',
+          'OutPkg': 'VPN閘道平均每秒出包量'
         },
 
       }

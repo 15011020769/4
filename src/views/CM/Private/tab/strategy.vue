@@ -34,7 +34,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-         <p class="LiftingOperation"><a  @click="LiftingOperationEvent(scope.row.GroupID)">解除</a></p> 
+         <p class="LiftingOperation"><a  @click="LiftingOperationEvent(scope.row.GroupID)">解除</a></p>
         </template>
       </el-table-column>
     </el-table>

@@ -74,10 +74,10 @@
         TimeGranularity: [],
         timevalueStart: null,
         timevalueEnd: null,
-        datetimeval: [], // 選擇時間數據
-        visible: false, // 時間選擇器的變化
-        datetim: true, // 時間選擇器的變化
-        datetime: false, // 時間選擇器的變化
+        datetimeval: [], // 选择时间数据
+        visible: false, // 时间选择器的变化
+        datetim: true, // 时间选择器的变化
+        datetime: false, // 时间选择器的变化
         Start_End: {
           StartTIme: "",
           EndTIme: ""
@@ -120,7 +120,7 @@
       SwitchGrain() {
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
-      // 返回橫坐標數組
+      // 返回橫坐標陣列
       getXAxis(startTime, endTime) {
         let startTimeSec = new Date(startTime).getTime();
         let endTimeSec = new Date(endTime).getTime();

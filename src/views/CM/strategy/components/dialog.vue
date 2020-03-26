@@ -1,25 +1,25 @@
 <template>
   <div class="wrap">
     <el-dialog
-      title="自定義列表字段"
+      title="自定義清單字段"
       :visible.sync="dialogVisible"
       width="40%"
       :close-on-click-modal="false"
     >
       <div class="dialog">
         <div class="explain">
-          <p>所購短信配額沒有使用限時，用完爲止</p>
+          <p>所購簡訊配額沒有使用限時，用完爲止</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">
             <p>
               <el-checkbox label="策略名稱"></el-checkbox>
               <el-checkbox label="觸發條件"></el-checkbox>
-              <el-checkbox label="所屬項目"></el-checkbox>
+              <el-checkbox label="所屬專案"></el-checkbox>
               <el-checkbox label="策略類型" disabled></el-checkbox>
               <el-checkbox label="已啓用/實例數" disabled></el-checkbox>
               <el-checkbox label="最後修改"></el-checkbox>
-              <el-checkbox label="告警渠道"></el-checkbox>
+              <el-checkbox label="告警管道"></el-checkbox>
             </p>
             <p>
 
@@ -45,9 +45,9 @@ export default {
       checkList: ["選中且禁用", "複選框 A"],
       msgPrice: 0,
       num: 100,
-      //購買短信 類型
+      //購買簡訊 類型
       liIndex: 0,
-      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義訊息"]
     };
   },
   props: {
@@ -138,4 +138,4 @@ export default {
 .dialog-footer {
   text-align: center;
 }
-</style>  
+</style>

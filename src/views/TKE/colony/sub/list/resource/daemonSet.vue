@@ -493,7 +493,7 @@ export default {
       this.searchInput = val;
       this.getDaemonSetList();
     },
-    //刷新数据
+    //重新整理数据
     refreshList() {
       this.getDaemonSetList();
     },

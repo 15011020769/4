@@ -7,8 +7,8 @@
           <div class="history-main">
             <!-- <div class="explain" style="margin-bottom:20px;">
               <p>
-                當月短信配額已用 0 條，剩余 1000 條可用。
-                <a @click="buyMessgae">購買短信</a>
+                當月簡訊配額已用 0 條，剩余 1000 條可用。
+                <a @click="buyMessgae">購買簡訊</a>
               </p>
             </div>-->
             <div class="box">
@@ -24,7 +24,7 @@
                   <!-- <XTimeX v-on:switchData="getBasicsList" :classsvalue="value"></XTimeX> -->
                 </div>
                 <div class="seek">
-                  <el-input v-model="input" placeholder="請輸入告警對象" @input="searchName"></el-input>
+                  <el-input v-model="input" placeholder="請輸入告警物件" @input="searchName"></el-input>
                   <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchBtn"></el-button>
                 </div>
                 <div class="icons">
@@ -55,12 +55,12 @@
                       </el-tooltip>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="告警對象" width="180">
+                  <el-table-column prop label="告警物件" width="180">
                     <template slot-scope="scope">
                       <el-tooltip
                         class="item"
                         effect="dark"
-                        :content="'告警對象:'+scope.row.ObjName"
+                        :content="'告警物件:'+scope.row.ObjName"
                         placement="bottom-start"
                       >
                         <div
@@ -86,8 +86,8 @@
                   <el-table-column prop label="持續時長" width="120">
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
-                  <el-table-column prop label="告警渠道" width="130">
-                    <template slot-scope="scope">郵件、短信</template>
+                  <el-table-column prop label="告警管道" width="130">
+                    <template slot-scope="scope">郵件、簡訊</template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">
                     <template slot-scope="scope">
@@ -133,12 +133,12 @@
                       <a @click="setStrategy(scope.row)">{{scope.row.GroupName}}</a>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="所屬網絡" width="120">
+                  <el-table-column prop label="所屬網路" width="120">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.Vpc=='1'">VPC網絡</div>
+                      <div v-if="scope.row.Vpc=='1'">VPC網路</div>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="所屬項目" width="120">
+                  <el-table-column prop label="所屬專案" width="120">
                     <template slot-scope="scope">{{scope.row.ProjectName}}</template>
                   </el-table-column>
                   <el-table-column prop label="所屬實例組" width="180">
@@ -178,7 +178,7 @@
       </el-tabs>
     </div>
 
-    <!-- 購買短信 -->
+    <!-- 購買簡訊 -->
     <buymsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" />
     <!-- 配置表格顯示參數 -->
     <Dialog :dialogVisible1="dialogVisible1" @cancel="cancel1" @save1="save1" />
@@ -201,13 +201,13 @@ export default {
   name: "history",
   data() {
     return {
-      loadShow: true, // 加載是否顯示
+      loadShow: true, // 加载是否显示
       activeName: "first",
       value: 1,
-      dialogVisible: false, //購買短信彈出框
+      dialogVisible: false, //购买簡訊弹出框
       input: "", //搜索框的值
-      tableData: [], //列表數據
-      dialogVisible1: false, //設置顯示參數彈框
+      tableData: [], //列表数据
+      dialogVisible1: false, //设置显示参数弹框
       timeObjs: [],
       TimeArr: [
         {
@@ -267,10 +267,10 @@ export default {
           ]
         }
       ],
-      //分頁
-      totals: 0, //總條數
-      pageSize: 10, //每頁10條
-      pageIndex: 1, // 當前頁碼
+      //分页
+      totals: 0, //总条数
+      pageSize: 10, //每页10条
+      pageIndex: 1, // 当前页码
       StartTime: "",
       EndTime: "",
       Period: {}
@@ -283,7 +283,7 @@ export default {
     Dialog
   },
   created() {
-    this.getBasicsList(); //獲取基礎告警列表
+    this.getBasicsList(); //获取基础告警列表
   },
   methods: {
     GetDate(val) {
@@ -372,8 +372,8 @@ export default {
           Offset: (this.pageIndex - 1) * this.pageSize
         };
         params.ObjLike = this.input;
-        params.StartTime = Date.parse(this.StartTime) / 1000; //開始時間戳
-        params.EndTime = new Date(this.EndTime).getTime()/1000; //結束時間戳
+        params.StartTime = Date.parse(this.StartTime) / 1000; //开始时间戳
+        params.EndTime = new Date(this.EndTime).getTime()/1000; //结束时间戳
       } else {
         var params = {
           Region: localStorage.getItem("regionv2"),
@@ -449,14 +449,14 @@ export default {
           new Blob([wbout], {
             type: "application/octet-stream"
           }),
-          "告警曆史—基礎告警告警列表.xlsx"
+          "告警曆史—基礎告警告警清單.xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);
       }
       return wbout;
     },
-    //購買短信
+    //購買簡訊
     buyMessgae() {
       this.dialogVisible = true;
     },

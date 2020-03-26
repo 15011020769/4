@@ -1,9 +1,9 @@
 <template>
   <div class='container-min' v-loading="loadShow">
     <el-card class="card1">
-      <h4 class="title-text">基本信息</h4>
+      <h4 class="title-text">基本訊息</h4>
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="模板名稱" class="form-item">
+        <el-form-item label="範本名稱" class="form-item">
           <div class="item-text">
             {{infoData.GroupName}}
             <!-- <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i> -->
@@ -32,8 +32,8 @@
       </h4>
       <p class="text-color1">指標告警(任意)</p>
       <p class="text-color2" v-for="(it) in infoData.Conditions" :key="it.MetricDisplayName">
-        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持續${it.continueTime}秒,按${it.calcType}天重複告警` }} -->
-        {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''},持續${it.ContinueTime/60}分鍾,${it.alarm}` }}
+        <!-- {{ `${it.metricShowName}>${it.calcValue}${it.unit},持續${it.continueTime/60}秒,按${it.calcType}天重複告警` }} -->
+        {{ `${it.MetricDisplayName}${it.CalcType||'-'}${it.CalcValue||'-'}${it.Unit||''}, 持續${it.ContinueTime}分鍾, ${it.alarm}` }}
       </p>
       <p class="text-color1" v-if="infoData.EventConditions&&infoData.EventConditions.length>0">事件告警</p>
       <p class="text-color2" v-for="(it) in infoData.EventConditions" :key="it.EventDisplayName">
@@ -48,7 +48,7 @@
             <a :href="`#/strategy/createdetail?groupId=${scope.row.GroupID}`" class="gpn">{{scope.row.GroupName}}</a>
           </template>
         </el-table-column>
-        <el-table-column label="所屬項目">
+        <el-table-column label="所屬專案">
           <template slot-scope="scope">
             {{ scope.row.ProjectID | ProjectName }}
           </template>
@@ -59,14 +59,14 @@
               <!-- <p>{{'組: '+scope.row.instanceGroup.groupName}}</p> -->
            </template>
         </el-table-column>
-        <el-table-column label="告警渠道">
+        <el-table-column label="告警管道">
           <template slot-scope="scope">
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
               <p>接收組:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'個':'0個'}}</p>
               <p>有效期:&nbsp;{{'00:00:00 - 23:59:59'}}</p>
-              <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
-              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
+              <!-- <p>{{'管道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
+              <p>管道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
             </div>
           </template>
           <!-- <span v-else>{{'-'}}</span> -->
@@ -75,25 +75,25 @@
       <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 項</div>
     </el-card>
     <!-- 修改名稱彈框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件模板名稱">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件範本名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
       <div>
         <el-input maxlength="20" v-model="editGroupName" style="width:200px;margin-top:20px" size="small"></el-input>
-        <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
-        <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
+        <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
+        <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitName()">保 存</el-button>
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件模板備注">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板備注</p> -->
+    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件範本備注">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本備注</p> -->
       <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
         <!-- <el-form-item prop="remark"> -->
           <div>
           <el-input type="textarea" rows="5" maxlength="100" v-model="editRemark" show-word-limit></el-input>
-          <p v-if="editRemark.length==100" class="edit-text-tips">條件模板備注不能超過100個字符</p>
+          <p v-if="editRemark.length==100" class="edit-text-tips">條件範本備注不能超過100個字符</p>
           </div>
         <!-- </el-form-item> -->
       <!-- </el-form> -->
@@ -103,16 +103,16 @@
       </span>
     </el-dialog>
     <!-- 告警触发条件编辑弹框 -->
-     <!-- @open="loadShow=true" -->
-    <el-dialog class="dil" @open="openEditloadShow=true" :visible.sync="showDelDialog3" width="65%">
+     <!--  @open="openEditloadShow=true"   @open="openEdit()"-->
+    <el-dialog @open="openEditloadShow=true" class="dil" :visible.sync="showDelDialog3" width="65%">
       <p class="title">修改觸發條件</p>
       <p class="rowCont" style="display: flex;margin-bottom:20px" v-show="showProductType">
         <span>策略類型</span>
         <product-type-cpt v-on:PassData="passData" :projectId='projectId' :searchParam='searchParam'
-    <!-- 修改备注弹框 -->
         :productValue='productValue'/>
          <!-- @loading="isLoading"  -->
       </P>
+      <!--  v-loading="loadShow" -->
       <div>
         <div style="display:flex">
           <span style="display: inline-block;width: 80px;">觸發條件</span>
@@ -136,6 +136,7 @@
                 </el-select>
                 <span>條件時，觸發告警</span>
               </p>
+              <!-- -->
               <ul v-loading="openEditloadShow">
                 <!-- <li style="display:flex;align-items: center;cursor: pointer;"> -->
                 <li style="display:flex;align-items: center;cursor: pointer;" v-for="(it,i) in indexAry" :key="i">
@@ -184,7 +185,7 @@
                       style="padding:0 10px;display:inline-block;height: 30px;line-height: 30px;width:52px;border: 1px solid #dcdfe6;"
                     >{{it.Unit||'&nbsp;'}}</b>
                     &nbsp;
-                    <el-select :disabled="isDisabled" v-model="it.ContinuePeriod" style="width:110px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.ContinueTime" style="width:110px;" size="small">
                       <el-option
                         v-for="(item,index) in continuePeriod"
                         :key="index"
@@ -194,7 +195,7 @@
                       ></el-option>
                     </el-select>&nbsp;
                     <span style="width:30px" v-if="UnionRule!==1" >then</span>&nbsp;
-                    <el-select :disabled="isDisabled" v-model="it.alarm" v-if="UnionRule!==1" style="width:150px;" size="small">
+                    <el-select :disabled="isDisabled" v-model="it.RepeatedAlarm" v-if="UnionRule!==1" style="width:150px;" size="small">
                       <el-option
                         v-for="(item,index) in jinggaoZQ"
                         :key="index"
@@ -206,7 +207,7 @@
                     <el-popover v-if="UnionRule!==1" placement="top" trigger="hover" width="300">
                       <div>
                         <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
-                        <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
+                        <p style="font-size:12px">週期指數遞增通知: 告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知</p>
                       </div>
                       <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                     </el-popover>
@@ -231,7 +232,7 @@
                 <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
                   <div>
                     <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
-                    <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
+                    <p style="font-size:12px">週期指數遞增通知: 告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知</p>
                   </div>
                   <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                 </el-popover>
@@ -263,7 +264,7 @@
                 <i class="rubbish-icon"></i>
               </ul>
             </div> -->
-            <p class="red-text">{{`該告警觸發條件模板已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
+            <p class="red-text">{{`該告警觸發條件範本已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
@@ -305,20 +306,20 @@ export default {
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
       total: 0, // 告警策略列表总数
-      id: '', // 模板id
-      editGroupName: '', // 编辑的模板名称
+      id: '', // 範本id
+      editGroupName: '', // 编辑的範本名称
       editRemark: '', // 编辑的备注
       Conditions: [], // 策略类型
-      tongjiZQ: [{ label: '統計周期1分鍾', value: 60 }, { label: '統計周期5分鍾', value: 300 }],
+      tongjiZQ: [{ label: '統計週期1分鍾', value: 60 }, { label: '統計週期5分鍾', value: 300 }],
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
-      continuePeriod: [// 持续周期
-        { label: '持續1個周期', value: 1 },
-        { label: '持續2個周期', value: 2 },
-        { label: '持續3個周期', value: 3 },
-        { label: '持續4個周期', value: 4 },
-        { label: '持續5個周期', value: 5 }
+      continuePeriod: [// 持续週期
+        { label: '持續1個週期', value: 1 },
+        { label: '持續2個週期', value: 2 },
+        { label: '持續3個週期', value: 3 },
+        { label: '持續4個週期', value: 4 },
+        { label: '持續5個週期', value: 5 }
       ],
-      jinggaoZQ: [// 警告周期
+      jinggaoZQ: [// 警告週期
         { label: '不重複', value: 0 },
         { label: '每5分鍾警告壹次', value: 300 },
         { label: '每10分鍾警告壹次', value: 600 },
@@ -330,7 +331,7 @@ export default {
         { label: '每6小時警告壹次', value: 21600 },
         { label: '每12小時警告壹次', value: 43200 },
         { label: '每1天警告壹次', value: 86400 },
-        { label: '周期指數遞增', value: 1 }
+        { label: '週期指數遞增', value: 1 }
       ],
       formInline: {
         jieshou: '接收組',
@@ -362,22 +363,22 @@ export default {
           }
         ], // 策略类型
         alarm: '', // 策略类型
-        projectName: '默认项目',
+        projectName: '預設專案',
         project: [
           {
             value: 0,
-            name: '默认项目'
+            name: '預設專案'
           }
         ]
       },
-      indexAry: [], // 指标告警数组
+      indexAry: [], // 编辑弹框打开后的指标告警数组
       eventAry: [], // 事件告警数组
       zhibiaoType: [], // 触发条件数据
       meetConditions: [{ label: '任意', value: 0 }, { label: '所有', value: 1 }], // 满足条件
       UnionRule: 0, // 双向绑定的满足条件
       all_alarm: 86400, // 满足条件为 所有 时告警值
       groupList: [], // 策略组列表
-      channelList: [], // 渠道列表
+      channelList: [], // 管道列表
       PolicyGrouplist: [], // 关联政策组列表
       allProjectName: [], // 项目名称列表
       projectId: 0,
@@ -418,7 +419,7 @@ export default {
   },
   methods: {
     async getInfo () {
-      await this.getPolicyType()
+      // await this.getPolicyType()
       await this.getProjectName()
       await this.getDetailInfo()
       // await this.getPolicyGroupList()
@@ -488,125 +489,158 @@ export default {
             // ct.forEach((k, j) => {
             //   if (ele.ViewName === k.PolicyViewName) {
             //     ele['Name'] = k.Name
-            //   }
-            // })
-            this.indexAry = ele.Conditions// 编辑触发条件
-            this.indexAry.forEach((item,i)=>{
-              let time = item.Period / 60// 编辑触发条件
-              let num = item.ContinueTime / (time * 60)// 编辑触发条件
-              item['Period'] = `統計周期${time}分鍾`// 編輯觸發條件
-              item['ContinuePeriod'] = `持續${num}個周期`// 編輯觸發條件
-              let time1 = item.AlarmNotifyPeriod / 60
-              let time2 = item.AlarmNotifyPeriod / (60 * 60)
-              if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = 0// 编辑触发条件
-              } else if (item.AlarmNotifyType == 1) {
-                item.alarm = 1// 编辑触发条件
-              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              } else {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              }
-            })
+            //   }RepeatedAlarm
+            // }) 
+            this.indexAry = ele.Conditions           
             ele.Conditions.forEach((item, i) => {
               let ct = Number(item.CalcType)
               item.CalcType = this.SymbolList[ct - 1]
+              let time = item.Period / 60
+              let num = item.ContinueTime / (time * 60)
+              item['ContinueTime'] = Number(num)
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重複告警'
+                this.indexAry[i].RepeatedAlarm = 0
+                this.all_alarm = 0
               } else if (item.AlarmNotifyType == 1) {
                 item.alarm = '按周期指數遞增重複告警'
-              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
+                this.indexAry[i].RepeatedAlarm = 1
+                this.all_alarm = 1
+              } else if (item.AlarmNotifyPeriod > 0 && time1 <= 30) {
                 item.alarm = `按${time1}分鍾重複告警`
+                this.indexAry[i].RepeatedAlarm = item.AlarmNotifyPeriod
+                this.all_alarm = item.AlarmNotifyPeriod
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
                 item.alarm = `按${time2}小時重複告警`
+                this.indexAry[i].RepeatedAlarm = item.AlarmNotifyPeriod
+                this.all_alarm = item.AlarmNotifyPeriod
               } else {
                 item.alarm = '按1天重複告警'
+                this.indexAry[i].RepeatedAlarm = item.AlarmNotifyPeriod
+                this.all_alarm = item.AlarmNotifyPeriod
+              }
+              if (ele.IsUnionRule === 0) {
+                this.UnionRule = 0
+              } else if (ele.IsUnionRule === 1) {
+                this.UnionRule = 1
               }
             })
-            this.infoData = ele
-            if (ele.IsUnionRule === 0) { // 編輯觸發條件
-              this.UnionRule = 0
-            } else if (ele.IsUnionRule === 1) {
-              this.UnionRule = 1
-            }
+            this.infoData = ele            
             this.eventAry = ele.EventConditions// 編輯觸發條件
           })
           // this.infoData = msg[0]
           this.loadShow = false
         } else {
           this.loadShow = false
-          let ErrTips = {}
-          let ErrOr = Object.assign(ErrorTips, ErrTips)
-          this.$message({
-            message: ErrOr[res.Response.Error.Code],
-            type: 'error',
-            showClose: true,
-            duration: 0
-          })
+          this.errorPrompt(res)
         }
       })
     },
     passData (item) {
-      // console.log(132, item)
-      // this.productData = item
-      // this.zhibiaoType = item.MetricName
       this.zhibiaoType = item.Metrics
       this.productValue = item.productValue
       this.$nextTick(() => {
         this.openEditloadShow = false
       })
     },
+    //打开编辑弹框的回调
+    openEdit(){
+      this.showDelDialog3 = true
+      // let params = {
+      //   Version: '2018-07-24',
+      //   Module: 'monitor',
+      //   GroupID: this.id
+      // }
+      // await this.axios.post(GET_CONDITIONSTEMPLATELIST, params).then(res=>{
+      //   if (res.Response.Error === undefined){
+      //     var msg = res.Response.TemplateGroupList
+      //     msg.forEach(ele=>{            
+      //       ele.Conditions.forEach((item,i)=>{
+      //         let ct = Number(item.CalcType)
+      //         item.CalcType = this.SymbolList[ct - 1]
+      //         let time = item.Period / 60
+      //         let num = item.ContinueTime / (time * 60)
+      //         item['ContinueTime'] = Number(num)
+      //         let time1 = item.AlarmNotifyPeriod / 60
+      //         let time2 = item.AlarmNotifyPeriod / (60 * 60)
+      //         if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
+      //           item.alarm = 0
+      //         } else if (item.AlarmNotifyType == 1) {
+      //           item.alarm = 1
+      //         } else if (item.AlarmNotifyPeriod > 0 && time1 <= 30) {
+      //           item.alarm = item.AlarmNotifyPeriod
+      //         } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
+      //           item.alarm = item.AlarmNotifyPeriod
+      //         } else {
+      //           item.alarm = item.AlarmNotifyPeriod
+      //         }
+      //       })
+      //       this.indexAry = ele.Conditions
+      //       if (ele.IsUnionRule === 0) {
+      //         this.UnionRule = 0
+      //       } else if (ele.IsUnionRule === 1) {
+      //         this.UnionRule = 1
+      //       }
+      //     })
+      //   }else{
+      //     this.errorPrompt(res)
+      //   }
+      // })
+    },
     // 保存編輯條件模板
     submitEdit () {
-    //   let { GroupID, GroupName, ViewName } = this.infoData
-    //   let params = {
-    //     Version: '2018-07-24',
-    //     Module: 'monitor',
-    //     IsUnionRule: this.UnionRule,
-    //     GroupID: GroupID,
-    //     ViewName: ViewName,
-    //     GroupName: GroupName
-    //   }
-    //   this.indexAry.forEach((ele, i) => {
-    //     params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
-    //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
-    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計周期
-    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持續周期
-    //     this.SymbolList.forEach((item3, index) => {
-    //       var CT
-    //       if (ele.CalcType == item3) {
-    //         CT = index + 1
-    //         params[`Conditions.${i}.CalcType`] = CT// 符號
-    //       }
-    //     })
-    //     this.jinggaoZQ.forEach(item4 => {
-    //       var AM
-    //       if (ele.alarm == item4.value && ele.alarm !== 1) {
-    //         AM = item4.value
-    //         params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
-    //         params[`Conditions.${i}.AlarmNotifyType`] = 0
-    //       }
-    //       if (ele.alarm == 1) {
-    //         // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
-    //         params[`Conditions.${i}.AlarmNotifyType`] = 1
-    //       }
-    //     })
-    //     if (this.UnionRule == 1 && this.all_alarm !== 1) {
-    //       params[`Conditions.${i}.AlarmNotifyPeriod`] = this.all_alarm
-    //       params[`Conditions.${i}.AlarmNotifyType`] = 0
-    //     } else if (this.UnionRule == 1 && this.all_alarm == 1) {
-    //       params[`Conditions.${i}.AlarmNotifyType`] = 1
-    //     }
-    //   })
-    //   this.axios.post(EDIT_TEMPLATE, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       console.log(res)
-    //     }
-    //   })
+      let { GroupID, GroupName, ViewName } = this.infoData
+      let params = {
+        Version: '2018-07-24',
+        Module: 'monitor',
+        IsUnionRule: this.UnionRule,
+        GroupID: GroupID,
+        ViewName: ViewName,
+        GroupName: GroupName
+      }
+      this.indexAry.forEach((ele, i) => {
+        params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
+        params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
+        params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計周期
+        params[`Conditions.${i}.ContinuePeriod`] = ele.ContinueTime// 持續周期
+        this.SymbolList.forEach((item3, index) => {
+          var CT
+          if (ele.CalcType == item3) {
+            CT = index + 1
+            params[`Conditions.${i}.CalcType`] = CT// 符號
+          }
+        })
+        this.jinggaoZQ.forEach(item4 => {
+          var AM
+          if (ele.RepeatedAlarm == item4.value && ele.RepeatedAlarm !== 1) {
+            AM = item4.value
+            params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
+            params[`Conditions.${i}.AlarmNotifyType`] = 0
+          }
+          if (ele.RepeatedAlarm == 1) {
+            // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
+            params[`Conditions.${i}.AlarmNotifyType`] = 1
+          }
+        })
+        if (this.UnionRule == 1 && this.all_alarm !== 1) {
+          params[`Conditions.${i}.AlarmNotifyPeriod`] = this.all_alarm
+          params[`Conditions.${i}.AlarmNotifyType`] = 0
+        } else if (this.UnionRule == 1 && this.all_alarm == 1) {
+          params[`Conditions.${i}.AlarmNotifyType`] = 1
+        }
+      })
+      this.axios.post(EDIT_TEMPLATE, params).then(res => {
+        if (res.Response.Error === undefined) {
+          this.showDelDialog3 = false
+          this.getDetailInfo()
+        }else{
+          this.showDelDialog3 = false
+          this.errorPrompt(res)
+
+        }
+      })
     },
     // 獲取策略組列表(未完成  參數有誤)
     async getPolicyGroupList () {
@@ -630,7 +664,7 @@ export default {
                 if (item === 'EMAIL') {
                   this.channelList.push('郵件')
                 } else if (item === 'SMS') {
-                  this.channelList.push('短信')
+                  this.channelList.push('簡訊')
                 } else if (item === 'WECHAT') {
                   this.channelList.push('微信')
                 }
@@ -639,7 +673,6 @@ export default {
           })
           this.groupList = msg
           this.loadShow = false
-          console.log(res)
         } else {
           this.loadShow = false
           let ErrTips = {}
@@ -726,17 +759,6 @@ export default {
       // return moment(value).format('YYYY/MM/DD HH :mm:ss')
       return moment(value).format('HH :mm:ss')
     },
-    // 告警觸發條件彈框(未完成)
-    // openEdit () {
-    //   this.showDelDialog3 = true
-    //   let params = {
-    //     lang: 'zh',
-    //     namespace: 'qce/cvm'
-    //   }
-    //   this.axios.post(DESCRIBE_METRICS, params).then(res => {
-    //     // console.log(res)
-    //   })
-    // },
     addZhibiao () { // 添加觸發條件的指標告警
       let { zhibiaoType } = this
       for (let i = 0; i < zhibiaoType.length; i++) {
@@ -749,33 +771,24 @@ export default {
             Period: 60,
             CalcType: '>',
             CalcValue: '0',
-            ContinuePeriod: 1,
+            ContinueTime: 1,
             MetricID: zhibiaoType[i].MetricId,
             Unit: zhibiaoType[i].MetricUnit,
-            alarm: 86400
+            RepeatedAlarm: 86400
           })
           return
         }
       }
-      // 如果不 return 就把數組第壹個push進來
+      // 如果不 return 就把陣列第壹個push進來
       this.indexAry.push({
         Period: 60,
         CalcType: '>',
         CalcValue: '0',
-        ContinuePeriod: 1,
+        ContinueTime: 1,
         MetricID: zhibiaoType[0].MetricId,
         Unit: zhibiaoType[0].MetricUnit,
-        alarm: 86400
+        RepeatedAlarm: 86400
       })
-      // this.indexAry.push(
-      //   {
-      //     Period: '統計周期1分鍾',
-      //     CalcType: '>',
-      //     CalcValue: '0',
-      //     ContinuePeriod: '持續1個周期',
-      //     alarm: '每1天警告壹次'
-      //   }
-      // )
     },
     delZhibiao (it) { // 刪除觸發條件的指標告警
       var index = this.indexAry.indexOf(it)
@@ -815,11 +828,11 @@ export default {
             }
           ], // 策略類型
           alarm: '', // 策略類型
-          projectName: '默認項目',
+          projectName: '預設專案',
           project: [
             {
               value: 0,
-              name: '默認項目'
+              name: '預設專案'
             }
           ]
         }
@@ -830,7 +843,55 @@ export default {
       if (index !== -1) {
         this.eventAry.splice(index, 1)
       }
-    }
+    },
+    // 錯誤提示
+    errorPrompt (res) {
+      let ErrTips = {
+        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文檔對鑒權的說明。',
+        'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
+        'FailedOperation': '操作失敗。',
+        'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
+        'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
+        'FailedOperation.AlertPolicyDeleteFailed': '告警策略刪除失敗。',
+        'FailedOperation.AlertPolicyDescribeFailed': '告警策略查詢失敗。',
+        'FailedOperation.AlertPolicyModifyFailed': '告警策略修改失敗。',
+        'FailedOperation.AlertTriggerRuleDeleteFailed': '刪除觸發條件失敗。',
+        'FailedOperation.DbQueryFailed': '數據庫查詢失敗。',
+        'FailedOperation.DbRecordCreateFailed': '創建數據庫記錄失敗。',
+        'FailedOperation.DbRecordDeleteFailed': '數據庫記錄刪除失敗。',
+        'FailedOperation.DbRecordUpdateFailed': '數據庫記錄更新失敗。',
+        'FailedOperation.DbTransactionBeginFailed': '數據庫事務開始失敗。',
+        'FailedOperation.DbTransactionCommitFailed': '數據庫事務提交失敗。',
+        'FailedOperation.DimQueryRequestFailed': '請求維度查詢服務失敗。',
+        'FailedOperation.DruidQueryFailed': '查詢分析數據失敗。',
+        'FailedOperation.DuplicateName': '名字重複。',
+        'FailedOperation.ServiceNotEnabled': '服務未啓用，開通服務後方可使用。',
+        'InternalError': '內部錯誤。',
+        'InternalError.ExeTimeout': '執行超時。',
+        'InvalidParameter': '參數錯誤。',
+        'InvalidParameter.InvalidParameter': '參數錯誤。',
+        'InvalidParameter.InvalidParameterParam': '參數錯誤。',
+        'InvalidParameterValue': '無效的參數值。',
+        'LimitExceeded': '超過配額限制。',
+        'LimitExceeded.MetricQuotaExceeded': '指標數量達到配額限制，禁止含有未注冊指標的請求。',
+        'MissingParameter': '缺少參數錯誤。',
+        'ResourceInUse': '資源被占用。',
+        'ResourceInsufficient': '資源不足。',
+        'ResourceNotFound': '資源不存在。',
+        'ResourceUnavailable': '資源不可用。',
+        'ResourcesSoldOut': '資源售罄。',
+        'UnauthorizedOperation': '未授權操作。',
+        'UnknownParameter': '未知參數錯誤。',
+        'UnsupportedOperation': '操作不支持。'
+      }
+      let ErrOr = Object.assign(ErrorTips, ErrTips)
+      this.$message({
+        message: ErrOr[res.Response.Error.Code],
+        type: 'error',
+        showClose: true,
+        duration: 0
+      })
+    },
   },
   filters: {
     formatDate (value) {
@@ -850,7 +911,7 @@ export default {
     },
     ProjectName (val) {
       if (val == 0) {
-        return '默認項目'
+        return '預設專案'
       }
       if (this.allProjectName) {
         for (let i in this.allProjectName) {
@@ -864,7 +925,7 @@ export default {
       if (val === 'EMAIL') {
         return '郵件'
       } else if (val === 'SMS') {
-        return '短信'
+        return '簡訊'
       } else if (val === 'WECHAT') {
         return '微信'
       } else if (val === 'CALL') {
@@ -878,13 +939,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -894,7 +955,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '對象存儲'
+          return '物件儲存'
         }
       }
     }

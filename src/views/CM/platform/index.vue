@@ -42,7 +42,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="EventStatus" label="狀態" ></el-table-column>
-            <el-table-column prop label="影響對象" >
+            <el-table-column prop label="影響物件" >
               <template slot-scope="scope">
                 <p>{{scope.row.AffectResource}}</p>
               </template>
@@ -99,7 +99,7 @@ export default {
       searchOptions: [
           {
             value: "InstanceId.0",
-            label: "影響對象ID"
+            label: "影響物件ID"
           },
           // {
           //   value: "EventName.0",
@@ -114,16 +114,16 @@ export default {
           //   label: "事件類型"
           // },
       ],
-      searchValue: "", //inp輸入的值
+      searchValue: "", //inp输入的值
 
-      loadShow: true, // 加載是否顯示
+      loadShow: true, // 加载是否显示
       tableData: [],
-      StartTime: "", //起始時間
-      EndTime: "", //結束時間
-      //分頁
-      TotalCount: 0, //總條數
-      pageSize: 10, // 分頁條數
-      pageIndex: 1, // 當前頁碼
+      StartTime: "", //起始时间
+      EndTime: "", //结束时间
+      //分页
+      TotalCount: 0, //总条数
+      pageSize: 10, // 分页条数
+      pageIndex: 1, // 当前页码
       TimeArr: [
 
           {
@@ -254,7 +254,7 @@ export default {
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.GetPlatformList();
         } else {
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         }
       },
     //导出表格
@@ -317,9 +317,9 @@ export default {
           cursor: pointer;
         }
       }
-     
+
   }
-  
+
   .table {
     width: 100%;
     background: white;
@@ -356,4 +356,4 @@ export default {
     line-height: 32px;
   }
 }
-</style>  
+</style>

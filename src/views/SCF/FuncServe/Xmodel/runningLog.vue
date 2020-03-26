@@ -284,7 +284,7 @@
         // height:auto;
         height: 800px;
         overflow: auto;
-        width: 260px;
+        width: 280px;
         border-right: 1px solid #ddd;
 
         ul {

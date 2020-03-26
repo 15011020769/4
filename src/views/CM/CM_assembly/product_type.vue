@@ -9,15 +9,15 @@
 <script>
   import {
     CVM_LIST, //云服务器列表
-    NAT_LIST, //NAT網關列表
-    VPN_LIST, //VPN網關列表
+    NAT_LIST, //NAT网关列表
+    VPN_LIST, //VPN网关列表
     VPNTD_LIST, //VPN通道列表
-    DCG_LIST, //专线網關列表
+    DCG_LIST, //专线网关列表
     MYSQL_LIST, //MYSQL列表
     REDIS_LIST, //REDIS列表
-    Physics_LIST, //物理專線列表
+    Physics_LIST, //物理专线列表
     Private_LIST, //专线通道列表
-    OBJ_LIST, //對象存儲列表
+    OBJ_LIST, //对象存储列表
     DISK_LIST, //云硬碟列表
     CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
@@ -52,16 +52,16 @@
             viewName: 'BS',
           },
           {
-            label: 'VPN網關',
+            label: 'VPN閘道',
             viewName: 'VPN_GW',
           }, {
             label: 'VPN通道',
             viewName: 'vpn_tunnel',
           }, {
-            label: 'NAT網關',
+            label: 'NAT閘道',
             viewName: 'nat_tc_stat',
           }, {
-            label: '专线網關',
+            label: '专线閘道',
             viewName: 'DC_GW',
           }, {
             label: 'MYSQL',
@@ -73,14 +73,14 @@
             label: '物理專線',
             viewName: 'dcline',
           }, {
-            label: '對象存儲',
+            label: '物件儲存',
             viewName: 'COS',
           }
         ],
-        Date: [], //各個产品數组
+        Date: [], //各个产品数组
         HeadConfig: {}, //头部设置
         SearchConfig: [], //搜索设置
-        Namespace: 'QCE/CVM', //各产品调取监控數據命名空间
+        Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
         MetricName: [],
         id: '',
         Pass: {},
@@ -164,7 +164,7 @@
           Version: "2017-03-12",
         }
         // this.searchParam.label !== undefined &&
-        if ( this.searchParam.value !== undefined) {
+        if (this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;
           parms["Filters.0.Values.0"] = this.searchParam.value;
           parms["Filters.1.Name"] = 'project-id';
@@ -210,10 +210,10 @@
               value: 'base_cpu_usage'
             },
             {
-              label: '内存使用量(MB)',
+              label: '記憶體使用量(MB)',
               value: 'mem_used'
             }, {
-              label: '内存利用率%',
+              label: '記憶體利用率%',
               value: 'mem_usage'
             },
             {
@@ -257,7 +257,7 @@
           this._PassValue()
         });
       },
-      // 获取NAT網關列表
+      // 获取NAT閘道列表
       _GetNat() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -310,7 +310,7 @@
           this._PassValue()
         });
       },
-      // 获取VPN網關列表
+      // 获取VPN閘道列表
       _GetVPNG() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -384,7 +384,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '所屬網路',
-            title3: 'VPN網關',
+            title3: 'VPN閘道',
           }
           this.MetricName = [{
               label: '網路出頻寬(Mbps)',
@@ -414,7 +414,7 @@
           this._PassValue()
         });
       },
-      // 获取专线網關列表
+      // 获取专线閘道列表
       _GetPRI() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -434,7 +434,7 @@
             },
             {
               value: "direct-connect-gateway-name",
-              label: "網關名稱"
+              label: "閘道名稱"
             }
           ]
           this.HeadConfig = {
@@ -521,7 +521,7 @@
               value: 'com_insert'
             },
             {
-              label: '覆蓋數(次/秒)',
+              label: '涵蓋數(次/秒)',
               value: 'com_replace'
             },
             {
@@ -549,11 +549,11 @@
               value: 'bytes_received'
             },
             {
-              label: '緩存使用率(%)',
+              label: '快取使用率(%)',
               value: 'qcache_use_rate',
             },
             {
-              label: '緩存命中率(%)',
+              label: '快取命中率(%)',
               value: 'qcache_hit_rate'
             },
             {
@@ -565,11 +565,11 @@
               value: 'created_tmp_tables'
             },
             {
-              label: 'innodb緩存使用率(%)',
+              label: 'innodb快取使用率(%)',
               value: 'innodb_cache_use_rate'
             },
             {
-              label: 'innodb緩存命中率(%)',
+              label: 'innodb快取命中率(%)',
               value: 'innodb_cache_hit_rate'
             },
             {
@@ -585,11 +585,11 @@
               value: 'innodb_os_fsyncs'
             },
             {
-              label: 'myisam緩存使用率(%)',
+              label: 'myisam快取使用率(%)',
               value: 'key_cache_use_rate'
             },
             {
-              label: 'myisam緩存命中率(%)',
+              label: 'myisam快取命中率(%)',
               value: 'key_cache_hit_rate'
             },
             {
@@ -613,7 +613,7 @@
               value: 'cpu_use_rate'
             },
             {
-              label: '内存利用率(%)',
+              label: '記憶體利用率(%)',
               value: 'memory_use_rate'
             }
           ]
@@ -631,7 +631,7 @@
         }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
-          this.Date = data.Response.InstanceSet
+          this.Date = data.data.Response.InstanceSet
           this.Namespace = 'qce/redis'
           this.SearchConfig = [{
             value: "InstanceId",
@@ -744,11 +744,11 @@
             },
             {
               value: 'storage_min',
-              label: '内存使用量(Mb)'
+              label: '記憶體使用量(Mb)'
             },
             {
               value: 'storage_us_min',
-              label: '内存使用率(%)'
+              label: '記憶體使用率(%)'
             }
           ]
           this._PassValue()
@@ -831,7 +831,7 @@
           this._PassValue()
         });
       },
-      //获取對象存儲列表
+      //获取對象儲存列表
       _GetOBJ() {
         let parms = {
           Region: this.selectedRegion,
@@ -840,7 +840,7 @@
         // if (this.searchParam.label !== undefined && this.searchParam.value !== undefined) {
         //   parms["Filters.0.Name"] = this.searchParam.label;
         //   parms["Filters.0.Values.0"] = this.searchParam.value;
-        // } 
+        // }
         this.axios.post(OBJ_LIST, parms).then(data => {
           this.id = 'COS'
           this.Date = data.Buckets
@@ -856,27 +856,27 @@
           }
           this.MetricName = [{
               value: 'std_read_requests',
-              label: '標准存儲讀請求(次)'
+              label: '標准儲存讀請求(次)'
             },
             {
               value: 'std_write_requests',
-              label: '標准存儲寫請求(次)',
+              label: '標准儲存寫請求(次)',
             },
             {
               value: 'ia_read_requests',
-              label: '低頻存儲讀請求(次)',
+              label: '低頻儲存讀請求(次)',
             },
             {
               value: 'outbandwidth',
-              label: '低頻存儲寫請求(次)',
+              label: '低頻儲存寫請求(次)',
             },
             {
               value: 'nl_read_request',
-              label: '近線存儲讀請求(次)',
+              label: '近線儲存讀請求(次)',
             },
             {
               value: 'nl_write_requests',
-              label: '近線存儲寫請求(次)',
+              label: '近線儲存寫請求(次)',
             },
             {
               value: 'inbound_traffic',

@@ -121,14 +121,14 @@ import moment from 'moment'
 export default {
   data () {
     return {
-      datevalueStart: new Date(), // 日期（從）
-      timevalueStart: new Date(), // 時間（從）
+      datevalueStart: new Date(), // 日期（从）
+      timevalueStart: new Date(), // 时间（从）
       datevalueEnd: new Date(), // 日期（至）
-      timevalueEnd: new Date(), // 時間（至）
-      datetimeval: [], // 選擇時間數據
-      visible: false, // 時間選擇器的變化
-      datetim: true, // 時間選擇器的變化
-      datetime: false, // 時間選擇器的變化
+      timevalueEnd: new Date(), // 时间（至）
+      datetimeval: [], // 选择时间数据
+      visible: false, // 时间选择器的变化
+      datetim: true, // 时间选择器的变化
+      datetime: false, // 时间选择器的变化
       options: [
         // 默認下拉數據
         {

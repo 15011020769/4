@@ -134,7 +134,7 @@
         selectedCity: {}, // 切换城市
         DiskType: {
           CLOUD_BASIC: "普通雲硬碟",
-          CLOUD_PREMIUM: "高性能雲硬碟",
+          CLOUD_PREMIUM: "高效能雲硬碟",
           CLOUD_SSD: "SSD雲硬碟"
         },
         searchInput: "",
@@ -217,7 +217,7 @@
           this.GetTabularData();
         } else {
           this.$message({
-            message: "請輸入正確搜索信息",
+            message: "請輸入正確搜索訊息",
             type: "error",
             showClose: true,
             duration: 0

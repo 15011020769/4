@@ -18,14 +18,14 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="雲伺服器基礎設施存儲模塊; 影響：導致IO性能下降 ，數據讀寫異常"
+                content="雲伺服器基礎設施儲存模組; 影響：導致IO效能下降 ，數據讀寫異常"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
               </el-tooltip>
             </div>
 
-            <div v-if="scope.row.AccidentName=='雲伺服器網絡連接問題'">
+            <div v-if="scope.row.AccidentName=='雲伺服器網路連接問題'">
               <span style="margin-left: 0px;flex-wrap:nowrap">
                 {{
                 scope.row.AccidentName
@@ -34,7 +34,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="雲伺服器基礎設施網路模塊導致; 影響：網速下降或網路連接中斷"
+                content="雲伺服器基礎設施網路模組導致; 影響：網速下降或網路連接中斷"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -207,7 +207,7 @@
     </el-dialog>
     <!-- 取消订阅 -->
     <el-dialog title="取消訂閱" :visible.sync="dialogcancel" width="30%">
-      <span>取消訂閱雲伺服器存儲問題？</span>
+      <span>取消訂閱雲伺服器儲存問題？</span>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancelsubscribe" type="primary" @click="cancel1">取消訂閱</el-button>
         <el-button @click="dialogcancel = false">取 消</el-button>
@@ -227,7 +227,7 @@ import {
 import { LIST_SUBACCOUNTS } from "@/constants";
 
 import Header from "@/components/public/Head";
-// const cityOptions = ["短信", "邮件", "站内信"];
+// const cityOptions = ["簡訊", "邮件", "站内信"];
 export default {
   name: "subscription",
   data() {
@@ -256,7 +256,7 @@ export default {
     this.getEventList();
   },
   methods: {
-    // 选中渠道
+    // 选中管道
     selectChannel() {
       // var data = this.$route.params;
       // if (data.NotifyWay) {
@@ -313,6 +313,22 @@ export default {
                   item.group = [];
                   item.index = index;
                   item.subscription = undefined;
+                });
+                this.$nextTick(() => {//回显参数，由于数据返回有误，无法开发
+                
+                    this.okObj.Receivers.forEach((v, i) => {
+                      arr.forEach((item, index) => {
+                        if (item.GroupId == v) {
+                          console.log(item);
+                          this.cam.selectUserGroup = item;
+                          this.$refs.multipleTable.toggleRowSelection(
+                            item,
+                            true
+                          );
+                        }
+                      });
+                    });
+
                 });
                 this.userListArr = arr;
               } else {
@@ -408,9 +424,11 @@ export default {
       this.selectUserList.forEach((item, index) => {
         var data = {};
         data.username = item.Name;
-        data.uid = item.Uid;
-        // params["Receivers." + index] = data;
-        params.Receivers = data;
+        data.uin = item.Uid;
+        //params.Receivers = data;
+        console.log(item);
+
+        params["Receivers." + index] = data;
       });
       //  var key, value;
       //   key = item.Name;
@@ -419,12 +437,12 @@ export default {
       //     key: value
       //   };
       //   params["Receivers." + index] = JSON.stringify(data);
-
+      console.log(params);
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
-        if (res.codeDesc === "Success") {
+        if (res.Response.Error === undefined) {
           this.$message({
-            message: "订阅成功",
+            message: "訂閱成功",
             type: "success",
             showClose: true,
             duration: 0

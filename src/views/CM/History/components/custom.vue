@@ -1,10 +1,10 @@
 <template>
   <div class="newdialog">
     <div>
-      <el-dialog title="自定義列表字段" :visible.sync="dialogVisible1" width="40%">
+      <el-dialog title="自定義清單字段" :visible.sync="dialogVisible1" width="40%">
         <div class="content">
           <div class="explain" style="margin-bottom:20px;">
-            <p>請選擇您想顯示的列表詳細信息，最多勾選10個字段，已勾選10個</p>
+            <p>請選擇您想顯示的清單詳細訊息，最多勾選10個字段，已勾選10個</p>
           </div>
           <div class="checkbox">
             <el-checkbox-group v-model="checkedlistNo">
@@ -25,18 +25,18 @@
 </template>
 
 <script>
-const opts = ["發生時間", "告警對象", "告警內容"];
+const opts = ["發生時間", "告警物件", "告警內容"];
 
 const options = [
   "持續時長",
-  "告警渠道",
+  "告警管道",
   "告警狀態",
   "結束時間",
   "告警類型",
   "策略類型",
   "策略名稱",
-  "所屬網絡",
-  "所屬項目",
+  "所屬網路",
+  "所屬專案",
   "所屬實例組"
 ];
 export default {
@@ -44,17 +44,17 @@ export default {
     return {
       checkedlist: [
         "持續時長",
-        "告警渠道",
+        "告警管道",
         "告警狀態",
         "結束時間",
         "告警類型",
         "策略類型",
         "策略名稱",
-        "所屬網絡",
-        "所屬項目",
+        "所屬網路",
+        "所屬專案",
         "所屬實例組"
       ],
-      checkedlistNo: ["發生時間", "告警對象", "告警內容"],
+      checkedlistNo: ["發生時間", "告警物件", "告警內容"],
       cis: opts,
       cities: options,
       num: 13 //個數

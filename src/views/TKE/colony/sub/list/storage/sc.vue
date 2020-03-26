@@ -163,7 +163,7 @@ export default {
       this.SearchList();
       // this.GetList()
     },
-    //刷新数据
+    //重新整理数据
     refreshList() {
       this.loadShow = true;
       this.GetList();

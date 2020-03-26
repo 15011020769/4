@@ -90,7 +90,7 @@ export default {
   data() {
     return {
       loadShow: false, //加载是否显示
-      autoRefresh: "", //自动刷新
+      autoRefresh: "", //自动重新整理
       list:[], //列表
       timeId:null
     };

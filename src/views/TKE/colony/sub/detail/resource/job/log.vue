@@ -5,7 +5,7 @@
       <div class="tke-grid ">
         <!-- 右侧 -->
         <div class="grid-right">
-          <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+          <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
         </div>
       </div>
       <el-card class='box-card'> 
@@ -95,7 +95,7 @@ export default {
         matchBrackets: true,  //括号匹配
         autoCloseBrackets: true
       },
-      autoRefresh: true, //自动刷新
+      autoRefresh: true, //自动重新整理
       timer: null,//定时器
     };
   },
@@ -159,7 +159,7 @@ export default {
     changeSize() {
       this.getdaemonSetLog();
     },
-    //是否刷新
+    //是否重新整理
     changeSwitch() {
       let autoRefresh = this.autoRefresh;
       if(autoRefresh) {

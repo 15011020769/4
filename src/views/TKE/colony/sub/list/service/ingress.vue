@@ -290,7 +290,7 @@ export default {
       console.log(this.searchInput)
       this.getIngressList()
     },
-    // 刷新数据
+    // 重新整理数据
     refreshList () {
       console.log('refreshList....')
       this.getIngressList()

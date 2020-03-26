@@ -8,17 +8,17 @@
 </template>
 <script>
   import {
-    CVM_LIST, //雲伺服器列表
-    NAT_LIST, //NAT網關列表
-    VPN_LIST, //VPN網關列表
+    CVM_LIST, //云服务器列表
+    NAT_LIST, //NAT网关列表
+    VPN_LIST, //VPN网关列表
     VPNTD_LIST, //VPN通道列表
-    DCG_LIST, //專線網關列表
+    DCG_LIST, //专线网关列表
     MYSQL_LIST, //MYSQL列表
     REDIS_LIST, //REDIS列表
-    Physics_LIST, //物理專線列表
-    Private_LIST, //專線通道列表
-    OBJ_LIST, //對象存儲列表
-    DISK_LIST, //雲硬碟列表
+    Physics_LIST, //物理专线列表
+    Private_LIST, //专线通道列表
+    OBJ_LIST, //对象存储列表
+    DISK_LIST, //云硬碟列表
     CM_GROUPING_LIST_TYPE,
     ALL_PROJECT
   } from "@/constants";
@@ -52,16 +52,16 @@
             viewName: 'BS',
           },
           {
-            label: 'VPN網關',
+            label: 'VPN閘道',
             viewName: 'VPN_GW',
           }, {
             label: 'VPN通道',
             viewName: 'vpn_tunnel',
           }, {
-            label: 'NAT網關',
+            label: 'NAT閘道',
             viewName: 'nat_tc_stat',
           }, {
-            label: '專線網關',
+            label: '專線閘道',
             viewName: 'DC_GW',
           }, {
             label: 'MYSQL',
@@ -73,14 +73,14 @@
             label: '物理專線',
             viewName: 'dcline',
           }, {
-            label: '對象存儲',
+            label: '物件儲存',
             viewName: 'COS',
           }
         ],
-        Date: [], //各個産品數組
-        HeadConfig: {}, //頭部設置
-        SearchConfig: [], //搜索設置
-        Namespace: 'QCE/CVM', //各産品調取監控數據命名空間
+        Date: [], //各个产品数组
+        HeadConfig: {}, //头部设置
+        SearchConfig: [], //搜索设置
+        Namespace: 'QCE/CVM', //各产品调取监控数据命名空间
         MetricName: [],
         id: '',
         Pass: {},
@@ -195,7 +195,7 @@
           ]
           this.HeadConfig = {
             title1: 'ID/主機名',
-            title2: '網絡類型',
+            title2: '網路類型',
             title3: 'IP地址'
           }
           this.MetricName = [{
@@ -209,17 +209,17 @@
               value: 'base_cpu_usage'
             },
             {
-              label: '內存使用量(MB)',
+              label: '記憶體使用量(MB)',
               value: 'mem_used'
             }, {
-              label: '內存利用率%',
+              label: '記憶體利用率%',
               value: 'mem_usage'
             },
             {
-              label: '內網出帶寬(Mbps)',
+              label: '內網出頻寬(Mbps)',
               value: 'lan_outtraffic'
             }, {
-              label: '內網入帶寬(Mbps)',
+              label: '內網入頻寬(Mbps)',
               value: 'lan_intraffic'
             },
             {
@@ -234,11 +234,11 @@
               value: 'tcp_curr_estab'
             },
             {
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'wan_outtraffic'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'wan_intraffic'
             }, {
               label: '外網出包量(個/s)',
@@ -256,7 +256,7 @@
           this._PassValue()
         });
       },
-      // 獲取NAT網關列表
+      // 獲取NAT閘道列表
       _GetNat() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -282,15 +282,15 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '狀態',
-            title3: '私有網絡',
+            title3: '私有網路',
             title4: '類型',
           }
           this.MetricName = [{
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -309,7 +309,7 @@
           this._PassValue()
         });
       },
-      // 獲取VPN網關列表
+      // 獲取VPN閘道列表
       _GetVPNG() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -335,14 +335,14 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '狀態',
-            title3: '所屬網絡',
+            title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -382,15 +382,15 @@
           ]
           this.HeadConfig = {
             title1: 'ID/名稱',
-            title2: '所屬網絡',
-            title3: 'VPN網關',
+            title2: '所屬網路',
+            title3: 'VPN閘道',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -413,7 +413,7 @@
           this._PassValue()
         });
       },
-      // 獲取專線網關列表
+      // 獲取專線閘道列表
       _GetPRI() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -433,20 +433,20 @@
             },
             {
               value: "direct-connect-gateway-name",
-              label: "網關名稱"
+              label: "閘道名稱"
             }
           ]
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: 'NAT配置狀態',
-            title3: '所屬網絡',
+            title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -482,7 +482,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '內網IP/端口',
-            // title3: '網絡類型',
+            // title3: '網路類型',
             // title4: '類型',
           }
           this.MetricName = [
@@ -520,7 +520,7 @@
               value: 'com_insert'
             },
             {
-              label: '覆蓋數(次/秒)',
+              label: '涵蓋數(次/秒)',
               value: 'com_replace'
             },
             {
@@ -548,11 +548,11 @@
               value: 'bytes_received'
             },
             {
-              label: '緩存使用率(%)',
+              label: '快取使用率(%)',
               value: 'qcache_use_rate',
             },
             {
-              label: '緩存命中率(%)',
+              label: '快取命中率(%)',
               value: 'qcache_hit_rate'
             },
             {
@@ -564,11 +564,11 @@
               value: 'created_tmp_tables'
             },
             {
-              label: 'innodb緩存使用率(%)',
+              label: 'innodb快取使用率(%)',
               value: 'innodb_cache_use_rate'
             },
             {
-              label: 'innodb緩存命中率(%)',
+              label: 'innodb快取命中率(%)',
               value: 'innodb_cache_hit_rate'
             },
             {
@@ -584,11 +584,11 @@
               value: 'innodb_os_fsyncs'
             },
             {
-              label: 'myisam緩存使用率(%)',
+              label: 'myisam快取使用率(%)',
               value: 'key_cache_use_rate'
             },
             {
-              label: 'myisam緩存命中率(%)',
+              label: 'myisam快取命中率(%)',
               value: 'key_cache_hit_rate'
             },
             {
@@ -612,7 +612,7 @@
               value: 'cpu_use_rate'
             },
             {
-              label: '內存利用率(%)',
+              label: '記憶體利用率(%)',
               value: 'memory_use_rate'
             }
           ]
@@ -630,7 +630,7 @@
         }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
-          this.Date = data.Response.InstanceSet
+          this.Date = data.data.Response.InstanceSet
           this.Namespace = 'qce/redis'
           this.SearchConfig = [{
             value: "InstanceId",
@@ -743,11 +743,11 @@
             },
             {
               value: 'storage_min',
-              label: '內存使用量(Mb)'
+              label: '記憶體使用量(Mb)'
             },
             {
               value: 'storage_us_min',
-              label: '內存使用率(%)'
+              label: '記憶體使用率(%)'
             }
           ]
           this._PassValue()
@@ -773,14 +773,14 @@
           this.HeadConfig = {
             title1: '名稱/ID',
             title2: '所在地',
-            title3: '帶寬',
+            title3: '頻寬',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             }
           ]
@@ -807,14 +807,14 @@
           }]
           this.HeadConfig = {
             title1: 'ID/名稱',
-            title2: '私有網絡',
+            title2: '私有網路',
           }
           this.MetricName = [{
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
@@ -830,7 +830,7 @@
           this._PassValue()
         });
       },
-      //獲取對象存儲列表
+      //獲取對象儲存列表
       _GetOBJ() {
         let parms = {
           Region: this.selectedRegion,
@@ -855,27 +855,27 @@
           }
           this.MetricName = [{
               value: 'std_read_requests',
-              label: '標准存儲讀請求(次)'
+              label: '標准儲存讀請求(次)'
             },
             {
               value: 'std_write_requests',
-              label: '標准存儲寫請求(次)',
+              label: '標准儲存寫請求(次)',
             },
             {
               value: 'ia_read_requests',
-              label: '低頻存儲讀請求(次)',
+              label: '低頻儲存讀請求(次)',
             },
             {
               value: 'outbandwidth',
-              label: '低頻存儲寫請求(次)',
+              label: '低頻儲存寫請求(次)',
             },
             {
               value: 'nl_read_request',
-              label: '近線存儲讀請求(次)',
+              label: '近線儲存讀請求(次)',
             },
             {
               value: 'nl_write_requests',
-              label: '近線存儲寫請求(次)',
+              label: '近線儲存寫請求(次)',
             },
             {
               value: 'inbound_traffic',

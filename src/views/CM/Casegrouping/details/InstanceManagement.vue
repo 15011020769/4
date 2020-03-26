@@ -140,13 +140,13 @@
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="VPN網關" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="VPN閘道" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.VpnGatewayId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
               </template>
             </el-table-column>
-            <el-table-column label="對端網關" v-if="viewName === 'vpn_tunnel'">
+            <el-table-column label="對端閘道" v-if="viewName === 'vpn_tunnel'">
               <template slot-scope="scope">
                 <p>{{ scope.row.CustomerGatewayId }}</p>
                 <!-- <p>{{scope.row.}}</p> -->
@@ -412,7 +412,7 @@
         custom-class="tke-dialog"
       >
         <div>
-          移出後，該組之前綁定的告警策略將與該實例解綁，該組後續所涉及的操作將不會對該實例生效。
+          移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="DeleteList()">確定移出</el-button>
@@ -431,7 +431,7 @@
         custom-class="tke-dialog"
       >
         <div>
-          移出後，該組之前綁定的告警策略將與該實例解綁，該組後續所涉及的操作將不會對該實例生效。
+          移出後，該組之前綁定的告警策略將與該實例釋放，該組後續所涉及的操作將不會對該實例生效。
         </div>
         <div slot="footer" class="dialog-footer">
           <el-button type="primary" @click="DeleteList()"
@@ -496,7 +496,7 @@ export default {
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默认项目"
+          projectName: "預設專案"
         }
       ],
       searchSelect: "",
@@ -682,9 +682,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -726,9 +726,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -1507,7 +1507,7 @@ export default {
       if (val == "CLOUD_BASIC") {
         return "普通雲硬碟";
       } else if (val === "CLOUD_PREMIUM") {
-        return "高性能雲硬碟";
+        return "高效能雲硬碟";
       } else if (val === "CLOUD_SSD") {
         return "SSD雲硬碟";
       }

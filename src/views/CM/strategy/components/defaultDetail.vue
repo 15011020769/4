@@ -12,7 +12,7 @@
 
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%">
-        <h3>基本信息</h3>
+        <h3>基本訊息</h3>
       </div>
       <ul>
         <li>
@@ -29,7 +29,7 @@
           </p>
         </li>
         <li v-if="basicNews.ProjectId != -1">
-          <span class="textColor">所屬項目</span>
+          <span class="textColor">所屬專案</span>
           <p>
             <span>{{ basicNews.ProjectId | ProjectName }}</span>
           </p>
@@ -71,7 +71,7 @@
       <div class="box-content">
         <p v-if="basicNews.ConditionsTemp">
           <span class="textColor" style="margin-right:20px;">
-            模板名稱
+            範本名稱
           </span>
           {{ basicNews.ConditionsTemp.GroupName }}
         </p>
@@ -93,7 +93,7 @@
               }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
             </span>
             <span v-else>
-              按周期指数递增重复告警
+              按週期指数递增重复告警
             </span>
           </p>
         </div>
@@ -113,13 +113,13 @@
     </el-card>
     <el-card class="box-card alarm-object">
       <div slot="header" class="clearfix">
-        <h3>告警對象</h3>
+        <h3>告警物件</h3>
         <a @click="editObject">編輯</a>
       </div>
       <div class="box-content" v-if="!InstanceGroupShow.InstanceGroup">
         <el-row style="margin:10px 5px;padding-top:10px">
           <el-button type="primary" @click="AlarmObjectNews"
-            >新增對象</el-button
+            >新增物件</el-button
           >
           <el-button
             v-if="UniqueId.length > 0"
@@ -152,8 +152,8 @@
               <span>{{ InstanceState(scope.row.InstanceState) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="網絡類型" v-if="ViewName === 'cvm_device'">
-            VPC 網絡
+          <el-table-column label="網路類型" v-if="ViewName === 'cvm_device'">
+            VPC 網路
           </el-table-column>
           <el-table-column label="IP地址" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
@@ -211,7 +211,7 @@
               <span>{{ VPN_GW_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'VPN_GW'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -230,19 +230,19 @@
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="VPN網關" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="VPN閘道" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpnGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="對端網關" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="對端閘道" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.CustomerGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -261,7 +261,7 @@
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="私有網絡" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="私有網路" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -286,7 +286,7 @@
               <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'DC_GW'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'DC_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -323,7 +323,7 @@
               <p>{{ scope.row.Vport }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="網絡類型" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="網路類型" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               VPC
             </template>
@@ -368,12 +368,12 @@
               <p>{{ dcchannel_Status(scope.row.State) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="私有網絡" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="私有網路" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="關聯專線網關" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="關聯專線閘道" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
@@ -390,7 +390,7 @@
               <p>{{ scope.row.Location }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
+          <el-table-column label="頻寬" v-if="ViewName === 'dcline'">
             <template slot-scope="scope">
               <p>{{ scope.row.Bandwidth }}Mbps</p>
             </template>
@@ -511,10 +511,10 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="網絡類型"
+                      label="網路類型"
                       v-if="ViewName === 'cvm_device'"
                     >
-                      VPC 網絡
+                      VPC 網路
                     </el-table-column>
                     <el-table-column
                       label="IP地址"
@@ -581,7 +581,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'VPN_GW'"
                     >
                       <template slot-scope="scope">
@@ -609,7 +609,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -618,7 +618,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="VPN網關"
+                      label="VPN閘道"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -627,7 +627,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="對端網關"
+                      label="對端閘道"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -655,7 +655,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="私有網絡"
+                      label="私有網路"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
@@ -694,7 +694,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'DC_GW'"
                     >
                       <template slot-scope="scope">
@@ -746,7 +746,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="網絡類型"
+                      label="網路類型"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">
@@ -848,7 +848,7 @@
                         <p>{{ scope.row.Location }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
+                    <el-table-column label="頻寬" v-if="ViewName === 'dcline'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.Bandwidth }}Mbps</p>
                       </template>
@@ -894,7 +894,7 @@
     </el-card>
     <el-card class="box-card alarm-object alarm-receiving-object">
       <div slot="header" class="clearfix">
-        <h3>告警接收對象</h3>
+        <h3>告警接收物件</h3>
       </div>
       <div class="box-content" style="margin-top:20px;">
         <el-row>
@@ -957,7 +957,7 @@
           </el-table-column>
 
           <el-table-column
-            label="告警渠道"
+            label="告警管道"
             v-if="
               receivingObjectData.length === 0 ||
                 ReceiverInfos.ReceiverType === 'group'
@@ -986,7 +986,7 @@
             {{ ReceiverInfos.EndTime | EndTime }}
           </el-table-column>
           <el-table-column
-            label="告警渠道"
+            label="告警管道"
             v-if="ReceiverInfos.ReceiverType === 'user'"
           >
             <span v-for="(item, index) in ReceiverInfos.NotifyWay" :key="index">
@@ -1007,7 +1007,7 @@
         <h3>回調接口</h3>
       </div>
       <p class="tip">
-        填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
+        填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警訊息推送到該地址。
       </p>
       <div
         class="box-content"
@@ -1104,12 +1104,12 @@
           <div class="chufaContent">
             <div>
               <el-radio v-model="radioChufa" label="1" @change="chufaTemplate"
-                >觸發條件模板</el-radio
+                >觸發條件範本</el-radio
               >
               <a
                 style="margin-left:15px;"
                 @click="$router.push({ path: '/Template' })"
-                >新增触发条件模板</a
+                >新增触发条件範本</a
               >
               <div class="content" v-if="radioChufa == 1">
                 <p>
@@ -1117,7 +1117,7 @@
                     v-model="nameVal"
                     style="width:150px;"
                     @change="TriggerChange"
-                    :disabled="nameVal === '當前策略下沒有觸發條件模板'"
+                    :disabled="nameVal === '當前策略下沒有觸發條件範本'"
                   >
                     <el-option
                       v-for="item in triggerCondition"
@@ -1127,9 +1127,11 @@
                       label-width="40px"
                     ></el-option>
                   </el-select>
-                  <a href="javascript:;" @click="AlarmTriggerCondition">刷新</a>
+                  <a href="javascript:;" @click="AlarmTriggerCondition"
+                    >重新整理</a
+                  >
                 </p>
-                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p>
                     <el-checkbox disabled>指標告警</el-checkbox>
                   </p>
@@ -1244,8 +1246,8 @@
                               重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                             </p>
                             <p style="margin-top:5px;">
-                              周期指數遞增通知:
-                              告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                              週期指數遞增通知:
+                              告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                             </p>
                           </div>
                           <i
@@ -1279,8 +1281,8 @@
                           重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                         </p>
                         <p style="margin-top:5px;">
-                          周期指數遞增通知:
-                          告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                          週期指數遞增通知:
+                          告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                         </p>
                       </div>
                       <i
@@ -1291,7 +1293,7 @@
                     </el-popover>
                   </div>
                 </div>
-                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p v-if="basicNews.EventConfig">
                     <el-checkbox disabled v-if="Conditions.EventConditions">
                       事件告警
@@ -1442,8 +1444,8 @@
                                 重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                               </p>
                               <p style="margin-top:5px;">
-                                周期指數遞增通知:
-                                告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                                週期指數遞增通知:
+                                告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                               </p>
                             </div>
                             <i
@@ -1461,7 +1463,8 @@
                         @click="delZhibiao(index)"
                       ></i>
                     </li>
-                    <a @click="addZhibiao()">添加</a>
+                    <a @click="addZhibiao()" v-if="!addDis">添加</a>
+                    <a v-if="addDis" style="color:#888;">添加</a>
                     <div v-if="formWrite.satisfyVal === 1">
                       <span>then</span>&nbsp;
                       <el-select
@@ -1482,8 +1485,8 @@
                             重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                           </p>
                           <p style="margin-top:5px;">
-                            周期指數遞增通知:
-                            告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                            週期指數遞增通知:
+                            告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                           </p>
                         </div>
                         <i
@@ -1549,16 +1552,16 @@
     </el-dialog>
     <!-- 告警對象編輯 -->
     <el-dialog
-      title="編輯告警對象"
+      title="編輯告警物件"
       :visible.sync="dialogEditObject"
       width="1024px"
     >
       <div class="edit-alarm-object">
         <el-radio-group v-model="editAlarmObjectRadio">
-          <p><el-radio label="1">全部對象</el-radio></p>
+          <p><el-radio label="1">全部物件</el-radio></p>
           <p>
             <el-radio label="2"
-              >選擇部分對象
+              >選擇部分物件
               <!-- (已選{{ multipleSelection.length }}個) -->
             </el-radio>
           </p>
@@ -1594,12 +1597,12 @@
     </el-dialog>
     <!-- 告警對象-新增對象 -->
     <el-dialog
-      title="關聯告警對象"
+      title="關聯告警物件"
       :visible.sync="alarmObjectNews"
       width="1024px"
     >
       <div class="edit-alarm-object-news">
-        <p>選擇部分對象</p>
+        <p>選擇部分物件</p>
         <div class="table">
           <CamTransferCpt
             :productData="productListData"
@@ -1655,13 +1658,13 @@
     </el-dialog>
     <!-- 告警接收對象 編輯 -->
     <el-dialog
-      title="告警接收對象"
+      title="告警接收物件"
       :visible.sync="editReceiveObjectVisuble"
       width="800px"
       custom-class="tke-dialog"
     >
       <div class="edit-receive-object">
-        <p>您可到訪問管理控制台修改用戶和用戶組信息</p>
+        <p>您可到訪問管理控制台修改用戶和用戶組訊息</p>
         <div>
           <Cam @camClick="camFun"></Cam>
         </div>
@@ -1723,7 +1726,7 @@
           </ul>
         </div>
         <p>
-          填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
+          填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警訊息推送到該地址。
         </p>
         <div class="bg-box">
           <p>
@@ -1745,17 +1748,17 @@
     </el-dialog>
     <!-- 告警對象 解除綁定 -->
     <el-dialog
-      title="確定解綁告警策略"
+      title="確定釋放告警策略"
       :visible.sync="unBindingInstance"
       width="600px"
       custom-class="tke-dialog"
     >
       <div>
-        解綁後，策略將不再對實例分組生效
+        釋放後，策略將不再對實例分組生效
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="UnBindingInstance"
-          >確定解綁</el-button
+          >確定釋放</el-button
         >
         <el-button @click="unBindingInstance = false">取消</el-button>
       </div>
@@ -1853,21 +1856,21 @@ export default {
       project,
       _ReceiverUserList,
       editBeizhuFlag: false,
-      dialogFormVisible: false, //基本信息組件彈框
-      dialogEditGaojing: false, //編輯告警彈框組件
-      dialogEditObject: false, //編輯告警彈框組件
+      dialogFormVisible: false, //基本信息组件弹框
+      dialogEditGaojing: false, //编辑告警弹框组件
+      dialogEditObject: false, //编辑告警弹框组件
       formLabelWidth: "120px",
       modifyNameDialogVisible: false,
       tipsShow: false,
       modifyRemarksDialogVisible: false,
       remarksVal: "",
-      showQudao1: false, //渠道選擇1顯示開關
-      showQudao2: false, //渠道選擇2顯示開關
-      errorTip1: false, //觸發條件模板錯誤提示
-      errorTip2: true, //配置觸發條件錯誤提示
+      showQudao1: false, //管道选择1显示开关
+      showQudao2: false, //管道选择2显示开关
+      errorTip1: false, //触发条件範本错误提示
+      errorTip2: true, //配置触发条件错误提示
       triggerInput: "", //新增接收
-      radio: "1", //選擇告警對象類型
-      radioChufa: "2", //觸發條件單選
+      radio: "1", //选择告警对象类型
+      radioChufa: "2", //触发条件单选
       input: "",
       input1: "",
       alarmObjectData: [],
@@ -1883,7 +1886,7 @@ export default {
       // 告警對象
       alarmObjectNews: false,
       alarmObjectRemovalVisible: false,
-      alarmObjecTitle: "確定解除與該告警對象的關聯？",
+      alarmObjecTitle: "確定解除與該告警物件的關聯？",
       UniqueId: "",
       alarmObjectRemovalAllVisible: false,
       // 修改觸發條件
@@ -1904,11 +1907,11 @@ export default {
       cycle: [
         {
           value: 60,
-          label: "統計周期1分鍾"
+          label: "統計週期1分鍾"
         },
         {
           value: 300,
-          label: "統計周期5分鍾"
+          label: "統計週期5分鍾"
         }
       ],
       satisfy: [
@@ -1981,23 +1984,23 @@ export default {
       continuousCycleOpt: [
         {
           value: 1,
-          label: "持續1個周期"
+          label: "持續1個週期"
         },
         {
           value: 2,
-          label: "持續2個周期"
+          label: "持續2個週期"
         },
         {
           value: 3,
-          label: "持續3個周期"
+          label: "持續3個週期"
         },
         {
           value: 4,
-          label: "持續4個周期"
+          label: "持續4個週期"
         },
         {
           value: 5,
-          label: "持續5個周期"
+          label: "持續5個週期"
         }
       ],
       warningOpt: [
@@ -2047,7 +2050,7 @@ export default {
         },
         {
           value: 60,
-          label: "周期指數遞增"
+          label: "週期指數遞增"
         }
       ],
       eventOpt: [
@@ -2061,7 +2064,7 @@ export default {
         },
         {
           value: "3",
-          label: "內存oom"
+          label: "記憶體oom"
         },
         {
           value: "4",
@@ -2073,7 +2076,7 @@ export default {
         },
         {
           value: "6",
-          label: "外網出帶寬超限導致丟包"
+          label: "外網出頻寬超限導致丟包"
         },
         {
           value: "7",
@@ -2101,7 +2104,8 @@ export default {
       editReceiveObjectVisuble: false,
       Verification: true,
       loading: true,
-      cam: {} // cam組件的值
+      addDis: false,
+      cam: {} // cam元件的值
     };
   },
   components: { Header, CamTransferCpt, ProductTypeCpt, Cam },
@@ -2116,6 +2120,7 @@ export default {
   },
   methods: {
     passData(data) {
+      console.log(data);
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
@@ -2294,7 +2299,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "	操作失敗。",
@@ -2345,7 +2350,7 @@ export default {
         }
       });
     },
-    // 項目
+    // 專案
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -2604,7 +2609,7 @@ export default {
           } else {
             this.nameVal =
               this.triggerCondition.length === 0
-                ? "當前策略下沒有觸發條件模板"
+                ? "當前策略下沒有觸發條件範本"
                 : this.triggerCondition[0].GroupID;
           }
 
@@ -2612,7 +2617,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -2679,11 +2684,11 @@ export default {
             "持續" +
             Number(this.Conditions.Conditions[j].ContinueTime) /
               Number(this.Conditions.Conditions[j].Period) +
-            "個周期"
+            "個週期"
         });
         console.log(this.Conditions.Conditions[j].AlarmNotifyType);
         if (this.Conditions.Conditions[j].AlarmNotifyType == 1) {
-          this.Conditions.Conditions[j].AlarmNotifyPeriod = "周期指数递增";
+          this.Conditions.Conditions[j].AlarmNotifyPeriod = "週期指数递增";
         } else {
           if (
             (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
@@ -2828,7 +2833,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "	請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "	請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -2959,7 +2964,7 @@ export default {
         Version: "2018-07-24",
         Module: "monitor",
         GroupId: this.$route.query.groupId,
-        Limit: this.pageSize,
+        Limit: 50,
         Offset: this.pageIndex
       };
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
@@ -2972,7 +2977,7 @@ export default {
             if (this.ViewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               for (let i in _enterList) {
@@ -3025,7 +3030,7 @@ export default {
             } else if (this.ViewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "disk-id";
@@ -3058,9 +3063,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3074,7 +3079,7 @@ export default {
             } else if (this.ViewName === "VPN_GW") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "public-ip-address";
@@ -3107,9 +3112,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3123,7 +3128,7 @@ export default {
             } else if (this.ViewName === "vpn_tunnel") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "vpn-connection-id";
@@ -3559,7 +3564,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "	操作失敗。",
@@ -3615,11 +3620,11 @@ export default {
     // 告警對象移除
     AlarmObjectRemoval(row, index) {
       if (index == 1) {
-        this.alarmObjecTitle = "確定解除與該告警對象的關聯？";
+        this.alarmObjecTitle = "確定解除與該告警物件的關聯？";
         this.UniqueId = row.UniqueId;
       } else {
         this.alarmObjecTitle =
-          "已選擇" + this.UniqueId.length + "個告警對象，確定要解除關聯？";
+          "已選擇" + this.UniqueId.length + "個告警物件，確定要解除關聯？";
       }
       this.alarmObjectRemovalVisible = true;
     },
@@ -3715,7 +3720,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -3751,7 +3756,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -3801,7 +3806,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -3872,7 +3877,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -3939,7 +3944,7 @@ export default {
       this.editReceiveObjectVisuble = true;
     },
 
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(val) {
       this.cam = val;
       console.log(this.cam);
@@ -3967,7 +3972,7 @@ export default {
           }
         } else {
           this.$message({
-            message: "請選擇接收渠道 ",
+            message: "請選擇接收管道 ",
             type: "error",
             showClose: true,
             duration: 0
@@ -4013,7 +4018,7 @@ export default {
           }
         } else {
           this.$message({
-            message: "請選擇接收渠道 ",
+            message: "請選擇接收管道 ",
             type: "error",
             showClose: true,
             duration: 0
@@ -4038,9 +4043,9 @@ export default {
           this.DetailsInit();
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.InvalidSecretId": "金鑰非法（不是雲 API 金鑰類型）。",
             "AuthFailure.MFAFailure": "MFA 錯誤。",
-            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SecretIdNotFound": "金鑰不存在。",
             "AuthFailure.SignatureExpire": "簽名過期。",
             "AuthFailure.SignatureFailure": "簽名錯誤。",
             "AuthFailure.TokenFailure	token": "錯誤。",
@@ -4084,13 +4089,24 @@ export default {
     },
     // 告警接收對象 解除
     Remove(row, index) {
+      console.log(row);
+      let name = "";
+      if (this.ReceiverInfos.ReceiverType === "group") {
+        name = "接收組";
+      } else {
+        name = "接收人";
+      }
       if (index == 1) {
         this.remove = [];
         this.remove = row;
-        this.relieveTitle = "確定解除與該$接收人的關聯？";
+        this.relieveTitle = "確定解除與該" + name + "的關聯？";
       } else {
         this.relieveTitle =
-          "已選擇" + this.remove.length + "個告警接收人，確定要解除關聯？";
+          "已選擇" +
+          this.remove.length +
+          "個告警" +
+          name +
+          "，確定要解除關聯？";
       }
       this.relieveDialogVisible = true;
     },
@@ -4177,16 +4193,16 @@ export default {
           this.relieveDialogVisible = false;
           this.DetailsInit();
           this.$message({
-            message: "告警接收對象解除成功",
+            message: "告警接收物件解除成功",
             type: "success",
             showClose: true,
             duration: 0
           });
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.InvalidSecretId": "金鑰非法（不是雲 API 金鑰類型）。",
             "AuthFailure.MFAFailure": "MFA 錯誤。",
-            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SecretIdNotFound": "金鑰不存在。",
             "AuthFailure.SignatureExpire": "簽名過期。",
             "AuthFailure.SignatureFailure": "簽名錯誤。",
             "AuthFailure.TokenFailure	token": "錯誤。",
@@ -4225,7 +4241,7 @@ export default {
     },
 
     chufaTemplate() {
-      //觸發條件模板
+      //觸發條件範本
     },
     config() {
       //配置觸發條件
@@ -4233,6 +4249,12 @@ export default {
       this.showChufa2 = true;
     },
     addZhibiao() {
+      if (this.typeOpt.length === this.formWrite.arr.length) {
+        this.addDis = true;
+        return false;
+      } else {
+        this.addDis = false;
+      }
       //添加觸發條件的指標告警
       this.formWrite.index++;
       if (this.formWrite.index + 1 === this.formWrite.arr.length) {
@@ -4713,9 +4735,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -4733,7 +4755,7 @@ export default {
       if (val === "EMAIL") {
         return "郵件";
       } else if (val === "SMS") {
-        return "短信";
+        return "簡訊";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
@@ -4742,7 +4764,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認項目";
+        return "預設專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

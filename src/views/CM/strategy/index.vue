@@ -79,9 +79,9 @@
           >
           <el-button v-else disabled>刪除</el-button>
           <el-button v-if="ModifyAlarm" @click="ModifyAlarmBtn()"
-            >修改告警渠道</el-button
+            >修改告警管道</el-button
           >
-          <el-button v-if="!ModifyAlarm" disabled>修改告警渠道</el-button>
+          <el-button v-if="!ModifyAlarm" disabled>修改告警管道</el-button>
         </el-row>
         <el-row class="iconBtn">
           <!-- <i class="el-icon-setting" @click="buyMessgae"></i> -->
@@ -97,7 +97,7 @@
         @selection-change="handleSelectionChange"
         id="exportTable"
       >
-        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column type="selection" width="50"></el-table-column>
         <el-table-column label="策略名稱">
           <template slot-scope="scope">
             <a class="defaultDialog" @click="defaultClick(scope.row)">{{
@@ -127,7 +127,7 @@
                       }}
                     </span>
                     <span v-else>
-                      按周期指数递增重复告警
+                      按週期指数递增重复告警
                     </span>
                   </p>
                 </div>
@@ -151,15 +151,19 @@
                   <p>
                     {{ item.MetricShowName }}
                     {{ item.CalcType | CalcType }} {{ item.CalcValue
-                    }}{{ item.Unit }}，持續{{
-                      item.ContinueTime / 60
-                    }}分鍾，按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
-                    }}{{
-                      item.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
-                    }}
+                    }}{{ item.Unit }}，持續{{ item.ContinueTime / 60 }}分鍾，
+                    <span v-if="item.AlarmNotifyType != 1"
+                      >按{{ item.AlarmNotifyPeriod | AlarmNotifyPeriod
+                      }}{{
+                        item.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警"
+                      }}
+                    </span>
+                    <span v-else>
+                      按周期指数递增重复告警
+                    </span>
                   </p>
                 </div>
-                <div
+                <!-- <div
                   v-for="(items, indexs) in scope.row.EventConditions"
                   :key="indexs"
                   class="trigger-condition"
@@ -169,12 +173,12 @@
                       items.AlarmNotifyPeriod > 0 ? "重複告警" : "不重複告警"
                     }}
                   </p>
-                </div>
+                </div> -->
               </div>
             </el-popover>
           </template>
         </el-table-column>
-        <el-table-column label="所屬項目">
+        <el-table-column label="所屬專案">
           <template slot-scope="scope">
             {{ scope.row.ProjectId | ProjectName }}
           </template>
@@ -185,7 +189,7 @@
               <div>
                 <p>
                   <span
-                    >策略類型： <span v-if="scope.row.IsDefault == 1">默認</span
+                    >策略類型： <span v-if="scope.row.IsDefault == 1">預設</span
                     >{{ scope.row.Name }}</span
                   >
                 </p>
@@ -196,7 +200,7 @@
                   "
                   style="color:#888;"
                 >
-                  此告警策略綁定的對象是實力組，當前不支持設置爲默認策略
+                  此告警策略綁定的物件是實力組，當前不支持設置爲預設策略
                 </p>
               </div>
               <div slot="reference">
@@ -205,14 +209,14 @@
                   @mouseenter="enter(scope.$index)"
                   @mouseleave="leave()"
                 >
-                  <span v-if="scope.row.IsDefault == 1">默認</span
+                  <span v-if="scope.row.IsDefault == 1">預設</span
                   >{{ scope.row.Name }}
                   <p
                     v-show="edit && scope.$index == current"
                     v-if="scope.row.IsDefault != 1 && scope.row.CanSetDefault"
                   >
                     <a href="javascript:;" @click="SetDefault(scope.row)"
-                      >設置默認</a
+                      >設置預設</a
                     >
                   </p>
                 </div>
@@ -237,7 +241,7 @@
             <div>{{ scope.row.UpdateTime | formatDate }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="告警渠道">
+        <el-table-column label="告警管道">
           <template slot-scope="scope">
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
@@ -247,12 +251,12 @@
                   {{ i.EndTime | EndTime }}
                 </p>
                 <p v-if="i.NotifyWay.length > 0">
-                  渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                  管道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                     >{{ j | NotifyWay
                     }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
                   >
                 </p>
-                <p v-else>渠道：-</p>
+                <p v-else>管道：-</p>
               </div>
             </div>
             <div v-else>-</div>
@@ -275,7 +279,7 @@
               >複制</el-button
             >
             <el-tooltip
-              content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
+              content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
               placement="left"
               effect="light"
               v-if="scope.row.IsDefault != 0"
@@ -285,7 +289,7 @@
               >
             </el-tooltip>
             <el-tooltip
-              content="解綁所有資源後支持刪除"
+              content="釋放所有資源後支持刪除"
               placement="left"
               effect="light"
               v-else-if="scope.row.UseSum != 0"
@@ -384,9 +388,9 @@
                   v-if="scope.row.IsDefault != 0"
                   id="text-color-red"
                 >
-                  <span>默認策略,無法刪除</span>
+                  <span>預設策略,無法刪除</span>
                   <el-tooltip
-                    content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
+                    content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
                     placement="left"
                     effect="light"
                   >
@@ -399,9 +403,9 @@
                   v-else-if="scope.row.UseSum != 0"
                   id="text-color-red"
                 >
-                  <span>已關聯對象,無法刪除</span>
+                  <span>已關聯物件,無法刪除</span>
                   <el-tooltip
-                    content="解綁所有資源後支持刪除"
+                    content="釋放所有資源後支持刪除"
                     placement="left"
                     effect="light"
                   >
@@ -430,9 +434,9 @@
         <el-button @click="deleteAllDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 修改告警渠道 -->
+    <!-- 修改告警管道 -->
     <el-dialog
-      title="修改告警渠道"
+      title="修改告警管道"
       :visible.sync="ModifyDialogVisible"
       width="600px"
       custom-class="tke-dialog"
@@ -442,14 +446,14 @@
         <p>
           <el-tooltip
             effect="light"
-            content="告警渠道爲空的策略不支持修改"
+            content="告警管道爲空的策略不支持修改"
             placement="top"
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
           您已選擇{{ multipleSelection.length }}條策略，其中{{
             arr.length
-          }}條支持修改。接收渠道統計如下:
+          }}條支持修改。接收管道統計如下:
         </p>
         <div class="modify-box">
           <div>
@@ -469,7 +473,7 @@
           </div>
           <div>
             <p>
-              <span>短信</span>
+              <span>簡訊</span>
               <span>已開通數:{{ SMSOpen }},未開通數:{{ SMSClose }}</span>
             </p>
             <el-select v-model="SMSVal" placeholder="請選擇">
@@ -554,17 +558,17 @@ import {
   CM_ALARM_SET_DEFAULT,
   CM_GROUPING_LIST_EDIT,
   CM_ALARM_MODIFY_NOTIFY,
-  CVM_LIST, //雲伺服器列表
-  NAT_LIST, //NAT網關列表
-  VPN_LIST, //VPN網關列表
+  CVM_LIST, //云伺服器列表
+  NAT_LIST, //NAT网关列表
+  VPN_LIST, //VPN网关列表
   VPNTD_LIST, //VPN通道列表
-  DCG_LIST, //專線網關列表
+  DCG_LIST, //专线网关列表
   MYSQL_LIST, //MYSQL列表
   REDIS_LIST, //REDIS列表
-  Physics_LIST, //物理專線列表
-  Private_LIST, //專線通道列表
-  OBJ_LIST, //對象存儲列表
-  DISK_LIST //雲硬碟列表
+  Physics_LIST, //物理专线列表
+  Private_LIST, //专线通道列表
+  OBJ_LIST, //对象存储列表
+  DISK_LIST //云硬碟列表
 } from "@/constants";
 var project = [];
 export default {
@@ -594,7 +598,7 @@ export default {
           viewName: "BS"
         },
         {
-          label: "VPN網關",
+          label: "VPN閘道",
           viewName: "VPN_GW"
         },
         {
@@ -602,11 +606,11 @@ export default {
           viewName: "vpn_tunnel"
         },
         {
-          label: "NAT網關",
+          label: "NAT閘道",
           viewName: "nat_tc_stat"
         },
         {
-          label: "專線網關",
+          label: "專線閘道",
           viewName: "DC_GW"
         },
         {
@@ -626,7 +630,7 @@ export default {
           viewName: "dcline"
         },
         {
-          label: "對象存儲",
+          label: "物件儲存",
           viewName: "COS"
         }
       ],
@@ -654,9 +658,9 @@ export default {
         alarm: "", //告警對象
         alarm_list: [
           {
-            name: "告警對象1"
+            name: "告警物件1"
           }
-        ], //告警對象數組
+        ], //告警對象陣列
         user: "用戶組", //用戶
         group: "", //組
         user_kind: [
@@ -682,22 +686,22 @@ export default {
             value: "2",
             name: "測試誤刪"
           }
-        ], //用戶名類型數據
-        product_value: "", //産品
+        ], //用户名类型数据
+        product_value: "", //产品
         strategy_value: "" //策略
       },
-      tableData: [], //表格數據
+      tableData: [], //表格数据
       loadShow: true,
       edit: false,
-      current: "", // 編輯
-      //分頁
-      total: 0, //總條數
-      pageSize: 10, // 分頁條數
-      pageIndex: 0, // 當前頁碼
-      operationFlag: -1, //按鈕禁用開關
+      current: "", // 编辑
+      //分页
+      total: 0, //总条数
+      pageSize: 10, // 分页条数
+      pageIndex: 0, // 当前页码
+      operationFlag: -1, //按钮禁用开关
       dataListLoading: false,
-      dialogVisible: false, //設置彈出框
-      defaultIconFlag: false, //鼠標事件
+      dialogVisible: false, //设置弹出框
+      defaultIconFlag: false, //鼠标事件
       deleteDialogVisible: false,
       deleteAllDialogVisible: false,
       deleteTableData: [],
@@ -731,7 +735,7 @@ export default {
       ],
       emailOpen: 0,
       emailClose: 0,
-      // 短信
+      // 簡訊
       SMSVal: "1",
       SMSOpt: [
         {
@@ -776,7 +780,7 @@ export default {
       monitorNumber: "",
       DiskType: {
         CLOUD_BASIC: "普通雲硬碟",
-        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_PREMIUM: "高效能雲硬碟",
         CLOUD_SSD: "SSD雲硬碟"
       },
       vpcConnState: {
@@ -871,7 +875,7 @@ export default {
               this.loadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+                  "請求未授權。請參考 CAM 文件對鑒權的說明。",
                 DryRunOperation:
                   "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
                 FailedOperation: "操作失敗。",
@@ -929,7 +933,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -979,7 +983,7 @@ export default {
         }
       });
     },
-    // 項目
+    // 專案
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -1032,7 +1036,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -1227,7 +1231,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -1318,7 +1322,7 @@ export default {
         this.tipsShow = false;
       }
     },
-    // 修改告警渠道
+    // 修改告警管道
     ModifyAlarmBtn() {
       this.ModifyDialogVisible = true;
       // console.log(this.arr[0].ReceiverInfos[0].NotifyWay);
@@ -1336,7 +1340,7 @@ export default {
       this.emailOpen = 0;
       this.emailClose = 0;
       this.emailVal = "1";
-      // 短信
+      // 簡訊
       this.SMSOpt = [
         {
           value: "1",
@@ -1627,9 +1631,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -1647,7 +1651,7 @@ export default {
       if (val === "EMAIL") {
         return "郵件";
       } else if (val === "SMS") {
-        return "短信";
+        return "簡訊";
       } else if (val === "WECHAT") {
         return "微信";
       } else if (val === "CALL") {
@@ -1656,7 +1660,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認項目";
+        return "預設專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {
@@ -1692,18 +1696,18 @@ export default {
   font-weight: 200;
 }
 
-.strategy-wrap >>> .el-table .cell {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-}
-p.qudaoInfo {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-}
+// .strategy-wrap >>> .el-table .cell {
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 1;
+//   overflow: hidden;
+// }
+// p.qudaoInfo {
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 1;
+//   overflow: hidden;
+// }
 a {
   color: #006eff;
   cursor: pointer;

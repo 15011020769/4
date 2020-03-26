@@ -185,7 +185,7 @@
           </div>
         </div>
         <!-- <div class="right">
-           当月已使用短信统计
+           当月已使用簡訊统计
           <div class="box">
             <div class="head">
               <h3 style="flex:1;">
@@ -219,7 +219,7 @@
         </div> -->
       </div>
     </div>
-    <!-- 购买短信 -->
+    <!-- 购买簡訊 -->
     <!-- <bugmsg :dialogVisible="dialogVisible" @cancel="cancel" @save="save" /> -->
   </div>
 </template>
@@ -245,7 +245,7 @@ export default {
   name: "overview",
   data() {
     return {
-      dialogVisible: false, //购买短信弹出框
+      dialogVisible: false, //购买簡訊弹出框
       region: "",
       tableData: [], //表格数据
       //下拉框
@@ -301,9 +301,9 @@ export default {
           subtitle: "雲硬碟"
         },
         {
-          label: "VPN網關",
+          label: "VPN閘道",
           viewName: "VPN_GW",
-          subtitle: "VPN網關"
+          subtitle: "VPN閘道"
         },
         {
           label: "VPN通道",
@@ -311,14 +311,14 @@ export default {
           subtitle: "VPN通道"
         },
         {
-          label: "NAT網關",
+          label: "NAT閘道",
           viewName: "nat_tc_stat",
-          subtitle: "NAT網關"
+          subtitle: "NAT閘道"
         },
         {
-          label: "專線網關",
+          label: "專線閘道",
           viewName: "DC_GW",
-          subtitle: "專線網關"
+          subtitle: "專線閘道"
         },
         {
           label: "彈性公網IP",
@@ -346,9 +346,9 @@ export default {
           subtitle: "物理專線"
         },
         {
-          label: "對象存儲",
+          label: "物件儲存",
           viewName: "COS",
-          subtitle: "對象存儲"
+          subtitle: "物件儲存"
         }
       ]
     };
@@ -391,7 +391,7 @@ export default {
   },
 
   methods: {
-    //购买短信
+    //购买簡訊
     buyMessgae() {
       this.dialogVisible = true;
     },
@@ -409,7 +409,7 @@ export default {
         this.region = res.data[0].zone;
       });
     },
-    // 当月已使用短信统计
+    // 当月已使用簡訊统计
     // getSMS() {
     //   let params = {
     //     Version: "2018-07-24",
@@ -777,11 +777,11 @@ export default {
       this.chartsObjects.forEach(item => {
         json.push({
           監控事件: item.Content,
-          項目: item.Type === "threshold" ? project : "-",
+          專案: item.Type === "threshold" ? project : "-",
           地域: "台灣台北",
           產品類型: product.label,
           // "類型": item.event === "evnet" ? "事件" : "阈值告警",   // 接口未提供該字段
-          對象: item.Dimensions === undefined ? "" : item.Dimensions,
+          物件: item.Dimensions === undefined ? "" : item.Dimensions,
           狀態: item.Status === 0 ? "未恢復" : "已恢復",
           告警策略: item.GroupName,
           開始時間: moment(item.FirstOccurTime).format("YYYY-MM-DD HH:mm:ss"),

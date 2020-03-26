@@ -293,7 +293,7 @@ export default {
       // this.getNameSpaceList();
       this.getNameSpaceTotal();
     },
-    //刷新数据
+    //重新整理数据
     refreshList(){
       // this.getNameSpaceList();
       this.getNameSpaceTotal();

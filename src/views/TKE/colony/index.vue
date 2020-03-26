@@ -773,28 +773,31 @@ export default {
               for (let k in _Data) {
                 if (this.list1[j].ClusterId === _Data[k][1]) {
                   if (_Data[k][2]) {
-                    this.list1[j]["root"] = _Data[k][2].toFixed(2);
+                    this.list1[j]["root"] = parseFloat(_Data[k][2].toFixed(2));
                   } else {
                     this.list1[j]["root"] = 0;
                   }
                   if (_Data[k][3]) {
-                    this.list1[j]["memory"] = (
-                      _Data[k][3] /
-                      (1024 * 1024 * 1024)
-                    ).toFixed(2);
+                    this.list1[j]["memory"] = parseFloat(
+                      (_Data[k][3] / (1024 * 1024 * 1024)).toFixed(2)
+                    );
                   } else {
                     this.list1[j]["memory"] = 0;
                   }
                   if (_Data[k][4]) {
-                    this.list1[j]["yroot"] = _Data[k][4].toFixed(2);
+                    this.list1[j]["yroot"] = parseFloat(
+                      ((_Data[k][2] * _Data[k][4]) / 100).toFixed(2)
+                    );
                   } else {
                     this.list1[j]["yroot"] = 0;
                   }
                   if (_Data[k][5]) {
-                    this.list1[j]["ymemory"] = (
-                      _Data[k][5] /
-                      (1024 * 1024 * 1024)
-                    ).toFixed(2);
+                    this.list1[j]["ymemory"] = parseFloat(
+                      (
+                        ((_Data[k][3] / (1024 * 1024 * 1024)) * _Data[k][5]) /
+                        100
+                      ).toFixed(2)
+                    );
                   } else {
                     this.list1[j]["ymemory"] = 0;
                   }
@@ -900,12 +903,12 @@ export default {
     // 查看详情跳转
     goColonySub(row) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
-      sessionStorage.setItem('ClusterOs', row.ClusterOs);
+      sessionStorage.setItem("ClusterOs", row.ClusterOs);
       this.$router.push({
         name: "colonyResourceDeployment",
         query: {
           clusterId: row.ClusterId,
-          ProjectId: row.ProjectId,
+          ProjectId: row.ProjectId
         }
       });
     },

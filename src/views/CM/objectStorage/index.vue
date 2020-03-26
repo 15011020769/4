@@ -129,7 +129,7 @@
             new Blob([wbout], {
               type: "application/octet-stream"
             }),
-            "對象儲存" + ".xlsx"
+            "物件儲存" + ".xlsx"
           );
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);
@@ -170,7 +170,7 @@
           this.GetTabularData();
           this.currpage = 1;
         } else {
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         }
       },
       // 添加项目列表的表格数据

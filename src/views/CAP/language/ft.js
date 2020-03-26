@@ -11,7 +11,7 @@ module.exports = {
       zrqqsl: '昨日請求數量',
       zryzl: '昨日驗證量',
       zreyljl: '昨日惡意攔截量',
-      ckxq: '檢視詳情',
+      ckxq: '查看詳情',
       yzmc: '驗證名稱',
       xcxyz: '如(小程序驗證)',
       yzssym: '驗證所屬域名',

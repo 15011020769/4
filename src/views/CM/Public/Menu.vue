@@ -36,12 +36,12 @@
             <span slot="title">平台事件訂閱</span>
           </el-menu-item>
           <el-menu-item index="/message">
-            <span slot="title">自定義消息</span>
+            <span slot="title">自定義訊息</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>
       <el-menu-item index="/Template">
-        <span slot="title">觸發條件模板</span>
+        <span slot="title">觸發條件範本</span>
       </el-menu-item>
       <el-submenu index="5">
         <template slot="title">

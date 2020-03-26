@@ -1,11 +1,11 @@
 <template>
   <div class="Template-wrap">
-    <Header title="觸發條件模板" />
+    <Header title="觸發條件範本" />
     <div class="overview-main">
       <div class="explain">
         <p>
-          觸發條件模板功能支持對相同告警規則的複用和統壹修改
-          <!-- ，點擊查看<a>觸發條件模板文檔</a> -->
+          觸發條件範本功能支持對相同告警規則的複用和統壹修改
+          <!-- ，點擊檢視<a>觸發條件範本文件</a> -->
         </p>
       </div>
     </div>
@@ -15,14 +15,14 @@
           <el-button type="primary" @click="buyMessgae">新建</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input v-model="triggerInput" placeholder="請輸入觸發條件模板名搜索"></el-input>
+          <el-input v-model="triggerInput" placeholder="請輸入觸發條件範本名搜索"></el-input>
           <el-button icon="el-icon-search" @click="clickSerch(triggerInput)" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
       <el-table style="width: 100%" height="500" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column prop label="模板名稱">
+        <el-table-column prop label="範本名稱">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="`策略名稱: ${scope.row.GroupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID,scope.row.GroupName)">{{scope.row.GroupName}}</span>
@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column prop label="綁定告警策略數">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" content="點擊查看詳情">
+            <el-popover trigger="hover" placement="right" content="點擊檢視詳情">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID)">{{`${scope.row.PolicyGroups.length}個`}}</span>
             </el-popover>
           </template>
@@ -112,14 +112,14 @@
         ></el-pagination>
       </div>
     </div>
-    <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件模板名稱">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
+    <!-- 编辑範本名称弹框 -->
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件範本名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
           <div>
             <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
-            <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
+            <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
       <!-- 分页 -->
-            <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
+            <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
           </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
@@ -128,7 +128,7 @@
     </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">確定刪除所選觸發條件模板嗎?</p>
+        <p style="color:#444;font-weight:bolder;">確定刪除所選觸發條件範本嗎?</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitDelete()">確 定</el-button>
           <el-button @click="showDelDialog = false">取 消</el-button>
@@ -136,7 +136,7 @@
       </el-dialog>
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">複制所選觸發條件模板</p>
+        <p style="color:#444;font-weight:bolder;">複制所選觸發條件範本</p>
         <p style="font-size:12px;margin-top:20px">{{`是否複制${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="coptData()">確 定</el-button>
@@ -173,10 +173,10 @@ export default {
       showDelDialog: false, // 是否显示删除弹框
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
-      groupName: '', // 模板名称
-      editGroupName: '', // 编辑的模板名称
-      editGroupId: '', // 编辑的模板id
-      // templateObj: {}, // 当前模板数据对象
+      groupName: '', // 範本名称
+      editGroupName: '', // 编辑的範本名称
+      editGroupId: '', // 编辑的範本id
+      // templateObj: {}, // 当前範本数据对象
       Conditions: [], // 策略类型
       PolicyType: [], // 策略类型下拉框的策略名称
       formInline: {
@@ -208,7 +208,7 @@ export default {
         alarm: '', // 告警对象
         alarm_list: [
           {
-            name: '告警對象1'
+            name: '告警物件1'
           }
         ], // 告警对象数组
         user: '', // 用户
@@ -245,16 +245,16 @@ export default {
           viewName: 'BS'
         },
         {
-          label: 'VPN網關',
+          label: 'VPN閘道',
           viewName: 'VPN_GW'
         }, {
           label: 'VPN通道',
           viewName: 'vpn_tunnel'
         }, {
-          label: 'NAT網關',
+          label: 'NAT閘道',
           viewName: 'nat_tc_stat'
         }, {
-          label: '專線網關',
+          label: '專線閘道',
           viewName: 'DC_GW'
         }, {
           label: 'MYSQL',
@@ -269,7 +269,7 @@ export default {
           label: '物理專線',
           viewName: 'dcline'
         }, {
-          label: '對象存儲',
+          label: '物件儲存',
           viewName: 'COS'
         }
         ],
@@ -279,11 +279,11 @@ export default {
       tableData: [
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫-Redis-其他版本',
+        //   type: '預設雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -294,11 +294,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫',
+        //   type: '預設雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -309,7 +309,7 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
         //   object: '東崋雲計算有限公司',
@@ -324,11 +324,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫-Redis-其他版本',
+        //   type: '預設雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -339,11 +339,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫',
+        //   type: '預設雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -354,7 +354,7 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
         //   object: '東崋雲計算有限公司',
@@ -368,14 +368,14 @@ export default {
         //   zanting: true
         // }
       ], // 表格數據
-      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符號數組
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符號陣列
       // 分頁
       TotalCount: 0, // 總條數
       pageSize: 10, // 分頁條數
       currpage: 0, // 當前頁碼
       operationFlag: -1, // 按鈕禁用開關
       searchName: '',
-      triggerInput: '' // 觸發條件模板名
+      triggerInput: '' // 觸發條件範本名
     }
   },
   components: {
@@ -455,7 +455,7 @@ export default {
               if (anp == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指數遞增重複告警'
+                item.alarm = '按週期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
@@ -485,14 +485,14 @@ export default {
         this.getTemplateList(val)
       }
     },
-    // 编辑模板名称按钮
+    // 编辑範本名称按钮
     showEditNameDlg (obj) {
       this.editGroupName = obj.GroupName
       this.editGroupId = obj.GroupID
       this.ShowEditDialog = true
       // this.templateObj = obj
     },
-    // 确定编辑模板名称完成
+    // 确定编辑範本名称完成
     async submitEditName () {
       let params = {
         Version: '2018-07-24',
@@ -507,7 +507,7 @@ export default {
           this.ShowEditDialog = false
           this.getTemplateList()
           this.$message({
-            message: '條件模板名稱修改成功',
+            message: '條件範本名稱修改成功',
             type: 'success',
             showClose: true,
             duration: 2000
@@ -586,7 +586,7 @@ export default {
     // 错误提示
     errorPrompt (res) {
       let ErrTips = {
-        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文檔對鑒權的說明。',
+        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
         'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
         'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
@@ -663,7 +663,7 @@ export default {
       //   .catch(_ => {});
     },
     addTemplate () {
-      // 新建触发条件模板
+      // 新建触发条件範本
       this.dialogFormVisible = true
     },
     onSubmit () {
@@ -707,13 +707,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -723,7 +723,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '對象存儲'
+          return '物件儲存'
         }
       }
     }

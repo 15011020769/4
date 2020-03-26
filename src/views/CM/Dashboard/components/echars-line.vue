@@ -17,6 +17,11 @@
       period: String,
       series:[Array, String, Number]
     },
+    data(){
+      return{
+        name:""
+      }
+    },
     mounted() {
       this.init();
     },
@@ -30,7 +35,7 @@
         handler() {
           this.init();
         }
-      }
+      },
     },
     methods: {
       init() {
@@ -94,22 +99,24 @@
               }
             },
             formatter(params) {
-              let relVal = `${params[0].name}<br/>
-           ${params[0].data}<br />`;
-              relVal += `粒度：${TimeGranularity[period]}</br>`;
-              return relVal;
-            }
+              let relVal = `${params[0].name}<br/>`;
+                  relVal += `粒度：${TimeGranularity[period]}</br>`;
+                  return relVal;
+                }
           },
-          toolbox: {
-            feature: {
-              saveAsImage: {
-                show: true,
-                name: this.MetricName,
-                title: "導出圖片"
-              }
+          // toolbox: {
+          //   feature: {
+          //     saveAsImage: {
+          //       show: true,
+          //       name: this.MetricName,
+          //       title: "導出圖片"
+          //     }
 
-            }
-          },
+          //   }
+          // },
+          // tooltip: {
+          //     trigger: 'axis'
+          // },
           legend: {
             // data: this.title,
             y: "bottom"
@@ -151,15 +158,28 @@
               // X轴显示
               show: false
             },
-            type: "value",
-            splitNumber: this.scale
+            // type: "value",
+            // splitNumber: this.scale
           }],
           series:this.series
-        });
+        },true);
+          if(myChart._$handlers.click){
+              myChart._$handlers.click.length = 0;
+          }
+          // let name = ""
+          let _this = this
+          myChart.on('click',  function(params) {
+        //这个params可以获取你要的图中的当前点击的项的参数
+              if(params){
+                  _this.$emit('paramValue',params.name)
+              }
+          });    
+        
         window.addEventListener("resize", () => {
           myChart.resize();
         });
       },
+      
       beforrDestroy() {
         if (this.myChart) {
           this.myChart.clear();

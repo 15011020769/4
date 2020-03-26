@@ -13,9 +13,9 @@
 
     <!-- 詳情子菜單導航 -->
     <div class="detial-nav">
-      <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'}">模板信息</router-link> -->
+      <!-- <router-link class="nav-item" :to="{name:'TemplateInfo'}">範本訊息</router-link> -->
       <!-- <router-link class="nav-item" :to="{name:'TemplateUpdate'}">變更日志</router-link> -->
-      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Info`}">模板信息</router-link>
+      <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Info`}">範本訊息</router-link>
       <router-link class="nav-item" :to="{path:`/Template/Detail/${groupId}/Update`}">變更日志</router-link>
     </div>
 

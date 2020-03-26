@@ -376,7 +376,7 @@
           return item.pinyin.indexOf(query) > -1;
         },
         show1: false,//检查状态是否可以新建
-        show2:false,//控制是否显示刷新按钮
+        show2:false,//控制是否显示重新整理按钮
         fontColor: false,
         rules: {
           name: [{

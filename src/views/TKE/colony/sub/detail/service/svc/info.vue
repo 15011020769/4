@@ -1,6 +1,6 @@
  <!-- Service-基本信息 -->
 <template>
-  <div class="colony-main">
+  <div class="colony-main" v-loading="loadShow">
     <div class="tke-card tke-formpanel-wrap">
       <h4  class="tke-formpanel-title">{{$t('TKE.overview.jbxx')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="120px" size="mini">
@@ -17,8 +17,8 @@
           <div class="tke-form-item_text" v-if="detailData.metadata &&detailData.metadata.labels">
             <!-- {{detailData.metadata && detailData.metadata.labels}} -->
             <span v-for="(v,i) in detailData.metadata && detailData.metadata.labels" :key="v">
-              {{i}}: {{v+'&nbsp;&nbsp;'}}
-              </span>
+              {{i}}: {{v+'&nbsp;&nbsp;'}} 
+            </span>
           </div>
           <div class="tke-form-item_text" v-else>-</div>
         </el-form-item>
@@ -27,13 +27,17 @@
         </el-form-item>
         <el-form-item label="Selector">
           <!-- <div class="tke-form-item_text">k8s-app：{{detailData.k8sApp}} 、qcloud-app：{{detailData.qcloudApp}}</div> -->
-          <div class="tke-form-item_text">{{detailData.k8sApp?'k8s-app：'+detailData.k8sApp+' 、'+'qcloud-app：'+detailData.qcloudApp:'-'}}</div>
+          <div class="tke-form-item_text" v-if="detailData.spec&&detailData.spec.selector">
+            <!-- {{detailData.k8sApp?'k8s-app：'+detailData.k8sApp+' 、'+'qcloud-app：'+detailData.qcloudApp:'-'}} -->
+            <span v-for="(val,key,i) in detailData.spec&&detailData.spec.selector" :key="i">{{key+': '+val+'&nbsp;&nbsp;'||'-'}}</span>
+          </div>
+          <div class="tke-form-item_text" v-else>-</div>
         </el-form-item>
         <el-form-item :label="$t('TKE.subList.fwfs')">
-          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type}}</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type||'-'}}</div>
         </el-form-item>
         <el-form-item label="集群IP">
-          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.clusterIP}}</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.clusterIP||'-'}}</div>
         </el-form-item>
         <el-form-item :label="$t('TKE.subList.fzjhip')">
           <!-- <div class="tke-form-item_text">{{detailData.status && detailData.status.loadBalancer.ingress && detailData.status.loadBalancer.ingress[0].ip}}</div> -->
@@ -43,7 +47,6 @@
           <div style="max-width:800px">
             <el-table
               :data="list"
-
               style="width: 100%">
               <el-table-column
                 prop="protocol"
@@ -51,17 +54,18 @@
                 >
               </el-table-column>
               <el-table-column
-                prop="port"
+                prop="targetPort"
                 label="容器端口"
                 >
               </el-table-column>
               <el-table-column
                 prop="nodePort"
+                v-if="list[0].nodePort"
                 :label="$t('TKE.subList.zjdk')"
                 >
               </el-table-column>
               <el-table-column
-                prop="targetPort"
+                prop="port"
                 :label="$t('TKE.subList.fwdk')"
                 >
               </el-table-column>
@@ -76,7 +80,7 @@
       <h4  class="tke-formpanel-title">{{$t('TKE.colony.gjszhi')}}</h4>
       <el-form  class="tke-form" label-position='left' label-width="130px" size="mini">
         <el-form-item label="ExternalTrafficPolicy">
-          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.type||'-'}}</div>
+          <div class="tke-form-item_text">{{detailData.spec && detailData.spec.externalTrafficPolicy||'Cluster'}}</div>
         </el-form-item>
         <el-form-item label="Session Affinity">
           <div class="tke-form-item_text">{{detailData.spec && detailData.spec.sessionAffinity}}</div>
@@ -95,10 +99,12 @@ import XLSX from 'xlsx'
 import { ALL_CITY, POINT_REQUEST } from '@/constants'
 import { ErrorTips } from '@/components/ErrorTips'
 import moment from 'moment'
+import Loading from '@/components/public/Loading'
 export default {
   name: 'svcDetailInfo',
   data () {
     return {
+      loadShow:false,
       list: [
         {
           protocol: 'TCP',
@@ -141,16 +147,14 @@ export default {
           this.loadShow = false
           let response = JSON.parse(res.Response.ResponseBody)
           this.detailData = response
-          this.detailData.k8sApp = this.detailData.spec.selector && this.detailData.spec.selector['k8s-app']
-          this.detailData.qcloudApp = this.detailData.spec.selector && this.detailData.spec.selector['qcloud-app']
+          // this.detailData.k8sApp = this.detailData.spec.selector && this.detailData.spec.selector['k8s-app']
+          // this.detailData.qcloudApp = this.detailData.spec.selector && this.detailData.spec.selector['qcloud-app']
           this.list = response.spec.ports
           // console.log(this.detailData, 'detail')
           // console.log(response)
         } else {
           this.loadShow = false
-          let ErrTips = {
-
-          }
+          let ErrTips = {}
           let ErrOr = Object.assign(ErrorTips, ErrTips)
           this.$message({
             message: ErrOr[res.Response.Error.Code],
