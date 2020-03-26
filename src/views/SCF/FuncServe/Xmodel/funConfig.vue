@@ -62,7 +62,7 @@
         </p>
       </div>
       <div class="Content" v-if="!Congigload">
-        <p>标签</p>
+        <p>{{$t('SCF.total.bq')}}</p>
         <span v-for="(v,i) in ConfigDate.Tags" :key="i">{{v}}</span>
         <p><i @click="modifyLabels()" class="el-icon-edit" style="cursor:pointer"></i></p>
       </div>

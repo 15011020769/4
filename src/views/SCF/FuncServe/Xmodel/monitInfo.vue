@@ -1,12 +1,12 @@
 <template>
   <div class="Monitor">
     <div class="Tips">
-      <p>如果当前函数尚未配置告警服务，可以<a href="../CM/index.html#/strategy/create"> [前往新增告警]</a>为函数添加告警策略</p>
+      <p>{{$t('SCF.total.hswpzgj')}}<a href="../CM/index.html#/strategy/create"> [前往新增告警]</a>{{$t('SCF.total.whstjcl')}}</p>
     </div>
     <div class="Monitortip">
       <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
         v-on:switchData="GetDat" />
-      <p @click="_GetBase">刷新</p>
+      <p @click="_GetBase">{{$t('SCF.total.sx')}}</p>
     </div>
 
     <div class="box-dis">
@@ -14,7 +14,7 @@
         <i class="el-icon-info"></i>{{$t('SCF.total.zs')}}
       </p>
       <div class="exportExcel">
-        <el-button size="small" @click="exportExcel" :disabled="TableLoad">導出</el-button>
+        <el-button size="small" @click="exportExcel" :disabled="TableLoad">{{$t('SCF.total.dc')}}</el-button>
       </div>
     </div>
     <div class="box-table">
@@ -80,7 +80,7 @@
           <template slot-scope="scope">
             <!-- <a class="a-1" @click="downPng(scope.row)">導出圖片</a> -->
             <a :id="scope.row.MetricName" class="a-1" :download="disName[scope.row.MetricName]"
-              @click="downCsvOne(scope.row)">導出數據</a>
+              @click="downCsvOne(scope.row)">{{$t('SCF.total.dcsj')}}</a>
           </template>
         </el-table-column>
       </el-table>
@@ -115,7 +115,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="數據" width="550">
+        <el-table-column :label="$t('SCF.total.sju')" width="550">
           <template slot-scope="scope">
             <p v-if="scope.row.DataPoints[0].Values.length==0">{{$t('SCF.total.zwsj')}}</p>
             <div v-if="scope.row.DataPoints[0].Values.length!=0">

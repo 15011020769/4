@@ -11,7 +11,7 @@
               <p>{{ $t('SCF.total.hssl') }}</p>
               <p v-loading="loading">
                 <span>{{topList.number}}</span>
-                <span>个</span>
+                <span>{{ $t('SCF.total.ge') }}</span>
               </p>
             </div>
           </el-col>
@@ -57,14 +57,14 @@
             <el-tab-pane name="mem_duration">
               <template slot="label">
                 <p>
-                  <span class="menu1">资源使用量</span>
+                  <span class="menu1">{{ $t('SCF.total.zysyl') }}</span>
                   <span class="menu2">(MBms)</span>
                 </p>
               </template>
               <div v-if="MetricName==='mem_duration'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">资源使用量</p>
+                <p class="title">{{ $t('SCF.total.zysyl') }}</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -83,14 +83,14 @@
             <el-tab-pane name="invocation">
               <template slot="label">
                 <p>
-                  <span class="menu1">调用次数</span>
+                  <span class="menu1">{{ $t('SCF.total.dycs') }}</span>
                   <span class="menu2">(次)</span>
                 </p>
               </template>
               <div v-if="MetricName==='invocation'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">调用次数</p>
+                <p class="title">{{ $t('SCF.total.dycs') }}</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -108,14 +108,14 @@
             <el-tab-pane name="out_flow">
               <template slot="label">
                 <p>
-                  <span class="menu1">外网出流量</span>
+                  <span class="menu1">{{$t('SCF.total.wwcll')}}</span>
                   <span class="menu2">(KB)</span>
                 </p>
               </template>
               <div v-if="MetricName==='out_flow'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">外网出流量</p>
+                <p class="title">{{$t('SCF.total.wwcll')}}</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -133,14 +133,14 @@
             <el-tab-pane name="error">
               <template slot="label">
                 <p>
-                  <span class="menu1">错误次数</span>
+                  <span class="menu1">{{$t('SCF.total.cwcs')}}</span>
                   <span class="menu2">(次)</span>
                 </p>
               </template>
               <div v-if="MetricName==='error'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">错误次数</p>
+                <p class="title">{{$t('SCF.total.cwcs')}}</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -183,14 +183,14 @@
             <el-tab-pane name="throttle">
               <template slot="label">
                 <p>
-                  <span class="menu1">受限次数</span>
+                  <span class="menu1">{{$t('SCF.total.sxcs')}}</span>
                   <span class="menu2">(次)</span>
                 </p>
               </template>
               <div v-if="MetricName==='throttle'">
                 <TimeDropDown :TimeArr='TimeArr' :Datecontrol='true' :Graincontrol='true' :Difference="'H'"
                   v-on:switchData="GetDat" />
-                <p class="title">受限次数</p>
+                <p class="title">{{$t('SCF.total.sxcs')}}</p>
                 <el-table :data="tableData" style="width: 750px" v-loading='tabload'>
                   <el-table-column>
                     <template slot-scope="scope">
@@ -209,16 +209,16 @@
         </div>
         <div class="top10">
           <div class="title">
-            <p>函数资源使用量 TOP 10 统计</p>
-            <p class="shua" @click="_shua">刷新</p>
+            <p>{{$t('SCF.total.hszysylqs')}}</p>
+            <p class="shua" @click="_shua">{{$t('SCF.total.sx')}}</p>
           </div>
           <div>
             <el-table :data="TopArr" style="width: 100%" v-loading='topload'>
-              <el-table-column prop="function_name" label="函数名">
+              <el-table-column prop="function_name" :label="$t('SCF.total.hsm')">
               </el-table-column>
-              <el-table-column prop="namespace" label="命名空间">
+              <el-table-column prop="namespace" :label="$t('SCF.total.mmkj')">
               </el-table-column>
-              <el-table-column label="数据指标">
+              <el-table-column :label="$t('SCF.total.sjzb')">
                 <template slot-scope="scope">
                   <p>{{scope.row.mem_duration}}MB/s</p>
                 </template>
@@ -325,7 +325,7 @@
           'mem_duration': '時間記憶體',
           'out_flow': '外網出流量',
           'throttle': '函數運行受限次數',
-          'ConcurrentExecutions': '并发执行错误'
+          'ConcurrentExecutions': '並發執行錯誤'
         },
         TopArr: [] //top10列表
       };

@@ -87,7 +87,6 @@
                 <div :class="{'errActive':isbol}">
                   <p class="modelNameSpace">{{ $t('SCF.total.ts1') }}</p>
                   <p class="modelNameSpace">{{ $t('SCF.total.ts2') }}</p>
-                  <p class="modelNameSpace">{{ $t('SCF.total.tbs3') }}</p>
                 </div>
 
               </div>
@@ -129,7 +128,7 @@
     <div>
       <el-dialog :visible.sync="DeleteVisible" width="550px" center>
         <div slot="title" class="DeleteVisible">
-          {{$t('SCF.total.qdschs')}} {{FunctionName}} 吗？
+          {{$t('SCF.total.qdschs')}} {{FunctionName}} 嗎？
         </div>
         <span>{{$t('SCF.total.scqd')}}</span>
         <span slot="footer" class="dialog-footer">
@@ -532,7 +531,7 @@
         this.axios.post(SCF_DEL, param).then(res => {
           if (res.Response.Error == undefined) {
             this.$message({
-              message: '删除成功',
+              message: '刪除成功',
               type: "success",
               showClose: true,
               duration: 0

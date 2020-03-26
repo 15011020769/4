@@ -1,9 +1,9 @@
 <template>
-  <el-dialog title="你已选择1个资源" :visible.sync="visible" width="50%" >
+  <el-dialog :title="$t('SCF.total.yxzy')" :visible.sync="visible" width="50%" >
       <div class="dialog-content">
           <div>
             <div class="dc-1">
-                <p class="p_1"><span class="s-1">标签键</span><span  class="s-2">标签值</span><span  class="s-3">删除</span></p>
+                <p class="p_1"><span class="s-1">{{$t('SCF.total.bqj')}}</span><span  class="s-2">{{$t('SCF.total.bqz')}}</span><span  class="s-3">{{$t('SCF.total.sc')}}</span></p>
                 <div class="content-list">
                 <p class="p_2" v-for="(v,i) in list" :key="i">
                     <span  class="s-1">
@@ -17,7 +17,7 @@
                         ></el-autocomplete>
                     </span>
                     <span  class="s-2"><el-input  v-show="v.Key!=''"  @focus="valueFocus(v.Value,i)" @blur="valueBlur(v,i)" v-model="v.Value" size="small"></el-input></span>
-                    <span  class="s-3"> <el-button type="text" size="small" @click="delKeyValue(i,v)">删除</el-button></span>
+                    <span  class="s-3"> <el-button type="text" size="small" @click="delKeyValue(i,v)">{{$t('SCF.total.sc')}}</el-button></span>
                 </p>
                 </div>
             </div>
@@ -29,7 +29,7 @@
     
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取 消</el-button>
-      <el-button type="primary" @click="submit">确 定</el-button>
+      <el-button type="primary" @click="submit">{{$t('SCF.total.qd')}}</el-button>
     </span>
   </el-dialog>
 </template>
@@ -128,11 +128,11 @@ export default {
                       });
                  }else{
                     let ErrTips = {
-                        "InvalidParameter.Tag": "Tag参数错误",
+                        "InvalidParameter.Tag": "Tag參數錯誤",
                         "InvalidParameterValue.DeleteTagsParamError":'DeleteTags中不能包含ReplaceTags或AddTags中元素',
-                        "InvalidParameterValue.ResourceDescriptionError":'资源描述错误',
-                        "LimitExceeded.TagKey":'用户创建标签键达到上限数 1000',
-                        "LimitExceeded.TagValue":'单个标签键对应标签值达到上限数 1000',
+                        "InvalidParameterValue.ResourceDescriptionError":'資源描述錯誤',
+                        "LimitExceeded.TagKey":'用戶創建標籤鍵達到上限數 1000',
+                        "LimitExceeded.TagValue":'單個標籤鍵對應標籤值達到上限數 1000',
                     };
                     let ErrOr = Object.assign(ErrorTips, ErrTips);
                     this.$message({

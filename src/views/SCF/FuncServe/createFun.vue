@@ -135,7 +135,7 @@
               </el-row>
             </div>
             <div v-else class="zusj">
-              暫無數據
+              {{ $t('SCF.total.zwsj') }}
             </div>
             <div class="Right-style pagstyle">
               <span class="pagtotal">共&nbsp;{{totalItems}}&nbsp;{{ $t('SCF.total.tiao') }}</span>
