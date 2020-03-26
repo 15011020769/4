@@ -86,7 +86,7 @@
                   <el-table-column prop label="持續時長" width="120">
                     <template slot-scope="scope">{{formatSeconds(scope.row.Duration)}}</template>
                   </el-table-column>
-                  <el-table-column prop label="告警渠道" width="130">
+                  <el-table-column prop label="告警管道" width="130">
                     <template slot-scope="scope">郵件、簡訊</template>
                   </el-table-column>
                   <el-table-column prop label="告警狀態" width="100">

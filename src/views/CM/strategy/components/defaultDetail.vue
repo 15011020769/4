@@ -957,7 +957,7 @@
           </el-table-column>
 
           <el-table-column
-            label="告警渠道"
+            label="告警管道"
             v-if="
               receivingObjectData.length === 0 ||
                 ReceiverInfos.ReceiverType === 'group'
@@ -986,7 +986,7 @@
             {{ ReceiverInfos.EndTime | EndTime }}
           </el-table-column>
           <el-table-column
-            label="告警渠道"
+            label="告警管道"
             v-if="ReceiverInfos.ReceiverType === 'user'"
           >
             <span v-for="(item, index) in ReceiverInfos.NotifyWay" :key="index">
@@ -1127,7 +1127,7 @@
                       label-width="40px"
                     ></el-option>
                   </el-select>
-                  <a href="javascript:;" @click="AlarmTriggerCondition">刷新</a>
+                  <a href="javascript:;" @click="AlarmTriggerCondition">重新整理</a>
                 </p>
                 <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p>
@@ -3967,7 +3967,7 @@ export default {
           }
         } else {
           this.$message({
-            message: "請選擇接收渠道 ",
+            message: "請選擇接收管道 ",
             type: "error",
             showClose: true,
             duration: 0
@@ -4013,7 +4013,7 @@ export default {
           }
         } else {
           this.$message({
-            message: "請選擇接收渠道 ",
+            message: "請選擇接收管道 ",
             type: "error",
             showClose: true,
             duration: 0

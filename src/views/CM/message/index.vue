@@ -55,7 +55,7 @@
             <!-- <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a> -->
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="告警渠道">
+        <el-table-column prop="address" label="告警管道">
           <template slot-scope="scope">
             <p v-if="scope.row.NotifyWay">
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">

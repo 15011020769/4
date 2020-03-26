@@ -117,7 +117,7 @@
                     {{ i.EndTime | EndTime }}
                   </p>
                   <p>
-                    渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                    管道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                       >{{ j | NotifyWay
                       }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
                     >

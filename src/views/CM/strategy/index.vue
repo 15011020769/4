@@ -79,9 +79,9 @@
           >
           <el-button v-else disabled>刪除</el-button>
           <el-button v-if="ModifyAlarm" @click="ModifyAlarmBtn()"
-            >修改告警渠道</el-button
+            >修改告警管道</el-button
           >
-          <el-button v-if="!ModifyAlarm" disabled>修改告警渠道</el-button>
+          <el-button v-if="!ModifyAlarm" disabled>修改告警管道</el-button>
         </el-row>
         <el-row class="iconBtn">
           <!-- <i class="el-icon-setting" @click="buyMessgae"></i> -->
@@ -241,7 +241,7 @@
             <div>{{ scope.row.UpdateTime | formatDate }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="告警渠道">
+        <el-table-column label="告警管道">
           <template slot-scope="scope">
             <div v-if="scope.row.ReceiverInfos != undefined">
               <div v-for="(i, x) in scope.row.ReceiverInfos" :key="x">
@@ -251,12 +251,12 @@
                   {{ i.EndTime | EndTime }}
                 </p>
                 <p v-if="i.NotifyWay.length > 0">
-                  渠道：<span v-for="(j, k) in i.NotifyWay" :key="k"
+                  管道：<span v-for="(j, k) in i.NotifyWay" :key="k"
                     >{{ j | NotifyWay
                     }}<i v-if="i.NotifyWay.length - 1 > k">、</i></span
                   >
                 </p>
-                <p v-else>渠道：-</p>
+                <p v-else>管道：-</p>
               </div>
             </div>
             <div v-else>-</div>
@@ -436,7 +436,7 @@
     </el-dialog>
     <!-- 修改告警渠道 -->
     <el-dialog
-      title="修改告警渠道"
+      title="修改告警管道"
       :visible.sync="ModifyDialogVisible"
       width="600px"
       custom-class="tke-dialog"
@@ -446,14 +446,14 @@
         <p>
           <el-tooltip
             effect="light"
-            content="告警渠道爲空的策略不支持修改"
+            content="告警管道爲空的策略不支持修改"
             placement="top"
           >
             <i class="el-icon-info"></i>
           </el-tooltip>
           您已選擇{{ multipleSelection.length }}條策略，其中{{
             arr.length
-          }}條支持修改。接收渠道統計如下:
+          }}條支持修改。接收管道統計如下:
         </p>
         <div class="modify-box">
           <div>

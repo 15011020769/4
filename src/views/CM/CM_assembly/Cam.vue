@@ -112,7 +112,7 @@
       </el-time-picker>
     </p>
     <p style="display:flex">
-      <span>接收渠道&nbsp;&nbsp;</span>
+      <span>接收管道&nbsp;&nbsp;</span>
       <el-checkbox-group v-model="cam.channel" @change="selectChannel">
         <el-checkbox label="郵件"></el-checkbox>
         <el-checkbox label="簡訊"></el-checkbox>

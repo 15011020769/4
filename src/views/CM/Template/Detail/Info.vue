@@ -59,14 +59,14 @@
               <!-- <p>{{'組: '+scope.row.instanceGroup.groupName}}</p> -->
            </template>
         </el-table-column>
-        <el-table-column label="告警渠道">
+        <el-table-column label="告警管道">
           <template slot-scope="scope">
             <div v-for="(item,i) in scope.row.ReceiverInfos" :key="i">
               <!-- +item.ReceiverGroupList.length||0 -->
               <p>接收組:&nbsp;{{item.ReceiverGroupList?''+item.ReceiverGroupList.length+'個':'0個'}}</p>
               <p>有效期:&nbsp;{{'00:00:00 - 23:59:59'}}</p>
-              <!-- <p>{{'渠道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
-              <p>渠道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
+              <!-- <p>{{'管道:'}}<span v-for="it in channelList" :key="it">{{it+' '}}</span></p> -->
+              <p>管道:<span v-for="key in item.NotifyWay" :key="key">&nbsp; {{key|notifyChannel}}</span></p>
             </div>
           </template>
           <!-- <span v-else>{{'-'}}</span> -->

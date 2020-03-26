@@ -59,7 +59,7 @@
       </el-table>
     </div>
     <p style="display:flex">
-      <span>告警渠道&nbsp;&nbsp;</span>
+      <span>告警管道&nbsp;&nbsp;</span>
       <el-checkbox-group v-model="qudaoCheckList" @change="selectChannel">
         <p style="margin:0 0 20px 30px;">
           <el-checkbox label="郵件"></el-checkbox>

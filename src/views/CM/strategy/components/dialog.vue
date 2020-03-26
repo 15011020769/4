@@ -19,7 +19,7 @@
               <el-checkbox label="策略類型" disabled></el-checkbox>
               <el-checkbox label="已啓用/實例數" disabled></el-checkbox>
               <el-checkbox label="最後修改"></el-checkbox>
-              <el-checkbox label="告警渠道"></el-checkbox>
+              <el-checkbox label="告警管道"></el-checkbox>
             </p>
             <p>
 

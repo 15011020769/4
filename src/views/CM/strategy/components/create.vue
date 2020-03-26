@@ -43,7 +43,7 @@
                 <el-select v-model="formInline.instanceGroupId" style="width:150px;">
                   <el-option v-for="(item, index) in formInline.instanceGroup" :key="index" :label="item.GroupName" :value="item.InstanceGroupId" label-width="40px"></el-option>
                 </el-select>
-                <el-button type="text" size="mini" style="width: 50px" @click="describeInstanceGroupList">刷新</el-button>
+                <el-button type="text" size="mini" style="width: 50px" @click="describeInstanceGroupList">重新整理</el-button>
               </el-form-item>
             </div>
           </div>
@@ -61,7 +61,7 @@
                                @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateId">
                       <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupID" label-width="40px"></el-option>
                     </el-select>
-                    <el-button type="text" size="mini" style="margin-left: 20px" @click="describeConditionsTemplateList">刷新</el-button>
+                    <el-button type="text" size="mini" style="margin-left: 20px" @click="describeConditionsTemplateList">重新整理</el-button>
                   </el-form-item>
                   <div v-show="formInline.conditionsTemplateId">
                     <p style="line-height: 28px"><el-checkbox disabled>指標告警</el-checkbox></p>
@@ -218,9 +218,9 @@
               </div>
             </div>
           </div>
-          <!-- 告警渠道 -->
+          <!-- 告警管道 -->
           <div style="margin-bottom: 18px">
-            <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">告警渠道</label>
+            <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">告警管道</label>
             <div style="margin-left: 70px;background-color: #f2f2f2;">
               <Cam @camClick="camFun"></Cam>
             </div>
@@ -576,7 +576,7 @@ export default {
             return
           } else if (cam.channel.length <= 0) {
             this.$message({
-              message: '請選擇接收渠道 ',
+              message: '請選擇接收管道 ',
               type: 'error',
               showClose: true,
               duration: 0

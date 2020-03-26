@@ -16,7 +16,7 @@
               <el-checkbox label="ID/策略名" disabled></el-checkbox>
               <el-checkbox label="近24小時觸發告警" disabled></el-checkbox>
               <el-checkbox label="消息接收組"></el-checkbox>
-              <el-checkbox label="告警渠道"></el-checkbox>
+              <el-checkbox label="告警管道"></el-checkbox>
               <el-checkbox label="操作" disabled></el-checkbox>
             </p>
             <p>

@@ -92,7 +92,7 @@
       <el-dropdown @command="handleCommand">
         <el-button type="text"><i class="el-icon-more"></i></el-button>
         <el-dropdown-menu slot="dropdown">
-          <div style="padding: 0 10px 10px;color: #bbb">自動刷新</div>
+          <div style="padding: 0 10px 10px;color: #bbb">自動重新整理</div>
           <el-dropdown-item
             v-for="item in refreshTimeArr"
             :key="item.value"
