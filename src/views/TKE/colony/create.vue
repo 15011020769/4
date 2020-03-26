@@ -876,7 +876,10 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                      >NT$
+                                      {{
+                                        scope.row.Price.UnitPrice | HuiLv
+                                      }}</span
                                     >每小時
                                   </template>
                                 </el-table-column>
@@ -940,7 +943,10 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                      >NT$
+                                      {{
+                                        scope.row.Price.UnitPrice | HuiLv
+                                      }}</span
                                     >每小時
                                   </template>
                                 </el-table-column>
@@ -1674,7 +1680,10 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                      >NT$
+                                      {{
+                                        scope.row.Price.UnitPrice | HuiLv
+                                      }}</span
                                     >每小時
                                   </template>
                                 </el-table-column>
@@ -1741,7 +1750,10 @@
                                 <el-table-column :label="$t('TKE.colony.pzfy')">
                                   <template slot-scope="scope">
                                     <span class="text-orange"
-                                      >NT$ {{ scope.row.Price.UnitPrice }}</span
+                                      >NT$
+                                      {{
+                                        scope.row.Price.UnitPrice | HuiLv
+                                      }}</span
                                     >每小時
                                   </template>
                                 </el-table-column>
@@ -6947,6 +6959,12 @@ export default {
         _val = "root";
       }
       return _val;
+    },
+    HuiLv(val) {
+      let usdRate = localStorage.getItem("usdRate"); // 美元汇率
+      let tpdRate = localStorage.getItem("tpdRate"); // 台币汇率
+      let taRate = localStorage.getItem("taRate"); // 税率
+      return (val * usdRate * tpdRate * taRate).toFixed(8);
     }
   }
 };

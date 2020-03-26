@@ -2116,6 +2116,7 @@ export default {
   },
   methods: {
     passData(data) {
+      console.log(data)
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
