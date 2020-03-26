@@ -2393,6 +2393,16 @@ export default {
         });
       }
     },
+    isURL(str) {
+      if(str.substring(str.length-4) !== '.com'){
+         this.$message({
+            message: '請輸入正確的url',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+      }
+    },
     // 編輯告警對象
     editObject() {
       this.multipleSelection = [];
@@ -4386,6 +4396,7 @@ export default {
     },
     HttpHistroyBlur() {
       // this.httpShow = false;
+      this.isURL(this.httpVal + this.httpInput);
     },
     leave() {
       this.httpShow = false;
@@ -4508,6 +4519,15 @@ export default {
     },
     // 回調接口 保存
     CallBackSave(val) {
+       if(str.substring(str.length-4) !== '.com'){
+         this.$message({
+            message: '請輸入正確的url',
+            type: "error",
+            showClose: true,
+            duration: 0
+          });
+          return false
+      }
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
