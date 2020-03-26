@@ -18,7 +18,7 @@
           <el-tooltip
             class="item"
             effect="light"
-            :content="$t('CVM.DashboardCreate.qxz')"
+            :content="$t('CVM.DashboardCreate.tips1')"
             placement="top"
           >
             <i class="el-icon-info"></i>
@@ -71,7 +71,7 @@
               :series="series"
               :period="'60'"
               :xdata="true"
-              style="width:95%;height:400px;margin-left:-20px"
+              style="width:95%;height:180px;margin-left:-20px"
               v-if="rightData.length"
             ></Echarts>
           </div>
@@ -147,6 +147,7 @@ export default {
       series: [],
       DashboardID: "",
       DashboardData: [],
+      pointId:"",
       loading: true,
       flag: false
     };
@@ -250,6 +251,7 @@ export default {
       ) {
         if (this.productValue === "cvm_device") {
           // 云服务器
+          this.pointId = "unInstanceId"
           params["Dimensions." + i + ".unInstanceId"] = this.rightData[
             i
           ].InstanceId;
@@ -259,6 +261,7 @@ export default {
           });
         } else if (this.productValue === "VPN_GW") {
           // VPN网关
+          this.pointId = "vpnGwId"
           params["Dimensions." + i + ".vpnGwId"] = this.rightData[
             i
           ].VpnGatewayId;
@@ -268,6 +271,7 @@ export default {
           });
         } else if (this.productValue === "vpn_tunnel") {
           // vpn通道
+          this.pointId = "vpnConnId"
           params["Dimensions." + i + ".vpnConnId"] = this.rightData[
             i
           ].VpnConnectionId;
@@ -277,6 +281,7 @@ export default {
           });
         } else if (this.productValue === "nat_tc_stat") {
           // Nat网关
+          this.pointId = "natId"
           params["Dimensions." + i + ".natId"] = this.rightData[i].NatGatewayId;
           this.DashboardData.push({
             regionId: "39",
@@ -284,6 +289,7 @@ export default {
           });
         } else if (this.productValue === "DC_GW") {
           // 专线网关
+          this.pointId = "directConnectGatewayId"
           params[
             "Dimensions." + i + ".directConnectGatewayId"
           ] = this.rightData[i].DirectConnectGatewayId;
@@ -293,6 +299,7 @@ export default {
           });
         } else if (this.productValue === "REDIS-CLUSTER") {
           // Redis
+          this.pointId = "instanceid"
           params["Dimensions." + i + ".appid"] = this.rightData[i].Appid;
           params["Dimensions." + i + ".instanceid"] = this.rightData[
             i
@@ -367,7 +374,7 @@ export default {
             }
             // y轴
             //  res.Response.DataPoints
-            for (let item=0 ;item<(res.Response.DataPoints.length>10?10:res.Response.DataPoints.length);item++) {
+            for (let item=0 ;item<res.Response.DataPoints.length;item++) {
               if (res.Response.DataPoints.length) {
                 this.series.push({
                   labelLine: {
@@ -377,7 +384,6 @@ export default {
                   },
                   type: "line",
                   data: res.Response.DataPoints[item].Points,
-                  symbol: "none",
                   itemStyle: {
                     normal: {
                       color: color[item] ? color[item] : color[item % 10],
@@ -385,10 +391,19 @@ export default {
                         color: color[item] ? color[item] : color[item % 10]
                       }
                     }
-                  }
+                  },
+                  symbol:'circle',
+                  showSymbol: false
                 });
               }
             }
+            // table数据
+            // for(let i in res.Response.DataPoints){
+            //   this.tableData.push({
+            //     points:res.Response.DataPoints[i].Points[0],
+
+            //   })
+            // }
             console.log(this.series);
           } else {
             this.series = [];

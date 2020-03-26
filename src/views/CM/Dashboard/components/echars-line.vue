@@ -17,6 +17,11 @@
       period: String,
       series:[Array, String, Number]
     },
+    data(){
+      return{
+        name:""
+      }
+    },
     mounted() {
       this.init();
     },
@@ -30,7 +35,7 @@
         handler() {
           this.init();
         }
-      }
+      },
     },
     methods: {
       init() {
@@ -110,6 +115,9 @@
 
             }
           },
+          // tooltip: {
+          //     trigger: 'axis'
+          // },
           legend: {
             // data: this.title,
             y: "bottom"
@@ -156,10 +164,20 @@
           }],
           series:this.series
         });
+          if(myChart._$handlers.click){
+              myChart._$handlers.click.length = 0;
+          }
+          // let name = ""
+          myChart.on('click',  function(params) {
+        //这个params可以获取你要的图中的当前点击的项的参数
+            this.$emit('paramValue',params.name)
+          });    
+        
         window.addEventListener("resize", () => {
           myChart.resize();
         });
       },
+      
       beforrDestroy() {
         if (this.myChart) {
           this.myChart.clear();
