@@ -1,6 +1,9 @@
 module.exports = {
     TKE: {
         overview: {
+            cc: '存储',
+            fw: '服务',
+            zdss: '自动伸缩',
             gl: '概览',
             zygl: '资源概览',
             ge: '个',
@@ -486,6 +489,8 @@ module.exports = {
             yczt: '异常状态',
         },
         myMirror: {
+            slyddxz: '数量已达到限制',
+            jsckslbwl: '镜像仓库数量不为零，不能进行删除操作',
             wdjx: '我的镜像',
             xjmmkj: '新建命名空间',
             cksm: '仓库数目',
@@ -553,7 +558,10 @@ module.exports = {
             xgjxckms: '修改镜像仓库描述',
             msbnwk: '描述不能为空',
             cdbncg1000gzf: '长度不能超过1000个字符',
-            jxid: '镜像ID（SHA256）'
+            jxid: '镜像ID（SHA256）',
+            scjxbb: '删除镜像版本',
+            nqdyscjxbb: '您确定要删除镜像版本',
+            jxbbsch: '镜像版本删除后将不可恢复，请提前备份好数据。'
         },
         totalMirror: {
           xzl: '下载量',

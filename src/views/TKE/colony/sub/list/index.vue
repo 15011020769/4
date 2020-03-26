@@ -35,22 +35,22 @@
           >
             <el-menu-item index="/colony/sub/list/basic">基本信息</el-menu-item>
             <el-submenu index="2">
-              <template slot="title"><span>节点管理</span></template>
+              <template slot="title"><span>{{$t('TKE.overview.jd')}}管理</span></template>
               <el-menu-item index="/colony/sub/list/nodeManage/node"
-                >节点</el-menu-item
+                >{{$t('TKE.overview.jd')}}</el-menu-item
               >
               <el-menu-item index="/colony/sub/list/nodeManage/masteretcd"
                 >Master&amp;Etcd</el-menu-item
               >
               <el-menu-item index="/colony/sub/list/nodeManage/asg"
-                >伸缩组</el-menu-item
+                >{{$t('TKE.subList.ssz')}}</el-menu-item
               >
             </el-submenu>
             <el-menu-item index="/colony/sub/list/namespace"
-              >命名空间</el-menu-item
+              >{{$t('TKE.overview.mmkj')}}</el-menu-item
             >
             <el-submenu index="4">
-              <template slot="title"><span>工作负载</span></template>
+              <template slot="title"><span>{{$t('TKE.overview.gzfz')}}</span></template>
               <el-menu-item index="/colony/sub/list/resource/deployment"
                 >Deployment</el-menu-item
               >
@@ -67,9 +67,9 @@
                 >CronJob</el-menu-item
               >
             </el-submenu>
-            <el-menu-item index="/colony/sub/list/hpa">自动伸缩</el-menu-item>
+            <el-menu-item index="/colony/sub/list/hpa">{{$t('TKE.overview.zdss')}}</el-menu-item>
             <el-submenu index="6">
-              <template slot="title"><span>服务</span></template>
+              <template slot="title"><span>{{$t('TKE.overview.fw')}}</span></template>
               <el-menu-item index="/colony/sub/list/service/svc"
                 >Service</el-menu-item
               >
@@ -87,7 +87,7 @@
               >
             </el-submenu>
             <el-submenu index="8">
-              <template slot="title"><span>存储</span></template>
+              <template slot="title"><span>{{$t('TKE.overview.cc')}}</span></template>
               <el-menu-item index="/colony/sub/list/storage/pv"
                 >PersistentVolume</el-menu-item
               >
@@ -98,7 +98,7 @@
                 >StorageClass</el-menu-item
               >
             </el-submenu>
-            <el-menu-item index="/colony/sub/list/log">日志</el-menu-item>
+            <el-menu-item index="/colony/sub/list/log">{{$t('TKE.event.rz')}}</el-menu-item>
             <el-menu-item index="/colony/sub/list/event">事件</el-menu-item>
           </el-menu>
         </el-aside>

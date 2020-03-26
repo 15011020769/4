@@ -1,6 +1,9 @@
 module.exports = {
     TKE: {
         overview: {
+            cc: '存儲',
+            fw: '服務',
+            zdss: '自動伸縮',
             gl: '概覽',
             zygl: '資源概覽',
             ge: '個',
@@ -486,6 +489,8 @@ module.exports = {
             yczt: '異常狀態',
         },
         myMirror: {
+            slyddxz: '數量已達到限制',
+            jsckslbwl: '映像倉庫數量不為零，不能進行刪除操作',
             wdjx: '我的映像',
             xjmmkj: '新建命名空間',
             cksm: '倉庫數目',
@@ -554,7 +559,10 @@ module.exports = {
             xgjxckms: '修改映像倉庫描述',
             msbnwk: '描述不能為空',
             cdbncg1000gzf: '長度不能超過1000個字元',
-            jxid: '映像ID（SHA256）'
+            jxid: '映像ID（SHA256）',
+            scjxbb: '刪除映像版本',
+            nqdyscjxbb: '您確定要刪除映像版本',
+            jxbbsch: '映像版本刪除後將不可恢復，請提前備份好數據。'
         },
         totalMirror: {
           xzl: '下載量',
