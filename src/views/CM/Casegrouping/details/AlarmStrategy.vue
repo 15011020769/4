@@ -494,7 +494,7 @@ export default {
     },
     NotifyWay(val) {
       if (val === "EMAIL") {
-        return "邮件";
+        return "郵件";
       } else if (val === "SMS") {
         return "簡訊";
       } else if (val === "WECHAT") {

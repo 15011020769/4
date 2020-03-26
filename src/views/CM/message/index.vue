@@ -59,7 +59,7 @@
           <template slot-scope="scope">
             <p v-if="scope.row.NotifyWay">
               <span v-for="(v,i) in scope.row.NotifyWay" :key="i">
-                <b v-if="v=='EMAIL'">邮件、</b>
+                <b v-if="v=='EMAIL'">郵件、</b>
                 <b v-if="v=='SMS'">簡訊、</b>
                 <b v-if="v=='CALL'">站内信、</b>
               </span>
