@@ -1606,6 +1606,8 @@
         <p>選擇部分物件</p>
         <div class="table">
           <CamTransferCpt
+            :selectedList="alarmObjectData"
+            :showSelectedList="true"
             :productData="productListData"
             v-on:projectId="projectIds"
             v-on:searchParam="searchParams"

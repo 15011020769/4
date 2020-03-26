@@ -16,7 +16,10 @@
             >
             </el-option>
           </el-select>
-          <el-select v-model="searchItem" :placeholder="$t('CVM.CamTransferCpt.placeholder1')">
+          <el-select
+            v-model="searchItem"
+            :placeholder="$t('CVM.CamTransferCpt.placeholder1')"
+          >
             <el-option
               v-for="item in searchItemOptions"
               :key="item.value"
@@ -41,8 +44,9 @@
           :data="tableData"
           height="420"
           ref="multipleTable"
-          @select="handleSelectionChange"
-          @select-all="handleSelectionChange"
+          @select="handleSelection"
+          @select-all="handleSelection"
+          @selection-change="handleSelectionChange"
           v-loadmore="loadMore"
           class="table-left"
         >
@@ -462,6 +466,12 @@ export default {
       default: function() {
         return [];
       }
+    },
+    showSelectedList: { // 弹出组件时，默认右边是否显示已选中的组件
+      type: Boolean,
+      default: function() {
+        return false;
+      }
     }
   },
   watch: {
@@ -674,7 +684,11 @@ export default {
         this.pageIndex++;
       }
     },
-    handleSelectionChange(val) {
+    handleSelection(val) {
+
+      if (this.showSelectedList === true) {
+        return;
+      }
 
       // 将以前已选择的过滤掉，右边表格只保留用户手动勾选的
       let selectedItems = [];
@@ -786,6 +800,15 @@ export default {
 
       this.multipleSelection = selectedItems;
       this.$emit("multipleSelection", selectedItems);
+    },
+    handleSelectionChange(val) {
+
+      if (this.showSelectedList === false) {
+        return;
+      }
+
+      this.multipleSelection = val;
+      this.$emit("multipleSelection", val);
     },
     DeleteList(row) {
       this.$refs.multipleTable.toggleRowSelection(row);
