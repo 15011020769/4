@@ -211,9 +211,9 @@
                 </el-table-column>
                 <el-table-column property="address" :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.Price.UnitPrice }}</span>
-                    <span class="text-orange" style="color:#ff7800;" v-else>￥{{ scope.row.Price.DiscountPrice }}</span>
-                    {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '小時' : '月'}}
+                    <span class="text-orange" style="color:#ff7800;" v-if="nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR'">NT$ {{ scope.row.cost }}</span>
+                    <span class="text-orange" style="color:#ff7800;" v-else>NT${{ scope.row.Price.DiscountPrice }}</span>
+                    {{nodeForm.instanceChargeType === 'POSTPAID_BY_HOUR' ? '每小時' : '月'}}
                   </template>
                 </el-table-column>
               </el-table>
@@ -1003,7 +1003,6 @@ export default {
     this.getClusterVersion();
   },
   methods: {
-    //提交保存
     AddAdvancedSetting() {
       this.nodeForm.advancedSettingArr.push({
         name: "",
@@ -1154,9 +1153,19 @@ export default {
       param["Filters.0.Values.0"] = "ap-taipei-1";
       param["Filters.1.Name"] = "instance-charge-type";
       param["Filters.1.Values.0"] = this.nodeForm.instanceChargeType;
+      let usdRate = localStorage.getItem('usdRate');   // 美元汇率
+      let tpdRate = localStorage.getItem('tpdRate');   // 台币汇率
+      let taRate = localStorage.getItem('taRate');  // 税率
       await this.axios.post(DESCRIBE_ZONE_INFO, param).then(res => {
         if(res.Response.Error === undefined) {
+          console.log(res.Response.InstanceTypeQuotaSet);
+          if(res.Response.InstanceTypeQuotaSet.length > 0) {
+            for(let i = 0; i < res.Response.InstanceTypeQuotaSet.length; i++) {
+              res.Response.InstanceTypeQuotaSet[i].cost = (res.Response.InstanceTypeQuotaSet[i].Price.UnitPrice * usdRate * tpdRate * taRate).toFixed(8);
+            }
+          }
           this.nodeForm.zoneInfoList = res.Response.InstanceTypeQuotaSet;
+          console.log(this.nodeForm.zoneInfoList)
           this.nodeForm.modelType = res.Response.InstanceTypeQuotaSet[0];
         } else {
           this.loadShow = false;

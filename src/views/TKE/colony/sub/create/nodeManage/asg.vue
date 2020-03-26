@@ -429,8 +429,8 @@
                 </el-table-column>
                 <el-table-column :label="$t('TKE.colony.pzfy')">
                   <template slot-scope="scope">
-                    <span class="text-orange">NT$ {{ scope.row.Price.UnitPrice }}</span>
-                    元/{{$t('TKE.colony.xs')}}起
+                    <span class="text-orange">NT$ {{ scope.row.cost }}</span>
+                    每{{$t('TKE.colony.xs')}}
                   </template>
                 </el-table-column>
               </el-table>
@@ -1180,6 +1180,12 @@ export default {
             });
             dataList = list;
           }
+          let usdRate = localStorage.getItem('usdRate');   // 美元汇率
+          let tpdRate = localStorage.getItem('tpdRate');   // 台币汇率
+          let taRate = localStorage.getItem('taRate');  // 税率
+          dataList.forEach(element => {
+            element.cost = (element.Price.UnitPrice* usdRate * tpdRate * taRate).toFixed(8);
+          });
           this.zoneInfoList = dataList;
           this.asg.zoneInstanceConfigInfo =
             dataList[0].InstanceType +
