@@ -429,19 +429,11 @@ export default {
             validator: (rule, value, callback) => {
               let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
               if (!value) {
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
                 callback(new Error("範本名稱不能爲空"));
-              } else if (value.length === 20) {
-                callback(new Error("範本名稱不能超過 20 字"));
+              } else if (!(rg.test(value))) {
+                callback(new Error("含有非法字符,请输入1-20個中英文字符或下劃線"));
               } else {
                 callback();
-=======
-                callback(new Error('模板名稱不能爲空'))
-              } else if (!(rg.test(value))) {
-                callback(new Error('存在非法字符,请输入1-20個中英文字符或下劃線'))
-              } else {
-                callback()
->>>>>>> 改bug
               }
               //  else if (value.length === 20) {
               // callback(new Error('提示:範本名称不能超过 20 字'))

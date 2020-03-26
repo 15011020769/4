@@ -37,7 +37,7 @@ import Cam from "./Cam";
 import {
   ADD_CUSTON_MESSAGE,
   RECEIVING_GROUP_DETAILE
-} from "@/constants/CM-lxx.js"; /////////
+} from "@/constants/CM-lxx.js";
 
 export default {
   data() {
@@ -89,7 +89,7 @@ export default {
           showClose: true,
           duration: 0
         });
-      } else if (!(rg.test(this.formInline.strategy_name))) {
+      }else if(!(rg.test(this.formInline.strategy_name))) {
         this.VerifyName = true
         this.$message({
           message: "存在非法字符,请输入1-20個中英文字符或下劃線",
