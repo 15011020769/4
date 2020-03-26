@@ -42,8 +42,8 @@
                 {{ item.DescName }}
                 <!-- <span style="color:#888">（%）</span> -->
               </b>
-              <!-- <el-row>
-                <i class="el-icon-zoom-in"></i>
+              <el-row>
+                <!-- <i class="el-icon-zoom-in"></i>
                 <el-dropdown trigger="click">
                   <span class="el-dropdown-link">
                     <i class="el-icon-more"></i>
@@ -55,8 +55,9 @@
                     <el-dropdown-item>{{$t('CVM.Dashboard.dctp')}}</el-dropdown-item>
                     <el-dropdown-item @click="deleteChart">{{$t('CVM.Casegrouping.sc')}}</el-dropdown-item>
                   </el-dropdown-menu>
-                </el-dropdown>
-              </el-row> -->
+                </el-dropdown> -->
+                <el-button type="text" @click="handleDelDashBoardView(item.DescName, item.ViewID)">删除</el-button>  
+              </el-row>
             </p>
             <!-- <div class="line" :ref="'echart' + item.ViewID" :id="'echart'+item.ViewID">
             </div> DataPoints-->
@@ -133,9 +134,8 @@
   import RenameControlPanel from "./components/renameControlPanel";
   import EcharS from "@/components/public/EcharS";
   import {
-    GET_DASHBOARD_LIST,
-    DESCRIBE_DASHBOARD_VIEWS,
-    GET_MONITOR_DATA
+    GET_DASHBOARD_LIST, DESCRIBE_DASHBOARD_VIEWS,
+    GET_MONITOR_DATA, DELETE_DASHBOARD_VIEW
   } from "@/constants";
   import {
     ErrorTips
@@ -792,6 +792,40 @@
         // console.log(this.ViewList, echartsIndex, dataIndex);
         this.ViewList[echartsIndex]['dataIndex'] = dataIndex;
         this.ViewList[echartsIndex]['showTime'] = name; // 展示的时间
+      },
+      // 删除监控面板
+      handleDelDashBoardView(DescName, ViewID) {
+        this.$confirm('确定删除' + DescName + '?', {
+          confirmButtonText: '确定', cancelButtonText: '取消', center: true
+        }).then(() => {
+          this.deleteDashboardView(ViewID); // 删除监控面板接口
+        }).catch(() => {});
+      },
+      // 删除监控面板
+      async deleteDashboardView(ViewID) {
+        let params = { Version: "2018-07-24", Module: "monitor", ViewID };
+        await this.axios.get(DELETE_DASHBOARD_VIEW, {
+            params: params
+          }).then(res => {
+            if (res.Response.Error === undefined) {
+              this.getDescribeDashboardView(); // 获取监控面板视图
+            } else {
+              let ErrTips = {
+                "FailedOperation":	"操作失败。",
+                "InternalError":	"内部错误。",
+                "InvalidParameter":	"参数错误。",
+                "UnknownParameter":	"未知参数错误。",
+                "UnsupportedOperation":	"操作不支持。"
+              };
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          })
       }
 
       // //取消
