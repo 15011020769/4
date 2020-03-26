@@ -6,7 +6,9 @@
         <p class="rowCont">
           <span>策略名稱</span>
           <el-input
-            style="width:330px;margin:0"
+            maxlength="20"
+            show-word-limit
+            style="width:330px;margin:0;line-height:30px"
             v-model="formInline.strategy_name"
             placeholder="請輸入策略名稱，20字以內"
             @blur="reg"
@@ -40,6 +42,7 @@ import {
 export default {
   data() {
     return {
+      VerifyName:false,//验证策略名称
       multipleSelection: [], //穿梭框數據
       // checked1: "", //郵件
       // checked2: "", //簡訊
@@ -77,21 +80,32 @@ export default {
   methods: {
     reg() {
       //策略名
+      let rg = /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
       if (this.formInline.strategy_name == "") {
+        this.VerifyName = true
         this.$message({
           message: "策略名不能為空",
           type: "error",
           showClose: true,
           duration: 0
         });
-      } else if (this.formInline.strategy_name.length >= 20) {
+      } else if (!(rg.test(this.formInline.strategy_name))) {
+        this.VerifyName = true
         this.$message({
-          message: "策略名最多不能超過20位",
+          message: "存在非法字符,请输入1-20個中英文字符或下劃線",
           type: "error",
           showClose: true,
           duration: 0
         });
       }
+      // else if (this.formInline.strategy_name.length >= 20) {
+      //   this.$message({
+      //     message: "策略名最多不能超過20位",
+      //     type: "error",
+      //     showClose: true,
+      //     duration: 0
+      //   });
+      // }
     },
     // 獲取cam元件的值
     camFun(data) {
@@ -131,6 +145,7 @@ export default {
         });
         return;
       }
+      if(this.VerifyName) return;
       let param = {
         Version: "2018-07-24",
         Module: "monitor",
