@@ -216,10 +216,10 @@
               value: 'mem_usage'
             },
             {
-              label: '內網出帶寬(Mbps)',
+              label: '內網出頻寬(Mbps)',
               value: 'lan_outtraffic'
             }, {
-              label: '內網入帶寬(Mbps)',
+              label: '內網入頻寬(Mbps)',
               value: 'lan_intraffic'
             },
             {
@@ -234,11 +234,11 @@
               value: 'tcp_curr_estab'
             },
             {
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'wan_outtraffic'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'wan_intraffic'
             }, {
               label: '外網出包量(個/s)',
@@ -286,11 +286,11 @@
             title4: '類型',
           }
           this.MetricName = [{
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -338,11 +338,11 @@
             title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '外網出帶寬(Mbps)',
+              label: '外網出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '外網入帶寬(Mbps)',
+              label: '外網入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -386,11 +386,11 @@
             title3: 'VPN網關',
           }
           this.MetricName = [{
-              label: '網路出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網路入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -442,11 +442,11 @@
             title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '網路出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網路入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -773,14 +773,14 @@
           this.HeadConfig = {
             title1: '名稱/ID',
             title2: '所在地',
-            title3: '帶寬',
+            title3: '頻寬',
           }
           this.MetricName = [{
-              label: '網路出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網路入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             }
           ]
@@ -810,11 +810,11 @@
             title2: '私有網路',
           }
           this.MetricName = [{
-              label: '網路入帶寬(Mbps)',
+              label: '網路入頻寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '網路出帶寬(Mbps)',
+              label: '網路出頻寬(Mbps)',
               value: 'outbandwidth'
             },
             {

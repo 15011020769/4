@@ -390,7 +390,7 @@
               <p>{{ scope.row.Location }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
+          <el-table-column label="頻寬" v-if="ViewName === 'dcline'">
             <template slot-scope="scope">
               <p>{{ scope.row.Bandwidth }}Mbps</p>
             </template>
@@ -848,7 +848,7 @@
                         <p>{{ scope.row.Location }}</p>
                       </template>
                     </el-table-column>
-                    <el-table-column label="帶寬" v-if="ViewName === 'dcline'">
+                    <el-table-column label="頻寬" v-if="ViewName === 'dcline'">
                       <template slot-scope="scope">
                         <p>{{ scope.row.Bandwidth }}Mbps</p>
                       </template>
@@ -2073,7 +2073,7 @@ export default {
         },
         {
           value: "6",
-          label: "外網出帶寬超限導致丟包"
+          label: "外網出頻寬超限導致丟包"
         },
         {
           value: "7",

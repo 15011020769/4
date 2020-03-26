@@ -3,7 +3,7 @@
     <div class="head">
       <Header title="流量監控" />
       <el-tabs v-model="activeName">
-        <el-tab-pane label="外網出帶寬" name="first">
+        <el-tab-pane label="外網出頻寬" name="first">
           <div class="history-main">
             <div class="box">
               <div class="table-top">
@@ -20,7 +20,7 @@
                     <a @click="exportExcel" style="margin-right:10px;">導出數據</a>
                   </div>
                 </div>
-                <h3>外網出帶寬Mbps</h3>
+                <h3>外網出頻寬Mbps</h3>
                 <!-- <div class="echarts" style="width:100%" v-if="Points.length"> -->
                 <!-- <Ecarts/> -->
                 <EcharLine :xdata="true" :time="times" :opData="Points" :period="Period" style="height:300px;width:100%"
@@ -34,7 +34,7 @@
                   <el-table-column prop="times" label="時間" sortable>
                     <template slot-scope="scope">{{scope.row.times}}</template>
                   </el-table-column>
-                  <el-table-column prop="Points" label="外出帶寬">
+                  <el-table-column prop="Points" label="外出頻寬">
                     <template slot-scope="scope">{{scope.row.Points}}Mbps</template>
                   </el-table-column>
                 </el-table>

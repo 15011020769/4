@@ -163,10 +163,10 @@
         ],
         disName: {
           'InPkg': '入包量',
-          'InTraffic': '入帶寬',
+          'InTraffic': '入頻寬',
 
           'OutPkg': '出包量',
-          'OutTraffic': '出帶寬'
+          'OutTraffic': '出頻寬'
         },
         Company: {
           'ConNum': '個',
@@ -179,10 +179,10 @@
         Tips: {
           'ConNum': '連接數',
           'InPkg': '入包量',
-          'InTraffic': '入帶寬',
+          'InTraffic': '入頻寬',
           'NewConn': '新增連接數',
           'OutPkg': '出包量',
-          'OutTraffic': '出帶寬'
+          'OutTraffic': '出頻寬'
         },
 
       }

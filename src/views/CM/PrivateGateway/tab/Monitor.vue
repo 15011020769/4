@@ -145,9 +145,9 @@
         MonitorData: [], //监控数据
         tableData: [], // 组合数据
         disName: {
-          'InBandwidth': '外網入帶寬',
+          'InBandwidth': '外網入頻寬',
           'InPkg': '入包量',
-          'OutBandwidth': '外網出帶寬',
+          'OutBandwidth': '外網出頻寬',
           'OutPkg': ' 出包量'
         },
         Company: {
