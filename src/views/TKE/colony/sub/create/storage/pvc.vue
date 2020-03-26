@@ -55,7 +55,7 @@
                   <a>工单咨询</a>
                 </div>
                 <el-radio-button label="COS" disabled>对象存储COS</el-radio-button>
-              </el-tooltip> -->
+              </el-tooltip>-->
             </el-radio-group>
           </el-form-item>
           <el-form-item :label="$t('TKE.storage.dxql')" class="m0">
@@ -73,7 +73,11 @@
           </el-form-item>
           <div v-if="pv.ps=='CBS'">
             <el-form-item label="StorageClass" class="m0">
-              <el-select v-model="pv.storageValue" :placeholder="$t('TKE.overview.qxz')">
+              <el-select
+                v-model="pv.storageValue"
+                :placeholder="$t('TKE.overview.qxz')"
+                @change="getType"
+              >
                 <el-option
                   v-for="(item,index) in StorageClass"
                   :key="index"
@@ -89,26 +93,37 @@
               <div>{{$t('TKE.storage.pvcjzdbd')}}</div>
             </el-form-item>
             <el-form-item :label="$t('TKE.storage.yplx')">
-              <div>{{$t('TKE.storage.ptyyp')}}</div>
-              <div>
+              <div v-if="type == 'CLOUD_BASIC'">{{$t('TKE.storage.ptyyp')}}</div>
+              <div v-if="type == 'CLOUD_BASIC'">
                 {{$t('TKE.storage.scwcbs')}}
-                <span class="red">{{$t('TKE.storage.rptypsqs')}}</span>
+                <span class="red" >{{$t('TKE.storage.rptypsqs')}}</span>
               </div>
+              <div v-if="type == 'CLOUD_PREMIUM'">高性能雲硬碟</div>
+              <div v-if="type == 'CLOUD_SSD'">SSD雲硬碟</div>
             </el-form-item>
             <el-form-item label="容量" prop="input">
-              <el-tooltip :content="$t('TKE.storage.ptyypypdx')" placement="top" effect="light">
-                <el-input style="width:150px" v-model="pv.input" @change="getMoney()">
+              <el-tooltip placement="top" effect="light">
+                <div slot="content"  v-if="type == 'CLOUD_BASIC'">{{$t('TKE.storage.ptyypypdx')}}</div>
+                <div slot="content"  v-if="type == 'CLOUD_PREMIUM'">高性能雲硬碟最小為10GB，最大為16000GB</div>
+                <div slot="content"  v-if="type == 'CLOUD_SSD'">SSD雲硬碟最小為200GB，最大為16000GB</div>
+                <el-input style="width:150px" v-model.number="pv.input" @change="getMoney()">
                   <template slot="append">GiB</template>
                 </el-input>
               </el-tooltip>
             </el-form-item>
             <el-form-item :label="$t('TKE.storage.fy')">
-              <div>{{$t('TKE.storage.qxsrhfdyprl')}}</div>
+              <div v-if="!monney">{{$t('TKE.storage.qxsrhfdyprl')}}</div>
+              <div v-if="monney">NT$<span style="color:#ff9d00">{{monney}}</span>每小時</div>
             </el-form-item>
           </div>
           <div v-if="pv.ps=='CFS'">
             <el-form-item label="StorageClass" class="m0">
-              <el-select class="err" v-model="pv.storageValue" :placeholder="$t('TKE.overview.zwsj')" disabled>
+              <el-select
+                class="err"
+                v-model="pv.storageValue"
+                :placeholder="$t('TKE.overview.zwsj')"
+                disabled
+              >
                 <el-option
                   v-for="(item,index) in pv.StorageClass"
                   :key="index"
@@ -168,6 +183,8 @@ export default {
         callback(new Error("硬碟大小需為10的倍數"));
       } else if (this.pv.input >= 16000) {
         callback(new Error("最大為16000GB"));
+      } else if (this.type == "CLOUD_SSD"&&this.pv.input<200) {
+        callback(new Error("最小為200GB"));
       } else {
         callback();
       }
@@ -186,6 +203,8 @@ export default {
       StorageClass: [],
       Namespace: [],
       see: false,
+      type: "", // 类型
+      monney:"", // 金额
       rules: {
         name: [
           { required: true, message: "名稱不能為空", trigger: "blur,change" },
@@ -199,7 +218,14 @@ export default {
       }
     };
   },
-  components: {},
+  watch:{
+    'pv.input':function(val){
+      if(!val){
+          this.monney = ""
+      }
+    }
+    
+  },
   created() {
     // 从路由获取类型
     this.GetStorageValue();
@@ -225,6 +251,28 @@ export default {
         }
       });
     },
+    filterType(val) {
+      if (val.parameters.type === "CLOUD_PREMIUM") {
+        this.type = "CLOUD_PREMIUM";
+      } else if (val.parameters.type === "CLOUD_PREMIUM") {
+      }
+    },
+    getType(val) {
+      // let type = []
+      this.StorageClass.filter(item => {
+        if (item.metadata.name == val) {
+          if (
+            item.parameters.type == "CLOUD_PREMIUM" ||
+            item.parameters.type == "CLOUD_SSD"
+          ) {
+            this.type = item.parameters.type;
+          } else {
+            this.type = "CLOUD_BASIC";
+          }
+        }
+      });
+      console.log(this.type);
+    },
     // 取消跳转
     jump() {
       this.$router.push({
@@ -248,6 +296,9 @@ export default {
           console.log(mes);
           this.pv.storageValue = mes.items[0].metadata.name;
           this.StorageClass = mes.items;
+          this.getType(mes.items[0].metadata.name);
+          console.log(this.StorageClass);
+          // this.filterType(this.StorageClass)
         } else {
           let ErrTips = {};
           let ErrOr = Object.assign(ErrorTips, ErrTips);
@@ -345,28 +396,34 @@ export default {
         }
       });
     },
+    // 获取金额
     getMoney() {
-      if (this.pv.input) {
-        var params = {
-          DiskChargeType: "POSTPAID_BY_HOUR",
-          DiskSize: this.pv.input,
-          DiskType: "CLOUD_BASIC",
-          Version: "2017-03-12"
-        };
-        this.axios.post(TKE_PAY_MONEY, params).then(res => {
-          if (res.Response.Error === undefined) {
-            console.log(res);
-          } else {
-            let ErrTips = {};
-            let ErrOr = Object.assign(ErrorTips, ErrTips);
-            this.$message({
-              message: ErrOr[res.Response.Error.Code],
-              type: "error",
-              showClose: true,
-              duration: 0
-            });
-          }
-        });
+      if (this.type == "CLOUD_PREMIUM" || (this.type == "CLOUD_SSD" && this.pv.input>=200)) {
+        if (this.pv.input) {
+          var params = {
+            DiskChargeType: "POSTPAID_BY_HOUR",
+            DiskSize: this.pv.input,
+            DiskType: this.type,
+            Version: "2017-03-12"
+          };
+          this.axios.post(TKE_PAY_MONEY, params).then(res => {
+            if (res.Response.Error === undefined) {
+              this.monney = res.Response.DiskPrice.UnitPriceDiscount
+              console.log(res.Response.DiskPrice.UnitPriceDiscount);
+            } else {
+              let ErrTips = {};
+              let ErrOr = Object.assign(ErrorTips, ErrTips);
+              this.$message({
+                message: ErrOr[res.Response.Error.Code],
+                type: "error",
+                showClose: true,
+                duration: 0
+              });
+            }
+          });
+        } else {
+          return;
+        }
       } else {
         return;
       }
