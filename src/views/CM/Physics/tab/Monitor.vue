@@ -160,8 +160,8 @@
           'OutBandwidth'
         ], // 可用指标
         disName: {
-          'InBandwidth': '入頻寬',
-          'OutBandwidth': ' 出頻寬 '
+          'InBandwidth': '網路入頻寬',
+          'OutBandwidth': ' 網路出頻寬 '
         },
         Company: {
           'InBandwidth': 'Mbps',
