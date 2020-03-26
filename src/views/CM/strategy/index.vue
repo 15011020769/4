@@ -1696,18 +1696,18 @@ export default {
   font-weight: 200;
 }
 
-.strategy-wrap >>> .el-table .cell {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-}
-p.qudaoInfo {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
-  overflow: hidden;
-}
+// .strategy-wrap >>> .el-table .cell {
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 1;
+//   overflow: hidden;
+// }
+// p.qudaoInfo {
+//   display: -webkit-box;
+//   -webkit-box-orient: vertical;
+//   -webkit-line-clamp: 1;
+//   overflow: hidden;
+// }
 a {
   color: #006eff;
   cursor: pointer;
@@ -1981,12 +1981,12 @@ a:hover {
   }
 }
 .trigger-condition {
-  // p {
-  //   display: -webkit-box;
-  //   -webkit-box-orient: vertical;
-  //   -webkit-line-clamp: 1;
-  //   overflow: hidden;
-  // }
+  p {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+  }
 }
 .tke-page {
   padding: 20px;
