@@ -29,7 +29,7 @@ let CMname = {
   'com_update': '更新數(次/秒)',
   'com_delete': '刪除數(次/秒)',
   'com_insert': '插入數(次/秒)',
-  'com_replace': '覆蓋數(次/秒)',
+  'com_replace': '涵蓋數(次/秒)',
   'queries': '總請求數(次/秒)',
   'threads_connected': '當前打開連接數(個)',
   'real_capacity': '磁盤使用空間(MB)',

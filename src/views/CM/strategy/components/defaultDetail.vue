@@ -93,7 +93,7 @@
               }}{{ i.AlarmNotifyPeriod > 0 ? "重复告警" : "不重复告警" }}
             </span>
             <span v-else>
-              按周期指数递增重复告警
+              按週期指数递增重复告警
             </span>
           </p>
         </div>
@@ -1244,8 +1244,8 @@
                               重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                             </p>
                             <p style="margin-top:5px;">
-                              周期指數遞增通知:
-                              告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                              週期指數遞增通知:
+                              告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                             </p>
                           </div>
                           <i
@@ -1279,8 +1279,8 @@
                           重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                         </p>
                         <p style="margin-top:5px;">
-                          周期指數遞增通知:
-                          告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                          週期指數遞增通知:
+                          告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                         </p>
                       </div>
                       <i
@@ -1442,8 +1442,8 @@
                                 重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                               </p>
                               <p style="margin-top:5px;">
-                                周期指數遞增通知:
-                                告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                                週期指數遞增通知:
+                                告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                               </p>
                             </div>
                             <i
@@ -1482,8 +1482,8 @@
                             重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                           </p>
                           <p style="margin-top:5px;">
-                            周期指數遞增通知:
-                            告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                            週期指數遞增通知:
+                            告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                           </p>
                         </div>
                         <i
@@ -1904,11 +1904,11 @@ export default {
       cycle: [
         {
           value: 60,
-          label: "統計周期1分鍾"
+          label: "統計週期1分鍾"
         },
         {
           value: 300,
-          label: "統計周期5分鍾"
+          label: "統計週期5分鍾"
         }
       ],
       satisfy: [
@@ -1981,23 +1981,23 @@ export default {
       continuousCycleOpt: [
         {
           value: 1,
-          label: "持續1個周期"
+          label: "持續1個週期"
         },
         {
           value: 2,
-          label: "持續2個周期"
+          label: "持續2個週期"
         },
         {
           value: 3,
-          label: "持續3個周期"
+          label: "持續3個週期"
         },
         {
           value: 4,
-          label: "持續4個周期"
+          label: "持續4個週期"
         },
         {
           value: 5,
-          label: "持續5個周期"
+          label: "持續5個週期"
         }
       ],
       warningOpt: [
@@ -2047,7 +2047,7 @@ export default {
         },
         {
           value: 60,
-          label: "周期指數遞增"
+          label: "週期指數遞增"
         }
       ],
       eventOpt: [
@@ -2679,11 +2679,11 @@ export default {
             "持續" +
             Number(this.Conditions.Conditions[j].ContinueTime) /
               Number(this.Conditions.Conditions[j].Period) +
-            "個周期"
+            "個週期"
         });
         console.log(this.Conditions.Conditions[j].AlarmNotifyType);
         if (this.Conditions.Conditions[j].AlarmNotifyType == 1) {
-          this.Conditions.Conditions[j].AlarmNotifyPeriod = "周期指数递增";
+          this.Conditions.Conditions[j].AlarmNotifyPeriod = "週期指数递增";
         } else {
           if (
             (this.Conditions.Conditions[j].AlarmNotifyPeriod / 60 / 60) % 1 ==
@@ -4038,9 +4038,9 @@ export default {
           this.DetailsInit();
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.InvalidSecretId": "金鑰非法（不是雲 API 金鑰類型）。",
             "AuthFailure.MFAFailure": "MFA 錯誤。",
-            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SecretIdNotFound": "金鑰不存在。",
             "AuthFailure.SignatureExpire": "簽名過期。",
             "AuthFailure.SignatureFailure": "簽名錯誤。",
             "AuthFailure.TokenFailure	token": "錯誤。",
@@ -4184,9 +4184,9 @@ export default {
           });
         } else {
           let ErrTips = {
-            "AuthFailure.InvalidSecretId": "密鑰非法（不是雲 API 密鑰類型）。",
+            "AuthFailure.InvalidSecretId": "金鑰非法（不是雲 API 金鑰類型）。",
             "AuthFailure.MFAFailure": "MFA 錯誤。",
-            "AuthFailure.SecretIdNotFound": "密鑰不存在。",
+            "AuthFailure.SecretIdNotFound": "金鑰不存在。",
             "AuthFailure.SignatureExpire": "簽名過期。",
             "AuthFailure.SignatureFailure": "簽名錯誤。",
             "AuthFailure.TokenFailure	token": "錯誤。",
@@ -4713,9 +4713,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -4742,7 +4742,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認專案";
+        return "預設專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

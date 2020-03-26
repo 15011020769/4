@@ -1507,7 +1507,7 @@ export default {
       if (val == "CLOUD_BASIC") {
         return "普通雲硬碟";
       } else if (val === "CLOUD_PREMIUM") {
-        return "高性能雲硬碟";
+        return "高效能雲硬碟";
       } else if (val === "CLOUD_SSD") {
         return "SSD雲硬碟";
       }

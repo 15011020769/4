@@ -58,7 +58,7 @@
                 <el-table :data="tableData" style="width: 100%" height="100">
                   <el-table-column prop="address" label="指標" width="180"></el-table-column>
                   <el-table-column prop="address" label="統計方法"></el-table-column>
-                  <el-table-column prop="address" label="統計周期" width="180"></el-table-column>
+                  <el-table-column prop="address" label="統計週期" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">
@@ -85,7 +85,7 @@
                 <el-table :data="tableData" style="width: 100%" height="100">
                   <el-table-column prop="address" label="指標" width="180"></el-table-column>
                   <el-table-column prop="address" label="統計方法"></el-table-column>
-                  <el-table-column prop="address" label="統計周期" width="180"></el-table-column>
+                  <el-table-column prop="address" label="統計週期" width="180"></el-table-column>
                   <el-table-column prop="address" label="操作"></el-table-column>
                 </el-table>
                 <div class="explains" style="margin-bottom:20px;">

@@ -521,7 +521,7 @@
               value: 'com_insert'
             },
             {
-              label: '覆蓋數(次/秒)',
+              label: '涵蓋數(次/秒)',
               value: 'com_replace'
             },
             {

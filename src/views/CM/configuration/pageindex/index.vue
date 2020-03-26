@@ -7,14 +7,14 @@
             <div class="content">
                 <div class="explain" style="margin-bottom:20px;">
                     <p>
-                    請對指標指定統計方法和統計周期
+                    請對指標指定統計方法和統計週期
                     </p>
                 </div>
                 <div class="table">
                     <el-table :data="gridData">
                         <el-table-column property="date" label="指標" width="190"></el-table-column>
                         <el-table-column property="name" label="統計方法" width="130"></el-table-column>
-                        <el-table-column property="address" label="統計周期" width="100"></el-table-column>
+                        <el-table-column property="address" label="統計週期" width="100"></el-table-column>
                         <el-table-column property="address" label="操作"></el-table-column>
                     </el-table>
                 </div>

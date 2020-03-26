@@ -327,7 +327,7 @@
         Tips: {
           'AccOuttraffic': '外網網卡的平均每秒出流量',
           'BaseCpuUsage': ' 基礎CPU使用率通過宿主機採集上報，無須安裝監控組件即可查看數據，子機高負載情況下仍可持續採集上報數據',
-          'CpuLoadavg': '1分钟内CPU平均负载，取 /proc/loadavg 第一列數據（windows操作系統無此指標），依賴監控組件安裝採集',
+          'CpuLoadavg': '1分钟内CPU平均负载，取 /proc/loadavg 第一列數據（windows作業系統無此指標），依賴監控組件安裝採集',
           'CpuUsage': 'CPU利用率是通過CVM子機內部監控組件採集上報，數據更加精準',
           'DiskIoAwait': ' 磁碟分區I/O平均每次操作的等待時間',
           'DiskSvctm': '磁碟分區平均每次I/O操作所花的時間',

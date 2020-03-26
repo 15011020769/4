@@ -473,9 +473,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {

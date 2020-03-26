@@ -408,7 +408,7 @@ export default {
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默認專案"
+          projectName: "預設專案"
         }
       ], //專案資源列表
       searchItem: "", //搜索项值
@@ -425,7 +425,7 @@ export default {
       },
       DiskType: {
         CLOUD_BASIC: "普通雲硬碟",
-        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_PREMIUM: "高效能雲硬碟",
         CLOUD_SSD: "SSD雲硬碟"
       },
       vpcConnState: {

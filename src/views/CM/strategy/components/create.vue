@@ -306,7 +306,7 @@ export default {
           name: '雲伺服器-基礎監控'
         }], // 策略類型
         alarm: '', // 策略類型
-        project: [{ projectName: '默認專案', projectId: 0 }],
+        project: [{ projectName: '預設專案', projectId: 0 }],
         projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
@@ -325,7 +325,7 @@ export default {
         }
       },
       condition: [{ id: 0, label: '任意' }, { id: 1, label: '所有' }],
-      tongjiZQ: [{ id: 60, label: '統計周期1分鍾' }, { id: 300, label: '統計周期5分鍾' }],
+      tongjiZQ: [{ id: 60, label: '統計週期1分鍾' }, { id: 300, label: '統計週期5分鍾' }],
       symbolList: [
         { id: '1', label: '>' },
         { id: '2', label: '>=' },
@@ -335,12 +335,12 @@ export default {
         { id: '6', label: '!=' }
       ], // 符號數組
       continuePeriod: [
-        { id: 1, label: '持續1個周期' },
-        { id: 2, label: '持續2個周期' },
-        { id: 3, label: '持續3個周期' },
-        { id: 4, label: '持續4個周期' },
-        { id: 5, label: '持續5個周期' }
-      ], // 持續周期
+        { id: 1, label: '持續1個週期' },
+        { id: 2, label: '持續2個週期' },
+        { id: 3, label: '持續3個週期' },
+        { id: 4, label: '持續4個週期' },
+        { id: 5, label: '持續5個週期' }
+      ], // 持續週期
       jinggaoZQ: [
         { label: '不重複', id: 0 },
         { label: '每5分鍾警告壹次', id: 300 },
@@ -353,8 +353,8 @@ export default {
         { label: '每6小時警告壹次', id: 21600 },
         { label: '每12小時警告壹次', id: 43200 },
         { label: '每1天警告壹次', id: 86400 },
-        { label: '周期指數遞增', id: 1 }
-      ], // 警告周期
+        { label: '週期指數遞增', id: 1 }
+      ], // 警告週期
       cam: {}, // cam組件的值
       projectId: 0,
       searchParam: {},
@@ -511,7 +511,7 @@ export default {
     getProjectsList: async function () {
       this.axios.get(ALL_PROJECT).then(res => {
         this.axiosUtils(res, () => {
-          this.formInline.project = [{ projectName: '默認專案', projectId: 0 }, ...res.data]
+          this.formInline.project = [{ projectName: '預設專案', projectId: 0 }, ...res.data]
         })
       })
     },

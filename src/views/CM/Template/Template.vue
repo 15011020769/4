@@ -279,11 +279,11 @@ export default {
       tableData: [
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫-Redis-其他版本',
+        //   type: '預設雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -294,11 +294,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫',
+        //   type: '預設雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -309,7 +309,7 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
         //   object: '東崋雲計算有限公司',
@@ -324,11 +324,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾，不重複告警',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫-Redis-其他版本',
+        //   type: '預設雲數據庫-Redis-其他版本',
         //   YS: '3/3',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -339,11 +339,11 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%,持續5分鍾',
         //   object: '東崋雲計算有限公司',
-        //   type: '默認雲數據庫',
+        //   type: '預設雲數據庫',
         //   YS: '0/0',
         //   yiqiying: 3,
         //   shilishu: 3,
@@ -354,7 +354,7 @@ export default {
         // },
         // {
         //   grounpId: 3290043,
-        //   groupName: '默認',
+        //   groupName: '預設',
         //   isOpen: true,
         //   chufa: '容量使用率>80%',
         //   object: '東崋雲計算有限公司',
@@ -455,7 +455,7 @@ export default {
               if (anp == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指數遞增重複告警'
+                item.alarm = '按週期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {

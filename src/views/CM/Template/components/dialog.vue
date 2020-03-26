@@ -185,8 +185,8 @@
                           重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                         </p>
                         <p style="font-size:12px">
-                          周期指數遞增通知:
-                          告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                          週期指數遞增通知:
+                          告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                         </p>
                       </div>
                       <i
@@ -239,8 +239,8 @@
                       重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。
                     </p>
                     <p style="font-size:12px">
-                      周期指數遞增通知:
-                      告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知
+                      週期指數遞增通知:
+                      告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知
                     </p>
                   </div>
                   <i
@@ -368,11 +368,11 @@ export default {
             }
           ], // 策略類型
           alarm: "", // 策略類型
-          projectName: "默認專案",
+          projectName: "預設專案",
           project: [
             {
               value: 0,
-              name: "默認專案"
+              name: "預設專案"
             }
           ]
         }
@@ -383,19 +383,19 @@ export default {
         { label: "所有", value: 1 }
       ], // 滿足條件
       tongjiZQ: [
-        { label: "統計周期1分鍾", value: 60 },
-        { label: "統計周期5分鍾", value: 300 }
+        { label: "統計週期1分鍾", value: 60 },
+        { label: "統計週期5分鍾", value: 300 }
       ],
       continuePeriod: [
-        // 持續周期
-        { label: "持續1個周期", value: 1 },
-        { label: "持續2個周期", value: 2 },
-        { label: "持續3個周期", value: 3 },
-        { label: "持續4個周期", value: 4 },
-        { label: "持續5個周期", value: 5 }
+        // 持續週期
+        { label: "持續1個週期", value: 1 },
+        { label: "持續2個週期", value: 2 },
+        { label: "持續3個週期", value: 3 },
+        { label: "持續4個週期", value: 4 },
+        { label: "持續5個週期", value: 5 }
       ],
       jinggaoZQ: [
-        // 警告周期
+        // 警告週期
         { label: "不重複", value: 0 },
         { label: "每5分鍾警告壹次", value: 300 },
         { label: "每10分鍾警告壹次", value: 600 },
@@ -407,7 +407,7 @@ export default {
         { label: "每6小時警告壹次", value: 21600 },
         { label: "每12小時警告壹次", value: 43200 },
         { label: "每1天警告壹次", value: 86400 },
-        { label: "周期指數遞增", value: 1 }
+        { label: "週期指數遞增", value: 1 }
       ],
       zhibiaoType: [], // 指標告警類型
       eventType: [], // 事件告警類型
@@ -558,14 +558,14 @@ export default {
           var PD;
           if (ele.Period == item1.value) {
             PD = item1.value;
-            params[`Conditions.${i}.CalcPeriod`] = PD; // 統計周期
+            params[`Conditions.${i}.CalcPeriod`] = PD; // 統計週期
           }
         });
         this.continuePeriod.forEach(item2 => {
           var CP;
           if (ele.ContinuePeriod == item2.value) {
             CP = item2.value;
-            params[`Conditions.${i}.ContinuePeriod`] = CP; // 持續周期
+            params[`Conditions.${i}.ContinuePeriod`] = CP; // 持續週期
           }
         });
         this.SymbolList.forEach((item3, index) => {
@@ -712,11 +712,11 @@ export default {
           }
         ], // 策略類型
         alarm: "", // 策略類型
-        projectName: "默認專案",
+        projectName: "預設專案",
         project: [
           {
             value: 0,
-            name: "默認專案"
+            name: "預設專案"
           }
         ]
       });

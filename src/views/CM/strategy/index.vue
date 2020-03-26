@@ -127,7 +127,7 @@
                       }}
                     </span>
                     <span v-else>
-                      按周期指数递增重复告警
+                      按週期指数递增重复告警
                     </span>
                   </p>
                 </div>
@@ -189,7 +189,7 @@
               <div>
                 <p>
                   <span
-                    >策略類型： <span v-if="scope.row.IsDefault == 1">默認</span
+                    >策略類型： <span v-if="scope.row.IsDefault == 1">預設</span
                     >{{ scope.row.Name }}</span
                   >
                 </p>
@@ -200,7 +200,7 @@
                   "
                   style="color:#888;"
                 >
-                  此告警策略綁定的物件是實力組，當前不支持設置爲默認策略
+                  此告警策略綁定的物件是實力組，當前不支持設置爲預設策略
                 </p>
               </div>
               <div slot="reference">
@@ -209,14 +209,14 @@
                   @mouseenter="enter(scope.$index)"
                   @mouseleave="leave()"
                 >
-                  <span v-if="scope.row.IsDefault == 1">默認</span
+                  <span v-if="scope.row.IsDefault == 1">預設</span
                   >{{ scope.row.Name }}
                   <p
                     v-show="edit && scope.$index == current"
                     v-if="scope.row.IsDefault != 1 && scope.row.CanSetDefault"
                   >
                     <a href="javascript:;" @click="SetDefault(scope.row)"
-                      >設置默認</a
+                      >設置預設</a
                     >
                   </p>
                 </div>
@@ -279,7 +279,7 @@
               >複制</el-button
             >
             <el-tooltip
-              content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
+              content="預設策略不支持刪除，可解綁所有資源或設置新的預設策略後將此轉爲非預設策略"
               placement="left"
               effect="light"
               v-if="scope.row.IsDefault != 0"
@@ -388,9 +388,9 @@
                   v-if="scope.row.IsDefault != 0"
                   id="text-color-red"
                 >
-                  <span>默認策略,無法刪除</span>
+                  <span>預設策略,無法刪除</span>
                   <el-tooltip
-                    content="默認策略不支持刪除，可解綁所有資源或設置新的默認策略後將此轉爲非默認策略"
+                    content="預設策略不支持刪除，可解綁所有資源或設置新的預設策略後將此轉爲非預設策略"
                     placement="left"
                     effect="light"
                   >
@@ -780,7 +780,7 @@ export default {
       monitorNumber: "",
       DiskType: {
         CLOUD_BASIC: "普通雲硬碟",
-        CLOUD_PREMIUM: "高性能雲硬碟",
+        CLOUD_PREMIUM: "高效能雲硬碟",
         CLOUD_SSD: "SSD雲硬碟"
       },
       vpcConnState: {
@@ -1631,9 +1631,9 @@ export default {
       } else if (value == 10) {
         return "周同比下降";
       } else if (value == 11) {
-        return "周期環比上漲";
+        return "週期環比上漲";
       } else if (value == 12) {
-        return "周期環比下降";
+        return "週期環比下降";
       }
     },
     AlarmNotifyPeriod(val) {
@@ -1660,7 +1660,7 @@ export default {
     },
     ProjectName(val) {
       if (val == 0) {
-        return "默認專案";
+        return "預設專案";
       }
       for (let i in project) {
         if (val == project[i].projectId) {

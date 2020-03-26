@@ -18,7 +18,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="雲伺服器基礎設施存儲模塊; 影響：導致IO性能下降 ，數據讀寫異常"
+                content="雲伺服器基礎設施存儲模組; 影響：導致IO效能下降 ，數據讀寫異常"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -34,7 +34,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="雲伺服器基礎設施網路模塊導致; 影響：網速下降或網路連接中斷"
+                content="雲伺服器基礎設施網路模組導致; 影響：網速下降或網路連接中斷"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>

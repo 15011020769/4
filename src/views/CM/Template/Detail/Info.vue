@@ -206,7 +206,7 @@
                     <el-popover v-if="UnionRule!==1" placement="top" trigger="hover" width="300">
                       <div>
                         <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
-                        <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
+                        <p style="font-size:12px">週期指數遞增通知: 告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知</p>
                       </div>
                       <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                     </el-popover>
@@ -231,7 +231,7 @@
                 <el-popover placement="top" trigger="hover" width="300" style="width:22px;height:22px">
                   <div>
                     <p style="font-size:12px">重複通知：可以設置告警發生24小時內重複發送通知；超過24小時，每天告警壹次，超過72小時，不再發送告警通知。</p>
-                    <p style="font-size:12px">周期指數遞增通知: 告警持續時長到達告警統計周期的1，2，4，8，16，32...倍時發送告警通知</p>
+                    <p style="font-size:12px">週期指數遞增通知: 告警持續時長到達告警統計週期的1，2，4，8，16，32...倍時發送告警通知</p>
                   </div>
                   <i slot="reference" class="el-icon-info" style="color:#888; margin:0 5px;"></i>
                 </el-popover>
@@ -309,16 +309,16 @@ export default {
       editGroupName: '', // 编辑的範本名称
       editRemark: '', // 编辑的备注
       Conditions: [], // 策略类型
-      tongjiZQ: [{ label: '統計周期1分鍾', value: 60 }, { label: '統計周期5分鍾', value: 300 }],
+      tongjiZQ: [{ label: '統計週期1分鍾', value: 60 }, { label: '統計週期5分鍾', value: 300 }],
       SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符号数组
-      continuePeriod: [// 持续周期
-        { label: '持續1個周期', value: 1 },
-        { label: '持續2個周期', value: 2 },
-        { label: '持續3個周期', value: 3 },
-        { label: '持續4個周期', value: 4 },
-        { label: '持續5個周期', value: 5 }
+      continuePeriod: [// 持续週期
+        { label: '持續1個週期', value: 1 },
+        { label: '持續2個週期', value: 2 },
+        { label: '持續3個週期', value: 3 },
+        { label: '持續4個週期', value: 4 },
+        { label: '持續5個週期', value: 5 }
       ],
-      jinggaoZQ: [// 警告周期
+      jinggaoZQ: [// 警告週期
         { label: '不重複', value: 0 },
         { label: '每5分鍾警告壹次', value: 300 },
         { label: '每10分鍾警告壹次', value: 600 },
@@ -330,7 +330,7 @@ export default {
         { label: '每6小時警告壹次', value: 21600 },
         { label: '每12小時警告壹次', value: 43200 },
         { label: '每1天警告壹次', value: 86400 },
-        { label: '周期指數遞增', value: 1 }
+        { label: '週期指數遞增', value: 1 }
       ],
       formInline: {
         jieshou: '接收組',
@@ -494,8 +494,8 @@ export default {
             this.indexAry.forEach((item,i)=>{
               let time = item.Period / 60// 编辑触发条件
               let num = item.ContinueTime / (time * 60)// 编辑触发条件
-              item['Period'] = `統計周期${time}分鍾`// 編輯觸發條件
-              item['ContinuePeriod'] = `持續${num}個周期`// 編輯觸發條件
+              item['Period'] = `統計週期${time}分鍾`// 編輯觸發條件
+              item['ContinuePeriod'] = `持續${num}個週期`// 編輯觸發條件
               let time1 = item.AlarmNotifyPeriod / 60
               let time2 = item.AlarmNotifyPeriod / (60 * 60)
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
@@ -518,7 +518,7 @@ export default {
               if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
                 item.alarm = '不重複告警'
               } else if (item.AlarmNotifyType == 1) {
-                item.alarm = '按周期指數遞增重複告警'
+                item.alarm = '按週期指數遞增重複告警'
               } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
@@ -574,8 +574,8 @@ export default {
     //   this.indexAry.forEach((ele, i) => {
     //     params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
     //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
-    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計周期
-    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持續周期
+    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計週期
+    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持續週期
     //     this.SymbolList.forEach((item3, index) => {
     //       var CT
     //       if (ele.CalcType == item3) {
@@ -769,10 +769,10 @@ export default {
       })
       // this.indexAry.push(
       //   {
-      //     Period: '統計周期1分鍾',
+      //     Period: '統計週期1分鍾',
       //     CalcType: '>',
       //     CalcValue: '0',
-      //     ContinuePeriod: '持續1個周期',
+      //     ContinuePeriod: '持續1個週期',
       //     alarm: '每1天警告壹次'
       //   }
       // )
@@ -815,11 +815,11 @@ export default {
             }
           ], // 策略類型
           alarm: '', // 策略類型
-          projectName: '默認專案',
+          projectName: '預設專案',
           project: [
             {
               value: 0,
-              name: '默認專案'
+              name: '預設專案'
             }
           ]
         }
@@ -850,7 +850,7 @@ export default {
     },
     ProjectName (val) {
       if (val == 0) {
-        return '默認專案'
+        return '預設專案'
       }
       if (this.allProjectName) {
         for (let i in this.allProjectName) {

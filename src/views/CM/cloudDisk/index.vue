@@ -134,7 +134,7 @@
         selectedCity: {}, // 切换城市
         DiskType: {
           CLOUD_BASIC: "普通雲硬碟",
-          CLOUD_PREMIUM: "高性能雲硬碟",
+          CLOUD_PREMIUM: "高效能雲硬碟",
           CLOUD_SSD: "SSD雲硬碟"
         },
         searchInput: "",

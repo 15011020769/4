@@ -118,7 +118,7 @@ export default {
               if (anp == 0 && item.alarmNotifyType == 0) {
                 item.alarm = '不重複告警'
               } else if (item.alarmNotifyType == 1) {
-                item.alarm = '按周期指數遞增重複告警'
+                item.alarm = '按週期指數遞增重複告警'
               } else if (anp > 0 && time1 < 30) {
                 item.alarm = `按${time1}分鍾重複告警`
               } else if (anp > 0 && time1 > 30 && time2 < 24) {
