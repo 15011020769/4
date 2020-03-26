@@ -195,7 +195,7 @@
           ]
           this.HeadConfig = {
             title1: 'ID/主機名',
-            title2: '網絡類型',
+            title2: '網路類型',
             title3: 'IP地址'
           }
           this.MetricName = [{
@@ -282,7 +282,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '狀態',
-            title3: '私有網絡',
+            title3: '私有網路',
             title4: '類型',
           }
           this.MetricName = [{
@@ -335,7 +335,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '狀態',
-            title3: '所屬網絡',
+            title3: '所屬網路',
           }
           this.MetricName = [{
               label: '外網出帶寬(Mbps)',
@@ -382,15 +382,15 @@
           ]
           this.HeadConfig = {
             title1: 'ID/名稱',
-            title2: '所屬網絡',
+            title2: '所屬網路',
             title3: 'VPN網關',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出帶寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入帶寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -439,14 +439,14 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: 'NAT配置狀態',
-            title3: '所屬網絡',
+            title3: '所屬網路',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出帶寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入帶寬(Mbps)',
               value: 'inbandwidth'
             },
             {
@@ -482,7 +482,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '內網IP/端口',
-            // title3: '網絡類型',
+            // title3: '網路類型',
             // title4: '類型',
           }
           this.MetricName = [
@@ -776,11 +776,11 @@
             title3: '帶寬',
           }
           this.MetricName = [{
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出帶寬(Mbps)',
               value: 'outbandwidth'
             },
             {
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入帶寬(Mbps)',
               value: 'inbandwidth'
             }
           ]
@@ -807,14 +807,14 @@
           }]
           this.HeadConfig = {
             title1: 'ID/名稱',
-            title2: '私有網絡',
+            title2: '私有網路',
           }
           this.MetricName = [{
-              label: '網絡入帶寬(Mbps)',
+              label: '網路入帶寬(Mbps)',
               value: 'inbandwidth'
             },
             {
-              label: '網絡出帶寬(Mbps)',
+              label: '網路出帶寬(Mbps)',
               value: 'outbandwidth'
             },
             {

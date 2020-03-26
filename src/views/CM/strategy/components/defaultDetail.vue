@@ -152,8 +152,8 @@
               <span>{{ InstanceState(scope.row.InstanceState) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="網絡類型" v-if="ViewName === 'cvm_device'">
-            VPC 網絡
+          <el-table-column label="網路類型" v-if="ViewName === 'cvm_device'">
+            VPC 網路
           </el-table-column>
           <el-table-column label="IP地址" v-if="ViewName === 'cvm_device'">
             <template slot-scope="scope">
@@ -211,7 +211,7 @@
               <span>{{ VPN_GW_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'VPN_GW'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'VPN_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -230,7 +230,7 @@
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -261,7 +261,7 @@
               <span>{{ VPN_Tunnel_State(scope.row.State) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="私有網絡" v-if="ViewName === 'nat_tc_stat'">
+          <el-table-column label="私有網路" v-if="ViewName === 'nat_tc_stat'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -286,7 +286,7 @@
               <span>{{ NAT_Status(scope.row.GatewayType) }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="所屬網絡" v-if="ViewName === 'DC_GW'">
+          <el-table-column label="所屬網路" v-if="ViewName === 'DC_GW'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpcId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -323,7 +323,7 @@
               <p>{{ scope.row.Vport }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="網絡類型" v-if="ViewName === 'cdb_detail'">
+          <el-table-column label="網路類型" v-if="ViewName === 'cdb_detail'">
             <template slot-scope="scope">
               VPC
             </template>
@@ -368,7 +368,7 @@
               <p>{{ dcchannel_Status(scope.row.State) }}</p>
             </template>
           </el-table-column>
-          <el-table-column label="私有網絡" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="私有網路" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               master-slave
             </template>
@@ -511,10 +511,10 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="網絡類型"
+                      label="網路類型"
                       v-if="ViewName === 'cvm_device'"
                     >
-                      VPC 網絡
+                      VPC 網路
                     </el-table-column>
                     <el-table-column
                       label="IP地址"
@@ -581,7 +581,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'VPN_GW'"
                     >
                       <template slot-scope="scope">
@@ -609,7 +609,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -655,7 +655,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="私有網絡"
+                      label="私有網路"
                       v-if="ViewName === 'nat_tc_stat'"
                     >
                       <template slot-scope="scope">
@@ -694,7 +694,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="所屬網絡"
+                      label="所屬網路"
                       v-if="ViewName === 'DC_GW'"
                     >
                       <template slot-scope="scope">
@@ -746,7 +746,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="網絡類型"
+                      label="網路類型"
                       v-if="ViewName === 'cdb_detail'"
                     >
                       <template slot-scope="scope">

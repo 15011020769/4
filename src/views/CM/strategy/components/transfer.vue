@@ -32,7 +32,7 @@
             ></el-table-column>
             <el-table-column
               prop="Type"
-              label="網絡類型"
+              label="網路類型"
               width="180"
             ></el-table-column>
 
@@ -109,7 +109,7 @@ export default {
         1: "自定義策略",
         2: "預設策略"
       },
-      tableTitle: "網絡類型",
+      tableTitle: "網路類型",
       optionPolicies: [
         {
           value: "All",

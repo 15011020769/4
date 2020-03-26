@@ -133,9 +133,9 @@
                       <a @click="setStrategy(scope.row)">{{scope.row.GroupName}}</a>
                     </template>
                   </el-table-column>
-                  <el-table-column prop label="所屬網絡" width="120">
+                  <el-table-column prop label="所屬網路" width="120">
                     <template slot-scope="scope">
-                      <div v-if="scope.row.Vpc=='1'">VPC網絡</div>
+                      <div v-if="scope.row.Vpc=='1'">VPC網路</div>
                     </template>
                   </el-table-column>
                   <el-table-column prop label="所屬項目" width="120">

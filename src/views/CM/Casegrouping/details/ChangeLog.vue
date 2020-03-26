@@ -82,7 +82,7 @@
                 </template>
               </el-table-column>
               <el-table-column :label="$t('CVM.ChangeLog.wllx')" width="180">
-                VPC 網絡
+                VPC 網路
               </el-table-column>
               <el-table-column label="IP地址">
                 <template slot-scope="scope">

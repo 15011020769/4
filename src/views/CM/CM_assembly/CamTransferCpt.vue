@@ -104,7 +104,7 @@
           <el-table-column :label="headConfig.title2" width="120">
             <template slot-scope="scope">
               <div v-if="productValue == 'cvm_device'">
-                <p>VPC 網絡</p>
+                <p>VPC 網路</p>
               </div>
               <div v-if="productValue === 'VPN_GW'">
                 <p>{{ vpcConnState[scope.row.State] }}</p>
