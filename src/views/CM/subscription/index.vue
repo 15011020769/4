@@ -422,7 +422,7 @@ export default {
 
       this.axios.post(SUBSCRIPTION_ADMINISTRATION, params).then(res => {
         console.log(res);
-        if (res.codeDesc === "Success") {
+        if (res.Response.Error === undefined) {
           this.$message({
             message: "订阅成功",
             type: "success",
