@@ -1194,7 +1194,7 @@
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="chargingShow">
-                          {{ $t("TKE.colony.cvmpe") }}{{ item.datanum }}台
+                          CVM配額:當前帳號最大可購買{{ item.datanum }}台
                         </p>
                         <el-row>
                           <el-button
@@ -2037,7 +2037,7 @@
                           <!-- <a href="#">提交工单</a> -->
                         </p>
                         <p v-if="chargingShow">
-                          {{ $t("TKE.colony.cvmpe") }}{{ item.datanum }}台
+                          CVM配額:當前帳號最大可購買{{ item.datanum }}台
                         </p>
                         <el-row>
                           <el-button
