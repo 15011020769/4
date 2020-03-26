@@ -51,13 +51,13 @@
           <div style="margin-bottom: 18px">
             <label style="width: 70px;vertical-align: middle;float: left;padding: 0 12px 0 0;line-height: 28px">觸發條件</label>
             <div style="margin-left: 70px" v-loading="loading">
-              <!-- 觸發條件模板 -->
+              <!-- 觸發條件範本 -->
               <div style="background-color: #f2f2f2;padding: 20px">
-                <el-radio v-model="radioChufa" label="1">觸發條件模板</el-radio>
-                <el-button type="text" size="mini" style="margin-left: 20px" @click="$router.push({path: '/Template'})">新增觸發條件模板</el-button>
+                <el-radio v-model="radioChufa" label="1">觸發條件範本</el-radio>
+                <el-button type="text" size="mini" style="margin-left: 20px" @click="$router.push({path: '/Template'})">新增觸發條件範本</el-button>
                 <div v-show="radioChufa === '1'" style="padding: 10px">
                   <el-form-item label-width="0px" style="margin-bottom: 0px">
-                    <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="當前策略下沒有觸發條件模板"
+                    <el-select v-model="formInline.conditionsTemplateId" style="width:150px;" placeholder="當前策略下沒有觸發條件範本"
                                @change="conditionTemplateChange" :disabled="!formInline.conditionsTemplateId">
                       <el-option v-for="(item, index) in formInline.conditionsTemplate" :key="index" :label="item.GroupName" :value="item.GroupID" label-width="40px"></el-option>
                     </el-select>
@@ -310,7 +310,7 @@ export default {
         projectId: 0,
         instanceGroup: [],
         instanceGroupId: '',
-        conditionsTemplate: [], // 触发条件模板下拉数组
+        conditionsTemplate: [], // 触发条件範本下拉数组
         conditionsTemplateId: '',
         triggerCondition: {
           IsUnionRule: 0,
@@ -480,7 +480,7 @@ export default {
         })
       })
     },
-    // 條件觸發模板 更改
+    // 條件觸發範本 更改
     conditionTemplateChange: function (groupID) {
       if (groupID !== '') {
         let oneConditionsTemplate = this.formInline.conditionsTemplate.find(item => {
@@ -531,7 +531,7 @@ export default {
         })
       })
     },
-    // 獲取 觸發條件模板 列表
+    // 獲取 觸發條件範本 列表
     describeConditionsTemplateList: async function () {
       let params = {
         Version: '2018-07-24',

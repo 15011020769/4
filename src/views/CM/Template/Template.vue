@@ -1,11 +1,11 @@
 <template>
   <div class="Template-wrap">
-    <Header title="觸發條件模板" />
+    <Header title="觸發條件範本" />
     <div class="overview-main">
       <div class="explain">
         <p>
-          觸發條件模板功能支持對相同告警規則的複用和統壹修改
-          <!-- ，點擊查看<a>觸發條件模板文檔</a> -->
+          觸發條件範本功能支持對相同告警規則的複用和統壹修改
+          <!-- ，點擊查看<a>觸發條件範本文檔</a> -->
         </p>
       </div>
     </div>
@@ -15,14 +15,14 @@
           <el-button type="primary" @click="buyMessgae">新建</el-button>
         </el-row>
         <el-row class="seek">
-          <el-input v-model="triggerInput" placeholder="請輸入觸發條件模板名搜索"></el-input>
+          <el-input v-model="triggerInput" placeholder="請輸入觸發條件範本名搜索"></el-input>
           <el-button icon="el-icon-search" @click="clickSerch(triggerInput)" style="margin-left:-1px;"></el-button>
         </el-row>
       </div>
       <el-table style="width: 100%" height="500" :data="tableData" v-loading="loadShow"
         :default-sort="{prop: 'changeData', order: 'descending'}"
       >
-        <el-table-column prop label="模板名稱">
+        <el-table-column prop label="範本名稱">
           <template slot-scope="scope">
             <el-popover trigger="hover" placement="right" :content="`策略名稱: ${scope.row.GroupName}`">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID,scope.row.GroupName)">{{scope.row.GroupName}}</span>
@@ -112,14 +112,14 @@
         ></el-pagination>
       </div>
     </div>
-    <!-- 编辑模板名称弹框 -->
-    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件模板名稱">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
+    <!-- 编辑範本名称弹框 -->
+    <el-dialog class="dil" :visible.sync="ShowEditDialog" width="25%" title="修改條件範本名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
           <div>
             <el-input maxlength="20" v-model="editGroupName" style="width:200px"></el-input>
-            <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
+            <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
       <!-- 分页 -->
-            <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
+            <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
           </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitEditName()">保 存</el-button>
@@ -128,7 +128,7 @@
     </el-dialog>
     <!-- 删除弹框 -->
       <el-dialog :visible.sync="showDelDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">確定刪除所選觸發條件模板嗎?</p>
+        <p style="color:#444;font-weight:bolder;">確定刪除所選觸發條件範本嗎?</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="submitDelete()">確 定</el-button>
           <el-button @click="showDelDialog = false">取 消</el-button>
@@ -136,7 +136,7 @@
       </el-dialog>
       <!-- 复制弹框 -->
       <el-dialog :visible.sync="showCopyDialog" width="35%">
-        <p style="color:#444;font-weight:bolder;">複制所選觸發條件模板</p>
+        <p style="color:#444;font-weight:bolder;">複制所選觸發條件範本</p>
         <p style="font-size:12px;margin-top:20px">{{`是否複制${groupName}`}}</p>
         <span slot="footer" class="dialog-footer">
           <el-button type="primary" @click="coptData()">確 定</el-button>
@@ -173,10 +173,10 @@ export default {
       showDelDialog: false, // 是否显示删除弹框
       showCopyDialog: false, // 是否显示复制弹框
       groupId: '', // 删除需要的id值
-      groupName: '', // 模板名称
-      editGroupName: '', // 编辑的模板名称
-      editGroupId: '', // 编辑的模板id
-      // templateObj: {}, // 当前模板数据对象
+      groupName: '', // 範本名称
+      editGroupName: '', // 编辑的範本名称
+      editGroupId: '', // 编辑的範本id
+      // templateObj: {}, // 当前範本数据对象
       Conditions: [], // 策略类型
       PolicyType: [], // 策略类型下拉框的策略名称
       formInline: {
@@ -375,7 +375,7 @@ export default {
       currpage: 0, // 當前頁碼
       operationFlag: -1, // 按鈕禁用開關
       searchName: '',
-      triggerInput: '' // 觸發條件模板名
+      triggerInput: '' // 觸發條件範本名
     }
   },
   components: {
@@ -485,14 +485,14 @@ export default {
         this.getTemplateList(val)
       }
     },
-    // 编辑模板名称按钮
+    // 编辑範本名称按钮
     showEditNameDlg (obj) {
       this.editGroupName = obj.GroupName
       this.editGroupId = obj.GroupID
       this.ShowEditDialog = true
       // this.templateObj = obj
     },
-    // 确定编辑模板名称完成
+    // 确定编辑範本名称完成
     async submitEditName () {
       let params = {
         Version: '2018-07-24',
@@ -507,7 +507,7 @@ export default {
           this.ShowEditDialog = false
           this.getTemplateList()
           this.$message({
-            message: '條件模板名稱修改成功',
+            message: '條件範本名稱修改成功',
             type: 'success',
             showClose: true,
             duration: 2000
@@ -663,7 +663,7 @@ export default {
       //   .catch(_ => {});
     },
     addTemplate () {
-      // 新建触发条件模板
+      // 新建触发条件範本
       this.dialogFormVisible = true
     },
     onSubmit () {

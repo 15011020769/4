@@ -316,7 +316,7 @@ export default {
       showQudao1: false, // 渠道选择1显示开关
       showQudao2: false, // 渠道选择2显示开关
 
-      errorTip1: false, // 触发条件模板错误提示
+      errorTip1: false, // 触发条件範本错误提示
       errorTip2: true, // 配置触发条件错误提示
       checkedZhibiao: true, // 指示告警
       checkedUse: false, // 使用预置触发条件
@@ -428,14 +428,14 @@ export default {
           {
             validator: (rule, value, callback) => {
               if (!value) {
-                callback(new Error("模板名稱不能爲空"));
+                callback(new Error("範本名稱不能爲空"));
               } else if (value.length === 20) {
-                callback(new Error("模板名稱不能超過 20 字"));
+                callback(new Error("範本名稱不能超過 20 字"));
               } else {
                 callback();
               }
               //  else if (value.length === 20) {
-              // callback(new Error('提示:模板名称不能超过 20 字'))
+              // callback(new Error('提示:範本名称不能超过 20 字'))
               // }
             },
             trigger: "blur",

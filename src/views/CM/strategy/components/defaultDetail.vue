@@ -71,7 +71,7 @@
       <div class="box-content">
         <p v-if="basicNews.ConditionsTemp">
           <span class="textColor" style="margin-right:20px;">
-            模板名稱
+            範本名稱
           </span>
           {{ basicNews.ConditionsTemp.GroupName }}
         </p>
@@ -1104,12 +1104,12 @@
           <div class="chufaContent">
             <div>
               <el-radio v-model="radioChufa" label="1" @change="chufaTemplate"
-                >觸發條件模板</el-radio
+                >觸發條件範本</el-radio
               >
               <a
                 style="margin-left:15px;"
                 @click="$router.push({ path: '/Template' })"
-                >新增触发条件模板</a
+                >新增触发条件範本</a
               >
               <div class="content" v-if="radioChufa == 1">
                 <p>
@@ -1117,7 +1117,7 @@
                     v-model="nameVal"
                     style="width:150px;"
                     @change="TriggerChange"
-                    :disabled="nameVal === '當前策略下沒有觸發條件模板'"
+                    :disabled="nameVal === '當前策略下沒有觸發條件範本'"
                   >
                     <el-option
                       v-for="item in triggerCondition"
@@ -1129,7 +1129,7 @@
                   </el-select>
                   <a href="javascript:;" @click="AlarmTriggerCondition">刷新</a>
                 </p>
-                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p>
                     <el-checkbox disabled>指標告警</el-checkbox>
                   </p>
@@ -1291,7 +1291,7 @@
                     </el-popover>
                   </div>
                 </div>
-                <div v-if="nameVal !== '當前策略下沒有觸發條件模板'">
+                <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p v-if="basicNews.EventConfig">
                     <el-checkbox disabled v-if="Conditions.EventConditions">
                       事件告警
@@ -1863,7 +1863,7 @@ export default {
       remarksVal: "",
       showQudao1: false, //渠道选择1显示开关
       showQudao2: false, //渠道选择2显示开关
-      errorTip1: false, //触发条件模板错误提示
+      errorTip1: false, //触发条件範本错误提示
       errorTip2: true, //配置触发条件错误提示
       triggerInput: "", //新增接收
       radio: "1", //选择告警对象类型
@@ -2604,7 +2604,7 @@ export default {
           } else {
             this.nameVal =
               this.triggerCondition.length === 0
-                ? "當前策略下沒有觸發條件模板"
+                ? "當前策略下沒有觸發條件範本"
                 : this.triggerCondition[0].GroupID;
           }
 
@@ -4225,7 +4225,7 @@ export default {
     },
 
     chufaTemplate() {
-      //觸發條件模板
+      //觸發條件範本
     },
     config() {
       //配置觸發條件

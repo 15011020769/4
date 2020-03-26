@@ -3,7 +3,7 @@
     <el-card class="card1">
       <h4 class="title-text">基本信息</h4>
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
-        <el-form-item label="模板名稱" class="form-item">
+        <el-form-item label="範本名稱" class="form-item">
           <div class="item-text">
             {{infoData.GroupName}}
             <!-- <i class="el-icon-edit" @click="openName(infoData.GroupName)" style="cursor:pointer"></i> -->
@@ -75,25 +75,25 @@
       <div class="number">共 {{infoData.PolicyGroups?infoData.PolicyGroups.length:0}} 項</div>
     </el-card>
     <!-- 修改名稱彈框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件模板名稱">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板名稱</p> -->
+    <el-dialog class="dil" :visible.sync="showDelDialog1" width="25%" title="修改條件範本名稱">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本名稱</p> -->
       <div>
         <el-input maxlength="20" v-model="editGroupName" style="width:200px;margin-top:20px" size="small"></el-input>
-        <p v-if="editGroupName==''" class="edit-text-tips">條件模板名稱不能爲空</p>
-        <p v-if="editGroupName.length==20" class="edit-text-tips">條件模板名稱不能超過20個字符</p>
+        <p v-if="editGroupName==''" class="edit-text-tips">條件範本名稱不能爲空</p>
+        <p v-if="editGroupName.length==20" class="edit-text-tips">條件範本名稱不能超過20個字符</p>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitName()">保 存</el-button>
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件模板備注">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板備注</p> -->
+    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件範本備注">
+      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本備注</p> -->
       <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
         <!-- <el-form-item prop="remark"> -->
           <div>
           <el-input type="textarea" rows="5" maxlength="100" v-model="editRemark" show-word-limit></el-input>
-          <p v-if="editRemark.length==100" class="edit-text-tips">條件模板備注不能超過100個字符</p>
+          <p v-if="editRemark.length==100" class="edit-text-tips">條件範本備注不能超過100個字符</p>
           </div>
         <!-- </el-form-item> -->
       <!-- </el-form> -->
@@ -263,7 +263,7 @@
                 <i class="rubbish-icon"></i>
               </ul>
             </div> -->
-            <p class="red-text">{{`該告警觸發條件模板已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
+            <p class="red-text">{{`該告警觸發條件範本已經關聯了${infoData.PolicyGroups?infoData.PolicyGroups.length:0}個策略，若修改，修改內容將應用到所有已關聯的告警策略上`}}</p>
           </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;margin-top:20px">
@@ -305,8 +305,8 @@ export default {
       loadShow: false, // 加载显示
       infoData: {}, // 详情信息
       total: 0, // 告警策略列表总数
-      id: '', // 模板id
-      editGroupName: '', // 编辑的模板名称
+      id: '', // 範本id
+      editGroupName: '', // 编辑的範本名称
       editRemark: '', // 编辑的备注
       Conditions: [], // 策略类型
       tongjiZQ: [{ label: '統計周期1分鍾', value: 60 }, { label: '統計周期5分鍾', value: 300 }],
@@ -560,7 +560,7 @@ export default {
         this.openEditloadShow = false
       })
     },
-    // 保存編輯條件模板
+    // 保存編輯條件範本
     submitEdit () {
     //   let { GroupID, GroupName, ViewName } = this.infoData
     //   let params = {
