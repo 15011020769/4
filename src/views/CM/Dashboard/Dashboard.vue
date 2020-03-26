@@ -74,7 +74,7 @@
             <p>
               <span>共 {{ item.DataPoints.length }}
                 {{ $t("CVM.Dashboard.ygsl") }}</span>
-              <!-- <span v-show="retractChartFlag">,监控明细（2020-01-10 21:47:40）</span> -->
+              <span v-show="item.openChartFlag">,{{$t("CVM.Dashboard.jkmx")}}( {{item.showTime}} )</span>
             </p>
             <p>
               <span>
@@ -563,6 +563,8 @@
                 ele.openChartFlag = false; // 列表展开收起的标志
                 ele.dataIndex = 0; // 折线图下面需要展示的数值的索引
                 ele.echartsIndex = index; // echarts图在Viewlist中的索引
+                console.log(this.time[this.time.length - 1], 'a');
+                ele.showTime = this.time[this.time.length - 1]// echarts图标需要展示的时间
                 let newInstances = [];
                 ele.Instances.forEach((el,i) => {
                   // newInstances.push(JSON.parse(el));
@@ -786,9 +788,10 @@
         return wbout;
       },
       // 改变监控图标实时展示的列表值
-      changeDataIndex(echartsIndex, dataIndex) {
+      changeDataIndex(echartsIndex, dataIndex, name) {
         // console.log(this.ViewList, echartsIndex, dataIndex);
         this.ViewList[echartsIndex]['dataIndex'] = dataIndex;
+        this.ViewList[echartsIndex]['showTime'] = name; // 展示的时间
       }
 
       // //取消

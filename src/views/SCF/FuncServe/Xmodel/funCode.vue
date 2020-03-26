@@ -90,9 +90,9 @@
             COS Bucket
             <el-tooltip placement="top" effect="light">
               <div slot="content">
-                選擇用作事件源的 COS 存儲桶，
+                {{$t('SCF.total.xzsjy')}}
                 <br />
-                該存儲桶必須位於函數所在地域
+                {{$t('SCF.total.wyhsszdy')}}
               </div>
               <i class="el-icon-warning"></i>
             </el-tooltip>
@@ -110,9 +110,9 @@
             {{$t('SCF.total.dxwj')}}
             <el-tooltip placement="top" effect="light">
               <div slot="content">
-                請填寫從Bucket根目錄(\"/\")開始的zip代碼文件
+                {{$t('SCF.total.qtxml')}}
                 <br />
-                完整路徑，例如: \"/test/demo.zip\"
+                {{$t('SCF.total.wzlj')}}，例如: \"/test/demo.zip\"
               </div>
               <i class="el-icon-warning"></i>
             </el-tooltip>
@@ -861,7 +861,7 @@ export default {
           this.modalName = '';
           this.GetListFunctionTestModels();
           this.$message({
-            message: "删除成功",
+            message: "刪除成功",
             type: "success",
             showClose: true,
             duration: 0

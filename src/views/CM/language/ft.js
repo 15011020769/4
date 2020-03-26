@@ -211,7 +211,8 @@ module.exports = {
       cmmjkmb: '重命名監控面板',
       zjklbz: '在監控面板中添加監控圖表，讓您更便捷查看指標監控！',
       elPop1: '導出的csv文件為utf-8編碼,',
-      elPop2: '如果查看有亂碼，請嘗試切換文件編碼格式'
+      elPop2: '如果查看有亂碼，請嘗試切換文件編碼格式',
+      jkmx: '監控明細'
     },
     DashboardCreate: {
       cjjktb: "創建監控圖表",

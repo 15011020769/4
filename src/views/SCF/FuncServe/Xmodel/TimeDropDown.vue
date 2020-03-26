@@ -10,25 +10,25 @@
           <el-popover placement="bottom" width="400" trigger="manual" v-model="visible" v-if="Datecontrol">
             <p class="p-dis">
               <span>從</span>
-              <el-date-picker class="width-date" v-model="timevalueStart" type="date" placeholder="選擇日期"
+              <el-date-picker class="width-date" v-model="timevalueStart" type="date" :placeholder="$t('SCF.total.xzrq')"
                 :picker-options="picker">
               </el-date-picker>
-              <el-time-picker class="width-date" v-model="timevalueStart" placeholder="任意時間點">
+              <el-time-picker class="width-date" v-model="timevalueStart" :placeholder="$t('SCF.total.rysjd')">
               </el-time-picker>
             </p>
             <p class="p-dis">
               <span>至</span>
-              <el-date-picker class="width-date" v-model="timevalueEnd" type="date" placeholder="選擇日期"
+              <el-date-picker class="width-date" v-model="timevalueEnd" type="date" :placeholder="$t('SCF.total.xzrq')"
                 :picker-options="picker">
               </el-date-picker>
-              <el-time-picker class="width-date" v-model="timevalueEnd" placeholder="任意時間點">
+              <el-time-picker class="width-date" v-model="timevalueEnd" :placeholder="$t('SCF.total.rysjd')">
               </el-time-picker>
             </p>
             <el-row class="margin-row">
-              <el-button size="mini" type="primary" @click="Sure">確定</el-button>
+              <el-button size="mini" type="primary" @click="Sure">{{$t('SCF.total.qd')}}</el-button>
               <el-button size="mini" @click="visible = false">取消</el-button>
             </el-row>
-            <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">選擇日期
+            <el-button size="small" v-if="datetim" icon="el-icon-search" @click="SelectionTime" slot="reference">{{$t('SCF.total.xzrq')}}
             </el-button>
             <el-button size="small" v-if="datetime" @click="SelectionTime" slot="reference">
               {{timevalueStart}}至{{timevalueEnd}}<i class="el-icon-date el-icon--right"></i>
@@ -38,7 +38,7 @@
         </el-button-group>
       </el-row>
       <div class="drop" v-if="Graincontrol">
-        <span style="margin-right:15px">時間粒度:</span>
+        <span style="margin-right:15px">{{$t('SCF.total.sjld')}}:</span>
         <el-select v-model="grainValue" size="small" @change="SwitchGrain">
           <el-option v-for="item in TimeGranularity" :key="item.value" :label="item.label" :value="item.value">
           </el-option>

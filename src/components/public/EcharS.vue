@@ -52,7 +52,8 @@
         const myChart = this.$echarts.init(chartView);
         let _this = this;
         myChart.on('click', function(params) {
-          _this.$emit("changeDataIndex", _this.echartsIndex, params.dataIndex);
+          console.log(params);
+          _this.$emit("changeDataIndex", _this.echartsIndex, params.dataIndex, params.name);
         });
         myChart.setOption({
           tooltip: {
@@ -102,7 +103,7 @@
               }
             },
             formatter(params) {
-              console.log(params, 'params');
+              // console.log(params, 'params');
               let relVal = `${params[0].name}<br/>`;
               params.forEach((ele,i) => {
                 relVal += `<span style="color: ${params[i].color}">${params[i].seriesName}: ${params[i].data}</span><br/>`;
