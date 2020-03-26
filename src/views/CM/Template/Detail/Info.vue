@@ -87,14 +87,8 @@
         <el-button @click="showDelDialog1 = false">取 消</el-button>
       </span>
     </el-dialog>
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
     <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件範本備注">
       <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件範本備注</p> -->
-=======
-    <!-- 修改备注弹框 -->
-    <el-dialog class="dil" :visible.sync="showDelDialog2" width="35%" title="修改條件模板備注">
-      <!-- <p style="color:#444;font-weight:bolder;margin-bottom:30px">修改條件模板備注</p> -->
->>>>>>> 改bug
       <!-- <el-form :model="infoData" :rules="rules" ref="form"> -->
         <!-- <el-form-item prop="remark"> -->
           <div>
@@ -495,34 +489,9 @@ export default {
             // ct.forEach((k, j) => {
             //   if (ele.ViewName === k.PolicyViewName) {
             //     ele['Name'] = k.Name
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
-            //   }
-            // })
-            this.indexAry = ele.Conditions// 编辑触发条件
-            this.indexAry.forEach((item,i)=>{
-              let time = item.Period / 60// 编辑触发条件
-              let num = item.ContinueTime / (time * 60)// 编辑触发条件
-              item['Period'] = `統計週期${time}分鍾`// 編輯觸發條件
-              item['ContinuePeriod'] = `持續${num}個週期`// 編輯觸發條件
-              let time1 = item.AlarmNotifyPeriod / 60
-              let time2 = item.AlarmNotifyPeriod / (60 * 60)
-              if (item.AlarmNotifyPeriod == 0 && item.AlarmNotifyType == 0) {
-                item.alarm = 0// 编辑触发条件
-              } else if (item.AlarmNotifyType == 1) {
-                item.alarm = 1// 编辑触发条件
-              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              } else if (item.AlarmNotifyPeriod > 0 && time1 > 30 && time2 < 24) {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              } else {
-                item.alarm = item.AlarmNotifyPeriod// 编辑触发条件
-              }
-            })
-=======
             //   }RepeatedAlarm
             // }) 
             this.indexAry = ele.Conditions           
->>>>>>> 改bug
             ele.Conditions.forEach((item, i) => {
               let ct = Number(item.CalcType)
               item.CalcType = this.SymbolList[ct - 1]
@@ -536,15 +505,10 @@ export default {
                 this.indexAry[i].RepeatedAlarm = 0
                 this.all_alarm = 0
               } else if (item.AlarmNotifyType == 1) {
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
-                item.alarm = '按週期指數遞增重複告警'
-              } else if (item.AlarmNotifyPeriod > 0 && time1 < 30) {
-=======
                 item.alarm = '按周期指數遞增重複告警'
                 this.indexAry[i].RepeatedAlarm = 1
                 this.all_alarm = 1
               } else if (item.AlarmNotifyPeriod > 0 && time1 <= 30) {
->>>>>>> 改bug
                 item.alarm = `按${time1}分鍾重複告警`
                 this.indexAry[i].RepeatedAlarm = item.AlarmNotifyPeriod
                 this.all_alarm = item.AlarmNotifyPeriod
@@ -581,55 +545,6 @@ export default {
         this.openEditloadShow = false
       })
     },
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
-    // 保存編輯條件範本
-    submitEdit () {
-    //   let { GroupID, GroupName, ViewName } = this.infoData
-    //   let params = {
-    //     Version: '2018-07-24',
-    //     Module: 'monitor',
-    //     IsUnionRule: this.UnionRule,
-    //     GroupID: GroupID,
-    //     ViewName: ViewName,
-    //     GroupName: GroupName
-    //   }
-    //   this.indexAry.forEach((ele, i) => {
-    //     params[`Conditions.${i}.CalcValue`] = Number(ele.CalcValue)// 百分比
-    //     params[`Conditions.${i}.MetricID`] = ele.MetricID// 指標類型id值
-    //     params[`Conditions.${i}.CalcPeriod`] = ele.Period// 統計週期
-    //     params[`Conditions.${i}.ContinuePeriod`] = ele.ContinuePeriod// 持續週期
-    //     this.SymbolList.forEach((item3, index) => {
-    //       var CT
-    //       if (ele.CalcType == item3) {
-    //         CT = index + 1
-    //         params[`Conditions.${i}.CalcType`] = CT// 符號
-    //       }
-    //     })
-    //     this.jinggaoZQ.forEach(item4 => {
-    //       var AM
-    //       if (ele.alarm == item4.value && ele.alarm !== 1) {
-    //         AM = item4.value
-    //         params[`Conditions.${i}.AlarmNotifyPeriod`] = AM
-    //         params[`Conditions.${i}.AlarmNotifyType`] = 0
-    //       }
-    //       if (ele.alarm == 1) {
-    //         // params[`Conditions.${i}.AlarmNotifyPeriod`] = ''
-    //         params[`Conditions.${i}.AlarmNotifyType`] = 1
-    //       }
-    //     })
-    //     if (this.UnionRule == 1 && this.all_alarm !== 1) {
-    //       params[`Conditions.${i}.AlarmNotifyPeriod`] = this.all_alarm
-    //       params[`Conditions.${i}.AlarmNotifyType`] = 0
-    //     } else if (this.UnionRule == 1 && this.all_alarm == 1) {
-    //       params[`Conditions.${i}.AlarmNotifyType`] = 1
-    //     }
-    //   })
-    //   this.axios.post(EDIT_TEMPLATE, params).then(res => {
-    //     if (res.Response.Error === undefined) {
-    //       console.log(res)
-    //     }
-    //   })
-=======
     //打开编辑弹框的回调
     openEdit(){
       this.showDelDialog3 = true
@@ -726,7 +641,6 @@ export default {
 
         }
       })
->>>>>>> 改bug
     },
     // 獲取策略組列表(未完成  參數有誤)
     async getPolicyGroupList () {
@@ -875,18 +789,6 @@ export default {
         Unit: zhibiaoType[0].MetricUnit,
         RepeatedAlarm: 86400
       })
-<<<<<<< aecaa761e1b9c5d1399d03ac2f7640f70d8a6d5c
-      // this.indexAry.push(
-      //   {
-      //     Period: '統計週期1分鍾',
-      //     CalcType: '>',
-      //     CalcValue: '0',
-      //     ContinuePeriod: '持續1個週期',
-      //     alarm: '每1天警告壹次'
-      //   }
-      // )
-=======
->>>>>>> 改bug
     },
     delZhibiao (it) { // 刪除觸發條件的指標告警
       var index = this.indexAry.indexOf(it)
