@@ -19,7 +19,7 @@
           <span style>告警接收組</span>
           <p class="tip">
             您可到
-            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組信息
+            <a @click="Console" style="cursor: pointer;">訪問管理控制台</a>修改用護和用護組訊息
             <br />
           </p>
         </div> -->

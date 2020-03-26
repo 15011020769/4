@@ -239,7 +239,7 @@
           this.currpage = 1;
           this.GetTabularData();
         } else {
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         }
       },
       // 添加项目列表的表格数据
@@ -268,7 +268,7 @@
           } else {
             let ErrTips = {
               "InvalidVpnGatewayId.Malformed": "無效的VPN網關,VPN實例ID不合法",
-              "InvalidVpnGatewayId.NotFound": "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確"
+              "InvalidVpnGatewayId.NotFound": "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確"
             };
             let ErrOr = Object.assign(ErrorTips, ErrTips);
             this.$message({

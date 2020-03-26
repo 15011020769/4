@@ -12,7 +12,7 @@
 
     <el-card class="box-card">
       <div slot="header" class="clearfix" style="width:100%">
-        <h3>基本信息</h3>
+        <h3>基本訊息</h3>
       </div>
       <ul>
         <li>
@@ -1007,7 +1007,7 @@
         <h3>回調接口</h3>
       </div>
       <p class="tip">
-        填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
+        填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警訊息推送到該地址。
       </p>
       <div
         class="box-content"
@@ -1661,7 +1661,7 @@
       custom-class="tke-dialog"
     >
       <div class="edit-receive-object">
-        <p>您可到訪問管理控制台修改用戶和用戶組信息</p>
+        <p>您可到訪問管理控制台修改用戶和用戶組訊息</p>
         <div>
           <Cam @camClick="camFun"></Cam>
         </div>
@@ -1723,7 +1723,7 @@
           </ul>
         </div>
         <p>
-          填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。
+          填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警訊息推送到該地址。
         </p>
         <div class="bg-box">
           <p>
@@ -3060,7 +3060,7 @@ export default {
                     "InvalidVpnGatewayId.Malformed":
                       "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3109,7 +3109,7 @@ export default {
                     "InvalidVpnGatewayId.Malformed":
                       "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({

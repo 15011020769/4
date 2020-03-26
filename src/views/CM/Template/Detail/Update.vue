@@ -30,7 +30,7 @@
     <!-- 查看变更后详情弹窗 -->
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
       <p style="color:#444;font-weight:800;margin-bottom:30px">變更後詳情</p>
-      <h4 class="title-text">基本信息</h4>
+      <h4 class="title-text">基本訊息</h4>
       <el-form>
         <el-form-item label="範本名稱">
           <span class="text">{{information.groupName}}</span>

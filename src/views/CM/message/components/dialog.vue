@@ -8,7 +8,7 @@
     >
       <div class="dialog">
         <div class="explain">
-          <p>請選擇您想顯示的列表詳細信息，最多勾選5個字段，已勾選5個。</p>
+          <p>請選擇您想顯示的列表詳細訊息，最多勾選5個字段，已勾選5個。</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">

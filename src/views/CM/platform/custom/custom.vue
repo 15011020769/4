@@ -7,7 +7,7 @@
             <div class="content">
               <div class="explain" style="margin-bottom:20px;">
                 <p>
-                  請選擇您想顯示的列表詳細信息，最多勾選7個字段，已勾選7個
+                  請選擇您想顯示的列表詳細訊息，最多勾選7個字段，已勾選7個
                 </p>
               </div>
               <div class="checkbox">
@@ -51,7 +51,7 @@
     }
   };
 </script>
-<style lang="scss" scoped> 
+<style lang="scss" scoped>
 
   .newdialog{
     width: 100%;

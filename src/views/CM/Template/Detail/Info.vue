@@ -1,7 +1,7 @@
 <template>
   <div class='container-min' v-loading="loadShow">
     <el-card class="card1">
-      <h4 class="title-text">基本信息</h4>
+      <h4 class="title-text">基本訊息</h4>
       <el-form class="form form_container" label-position='left' label-width="120px" size="mini">
         <el-form-item label="範本名稱" class="form-item">
           <div class="item-text">

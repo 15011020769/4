@@ -254,7 +254,7 @@ export default {
         if (this.searchInput !== "" && this.searchValue !== "") {
           this.GetPlatformList();
         } else {
-          this.$message.error("請輸入正確搜索信息");
+          this.$message.error("請輸入正確搜索訊息");
         }
       },
     //导出表格

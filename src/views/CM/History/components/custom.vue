@@ -4,7 +4,7 @@
       <el-dialog title="自定義列表字段" :visible.sync="dialogVisible1" width="40%">
         <div class="content">
           <div class="explain" style="margin-bottom:20px;">
-            <p>請選擇您想顯示的列表詳細信息，最多勾選10個字段，已勾選10個</p>
+            <p>請選擇您想顯示的列表詳細訊息，最多勾選10個字段，已勾選10個</p>
           </div>
           <div class="checkbox">
             <el-checkbox-group v-model="checkedlistNo">

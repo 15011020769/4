@@ -246,7 +246,7 @@
                   </el-option>
                 </el-select>
               </el-form-item>
-              <p style="line-height: 28px">填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警信息推送到該地址。</p>
+              <p style="line-height: 28px">填寫公網可訪問到的url作爲回調接口地址(域名或IP[:端口][/path])，雲監控將及時把告警訊息推送到該地址。</p>
               <div style="margin-top: 10px;background-color: #fff4e3;color: #c07400;border: 1px solid #ffd18b;padding: 10px 20px;font-size: 12px;line-height: 28px;">
                 <p>回調域名通過驗證後生效，請于Response Body中返回以下code。<i class="el-icon-info" style="margin:0 5px;color: #c07400;"></i></p>
                 <p style="margin: 10px 0;font-size: 16px;font-weight: 700;">{{formInline.callbackVerifyCode===''? httpCodes : formInline.callbackVerifyCode}}</p>

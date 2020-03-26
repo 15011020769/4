@@ -217,7 +217,7 @@
           this.GetTabularData();
         } else {
           this.$message({
-            message: "請輸入正確搜索信息",
+            message: "請輸入正確搜索訊息",
             type: "error",
             showClose: true,
             duration: 0

@@ -684,7 +684,7 @@ export default {
                     "InvalidVpnGatewayId.Malformed":
                       "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -728,7 +728,7 @@ export default {
                     "InvalidVpnGatewayId.Malformed":
                       "無效的VPN網關,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源信息是否正確。"
+                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
