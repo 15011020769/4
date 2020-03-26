@@ -677,9 +677,16 @@ export default {
       } else if (this.SubmissionValue === 'Inline') {   // 在线编辑
         this.cslsSDK.getBlob().then(blob => {
           this.blobToDataURI(blob, data => { //blob格式再转换为base64格式
-            console.log('我是base64')
             console.log(data)
-            param.ZipFile = data.replace(/^data:application\/\w+;base64,/, "");  // 正则替换哈 imgData 为base64字符串
+            const base64Str = data.replace(/^data:application\/\w+;base64,/, "")
+            var strLength = base64Str.length;
+            var fileLength = parseInt(strLength - (strLength / 8) * 2);
+            // 由字节转换为KB
+            var sizea = "";
+            sizea = (fileLength / 1024).toFixed(2);
+            console.log('base64大小' + sizea)
+
+            param.ZipFile = base64Str;  // 正则替换哈 imgData 为base64字符串
             this.updateCsliteFun(param) // 更新函数代码
           })
 
@@ -701,7 +708,7 @@ export default {
         Type: "",
         Version: "2018-04-16"
       }
-      this.axios.post(GetTempCosInfo, params).then(res => {
+      this.axios.post('http://152.136.25.227:8868/product/' + GetTempCosInfo, params).then(res => {
         if (res.Response.Error === undefined) {
           // this.$message({
           //   message: '保存成功',
