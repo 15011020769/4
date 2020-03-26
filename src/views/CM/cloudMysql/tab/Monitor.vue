@@ -76,8 +76,8 @@
 </template>
 <script>
   import moment from "moment";
-  import TimeDropDown from '@/components/public/TimeDropDown' //引入時間組件
-  import echartLine from "@/components/public/echars-line"; //引入圖標組件
+  import TimeDropDown from '@/components/public/TimeDropDown' //引入時間元件
+  import echartLine from "@/components/public/echars-line"; //引入圖標元件
   import {
     ErrorTips
   } from "@/components/ErrorTips";
@@ -267,16 +267,16 @@
           'LogCapacity': '日志使用量',
           'MasterSlaveSyncDistance': '主從延遲距離',
           'MaxConnections': '最大連接數',
-          'MemoryUse': '內存占用',
-          'MemoryUseRate': '內存利用率',
+          'MemoryUse': '記憶體占用',
+          'MemoryUseRate': '記憶體利用率',
           'OpenedTables': '已經打開的表數',
           'OpenFiles': '打開文件總數',
           'QcacheFreeBlocks': '查詢快取空閑塊',
-          'QcacheFreeMemory': '快取中空閑內存量',
+          'QcacheFreeMemory': '快取中空閑記憶體量',
           'QcacheHits': '快取命中次數',
           'QcacheHitRate': '快取命中率',
           'QcacheInserts': '快取寫入次數',
-          'QcacheLowmemPrunes': '因內存不足刪除快取次數',
+          'QcacheLowmemPrunes': '因記憶體不足刪除快取次數',
           'QcacheNotCached': '查詢未被快取次數',
           'QcacheQueriesInCache': '以注冊到快取內的查詢數',
           'QcacheTotalBlocks': '查詢快取內的總塊數',
@@ -429,16 +429,16 @@
           'LogCapacity': '日志使用量',
           'MasterSlaveSyncDistance': '主從延遲距離',
           'MaxConnections': '最大連接數',
-          'MemoryUse': '內存占用',
-          'MemoryUseRate': '內存利用率',
+          'MemoryUse': '記憶體占用',
+          'MemoryUseRate': '記憶體利用率',
           'OpenedTables': '已經打開的表數',
           'OpenFiles': '打開文件總數',
           'QcacheFreeBlocks': '查詢快取空閑塊',
-          'QcacheFreeMemory': '快取中空閑內存量',
+          'QcacheFreeMemory': '快取中空閑記憶體量',
           'QcacheHits': '快取命中次數',
           'QcacheHitRate': '查詢快取命中率',
           'QcacheInserts': '快取寫入次數',
-          'QcacheLowmemPrunes': '因內存不足刪除快取次數',
+          'QcacheLowmemPrunes': '因記憶體不足刪除快取次數',
           'QcacheNotCached': '查詢未被快取次數',
           'QcacheQueriesInCache': '以注冊到快取內的查詢數',
           'QcacheTotalBlocks': '查詢快取內的總塊數',

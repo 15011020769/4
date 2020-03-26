@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="查看條件"
+    title="檢視條件"
     :visible.sync="visible"
     width="1040px"
     @open="handleOpen"

@@ -440,19 +440,19 @@
                     <el-form-item :label="$t('TKE.subList.gzml')">
                       <el-input class="w192" v-model="v.workDirectory"></el-input>
                       <p> {{$t('TKE.subList.zdgzml')}}
-                        <!-- <a href="#">查看详情</a> -->
+                        <!-- <a href="#">檢視详情</a> -->
                       </p>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.subList.yxml')">
                       <el-input type="textarea" class="w400" v-model="v.runCommand" rows="3" resize="none"></el-input>
                       <p> {{$t('TKE.subList.kzsrml')}}，
-                        <!-- <a href="#">查看详情</a> -->
+                        <!-- <a href="#">檢視详情</a> -->
                       </p>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.subList.yxcs')">
                       <el-input type="textarea" class="w400" v-model="v.runParam" rows="3" resize="none"></el-input>
                       <p>{{$t('TKE.subList.srcs')}}，
-                        <!-- <a href="#">查看详情</a> -->
+                        <!-- <a href="#">檢視详情</a> -->
                       </p>
                     </el-form-item>
                     <el-form-item :label="$t('TKE.subList.rqjkjc')">
@@ -661,7 +661,7 @@
               <!-- 自动调节 -->
               <div v-show="wl.caseNum==='autoAdjust'">
                 <p style="line-height: 28px">{{$t('TKE.subList.mzrysdtj')}}
-                  <!-- <a href="#">查看更多</a> -->
+                  <!-- <a href="#">檢視更多</a> -->
                 </p>
                 <div class="case-content" style="background-color: #f2f2f2;margin-top:6px;padding:20px;">
                   <el-form-item :label="$t('TKE.subList.cfcl')">
@@ -925,7 +925,7 @@
                     </div>
                     <div>
                       {{$t('TKE.subList.lyzf')}}，
-                      <!-- <a href="">查看详情</a><i
+                      <!-- <a href="">檢視详情</a><i
                       class="el-icon-edit-outline"></i> -->
                     </div>
                   </el-form-item>
@@ -943,13 +943,13 @@
                   <el-form-item v-if="wl.serviceAccess=='3'" label-width="0px">
                     <div>{{$t('TKE.subList.nwfwxs')}}。</div>
                     <div>支持Ingress
-                      <!-- <a href="">查看详情</a><i class="el-icon-edit-outline"></i> -->
+                      <!-- <a href="">檢視详情</a><i class="el-icon-edit-outline"></i> -->
                     </div>
                   </el-form-item>
                   <el-form-item v-if="wl.serviceAccess=='4'" label-width="0px">
                     <div>{{$t('TKE.subList.zjdkys')}}。</div>
                     <div>支持Ingress
-                      <!-- <a href="">查看详情</a><i class="el-icon-edit-outline"></i> -->
+                      <!-- <a href="">檢視详情</a><i class="el-icon-edit-outline"></i> -->
                     </div>
                   </el-form-item>
                 </div>
@@ -988,11 +988,11 @@
                   </el-radio-group>
                 </div>
                 <p v-show="wl.loadBalance=='1'">{{$t('TKE.subList.zdcj')}}，
-                  <!-- <a href="javascript:;">查看更多说明</a> -->
+                  <!-- <a href="javascript:;">檢視更多说明</a> -->
                 </p>
                 <div v-show="wl.loadBalance=='2'">
                   <div>{{$t('TKE.subList.qwsdxgjt')}}
-                    <!-- <el-button type="text" size="mini">查看更多说明</el-button> -->
+                    <!-- <el-button type="text" size="mini">檢視更多说明</el-button> -->
                   </div>
                   <el-select v-show="wl.loadBalance=='2'" v-model="wl.describeLoadBalancersValue" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
                     <el-option

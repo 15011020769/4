@@ -83,7 +83,7 @@ export default {
     Console(){
       //訪問管理控制台
     },
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(data) {
       this.cam = data;
       console.log(this.cam);

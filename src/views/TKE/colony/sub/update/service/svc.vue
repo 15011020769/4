@@ -33,7 +33,7 @@
                 </div>
                 <div>
                   {{$t('TKE.subList.lyzf')}}，
-                  <!-- <a href>查看详情</a>
+                  <!-- <a href>檢視详情</a>
                   <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
@@ -55,7 +55,7 @@
                 <div>{{$t('TKE.subList.nwfwxs')}}。</div>
                 <div>
                   支持Ingress
-                  <!-- <a href>查看详情</a>
+                  <!-- <a href>檢視详情</a>
                   <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
@@ -63,7 +63,7 @@
                 <div>{{$t('TKE.subList.zjdkys')}}。</div>
                 <div>
                   支持Ingress
-                  <!-- <a href>查看详情</a>
+                  <!-- <a href>檢視详情</a>
                   <i class="el-icon-edit-outline"></i> -->
                 </div>
               </div>
@@ -100,11 +100,11 @@
             </div>
             <p v-show="svc.loadBalance=='1'">
               {{$t('TKE.subList.zdcj')}}，
-              <!-- <a href="">查看更多说明</a> -->
+              <!-- <a href="">檢視更多说明</a> -->
             </p>
             <div v-show="svc.loadBalance=='2'">
               {{$t('TKE.subList.qwsdxgjt')}}
-              <!-- <a href="">查看更多说明</a> -->
+              <!-- <a href="">檢視更多说明</a> -->
               <div>
                 <el-select :disabled="svc.value1==='暫無數據'" v-show="svc.radio==='1'" v-model="svc.value1" :placeholder="$t('TKE.overview.qxz')" class="borderRed">
 				        	<el-option

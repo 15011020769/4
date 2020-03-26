@@ -76,11 +76,11 @@
           </el-table-column>
           <el-table-column
             prop="AlarmPolicySettings"
-            label="告警渠道"
+            label="告警管道"
             min-width="20%">
             <template slot-scope="scope">
                 <div>{{$t('TKE.overview.jsz')}}:{{scope.row.NotifySettings.ReceiverGroups.length}}{{$t('TKE.overview.ge')}}</div>
-                <div>渠道:<span v-for="(item,index) in scope.row.NotifySettings.NotifyWay" :key='index'>{{item|NotifyWays}}</span></div>
+                <div>管道:<span v-for="(item,index) in scope.row.NotifySettings.NotifyWay" :key='index'>{{item|NotifyWays}}</span></div>
             </template>
           </el-table-column>
           <el-table-column

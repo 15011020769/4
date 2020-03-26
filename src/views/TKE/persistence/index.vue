@@ -171,7 +171,7 @@ export default {
     hoverShow() {
       this.showFlag = true;
     },
-    // 查看详情跳转
+    // 檢視详情跳转
     goColonySub(id) {
       this.$router.push({
         name: "colonyResourceDeployment",

@@ -199,11 +199,11 @@ export default {
         },
         {
           value: "選項2",
-          label: "智能物聯網關"
+          label: "智能物聯閘道"
         },
         {
           value: "選項3",
-          label: "API網關"
+          label: "API閘道"
         }
       ],
       table_value: "",

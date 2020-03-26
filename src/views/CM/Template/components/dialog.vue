@@ -313,8 +313,8 @@ export default {
       showChufa1: false, // 触发条件1显示开关
       showChufa2: true, // 触发条件2显示开关
 
-      showQudao1: false, // 渠道选择1显示开关
-      showQudao2: false, // 渠道选择2显示开关
+      showQudao1: false, // 管道选择1显示开关
+      showQudao2: false, // 管道选择2显示开关
 
       errorTip1: false, // 触发条件範本错误提示
       errorTip2: true, // 配置触发条件错误提示
@@ -662,7 +662,7 @@ export default {
           return;
         }
       }
-      // 如果不 return 就把數組第壹個push進來
+      // 如果不 return 就把陣列第壹個push進來
       this.indexAry.push({
         Period: 60,
         CalcType: ">",
@@ -748,7 +748,7 @@ export default {
     errorPrompt(res) {
       let ErrTips = {
         "AuthFailure.UnauthorizedOperation":
-          "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+          "請求未授權。請參考 CAM 文件對鑒權的說明。",
         DryRunOperation:
           "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
         FailedOperation: "操作失敗。",

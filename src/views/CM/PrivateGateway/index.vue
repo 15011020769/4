@@ -121,7 +121,7 @@
           },
           {
             value: "direct-connect-gateway-name",
-            label: "網關名稱"
+            label: "閘道名稱"
           }
         ],
         //inp输入的值

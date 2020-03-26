@@ -250,19 +250,19 @@
                    <el-form-item :label="$t('TKE.subList.gzml')">
                      <el-input class="w192" v-model="v.workDirectory"></el-input>
                      <p> {{$t('TKE.subList.zdgzml')}}
-                       <!-- <a href="#">查看详情</a>  -->
+                       <!-- <a href="#">檢視详情</a>  -->
                      </p>
                    </el-form-item>
                    <el-form-item :label="$t('TKE.subList.yxml')">
                      <el-input type="textarea"  v-model="v.runCommand" class="w400"  rows="3" resize="none"></el-input>
                      <p> {{$t('TKE.subList.kzsrml')}}，
-                       <!-- <a href="#">查看详情</a>  -->
+                       <!-- <a href="#">檢視详情</a>  -->
                       </p>
                    </el-form-item>
                    <el-form-item :label="$t('TKE.subList.yxcs')">
                      <el-input type="textarea"  v-model="v.runParam"   class="w400"  rows="3" resize="none"></el-input>
                      <p>{{$t('TKE.subList.srcs')}}，
-                       <!-- <a href="#">查看详情</a>  -->
+                       <!-- <a href="#">檢視详情</a>  -->
                       </p>
                    </el-form-item>
                    <el-form-item :label="$t('TKE.subList.rqjkjc')">

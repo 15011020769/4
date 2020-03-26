@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <!-- 查看变更后详情 -->
+    <!-- 檢視变更后详情 -->
     <div class="look-details">
       <el-dialog :title="$t('CVM.ChangeLog.bghxq')" :visible.sync="visible">
         <ul>

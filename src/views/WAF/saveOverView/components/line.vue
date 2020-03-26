@@ -90,7 +90,7 @@ export default {
         //   formatter(params) {
         //     var relVal = params[0].name;  
         //     for (var i = 0, l = params.length; i < l; i++) {
-        //       if(params[i].seriesName == "上行帶寬" || params[i].seriesName == "下行帶寬") {
+        //       if(params[i].seriesName == "上行頻寬" || params[i].seriesName == "下行帶寬") {
         //         relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"bps";
         //       }
         //       relVal += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value+"次";

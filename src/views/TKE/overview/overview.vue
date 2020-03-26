@@ -244,7 +244,7 @@ export default {
       await this.statusData();
       await this.getCpuInfo()
     },
-    // 查看详情跳转
+    // 檢視详情跳转
     goColonySub(id) {
       // scope.row.ClusterType=='MANAGED_CLUSTER'
       this.$router.push({
@@ -255,7 +255,7 @@ export default {
       });
     
     },
-    //查看节点
+    //檢視节点
     goNode(id){
         this.$router.push({
         name: "colonyNodeManageNode",
@@ -264,7 +264,7 @@ export default {
         }
       });
     },
-    //查看节点
+    //檢視节点
     goMasteretcd(id){
         this.$router.push({
         name: "colonyNodeManageMasteretcd",
@@ -273,7 +273,7 @@ export default {
         }
       });
     },
-    //查看节点
+    //檢視节点
     goWorkload(id){
         this.$router.push({
         name: "colonyResourceDeployment",

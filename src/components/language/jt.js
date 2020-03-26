@@ -49,8 +49,8 @@ module.exports = {
   info: '消息中心',
   workorder: '我的工单',
   back: '账号系统',
-  h: '退出',
+  h: '登出',
   hintTitle: '提示',
-  hintContent: '確定進行[退出]操作?',
+  hintContent: '確定進行[登出]操作?',
   lockText: '您的账户已锁定，暂不支持购买'
 }

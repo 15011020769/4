@@ -34,7 +34,7 @@
     </el-tab-pane>
     <el-tab-pane label="复用现有用户策略" name="second">
       <div class="tea-alert">
-        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确认将无法更改。在创建用户后，您可以查看并下载密钥等相关信息。</div>
+        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确认将无法更改。在创建用户后，您可以檢視并下载密钥等相关信息。</div>
       </div>
       <div class>
         <p class="search-inp">
@@ -68,7 +68,7 @@
     </el-tab-pane>
     <el-tab-pane label="添加至组获得随组权限" name="third">
       <div class="tea-alert">
-        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确认将无法更改。在创建用户后，您可以查看并下载密钥等相关信息。</div>
+        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确认将无法更改。在创建用户后，您可以檢視并下载密钥等相关信息。</div>
       </div>
       <div class="search">
         <p>

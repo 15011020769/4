@@ -609,7 +609,7 @@ export default {
         this.getActioned()
       }
       this.$message({
-        message: this.t('添加IP黑名单成功，您可以前往IP管理模块查看。', 'WAF.tjipcg'),
+        message: this.t('添加IP黑名单成功，您可以前往IP管理模块檢視。', 'WAF.tjipcg'),
         type: 'success',
         showClose: true,
         duration: 0

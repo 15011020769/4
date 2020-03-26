@@ -76,7 +76,7 @@ module.exports = {
         tabs: {
             tab1: '关联实例',
             tab1new: '新增实例',
-            tab1new1: '同地域带宽免费，点击查看详情',
+            tab1new1: '同地域带宽免费，点击檢視详情',
             tab1new2: '私有网络',
             tab1new3: '专线网关',
             tab1new4: '请选择',
@@ -138,7 +138,7 @@ module.exports = {
             title1: '集群健康状态',
             placeh1: '请选择',
             worked: '有效',
-            refrush: '刷新',
+            refrush: '重新整理',
         },
         timeX: {
             constantly: '实时',

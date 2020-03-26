@@ -72,7 +72,7 @@
             @input="value => ruleForm.Height=value.replace(/[^\d]/, '')"
             style="width:330px;"
           />
-          <span class="sub-text">視頻高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
+          <span class="sub-text">影音高度範圍為0-3000，要求為4的倍數，寬度按等比例縮放</span>
         </el-form-item>
       </template>
 
@@ -87,7 +87,7 @@
           @input="value => ruleForm.AdaptBitratePercent=value.replace(/[^\d]/, '')"
           style="width:330px;"
         />
-        <span class="sub-text">請輸入10-50之間的整數，表示相比視頻碼率節省的碼率</span>
+        <span class="sub-text">請輸入10-50之間的整數，表示相比影音碼率節省的碼率</span>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm')"
@@ -165,7 +165,7 @@ export default {
               }
 
               if (value % 4 !== 0) {
-                return void callback('視頻高度要求為4的倍數，寬度按等比例縮放')
+                return void callback('影音高度要求為4的倍數，寬度按等比例縮放')
               }
               callback()
             }

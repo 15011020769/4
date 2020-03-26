@@ -20,7 +20,7 @@
           ></el-input>
           <el-button icon="el-icon-search"  @click="clickSearch(inputValue)"></el-button>
           <span v-if='refreshData'>
-            <el-tooltip class="tooltip" effect="dark" content="刷新" placement="top">
+            <el-tooltip class="tooltip" effect="dark" content="重新整理" placement="top">
               <i @click="refresh" class="el-icon-refresh tke-refresh "></i>
             </el-tooltip>
 

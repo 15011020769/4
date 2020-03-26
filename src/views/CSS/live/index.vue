@@ -60,7 +60,7 @@ export default {
           })
           return
         }
-        this.$alert('您已開通台富雲直播服務，新用戶專享20GB流量包已發放至您的賬號，歡迎使用直播功能。', '提示', {
+        this.$alert('您已開通台富雲直播服務，新用戶專享20GB流量包已發放至您的帳號，歡迎使用直播功能。', '提示', {
           confirmButtonText: '確定',
           center: true,
           callback: () => {

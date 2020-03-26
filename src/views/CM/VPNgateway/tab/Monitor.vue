@@ -166,10 +166,10 @@
           'OutPkg': ' 個/秒'
         },
         Tips: {
-          'InBandwidth': 'VPN網關平均每秒入流量',
-          'InPkg': 'VPN網關平均每秒入包量',
-          'OutBandwidth': 'VPN網關平均每秒出流量',
-          'OutPkg': 'VPN網關平均每秒出包量'
+          'InBandwidth': 'VPN閘道平均每秒入流量',
+          'InPkg': 'VPN閘道平均每秒入包量',
+          'OutBandwidth': 'VPN閘道平均每秒出流量',
+          'OutPkg': 'VPN閘道平均每秒出包量'
         },
 
       }

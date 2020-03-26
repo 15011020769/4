@@ -35,7 +35,7 @@
              </div>
              <div v-if="upn.type=='2'">
                <p>{{$t('TKE.subList.mzrysdtj')}}
-                 <!-- <a href="#">查看更多</a> -->
+                 <!-- <a href="#">檢視更多</a> -->
                </p>
                <el-form-item :label="$t('TKE.subList.cfcl')" style="margin-top:10px">
                  <div class="bottom10" v-for="(val,index) in optionsData" :key="index">

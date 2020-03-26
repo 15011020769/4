@@ -83,7 +83,7 @@ export default {
       loadingShow: true, // 接收组动画
       userListArr: [], // 接收人列表数组
       userListLoading: "true", // 接收人加载动画
-      qudaoCheckList: [], //渠道选择
+      qudaoCheckList: [], //管道选择
       formInline: {
         jieshou: "0",
         jieshouArr: [
@@ -99,7 +99,7 @@ export default {
         selectUserGroup: [], // 接收组 --> table表格选中
         selectUserList: [], // 接收人 --> table表格选中
         time: [], // 选中的时间
-        channel: [] // 选中的渠道
+        channel: [] // 选中的管道
       }
     };
   },
@@ -235,7 +235,7 @@ export default {
       this.cam.selectUserGroup = val;
       this.$emit("camClick", this.cam);
     },
-    // 選中渠道
+    // 選中管道
     selectChannel() {
       this.cam.channel = this.qudaoCheckList;
       this.$emit("camClick", this.cam);

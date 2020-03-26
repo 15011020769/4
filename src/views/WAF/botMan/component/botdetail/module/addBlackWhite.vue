@@ -8,7 +8,7 @@
         :before-close="handleClose"
         >
         <div class="topTip" v-if="tipShow">
-          <p style="width: 99%">{{t('加黑IP后，您可前往【IP管理-IP黑白名单】查看', 'WAF.jhiph')}}</p>
+          <p style="width: 99%">{{t('加黑IP后，您可前往【IP管理-IP黑白名单】檢視', 'WAF.jhiph')}}</p>
           <span class="el-icon-close" @click="closeTip"></span>
         </div>
         <div class="newClear">

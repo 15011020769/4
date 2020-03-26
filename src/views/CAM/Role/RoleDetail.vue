@@ -760,7 +760,7 @@ export default {
           if (res.Response.Error === undefined) {
             if (res.Response.RequestId) {
               this.$message({
-                message: "解綁成功",
+                message: "釋放成功",
                 type: "success",
                 duration: 0,
                 showClose: true

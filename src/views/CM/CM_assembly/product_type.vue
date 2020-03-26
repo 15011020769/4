@@ -52,16 +52,16 @@
             viewName: 'BS',
           },
           {
-            label: 'VPN網關',
+            label: 'VPN閘道',
             viewName: 'VPN_GW',
           }, {
             label: 'VPN通道',
             viewName: 'vpn_tunnel',
           }, {
-            label: 'NAT網關',
+            label: 'NAT閘道',
             viewName: 'nat_tc_stat',
           }, {
-            label: '专线網關',
+            label: '专线閘道',
             viewName: 'DC_GW',
           }, {
             label: 'MYSQL',
@@ -73,7 +73,7 @@
             label: '物理專線',
             viewName: 'dcline',
           }, {
-            label: '物件存儲',
+            label: '物件儲存',
             viewName: 'COS',
           }
         ],
@@ -257,7 +257,7 @@
           this._PassValue()
         });
       },
-      // 获取NAT網關列表
+      // 获取NAT閘道列表
       _GetNat() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -310,7 +310,7 @@
           this._PassValue()
         });
       },
-      // 获取VPN網關列表
+      // 获取VPN閘道列表
       _GetVPNG() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -384,7 +384,7 @@
           this.HeadConfig = {
             title1: 'ID/名稱',
             title2: '所屬網路',
-            title3: 'VPN網關',
+            title3: 'VPN閘道',
           }
           this.MetricName = [{
               label: '網路出頻寬(Mbps)',
@@ -414,7 +414,7 @@
           this._PassValue()
         });
       },
-      // 获取专线網關列表
+      // 获取专线閘道列表
       _GetPRI() {
         let parms = {
           Region: localStorage.getItem("regionv2"),
@@ -434,7 +434,7 @@
             },
             {
               value: "direct-connect-gateway-name",
-              label: "網關名稱"
+              label: "閘道名稱"
             }
           ]
           this.HeadConfig = {
@@ -831,7 +831,7 @@
           this._PassValue()
         });
       },
-      //获取對象存儲列表
+      //获取對象儲存列表
       _GetOBJ() {
         let parms = {
           Region: this.selectedRegion,
@@ -856,27 +856,27 @@
           }
           this.MetricName = [{
               value: 'std_read_requests',
-              label: '標准存儲讀請求(次)'
+              label: '標准儲存讀請求(次)'
             },
             {
               value: 'std_write_requests',
-              label: '標准存儲寫請求(次)',
+              label: '標准儲存寫請求(次)',
             },
             {
               value: 'ia_read_requests',
-              label: '低頻存儲讀請求(次)',
+              label: '低頻儲存讀請求(次)',
             },
             {
               value: 'outbandwidth',
-              label: '低頻存儲寫請求(次)',
+              label: '低頻儲存寫請求(次)',
             },
             {
               value: 'nl_read_request',
-              label: '近線存儲讀請求(次)',
+              label: '近線儲存讀請求(次)',
             },
             {
               value: 'nl_write_requests',
-              label: '近線存儲寫請求(次)',
+              label: '近線儲存寫請求(次)',
             },
             {
               value: 'inbound_traffic',

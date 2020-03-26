@@ -545,7 +545,7 @@
               <div class="tke-second-worker-popover-data-bg distribution">
                 <el-checkbox v-model="asg.pubBroadbandShow" class="format-and-mount">
                   {{$t('TKE.colony.fpmfgw')}}，
-                  <!-- <a href="#">查看详情</a> -->
+                  <!-- <a href="#">檢視详情</a> -->
                 </el-checkbox>
               </div>
             </div>

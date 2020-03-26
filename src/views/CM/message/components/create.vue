@@ -48,7 +48,7 @@ export default {
       tableData: [],
       options: [],
       values: "",
-      cam: {}, // cam組件的值
+      cam: {}, // cam元件的值
       formInline: {
         strategy_name: "", //策略名稱
         textarea: "", //備注
@@ -93,7 +93,7 @@ export default {
         });
       }
     },
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(data) {
       this.cam = data;
     },

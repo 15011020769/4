@@ -11,7 +11,7 @@
           </template>
         </el-table-column>
         <el-table-column label="最後修改">
-          <span class="text" @click="showDelDialog=true">查看變更後詳情</span>
+          <span class="text" @click="showDelDialog=true">檢視變更後詳情</span>
         </el-table-column>
       </el-table>
       <!-- 分页 -->
@@ -27,7 +27,7 @@
         ></el-pagination>
       </div>
     </el-card>
-    <!-- 查看变更后详情弹窗 -->
+    <!-- 檢視变更后详情弹窗 -->
     <el-dialog class="dil" :visible.sync="showDelDialog" width="50%">
       <p style="color:#444;font-weight:800;margin-bottom:30px">變更後詳情</p>
       <h4 class="title-text">基本訊息</h4>
@@ -179,13 +179,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -195,7 +195,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '物件存儲'
+          return '物件儲存'
         }
       }
     }

@@ -377,7 +377,7 @@ export default {
       UnionRule: 0, // 双向绑定的满足条件
       all_alarm: 86400, // 满足条件为 所有 时告警值
       groupList: [], // 策略组列表
-      channelList: [], // 渠道列表
+      channelList: [], // 管道列表
       PolicyGrouplist: [], // 关联政策组列表
       allProjectName: [], // 项目名称列表
       projectId: 0,
@@ -757,7 +757,7 @@ export default {
           return
         }
       }
-      // 如果不 return 就把數組第壹個push進來
+      // 如果不 return 就把陣列第壹個push進來
       this.indexAry.push({
         Period: 60,
         CalcType: '>',
@@ -878,13 +878,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -894,7 +894,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '物件存儲'
+          return '物件儲存'
         }
       }
     }

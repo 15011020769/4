@@ -301,9 +301,9 @@ export default {
           subtitle: "雲硬碟"
         },
         {
-          label: "VPN網關",
+          label: "VPN閘道",
           viewName: "VPN_GW",
-          subtitle: "VPN網關"
+          subtitle: "VPN閘道"
         },
         {
           label: "VPN通道",
@@ -311,14 +311,14 @@ export default {
           subtitle: "VPN通道"
         },
         {
-          label: "NAT網關",
+          label: "NAT閘道",
           viewName: "nat_tc_stat",
-          subtitle: "NAT網關"
+          subtitle: "NAT閘道"
         },
         {
-          label: "專線網關",
+          label: "專線閘道",
           viewName: "DC_GW",
-          subtitle: "專線網關"
+          subtitle: "專線閘道"
         },
         {
           label: "彈性公網IP",
@@ -346,9 +346,9 @@ export default {
           subtitle: "物理專線"
         },
         {
-          label: "物件存儲",
+          label: "物件儲存",
           viewName: "COS",
-          subtitle: "物件存儲"
+          subtitle: "物件儲存"
         }
       ]
     };

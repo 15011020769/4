@@ -153,7 +153,7 @@ export default {
           "您好，您添加的是直播默認域名，此域名不再提供服務，請您添加自有域名。添加域名 <a\
               href='../../index.html#/documentcenter/doc/33862'\
               target='_blank'\
-              >參考文檔</a>"
+              >參考文件</a>"
         return false
       }
 

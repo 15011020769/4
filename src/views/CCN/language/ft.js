@@ -77,7 +77,7 @@ module.exports = {
     tabs: {
       tab1: '關聯實例',
       tab1new: '新增實例',
-      tab1new1: '同地域頻寬免費，點擊查看詳情',
+      tab1new1: '同地域頻寬免費，點擊檢視詳情',
       tab1new2: '私有網路',
       tab1new3: '專線閘道',
       tab1new4: '請選擇',

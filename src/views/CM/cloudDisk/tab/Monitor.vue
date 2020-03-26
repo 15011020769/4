@@ -194,12 +194,12 @@
         Tips: {
           'DiskAwait': '硬碟I / O平均每次操作的等待時間',
           'DiskReadIops': '硬碟平均每秒讀次數',
-          'DiskReadTraffic': '平均每秒從硬碟讀到內存的數據量',
+          'DiskReadTraffic': '平均每秒從硬碟讀到記憶體的數據量',
           'DiskSvctm': '硬碟平均每次I / O操作所花的時間',
           'DiskUsage': '磁碟分區使用率',
           'DiskUtil': '硬碟有IO操作的時間與總時間的百分比',
           'DiskWriteIops': '硬碟平均每秒寫次數',
-          'DiskWriteTraffic': '平均每秒從內存寫到硬碟的數據量'
+          'DiskWriteTraffic': '平均每秒從記憶體寫到硬碟的數據量'
         },
 
       }

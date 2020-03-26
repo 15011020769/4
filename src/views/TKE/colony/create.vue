@@ -157,7 +157,7 @@
                     <li><span></span>{{ $t("TKE.colony.rxrzcj") }}</li>
                   </ul>
                   <p class="hover-target">
-                    <!-- <a href="../../index.html#/documentcenter/doc/35747" class="ml5" slot="reference">查看详情</a> -->
+                    <!-- <a href="../../index.html#/documentcenter/doc/35747" class="ml5" slot="reference">檢視详情</a> -->
                   </p>
                 </div>
                 <a href="javascript:;" class="ml5" slot="reference">{{
@@ -1154,7 +1154,7 @@
                                     class="format-and-mount"
                                     >{{ $t("TKE.colony.fpmfgw") }}，
                                     <!-- <a href="#"
-                                      >查看详情</a
+                                      >檢視详情</a
                                     > -->
                                   </el-checkbox>
                                 </div>
@@ -2005,7 +2005,7 @@
                                     class="format-and-mount"
                                     >{{ $t("TKE.colony.fpmfgw") }}，
                                     <!-- <a href="#"
-                                      >查看详情</a
+                                      >檢視详情</a
                                     > -->
                                   </el-checkbox>
                                 </div>
@@ -2533,7 +2533,7 @@
               <p>
                 節點啟動配置
                 <el-tooltip
-                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑查看"
+                  content="指定自定義數據配置Node，即當Node啟動後運行配置的腳本，需要自行保證腳本的可重入及重試邏輯, 腳本及其生成的日誌文件可在節點的/usr/local/qcloud/tke/userscript路徑檢視"
                   placement="right"
                   width="200px"
                   effect="light"
@@ -4916,7 +4916,7 @@ export default {
                 "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
               "InvalidInstanceType.Malformed":
                 "指定InstanceType參數格式不合法。",
-              InvalidParameterCombination: "表示參數組合不正確。",
+              InvalidParameterCombination: "表示參陣列合不正確。",
               InvalidParameterValue:
                 "無效參數值。參數值格式錯誤或者參數值不被支持等。",
               "InvalidParameterValue.Range":
@@ -5006,7 +5006,7 @@ export default {
                   "指定的InstanceName字元串長度超出限制，必須小於等於60位元組。",
                 "InvalidInstanceType.Malformed":
                   "指定InstanceType參數格式不合法。",
-                InvalidParameterCombination: "表示參數組合不正確。",
+                InvalidParameterCombination: "表示參陣列合不正確。",
                 InvalidParameterValue:
                   "無效參數值。參數值格式錯誤或者參數值不被支持等。",
                 "InvalidParameterValue.Range":

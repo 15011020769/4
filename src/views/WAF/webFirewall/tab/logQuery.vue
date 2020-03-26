@@ -547,7 +547,7 @@ export default {
       this.axios.post(CREATE_ATTACK_DOWNLOAD_TASK, params).then(resp => {
         this.generalRespHandler(resp, ({ Context, Data, Count }) => {
           this.createDownTaskModel = false
-        }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面查看任务状态', 'WAF.cjcgnkyqw'))
+        }, COMMON_ERROR, this.t('创建成功，你可以前往“下载任务”界面檢視任务状态', 'WAF.cjcgnkyqw'))
       })
     },
     // 关闭下载任务弹框

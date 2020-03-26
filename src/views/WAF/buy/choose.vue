@@ -435,7 +435,7 @@ export default {
       }
       if (domainPackageCount) {
         orders.push({
-          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-CLB續費`,
+          name: `Web${this.t('应用防火墙', 'WAF.yyfhq')}-域名包-CLB續約`,
           config: `域名包：${domainPackageCount}${this.t('个', 'WAF.g')}`,
           price: `${this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost}元/月`, // 单价
           cost: this.costInfo[CLB_BUY_DOMAIN_TYPES.pid].RealTotalCost, // 费用

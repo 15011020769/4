@@ -23,7 +23,7 @@
         <p>
           {{
             t(
-              "这里可以查看到正在封堵状态中的IP记录/这里可以查看动态生成的IP封堵记录，例如CC，BOT，自定义人机识别等",
+              "这里可以檢視到正在封堵状态中的IP记录/这里可以檢視动态生成的IP封堵记录，例如CC，BOT，自定义人机识别等",
               "WAF.zlkyckzzfd"
             )
           }}
@@ -381,7 +381,7 @@ export default {
     closeTip () {
       this.tipShow = false
     },
-    // 点击查看详情
+    // 点击檢視详情
     isShowTop () {
       if (this.flag) {
         this.arrowShow = false

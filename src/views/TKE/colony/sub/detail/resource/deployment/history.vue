@@ -165,7 +165,7 @@ export default {
         }
       });
     },
-    //打开yaml查看modal
+    //打开yaml檢視modal
     viewYaml(rowData) {
       this.isShowYamlModal = true;
       this.yamlInfo = JSON.stringify(rowData);

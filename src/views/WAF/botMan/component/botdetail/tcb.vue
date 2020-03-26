@@ -107,7 +107,7 @@
         </el-table-column>
         <el-table-column label="操作" width="80">
           <template slot-scope="scope">
-            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('查看详情', 'WAF.ckxq')}}</el-button>
+            <el-button @click="goDetail(scope)" type="text" size="mini">{{t('檢視详情', 'WAF.ckxq')}}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -241,7 +241,7 @@ export default {
         this.loading = false
       })
     },
-    // 查看详情
+    // 檢視详情
     goDetail(scope) {
       this.$router.push({
         path: "/botDetail/ucb",

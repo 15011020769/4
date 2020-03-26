@@ -5,7 +5,7 @@
       <div class="explain">
         <p>
           觸發條件範本功能支持對相同告警規則的複用和統壹修改
-          <!-- ，點擊查看<a>觸發條件範本文檔</a> -->
+          <!-- ，點擊檢視<a>觸發條件範本文件</a> -->
         </p>
       </div>
     </div>
@@ -79,7 +79,7 @@
         </el-table-column>
         <el-table-column prop label="綁定告警策略數">
           <template slot-scope="scope">
-            <el-popover trigger="hover" placement="right" content="點擊查看詳情">
+            <el-popover trigger="hover" placement="right" content="點擊檢視詳情">
               <span class="tke-text-link" slot="reference" @click="goDetail(scope.row.GroupID)">{{`${scope.row.PolicyGroups.length}個`}}</span>
             </el-popover>
           </template>
@@ -245,16 +245,16 @@ export default {
           viewName: 'BS'
         },
         {
-          label: 'VPN網關',
+          label: 'VPN閘道',
           viewName: 'VPN_GW'
         }, {
           label: 'VPN通道',
           viewName: 'vpn_tunnel'
         }, {
-          label: 'NAT網關',
+          label: 'NAT閘道',
           viewName: 'nat_tc_stat'
         }, {
-          label: '專線網關',
+          label: '專線閘道',
           viewName: 'DC_GW'
         }, {
           label: 'MYSQL',
@@ -269,7 +269,7 @@ export default {
           label: '物理專線',
           viewName: 'dcline'
         }, {
-          label: '物件存儲',
+          label: '物件儲存',
           viewName: 'COS'
         }
         ],
@@ -368,7 +368,7 @@ export default {
         //   zanting: true
         // }
       ], // 表格數據
-      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符號數組
+      SymbolList: ['>', '>=', '<', '<=', '=', '!='], // 符號陣列
       // 分頁
       TotalCount: 0, // 總條數
       pageSize: 10, // 分頁條數
@@ -586,7 +586,7 @@ export default {
     // 错误提示
     errorPrompt (res) {
       let ErrTips = {
-        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文檔對鑒權的說明。',
+        'AuthFailure.UnauthorizedOperation': '請求未授權。請參考 CAM 文件對鑒權的說明。',
         'DryRunOperation': 'DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。',
         'FailedOperation.AlertFilterRuleDeleteFailed': '刪除過濾條件失敗。',
         'FailedOperation.AlertPolicyCreateFailed': '創建告警策略失敗。',
@@ -707,13 +707,13 @@ export default {
         } else if (val === 'BS') {
           return '雲硬碟'
         } else if (val === 'VPN_GW') {
-          return 'VPN網關'
+          return 'VPN閘道'
         } else if (val === 'vpn_tunnel') {
           return 'VPN通道'
         } else if (val === 'nat_tc_stat') {
-          return 'NAT網關'
+          return 'NAT閘道'
         } else if (val === 'DC_GW') {
-          return '專線網關'
+          return '專線閘道'
         } else if (val === 'cdb_detail') {
           return 'MYSQL'
         } else if (val === 'REDIS-CLUSTER') {
@@ -723,7 +723,7 @@ export default {
         } else if (val === 'dcline') {
           return '物理專線'
         } else if (val === 'COS') {
-          return '物件存儲'
+          return '物件儲存'
         }
       }
     }

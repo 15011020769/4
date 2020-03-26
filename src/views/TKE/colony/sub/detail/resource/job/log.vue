@@ -5,7 +5,7 @@
       <div class="tke-grid ">
         <!-- 右侧 -->
         <div class="grid-right">
-          <span>自动刷新</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
+          <span>自动重新整理</span><el-switch class="ml10" v-model="autoRefresh" @change="changeSwitch(e)" ></el-switch>
         </div>
       </div>
       <el-card class='box-card'> 

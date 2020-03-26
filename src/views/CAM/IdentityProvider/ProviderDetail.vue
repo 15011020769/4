@@ -134,7 +134,7 @@ export default {
             })
             .then(res => {
               if (res.Response.Error) {
-                this.metadataDocumentError = "元數據文檔內容有誤";
+                this.metadataDocumentError = "元數據文件內容有誤";
               } else {
                 this.base64encode = base64encode;
               }
@@ -146,7 +146,7 @@ export default {
             });
         } catch (err) {
           this.loading = false;
-          this.metadataDocumentError = "元數據文檔內容有誤";
+          this.metadataDocumentError = "元數據文件內容有誤";
           this.$refs.upload.clearFiles();
           console.log("======");
         }

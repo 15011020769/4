@@ -279,7 +279,7 @@
               >複制</el-button
             >
             <el-tooltip
-              content="預設策略不支持刪除，可解綁所有資源或設置新的預設策略後將此轉爲非預設策略"
+              content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
               placement="left"
               effect="light"
               v-if="scope.row.IsDefault != 0"
@@ -289,7 +289,7 @@
               >
             </el-tooltip>
             <el-tooltip
-              content="解綁所有資源後支持刪除"
+              content="釋放所有資源後支持刪除"
               placement="left"
               effect="light"
               v-else-if="scope.row.UseSum != 0"
@@ -390,7 +390,7 @@
                 >
                   <span>預設策略,無法刪除</span>
                   <el-tooltip
-                    content="預設策略不支持刪除，可解綁所有資源或設置新的預設策略後將此轉爲非預設策略"
+                    content="預設策略不支持刪除，可釋放所有資源或設置新的預設策略後將此轉爲非預設策略"
                     placement="left"
                     effect="light"
                   >
@@ -405,7 +405,7 @@
                 >
                   <span>已關聯物件,無法刪除</span>
                   <el-tooltip
-                    content="解綁所有資源後支持刪除"
+                    content="釋放所有資源後支持刪除"
                     placement="left"
                     effect="light"
                   >
@@ -434,7 +434,7 @@
         <el-button @click="deleteAllDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-    <!-- 修改告警渠道 -->
+    <!-- 修改告警管道 -->
     <el-dialog
       title="修改告警管道"
       :visible.sync="ModifyDialogVisible"
@@ -598,7 +598,7 @@ export default {
           viewName: "BS"
         },
         {
-          label: "VPN網關",
+          label: "VPN閘道",
           viewName: "VPN_GW"
         },
         {
@@ -606,11 +606,11 @@ export default {
           viewName: "vpn_tunnel"
         },
         {
-          label: "NAT網關",
+          label: "NAT閘道",
           viewName: "nat_tc_stat"
         },
         {
-          label: "專線網關",
+          label: "專線閘道",
           viewName: "DC_GW"
         },
         {
@@ -630,7 +630,7 @@ export default {
           viewName: "dcline"
         },
         {
-          label: "物件存儲",
+          label: "物件儲存",
           viewName: "COS"
         }
       ],
@@ -660,7 +660,7 @@ export default {
           {
             name: "告警物件1"
           }
-        ], //告警對象數組
+        ], //告警對象陣列
         user: "用戶組", //用戶
         group: "", //組
         user_kind: [
@@ -875,7 +875,7 @@ export default {
               this.loadShow = false;
               let ErrTips = {
                 "AuthFailure.UnauthorizedOperation":
-                  "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+                  "請求未授權。請參考 CAM 文件對鑒權的說明。",
                 DryRunOperation:
                   "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
                 FailedOperation: "操作失敗。",
@@ -933,7 +933,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -1036,7 +1036,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -1231,7 +1231,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -1322,7 +1322,7 @@ export default {
         this.tipsShow = false;
       }
     },
-    // 修改告警渠道
+    // 修改告警管道
     ModifyAlarmBtn() {
       this.ModifyDialogVisible = true;
       // console.log(this.arr[0].ReceiverInfos[0].NotifyWay);

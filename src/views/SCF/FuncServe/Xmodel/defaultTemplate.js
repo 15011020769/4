@@ -7,7 +7,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'COS 對象存儲的 POST 事件範本',
+    name: 'COS 對象儲存的 POST 事件範本',
     code: `{
       "Records": [
       {
@@ -49,7 +49,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'COS 對象存儲的 PUT 事件範本',
+    name: 'COS 對象儲存的 PUT 事件範本',
     code: `{
       "Records": [
       {
@@ -91,7 +91,7 @@ export const defaultTemplate = [
     }`
   },
   {
-    name: 'COS 對象存儲的 DELETE 事件範本',
+    name: 'COS 對象儲存的 DELETE 事件範本',
     code: `{
       "Records": [
       {

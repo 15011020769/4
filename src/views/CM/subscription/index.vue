@@ -18,7 +18,7 @@
               <el-tooltip
                 class="item"
                 effect="light"
-                content="雲伺服器基礎設施存儲模組; 影響：導致IO效能下降 ，數據讀寫異常"
+                content="雲伺服器基礎設施儲存模組; 影響：導致IO效能下降 ，數據讀寫異常"
                 placement="bottom-start"
               >
                 <i class="el-icon-info" style="margin:0 5px;cursor: pointer;"></i>
@@ -207,7 +207,7 @@
     </el-dialog>
     <!-- 取消订阅 -->
     <el-dialog title="取消訂閱" :visible.sync="dialogcancel" width="30%">
-      <span>取消訂閱雲伺服器存儲問題？</span>
+      <span>取消訂閱雲伺服器儲存問題？</span>
       <span slot="footer" class="dialog-footer">
         <el-button class="cancelsubscribe" type="primary" @click="cancel1">取消訂閱</el-button>
         <el-button @click="dialogcancel = false">取 消</el-button>
@@ -256,7 +256,7 @@ export default {
     this.getEventList();
   },
   methods: {
-    // 选中渠道
+    // 选中管道
     selectChannel() {
       // var data = this.$route.params;
       // if (data.NotifyWay) {

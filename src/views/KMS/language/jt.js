@@ -82,7 +82,7 @@ module.exports= {
             chooseAl: '您已选',
             oneKmsSer: '1个密钥服务',
             kmsserver:'个密钥服务',
-            lookDetail: '查看详情',
+            lookDetail: '檢視详情',
             canStart: '可启用',
             canStop: '可禁用',
             question1: '启用选中的密钥服务？',

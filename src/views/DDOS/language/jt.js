@@ -112,7 +112,7 @@ module.exports = {
       iKnow: '我知道了',
       netReturnError: '回切失败',
       netReturnErrorMsg: '硅谷区域正在遭受攻击，暂时无法回切',
-      CheckReport: '查看报表',
+      CheckReport: '檢視报表',
       AssetListName: 'ID/名称',
       Forwarding: '转发规则数(个)',
       protectionNum: '防护IP数(个)',

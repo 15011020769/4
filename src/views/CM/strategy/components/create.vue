@@ -333,7 +333,7 @@ export default {
         { id: '4', label: '<=' },
         { id: '5', label: '=' },
         { id: '6', label: '!=' }
-      ], // 符號數組
+      ], // 符號陣列
       continuePeriod: [
         { id: 1, label: '持續1個週期' },
         { id: 2, label: '持續2個週期' },
@@ -355,7 +355,7 @@ export default {
         { label: '每1天警告壹次', id: 86400 },
         { label: '週期指數遞增', id: 1 }
       ], // 警告週期
-      cam: {}, // cam組件的值
+      cam: {}, // cam元件的值
       projectId: 0,
       searchParam: {},
       product: {},
@@ -620,7 +620,7 @@ export default {
         // params.IsUnionRule = configTrigger.IsUnionRule
         Conditions.forEach((item, index) => {
           params[`Conditions.${index}.MetricId`] = item.MetricID
-          // todo 有問題，不知道給後台傳的是什麽值，文檔上是 0.連續告警 1.指數告警
+          // todo 有問題，不知道給後台傳的是什麽值，文件上是 0.連續告警 1.指數告警
           // params[`Conditions.${index}.AlarmNotifyType`] = item.AlarmNotifyType
           params[`Conditions.${index}.AlarmNotifyType`] = 0
           if (configTrigger.IsUnionRule === 0) {

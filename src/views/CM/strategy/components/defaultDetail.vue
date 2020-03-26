@@ -236,13 +236,13 @@
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="VPN網關" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="VPN閘道" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.VpnGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
             </template>
           </el-table-column>
-          <el-table-column label="對端網關" v-if="ViewName === 'vpn_tunnel'">
+          <el-table-column label="對端閘道" v-if="ViewName === 'vpn_tunnel'">
             <template slot-scope="scope">
               <p>{{ scope.row.CustomerGatewayId }}</p>
               <!-- <p>{{scope.row.}}</p> -->
@@ -373,7 +373,7 @@
               master-slave
             </template>
           </el-table-column>
-          <el-table-column label="關聯專線網關" v-if="ViewName === 'dcchannel'">
+          <el-table-column label="關聯專線閘道" v-if="ViewName === 'dcchannel'">
             <template slot-scope="scope">
               {{ scope.row.WanIp }}
             </template>
@@ -618,7 +618,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="VPN網關"
+                      label="VPN閘道"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -627,7 +627,7 @@
                       </template>
                     </el-table-column>
                     <el-table-column
-                      label="對端網關"
+                      label="對端閘道"
                       v-if="ViewName === 'vpn_tunnel'"
                     >
                       <template slot-scope="scope">
@@ -1745,17 +1745,17 @@
     </el-dialog>
     <!-- 告警對象 解除綁定 -->
     <el-dialog
-      title="確定解綁告警策略"
+      title="確定釋放告警策略"
       :visible.sync="unBindingInstance"
       width="600px"
       custom-class="tke-dialog"
     >
       <div>
-        解綁後，策略將不再對實例分組生效
+        釋放後，策略將不再對實例分組生效
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="UnBindingInstance"
-          >確定解綁</el-button
+          >確定釋放</el-button
         >
         <el-button @click="unBindingInstance = false">取消</el-button>
       </div>
@@ -1861,8 +1861,8 @@ export default {
       tipsShow: false,
       modifyRemarksDialogVisible: false,
       remarksVal: "",
-      showQudao1: false, //渠道选择1显示开关
-      showQudao2: false, //渠道选择2显示开关
+      showQudao1: false, //管道选择1显示开关
+      showQudao2: false, //管道选择2显示开关
       errorTip1: false, //触发条件範本错误提示
       errorTip2: true, //配置触发条件错误提示
       triggerInput: "", //新增接收
@@ -2061,7 +2061,7 @@ export default {
         },
         {
           value: "3",
-          label: "內存oom"
+          label: "記憶體oom"
         },
         {
           value: "4",
@@ -2101,7 +2101,7 @@ export default {
       editReceiveObjectVisuble: false,
       Verification: true,
       loading: true,
-      cam: {} // cam組件的值
+      cam: {} // cam元件的值
     };
   },
   components: { Header, CamTransferCpt, ProductTypeCpt, Cam },
@@ -2294,7 +2294,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "	操作失敗。",
@@ -2345,7 +2345,7 @@ export default {
         }
       });
     },
-    // 項目
+    // 專案
     Project() {
       this.axios.get(ALL_PROJECT).then(res => {
         if (res.codeDesc === "Success") {
@@ -2612,7 +2612,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -2828,7 +2828,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "	請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "	請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -3058,9 +3058,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3107,9 +3107,9 @@ export default {
                 } else {
                   let ErrTips = {
                     "InvalidVpnGatewayId.Malformed":
-                      "無效的VPN網關,VPN實例ID不合法。",
+                      "無效的VPN閘道,VPN實例ID不合法。",
                     "InvalidVpnGatewayId.NotFound":
-                      "無效的VPN網關,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
+                      "無效的VPN閘道,VPN實例不存在，請再次核實您輸入的資源訊息是否正確。"
                   };
                   let ErrOr = Object.assign(ErrorTips, ErrTips);
                   this.$message({
@@ -3559,7 +3559,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "	操作失敗。",
@@ -3715,7 +3715,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -3751,7 +3751,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             FailedOperation: "操作失敗。",
             InternalError: "內部錯誤。",
             InvalidParameter: "參數錯誤。",
@@ -3801,7 +3801,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -3872,7 +3872,7 @@ export default {
         } else {
           let ErrTips = {
             "AuthFailure.UnauthorizedOperation":
-              "請求未授權。請參考 CAM 文檔對鑒權的說明。",
+              "請求未授權。請參考 CAM 文件對鑒權的說明。",
             DryRunOperation:
               "DryRun 操作，代表請求將會是成功的，只是多傳了 DryRun 參數。",
             FailedOperation: "操作失敗。",
@@ -3939,7 +3939,7 @@ export default {
       this.editReceiveObjectVisuble = true;
     },
 
-    // 獲取cam組件的值
+    // 獲取cam元件的值
     camFun(val) {
       this.cam = val;
       console.log(this.cam);

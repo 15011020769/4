@@ -334,7 +334,7 @@
                   </div>
                   <div>
                     <span style="color:#666">上次敏感操作:</span>
-                    <span style="color:red">查看详情</span>
+                    <span style="color:red">檢視详情</span>
                   </div>
                 </el-collapse-item>
               </el-collapse>

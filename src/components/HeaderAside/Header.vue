@@ -44,7 +44,7 @@
         <el-menu-item index="6-4" class="count-li">{{
           $t("COM.back")
         }}</el-menu-item>
-        <!-- 退出 -->
+        <!-- 登出 -->
         <el-menu-item index="6-3" class="count-li">{{
           $t("COM.h")
         }}</el-menu-item>
@@ -208,9 +208,9 @@ export default {
           })
       }
 
-      // 退出
+      // 登出
       if (key === '6-3') {
-        // '确定进行[退出]操作?', '提示'
+        // '确定进行[登出]操作?', '提示'
         this.$confirm(this.$t('COM.hintContent'), this.$t('COM.hintTitle'), {
           // 确定
           confirmButtonText: '確定',
@@ -220,18 +220,18 @@ export default {
         })
           .then(() => {
             if (this.$cookie.get('subAccountName') && this.$cookie.get('subAccountName') !== '') {
-              this.subAccount() // 子账号退出
+              this.subAccount() // 子账号登出
             } else {
-              this.mainAccount() // 主账号退出
+              this.mainAccount() // 主账号登出
             }
           })
           .catch(() => {
-            this.$message.error('退出異常，請重試')
+            this.$message.error('登出異常，請重試')
           })
       }
     },
 
-    // 主账号退出
+    // 主账号登出
     mainAccount () {
       let params = {
         'QcloudUin': this.$cookie.get('uin')
@@ -242,18 +242,18 @@ export default {
           console.log(data)
           console.log(typeof data)
           if (data.RetCode === '00') {
-            // 退出我们的系统
+            // 登出我们的系统
             clearLoginInfo()
             this.loginStatus = !!this.$cookie.get('uuid')
-            // 退出台湾的系统成功 跳转到登录
+            // 登出台湾的系统成功 跳转到登录
             window.location.href = process.env.VUE_APP_loginUrl
           } else {
-            this.$message.error('退出異常，請重試')
+            this.$message.error('登出異常，請重試')
           }
         })
     },
 
-    // 子账号退出
+    // 子账号登出
     subAccount () {
       let params = {
         'QcloudUin': this.$cookie.get('uin'),
@@ -265,13 +265,13 @@ export default {
           data
         }) => {
           if (data.RetCode === '00') {
-            // 退出我们的系统
+            // 登出我们的系统
             clearLoginInfo()
             this.loginStatus = !!this.$cookie.get('uuid')
-            // 退出台湾的系统成功 跳转到登录
+            // 登出台湾的系统成功 跳转到登录
             window.location.href = process.env.VUE_APP_loginUrl
           } else {
-            this.$message.error('退出異常，請重試')
+            this.$message.error('登出異常，請重試')
           }
         })
     }

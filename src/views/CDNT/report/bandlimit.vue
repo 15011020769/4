@@ -97,7 +97,7 @@ export default {
       const start = times[0].split(' ')[0]
       const end = times[1].split(' ')[0]
       let data = [
-        ['統計項目', projectName || '全部項目'],
+        ['統計專案', projectName || '全部專案'],
         ['統計域名', domainName || '全部域名'],
         ['報表類型', type],
         ['開始時間', times[0]],

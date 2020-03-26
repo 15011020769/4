@@ -77,11 +77,11 @@ export default {
       options: [
         {
           value: '1',
-          label: '查看播放數據'
+          label: '檢視播放數據'
         },
         {
           value: '2',
-          label: '查看推流數據'
+          label: '檢視推流數據'
         }
       ],
       StartTime: moment(new Date()).subtract(2,'hours').format("YYYY-MM-DD HH:mm:ss"),

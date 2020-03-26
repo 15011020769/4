@@ -120,7 +120,7 @@
       SwitchGrain() {
         this.$emit("switchData", [this.grainValue, this.Start_End]);
       },
-      // 返回橫坐標數組
+      // 返回橫坐標陣列
       getXAxis(startTime, endTime) {
         let startTimeSec = new Date(startTime).getTime();
         let endTimeSec = new Date(endTime).getTime();

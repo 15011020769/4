@@ -138,7 +138,7 @@ export default {
       editableTabsValue: "2",
       tableDatas: [{
           date:"aa",
-          name:"內存",
+          name:"記憶體",
           address:"%"
       }]
     };

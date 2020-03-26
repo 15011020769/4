@@ -129,7 +129,7 @@ module.exports = {
     upload: {
       deleteTip: '按 delete 键可删除 ',
       delete: '删除 ',
-      preview: '查看图片 ',
+      preview: '檢視图片 ',
       continue: '继续上传 '
     },
     table: {

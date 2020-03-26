@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="tea-alert">
-        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确定将无法更改。在创建用户后，您可以查看并下载密钥等相关信息。</div>
+        <div class="tea-alert__info">因子用户登录使用用户名，用户名一经确定将无法更改。在创建用户后，您可以檢視并下载密钥等相关信息。</div>
       </div>
       <div class="tea-form">
         <div class="tea-form__item">
