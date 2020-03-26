@@ -162,7 +162,7 @@
             // splitNumber: this.scale
           }],
           series:this.series
-        });
+        },true);
           if(myChart._$handlers.click){
               myChart._$handlers.click.length = 0;
           }

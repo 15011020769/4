@@ -89,6 +89,9 @@
                   v-loading="loadShow">
                   <el-table-column
                     prop="color">
+                    <template slot-scope="scope">
+                      <div :style='"width: 10px;height: 10px;border-radius: 50%;background:" + scope.row.color'></div>
+                    </template>
                   </el-table-column>
                   <el-table-column
                     prop="pointId"
@@ -461,8 +464,8 @@ export default {
               })
             }
             this.loadShow = false
-            console.log(this.series);
-            console.log(this.times);
+            // console.log(this.series);
+            // console.log(this.times);
           } else {
             this.series = [];
           }
