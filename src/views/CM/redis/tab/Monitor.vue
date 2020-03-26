@@ -133,6 +133,7 @@
           }
         ],
         ID: this.$route.query.id,
+        Appid:this.$route.query.appid,
         BaseList: [], //全部指标列表
         BaseListK: [], //用到的指标列表
         TableLoad: true,
@@ -494,7 +495,7 @@
           EndTime: this.Time.EndTIme,
           MetricName: MetricName,
           'Dimensions.0.instanceid': this.ID,
-          'Dimensions.0.appid': localStorage.getItem('appid')
+          'Dimensions.0.appid': this.Appid
         }
         this.axios.post(All_MONITOR, parms).then(data => {
           if (data.Response.Error == undefined) {

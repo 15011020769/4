@@ -24,7 +24,7 @@
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.jk')">
           <template slot-scope="scope">
-            <div class="a" @click="jump(scope.row.InstanceId)"></div>
+            <div class="a" @click="jump(scope.row.InstanceId,scope.row.Appid)"></div>
           </template>
         </el-table-column>
         <el-table-column prop :label="$t('CVM.clBload.zt')">
@@ -281,11 +281,12 @@
         this.GetTabularData();
       },
       //跳转
-      jump(id) {
+      jump(id,appid) {
         this.$router.push({
           name: "Redisdetails",
           query: {
-            id
+            id,
+            appid
           }
         });
       }

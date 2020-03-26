@@ -156,10 +156,10 @@
         tableData: [], // 组合数据
         disName: {
           'Delay': '延時',
-          'Inbandwidth': '網路入頻寬',
+          'Inbandwidth': '外網入頻寬',
           'Inpkg': '入包量',
           'Outpkg': '出包量',
-          'Outbandwidth': '網路出頻寬',
+          'Outbandwidth': '外網出頻寬',
           'Pkgdrop': '丟包',
         },
         Company: {

@@ -204,6 +204,12 @@
           if (res.Response.Error == undefined) {
             this.BaseList = res.Response.MetricSet
             this.MonitorData = []
+            let dataArr = [];
+            dataArr.push(this.BaseList[0]);
+            dataArr.push(this.BaseList[2]);
+            dataArr.push(this.BaseList[3]);
+            dataArr.push(this.BaseList[1]);
+            this.BaseList = dataArr;
             this.BaseListK = []
             this.BaseList.forEach(item => {
               if (item.Period.indexOf(Number(this.Period)) !== -1) {
