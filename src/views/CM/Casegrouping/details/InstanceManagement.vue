@@ -496,7 +496,7 @@ export default {
       projectOptions: [
         {
           projectId: 0,
-          projectName: "默认项目"
+          projectName: "預設專案"
         }
       ],
       searchSelect: "",

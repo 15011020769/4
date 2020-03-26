@@ -1,21 +1,21 @@
 <template>
   <div class="wrap">
     <el-dialog
-      title="自定義列表字段"
+      title="自定義清單字段"
       :visible.sync="dialogVisible"
       width="40%"
       :close-on-click-modal="false"
     >
       <div class="dialog">
         <div class="explain">
-          <p>請選擇您想顯示的列表詳細訊息，最多勾選5個字段，已勾選5個。</p>
+          <p>請選擇您想顯示的清單詳細訊息，最多勾選5個字段，已勾選5個。</p>
         </div>
         <div class="dialog-main">
           <el-checkbox-group v-model="checkList">
             <p>
               <el-checkbox label="ID/策略名" disabled></el-checkbox>
               <el-checkbox label="近24小時觸發告警" disabled></el-checkbox>
-              <el-checkbox label="消息接收組"></el-checkbox>
+              <el-checkbox label="訊息接收組"></el-checkbox>
               <el-checkbox label="告警管道"></el-checkbox>
               <el-checkbox label="操作" disabled></el-checkbox>
             </p>
@@ -43,7 +43,7 @@ export default {
       num: 100,
       //購買簡訊 類型
       liIndex: 0,
-      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義訊息"]
     };
   },
   props: {

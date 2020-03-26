@@ -36,7 +36,7 @@
             <span slot="title">平台事件訂閱</span>
           </el-menu-item>
           <el-menu-item index="/message">
-            <span slot="title">自定義消息</span>
+            <span slot="title">自定義訊息</span>
           </el-menu-item>
         </el-menu-item-group>
       </el-submenu>

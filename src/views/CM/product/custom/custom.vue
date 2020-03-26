@@ -2,14 +2,14 @@
   <div class="newdialog">
     <div>
       <el-dialog
-        title="自定義列表字段"
+        title="自定義清單字段"
         :visible.sync="dialogVisible"
         width="40%"
       >
         <div class="content">
           <div class="explain" style="margin-bottom:20px;">
             <p>
-              請選擇您想顯示的列表詳細訊息，最多勾選10個字段，已勾選10個
+              請選擇您想顯示的清單詳細訊息，最多勾選10個字段，已勾選10個
             </p>
           </div>
           <div class="checkbox">

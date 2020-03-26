@@ -1,6 +1,6 @@
 <template>
   <div class="message-wrap">
-    <Header title="自定義消息" />
+    <Header title="自定義訊息" />
     <!-- <Search></Search> -->
     <p>.</p>
     <!-- <div class="overview-main">
@@ -14,7 +14,7 @@
     <div class="table">
       <div class="addBtn">
         <el-row>
-          <el-button type="primary" @click="addMessage">新增消息策略</el-button>
+          <el-button type="primary" @click="addMessage">新增訊息策略</el-button>
         </el-row>
         <el-row class="seek">
           <!-- <el-input v-model="triggerInput" placeholder="请输入策略ID、策略名称搜索" @input="searchList"></el-input>
@@ -49,7 +49,7 @@
             <!-- <a @click="alarmDialog">{{scope.row.AlarmCount}}</a> -->
           </template>
         </el-table-column>
-        <el-table-column prop="type" label="消息接收组">
+        <el-table-column prop="type" label="訊息接收组">
           <template slot-scope="scope">
             {{scope.row.ReceiverGroupIds.length}}
             <!-- <a @click="receiverGroup(scope.row)">{{scope.row.ReceiverGroupIds.length}}</a> -->
@@ -107,7 +107,7 @@
             <XTimeX v-on:switchData="getAlarmList" :classsvalue="valueT"></XTimeX>
           </div>
           <div class="seek">
-            <el-input v-model="input" placeholder="请输入消息内容关键字或监控组件主机IP" @input="searchZIID"></el-input>
+            <el-input v-model="input" placeholder="请输入訊息内容关键字或监控组件主机IP" @input="searchZIID"></el-input>
             <el-button icon="el-icon-search" style="margin-left:-1px;" @click="searchZIIDBtn"></el-button>
           </div>
         </div>
@@ -126,10 +126,10 @@
             <el-table-column prop label="发生时间">
               <template slot-scope="scope">111</template>
             </el-table-column>
-            <el-table-column prop label="消息内容">
+            <el-table-column prop label="訊息内容">
               <template slot-scope="scope">22222</template>
             </el-table-column>
-            <el-table-column prop label="消息来源">
+            <el-table-column prop label="訊息来源">
               <template slot-scope="scope">3333</template>
             </el-table-column>
           </el-table>
@@ -154,7 +154,7 @@
 
     <!-- 接收组 -->
     <el-dialog
-      title="消息接收组详情"
+      title="訊息接收组详情"
       :visible.sync="deleteDialogVisible1"
       width="500px"
       custom-class="tke-dialog"
@@ -370,7 +370,7 @@ export default {
       // params.ObjLike = this.input;
       this.getCustomMessage();
     },
-    //新增消息策略
+    //新增訊息策略
     addMessage() {
       // alert("/message/create")messageCreate
       this.$router.push({ name: "messageCreate" });

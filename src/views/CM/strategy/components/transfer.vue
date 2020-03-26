@@ -3,7 +3,7 @@
     <div class="main" style="background:white;">
       <div class="left">
         <!-- <p class="title">
-          <b style="font-size:13px;">策略列表</b>
+          <b style="font-size:13px;">策略清單</b>
           &nbsp;(共{{num}}條)
         </p>-->
         <div class="left-main border">

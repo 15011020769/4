@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <el-dialog
-      title="自定義列表字段"
+      title="自定義清單字段"
       :visible.sync="dialogVisible"
       width="40%"
       :close-on-click-modal="false"
@@ -47,7 +47,7 @@ export default {
       num: 100,
       //購買簡訊 類型
       liIndex: 0,
-      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義消息"]
+      btnArr: ["基礎告警", "雲撥測告警", "自定義監控告警", "自定義訊息"]
     };
   },
   props: {

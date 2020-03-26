@@ -362,11 +362,11 @@ export default {
           }
         ], // 策略类型
         alarm: '', // 策略类型
-        projectName: '默认项目',
+        projectName: '預設專案',
         project: [
           {
             value: 0,
-            name: '默认项目'
+            name: '預設專案'
           }
         ]
       },

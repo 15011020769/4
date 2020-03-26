@@ -449,7 +449,7 @@ export default {
           new Blob([wbout], {
             type: "application/octet-stream"
           }),
-          "告警曆史—基礎告警告警列表.xlsx"
+          "告警曆史—基礎告警告警清單.xlsx"
         );
       } catch (e) {
         if (typeof console !== "undefined") console.log(e, wbout);

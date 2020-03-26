@@ -1,6 +1,6 @@
 <template>
   <div class="create-wrap">
-    <Header title="編輯消息策略" backShow="true"></Header>
+    <Header title="編輯訊息策略" backShow="true"></Header>
     <div class="create-main">
       <div class="box">
         <p>
