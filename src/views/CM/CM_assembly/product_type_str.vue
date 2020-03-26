@@ -630,7 +630,7 @@
         }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
-          this.Date = data.Response.InstanceSet
+          this.Date = data.data.Response.InstanceSet
           this.Namespace = 'qce/redis'
           this.SearchConfig = [{
             value: "InstanceId",

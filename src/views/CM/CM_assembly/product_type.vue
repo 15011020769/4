@@ -164,7 +164,7 @@
           Version: "2017-03-12",
         }
         // this.searchParam.label !== undefined &&
-        if ( this.searchParam.value !== undefined) {
+        if (this.searchParam.value !== undefined) {
           parms["Filters.0.Name"] = this.searchParam.label;
           parms["Filters.0.Values.0"] = this.searchParam.value;
           parms["Filters.1.Name"] = 'project-id';
@@ -631,7 +631,7 @@
         }
         this.axios.post(REDIS_LIST, parms).then(data => {
           this.redis = 'redis'
-          this.Date = data.Response.InstanceSet
+          this.Date = data.data.Response.InstanceSet
           this.Namespace = 'qce/redis'
           this.SearchConfig = [{
             value: "InstanceId",
