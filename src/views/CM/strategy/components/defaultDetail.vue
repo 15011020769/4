@@ -1127,7 +1127,9 @@
                       label-width="40px"
                     ></el-option>
                   </el-select>
-                  <a href="javascript:;" @click="AlarmTriggerCondition">重新整理</a>
+                  <a href="javascript:;" @click="AlarmTriggerCondition"
+                    >重新整理</a
+                  >
                 </p>
                 <div v-if="nameVal !== '當前策略下沒有觸發條件範本'">
                   <p>
@@ -1461,7 +1463,8 @@
                         @click="delZhibiao(index)"
                       ></i>
                     </li>
-                    <a @click="addZhibiao()">添加</a>
+                    <a @click="addZhibiao()" v-if="!addDis">添加</a>
+                    <a v-if="addDis" style="color:#888;">添加</a>
                     <div v-if="formWrite.satisfyVal === 1">
                       <span>then</span>&nbsp;
                       <el-select
@@ -2101,6 +2104,7 @@ export default {
       editReceiveObjectVisuble: false,
       Verification: true,
       loading: true,
+      addDis: false,
       cam: {} // cam元件的值
     };
   },
@@ -2116,7 +2120,7 @@ export default {
   },
   methods: {
     passData(data) {
-      console.log(data)
+      console.log(data);
       this.isShow = false;
       this.productListData = data;
       this.typeOpt = data.Metrics;
@@ -2960,7 +2964,7 @@ export default {
         Version: "2018-07-24",
         Module: "monitor",
         GroupId: this.$route.query.groupId,
-        Limit: this.pageSize,
+        Limit: 50,
         Offset: this.pageIndex
       };
       await this.$axios.post(CM_ALARM_OBJECT_LIST, param).then(res => {
@@ -2973,7 +2977,7 @@ export default {
             if (this.ViewName === "cvm_device") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               for (let i in _enterList) {
@@ -3026,7 +3030,7 @@ export default {
             } else if (this.ViewName === "BS") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "disk-id";
@@ -3075,7 +3079,7 @@ export default {
             } else if (this.ViewName === "VPN_GW") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "public-ip-address";
@@ -3124,7 +3128,7 @@ export default {
             } else if (this.ViewName === "vpn_tunnel") {
               let params = {
                 Version: "2017-03-12",
-                Limit: this.pageSize,
+                Limit: 50,
                 Offset: this.pageIndex
               };
               params["Filters.0.Name"] = "vpn-connection-id";
@@ -4085,13 +4089,24 @@ export default {
     },
     // 告警接收對象 解除
     Remove(row, index) {
+      console.log(row);
+      let name = "";
+      if (this.ReceiverInfos.ReceiverType === "group") {
+        name = "接收組";
+      } else {
+        name = "接收人";
+      }
       if (index == 1) {
         this.remove = [];
         this.remove = row;
-        this.relieveTitle = "確定解除與該$接收人的關聯？";
+        this.relieveTitle = "確定解除與該" + name + "的關聯？";
       } else {
         this.relieveTitle =
-          "已選擇" + this.remove.length + "個告警接收人，確定要解除關聯？";
+          "已選擇" +
+          this.remove.length +
+          "個告警" +
+          name +
+          "，確定要解除關聯？";
       }
       this.relieveDialogVisible = true;
     },
@@ -4234,6 +4249,12 @@ export default {
       this.showChufa2 = true;
     },
     addZhibiao() {
+      if (this.typeOpt.length === this.formWrite.arr.length) {
+        this.addDis = true;
+        return false;
+      } else {
+        this.addDis = false;
+      }
       //添加觸發條件的指標告警
       this.formWrite.index++;
       if (this.formWrite.index + 1 === this.formWrite.arr.length) {

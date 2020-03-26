@@ -97,7 +97,7 @@
         @selection-change="handleSelectionChange"
         id="exportTable"
       >
-        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column type="selection" width="50"></el-table-column>
         <el-table-column label="策略名稱">
           <template slot-scope="scope">
             <a class="defaultDialog" @click="defaultClick(scope.row)">{{
