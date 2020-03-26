@@ -33,7 +33,7 @@
             style="height: 100%"
             :default-active="this.$route.path"
           >
-            <el-menu-item index="/colony/sub/list/basic">基本信息</el-menu-item>
+            <el-menu-item index="/colony/sub/list/basic">{{$t('TKE.overview.jbxx')}}</el-menu-item>
             <el-submenu index="2">
               <template slot="title"><span>{{$t('TKE.overview.jd')}}管理</span></template>
               <el-menu-item index="/colony/sub/list/nodeManage/node"
