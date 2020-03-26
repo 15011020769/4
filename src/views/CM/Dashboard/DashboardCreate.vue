@@ -75,6 +75,14 @@
               v-if="rightData.length"
             ></Echarts>
           </div>
+          <div>
+            <div style="width:100%;height:30px;background-color:#f2f2f2;margin:10px 0px;" v-if='rightData.length'>
+                <div style="margin-left:20px;line-height:30px">
+                    <span>共有{{rightData.length}}个实例</span>
+                    <span style="margin-left:20px">共有{{rightData.length}}个实例</span>
+                </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="footer-right">
@@ -147,6 +155,7 @@ export default {
       series: [],
       DashboardID: "",
       DashboardData: [],
+      tableData:[],
       pointId:"",
       loading: true,
       flag: false
@@ -311,6 +320,7 @@ export default {
           });
         } else if (this.productValue === "dcchannel") {
           // 专用通道
+          this.pointId = "directConnectConnId"
           params["Dimensions." + i + ".directConnectConnId"] = this.rightData[
             i
           ].DirectConnectTunnelId;
@@ -320,6 +330,7 @@ export default {
           });
         } else if (this.productValue === "COS") {
           // 对象存储
+          this.pointId = "bucket"
           params["Dimensions." + i + ".bucket"] = this.rightData[i].Name;
           this.DashboardData.push({
             regionId: "39",
@@ -327,6 +338,7 @@ export default {
           });
         } else if (this.productValue === "dcline") {
           // 物理专线
+          this.pointId = "directConnectId"
           params["Dimensions." + i + ".directConnectId"] = this.rightData[
             i
           ].DirectConnectId;
@@ -336,6 +348,7 @@ export default {
           });
         } else if (this.productValue === "cdb_detail") {
           // MYSQL
+          this.pointId = "uInstanceId"
           params["Dimensions." + i + ".uInstanceId"] = this.rightData[
             i
           ].InstanceId;
@@ -345,6 +358,7 @@ export default {
           });
         } else if (this.productValue === "BS") {
           // 云硬盘
+          this.pointId = "diskId"
           params["Dimensions." + i + ".diskId"] = this.rightData[i].DiskId;
           this.DashboardData.push({
             regionId: "39",
@@ -398,13 +412,14 @@ export default {
               }
             }
             // table数据
-            // for(let i in res.Response.DataPoints){
-            //   this.tableData.push({
-            //     points:res.Response.DataPoints[i].Points[0],
+            for(let i in res.Response.DataPoints){
+              this.tableData.push({
+                points:res.Response.DataPoints[i].Points[0],
+                pointId:res.Response.DataPoints[i].Dimensions[this.pointId]
+              })
+            }
 
-            //   })
-            // }
-            console.log(this.series);
+            console.log(this.tableData);
           } else {
             this.series = [];
           }
