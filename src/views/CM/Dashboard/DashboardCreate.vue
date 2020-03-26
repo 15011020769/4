@@ -79,8 +79,8 @@
           <div>
             <div style="width:100%;height:30px;background-color:#f2f2f2;margin:10px 0px;" v-if='rightData.length'>
                 <div style="margin-left:20px;line-height:30px">
-                    <span>共有{{rightData.length}}个实例</span>
-                    <span style="margin-left:20px">监控明细({{StartTime}})</span>
+                    <span>共有{{rightData.length}}個實例</span>
+                    <span style="margin-left:20px">監控明細({{StartTime}})</span>
                 </div>
                 <el-table
                  :data="tableData"
@@ -223,8 +223,9 @@ export default {
     getTarget(val) {
       this.picName = "明細-" + val.label;
       this.picNameLable = val.label
-      console.log(this.picNameLable)
-      this.MetricName = val.value;
+      // console.log(this.picNameLable)
+      this.MetricName = this.filterMetricName(val.value);
+      this.loadShow = true
       if (this.rightData.length) {
         this.getMonitorList();
       }
@@ -235,6 +236,7 @@ export default {
       this.projectId = data;
     },
     paramValue(evt){
+      this.StartTime = evt
       for(let i in this.times){
         if(this.times[i] == evt){
             // this.tableData[points]=res.Response.DataPoints[i].Points[0],
@@ -262,6 +264,14 @@ export default {
       this.loading = val;
       this.series = [];
     },
+    filterMetricName(val){
+        if(val.indexOf('(')!==-1){
+          return val.split('(')[0]
+        } else {
+          return val
+        }
+        console.log(val)
+    },
     // 创建
     createJump() {
       if (this.rightData.length) {
@@ -282,7 +292,7 @@ export default {
     async getMonitorList() {
       this.timeDate = {};
       this.times = [];
-      // this.series = [];
+      this.series = [];
       this.DashboardData = [];
       this.tableData = [];
       
